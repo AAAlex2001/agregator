@@ -21,7 +21,6 @@ const Header = () => {
             </linearGradient>
             </defs>
             </svg>
-
         </span>
       </div>
       <nav className={styles.nav}>
@@ -32,10 +31,12 @@ const Header = () => {
       </nav>
       <div className={styles.actions}>
         <Link className={styles.login} href="#login">
-          Вход
+          <span className={styles.loginText}> Войти
+               </span>
         </Link>
-        <Link className={styles.cta} href="#signup">
-          Присоединиться
+        <Link className={styles.signUp} href="#signup">
+          <span className={styles.signUpText}> Зарегистрироваться
+              </span>
         </Link>
       </div>
     </header>

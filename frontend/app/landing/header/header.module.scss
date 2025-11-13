@@ -5,31 +5,48 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   backdrop-filter: blur(16px);
-  gap: 244px;
-  padding: 15px
+  padding: 15px;
 }
 
 .brand {
   display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+  flex-direction: row;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  width: 208px;
+  height: 38px;
+
+  .svg {
+    width: 208px;
+    height: 38px;
+  }
 }
 
 .nav {
   display: flex;
   justify-content: center;
-  gap: 50px;
+  gap: 8px;
   white-space: nowrap;
+  font-weight: 500;
+  margin: 0 auto;
   a {
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
+    font-size: 16px;
+    line-height: 16px;
+    color: #1A1A1A;
+    padding: 14px 20px;
+    border-radius: 40px;
+    transition: background-color 0.5s ease;
 
     &:hover,
     &:focus-visible {
-      color: #f8fafc;
+      background-color: #FFDDA9;
     }
   }
 }
@@ -37,30 +54,48 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 11px;
+  margin: 0 auto;
 }
 
 .login {
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 16px;
+  line-height: 16px;
+  color: #1A1A1A;
+  border-radius: 10px;
+  border: 2px solid #FFB800;
+  padding: 14px 33.5px;
+  transition: background-color 0.5s ease, border-color 0.3s ease;
 
   &:hover,
   &:focus-visible {
-    color: #f8fafc;
+    background-color: #FFDDA9;
+    border-color: transparent;
   }
 }
 
-.cta {
-  padding: 0.6rem 1.4rem;
-  border-radius: 999px;
-  color: #0f172a;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.signUp {
+  display: flex;
+  flex-direction: row;
+  max-width: 216px;
+  padding: 14px 33.5px;
+  border-radius: 10px;
+  transition: background-color 0.5s ease;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFB800;
 
-  &:hover,
-  &:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 25px -15px rgba(34, 211, 238, 0.6);
-  }
+    .signUpText {
+      text-decoration: none;
+      font-size: 16px;
+      line-height: 16px;
+      font-weight: 500;
+      color: #1A1A1A;
+    }
+
+      &:hover,
+      &:focus-visible {
+        background-color: #FF8A00;
+    }
 }
