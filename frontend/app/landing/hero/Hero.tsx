@@ -17,6 +17,19 @@ const Hero = () => {
       <div className={styles.visual} aria-hidden="true">
           <Image src="/hero_svg.svg" alt="Карьер" width={787} height={412} />
       </div>
+
+        <div className={styles.visualDecoration1}>
+            <div className={styles.visualDecorationHeader}>
+                <div className={styles.visualDecorationHeaderText}>
+                    <p>Анализ устойчивости борта карьера</p>
+                    <span>850 000 ₽</span>
+                </div>
+            </div>
+
+            <div className={styles.visualDecorationBody}>
+                <span>Требуется эксперт с аттестацией Э2 ЗС</span>
+            </div>
+        </div>
     </section>
   );
 };

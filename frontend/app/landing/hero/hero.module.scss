@@ -57,4 +57,30 @@
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  position: relative;
+}
+
+
+.visualDecoration1 {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+}
+
+.visualDecorationHeaderText {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
+    .span {
+      font-size: 18px;
+      line-height: 28px;
+      font-weight: 700;
+    }
+
+    .p {
+      font-size: 18px;
+      line-height: 28px;
+      font-weight: 700;
+    }
 }
