@@ -30,14 +30,10 @@ const Header = () => {
         <Link href="#faq">FAQ</Link>
       </nav>
       <div className={styles.actions}>
-        <Link className={styles.login} href="#login">
-          <span className={styles.loginText}> Войти
-               </span>
-        </Link>
-        <Link className={styles.signUp} href="#signup">
-          <span className={styles.signUpText}> Зарегистрироваться
-              </span>
-        </Link>
+        <button className={styles.login}> Войти
+        </button>
+        <button className={styles.signUp}>  Зарегистрироваться
+        </button>
       </div>
     </header>
   );

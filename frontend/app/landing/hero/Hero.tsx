@@ -1,26 +1,16 @@
-import Link from "next/link";
 import styles from "./hero.module.scss";
 
 const Hero = () => {
   return (
     <section className={styles.hero} id="hero">
-      <div className={styles.content}>
+        <div className={styles.leftSection}>
         <h1>
-          Автоматизируйте сбор данных
-          <span>Agregator объединяет ваши сервисы в единую аналитику</span>
+          Единственная площадка для аттестованных экспертов промышленной безопасности
         </h1>
         <p>
-          Настраивайте интеграции, управляйте бизнес-процессами и контролируйте показатели в одном
-          месте. Платформа готова к масштабированию с первого дня.
+          Размещайте заказы и находите проекты среди специалистов со всей России. Все эксперты имеют официальные аттестации Ростехнадзора
         </p>
-        <div className={styles.actions}>
-          <Link className={styles.primary} href="#orders">
-            Запланировать демо
-          </Link>
-          <Link className={styles.secondary} href="#how-it-works">
-            Посмотреть процессы
-          </Link>
-        </div>
+          <button className={styles.primary}> Начать работать </button>
       </div>
       <div className={styles.visual} aria-hidden="true">
         <div className={styles.widget}>
