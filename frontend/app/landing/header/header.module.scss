@@ -35,13 +35,14 @@
   white-space: nowrap;
   font-weight: 500;
   margin: 0 auto;
+
   a {
     text-decoration: none;
     font-size: 16px;
     line-height: 16px;
     color: #1A1A1A;
     padding: 14px 20px;
-    border-radius: 40px;
+    border-radius: 10px;
     transition: background-color 0.5s ease;
 
     &:hover,
@@ -59,14 +60,24 @@
 }
 
 .login {
-  text-decoration: none;
-  font-size: 16px;
-  line-height: 16px;
-  color: #1A1A1A;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  max-width: 120px;
+  height: 44px;
   border-radius: 10px;
   border: 2px solid #FFB800;
   padding: 14px 33.5px;
   transition: background-color 0.5s ease, border-color 0.3s ease;
+
+    .loginText {
+      text-decoration: none;
+      font-size: 16px;
+      line-height: 16px;
+      font-weight: 500;
+      color: #1A1A1A;
+    }
 
   &:hover,
   &:focus-visible {
@@ -79,6 +90,7 @@
   display: flex;
   flex-direction: row;
   max-width: 216px;
+  height: 44px;
   padding: 14px 33.5px;
   border-radius: 10px;
   transition: background-color 0.5s ease;
