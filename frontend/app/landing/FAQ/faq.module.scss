@@ -1,0 +1,68 @@
+@use "sass:color";
+
+.section {
+  display: grid;
+  gap: 2rem;
+}
+
+.header {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 420px;
+
+  h2 {
+    font-size: clamp(2rem, 3vw, 2.3rem);
+    font-weight: 700;
+  }
+}
+
+.badge {
+  width: fit-content;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 234, 212, 0.35);
+  background: rgba(45, 212, 191, 0.15);
+  color: #5eead4;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.item {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.45);
+  padding: 1rem 1.25rem;
+  transition: border-color 0.2s ease;
+
+  &[open] {
+    border-color: rgba(45, 212, 191, 0.35);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  p {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    color: color.scale(#e2e8f0, $lightness: -15%);
+    line-height: 1.6;
+  }
+}
+

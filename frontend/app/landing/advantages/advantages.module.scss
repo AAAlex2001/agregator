@@ -1,0 +1,70 @@
+@use "sass:color";
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 640px;
+
+  h2 {
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+  }
+}
+
+.badge {
+  width: fit-content;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 250, 252, 0.2);
+  color: #f1f5f9;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.feature {
+  display: grid;
+  gap: 0.75rem;
+  padding: 2rem;
+  border-radius: 1.75rem;
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-4px);
+    border-color: rgba(148, 163, 184, 0.3);
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: color.scale(#e2e8f0, $lightness: -15%);
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
