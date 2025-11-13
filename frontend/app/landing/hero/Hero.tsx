@@ -1,8 +1,10 @@
 import styles from "./hero.module.scss";
+import Image from "next/image";
+
 
 const Hero = () => {
   return (
-    <section className={styles.hero} id="hero">
+    <section className={styles.hero}>
         <div className={styles.leftSection}>
         <h1>
           Единственная площадка для аттестованных экспертов промышленной безопасности
@@ -13,16 +15,7 @@ const Hero = () => {
           <button className={styles.primary}> Начать работать </button>
       </div>
       <div className={styles.visual} aria-hidden="true">
-        <div className={styles.widget}>
-          <span className={styles.metricLabel}>Новые источники</span>
-          <span className={styles.metricValue}>+12</span>
-          <span className={styles.metricSub}>за последнюю неделю</span>
-        </div>
-        <div className={styles.timeline}>
-          <span />
-          <span />
-          <span />
-        </div>
+          <Image src="/hero_svg.svg" alt="Карьер" width={787} height={412} />
       </div>
     </section>
   );
