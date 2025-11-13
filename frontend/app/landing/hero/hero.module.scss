@@ -3,16 +3,16 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 0 160px;
-  margin-top: 140px;
-  margin-bottom: 140px;
-  gap: 125px;
+  padding: 0 20px;
+  margin: 140px auto;
+  max-width: 1600px;
+  gap: 10px;
 }
 
 .leftSection {
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc((100% - 125px)/2);
+  max-width: 668px;
 
   h1 {
     font-size: 34px;
@@ -58,7 +58,7 @@
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  flex: 0 0 calc((100% - 125px)/2);
+  width: 100%;
 }
 
 
@@ -69,9 +69,9 @@
   border-radius: 20px;
   border: 2px solid #FF8A00;
   padding: 10px 20px;
-  top: 240px;
+  top: 20px;
   background: #f5f7fb;
-  right: calc(489/1920)*100%;
+  left: calc(30/1920)*100%;
 }
 
 .visualDecorationHeaderText {
