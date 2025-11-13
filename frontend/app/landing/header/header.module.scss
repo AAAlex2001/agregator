@@ -93,26 +93,24 @@
 
 .signUp {
   display: flex;
-  flex-direction: row;
-  max-width: 216px;
+  width: 216px;
   height: 44px;
-  padding: 14px 33.5px;
-  border-radius: 10px;
-  transition: background-color 0.5s ease;
-  justify-content: center;
   align-items: center;
-  background-color: #FFB800;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  transition: background 0.4s ease;
 
-    .signUpText {
-      text-decoration: none;
-      font-size: 16px;
-      line-height: 16px;
-      font-weight: 500;
-      color: #1A1A1A;
-    }
+  .signUpText {
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 500;
+    color: #1A1A1A;
+  }
 
-      &:hover,
-      &:focus-visible {
-        background-color: #FF8A00;
-    }
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
 }
