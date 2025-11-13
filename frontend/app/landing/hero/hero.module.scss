@@ -6,11 +6,13 @@
   padding: 0 160px;
   margin-top: 140px;
   margin-bottom: 140px;
+  gap: 125px;
 }
 
 .leftSection {
   display: flex;
   flex-direction: column;
+  flex: 0 0 calc((100% - 125px)/2);
 
   h1 {
     font-size: 34px;
@@ -51,12 +53,12 @@
 }
 
 .visual {
-  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   position: relative;
+  flex: 0 0 calc((100% - 125px)/2);
 }
 
 
