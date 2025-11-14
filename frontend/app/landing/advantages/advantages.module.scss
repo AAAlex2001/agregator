@@ -27,8 +27,10 @@
   flex: 0 0 calc((100% - 24px) / 4);
 
   p {
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 22px;
+    color: #808080;
+    font-weight: 400;
   }
 }
 
@@ -39,7 +41,8 @@
   gap: 10px;
 
   h3 {
-    font-size: 1.15rem;
+    font-size: 18px;
+    line-height: 22px;
     font-weight: 600;
   }
 
