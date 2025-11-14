@@ -80,7 +80,9 @@ const HowItWorks = () => {
       <div className={styles.steps}>
         {(isExpert ? expert : client).map((value) => (
           <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-            <Image src={value.icon} alt={value.title} width={42} height={96}/>
+            <div className={styles.iconWrapper}>
+              <Image src={value.icon} alt={value.title} fill style={{ objectFit: "contain" }} />
+            </div>
             <div className={styles.description}>
               <h2>{value.title}</h2>
               <p>{value.description}</p>

@@ -100,6 +100,23 @@
   width: 100%;
 }
 
+.iconWrapper {
+  position: relative;
+  width: 42px;
+  height: 96px;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  img,
+  span {
+    width: 42px !important;
+    height: 96px !important;
+    max-width: 42px !important;
+    max-height: 96px !important;
+    object-fit: contain !important;
+  }
+}
+
 .description {
   display: flex;
   flex-direction: column;
