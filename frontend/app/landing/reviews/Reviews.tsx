@@ -106,6 +106,9 @@ const Reviews = () => {
       <div className={styles.content}>
         <div className={styles.headerRow}>
           <header className={styles.header}>
+            <div className={styles.backgroundImageBelAz}>
+              <Image src="/belaz_2.svg" alt="Belaz" fill style={{ objectFit: "contain" }} />
+            </div>
             <h1>О&nbsp;нас говорят профессионалы</h1>
             <p>
               Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный

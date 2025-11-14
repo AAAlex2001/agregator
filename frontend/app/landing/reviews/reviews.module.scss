@@ -28,6 +28,7 @@
   align-items: flex-start;
   gap: 15px;
   max-width: 944px;
+  position: relative;
 
   h1 {
     font-size: 24px;
@@ -40,6 +41,15 @@
     line-height: 24px;
     font-weight: 500;
     color: #808080;
+  }
+
+  .backgroundImageBelAz {
+    position: absolute;
+    width: 315px;
+    height: 280px;
+    right: -500px;
+    top: -70px;
+    z-index: 0;
   }
 }
 
@@ -57,7 +67,7 @@
 }
 
 .slide {
-  width: 520px;
+  width: 450px;
 }
 
 .item {
