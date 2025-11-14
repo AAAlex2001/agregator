@@ -41,15 +41,15 @@ const expert = [
   },
   {
       id: 2,
-    title: "Найдите свой проект и участвуйте в тендере",
-    description: "Используйте поиск и фильтры, чтобы найти подходящие проекты. Для подачи заявки внесите страховой взнос 5% от суммы заказа. Если выбран другой исполнитель — средства возвращаются",
-      icon: "/number_2.svg"
-  },
-  {
-      id: 3,
     title: "Откликнитесь и обсудите",
     description: "Напишите коммерческое предложение и обсудите детали напрямую c заказчиком",
       icon: "/number_3.svg"
+  },
+    {
+      id: 3,
+    title: "Найдите свой проект и участвуйте в тендере",
+    description: "Используйте поиск и фильтры, чтобы найти подходящие проекты. Для подачи заявки внесите страховой взнос 5% от суммы заказа. Если выбран другой исполнитель — средства возвращаются",
+      icon: "/number_2.svg"
   },
   {
       id: 4,
@@ -80,12 +80,10 @@ const HowItWorks = () => {
       <div className={styles.steps}>
         {(isExpert ? expert : client).map((value) => (
           <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-            <div>
-                <Image src={value.icon} alt={value.title} width={42} height={96} />
-                 <div className={styles.description}>
+            <Image src={value.icon} alt={value.title} width={42} height={96} />
+            <div className={styles.description}>
               <h2>{value.title}</h2>
               <p>{value.description}</p>
-                    </div>
             </div>
           </div>
         ))}
