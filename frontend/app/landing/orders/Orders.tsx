@@ -189,7 +189,9 @@ const Orders = () => {
   </Swiper>
       </div>
 
-        <button className={styles.checkButton}> Смотреть все заказы </button>
+        <button className={styles.checkButton}>
+            Смотреть все заказы
+        </button>
 
     </section>
   );

@@ -214,7 +214,7 @@
   padding: 16px 24px;
   cursor: pointer;
   transition: background-color 0.5s ease;
-
+  margin: 0 auto;
   font-weight: 600;
   font-size: 18px;
   line-height: 22px;
@@ -224,5 +224,4 @@
   &:focus-visible {
     background-color: #FFAF38;
   }
-
 }
