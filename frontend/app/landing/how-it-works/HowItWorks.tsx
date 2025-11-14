@@ -74,16 +74,16 @@ const HowItWorks = () => {
         </div>
             <div className={styles.stepsInfo}>
                 <div className={styles.stepsTabs}>
-                    <span onClick={() => setIsExpert(false)}>Я заказчик</span>
-                    <span onClick={() => setIsExpert(true)}>Я эксперт</span>
+                    <span className={!isExpert ? styles.active : ''} onClick={() => setIsExpert(false)}>Я заказчик</span>
+                    <span className={isExpert ? styles.active : ''} onClick={() => setIsExpert(true)}>Я эксперт</span>
                 </div>
       <div className={styles.steps}>
         {(isExpert ? expert : client).map((value) => (
-          <div className={styles.step} key={value.id}>
+          <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
             <div>
+                <Image src={value.icon} alt={value.title} width={42} height={96} />
+                 <div className={styles.description}>
               <h2>{value.title}</h2>
-                <div className={styles.description}>
-                    <Image src={value.icon} alt={value.title} width={42} height={96} />
               <p>{value.description}</p>
                     </div>
             </div>
