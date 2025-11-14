@@ -13,13 +13,21 @@
   max-width: 1640px;
 }
 
+/* Хедер + стрелки в одной строке */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
 .header {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   gap: 15px;
-  margin-bottom: 40px;
   max-width: 944px;
 
   h1 {
@@ -34,6 +42,14 @@
     font-weight: 500;
     color: #808080;
   }
+}
+
+/* Контейнер со стрелками справа от заголовка */
+.arrows {
+  display: flex;
+  gap: 30px;
+  flex-shrink: 0;
+  align-self: center;
 }
 
 .list {
@@ -79,14 +95,14 @@
   flex-direction: column;
   gap: 5px;
   margin-top: auto;
-  border-top: 1px solid #FF8A00;
+  border-top: 1px solid #ff8a00;
 }
 
 .reviewer {
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
-  color: #1A1A1A;
+  color: #1a1a1a;
   margin-top: 12px;
 }
 
@@ -95,20 +111,6 @@
   line-height: 15px;
   font-weight: 500;
 }
-
-.arrows {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 1640px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 2;
-}
-
 
 .item::before {
   content: "";
@@ -148,9 +150,10 @@
   }
 }
 
+/* Swiper-обёртки */
 :global(.swiper) {
   overflow: hidden;
-  padding: 30px 0 ;
+  padding: 30px 0;
 }
 
 :global(.swiper-wrapper) {
@@ -166,13 +169,12 @@
   width: 100%;
 }
 
-
-
+/* Активный слайд по центру — выделяем */
 :global(.swiper-slide-active article) {
   transform: scale(1.02);
   opacity: 1;
-  border: 2px solid #FFB800;
-  box-shadow: 0 0 20px #C4994B33;
+  border: 2px solid #ffb800;
+  box-shadow: 0 0 20px #c4994b33;
 }
 
 :global(.swiper-slide-active) .item::before {
@@ -180,22 +182,24 @@
   border-radius: 18px;
 }
 
+/* Неактивные слайды */
 :global(.swiper-slide:not(.swiper-slide-active) article) {
   opacity: 0.5;
-  border: 1px solid #FF8A00;
-  background: #FFDDA9;
+  border: 1px solid #ff8a00;
+  background: #ffdda9;
 }
 
+/* === Стрелки навигации (глобальные классы) — теперь в потоке, рядом с хедером === */
 :global(.orders-nav-btn) {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   width: 50px;
   height: 50px;
   border-radius: 10px;
-  border: 3px solid #FFDDA9;
+  border: 3px solid #ffdda9;
   background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -203,25 +207,23 @@
   transition: background-color 0.5s ease, border-color 0.5s ease;
   z-index: 5;
 
+  span {
+    display: flex;
+  }
 
   &:hover {
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
     background: #fff9e6;
     border-color: transparent;
   }
 }
 
 :global(.orders-nav-btn--prev) {
-  left: 20px;
-
   span {
     transform: rotate(180deg);
   }
 }
 
 :global(.orders-nav-btn--next) {
-  right: 20px;
-
   span {
     transform: rotate(0deg);
   }

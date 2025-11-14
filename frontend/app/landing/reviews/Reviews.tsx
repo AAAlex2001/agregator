@@ -104,93 +104,100 @@ const Reviews = () => {
   return (
     <section className={styles.section} id="orders">
       <div className={styles.content}>
-        <header className={styles.header}>
-          <h1>О нас говорят профессионалы</h1>
-          <p>
-            Мнение тех, кто уже нашёл исполнителя или получил выгодный заказ на нашей платформе
-          </p>
-        </header>
+        <div className={styles.headerRow}>
+          <header className={styles.header}>
+            <h1>О&nbsp;нас говорят профессионалы</h1>
+            <p>
+              Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный
+              заказ на&nbsp;нашей платформе
+            </p>
+          </header>
+
+          <div className={styles.arrows}>
+            <button
+              className="orders-nav-btn orders-nav-btn--prev"
+              type="button"
+              aria-label="Предыдущий"
+            >
+              <span>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 12L13 18M19 12L13 6M19 12H5"
+                    stroke="#FFDDA9"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
+
+            <button
+              className="orders-nav-btn orders-nav-btn--next"
+              type="button"
+              aria-label="Следующий"
+            >
+              <span>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 12L13 18M19 12L13 6M19 12H5"
+                    stroke="#FFDDA9"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className={styles.list}>
-  <div className={styles.arrows}>
-    <button
-      className="orders-nav-btn orders-nav-btn--prev"
-      type="button"
-      aria-label="Предыдущий"
-    >
-      <span>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+        <Swiper
+          modules={[Navigation]}
+          loop={true}
+          centeredSlides={true}
+          slidesPerView={"auto"}
+          spaceBetween={0}
+          navigation={{
+            prevEl: ".orders-nav-btn--prev",
+            nextEl: ".orders-nav-btn--next",
+          }}
         >
-          <path
-            d="M19 12L13 18M19 12L13 6M19 12H5"
-            stroke="#FFDDA9"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
-    </button>
-
-    <button
-      className="orders-nav-btn orders-nav-btn--next"
-      type="button"
-      aria-label="Следующий"
-    >
-      <span>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19 12L13 18M19 12L13 6M19 12H5"
-            stroke="#FFDDA9"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
-    </button>
-
-  </div>
-
-  <Swiper
-    modules={[Navigation]}
-    loop={true}
-    centeredSlides={true}
-    slidesPerView={"auto"}
-    spaceBetween={0}
-    navigation={{
-      prevEl: ".orders-nav-btn--prev",
-      nextEl: ".orders-nav-btn--next",
-    }}
-  >
-    {reviews.map((review) => (
-      <SwiperSlide key={review.id} className={styles.slide}>
-        <article className={styles.item}>
-          <p>{review.text}</p>
-          <div className={styles.reviewerInfo}>
-            <span className={styles.reviewer}>{review.reviewer}</span>
-            <span className={styles.position}>{review.position}</span>
-          </div>
-        </article>
-      </SwiperSlide>
-    ))}
-  </Swiper>
+          {reviews.map((review) => (
+            <SwiperSlide key={review.id} className={styles.slide}>
+              <article className={styles.item}>
+                <p>{review.text}</p>
+                <div className={styles.reviewerInfo}>
+                  <span className={styles.reviewer}>{review.reviewer}</span>
+                  <span className={styles.position}>{review.position}</span>
+                </div>
+              </article>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
 
       <div className={styles.backgroundImage}>
-        <Image src="/reviews.svg" alt="Orders background" fill style={{ objectFit: "cover" }} />
+        <Image
+          src="/reviews.svg"
+          alt="Orders background"
+          fill
+          style={{ objectFit: "cover" }}
+        />
       </div>
     </section>
   );
