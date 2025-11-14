@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Ресурс Плюс",
-  description: "Промышленная экспертиза и аудит производственных объектов",
+  description: "Экспертиза промышленной безопасности ОПО",
 };
 
 export default function RootLayout({
