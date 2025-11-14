@@ -8,6 +8,7 @@ import Advantages from "./advantages/Advantages";
 import Reviews from "./reviews/Reviews";
 import FAQ from "./FAQ/FAQ";
 import Footer from "./footer/Footer";
+import KeyAdvantages from "./key-advantages/KeyAdvantages";
 
 
 export default function LandingPage() {
@@ -20,6 +21,7 @@ export default function LandingPage() {
         <IndustryDirections />
         <HowItWorks />
         <Orders />
+        <KeyAdvantages />
         <Reviews />
         <FAQ />
       </main>
