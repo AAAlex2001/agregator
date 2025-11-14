@@ -2,7 +2,6 @@
 
 import styles from "./how-it-works.module.scss";
 import { useState } from "react";
-import Image from "next/image";
 
 const client = [
   {
@@ -81,7 +80,7 @@ const HowItWorks = () => {
         {(isExpert ? expert : client).map((value) => (
           <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
             <div className={styles.iconWrapper}>
-              <Image src={value.icon} alt={value.title} fill style={{ objectFit: "contain" }} />
+              <img src={value.icon} alt={value.title} />
             </div>
             <div className={styles.description}>
               <h2>{value.title}</h2>
