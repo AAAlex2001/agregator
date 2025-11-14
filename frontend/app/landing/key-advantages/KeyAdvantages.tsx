@@ -2,6 +2,7 @@
 
 import styles from "./key-advantages.module.scss";
 import { useState } from "react";
+import Image from "next/image";
 
 const client = [
   {
@@ -96,6 +97,9 @@ const KeyAdvantages = () => {
               </div>
                     </div>
             </div>
+      <div className={styles.backgroundImage}>
+        <Image src="/key-advantages.svg" alt="Key advantages background" fill style={{ objectFit: "cover"  }} />
+      </div>
     </section>
   );
 };
