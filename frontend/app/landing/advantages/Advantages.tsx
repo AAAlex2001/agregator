@@ -1,35 +1,45 @@
 import styles from "./advantages.module.scss";
+import Image from "next/image";
 
 const features = [
   {
-    title: "Готовы к росту",
-    description: "Вертикально и горизонтально масштабируемая архитектура, SLA 99.9% и резервирование.",
+      id: 1,
+    title: "Аттестованные эксперты",
+    description: "Специалисты всех 15 областей аттестации по Приказу Ростехнадзора. Самостоятельно выбирайте для себя подходящих экспертов",
+    icon: "/icon_diploma.svg",
   },
   {
-    title: "Безопасность данных",
-    description: "Шифрование, контроль доступа по ролям, аудит событий и соответствие требованиям GDPR.",
+      id: 2,
+    title: "Решение за 1–2 дня",
+    description: "Размещайте заказы и получайте отклики от исполнителей. Первые предложения могут поступить уже в день размещения",
+    icon: "/icon_quick.svg",
   },
   {
-    title: "Открытая экосистема",
-    description: "API, Webhooks и расширения позволяют строить собственные приложения вокруг платформы.",
+        id: 3,
+    title: "Точечный поиск",
+    description: "Ищите заказы и экспертов с фильтрами по отраслям и видам работ. Используйте возможности поиска на платформе",
+    icon: "/icon_search.svg",
   },
   {
-    title: "Поддержка 24/7",
-    description: "Команда внедрения и Customer Success помогают решать задачи на каждом этапе.",
+        id: 4,
+    title: "Рейтинг и отзывы",
+    description: "После завершения работы заказчик ставит оценку и пишет отзыв. Так на платформе формируется репутация эксперта",
+    icon: "/icon_comment.svg",
   },
 ];
 
 const Advantages = () => {
   return (
     <section className={styles.section} id="advantages">
-      <header className={styles.header}>
-        <span className={styles.badge}>Почему мы</span>
-        <h2>Платформа, созданная для сложных данных</h2>
-      </header>
-      <div className={styles.grid}>
+      <div className={styles.card}>
         {features.map((feature) => (
-          <article className={styles.feature} key={feature.title}>
+          <article className={styles.feature} key={feature.id}>
+              <div className={styles.featureHeader}>
+            {feature.icon && (
+              <Image src={feature.icon} alt={feature.title} width={48} height={48} />
+            )}
             <h3>{feature.title}</h3>
+                </div>
             <p>{feature.description}</p>
           </article>
         ))}

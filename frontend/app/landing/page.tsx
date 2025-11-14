@@ -15,10 +15,10 @@ export default function LandingPage() {
       <Header />
       <main className={styles.main}>
         <Hero />
-        <IndustryDirections />
+        <Advantages />
         <HowItWorks />
         <Orders />
-        <Advantages />
+        <IndustryDirections />
         <Reviews />
         <FAQ />
       </main>
