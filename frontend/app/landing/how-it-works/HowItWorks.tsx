@@ -2,6 +2,7 @@
 
 import styles from "./how-it-works.module.scss";
 import { useState } from "react";
+import Image from "next/image";
 
 const client = [
   {
@@ -65,31 +66,39 @@ const HowItWorks = () => {
   return (
     <section className={styles.section} id="how-it-works">
         <div className={styles.content}>
-        <div className={styles.header}>
-        <h1>Начните работать за 4 простых шага</h1>
-        <p>
-          Платформа устроена максимально прозрачно. Выбирайте свою роль:
-        </p>
-        </div>
-            <div className={styles.stepsInfo}>
-                <div className={styles.stepsTabs}>
-                    <span className={!isExpert ? styles.active : ''} onClick={() => setIsExpert(false)}>Я заказчик</span>
-                    <span className={isExpert ? styles.active : ''} onClick={() => setIsExpert(true)}>Я эксперт</span>
-                </div>
-      <div className={styles.steps}>
-        {(isExpert ? expert : client).map((value) => (
-          <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-            <div className={styles.iconWrapper}>
-              <img src={value.icon} alt={value.title} />
-            </div>
-            <div className={styles.description}>
-              <h2>{value.title}</h2>
-              <p>{value.description}</p>
-            </div>
-          </div>
-        ))}
+            <div className={styles.header}>
+                <div className={styles.backgroundImage}>
+        <Image src="/belaz.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
       </div>
-                </div>
+
+                <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+
+            <h1>Начните работать за 4 простых шага</h1>
+            <p>
+              Платформа устроена максимально прозрачно. Выбирайте свою роль:
+            </p>
+            </div>
+                <div className={styles.stepsInfo}>
+                        <div className={styles.stepsTabs}>
+                            <span className={!isExpert ? styles.active : ''} onClick={() => setIsExpert(false)}>Я заказчик</span>
+                            <span className={isExpert ? styles.active : ''} onClick={() => setIsExpert(true)}>Я эксперт</span>
+                        </div>
+              <div className={styles.steps}>
+                {(isExpert ? expert : client).map((value) => (
+                  <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
+                    <div className={styles.iconWrapper}>
+                      <img src={value.icon} alt={value.title} />
+                    </div>
+                    <div className={styles.description}>
+                      <h2>{value.title}</h2>
+                      <p>{value.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+                    </div>
             </div>
     </section>
   );

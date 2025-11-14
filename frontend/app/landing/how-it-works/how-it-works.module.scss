@@ -17,6 +17,7 @@
   flex-direction: column;
   gap: 15px;
   margin-bottom: 40px;
+  position: relative;
 
   h1 {
     font-size: 24px;
@@ -126,4 +127,22 @@
     font-weight: 400;
   }
 
+}
+
+.backgroundImage {
+  position: absolute;
+  width: 315px;
+  height: 280px;
+  right: calc(0/1920) * 100%;
+  bottom: -40px;
+  z-index: 1;
+}
+
+.backgroundImageCoal {
+  position: absolute;
+  width: 315px;
+  height: 280px;
+  right: -120px;
+  bottom: -40px;
+  z-index: 0;
 }
