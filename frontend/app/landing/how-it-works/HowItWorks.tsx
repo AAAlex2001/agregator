@@ -1,6 +1,22 @@
 import styles from "./how-it-works.module.scss";
 
-const steps = [
+const client = [
+  {
+    title: "Подключение",
+    description: "Выбираете готовые коннекторы или создаёте свои через API и SDK Agregator.",
+  },
+  {
+    title: "Оркестрация",
+    description: "Настраиваете правила синхронизации, очистки и маршрутизации данных.",
+  },
+  {
+    title: "Аналитика",
+    description: "Получаете визуализации, алерты и отчёты в реальном времени и в едином формате.",
+  },
+];
+
+
+const expert = [
   {
     title: "Подключение",
     description: "Выбираете готовые коннекторы или создаёте свои через API и SDK Agregator.",
@@ -27,7 +43,7 @@ const HowItWorks = () => {
         </p>
       </div>
       <ol className={styles.steps}>
-        {steps.map((step, index) => (
+        {client.map((step, index) => (
           <li className={styles.step} key={step.title}>
             <span className={styles.index}>0{index + 1}</span>
             <div>
