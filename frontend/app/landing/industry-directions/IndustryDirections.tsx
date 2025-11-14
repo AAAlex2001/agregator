@@ -64,37 +64,42 @@ const IndustryDirections = () => {
 
   return (
     <section className={styles.section} id="advantages">
-        <h1 className={styles.title}>Эксперты по промбезопасности для всех отраслей промышленности</h1>
-        <h2 className={styles.subtitle}>От шахт до объектов переработки. Найдите специалиста или проект в вашей сфере — мы работаем со всеми направлениями, подконтрольными Ростехнадзору</h2>
-      <div className={styles.card}>
-        {industries.map((industry) => (
-          <article 
-            className={styles.industry}
-            key={industry.id}
-            onMouseEnter={() => setIsHovered(industry.id)}
-            onMouseLeave={() => setIsHovered(null)}
-          >
-            {industry.photo && (
-              <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
-                <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
-              </div>
-            )}
-            <div className={styles.industryContent}>
-              <div className={styles.industryHeader}>
-                <h3>{industry.title}</h3>
-              </div>
-              {Array.isArray(industry.description) ? (
-                <ul>
-                  {industry.description.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>{industry.description}</p>
+      <div className={styles.content}>
+        <h1 className={styles.title}>Эксперты по промбезопасности для всех отраслей промышленности</h1>
+        <h2 className={styles.subtitle}>От шахт до объектов переработки. Найдите специалиста или проект в вашей сфере — мы работаем со всеми направлениями, подконтрольными Ростехнадзору</h2>
+        <div className={styles.card}>
+          {industries.map((industry) => (
+            <article 
+              className={styles.industry}
+              key={industry.id}
+              onMouseEnter={() => setIsHovered(industry.id)}
+              onMouseLeave={() => setIsHovered(null)}
+            >
+              {industry.photo && (
+                <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
+                  <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
+                </div>
               )}
-            </div>
-          </article>
-        ))}
+              <div className={styles.industryContent}>
+                <div className={styles.industryHeader}>
+                  <h3>{industry.title}</h3>
+                </div>
+                {Array.isArray(industry.description) ? (
+                  <ul>
+                    {industry.description.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{industry.description}</p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+      <div className={styles.backgroundImage}>
+        <Image src="/industry.jpg" alt="Industry background" fill style={{ objectFit: "cover" }} />
       </div>
     </section>
   );
