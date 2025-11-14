@@ -39,9 +39,6 @@ const features = [
 const Advantages = () => {
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
-
-
-
   return (
     <section className={styles.section} id="advantages">
       <div className={styles.card}>
@@ -74,4 +71,3 @@ const Advantages = () => {
 };
 
 export default Advantages;
-
