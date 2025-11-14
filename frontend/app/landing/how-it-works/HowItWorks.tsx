@@ -25,9 +25,9 @@ const client = [
   },
   {
       id: 4,
-    title: "Напишите отзыв и оцените работу",
-    description: "Как сделка закроется вы сможете оставить отзыв об исполнителе и поставить рейтинг",
-      icon: "/number_3.svg"
+    title: "Напишите отзыв и оцените работу",
+    description: "Как сделка закроется вы сможете оставить отзыв об исполнителе и поставить рейтинг",
+      icon: "/number_4.svg"
   },
 ];
 
@@ -78,13 +78,13 @@ const HowItWorks = () => {
                     <span onClick={() => setIsExpert(true)}>Я эксперт</span>
                 </div>
       <div className={styles.steps}>
-        {(isExpert ? expert : client).map((step) => (
-          <div className={styles.step} key={step.id}>
+        {(isExpert ? expert : client).map((value) => (
+          <div className={styles.step} key={value.id}>
             <div>
-              <h2>{step.title}</h2>
+              <h2>{value.title}</h2>
                 <div className={styles.description}>
-                    <Image src={step.icon} alt={step.title} width={42} height={96} />
-              <p>{step.description}</p>
+                    <Image src={value.icon} alt={value.title} width={42} height={96} />
+              <p>{value.description}</p>
                     </div>
             </div>
           </div>
