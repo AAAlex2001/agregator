@@ -45,7 +45,12 @@ const FAQ = () => {
       <div className={styles.list}>
         {faq.map((item) => (
           <details className={styles.item} key={item.question}>
-            <summary>{item.question}</summary>
+            <summary>
+              <span>{item.question}</span>
+              {item.icon && (
+                <Image src={item.icon} alt="Plus icon" width={30} height={30} />
+              )}
+            </summary>
             <p>{item.answer}</p>
           </details>
         ))}

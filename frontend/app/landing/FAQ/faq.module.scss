@@ -43,22 +43,23 @@
   background: #FFF3E5;
   padding: 15px 26px;
   transition: border-color 0.2s ease;
-
-  &[open] {
-    border-color: rgba(45, 212, 191, 0.35);
-  }
+  cursor: pointer;
 
   summary {
-    cursor: pointer;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 22px;
     display: flex;
-    color: #4D4D4D;
-  }
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
-  summary::-webkit-details-marker {
-    display: none;
+
+      span {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 22px;
+      display: flex;
+      color: #4D4D4D;
+      }
+
   }
 
   p {
