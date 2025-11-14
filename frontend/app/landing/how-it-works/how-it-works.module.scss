@@ -133,16 +133,35 @@
   position: absolute;
   width: 315px;
   height: 280px;
-  right: calc(0/1920) * 100%;
+  right: 100px;
   bottom: -40px;
   z-index: 1;
 }
 
 .backgroundImageCoal {
   position: absolute;
-  width: 315px;
-  height: 280px;
-  right: -120px;
-  bottom: -40px;
+  width: 400px;
+  height: 400px;
+  right: -40px;
+  bottom: -70px;
   z-index: 0;
+
+  &:nth-child(2) {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    right: 10px;
+    bottom: -40px;
+    z-index: 0;
+  }
+
+  &:nth-child(3) {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    right: -40px;
+    top: 10px;
+    z-index: 0;
+    rotate: (20deg) ;
+  }
 }
