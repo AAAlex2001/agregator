@@ -14,7 +14,7 @@ const industries = [
       "Нефтегазодобыча (Э4)",
       "Геологоразведка (Э6)"
     ],
-      photo: "/advantages_1.jpg",
+      photo: "/industry_1.jpg",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const industries = [
       "Пищевая промышленность (Э10)",
       "Переработка сырья (Э15)"
     ],
-      photo: "/advantages_2.jpg",
+      photo: "/industry_2.jpg",
   },
   {
     id: 3,
@@ -36,7 +36,7 @@ const industries = [
       "Газоснабжение (Э11)",
       "Канатные дороги (Э14.1, Э14.2)"
     ],
-      photo: "/advantages_3.jpg",
+      photo: "/industry_3.jpg",
   },
   {
     id: 4,
@@ -46,7 +46,7 @@ const industries = [
       "Взрывчатые материалы (Э3.1, Э3.2)",
       "Водоподготовка (Э9)"
     ],
-      photo: "/advantages_4.jpg",
+      photo: "/industry_4.jpg",
   },
   {
     id: 5,
@@ -54,7 +54,7 @@ const industries = [
     description: [
       "Грузоподъемные механизмы (Э14.4)"
     ],
-      photo: "/advantages_4.jpg",
+      photo: "/industry_5.jpg",
   },
 ];
 
