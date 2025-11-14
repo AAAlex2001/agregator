@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Image from "next/image";
 
 import styles from "./orders.module.scss";
 
@@ -189,10 +190,13 @@ const Orders = () => {
   </Swiper>
       </div>
 
-        <button className={styles.checkButton}>
-            Смотреть все заказы
-        </button>
+      <button className={styles.checkButton}>
+        Смотреть все заказы
+      </button>
 
+      <div className={styles.backgroundImage}>
+        <Image src="/orders.svg" alt="Orders background" fill style={{ objectFit: "cover" }} />
+      </div>
     </section>
   );
 };
