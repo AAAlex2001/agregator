@@ -161,6 +161,7 @@ const Orders = () => {
         </svg>
       </span>
     </button>
+
   </div>
 
   <Swiper
@@ -187,6 +188,9 @@ const Orders = () => {
     ))}
   </Swiper>
       </div>
+
+        <button className={styles.checkButton}> Смотреть все заказы </button>
+
     </section>
   );
 };
