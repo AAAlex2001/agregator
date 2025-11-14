@@ -49,8 +49,8 @@ const Advantages = () => {
             onMouseEnter={() => setIsHovered(feature.id)}
             onMouseLeave={() => setIsHovered(null)}
           >
-            {isHovered === feature.id && feature.photo && (
-              <div className={styles.featureImage}>
+            {feature.photo && (
+              <div className={`${styles.featureImage} ${isHovered === feature.id ? styles.visible : ''}`}>
                 <Image src={feature.photo} alt={feature.title} fill style={{ objectFit: "cover" }} />
               </div>
             )}

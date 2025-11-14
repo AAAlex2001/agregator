@@ -74,8 +74,8 @@ const IndustryDirections = () => {
             onMouseEnter={() => setIsHovered(industry.id)}
             onMouseLeave={() => setIsHovered(null)}
           >
-            {isHovered === industry.id && industry.photo && (
-              <div className={styles.industryImage}>
+            {industry.photo && (
+              <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
                 <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
               </div>
             )}
