@@ -13,7 +13,6 @@
   max-width: 1640px;
 }
 
-/* Хедер + стрелки в одной строке */
 .headerRow {
   display: flex;
   justify-content: space-between;
@@ -44,10 +43,9 @@
   }
 }
 
-/* Контейнер со стрелками справа от заголовка */
 .arrows {
   display: flex;
-  gap: 30px;
+  gap: 40px;
   flex-shrink: 0;
   align-self: center;
 }
@@ -150,7 +148,6 @@
   }
 }
 
-/* Swiper-обёртки */
 :global(.swiper) {
   overflow: hidden;
   padding: 30px 0;
@@ -169,7 +166,6 @@
   width: 100%;
 }
 
-/* Активный слайд по центру — выделяем */
 :global(.swiper-slide-active article) {
   transform: scale(1.02);
   opacity: 1;
@@ -182,14 +178,12 @@
   border-radius: 18px;
 }
 
-/* Неактивные слайды */
 :global(.swiper-slide:not(.swiper-slide-active) article) {
   opacity: 0.5;
   border: 1px solid #ff8a00;
   background: #ffdda9;
 }
 
-/* === Стрелки навигации (глобальные классы) — теперь в потоке, рядом с хедером === */
 :global(.orders-nav-btn) {
   position: relative;
   top: auto;
@@ -200,6 +194,7 @@
   border-radius: 10px;
   border: 3px solid #ffdda9;
   background: #ffffff;
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -214,6 +209,7 @@
   &:hover {
     background: #fff9e6;
     border-color: transparent;
+    box-shadow: none;
   }
 }
 

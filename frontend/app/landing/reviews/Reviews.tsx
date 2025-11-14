@@ -193,8 +193,8 @@ const Reviews = () => {
 
       <div className={styles.backgroundImage}>
         <Image
-          src="/reviews.svg"
-          alt="Orders background"
+          src="/reviews.jpg"
+          alt="Reviews background"
           fill
           style={{ objectFit: "cover" }}
         />
