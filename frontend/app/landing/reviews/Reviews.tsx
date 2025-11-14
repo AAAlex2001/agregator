@@ -102,7 +102,7 @@ const reviews = [
 
 const Reviews = () => {
   return (
-    <section className={styles.section} id="orders">
+    <section className={styles.section} id="reviews">
       <div className={styles.content}>
         <div className={styles.headerRow}>
           <header className={styles.header}>

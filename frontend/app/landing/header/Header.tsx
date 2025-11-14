@@ -1,7 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import styles from "./header.module.scss";
 
 const Header = () => {
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
+    if (element) {
+      const headerHeight = 450;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -25,10 +42,18 @@ const Header = () => {
           </span>
         </div>
         <nav className={styles.nav}>
-          <Link href="#how-it-works">Как это работает</Link>
-          <Link href="#advantages">Преимущества</Link>
-          <Link href="#reviews">Отзывы</Link>
-          <Link href="#faq">FAQ</Link>
+          <Link href="#how-it-works" onClick={(e) => handleSmoothScroll(e, "#how-it-works")}>
+            Как это работает
+          </Link>
+          <Link href="#advantages" onClick={(e) => handleSmoothScroll(e, "#advantages")}>
+            Преимущества
+          </Link>
+          <Link href="#reviews" onClick={(e) => handleSmoothScroll(e, "#reviews")}>
+            Отзывы
+          </Link>
+          <Link href="#faq" onClick={(e) => handleSmoothScroll(e, "#faq")}>
+            FAQ
+          </Link>
         </nav>
         <div className={styles.actions}>
           <button className={styles.login}> Войти
