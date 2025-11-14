@@ -164,4 +164,24 @@
     z-index: 0;
     rotate: (20deg) ;
   }
+
+  &:nth-child(4) {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: 150px;
+    top: 500px;
+    z-index: 0;
+    rotate: (-40deg) ;
+  }
+
+  &:nth-child(5) {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    left: -70px;
+    top: 400px;
+    z-index: 0;
+    rotate: (70deg) ;
+  }
 }

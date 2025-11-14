@@ -20,6 +20,7 @@
   align-items: flex-start;
   gap: 15px;
   margin-bottom: 40px;
+  max-width: 944px;
 
   h1 {
     font-size: 24px;
@@ -41,7 +42,6 @@
   box-sizing: border-box;
 }
 
-/* Один слайд (ширина карточки) */
 .slide {
   width: 520px;
 }
@@ -57,8 +57,6 @@
   background: #ffffff;
   box-sizing: border-box;
   position: relative;
-
-  /* базовое состояние — чуть меньше и менее яркое */
   transform: scale(0.96);
   opacity: 0.8;
   transition:
@@ -75,6 +73,20 @@
   }
 }
 
+.arrows {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1640px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+
 .item::before {
   content: "";
   position: absolute;
@@ -83,7 +95,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0;                 // по умолчанию невидим
+  opacity: 0;
   transition: opacity 0.5s ease;
   z-index: 0;
 }
@@ -114,8 +126,8 @@
 }
 
 :global(.swiper) {
-  overflow: hidden; // или вообще без этого правила — Swiper сам так делает\
-  padding: 30px;
+  overflow: hidden;
+  padding: 30px 0 ;
 }
 
 :global(.swiper-wrapper) {
@@ -131,9 +143,10 @@
   width: 100%;
 }
 
-/* Активный слайд по центру — выделяем */
+
+
 :global(.swiper-slide-active article) {
-  transform: scale(1.07);
+  transform: scale(1.02);
   opacity: 1;
   border: 2px solid #FFB800;
   box-shadow: 0 0 20px #C4994B33;
@@ -144,15 +157,11 @@
   border-radius: 18px;
 }
 
-
-
 :global(.swiper-slide:not(.swiper-slide-active) article) {
   opacity: 0.5;
   border: 1px solid #FF8A00;
 }
 
-
-/* === Стрелки навигации (глобальные классы) === */
 :global(.orders-nav-btn) {
   position: absolute;
   top: 50%;

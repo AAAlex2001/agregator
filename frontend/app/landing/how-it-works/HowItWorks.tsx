@@ -83,6 +83,14 @@ const HowItWorks = () => {
         <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
       </div>
 
+                <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+
+                <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+
             <h1>Начните работать за 4 простых шага</h1>
             <p>
               Платформа устроена максимально прозрачно. Выбирайте свою роль:

@@ -113,87 +113,79 @@ const Orders = () => {
       </div>
 
       <div className={styles.list}>
-        {/* Кнопки навигации (глобальные классы для Swiper) */}
-        <button
-          className="orders-nav-btn orders-nav-btn--prev"
-          type="button"
-          aria-label="Предыдущий"
+  <div className={styles.arrows}>
+    <button
+      className="orders-nav-btn orders-nav-btn--prev"
+      type="button"
+      aria-label="Предыдущий"
+    >
+      <span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <span>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19 12L13 18M19 12L13 6M19 12H5"
-                stroke="#FFDDA9"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-        </button>
+          <path
+            d="M19 12L13 18M19 12L13 6M19 12H5"
+            stroke="#FFDDA9"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    </button>
 
-        <button
-          className="orders-nav-btn orders-nav-btn--next"
-          type="button"
-          aria-label="Следующий"
+    <button
+      className="orders-nav-btn orders-nav-btn--next"
+      type="button"
+      aria-label="Следующий"
+    >
+      <span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <span>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19 12L13 18M19 12L13 6M19 12H5"
-                stroke="#FFDDA9"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-        </button>
+          <path
+            d="M19 12L13 18M19 12L13 6M19 12H5"
+            stroke="#FFDDA9"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    </button>
+  </div>
 
-
-        <Swiper
-          modules={[Navigation]}
-          loop={true}
-          centeredSlides={true}
-          slidesPerView={"auto"}
-          spaceBetween={20}
-          navigation={{
-            prevEl: ".orders-nav-btn--prev",
-            nextEl: ".orders-nav-btn--next",
-          }}
-          breakpoints={{
-            0: {
-              spaceBetween: 16,
-            },
-            768: {
-              spaceBetween: 20,
-            },
-          }}
-        >
-          {orders.map((order) => (
-            <SwiperSlide key={order.title} className={styles.slide}>
-              <article className={styles.item}>
-                <div className={styles.headerItem}>
-                  <h2>{order.title}</h2>
-                  <span>{order.price}</span>
-                </div>
-                <p>{order.description}</p>
-              </article>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+  <Swiper
+    modules={[Navigation]}
+    loop={true}
+    centeredSlides={true}
+    slidesPerView={"auto"}
+    spaceBetween={0}
+    navigation={{
+      prevEl: ".orders-nav-btn--prev",
+      nextEl: ".orders-nav-btn--next",
+    }}
+  >
+    {orders.map((order) => (
+      <SwiperSlide key={order.title} className={styles.slide}>
+        <article className={styles.item}>
+          <div className={styles.headerItem}>
+            <h2>{order.title}</h2>
+            <span>{order.price}</span>
+          </div>
+          <p>{order.description}</p>
+        </article>
+      </SwiperSlide>
+    ))}
+  </Swiper>
       </div>
     </section>
   );
