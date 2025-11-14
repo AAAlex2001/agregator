@@ -49,8 +49,28 @@
     height: 280px;
     right: -500px;
     top: -70px;
-    z-index: 0;
+    z-index: 2;
   }
+
+  .backgroundImageCoal {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: -450px;
+    bottom: -80px;
+    z-index: 1;
+    rotate: (70deg);
+  }
+
+    &:nth-child(2) {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: 10px;
+      bottom: -40px;
+      z-index: 0;
+    }
+
 }
 
 .arrows {
