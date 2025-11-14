@@ -43,7 +43,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  padding: 20px;
+  padding: 30px;
   border-radius: 15px;
   border: 2px solid #FFB800;
   overflow: hidden;
@@ -58,11 +58,18 @@
     flex: 0 0 calc((100% - 40px) / 3);
   }
 
-  p {
-    font-size: 16px;
-    line-height: 20px;
-    color: #1A1A1A;
-    font-weight: 500;
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    li {
+      font-size: 16px;
+      line-height: 20px;
+      color: #1A1A1A;
+      font-weight: 500;
+      gap: 5px;
+    }
   }
 }
 
