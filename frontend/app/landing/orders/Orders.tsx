@@ -2,41 +2,44 @@ import styles from "./orders.module.scss";
 
 const orders = [
   {
-    title: "Мониторинг продаж",
+    title: "Экспертиза проекта модернизации ",
+      price: "1 200 000 ₽",
     description: "Мгновенное обновление отчётов при изменении статусов заказов и оплат.",
-    meta: "Для команд продаж",
   },
   {
-    title: "Контроль SLA",
+    title: "Проект вскрыши карьера для золоторудного месторождения",
+      price: "850 000 ₽",
     description: "Алерты при задержке отправки, сбоях на складах и нарушениях логистики.",
-    meta: "Для операционного отдела",
   },
   {
-    title: "Финансовая сверка",
+    title: "Расчёт устойчивости борта карьера глубиной 150 м",
+    price: "2 200 000 ₽",
     description: "Сопоставление транзакций, комиссий и возвратов по всем каналам.",
-    meta: "Для финансовой службы",
   },
 ];
 
 const Orders = () => {
   return (
     <section className={styles.section} id="orders">
+        <div className={styles.content}>
       <header className={styles.header}>
-        <h2>Типовые сценарии автоматизации</h2>
+        <h1>Реальные заказы с платформы</h1>
         <p>
-          Выбирайте готовые пайплайны Agregator или собирайте свои — логику легко менять без
-          вмешательства разработчиков.
+          Актуальные проекты от предприятий горнодобывающий отрасли. Находите подходящие и откликайтесь напрямую
         </p>
       </header>
       <div className={styles.list}>
         {orders.map((order) => (
           <article className={styles.item} key={order.title}>
-            <div className={styles.meta}>{order.meta}</div>
-            <h3>{order.title}</h3>
+              <div className={styles.headerItem}>
+            <h2>{order.title}</h2>
+                  <span>{order.price}</span>
+                  </div>
             <p>{order.description}</p>
           </article>
         ))}
       </div>
+            </div>
     </section>
   );
 };

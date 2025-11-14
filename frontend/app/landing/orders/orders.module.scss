@@ -1,82 +1,80 @@
-@use "sass:color";
-
 .section {
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+}
+
+.content {
+  display: flex;
+  padding: 0 20px;
+  flex-direction: column;
+  max-width: 1640px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .header {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   max-width: 680px;
+  margin-bottom: 40px;
 
-  h2 {
-    font-size: clamp(2rem, 3.5vw, 2.6rem);
-    font-weight: 700;
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: color.scale(#e2e8f0, $lightness: -8%);
-  }
-}
-
-.list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-}
-
-.item {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1.75rem;
-  border-radius: 1.75rem;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-
-  &:hover,
-  &:focus-within {
-    transform: translateY(-4px);
-    border-color: rgba(148, 163, 184, 0.32);
-  }
-
-  h3 {
-    font-size: 1.1rem;
+  h1 {
+    font-size: 24px;
+    line-height: 29px;
     font-weight: 600;
   }
 
   p {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 500;
+    color: #808080;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #FFB800;
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 520px;
+  gap: 15px;
+  justify-content: flex-start;
+
+  p {
     font-size: 0.95rem;
-    color: color.scale(#e2e8f0, $lightness: -18%);
     line-height: 1.6;
   }
 }
 
-.meta {
-  width: fit-content;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: rgba(59, 130, 246, 0.25);
-  color: #bfdbfe;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+.headerItem {
 
-@media (max-width: 1024px) {
-  .list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
 
-@media (max-width: 768px) {
-  .list {
-    grid-template-columns: 1fr;
+  h2 {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 600;
+    max-width: 334px;
   }
+
+  span {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
 }
 
