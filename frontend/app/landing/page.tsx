@@ -9,6 +9,7 @@ import Reviews from "./reviews/Reviews";
 import FAQ from "./FAQ/FAQ";
 import Footer from "./footer/Footer";
 
+
 export default function LandingPage() {
   return (
     <div className={styles.page}>
