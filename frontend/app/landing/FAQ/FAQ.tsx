@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./faq.module.scss";
 
 const faq = [
@@ -38,10 +38,24 @@ const faq = [
 
 const FAQ = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const answerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const toggle = (id: string) => {
     setActiveId((prev) => (prev === id ? null : id));
   };
+
+  useEffect(() => {
+    Object.keys(answerRefs.current).forEach((id) => {
+      const element = answerRefs.current[id];
+      if (element) {
+        if (activeId === id) {
+          element.style.height = `${element.scrollHeight}px`;
+        } else {
+          element.style.height = "0px";
+        }
+      }
+    });
+  }, [activeId]);
 
   return (
     <section className={styles.section} id="faq">
@@ -94,6 +108,7 @@ const FAQ = () => {
                 </svg>
               </div>
               <div
+                ref={(el) => (answerRefs.current[item.id] = el)}
                 className={`${styles.answer} ${
                   activeId === item.id ? styles.open : ""
                 }`}
