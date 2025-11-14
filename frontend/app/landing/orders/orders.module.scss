@@ -56,6 +56,7 @@
   justify-content: flex-start;
   background: #ffffff;
   box-sizing: border-box;
+  position: relative;
 
   /* базовое состояние — чуть меньше и менее яркое */
   transform: scale(0.96);
@@ -72,6 +73,24 @@
     line-height: 27px;
     font-weight: 400;
   }
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/swiper.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;                 // по умолчанию невидим
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
+
+.item > * {
+  position: relative;
+  z-index: 1;
 }
 
 .headerItem {
@@ -114,11 +133,18 @@
 
 /* Активный слайд по центру — выделяем */
 :global(.swiper-slide-active article) {
-  transform: scale(1.06);
+  transform: scale(1.07);
   opacity: 1;
   border: 2px solid #FFB800;
   box-shadow: 0 0 20px #C4994B33;
 }
+
+:global(.swiper-slide-active) .item::before {
+  opacity: 0.2;
+  border-radius: 18px;
+}
+
+
 
 :global(.swiper-slide:not(.swiper-slide-active) article) {
   opacity: 0.5;
