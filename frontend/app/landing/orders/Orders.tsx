@@ -1,4 +1,7 @@
+"use client"
+
 import styles from "./orders.module.scss";
+import { useRef } from 'react';
 
 const orders = [
   {
@@ -94,27 +97,51 @@ const orders = [
 ];
 
 const Orders = () => {
+    const testimonialsRef = useRef<HTMLDivElement>(null);
+    const scrollByStep = (dir: 'prev' | 'next') => {
+    const row = testimonialsRef.current as HTMLElement | null;
+    if (!row) return;
+    const firstCard = row.querySelector(`.${styles.testimonialCard}`) as HTMLElement | null;
+    const stepBase = firstCard?.offsetWidth || 0;
+    const step = (stepBase > 0 ? stepBase : row.clientWidth);
+    const maxScroll = row.scrollWidth - row.clientWidth;
+    const target = Math.min(Math.max(0, row.scrollLeft + (dir === 'next' ? step : -step)), maxScroll);
+    row.scrollTo({ left: target, behavior: 'smooth' });
+  };
+
   return (
     <section className={styles.section} id="orders">
-        <div className={styles.content}>
-      <header className={styles.header}>
-        <h1>Реальные заказы с платформы</h1>
-        <p>
-          Актуальные проекты от предприятий горнодобывающий отрасли. Находите подходящие и откликайтесь напрямую
-        </p>
-      </header>
-      <div className={styles.list}>
+      <div className={styles.content}>
+        <header className={styles.header}>
+          <h1>Реальные заказы с платформы</h1>
+          <p>
+            Актуальные проекты от предприятий горнодобывающий отрасли. Находите подходящие и откликайтесь напрямую
+          </p>
+        </header>
+      </div>
+      <div className={styles.list} ref={testimonialsRef}>
         {orders.map((order) => (
           <article className={styles.item} key={order.title}>
-              <div className={styles.headerItem}>
-            <h2>{order.title}</h2>
-                  <span>{order.price}</span>
-                  </div>
+            <div className={styles.headerItem}>
+              <h2>{order.title}</h2>
+              <span>{order.price}</span>
+            </div>
             <p>{order.description}</p>
           </article>
         ))}
       </div>
-            </div>
+        <div className={styles.testimonialsArrows} style={{pointerEvents:'auto'}}>
+          <button className={`${styles.arrowBtn} ${styles.prev}`} onClick={() => scrollByStep('prev')} aria-label="Previous">
+            <svg className={styles.arrowSvg} viewBox="0 0 22 38" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="left-arrow">
+              <path d="M19 35L3 19L19 3" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button className={`${styles.arrowBtn} ${styles.next}`} onClick={() => scrollByStep('next')} aria-label="Next">
+            <svg className={styles.arrowSvg} viewBox="0 0 22 38" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="right-arrow">
+              <path d="M3 35L19 19L3 3" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
     </section>
   );
 };
