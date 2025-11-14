@@ -7,30 +7,38 @@ import { useState } from "react";
 const industries = [
   {
     id: 1,
-    title: "Аттестованные эксперты",
-    description: "Специалисты всех 15 областей аттестации по Приказу Ростехнадзора. Самостоятельно выбирайте для себя подходящих экспертов",
-    icon: "/icon_diploma.svg",
+    title: "ДОБЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
+    description: [
+      "Угольная, сланцевая, торфяная (Э1)",
+      "Горнорудная и нерудная (Э2)",
+      "Нефтегазодобыча (Э4)",
+      "Геологоразведка (Э6)"
+    ],
       photo: "/advantages_1.jpg",
   },
   {
     id: 2,
-    title: "Решение за 1–2 дня",
+    title: "ОБРАБАТЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
     description: "Размещайте заказы и получайте отклики от исполнителей. Первые предложения могут поступить уже в день размещения",
-    icon: "/icon_quick.svg",
       photo: "/advantages_2.jpg",
   },
   {
     id: 3,
-    title: "Точечный поиск",
+    title: "ТРАНСПОРТ И ИНФРАСТРУКТУРА",
     description: "Ищите заказы и экспертов с фильтрами по отраслям и видам работ. Используйте возможности поиска на платформе",
-    icon: "/icon_search.svg",
       photo: "/advantages_3.jpg",
   },
   {
     id: 4,
-    title: "Рейтинг и отзывы",
+    title: "ЭНЕРГЕТИКА И ОПАСНЫЕ ПРОИЗВОДСТВА",
     description: "После завершения работы заказчик ставит оценку и пишет отзыв. Так на платформе формируется репутация эксперта",
-    icon: "/icon_comment.svg",
+      photo: "/advantages_4.jpg",
+  },
+
+    {
+    id: 5,
+    title: "СПЕЦИАЛЬНЫЕ ОБЪЕКТЫ",
+    description: "После завершения работы заказчик ставит оценку и пишет отзыв. Так на платформе формируется репутация эксперта",
       photo: "/advantages_4.jpg",
   },
 ];
@@ -58,9 +66,6 @@ const IndustryDirections = () => {
             )}
             <div className={styles.industryContent}>
               <div className={styles.industryHeader}>
-                {industry.icon && (
-                  <Image src={industry.icon} alt={industry.title} width={48} height={48} />
-                )}
                 <h3>{industry.title}</h3>
               </div>
               <p>{industry.description}</p>
