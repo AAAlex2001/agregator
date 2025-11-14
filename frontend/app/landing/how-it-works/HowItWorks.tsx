@@ -11,17 +11,17 @@ const client = [
     description: "Разместите ТЗ на экспертизу, укажите отрасль, бюджет и сроки",
       icon: "/number_1.svg"
   },
-  {
+    {
       id: 2,
-    title: "Получите отклики",
-    description: "На ваш заказ откликнутся десятки экспертов с портфолио и рейтингами",
-      icon: "/number_2.svg"
-  },
-  {
-      id: 3,
     title: "Выберите исполнителя",
     description: "Изучите рейтинг, портфолио и отзывы. Пообщайтесь в чате и выберите лучшего кандидата",
       icon: "/number_3.svg"
+  },
+  {
+      id: 3,
+    title: "Получите отклики",
+    description: "На ваш заказ откликнутся десятки экспертов с портфолио и рейтингами",
+      icon: "/number_2.svg"
   },
   {
       id: 4,
@@ -80,7 +80,7 @@ const HowItWorks = () => {
       <div className={styles.steps}>
         {(isExpert ? expert : client).map((value) => (
           <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-            <Image src={value.icon} alt={value.title} width={42} height={96} />
+            <Image src={value.icon} alt={value.title} width={42} height={96}/>
             <div className={styles.description}>
               <h2>{value.title}</h2>
               <p>{value.description}</p>
