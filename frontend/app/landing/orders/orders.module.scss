@@ -1,6 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
+  padding: 60px 0;
 }
 
 .content {
@@ -35,23 +36,36 @@
 }
 
 .list {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
+  position: relative;
   width: 100%;
-  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Один слайд (ширина карточки) */
+.slide {
+  width: 520px;
 }
 
 .item {
   display: flex;
   flex-direction: column;
-  border: 2px solid #FFB800;
+  border: 2px solid #ffb800;
   border-radius: 20px;
   padding: 20px;
   gap: 15px;
   justify-content: flex-start;
-  min-width: 520px;
-  flex-shrink: 0;
+  background: #ffffff;
+  box-sizing: border-box;
+
+  /* базовое состояние — чуть меньше и менее яркое */
+  transform: scale(0.96);
+  opacity: 0.8;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease;
 
   p {
     font-size: 16px;
@@ -61,7 +75,6 @@
 }
 
 .headerItem {
-
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -71,7 +84,6 @@
     font-size: 18px;
     line-height: 28px;
     font-weight: 600;
-    max-width: 334px;
   }
 
   span {
@@ -80,6 +92,78 @@
     font-weight: 400;
     white-space: nowrap;
   }
-
 }
 
+:global(.swiper) {
+  overflow: hidden; // или вообще без этого правила — Swiper сам так делает\
+  padding: 30px;
+}
+
+:global(.swiper-wrapper) {
+  align-items: stretch;
+}
+
+:global(.swiper-slide) {
+  height: auto;
+  display: flex;
+}
+
+:global(.swiper-slide > *) {
+  width: 100%;
+}
+
+/* Активный слайд по центру — выделяем */
+:global(.swiper-slide-active article) {
+  transform: scale(1.06);
+  opacity: 1;
+  border: 2px solid #FFB800;
+  box-shadow: 0 0 20px #C4994B33;
+}
+
+:global(.swiper-slide:not(.swiper-slide-active) article) {
+  opacity: 0.5;
+  border: 1px solid #FF8A00;
+}
+
+
+/* === Стрелки навигации (глобальные классы) === */
+:global(.orders-nav-btn) {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  border: 3px solid #FFDDA9;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.5s ease, border-color 0.5s ease;
+  z-index: 5;
+
+
+  &:hover {
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+    background: #fff9e6;
+    border-color: transparent;
+  }
+}
+
+:global(.orders-nav-btn--prev) {
+  left: 20px;
+
+  span {
+    transform: rotate(180deg);
+  }
+}
+
+:global(.orders-nav-btn--next) {
+  right: 20px;
+
+  span {
+    transform: rotate(0deg);
+  }
+}
