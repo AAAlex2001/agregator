@@ -104,6 +104,17 @@
   }
 }
 
+/* Arrow animation in the primary button */
+.arrow {
+  display: inline-flex;
+  transition: transform 0.5s ease;
+}
+
+.primaryBtn:hover .arrow,
+.primaryBtn:focus-visible .arrow {
+  transform: translateX(12px);
+}
+
 .ctaActions {
   display: flex;
   gap: 12px;
@@ -125,11 +136,13 @@
   font-weight: 500;
   color: #FFFFFF;
   width: fit-content;
+  gap: 20px;
 
   &:hover,
   &:focus-visible {
     background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
   }
+
 }
 
 .secondaryBtn {

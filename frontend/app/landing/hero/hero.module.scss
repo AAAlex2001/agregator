@@ -37,19 +37,30 @@
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
   transition: background 0.4s ease;
   cursor: pointer;
-  padding: 17px 80.5px;
-  max-width: 320px;
+  padding: 17px 58.5px;
   margin-bottom: 85px;
   text-decoration: none;
   font-size: 18px;
   line-height: 22px;
   font-weight: 500;
   color: #FFF8EB;
+  width: fit-content;
+  gap: 20px;
 
   &:hover,
   &:focus-visible {
     background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
   }
+}
+
+.arrow {
+  display: inline-flex;
+  transition: transform 0.5s ease;
+}
+
+.primary:hover .arrow,
+.primary:focus-visible .arrow {
+  transform: translateX(12px);
 }
 
 .visual {
