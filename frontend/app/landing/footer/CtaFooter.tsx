@@ -7,10 +7,10 @@ const CtaFooter = () => {
         <div className={styles.ctaCard}>
           <div className={styles.ctaLeft}>
             <span className={styles.ctaChip}>Действуйте прямо сейчас</span>
-            <h2>Найдите эксперта по промбезопасности или заявите о своей специализации</h2>
+            <h1>Найдите эксперта по промбезопасности или заявите о своей специализации</h1>
           </div>
           <div className={styles.ctaRight}>
-            <h3>После регистрации вы сможете:</h3>
+            <h2>После регистрации вы сможете:</h2>
             <ul>
               <li>
                 <span aria-hidden="true" className={styles.bullet}>
