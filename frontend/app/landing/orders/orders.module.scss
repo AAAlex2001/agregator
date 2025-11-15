@@ -145,11 +145,12 @@
 
 
 
-:global(.swiper-slide-active article) {
+:global(.swiper-slide-active) .item {
   transform: scale(1.02);
   opacity: 1;
   border: 2px solid #FFB800;
   box-shadow: 0 0 20px #C4994B33;
+  background: #ffffff;
 }
 
 :global(.swiper-slide-active) .item::before {
@@ -157,9 +158,10 @@
   border-radius: 18px;
 }
 
-:global(.swiper-slide:not(.swiper-slide-active) article) {
+:global(.swiper-slide:not(.swiper-slide-active)) .item {
   opacity: 0.5;
   border: 1px solid #FF8A00;
+  background: #ffffff;
 }
 
 :global(.orders-nav-btn) {

@@ -13,20 +13,22 @@ import KeyAdvantages from "./key-advantages/KeyAdvantages";
 
 export default function LandingPage() {
   return (
-    <div className={styles.page}>
+    <>
       <Header />
-      <main className={styles.main}>
-        <Hero />
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <Hero />
           <Advantages />
-        <IndustryDirections />
-        <HowItWorks />
-        <Orders />
-        <KeyAdvantages />
-        <Reviews />
-        <FAQ />
-      </main>
-      <Footer />
-    </div>
+          <IndustryDirections />
+          <HowItWorks />
+          <Orders />
+          <KeyAdvantages />
+          <Reviews />
+          <FAQ />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
 
