@@ -1,36 +1,32 @@
-import Link from "next/link";
 import styles from "./footer.module.scss";
 
 const Footer = () => {
   return (
     <footer className={styles.footer} id="footer">
-      <div className={styles.primary}>
-        <span className={styles.logo}>Agregator</span>
-        <p>Соединяем данные, процессы и людей в единую экосистему.</p>
-      </div>
-      <div className={styles.links}>
-        <div>
-          <h4>Платформа</h4>
-          <Link href="#hero">Обзор</Link>
-          <Link href="#advantages">Преимущества</Link>
-          <Link href="#orders">Сценарии</Link>
+      <div className={styles.cta}>
+        <div className={styles.ctaCard}>
+          <div className={styles.ctaLeft}>
+            <span className={styles.ctaChip}>Действуйте прямо сейчас</span>
+            <h2>Найдите эксперта по промбезопасности<br />или заявите о своей специализации</h2>
+          </div>
+          <div className={styles.ctaRight}>
+            <h3>После регистрации вы сможете:</h3>
+            <ul>
+              <li>Разместить заказ и получить первые отклики уже сегодня</li>
+              <li>Находить проекты именно по вашей аттестации</li>
+              <li>Вести переговоры напрямую без посредников</li>
+              <li>Строить долгосрочную репутацию в профессиональном сообществе</li>
+            </ul>
+            <div className={styles.ctaActions}>
+              <button className={styles.primaryBtn}>
+                Найти эксперта <span aria-hidden="true" className={styles.arrow}>→</span>
+              </button>
+              <button className={styles.secondaryBtn}>
+                Стать экспертом на платформе
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          <h4>Ресурсы</h4>
-          <Link href="#how-it-works">Документация</Link>
-          <Link href="#reviews">Отзывы</Link>
-          <Link href="#faq">FAQ</Link>
-        </div>
-        <div>
-          <h4>Правовая информация</h4>
-          <Link href="#privacy">Политика</Link>
-          <Link href="#terms">Условия</Link>
-          <Link href="#agreement">Договор</Link>
-        </div>
-      </div>
-      <div className={styles.bottom}>
-        <span>© {new Date().getFullYear()} Agregator. Все права защищены.</span>
-        <Link href="mailto:hello@agregator.io">hello@agregator.io</Link>
       </div>
     </footer>
   );
