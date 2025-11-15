@@ -24,6 +24,7 @@ const Footer = () => {
             </linearGradient>
             </defs>
             </svg>
+
         </span>
 
           <h1>Площадка для аттестованных экспертов промышленной безопасности</h1>
@@ -59,10 +60,12 @@ const Footer = () => {
 
       </div>
       <div className={styles.bottom}>
-        <span>© {new Date().getFullYear()} Agregator. Все права защищены.</span>
-          <nav className={styles.nav}>
-        <Link href="mailto:hello@agregator.io">hello@agregator.io</Link>
-              </nav>
+          <span>© {new Date().getFullYear()} Ресурс-Плюс. Все права защищены.</span>
+        <div className={styles.bottomLinks}>
+          <Link href="">Пользовательское соглашение</Link>
+          <Link href="">Политика конфиденциальности</Link>
+          <Link href="">Политика обработки данных</Link>
+        </div>
       </div>
             </div>
     </footer>
@@ -70,4 +73,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
