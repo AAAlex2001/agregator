@@ -6,6 +6,7 @@ const Footer = () => {
     <footer className={styles.footer} id="footer">
         <div className={styles.content}>
       <div className={styles.primary}>
+          <div className={styles.primaryLogo}>
         <span className={styles.logo}>
 
             <svg width="240" height="43" viewBox="0 0 240 43" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,39 +24,45 @@ const Footer = () => {
             </linearGradient>
             </defs>
             </svg>
-
         </span>
 
           <h1>Площадка для аттестованных экспертов промышленной безопасности</h1>
+          </div>
+              <div className={styles.links}>
+                <div>
+                  <h2>Платформа</h2>
+                  <Link href="#about">О нас</Link>
+                  <Link href="#how-it-works">Как это работает</Link>
+                  <Link href="#faq">FAQ</Link>
+                </div>
+                <div>
+                  <h2>Заказчикам</h2>
+                  <Link href="#orders">Разместить заказ</Link>
+                  <Link href="#experts">Найти исполнителя</Link>
+                </div>
+                <div>
+                  <h2>Специалистам</h2>
+                  <Link href="#find-orders">Найти заказы</Link>
+                  <Link href="#create-profile">Создать профиль</Link>
+                  <Link href="#portfolio">Портфолио</Link>
+                </div>
+                <div>
+                  <h2>Документы</h2>
+                  <Link href="#company-details">Реквизиты компании</Link>
+                  <Link href="#offer">Оферта</Link>
+                </div>
+              </div>
 
-      </div>
-      <div className={styles.links}>
-        <div>
-          <h4>Платформа</h4>
-          <Link href="#about">О нас</Link>
-          <Link href="#how-it-works">Как это работает</Link>
-          <Link href="#faq">FAQ</Link>
-        </div>
-        <div>
-          <h4>Заказчикам</h4>
-          <Link href="#orders">Разместить заказ</Link>
-          <Link href="#experts">Найти исполнителя</Link>
-        </div>
-        <div>
-          <h4>Специалистам</h4>
-          <Link href="#find-orders">Найти заказы</Link>
-          <Link href="#create-profile">Создать профиль</Link>
-          <Link href="#portfolio">Портфолио</Link>
-        </div>
-        <div>
-          <h4>Документы</h4>
-          <Link href="#company-details">Реквизиты компании</Link>
-          <Link href="#offer">Оферта</Link>
-        </div>
+          <div className={styles.chatBlock}>
+                <button className={styles.chatButton}> Чат с поддержкой </button>
+          </div>
+
       </div>
       <div className={styles.bottom}>
         <span>© {new Date().getFullYear()} Agregator. Все права защищены.</span>
+          <nav className={styles.nav}>
         <Link href="mailto:hello@agregator.io">hello@agregator.io</Link>
+              </nav>
       </div>
             </div>
     </footer>

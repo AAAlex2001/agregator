@@ -18,3 +18,4 @@ networks:
   agregator-network:
     driver: bridge
 
+

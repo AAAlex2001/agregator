@@ -34,9 +34,16 @@
 
 .primary {
   display: flex;
+  flex-direction: row;
+  width: 100%;
+
+}
+
+.primaryLogo {
+  display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 295px;
+  max-width: 300px;
 
   h1 {
     font-size: 14px;
@@ -47,30 +54,34 @@
 
 }
 
-.logo {
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-}
 
 .links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  width: 100%;
+  justify-content: center;
+  padding: 0 10px;
+
+
+  h2 {
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
 
   a {
-    display: block;
-    font-size: 0.9rem;
-    text-decoration: none;
-    margin-bottom: 0.5rem;
-    transition: color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 400;
     color: #FFFFFF;
 
     &:hover,
     &:focus-visible {
-      color: #FFFFFF;
+      color: #FFB800;
     }
   }
 }
@@ -80,7 +91,10 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.75rem;
-  font-size: 0.85rem;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  margin-top: 20px;
 
   a {
     color: #FFFFFF;
@@ -90,5 +104,28 @@
     &:focus-visible {
       color: #FFFFFF;
     }
+  }
+}
+
+.chatButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 14px 46.5px;
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  transition: background 0.4s ease;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 500;
+  color: #1A1A1A;
+  width: fit-content;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
   }
 }
