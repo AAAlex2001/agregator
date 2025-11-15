@@ -22,6 +22,7 @@
   border-radius: 24px;
   position: relative;
   z-index: 2;
+  max-height: 320px;
 }
 
 .ctaCard::before {
@@ -165,4 +166,72 @@
   &:focus-visible {
     background-color: #FFAF38;
   }
+}
+
+.backgroundImage {
+  position: absolute;
+  width: 310px;
+  height: 275px;
+  left: 170px;
+  bottom: 310px;
+  z-index: 1;
+}
+
+.backgroundImageCoal {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 130px;
+  bottom: 420px;
+  z-index: 0;
+  rotate: (170deg);
+
+
+  &:nth-child(2) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: 50px;
+    bottom: 300px;
+    z-index: 0;
+  }
+
+  &:nth-child(3) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: 50px;
+    bottom: 300px;
+    z-index: 0;
+  }
+
+  &:nth-child(5) {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    left: 20px;
+    bottom: 260px;
+    z-index: 0;
+  }
+
+  &:nth-child(6) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: -30px;
+    bottom: 60px;
+    z-index: 0;
+    rotate: (90deg);
+  }
+
+  &:nth-child(7) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: -30px;
+    bottom: -130px;
+    z-index: 0;
+    rotate: (90deg);
+  }
+
 }

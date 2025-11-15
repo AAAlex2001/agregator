@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import styles from "./faq.module.scss";
+import Image from "next/image";
 
 const faq = [
   {
@@ -61,6 +62,15 @@ const FAQ = () => {
     <section className={styles.section} id="faq">
       <div className={styles.content}>
         <div className={styles.header}>
+             <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
           <h1>Частые вопросы</h1>
           <p>Всё, что важно знать перед началом работы</p>
         </div>

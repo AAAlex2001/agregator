@@ -124,7 +124,7 @@ const Reviews = () => {
               <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
             </div>
               <div className={styles.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
             </div>
             <button
               className="orders-nav-btn orders-nav-btn--prev"

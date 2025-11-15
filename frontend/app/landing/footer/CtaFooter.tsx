@@ -1,10 +1,32 @@
 import styles from "./cta-footer.module.scss";
+import Image from "next/image";
 
 const CtaFooter = () => {
   return (
     <footer className={styles.footer} id="footer">
       <div className={styles.cta}>
         <div className={styles.ctaCard}>
+            <div className={styles.backgroundImage}>
+        <Image src="/belaz_3.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
           <div className={styles.ctaLeft}>
             <span className={styles.ctaChip}>Действуйте прямо сейчас</span>
             <h1>Найдите эксперта по промбезопасности или заявите о своей специализации</h1>
