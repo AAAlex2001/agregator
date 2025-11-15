@@ -118,7 +118,9 @@ const FAQ = () => {
                 </svg>
               </div>
               <div
-                ref={(el) => (answerRefs.current[item.id] = el)}
+                ref={(el) => {
+                  answerRefs.current[item.id] = el;
+                }}
                 className={`${styles.answer} ${
                   activeId === item.id ? styles.open : ""
                 }`}
