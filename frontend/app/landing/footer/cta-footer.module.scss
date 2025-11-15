@@ -1,55 +1,56 @@
 .footer {
-  padding: 60px 20px 100px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 70px;
 }
 
 .cta {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 0 40px;
 }
 
 .ctaCard {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 40px;
   align-items: center;
-  padding: 40px 48px;
-  background: #ffffff;
-  border: 2px solid #FF8A00;
+  padding: 60px 50px 60px 222px;
+  border: 3px solid #FF8A00;
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.08);
 }
 
 .ctaLeft {
-  display: grid;
+  display: flex;
   gap: 18px;
+  flex-direction: column;
 
   .ctaChip {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 36px;
-    padding: 0 16px;
-    border-radius: 999px;
-    border: 2px solid #FFB800;
+    padding: 6.5px 24px;
+    border-radius: 50px;
+    border: 2px solid #FF8A00;
     font-weight: 600;
     font-size: 14px;
-    color: #1A1A1A;
-    background: #FFFFFF;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    line-height: 17px;
+    color: #4D4D4D;
+    width: fit-content;
   }
 
   h2 {
-    font-size: 28px;
-    line-height: 1.25;
-    font-weight: 700;
-    color: #1A1A1A;
+    font-size: 22px;
+    line-height: 100%;
+    font-weight: 500;
+    color: #0D0D0D;
   }
 }
 
 .ctaRight {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+  width: 100%;
 
   h3 {
     font-size: 18px;
@@ -59,14 +60,14 @@
   }
 
   ul {
-    display: grid;
-    gap: 10px;
-    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 
     li {
-      font-size: 16px;
-      line-height: 1.5;
-      color: #1A1A1A;
+      font-size: 14px;
+      line-height: 22px;
+      color: #808080;
     }
   }
 }

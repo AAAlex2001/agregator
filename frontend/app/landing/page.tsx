@@ -8,6 +8,7 @@ import Advantages from "./advantages/Advantages";
 import Reviews from "./reviews/Reviews";
 import FAQ from "./FAQ/FAQ";
 import Footer from "./footer/Footer";
+import CtaFooter from "./footer/CtaFooter";
 import KeyAdvantages from "./key-advantages/KeyAdvantages";
 
 
@@ -26,7 +27,8 @@ export default function LandingPage() {
           <Reviews />
           <FAQ />
         </main>
-        <Footer />
+      <CtaFooter />
+      <Footer />
       </div>
     </>
   );
