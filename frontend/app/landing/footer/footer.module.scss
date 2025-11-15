@@ -109,6 +109,37 @@
   }
 }
 
+.chatBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+   span{
+      font-size: 12px;
+      line-height: 24px;
+      font-weight: 500;
+      color: #1A1A1A;
+     margin-bottom: 16px;
+    }
+
+}
+
+.navLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
+
+}
+
 .chatButton {
   display: flex;
   align-items: center;
@@ -125,6 +156,7 @@
   color: #1A1A1A;
   width: fit-content;
   white-space: nowrap;
+  margin-bottom: 5px;
 
   &:hover,
   &:focus-visible {
