@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 70px;
+  padding: 0 20px;
 }
 
 .cta {
@@ -15,9 +16,26 @@
   gap: 40px;
   align-items: center;
   padding: 60px 50px 60px 222px;
-  border: 3px solid #FF8A00;
+  background:
+    radial-gradient(200% 820% at -129.81% 50.16%, rgba(255, 161, 0, 0.5) 3.98%, #FFFFFF 83.65%),
+    linear-gradient(0deg, #FFFFFF, #FFFFFF);
   border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.ctaCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
 }
 
 .ctaLeft {
@@ -62,13 +80,27 @@
   ul {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 5px;
 
     li {
-      font-size: 14px;
-      line-height: 22px;
-      color: #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      
+      .liText {
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: #808080;
+      }
     }
+  }
+
+  .bullet {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -79,42 +111,45 @@
 }
 
 .primaryBtn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 18px;
+  justify-content: center;
   border-radius: 10px;
+  padding: 14px 22.5px;
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
-  border: none;
+  transition: background 0.4s ease;
   cursor: pointer;
+  text-decoration: none;
   font-size: 16px;
-  font-weight: 600;
-  color: #1A1A1A;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  line-height: 16px;
+  font-weight: 500;
+  color: #FFFFFF;
+  width: fit-content;
 
-  &:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
   }
 }
 
 .secondaryBtn {
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  height: 44px;
-  padding: 0 18px;
+  background: #FFDDA9;
   border-radius: 10px;
-  background: #FFEFD2;
-  border: 2px solid #FFDDA9;
+  padding: 16px 24px;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.5s ease;
   font-weight: 600;
-  color: #1A1A1A;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  font-size: 18px;
+  line-height: 22px;
+  color: #4D4D4D;
+  width: fit-content;
 
-  &:hover {
-    background: #FFDDA9;
-    border-color: #FFB800;
+  &:hover,
+  &:focus-visible {
+    background-color: #FFAF38;
   }
 }
