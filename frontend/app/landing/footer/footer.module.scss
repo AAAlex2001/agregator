@@ -131,13 +131,24 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+
+}
+
+.navLink {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 20px;
   cursor: pointer;
+  transition: background 0.5s ease;
 
   &:hover,
   &:focus-visible {
-    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+    background: #FFB800;
   }
-
 }
 
 .chatButton {
@@ -191,3 +202,5 @@
   }
 
 }
+
+
