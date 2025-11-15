@@ -31,16 +31,26 @@ const Footer = () => {
       </div>
       <div className={styles.links}>
         <div>
-          <h4>Ресурсы</h4>
-          <Link href="#how-it-works">Документация</Link>
-          <Link href="#reviews">Отзывы</Link>
+          <h4>Платформа</h4>
+          <Link href="#about">О нас</Link>
+          <Link href="#how-it-works">Как это работает</Link>
           <Link href="#faq">FAQ</Link>
         </div>
         <div>
-          <h4>Правовая информация</h4>
-          <Link href="#privacy">Политика</Link>
-          <Link href="#terms">Условия</Link>
-          <Link href="#agreement">Договор</Link>
+          <h4>Заказчикам</h4>
+          <Link href="#orders">Разместить заказ</Link>
+          <Link href="#experts">Найти исполнителя</Link>
+        </div>
+        <div>
+          <h4>Специалистам</h4>
+          <Link href="#find-orders">Найти заказы</Link>
+          <Link href="#create-profile">Создать профиль</Link>
+          <Link href="#portfolio">Портфолио</Link>
+        </div>
+        <div>
+          <h4>Документы</h4>
+          <Link href="#company-details">Реквизиты компании</Link>
+          <Link href="#offer">Оферта</Link>
         </div>
       </div>
       <div className={styles.bottom}>
