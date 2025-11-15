@@ -56,7 +56,7 @@ const Footer = () => {
 
           <div className={styles.chatBlock}>
                 <button className={styles.chatButton}> Чат с поддержкой </button>
-              <span>Отвечаем круглосуточно</span>
+              <p>Отвечаем круглосуточно</p>
               <div className={styles.navLinks}>
                 <span className={styles.navLink}>
                   <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
