@@ -4,6 +4,7 @@ import styles from "./footer.module.scss";
 const Footer = () => {
   return (
     <footer className={styles.footer} id="footer">
+        <div className={styles.content}>
       <div className={styles.primary}>
         <span className={styles.logo}>Agregator</span>
         <p>Соединяем данные, процессы и людей в единую экосистему.</p>
@@ -32,6 +33,7 @@ const Footer = () => {
         <span>© {new Date().getFullYear()} Agregator. Все права защищены.</span>
         <Link href="mailto:hello@agregator.io">hello@agregator.io</Link>
       </div>
+            </div>
     </footer>
   );
 };
