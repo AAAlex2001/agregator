@@ -70,14 +70,7 @@ const CtaFooter = () => {
               </li>
             </ul>
             <div className={styles.ctaActions}>
-              <button className={styles.primaryBtn}>
-                Найти эксперта
-                <span aria-hidden="true" className={styles.arrow}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12L13 18M19 12L13 6M19 12H5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              </button>
+              <button className={styles.primaryBtn}>Найти эксперта</button>
               <button className={styles.secondaryBtn}>
                 Стать экспертом на платформе
               </button>

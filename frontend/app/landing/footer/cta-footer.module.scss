@@ -53,7 +53,15 @@
     font-size: 14px;
     line-height: 17px;
     color: #4D4D4D;
+    cursor: pointer;
     width: fit-content;
+      transition: background-color 0.5s ease, border-color 0.3s ease;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #FFDDA9;
+        border-color: transparent;
+      }
   }
 
   h1 {
@@ -104,16 +112,7 @@
   }
 }
 
-/* Arrow animation in the primary button */
-.arrow {
-  display: inline-flex;
-  transition: transform 0.5s ease;
-}
-
-.primaryBtn:hover .arrow,
-.primaryBtn:focus-visible .arrow {
-  transform: translateX(12px);
-}
+/* arrow removed from CTA primary button */
 
 .ctaActions {
   display: flex;
