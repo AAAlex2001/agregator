@@ -1,6 +1,7 @@
 .footer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.78);
 }
 
 .content {
@@ -8,7 +9,7 @@
   padding: 0 20px;
   flex-direction: column;
   max-width: 1640px;
-  margin: 0 auto;
+  margin: 0 auto 20px auto;
   width: 100%;
 }
 
