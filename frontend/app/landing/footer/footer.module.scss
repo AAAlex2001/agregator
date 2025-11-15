@@ -1,7 +1,24 @@
 .footer {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.78);
+  background: transparent;
+  position: relative;
+  overflow: visible;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -550px; /* тянем фон вверх, чтобы покрыть CTA-блок */
+  height: 1000px; /* фиксированная высота фона */
+  background-image: url("/footer.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .content {
@@ -11,18 +28,23 @@
   max-width: 1640px;
   margin: 0 auto 20px auto;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .primary {
   display: flex;
-  gap: 0.5rem;
-  max-width: 420px;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 295px;
 
-  p {
-    font-size: 0.95rem;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.8);
+  h1 {
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 400;
+    color: #FFFFFF;
   }
+
 }
 
 .logo {
@@ -37,14 +59,6 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
-
-  h4 {
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-  }
 
   a {
     display: block;

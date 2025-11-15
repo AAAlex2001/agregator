@@ -21,6 +21,7 @@
     linear-gradient(0deg, #FFFFFF, #FFFFFF);
   border-radius: 24px;
   position: relative;
+  z-index: 2;
 }
 
 .ctaCard::before {
