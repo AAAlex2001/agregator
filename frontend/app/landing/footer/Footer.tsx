@@ -79,9 +79,19 @@ const Footer = () => {
       <div className={styles.bottom}>
           <span>© {new Date().getFullYear()} Ресурс-Плюс. Все права защищены.</span>
         <div className={styles.bottomLinks}>
-          <Link href="">Пользовательское соглашение</Link>
-          <Link href="">Политика конфиденциальности</Link>
-          <Link href="">Политика обработки данных</Link>
+            <span>*Все эксперты имеют аттестацию Ростехнадзора согласно
+            <a href="https://www.gosnadzor.ru/service/list/certification%20experts/%D0%9F%D1%80-287%20%D0%BE%D1%82%2031.08.2022.pdf?ysclid=mi265psds810889564"
+               target="_blank"
+               rel="noopener noreferrer"
+               title="Открыть Приказ № 287 от 31.08.2022 г.">
+            Приказу № 287 от 31.08.2022 г.
+            </a>
+            </span>
+            <div className={styles.bottomLinksButtoms}>
+          <p>Пользовательское соглашение</p>
+          <p>Политика конфиденциальности</p>
+          <p>Политика обработки данных</p>
+                </div>
         </div>
       </div>
             </div>

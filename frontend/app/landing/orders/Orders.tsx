@@ -9,7 +9,7 @@ import styles from "./orders.module.scss";
 
 const orders = [
   {
-    title: "Экспертиза проекта модернизации ",
+    title: "Экспертиза  промышленной безопасности технического перевооружения ОПО ",
     price: "1 200 000 ₽",
     description: "установки ЭЛОУ-АВТ. Требуется: Эксперт Э7 ОБ",
   },
@@ -105,7 +105,7 @@ const Orders = () => {
     <section className={styles.section} id="orders">
       <div className={styles.content}>
         <header className={styles.header}>
-          <h1>Реальные заказы с платформы</h1>
+          <h1>Примеры работ на платформе</h1>
           <p>
             Актуальные проекты от предприятий горнодобывающей отрасли. Находите
             подходящие и откликайтесь напрямую

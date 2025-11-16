@@ -65,8 +65,8 @@ const IndustryDirections = () => {
   return (
     <section className={styles.section} id="advantages">
       <div className={styles.content}>
-        <h1 className={styles.title}>Эксперты по промбезопасности для всех отраслей промышленности</h1>
-        <h2 className={styles.subtitle}>От шахт до объектов переработки. Найдите специалиста или проект в вашей сфере — мы работаем со всеми направлениями, подконтрольными Ростехнадзору</h2>
+        <h1 className={styles.title}>Эксперты по промышленной безопасности для всех отраслей промышленности</h1>
+        <h2 className={styles.subtitle}>От шахт до объектов переработки. Найдите специалиста или проект в вашей аккредитации</h2>
         <div className={styles.card}>
           {industries.map((industry) => (
             <article 
