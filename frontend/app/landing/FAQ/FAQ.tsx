@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import styles from "./faq.module.scss";
 import Image from "next/image";
 
@@ -39,41 +39,43 @@ const faq = [
 
 const FAQ = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const answerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const toggle = (id: string) => {
     setActiveId((prev) => (prev === id ? null : id));
   };
 
-  useEffect(() => {
-    Object.keys(answerRefs.current).forEach((id) => {
-      const element = answerRefs.current[id];
-      if (element) {
-        if (activeId === id) {
-          element.style.height = `${element.scrollHeight}px`;
-        } else {
-          element.style.height = "0px";
-        }
-      }
-    });
-  }, [activeId]);
-
   return (
     <section className={styles.section} id="faq">
       <div className={styles.content}>
         <div className={styles.header}>
-             <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
-      </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
-            </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
-            </div>
+          <div className={styles.backgroundImageCoal}>
+            <Image
+              src="/coal.svg"
+              alt="coal"
+              fill
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+          <div className={styles.backgroundImageCoal}>
+            <Image
+              src="/gold.svg"
+              alt="gold"
+              fill
+              style={{ objectFit: "contain" }}
+            />
+          </div>
+          <div className={styles.backgroundImageCoal}>
+            <Image
+              src="/copper.svg"
+              alt="cooper"
+              fill
+              style={{ objectFit: "contain" }}
+            />
+          </div>
           <h1>Частые вопросы</h1>
           <p>Всё, что важно знать перед началом работы</p>
         </div>
+
         <div className={styles.list}>
           {faq.map((item) => (
             <div
@@ -117,15 +119,15 @@ const FAQ = () => {
                   </defs>
                 </svg>
               </div>
+
               <div
-                ref={(el) => {
-                  answerRefs.current[item.id] = el;
-                }}
                 className={`${styles.answer} ${
                   activeId === item.id ? styles.open : ""
                 }`}
               >
-                <span>{item.answer}</span>
+                <div className={styles.answerInner}>
+                  <span>{item.answer}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -136,4 +138,3 @@ const FAQ = () => {
 };
 
 export default FAQ;
-
