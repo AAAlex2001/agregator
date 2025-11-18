@@ -70,14 +70,16 @@
   align-items: center;
   position: relative;
   width: 100%;
+  min-height: 322px;
 }
 
 .heroImage {
   width: 100%;
   min-width: 320px;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
   min-height: 322px;
+  object-fit: cover;
+  border-radius: 20px;
 }
 
 
@@ -90,7 +92,8 @@
   padding: 10px 20px;
   top: 20px;
   background: #FFFFFF;
-  right: calc(20/360)*100%;
+  left: calc(0/360)*100%;
+  max-width: 290px;
 }
 
 .visualDecorationHeaderText {
@@ -132,7 +135,8 @@
   padding: 10px 20px;
   top: 90px;
   background: #FFDDA9;
-  right: calc(50/1920)*100%;
+  right: calc(0/1920)*100%;
+  max-width: 150px;
 
   p {
       font-size: 18px;
@@ -187,7 +191,7 @@
   flex-direction: column;
   border-radius: 20px;
   padding: 10px 20px;
-  bottom: 70px;
+  bottom: 0px;
   background: #B0ADFF;
   right: calc(20/1920)*100%;
 
