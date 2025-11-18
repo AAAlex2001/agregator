@@ -105,6 +105,12 @@
   opacity: 0.2;
 }
 
+:global(.swiper-slide:not(.swiper-slide-active)) .industry {
+  background: #FFFFFF;
+  opacity: 1;
+  border: 2px solid #FFB800;
+}
+
 .industryContent {
   position: relative;
   display: flex;
