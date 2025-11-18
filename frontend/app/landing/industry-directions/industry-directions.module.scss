@@ -123,11 +123,13 @@
   width: fit-content;
   z-index: 3;
   position: relative;
+  margin-bottom: 10px;
 
   h3 {
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
     color: #FFFFFF;
+    text-align: center;
   }
 }
