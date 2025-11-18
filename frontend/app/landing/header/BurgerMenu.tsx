@@ -45,7 +45,8 @@ const BurgerMenu = () => {
       </button>
 
       {isOpen && (
-        <nav className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
+        <>
+          <nav className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
             <div className={styles.menuLogo}>
               <svg width="212" height="38" viewBox="0 0 212 38" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.9481 19.6548L16.3082 19.8358C17.2563 20.3098 18.3018 20.5567 19.3618 20.5567C20.4218 20.5567 21.4673 20.3098 22.4153 19.8358L22.7755 19.6548M14.2412 9.41371C14.2412 8.50833 14.6009 7.64005 15.2411 6.99985C15.8813 6.35966 16.7495 6 17.6549 6H21.0686C21.974 6 22.8423 6.35966 23.4825 6.99985C24.1227 7.64005 24.4823 8.50833 24.4823 9.41371V11.1206H14.2412V9.41371Z" stroke="url(#paint0_linear_644_2256)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -92,9 +93,10 @@ const BurgerMenu = () => {
               FAQ
             </Link>
             <div className={styles.menuActions}>
-              <button className={styles.menuSignUp}>Зарегистрироваться</button>
+              <button className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</button>
             </div>
           </nav>
+        </>
       )}
     </>
   );
