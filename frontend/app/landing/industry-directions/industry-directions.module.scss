@@ -21,31 +21,37 @@
 }
 
 .title {
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 20px;
+  line-height: 28px;
   font-weight: 600;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
 .subtitle {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   font-weight: 500;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   width: 100%;
   max-width: 1246px;
   color: #808080;
 }
 
 .card {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: center;
   width: 100%;
   margin: 0 auto;
-  flex-wrap: wrap;
+}
+
+.swiper {
+  width: 100%;
+  overflow: visible;
+}
+
+.slide {
+  width: 320px;
+  height: auto;
+  display: flex;
 }
 
 .industry {
@@ -59,15 +65,9 @@
   border: 2px solid #FFB800;
   overflow: hidden;
   cursor: pointer;
-
-  &:nth-child(1),
-  &:nth-child(2) {
-    flex: 0 0 calc((100% - 20px) / 2);
-  }
-
-  &:nth-child(n+3) {
-    flex: 0 0 calc((100% - 40px) / 3);
-  }
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
 
   ul {
     display: flex;
@@ -98,7 +98,11 @@
 }
 
 .industryImage.visible {
-  opacity: 1;
+  opacity: 0.2;
+}
+
+:global(.swiper-slide-active) .industryImage {
+  opacity: 0.2;
 }
 
 .industryContent {

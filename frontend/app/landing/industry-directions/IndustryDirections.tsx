@@ -1,5 +1,7 @@
 "use client";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
@@ -67,36 +69,45 @@ const IndustryDirections = () => {
       <div className={styles.content}>
         <h1 className={styles.title}>Эксперты по промышленной безопасности для всех отраслей промышленности</h1>
         <h2 className={styles.subtitle}>От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации</h2>
-        <div className={styles.card}>
+      </div>
+      <div className={styles.card}>
+        <Swiper
+          loop={true}
+          centeredSlides={true}
+          slidesPerView={"auto"}
+          spaceBetween={20}
+          className={styles.swiper}
+        >
           {industries.map((industry) => (
-            <article 
-              className={styles.industry}
-              key={industry.id}
-              onMouseEnter={() => setIsHovered(industry.id)}
-              onMouseLeave={() => setIsHovered(null)}
-            >
-              {industry.photo && (
-                <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
-                  <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
-                </div>
-              )}
-              <div className={styles.industryContent}>
-                <div className={styles.industryHeader}>
-                  <h3>{industry.title}</h3>
-                </div>
-                {Array.isArray(industry.description) ? (
-                  <ul>
-                    {industry.description.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>{industry.description}</p>
+            <SwiperSlide key={industry.id} className={styles.slide}>
+              <article 
+                className={styles.industry}
+                onMouseEnter={() => setIsHovered(industry.id)}
+                onMouseLeave={() => setIsHovered(null)}
+              >
+                {industry.photo && (
+                  <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
+                    <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
+                  </div>
                 )}
-              </div>
-            </article>
+                <div className={styles.industryContent}>
+                  <div className={styles.industryHeader}>
+                    <h3>{industry.title}</h3>
+                  </div>
+                  {Array.isArray(industry.description) ? (
+                    <ul>
+                      {industry.description.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{industry.description}</p>
+                  )}
+                </div>
+              </article>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       </div>
       <div className={styles.backgroundImage}>
         <Image src="/industry.svg" alt="Industry background" fill style={{ objectFit: "cover" }} />
