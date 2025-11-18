@@ -123,3 +123,46 @@
 }
 
 }
+
+@media (min-width: 1440px) {
+  .card {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 24px;
+    justify-content: center;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .feature {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  .featureHeader {
+
+  h3 {
+      font-size: 18px;
+      line-height: 22px;
+  }
+}
+
+
+  .chevron {
+    display: none;
+}
+
+  .descriptionWrapper {
+  max-height: 1000px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.descriptionOpen {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+}
