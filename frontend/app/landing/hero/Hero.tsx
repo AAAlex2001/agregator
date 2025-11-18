@@ -42,7 +42,7 @@ const Hero = () => {
           <div className={styles.visualDecoration2}>
             <div className={styles.visualDecorationHeader}>
                 <div className={styles.visualDecorationHeaderText}>
-                    <p>На ваш заказ откликнулось 7 экспертов</p>
+                    <span>На ваш заказ откликнулось 7 экспертов</span>
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@ const Hero = () => {
           <div className={styles.visualDecoration4}>
             <div className={styles.visualDecorationHeader}>
                 <div className={styles.visualDecorationHeaderText}>
-                    <p>Отзыв опубликован!</p>
+                    <span>Отзыв опубликован!</span>
                 </div>
             </div>
         </div>

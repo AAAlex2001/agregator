@@ -131,16 +131,16 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 10px 20px;
   top: 90px;
   background: #FFDDA9;
   right: calc(0/1920)*100%;
   max-width: 150px;
 
-  p {
-      font-size: 18px;
-      line-height: 28px;
+  span {
+      font-size: 14px;
+      line-height: 20px;
       font-weight: 400;
     }
 }
@@ -166,7 +166,7 @@
     p {
       font-size: 14px;
       line-height: 20px;
-      font-weight: 400;
+      font-weight: 600;
     }
 }
 
@@ -189,13 +189,13 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 10px 20px;
   bottom: 0px;
   background: #B0ADFF;
   right: calc(20/1920)*100%;
 
-  p {
+  span {
       font-size: 14px;
       line-height: 20px;
       font-weight: 400;
