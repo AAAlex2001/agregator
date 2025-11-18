@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 78px auto 140px auto;
+  margin: 78px auto 70px auto;
   padding: 0 20px;
   max-width: 1640px;
 }
@@ -37,7 +37,7 @@
   transition: background 0.4s ease;
   cursor: pointer;
   padding: 14px 67.5px;
-  margin-bottom: 155px;
+  margin-bottom: 143px;
   text-decoration: none;
   font-size: 16px;
   line-height: 20px;
@@ -71,6 +71,8 @@
   position: relative;
   width: 100%;
   min-height: 322px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .heroImage {
@@ -200,4 +202,118 @@
       line-height: 20px;
       font-weight: 400;
     }
+}
+
+@media (min-width: 768px) {
+  .hero {
+  margin: 78px auto 70px auto;
+}
+
+  .leftSection {
+
+  h1 {
+    font-size: 30px;
+    line-height: 37px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    }
+
+  p {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    margin-bottom: 40px;
+  }
+}
+.primary {
+  border-radius: 10px;
+  padding: 17px 58.5px;
+  margin-bottom: 143px;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.visual {
+  min-height: 412px;
+  max-width: 1000px;
+}
+
+
+.visualDecoration1 {
+  top: 20px;
+  left: calc(0/360)*100%;
+  max-width: none;
+}
+
+.visualDecorationHeaderText {
+  gap: 10px;
+
+    span {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+}
+
+.visualDecorationBody {
+  display: flex;
+  flex-direction: row;
+
+    span {
+        font-size: 16px;
+        line-height: 24px;
+    }
+}
+
+.visualDecoration2 {
+  top: 90px;
+  background: #FFDDA9;
+  right: calc(0/1920)*100%;
+  max-width: none;
+
+  span {
+      font-size: 16px;
+      line-height: 24px;
+    }
+}
+
+.visualDecoration3 {
+  bottom: 30px;
+  left: calc(30/1920)*100%;
+  max-width: none;
+}
+
+.visualDecorationHeaderText {
+  gap: 10px;
+
+    p {
+      font-size: 16px;
+      line-height: 24px;
+    }
+}
+
+.checkIcon {
+  gap: 5px;
+
+    span {
+        font-size: 16px;
+        line-height: 24px;
+      }
+
+}
+
+.visualDecoration4 {
+  bottom: 0px;
+  right: calc(20/1920)*100%;
+
+  span {
+      font-size: 16px;
+      line-height: 24px;
+    }
+}
 }
