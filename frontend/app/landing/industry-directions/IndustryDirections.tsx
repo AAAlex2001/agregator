@@ -1,7 +1,9 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/navigation";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
@@ -71,11 +73,65 @@ const IndustryDirections = () => {
         <h2 className={styles.subtitle}>От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации</h2>
       </div>
       <div className={styles.card}>
+        <div className={styles.arrows}>
+          <button
+            className="industry-nav-btn industry-nav-btn--prev"
+            type="button"
+            aria-label="Предыдущий"
+          >
+            <span>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 12L13 18M19 12L13 6M19 12H5"
+                  stroke="#FFDDA9"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+
+          <button
+            className="industry-nav-btn industry-nav-btn--next"
+            type="button"
+            aria-label="Следующий"
+          >
+            <span>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 12L13 18M19 12L13 6M19 12H5"
+                  stroke="#FFDDA9"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
         <Swiper
+          modules={[Navigation]}
           loop={true}
           centeredSlides={true}
           slidesPerView={"auto"}
           spaceBetween={20}
+          navigation={{
+            prevEl: ".industry-nav-btn--prev",
+            nextEl: ".industry-nav-btn--next",
+          }}
           className={styles.swiper}
         >
           {industries.map((industry) => (
