@@ -30,10 +30,12 @@
   flex-direction: row;
   width: 212px;
   height: 38px;
+  flex-shrink: 0;
 
-  .svg {
+  svg {
     width: 212px;
     height: 38px;
+    display: block;
   }
 }
 
