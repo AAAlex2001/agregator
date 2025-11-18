@@ -149,9 +149,13 @@
 }
 
 
+  .feature:hover .featureImage {
+    opacity: 0.18;
+  }
+
   .chevron {
     display: none;
-}
+  }
 
   .descriptionWrapper {
   max-height: 1000px;
