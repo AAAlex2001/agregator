@@ -111,9 +111,11 @@
   border-radius: 10px;
   transition: background-color 0.3s ease;
 
-  &:hover,
-  &:focus-visible {
-    background-color: rgba(255, 221, 169, 0.5);
+  @media (min-width: 1440px) {
+    &:hover,
+    &:focus-visible {
+      background-color: rgba(255, 221, 169, 0.5);
+    }
   }
 }
 
@@ -142,10 +144,12 @@
   font-weight: 500;
   color: #1A1A1A;
 
-  &:hover,
-  &:focus-visible {
-    background-color: #FFDDA9;
-    border-color: transparent;
+  @media (min-width: 1440px) {
+    &:hover,
+    &:focus-visible {
+      background-color: #FFDDA9;
+      border-color: transparent;
+    }
   }
 }
 
@@ -166,9 +170,11 @@
   font-weight: 500;
   color: #1A1A1A;
 
-  &:hover,
-  &:focus-visible {
-    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  @media (min-width: 1440px) {
+    &:hover,
+    &:focus-visible {
+      background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+    }
   }
 }
 
