@@ -53,7 +53,7 @@
   height: 100vh;
   background: #FFFFFF;
   z-index: 99;
-  padding: 18px 20px 20px;
+  padding: 17px 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -68,15 +68,25 @@
 
 .menuLogo {
   display: flex;
-  width: 212px;
-  height: 38px;
+  width: 155px;
+  height: 28px;
   margin-bottom: 20px;
   flex-shrink: 0;
   
   svg {
+    width: 155px;
+    height: 28px;
+    display: block;
+  }
+
+  @media (min-width: 768px) {
     width: 212px;
     height: 38px;
-    display: block;
+
+    svg {
+      width: 212px;
+      height: 38px;
+    }
   }
 }
 

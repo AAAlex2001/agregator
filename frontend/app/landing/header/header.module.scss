@@ -28,14 +28,24 @@
 .logo {
   display: flex;
   flex-direction: row;
-  width: 212px;
-  height: 38px;
+  width: 155px;
+  height: 28px;
   flex-shrink: 0;
 
   svg {
+    width: 155px;
+    height: 28px;
+    display: block;
+  }
+
+  @media (min-width: 768px) {
     width: 212px;
     height: 38px;
-    display: block;
+
+    svg {
+      width: 212px;
+      height: 38px;
+    }
   }
 }
 
@@ -102,18 +112,26 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  max-width: 120px;
-  height: 44px;
+  width: 78px;
+  height: 32px;
   border-radius: 10px;
-  padding: 14px 22.5px;
+  padding: 8px 16px;
   border: 2px solid #FFB800;
   background: transparent;
   transition: background-color 0.5s ease, border-color 0.3s ease;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 16px;
   font-weight: 500;
   color: #1A1A1A;
+
+  @media (min-width: 768px) {
+    max-width: 120px;
+    width: auto;
+    height: 44px;
+    padding: 14px 22.5px;
+    font-size: 16px;
+  }
 
   &:hover,
   &:focus-visible {
