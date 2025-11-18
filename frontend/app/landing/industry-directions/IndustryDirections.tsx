@@ -1,9 +1,10 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
@@ -123,7 +124,7 @@ const IndustryDirections = () => {
           </button>
         </div>
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
           loop={true}
           centeredSlides={true}
           slidesPerView={"auto"}
@@ -131,6 +132,9 @@ const IndustryDirections = () => {
           navigation={{
             prevEl: ".industry-nav-btn--prev",
             nextEl: ".industry-nav-btn--next",
+          }}
+          pagination={{
+            clickable: true,
           }}
           breakpoints={{
             1440: {
