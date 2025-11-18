@@ -1,32 +1,31 @@
 .hero {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 140px auto;
+  margin: 78px auto 140px auto;
   padding: 0 20px;
   max-width: 1640px;
-  gap: 10px;
 }
 
 .leftSection {
   display: flex;
   flex-direction: column;
-  max-width: 668px;
+  justify-content: center;
 
   h1 {
-    font-size: 34px;
-    line-height: 41px;
+    font-size: 24px;
+    line-height: 32px;
     font-weight: 600;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     }
 
   p {
-    font-size: 18px;
-    line-height: 28px;
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 500;
     color: #808080;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
   }
 }
 .primary {
@@ -37,15 +36,16 @@
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
   transition: background 0.4s ease;
   cursor: pointer;
-  padding: 17px 58.5px;
-  margin-bottom: 85px;
+  padding: 14px 67.5px;
+  margin-bottom: 155px;
   text-decoration: none;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 20px;
   font-weight: 500;
   color: #FFF8EB;
   width: fit-content;
   gap: 20px;
+  white-space: nowrap;
 
   &:hover,
   &:focus-visible {
@@ -72,6 +72,14 @@
   width: 100%;
 }
 
+.heroImage {
+  width: 100%;
+  min-width: 320px;
+  height: auto;
+  object-fit: contain;
+  min-height: 322px;
+}
+
 
 .visualDecoration1 {
   position: absolute;
@@ -82,23 +90,25 @@
   padding: 10px 20px;
   top: 20px;
   background: #FFFFFF;
-  left: calc(120/1920)*100%;
+  right: calc(20/360)*100%;
 }
 
 .visualDecorationHeaderText {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   gap: 10px;
 
     span {
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 14px;
+      line-height: 20px;
       font-weight: 400;
     }
 
     p {
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 14px;
+      line-height: 20px;
       font-weight: 600;
     }
 }
@@ -108,8 +118,8 @@
   flex-direction: row;
 
     span {
-        font-size: 18px;
-        line-height: 28px;
+        font-size: 14px;
+        line-height: 20px;
         font-weight: 400;
     }
 }
@@ -138,9 +148,10 @@
   border-radius: 20px;
   border: 1px solid #FF8A00;
   padding: 10px 20px;
-  bottom: 100px;
+  bottom: 30px;
   background: #FFFFFF;
-  right: calc(500/1920)*100%;
+  left: calc(30/1920)*100%;
+  max-width: 290px;
 }
 
 .visualDecorationHeaderText {
@@ -149,8 +160,8 @@
   gap: 10px;
 
     p {
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 14px;
+      line-height: 20px;
       font-weight: 400;
     }
 }
@@ -159,10 +170,12 @@
   display: flex;
   flex-direction: row;
   gap: 5px;
+  justify-content: flex-start;
+  align-items: center;
 
     span {
-        font-size: 18px;
-        line-height: 28px;
+        font-size: 14px;
+        line-height: 20px;
         font-weight: 400;
       }
 
@@ -174,13 +187,13 @@
   flex-direction: column;
   border-radius: 20px;
   padding: 10px 20px;
-  top: 70px;
+  bottom: 70px;
   background: #B0ADFF;
-  right: calc(-750/1920)*100%;
+  right: calc(20/1920)*100%;
 
   p {
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 14px;
+      line-height: 20px;
       font-weight: 400;
     }
 }

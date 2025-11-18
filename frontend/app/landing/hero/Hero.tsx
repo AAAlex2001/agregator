@@ -1,5 +1,4 @@
 import styles from "./hero.module.scss";
-import Image from "next/image";
 
 
 const Hero = () => {
@@ -7,7 +6,7 @@ const Hero = () => {
     <section className={styles.hero}>
         <div className={styles.leftSection}>
         <h1>
-          Единственная площадка для аттестованных экспертов промышленной безопасности
+          Единственная площадка для поиска аттестованных экспертов промышленной безопасности
         </h1>
         <p>
           Размещайте заказы и находите проекты среди специалистов по всей России. Все эксперты имеют официальные аттестации Ростехнадзора
@@ -22,7 +21,7 @@ const Hero = () => {
           </button>
       </div>
       <div className={styles.visual} aria-hidden="true">
-          <Image src="/hero_svg.svg" alt="Карьер" width={787} height={412} />
+          <img src="/hero_svg.svg" alt="Карьер" className={styles.heroImage} />
 
 
           <div className={styles.visualDecoration1}>
@@ -68,14 +67,14 @@ const Hero = () => {
             <div className={styles.visualDecorationBody}>
                 <span>Выполнил эксперт с аттестацией Э2 КЛ/ТП</span>
             </div>
+        </div>
 
-              <div className={styles.visualDecoration4}>
+          <div className={styles.visualDecoration4}>
             <div className={styles.visualDecorationHeader}>
                 <div className={styles.visualDecorationHeaderText}>
                     <p>Отзыв опубликован!</p>
                 </div>
             </div>
-        </div>
         </div>
 
       </div>
