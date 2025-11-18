@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import BurgerMenu from "./BurgerMenu";
 import styles from "./header.module.scss";
 
 const Header = () => {
@@ -61,6 +62,7 @@ const Header = () => {
           <button className={styles.signUp}>  Зарегистрироваться
           </button>
         </div>
+        <BurgerMenu />
       </div>
     </header>
   );
