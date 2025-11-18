@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 180px;
-  padding: 0 20px;
 }
 
 .content {
@@ -12,12 +11,13 @@
   justify-content: center;
   max-width: 1640px;
   margin-left: 0;
+  padding: 0 20px;
 }
 
 .backgroundImage {
   position: relative;
   width: 100%;
-  height: 1190px;
+  height: 475px;
 }
 
 .title {
@@ -253,6 +253,10 @@
     display: none;
   }
 
+  .backgroundImage {
+  height: 920px;
+  }
+
   .swiper {
     padding-bottom: 0;
   }
@@ -285,6 +289,7 @@
     transform: none !important;
     max-width: 1640px;
     margin: 0 auto;
+    padding: 0 20px;
   }
 
   .slide {
