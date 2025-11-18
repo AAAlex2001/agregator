@@ -37,34 +37,60 @@ const features = [
 
 
 const Advantages = () => {
-  const [isHovered, setIsHovered] = useState<number | null>(null);
+  const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
+
+  const toggleCard = (id: number) => {
+    setOpenedCards((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <section className={styles.section} id="advantages">
       <div className={styles.card}>
-        {features.map((feature) => (
-          <article 
-            className={styles.feature} 
-            key={feature.id}
-            onMouseEnter={() => setIsHovered(feature.id)}
-            onMouseLeave={() => setIsHovered(null)}
-          >
-            {feature.photo && (
-              <div className={`${styles.featureImage} ${isHovered === feature.id ? styles.visible : ''}`}>
-                <Image src={feature.photo} alt={feature.title} fill style={{ objectFit: "cover" }} />
+        {features.map((feature) => {
+          const isOpen = openedCards.has(feature.id);
+          return (
+            <article 
+              className={`${styles.feature} ${isOpen ? styles.featureOpen : ''}`}
+              key={feature.id}
+              onClick={() => toggleCard(feature.id)}
+            >
+              {feature.photo && (
+                <div className={`${styles.featureImage} ${isOpen ? styles.visible : ''}`}>
+                  <Image src={feature.photo} alt={feature.title} fill style={{ objectFit: "cover" }} />
+                </div>
+              )}
+              <div className={styles.featureContent}>
+                <div className={styles.featureHeader}>
+                  {feature.icon && (
+                    <Image src={feature.icon} alt={feature.title} width={40} height={40} />
+                  )}
+                  <h3>{feature.title}</h3>
+                  <svg 
+                    className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M6 9L12 15L18 9" stroke="#FFB800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className={`${styles.descriptionWrapper} ${isOpen ? styles.descriptionOpen : ''}`}>
+                  <p>{feature.description}</p>
+                </div>
               </div>
-            )}
-            <div className={styles.featureContent}>
-              <div className={styles.featureHeader}>
-                {feature.icon && (
-                  <Image src={feature.icon} alt={feature.title} width={48} height={48} />
-                )}
-                <h3>{feature.title}</h3>
-              </div>
-              <p>{feature.description}</p>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

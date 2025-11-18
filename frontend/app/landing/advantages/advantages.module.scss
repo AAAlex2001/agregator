@@ -6,13 +6,12 @@
 
 .card {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 24px;
   max-width: 1600px;
   justify-content: center;
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
 }
 
 .feature {
@@ -24,15 +23,17 @@
   padding: 20px;
   border-radius: 15px;
   border: 2px solid #FFB800;
-  flex: 0 0 calc((100% - 24px) / 4);
+  width: 100%;
   overflow: hidden;
   cursor: pointer;
+  transition: all 0.3s ease;
 
   p {
     font-size: 16px;
     line-height: 22px;
     color: #808080;
     font-weight: 400;
+    margin: 0;
   }
 }
 
@@ -45,6 +46,7 @@
   z-index: 0;
   opacity: 0;
   transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .featureImage.visible {
@@ -63,13 +65,36 @@
 .featureHeader {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
   width: 100%;
 
   h3 {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 16px;
+    line-height: 20px;
     font-weight: 600;
+    width: 100%;
   }
+}
+
+.chevron {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.descriptionWrapper {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.descriptionOpen {
+  max-height: 1000px;
+  opacity: 1;
 }
