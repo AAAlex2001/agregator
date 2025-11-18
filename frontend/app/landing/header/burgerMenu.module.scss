@@ -61,6 +61,11 @@
   transform: translateY(-20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
 
+  @media (min-width: 768px) {
+    padding: 18px 20px 20px;
+
+  }
+
   @media (min-width: 1440px) {
     display: none;
   }
