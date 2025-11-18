@@ -45,9 +45,7 @@ const BurgerMenu = () => {
       </button>
 
       {isOpen && (
-        <>
-          <div className={styles.overlay} onClick={closeMenu}></div>
-          <nav className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
+        <nav className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
             <Link
               href="#how-it-works"
               onClick={(e) => handleSmoothScroll(e, "#how-it-works")}
@@ -81,7 +79,6 @@ const BurgerMenu = () => {
               <button className={styles.menuSignUp}>Зарегистрироваться</button>
             </div>
           </nav>
-        </>
       )}
     </>
   );
