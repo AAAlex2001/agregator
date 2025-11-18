@@ -132,6 +132,12 @@ const IndustryDirections = () => {
             prevEl: ".industry-nav-btn--prev",
             nextEl: ".industry-nav-btn--next",
           }}
+          breakpoints={{
+            1440: {
+              enabled: false,
+              allowTouchMove: false,
+            },
+          }}
           className={styles.swiper}
         >
           {industries.map((industry) => (
