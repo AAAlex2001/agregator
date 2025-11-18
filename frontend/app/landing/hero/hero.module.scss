@@ -210,12 +210,16 @@
 }
 
   .leftSection {
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-right: auto;
 
   h1 {
     font-size: 30px;
     line-height: 37px;
     font-weight: 600;
     margin-bottom: 24px;
+    max-width: 1000px;
     }
 
   p {
@@ -223,6 +227,7 @@
     line-height: 24px;
     font-weight: 500;
     margin-bottom: 40px;
+    max-width: 700px;
   }
 }
 .primary {
@@ -320,10 +325,11 @@
 
 @media (min-width: 1440px) {
   .hero {
-  margin: 78px auto 70px auto;
+    margin: 78px auto 70px auto;
     flex-direction: row;
+    align-items: flex-start;
     gap: 50px;
-}
+  }
 
   .leftSection {
 
@@ -332,6 +338,7 @@
     line-height: 42px;
     font-weight: 600;
     margin-bottom: 32px;
+    max-width: none;
     }
 
   p {
@@ -339,6 +346,7 @@
     line-height: 24px;
     font-weight: 500;
     margin-bottom: 60px;
+    max-width: none;
   }
 }
 
