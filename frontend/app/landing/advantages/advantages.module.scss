@@ -145,12 +145,22 @@
   h3 {
       font-size: 18px;
       line-height: 22px;
+    white-space: nowrap;
   }
 }
 
 
+  .featureImage.visible {
+    opacity: 0;
+  }
+
   .feature:hover .featureImage {
     opacity: 0.18;
+  }
+
+  .featureContent {
+    flex-grow: 1;
+    justify-content: space-between;
   }
 
   .chevron {
