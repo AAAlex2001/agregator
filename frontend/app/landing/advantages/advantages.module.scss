@@ -7,7 +7,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   max-width: 1600px;
   justify-content: center;
   width: 100%;
@@ -33,7 +33,6 @@
     line-height: 22px;
     color: #808080;
     font-weight: 400;
-    margin: 0;
   }
 }
 
@@ -50,7 +49,7 @@
 }
 
 .featureImage.visible {
-  opacity: 0.2;
+  opacity: 0.18;
 }
 
 .featureContent {
@@ -80,7 +79,7 @@
 
 .chevron {
   flex-shrink: 0;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
 }
 
 .chevronOpen {
@@ -97,4 +96,30 @@
 .descriptionOpen {
   max-height: 1000px;
   opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .card {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .feature {
+    width: calc((100% - 24px) / 2);
+
+  }
+
+  .featureHeader {
+
+  h3 {
+      font-size: 18px;
+      line-height: 22px;
+  }
+}
+
 }
