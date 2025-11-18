@@ -62,7 +62,10 @@ const Header = () => {
           <button className={styles.signUp}>  Зарегистрироваться
           </button>
         </div>
-        <BurgerMenu />
+        <div className={styles.mobileActions}>
+          <button className={styles.mobileLogin}>Войти</button>
+          <BurgerMenu />
+        </div>
       </div>
     </header>
   );

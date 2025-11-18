@@ -75,7 +75,6 @@ const BurgerMenu = () => {
               FAQ
             </Link>
             <div className={styles.menuActions}>
-              <button className={styles.menuLogin}>Войти</button>
               <button className={styles.menuSignUp}>Зарегистрироваться</button>
             </div>
           </nav>
