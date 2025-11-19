@@ -1,8 +1,9 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./reviews.module.scss";
@@ -179,7 +180,7 @@ const Reviews = () => {
 
       <div className={styles.list}>
         <Swiper
-          modules={[Navigation]}
+          modules={[Navigation, Pagination]}
           loop={true}
           centeredSlides={true}
           slidesPerView={"auto"}
@@ -187,6 +188,9 @@ const Reviews = () => {
           navigation={{
             prevEl: ".orders-nav-btn--prev",
             nextEl: ".orders-nav-btn--next",
+          }}
+          pagination={{
+            clickable: true,
           }}
         >
           {reviews.map((review) => (
