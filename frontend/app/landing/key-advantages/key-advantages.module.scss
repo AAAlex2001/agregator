@@ -1,6 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
+  margin-bottom: 120px;
 }
 
 .content {
@@ -133,11 +134,17 @@
   }
 }
 
+.backgroundImage {
+  position: relative;
+  width: 100%;
+  height: 475px;
+}
+
 @media (min-width: 768px) {
 
-  .content {
-  margin: 0 auto 160px auto;
-  }
+  .section {
+  margin-bottom: 200px;
+}
 
 
   .header {
@@ -209,9 +216,10 @@
 }
 
 @media (min-width: 1440px) {
+  
 
-  .content {
-  margin: 0 auto 260px auto;
-  }
+  .backgroundImage {
+  height: 920px;
+}
 
 }

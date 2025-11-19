@@ -209,7 +209,7 @@ const Reviews = () => {
 
       <div className={styles.backgroundImage}>
         <Image
-          src="/reviews.jpg"
+          src="/reviews.png"
           alt="Reviews background"
           fill
           style={{ objectFit: "cover" }}
