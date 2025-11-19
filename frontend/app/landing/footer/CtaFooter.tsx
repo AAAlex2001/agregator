@@ -6,6 +6,9 @@ const CtaFooter = () => {
     <footer className={styles.footer} id="footer">
       <div className={styles.cta}>
         <div className={styles.ctaCard}>
+            <div className={styles.backgroundImage}>
+        <Image src="/belaz_3.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
+      </div>
             <div className={styles.backgroundImageBelAz}>
         <Image src="/belaz_2.svg" alt="Belaz" fill style={{ objectFit: "contain" }} />
       </div>
@@ -17,6 +20,22 @@ const CtaFooter = () => {
             </div>
             <div className={styles.backgroundImageCoal}>
               <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
+
+            <div className={styles.backgroundImageCoal2}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal2}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal2}>
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal2}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal2}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
             </div>
           <div className={styles.ctaLeft}>
             <span className={styles.ctaChip}>Действуйте прямо сейчас</span>
