@@ -142,7 +142,7 @@ const IndustryDirections = () => {
               allowTouchMove: false,
             },
           }}
-          className={styles.swiper}
+          className={`${styles.swiper} industry-swiper`}
         >
           {industries.map((industry) => (
             <SwiperSlide key={industry.id} className={styles.slide}>

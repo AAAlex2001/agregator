@@ -166,7 +166,7 @@ const Orders = () => {
     loop={true}
     centeredSlides={true}
     slidesPerView={"auto"}
-    spaceBetween={20}
+    spaceBetween={5}
     navigation={{
       prevEl: ".orders-nav-btn--prev",
       nextEl: ".orders-nav-btn--next",
@@ -174,6 +174,7 @@ const Orders = () => {
     pagination={{
       clickable: true,
     }}
+    className="orders-swiper"
   >
     {orders.map((order) => (
       <SwiperSlide key={order.title} className={styles.slide}>
