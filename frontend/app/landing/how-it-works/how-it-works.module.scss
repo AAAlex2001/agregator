@@ -1,6 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
+  margin-bottom: 120px;
 }
 
 .content {
@@ -136,6 +137,9 @@
 }
 
 @media (min-width: 768px) {
+  .section {
+    margin-bottom: 200px;
+  }
 
   .content {
   margin: 0 auto 160px auto;
