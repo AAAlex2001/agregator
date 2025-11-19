@@ -1,13 +1,26 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: agregator-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: agregator-frontend
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
     restart: unless-stopped
