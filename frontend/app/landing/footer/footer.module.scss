@@ -12,7 +12,7 @@
   left: 0;
   right: 0;
   top: -600px;
-  height: 1000px;
+  height: calc(100% + 600px);
   background-image: url("/footer.svg");
   background-repeat: no-repeat;
   background-size: cover;
