@@ -11,8 +11,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -550px; /* тянем фон вверх, чтобы покрыть CTA-блок */
-  height: 1000px; /* фиксированная высота фона */
+  top: -550px;
+  height: 1000px;
   background-image: url("/footer.svg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -34,7 +34,7 @@
 
 .primary {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   margin-bottom: 95px;
 
@@ -45,12 +45,16 @@
   flex-direction: column;
   gap: 20px;
   max-width: 300px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 62px auto;
 
   h1 {
     font-size: 14px;
     line-height: 17px;
     font-weight: 400;
     color: #FFFFFF;
+    text-align: center;
   }
 
 }
@@ -63,6 +67,14 @@
   width: 100%;
   justify-content: center;
   padding: 0 10px;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+}
+
+.links > div {
+  flex: 1 0 calc((100% - 40px) / 4);
+  display: flex;
+  flex-direction: column;
 
 
   h2 {
