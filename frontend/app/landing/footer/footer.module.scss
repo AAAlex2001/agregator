@@ -270,7 +270,7 @@
     position: absolute;
     width: 300px;
     height: 300px;
-    left: -90px;
+    left: -110px;
     bottom: 690px;
     z-index: 0;
   }
@@ -280,14 +280,184 @@
     width: 300px;
     height: 300px;
     left: -20px;
-    bottom: 530px;
+    bottom: 550px;
     z-index: 0;
   }
 
 }
 
 @media (min-width: 768px) {
-  
+
+  .primaryLogo {
+  margin: 0 auto 62px 0;
+  align-items: flex-start;
+
+    h1 {
+    text-align: left;
+  }
+
+}
+
+  .chatBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+  .bottomLinksButtoms {
+
+
+    p {
+      max-width: 250px;
+    }
+
+}
+
+  .links > div {
+  flex: 1 0 calc((100% - 40px) / 5);
+}
+
+
+  .backgroundImage {
+  width: 310px;
+  height: 275px;
+  left: 40px;
+  bottom: 690px;
+}
+
+.backgroundImageCoal {
+    left: 10px;
+    bottom: 800px;
+
+
+  &:nth-child(2) {
+    left: -70px;
+    bottom: 710px;
+  }
+
+  &:nth-child(3) {
+    left: -110px;
+    bottom: 490px;
+  }
+
+  &:nth-child(4) {
+    left: -20px;
+    bottom: 350px;
+  }
+
+}
+
+}
+
+@media (min-width: 1440px) {
+
+  .primary {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 95px;
+  position: relative;
+    justify-content: center;
+
+}
+
+  .primaryLogo {
+  margin: 0 auto 62px 0;
+    justify-content: flex-start;
+  align-items: flex-start;
+
+    h1 {
+    text-align: left;
+  }
+
+}
+
+  .chatBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 16px;
+}
+
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+  .bottomLinksButtoms {
+    flex-direction: row;
+
+
+    p {
+      max-width: 250px;
+    }
+
+}
+
+
+  .bottomLinks {
+
+    span {
+      text-align: right;
+    }
+
+}
+
+  .links {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  width: 100%;
+  justify-content: center;
+  padding: 0 10px;
+  flex-wrap: nowrap;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+  .links > div {
+  flex: 0 0 auto;
+}
+
+
+  .backgroundImage {
+  display: none;
+}
+
+.backgroundImageCoal {
+    display: none;
+
+
+  &:nth-child(2) {
+    display: none;
+  }
+
+  &:nth-child(3) {
+    display: none;
+  }
+
+  &:nth-child(4) {
+    display: none;
+  }
+
+}
+
 }
 
 
