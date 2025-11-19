@@ -11,7 +11,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -550px;
+  top: -600px;
   height: 1000px;
   background-image: url("/footer.svg");
   background-repeat: no-repeat;
@@ -108,11 +108,12 @@
   justify-content: space-between;
   gap: 30px;
 
-  span {
+  > span {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
     color: #FFFFFF;
+    order: 2;
   }
 
   a {
@@ -186,6 +187,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  order: 1;
 
     span {
       font-size: 12px;
@@ -398,6 +400,14 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 30px;
+
+  > span {
+    order: 1;
+  }
+}
+
+.bottomLinks {
+  order: 2;
 }
 
   .bottomLinksButtoms {
