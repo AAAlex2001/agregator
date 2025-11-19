@@ -184,7 +184,7 @@ const Reviews = () => {
           loop={true}
           centeredSlides={true}
           slidesPerView={"auto"}
-          spaceBetween={0}
+          spaceBetween={5}
           navigation={{
             prevEl: ".orders-nav-btn--prev",
             nextEl: ".orders-nav-btn--next",
