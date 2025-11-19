@@ -98,7 +98,7 @@ const KeyAdvantages = () => {
                     </div>
             </div>
       <div className={styles.backgroundImage}>
-        <Image src="/key-advantages.jpg" alt="Key advantages background" fill style={{ objectFit: "cover"  }} />
+        <Image src="/key-advantages.png" alt="Key advantages background" fill style={{ objectFit: "cover"  }} />
       </div>
     </section>
   );
