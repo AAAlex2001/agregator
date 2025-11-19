@@ -8,7 +8,7 @@
   padding: 0 20px;
   flex-direction: column;
   max-width: 1640px;
-  margin: 0 auto 273px auto;
+  margin: 0 auto 120px auto;
   width: 100%;
 }
 
@@ -20,13 +20,13 @@
   position: relative;
 
   h1 {
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 20px;
+    line-height: 28px;
     font-weight: 600;
   }
 
   p {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 24px;
     font-weight: 500;
     color: #808080;
@@ -41,17 +41,17 @@
 
 .stepsTabs {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 12px;
   border: 2px solid #FFB800;
-  border-radius: 50px;
+  border-radius: 30px;
   justify-content: center ;
   align-items: center;
   padding: 10px;
 
   span {
-    font-size: 20px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 20px;
     font-weight: 500;
     cursor: pointer;
     width: 100%;
@@ -74,8 +74,7 @@
 
 .steps {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 40px;
 }
 
@@ -92,8 +91,7 @@
   display: flex;
   flex-direction: row;
   gap: 30px;
-  animation: fadeIn 0.7s ease;
-  flex: 0 0 calc((100% - 40px) / 2);
+  animation: fadeIn 1s ease;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -102,7 +100,7 @@
 .iconWrapper {
   position: relative;
   width: 42px;
-  height: 96px;
+  height: 78px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -116,42 +114,123 @@
   width: 100%;
 
   h2 {
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 500;
   }
 
   p {
     font-size: 16px;
-    line-height: 22px;
+    line-height: 24px;
     font-weight: 400;
   }
 
 }
 
 .backgroundImage {
+  display: none;
+}
+
+.backgroundImageCoal {
+  display: none;
+}
+
+@media (min-width: 768px) {
+
+  .content {
+  margin: 0 auto 160px auto;
+  }
+
+
+  .header {
+
+  h1 {
+    font-size: 24px;
+    line-height: 29px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+  .stepsTabs {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  span {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+}
+
+  .steps {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+    flex-wrap: wrap;
+}
+
+
+  .step {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  animation: fadeIn 0.7s ease;
+  flex: 0 0 calc((100% - 40px)/2);
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  }
+
+  .iconWrapper {
+  width: 42px;
+  height: 82px;
+  }
+
+  .description {
+
+  h2 {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+}
+
+
+  .backgroundImage {
   position: absolute;
-  width: 315px;
-  height: 280px;
+  width: 150px;
+  height: 150px;
   right: 100px;
-  bottom: -40px;
+  bottom: 60px;
   z-index: 1;
+  display: block;
 }
 
 .backgroundImageCoal {
   position: absolute;
-  width: 400px;
-  height: 400px;
-  right: -40px;
-  bottom: -70px;
+  width: 200px;
+  height: 200px;
+  right: 20px;
+  bottom: 70px;
   z-index: 0;
+  display: block;
 
   &:nth-child(2) {
     position: absolute;
     width: 120px;
     height: 120px;
     right: 10px;
-    bottom: -40px;
+    bottom: 40px;
     z-index: 0;
   }
 
@@ -160,28 +239,83 @@
     width: 120px;
     height: 120px;
     right: -40px;
-    top: 10px;
+    bottom: -20px;
     z-index: 0;
     rotate: (20deg) ;
   }
 
   &:nth-child(4) {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     left: 150px;
-    top: 500px;
+    top: 480px;
     z-index: 0;
     rotate: (-40deg) ;
   }
 
   &:nth-child(5) {
     position: absolute;
-    width: 350px;
-    height: 350px;
-    left: -70px;
-    top: 400px;
+    width: 150px;
+    height: 150px;
+    left: 10px;
+    top: 460px;
     z-index: 0;
     rotate: (70deg) ;
   }
+}
+
+}
+
+@media (min-width: 1440px) {
+
+  .content {
+  margin: 0 auto 260px auto;
+  }
+
+
+  .backgroundImage {
+  width: 315px;
+  height: 280px;
+  right: 100px;
+  bottom: -40px;
+  display: block;
+}
+
+.backgroundImageCoal {
+  width: 400px;
+  height: 400px;
+  right: -40px;
+  bottom: -70px;
+  display: block;
+
+  &:nth-child(2) {
+    width: 120px;
+    height: 120px;
+    right: 10px;
+    bottom: -40px;
+  }
+
+  &:nth-child(3) {
+    width: 120px;
+    height: 120px;
+    right: -40px;
+    top: 10px;
+  }
+
+  &:nth-child(4) {
+    width: 200px;
+    height: 200px;
+    left: 150px;
+    top: 450px;
+  }
+
+  &:nth-child(5) {
+    width: 350px;
+    height: 350px;
+    left: -70px;
+    top: 350px;
+  }
+}
+
 }
