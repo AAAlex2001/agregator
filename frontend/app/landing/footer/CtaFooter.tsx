@@ -21,6 +21,12 @@ const CtaFooter = () => {
             <div className={styles.backgroundImageCoal}>
               <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
             </div>
+            <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
 
             <div className={styles.backgroundImageCoal2}>
         <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />

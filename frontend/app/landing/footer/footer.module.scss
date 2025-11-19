@@ -37,6 +37,7 @@
   flex-direction: column;
   width: 100%;
   margin-bottom: 95px;
+  position: relative;
 
 }
 
@@ -234,6 +235,59 @@
       }
     }
 
+}
+
+
+.backgroundImage {
+  position: absolute;
+  width: 310px;
+  height: 275px;
+  left: 40px;
+  bottom: 890px;
+  z-index: 1;
+}
+
+.backgroundImageCoal {
+
+  position: absolute;
+    width: 260px;
+    height: 260px;
+    left: 10px;
+    bottom: 1000px;
+    z-index: 0;
+
+
+  &:nth-child(2) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: -70px;
+    bottom: 910px;
+    z-index: 0;
+  }
+
+  &:nth-child(3) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: -90px;
+    bottom: 690px;
+    z-index: 0;
+  }
+
+  &:nth-child(4) {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: -20px;
+    bottom: 530px;
+    z-index: 0;
+  }
+
+}
+
+@media (min-width: 768px) {
+  
 }
 
 

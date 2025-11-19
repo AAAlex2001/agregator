@@ -1,11 +1,27 @@
 import Link from "next/link";
 import styles from "./footer.module.scss";
+import Image from "next/image";
 
 const Footer = () => {
   return (
     <footer className={styles.footer} id="footer">
         <div className={styles.content}>
       <div className={styles.primary}>
+          <div className={styles.backgroundImage}>
+        <Image src="/belaz_3.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
+      </div>
+          <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            </div>
+            <div className={styles.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            </div>
           <div className={styles.primaryLogo}>
         <span className={styles.logo}>
 
