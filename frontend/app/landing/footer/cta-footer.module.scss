@@ -12,17 +12,16 @@
 
 .ctaCard {
   display: flex;
-  flex-direction: row;
-  gap: 40px;
+  flex-direction: column;
+  gap: 20px;
   align-items: center;
-  padding: 60px 50px 60px 222px;
+  padding: 20px;
   background:
     radial-gradient(200% 820% at -129.81% 50.16%, rgba(255, 161, 0, 0.5) 3.98%, #FFFFFF 83.65%),
     linear-gradient(0deg, #FFFFFF, #FFFFFF);
   border-radius: 24px;
   position: relative;
   z-index: 2;
-  max-height: 320px;
 }
 
 .ctaCard::before {
@@ -42,8 +41,10 @@
 
 .ctaLeft {
   display: flex;
-  gap: 18px;
+  gap: 15px;
   flex-direction: column;
+  z-index: 3;
+  align-items: center;
 
   .ctaChip {
     align-items: center;
@@ -67,8 +68,8 @@
   }
 
   h1 {
-    font-size: 22px;
-    line-height: 100%;
+    font-size: 18px;
+    line-height: 24px;
     font-weight: 500;
     color: #0D0D0D;
   }
@@ -102,7 +103,7 @@
       .liText {
         width: 100%;
         font-size: 14px;
-        line-height: 22px;
+        line-height: 20px;
         color: #808080;
       }
     }
@@ -114,12 +115,14 @@
   }
 }
 
-/* arrow removed from CTA primary button */
 
 .ctaActions {
   display: flex;
   gap: 12px;
   margin-top: 8px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .primaryBtn {
@@ -127,17 +130,18 @@
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  padding: 14px 22.5px;
+  padding: 11.5px 80.5px;
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
   transition: background 0.4s ease;
   cursor: pointer;
   text-decoration: none;
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 18px;
   font-weight: 500;
   color: #FFFFFF;
   width: fit-content;
   gap: 20px;
+  white-space: nowrap;
 
   &:hover,
   &:focus-visible {
@@ -153,14 +157,15 @@
   align-items: center;
   background: #FFDDA9;
   border-radius: 10px;
-  padding: 16px 24px;
+  padding: 11.5px 22.5px;
   cursor: pointer;
   transition: background-color 0.5s ease;
   font-weight: 600;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 18px;
   color: #4D4D4D;
   width: fit-content;
+  white-space: nowrap;
 
   &:hover,
   &:focus-visible {
@@ -168,70 +173,44 @@
   }
 }
 
-.backgroundImage {
-  position: absolute;
-  width: 310px;
-  height: 275px;
-  left: 170px;
-  bottom: 310px;
-  z-index: 1;
-}
-
-.backgroundImageCoal {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  left: 130px;
-  bottom: 420px;
-  z-index: 0;
-  rotate: (170deg);
-
-
-  &:nth-child(2) {
+.backgroundImageBelAz {
     position: absolute;
-    width: 300px;
-    height: 300px;
-    left: 50px;
-    bottom: 300px;
-    z-index: 0;
+    width: 315px;
+    height: 280px;
+    left: 0;
+    top: -210px;
+    z-index: 3;
+    display: block;
   }
 
-  &:nth-child(3) {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    left: 50px;
-    bottom: 300px;
-    z-index: 0;
-  }
-
-  &:nth-child(5) {
+  .backgroundImageCoal {
     position: absolute;
     width: 200px;
     height: 200px;
-    left: 20px;
-    bottom: 260px;
+    left: 80px;
+    top: -230px;
     z-index: 0;
-  }
+    rotate: (-80deg);
+    display: block;
 
-  &:nth-child(6) {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    left: -30px;
-    bottom: 60px;
-    z-index: 0;
-    rotate: (90deg);
-  }
+    &:nth-child(2) {
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      left: -20px;
+      top: -280px;
+      z-index: 0;
+      rotate: (90deg);
+    }
 
-  &:nth-child(7) {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    left: -30px;
-    bottom: -130px;
-    z-index: 0;
-    rotate: (90deg);
-  }
+    &:nth-child(3) {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      left: 0;
+      top: -250px;
+      z-index: 0;
+      rotate: (0deg);
+    }
 
-}
+  }
