@@ -176,7 +176,7 @@ const IndustryDirections = () => {
         </Swiper>
       </div>
       <div className={styles.backgroundImage}>
-        <Image src="/industry.svg" alt="Industry background" fill style={{ objectFit: "cover" }} />
+        <Image src="/industry.png" alt="Industry background" fill style={{ objectFit: "cover" }} />
       </div>
     </section>
   );
