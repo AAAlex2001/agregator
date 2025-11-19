@@ -1,7 +1,7 @@
 .footer {
   display: flex;
   flex-direction: column;
-  background: transparent;
+  background: #000000;
   position: relative;
   overflow: visible;
 }
@@ -102,13 +102,17 @@
 
 .bottom {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-  color: #FFFFFF;
+  gap: 30px;
+
+  span {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: #FFFFFF;
+  }
 
   a {
     color: #FFFFFF;
@@ -126,7 +130,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-
+  gap: 16px;
 }
 
 .navLinks {
@@ -187,7 +191,7 @@
       line-height: 15px;
       color: #808080;
       font-weight: 500;
-      text-align: right;
+      text-align: center;
     }
 
     a {
@@ -195,7 +199,7 @@
       line-height: 15px;
       color: #808080;
       font-weight: 500;
-      text-align: right;
+      text-align: center;
       text-decoration: underline;
       margin-left: 3px;
     }
@@ -204,7 +208,7 @@
 
 .bottomLinksButtoms {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
 
 
@@ -222,6 +226,7 @@
       transition: background-color 0.5s ease, border-color 0.5s ease;
       white-space: nowrap;
       cursor: pointer;
+      text-align: center;
 
       &:hover,
       &:focus-visible {

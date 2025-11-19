@@ -77,7 +77,6 @@ const Footer = () => {
 
       </div>
       <div className={styles.bottom}>
-          <span>© {new Date().getFullYear()} Ресурс-Плюс. Все права защищены.</span>
         <div className={styles.bottomLinks}>
             <span>*Все эксперты имеют аттестацию Ростехнадзора согласно
             <a href="https://www.gosnadzor.ru/service/list/certification%20experts/%D0%9F%D1%80-287%20%D0%BE%D1%82%2031.08.2022.pdf?ysclid=mi265psds810889564"
@@ -93,6 +92,7 @@ const Footer = () => {
           <p>Политика обработки данных</p>
                 </div>
         </div>
+          <span>© {new Date().getFullYear()} Ресурс-Плюс. Все права защищены.</span>
       </div>
             </div>
     </footer>
