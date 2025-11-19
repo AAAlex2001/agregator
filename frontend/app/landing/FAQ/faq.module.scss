@@ -18,18 +18,18 @@
   position: relative;
 
   h1 {
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 20px;
+    line-height: 28px;
     font-weight: 600;
     margin-bottom: 15px;
   }
 
   p {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 24px;
     font-weight: 500;
     color: #808080;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
   }
 }
 
@@ -46,6 +46,7 @@
   transition: background-color 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
   border: 2px solid transparent;
+  z-index: 2;
 
   &.open {
     background: #ffffff;
@@ -61,8 +62,8 @@
 
   span {
     font-weight: 400;
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 16px;
+    line-height: 20px;
     display: flex;
     color: #4d4d4d;
     width: 100%;
@@ -75,8 +76,8 @@
 }
 
 .icon {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   color: #ff8a00;
   transition: transform 0.3s ease;
   flex-shrink: 0;
@@ -90,8 +91,6 @@
 .icon.open .verticalLine {
   transform: rotate(90deg);
 }
-
-/* Плавное раскрытие без max-height и без фейда */
 
 .answer {
   display: grid;
@@ -109,8 +108,8 @@
   transition: padding-top 0.3s ease;
 
   span {
-    font-size: 16px;
-    line-height: 19px;
+    font-size: 14px;
+    line-height: 17px;
     font-weight: 400;
     color: #4d4d4d;
     display: block;
@@ -122,31 +121,113 @@
 }
 
 .backgroundImageCoal {
+  display: none;
+}
+
+@media (min-width: 768px) {
+
+  .icon {
+  width: 35px;
+  height: 35px;
+}
+
+
+  .question {
+
+  span {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
+
+  .answerInner {
+
+  span {
+    font-size: 16px;
+    line-height: 19px;
+  }
+}
+
+
+  .header {
+
+  h1 {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 40px;
+    max-width: 340px;
+  }
+}
+
+
+  .backgroundImageCoal {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 170px;
+  height: 170px;
   right: 100px;
-  bottom: -50px;
+  bottom: 0;
   z-index: 0;
   rotate: (150deg);
+  display: block;
 
   &:nth-child(2) {
     position: absolute;
-    width: 300px;
-    height: 300px;
-    right: 50px;
-    bottom: -90px;
+    width: 170px;
+    height: 170px;
+    right: 70px;
+    bottom: 0;
     z-index: 1;
     rotate: (180deg);
+
   }
 
   &:nth-child(3) {
     position: absolute;
-    width: 300px;
-    height: 300px;
-    right: -40px;
-    bottom: -60px;
+    width: 170px;
+    height: 170px;
+    right: 20px;
+    bottom: 0;
     z-index: 0;
     rotate: (300deg);
   }
+}
+
+
+}
+
+
+@media (min-width: 1440px) {
+
+
+  .header {
+
+  p {
+    max-width: none;
+  }
+}
+
+
+  .backgroundImageCoal {
+  width: 300px;
+  height: 300px;
+  bottom: -50px;
+  &:nth-child(2) {
+    width: 300px;
+    height: 300px;
+    bottom: -50px;
+  }
+
+  &:nth-child(3) {
+    width: 300px;
+    height: 300px;
+    bottom: -50px;
+  }
+}
+
+
 }
