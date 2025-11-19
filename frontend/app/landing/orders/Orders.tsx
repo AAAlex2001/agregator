@@ -79,11 +79,6 @@ const orders = [
     description: "Площадь: 25 га, Требуется: Эксперт Э4 Э",
   },
   {
-    title: "Экспертиза проекта золотоизвлекательной фабрики",
-    price: "2 900 000 ₽",
-    description: "Производительность: 3 млн т/год руды",
-  },
-  {
     title: "Проект системы пылеподавления на карьере",
     price: "670 000 ₽",
     description: "Площадь обработки: 50 га",
@@ -170,7 +165,7 @@ const Orders = () => {
     loop={true}
     centeredSlides={true}
     slidesPerView={"auto"}
-    spaceBetween={0}
+    spaceBetween={20}
     navigation={{
       prevEl: ".orders-nav-btn--prev",
       nextEl: ".orders-nav-btn--next",
@@ -195,7 +190,7 @@ const Orders = () => {
       </button>
 
       <div className={styles.backgroundImage}>
-        <Image src="/orders.svg" alt="Orders background" fill style={{ objectFit: "cover" }} />
+        <Image src="/orderss.png" alt="Orders background" fill style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

@@ -23,13 +23,13 @@
   max-width: 944px;
 
   h1 {
-    font-size: 24px;
-    line-height: 29px;
+    font-size: 20px;
+    line-height: 28px;
     font-weight: 600;
   }
 
   p {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 24px;
     font-weight: 500;
     color: #808080;
@@ -43,7 +43,7 @@
 }
 
 .slide {
-  width: 520px;
+  width: 320px;
 }
 
 .item {
@@ -59,6 +59,8 @@
   position: relative;
   transform: scale(0.96);
   opacity: 0.8;
+  max-width: 320px;
+  margin: 0 auto;
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease,
@@ -68,7 +70,7 @@
 
   p {
     font-size: 16px;
-    line-height: 27px;
+    line-height: 24px;
     font-weight: 400;
   }
 }
@@ -80,7 +82,7 @@
   transform: translate(-50%, -50%);
   width: 100%;
   max-width: 1640px;
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   z-index: 2;
@@ -109,11 +111,10 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 10px;
 
   h2 {
-    font-size: 18px;
-    line-height: 28px;
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 600;
   }
 
@@ -208,7 +209,7 @@
 .backgroundImage {
   position: relative;
   width: 100%;
-  height: 1100px;
+  height: 920px;
 }
 
 .checkButton {

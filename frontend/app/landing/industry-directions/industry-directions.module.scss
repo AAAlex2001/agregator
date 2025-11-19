@@ -272,7 +272,7 @@
     align-items: flex-start;
   }
 
-  .swiper {
+  .card .swiper {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -280,7 +280,7 @@
     width: 100%;
   }
 
-  :global(.swiper-wrapper) {
+  .card :global(.swiper-wrapper) {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
