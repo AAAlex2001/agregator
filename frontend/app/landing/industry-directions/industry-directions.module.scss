@@ -1,7 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 180px;
+  margin-bottom: 120px;
 }
 
 .content {
@@ -170,6 +170,10 @@
 }
 
 @media (min-width: 768px) {
+
+  .section {
+  margin-bottom: 200px;
+}
 
   .title {
   font-size: 24px;

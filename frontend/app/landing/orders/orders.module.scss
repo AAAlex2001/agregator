@@ -1,7 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin: 60px 0 20px 0;
+  margin: 60px 0 120px 0;
 }
 
 .content {
@@ -249,6 +249,10 @@
 }
 
 @media (min-width: 768px) {
+
+  .section {
+  margin: 60px 0 200px 0;
+  }
 
   .header {
 
