@@ -84,7 +84,6 @@
   }
 }
 
-// Стили для иконки логина (email/phone)
 .loginIcon {
   svg path {
     fill: #CCCED5;
@@ -110,20 +109,19 @@
 
   &:hover .loginIcon[data-type="both"] svg path {
     &:first-child {
-      fill: #808080; // Почта - серая
+      fill: #808080;
     }
     &:last-child {
-      fill: #FF8A00; // Телефон - оранжевая
+      fill: #FF8A00;
     }
   }
 
   &:hover .loginIcon[data-type="both"] svg path[stroke] {
-    stroke: #FF8A00; // Телефон - оранжевая обводка
+    stroke: #FF8A00;
     fill: none;
   }
 }
 
-// Focus состояние - все иконки #FF8A00
 .input:focus ~ .loginIcon svg path,
 .inputWrapper:has(.input:focus) .loginIcon svg path {
   fill: #FF8A00 !important;
@@ -144,22 +142,18 @@
   fill: none !important;
 }
 
-// Стили для иконки замочка (lock)
 .lockIcon {
   svg path {
     transition: fill 0.3s ease, stroke 0.3s ease;
   }
 }
 
-// При hover - только точка в центре загорается оранжевым
 .inputWrapper:hover .lockIcon svg path.lockDot {
   fill: #FF8A00 !important;
   stroke: #FF8A00 !important;
 }
 
-// При focus - весь замочек загорается оранжевым
 .inputWrapper:has(.input:focus) .lockIcon svg path {
-  fill: #FFFFFF !important;
   stroke: #FF8A00 !important;
 }
 
