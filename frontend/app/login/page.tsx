@@ -10,13 +10,13 @@ import { loadSlim } from 'tsparticles-slim';
 import type { Engine } from 'tsparticles-engine';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Здесь будет логика входа
-    console.log("Вход:", { email, password });
+    console.log("Вход:", { login, password });
   };
 
   const particlesInit = useCallback(async (engine: Engine) => {
@@ -75,10 +75,10 @@ export default function LoginPage() {
       move: {
         enable: true,
         speed: 2,
-        direction: "none",
+        direction: "none" as const,
         random: true,
         straight: false,
-        outModes: "out",
+        outModes: "out" as const,
         bounce: false,
         attract: {
           enable: true,
@@ -88,15 +88,15 @@ export default function LoginPage() {
       }
     },
     interactivity: {
-      detectsOn: "window",
+      detectsOn: "window" as const,
       events: {
         onHover: {
           enable: true,
-          mode: "repulse"
+          mode: "repulse" as const
         },
         onClick: {
           enable: false,
-          mode: "push"
+          mode: "push" as const
         },
         resize: true
       },
@@ -173,16 +173,17 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.field}>
-              <label htmlFor="email" className={styles.label}>
-                Email
+              <label htmlFor="login" className={styles.label}>
+                {login.includes("@") ? "Email" : login.match(/^[\d\+\(\)\s-]+$/) && login.length > 0 ? "Телефон" : "Email или телефон"}
               </label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="login"
+                type="text"
+                inputMode="email"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
                 className={styles.input}
-                placeholder="example@mail.com"
+                placeholder="Email или телефон"
                 required
               />
             </div>
