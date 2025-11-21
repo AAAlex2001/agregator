@@ -177,7 +177,7 @@ export default function LoginPage() {
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
                 className={styles.input}
-                placeholder="Email или телефон"
+                placeholder="Электронная почта или телефон"
                 required
               />
             </div>

@@ -9,12 +9,13 @@
 
 .content {
   width: 100%;
+  margin: 0 auto;
 }
 
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 
   .logo {
     display: flex;
@@ -22,28 +23,29 @@
     text-decoration: none;
 
     svg {
-      width: 155px;
-      height: 28px;
+      width: 180px;
+      height: 32px;
     }
   }
 }
 
 .formContainer {
   background: #ffffff;
-  border: 2px solid #FFB800;
-  border-radius: 20px;
-  padding: 40px 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #FF8A00;
+  border-radius: 12px;
+  padding: 20px 20px 15px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 3;
   max-width: 350px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .field {
@@ -54,11 +56,11 @@
 
 .input {
   width: 100%;
-  padding: 14px 20px;
+  padding: 13px 16px;
   border: 2px solid #E6E6E6;
   border-radius: 10px;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 14px;
+  line-height: 125%;
   color: #1A1A1A;
   background: #ffffff;
   transition: border-color 0.3s ease;
@@ -81,7 +83,7 @@
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
   color: #1A1A1A;
   font-size: 16px;
-  line-height: 22px;
+  line-height: 20px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.4s ease;
@@ -98,18 +100,18 @@
 }
 
 .footer {
-  margin-top: 30px;
+  margin-top: 8px;
   text-align: center;
 
   p {
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 32px;
     color: #808080;
   }
 }
 
 .link {
-  color: #FFB800;
+  color: #FF8A00;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -119,4 +121,8 @@
     text-decoration: underline;
   }
 }
+
+
+
+
 
