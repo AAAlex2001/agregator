@@ -76,11 +76,72 @@
   z-index: 1;
   pointer-events: none;
   transition: all 0.3s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
 }
 
-.inputWrapper:hover .iconLeft svg path:last-of-type {
-  fill: #FF8A00;
-  stroke: #FF8A00;
+// Стили для иконки логина (email/phone)
+.loginIcon {
+  svg path {
+    fill: #CCCED5;
+    stroke: none;
+    transition: fill 0.3s ease;
+  }
+
+  svg path[stroke] {
+    stroke: #CCCED5;
+    fill: none;
+    transition: stroke 0.3s ease;
+  }
+}
+
+.inputWrapper {
+  &:hover .loginIcon[data-type="email"] svg path {
+    fill: #808080;
+  }
+
+  &:hover .loginIcon[data-type="phone"] svg path {
+    fill: #808080;
+  }
+
+  &:hover .loginIcon[data-type="both"] svg path {
+    &:first-child {
+      fill: #808080; // Почта - серая
+    }
+    &:last-child {
+      fill: #FF8A00; // Телефон - оранжевая
+    }
+  }
+
+  &:hover .loginIcon[data-type="both"] svg path[stroke] {
+    stroke: #FF8A00; // Телефон - оранжевая обводка
+    fill: none;
+  }
+}
+
+// Focus состояние - все иконки #FF8A00
+.input:focus ~ .loginIcon svg path,
+.inputWrapper:has(.input:focus) .loginIcon svg path {
+  fill: #FF8A00 !important;
+}
+
+.input:focus ~ .loginIcon svg path[stroke],
+.inputWrapper:has(.input:focus) .loginIcon svg path[stroke] {
+  stroke: #FF8A00 !important;
+  fill: none !important;
+}
+
+.loginIcon.focused svg path {
+  fill: #FF8A00 !important;
+}
+
+.loginIcon.focused svg path[stroke] {
+  stroke: #FF8A00 !important;
+  fill: none !important;
 }
 
 .iconRight {
