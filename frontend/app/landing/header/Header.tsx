@@ -57,13 +57,13 @@ const Header = () => {
           </Link>
         </nav>
         <div className={styles.actions}>
-          <button className={styles.login}> Войти
-          </button>
+          <Link href="/login" className={styles.login}> Войти
+          </Link>
           <button className={styles.signUp}>  Зарегистрироваться
           </button>
         </div>
         <div className={styles.mobileActions}>
-          <button className={styles.mobileLogin}>Войти</button>
+          <Link href="/login" className={styles.mobileLogin}>Войти</Link>
           <BurgerMenu />
         </div>
       </div>

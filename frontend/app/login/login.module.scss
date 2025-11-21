@@ -1,0 +1,159 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.content {
+  width: 100%;
+  max-width: 500px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+
+    svg {
+      width: 155px;
+      height: 28px;
+
+      @media (min-width: 768px) {
+        width: 212px;
+        height: 38px;
+      }
+    }
+  }
+}
+
+.formContainer {
+  background: #ffffff;
+  border: 2px solid #FFB800;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 3;
+
+  @media (min-width: 768px) {
+    padding: 50px 40px;
+  }
+}
+
+.title {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 10px;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+    line-height: 38px;
+  }
+}
+
+.subtitle {
+  font-size: 16px;
+  line-height: 24px;
+  color: #808080;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 2px solid #E6E6E6;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1A1A1A;
+  background: #ffffff;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #FFB800;
+  }
+
+  &::placeholder {
+    color: #808080;
+  }
+}
+
+.submitButton {
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  color: #1A1A1A;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.4s ease;
+  margin-top: 10px;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.footer {
+  margin-top: 30px;
+  text-align: center;
+
+  p {
+    font-size: 14px;
+    line-height: 20px;
+    color: #808080;
+  }
+}
+
+.link {
+  color: #FFB800;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #FF8A00;
+    text-decoration: underline;
+  }
+}
+
