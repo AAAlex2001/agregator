@@ -144,6 +144,25 @@
   fill: none !important;
 }
 
+// Стили для иконки замочка (lock)
+.lockIcon {
+  svg path {
+    transition: fill 0.3s ease, stroke 0.3s ease;
+  }
+}
+
+// При hover - только точка в центре загорается оранжевым
+.inputWrapper:hover .lockIcon svg path.lockDot {
+  fill: #FF8A00 !important;
+  stroke: #FF8A00 !important;
+}
+
+// При focus - весь замочек загорается оранжевым
+.inputWrapper:has(.input:focus) .lockIcon svg path {
+  fill: #FFFFFF !important;
+  stroke: #FF8A00 !important;
+}
+
 .iconRight {
   position: absolute;
   right: 16px;
