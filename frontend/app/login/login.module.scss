@@ -60,6 +60,58 @@
   gap: 8px;
 }
 
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.iconLeft {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.inputWrapper:hover .iconLeft svg path:last-of-type {
+  fill: #FF8A00;
+  stroke: #FF8A00;
+}
+
+.iconRight {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1;
+  transition: all 0.3s ease;
+
+  &.closedEye:hover {
+    svg path {
+      fill: #FF8A00;
+      stroke: #FF8A00;
+    }
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  svg {
+    display: block;
+  }
+}
+
 .input {
   width: 100%;
   padding: 13px 16px;
@@ -71,6 +123,10 @@
   background: #ffffff;
   transition: border-color 0.3s ease;
 
+  &:hover {
+    border-color: #FFDDA9;
+  }
+
   &:focus {
     outline: none;
     border-color: #FFB800;
@@ -79,6 +135,11 @@
   &::placeholder {
     color: #808080;
   }
+}
+
+.inputWrapper .input {
+  padding-left: 48px;
+  padding-right: 48px;
 }
 
 .submitButton {
