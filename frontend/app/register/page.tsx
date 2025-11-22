@@ -59,16 +59,50 @@ const roles = [
 ];
 
 export default function RegisterPage() {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [selectedRole, setSelectedRole] = useState<number | null>(null);
   const [openedCardId, setOpenedCardId] = useState<number | null>(null);
+  
+  // Форма второго шага
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const [isLoginFocused, setIsLoginFocused] = useState(false);
 
   const toggleCard = (id: number) => {
     setOpenedCardId((prev) => (prev === id ? null : id));
   };
 
   const handleSelectRole = (roleId: number) => {
-    console.log("Выбрана роль:", roleId);
-    // Здесь будет переход на следующий шаг регистрации
+    setSelectedRole(roleId);
+    setStep(2);
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Регистрация:", { role: selectedRole, login, password });
+  };
+
+  const getInputType = (value: string): 'email' | 'phone' | 'both' => {
+    if (!value.trim()) {
+      return 'both';
+    }
+    
+    if (value.includes('@')) {
+      return 'email';
+    }
+    
+    const phonePattern = /^[\d\s\+\-\(\)]+$/;
+    if (phonePattern.test(value)) {
+      return 'phone';
+    }
+    
+    return 'both';
+  };
+
+  const inputType = getInputType(login);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
@@ -220,63 +254,186 @@ export default function RegisterPage() {
 
           <div className={styles.stepsHeader}>
             <h2 className={styles.registrationTitle}>Регистрация</h2>
-            <span className={styles.stepIndicator}>Шаг 1. Выбор роли</span>
+            <span className={styles.stepIndicator}>
+              {step === 1 ? "Шаг 1. Выбор роли" : "Шаг 2. Данные"}
+            </span>
           </div>
 
-          <div className={styles.rolesContainer}>
-            {roles.map((role) => {
-              const isOpen = openedCardId === role.id;
-              return (
-                <div
-                  key={role.id}
-                  className={`${styles.roleCard} ${isOpen ? styles.roleCardOpen : ''}`}
-                  onClick={() => toggleCard(role.id)}
-                >
-                  {role.photo && (
-                    <div className={`${styles.roleImage} ${isOpen ? styles.visible : ''}`}>
-                      <Image src={role.photo} alt={role.title} fill style={{ objectFit: "cover" }} />
+          {step === 1 ? (
+            <>
+              <div className={styles.rolesContainer}>
+                {roles.map((role) => {
+                  const isOpen = openedCardId === role.id;
+                  return (
+                    <div
+                      key={role.id}
+                      className={`${styles.roleCard} ${isOpen ? styles.roleCardOpen : ''}`}
+                      onClick={() => toggleCard(role.id)}
+                    >
+                      {role.photo && (
+                        <div className={`${styles.roleImage} ${isOpen ? styles.visible : ''}`}>
+                          <Image src={role.photo} alt={role.title} fill style={{ objectFit: "cover" }} />
+                        </div>
+                      )}
+                      <div className={styles.roleContent}>
+                        <div className={styles.roleHeader}>
+                          <div className={styles.roleIcon}>{role.icon}</div>
+                          <h3 className={styles.roleTitle}>{role.title}</h3>
+                          <svg
+                            className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M6 9L12 15L18 9" stroke="#FFB800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className={`${styles.roleDescriptionWrapper} ${isOpen ? styles.roleDescriptionOpen : ''}`}>
+                          <h4 className={styles.expandedTitle}>{role.expandedTitle}</h4>
+                          <ul className={styles.descriptionList}>
+                            {role.description.map((item, index) => (
+                              <li key={index} className={styles.descriptionItem}>
+                                <span className={styles.bullet}>◆</span>
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                          <button
+                            className={styles.selectButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectRole(role.id);
+                            }}
+                          >
+                            Выбрать
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <div className={styles.roleContent}>
-                    <div className={styles.roleHeader}>
-                      <div className={styles.roleIcon}>{role.icon}</div>
-                      <h3 className={styles.roleTitle}>{role.title}</h3>
-                      <svg
-                        className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M6 9L12 15L18 9" stroke="#FFB800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.field}>
+                <div className={styles.inputWrapper}>
+                  <span className={`${styles.iconLeft} ${styles.loginIcon} ${isLoginFocused ? styles.focused : ''}`} data-type={inputType}>
+                    {inputType === 'email' ? (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.8327 3.33325H4.16602C3.50297 3.33325 2.86709 3.59664 2.39825 4.06549C1.92941 4.53433 1.66602 5.17021 1.66602 5.83325V14.1666C1.66602 14.8296 1.92941 15.4655 2.39825 15.9344C2.86709 16.4032 3.50297 16.6666 4.16602 16.6666H15.8327C16.4957 16.6666 17.1316 16.4032 17.6004 15.9344C18.0693 15.4655 18.3327 14.8296 18.3327 14.1666V5.83325C18.3327 5.17021 18.0693 4.53433 17.6004 4.06549C17.1316 3.59664 16.4957 3.33325 15.8327 3.33325ZM15.2743 4.99992L9.99935 8.95825L4.72435 4.99992H15.2743ZM15.8327 14.9999H4.16602C3.945 14.9999 3.73304 14.9121 3.57676 14.7558C3.42048 14.5996 3.33268 14.3876 3.33268 14.1666V6.04159L9.49935 10.6666C9.6436 10.7748 9.81904 10.8333 9.99935 10.8333C10.1797 10.8333 10.3551 10.7748 10.4993 10.6666L16.666 6.04159V14.1666C16.666 14.3876 16.5782 14.5996 16.4219 14.7558C16.2657 14.9121 16.0537 14.9999 15.8327 14.9999Z" fill="#CCCED5"/>
                       </svg>
-                    </div>
-                    <div className={`${styles.roleDescriptionWrapper} ${isOpen ? styles.roleDescriptionOpen : ''}`}>
-                      <h4 className={styles.expandedTitle}>{role.expandedTitle}</h4>
-                      <ul className={styles.descriptionList}>
-                        {role.description.map((item, index) => (
-                          <li key={index} className={styles.descriptionItem}>
-                            <span className={styles.bullet}>◆</span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                      <button
-                        className={styles.selectButton}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSelectRole(role.id);
-                        }}
-                      >
-                        Выбрать
-                      </button>
-                    </div>
-                  </div>
+                    ) : inputType === 'phone' ? (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M5.95162 18.4442C7.15162 18.4001 10.5525 17.9301 14.1141 14.3692C17.675 10.8076 18.1441 7.40756 18.1891 6.20672C18.2558 4.37672 16.8541 2.59922 15.235 1.90506C15.04 1.82086 14.8265 1.78881 14.6153 1.81204C14.4042 1.83527 14.2028 1.91298 14.0308 2.03756C12.6975 3.00922 11.7775 4.47922 10.9875 5.63506C10.8136 5.889 10.7393 6.19801 10.7787 6.50322C10.818 6.80843 10.9683 7.0885 11.2008 7.29006L12.8266 8.49756C12.9052 8.55428 12.9605 8.63758 12.9822 8.73199C13.004 8.8264 12.9907 8.92551 12.945 9.01089C12.5766 9.68006 11.9216 10.6767 11.1716 11.4267C10.4216 12.1767 9.37745 12.8751 8.66162 13.2851C8.57187 13.3354 8.46623 13.3495 8.36641 13.3244C8.26659 13.2993 8.18019 13.2369 8.12495 13.1501L7.06662 11.5392C6.87205 11.2808 6.58502 11.1076 6.26564 11.056C5.94627 11.0045 5.61932 11.0785 5.35329 11.2626C4.18079 12.0742 2.81246 12.9784 1.81079 14.2609C1.6761 14.4341 1.59042 14.6404 1.56272 14.8581C1.53501 15.0758 1.56629 15.2969 1.65329 15.4984C2.35079 17.1259 4.11579 18.5117 5.95162 18.4442Z" fill="#CCCED5"/>
+                      </svg>
+                    ) : (
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.966 4.33325H4.36602C3.64993 4.33325 2.96318 4.62957 2.45683 5.15701C1.95048 5.68446 1.66602 6.39983 1.66602 7.14575V16.5208C1.66602 17.2667 1.95048 17.982 2.45683 18.5095C2.96318 19.0369 3.64993 19.3333 4.36602 19.3333H16.966C17.6821 19.3333 18.3689 19.0369 18.8752 18.5095C19.3816 17.982 19.666 17.2667 19.666 16.5208V7.14575C19.666 6.39983 19.3816 5.68446 18.8752 5.15701C18.3689 4.62957 17.6821 4.33325 16.966 4.33325ZM16.363 6.20825L10.666 10.6614L4.96902 6.20825H16.363ZM16.966 17.4583H4.36602C4.12732 17.4583 3.8984 17.3595 3.72962 17.1837C3.56084 17.0078 3.46602 16.7694 3.46602 16.5208V7.38013L10.126 12.5833C10.2818 12.705 10.4713 12.7708 10.666 12.7708C10.8607 12.7708 11.0502 12.705 11.206 12.5833L17.866 7.38013V16.5208C17.866 16.7694 17.7712 17.0078 17.6024 17.1837C17.4336 17.3595 17.2047 17.4583 16.966 17.4583Z" fill="#CCCED5"/>
+                        <path d="M19.8311 7.50391C19.7276 7.51529 19.6284 7.55259 19.5439 7.61328V7.61426C18.4282 8.42718 17.6511 9.66192 16.918 10.7344V10.7354C16.8308 10.8628 16.7938 11.0178 16.8135 11.1709C16.8329 11.3216 16.9071 11.4587 17.0205 11.5596L18.4619 12.6309C18.5861 12.722 18.6829 12.8445 18.7432 12.9844L18.791 13.1318C18.8377 13.3348 18.8094 13.5479 18.7109 13.7314L18.708 13.7363C18.3624 14.3641 17.7459 15.3059 17.0254 16.0264C16.3057 16.746 15.3221 17.4005 14.6572 17.7812L14.6533 17.7842C14.461 17.892 14.2344 17.922 14.0205 17.8682C13.8089 17.8149 13.6264 17.6829 13.5078 17.5L13.5068 17.501L12.5674 16.0703C12.4697 15.9432 12.3274 15.8576 12.1689 15.832C12.0087 15.8062 11.8445 15.8433 11.7109 15.9355C10.6353 16.68 9.47343 17.4509 8.62695 18.5342C8.56056 18.6196 8.51854 18.7218 8.50488 18.8291C8.49131 18.9363 8.50695 19.0453 8.5498 19.1445V19.1455C9.11563 20.4655 10.5419 21.5497 11.9473 21.498C12.8998 21.463 15.6855 21.0977 18.6807 18.2539L18.9707 17.9717C21.8796 15.0626 22.4019 12.301 22.4863 11.1562L22.498 10.9492C22.5488 9.55055 21.4516 8.11297 20.1377 7.5498H20.1367C20.0406 7.5083 19.9351 7.4925 19.8311 7.50391Z" fill="#CCCED5"/>
+                      </svg>
+                    )}
+                  </span>
+                  <input
+                    id="login"
+                    type="text"
+                    inputMode="email"
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value)}
+                    onFocus={() => setIsLoginFocused(true)}
+                    onBlur={() => setIsLoginFocused(false)}
+                    className={styles.input}
+                    placeholder="Электронная почта или телефон"
+                    required
+                  />
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              <div className={styles.field}>
+                <div className={styles.inputWrapper}>
+                  <span className={`${styles.iconLeft} ${styles.lockIcon}`}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path className={styles.lockDot} d="M9.16602 13.3333C9.16602 13.5543 9.25381 13.7663 9.41009 13.9226C9.56637 14.0789 9.77834 14.1667 9.99935 14.1667C10.2204 14.1667 10.4323 14.0789 10.5886 13.9226C10.7449 13.7663 10.8327 13.5543 10.8327 13.3333C10.8327 13.1123 10.7449 12.9004 10.5886 12.7441C10.4323 12.5878 10.2204 12.5 9.99935 12.5C9.77834 12.5 9.56637 12.5878 9.41009 12.7441C9.25381 12.9004 9.16602 13.1123 9.16602 13.3333Z" fill="#CCCED5" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M5.83398 9.16659C5.83398 9.16659 5.83398 8.33326 5.83398 7.49993C5.83398 5.83324 6.56773 4.7917 7.34914 4.16658C8.13054 3.54146 8.89558 3.33325 10.0007 3.33325C11.1057 3.33325 11.8708 3.54146 12.6522 4.16658C13.4336 4.7917 14.1673 5.83324 14.1673 7.49993C14.1673 8.74996 14.1673 9.16659 14.1673 9.16659" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4.16602 10.8334C4.16602 10.3914 4.34161 9.96746 4.65417 9.6549C4.96673 9.34234 5.39065 9.16675 5.83268 9.16675H14.166C14.608 9.16675 15.032 9.34234 15.3445 9.6549C15.6571 9.96746 15.8327 10.3914 15.8327 10.8334V15.8334C15.8327 16.2754 15.6571 16.6994 15.3445 17.0119C15.032 17.3245 14.608 17.5001 14.166 17.5001H5.83268C5.39065 17.5001 4.96673 17.3245 4.65417 17.0119C4.34161 16.6994 4.16602 16.2754 4.16602 15.8334V10.8334Z" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9.99902 13.75C10.0449 13.75 10.0828 13.7871 10.083 13.833C10.083 13.879 10.045 13.917 9.99902 13.917C9.95315 13.9168 9.91602 13.8789 9.91602 13.833C9.91619 13.7872 9.95326 13.7502 9.99902 13.75Z" fill="#CCCED5" stroke="#CCCED5" strokeWidth="1.5"/>
+                    </svg>
+                  </span>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={styles.input}
+                    placeholder="Пароль"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={`${styles.iconRight} ${!showPassword ? styles.closedEye : ''}`}
+                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                  >
+                    {showPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.5 10C17.5 11 14.1417 15 10 15C5.85833 15 2.5 11 2.5 10C2.5 9 5.85833 5 10 5C14.1417 5 17.5 9 17.5 10Z" stroke="#FF8A00" strokeWidth="2"/>
+                        <path d="M12.5 10C12.5 10.663 12.2366 11.2989 11.7678 11.7678C11.2989 12.2366 10.663 12.5 10 12.5C9.33696 12.5 8.70107 12.2366 8.23223 11.7678C7.76339 11.2989 7.5 10.663 7.5 10C7.5 9.33696 7.76339 8.70107 8.23223 8.23223C8.70107 7.76339 9.33696 7.5 10 7.5C10.663 7.5 11.2989 7.76339 11.7678 8.23223C12.2366 8.70107 12.5 9.33696 12.5 10Z" stroke="#FF8A00" strokeWidth="2"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.54117 7.75833C2.50575 7.65255 2.49193 7.54072 2.50053 7.42949C2.50913 7.31827 2.53997 7.2099 2.59124 7.11081C2.6425 7.01172 2.71314 6.92394 2.79896 6.85266C2.88478 6.78139 2.98404 6.72807 3.09085 6.69587C3.19767 6.66367 3.30986 6.65324 3.42077 6.66521C3.53169 6.67718 3.63908 6.71129 3.73656 6.76554C3.83405 6.81978 3.91965 6.89304 3.98829 6.98099C4.05694 7.06893 4.10722 7.16976 4.13617 7.2775C5.8745 13.0992 14.1212 13.1 15.8612 7.28083C15.8924 7.17589 15.9439 7.07811 16.0129 6.99309C16.0819 6.90806 16.1669 6.83746 16.2632 6.7853C16.3594 6.73314 16.465 6.70046 16.5739 6.68911C16.6828 6.67777 16.7929 6.68798 16.8978 6.71917C17.0028 6.75036 17.1006 6.80191 17.1856 6.87089C17.2706 6.93987 17.3412 7.02491 17.3934 7.12118C17.4455 7.21744 17.4782 7.32303 17.4896 7.43193C17.5009 7.54082 17.4907 7.65089 17.4595 7.75583C17.1565 8.79857 16.6422 9.76783 15.9487 10.6033L17.0112 11.6667C17.163 11.8238 17.247 12.0343 17.2451 12.2528C17.2432 12.4713 17.1555 12.6803 17.001 12.8348C16.8465 12.9894 16.6375 13.077 16.419 13.0789C16.2005 13.0808 15.99 12.9968 15.8328 12.845L14.7403 11.7525C14.1508 12.1973 13.4995 12.5535 12.807 12.81L13.1045 13.9225C13.1362 14.0292 13.1463 14.1412 13.134 14.2518C13.1218 14.3625 13.0874 14.4696 13.0331 14.5667C12.9788 14.6639 12.9055 14.7492 12.8177 14.8176C12.7298 14.886 12.6292 14.9361 12.5217 14.9649C12.4141 14.9938 12.3019 15.0008 12.1916 14.9855C12.0814 14.9703 11.9753 14.9331 11.8796 14.8762C11.7839 14.8192 11.7006 14.7437 11.6346 14.6541C11.5686 14.5644 11.5213 14.4624 11.4953 14.3542L11.192 13.2233C10.4028 13.34 9.59617 13.34 8.807 13.2233L8.50367 14.3542C8.47774 14.4624 8.43038 14.5644 8.36438 14.6541C8.29839 14.7437 8.21509 14.8192 8.11943 14.8762C8.02376 14.9331 7.91765 14.9703 7.80737 14.9855C7.69709 15.0008 7.58487 14.9938 7.47735 14.9649C7.36982 14.9361 7.26916 14.886 7.18132 14.8176C7.09348 14.7492 7.02023 14.6639 6.9659 14.5667C6.91157 14.4696 6.87726 14.3625 6.865 14.2518C6.85273 14.1412 6.86277 14.0292 6.8945 13.9225L7.192 12.81C6.49946 12.5533 5.84814 12.1967 5.25867 11.7517L4.167 12.845C4.01075 13.0015 3.79873 13.0895 3.57759 13.0896C3.35646 13.0898 3.14432 13.0021 2.98784 12.8458C2.83136 12.6896 2.74336 12.4776 2.74321 12.2564C2.74305 12.0353 2.83075 11.8231 2.987 11.6667L4.0495 10.6042C3.39617 9.82417 2.8745 8.87583 2.5395 7.75917L2.54117 7.75833Z" fill="#CCCED5"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.field}>
+                <div className={styles.inputWrapper}>
+                  <span className={`${styles.iconLeft} ${styles.lockIcon}`}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path className={styles.lockDot} d="M9.16602 13.3333C9.16602 13.5543 9.25381 13.7663 9.41009 13.9226C9.56637 14.0789 9.77834 14.1667 9.99935 14.1667C10.2204 14.1667 10.4323 14.0789 10.5886 13.9226C10.7449 13.7663 10.8327 13.5543 10.8327 13.3333C10.8327 13.1123 10.7449 12.9004 10.5886 12.7441C10.4323 12.5878 10.2204 12.5 9.99935 12.5C9.77834 12.5 9.56637 12.5878 9.41009 12.7441C9.25381 12.9004 9.16602 13.1123 9.16602 13.3333Z" fill="#CCCED5" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M5.83398 9.16659C5.83398 9.16659 5.83398 8.33326 5.83398 7.49993C5.83398 5.83324 6.56773 4.7917 7.34914 4.16658C8.13054 3.54146 8.89558 3.33325 10.0007 3.33325C11.1057 3.33325 11.8708 3.54146 12.6522 4.16658C13.4336 4.7917 14.1673 5.83324 14.1673 7.49993C14.1673 8.74996 14.1673 9.16659 14.1673 9.16659" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4.16602 10.8334C4.16602 10.3914 4.34161 9.96746 4.65417 9.6549C4.96673 9.34234 5.39065 9.16675 5.83268 9.16675H14.166C14.608 9.16675 15.032 9.34234 15.3445 9.6549C15.6571 9.96746 15.8327 10.3914 15.8327 10.8334V15.8334C15.8327 16.2754 15.6571 16.6994 15.3445 17.0119C15.032 17.3245 14.608 17.5001 14.166 17.5001H5.83268C5.39065 17.5001 4.96673 17.3245 4.65417 17.0119C4.34161 16.6994 4.16602 16.2754 4.16602 15.8334V10.8334Z" stroke="#CCCED5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9.99902 13.75C10.0449 13.75 10.0828 13.7871 10.083 13.833C10.083 13.879 10.045 13.917 9.99902 13.917C9.95315 13.9168 9.91602 13.8789 9.91602 13.833C9.91619 13.7872 9.95326 13.7502 9.99902 13.75Z" fill="#CCCED5" stroke="#CCCED5" strokeWidth="1.5"/>
+                    </svg>
+                  </span>
+                  <input
+                    id="repeatPassword"
+                    type={showRepeatPassword ? "text" : "password"}
+                    value={repeatPassword}
+                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    className={styles.input}
+                    placeholder="Повторите пароль"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                    className={`${styles.iconRight} ${!showRepeatPassword ? styles.closedEye : ''}`}
+                    aria-label={showRepeatPassword ? "Скрыть пароль" : "Показать пароль"}
+                  >
+                    {showRepeatPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.5 10C17.5 11 14.1417 15 10 15C5.85833 15 2.5 11 2.5 10C2.5 9 5.85833 5 10 5C14.1417 5 17.5 9 17.5 10Z" stroke="#FF8A00" strokeWidth="2"/>
+                        <path d="M12.5 10C12.5 10.663 12.2366 11.2989 11.7678 11.7678C11.2989 12.2366 10.663 12.5 10 12.5C9.33696 12.5 8.70107 12.2366 8.23223 11.7678C7.76339 11.2989 7.5 10.663 7.5 10C7.5 9.33696 7.76339 8.70107 8.23223 8.23223C8.70107 7.76339 9.33696 7.5 10 7.5C10.663 7.5 11.2989 7.76339 11.7678 8.23223C12.2366 8.70107 12.5 9.33696 12.5 10Z" stroke="#FF8A00" strokeWidth="2"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.54117 7.75833C2.50575 7.65255 2.49193 7.54072 2.50053 7.42949C2.50913 7.31827 2.53997 7.2099 2.59124 7.11081C2.6425 7.01172 2.71314 6.92394 2.79896 6.85266C2.88478 6.78139 2.98404 6.72807 3.09085 6.69587C3.19767 6.66367 3.30986 6.65324 3.42077 6.66521C3.53169 6.67718 3.63908 6.71129 3.73656 6.76554C3.83405 6.81978 3.91965 6.89304 3.98829 6.98099C4.05694 7.06893 4.10722 7.16976 4.13617 7.2775C5.8745 13.0992 14.1212 13.1 15.8612 7.28083C15.8924 7.17589 15.9439 7.07811 16.0129 6.99309C16.0819 6.90806 16.1669 6.83746 16.2632 6.7853C16.3594 6.73314 16.465 6.70046 16.5739 6.68911C16.6828 6.67777 16.7929 6.68798 16.8978 6.71917C17.0028 6.75036 17.1006 6.80191 17.1856 6.87089C17.2706 6.93987 17.3412 7.02491 17.3934 7.12118C17.4455 7.21744 17.4782 7.32303 17.4896 7.43193C17.5009 7.54082 17.4907 7.65089 17.4595 7.75583C17.1565 8.79857 16.6422 9.76783 15.9487 10.6033L17.0112 11.6667C17.163 11.8238 17.247 12.0343 17.2451 12.2528C17.2432 12.4713 17.1555 12.6803 17.001 12.8348C16.8465 12.9894 16.6375 13.077 16.419 13.0789C16.2005 13.0808 15.99 12.9968 15.8328 12.845L14.7403 11.7525C14.1508 12.1973 13.4995 12.5535 12.807 12.81L13.1045 13.9225C13.1362 14.0292 13.1463 14.1412 13.134 14.2518C13.1218 14.3625 13.0874 14.4696 13.0331 14.5667C12.9788 14.6639 12.9055 14.7492 12.8177 14.8176C12.7298 14.886 12.6292 14.9361 12.5217 14.9649C12.4141 14.9938 12.3019 15.0008 12.1916 14.9855C12.0814 14.9703 11.9753 14.9331 11.8796 14.8762C11.7839 14.8192 11.7006 14.7437 11.6346 14.6541C11.5686 14.5644 11.5213 14.4624 11.4953 14.3542L11.192 13.2233C10.4028 13.34 9.59617 13.34 8.807 13.2233L8.50367 14.3542C8.47774 14.4624 8.43038 14.5644 8.36438 14.6541C8.29839 14.7437 8.21509 14.8192 8.11943 14.8762C8.02376 14.9331 7.91765 14.9703 7.80737 14.9855C7.69709 15.0008 7.58487 14.9938 7.47735 14.9649C7.36982 14.9361 7.26916 14.886 7.18132 14.8176C7.09348 14.7492 7.02023 14.6639 6.9659 14.5667C6.91157 14.4696 6.87726 14.3625 6.865 14.2518C6.85273 14.1412 6.86277 14.0292 6.8945 13.9225L7.192 12.81C6.49946 12.5533 5.84814 12.1967 5.25867 11.7517L4.167 12.845C4.01075 13.0015 3.79873 13.0895 3.57759 13.0896C3.35646 13.0898 3.14432 13.0021 2.98784 12.8458C2.83136 12.6896 2.74336 12.4776 2.74321 12.2564C2.74305 12.0353 2.83075 11.8231 2.987 11.6667L4.0495 10.6042C3.39617 9.82417 2.8745 8.87583 2.5395 7.75917L2.54117 7.75833Z" fill="#CCCED5"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className={styles.submitButton}>
+                Зарегистрироваться
+              </button>
+            </form>
+          )}
 
           <div className={styles.footer}>
             <p>
