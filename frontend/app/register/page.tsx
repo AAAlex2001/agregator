@@ -72,7 +72,28 @@ export default function RegisterPage() {
   const [isLoginFocused, setIsLoginFocused] = useState(false);
 
   const toggleCard = (id: number) => {
-    setOpenedCardId((prev) => (prev === id ? null : id));
+    setOpenedCardId((prev) => {
+      if (prev === id) {
+        return null;
+      }
+
+      if (prev === null) {
+        return id;
+      }
+
+      const previousId = prev;
+
+      setTimeout(() => {
+        setOpenedCardId((current) => {
+          if (current === null || current === previousId) {
+            return id;
+          }
+          return current;
+        });
+      }, 250);
+
+      return null;
+    });
   };
 
   const handleSelectRole = (roleId: number) => {
