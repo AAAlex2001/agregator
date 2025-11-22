@@ -260,7 +260,7 @@ export default function RegisterPage() {
           </div>
 
           {step === 1 ? (
-            <>
+            <div className={styles.stepContent} key="step1">
               <div className={styles.rolesContainer}>
                 {roles.map((role) => {
                   const isOpen = openedCardId === role.id;
@@ -315,9 +315,10 @@ export default function RegisterPage() {
                   );
                 })}
               </div>
-            </>
+            </div>
           ) : (
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.stepContent} key="step2">
+              <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.field}>
                 <div className={styles.inputWrapper}>
                   <span className={`${styles.iconLeft} ${styles.loginIcon} ${isLoginFocused ? styles.focused : ''}`} data-type={inputType}>
@@ -433,6 +434,7 @@ export default function RegisterPage() {
                 Зарегистрироваться
               </button>
             </form>
+            </div>
           )}
 
           <div className={styles.footer}>
