@@ -72,28 +72,8 @@ export default function RegisterPage() {
   const [isLoginFocused, setIsLoginFocused] = useState(false);
 
   const toggleCard = (id: number) => {
-    setOpenedCardId((prev) => {
-      if (prev === id) {
-        return null;
-      }
-
-      if (prev === null) {
-        return id;
-      }
-
-      const previousId = prev;
-
-      setTimeout(() => {
-        setOpenedCardId((current) => {
-          if (current === null || current === previousId) {
-            return id;
-          }
-          return current;
-        });
-      }, 250);
-
-      return null;
-    });
+    // Аккордеон: либо одна открытая карточка, либо ни одной
+    setOpenedCardId((prev) => (prev === id ? null : id));
   };
 
   const handleSelectRole = (roleId: number) => {
@@ -312,24 +292,26 @@ export default function RegisterPage() {
                           </svg>
                         </div>
                         <div className={`${styles.roleDescriptionWrapper} ${isOpen ? styles.roleDescriptionOpen : ''}`}>
-                          <h4 className={styles.expandedTitle}>{role.expandedTitle}</h4>
-                          <ul className={styles.descriptionList}>
-                            {role.description.map((item, index) => (
-                              <li key={index} className={styles.descriptionItem}>
-                                <span className={styles.bullet}>◆</span>
-                                {item}
-                              </li>
-                            ))}
-                          </ul>
-                          <button
-                            className={styles.selectButton}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSelectRole(role.id);
-                            }}
-                          >
-                            Выбрать
-                          </button>
+                          <div className={styles.roleDescriptionInner}>
+                            <h4 className={styles.expandedTitle}>{role.expandedTitle}</h4>
+                            <ul className={styles.descriptionList}>
+                              {role.description.map((item, index) => (
+                                <li key={index} className={styles.descriptionItem}>
+                                  <span className={styles.bullet}>◆</span>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                            <button
+                              className={styles.selectButton}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectRole(role.id);
+                              }}
+                            >
+                              Выбрать
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
