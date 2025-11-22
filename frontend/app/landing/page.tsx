@@ -19,11 +19,11 @@ export default function LandingPage() {
       <div className={styles.page}>
         <main className={styles.main}>
           <Hero />
+          <HowItWorks />
+          <KeyAdvantages />
+          <Orders />
           <Advantages />
           <IndustryDirections />
-          <HowItWorks />
-          <Orders />
-          <KeyAdvantages />
           <Reviews />
           <FAQ />
         </main>
