@@ -297,7 +297,19 @@ export default function RegisterPage() {
                             <ul className={styles.descriptionList}>
                               {role.description.map((item, index) => (
                                 <li key={index} className={styles.descriptionItem}>
-                                  <span className={styles.bullet}>◆</span>
+                                  <span className={styles.bullet}>
+
+                                      <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 0C2.84844 0 2.69689 0.0541395 2.57781 0.173246L0.17456 2.57704C-0.0581868 2.80984 -0.0581868 3.18881 0.17456 3.42161L2.57781 5.8254C2.81056 6.0582 3.18945 6.0582 3.42219 5.8254L5.82544 3.42161C6.05819 3.18881 6.05819 2.80984 5.82544 2.57704L3.42219 0.173246C3.30311 0.0541395 3.15156 0 3 0Z" fill="url(#paint0_linear_1064_1184)"/>
+                                        <defs>
+                                        <linearGradient id="paint0_linear_1064_1184" x1="0" y1="3" x2="6" y2="3" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#FFB800"/>
+                                        <stop offset="1" stop-color="#FF8A00"/>
+                                        </linearGradient>
+                                        </defs>
+                                      </svg>
+
+                                  </span>
                                   {item}
                                 </li>
                               ))}
