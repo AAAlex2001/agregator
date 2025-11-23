@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import styles from "./forgot-password.module.scss";
 
 import Particles from 'react-particles';
-import { particlesInit, particlesOptions } from '@/utils/particles';
+import { particlesInit, particlesOptions } from '@/app/utils/particles';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();

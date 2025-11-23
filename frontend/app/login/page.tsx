@@ -6,7 +6,7 @@ import styles from "./login.module.scss";
 
 
 import Particles from 'react-particles';
-import { particlesInit, particlesOptions } from '@/utils/particles';
+import { particlesInit, particlesOptions } from '@/app/utils/particles';
 
 export default function LoginPage() {
   const [login, setLogin] = useState("");

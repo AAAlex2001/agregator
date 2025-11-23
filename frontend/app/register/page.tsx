@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./register.module.scss";
 import Particles from 'react-particles';
-import { particlesInit, particlesOptions } from '@/utils/particles';
+import { particlesInit, particlesOptions } from '@/app/utils/particles';
 
 const roles = [
   {
