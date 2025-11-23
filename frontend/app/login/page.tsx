@@ -168,6 +168,11 @@ export default function LoginPage() {
                 Зарегистрироваться
               </Link>
             </p>
+            <p>
+              <Link href="/forgot-password" className={styles.forgotLink}>
+                Забыли пароль?
+              </Link>
+            </p>
           </div>
         </div>
       </div>

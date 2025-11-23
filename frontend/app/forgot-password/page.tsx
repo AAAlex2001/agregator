@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
     if (step === 4) {
       const timer = setTimeout(() => {
         router.push("/login");
-      }, 2500);
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [step, router]);

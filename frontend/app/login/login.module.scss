@@ -228,6 +228,7 @@
   padding-right: 15px;
 }
 
+
 .submitButton {
   width: 100%;
   padding: 14px 24px;
@@ -260,6 +261,7 @@
     font-size: 12px;
     line-height: 32px;
     color: #808080;
+    margin: 0;
   }
 }
 
@@ -267,6 +269,20 @@
   color: #FF8A00;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #FF8A00;
+    text-decoration: underline;
+  }
+}
+
+.forgotLink {
+  color: #808080;
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 32px;
+  font-weight: 400;
   transition: color 0.3s ease;
 
   &:hover {
