@@ -95,7 +95,7 @@ const BurgerMenu = () => {
               FAQ
             </Link>
             <div className={styles.menuActions}>
-              <button className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</button>
+              <Link href="/register" className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
             </div>
           </nav>
         </>

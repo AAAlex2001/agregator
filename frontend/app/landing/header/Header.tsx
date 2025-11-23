@@ -59,8 +59,8 @@ const Header = () => {
         <div className={styles.actions}>
           <Link href="/login" className={styles.login}> Войти
           </Link>
-          <button className={styles.signUp}>  Зарегистрироваться
-          </button>
+          <Link href="/register" className={styles.signUp}>  Зарегистрироваться
+          </Link>
         </div>
         <div className={styles.mobileActions}>
           <Link href="/login" className={styles.mobileLogin}>Войти</Link>
