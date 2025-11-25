@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./register.module.scss";
-import Particles from 'react-particles';
-import { particlesInit, particlesOptions } from '@/app/utils/particles';
 
 const roles = [
   {
@@ -60,6 +58,8 @@ export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
   const [openedCardId, setOpenedCardId] = useState<number | null>(null);
+  const [isVantaReady, setIsVantaReady] = useState(false);
+  const vantaRef = useRef<HTMLDivElement | null>(null);
   
   // Форма второго шага
   const [login, setLogin] = useState("");
@@ -103,20 +103,128 @@ export default function RegisterPage() {
 
   const inputType = getInputType(login);
 
+  useEffect(() => {
+    if (!vantaRef.current) {
+      return;
+    }
+
+    let cleanup: (() => void) | null = null;
+    let cancelled = false;
+    let restoreFpsLimit: (() => void) | null = null;
+
+    const applyFpsLimit = (fps: number) => {
+      const frameInterval = 1000 / fps;
+      const originalRAF = window.requestAnimationFrame;
+      const originalCAF = window.cancelAnimationFrame;
+
+      window.requestAnimationFrame = ((callback: FrameRequestCallback) => {
+        return window.setTimeout(
+          () => callback(performance.now()),
+          frameInterval
+        );
+      }) as typeof window.requestAnimationFrame;
+
+      window.cancelAnimationFrame = ((handle: number) => {
+        clearTimeout(handle);
+      }) as typeof window.cancelAnimationFrame;
+
+      return () => {
+        window.requestAnimationFrame = originalRAF;
+        window.cancelAnimationFrame = originalCAF;
+      };
+    };
+
+    const loadScript = (id: string, src: string) =>
+      new Promise<void>((resolve, reject) => {
+        if (document.getElementById(id)) {
+          resolve();
+          return;
+        }
+        const script = document.createElement("script");
+        script.id = id;
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () =>
+          reject(new Error(`Не удалось загрузить скрипт: ${src}`));
+        document.body.appendChild(script);
+      });
+
+    const initVanta = async () => {
+      try {
+        await loadScript(
+          "threejs-cdn",
+          "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+        );
+        await loadScript(
+          "vanta-globe",
+          "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"
+        );
+
+        const three = (window as typeof window & { THREE?: any }).THREE;
+
+        if (
+          !window.VANTA?.GLOBE ||
+          !vantaRef.current ||
+          cancelled ||
+          !three
+        ) {
+          if (!three) {
+            console.error("THREE.js не загрузился, пропускаю Vanta");
+          }
+          return;
+        }
+
+        restoreFpsLimit = applyFpsLimit(30);
+
+        const effect = window.VANTA.GLOBE({
+          el: vantaRef.current,
+          THREE: three,
+          mouseControls: false,
+          touchControls: false,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          color: 0xff8a00,
+          color2: 0xff3b3b,
+          backgroundColor: 0xffffff,
+          points: 12.0,
+          maxDistance: 18.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+        });
+
+        setIsVantaReady(true);
+        cleanup = () => {
+          effect?.destroy?.();
+          setIsVantaReady(false);
+          restoreFpsLimit?.();
+          restoreFpsLimit = null;
+        };
+      } catch (error) {
+        console.error("Не удалось инициализировать Vanta", error);
+        restoreFpsLimit?.();
+        restoreFpsLimit = null;
+      }
+    };
+
+    initVanta();
+
+    return () => {
+      cancelled = true;
+      cleanup?.();
+      restoreFpsLimit?.();
+      restoreFpsLimit = null;
+    };
+  }, []);
+
   return (
     <div className={styles.container}>
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={particlesOptions}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 1,
-        }}
+      <div
+        ref={vantaRef}
+        className={`${styles.background} ${
+          !isVantaReady ? styles.backgroundFallback : ""
+        }`}
       />
 
       <div className={styles.content}>
@@ -191,8 +299,8 @@ export default function RegisterPage() {
                                         <path d="M3 0C2.84844 0 2.69689 0.0541395 2.57781 0.173246L0.17456 2.57704C-0.0581868 2.80984 -0.0581868 3.18881 0.17456 3.42161L2.57781 5.8254C2.81056 6.0582 3.18945 6.0582 3.42219 5.8254L5.82544 3.42161C6.05819 3.18881 6.05819 2.80984 5.82544 2.57704L3.42219 0.173246C3.30311 0.0541395 3.15156 0 3 0Z" fill="url(#paint0_linear_1064_1184)"/>
                                         <defs>
                                         <linearGradient id="paint0_linear_1064_1184" x1="0" y1="3" x2="6" y2="3" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#FFB800"/>
-                                        <stop offset="1" stop-color="#FF8A00"/>
+                                        <stop stopColor="#FFB800"/>
+                                        <stop offset="1" stopColor="#FF8A00"/>
                                         </linearGradient>
                                         </defs>
                                       </svg>

@@ -1,18 +1,131 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./login.module.scss";
-
-
-import Particles from 'react-particles';
-import { particlesInit, particlesOptions } from '@/app/utils/particles';
 
 export default function LoginPage() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoginFocused, setIsLoginFocused] = useState(false);
+  const [isVantaReady, setIsVantaReady] = useState(false);
+  const vantaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!vantaRef.current) {
+      return;
+    }
+
+    let cleanup: (() => void) | null = null;
+    let cancelled = false;
+    let restoreFpsLimit: (() => void) | null = null;
+
+    const applyFpsLimit = (fps: number) => {
+      const frameInterval = 1000 / fps;
+      const originalRAF = window.requestAnimationFrame;
+      const originalCAF = window.cancelAnimationFrame;
+
+      window.requestAnimationFrame = ((callback: FrameRequestCallback) => {
+        return window.setTimeout(
+          () => callback(performance.now()),
+          frameInterval
+        );
+      }) as typeof window.requestAnimationFrame;
+
+      window.cancelAnimationFrame = ((handle: number) => {
+        clearTimeout(handle);
+      }) as typeof window.cancelAnimationFrame;
+
+      return () => {
+        window.requestAnimationFrame = originalRAF;
+        window.cancelAnimationFrame = originalCAF;
+      };
+    };
+
+    const loadScript = (id: string, src: string) =>
+      new Promise<void>((resolve, reject) => {
+        if (document.getElementById(id)) {
+          resolve();
+          return;
+        }
+        const script = document.createElement("script");
+        script.id = id;
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () =>
+          reject(new Error(`Не удалось загрузить скрипт: ${src}`));
+        document.body.appendChild(script);
+      });
+
+    const initVanta = async () => {
+      try {
+        await loadScript(
+          "threejs-cdn",
+          "https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+        );
+        await loadScript(
+          "vanta-globe",
+          "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"
+        );
+
+        const three = (window as typeof window & { THREE?: any }).THREE;
+
+        if (
+          !window.VANTA?.GLOBE ||
+          !vantaRef.current ||
+          cancelled ||
+          !three
+        ) {
+          if (!three) {
+            console.error("THREE.js не загрузился, пропускаю Vanta");
+          }
+          return;
+        }
+
+        restoreFpsLimit = applyFpsLimit(30);
+
+        const effect = window.VANTA.GLOBE({
+          el: vantaRef.current,
+          THREE: three,
+          mouseControls: false,
+          touchControls: false,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          color: 0xff8a00,
+          color2: 0xff3b3b,
+          backgroundColor: 0xffffff,
+          points: 12.0,
+          maxDistance: 18.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+        });
+
+        setIsVantaReady(true);
+        cleanup = () => {
+          effect?.destroy?.();
+          setIsVantaReady(false);
+          restoreFpsLimit?.();
+          restoreFpsLimit = null;
+        };
+      } catch (error) {
+        console.error("Не удалось инициализировать Vanta", error);
+        restoreFpsLimit?.();
+        restoreFpsLimit = null;
+      }
+    };
+
+    initVanta();
+
+    return () => {
+      cancelled = true;
+      cleanup?.();
+      restoreFpsLimit?.();
+      restoreFpsLimit = null;
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,19 +157,12 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-
-        <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={particlesOptions}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 1,
-        }}
+      <div
+        id="vanta"
+        ref={vantaRef}
+        className={`${styles.background} ${
+          !isVantaReady ? styles.backgroundFallback : ""
+        }`}
       />
 
       <div className={styles.content}>
