@@ -8,6 +8,7 @@ import "swiper/css/pagination";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
+import { SwiperNavigation, Card } from "@/app/components";
 
 const industries = [
   {
@@ -75,53 +76,10 @@ const IndustryDirections = () => {
       </div>
       <div className={styles.card}>
         <div className={styles.arrows}>
-          <button
-            className="industry-nav-btn industry-nav-btn--prev"
-            type="button"
-            aria-label="Предыдущий"
-          >
-            <span>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M19 12L13 18M19 12L13 6M19 12H5"
-                  stroke="#FFDDA9"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-
-          <button
-            className="industry-nav-btn industry-nav-btn--next"
-            type="button"
-            aria-label="Следующий"
-          >
-            <span>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M19 12L13 18M19 12L13 6M19 12H5"
-                  stroke="#FFDDA9"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
+          <SwiperNavigation
+            prevClassName="industry-nav-btn--prev"
+            nextClassName="industry-nav-btn--next"
+          />
         </div>
         <Swiper
           modules={[Navigation, Pagination]}
@@ -146,31 +104,15 @@ const IndustryDirections = () => {
         >
           {industries.map((industry) => (
             <SwiperSlide key={industry.id} className={styles.slide}>
-              <article 
-                className={styles.industry}
+              <Card
+                variant="industry"
+                title={industry.title}
+                description={industry.description}
+                photo={industry.photo}
+                isHovered={isHovered === industry.id}
                 onMouseEnter={() => setIsHovered(industry.id)}
                 onMouseLeave={() => setIsHovered(null)}
-              >
-                {industry.photo && (
-                  <div className={`${styles.industryImage} ${isHovered === industry.id ? styles.visible : ''}`}>
-                    <Image src={industry.photo} alt={industry.title} fill style={{ objectFit: "cover" }} />
-                  </div>
-                )}
-                <div className={styles.industryContent}>
-                  <div className={styles.industryHeader}>
-                    <h3>{industry.title}</h3>
-                  </div>
-                  {Array.isArray(industry.description) ? (
-                    <ul>
-                      {industry.description.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>{industry.description}</p>
-                  )}
-                </div>
-              </article>
+              />
             </SwiperSlide>
           ))}
         </Swiper>

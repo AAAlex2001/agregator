@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./footer.module.scss";
 import Image from "next/image";
+import { Button } from "@/app/components";
 
 const Footer = () => {
   return (
@@ -71,7 +72,9 @@ const Footer = () => {
               </div>
 
           <div className={styles.chatBlock}>
-                <button className={styles.chatButton}> Чат с поддержкой </button>
+                <Button variant="chat" size="md">
+              Чат с поддержкой
+            </Button>
               <div className={styles.navLinks}>
                 <span className={styles.navLink}>
                   <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">

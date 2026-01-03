@@ -1,87 +1,90 @@
 import styles from "./hero.module.scss";
-
+import { Button } from "@/app/components";
 
 const Hero = () => {
   return (
     <section className={styles.hero}>
-        <div className={styles.leftSection}>
+      <div className={styles.leftSection}>
         <h1>
-          Первая единая площадка для поиска аттестованных экспертов промышленной безопасности
+          Первая единая площадка для поиска аттестованных экспертов
+          промышленной безопасности
         </h1>
         <p>
-          Размещайте заказы и находите проекты среди специалистов по всей России. Все эксперты имеют официальные аттестации Ростехнадзора
+          Размещайте заказы и находите проекты среди специалистов по всей
+          России. Все эксперты имеют официальные аттестации Ростехнадзора
         </p>
-          <button className={styles.primary}>
-            Начать работать
-            <span aria-hidden="true" className={styles.arrow}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 12L13 18M19 12L13 6M19 12H5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-          </button>
+        <Button variant="primary" showArrow className={styles.heroButton}>
+          Начать работать
+        </Button>
       </div>
       <div className={styles.visual} aria-hidden="true">
-          <img src="/hero_svg.svg" alt="Карьер" className={styles.heroImage} />
+        <img src="/hero_svg.svg" alt="Карьер" className={styles.heroImage} />
 
-
-          <div className={styles.visualDecoration1}>
-            <div className={styles.visualDecorationHeader}>
-                <div className={styles.visualDecorationHeaderText}>
-                    <p>Анализ устойчивости борта карьера</p>
-                    <span>850 000 ₽</span>
-                </div>
+        <div className={styles.visualDecoration1}>
+          <div className={styles.visualDecorationHeader}>
+            <div className={styles.visualDecorationHeaderText}>
+              <p>Анализ устойчивости борта карьера</p>
+              <span>850 000 ₽</span>
             </div>
-
-
-
-            <div className={styles.visualDecorationBody}>
-                <span>Требуется эксперт с аттестацией Э2 ЗС</span>
-            </div>
+          </div>
+          <div className={styles.visualDecorationBody}>
+            <span>Требуется эксперт с аттестацией Э2 ЗС</span>
+          </div>
         </div>
 
-          <div className={styles.visualDecoration2}>
-            <div className={styles.visualDecorationHeader}>
-                <div className={styles.visualDecorationHeaderText}>
-                    <span>На ваш заказ откликнулось 7 экспертов</span>
-                </div>
+        <div className={styles.visualDecoration2}>
+          <div className={styles.visualDecorationHeader}>
+            <div className={styles.visualDecorationHeaderText}>
+              <span>На ваш заказ откликнулось 7 экспертов</span>
             </div>
+          </div>
         </div>
 
-          <div className={styles.visualDecoration3}>
-            <div className={styles.visualDecorationHeader}>
-                <div className={styles.visualDecorationHeaderText}>
-                    <p>Проект вскрытия карьера</p>
-                    <div className={styles.checkIcon}>
-                        <svg width="21" height="28" viewBox="0 0 21 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.3333 22.3333C11.4279 22.3346 12.5119 22.1197 13.5231 21.7008C14.5344 21.282 15.4529 20.6674 16.2258 19.8925C17.0008 19.1195 17.6153 18.201 18.0342 17.1898C18.4531 16.1785 18.668 15.0945 18.6667 14C18.668 12.9054 18.4531 11.8214 18.0342 10.8102C17.6153 9.79895 17.0008 8.88045 16.2258 8.10747C15.4529 7.33253 14.5344 6.71797 13.5231 6.2991C12.5119 5.88022 11.4279 5.66528 10.3333 5.66663C9.23879 5.66528 8.15477 5.88022 7.14354 6.2991C6.13232 6.71797 5.21383 7.33253 4.44084 8.10747C3.66591 8.88045 3.05135 9.79895 2.63247 10.8102C2.21359 11.8214 1.99866 12.9054 2.00001 14C1.99866 15.0945 2.21359 16.1785 2.63247 17.1898C3.05135 18.201 3.66591 19.1195 4.44084 19.8925C5.21383 20.6674 6.13232 21.282 7.14354 21.7008C8.15477 22.1197 9.23879 22.3346 10.3333 22.3333Z" stroke="#2EC035" strokeWidth="1.5" strokeLinejoin="round"/>
-<path d="M7 14L9.5 16.5L14.5 11.5" stroke="#2EC035" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
-
-                    <span>Завершён</span>
-                    </div>
-                </div>
+        <div className={styles.visualDecoration3}>
+          <div className={styles.visualDecorationHeader}>
+            <div className={styles.visualDecorationHeaderText}>
+              <p>Проект вскрытия карьера</p>
+              <div className={styles.checkIcon}>
+                <svg
+                  width="21"
+                  height="28"
+                  viewBox="0 0 21 28"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.3333 22.3333C11.4279 22.3346 12.5119 22.1197 13.5231 21.7008C14.5344 21.282 15.4529 20.6674 16.2258 19.8925C17.0008 19.1195 17.6153 18.201 18.0342 17.1898C18.4531 16.1785 18.668 15.0945 18.6667 14C18.668 12.9054 18.4531 11.8214 18.0342 10.8102C17.6153 9.79895 17.0008 8.88045 16.2258 8.10747C15.4529 7.33253 14.5344 6.71797 13.5231 6.2991C12.5119 5.88022 11.4279 5.66528 10.3333 5.66663C9.23879 5.66528 8.15477 5.88022 7.14354 6.2991C6.13232 6.71797 5.21383 7.33253 4.44084 8.10747C3.66591 8.88045 3.05135 9.79895 2.63247 10.8102C2.21359 11.8214 1.99866 12.9054 2.00001 14C1.99866 15.0945 2.21359 16.1785 2.63247 17.1898C3.05135 18.201 3.66591 19.1195 4.44084 19.8925C5.21383 20.6674 6.13232 21.282 7.14354 21.7008C8.15477 22.1197 9.23879 22.3346 10.3333 22.3333Z"
+                    stroke="#2EC035"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M7 14L9.5 16.5L14.5 11.5"
+                    stroke="#2EC035"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Завершён</span>
+              </div>
             </div>
-
-
-
-            <div className={styles.visualDecorationBody}>
-                <span>Выполнил эксперт с аттестацией Э2 КЛ/ТП</span>
-            </div>
+          </div>
+          <div className={styles.visualDecorationBody}>
+            <span>Выполнил эксперт с аттестацией Э2 КЛ/ТП</span>
+          </div>
         </div>
 
-          <div className={styles.visualDecoration4}>
-            <div className={styles.visualDecorationHeader}>
-                <div className={styles.visualDecorationHeaderText}>
-                    <span>Отзыв опубликован!</span>
-                </div>
+        <div className={styles.visualDecoration4}>
+          <div className={styles.visualDecorationHeader}>
+            <div className={styles.visualDecorationHeaderText}>
+              <span>Отзыв опубликован!</span>
             </div>
+          </div>
         </div>
-
       </div>
-
     </section>
   );
 };
 
 export default Hero;
-

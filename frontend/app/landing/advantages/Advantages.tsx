@@ -1,8 +1,8 @@
 "use client";
 
 import styles from "./advantages.module.scss";
-import Image from "next/image";
 import { useState } from "react";
+import { Card } from "@/app/components";
 
 const features = [
   {
@@ -57,38 +57,16 @@ const Advantages = () => {
         {features.map((feature) => {
           const isOpen = openedCards.has(feature.id);
           return (
-            <article 
-              className={`${styles.feature} ${isOpen ? styles.featureOpen : ''}`}
+            <Card
               key={feature.id}
+              variant="advantage"
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+              photo={feature.photo}
+              isOpen={isOpen}
               onClick={() => toggleCard(feature.id)}
-            >
-              {feature.photo && (
-                <div className={`${styles.featureImage} ${isOpen ? styles.visible : ''}`}>
-                  <Image src={feature.photo} alt={feature.title} fill style={{ objectFit: "cover" }} />
-                </div>
-              )}
-              <div className={styles.featureContent}>
-                <div className={styles.featureHeader}>
-                  {feature.icon && (
-                    <Image src={feature.icon} alt={feature.title} width={40} height={40} />
-                  )}
-                  <h3>{feature.title}</h3>
-                  <svg 
-                    className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M6 9L12 15L18 9" stroke="#FFB800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <div className={`${styles.descriptionWrapper} ${isOpen ? styles.descriptionOpen : ''}`}>
-                  <p>{feature.description}</p>
-                </div>
-              </div>
-            </article>
+            />
           );
         })}
       </div>

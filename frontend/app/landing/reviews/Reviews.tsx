@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./reviews.module.scss";
+import { SwiperNavigation, Card } from "@/app/components";
 
 const reviews = [
   {
@@ -127,53 +128,10 @@ const Reviews = () => {
               <div className={styles.backgroundImageCoal}>
               <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
             </div>
-            <button
-              className="orders-nav-btn orders-nav-btn--prev"
-              type="button"
-              aria-label="Предыдущий"
-            >
-              <span>
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M19 12L13 18M19 12L13 6M19 12H5"
-                    stroke="#FFDDA9"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </button>
-
-            <button
-              className="orders-nav-btn orders-nav-btn--next"
-              type="button"
-              aria-label="Следующий"
-            >
-              <span>
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M19 12L13 18M19 12L13 6M19 12H5"
-                    stroke="#FFDDA9"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </button>
+            <SwiperNavigation
+              prevClassName="reviews-nav-btn--prev"
+              nextClassName="reviews-nav-btn--next"
+            />
           </div>
         </div>
       </div>
@@ -186,8 +144,8 @@ const Reviews = () => {
           slidesPerView={"auto"}
           spaceBetween={5}
           navigation={{
-            prevEl: ".orders-nav-btn--prev",
-            nextEl: ".orders-nav-btn--next",
+            prevEl: ".reviews-nav-btn--prev",
+            nextEl: ".reviews-nav-btn--next",
           }}
           pagination={{
             clickable: true,
@@ -195,13 +153,12 @@ const Reviews = () => {
         >
           {reviews.map((review) => (
             <SwiperSlide key={review.id} className={styles.slide}>
-              <article className={styles.item}>
-                <p>{review.text}</p>
-                <div className={styles.reviewerInfo}>
-                  <span className={styles.reviewer}>{review.reviewer}</span>
-                  <span className={styles.position}>{review.position}</span>
-                </div>
-              </article>
+              <Card
+                variant="review"
+                text={review.text}
+                reviewer={review.reviewer}
+                position={review.position}
+              />
             </SwiperSlide>
           ))}
         </Swiper>

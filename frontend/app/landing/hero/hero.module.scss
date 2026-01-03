@@ -28,39 +28,8 @@
     margin-bottom: 40px;
   }
 }
-.primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
-  transition: background 0.4s ease;
-  cursor: pointer;
-  padding: 14px 67.5px;
+.heroButton {
   margin-bottom: 143px;
-  text-decoration: none;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
-  color: #FFF8EB;
-  width: fit-content;
-  gap: 20px;
-  white-space: nowrap;
-
-  &:hover,
-  &:focus-visible {
-    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
-  }
-}
-
-.arrow {
-  display: inline-flex;
-  transition: transform 0.5s ease;
-}
-
-.primary:hover .arrow,
-.primary:focus-visible .arrow {
-  transform: translateX(12px);
 }
 
 .visual {
@@ -230,15 +199,6 @@
     max-width: 700px;
   }
 }
-.primary {
-  border-radius: 10px;
-  padding: 17px 58.5px;
-  margin-bottom: 143px;
-  font-size: 18px;
-  line-height: 22px;
-  font-weight: 500;
-}
-
 .visual {
   min-height: 412px;
   max-width: 1000px;

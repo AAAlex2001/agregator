@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import styles from "./how-it-works.module.scss";
 import { useState } from "react";
 import Image from "next/image";
+import { Tabs } from "@/app/components";
 
 const client = [
   {
@@ -97,10 +98,14 @@ const HowItWorks = () => {
             </p>
             </div>
                 <div className={styles.stepsInfo}>
-                        <div className={styles.stepsTabs}>
-                            <span className={!isExpert ? styles.active : ''} onClick={() => setIsExpert(false)}>Я заказчик</span>
-                            <span className={isExpert ? styles.active : ''} onClick={() => setIsExpert(true)}>Я эксперт</span>
-                        </div>
+                        <Tabs
+                          tabs={[
+                            { id: 'client', label: 'Я заказчик' },
+                            { id: 'expert', label: 'Я эксперт' }
+                          ]}
+                          activeTab={isExpert ? 'expert' : 'client'}
+                          onTabChange={(tabId) => setIsExpert(tabId === 'expert')}
+                        />
               <div className={styles.steps}>
                 {(isExpert ? expert : client).map((value) => (
                   <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>

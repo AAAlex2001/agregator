@@ -1,5 +1,6 @@
 import styles from "./cta-footer.module.scss";
 import Image from "next/image";
+import { Button } from "@/app/components";
 
 const CtaFooter = () => {
   return (
@@ -108,10 +109,12 @@ const CtaFooter = () => {
               </li>
             </ul>
             <div className={styles.ctaActions}>
-              <button className={styles.primaryBtn}>Найти эксперта</button>
-              <button className={styles.secondaryBtn}>
+              <Button variant="primary" size="sm" fullWidth>
+                Найти эксперта
+              </Button>
+              <Button variant="secondary" size="sm" fullWidth>
                 Стать экспертом на платформе
-              </button>
+              </Button>
             </div>
           </div>
         </div>

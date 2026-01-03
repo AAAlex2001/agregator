@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./orders.module.scss";
+import { SwiperNavigation, Card, Button } from "@/app/components";
 
 const orders = [
   {
@@ -111,54 +112,10 @@ const Orders = () => {
 
       <div className={styles.list}>
   <div className={styles.arrows}>
-    <button
-      className="orders-nav-btn orders-nav-btn--prev"
-      type="button"
-      aria-label="Предыдущий"
-    >
-      <span>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19 12L13 18M19 12L13 6M19 12H5"
-            stroke="#FFDDA9"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
-    </button>
-
-    <button
-      className="orders-nav-btn orders-nav-btn--next"
-      type="button"
-      aria-label="Следующий"
-    >
-      <span>
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M19 12L13 18M19 12L13 6M19 12H5"
-            stroke="#FFDDA9"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
-    </button>
-
+    <SwiperNavigation
+      prevClassName="orders-nav-btn--prev"
+      nextClassName="orders-nav-btn--next"
+    />
   </div>
 
   <Swiper
@@ -178,21 +135,20 @@ const Orders = () => {
   >
     {orders.map((order) => (
       <SwiperSlide key={order.title} className={styles.slide}>
-        <article className={styles.item}>
-          <div className={styles.headerItem}>
-            <h2>{order.title}</h2>
-            <span>{order.price}</span>
-          </div>
-          <p>{order.description}</p>
-        </article>
+        <Card
+          variant="order"
+          title={order.title}
+          price={order.price}
+          description={order.description}
+        />
       </SwiperSlide>
     ))}
   </Swiper>
       </div>
 
-      <button className={styles.checkButton}>
+      <Button variant="secondary" className={styles.checkButton}>
         Смотреть все заказы
-      </button>
+      </Button>
 
       <div className={styles.backgroundImage}>
         <Image src="/orderss.png" alt="Orders background" fill style={{ objectFit: "cover" }} />
