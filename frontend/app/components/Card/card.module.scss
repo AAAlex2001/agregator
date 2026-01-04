@@ -236,6 +236,7 @@
   opacity: 0.8;
   max-width: 320px;
   margin: 0 auto;
+  background: #FFFFFF;
 
   p {
     font-size: 16px;
@@ -261,6 +262,7 @@
     transform: scale(1.02);
     opacity: 1;
     box-shadow: 0 0 20px #C4994B33;
+    border: 2px solid #FFB800;
 
     &::before {
       opacity: 0.2;
@@ -268,8 +270,9 @@
   }
 
   &:not(.active) {
-    opacity: 0.5;
-    border: 1px solid #FF8A00;
+    opacity: 0.6;
+    border: 1px solid #FFB800;
+    background: #FFFFFF;
   }
 
   .header {

@@ -135,6 +135,7 @@ const Reviews = () => {
 
       <div className={styles.list}>
         <Swiper
+          className="reviews-swiper"
           modules={[Navigation, Pagination]}
           loop={true}
           centeredSlides={true}
