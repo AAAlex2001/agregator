@@ -27,6 +27,10 @@
   padding-bottom: 40px;
 }
 
+.card {
+  position: relative;
+}
+
 :global(.industry-swiper .swiper-pagination) {
   bottom: 0 !important;
   display: flex;
@@ -202,7 +206,7 @@
     border: 3px solid #FFDDA9;
     background: #ffffff;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
-    display: block;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
