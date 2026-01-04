@@ -1,18 +1,12 @@
 import styles from "./hero.module.scss";
-import { Button } from "@/app/components";
+import { Button, Title, Subtitle } from "@/app/components";
 
 const Hero = () => {
   return (
     <section className={styles.hero}>
       <div className={styles.leftSection}>
-        <h1>
-          Первая единая площадка для поиска аттестованных экспертов
-          промышленной безопасности
-        </h1>
-        <p>
-          Размещайте заказы и находите проекты среди специалистов по всей
-          России. Все эксперты имеют официальные аттестации Ростехнадзора
-        </p>
+        <Title text="Первая единая площадка для поиска аттестованных экспертов промышленной безопасности" />
+        <Subtitle text="Размещайте заказы и находите проекты среди специалистов по всей России. Все эксперты имеют официальные аттестации Ростехнадзора" />
         <Button variant="primary" showArrow className={styles.heroButton}>
           Начать работать
         </Button>

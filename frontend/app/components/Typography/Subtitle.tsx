@@ -1,14 +1,14 @@
 import styles from "./typography.module.scss";
 
 interface SubtitleProps {
-  children: React.ReactNode;
+  text?: string;
   className?: string;
 }
 
-const Subtitle = ({ children, className = "" }: SubtitleProps) => {
+const Subtitle = ({ text, className = "" }: SubtitleProps) => {
   return (
     <p className={`${styles.subtitle} ${className}`}>
-      {children}
+      {text}
     </p>
   );
 };

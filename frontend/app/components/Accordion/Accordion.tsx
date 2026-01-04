@@ -29,11 +29,11 @@ const Accordion = ({ items, activeId, onToggle, className = "" }: AccordionProps
           >
             <div className={styles.question}>
               <span>{item.question}</span>
-              <span className={`${styles.icon} ${isOpen ? styles.iconOpen : ""}`}>
+              <span className={`${styles.icon} ${isOpen ? styles.open : ""}`}>
                 <PlusIcon isOpen={isOpen} />
               </span>
             </div>
-            <div className={`${styles.answer} ${isOpen ? styles.answerOpen : ""}`}>
+            <div className={`${styles.answer} ${isOpen ? styles.open : ""}`}>
               <div className={styles.answerInner}>
                 <span>{item.answer}</span>
               </div>

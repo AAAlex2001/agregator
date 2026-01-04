@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./orders.module.scss";
-import { SwiperNavigation, Card, Button } from "@/app/components";
+import { SwiperNavigation, Card, Button, Title, Subtitle } from "@/app/components";
 
 const orders = [
   {
@@ -102,11 +102,8 @@ const Orders = () => {
     <section className={styles.section} id="orders">
       <div className={styles.content}>
         <header className={styles.header}>
-          <h1>Примеры работ на платформе</h1>
-          <p>
-            Актуальные проекты от предприятий горнодобывающей отрасли. Находите
-            подходящие и откликайтесь напрямую
-          </p>
+          <Title text="Примеры работ на платформе" />
+          <Subtitle text="Актуальные проекты от предприятий горнодобывающей отрасли. Находите подходящие и откликайтесь напрямую" />
         </header>
       </div>
 

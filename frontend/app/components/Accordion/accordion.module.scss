@@ -11,6 +11,7 @@
   transition: background-color 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
   border: 2px solid transparent;
+  z-index: 2;
 
   &.open {
     background: #ffffff;
@@ -30,12 +31,11 @@
     line-height: 20px;
     display: flex;
     color: #4d4d4d;
-    width: 100%;
     transition: color 0.3s ease;
   }
 }
 
-.item.open .question span:first-child {
+.item.open .question span {
   color: #ff8a00;
 }
 
@@ -54,10 +54,10 @@
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.3s ease;
-}
 
-.answerOpen {
-  grid-template-rows: 1fr;
+  &.open {
+    grid-template-rows: 1fr;
+  }
 }
 
 .answerInner {
@@ -74,7 +74,7 @@
   }
 }
 
-.answerOpen .answerInner {
+.answer.open .answerInner {
   padding-top: 10px;
 }
 

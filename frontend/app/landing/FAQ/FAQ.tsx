@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./faq.module.scss";
 import Image from "next/image";
+import { Accordion, Title, Subtitle } from "@/app/components";
 
 const faq = [
   {
@@ -72,66 +73,11 @@ const FAQ = () => {
               style={{ objectFit: "contain" }}
             />
           </div>
-          <h1>Частые вопросы</h1>
-          <p>Всё, что важно знать перед началом работы</p>
+          <Title text="Частые вопросы" />
+          <Subtitle text="Всё, что важно знать перед началом работы" />
         </div>
 
-        <div className={styles.list}>
-          {faq.map((item) => (
-            <div
-              key={item.id}
-              className={`${styles.item} ${
-                activeId === item.id ? styles.open : ""
-              }`}
-              onClick={() => toggle(item.id)}
-            >
-              <div className={styles.question}>
-                <span>{item.question}</span>
-                <svg
-                  className={`${styles.icon} ${
-                    activeId === item.id ? styles.open : ""
-                  }`}
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clipPath="url(#clip0_1596_6718)">
-                    <path
-                      className={styles.verticalLine}
-                      d="M10 1.5V18.5"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M1.5 10H18.5"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_1596_6718">
-                      <rect width="20" height="20" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </div>
-
-              <div
-                className={`${styles.answer} ${
-                  activeId === item.id ? styles.open : ""
-                }`}
-              >
-                <div className={styles.answerInner}>
-                  <span>{item.answer}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Accordion items={faq} activeId={activeId} onToggle={toggle} />
       </div>
     </section>
   );

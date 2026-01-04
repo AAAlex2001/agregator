@@ -3,7 +3,7 @@
 import styles from "./how-it-works.module.scss";
 import { useState } from "react";
 import Image from "next/image";
-import { Tabs } from "@/app/components";
+import { Tabs, Title, Subtitle } from "@/app/components";
 
 const client = [
   {
@@ -92,10 +92,8 @@ const HowItWorks = () => {
         <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
       </div>
 
-            <h1>Начните работать за 4 простых шага</h1>
-            <p>
-              Платформа устроена максимально прозрачно. Выбирайте свою роль:
-            </p>
+            <Title text="Начните работать за 4 простых шага" />
+            <Subtitle text="Платформа устроена максимально прозрачно. Выбирайте свою роль:" />
             </div>
                 <div className={styles.stepsInfo}>
                         <Tabs

@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./reviews.module.scss";
-import { SwiperNavigation, Card } from "@/app/components";
+import { SwiperNavigation, Card, Title, Subtitle } from "@/app/components";
 
 const reviews = [
   {
@@ -108,11 +108,8 @@ const Reviews = () => {
       <div className={styles.content}>
         <div className={styles.headerRow}>
           <header className={styles.header}>
-            <h1>О&nbsp;нас говорят профессионалы</h1>
-            <p>
-              Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный
-              заказ на&nbsp;нашей платформе
-            </p>
+            <Title text="О&nbsp;нас говорят профессионалы" />
+            <Subtitle text="Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный заказ на&nbsp;нашей платформе" />
           </header>
 
           <div className={styles.arrows}>

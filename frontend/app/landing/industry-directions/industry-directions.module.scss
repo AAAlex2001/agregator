@@ -12,33 +12,10 @@
   max-width: 1640px;
   margin-left: 0;
   padding: 0 20px;
+  margin-bottom: 60px;
 }
 
 .backgroundImage {
-  position: relative;
-  width: 100%;
-  height: 475px;
-}
-
-.title {
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.subtitle {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 500;
-  margin-bottom: 60px;
-  width: 100%;
-  max-width: 1246px;
-  color: #808080;
-}
-
-.card {
   width: 100%;
   margin: 0 auto;
   position: relative;
@@ -174,19 +151,6 @@
   .section {
   margin-bottom: 200px;
 }
-
-  .title {
-  font-size: 24px;
-  line-height: 29px;
-  margin-bottom: 15px;
-  }
-
-  .subtitle {
-  font-size: 18px;
-  line-height: 24px;
-  margin-bottom: 60px;
-}
-
 
   .slide {
   min-width: 490px;

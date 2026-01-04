@@ -6,9 +6,9 @@ interface PlusIconProps {
 const PlusIcon = ({ className, isOpen = false }: PlusIconProps) => (
   <svg
     className={className}
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -23,6 +23,7 @@ const PlusIcon = ({ className, isOpen = false }: PlusIconProps) => (
           transform: isOpen ? "scaleY(0)" : "scaleY(1)",
           transformOrigin: "center",
           transition: "transform 0.3s ease",
+          color: "FF8A00"
         }}
       />
       <path
@@ -31,11 +32,14 @@ const PlusIcon = ({ className, isOpen = false }: PlusIconProps) => (
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
+        style={{
+          color: 'FF8A00'
+        }}
       />
     </g>
     <defs>
       <clipPath id="clip0_plus">
-        <rect width="20" height="20" fill="white" />
+        <rect width="24" height="24" fill="white" />
       </clipPath>
     </defs>
   </svg>

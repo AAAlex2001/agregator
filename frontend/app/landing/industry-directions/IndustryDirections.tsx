@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
-import { SwiperNavigation, Card } from "@/app/components";
+import { SwiperNavigation, Card, Title, Subtitle } from "@/app/components";
 
 const industries = [
   {
@@ -71,8 +71,8 @@ const IndustryDirections = () => {
   return (
     <section className={styles.section} id="advantages">
       <div className={styles.content}>
-        <h1 className={styles.title}>Эксперты по промышленной безопасности для всех отраслей промышленности</h1>
-        <h2 className={styles.subtitle}>От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации</h2>
+        <Title text="Эксперты по промышленной безопасности для всех отраслей промышленности" className={styles.title} />
+        <Subtitle text="От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации" className={styles.subtitle} />
       </div>
       <div className={styles.card}>
         <div className={styles.arrows}>
