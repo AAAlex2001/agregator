@@ -1,9 +1,11 @@
 .navigation {
   display: flex;
-  gap: 40px;
+  gap: 20px;
   flex-shrink: 0;
   align-self: center;
   position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .navBtn {
