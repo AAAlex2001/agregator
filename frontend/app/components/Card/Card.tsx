@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import Image from "next/image";
 import styles from "./card.module.scss";
 import { ChevronIcon } from "@/app/icons";
@@ -12,7 +13,7 @@ interface CardProps {
   description?: string | string[];
   price?: string;
   photo?: string;
-  icon?: string;
+  icon?: string | ReactNode;
   reviewer?: string;
   position?: string;
   text?: string;
@@ -106,7 +107,11 @@ const Card = ({
         )}
         <div className={styles.content}>
           <div className={styles.header}>
-            {icon && <Image src={icon} alt={title || ""} width={40} height={40} />}
+            {icon && (typeof icon === "string" ? (
+              <Image src={icon} alt={title || ""} width={40} height={40} />
+            ) : (
+              icon
+            ))}
             <h3>{title}</h3>
             <span className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}>
               <ChevronIcon />
