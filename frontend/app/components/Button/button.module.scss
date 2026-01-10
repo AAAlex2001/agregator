@@ -16,7 +16,6 @@
   width: 100%;
 }
 
-// Variants
 .primary {
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
   color: #FFF8EB;
@@ -48,7 +47,18 @@
   }
 }
 
-// Sizes
+.settings {
+  border-radius: 40px;
+  background: #ffffff;
+  border: 1px solid #FFDDA94D;
+
+
+  &:hover,
+  &:focus-visible {
+    background-color: #FFDDA9;
+  }
+}
+
 .sm {
   padding: 11.5px 22.5px;
   font-size: 14px;
@@ -67,7 +77,6 @@
   line-height: 22px;
 }
 
-// Arrow
 .arrow {
   display: inline-flex;
   transition: transform 0.5s ease;

@@ -1,0 +1,69 @@
+.container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background: #ffffff;
+  overflow: hidden;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+.title {
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 600;
+    margin-bottom: 90px;
+    color: #1A1A1A;
+}
+
+.subtitle {
+  margin-bottom: 0;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.infoContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Новые стили для иконок в полях */
+.inputRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9AA0A6; /* цвет иконки */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Класс, который передаётся в Input через prop className */
+/* Увеличиваем левый padding, чтобы иконка не перекрывала текст */
+.input {
+  padding-left: 40px;
+  width: 100%;
+  box-sizing: border-box;
+}

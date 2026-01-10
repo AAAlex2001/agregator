@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/frontend/app/settings/settings.module.scss">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/frontend/app/settings/settings.module.scss" />
+              <option name="originalContent" value=".container {&#10;  height: 100vh;&#10;  display: flex;&#10;  align-items: center;&#10;  justify-content: center;&#10;  padding: 0 10px;&#10;  background: #ffffff;&#10;  overflow: hidden;&#10;  margin: 0 auto;&#10;  flex-direction: column;&#10;}&#10;&#10;.title {&#10;    font-size: 20px;&#10;    line-height: 24px;&#10;    font-weight: 600;&#10;    margin-bottom: 90px;&#10;    color: #1A1A1A;&#10;}&#10;&#10;.subtitle {&#10;  margin-bottom: 0;&#10;}&#10;&#10;.buttons {&#10;  display: flex;&#10;  flex-direction: row;&#10;  gap: 8px;&#10;  margin-bottom: 40px;&#10;}&#10;&#10;.info {&#10;  display: flex;&#10;  flex-direction: column;&#10;  gap: 20px;&#10;}&#10;&#10;.infoContent {&#10;  display: flex;&#10;  flex-direction: column;&#10;  gap: 8px;&#10;}" />
+              <option name="updatedContent" value=".container {&#10;  height: 100vh;&#10;  display: flex;&#10;  align-items: center;&#10;  justify-content: center;&#10;  padding: 0 10px;&#10;  background: #ffffff;&#10;  overflow: hidden;&#10;  margin: 0 auto;&#10;  flex-direction: column;&#10;}&#10;&#10;.title {&#10;    font-size: 20px;&#10;    line-height: 24px;&#10;    font-weight: 600;&#10;    margin-bottom: 90px;&#10;    color: #1A1A1A;&#10;}&#10;&#10;.subtitle {&#10;  margin-bottom: 0;&#10;}&#10;&#10;.buttons {&#10;  display: flex;&#10;  flex-direction: row;&#10;  gap: 8px;&#10;  margin-bottom: 40px;&#10;}&#10;&#10;.info {&#10;  display: flex;&#10;  flex-direction: column;&#10;  gap: 20px;&#10;}&#10;&#10;.infoContent {&#10;  display: flex;&#10;  flex-direction: column;&#10;  gap: 8px;&#10;}&#10;&#10;/* Новые стили для иконок в полях */&#10;.inputRow {&#10;  position: relative;&#10;  display: flex;&#10;  align-items: center;&#10;}&#10;&#10;.icon {&#10;  position: absolute;&#10;  left: 12px;&#10;  top: 50%;&#10;  transform: translateY(-50%);&#10;  color: #9AA0A6; /* цвет иконки */&#10;  display: inline-flex;&#10;  align-items: center;&#10;  justify-content: center;&#10;  pointer-events: none;&#10;}&#10;&#10;/* Класс, который передаётся в Input через prop className */&#10;/* Увеличиваем левый padding, чтобы иконка не перекрывала текст */&#10;.input {&#10;  padding-left: 40px;&#10;  width: 100%;&#10;  box-sizing: border-box;&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

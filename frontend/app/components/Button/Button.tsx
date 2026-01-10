@@ -3,7 +3,7 @@
 import styles from "./button.module.scss";
 import { ArrowIcon } from "@/app/icons";
 
-type ButtonVariant = "primary" | "secondary" | "chat";
+type ButtonVariant = "primary" | "secondary" | "chat" | "settings";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
