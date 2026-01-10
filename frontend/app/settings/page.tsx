@@ -29,13 +29,14 @@ export default function SettingsPage() {
       <div className={styles.content}>
         <Title text="Настройки" as="h1" className={styles.title} />
         <div className={styles.buttons}>
-          <Button variant="settings" size="sm" onClick={() => setActiveSection("personal")}>
+          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("personal")}>
             Личные данные
           </Button>
-          <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")}>
+          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("finance")}>
             Финансы
           </Button>
         </div>
+        {activeSection === "personal" && (
         <div className={styles.data}> 
         <div className={styles.info}>
           <Subtitle text="Персональные данные" className={styles.subtitle} />
@@ -101,6 +102,14 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+        )}
+        {activeSection === "finance" && (
+          <div className={styles.finance}>
+            <Subtitle text="Финансовая информация" className={styles.subtitle} />
+            <div className={styles.infoContent}>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
