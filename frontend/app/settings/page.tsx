@@ -5,6 +5,7 @@ import { Button } from "@/app/components";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import {Input} from "@/app/components/";
+import Header from "@/app/landing/header/Header";
 import styles from "./settings.module.scss";
 
 export default function SettingsPage() {
@@ -25,9 +26,11 @@ export default function SettingsPage() {
   };
 
   return (
+    <>
+    <Header />
     <div className={styles.container}>
       <div className={styles.content}>
-        <Title text="Настройки" as="h1" className={styles.title} />
+        <Title text="Настройки профиля" as="h1" className={styles.title} />
         <div className={styles.buttons}>
           <Button variant="settings" size="sm" onClick={() => handleSwitchSection("personal")}>
             Личные данные
@@ -94,11 +97,6 @@ export default function SettingsPage() {
               value={repeatPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRepeatPassword(e.target.value)}
             />
-            <div className={styles.saveButton}>
-              <Button variant="primary" size="md" onClick={() => {/* Сохранение данных */}}>
-                Сохранить изменения
-              </Button>
-            </div>  
           </div>
         </div>
       </div>
@@ -111,6 +109,13 @@ export default function SettingsPage() {
           </div>
         )}
       </div>
+
+      <div className={styles.saveButtonWrapper}>
+          <Button variant="chat" size="md" className={styles.saveButton} onClick={() => {/* Сохранение данных */}}>
+             Сохранить изменения
+          </Button>
+      </div>
     </div>
+    </>
   );
 }

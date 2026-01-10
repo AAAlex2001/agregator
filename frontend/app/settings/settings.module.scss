@@ -1,14 +1,13 @@
 .container {
-  height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 10px;
+  justify-content: stretch;
   background: #ffffff;
   overflow: hidden;
   margin: 0 auto;
   flex-direction: column;
   width: 100%;
+  padding: 100px 20px 0 20px;
 }
 
 .content {
@@ -75,9 +74,27 @@
   width: 100%;
 }
 
+.passwordSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
 .infoContent {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
+}
+
+.saveButtonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.saveButton {
+  width: 100%;
+  max-width: 237px;
 }
