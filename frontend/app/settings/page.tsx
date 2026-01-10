@@ -41,8 +41,8 @@ export default function SettingsPage() {
         </div>
         {activeSection === "personal" && (
         <div className={styles.data}> 
-        <div className={styles.info}>
           <Subtitle text="Персональные данные" className={styles.subtitle} />
+        <div className={styles.info}>
           <div className={styles.infoContent}>
             <Input
               type="text"
@@ -78,8 +78,8 @@ export default function SettingsPage() {
             />
           </div>
         </div>
-        <div className={styles.passwordSection}>
           <Subtitle text="Изменить пароль" className={styles.subtitle} />
+        <div className={styles.passwordSection}>
           <div className={styles.infoContent}> 
             <Input
               type="password"
