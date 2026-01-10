@@ -15,6 +15,7 @@ interface ButtonProps {
   className?: string;
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
+  isActive?: boolean;
 }
 
 const Button = ({
@@ -26,12 +27,14 @@ const Button = ({
   className = "",
   type = "button",
   fullWidth = false,
+  isActive = false,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
     styles[variant],
     styles[size],
     fullWidth ? styles.fullWidth : "",
+    isActive ? styles.active : "",
     className,
   ]
     .filter(Boolean)

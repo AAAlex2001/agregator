@@ -50,12 +50,17 @@
 .settings {
   border-radius: 40px;
   background: #ffffff;
-  border: 1px solid #FFDDA94D;
+  border: 2px solid #FFDDA94D;
 
 
   &:hover,
   &:focus-visible {
     background-color: #FFDDA9;
+  }
+
+  &.active {
+    background: #FFDDA9;
+    border-color: transparent;
   }
 }
 

@@ -32,10 +32,10 @@ export default function SettingsPage() {
       <div className={styles.content}>
         <Title text="Настройки профиля" as="h1" className={styles.title} />
         <div className={styles.buttons}>
-          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("personal")}>
+          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("personal")} isActive={activeSection === "personal"}>
             Личные данные
           </Button>
-          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("finance")}>
+          <Button variant="settings" size="sm" onClick={() => handleSwitchSection("finance")} isActive={activeSection === "finance"}>
             Финансы
           </Button>
         </div>
