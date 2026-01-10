@@ -12,6 +12,8 @@ export default function SettingsPage() {
   const [phone, setPhone] = useState("");
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
   return (
     <div className={styles.container}>
@@ -65,7 +67,29 @@ export default function SettingsPage() {
         </div>
         <div className={styles.passwordSection}>
           <Subtitle text="Изменить пароль" className={styles.subtitle} />
-          <div className={styles.infoContent}> </div>
+          <div className={styles.infoContent}> 
+            <Input
+              type="password"
+              placeholder="Введите новый пароль"
+              aria-label="Пароль"
+              variant="password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Повторите новый пароль"
+              aria-label="Повторите пароль"
+              variant="password"
+              value={repeatPassword}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRepeatPassword(e.target.value)}
+            />
+            <div className={styles.saveButton}>
+              <Button variant="primary" size="md" onClick={() => {/* Сохранение данных */}}>
+                Сохранить изменения
+              </Button>
+            </div>  
+          </div>
         </div>
       </div>
       </div>
