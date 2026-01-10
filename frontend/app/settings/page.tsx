@@ -14,16 +14,25 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [activeSection, setActiveSection] = useState<"personal" | "finance">("personal");
+
+  const handleSwitchSection = (section: string) => {
+    if (section === "personal") {
+      setActiveSection("personal");
+    } else if (section === "finance") {
+      setActiveSection("finance");
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
         <Title text="Настройки" as="h1" className={styles.title} />
         <div className={styles.buttons}>
-          <Button variant="settings" size="sm" onClick={() => {/* переключение секции при необходимости */}}>
+          <Button variant="settings" size="sm" onClick={() => setActiveSection("personal")}>
             Личные данные
           </Button>
-          <Button variant="settings" size="sm" onClick={() => {/* переключение секции при необходимости */}}>
+          <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")}>
             Финансы
           </Button>
         </div>
