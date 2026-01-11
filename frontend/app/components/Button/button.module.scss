@@ -47,6 +47,20 @@
   }
 }
 
+.outline {
+  background: #ffffff;
+  color: #1A1A1A;
+  border: 2px solid #FFB800;
+
+
+
+  &:hover,
+  &:focus-visible {
+    background: #FFDDA9;
+    border-color: #FFDDA9;
+  }
+}
+
 .settings {
   border-radius: 40px;
   background: #ffffff;
@@ -65,21 +79,24 @@
 }
 
 .sm {
-  padding: 11.5px 22.5px;
   font-size: 14px;
   line-height: 18px;
+  padding: 12px 24px;
+  max-height: 40px;
 }
 
 .md {
-  padding: 14px 46.5px;
   font-size: 16px;
   line-height: 20px;
+  padding: 12px 32px;
+  max-height: 40px;
 }
 
 .lg {
-  padding: 17px 58.5px;
   font-size: 18px;
   line-height: 22px;
+  padding: 14px 40px;
+  max-height: 40px;
 }
 
 .arrow {
@@ -104,7 +121,6 @@
   }
   
   .md {
-    padding: 17px 58.5px;
     font-size: 18px;
     line-height: 22px;
   }

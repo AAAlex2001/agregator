@@ -81,6 +81,39 @@
   }
 }
 
+.finance {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .subtitle {
+    text-align: left;
+    width: 100%;
+    white-space: nowrap;
+  }
+}
+
+.financeButtons{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
+.infoContentFinance {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
 .passwordSection {
   display: flex;
   flex-direction: column;

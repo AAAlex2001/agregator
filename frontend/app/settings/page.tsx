@@ -103,8 +103,16 @@ export default function SettingsPage() {
         )}
         {activeSection === "finance" && (
           <div className={styles.finance}>
-            <Subtitle text="Финансовая информация" className={styles.subtitle} />
-            <div className={styles.infoContent}>
+            <div className={styles.infoContentFinance}>
+              <Subtitle text="Баланс: 150 000р" className={styles.subtitle} />
+              <div className={styles.financeButtons}>
+              <Button variant="chat" size="md" fullWidth={true} onClick={() => {/* Сохранение данных */}}>
+                Пополнить
+              </Button>
+              <Button variant="outline" size="md" fullWidth={true} onClick={() => {/* Сохранение данных */}}>
+                Вывести средства
+              </Button>
+              </div>
             </div>
           </div>
         )}
