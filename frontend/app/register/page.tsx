@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Input } from "@/app/components";
+import { Button, Input } from "@/app/components";
 import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/app/icons";
 import styles from "./register.module.scss";
 
@@ -154,7 +154,9 @@ export default function RegisterPage() {
                                 handleSelectRole(role.id);
                               }}
                             >
-                              Выбрать
+                              <Button variant="outline" size="md" fullWidth>
+                                Выбрать
+                              </Button>
                             </button>
                           </div>
                         </div>
@@ -194,13 +196,15 @@ export default function RegisterPage() {
                   required
                 />
 
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
+                <Button
+                  type="submit"
+                  variant="chat"
+                  size="lg"
+                  fullWidth
                   disabled={state.isLoading}
                 >
                   {state.isLoading ? "Регистрируем..." : "Зарегистрироваться"}
-                </button>
+                </Button>
               </form>
             </div>
           )}

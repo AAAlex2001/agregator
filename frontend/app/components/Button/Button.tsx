@@ -16,6 +16,7 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
   isActive?: boolean;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -28,6 +29,7 @@ const Button = ({
   type = "button",
   fullWidth = false,
   isActive = false,
+  disabled = false,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
@@ -41,7 +43,7 @@ const Button = ({
     .join(" ");
 
   return (
-    <button type={type} className={buttonClasses} onClick={onClick}>
+    <button type={type} className={buttonClasses} onClick={onClick} disabled={disabled}>
       {children}
       {showArrow && (
         <span aria-hidden="true" className={styles.arrow}>
