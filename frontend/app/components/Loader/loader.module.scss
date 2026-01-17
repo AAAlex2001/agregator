@@ -1,0 +1,28 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.spinner {
+  width: var(--loader-size, 28px);
+  height: var(--loader-size, 28px);
+  border-radius: 999px;
+  background: conic-gradient(from 0deg, #FFB800, #FF8A00, #FFB800);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  animation: spin 0.9s linear infinite;
+}
+
+.label {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
