@@ -147,17 +147,18 @@ export default function RegisterPage() {
                                 </li>
                               ))}
                             </ul>
-                            <button
+                            <Button
+                              variant="outlineOrange"
+                              size="md"
+                              fullWidth
                               className={styles.selectButton}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleSelectRole(role.id);
                               }}
                             >
-                              <Button variant="outline" size="md" fullWidth>
-                                Выбрать
-                              </Button>
-                            </button>
+                              Выбрать
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -196,15 +197,15 @@ export default function RegisterPage() {
                   required
                 />
 
-                <Button
-                  type="submit"
-                  variant="chat"
-                  size="lg"
-                  fullWidth
-                  disabled={state.isLoading}
-                >
-                  {state.isLoading ? "Регистрируем..." : "Зарегистрироваться"}
-                </Button>
+                  <Button
+                    type="submit"
+                    variant="chat"
+                    size="lg"
+                    fullWidth
+                    isLoading={state.isLoading}
+                  >
+                    Зарегистрироваться
+                  </Button>
               </form>
             </div>
           )}

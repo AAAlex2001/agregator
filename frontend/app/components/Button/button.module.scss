@@ -70,6 +70,19 @@
   }
 }
 
+.outlineOrange {
+  background: #ffffff;
+  color: #1A1A1A;
+  border: 2px solid #FF8A00;
+
+  &:hover,
+  &:focus-visible {
+    background: #FF8A00;
+    border-color: #FF8A00;
+    color: #ffffff;
+  }
+}
+
 .settings {
   border-radius: 40px;
   background: #ffffff;
@@ -121,6 +134,10 @@
 .button:hover .arrow,
 .button:focus-visible .arrow {
   transform: translateX(12px);
+}
+
+.inlineLoader {
+  color: #ffffff;
 }
 
 @media (min-width: 768px) {

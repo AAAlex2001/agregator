@@ -19,10 +19,6 @@
   pointer-events: none;
 }
 
-.backgroundFallback {
-  background: #ffffff;
-}
-
 .content {
   display: flex;
   flex-direction: column;
@@ -34,33 +30,12 @@
   z-index: 2;
 }
 
-.header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-
-  .logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-
-    svg {
-      width: 180px;
-      height: 32px;
-    }
-  }
-}
-
 .formContainer {
   background: #ffffff;
   border: 1px solid #FF8A00;
   border-radius: 12px;
   padding: 20px 20px 15px 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 3;
-  max-width: 350px;
-  margin: 0 auto;
   width: 100%;
   animation: fadeInUp 0.5s ease-out;
 }
@@ -76,197 +51,39 @@
   }
 }
 
+.header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+
+  svg {
+    width: 180px;
+    height: 32px;
+    display: block;
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.inputWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.iconLeft {
-  position: absolute;
-  left: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  pointer-events: none;
-  transition: all 0.3s ease;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    display: block;
-  }
-}
-
-.loginIcon {
-  svg path {
-    fill: #CCCED5;
-    stroke: none;
-    transition: fill 0.3s ease;
-  }
-
-  svg path[stroke] {
-    stroke: #CCCED5;
-    fill: none;
-    transition: stroke 0.3s ease;
-  }
-}
-
-.inputWrapper {
-  &:hover .loginIcon[data-type="email"] svg path {
-    fill: #808080;
-  }
-
-  &:hover .loginIcon[data-type="phone"] svg path {
-    fill: #808080;
-  }
-
-  &:hover .loginIcon[data-type="both"] svg path {
-    &:first-child {
-      fill: #808080;
-    }
-    &:last-child {
-      fill: #FF8A00;
-    }
-  }
-
-  &:hover .loginIcon[data-type="both"] svg path[stroke] {
-    stroke: #FF8A00;
-    fill: none;
-  }
-}
-
-.input:focus ~ .loginIcon svg path,
-.inputWrapper:has(.input:focus) .loginIcon svg path {
-  fill: #FF8A00 !important;
-}
-
-.input:focus ~ .loginIcon svg path[stroke],
-.inputWrapper:has(.input:focus) .loginIcon svg path[stroke] {
-  stroke: #FF8A00 !important;
-  fill: none !important;
-}
-
-.loginIcon.focused svg path {
-  fill: #FF8A00 !important;
-}
-
-.loginIcon.focused svg path[stroke] {
-  stroke: #FF8A00 !important;
-  fill: none !important;
-}
-
-.lockIcon {
-  svg path {
-    transition: fill 0.3s ease, stroke 0.3s ease;
-  }
-}
-
-.inputWrapper:hover .lockIcon svg path.lockDot {
-  fill: #FF8A00 !important;
-  stroke: #FF8A00 !important;
-}
-
-.inputWrapper:has(.input:focus) .lockIcon svg path {
-  stroke: #FF8A00 !important;
-}
-
-.iconRight {
-  position: absolute;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1;
-  transition: all 0.3s ease;
-
-  &.closedEye:hover {
-    svg path {
-      fill: #FF8A00;
-      stroke: #FF8A00;
-    }
-  }
-
-  &:active {
-    opacity: 0.7;
-  }
-
-  svg {
-    display: block;
-  }
-}
-
-.input {
-  width: 100%;
-  padding: 13px 16px;
-  border: 2px solid #E6E6E6;
+.errorMessage {
+  background: rgba(255, 138, 0, 0.12);
+  color: #1A1A1A;
+  border: 1px solid rgba(255, 138, 0, 0.35);
   border-radius: 10px;
+  padding: 10px 12px;
   font-size: 14px;
-  line-height: 125%;
-  color: #1A1A1A;
-  background: #ffffff;
-  transition: border-color 0.3s ease;
-
-  &:hover {
-    border-color: #FFDDA9;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #FFB800;
-  }
-
-  &::placeholder {
-    color: #808080;
-  }
-}
-
-.inputWrapper .input {
-  padding-left: 40px;
-  padding-right: 15px;
-}
-
-
-.submitButton {
-  width: 100%;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
-  color: #1A1A1A;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.4s ease;
-  margin-top: 10px;
-
-  &:hover,
-  &:focus-visible {
-    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+  line-height: 18px;
+  text-align: center;
 }
 
 .footer {

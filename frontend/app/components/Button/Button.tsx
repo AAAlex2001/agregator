@@ -2,8 +2,9 @@
 
 import styles from "./button.module.scss";
 import { ArrowIcon } from "@/app/icons";
+import Loader from "../Loader";
 
-type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline";
+type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline" | "outlineOrange";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
@@ -11,12 +12,13 @@ interface ButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   showArrow?: boolean;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
   isActive?: boolean;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = ({
@@ -30,6 +32,7 @@ const Button = ({
   fullWidth = false,
   isActive = false,
   disabled = false,
+  isLoading = false,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
@@ -43,9 +46,15 @@ const Button = ({
     .join(" ");
 
   return (
-    <button type={type} className={buttonClasses} onClick={onClick} disabled={disabled}>
-      {children}
-      {showArrow && (
+    <button
+      type={type}
+      className={buttonClasses}
+      onClick={onClick}
+      disabled={disabled || isLoading}
+      aria-busy={isLoading}
+    >
+      {isLoading ? <Loader size="sm" label="" className={styles.inlineLoader} /> : children}
+      {!isLoading && showArrow && (
         <span aria-hidden="true" className={styles.arrow}>
           <ArrowIcon />
         </span>

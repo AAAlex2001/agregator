@@ -1,18 +1,37 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/app/components";
+import Button from "@/app/components/Button/Button";
 import { LogoIcon } from "@/app/icons";
 import styles from "./login.module.scss";
+import { handleLogin } from "./store/actions";
+import { useLoginState } from "./store/state";
 
 export default function LoginPage() {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const state = useLoginState();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Вход:", { login, password });
+
+    state.setIsLoading(true);
+    state.setError(null);
+
+    try {
+      await handleLogin(
+        { login: state.login, password: state.password },
+        () => {
+          router.push("/settings");
+        },
+        (error) => {
+          state.setError(error);
+        }
+      );
+    } finally {
+      state.setIsLoading(false);
+    }
   };
 
   return (
@@ -28,11 +47,12 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
+            {state.error && <div className={styles.errorMessage}>{state.error}</div>}
             <Input
               id="login"
               variant="emailOrPhone"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
+              value={state.login}
+              onChange={(e) => state.setLogin(e.target.value)}
               placeholder="Электронная почта или телефон"
               required
             />
@@ -40,15 +60,15 @@ export default function LoginPage() {
             <Input
               id="password"
               variant="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={state.password}
+              onChange={(e) => state.setPassword(e.target.value)}
               placeholder="Введите пароль"
               required
             />
 
-            <button type="submit" className={styles.submitButton}>
+            <Button type="submit" variant="primary" fullWidth isLoading={state.isLoading}>
               Войти
-            </button>
+            </Button>
           </form>
 
           <div className={styles.footer}>
