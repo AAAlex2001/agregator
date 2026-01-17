@@ -22,8 +22,6 @@ import {
   getReviews,
 } from "./landing.data";
 
-export const revalidate = 60 * 60;
-
 export const metadata: Metadata = {
   title: "Промышленная безопасность — платформа экспертов и заказов",
   description:
@@ -44,6 +42,7 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
   const [howItWorksSteps, keyAdvantagesSteps, orders, industries, reviews, faq, advantages] = await Promise.all([
