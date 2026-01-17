@@ -10,62 +10,12 @@ import Image from "next/image";
 import { useState } from "react";
 import { SwiperNavigation, Card, Title, Subtitle } from "@/app/components";
 
-const industries = [
-  {
-    id: 1,
-    title: "ДОБЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
-    description: [
-      "Угольная, сланцевая, торфяная (Э1)",
-      "Горнорудная и нерудная (Э2)",
-      "Нефтегазодобыча (Э4)",
-      "Геологоразведка (Э6)"
-    ],
-      photo: "/industry_1.jpg",
-  },
-  {
-    id: 2,
-    title: "ОБРАБАТЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
-    description: [
-      "Химическая, нефтехимическая (Э7)",
-      "Металлургия (Э13)",
-      "Пищевая промышленность (Э10)",
-      "Переработка сырья (Э15)"
-    ],
-      photo: "/industry_2.jpg",
-  },
-  {
-    id: 3,
-    title: "ТРАНСПОРТ И ИНФРАСТРУКТУРА",
-    description: [
-      "Трубопроводный транспорт (Э5)",
-      "Нефтепродуктообеспечение (Э8)",
-      "Газоснабжение (Э11)",
-      "Канатные дороги (Э14.1, Э14.2)"
-    ],
-      photo: "/industry_3.jpg",
-  },
-  {
-    id: 4,
-    title: "ЭНЕРГЕТИКА И ОПАСНЫЕ ПРОИЗВОДСТВА",
-    description: [
-      "Тепло- и электроэнергетика (Э12)",
-      "Взрывчатые материалы (Э3.1, Э3.2)",
-      "Водоподготовка (Э9)"
-    ],
-      photo: "/industry_4.jpg",
-  },
-  {
-    id: 5,
-    title: "СПЕЦИАЛЬНЫЕ ОБЪЕКТЫ",
-    description: [
-      "Грузоподъемные механизмы (Э14.4)"
-    ],
-      photo: "/industry_5.jpg",
-  },
-];
+import type { LandingIndustry } from "../landing.data";
+type IndustryDirectionsProps = {
+  industries: LandingIndustry[];
+};
 
-
-const IndustryDirections = () => {
+const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
   return (

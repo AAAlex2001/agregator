@@ -7,9 +7,9 @@ interface SubtitleProps {
 
 const Subtitle = ({ text, className = "" }: SubtitleProps) => {
   return (
-    <p className={`${styles.subtitle} ${className}`}>
+    <h2 className={`${styles.subtitle} ${className}`}>
       {text}
-    </p>
+    </h2>
   );
 };
 

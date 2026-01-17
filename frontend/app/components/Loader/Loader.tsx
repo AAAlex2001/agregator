@@ -1,4 +1,5 @@
 import styles from "./loader.module.scss";
+import type { CSSProperties } from "react";
 
 type LoaderSize = "sm" | "md" | "lg";
 
@@ -19,7 +20,7 @@ export default function Loader({ className, label = "Загрузка…", size 
 
   return (
     <div className={[styles.root, className].filter(Boolean).join(" ")} role="status" aria-live="polite">
-      <span className={styles.spinner} style={{ "--loader-size": `${px}px` } as React.CSSProperties} />
+      <span className={styles.spinner} style={{ "--loader-size": `${px}px` } as CSSProperties} />
       {label ? <span className={styles.label}>{label}</span> : null}
     </div>
   );

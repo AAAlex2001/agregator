@@ -130,7 +130,7 @@ const Card = ({
     return (
       <article className={cardClasses}>
         <div className={styles.header}>
-          <h2>{title}</h2>
+          <h3>{title}</h3>
           <span>{price}</span>
         </div>
         <p>{typeof description === "string" ? description : ""}</p>
