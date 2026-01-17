@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@/app/components";
 import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/app/icons";
 import styles from "./register.module.scss";
 
-interface Role {
-  id: number;
-  title: string;
-  icon: ReactNode;
-  expandedTitle: string;
-  description: string[];
-  photo: string;
-}
+import { useRegistrationState } from "./store/state";
+import { handleRegistration, getRoleType } from "./store/actions";
+import type { Role } from "./store/types";
 
 const roles: Role[] = [
   {
@@ -44,25 +39,49 @@ const roles: Role[] = [
 ];
 
 export default function RegisterPage() {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [selectedRole, setSelectedRole] = useState<number | null>(null);
-  const [openedCardId, setOpenedCardId] = useState<number | null>(null);
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+  const router = useRouter();
+  const state = useRegistrationState();
 
   const toggleCard = (id: number) => {
-    setOpenedCardId((prev) => (prev === id ? null : id));
+    state.setOpenedCardId(state.openedCardId === id ? null : id);
   };
 
   const handleSelectRole = (roleId: number) => {
-    setSelectedRole(roleId);
-    setStep(2);
+    state.setSelectedRole(roleId);
+    state.setStep(2);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Регистрация:", { role: selectedRole, login, password });
+    
+    if (!state.selectedRole) {
+      state.setError("Выберите роль");
+      return;
+    }
+
+    state.setIsLoading(true);
+    state.setError(null);
+
+    try {
+      await handleRegistration(
+        {
+          role: getRoleType(state.selectedRole),
+          login: state.login,
+          password: state.password,
+          repeatPassword: state.repeatPassword,
+        },
+        (userId) => {
+          console.log("Успешная регистрация, ID:", userId);
+          router.push("/login");
+        },
+        (error) => {
+          state.setError(error);
+        }
+      );
+    } catch (err) {
+    } finally {
+      state.setIsLoading(false);
+    }
   };
 
   return (
@@ -80,15 +99,21 @@ export default function RegisterPage() {
           <div className={styles.stepsHeader}>
             <h2 className={styles.registrationTitle}>Регистрация</h2>
             <span className={styles.stepIndicator}>
-              {step === 1 ? "Шаг 1. Выбор роли" : "Шаг 2. Данные"}
+              {state.step === 1 ? "Шаг 1. Выбор роли" : "Шаг 2. Данные"}
             </span>
           </div>
 
-          {step === 1 ? (
+          {state.error && (
+            <div className={styles.errorMessage}>
+              {state.error}
+            </div>
+          )}
+
+          {state.step === 1 ? (
             <div className={styles.stepContent} key="step1">
               <div className={styles.rolesContainer}>
                 {roles.map((role) => {
-                  const isOpen = openedCardId === role.id;
+                  const isOpen = state.openedCardId === role.id;
                   return (
                     <div
                       key={role.id}
@@ -145,8 +170,8 @@ export default function RegisterPage() {
                 <Input
                   id="login"
                   variant="emailOrPhone"
-                  value={login}
-                  onChange={(e) => setLogin(e.target.value)}
+                  value={state.login}
+                  onChange={(e) => state.setLogin(e.target.value)}
                   placeholder="Электронная почта или телефон"
                   required
                 />
@@ -154,8 +179,8 @@ export default function RegisterPage() {
                 <Input
                   id="password"
                   variant="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={state.password}
+                  onChange={(e) => state.setPassword(e.target.value)}
                   placeholder="Пароль"
                   required
                 />
@@ -163,14 +188,18 @@ export default function RegisterPage() {
                 <Input
                   id="repeatPassword"
                   variant="password"
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
+                  value={state.repeatPassword}
+                  onChange={(e) => state.setRepeatPassword(e.target.value)}
                   placeholder="Повторите пароль"
                   required
                 />
 
-                <button type="submit" className={styles.submitButton}>
-                  Зарегистрироваться
+                <button 
+                  type="submit" 
+                  className={styles.submitButton}
+                  disabled={state.isLoading}
+                >
+                  {state.isLoading ? "Регистрируем..." : "Зарегистрироваться"}
                 </button>
               </form>
             </div>
