@@ -34,7 +34,7 @@ class ForgotPasswordRequest(BaseModel):
             raise ValueError("Необходимо указать либо телефон, либо email")
         return self
     
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def new_password_length(cls, values):
         """
         Валидатор: новый пароль должен быть не менее 8 символов.
@@ -44,7 +44,7 @@ class ForgotPasswordRequest(BaseModel):
             raise ValueError("Новый пароль должен быть не менее 8 символов")
         return values
     
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def code_length(cls, values):
         """
         Валидатор: код должен быть не менее 6 символов.
@@ -54,7 +54,7 @@ class ForgotPasswordRequest(BaseModel):
             raise ValueError("Код должен быть не менее 6 символов")
         return values
     
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def new_password_check(cls, values):
         """
         Валидатор: новый пароль должен совпадать с подтверждением.

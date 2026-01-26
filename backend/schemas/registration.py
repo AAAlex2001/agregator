@@ -25,7 +25,7 @@ class UserRegistration(BaseModel):
             raise ValueError("Необходимо указать либо телефон, либо email")
         return self
     
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def password_length(cls, values):
         """
         Валидатор: пароль должен быть не менее 8 символов.
@@ -35,7 +35,7 @@ class UserRegistration(BaseModel):
             raise ValueError("Пароль должен быть не менее 8 символов")
         return values
     
-    @model_validator(mode="before")
+    @model_validator(mode="after")
     def role_must_be_valid(cls, values):
         """
         Валидатор: роль должна быть либо Заказчиком, либо Экспертом.
