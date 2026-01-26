@@ -2,6 +2,7 @@
 Настройка подключения к базе данных
 """
 import os
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from dotenv import load_dotenv
@@ -10,10 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # URL подключения к базе данных из переменных окружения
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://safelogist:safelogist_password@localhost:5432/safelogist_db"
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL must be set in .env file")
 
 # Создание движка базы данных
 # Логирование SQL запросов (только в режиме разработки)
@@ -35,7 +35,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency для получения сессии базы данных
     Используется в FastAPI через Depends(get_db)

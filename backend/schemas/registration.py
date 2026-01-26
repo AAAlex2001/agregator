@@ -24,6 +24,27 @@ class UserRegistration(BaseModel):
         if not self.phone and not self.email:
             raise ValueError("Необходимо указать либо телефон, либо email")
         return self
+    
+    @model_validator(mode="before")
+    def password_length(cls, values):
+        """
+        Валидатор: пароль должен быть не менее 8 символов.
+        """
+        password = values.get("password")
+        if password and len(password) < 8:
+            raise ValueError("Пароль должен быть не менее 8 символов")
+        return values
+    
+    @model_validator(mode="before")
+    def role_must_be_valid(cls, values):
+        """
+        Валидатор: роль должна быть либо Заказчиком, либо Экспертом.
+        """
+        role = values.get("role")
+        if role not in UserRole.__members__:
+            raise ValueError("Роль должна быть либо Заказчиком, либо Экспертом")
+        return values
+    
 
 
 class UserResponse(BaseModel):

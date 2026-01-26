@@ -1,4 +1,46 @@
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: agregator-postgres
+    environment:
+      POSTGRES_DB: agregator_db
+      POSTGRES_USER: agregator
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - agregator-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agregator -d agregator_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agregator-backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
+      ECHO_SQL: ${ECHO_SQL:-false}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
   nginx:
     image: nginx:alpine
     container_name: agregator-nginx
@@ -10,6 +52,7 @@ services:
       - ./ssl:/etc/nginx/ssl:ro
     depends_on:
       - frontend
+      - backend
     restart: unless-stopped
     networks:
       - agregator-network
@@ -28,6 +71,9 @@ services:
 networks:
   agregator-network:
     driver: bridge
+
+volumes:
+  postgres_data:
 
 
 
