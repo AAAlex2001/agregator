@@ -397,8 +397,6 @@ const mockResponses: ResponseData[] = [
   },
 ];
 
-const TOTAL_PAGES = 5;
-
 export default function ResponsesPage() {
   const [activeTab, setActiveTab] = useState("new");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
@@ -409,28 +407,19 @@ export default function ResponsesPage() {
     (r) => r.tabKey === activeTab
   );
 
+  const totalPages = filteredResponses.length;
+
   const handleSlideChange = useCallback(
     (swiper: SwiperType) => {
       setActiveIndex(swiper.realIndex);
-      const totalSlides = filteredResponses.length;
-      if (totalSlides > 0) {
-        const page =
-          Math.floor(
-            swiper.realIndex / Math.ceil(totalSlides / TOTAL_PAGES)
-          ) + 1;
-        setCurrentPage(Math.min(page, TOTAL_PAGES));
-      }
+      setCurrentPage(swiper.realIndex + 1);
     },
-    [filteredResponses.length]
+    []
   );
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    const totalSlides = filteredResponses.length;
-    const slideIndex = Math.floor(
-      (page - 1) * (totalSlides / TOTAL_PAGES)
-    );
-    swiperRef?.slideTo(slideIndex);
+    swiperRef?.slideToLoop(page - 1);
   };
 
   const handlePrev = () => {
@@ -445,7 +434,7 @@ export default function ResponsesPage() {
     setActiveTab(tabKey);
     setActiveIndex(0);
     setCurrentPage(1);
-    swiperRef?.slideTo(0);
+    swiperRef?.slideToLoop(0);
   };
 
   return (
@@ -455,15 +444,13 @@ export default function ResponsesPage() {
         <div className={styles.shadeLeft} />
         <div className={styles.shadeRight} />
 
-        <h1 className={styles.heading}>Мои отклики</h1>
-
         <div className={styles.tabBar}>
           {tabs.map((tab) => (
             <button
               key={tab.key}
               className={`${styles.tab} ${
-                activeTab === tab.key ? styles.tabActive : ""
-              }`}
+                tab.count > 0 ? styles.tabWithCount : ""
+              } ${activeTab === tab.key ? styles.tabActive : ""}`}
               onClick={() => handleTabChange(tab.key)}
             >
               {tab.label}
@@ -479,7 +466,14 @@ export default function ResponsesPage() {
             className={styles.swiper}
             modules={[Navigation]}
             slidesPerView="auto"
-            spaceBetween={20}
+            spaceBetween={16}
+            centeredSlides
+            loop
+            breakpoints={{
+              769: {
+                spaceBetween: 20,
+              },
+            }}
             onSwiper={setSwiperRef}
             onSlideChange={handleSlideChange}
           >
@@ -533,7 +527,7 @@ export default function ResponsesPage() {
             </button>
 
             <div className={styles.pages}>
-              {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map(
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => (
                   <button
                     key={page}

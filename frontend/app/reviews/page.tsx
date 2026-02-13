@@ -98,23 +98,22 @@ const mockReviews: Review[] = [
 
 const TOTAL_REVIEWS = 8;
 const AVG_RATING = 4.8;
-const TOTAL_PAGES = 5;
 
 export default function ReviewsPage() {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const totalPages = mockReviews.length;
+
   const handleSlideChange = useCallback((swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
-    const page = Math.floor(swiper.realIndex / Math.ceil(mockReviews.length / TOTAL_PAGES)) + 1;
-    setCurrentPage(Math.min(page, TOTAL_PAGES));
+    setCurrentPage(swiper.realIndex + 1);
   }, []);
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    const slideIndex = Math.floor((page - 1) * (mockReviews.length / TOTAL_PAGES));
-    swiperRef?.slideTo(slideIndex);
+    swiperRef?.slideToLoop(page - 1);
   };
 
   const handlePrev = () => {
@@ -185,7 +184,7 @@ export default function ReviewsPage() {
             </button>
 
             <div className={styles.pages}>
-              {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map(
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => (
                   <button
                     key={page}

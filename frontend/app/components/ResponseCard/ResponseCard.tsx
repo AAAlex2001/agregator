@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronIcon } from "@/app/icons";
+import Button from "@/app/components/Button";
 import styles from "./responseCard.module.scss";
 
 export interface ResponseBadge {
@@ -190,12 +191,24 @@ const ResponseCard = ({
 
       {/* Buttons */}
       <div className={styles.actions}>
-        <button className={styles.editBtn} onClick={onEdit}>
+        <Button
+          variant="outline"
+          size="sm"
+          fullWidth
+          onClick={onEdit}
+          className={styles.editBtn}
+        >
           {editBtnText}
-        </button>
-        <button className={styles.payBtn} onClick={onPay}>
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          fullWidth
+          onClick={onPay}
+          className={styles.payBtn}
+        >
           {payBtnText}
-        </button>
+        </Button>
       </div>
     </article>
   );

@@ -3,12 +3,13 @@
   flex-direction: column;
   align-items: center;
   padding: 40px 45px;
-  gap: 24px;
+  gap: 40px;
   position: relative;
+  overflow-x: hidden;
 
   @media (max-width: 768px) {
     padding: 20px 16px;
-    gap: 16px;
+    gap: 24px;
   }
 }
 
@@ -40,30 +41,17 @@
   }
 }
 
-.heading {
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 29px;
-  color: #1a1a1a;
-  margin: 0;
-  align-self: flex-start;
-
-  @media (max-width: 768px) {
-    font-size: 20px;
-    line-height: 24px;
-  }
-}
-
 .tabBar {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  border-radius: 25px;
 
   &::-webkit-scrollbar {
     display: none;
@@ -71,72 +59,149 @@
 }
 
 .tab {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
+  padding: 10px 14px;
   gap: 8px;
-  padding: 10px 20px;
-  border-radius: 40px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.004);
   border: 1px solid rgba(255, 221, 169, 0.3);
-  background: transparent;
+  border-radius: 40px;
   cursor: pointer;
   white-space: nowrap;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
-  color: #a6acbf;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-size: 16px;
+  line-height: 16px;
+  color: #1a1a1a;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 
   &:hover {
     border-color: #ffdda9;
-    color: #1a1a1a;
   }
+}
+
+.tabWithCount {
+  padding: 10px 8px 10px 14px;
 }
 
 .tabActive {
   border-color: #ffdda9;
-  color: #1a1a1a;
   background: rgba(255, 221, 169, 0.1);
 }
 
 .tabCount {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2px 8px;
-  border-radius: 20px;
+  padding: 6px 10px;
   background: #ffdda9;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 15px;
+  border-radius: 21px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
   color: #1a1a1a;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 20px;
+.cardsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
   width: 100%;
-}
 
-@media (min-width: 1500px) {
-  .cards {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .cards {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  @media (max-width: 768px) {
     gap: 16px;
-    padding-bottom: 8px;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
+}
+
+.swiper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.slide {
+  width: 660px !important;
+  height: auto !important;
+
+  @media (max-width: 768px) {
+    width: 340px !important;
+  }
+}
+
+.slideInner {
+  opacity: 0.5;
+  transform: scale(0.96);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  height: 100%;
+}
+
+.slideActive {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 20px;
+}
+
+.slideBtn {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  border: 3px solid #ffdda9;
+  box-shadow: 2px 3px 10px rgba(196, 153, 75, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background: #fff9e6;
+    border-color: transparent;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+  }
+}
+
+.arrowLeft {
+  transform: rotate(180deg);
+}
+
+.pages {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pageBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ffdda9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageBtnActive {
+  font-weight: 800;
+  color: #ff8a00;
 }
