@@ -16,3 +16,4 @@ export { default as DiplomaIcon } from "./DiplomaIcon";
 export { default as QuickIcon } from "./QuickIcon";
 export { default as SearchIcon } from "./SearchIcon";
 export { default as CommentIcon } from "./CommentIcon";
+export { default as StarIcon } from "./StarIcon";
