@@ -5,6 +5,7 @@ type Action =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "SET_ORDERS"; payload: OrderCardViewModel[] }
+  | { type: "APPEND_ORDERS"; payload: OrderCardViewModel[] }
   | { type: "SET_TOTAL"; payload: number }
   | { type: "RESET" };
 
@@ -15,6 +16,21 @@ const initialState: OrdersState = {
   error: null,
 };
 
+function uniqueById(items: OrderCardViewModel[]): OrderCardViewModel[] {
+  const seen = new Set<number>();
+  const uniqueItems: OrderCardViewModel[] = [];
+
+  for (const item of items) {
+    if (seen.has(item.id)) {
+      continue;
+    }
+    seen.add(item.id);
+    uniqueItems.push(item);
+  }
+
+  return uniqueItems;
+}
+
 function reducer(state: OrdersState, action: Action): OrdersState {
   switch (action.type) {
     case "SET_LOADING":
@@ -22,7 +38,9 @@ function reducer(state: OrdersState, action: Action): OrdersState {
     case "SET_ERROR":
       return { ...state, error: action.payload };
     case "SET_ORDERS":
-      return { ...state, items: action.payload };
+      return { ...state, items: uniqueById(action.payload) };
+    case "APPEND_ORDERS":
+      return { ...state, items: uniqueById([...state.items, ...action.payload]) };
     case "SET_TOTAL":
       return { ...state, total: action.payload };
     case "RESET":
@@ -36,6 +54,7 @@ export function useOrdersState(): OrdersState & {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setOrders: (orders: OrderCardViewModel[]) => void;
+  appendOrders: (orders: OrderCardViewModel[]) => void;
   setTotal: (total: number) => void;
   reset: () => void;
 } {
@@ -53,6 +72,10 @@ export function useOrdersState(): OrdersState & {
     (orders: OrderCardViewModel[]) => dispatch({ type: "SET_ORDERS", payload: orders }),
     []
   );
+  const appendOrders = useCallback(
+    (orders: OrderCardViewModel[]) => dispatch({ type: "APPEND_ORDERS", payload: orders }),
+    []
+  );
   const setTotal = useCallback(
     (total: number) => dispatch({ type: "SET_TOTAL", payload: total }),
     []
@@ -65,9 +88,10 @@ export function useOrdersState(): OrdersState & {
       setLoading,
       setError,
       setOrders,
+      appendOrders,
       setTotal,
       reset,
     }),
-    [state, setLoading, setError, setOrders, setTotal, reset]
+    [state, setLoading, setError, setOrders, appendOrders, setTotal, reset]
   );
 }

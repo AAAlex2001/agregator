@@ -2,11 +2,13 @@ import { fetchOrders } from "./api";
 import { mapOrderToCardViewModel } from "./mappers";
 
 export async function loadOrders(
+  skip = 0,
+  limit = 50,
   onSuccess?: (payload: { itemsCount: number; total: number; items: ReturnType<typeof mapOrderToCardViewModel>[] }) => void,
   onError?: (message: string) => void
 ): Promise<void> {
   try {
-    const response = await fetchOrders();
+    const response = await fetchOrders(skip, limit);
     const mappedItems = response.items.map(mapOrderToCardViewModel);
 
     onSuccess?.({

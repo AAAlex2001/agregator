@@ -14,16 +14,21 @@ import styles from "./orders.module.scss";
 export default function OrdersPage() {
   const {
     items,
+    total,
     isLoading,
     error,
     setLoading,
     setError,
     setOrders,
+    appendOrders,
     setTotal,
   } = useOrdersState();
   const ordersRef = useRef<HTMLDivElement | null>(null);
+  const isLoadingMoreRef = useRef(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
   const [isResponding, setIsResponding] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const PAGE_LIMIT = 50;
 
   const parseSumAmount = useCallback((sum: string): number => {
     const normalized = sum.replace("₽", "").replace(/\s+/g, "").replace(",", ".").trim();
@@ -48,6 +53,8 @@ export default function OrdersPage() {
 
     try {
       await loadOrders(
+        0,
+        PAGE_LIMIT,
         ({ items, total }) => {
           setOrders(items);
           setTotal(total);
@@ -60,6 +67,47 @@ export default function OrdersPage() {
       setLoading(false);
     }
   }, [setError, setLoading, setOrders, setTotal]);
+
+  const hasMoreOrders = items.length < total;
+
+  const loadMoreOrders = useCallback(async () => {
+    if (isLoading || isLoadingMore || isLoadingMoreRef.current || !hasMoreOrders) {
+      return;
+    }
+
+    isLoadingMoreRef.current = true;
+    setIsLoadingMore(true);
+    try {
+      await loadOrders(
+        items.length,
+        PAGE_LIMIT,
+        ({ items: nextItems, total: nextTotal }) => {
+          appendOrders(nextItems);
+          setTotal(nextTotal);
+        },
+        (loadError) => {
+          setError(loadError);
+        }
+      );
+    } finally {
+      isLoadingMoreRef.current = false;
+      setIsLoadingMore(false);
+    }
+  }, [appendOrders, hasMoreOrders, isLoading, isLoadingMore, items.length, setError, setTotal]);
+
+  const maybeLoadMore = useCallback(() => {
+    const element = ordersRef.current;
+    if (!element) {
+      return;
+    }
+
+    const SCROLL_THRESHOLD = 120;
+    const reachedEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth - SCROLL_THRESHOLD;
+
+    if (reachedEnd) {
+      void loadMoreOrders();
+    }
+  }, [loadMoreOrders]);
 
   const handleRespondToOrder = useCallback(
     async (order: OrderCardViewModel) => {
@@ -105,7 +153,8 @@ export default function OrdersPage() {
     delta *= PIXEL_MULTIPLIER;
 
     element.scrollLeft = Math.max(0, Math.min(element.scrollLeft + delta, maxScroll));
-  }, []);
+    maybeLoadMore();
+  }, [maybeLoadMore]);
 
   useEffect(() => {
     void fetchOrdersData();
@@ -121,12 +170,18 @@ export default function OrdersPage() {
       handleOrdersWheel(event);
     };
 
+    const handleScroll = () => {
+      maybeLoadMore();
+    };
+
     element.addEventListener("wheel", handleWheelScroll, { passive: false, capture: true });
+    element.addEventListener("scroll", handleScroll);
 
     return () => {
       element.removeEventListener("wheel", handleWheelScroll, { capture: true });
+      element.removeEventListener("scroll", handleScroll);
     };
-  }, [handleOrdersWheel]);
+  }, [handleOrdersWheel, maybeLoadMore]);
 
   return (
     <>
@@ -182,6 +237,11 @@ export default function OrdersPage() {
                   onClick={() => setSelectedOrder(order)}
                 />
               ))}
+              {isLoadingMore && (
+                <div className={styles.loadMoreIndicator}>
+                  <Loader label="" size="md" />
+                </div>
+              )}
             </div>
           </div>
         )}
