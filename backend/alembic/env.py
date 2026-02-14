@@ -12,6 +12,7 @@ load_dotenv()
 from models.base import Base
 from models.user import User
 from models.password_reset_code import PasswordResetCode
+from models.order import Order, OrderBadge
 
 config = context.config
 

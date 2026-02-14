@@ -1,0 +1,119 @@
+from typing import Optional
+
+from fastapi import HTTPException, status
+from sqlalchemy import func, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
+
+from models.order import Order, OrderBadge, OrderStatus
+from schemas.order import OrderCreate, OrderUpdate
+
+
+class OrderService:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_orders(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+        status_filter: Optional[OrderStatus] = None,
+    ) -> tuple[list[Order], int]:
+        count_query = select(func.count(Order.id))
+        list_query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .order_by(Order.created_at.desc())
+        )
+
+        if status_filter:
+            count_query = count_query.where(Order.status == status_filter)
+            list_query = list_query.where(Order.status == status_filter)
+
+        total_result = await self.db.execute(count_query)
+        total = total_result.scalar_one()
+
+        list_query = list_query.offset(skip).limit(limit)
+        result = await self.db.execute(list_query)
+        orders = result.scalars().unique().all()
+
+        return list(orders), total
+
+    async def get_order_by_id(self, order_id: int) -> Order:
+        query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(Order.id == order_id)
+        )
+        result = await self.db.execute(query)
+        order = result.scalars().first()
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказ не найден",
+            )
+        return order
+
+    async def create_order(self, data: OrderCreate) -> Order:
+        order = Order(
+            title=data.title,
+            customer_id=data.customer_id,
+            sum_amount=data.sum_amount,
+            deadline=data.deadline,
+            status=data.status,
+        )
+        self.db.add(order)
+        await self.db.flush()
+
+        if data.badges:
+            badge_objects = [
+                OrderBadge(
+                    order_id=order.id,
+                    text=badge.text,
+                    variant=badge.variant,
+                )
+                for badge in data.badges
+            ]
+            self.db.add_all(badge_objects)
+
+        await self.db.commit()
+
+        return await self.get_order_by_id(order.id)
+
+    async def update_order(
+        self, order_id: int, data: OrderUpdate
+    ) -> Order:
+        order = await self.get_order_by_id(order_id)
+
+        update_data = data.model_dump(exclude_unset=True)
+        badges_data = update_data.pop("badges", None)
+
+        for field, value in update_data.items():
+            setattr(order, field, value)
+
+        if badges_data is not None:
+            await self.db.execute(
+                delete(OrderBadge).where(OrderBadge.order_id == order_id)
+            )
+            badge_objects = [
+                OrderBadge(
+                    order_id=order_id,
+                    text=badge["text"],
+                    variant=badge["variant"],
+                )
+                for badge in badges_data
+            ]
+            self.db.add_all(badge_objects)
+
+        await self.db.commit()
+
+        return await self.get_order_by_id(order_id)
+
+    async def delete_order(self, order_id: int) -> Order:
+        order = await self.get_order_by_id(order_id)
+        order.status = OrderStatus.ARCHIVED
+        await self.db.commit()
+        await self.db.refresh(order)
+        return order

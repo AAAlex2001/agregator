@@ -7,7 +7,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import Header from "@/app/landing/header/Header";
+import AuthHeader from "@/app/landing/header/AuthHeader";
 import ReviewCard from "@/app/components/ReviewCard";
 import { ArrowIcon, StarIcon } from "@/app/icons";
 import styles from "./reviews.module.scss";
@@ -126,7 +126,13 @@ export default function ReviewsPage() {
 
   return (
     <>
-      <Header />
+      <AuthHeader
+        name="Иван Иванов"
+        rating={4.8}
+        reviewCount={12}
+        role="Эксперт"
+        balance="150 000"
+      />
       <div className={styles.wrapper}>
         <div className={styles.shadeLeft} />
         <div className={styles.shadeRight} />

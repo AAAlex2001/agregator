@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import login, registration, forgot_password
+from routes import login, registration, forgot_password, order
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0")
 
@@ -15,6 +15,7 @@ app.add_middleware(
 app.include_router(login.router, prefix="/api")
 app.include_router(registration.router, prefix="/api")
 app.include_router(forgot_password.router, prefix="/api")
+app.include_router(order.router, prefix="/api")
 
 @app.get("/")
 async def root():

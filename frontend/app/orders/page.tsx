@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/app/landing/header/Header";
+import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/components/OrderCard";
 import type { Badge } from "@/app/components/OrderCard";
 import styles from "./orders.module.scss";
@@ -152,7 +152,13 @@ const mockOrders: Order[] = [
 export default function OrdersPage() {
   return (
     <>
-      <Header />
+      <AuthHeader
+        name="Иван Иванов"
+        rating={4.8}
+        reviewCount={12}
+        role="Эксперт"
+        balance="150 000"
+      />
       <div className={styles.wrapper}>
         <div className={styles.shadeLeft} />
         <div className={styles.shadeRight} />

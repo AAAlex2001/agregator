@@ -17,3 +17,7 @@ export { default as QuickIcon } from "./QuickIcon";
 export { default as SearchIcon } from "./SearchIcon";
 export { default as CommentIcon } from "./CommentIcon";
 export { default as StarIcon } from "./StarIcon";
+export { default as SettingsIcon } from "./SettingsIcon";
+export { default as ReviewIcon } from "./ReviewIcon";
+export { default as ProfileIcon } from "./ProfileIcon";
+export { default as LogoutIcon } from "./LogoutIcon";
