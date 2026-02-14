@@ -21,3 +21,8 @@ export { default as SettingsIcon } from "./SettingsIcon";
 export { default as ReviewIcon } from "./ReviewIcon";
 export { default as ProfileIcon } from "./ProfileIcon";
 export { default as LogoutIcon } from "./LogoutIcon";
+export { default as ChatHeaderIcon } from "./ChatHeaderIcon";
+export { default as NotificationsHeaderIcon } from "./NotificationsHeaderIcon";
+export { default as ProfileHeaderIcon } from "./ProfileHeaderIcon";
+export { default as BurgerHeaderIcon } from "./BurgerHeaderIcon";
+export { default as LogoMarkIcon } from "./LogoMarkIcon";

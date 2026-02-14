@@ -15,6 +15,15 @@
   max-width: 1600px;
   margin: 0 auto;
   position: relative;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    gap: 20px;
+  }
+
+  @media (min-width: 1440px) {
+    gap: 32px;
+  }
 }
 
 .brand {
@@ -25,29 +34,47 @@
 .logo {
   display: flex;
   flex-direction: row;
-  width: 155px;
-  height: 28px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
-
-  svg {
-    width: 155px;
-    height: 28px;
-    display: block;
-  }
 
   @media (min-width: 768px) {
     width: 212px;
     height: 38px;
+  }
+}
 
-    svg {
-      width: 212px;
-      height: 38px;
-    }
+.logoMobile {
+  display: inline-flex;
+
+  svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.logoDesktop {
+  display: none;
+
+  svg {
+    width: 212px;
+    height: 38px;
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    display: inline-flex;
   }
 }
 
 .nav {
   display: none;
+  flex: 1;
 
   @media (min-width: 1440px) {
     display: flex;
@@ -91,5 +118,90 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  margin-left: auto;
+}
+
+.iconsRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  @media (min-width: 768px) {
+    gap: 10px;
+  }
+}
+
+.iconRounded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+
+  svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+  }
+}
+
+.profileDesktopTrigger {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: inline-flex;
+  }
+}
+
+.profileIconMotion {
+  display: inline-flex;
+}
+
+.profileTriggerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  cursor: pointer;
+
+  svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+  }
+}
+
+.burgerTriggerWrap {
+  display: inline-flex;
+
+  @media (min-width: 1440px) {
+    display: none;
+  }
+}
+
+.burgerTriggerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    width: 48px;
+    height: 48px;
+  }
 }

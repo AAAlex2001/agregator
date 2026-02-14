@@ -174,7 +174,7 @@
 }
 
 .closeButton {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 48px;
@@ -184,6 +184,10 @@
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
 }
 
 .closeIcon {

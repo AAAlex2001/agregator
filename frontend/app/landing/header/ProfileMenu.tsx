@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -18,6 +18,9 @@ interface ProfileMenuProps {
   reviewCount: number;
   role: string;
   balance: string;
+  triggerIcon?: ReactNode;
+  triggerClassName?: string;
+  triggerAriaLabel?: string;
 }
 
 const ProfileMenu = ({
@@ -26,6 +29,9 @@ const ProfileMenu = ({
   reviewCount,
   role,
   balance,
+  triggerIcon,
+  triggerClassName,
+  triggerAriaLabel,
 }: ProfileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -76,12 +82,12 @@ const ProfileMenu = ({
   return (
     <>
       <button
-        className={styles.profileButton}
+        className={`${styles.profileButton} ${triggerClassName ?? ""}`}
         onClick={toggleMenu}
-        aria-label="Открыть профиль"
+        aria-label={triggerAriaLabel ?? "Открыть профиль"}
         aria-expanded={isOpen}
       >
-        <ProfileIcon width={24} height={24} />
+        {triggerIcon ?? <ProfileIcon width={24} height={24} />}
       </button>
 
       {isOpen && (
