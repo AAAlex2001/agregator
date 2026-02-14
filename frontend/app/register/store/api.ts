@@ -1,6 +1,10 @@
 import type { RegistrationFormData, RegistrationResponse } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL is not set");
+}
 
 export async function registerUser(data: RegistrationFormData): Promise<RegistrationResponse> {
   const payload = {
@@ -10,7 +14,7 @@ export async function registerUser(data: RegistrationFormData): Promise<Registra
     password: data.password,
   };
 
-  const response = await fetch(`${API_BASE_URL}/register/register`, {
+  const response = await fetch(`${API_BASE_URL}/register/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
