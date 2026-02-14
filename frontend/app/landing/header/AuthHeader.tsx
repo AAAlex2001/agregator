@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ProfileMenu from "./ProfileMenu";
 import styles from "./authHeader.module.scss";
 
@@ -19,6 +20,14 @@ const AuthHeader = ({
   role,
   balance,
 }: AuthHeaderProps) => {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: "/orders", label: "Мои заказы" },
+    { href: "/responses", label: "Мои отклики" },
+    { href: "/reviews", label: "Отзывы" },
+  ];
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -42,9 +51,16 @@ const AuthHeader = ({
           </Link>
         </div>
         <nav className={styles.nav}>
-          <Link href="/orders">Мои заказы</Link>
-          <Link href="/responses">Мои отклики</Link>
-          <Link href="/reviews">Отзывы</Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={pathname === link.href ? styles.navActive : undefined}
+              aria-current={pathname === link.href ? "page" : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
         <div className={styles.actions}>
           <ProfileMenu

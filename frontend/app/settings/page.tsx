@@ -5,7 +5,7 @@ import { Button } from "@/app/components";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import {Input} from "@/app/components/";
-import Header from "@/app/landing/header/Header";
+import AuthHeader from "@/app/landing/header/AuthHeader";
 import styles from "./settings.module.scss";
 
 export default function SettingsPage() {
@@ -27,7 +27,13 @@ export default function SettingsPage() {
 
   return (
     <>
-    <Header />
+    <AuthHeader
+      name="Иван Иванов"
+      rating={4.8}
+      reviewCount={12}
+      role="Эксперт"
+      balance="150 000"
+    />
     <div className={styles.container}>
       <div className={styles.content}>
         <Title text="Настройки профиля" as="h1" className={styles.title} />

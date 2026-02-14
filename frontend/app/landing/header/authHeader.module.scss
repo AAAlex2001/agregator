@@ -79,6 +79,15 @@
   }
 }
 
+.navActive {
+  background: rgba(255, 138, 0, 0.4) !important;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 138, 0, 0.5) !important;
+  }
+}
+
 .actions {
   display: flex;
   align-items: center;

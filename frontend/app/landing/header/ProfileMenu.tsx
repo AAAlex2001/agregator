@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ProfileIcon,
   StarIcon,
@@ -29,6 +29,7 @@ const ProfileMenu = ({
 }: ProfileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -37,6 +38,34 @@ const ProfileMenu = ({
   const closeMenu = () => {
     setIsOpen(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("token");
+    closeMenu();
+    router.push("/login");
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isOpen]);
 
   const menuTabs = [
     { href: "/orders", label: "Мои заказы" },
@@ -134,7 +163,7 @@ const ProfileMenu = ({
                 <ReviewIcon />
                 Отзывы
               </Link>
-              <button className={styles.logoutButton} onClick={closeMenu}>
+              <button className={styles.logoutButton} onClick={handleLogout}>
                 <LogoutIcon />
                 Выйти
               </button>
