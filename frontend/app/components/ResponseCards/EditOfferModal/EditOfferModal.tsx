@@ -171,10 +171,10 @@ const EditOfferModal = ({
                 <span className={styles.commentLabel}>
                   Комментарий для заказчика
                 </span>
-                <textarea
-                  className={styles.commentTextarea}
+                <CardInput
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={setComment}
+                  multiline
                   rows={4}
                 />
               </div>

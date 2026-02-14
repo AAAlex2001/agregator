@@ -111,23 +111,6 @@
   color: #000000;
 }
 
-.commentTextarea {
-  box-sizing: border-box;
-  display: flex;
-  padding: 16px;
-  gap: 10px;
-  width: 100%;
-  min-height: 150px;
-  border: 1px solid #ffdda9;
-  border-radius: 8px;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  color: #1a1a1a;
-  resize: vertical;
-}
-
 /* Bottom section */
 .bottomSection {
   display: flex;
@@ -195,6 +178,7 @@
   flex-direction: row;
   align-items: flex-start;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .fileThumbnail {
@@ -272,10 +256,6 @@
   .commentLabel {
     font-size: 14px;
     line-height: 24px;
-  }
-
-  .commentTextarea {
-    font-size: 14px;
   }
 
   .existingFiles {

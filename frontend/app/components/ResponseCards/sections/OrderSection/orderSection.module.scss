@@ -98,6 +98,7 @@
   line-height: 28px;
   text-align: right;
   color: #1a1a1a;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -111,6 +112,11 @@
     line-height: 17px;
   }
 
+  .orderMeta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .orderDate {
     font-size: 14px;
     line-height: 28px;
@@ -119,6 +125,11 @@
   .badge {
     font-size: 14px;
     line-height: 17px;
+  }
+
+  .cash {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .sum {
