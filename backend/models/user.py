@@ -46,3 +46,9 @@ class User(Base):
         back_populates="customer",
         cascade="all, delete-orphan"
     )
+
+    responses = relationship(
+        "OrderResponse",
+        back_populates="expert",
+        cascade="all, delete-orphan"
+    )

@@ -68,6 +68,12 @@ class Order(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
+    responses = relationship(
+        "OrderResponse",
+        back_populates="order",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
 
 
 class OrderBadge(Base):
