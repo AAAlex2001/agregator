@@ -68,7 +68,7 @@ const ProfileMenu = ({
   }, [isOpen]);
 
   const menuTabs = [
-    { href: "/orders", label: "Мои заказы" },
+    { href: "/orders", label: "Все заказы" },
     { href: "/responses", label: "Мои отклики" },
     { href: "/reviews", label: "Отзывы" },
   ];

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/orders/components/OrderCard";
-import { Loader } from "@/app/components";
+import { Loader, Title, Subtitle } from "@/app/components";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { loadOrders } from "./store/actions";
 import { useOrdersState } from "./store/state";
@@ -98,15 +98,21 @@ export default function OrdersPage() {
         balance="150 000"
       />
       <div className={styles.wrapper}>
+        <div className={styles.pageHead}>
+          <Title text="Все заказы" className={styles.pageTitle} as="h1" />
+          <Subtitle text="Актуальные заказы по направлениям" className={styles.pageSubtitle} />
+        </div>
+
         {isLoading && (
           <div className={styles.statusState}>
-            <Loader label="Загружаем заказы" size="lg" />
+            <Loader label="" size="lg" />
           </div>
         )}
 
         {!isLoading && error && (
           <div className={styles.statusState}>
-            <p className={styles.errorText}>{error}</p>
+            <Title text="Ошибка загрузки" className={styles.statusTitle} as="h2" />
+            <Subtitle text={error} className={styles.statusSubtitle} />
             <button className={styles.retryButton} onClick={() => void fetchOrdersData()}>
               Повторить
             </button>
@@ -115,27 +121,30 @@ export default function OrdersPage() {
 
         {!isLoading && !error && items.length === 0 && (
           <div className={styles.statusState}>
-            <p className={styles.emptyText}>Пока нет заказов</p>
+            <Title text="Все заказы" className={styles.statusTitle} as="h2" />
+            <Subtitle text="Пока нет заказов" className={styles.statusSubtitle} />
           </div>
         )}
 
-        <div className={styles.ordersContainer}>
-          <div className={styles.shadeLeft} />
-          <div className={styles.shadeRight} />
-          <div className={styles.orders} ref={ordersRef} onWheelCapture={handleOrdersWheel}>
-            {items.map((order) => (
-              <OrderCard
-                key={order.id}
-                badges={order.badges}
-                title={order.title}
-                customer={order.customer}
-                date={order.date}
-                sum={order.sum}
-                onClick={() => setSelectedOrder(order)}
-              />
-            ))}
+        {!isLoading && !error && items.length > 0 && (
+          <div className={styles.ordersContainer}>
+            <div className={styles.shadeLeft} />
+            <div className={styles.shadeRight} />
+            <div className={styles.orders} ref={ordersRef} onWheelCapture={handleOrdersWheel}>
+              {items.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  badges={order.badges}
+                  title={order.title}
+                  customer={order.customer}
+                  date={order.date}
+                  sum={order.sum}
+                  onClick={() => setSelectedOrder(order)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <OrderDetailsModal
           isOpen={Boolean(selectedOrder)}

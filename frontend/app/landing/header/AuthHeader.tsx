@@ -23,7 +23,7 @@ const AuthHeader = ({
   const pathname = usePathname();
 
   const navLinks = [
-    { href: "/orders", label: "Мои заказы" },
+    { href: "/orders", label: "Все заказы" },
     { href: "/responses", label: "Мои отклики" },
     { href: "/reviews", label: "Отзывы" },
   ];
