@@ -9,7 +9,7 @@
   position: relative;
   overflow-x: hidden;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     padding: 40px 10px;
     gap: 40px;
   }
@@ -23,8 +23,8 @@
   gap: 8px;
 }
 
-.pageTitle,
-.pageSubtitle {
+.pageHead .pageTitle,
+.pageHead .pageSubtitle {
   margin: 0;
   text-align: center;
 }
@@ -40,8 +40,8 @@
   padding: 16px;
 }
 
-.statusTitle,
-.statusSubtitle {
+.statusState .statusTitle,
+.statusState .statusSubtitle {
   margin: 0;
   text-align: center;
 }
@@ -151,7 +151,7 @@
   width: 100%;
   position: relative;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     gap: 24px;
   }
 }
@@ -168,7 +168,7 @@
   width: 340px !important;
   height: auto !important;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     width: 660px !important;
   }
 }

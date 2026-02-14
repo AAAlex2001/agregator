@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useReducer } from "react";
 import type { ResponseCardViewModel, ResponseCounters, ResponsesState } from "./types";
 
 type Action =
@@ -48,33 +48,18 @@ export function useResponsesState(): ResponsesState & {
 } {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setLoading = useCallback(
-    (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading }),
-    []
-  );
-  const setError = useCallback(
-    (error: string | null) => dispatch({ type: "SET_ERROR", payload: error }),
-    []
-  );
-  const setItems = useCallback(
-    (items: ResponseCardViewModel[]) => dispatch({ type: "SET_ITEMS", payload: items }),
-    []
-  );
-  const setCounters = useCallback(
-    (counters: ResponseCounters) => dispatch({ type: "SET_COUNTERS", payload: counters }),
-    []
-  );
-  const reset = useCallback(() => dispatch({ type: "RESET" }), []);
+  const setLoading = (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading });
+  const setError = (error: string | null) => dispatch({ type: "SET_ERROR", payload: error });
+  const setItems = (items: ResponseCardViewModel[]) => dispatch({ type: "SET_ITEMS", payload: items });
+  const setCounters = (counters: ResponseCounters) => dispatch({ type: "SET_COUNTERS", payload: counters });
+  const reset = () => dispatch({ type: "RESET" });
 
-  return useMemo(
-    () => ({
-      ...state,
-      setLoading,
-      setError,
-      setItems,
-      setCounters,
-      reset,
-    }),
-    [state, setLoading, setError, setItems, setCounters, reset]
-  );
+  return {
+    ...state,
+    setLoading,
+    setError,
+    setItems,
+    setCounters,
+    reset,
+  };
 }

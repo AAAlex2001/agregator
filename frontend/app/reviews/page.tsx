@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -106,7 +106,7 @@ export default function ReviewsPage() {
 
   const totalPages = mockReviews.length;
 
-  const paginationItems = useMemo<(number | "ellipsis")[]>(() => {
+  const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
       return Array.from({ length: totalPages }, (_, index) => index + 1);
     }
@@ -120,12 +120,12 @@ export default function ReviewsPage() {
     }
 
     return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
-  }, [currentPage, totalPages]);
+  })();
 
-  const handleSlideChange = useCallback((swiper: SwiperType) => {
+  const handleSlideChange = (swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
     setCurrentPage(swiper.realIndex + 1);
-  }, []);
+  };
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);

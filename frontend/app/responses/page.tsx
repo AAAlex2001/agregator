@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -32,7 +32,7 @@ export default function ResponsesPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     setLoading(true);
     setError(null);
 
@@ -50,11 +50,11 @@ export default function ResponsesPage() {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, setCounters, setError, setItems, setLoading]);
+  };
 
   useEffect(() => {
     void fetchData();
-  }, [fetchData]);
+  }, [activeTab]);
 
   useEffect(() => {
     setActiveIndex(0);
@@ -62,22 +62,19 @@ export default function ResponsesPage() {
     swiperRef?.slideToLoop(0);
   }, [activeTab, swiperRef, items.length]);
 
-  const tabs = useMemo(
-    () => [
-      { key: "all" as const, label: "Все", count: counters.all },
-      { key: "review" as const, label: "На рассмотрении", count: counters.review },
-      { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
-      { key: "accepted" as const, label: "Принятые", count: counters.accepted },
-      { key: "completed" as const, label: "Завершены", count: counters.completed },
-      { key: "archive" as const, label: "Архив", count: counters.archive },
-    ],
-    [counters]
-  );
+  const tabs = [
+    { key: "all" as const, label: "Все", count: counters.all },
+    { key: "review" as const, label: "На рассмотрении", count: counters.review },
+    { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
+    { key: "accepted" as const, label: "Принятые", count: counters.accepted },
+    { key: "completed" as const, label: "Завершены", count: counters.completed },
+    { key: "archive" as const, label: "Архив", count: counters.archive },
+  ];
 
   const totalPages = Math.max(1, items.length);
   const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Все";
 
-  const paginationItems = useMemo<(number | "ellipsis")[]>(() => {
+  const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
       return Array.from({ length: totalPages }, (_, index) => index + 1);
     }
@@ -91,12 +88,12 @@ export default function ResponsesPage() {
     }
 
     return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
-  }, [currentPage, totalPages]);
+  })();
 
-  const handleSlideChange = useCallback((swiper: SwiperType) => {
+  const handleSlideChange = (swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
     setCurrentPage(swiper.realIndex + 1);
-  }, []);
+  };
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
@@ -156,7 +153,7 @@ export default function ResponsesPage() {
               centeredSlides
               loop={items.length > 1}
               breakpoints={{
-                769: {
+                768: {
                   spaceBetween: 20,
                 },
               }}

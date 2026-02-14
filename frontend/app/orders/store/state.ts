@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useReducer } from "react";
 import type { OrderCardViewModel, OrdersState } from "./types";
 
 type Action =
@@ -60,38 +60,20 @@ export function useOrdersState(): OrdersState & {
 } {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setLoading = useCallback(
-    (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading }),
-    []
-  );
-  const setError = useCallback(
-    (error: string | null) => dispatch({ type: "SET_ERROR", payload: error }),
-    []
-  );
-  const setOrders = useCallback(
-    (orders: OrderCardViewModel[]) => dispatch({ type: "SET_ORDERS", payload: orders }),
-    []
-  );
-  const appendOrders = useCallback(
-    (orders: OrderCardViewModel[]) => dispatch({ type: "APPEND_ORDERS", payload: orders }),
-    []
-  );
-  const setTotal = useCallback(
-    (total: number) => dispatch({ type: "SET_TOTAL", payload: total }),
-    []
-  );
-  const reset = useCallback(() => dispatch({ type: "RESET" }), []);
+  const setLoading = (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading });
+  const setError = (error: string | null) => dispatch({ type: "SET_ERROR", payload: error });
+  const setOrders = (orders: OrderCardViewModel[]) => dispatch({ type: "SET_ORDERS", payload: orders });
+  const appendOrders = (orders: OrderCardViewModel[]) => dispatch({ type: "APPEND_ORDERS", payload: orders });
+  const setTotal = (total: number) => dispatch({ type: "SET_TOTAL", payload: total });
+  const reset = () => dispatch({ type: "RESET" });
 
-  return useMemo(
-    () => ({
-      ...state,
-      setLoading,
-      setError,
-      setOrders,
-      appendOrders,
-      setTotal,
-      reset,
-    }),
-    [state, setLoading, setError, setOrders, appendOrders, setTotal, reset]
-  );
+  return {
+    ...state,
+    setLoading,
+    setError,
+    setOrders,
+    appendOrders,
+    setTotal,
+    reset,
+  };
 }
