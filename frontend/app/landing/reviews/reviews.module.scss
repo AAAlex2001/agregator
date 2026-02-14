@@ -46,7 +46,7 @@
 
 :global(.reviews-swiper) {
   overflow: hidden;
-  padding: 30px 0 40px 0;
+  padding: 30px 0 0 0;
 }
 
 :global(.reviews-swiper .swiper-wrapper) {
@@ -56,6 +56,8 @@
 :global(.reviews-swiper .swiper-slide) {
   height: auto;
   display: flex;
+  width: 320px !important;
+  flex-shrink: 0;
 }
 
 :global(.reviews-swiper .swiper-slide > *) {
@@ -63,7 +65,8 @@
 }
 
 :global(.reviews-swiper .swiper-pagination) {
-  bottom: 0 !important;
+  position: static !important;
+  margin-top: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -139,6 +142,10 @@
     width: 385px;
   }
 
+  :global(.reviews-swiper .swiper-slide) {
+    width: 385px !important;
+  }
+
   .arrows {
     display: flex;
     gap: 40px;
@@ -200,6 +207,10 @@
 
   .slide {
     width: 385px;
+  }
+
+  :global(.reviews-swiper .swiper-slide) {
+    width: 385px !important;
   }
 
   .arrows {

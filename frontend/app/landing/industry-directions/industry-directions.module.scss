@@ -254,6 +254,8 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
     gap: 20px;
     width: 100%;
   }
@@ -262,6 +264,8 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
     gap: 20px;
     width: 100%;
     transform: none !important;
