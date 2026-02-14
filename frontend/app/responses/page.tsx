@@ -8,18 +8,21 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import Header from "@/app/landing/header/Header";
-import ResponseCard from "@/app/components/ResponseCard";
-import type { ResponseBadge } from "@/app/components/ResponseCard";
 import {
+  ResponseCard,
   AcceptanceRequestCard,
   InProgressCard,
-} from "@/app/components/ResponseCards/Accepted";
-import EditOfferModal from "@/app/components/ResponseCards/EditOfferModal";
-import type { EditOfferFormData } from "@/app/components/ResponseCards/EditOfferModal";
-import ConfirmationModal from "@/app/components/ResponseCards/ConfirmationModal";
-import type { ConfirmationButton } from "@/app/components/ResponseCards/ConfirmationModal";
+  EditOfferModal,
+  ConfirmationModal,
+} from "@/app/components/ResponseCards";
+import type {
+  ResponseBadge,
+  EditOfferFormData,
+  ConfirmationButton,
+} from "@/app/components/ResponseCards";
 import { ArrowIcon } from "@/app/icons";
 import styles from "./responses.module.scss";
+import Image from "next/image";
 
 interface Tab {
   key: string;

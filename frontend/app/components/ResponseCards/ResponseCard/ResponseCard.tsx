@@ -11,9 +11,9 @@ import {
   ActionButtons,
 } from "../sections";
 import type { ResponseBadge } from "../types";
-import styles from "./considerationCard.module.scss";
+import styles from "./responseCard.module.scss";
 
-export interface ConsiderationCardProps {
+export interface ResponseCardProps {
   dateLabel: string;
   date: string;
   status: string;
@@ -44,7 +44,7 @@ export interface ConsiderationCardProps {
   onPay?: () => void;
 }
 
-const ConsiderationCard = (props: ConsiderationCardProps) => {
+const ResponseCard = (props: ResponseCardProps) => {
   return (
     <article className={styles.card}>
       <div className={styles.content}>
@@ -104,4 +104,4 @@ const ConsiderationCard = (props: ConsiderationCardProps) => {
   );
 };
 
-export default ConsiderationCard;
+export default ResponseCard;

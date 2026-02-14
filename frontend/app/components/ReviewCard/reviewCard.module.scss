@@ -6,45 +6,45 @@
   padding: 16px;
   gap: 8px;
 
-  width: 700px;
-  min-height: 206px;
+  width: 340px;
+  min-height: 340px;
   flex-shrink: 0;
 
   background: #ffffff;
   border: 1px solid #ffdda9;
   border-radius: 16px;
 
-  @media (max-width: 768px) {
-    width: 340px;
-    min-height: 340px;
+  @media (min-width: 769px) {
+    width: 700px;
+    min-height: 206px;
   }
 }
 
 .customer {
   font-weight: 600;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #ff8a00;
   margin: 0;
   width: 100%;
 
-  @media (max-width: 768px) {
-    font-size: 14px;
-    line-height: 17px;
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
   }
 }
 
 .order {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #a6acbf;
   margin: 0;
   width: 100%;
 
-  @media (max-width: 768px) {
-    font-size: 14px;
-    line-height: 17px;
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
   }
 }
 
@@ -68,14 +68,14 @@
 
 .date {
   font-weight: 400;
-  font-size: 16px;
-  line-height: 28px;
+  font-size: 14px;
+  line-height: 24px;
   text-align: right;
   color: #000000;
 
-  @media (max-width: 768px) {
-    font-size: 14px;
-    line-height: 24px;
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 28px;
   }
 }
 
@@ -91,14 +91,14 @@
 
 .commentText {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 14px;
+  line-height: 20px;
   color: #000000;
   margin: 0;
   width: 100%;
 
-  @media (max-width: 768px) {
-    font-size: 14px;
-    line-height: 20px;
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 24px;
   }
 }

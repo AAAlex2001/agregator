@@ -1,5 +1,5 @@
-export { default as ConsiderationCard } from "./Consideration";
-export type { ConsiderationCardProps } from "./Consideration";
+export { default as ResponseCard } from "./ResponseCard";
+export type { ResponseCardProps } from "./ResponseCard";
 
 export { default as EditOfferModal } from "./EditOfferModal";
 export type { EditOfferModalProps, EditOfferFormData } from "./EditOfferModal";

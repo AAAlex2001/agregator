@@ -1,9 +1,13 @@
 .termsRow {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
   gap: 12px;
   width: 100%;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+  }
 }
 
 .termItem {
@@ -15,48 +19,41 @@
 
 .costItem {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 4px;
   flex: 1;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }
 
 .termLabel {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #1a1a1a;
   white-space: nowrap;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
 }
 
 .termValue {
   font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #1a1a1a;
   white-space: nowrap;
-}
 
-@media (max-width: 768px) {
-  .termsRow {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .costItem {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  .termLabel {
-    font-size: 14px;
-    line-height: 17px;
-  }
-
-  .termValue {
-    font-size: 14px;
-    line-height: 17px;
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
   }
 }

@@ -1,10 +1,14 @@
 .actions {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
   width: 100%;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+  }
 }
 
 .editBtn {
@@ -12,25 +16,23 @@
   max-height: 44px;
   border-width: 1px !important;
   border-color: #ffdda9 !important;
+  font-size: 14px !important;
+  line-height: 17px !important;
+
+  @media (min-width: 769px) {
+    font-size: unset !important;
+    line-height: unset !important;
+  }
 }
 
 .payBtn {
   flex: 1;
   max-height: 44px;
-}
+  font-size: 14px !important;
+  line-height: 17px !important;
 
-@media (max-width: 768px) {
-  .actions {
-    flex-direction: column;
-  }
-
-  .editBtn {
-    font-size: 14px !important;
-    line-height: 17px !important;
-  }
-
-  .payBtn {
-    font-size: 14px !important;
-    line-height: 17px !important;
+  @media (min-width: 769px) {
+    font-size: unset !important;
+    line-height: unset !important;
   }
 }

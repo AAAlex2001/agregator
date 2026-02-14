@@ -6,8 +6,8 @@ import {
   StatusHeader,
   OrderSection,
   CommissionInfo,
-  CardInput,
 } from "../sections";
+import CardInput from "@/app/components/CardInput";
 import type { ResponseBadge } from "../types";
 import styles from "./editOfferModal.module.scss";
 

@@ -15,12 +15,18 @@
   align-items: flex-start;
   padding: 16px 20px;
   gap: 24px;
-  width: 660px;
+  width: 340px;
+  margin: 16px;
   max-height: 90vh;
   overflow-y: auto;
   background: #ffffff;
   border: 1px solid #ffdda9;
   border-radius: 16px;
+
+  @media (min-width: 769px) {
+    width: 660px;
+    margin: 0;
+  }
 }
 
 .content {
@@ -34,10 +40,15 @@
 .title {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 18px;
+  line-height: 22px;
   color: #1a1a1a;
   margin: 0;
+
+  @media (min-width: 769px) {
+    font-size: 20px;
+    line-height: 24px;
+  }
 }
 
 /* Warning info block */
@@ -52,9 +63,14 @@
 .warningTitle {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
-  font-size: 14px;
-  line-height: 17px;
+  font-size: 12px;
+  line-height: 15px;
   color: #ff8a00;
+
+  @media (min-width: 769px) {
+    font-size: 14px;
+    line-height: 17px;
+  }
 }
 
 .warningList {
@@ -87,44 +103,26 @@
 .warningText {
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
+  font-size: 12px;
+  line-height: 15px;
   color: #1a1a1a;
+
+  @media (min-width: 769px) {
+    font-size: 14px;
+    line-height: 17px;
+  }
 }
 
 /* Action buttons */
 .actions {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
   width: 100%;
-}
 
-/* Mobile */
-@media (max-width: 768px) {
-  .modal {
-    width: 340px;
-    margin: 16px;
-  }
-
-  .title {
-    font-size: 18px;
-    line-height: 22px;
-  }
-
-  .warningTitle {
-    font-size: 12px;
-    line-height: 15px;
-  }
-
-  .warningText {
-    font-size: 12px;
-    line-height: 15px;
-  }
-
-  .actions {
-    flex-direction: column;
+  @media (min-width: 769px) {
+    flex-direction: row;
   }
 }

@@ -2,7 +2,7 @@
 
 import styles from "./cardInput.module.scss";
 
-interface CardInputProps {
+export interface CardInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;

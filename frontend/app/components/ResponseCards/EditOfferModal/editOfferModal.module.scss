@@ -15,12 +15,12 @@
   align-items: flex-start;
   padding: 16px 20px;
   gap: 24px;
-  width: 660px;
-  max-height: 90vh;
+  margin: 16px;
   overflow-y: auto;
   background: #ffffff;
   border: 1px solid #ffdda9;
   border-radius: 16px;
+  max-width: 660px;
 }
 
 .content {
@@ -48,7 +48,6 @@
   width: 100%;
 }
 
-/* Fields area */
 .fieldsArea {
   display: flex;
   flex-direction: column;
@@ -59,25 +58,23 @@
 
 .fieldLabels {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
 }
 
 .fieldLabel {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #1a1a1a;
   flex: 1;
 }
 
 .fieldInputs {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
 }
 
@@ -95,7 +92,7 @@
   color: #1a1a1a;
 }
 
-/* Comment area */
+
 .commentArea {
   display: flex;
   flex-direction: column;
@@ -106,7 +103,7 @@
 
 .commentLabel {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: #000000;
 }
@@ -122,15 +119,14 @@
 
 .existingFiles {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 10px;
+  flex-direction: column;
+  gap: 0;
   width: 100%;
 }
 
 .existingFilesTitle {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: #000000;
   white-space: nowrap;
@@ -138,7 +134,7 @@
 
 .existingFileLink {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: #000000;
   text-decoration: underline;
@@ -149,13 +145,12 @@
   }
 }
 
-/* Upload + submit row */
+
 .uploadAndSubmit {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 66px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
   width: 100%;
 }
 
@@ -168,7 +163,7 @@
 
 .fileUploadTitle {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: #000000;
 }
@@ -228,63 +223,67 @@
 
 /* Submit button sizing override */
 .submitBtn {
-  min-width: 320px;
+  width: 100%;
+  min-width: unset;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .modal {
-    width: 340px;
-    margin: 16px;
+    width: 660px;
+    margin: 0;
   }
 
   .fieldLabels {
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .fieldLabel {
-    font-size: 14px;
-    line-height: 17px;
+    font-size: 16px;
+    line-height: 20px;
   }
 
   .fieldInputs {
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .commentLabel {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 24px;
   }
 
   .existingFiles {
-    flex-direction: column;
-    gap: 0;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .existingFilesTitle {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 24px;
   }
 
   .existingFileLink {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 24px;
   }
 
   .uploadAndSubmit {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 66px;
   }
 
   .fileUploadTitle {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .submitBtn {
-    width: 100%;
-    min-width: unset;
+    min-width: 320px;
+    width: auto;
   }
 }

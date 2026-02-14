@@ -2,28 +2,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  gap: 40px;
+  padding: 20px;
+  gap: 24px;
   max-width: 1640px;
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
 
-  @media (max-width: 768px) {
-    padding: 20px;
-    gap: 24px;
+  @media (min-width: 769px) {
+    padding: 40px 20px;
+    gap: 40px;
   }
 }
 
 .shadeLeft,
 .shadeRight {
-  display: block;
-  position: fixed;
-  width: 100px;
-  top: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 10;
+  display: none;
+
+  @media (min-width: 769px) {
+    display: block;
+    position: fixed;
+    width: 100px;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
 }
 
 .shadeLeft {
@@ -34,13 +38,6 @@
 .shadeRight {
   right: 0;
   background: linear-gradient(270deg, #ffffff 46.63%, rgba(255, 255, 255, 0) 100%);
-}
-
-@media (max-width: 768px) {
-  .shadeLeft,
-  .shadeRight {
-    display: none;
-  }
 }
 
 .tabBar {
@@ -112,11 +109,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
 
-  @media (max-width: 768px) {
-    gap: 16px;
+  @media (min-width: 769px) {
+    gap: 24px;
   }
 }
 
@@ -126,11 +123,11 @@
 }
 
 .slide {
-  width: 660px !important;
+  width: 340px !important;
   height: auto !important;
 
-  @media (max-width: 768px) {
-    width: 340px !important;
+  @media (min-width: 769px) {
+    width: 660px !important;
   }
 }
 

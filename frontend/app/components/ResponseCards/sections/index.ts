@@ -6,4 +6,3 @@ export { default as CommentSection } from "./CommentSection";
 export { default as TechSpecFiles } from "./TechSpecFiles";
 export { default as ReminderSection } from "./ReminderSection";
 export { default as ActionButtons } from "./ActionButtons";
-export { default as CardInput } from "./CardInput";

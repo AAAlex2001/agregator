@@ -19,10 +19,15 @@
 
 .orderTitle {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #000000;
   flex: 1;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
 }
 
 .chevron {
@@ -32,10 +37,15 @@
 
 .customer {
   font-weight: 600;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   color: #ff8a00;
   width: 100%;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
 }
 
 .orderMeta {
@@ -43,15 +53,25 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 8px;
   width: 100%;
+
+  @media (min-width: 769px) {
+    flex-wrap: nowrap;
+    gap: 24px;
+  }
 }
 
 .orderDate {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 28px;
   color: #000000;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+  }
 }
 
 .badges {
@@ -69,8 +89,8 @@
   padding: 4px 8px;
   border-radius: 8px;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 17px;
   white-space: nowrap;
 
   &.blue {
@@ -82,58 +102,36 @@
     background: #e8f5e9;
     color: #2e7d32;
   }
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
 }
 
 .cash {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
+  width: 100%;
+
+  @media (min-width: 769px) {
+    justify-content: flex-end;
+    width: auto;
+  }
 }
 
 .sum {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 28px;
   text-align: right;
   color: #1a1a1a;
   white-space: nowrap;
-}
 
-@media (max-width: 768px) {
-  .orderTitle {
-    font-size: 14px;
-    line-height: 17px;
-  }
-
-  .customer {
-    font-size: 14px;
-    line-height: 17px;
-  }
-
-  .orderMeta {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .orderDate {
-    font-size: 14px;
-    line-height: 28px;
-  }
-
-  .badge {
-    font-size: 14px;
-    line-height: 17px;
-  }
-
-  .cash {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .sum {
-    font-size: 14px;
-    line-height: 28px;
+  @media (min-width: 769px) {
+    font-size: 16px;
   }
 }
