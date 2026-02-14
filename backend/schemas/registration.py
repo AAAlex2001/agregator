@@ -26,24 +26,13 @@ class UserRegistration(BaseModel):
         return self
     
     @model_validator(mode="after")
-    def password_length(cls, values):
+    def password_length(self):
         """
         Валидатор: пароль должен быть не менее 8 символов.
         """
-        password = values.get("password")
-        if password and len(password) < 8:
+        if self.password and len(self.password) < 8:
             raise ValueError("Пароль должен быть не менее 8 символов")
-        return values
-    
-    @model_validator(mode="after")
-    def role_must_be_valid(cls, values):
-        """
-        Валидатор: роль должна быть либо Заказчиком, либо Экспертом.
-        """
-        role = values.get("role")
-        if role not in UserRole.__members__:
-            raise ValueError("Роль должна быть либо Заказчиком, либо Экспертом")
-        return values
+        return self
     
 
 

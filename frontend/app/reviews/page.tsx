@@ -134,9 +134,6 @@ export default function ReviewsPage() {
         balance="150 000"
       />
       <div className={styles.wrapper}>
-        <div className={styles.shadeLeft} />
-        <div className={styles.shadeRight} />
-
         <div className={styles.titleBlock}>
           <h1 className={styles.heading}>Отзывы наших клиентов</h1>
           <div className={styles.ratingInfo}>
@@ -151,6 +148,8 @@ export default function ReviewsPage() {
         </div>
 
         <div className={styles.reviewsSection}>
+          <div className={styles.shadeLeft} />
+          <div className={styles.shadeRight} />
           <Swiper
             className={styles.swiper}
             modules={[Navigation]}

@@ -50,14 +50,14 @@
 .shadeRight {
   display: none;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     display: block;
-    position: fixed;
-    width: 100px;
+    position: absolute;
+    width: 96px;
     top: 0;
     bottom: 0;
     pointer-events: none;
-    z-index: 10;
+    z-index: 6;
   }
 }
 
@@ -142,6 +142,7 @@
   align-items: center;
   gap: 16px;
   width: 100%;
+  position: relative;
 
   @media (min-width: 769px) {
     gap: 24px;
@@ -151,6 +152,8 @@
 .swiper {
   width: 100%;
   overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .slide {

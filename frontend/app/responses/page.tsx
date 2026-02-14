@@ -105,9 +105,6 @@ export default function ResponsesPage() {
         balance="150 000"
       />
       <div className={styles.wrapper}>
-        <div className={styles.shadeLeft} />
-        <div className={styles.shadeRight} />
-
         <div className={styles.pageHead}>
           <Title text="Все отклики" className={styles.pageTitle} as="h1" />
           <Subtitle text="Отслеживайте статус ваших откликов" className={styles.pageSubtitle} />
@@ -133,6 +130,8 @@ export default function ResponsesPage() {
           <ResponsesState title={activeTabLabel} subtitle="Пока нет откликов" />
         ) : (
           <div className={styles.cardsSection}>
+            <div className={styles.shadeLeft} />
+            <div className={styles.shadeRight} />
             <Swiper
               className={styles.swiper}
               modules={[Navigation]}
