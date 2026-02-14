@@ -10,6 +10,14 @@ import "swiper/css/navigation";
 import Header from "@/app/landing/header/Header";
 import ResponseCard from "@/app/components/ResponseCard";
 import type { ResponseBadge } from "@/app/components/ResponseCard";
+import {
+  AcceptanceRequestCard,
+  InProgressCard,
+} from "@/app/components/ResponseCards/Accepted";
+import EditOfferModal from "@/app/components/ResponseCards/EditOfferModal";
+import type { EditOfferFormData } from "@/app/components/ResponseCards/EditOfferModal";
+import ConfirmationModal from "@/app/components/ResponseCards/ConfirmationModal";
+import type { ConfirmationButton } from "@/app/components/ResponseCards/ConfirmationModal";
 import { ArrowIcon } from "@/app/icons";
 import styles from "./responses.module.scss";
 
@@ -20,8 +28,8 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { key: "new", label: "Новые", count: 5 },
-  { key: "review", label: "На рассмотрении", count: 2 },
+  { key: "all", label: "Все", count: 13 },
+  { key: "review", label: "На рассмотрении", count: 7 },
   { key: "rejected", label: "Отклоненные", count: 2 },
   { key: "accepted", label: "Принятые", count: 2 },
   { key: "completed", label: "Завершены", count: 2 },
@@ -57,6 +65,8 @@ interface ResponseData {
   editBtnText?: string;
   payBtnText?: string;
   tabKey: string;
+  confirmDeadline?: string;
+  acceptedStatus?: "request" | "inProgress";
 }
 
 const mockResponses: ResponseData[] = [
@@ -136,7 +146,7 @@ const mockResponses: ResponseData[] = [
     commissionStatus: "получен",
     commentTitle: "Комментарий:",
     commentText: "Опыт работы с аналогичными объектами более 10 лет.",
-    tabKey: "new",
+    tabKey: "review",
   },
   {
     id: 4,
@@ -163,7 +173,7 @@ const mockResponses: ResponseData[] = [
       "Гарантируем качественное выполнение работ в установленные сроки.",
     techSpecTitle: "Техническое задание:",
     techSpecFiles: ["ТЗ_устройства.pdf"],
-    tabKey: "new",
+    tabKey: "review",
   },
   {
     id: 5,
@@ -187,7 +197,7 @@ const mockResponses: ResponseData[] = [
     commissionStatus: "получен",
     commentTitle: "Комментарий:",
     commentText: "Полный комплекс экспертных работ с выездом на объект.",
-    tabKey: "new",
+    tabKey: "review",
   },
   {
     id: 6,
@@ -212,7 +222,7 @@ const mockResponses: ResponseData[] = [
     commentTitle: "Комментарий:",
     commentText:
       "Выполним работу качественно и в срок. Аккредитованная лаборатория.",
-    tabKey: "new",
+    tabKey: "review",
   },
   {
     id: 7,
@@ -236,7 +246,7 @@ const mockResponses: ResponseData[] = [
     commissionStatus: "получен",
     commentTitle: "Комментарий:",
     commentText: "Предлагаем конкурентные условия. Команда из 5 экспертов.",
-    tabKey: "new",
+    tabKey: "review",
   },
   {
     id: 8,
@@ -315,6 +325,8 @@ const mockResponses: ResponseData[] = [
     techSpecTitle: "Техническое задание:",
     techSpecFiles: ["ТЗ_энергомаш.pdf"],
     tabKey: "accepted",
+    acceptedStatus: "request",
+    confirmDeadline: "Подтвердите согласие до 15.10.2025",
   },
   {
     id: 11,
@@ -323,7 +335,6 @@ const mockResponses: ResponseData[] = [
     status: "Принято",
     statusColor: "#137333",
     statusBg: "#E6F4EA",
-    statusMessage: "Заказчик выбрал вас!",
     orderTitle: "Экспертиза промышленной безопасности зданий и сооружений",
     customer: "АО «Норильский никель»",
     orderDate: "12.02.2026",
@@ -337,13 +348,12 @@ const mockResponses: ResponseData[] = [
     commissionText: "Взнос в размере",
     commissionAmount: "44 000 ₽",
     commissionStatus: "получен",
-    balanceReturnText: "На ваш баланс вернется",
-    balanceReturnAmount: "22 000 ₽",
     commentTitle: "Комментарий:",
     commentText: "Экспертиза в процессе выполнения.",
     techSpecTitle: "Техническое задание:",
     techSpecFiles: ["ТЗ_никель.pdf"],
     tabKey: "accepted",
+    acceptedStatus: "inProgress",
   },
   {
     id: 12,
@@ -398,14 +408,114 @@ const mockResponses: ResponseData[] = [
 ];
 
 export default function ResponsesPage() {
-  const [activeTab, setActiveTab] = useState("new");
+  const [activeTab, setActiveTab] = useState("all");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const filteredResponses = mockResponses.filter(
-    (r) => r.tabKey === activeTab
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingResponse, setEditingResponse] = useState<ResponseData | null>(
+    null
   );
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [confirmType, setConfirmType] = useState<"complete" | "withdraw" | null>(null);
+  const [confirmingResponse, setConfirmingResponse] = useState<ResponseData | null>(null);
+
+  const handleEditResponse = useCallback((response: ResponseData) => {
+    setEditingResponse(response);
+    setEditModalOpen(true);
+  }, []);
+
+  const handleEditSubmit = useCallback((data: EditOfferFormData) => {
+    console.log("Submit edit:", data);
+    setEditModalOpen(false);
+    setEditingResponse(null);
+  }, []);
+
+  const handleCompleteProject = useCallback((response: ResponseData) => {
+    setConfirmingResponse(response);
+    setConfirmType("complete");
+    setConfirmModalOpen(true);
+  }, []);
+
+  const handleWithdrawOffer = useCallback((response: ResponseData) => {
+    setConfirmingResponse(response);
+    setConfirmType("withdraw");
+    setConfirmModalOpen(true);
+  }, []);
+
+  const closeConfirmModal = useCallback(() => {
+    setConfirmModalOpen(false);
+    setConfirmType(null);
+    setConfirmingResponse(null);
+  }, []);
+
+  const getConfirmationConfig = useCallback(() => {
+    if (!confirmingResponse || !confirmType) return null;
+
+    if (confirmType === "complete") {
+      return {
+        showStatusHeader: false,
+        title: "Вы уверены, что хотите закрыть проект?",
+        warningTitle: "Обратите внимание:",
+        warningItems: [
+          "После закрытия проект будет перемещён в архив",
+          "Все незавершённые этапы будут отменены",
+          "Возврат средств после закрытия невозможен",
+        ],
+        buttons: [
+          {
+            text: "Закрыть",
+            variant: "primary" as const,
+            onClick: () => {
+              console.log("Project closed:", confirmingResponse.id);
+              closeConfirmModal();
+            },
+          },
+          {
+            text: "Завершить работу",
+            variant: "green" as const,
+            onClick: () => {
+              console.log("Work completed:", confirmingResponse.id);
+              closeConfirmModal();
+            },
+          },
+        ] as ConfirmationButton[],
+      };
+    }
+
+    return {
+      showStatusHeader: true,
+      title: "Вы уверены, что хотите отозвать ваше предложение?",
+      warningTitle: "Обратите внимание:",
+      warningItems: [
+        "Ваш отклик будет удалён из списка предложений",
+        "Заказчик больше не сможет его увидеть",
+        "Повторная подача отклика возможна в любой момент",
+      ],
+      buttons: [
+        {
+          text: "Отозвать",
+          variant: "primary" as const,
+          onClick: () => {
+            console.log("Offer withdrawn:", confirmingResponse.id);
+            closeConfirmModal();
+          },
+        },
+        {
+          text: "Редактировать отклик",
+          variant: "outlineOrange" as const,
+          onClick: () => {
+            closeConfirmModal();
+            handleEditResponse(confirmingResponse);
+          },
+        },
+      ] as ConfirmationButton[],
+    };
+  }, [confirmingResponse, confirmType, closeConfirmModal, handleEditResponse]);
+
+  const filteredResponses = activeTab === "all"
+    ? mockResponses
+    : mockResponses.filter((r) => r.tabKey === activeTab);
 
   const totalPages = filteredResponses.length;
 
@@ -428,6 +538,100 @@ export default function ResponsesPage() {
 
   const handleNext = () => {
     swiperRef?.slideNext();
+  };
+
+  const renderCard = (response: ResponseData) => {
+    if (response.acceptedStatus === "request") {
+      return (
+        <AcceptanceRequestCard
+          dateLabel={response.dateLabel}
+          date={response.date}
+          status={response.status}
+          statusColor={response.statusColor}
+          statusBg={response.statusBg}
+          statusMessage={response.statusMessage}
+          orderTitle={response.orderTitle}
+          customer={response.customer}
+          orderDate={response.orderDate}
+          badges={response.badges}
+          sum={response.sum}
+          deadline={response.deadline}
+          costEstimate={response.costEstimate}
+          commissionText={response.commissionText}
+          commissionAmount={response.commissionAmount}
+          commissionStatus={response.commissionStatus}
+          balanceReturnText={response.balanceReturnText}
+          balanceReturnAmount={response.balanceReturnAmount}
+          commentTitle={response.commentTitle}
+          commentText={response.commentText}
+          techSpecTitle={response.techSpecTitle}
+          techSpecFiles={response.techSpecFiles}
+          confirmDeadline={response.confirmDeadline}
+          onEdit={() => handleEditResponse(response)}
+          onDecline={() => handleWithdrawOffer(response)}
+        />
+      );
+    }
+
+    if (response.acceptedStatus === "inProgress") {
+      return (
+        <InProgressCard
+          dateLabel={response.dateLabel}
+          date={response.date}
+          status={response.status}
+          statusColor={response.statusColor}
+          statusBg={response.statusBg}
+          orderTitle={response.orderTitle}
+          customer={response.customer}
+          orderDate={response.orderDate}
+          badges={response.badges}
+          sum={response.sum}
+          deadline={response.deadline}
+          costEstimate={response.costEstimate}
+          commissionText={response.commissionText}
+          commissionAmount={response.commissionAmount}
+          commissionStatus={response.commissionStatus}
+          commentTitle={response.commentTitle}
+          commentText={response.commentText}
+          techSpecTitle={response.techSpecTitle}
+          techSpecFiles={response.techSpecFiles}
+          onEdit={() => handleEditResponse(response)}
+          onComplete={() => handleCompleteProject(response)}
+        />
+      );
+    }
+
+    return (
+      <ResponseCard
+        dateLabel={response.dateLabel}
+        date={response.date}
+        status={response.status}
+        statusColor={response.statusColor}
+        statusBg={response.statusBg}
+        statusMessage={response.statusMessage}
+        orderTitle={response.orderTitle}
+        customer={response.customer}
+        orderDate={response.orderDate}
+        badges={response.badges}
+        sum={response.sum}
+        deadline={response.deadline}
+        costEstimate={response.costEstimate}
+        commissionText={response.commissionText}
+        commissionAmount={response.commissionAmount}
+        commissionStatus={response.commissionStatus}
+        balanceReturnText={response.balanceReturnText}
+        balanceReturnAmount={response.balanceReturnAmount}
+        commentTitle={response.commentTitle}
+        commentText={response.commentText}
+        techSpecTitle={response.techSpecTitle}
+        techSpecFiles={response.techSpecFiles}
+        reminderText={response.reminderText}
+        reminderDays={response.reminderDays}
+        editBtnText={response.editBtnText}
+        payBtnText={response.payBtnText}
+        onEdit={() => handleEditResponse(response)}
+      />
+    );
   };
 
   const handleTabChange = (tabKey: string) => {
@@ -484,34 +688,7 @@ export default function ResponsesPage() {
                     index === activeIndex ? styles.slideActive : ""
                   }`}
                 >
-                  <ResponseCard
-                    dateLabel={response.dateLabel}
-                    date={response.date}
-                    status={response.status}
-                    statusColor={response.statusColor}
-                    statusBg={response.statusBg}
-                    statusMessage={response.statusMessage}
-                    orderTitle={response.orderTitle}
-                    customer={response.customer}
-                    orderDate={response.orderDate}
-                    badges={response.badges}
-                    sum={response.sum}
-                    deadline={response.deadline}
-                    costEstimate={response.costEstimate}
-                    commissionText={response.commissionText}
-                    commissionAmount={response.commissionAmount}
-                    commissionStatus={response.commissionStatus}
-                    balanceReturnText={response.balanceReturnText}
-                    balanceReturnAmount={response.balanceReturnAmount}
-                    commentTitle={response.commentTitle}
-                    commentText={response.commentText}
-                    techSpecTitle={response.techSpecTitle}
-                    techSpecFiles={response.techSpecFiles}
-                    reminderText={response.reminderText}
-                    reminderDays={response.reminderDays}
-                    editBtnText={response.editBtnText}
-                    payBtnText={response.payBtnText}
-                  />
+                  {renderCard(response)}
                 </div>
               </SwiperSlide>
             ))}
@@ -552,6 +729,59 @@ export default function ResponsesPage() {
           </div>
         </div>
       </div>
+      {editingResponse && (
+        <EditOfferModal
+          isOpen={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setEditingResponse(null);
+          }}
+          onSubmit={handleEditSubmit}
+          dateLabel={editingResponse.dateLabel}
+          date={editingResponse.date}
+          status={editingResponse.status}
+          statusColor={editingResponse.statusColor}
+          statusBg={editingResponse.statusBg}
+          statusMessage={editingResponse.statusMessage}
+          orderTitle={editingResponse.orderTitle}
+          customer={editingResponse.customer}
+          orderDate={editingResponse.orderDate}
+          badges={editingResponse.badges}
+          sum={editingResponse.sum}
+          commissionText={editingResponse.commissionText}
+          commissionAmount={editingResponse.commissionAmount}
+          commissionStatus={editingResponse.commissionStatus}
+          initialDeadline={editingResponse.deadline}
+          initialCostEstimate={editingResponse.costEstimate}
+          existingFiles={editingResponse.techSpecFiles}
+        />
+      )}
+      {confirmingResponse && (() => {
+        const config = getConfirmationConfig();
+        if (!config) return null;
+        return (
+          <ConfirmationModal
+            isOpen={confirmModalOpen}
+            onClose={closeConfirmModal}
+            showStatusHeader={config.showStatusHeader}
+            dateLabel={confirmingResponse.dateLabel}
+            date={confirmingResponse.date}
+            status={confirmingResponse.status}
+            statusColor={confirmingResponse.statusColor}
+            statusBg={confirmingResponse.statusBg}
+            statusMessage={confirmingResponse.statusMessage}
+            title={config.title}
+            orderTitle={confirmingResponse.orderTitle}
+            customer={confirmingResponse.customer}
+            orderDate={confirmingResponse.orderDate}
+            badges={confirmingResponse.badges}
+            sum={confirmingResponse.sum}
+            warningTitle={config.warningTitle}
+            warningItems={config.warningItems}
+            buttons={config.buttons}
+          />
+        );
+      })()}
     </>
   );
 }

@@ -1,0 +1,62 @@
+.termsRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.termItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.costItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.termLabel {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.termValue {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .termsRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .costItem {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .termLabel {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .termValue {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}

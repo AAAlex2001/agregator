@@ -83,6 +83,28 @@
   }
 }
 
+.green {
+  background: #E6F4EA;
+  color: #137333;
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #D4EDDA;
+  }
+}
+
+.transparent {
+  background: transparent;
+  color: #1A1A1A;
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #F5F5F5;
+  }
+}
+
 .settings {
   border-radius: 40px;
   background: #ffffff;

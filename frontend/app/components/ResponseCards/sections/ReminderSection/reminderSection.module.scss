@@ -1,0 +1,33 @@
+.reminderRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.reminderText {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ff8a00;
+}
+
+.reminderDays {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ff8a00;
+}
+
+@media (max-width: 768px) {
+  .reminderText {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .reminderDays {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}

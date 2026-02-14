@@ -1,0 +1,36 @@
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.editBtn {
+  flex: 1;
+  max-height: 44px;
+  border-width: 1px !important;
+  border-color: #ffdda9 !important;
+}
+
+.payBtn {
+  flex: 1;
+  max-height: 44px;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .editBtn {
+    font-size: 14px !important;
+    line-height: 17px !important;
+  }
+
+  .payBtn {
+    font-size: 14px !important;
+    line-height: 17px !important;
+  }
+}

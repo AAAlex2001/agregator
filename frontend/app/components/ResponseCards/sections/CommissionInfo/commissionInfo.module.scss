@@ -1,0 +1,104 @@
+.balanceRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.commissionRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.commissionLabel {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.commissionAmount {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.commissionStatus {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.balanceReturn {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.balanceReturnLabel {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ff8a00;
+}
+
+.balanceReturnAmount {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ff8a00;
+}
+
+/* Highlighted mode (used in EditOfferModal) */
+.highlighted {
+  .commissionLabel,
+  .commissionAmount,
+  .commissionStatus {
+    color: #ff8a00;
+  }
+}
+
+@media (max-width: 768px) {
+  .balanceRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .balanceReturn {
+    justify-content: flex-start;
+  }
+
+  .commissionLabel {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .commissionAmount {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .commissionStatus {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .balanceReturnLabel {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .balanceReturnAmount {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
