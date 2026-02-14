@@ -20,7 +20,7 @@ class BadgeResponse(BaseModel):
 
 class OrderCreate(BaseModel):
     title: str = Field(..., max_length=500)
-    customer_id: int
+    customer_id: int = Field(..., ge=1)
     sum_amount: int = Field(..., gt=0)
     deadline: date
     badges: list[BadgeSchema] = Field(default_factory=list)

@@ -2,11 +2,13 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 from sqlalchemy import func, delete
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
+from models.user import User
 from schemas.order import OrderCreate, OrderUpdate
 
 
@@ -57,6 +59,16 @@ class OrderService:
         return order
 
     async def create_order(self, data: OrderCreate) -> Order:
+        customer_exists_query = select(User.id).where(User.id == data.customer_id)
+        customer_exists_result = await self.db.execute(customer_exists_query)
+        customer_id = customer_exists_result.scalar_one_or_none()
+
+        if customer_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказчик не найден",
+            )
+
         order = Order(
             title=data.title,
             customer_id=data.customer_id,
@@ -65,7 +77,14 @@ class OrderService:
             status=data.status,
         )
         self.db.add(order)
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except IntegrityError:
+            await self.db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Некорректные данные заказа",
+            )
 
         if data.badges:
             badge_objects = [
