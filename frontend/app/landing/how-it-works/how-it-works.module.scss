@@ -6,7 +6,7 @@
 
 .content {
   display: flex;
-  padding: 0 20px;
+  padding: 0 10px;
   flex-direction: column;
   max-width: 1640px;
   margin: 0 auto 120px auto;
@@ -62,7 +62,7 @@
 
 .steps {
   display: flex;
-  flex-direction: column;
+  padding: 0 10px;
   gap: 40px;
 }
 

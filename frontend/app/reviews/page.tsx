@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -106,6 +106,22 @@ export default function ReviewsPage() {
 
   const totalPages = mockReviews.length;
 
+  const paginationItems = useMemo<(number | "ellipsis")[]>(() => {
+    if (totalPages <= 4) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, "ellipsis", totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, "ellipsis", totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
+  }, [currentPage, totalPages]);
+
   const handleSlideChange = useCallback((swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
     setCurrentPage(swiper.realIndex + 1);
@@ -189,19 +205,25 @@ export default function ReviewsPage() {
             </button>
 
             <div className={styles.pages}>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
+              {paginationItems.map((item, index) => {
+                if (item === "ellipsis") {
+                  return (
+                    <span key={`ellipsis-${index}`} className={styles.pageBtn} aria-hidden="true">
+                      ...
+                    </span>
+                  );
+                }
+
+                return (
                   <button
-                    key={page}
-                    className={`${styles.pageBtn} ${
-                      page === currentPage ? styles.pageBtnActive : ""
-                    }`}
-                    onClick={() => handlePageClick(page)}
+                    key={item}
+                    className={`${styles.pageBtn} ${item === currentPage ? styles.pageBtnActive : ""}`}
+                    onClick={() => handlePageClick(item)}
                   >
-                    {page}
+                    {item}
                   </button>
-                )
-              )}
+                );
+              })}
             </div>
 
             <button

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 20px 10px;
   gap: 24px;
   max-width: 1640px;
   margin: 0 auto;
@@ -10,7 +10,7 @@
   overflow-x: hidden;
 
   @media (min-width: 769px) {
-    padding: 40px 20px;
+    padding: 40px 10px;
     gap: 40px;
   }
 }
@@ -74,11 +74,13 @@
 .tabBar {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
   width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   -ms-overflow-style: none;
   scrollbar-width: none;
   border-radius: 25px;
@@ -86,11 +88,16 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media (min-width: 768px) {
+    justify-content: center;
+  }
 }
 
 .tab {
   box-sizing: border-box;
   display: flex;
+  flex: 0 0 auto;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -151,8 +158,9 @@
 
 .swiper {
   width: 100%;
-  overflow: hidden;
-  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: visible;
+  padding: 20px 0;
   box-sizing: border-box;
 }
 

@@ -6,7 +6,7 @@
 
 .content {
   display: flex;
-  padding: 0 20px;
+  padding: 0 10px;
   flex-direction: column;
   max-width: 1640px;
   margin: 0 auto 120px auto;
@@ -68,7 +68,7 @@
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
+  padding: 0 10px;
   }
   to {
     opacity: 1;

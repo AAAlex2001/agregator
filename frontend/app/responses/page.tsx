@@ -77,6 +77,22 @@ export default function ResponsesPage() {
   const totalPages = Math.max(1, items.length);
   const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Все";
 
+  const paginationItems = useMemo<(number | "ellipsis")[]>(() => {
+    if (totalPages <= 4) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, "ellipsis", totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, "ellipsis", totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
+  }, [currentPage, totalPages]);
+
   const handleSlideChange = useCallback((swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
     setCurrentPage(swiper.realIndex + 1);
@@ -181,15 +197,25 @@ export default function ResponsesPage() {
               </button>
 
               <div className={styles.pages}>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    className={`${styles.pageBtn} ${page === currentPage ? styles.pageBtnActive : ""}`}
-                    onClick={() => handlePageClick(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {paginationItems.map((item, index) => {
+                  if (item === "ellipsis") {
+                    return (
+                      <span key={`ellipsis-${index}`} className={styles.pageBtn} aria-hidden="true">
+                        ...
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <button
+                      key={item}
+                      className={`${styles.pageBtn} ${item === currentPage ? styles.pageBtnActive : ""}`}
+                      onClick={() => handlePageClick(item)}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
               </div>
 
               <button className={styles.slideBtn} onClick={handleNext} aria-label="Вперед">
