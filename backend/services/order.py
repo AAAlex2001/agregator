@@ -10,7 +10,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
-from models.user import User
+from models.user import User, UserRole
 from schemas.order import OrderCreate, OrderUpdate
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
@@ -34,6 +34,7 @@ class OrderService:
         skip: int = 0,
         limit: int = 20,
         status_filter: Optional[OrderStatus] = None,
+        expert_id: Optional[int] = None,
     ) -> tuple[list[Order], int]:
         count_query = select(func.count(Order.id))
         list_query = (
@@ -41,6 +42,21 @@ class OrderService:
             .options(selectinload(Order.badges), selectinload(Order.customer))
             .order_by(Order.created_at.desc())
         )
+
+        if expert_id is not None:
+            expert_result = await self.db.execute(
+                select(User.role).where(User.id == expert_id)
+            )
+            expert_role = expert_result.scalar_one_or_none()
+            if expert_role is not None and expert_role == UserRole.EXPERT:
+                count_query = count_query.where(
+                    Order.status == OrderStatus.ACTIVE,
+                    Order.assigned_expert_id.is_(None),
+                )
+                list_query = list_query.where(
+                    Order.status == OrderStatus.ACTIVE,
+                    Order.assigned_expert_id.is_(None),
+                )
 
         if status_filter:
             count_query = count_query.where(Order.status == status_filter)

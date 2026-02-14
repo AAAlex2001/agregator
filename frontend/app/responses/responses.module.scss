@@ -15,6 +15,37 @@
   }
 }
 
+.pageHead {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageTitle,
+.pageSubtitle {
+  margin: 0;
+  text-align: center;
+}
+
+.statusState {
+  width: 100%;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.statusTitle,
+.statusSubtitle {
+  margin: 0;
+  text-align: center;
+}
+
 .shadeLeft,
 .shadeRight {
   display: none;

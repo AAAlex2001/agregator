@@ -43,8 +43,15 @@ class User(Base):
 
     orders = relationship(
         "Order",
+        foreign_keys="Order.customer_id",
         back_populates="customer",
         cascade="all, delete-orphan"
+    )
+
+    assigned_orders = relationship(
+        "Order",
+        foreign_keys="Order.assigned_expert_id",
+        back_populates="assigned_expert",
     )
 
     responses = relationship(

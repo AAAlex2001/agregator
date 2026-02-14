@@ -80,6 +80,7 @@ class OrderResponse(BaseModel):
     title: str
     comment: str
     customer_id: int
+    assigned_expert_id: int | None
     customer_name: str
     sum: str
     date: str
@@ -116,6 +117,7 @@ class OrderResponse(BaseModel):
             title=order.title,
             comment=order.comment or "",
             customer_id=order.customer_id,
+            assigned_expert_id=order.assigned_expert_id,
             customer_name=customer_name,
             sum=sum_display,
             date=date_display,

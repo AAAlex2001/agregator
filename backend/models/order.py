@@ -40,6 +40,12 @@ class Order(Base):
         nullable=False,
         index=True,
     )
+    assigned_expert_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     technical_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(Integer, nullable=False)
     deadline = Column(Date, nullable=False)
@@ -61,7 +67,16 @@ class Order(Base):
         nullable=False,
     )
 
-    customer = relationship("User", back_populates="orders")
+    customer = relationship(
+        "User",
+        foreign_keys=[customer_id],
+        back_populates="orders",
+    )
+    assigned_expert = relationship(
+        "User",
+        foreign_keys=[assigned_expert_id],
+        back_populates="assigned_orders",
+    )
     badges = relationship(
         "OrderBadge",
         back_populates="order",

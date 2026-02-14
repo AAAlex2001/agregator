@@ -8,6 +8,25 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
+function getCurrentUserId(): number {
+  if (typeof window !== "undefined") {
+    const stored = window.localStorage.getItem("user_id");
+    if (stored) {
+      const parsed = Number(stored);
+      if (Number.isInteger(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+  }
+
+  const fallback = Number(process.env.NEXT_PUBLIC_EXPERT_ID ?? "1");
+  if (Number.isInteger(fallback) && fallback > 0) {
+    return fallback;
+  }
+
+  throw new Error("Не удалось определить пользователя");
+}
+
 export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersListResponse> {
   const apiBaseUrl = getApiBaseUrl();
 
@@ -18,7 +37,10 @@ export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersListRespo
 
   const response = await fetch(`${apiBaseUrl}/orders/?${query.toString()}`, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
   });
 
   if (!response.ok) {

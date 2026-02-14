@@ -90,15 +90,9 @@ async def update_response_status(
     x_user_id: int = Header(..., alias="X-User-Id"),
 ):
     service = ResponseService(db)
-    response = await service.get_response_by_id(response_id)
-    if response.expert_id != x_user_id:
-        from fastapi import HTTPException, status
-
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нельзя изменять чужой отклик",
-        )
-    response.status = new_status
-    await db.commit()
-    updated = await service.get_response_by_id(response_id)
+    updated = await service.update_response_status(
+        response_id=response_id,
+        actor_id=x_user_id,
+        new_status=new_status,
+    )
     return to_item(updated)

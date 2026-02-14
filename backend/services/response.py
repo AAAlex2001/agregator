@@ -30,6 +30,21 @@ class ResponseService:
             )
         return user
 
+    async def get_actor(self, user_id: int) -> User:
+        result = await self.db.execute(select(User).where(User.id == user_id))
+        user = result.scalars().first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь не найден",
+            )
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Пользователь неактивен",
+            )
+        return user
+
     async def create_response(
         self,
         order_id: int,
@@ -54,6 +69,12 @@ class ResponseService:
                 detail="Нельзя откликнуться на неактивный заказ",
             )
 
+        if order.assigned_expert_id is not None and order.assigned_expert_id != expert_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Заказ уже закреплен за другим экспертом",
+            )
+
         existing_result = await self.db.execute(
             select(OrderResponse).where(
                 OrderResponse.order_id == order_id,
@@ -74,6 +95,7 @@ class ResponseService:
             proposed_deadline=data.proposed_deadline,
             status=ResponseStatus.REVIEW,
         )
+        order.assigned_expert_id = expert_id
         self.db.add(entity)
 
         try:
@@ -86,6 +108,44 @@ class ResponseService:
             )
 
         return await self.get_response_by_id(entity.id)
+
+    async def update_response_status(
+        self,
+        response_id: int,
+        actor_id: int,
+        new_status: ResponseStatus,
+    ) -> OrderResponse:
+        actor = await self.get_actor(actor_id)
+        response = await self.get_response_by_id(response_id)
+
+        if actor.role == UserRole.EXPERT:
+            if response.expert_id != actor.id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Нельзя изменять чужой отклик",
+                )
+        elif actor.role == UserRole.CUSTOMER:
+            if not response.order or response.order.customer_id != actor.id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Нельзя изменять отклик к чужому заказу",
+                )
+            if new_status != ResponseStatus.REJECTED:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Заказчик может только отклонять отклики",
+                )
+            if response.order.assigned_expert_id == response.expert_id:
+                response.order.assigned_expert_id = None
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Недостаточно прав для изменения статуса",
+            )
+
+        response.status = new_status
+        await self.db.commit()
+        return await self.get_response_by_id(response_id)
 
     async def get_response_by_id(self, response_id: int) -> OrderResponse:
         result = await self.db.execute(

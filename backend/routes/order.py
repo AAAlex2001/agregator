@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Header, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -22,9 +22,10 @@ async def get_orders(
     limit: int = Query(20, ge=1, le=100),
     status: Optional[OrderStatus] = None,
     db: AsyncSession = Depends(get_db),
+    x_user_id: Optional[int] = Header(None, alias="X-User-Id"),
 ):
     service = OrderService(db)
-    orders, total = await service.get_orders(skip, limit, status)
+    orders, total = await service.get_orders(skip, limit, status, x_user_id)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
         total=total,

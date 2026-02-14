@@ -9,9 +9,11 @@ interface OrderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: OrderDetails | null;
+  onRespond?: (order: OrderDetails) => void;
+  isResponding?: boolean;
 }
 
-export default function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalProps) {
+export default function OrderDetailsModal({ isOpen, onClose, order, onRespond, isResponding = false }: OrderDetailsModalProps) {
   if (!isOpen || !order) {
     return null;
   }
@@ -32,7 +34,11 @@ export default function OrderDetailsModal({ isOpen, onClose, order }: OrderDetai
 
         <TopSection order={order} />
         <CommentSection comment={order.comment} />
-        <TechnicalSection technicalFiles={order.technicalFiles} />
+        <TechnicalSection
+          technicalFiles={order.technicalFiles}
+          onRespond={() => onRespond?.(order)}
+          isResponding={isResponding}
+        />
       </div>
     </div>
   );

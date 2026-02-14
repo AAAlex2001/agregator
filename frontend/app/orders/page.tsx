@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/orders/components/OrderCard";
 import { Loader, Title, Subtitle } from "@/app/components";
+import { createResponseForOrder } from "@/app/responses/store/api";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { loadOrders } from "./store/actions";
 import { useOrdersState } from "./store/state";
@@ -22,6 +23,64 @@ export default function OrdersPage() {
   } = useOrdersState();
   const ordersRef = useRef<HTMLDivElement | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
+  const [isResponding, setIsResponding] = useState(false);
+
+  const parseSumAmount = useCallback((sum: string): number => {
+    const normalized = sum.replace("₽", "").replace(/\s+/g, "").replace(",", ".").trim();
+    const amount = Number(normalized);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return 100;
+    }
+    return Math.round(amount * 100);
+  }, []);
+
+  const parseDateToIso = useCallback((date: string): string => {
+    const [day, month, year] = date.split(".");
+    if (!day || !month || !year) {
+      return new Date().toISOString().slice(0, 10);
+    }
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }, []);
+
+  const fetchOrdersData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await loadOrders(
+        ({ items, total }) => {
+          setOrders(items);
+          setTotal(total);
+        },
+        (error) => {
+          setError(error);
+        }
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [setError, setLoading, setOrders, setTotal]);
+
+  const handleRespondToOrder = useCallback(
+    async (order: OrderCardViewModel) => {
+      setIsResponding(true);
+      try {
+        await createResponseForOrder(order.id, {
+          comment: order.comment,
+          proposed_sum_amount: parseSumAmount(order.sum),
+          proposed_deadline: parseDateToIso(order.date),
+        });
+        await fetchOrdersData();
+        setSelectedOrder(null);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Не удалось отправить отклик";
+        setError(message);
+      } finally {
+        setIsResponding(false);
+      }
+    },
+    [fetchOrdersData, parseDateToIso, parseSumAmount, setError]
+  );
 
   const handleOrdersWheel = useCallback((event: { deltaX: number; deltaY: number; deltaMode: number; preventDefault: () => void; }) => {
     const element = ordersRef.current;
@@ -47,25 +106,6 @@ export default function OrdersPage() {
 
     element.scrollLeft = Math.max(0, Math.min(element.scrollLeft + delta, maxScroll));
   }, []);
-
-  const fetchOrdersData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      await loadOrders(
-        ({ items, total }) => {
-          setOrders(items);
-          setTotal(total);
-        },
-        (error) => {
-          setError(error);
-        }
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [setError, setLoading, setOrders, setTotal]);
 
   useEffect(() => {
     void fetchOrdersData();
@@ -150,6 +190,8 @@ export default function OrdersPage() {
           isOpen={Boolean(selectedOrder)}
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
+          onRespond={handleRespondToOrder}
+          isResponding={isResponding}
         />
       </div>
     </>

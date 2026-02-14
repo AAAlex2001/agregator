@@ -4,6 +4,8 @@ import styles from "./technicalSection.module.scss";
 
 interface TechnicalSectionProps {
   technicalFiles: string[];
+  onRespond?: () => void;
+  isResponding?: boolean;
 }
 
 const MAX_TECHNICAL_FILES = 4;
@@ -13,7 +15,7 @@ function getFileDisplayName(filePath: string): string {
   return fileName.length > 12 ? `${fileName.slice(0, 12)}…` : fileName;
 }
 
-export default function TechnicalSection({ technicalFiles }: TechnicalSectionProps) {
+export default function TechnicalSection({ technicalFiles, onRespond, isResponding = false }: TechnicalSectionProps) {
   const filesToShow = technicalFiles.slice(0, MAX_TECHNICAL_FILES);
 
   return (
@@ -38,7 +40,14 @@ export default function TechnicalSection({ technicalFiles }: TechnicalSectionPro
         </div>
       </div>
 
-      <Button type="button" variant="primary" size="md" className={styles.actionButton}>
+      <Button
+        type="button"
+        variant="primary"
+        size="md"
+        className={styles.actionButton}
+        onClick={onRespond}
+        isLoading={isResponding}
+      >
         <span className={styles.actionText}>Откликнуться</span>
         <ArrowIcon className={styles.actionArrow} color="#FFFFFF" />
       </Button>

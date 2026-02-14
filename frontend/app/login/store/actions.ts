@@ -15,7 +15,11 @@ export async function handleLogin(
       throw new Error("Введите пароль");
     }
 
-    await loginUser(data);
+    const user = await loginUser(data);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("user_id", String(user.id));
+    }
 
     if (onSuccess) {
       onSuccess();
