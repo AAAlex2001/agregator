@@ -1,155 +1,93 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import AuthHeader from "@/app/landing/header/AuthHeader";
-import OrderCard from "@/app/components/OrderCard";
-import type { Badge } from "@/app/components/OrderCard";
+import OrderCard from "@/app/orders/components/OrderCard";
+import { Loader } from "@/app/components";
+import OrderDetailsModal from "./components/OrderDetailsModal";
+import { loadOrders } from "./store/actions";
+import { useOrdersState } from "./store/state";
+import type { OrderCardViewModel } from "./store/types";
 import styles from "./orders.module.scss";
 
-interface Order {
-  id: number;
-  badges: Badge[];
-  title: string;
-  customer: string;
-  date: string;
-  sum: string;
-}
-
-const mockOrders: Order[] = [
-  {
-    id: 1,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ООО «Ресурс Плюс»",
-    date: "12.01.2026",
-    sum: "150 000 ₽",
-  },
-  {
-    id: 2,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности зданий и сооружений",
-    customer: "ПАО «Газпром»",
-    date: "15.01.2026",
-    sum: "250 000 ₽",
-  },
-  {
-    id: 3,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "АО «Транснефть»",
-    date: "20.01.2026",
-    sum: "180 000 ₽",
-  },
-  {
-    id: 4,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ООО «НефтеГазСервис»",
-    date: "22.01.2026",
-    sum: "320 000 ₽",
-  },
-  {
-    id: 5,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности зданий и сооружений",
-    customer: "ПАО «Лукойл»",
-    date: "25.01.2026",
-    sum: "410 000 ₽",
-  },
-  {
-    id: 6,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ООО «ПромЭкспертиза»",
-    date: "28.01.2026",
-    sum: "195 000 ₽",
-  },
-  {
-    id: 7,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "АО «Сибур»",
-    date: "01.02.2026",
-    sum: "275 000 ₽",
-  },
-  {
-    id: 8,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности зданий и сооружений",
-    customer: "ООО «ТехноСервис»",
-    date: "05.02.2026",
-    sum: "340 000 ₽",
-  },
-  {
-    id: 9,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ПАО «Роснефть»",
-    date: "08.02.2026",
-    sum: "520 000 ₽",
-  },
-  {
-    id: 10,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ООО «Энергомаш»",
-    date: "10.02.2026",
-    sum: "165 000 ₽",
-  },
-  {
-    id: 11,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности зданий и сооружений",
-    customer: "АО «Норильский никель»",
-    date: "12.02.2026",
-    sum: "480 000 ₽",
-  },
-  {
-    id: 12,
-    badges: [
-      { text: "Э4 ТУ", variant: "blue" },
-      { text: "Э4 ОБ", variant: "green" },
-    ],
-    title: "Экспертиза промышленной безопасности технических устройств",
-    customer: "ООО «СтройМонтаж»",
-    date: "14.02.2026",
-    sum: "210 000 ₽",
-  },
-];
-
 export default function OrdersPage() {
+  const {
+    items,
+    isLoading,
+    error,
+    setLoading,
+    setError,
+    setOrders,
+    setTotal,
+  } = useOrdersState();
+  const ordersRef = useRef<HTMLDivElement | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
+
+  const handleOrdersWheel = useCallback((event: { deltaX: number; deltaY: number; deltaMode: number; preventDefault: () => void; }) => {
+    const element = ordersRef.current;
+    if (!element) return;
+
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (maxScroll <= 0) return;
+
+    const PIXEL_MULTIPLIER = 2;
+    const LINE_HEIGHT = 40;
+
+    event.preventDefault();
+
+    let delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+
+    if (event.deltaMode === 1) {
+      delta *= LINE_HEIGHT;
+    } else if (event.deltaMode === 2) {
+      delta *= element.clientWidth;
+    }
+
+    delta *= PIXEL_MULTIPLIER;
+
+    element.scrollLeft = Math.max(0, Math.min(element.scrollLeft + delta, maxScroll));
+  }, []);
+
+  const fetchOrdersData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await loadOrders(
+        ({ items, total }) => {
+          setOrders(items);
+          setTotal(total);
+        },
+        (error) => {
+          setError(error);
+        }
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [setError, setLoading, setOrders, setTotal]);
+
+  useEffect(() => {
+    void fetchOrdersData();
+  }, [fetchOrdersData]);
+
+  useEffect(() => {
+    const element = ordersRef.current;
+    if (!element) {
+      return;
+    }
+
+    const handleWheelScroll = (event: WheelEvent) => {
+      handleOrdersWheel(event);
+    };
+
+    element.addEventListener("wheel", handleWheelScroll, { passive: false, capture: true });
+
+    return () => {
+      element.removeEventListener("wheel", handleWheelScroll, { capture: true });
+    };
+  }, [handleOrdersWheel]);
+
   return (
     <>
       <AuthHeader
@@ -160,20 +98,50 @@ export default function OrdersPage() {
         balance="150 000"
       />
       <div className={styles.wrapper}>
-        <div className={styles.shadeLeft} />
-        <div className={styles.shadeRight} />
-        <div className={styles.orders}>
-          {mockOrders.map((order) => (
-            <OrderCard
-              key={order.id}
-              badges={order.badges}
-              title={order.title}
-              customer={order.customer}
-              date={order.date}
-              sum={order.sum}
-            />
-          ))}
+        {isLoading && (
+          <div className={styles.statusState}>
+            <Loader label="Загружаем заказы" size="lg" />
+          </div>
+        )}
+
+        {!isLoading && error && (
+          <div className={styles.statusState}>
+            <p className={styles.errorText}>{error}</p>
+            <button className={styles.retryButton} onClick={() => void fetchOrdersData()}>
+              Повторить
+            </button>
+          </div>
+        )}
+
+        {!isLoading && !error && items.length === 0 && (
+          <div className={styles.statusState}>
+            <p className={styles.emptyText}>Пока нет заказов</p>
+          </div>
+        )}
+
+        <div className={styles.ordersContainer}>
+          <div className={styles.shadeLeft} />
+          <div className={styles.shadeRight} />
+          <div className={styles.orders} ref={ordersRef} onWheelCapture={handleOrdersWheel}>
+            {items.map((order) => (
+              <OrderCard
+                key={order.id}
+                badges={order.badges}
+                title={order.title}
+                customer={order.customer}
+                date={order.date}
+                sum={order.sum}
+                onClick={() => setSelectedOrder(order)}
+              />
+            ))}
+          </div>
         </div>
+
+        <OrderDetailsModal
+          isOpen={Boolean(selectedOrder)}
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+        />
       </div>
     </>
   );

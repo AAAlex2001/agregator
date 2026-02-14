@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -59,6 +59,17 @@ async def update_order(
 ):
     service = OrderService(db)
     order = await service.update_order(order_id, data)
+    return OrderResponse.from_order(order)
+
+
+@router.post("/{order_id}/files", response_model=OrderResponse)
+async def upload_order_files(
+    order_id: int,
+    files: list[UploadFile] = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    service = OrderService(db)
+    order = await service.upload_order_files(order_id, files)
     return OrderResponse.from_order(order)
 
 

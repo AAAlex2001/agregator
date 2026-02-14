@@ -2,56 +2,113 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 194px 20px 20px 20px;
   gap: 24px;
   max-width: 1640px;
   margin: 0 auto;
   position: relative;
+  overflow-x: clip;
+}
 
-  @media (min-width: 769px) {
-    padding: 40px 20px;
-  }
+.ordersContainer {
+  width: 100%;
+  position: relative;
 }
 
 .orders {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 20px;
   width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
 
-  @media (min-width: 769px) {
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  @media (min-width: 768px) {
+    display: grid;
+    align-items: initial;
+    grid-template-rows: repeat(3, 184px);
+    grid-auto-flow: column;
+    grid-auto-columns: 350px;
+    min-height: 700px;
+    gap: 20px;
+    min-width: 100%;
+    overscroll-behavior: contain;
   }
 }
 
-// Limit to max 4 columns on wide screens
-@media (min-width: 1400px) {
-  .orders {
-    grid-template-columns: repeat(4, 1fr);
+.statusState {
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.errorText,
+.emptyText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1A1A1A;
+  text-align: center;
+}
+
+.retryButton {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  color: #1A1A1A;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.4s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
   }
+}
+
+.orders::-webkit-scrollbar {
+  height: 8px;
+}
+
+.orders::-webkit-scrollbar-thumb {
+  background: rgba(255, 138, 0, 0.35);
+  border-radius: 999px;
 }
 
 .shadeLeft,
 .shadeRight {
   display: none;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     display: block;
-    position: fixed;
-    width: 100px;
+    position: absolute;
     top: 0;
     bottom: 0;
+    width: 96px;
     pointer-events: none;
-    z-index: 10;
+    z-index: 6;
   }
 }
 
 .shadeLeft {
   left: 0;
-  background: linear-gradient(90deg, #ffffff 46.63%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .shadeRight {
   right: 0;
-  background: linear-gradient(270deg, #ffffff 46.63%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 100%);
 }
+
+

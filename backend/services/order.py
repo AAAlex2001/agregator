@@ -1,6 +1,8 @@
 from typing import Optional
+from pathlib import Path
+from uuid import uuid4
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import func, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +12,17 @@ from sqlalchemy.orm import selectinload
 from models.order import Order, OrderBadge, OrderStatus
 from models.user import User
 from schemas.order import OrderCreate, OrderUpdate
+
+ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
+    ".pdf",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+}
 
 
 class OrderService:
@@ -71,7 +84,9 @@ class OrderService:
 
         order = Order(
             title=data.title,
+            comment=data.comment,
             customer_id=data.customer_id,
+            technical_files=data.technical_files,
             sum_amount=data.sum_amount,
             deadline=data.deadline,
             status=data.status,
@@ -100,6 +115,57 @@ class OrderService:
         await self.db.commit()
 
         return await self.get_order_by_id(order.id)
+
+    async def upload_order_files(
+        self,
+        order_id: int,
+        files: list[UploadFile],
+    ) -> Order:
+        order = await self.get_order_by_id(order_id)
+
+        if not files:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Не переданы файлы для загрузки",
+            )
+
+        upload_dir = (
+            Path(__file__).resolve().parents[1]
+            / "uploads"
+            / "orders"
+            / str(order_id)
+        )
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        saved_files = list(order.technical_files or [])
+
+        for file in files:
+            file_name = file.filename or ""
+            extension = Path(file_name).suffix.lower()
+
+            if extension not in ALLOWED_TECHNICAL_FILE_EXTENSIONS:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "Допустимые форматы файлов: "
+                        "PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
+                    ),
+                )
+
+            generated_name = f"{uuid4().hex}{extension}"
+            file_path = upload_dir / generated_name
+
+            file_content = await file.read()
+            with open(file_path, "wb") as file_handle:
+                file_handle.write(file_content)
+
+            saved_files.append(f"/uploads/orders/{order_id}/{generated_name}")
+
+        order.technical_files = saved_files
+        await self.db.commit()
+        await self.db.refresh(order)
+
+        return await self.get_order_by_id(order_id)
 
     async def update_order(
         self, order_id: int, data: OrderUpdate

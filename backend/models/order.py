@@ -5,10 +5,12 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
+    Text,
     Date,
     DateTime,
     ForeignKey,
     Enum,
+    JSON,
 )
 from sqlalchemy.orm import relationship
 
@@ -31,12 +33,14 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(500), nullable=False)
+    comment = Column(Text, nullable=False, default="")
     customer_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
+    technical_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(Integer, nullable=False)
     deadline = Column(Date, nullable=False)
     status = Column(

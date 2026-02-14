@@ -1,0 +1,152 @@
+.technicalSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 24px;
+  width: 292px;
+  height: 168px;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.technicalFiles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 12px;
+  width: 286px;
+  height: 100px;
+  flex: none;
+  flex-grow: 0;
+}
+
+.technicalTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
+  gap: 10px;
+  width: 286px;
+  height: 24px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #000000;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.filesRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
+  gap: 10px;
+  width: 286px;
+  height: 64px;
+  flex: none;
+  flex-grow: 0;
+}
+
+.fileItem {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  background: #f5f5f5;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #1a1a1a;
+  padding: 6px;
+  font-size: 10px;
+  line-height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: break-word;
+}
+
+.filePlaceholder {
+  pointer-events: none;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 292px;
+  height: 44px;
+  min-width: 292px;
+  max-height: 44px;
+  padding: 16px 24px;
+  gap: 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.actionText {
+  width: 106px;
+  height: 17px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  color: #fff8eb;
+  flex: none;
+  flex-grow: 0;
+}
+
+.actionArrow {
+  width: 24px;
+  height: 24px;
+  transform: rotate(0deg);
+  transition: transform 0.25s ease;
+  flex: none;
+  flex-grow: 0;
+}
+
+.actionButton:hover .actionArrow,
+.actionButton:focus-visible .actionArrow {
+  transform: translateX(6px) rotate(0deg);
+}
+
+@media (min-width: 768px) {
+  .technicalSection {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 66px;
+    width: 672px;
+    height: 100px;
+  }
+
+  .technicalTitle {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .actionButton {
+    width: 320px;
+    min-width: 320px;
+    flex: none;
+    flex-shrink: 0;
+    align-self: auto;
+  }
+
+  .actionText {
+    width: 136px;
+    height: 22px;
+    font-size: 18px;
+    line-height: 22px;
+  }
+}

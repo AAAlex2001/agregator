@@ -1,9 +1,11 @@
 import type { LoginFormData, LoginResponse } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-if (!API_BASE_URL) {
-  throw new Error("NEXT_PUBLIC_API_URL is not set");
+function getApiBaseUrl(): string {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiBaseUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL is not set");
+  }
+  return apiBaseUrl;
 }
 
 function splitLogin(login: string): { email?: string; phone?: string } {
@@ -14,12 +16,14 @@ function splitLogin(login: string): { email?: string; phone?: string } {
 }
 
 export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
+  const apiBaseUrl = getApiBaseUrl();
+
   const payload = {
     ...splitLogin(data.login),
     password: data.password,
   };
 
-  const response = await fetch(`${API_BASE_URL}/login/`, {
+  const response = await fetch(`${apiBaseUrl}/login/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

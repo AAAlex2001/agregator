@@ -7,6 +7,6 @@ export { Title, Subtitle } from "./Typography";
 export { default as Input } from "./Input";
 export { default as CardInput } from "./CardInput";
 export { default as Loader } from "./Loader";
-export { default as OrderCard } from "./OrderCard";
+export { default as OrderCard } from "../orders/components/OrderCard";
 export { default as ReviewCard } from "./ReviewCard";
 export { ResponseCard } from "./ResponseCards";

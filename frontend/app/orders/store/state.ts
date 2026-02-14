@@ -1,0 +1,73 @@
+import { useCallback, useMemo, useReducer } from "react";
+import type { OrderCardViewModel, OrdersState } from "./types";
+
+type Action =
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_ORDERS"; payload: OrderCardViewModel[] }
+  | { type: "SET_TOTAL"; payload: number }
+  | { type: "RESET" };
+
+const initialState: OrdersState = {
+  items: [],
+  total: 0,
+  isLoading: false,
+  error: null,
+};
+
+function reducer(state: OrdersState, action: Action): OrdersState {
+  switch (action.type) {
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload };
+    case "SET_ORDERS":
+      return { ...state, items: action.payload };
+    case "SET_TOTAL":
+      return { ...state, total: action.payload };
+    case "RESET":
+      return initialState;
+    default:
+      return state;
+  }
+}
+
+export function useOrdersState(): OrdersState & {
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setOrders: (orders: OrderCardViewModel[]) => void;
+  setTotal: (total: number) => void;
+  reset: () => void;
+} {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const setLoading = useCallback(
+    (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading }),
+    []
+  );
+  const setError = useCallback(
+    (error: string | null) => dispatch({ type: "SET_ERROR", payload: error }),
+    []
+  );
+  const setOrders = useCallback(
+    (orders: OrderCardViewModel[]) => dispatch({ type: "SET_ORDERS", payload: orders }),
+    []
+  );
+  const setTotal = useCallback(
+    (total: number) => dispatch({ type: "SET_TOTAL", payload: total }),
+    []
+  );
+  const reset = useCallback(() => dispatch({ type: "RESET" }), []);
+
+  return useMemo(
+    () => ({
+      ...state,
+      setLoading,
+      setError,
+      setOrders,
+      setTotal,
+      reset,
+    }),
+    [state, setLoading, setError, setOrders, setTotal, reset]
+  );
+}
