@@ -13,3 +13,10 @@ export interface OrderDetails {
   comment: string;
   technicalFiles: string[];
 }
+
+export interface Step2FormData {
+  deadline: string;
+  costEstimate: number;
+  comment: string;
+  files: File[];
+}

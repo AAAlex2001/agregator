@@ -44,19 +44,27 @@
 
 .modalRespond {
   gap: 12px;
-  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalStep2 {
+  gap: 20px;
   overflow-y: auto;
 }
 
 @media (min-width: 768px) {
   .modal {
     width: 720px;
-    height: 592px;
     justify-content: space-between;
   }
 
   .modalRespond {
     height: auto;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+
+  .modalStep2 {
     gap: 20px;
     justify-content: flex-start;
   }

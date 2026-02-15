@@ -42,6 +42,7 @@ class ExpertResponseItem(BaseModel):
     order_date: str
     customer_name: str
     technical_files: list[str]
+    response_files: list[str] = []
     badges: list[dict[str, str]]
     created_at: datetime
 

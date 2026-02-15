@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, Header, Query
+from datetime import date as date_type
+
+from fastapi import APIRouter, Depends, File, Form, Header, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -40,6 +42,7 @@ def to_item(entity) -> ExpertResponseItem:
         order_date=order.deadline.strftime("%d.%m.%Y") if order else "",
         customer_name=customer_name,
         technical_files=order.technical_files if order and order.technical_files else [],
+        response_files=entity.technical_files if entity.technical_files else [],
         badges=[
             {"text": badge.text, "variant": badge.variant.value}
             for badge in (order.badges if order else [])
@@ -51,12 +54,28 @@ def to_item(entity) -> ExpertResponseItem:
 @router.post("/orders/{order_id}/responses", response_model=ExpertResponseItem)
 async def create_response_for_order(
     order_id: int,
-    data: ResponseCreate,
+    comment: str = Form(""),
+    proposed_sum_amount: int = Form(...),
+    proposed_deadline: str = Form(...),
+    files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     x_user_id: int = Header(..., alias="X-User-Id"),
 ):
+    data = ResponseCreate(
+        comment=comment,
+        proposed_sum_amount=proposed_sum_amount,
+        proposed_deadline=date_type.fromisoformat(proposed_deadline),
+    )
     service = ResponseService(db)
     created = await service.create_response(order_id=order_id, expert_id=x_user_id, data=data)
+
+    if files and files[0].filename:
+        created = await service.upload_response_files(
+            response_id=created.id,
+            expert_id=x_user_id,
+            files=files,
+        )
+
     return to_item(created)
 
 

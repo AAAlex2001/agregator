@@ -71,4 +71,5 @@ export interface CreateResponsePayload {
   comment: string;
   proposed_sum_amount: number;
   proposed_deadline: string;
+  files?: File[];
 }

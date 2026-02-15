@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { createResponseForOrder } from "@/app/responses/store/api";
+import type { Step2FormData } from "../components/OrderDetailsModal/types";
 import { mapOrderToCardViewModel } from "../store/mappers";
 import { useOrdersState } from "../store/state";
 import type { OrderCardViewModel, OrderResponse } from "../store/types";
 import {
-  buildCreateResponsePayload,
   clamp,
   fetchInitialOrdersData,
   fetchMoreOrdersData,
@@ -115,11 +115,16 @@ export function useOrdersPage() {
     maybeLoadMore();
   };
 
-  const handleRespondToOrder = async (order: OrderCardViewModel) => {
+  const handleRespondToOrder = async (order: { id: number }, formData: Step2FormData) => {
     setIsResponding(true);
 
     try {
-      await createResponseForOrder(order.id, buildCreateResponsePayload(order));
+      await createResponseForOrder(order.id, {
+        comment: formData.comment,
+        proposed_sum_amount: formData.costEstimate,
+        proposed_deadline: formData.deadline,
+        files: formData.files,
+      });
       setSelectedOrder(null);
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось отправить отклик";

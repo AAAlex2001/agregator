@@ -73,10 +73,21 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
 export async function createResponseForOrder(orderId: number, payload: CreateResponsePayload): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
 
+  const formData = new FormData();
+  formData.append("comment", payload.comment);
+  formData.append("proposed_sum_amount", String(payload.proposed_sum_amount));
+  formData.append("proposed_deadline", payload.proposed_deadline);
+
+  for (const file of payload.files ?? []) {
+    formData.append("files", file);
+  }
+
   const response = await fetch(`${apiBaseUrl}/orders/${orderId}/responses`, {
     method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify(payload),
+    headers: {
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    body: formData,
   });
 
   if (!response.ok) {

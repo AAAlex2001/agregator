@@ -1,9 +1,12 @@
+from pathlib import Path
+from uuid import uuid4
+
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException, status
+from fastapi import HTTPException, UploadFile, status
 
 from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
@@ -11,6 +14,10 @@ from models.user import User, UserRole
 from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
 from ws.manager import order_manager
+
+ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
+    ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
+}
 
 
 class ResponseService:
@@ -184,6 +191,61 @@ class ResponseService:
                 detail="Отклик не найден",
             )
         return response
+
+    async def upload_response_files(
+        self,
+        response_id: int,
+        expert_id: int,
+        files: list[UploadFile],
+    ) -> OrderResponse:
+        response = await self.get_response_by_id(response_id)
+
+        if response.expert_id != expert_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нельзя загружать файлы к чужому отклику",
+            )
+
+        if not files:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Не переданы файлы для загрузки",
+            )
+
+        upload_dir = (
+            Path(__file__).resolve().parents[1]
+            / "uploads"
+            / "responses"
+            / str(response_id)
+        )
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        saved_files = list(response.technical_files or [])
+
+        for file in files:
+            file_name = file.filename or ""
+            extension = Path(file_name).suffix.lower()
+
+            if extension not in ALLOWED_TECHNICAL_FILE_EXTENSIONS:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Допустимые форматы: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX",
+                )
+
+            generated_name = f"{uuid4().hex}{extension}"
+            file_path = upload_dir / generated_name
+
+            file_content = await file.read()
+            with open(file_path, "wb") as file_handle:
+                file_handle.write(file_content)
+
+            saved_files.append(f"/uploads/responses/{response_id}/{generated_name}")
+
+        response.technical_files = saved_files
+        await self.db.commit()
+        await self.db.refresh(response)
+
+        return await self.get_response_by_id(response_id)
 
     @staticmethod
     def status_for_tab(tab: ResponseTab | None) -> ResponseStatus | None:
