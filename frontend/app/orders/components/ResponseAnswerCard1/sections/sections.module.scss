@@ -171,14 +171,13 @@
 .commissionInfo {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 4px;
   width: 100%;
 
   @media (min-width: 768px) {
     flex-direction: row;
-    align-items: center;
   }
 }
 
@@ -316,11 +315,15 @@
 
 .balanceRow {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   width: 100%;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 .balanceInfo {
