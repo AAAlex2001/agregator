@@ -11,7 +11,8 @@ from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
 from models.user import User, UserRole
-from schemas.order import OrderCreate, OrderUpdate
+from schemas.order import OrderCreate, OrderResponse, OrderUpdate
+from ws.manager import order_manager
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
     ".pdf",
@@ -130,7 +131,12 @@ class OrderService:
 
         await self.db.commit()
 
-        return await self.get_order_by_id(order.id)
+        created_order = await self.get_order_by_id(order.id)
+        await order_manager.broadcast({
+            "event": "order_created",
+            "data": OrderResponse.from_order(created_order).model_dump(),
+        })
+        return created_order
 
     async def upload_order_files(
         self,
@@ -210,11 +216,20 @@ class OrderService:
 
         await self.db.commit()
 
-        return await self.get_order_by_id(order_id)
+        updated_order = await self.get_order_by_id(order_id)
+        await order_manager.broadcast({
+            "event": "order_updated",
+            "data": OrderResponse.from_order(updated_order).model_dump(),
+        })
+        return updated_order
 
     async def delete_order(self, order_id: int) -> Order:
         order = await self.get_order_by_id(order_id)
         order.status = OrderStatus.ARCHIVED
         await self.db.commit()
         await self.db.refresh(order)
+        await order_manager.broadcast({
+            "event": "order_removed",
+            "data": {"id": order_id},
+        })
         return order

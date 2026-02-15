@@ -7,6 +7,9 @@ type Action =
   | { type: "SET_ORDERS"; payload: OrderCardViewModel[] }
   | { type: "APPEND_ORDERS"; payload: OrderCardViewModel[] }
   | { type: "SET_TOTAL"; payload: number }
+  | { type: "PREPEND_ORDER"; payload: OrderCardViewModel }
+  | { type: "UPDATE_ORDER"; payload: OrderCardViewModel }
+  | { type: "REMOVE_ORDER"; payload: number }
   | { type: "RESET" };
 
 const initialState: OrdersState = {
@@ -43,6 +46,25 @@ function reducer(state: OrdersState, action: Action): OrdersState {
       return { ...state, items: uniqueById([...state.items, ...action.payload]) };
     case "SET_TOTAL":
       return { ...state, total: action.payload };
+    case "PREPEND_ORDER":
+      return {
+        ...state,
+        items: uniqueById([action.payload, ...state.items]),
+        total: state.total + 1,
+      };
+    case "UPDATE_ORDER":
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id === action.payload.id ? action.payload : item
+        ),
+      };
+    case "REMOVE_ORDER":
+      return {
+        ...state,
+        items: state.items.filter((item) => item.id !== action.payload),
+        total: Math.max(0, state.total - 1),
+      };
     case "RESET":
       return initialState;
     default:
@@ -56,6 +78,9 @@ export function useOrdersState(): OrdersState & {
   setOrders: (orders: OrderCardViewModel[]) => void;
   appendOrders: (orders: OrderCardViewModel[]) => void;
   setTotal: (total: number) => void;
+  prependOrder: (order: OrderCardViewModel) => void;
+  updateOrder: (order: OrderCardViewModel) => void;
+  removeOrder: (id: number) => void;
   reset: () => void;
 } {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -65,6 +90,9 @@ export function useOrdersState(): OrdersState & {
   const setOrders = (orders: OrderCardViewModel[]) => dispatch({ type: "SET_ORDERS", payload: orders });
   const appendOrders = (orders: OrderCardViewModel[]) => dispatch({ type: "APPEND_ORDERS", payload: orders });
   const setTotal = (total: number) => dispatch({ type: "SET_TOTAL", payload: total });
+  const prependOrder = (order: OrderCardViewModel) => dispatch({ type: "PREPEND_ORDER", payload: order });
+  const updateOrder = (order: OrderCardViewModel) => dispatch({ type: "UPDATE_ORDER", payload: order });
+  const removeOrder = (id: number) => dispatch({ type: "REMOVE_ORDER", payload: id });
   const reset = () => dispatch({ type: "RESET" });
 
   return {
@@ -74,6 +102,9 @@ export function useOrdersState(): OrdersState & {
     setOrders,
     appendOrders,
     setTotal,
+    prependOrder,
+    updateOrder,
+    removeOrder,
     reset,
   };
 }

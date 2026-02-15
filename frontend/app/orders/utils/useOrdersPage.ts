@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createResponseForOrder } from "@/app/responses/store/api";
+import { mapOrderToCardViewModel } from "../store/mappers";
 import { useOrdersState } from "../store/state";
-import type { OrderCardViewModel } from "../store/types";
+import type { OrderCardViewModel, OrderResponse } from "../store/types";
 import {
   buildCreateResponsePayload,
   clamp,
@@ -10,6 +11,7 @@ import {
   getNormalizedWheelDelta,
   hasReachedHorizontalEnd,
 } from "./ordersPage.utils";
+import { useOrdersWebSocket } from "./useOrdersWebSocket";
 
 const PAGE_LIMIT = 50;
 
@@ -24,7 +26,16 @@ export function useOrdersPage() {
     setOrders,
     appendOrders,
     setTotal,
+    prependOrder,
+    updateOrder,
+    removeOrder,
   } = useOrdersState();
+
+  useOrdersWebSocket({
+    onCreated: (order: OrderResponse) => prependOrder(mapOrderToCardViewModel(order)),
+    onUpdated: (order: OrderResponse) => updateOrder(mapOrderToCardViewModel(order)),
+    onRemoved: (id: number) => removeOrder(id),
+  });
 
   const ordersRef = useRef<HTMLDivElement | null>(null);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
@@ -109,7 +120,6 @@ export function useOrdersPage() {
 
     try {
       await createResponseForOrder(order.id, buildCreateResponsePayload(order));
-      await fetchOrdersData();
       setSelectedOrder(null);
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось отправить отклик";

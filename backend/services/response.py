@@ -8,7 +8,9 @@ from fastapi import HTTPException, status
 from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
+from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
+from ws.manager import order_manager
 
 
 class ResponseService:
@@ -107,6 +109,11 @@ class ResponseService:
                 detail="Отклик уже существует",
             )
 
+        await order_manager.broadcast({
+            "event": "order_removed",
+            "data": {"id": order_id},
+        })
+
         return await self.get_response_by_id(entity.id)
 
     async def update_response_status(
@@ -145,6 +152,20 @@ class ResponseService:
 
         response.status = new_status
         await self.db.commit()
+
+        if new_status == ResponseStatus.REJECTED and response.order:
+            order_result = await self.db.execute(
+                select(Order)
+                .options(selectinload(Order.badges), selectinload(Order.customer))
+                .where(Order.id == response.order_id)
+            )
+            refreshed_order = order_result.scalars().first()
+            if refreshed_order and refreshed_order.assigned_expert_id is None:
+                await order_manager.broadcast({
+                    "event": "order_created",
+                    "data": OrderResponseSchema.from_order(refreshed_order).model_dump(),
+                })
+
         return await self.get_response_by_id(response_id)
 
     async def get_response_by_id(self, response_id: int) -> OrderResponse:

@@ -40,3 +40,8 @@ export interface OrdersState {
   isLoading: boolean;
   error: string | null;
 }
+
+export type OrderWsEvent =
+  | { event: "order_created"; data: OrderResponse }
+  | { event: "order_updated"; data: OrderResponse }
+  | { event: "order_removed"; data: { id: number } };

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/orders/components/OrderCard";
 import { Loader, Subtitle, Title } from "@/app/components";
@@ -22,6 +24,16 @@ export default function OrdersPage() {
     handleRespondToOrder,
     handleOrdersWheel,
   } = useOrdersPage();
+
+  const knownIdsRef = useRef<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (!isLoading && items.length > 0) {
+      for (const item of items) {
+        knownIdsRef.current.add(item.id);
+      }
+    }
+  }, [isLoading, items]);
 
   return (
     <>
@@ -67,17 +79,28 @@ export default function OrdersPage() {
               <div className={styles.shadeLeft} />
               <div className={styles.shadeRight} />
               <div className={styles.orders} ref={ordersRef} onWheelCapture={handleOrdersWheel}>
-                {items.map((order) => (
-                  <OrderCard
-                    key={order.id}
-                    badges={order.badges}
-                    title={order.title}
-                    customer={order.customer}
-                    date={order.date}
-                    sum={order.sum}
-                    onClick={() => setSelectedOrder(order)}
-                  />
-                ))}
+                <AnimatePresence mode="popLayout">
+                  {items.map((order) => (
+                    <motion.div
+                      key={order.id}
+                      layout
+                      style={{ height: "100%" }}
+                      initial={knownIdsRef.current.has(order.id) ? false : { opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.85 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                    >
+                      <OrderCard
+                        badges={order.badges}
+                        title={order.title}
+                        customer={order.customer}
+                        date={order.date}
+                        sum={order.sum}
+                        onClick={() => setSelectedOrder(order)}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
                 {isLoadingMore && (
                   <div className={styles.loadMoreIndicator}>
                     <Loader label="" size="md" />

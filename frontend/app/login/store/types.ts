@@ -11,6 +11,8 @@ export interface LoginState {
 }
 
 export interface LoginResponse {
-  access_token?: string;
-  token_type?: string;
+  id: number;
+  email: string | null;
+  phone: string | null;
+  created_at: string;
 }
