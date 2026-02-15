@@ -75,7 +75,7 @@ export default function CommissionSection({ commission, balance, onTopUp }: Comm
           <span className={styles.balanceValue}>{formatNumber(balance)}{"\u00A0₽"}</span>
         </div>
         <Button
-          variant="transparent"
+          variant="secondary"
           size="sm"
           className={styles.topUpButton}
           onClick={onTopUp}

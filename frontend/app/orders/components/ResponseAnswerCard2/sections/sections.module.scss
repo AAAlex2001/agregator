@@ -222,6 +222,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .fileTitle {
@@ -309,13 +310,5 @@
   &:hover {
     border-color: #ff8a00;
     color: #ff8a00;
-  }
-}
-
-.submitButton {
-  @media (min-width: 768px) {
-    width: 320px;
-    min-width: 320px;
-    flex-shrink: 0;
   }
 }
