@@ -1,4 +1,5 @@
 import type { Badge } from "@/app/expert/orders/types";
+export type { Badge } from "@/app/expert/orders/types";
 
 export interface OrderDetails {
   id: number;

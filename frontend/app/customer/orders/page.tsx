@@ -1,19 +1,12 @@
 "use client";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
+import OrderCard from "@/app/expert/orders/components/OrderCard";
 import { Button, Loader, Title, Subtitle } from "@/app/components";
 import EmptyState from "./components/EmptyState";
 import CreateOrderForm from "./components/CreateOrderForm";
 import { useCustomerOrdersPage } from "./utils/useCustomerOrdersPage";
 import styles from "./customerOrders.module.scss";
-
-const BADGE_COLORS: Record<string, { bg: string; color: string }> = {
-  BLUE: { bg: "#E3F2FD", color: "#1565C0" },
-  GREEN: { bg: "#E8F5E9", color: "#2E7D32" },
-  GRAY: { bg: "#F5F5F5", color: "#78909C" },
-  ORANGE: { bg: "#FFF3E0", color: "#E65100" },
-  BROWN: { bg: "#EFEBE9", color: "#6D4C41" },
-};
 
 export default function CustomerOrdersPage() {
   const {
@@ -67,6 +60,7 @@ export default function CustomerOrdersPage() {
               <>
                 <div className={styles.pageHead}>
                   <Title text="Мои заказы" className={styles.pageTitle} as="h1" />
+                  <Subtitle text="Актуальные заказы по направлениям" className={styles.pageSubtitle} />
                 </div>
                 <div className={styles.createButtonWrap}>
                   <Button
@@ -75,36 +69,24 @@ export default function CustomerOrdersPage() {
                     className={styles.createButton}
                     onClick={() => setShowCreateForm(true)}
                   >
-                    Создать заказ
+                    Добавить заказ
                   </Button>
                 </div>
-                <div className={styles.ordersList}>
+                <div className={styles.ordersContainer}>
+                  <div className={styles.shadeLeft} />
+                  <div className={styles.shadeRight} />
+                  <div className={styles.orders}>
                   {items.map((order) => (
-                    <div key={order.id} className={styles.orderItem}>
-                      <span className={styles.orderTitle}>{order.title}</span>
-                      <div className={styles.orderMeta}>
-                        <span>{order.date}</span>
-                        <span className={styles.orderSum}>{order.sum}</span>
-                        {order.company && <span>{order.company}</span>}
-                      </div>
-                      {order.badges.length > 0 && (
-                        <div className={styles.orderBadges}>
-                          {order.badges.map((badge, i) => {
-                            const colors = BADGE_COLORS[badge.variant] ?? BADGE_COLORS.BLUE;
-                            return (
-                              <span
-                                key={i}
-                                className={styles.orderBadge}
-                                style={{ background: colors.bg, color: colors.color }}
-                              >
-                                {badge.text}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
+                    <OrderCard
+                      key={order.id}
+                      badges={order.badges}
+                      title={order.title}
+                      customer={order.customer}
+                      date={order.date}
+                      sum={order.sum}
+                    />
                   ))}
+                  </div>
                 </div>
               </>
             )}

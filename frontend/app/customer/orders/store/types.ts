@@ -1,3 +1,5 @@
+import type { Badge } from "@/app/expert/orders/types";
+
 export interface BadgeOption {
   text: string;
   variant: string;
@@ -31,10 +33,10 @@ export interface CustomerOrdersListResponse {
 export interface CustomerOrderCardVM {
   id: number;
   title: string;
-  company: string;
+  customer: string;
   date: string;
   sum: string;
-  badges: { text: string; variant: string }[];
+  badges: Badge[];
   status: string;
 }
 
