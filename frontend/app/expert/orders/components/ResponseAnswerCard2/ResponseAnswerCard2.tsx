@@ -85,7 +85,17 @@ export default function ResponseAnswerCard2({
         type="file"
         multiple
         accept=".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx"
-        style={{ position: "absolute", width: 0, height: 0, overflow: "hidden", opacity: 0 }}
+        style={{
+          position: "absolute",
+          width: "1px",
+          height: "1px",
+          margin: "-1px",
+          padding: 0,
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
         tabIndex={-1}
         onChange={handleFileChange}
       />

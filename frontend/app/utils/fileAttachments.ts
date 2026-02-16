@@ -70,7 +70,7 @@ export async function downloadFileByPath(filePath: string): Promise<void> {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(blobUrl);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
   } catch {
     const fallbackLink = document.createElement("a");
     fallbackLink.href = fileUrl;

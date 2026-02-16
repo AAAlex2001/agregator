@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
 import { Button, Loader, Title, Subtitle } from "@/app/components";
@@ -19,6 +20,26 @@ export default function CustomerOrdersPage() {
     handleCreateOrder,
     fetchOrders,
   } = useCustomerOrdersPage();
+
+  const ordersRef = useRef<HTMLDivElement>(null);
+  const showOrders = !isLoading && !error && items.length > 0;
+
+  useEffect(() => {
+    if (!showOrders) return;
+    const element = ordersRef.current;
+    if (!element) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      const maxScroll = element.scrollWidth - element.clientWidth;
+      if (maxScroll <= 0) return;
+      event.preventDefault();
+      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      element.scrollLeft = Math.max(0, Math.min(element.scrollLeft + delta, maxScroll));
+    };
+
+    element.addEventListener("wheel", handleWheel, { passive: false });
+    return () => element.removeEventListener("wheel", handleWheel);
+  }, [showOrders]);
 
   return (
     <>
@@ -74,7 +95,7 @@ export default function CustomerOrdersPage() {
                 <div className={styles.ordersContainer}>
                   <div className={styles.shadeLeft} />
                   <div className={styles.shadeRight} />
-                  <div className={styles.orders}>
+                  <div className={styles.orders} ref={ordersRef}>
                   {items.map((order) => (
                     <OrderCard
                       key={order.id}

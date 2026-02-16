@@ -45,6 +45,14 @@
   text-align: center;
   word-break: break-word;
   cursor: pointer;
+  overflow: hidden;
+}
+
+.fileThumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .previewOverlay {
@@ -85,4 +93,12 @@
   max-height: calc(90vh - 24px);
   object-fit: contain;
   border-radius: 8px;
+}
+
+.previewLoaderWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 120px;
 }

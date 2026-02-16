@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowIcon } from "@/app/icons";
-import { Button } from "@/app/components";
+import { Button, Loader } from "@/app/components";
 import {
   downloadFileByPath,
   getFileNameFromPath,
@@ -20,6 +20,44 @@ interface TechnicalSectionProps {
 function getFileDisplayName(filePath: string): string {
   const fileName = filePath.split("/").pop() || filePath;
   return fileName.length > 12 ? `${fileName.slice(0, 12)}…` : fileName;
+}
+
+function ImageThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && <Loader label="" size="sm" />}
+      <img
+        src={src}
+        alt={alt}
+        className={styles.fileThumbnailImage}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
+}
+
+function PreviewImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className={styles.previewLoaderWrap}>
+          <Loader label="" size="lg" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={styles.previewImage}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
 }
 
 export default function TechnicalSection({ technicalFiles, onRespond, isResponding = false }: TechnicalSectionProps) {
@@ -46,7 +84,14 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
               className={styles.fileItem}
               onClick={() => void handleFileClick(filePath)}
             >
-              {getFileDisplayName(filePath)}
+              {isImageFilePath(filePath) ? (
+                <ImageThumbnail
+                  src={resolveFileUrl(filePath)}
+                  alt={getFileDisplayName(filePath)}
+                />
+              ) : (
+                getFileDisplayName(filePath)
+              )}
             </button>
           ))}
         </div>
@@ -70,10 +115,9 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
             <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
               ×
             </button>
-            <img
+            <PreviewImage
               src={resolveFileUrl(selectedImage)}
               alt={getFileNameFromPath(selectedImage)}
-              className={styles.previewImage}
             />
           </div>
         </div>

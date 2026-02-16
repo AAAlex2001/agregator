@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loader } from "@/app/components";
 import {
   downloadFileByPath,
   getFileNameFromPath,
@@ -17,6 +18,44 @@ interface TechSpecFilesProps {
 function getFileDisplayName(filePath: string): string {
   const fileName = filePath.split("/").pop() || filePath;
   return fileName.length > 12 ? `${fileName.slice(0, 12)}…` : fileName;
+}
+
+function ImageThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && <Loader label="" size="sm" />}
+      <img
+        src={src}
+        alt={alt}
+        className={styles.fileThumbnailImage}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
+}
+
+function PreviewImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className={styles.previewLoaderWrap}>
+          <Loader label="" size="lg" />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={styles.previewImage}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+      />
+    </>
+  );
 }
 
 const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => {
@@ -46,7 +85,14 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
               className={styles.fileItem}
               onClick={() => void handleFileClick(file)}
             >
-              {getFileDisplayName(file)}
+              {isImageFilePath(file) ? (
+                <ImageThumbnail
+                  src={resolveFileUrl(file)}
+                  alt={getFileDisplayName(file)}
+                />
+              ) : (
+                getFileDisplayName(file)
+              )}
             </button>
           ))}
         </div>
@@ -57,10 +103,9 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
             <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
               ×
             </button>
-            <img
+            <PreviewImage
               src={resolveFileUrl(selectedImage)}
               alt={getFileNameFromPath(selectedImage)}
-              className={styles.previewImage}
             />
           </div>
         </div>
