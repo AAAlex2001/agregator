@@ -59,7 +59,10 @@ const AuthHeader = ({
 
   const navLinks =
     role === "Заказчик"
-      ? [{ href: "/customer/orders", label: "Мои заказы" }]
+      ? [
+          { href: "/customer/orders", label: "Мои заказы" },
+          { href: "/customer/responses", label: "Отклики" },
+        ]
       : [
           { href: "/expert/orders", label: "Все заказы" },
           { href: "/responses", label: "Мои отклики" },

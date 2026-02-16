@@ -42,6 +42,7 @@ export interface ResponseCardProps {
   payBtnText?: string;
   onEdit?: () => void;
   onPay?: () => void;
+  showActions?: boolean;
 }
 
 const ResponseCard = (props: ResponseCardProps) => {
@@ -94,12 +95,14 @@ const ResponseCard = (props: ResponseCardProps) => {
         </div>
       </div>
 
-      <ActionButtons
-        editBtnText={props.editBtnText}
-        payBtnText={props.payBtnText}
-        onEdit={props.onEdit}
-        onPay={props.onPay}
-      />
+      {props.showActions !== false && (
+        <ActionButtons
+          editBtnText={props.editBtnText}
+          payBtnText={props.payBtnText}
+          onEdit={props.onEdit}
+          onPay={props.onPay}
+        />
+      )}
     </article>
   );
 };

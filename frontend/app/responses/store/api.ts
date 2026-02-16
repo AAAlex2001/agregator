@@ -1,6 +1,7 @@
 import type {
   CreateResponsePayload,
   ResponseTabKey,
+  ResponseApiItem,
   ResponsesApiList,
 } from "./types";
 
@@ -92,6 +93,32 @@ export async function createResponseForOrder(orderId: number, payload: CreateRes
 
   if (!response.ok) {
     let message = "Не удалось отправить отклик";
+    try {
+      const body = (await response.json()) as { detail?: string };
+      if (body?.detail) {
+        message = body.detail;
+      }
+    } catch {
+    }
+    throw new Error(message);
+  }
+}
+
+export async function updateResponseStatus(
+  responseId: number,
+  newStatus: ResponseApiItem["status"]
+): Promise<void> {
+  const apiBaseUrl = getApiBaseUrl();
+
+  const response = await fetch(`${apiBaseUrl}/responses/${responseId}/status?new_status=${newStatus}`, {
+    method: "PATCH",
+    headers: {
+      "X-User-Id": String(getCurrentUserId()),
+    },
+  });
+
+  if (!response.ok) {
+    let message = "Не удалось обновить статус отклика";
     try {
       const body = (await response.json()) as { detail?: string };
       if (body?.detail) {

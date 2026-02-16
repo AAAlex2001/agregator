@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from models.response import ResponseStatus
+from models.user import UserRole
 from schemas.response import (
     ExpertResponseItem,
     ExpertResponseList,
@@ -88,12 +89,21 @@ async def get_my_responses(
     x_user_id: int = Header(..., alias="X-User-Id"),
 ):
     service = ResponseService(db)
-    items, total, counters = await service.list_responses(
-        expert_id=x_user_id,
-        tab=tab,
-        skip=skip,
-        limit=limit,
-    )
+    actor = await service.get_actor(x_user_id)
+    if actor.role == UserRole.CUSTOMER:
+        items, total, counters = await service.list_customer_responses(
+            customer_id=x_user_id,
+            tab=tab,
+            skip=skip,
+            limit=limit,
+        )
+    else:
+        items, total, counters = await service.list_responses(
+            expert_id=x_user_id,
+            tab=tab,
+            skip=skip,
+            limit=limit,
+        )
     return ExpertResponseList(
         items=[to_item(item) for item in items],
         total=total,

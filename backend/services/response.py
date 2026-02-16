@@ -39,6 +39,21 @@ class ResponseService:
             )
         return user
 
+    async def ensure_customer(self, customer_id: int) -> User:
+        result = await self.db.execute(select(User).where(User.id == customer_id))
+        user = result.scalars().first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь не найден",
+            )
+        if not user.is_active or user.role != UserRole.CUSTOMER:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Недостаточно прав для откликов",
+            )
+        return user
+
     async def get_actor(self, user_id: int) -> User:
         result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalars().first()
@@ -144,12 +159,12 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нельзя изменять отклик к чужому заказу",
                 )
-            if new_status != ResponseStatus.REJECTED:
+            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.ACCEPTED}:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Заказчик может только отклонять отклики",
+                    detail="Заказчик может только отклонять или принимать отклики",
                 )
-            if response.order.assigned_expert_id == response.expert_id:
+            if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
         else:
             raise HTTPException(
@@ -303,6 +318,68 @@ class ResponseService:
         grouped = await self.db.execute(
             select(OrderResponse.status, func.count(OrderResponse.id))
             .where(OrderResponse.expert_id == expert_id)
+            .group_by(OrderResponse.status)
+        )
+
+        counters_map = {status: count for status, count in grouped.all()}
+        counters = ResponseCounters(
+            all=sum(counters_map.values()),
+            review=counters_map.get(ResponseStatus.REVIEW, 0),
+            rejected=counters_map.get(ResponseStatus.REJECTED, 0),
+            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
+            completed=counters_map.get(ResponseStatus.COMPLETED, 0),
+            archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
+        )
+
+        return items, total, counters
+
+    async def list_customer_responses(
+        self,
+        customer_id: int,
+        tab: ResponseTab | None,
+        skip: int,
+        limit: int,
+    ) -> tuple[list[OrderResponse], int, ResponseCounters]:
+        await self.ensure_customer(customer_id)
+
+        status_filter = self.status_for_tab(tab)
+
+        base_query = (
+            select(OrderResponse)
+            .join(Order, Order.id == OrderResponse.order_id)
+            .where(Order.customer_id == customer_id)
+        )
+        if status_filter:
+            base_query = base_query.where(OrderResponse.status == status_filter)
+
+        total_query = (
+            select(func.count(OrderResponse.id))
+            .join(Order, Order.id == OrderResponse.order_id)
+            .where(Order.customer_id == customer_id)
+        )
+        if status_filter:
+            total_query = total_query.where(OrderResponse.status == status_filter)
+
+        total_result = await self.db.execute(total_query)
+        total = total_result.scalar_one()
+
+        list_query = (
+            base_query
+            .options(
+                selectinload(OrderResponse.order).selectinload(Order.badges),
+                selectinload(OrderResponse.order).selectinload(Order.customer),
+            )
+            .order_by(OrderResponse.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        list_result = await self.db.execute(list_query)
+        items = list(list_result.scalars().unique().all())
+
+        grouped = await self.db.execute(
+            select(OrderResponse.status, func.count(OrderResponse.id))
+            .join(Order, Order.id == OrderResponse.order_id)
+            .where(Order.customer_id == customer_id)
             .group_by(OrderResponse.status)
         )
 

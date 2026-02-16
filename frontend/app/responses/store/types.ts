@@ -40,6 +40,7 @@ export interface ResponsesApiList {
 
 export interface ResponseCardViewModel {
   id: number;
+  rawStatus: ResponseApiItem["status"];
   dateLabel: string;
   date: string;
   status: string;

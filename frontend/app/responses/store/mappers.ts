@@ -34,6 +34,7 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
 
   return {
     id: item.id,
+    rawStatus: item.status,
     dateLabel: "Отклик от",
     date: item.date,
     status: mappedStatus.label,
