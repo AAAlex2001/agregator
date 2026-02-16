@@ -8,6 +8,11 @@ interface ActionButtonsProps {
   payBtnText?: string;
   onEdit?: () => void;
   onPay?: () => void;
+  editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  hideEditButton?: boolean;
+  isEditLoading?: boolean;
+  isPayLoading?: boolean;
 }
 
 const ActionButtons = ({
@@ -15,23 +20,32 @@ const ActionButtons = ({
   payBtnText = "Оплатить и получить заказ",
   onEdit,
   onPay,
+  editBtnVariant = "outline",
+  payBtnVariant = "secondary",
+  hideEditButton = false,
+  isEditLoading = false,
+  isPayLoading = false,
 }: ActionButtonsProps) => (
   <div className={styles.actions}>
+    {!hideEditButton && (
+      <Button
+        variant={editBtnVariant}
+        size="sm"
+        fullWidth
+        onClick={onEdit}
+        className={styles.editBtn}
+        isLoading={isEditLoading}
+      >
+        {editBtnText}
+      </Button>
+    )}
     <Button
-      variant="outline"
-      size="sm"
-      fullWidth
-      onClick={onEdit}
-      className={styles.editBtn}
-    >
-      {editBtnText}
-    </Button>
-    <Button
-      variant="secondary"
+      variant={payBtnVariant}
       size="sm"
       fullWidth
       onClick={onPay}
       className={styles.payBtn}
+      isLoading={isPayLoading}
     >
       {payBtnText}
     </Button>

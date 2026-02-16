@@ -43,6 +43,11 @@ export interface ResponseCardProps {
   onEdit?: () => void;
   onPay?: () => void;
   showActions?: boolean;
+  editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  hideEditButton?: boolean;
+  isEditLoading?: boolean;
+  isPayLoading?: boolean;
 }
 
 const ResponseCard = (props: ResponseCardProps) => {
@@ -101,6 +106,11 @@ const ResponseCard = (props: ResponseCardProps) => {
           payBtnText={props.payBtnText}
           onEdit={props.onEdit}
           onPay={props.onPay}
+          editBtnVariant={props.editBtnVariant}
+          payBtnVariant={props.payBtnVariant}
+          hideEditButton={props.hideEditButton}
+          isEditLoading={props.isEditLoading}
+          isPayLoading={props.isPayLoading}
         />
       )}
     </article>

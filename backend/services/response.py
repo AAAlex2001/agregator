@@ -153,6 +153,27 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нельзя изменять чужой отклик",
                 )
+            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.COMPLETED}:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Эксперт может только отозвать отклик или завершить проект",
+                )
+            if new_status == ResponseStatus.REJECTED and response.order and response.order.assigned_expert_id == actor.id:
+                response.order.assigned_expert_id = None
+                if response.order.status != OrderStatus.ARCHIVED:
+                    response.order.status = OrderStatus.ACTIVE
+            if new_status == ResponseStatus.COMPLETED:
+                if response.status not in {ResponseStatus.ACCEPTED, ResponseStatus.COMPLETED}:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Завершить можно только принятый отклик",
+                    )
+                if not response.order or response.order.assigned_expert_id != actor.id:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Нельзя завершить незакрепленный заказ",
+                    )
+                response.order.status = OrderStatus.COMPLETED
         elif actor.role == UserRole.CUSTOMER:
             if not response.order or response.order.customer_id != actor.id:
                 raise HTTPException(
@@ -186,6 +207,19 @@ class ResponseService:
                 await order_manager.broadcast({
                     "event": "order_created",
                     "data": OrderResponseSchema.from_order(refreshed_order).model_dump(),
+                })
+
+        if new_status == ResponseStatus.COMPLETED and response.order:
+            order_result = await self.db.execute(
+                select(Order)
+                .options(selectinload(Order.badges), selectinload(Order.customer))
+                .where(Order.id == response.order_id)
+            )
+            completed_order = order_result.scalars().first()
+            if completed_order:
+                await order_manager.broadcast({
+                    "event": "order_updated",
+                    "data": OrderResponseSchema.from_order(completed_order).model_dump(),
                 })
 
         return await self.get_response_by_id(response_id)

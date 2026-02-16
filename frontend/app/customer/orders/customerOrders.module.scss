@@ -63,10 +63,10 @@
   @media (min-width: 768px) {
     display: grid;
     align-items: initial;
-    grid-template-rows: repeat(3, 184px);
+    grid-template-rows: repeat(3, 224px);
     grid-auto-flow: column;
     grid-auto-columns: 350px;
-    min-height: 700px;
+    min-height: 712px;
     gap: 20px;
     min-width: 100%;
     overscroll-behavior: contain;

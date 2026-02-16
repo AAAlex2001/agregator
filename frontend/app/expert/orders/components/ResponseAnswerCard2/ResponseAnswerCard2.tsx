@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useNotifications } from "@/app/components/Notifications";
+import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
 import type { OrderDetails, Step2FormData } from "../OrderDetailsModal/types";
 import { OrderSummary } from "../ResponseAnswerCard1/sections";
 import {
@@ -27,6 +29,7 @@ export default function ResponseAnswerCard2({
   onSubmit,
   isSubmitting,
 }: ResponseAnswerCard2Props) {
+  const { showError } = useNotifications();
   const [deadline, setDeadline] = useState("");
   const [costEstimate, setCostEstimate] = useState("");
   const [comment, setComment] = useState("");
@@ -47,11 +50,22 @@ export default function ResponseAnswerCard2({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = event.target.files;
-    if (newFiles) {
-      setFiles((prev) => [...prev, ...Array.from(newFiles)]);
+    const selectedFiles = event.currentTarget.files
+      ? Array.from(event.currentTarget.files)
+      : [];
+
+    if (selectedFiles.length > 0) {
+      setFiles((prev) => {
+        const result = mergeFilesWithLimits(prev, selectedFiles);
+        if (result.errorMessage) {
+          showError(result.errorMessage);
+          return prev;
+        }
+        return result.nextFiles;
+      });
     }
-    event.target.value = "";
+
+    event.currentTarget.value = "";
   };
 
   return (
@@ -74,7 +88,13 @@ export default function ResponseAnswerCard2({
       <CommentField comment={comment} onCommentChange={setComment} />
       <FileUploadSection
         files={files}
-        onAddFile={() => fileInputRef.current?.click()}
+        onAddFile={() => {
+          if (!fileInputRef.current) {
+            return;
+          }
+          fileInputRef.current.value = "";
+          fileInputRef.current.click();
+        }}
         onRemoveFile={(index) => setFiles((prev) => prev.filter((_, i) => i !== index))}
         canSubmit={canSubmit}
         isSubmitting={isSubmitting}

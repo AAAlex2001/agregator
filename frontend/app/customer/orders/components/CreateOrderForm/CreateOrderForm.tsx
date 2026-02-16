@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/app/components";
+import { useNotifications } from "@/app/components/Notifications";
+import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
 import { BadgeSelector, FileUpload, BADGE_OPTIONS } from "./sections";
 import styles from "./createOrderForm.module.scss";
 
@@ -25,6 +27,7 @@ export default function CreateOrderForm({
   onSubmit,
   isSubmitting,
 }: CreateOrderFormProps) {
+  const { showError } = useNotifications();
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [deadline, setDeadline] = useState("");
@@ -44,11 +47,22 @@ export default function CreateOrderForm({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = event.target.files;
-    if (newFiles) {
-      setFiles((prev) => [...prev, ...Array.from(newFiles)]);
+    const selectedFiles = event.currentTarget.files
+      ? Array.from(event.currentTarget.files)
+      : [];
+
+    if (selectedFiles.length > 0) {
+      setFiles((prev) => {
+        const result = mergeFilesWithLimits(prev, selectedFiles);
+        if (result.errorMessage) {
+          showError(result.errorMessage);
+          return prev;
+        }
+        return result.nextFiles;
+      });
     }
-    event.target.value = "";
+
+    event.currentTarget.value = "";
   };
 
   const handleRemoveFile = (index: number) => {
@@ -156,7 +170,13 @@ export default function CreateOrderForm({
 
       <FileUpload
         files={files}
-        onAddFile={() => fileInputRef.current?.click()}
+        onAddFile={() => {
+          if (!fileInputRef.current) {
+            return;
+          }
+          fileInputRef.current.value = "";
+          fileInputRef.current.click();
+        }}
         onRemoveFile={handleRemoveFile}
       />
 

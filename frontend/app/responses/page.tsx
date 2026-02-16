@@ -12,6 +12,7 @@ import { Loader, ResponseCard, Title, Subtitle, Button } from "@/app/components"
 import { ArrowIcon } from "@/app/icons";
 import { ResponsesState, ResponsesTabs } from "./components";
 import { loadResponses } from "./store/actions";
+import { updateResponseStatus } from "./store/api";
 import { useResponsesState } from "./store/state";
 import type { ResponseTabKey } from "./store/types";
 import styles from "./responses.module.scss";
@@ -31,6 +32,10 @@ export default function ResponsesPage() {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [startedResponses, setStartedResponses] = useState<Record<number, boolean>>({});
+  const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "complete" | null>>({});
+
+  const isExpert = typeof window !== "undefined" && window.localStorage.getItem("user_role") === "EXPERT";
 
   const fetchData = async () => {
     setLoading(true);
@@ -61,6 +66,89 @@ export default function ResponsesPage() {
     setCurrentPage(1);
     swiperRef?.slideToLoop(0);
   }, [activeTab, swiperRef, items.length]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const raw = window.localStorage.getItem("expert_started_responses");
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as number[];
+      const next: Record<number, boolean> = {};
+      for (const id of parsed) {
+        if (Number.isInteger(id) && id > 0) {
+          next[id] = true;
+        }
+      }
+      setStartedResponses(next);
+    } catch {
+      setStartedResponses({});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const ids = Object.entries(startedResponses)
+      .filter(([, started]) => started)
+      .map(([id]) => Number(id))
+      .filter((id) => Number.isInteger(id) && id > 0);
+
+    window.localStorage.setItem("expert_started_responses", JSON.stringify(ids));
+  }, [startedResponses]);
+
+  const setActionLoading = (responseId: number, mode: "withdraw" | "complete" | null) => {
+    setLoadingActionByResponseId((previous) => ({
+      ...previous,
+      [responseId]: mode,
+    }));
+  };
+
+  const handleWithdrawResponse = async (responseId: number) => {
+    setActionLoading(responseId, "withdraw");
+    try {
+      await updateResponseStatus(responseId, "REJECTED");
+      await fetchData();
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось отозвать отклик";
+      setError(message);
+    } finally {
+      setActionLoading(responseId, null);
+    }
+  };
+
+  const handleStartOrComplete = async (responseId: number) => {
+    if (!startedResponses[responseId]) {
+      setStartedResponses((previous) => ({
+        ...previous,
+        [responseId]: true,
+      }));
+      return;
+    }
+
+    setActionLoading(responseId, "complete");
+    try {
+      await updateResponseStatus(responseId, "COMPLETED");
+      setStartedResponses((previous) => {
+        const next = { ...previous };
+        delete next[responseId];
+        return next;
+      });
+      await fetchData();
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось завершить проект";
+      setError(message);
+    } finally {
+      setActionLoading(responseId, null);
+    }
+  };
 
   const tabs = [
     { key: "all" as const, label: "Все", count: counters.all },
@@ -162,12 +250,22 @@ export default function ResponsesPage() {
               {items.map((response, index) => (
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
+                    {(() => {
+                      const isAcceptedExpertCard = isExpert && response.rawStatus === "ACCEPTED";
+                      const isCompletedCard = response.rawStatus === "COMPLETED";
+                      const isStarted = Boolean(startedResponses[response.id]);
+                      const actionLoading = loadingActionByResponseId[response.id] ?? null;
+                      const cardStatus = isAcceptedExpertCard && isStarted ? "В работе" : response.status;
+                      const cardStatusColor = isAcceptedExpertCard && isStarted ? "#1565C0" : response.statusColor;
+                      const cardStatusBg = isAcceptedExpertCard && isStarted ? "#E3F2FD" : response.statusBg;
+
+                      return (
                     <ResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
-                      status={response.status}
-                      statusColor={response.statusColor}
-                      statusBg={response.statusBg}
+                      status={cardStatus}
+                      statusColor={cardStatusColor}
+                      statusBg={cardStatusBg}
                       orderTitle={response.orderTitle}
                       customer={response.customer}
                       orderDate={response.orderDate}
@@ -181,7 +279,18 @@ export default function ResponsesPage() {
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
+                      editBtnText={isAcceptedExpertCard ? "Отклонить отклик" : undefined}
+                      payBtnText={isAcceptedExpertCard ? (isStarted ? "Завершить проект" : "Начать работу") : undefined}
+                      editBtnVariant={isAcceptedExpertCard ? "outline" : undefined}
+                      payBtnVariant={isAcceptedExpertCard ? "green" : undefined}
+                      showActions={!isCompletedCard && isAcceptedExpertCard}
+                      onEdit={isAcceptedExpertCard ? () => void handleWithdrawResponse(response.id) : undefined}
+                      onPay={isAcceptedExpertCard ? () => void handleStartOrComplete(response.id) : undefined}
+                      isEditLoading={isAcceptedExpertCard && actionLoading === "withdraw"}
+                      isPayLoading={isAcceptedExpertCard && actionLoading === "complete"}
                     />
+                      );
+                    })()}
                   </div>
                 </SwiperSlide>
               ))}

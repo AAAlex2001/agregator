@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { NotificationProvider } from "@/app/components/Notifications";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={montserrat.className}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <NotificationProvider>{children}</NotificationProvider>
+      </body>
     </html>
   );
 }
