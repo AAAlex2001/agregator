@@ -1,11 +1,14 @@
+import json
+from datetime import date as date_type
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Header, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Header, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from models.order import OrderStatus
 from schemas.order import (
+    BadgeSchema,
     OrderCreate,
     OrderUpdate,
     OrderResponse,
@@ -49,6 +52,45 @@ async def create_order(
 ):
     service = OrderService(db)
     order = await service.create_order(data)
+    return OrderResponse.from_order(order)
+
+
+@router.post("/create-with-files", response_model=OrderResponse)
+async def create_order_with_files(
+    title: str = Form(...),
+    company: str = Form(""),
+    typical_names: str = Form(""),
+    comment: str = Form(""),
+    customer_id: int = Form(...),
+    sum_amount: int = Form(...),
+    deadline: str = Form(...),
+    badges_json: str = Form("[]"),
+    files: list[UploadFile] = File(default=[]),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        badge_list = json.loads(badges_json)
+    except json.JSONDecodeError:
+        badge_list = []
+
+    badges = [
+        BadgeSchema(text=b["text"], variant=b["variant"])
+        for b in badge_list
+    ]
+
+    data = OrderCreate(
+        title=title,
+        company=company,
+        typical_names=typical_names,
+        comment=comment,
+        customer_id=customer_id,
+        sum_amount=sum_amount,
+        deadline=date_type.fromisoformat(deadline),
+        badges=badges,
+    )
+
+    service = OrderService(db)
+    order = await service.create_order(data, files=files if files else None)
     return OrderResponse.from_order(order)
 
 

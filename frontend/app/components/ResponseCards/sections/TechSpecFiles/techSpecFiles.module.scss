@@ -1,14 +1,9 @@
-.filesRow {
+.filesSection {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0;
+  gap: 12px;
   width: 100%;
-
-  @media (min-width: 769px) {
-    flex-direction: row;
-    gap: 10px;
-  }
 }
 
 .filesTitle {
@@ -23,31 +18,33 @@
   }
 }
 
-.filesList {
+.filesRow {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
 }
 
-.fileLink {
-  border: none;
-  background: transparent;
-  padding: 0;
-  text-align: left;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 24px;
-  color: #000000;
-  text-decoration: underline;
+.fileItem {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  background: #f5f5f5;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #1a1a1a;
+  padding: 6px;
+  font-size: 10px;
+  line-height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: break-word;
   cursor: pointer;
-
-  &:hover {
-    color: #1a1a1a;
-  }
-
-  @media (min-width: 769px) {
-    font-size: 16px;
-  }
 }
 
 .previewOverlay {

@@ -17,8 +17,6 @@ interface TechnicalSectionProps {
   isResponding?: boolean;
 }
 
-const MAX_TECHNICAL_FILES = 4;
-
 function getFileDisplayName(filePath: string): string {
   const fileName = filePath.split("/").pop() || filePath;
   return fileName.length > 12 ? `${fileName.slice(0, 12)}…` : fileName;
@@ -26,7 +24,6 @@ function getFileDisplayName(filePath: string): string {
 
 export default function TechnicalSection({ technicalFiles, onRespond, isResponding = false }: TechnicalSectionProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const filesToShow = technicalFiles.slice(0, MAX_TECHNICAL_FILES);
 
   const handleFileClick = async (filePath: string) => {
     if (isImageFilePath(filePath)) {
@@ -42,7 +39,7 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
       <div className={styles.technicalFiles}>
         <div className={styles.technicalTitle}>Файлы технического задания</div>
         <div className={styles.filesRow}>
-          {filesToShow.map((filePath, index) => (
+          {technicalFiles.map((filePath, index) => (
             <button
               key={`${filePath}-${index}`}
               type="button"
@@ -51,9 +48,6 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
             >
               {getFileDisplayName(filePath)}
             </button>
-          ))}
-          {Array.from({ length: Math.max(0, MAX_TECHNICAL_FILES - filesToShow.length) }).map((_, index) => (
-            <div key={`placeholder-${index}`} className={`${styles.fileItem} ${styles.filePlaceholder}`} />
           ))}
         </div>
       </div>

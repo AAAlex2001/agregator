@@ -14,6 +14,11 @@ interface TechSpecFilesProps {
   techSpecFiles?: string[];
 }
 
+function getFileDisplayName(filePath: string): string {
+  const fileName = filePath.split("/").pop() || filePath;
+  return fileName.length > 12 ? `${fileName.slice(0, 12)}…` : fileName;
+}
+
 const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -31,17 +36,17 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
 
   return (
     <>
-      <div className={styles.filesRow}>
+      <div className={styles.filesSection}>
         <span className={styles.filesTitle}>{techSpecTitle}</span>
-        <div className={styles.filesList}>
+        <div className={styles.filesRow}>
           {techSpecFiles.map((file, index) => (
             <button
               key={index}
               type="button"
-              className={styles.fileLink}
+              className={styles.fileItem}
               onClick={() => void handleFileClick(file)}
             >
-              {getFileNameFromPath(file)}
+              {getFileDisplayName(file)}
             </button>
           ))}
         </div>

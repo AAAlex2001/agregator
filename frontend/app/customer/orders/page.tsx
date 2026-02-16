@@ -62,16 +62,15 @@ export default function CustomerOrdersPage() {
                   <Title text="Мои заказы" className={styles.pageTitle} as="h1" />
                   <Subtitle text="Актуальные заказы по направлениям" className={styles.pageSubtitle} />
                 </div>
-                <div className={styles.createButtonWrap}>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    className={styles.createButton}
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    Добавить заказ
-                  </Button>
-                </div>
+                <Button
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  className={styles.createButton}
+                  onClick={() => setShowCreateForm(true)}
+                >
+                  Добавить заказ
+                </Button>
                 <div className={styles.ordersContainer}>
                   <div className={styles.shadeLeft} />
                   <div className={styles.shadeRight} />

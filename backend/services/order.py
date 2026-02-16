@@ -30,6 +30,39 @@ class OrderService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def save_uploaded_files(
+        self,
+        order_id: int,
+        files: list[UploadFile],
+    ) -> list[str]:
+        upload_dir = (
+            Path(__file__).resolve().parents[1]
+            / "uploads"
+            / "orders"
+            / str(order_id)
+        )
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        saved_paths: list[str] = []
+        for file in files:
+            extension = Path(file.filename or "").suffix.lower()
+            if extension not in ALLOWED_TECHNICAL_FILE_EXTENSIONS:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "Допустимые форматы файлов: "
+                        "PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
+                    ),
+                )
+            generated_name = f"{uuid4().hex}{extension}"
+            file_path = upload_dir / generated_name
+            content = await file.read()
+            with open(file_path, "wb") as f:
+                f.write(content)
+            saved_paths.append(f"/uploads/orders/{order_id}/{generated_name}")
+
+        return saved_paths
+
     async def get_orders(
         self,
         skip: int = 0,
@@ -95,7 +128,11 @@ class OrderService:
             )
         return order
 
-    async def create_order(self, data: OrderCreate) -> Order:
+    async def create_order(
+        self,
+        data: OrderCreate,
+        files: list[UploadFile] | None = None,
+    ) -> Order:
         customer_exists_query = select(User.id).where(User.id == data.customer_id)
         customer_exists_result = await self.db.execute(customer_exists_query)
         customer_id = customer_exists_result.scalar_one_or_none()
@@ -126,6 +163,9 @@ class OrderService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Некорректные данные заказа",
             )
+
+        if files:
+            order.technical_files = await self.save_uploaded_files(order.id, files)
 
         if data.badges:
             badge_objects = [
@@ -160,39 +200,9 @@ class OrderService:
                 detail="Не переданы файлы для загрузки",
             )
 
-        upload_dir = (
-            Path(__file__).resolve().parents[1]
-            / "uploads"
-            / "orders"
-            / str(order_id)
-        )
-        upload_dir.mkdir(parents=True, exist_ok=True)
+        new_paths = await self.save_uploaded_files(order_id, files)
+        order.technical_files = list(order.technical_files or []) + new_paths
 
-        saved_files = list(order.technical_files or [])
-
-        for file in files:
-            file_name = file.filename or ""
-            extension = Path(file_name).suffix.lower()
-
-            if extension not in ALLOWED_TECHNICAL_FILE_EXTENSIONS:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=(
-                        "Допустимые форматы файлов: "
-                        "PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
-                    ),
-                )
-
-            generated_name = f"{uuid4().hex}{extension}"
-            file_path = upload_dir / generated_name
-
-            file_content = await file.read()
-            with open(file_path, "wb") as file_handle:
-                file_handle.write(file_content)
-
-            saved_files.append(f"/uploads/orders/{order_id}/{generated_name}")
-
-        order.technical_files = saved_files
         await self.db.commit()
         await self.db.refresh(order)
 

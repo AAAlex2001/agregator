@@ -5,7 +5,6 @@
   padding: 0;
   gap: 24px;
   width: 292px;
-  height: 168px;
   flex: none;
   align-self: stretch;
   flex-grow: 0;
@@ -18,38 +17,23 @@
   padding: 0;
   gap: 12px;
   width: 286px;
-  height: 100px;
   flex: none;
   flex-grow: 0;
 }
 
 .technicalTitle {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0;
-  gap: 10px;
-  width: 286px;
-  height: 24px;
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
   color: #000000;
-  flex: none;
-  align-self: stretch;
-  flex-grow: 0;
 }
 
 .filesRow {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
-  padding: 0;
   gap: 10px;
-  width: 286px;
-  height: 64px;
-  flex: none;
-  flex-grow: 0;
 }
 
 .fileItem {
@@ -71,10 +55,6 @@
   text-align: center;
   word-break: break-word;
   cursor: pointer;
-}
-
-.filePlaceholder {
-  pointer-events: none;
 }
 
 .actionButton {
@@ -168,7 +148,6 @@
     align-items: flex-end;
     gap: 66px;
     width: 672px;
-    height: 100px;
   }
 
   .technicalTitle {

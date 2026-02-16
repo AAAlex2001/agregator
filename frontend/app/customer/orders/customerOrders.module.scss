@@ -40,12 +40,12 @@
 
 .statusState {
   width: 100%;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  min-height: 120px;
   padding: 16px;
 }
 
@@ -73,15 +73,7 @@
   }
 }
 
-.createButtonWrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
 .createButton {
-  width: 100%;
-  max-width: 1640px;
   height: 44px;
   font-size: 18px;
 }
