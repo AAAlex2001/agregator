@@ -70,6 +70,7 @@
   justify-content: center;
   text-align: center;
   word-break: break-word;
+  cursor: pointer;
 }
 
 .filePlaceholder {
@@ -118,6 +119,46 @@
 .actionButton:hover .actionArrow,
 .actionButton:focus-visible .actionArrow {
   transform: translateX(6px) rotate(0deg);
+}
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.previewModal {
+  position: relative;
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.previewClose {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #1a1a1a;
+}
+
+.previewImage {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 24px);
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 @media (min-width: 768px) {

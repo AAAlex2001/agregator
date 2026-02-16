@@ -30,6 +30,10 @@
 }
 
 .fileLink {
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
@@ -44,4 +48,44 @@
   @media (min-width: 769px) {
     font-size: 16px;
   }
+}
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.previewModal {
+  position: relative;
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.previewClose {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: #1a1a1a;
+}
+
+.previewImage {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 24px);
+  object-fit: contain;
+  border-radius: 8px;
 }

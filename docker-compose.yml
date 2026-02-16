@@ -34,6 +34,8 @@ services:
       EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
     ports:
       - "8000:8000"
+    volumes:
+      - backend_uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -74,6 +76,7 @@ networks:
 
 volumes:
   postgres_data:
+  backend_uploads:
 
 
 

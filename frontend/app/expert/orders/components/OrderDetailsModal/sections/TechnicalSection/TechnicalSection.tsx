@@ -1,5 +1,14 @@
+"use client";
+
+import { useState } from "react";
 import { ArrowIcon } from "@/app/icons";
 import { Button } from "@/app/components";
+import {
+  downloadFileByPath,
+  getFileNameFromPath,
+  isImageFilePath,
+  resolveFileUrl,
+} from "@/app/utils/fileAttachments";
 import styles from "./technicalSection.module.scss";
 
 interface TechnicalSectionProps {
@@ -16,7 +25,17 @@ function getFileDisplayName(filePath: string): string {
 }
 
 export default function TechnicalSection({ technicalFiles, onRespond, isResponding = false }: TechnicalSectionProps) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const filesToShow = technicalFiles.slice(0, MAX_TECHNICAL_FILES);
+
+  const handleFileClick = async (filePath: string) => {
+    if (isImageFilePath(filePath)) {
+      setSelectedImage(filePath);
+      return;
+    }
+
+    await downloadFileByPath(filePath);
+  };
 
   return (
     <div className={styles.technicalSection}>
@@ -24,15 +43,14 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
         <div className={styles.technicalTitle}>Файлы технического задания</div>
         <div className={styles.filesRow}>
           {filesToShow.map((filePath, index) => (
-            <a
+            <button
               key={`${filePath}-${index}`}
-              href={filePath}
+              type="button"
               className={styles.fileItem}
-              target="_blank"
-              rel="noreferrer"
+              onClick={() => void handleFileClick(filePath)}
             >
               {getFileDisplayName(filePath)}
-            </a>
+            </button>
           ))}
           {Array.from({ length: Math.max(0, MAX_TECHNICAL_FILES - filesToShow.length) }).map((_, index) => (
             <div key={`placeholder-${index}`} className={`${styles.fileItem} ${styles.filePlaceholder}`} />
@@ -51,6 +69,21 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
         <span className={styles.actionText}>Откликнуться</span>
         <ArrowIcon className={styles.actionArrow} color="#FFFFFF" />
       </Button>
+
+      {selectedImage && (
+        <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>
+          <div className={styles.previewModal} onClick={(event) => event.stopPropagation()}>
+            <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
+              ×
+            </button>
+            <img
+              src={resolveFileUrl(selectedImage)}
+              alt={getFileNameFromPath(selectedImage)}
+              className={styles.previewImage}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
