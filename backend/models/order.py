@@ -4,6 +4,7 @@ from enum import Enum as PyEnum
 from sqlalchemy import (
     Column,
     Integer,
+    BigInteger,
     String,
     Text,
     Date,
@@ -52,7 +53,7 @@ class Order(Base):
         index=True,
     )
     technical_files = Column(JSON, nullable=False, default=list)
-    sum_amount = Column(Integer, nullable=False)
+    sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
     status = Column(
         Enum(OrderStatus),

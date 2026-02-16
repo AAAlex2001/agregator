@@ -31,7 +31,18 @@ def upgrade() -> None:
     op.execute("ALTER TYPE badgevariant ADD VALUE IF NOT EXISTS 'ORANGE'")
     op.execute("ALTER TYPE badgevariant ADD VALUE IF NOT EXISTS 'BROWN'")
 
+    op.alter_column(
+        "orders", "sum_amount",
+        existing_type=sa.Integer(),
+        type_=sa.BigInteger(),
+    )
+
 
 def downgrade() -> None:
+    op.alter_column(
+        "orders", "sum_amount",
+        existing_type=sa.BigInteger(),
+        type_=sa.Integer(),
+    )
     op.drop_column("orders", "typical_names")
     op.drop_column("orders", "company")
