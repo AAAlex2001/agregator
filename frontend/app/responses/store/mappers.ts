@@ -20,6 +20,8 @@ function mapStatus(status: ResponseApiItem["status"]): {
       return { label: "Отклонен", color: "#C62828", bg: "#FFEBEE" };
     case "ACCEPTED":
       return { label: "Принято", color: "#137333", bg: "#E6F4EA" };
+    case "IN_PROGRESS":
+      return { label: "В работе", color: "#1565C0", bg: "#E3F2FD" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
     case "ARCHIVED":
@@ -41,7 +43,9 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     statusColor: mappedStatus.color,
     statusBg: mappedStatus.bg,
     orderTitle: item.order_title,
+    orderCustomerSum: item.order_sum,
     customer: item.customer_name,
+    customerCompany: item.customer_company,
     orderDate: item.order_date,
     badges: item.badges.map((badge) => ({
       text: badge.text,

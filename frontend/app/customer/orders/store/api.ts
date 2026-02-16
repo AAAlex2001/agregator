@@ -2,6 +2,7 @@ import type {
   CreateOrderPayload,
   CustomerOrdersListResponse,
 } from "./types";
+import { stableMultipartFetch } from "@/app/utils/stableMultipartFetch";
 
 function getApiBaseUrl(): string {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -51,31 +52,31 @@ export async function createCustomerOrder(
 ): Promise<{ id: number }> {
   const apiBaseUrl = getApiBaseUrl();
   const userId = getCurrentUserId();
+  const rawFiles = payload.files ?? [];
 
-  const formData = new FormData();
-  formData.append("title", payload.title);
-  formData.append("company", payload.company);
-  formData.append("typical_names", payload.typical_names);
-  formData.append("comment", payload.comment);
-  formData.append("customer_id", String(payload.customer_id));
-  formData.append("sum_amount", String(payload.sum_amount));
-  formData.append("deadline", payload.deadline);
-  formData.append("badges_json", JSON.stringify(payload.badges));
-
-  if (payload.files && payload.files.length > 0) {
-    for (const file of payload.files) {
+  const buildFormData = (files: File[]) => {
+    const formData = new FormData();
+    formData.append("title", payload.title);
+    formData.append("company", payload.company);
+    formData.append("typical_names", payload.typical_names);
+    formData.append("comment", payload.comment);
+    formData.append("customer_id", String(payload.customer_id));
+    formData.append("sum_amount", String(payload.sum_amount));
+    formData.append("deadline", payload.deadline);
+    formData.append("badges_json", JSON.stringify(payload.badges));
+    for (const file of files) {
       formData.append("files", file);
     }
-  }
+    return formData;
+  };
 
-  const response = await fetch(
-    `${apiBaseUrl}/orders/create-with-files`,
-    {
-      method: "POST",
-      headers: { "X-User-Id": String(userId) },
-      body: formData,
-    },
-  );
+  const response = await stableMultipartFetch({
+    input: `${apiBaseUrl}/orders/create-with-files`,
+    method: "POST",
+    headers: { "X-User-Id": String(userId) },
+    files: rawFiles,
+    buildBody: buildFormData,
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);

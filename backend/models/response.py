@@ -11,6 +11,7 @@ class ResponseStatus(str, PyEnum):
     REVIEW = "REVIEW"
     REJECTED = "REJECTED"
     ACCEPTED = "ACCEPTED"
+    IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
     ARCHIVED = "ARCHIVED"
 

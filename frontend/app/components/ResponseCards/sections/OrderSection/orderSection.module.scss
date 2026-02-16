@@ -10,6 +10,11 @@
 }
 
 .orderTitleRow {
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -35,7 +40,12 @@
 
 .chevron {
   flex-shrink: 0;
-  transform: rotate(-90deg);
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.chevronExpanded {
+  transform: rotate(180deg);
 }
 
 .customer {

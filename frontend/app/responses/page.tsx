@@ -32,8 +32,7 @@ export default function ResponsesPage() {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [startedResponses, setStartedResponses] = useState<Record<number, boolean>>({});
-  const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "complete" | null>>({});
+  const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "start" | "complete" | null>>({});
 
   const isExpert = typeof window !== "undefined" && window.localStorage.getItem("user_role") === "EXPERT";
 
@@ -67,44 +66,7 @@ export default function ResponsesPage() {
     swiperRef?.slideToLoop(0);
   }, [activeTab, swiperRef, items.length]);
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    try {
-      const raw = window.localStorage.getItem("expert_started_responses");
-      if (!raw) {
-        return;
-      }
-
-      const parsed = JSON.parse(raw) as number[];
-      const next: Record<number, boolean> = {};
-      for (const id of parsed) {
-        if (Number.isInteger(id) && id > 0) {
-          next[id] = true;
-        }
-      }
-      setStartedResponses(next);
-    } catch {
-      setStartedResponses({});
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const ids = Object.entries(startedResponses)
-      .filter(([, started]) => started)
-      .map(([id]) => Number(id))
-      .filter((id) => Number.isInteger(id) && id > 0);
-
-    window.localStorage.setItem("expert_started_responses", JSON.stringify(ids));
-  }, [startedResponses]);
-
-  const setActionLoading = (responseId: number, mode: "withdraw" | "complete" | null) => {
+  const setActionLoading = (responseId: number, mode: "withdraw" | "start" | "complete" | null) => {
     setLoadingActionByResponseId((previous) => ({
       ...previous,
       [responseId]: mode,
@@ -124,26 +86,17 @@ export default function ResponsesPage() {
     }
   };
 
-  const handleStartOrComplete = async (responseId: number) => {
-    if (!startedResponses[responseId]) {
-      setStartedResponses((previous) => ({
-        ...previous,
-        [responseId]: true,
-      }));
-      return;
-    }
-
-    setActionLoading(responseId, "complete");
+  const handleStartOrComplete = async (responseId: number, isInProgress: boolean) => {
+    setActionLoading(responseId, isInProgress ? "complete" : "start");
     try {
-      await updateResponseStatus(responseId, "COMPLETED");
-      setStartedResponses((previous) => {
-        const next = { ...previous };
-        delete next[responseId];
-        return next;
-      });
+      await updateResponseStatus(responseId, isInProgress ? "COMPLETED" : "IN_PROGRESS");
       await fetchData();
     } catch (caughtError) {
-      const message = caughtError instanceof Error ? caughtError.message : "Не удалось завершить проект";
+      const message = caughtError instanceof Error
+        ? caughtError.message
+        : isInProgress
+          ? "Не удалось завершить проект"
+          : "Не удалось перевести проект в работу";
       setError(message);
     } finally {
       setActionLoading(responseId, null);
@@ -251,26 +204,25 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isAcceptedExpertCard = isExpert && response.rawStatus === "ACCEPTED";
+                      const isExpertAcceptedOrInProgressCard =
+                        isExpert && (response.rawStatus === "ACCEPTED" || response.rawStatus === "IN_PROGRESS");
                       const isCompletedCard = response.rawStatus === "COMPLETED";
-                      const isStarted = Boolean(startedResponses[response.id]);
+                      const isInProgress = response.rawStatus === "IN_PROGRESS";
                       const actionLoading = loadingActionByResponseId[response.id] ?? null;
-                      const cardStatus = isAcceptedExpertCard && isStarted ? "В работе" : response.status;
-                      const cardStatusColor = isAcceptedExpertCard && isStarted ? "#1565C0" : response.statusColor;
-                      const cardStatusBg = isAcceptedExpertCard && isStarted ? "#E3F2FD" : response.statusBg;
 
                       return (
                     <ResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
-                      status={cardStatus}
-                      statusColor={cardStatusColor}
-                      statusBg={cardStatusBg}
-                      orderTitle={response.orderTitle}
-                      customer={response.customer}
+                      status={response.status}
+                      statusColor={response.statusColor}
+                      statusBg={response.statusBg}
+                      orderTitle={response.orderCustomerSum || response.orderTitle}
+                      customer={response.customerCompany || response.customer}
                       orderDate={response.orderDate}
                       badges={response.badges}
-                      sum={response.sum}
+                      sum={response.orderCustomerSum || response.sum}
+                      collapsibleOrderMeta
                       deadline={response.deadline}
                       costEstimate={response.costEstimate}
                       commissionText={response.commissionText}
@@ -279,15 +231,15 @@ export default function ResponsesPage() {
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      editBtnText={isAcceptedExpertCard ? "Отклонить отклик" : undefined}
-                      payBtnText={isAcceptedExpertCard ? (isStarted ? "Завершить проект" : "Начать работу") : undefined}
-                      editBtnVariant={isAcceptedExpertCard ? "outline" : undefined}
-                      payBtnVariant={isAcceptedExpertCard ? "green" : undefined}
-                      showActions={!isCompletedCard && isAcceptedExpertCard}
-                      onEdit={isAcceptedExpertCard ? () => void handleWithdrawResponse(response.id) : undefined}
-                      onPay={isAcceptedExpertCard ? () => void handleStartOrComplete(response.id) : undefined}
-                      isEditLoading={isAcceptedExpertCard && actionLoading === "withdraw"}
-                      isPayLoading={isAcceptedExpertCard && actionLoading === "complete"}
+                      editBtnText={isExpertAcceptedOrInProgressCard ? "Отклонить отклик" : undefined}
+                      payBtnText={isExpertAcceptedOrInProgressCard ? (isInProgress ? "Завершить проект" : "Начать работу") : undefined}
+                      editBtnVariant={isExpertAcceptedOrInProgressCard ? "outline" : undefined}
+                      payBtnVariant={isExpertAcceptedOrInProgressCard ? "green" : undefined}
+                      showActions={!isCompletedCard && isExpertAcceptedOrInProgressCard}
+                      onEdit={isExpertAcceptedOrInProgressCard ? () => void handleWithdrawResponse(response.id) : undefined}
+                      onPay={isExpertAcceptedOrInProgressCard ? () => void handleStartOrComplete(response.id, isInProgress) : undefined}
+                      isEditLoading={isExpertAcceptedOrInProgressCard && actionLoading === "withdraw"}
+                      isPayLoading={isExpertAcceptedOrInProgressCard && (actionLoading === "start" || actionLoading === "complete")}
                     />
                       );
                     })()}

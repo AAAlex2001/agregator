@@ -25,6 +25,7 @@ export interface ResponseCardProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+  collapsibleOrderMeta?: boolean;
   deadline: string;
   costEstimate: string;
   commissionText: string;
@@ -70,6 +71,7 @@ const ResponseCard = (props: ResponseCardProps) => {
             orderDate={props.orderDate}
             badges={props.badges}
             sum={props.sum}
+            collapsible={props.collapsibleOrderMeta}
           />
 
           <div className={styles.infoSection}>

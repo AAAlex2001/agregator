@@ -19,14 +19,16 @@ export interface ResponseApiBadge {
 export interface ResponseApiItem {
   id: number;
   order_id: number;
-  status: "REVIEW" | "REJECTED" | "ACCEPTED" | "COMPLETED" | "ARCHIVED";
+  status: "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
   date: string;
   comment: string;
   proposed_sum: string;
   proposed_deadline: string;
   order_title: string;
+  order_sum: string;
   order_date: string;
   customer_name: string;
+  customer_company: string;
   technical_files: string[];
   badges: ResponseApiBadge[];
   created_at: string;
@@ -47,7 +49,9 @@ export interface ResponseCardViewModel {
   statusColor: string;
   statusBg: string;
   orderTitle: string;
+  orderCustomerSum: string;
   customer: string;
+  customerCompany: string;
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;

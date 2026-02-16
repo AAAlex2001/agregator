@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ChevronIcon } from "@/app/icons";
 import type { ResponseBadge } from "../../types";
 import styles from "./orderSection.module.scss";
@@ -10,6 +11,7 @@ interface OrderSectionProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+  collapsible?: boolean;
 }
 
 const OrderSection = ({
@@ -18,30 +20,49 @@ const OrderSection = ({
   orderDate,
   badges,
   sum,
-}: OrderSectionProps) => (
-  <div className={styles.orderSection}>
-    <div className={styles.orderTitleRow}>
-      <span className={styles.orderTitle}>{orderTitle}</span>
-      <ChevronIcon className={styles.chevron} />
+  collapsible = false,
+}: OrderSectionProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const showMeta = collapsible ? expanded : true;
+
+  return (
+    <div className={styles.orderSection}>
+      <button
+        type="button"
+        className={styles.orderTitleRow}
+        onClick={() => {
+          if (!collapsible) {
+            return;
+          }
+          setExpanded((prev) => !prev);
+        }}
+      >
+        <span className={styles.orderTitle}>{orderTitle}</span>
+        <ChevronIcon className={`${styles.chevron} ${showMeta ? styles.chevronExpanded : ""}`} />
+      </button>
+      {showMeta && (
+        <>
+          <span className={styles.customer}>{customer}</span>
+          <div className={styles.orderMeta}>
+            <span className={styles.orderDate}>{orderDate}</span>
+            <div className={styles.badges}>
+              {badges.map((badge, index) => (
+                <span
+                  key={index}
+                  className={`${styles.badge} ${styles[badge.variant]}`}
+                >
+                  {badge.text}
+                </span>
+              ))}
+            </div>
+            <div className={styles.cash}>
+              <span className={styles.sum}>{sum}</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
-    <span className={styles.customer}>{customer}</span>
-    <div className={styles.orderMeta}>
-      <span className={styles.orderDate}>{orderDate}</span>
-      <div className={styles.badges}>
-        {badges.map((badge, index) => (
-          <span
-            key={index}
-            className={`${styles.badge} ${styles[badge.variant]}`}
-          >
-            {badge.text}
-          </span>
-        ))}
-      </div>
-      <div className={styles.cash}>
-        <span className={styles.sum}>{sum}</span>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 export default OrderSection;

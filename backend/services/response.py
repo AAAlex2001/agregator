@@ -153,7 +153,7 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нельзя изменять чужой отклик",
                 )
-            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.COMPLETED}:
+            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Эксперт может только отозвать отклик или завершить проект",
@@ -162,11 +162,22 @@ class ResponseService:
                 response.order.assigned_expert_id = None
                 if response.order.status != OrderStatus.ARCHIVED:
                     response.order.status = OrderStatus.ACTIVE
-            if new_status == ResponseStatus.COMPLETED:
-                if response.status not in {ResponseStatus.ACCEPTED, ResponseStatus.COMPLETED}:
+            if new_status == ResponseStatus.IN_PROGRESS:
+                if response.status != ResponseStatus.ACCEPTED:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
-                        detail="Завершить можно только принятый отклик",
+                        detail="В работу можно перевести только принятый отклик",
+                    )
+                if not response.order or response.order.assigned_expert_id != actor.id:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Нельзя начать работу по незакрепленному заказу",
+                    )
+            if new_status == ResponseStatus.COMPLETED:
+                if response.status not in {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Завершить можно только отклик со статусом в работе",
                     )
                 if not response.order or response.order.assigned_expert_id != actor.id:
                     raise HTTPException(
@@ -297,19 +308,19 @@ class ResponseService:
         return await self.get_response_by_id(response_id)
 
     @staticmethod
-    def status_for_tab(tab: ResponseTab | None) -> ResponseStatus | None:
+    def statuses_for_tab(tab: ResponseTab | None) -> list[ResponseStatus] | None:
         if tab is None or tab == ResponseTab.ALL:
             return None
         if tab == ResponseTab.REVIEW:
-            return ResponseStatus.REVIEW
+            return [ResponseStatus.REVIEW]
         if tab == ResponseTab.REJECTED:
-            return ResponseStatus.REJECTED
+            return [ResponseStatus.REJECTED]
         if tab == ResponseTab.ACCEPTED:
-            return ResponseStatus.ACCEPTED
+            return [ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS]
         if tab == ResponseTab.COMPLETED:
-            return ResponseStatus.COMPLETED
+            return [ResponseStatus.COMPLETED]
         if tab == ResponseTab.ARCHIVE:
-            return ResponseStatus.ARCHIVED
+            return [ResponseStatus.ARCHIVED]
         return None
 
     async def list_responses(
@@ -321,17 +332,17 @@ class ResponseService:
     ) -> tuple[list[OrderResponse], int, ResponseCounters]:
         await self.ensure_expert(expert_id)
 
-        status_filter = self.status_for_tab(tab)
+        status_filters = self.statuses_for_tab(tab)
 
         base_query = select(OrderResponse).where(OrderResponse.expert_id == expert_id)
-        if status_filter:
-            base_query = base_query.where(OrderResponse.status == status_filter)
+        if status_filters:
+            base_query = base_query.where(OrderResponse.status.in_(status_filters))
 
         total_query = select(func.count(OrderResponse.id)).where(
             OrderResponse.expert_id == expert_id
         )
-        if status_filter:
-            total_query = total_query.where(OrderResponse.status == status_filter)
+        if status_filters:
+            total_query = total_query.where(OrderResponse.status.in_(status_filters))
 
         total_result = await self.db.execute(total_query)
         total = total_result.scalar_one()
@@ -360,7 +371,7 @@ class ResponseService:
             all=sum(counters_map.values()),
             review=counters_map.get(ResponseStatus.REVIEW, 0),
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
-            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
+            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0) + counters_map.get(ResponseStatus.IN_PROGRESS, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
             archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )
@@ -376,23 +387,23 @@ class ResponseService:
     ) -> tuple[list[OrderResponse], int, ResponseCounters]:
         await self.ensure_customer(customer_id)
 
-        status_filter = self.status_for_tab(tab)
+        status_filters = self.statuses_for_tab(tab)
 
         base_query = (
             select(OrderResponse)
             .join(Order, Order.id == OrderResponse.order_id)
             .where(Order.customer_id == customer_id)
         )
-        if status_filter:
-            base_query = base_query.where(OrderResponse.status == status_filter)
+        if status_filters:
+            base_query = base_query.where(OrderResponse.status.in_(status_filters))
 
         total_query = (
             select(func.count(OrderResponse.id))
             .join(Order, Order.id == OrderResponse.order_id)
             .where(Order.customer_id == customer_id)
         )
-        if status_filter:
-            total_query = total_query.where(OrderResponse.status == status_filter)
+        if status_filters:
+            total_query = total_query.where(OrderResponse.status.in_(status_filters))
 
         total_result = await self.db.execute(total_query)
         total = total_result.scalar_one()
@@ -422,7 +433,7 @@ class ResponseService:
             all=sum(counters_map.values()),
             review=counters_map.get(ResponseStatus.REVIEW, 0),
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
-            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
+            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0) + counters_map.get(ResponseStatus.IN_PROGRESS, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
             archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )

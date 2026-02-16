@@ -4,6 +4,7 @@ import type {
   ResponseApiItem,
   ResponsesApiList,
 } from "./types";
+import { stableMultipartFetch } from "@/app/utils/stableMultipartFetch";
 
 function getApiBaseUrl(): string {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -73,22 +74,27 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
 
 export async function createResponseForOrder(orderId: number, payload: CreateResponsePayload): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
+  const rawFiles = payload.files ?? [];
 
-  const formData = new FormData();
-  formData.append("comment", payload.comment);
-  formData.append("proposed_sum_amount", String(payload.proposed_sum_amount));
-  formData.append("proposed_deadline", payload.proposed_deadline);
+  const buildFormData = (files: File[]) => {
+    const formData = new FormData();
+    formData.append("comment", payload.comment);
+    formData.append("proposed_sum_amount", String(payload.proposed_sum_amount));
+    formData.append("proposed_deadline", payload.proposed_deadline);
+    for (const file of files) {
+      formData.append("files", file);
+    }
+    return formData;
+  };
 
-  for (const file of payload.files ?? []) {
-    formData.append("files", file);
-  }
-
-  const response = await fetch(`${apiBaseUrl}/orders/${orderId}/responses`, {
+  const response = await stableMultipartFetch({
+    input: `${apiBaseUrl}/orders/${orderId}/responses`,
     method: "POST",
     headers: {
       "X-User-Id": String(getCurrentUserId()),
     },
-    body: formData,
+    files: rawFiles,
+    buildBody: buildFormData,
   });
 
   if (!response.ok) {

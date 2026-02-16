@@ -28,8 +28,13 @@ def format_sum(sum_amount: int) -> str:
 def to_item(entity) -> ExpertResponseItem:
     order = entity.order
     customer_name = ""
+    customer_company = ""
+    order_sum = ""
     if order and order.customer:
         customer_name = order.customer.email or order.customer.phone or ""
+    if order:
+        customer_company = order.company or ""
+        order_sum = format_sum(order.sum_amount)
 
     return ExpertResponseItem(
         id=entity.id,
@@ -40,8 +45,10 @@ def to_item(entity) -> ExpertResponseItem:
         proposed_sum=format_sum(entity.proposed_sum_amount),
         proposed_deadline=entity.proposed_deadline.strftime("%d.%m.%Y"),
         order_title=order.title if order else "",
+        order_sum=order_sum,
         order_date=order.deadline.strftime("%d.%m.%Y") if order else "",
         customer_name=customer_name,
+        customer_company=customer_company,
         technical_files=order.technical_files if order and order.technical_files else [],
         response_files=entity.technical_files if entity.technical_files else [],
         badges=[

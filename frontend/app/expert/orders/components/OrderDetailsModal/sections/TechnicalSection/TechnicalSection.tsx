@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowIcon } from "@/app/icons";
 import { Button, Loader } from "@/app/components";
+import {
+  createThumbnailBlobUrlFromImageUrl,
+  revokeBlobImagePreview,
+} from "@/app/utils/blobImagePreview";
 import {
   downloadFileByPath,
   getFileNameFromPath,
@@ -24,16 +28,59 @@ function getFileDisplayName(filePath: string): string {
 
 function ImageThumbnail({ src, alt }: { src: string; alt: string }) {
   const [loaded, setLoaded] = useState(false);
+  const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    let generatedUrl: string | null = null;
+
+    setLoaded(false);
+    setThumbnailSrc(null);
+
+    void createThumbnailBlobUrlFromImageUrl(src).then((url) => {
+      if (!isMounted) {
+        revokeBlobImagePreview(url);
+        return;
+      }
+
+      if (url) {
+        generatedUrl = url;
+        setThumbnailSrc(url);
+        return;
+      }
+
+      setThumbnailSrc(src);
+    });
+
+    return () => {
+      isMounted = false;
+      revokeBlobImagePreview(generatedUrl);
+    };
+  }, [src]);
+
+  if (!thumbnailSrc) {
+    return <Loader label="" size="sm" />;
+  }
 
   return (
     <>
       {!loaded && <Loader label="" size="sm" />}
       <img
-        src={src}
+        src={thumbnailSrc}
         alt={alt}
         className={styles.fileThumbnailImage}
         style={loaded ? undefined : { display: "none" }}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          setLoaded(true);
+        }}
+        onError={() => {
+          if (thumbnailSrc !== src) {
+            setLoaded(false);
+            setThumbnailSrc(src);
+            return;
+          }
+          setLoaded(true);
+        }}
       />
     </>
   );

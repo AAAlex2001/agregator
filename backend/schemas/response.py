@@ -39,8 +39,10 @@ class ExpertResponseItem(BaseModel):
     proposed_sum: str
     proposed_deadline: str
     order_title: str
+    order_sum: str
     order_date: str
     customer_name: str
+    customer_company: str
     technical_files: list[str]
     response_files: list[str] = []
     badges: list[dict[str, str]]
