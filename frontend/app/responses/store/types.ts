@@ -36,6 +36,8 @@ export interface ResponseApiItem {
   order_commission_amount: string;
   commission_paid: string | null;
   balance_return: string | null;
+  proposed_sum_amount_raw: number;
+  proposed_deadline_raw: string;
 }
 
 export interface ResponsesApiList {
@@ -69,6 +71,8 @@ export interface ResponseCardViewModel {
   commentText: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  rawSumAmount: number;
+  rawDeadline: string;
   statusMessage?: string;
   commissionStatus?: string;
   balanceReturnText?: string;
@@ -88,4 +92,5 @@ export interface CreateResponsePayload {
   proposed_sum_amount: number;
   proposed_deadline: string;
   files?: File[];
+  keepFiles?: string[];
 }

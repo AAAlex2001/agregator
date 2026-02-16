@@ -1,4 +1,4 @@
 export interface ResponseBadge {
   text: string;
-  variant: "blue" | "green";
+  variant: "blue" | "green" | "gray" | "orange" | "brown";
 }

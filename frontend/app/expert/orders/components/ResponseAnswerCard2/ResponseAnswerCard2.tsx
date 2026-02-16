@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useNotifications } from "@/app/components/Notifications";
 import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
-import type { OrderDetails, Step2FormData } from "../OrderDetailsModal/types";
+import type { OrderDetails, Step2FormData, Step2InitialData } from "../OrderDetailsModal/types";
 import { OrderSummary } from "../ResponseAnswerCard1/sections";
 import {
   CommissionConfirm,
@@ -19,6 +19,8 @@ interface ResponseAnswerCard2Props {
   onCancel: () => void;
   onSubmit: (data: Step2FormData) => void;
   isSubmitting: boolean;
+  initialData?: Step2InitialData;
+  submitLabel?: string;
 }
 
 export default function ResponseAnswerCard2({
@@ -26,24 +28,29 @@ export default function ResponseAnswerCard2({
   onCancel,
   onSubmit,
   isSubmitting,
+  initialData,
+  submitLabel,
 }: ResponseAnswerCard2Props) {
   const { showError } = useNotifications();
-  const [deadline, setDeadline] = useState("");
-  const [costEstimate, setCostEstimate] = useState("");
-  const [comment, setComment] = useState("");
+  const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
+  const [costEstimate, setCostEstimate] = useState(initialData?.costEstimate ?? "");
+  const [comment, setComment] = useState(initialData?.comment ?? "");
   const [files, setFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<string[]>(initialData?.existingFiles ?? []);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parsedCost = Number(costEstimate.replace(/\s/g, "").replace(",", "."));
-  const canSubmit = deadline.trim() !== "" && parsedCost > 0;
+  const isEditMode = Boolean(initialData);
+  const canSubmit = isEditMode || (deadline.trim() !== "" && parsedCost > 0);
 
   const handleSubmit = () => {
-    if (!canSubmit || isSubmitting) return;
+    if (isSubmitting) return;
     onSubmit({
       deadline,
       costEstimate: Math.round(parsedCost * 100),
       comment,
       files,
+      keepFiles: existingFiles,
     });
   };
 
@@ -86,6 +93,7 @@ export default function ResponseAnswerCard2({
       <CommentField comment={comment} onCommentChange={setComment} />
       <FileUploadSection
         files={files}
+        existingFiles={existingFiles}
         onAddFile={() => {
           if (!fileInputRef.current) {
             return;
@@ -94,9 +102,11 @@ export default function ResponseAnswerCard2({
           fileInputRef.current.click();
         }}
         onRemoveFile={(index) => setFiles((prev) => prev.filter((_, i) => i !== index))}
+        onRemoveExistingFile={(index) => setExistingFiles((prev) => prev.filter((_, i) => i !== index))}
         canSubmit={canSubmit}
         isSubmitting={isSubmitting}
         onSubmit={handleSubmit}
+        submitLabel={submitLabel}
       />
       <input
         ref={fileInputRef}

@@ -148,6 +148,7 @@ export async function updateExistingResponse(
     formData.append("comment", payload.comment);
     formData.append("proposed_sum_amount", String(payload.proposed_sum_amount));
     formData.append("proposed_deadline", payload.proposed_deadline);
+    formData.append("keep_files", JSON.stringify(payload.keepFiles ?? []));
     for (const file of files) {
       formData.append("files", file);
     }

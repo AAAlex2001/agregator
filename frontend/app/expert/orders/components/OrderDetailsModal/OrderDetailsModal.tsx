@@ -5,7 +5,7 @@ import { Button } from "@/app/components";
 import ResponseAnswerCard1 from "../ResponseAnswerCard1";
 import ResponseAnswerCard2 from "../ResponseAnswerCard2";
 import { CommentSection, TechnicalSection, TopSection } from "./sections";
-import type { OrderDetails, Step2FormData } from "./types";
+import type { OrderDetails, Step2FormData, Step2InitialData } from "./types";
 import styles from "./orderDetailsModal.module.scss";
 
 export type ModalStep = "details" | "step1" | "step2";
@@ -19,6 +19,8 @@ interface OrderDetailsModalProps {
   onTopUp?: () => void;
   isResponding?: boolean;
   initialStep?: ModalStep;
+  initialData?: Step2InitialData;
+  submitLabel?: string;
 }
 
 export default function OrderDetailsModal({
@@ -30,6 +32,8 @@ export default function OrderDetailsModal({
   onTopUp,
   isResponding = false,
   initialStep = "details",
+  initialData,
+  submitLabel,
 }: OrderDetailsModalProps) {
   const [step, setStep] = useState<ModalStep>(initialStep);
 
@@ -99,6 +103,8 @@ export default function OrderDetailsModal({
             onCancel={() => setStep("step1")}
             onSubmit={(formData) => onRespond?.(order, formData)}
             isSubmitting={isResponding}
+            initialData={initialData}
+            submitLabel={submitLabel}
           />
         )}
       </div>

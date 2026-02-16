@@ -2,12 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/app/components";
+import {
+  isImageFilePath,
+  resolveFileUrl,
+} from "@/app/utils/fileAttachments";
 import styles from "./sections.module.scss";
 
 const IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
 
 function isImageFile(file: File): boolean {
   return IMAGE_TYPES.includes(file.type);
+}
+
+function getExistingFileName(filePath: string): string {
+  const name = filePath.split("/").pop() || filePath;
+  return name.length > 8 ? `${name.slice(0, 8)}…` : name;
 }
 
 const FileIcon = () => (
@@ -29,20 +38,26 @@ const FileIcon = () => (
 
 interface FileUploadSectionProps {
   files: File[];
+  existingFiles?: string[];
   onAddFile: () => void;
   onRemoveFile: (index: number) => void;
+  onRemoveExistingFile?: (index: number) => void;
   canSubmit: boolean;
   isSubmitting: boolean;
   onSubmit: () => void;
+  submitLabel?: string;
 }
 
 export default function FileUploadSection({
   files,
+  existingFiles = [],
   onAddFile,
   onRemoveFile,
+  onRemoveExistingFile,
   canSubmit,
   isSubmitting,
   onSubmit,
+  submitLabel,
 }: FileUploadSectionProps) {
   const [previews, setPreviews] = useState<Map<number, string>>(new Map());
 
@@ -70,6 +85,31 @@ export default function FileUploadSection({
       <div className={styles.fileContent}>
         <span className={styles.fileTitle}>Ваши файлы</span>
         <div className={styles.fileThumbnails}>
+          {existingFiles.map((filePath, index) => (
+            <div key={`existing-${filePath}-${index}`} className={styles.fileThumbnail}>
+              {isImageFilePath(filePath) ? (
+                <img
+                  src={resolveFileUrl(filePath)}
+                  alt={getExistingFileName(filePath)}
+                  className={styles.filePreviewImage}
+                />
+              ) : (
+                <>
+                  <FileIcon />
+                  <span className={styles.fileName}>
+                    {getExistingFileName(filePath)}
+                  </span>
+                </>
+              )}
+              <button
+                type="button"
+                className={styles.fileRemove}
+                onClick={() => onRemoveExistingFile?.(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
           {files.map((file, index) => (
             <div key={`${file.name}-${index}`} className={styles.fileThumbnail}>
               {previews.has(index) ? (
@@ -109,7 +149,7 @@ export default function FileUploadSection({
         isLoading={isSubmitting}
         onClick={onSubmit}
       >
-        Подать заявку
+        {submitLabel ?? "Подать заявку"}
       </Button>
     </div>
   );

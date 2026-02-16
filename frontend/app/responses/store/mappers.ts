@@ -5,7 +5,19 @@ import type {
 } from "./types";
 
 function mapBadgeVariant(variant: string): ResponseBadge["variant"] {
-  return variant.toLowerCase() === "green" ? "green" : "blue";
+  switch (variant.toLowerCase()) {
+    case "green":
+      return "green";
+    case "gray":
+      return "gray";
+    case "orange":
+      return "orange";
+    case "brown":
+      return "brown";
+    case "blue":
+    default:
+      return "blue";
+  }
 }
 
 function mapStatus(status: ResponseApiItem["status"]): {
@@ -65,8 +77,10 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     balanceReturnAmount: isAccepted && item.balance_return ? item.balance_return : undefined,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
-    techSpecTitle: item.technical_files.length > 0 ? "Техническое задание:" : undefined,
-    techSpecFiles: item.technical_files,
+    techSpecTitle: item.response_files.length > 0 ? "Файлы отклика:" : undefined,
+    techSpecFiles: item.response_files,
+    rawSumAmount: item.proposed_sum_amount_raw ?? 0,
+    rawDeadline: item.proposed_deadline_raw ?? "",
     reminderText: isAccepted ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
   };
 }

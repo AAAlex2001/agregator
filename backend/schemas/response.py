@@ -50,6 +50,8 @@ class ExpertResponseItem(BaseModel):
     order_commission_amount: str = ""
     commission_paid: str | None = None
     balance_return: str | None = None
+    proposed_sum_amount_raw: int = 0
+    proposed_deadline_raw: str = ""
 
     model_config = {"from_attributes": True}
 

@@ -18,4 +18,12 @@ export interface Step2FormData {
   costEstimate: number;
   comment: string;
   files: File[];
+  keepFiles: string[];
+}
+
+export interface Step2InitialData {
+  deadline: string;
+  costEstimate: string;
+  comment: string;
+  existingFiles: string[];
 }

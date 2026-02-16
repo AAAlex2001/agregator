@@ -93,10 +93,10 @@ export default function ResponsesPage() {
   const handleRejectResponse = async (responseId: number) => {
     setActionLoading(responseId, "withdraw");
     try {
-      await updateResponseStatus(responseId, "REJECTED");
+      await withdrawResponse(responseId);
       await fetchData();
     } catch (caughtError) {
-      const message = caughtError instanceof Error ? caughtError.message : "Не удалось отклонить отклик";
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось отозвать отклик";
       setError(message);
     } finally {
       setActionLoading(responseId, null);
@@ -130,6 +130,7 @@ export default function ResponsesPage() {
         proposed_sum_amount: formData.costEstimate,
         proposed_deadline: formData.deadline,
         files: formData.files,
+        keepFiles: formData.keepFiles,
       });
       setEditingResponse(null);
       await fetchData();
@@ -368,6 +369,19 @@ export default function ResponsesPage() {
         onRespond={handleEditSubmit}
         isResponding={isEditSubmitting}
         initialStep="step2"
+        initialData={
+          editingResponse
+            ? {
+                deadline: editingResponse.rawDeadline || "",
+                costEstimate: editingResponse.rawSumAmount > 0
+                  ? String(editingResponse.rawSumAmount / 100)
+                  : "",
+                comment: editingResponse.commentText,
+                existingFiles: editingResponse.techSpecFiles ?? [],
+              }
+            : undefined
+        }
+        submitLabel="Сохранить"
       />
     </>
   );

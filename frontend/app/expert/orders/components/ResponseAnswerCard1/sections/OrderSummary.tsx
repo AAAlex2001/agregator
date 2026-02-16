@@ -10,6 +10,14 @@ interface OrderSummaryProps {
 }
 
 export default function OrderSummary({ title, customer, date, badges, sum }: OrderSummaryProps) {
+  const badgeVariantClass: Record<Badge["variant"], string> = {
+    blue: styles.badgeBlue,
+    green: styles.badgeGreen,
+    gray: styles.badgeGray,
+    orange: styles.badgeOrange,
+    brown: styles.badgeBrown,
+  };
+
   return (
     <div className={styles.orderSummary}>
       <div className={styles.orderTitleRow}>
@@ -25,7 +33,7 @@ export default function OrderSummary({ title, customer, date, badges, sum }: Ord
           {badges.map((badge) => (
             <span
               key={badge.text}
-              className={`${styles.badge} ${badge.variant === "blue" ? styles.badgeBlue : styles.badgeGreen}`}
+              className={`${styles.badge} ${badgeVariantClass[badge.variant]}`}
             >
               {badge.text}
             </span>

@@ -146,6 +146,7 @@ class ResponseService:
     ) -> OrderResponse:
         actor = await self.get_actor(actor_id)
         response = await self.get_response_by_id(response_id)
+        status_to_set = new_status
 
         if actor.role == UserRole.EXPERT:
             if response.expert_id != actor.id:
@@ -153,15 +154,11 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нельзя изменять чужой отклик",
                 )
-            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
+            if new_status not in {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Эксперт может только отозвать отклик или завершить проект",
+                    detail="Эксперт может только начать или завершить проект",
                 )
-            if new_status == ResponseStatus.REJECTED and response.order and response.order.assigned_expert_id == actor.id:
-                response.order.assigned_expert_id = None
-                if response.order.status != OrderStatus.ARCHIVED:
-                    response.order.status = OrderStatus.ACTIVE
             if new_status == ResponseStatus.IN_PROGRESS:
                 if response.status != ResponseStatus.ACCEPTED:
                     raise HTTPException(
@@ -204,10 +201,10 @@ class ResponseService:
                 detail="Недостаточно прав для изменения статуса",
             )
 
-        response.status = new_status
+        response.status = status_to_set
         await self.db.commit()
 
-        if new_status == ResponseStatus.REJECTED and response.order:
+        if status_to_set == ResponseStatus.REJECTED and response.order:
             order_result = await self.db.execute(
                 select(Order)
                 .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -220,7 +217,7 @@ class ResponseService:
                     "data": OrderResponseSchema.from_order(refreshed_order).model_dump(),
                 })
 
-        if new_status == ResponseStatus.COMPLETED and response.order:
+        if status_to_set == ResponseStatus.COMPLETED and response.order:
             order_result = await self.db.execute(
                 select(Order)
                 .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -240,8 +237,9 @@ class ResponseService:
         response_id: int,
         expert_id: int,
         data: ResponseCreate,
+        keep_files: list[str] | None = None,
     ) -> OrderResponse:
-        """Update a REVIEW response (deadline, cost, comment)."""
+        """Update a REVIEW response (deadline, cost, comment, files)."""
         await self.ensure_expert(expert_id)
         response = await self.get_response_by_id(response_id)
 
@@ -260,6 +258,11 @@ class ResponseService:
         response.comment = data.comment
         response.proposed_sum_amount = data.proposed_sum_amount
         response.proposed_deadline = data.proposed_deadline
+
+        if keep_files is not None:
+            existing = list(response.technical_files or [])
+            response.technical_files = [f for f in existing if f in keep_files]
+
         await self.db.commit()
 
         return await self.get_response_by_id(response_id)
@@ -279,10 +282,10 @@ class ResponseService:
                 detail="Нельзя отозвать чужой отклик",
             )
 
-        if response.status != ResponseStatus.REVIEW:
+        if response.status not in {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Отозвать можно только отклик на рассмотрении",
+                detail="Отозвать можно только отклик на рассмотрении, принятый или в работе",
             )
 
         order_id = response.order_id

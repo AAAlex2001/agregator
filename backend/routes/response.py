@@ -71,6 +71,8 @@ def to_item(entity) -> ExpertResponseItem:
         order_commission_amount=order_commission_amount,
         commission_paid=commission_paid_str,
         balance_return=balance_return_str,
+        proposed_sum_amount_raw=entity.proposed_sum_amount,
+        proposed_deadline_raw=entity.proposed_deadline.isoformat(),
     )
 
 
@@ -155,10 +157,17 @@ async def update_response(
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
     proposed_deadline: str = Form(...),
+    keep_files: str = Form(default="[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     x_user_id: int = Header(..., alias="X-User-Id"),
 ):
+    import json as _json
+    try:
+        keep_files_list: list[str] = _json.loads(keep_files)
+    except (ValueError, TypeError):
+        keep_files_list = []
+
     data = ResponseCreate(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
@@ -167,6 +176,7 @@ async def update_response(
     service = ResponseService(db)
     updated = await service.update_response(
         response_id=response_id, expert_id=x_user_id, data=data,
+        keep_files=keep_files_list,
     )
 
     if files and files[0].filename:
