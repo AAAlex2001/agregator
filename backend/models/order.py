@@ -26,6 +26,9 @@ class OrderStatus(str, PyEnum):
 class BadgeVariant(str, PyEnum):
     BLUE = "BLUE"
     GREEN = "GREEN"
+    GRAY = "GRAY"
+    ORANGE = "ORANGE"
+    BROWN = "BROWN"
 
 
 class Order(Base):
@@ -33,6 +36,8 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(500), nullable=False)
+    company = Column(String(500), nullable=False, default="")
+    typical_names = Column(String(1000), nullable=False, default="")
     comment = Column(Text, nullable=False, default="")
     customer_id = Column(
         Integer,

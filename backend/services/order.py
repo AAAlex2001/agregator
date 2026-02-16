@@ -58,6 +58,13 @@ class OrderService:
                     Order.status == OrderStatus.ACTIVE,
                     Order.assigned_expert_id.is_(None),
                 )
+            elif expert_role is not None and expert_role == UserRole.CUSTOMER:
+                count_query = count_query.where(
+                    Order.customer_id == expert_id,
+                )
+                list_query = list_query.where(
+                    Order.customer_id == expert_id,
+                )
 
         if status_filter:
             count_query = count_query.where(Order.status == status_filter)
@@ -101,6 +108,8 @@ class OrderService:
 
         order = Order(
             title=data.title,
+            company=data.company,
+            typical_names=data.typical_names,
             comment=data.comment,
             customer_id=data.customer_id,
             technical_files=data.technical_files,

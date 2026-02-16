@@ -22,8 +22,8 @@ export default function LoginPage() {
     try {
       await handleLogin(
         { login: state.login, password: state.password },
-        () => {
-          router.push("/settings");
+        (role) => {
+          router.push(role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
         },
         (error) => {
           state.setError(error);

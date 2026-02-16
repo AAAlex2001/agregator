@@ -31,7 +31,6 @@ export default function SettingsPage() {
       name="Иван Иванов"
       rating={4.8}
       reviewCount={12}
-      role="Эксперт"
       balance="150 000"
     />
     <div className={styles.container}>

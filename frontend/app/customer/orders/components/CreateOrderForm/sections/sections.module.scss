@@ -1,0 +1,159 @@
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.fieldLabel {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.inputField {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+  outline: none;
+  background: transparent;
+
+  &::placeholder {
+    color: #a6acbf;
+  }
+
+  &:focus {
+    border-color: #ff8a00;
+  }
+}
+
+.badgeRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badgeButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  height: 25px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8 !important;
+  }
+}
+
+.fileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.fileRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fileAdd {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  background: #ffffff;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: #ff8a00;
+  }
+}
+
+.fileThumbnail {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  background: #f5f5f5;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.filePreviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.fileName {
+  font-size: 9px;
+  line-height: 11px;
+  color: #1a1a1a;
+  text-align: center;
+  word-break: break-all;
+}
+
+.fileRemove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.fileHint {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #a6acbf;
+}

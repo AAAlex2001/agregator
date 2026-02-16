@@ -20,6 +20,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     "модель для ответа на фронтенд"
     id: int
+    role: str
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     created_at: datetime

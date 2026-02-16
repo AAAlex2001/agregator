@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthHeader from "@/app/landing/header/AuthHeader";
-import OrderCard from "@/app/orders/components/OrderCard";
+import OrderCard from "@/app/expert/orders/components/OrderCard";
 import { Loader, Subtitle, Title } from "@/app/components";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { useOrdersPage } from "./utils/useOrdersPage";
@@ -41,7 +41,6 @@ export default function OrdersPage() {
         name="Иван Иванов"
         rating={4.8}
         reviewCount={12}
-        role="Эксперт"
         balance="150 000"
       />
       <div className={styles.wrapper}>

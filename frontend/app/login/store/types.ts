@@ -12,6 +12,7 @@ export interface LoginState {
 
 export interface LoginResponse {
   id: number;
+  role: "CUSTOMER" | "EXPERT";
   email: string | null;
   phone: string | null;
   created_at: string;

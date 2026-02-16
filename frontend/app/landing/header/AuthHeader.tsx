@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -18,17 +19,37 @@ interface AuthHeaderProps {
   name: string;
   rating: number;
   reviewCount: number;
-  role: string;
+  role?: string;
   balance: string;
+}
+
+function useDisplayRole(roleProp?: string): string {
+  const [displayRole, setDisplayRole] = useState(roleProp ?? "Эксперт");
+
+  useEffect(() => {
+    if (roleProp) {
+      setDisplayRole(roleProp);
+      return;
+    }
+    const stored = window.localStorage.getItem("user_role");
+    if (stored === "CUSTOMER") {
+      setDisplayRole("Заказчик");
+    } else {
+      setDisplayRole("Эксперт");
+    }
+  }, [roleProp]);
+
+  return displayRole;
 }
 
 const AuthHeader = ({
   name,
   rating,
   reviewCount,
-  role,
+  role: roleProp,
   balance,
 }: AuthHeaderProps) => {
+  const role = useDisplayRole(roleProp);
   const pathname = usePathname();
   const iconMotion = {
     whileHover: { y: -2, scale: 1.06 },
@@ -36,11 +57,14 @@ const AuthHeader = ({
     transition: { type: "spring" as const, stiffness: 420, damping: 20 },
   };
 
-  const navLinks = [
-    { href: "/orders", label: "Все заказы" },
-    { href: "/responses", label: "Мои отклики" },
-    { href: "/reviews", label: "Отзывы" },
-  ];
+  const navLinks =
+    role === "Заказчик"
+      ? [{ href: "/customer/orders", label: "Мои заказы" }]
+      : [
+          { href: "/expert/orders", label: "Все заказы" },
+          { href: "/responses", label: "Мои отклики" },
+          { href: "/reviews", label: "Отзывы" },
+        ];
 
   return (
     <header className={styles.header}>

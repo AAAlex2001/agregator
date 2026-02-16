@@ -16,23 +16,43 @@ interface ProfileMenuProps {
   name: string;
   rating: number;
   reviewCount: number;
-  role: string;
+  role?: string;
   balance: string;
   triggerIcon?: ReactNode;
   triggerClassName?: string;
   triggerAriaLabel?: string;
 }
 
+function useDisplayRole(roleProp?: string): string {
+  const [displayRole, setDisplayRole] = useState(roleProp ?? "Эксперт");
+
+  useEffect(() => {
+    if (roleProp) {
+      setDisplayRole(roleProp);
+      return;
+    }
+    const stored = window.localStorage.getItem("user_role");
+    if (stored === "CUSTOMER") {
+      setDisplayRole("Заказчик");
+    } else {
+      setDisplayRole("Эксперт");
+    }
+  }, [roleProp]);
+
+  return displayRole;
+}
+
 const ProfileMenu = ({
   name,
   rating,
   reviewCount,
-  role,
+  role: roleProp,
   balance,
   triggerIcon,
   triggerClassName,
   triggerAriaLabel,
 }: ProfileMenuProps) => {
+  const role = useDisplayRole(roleProp);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -49,6 +69,8 @@ const ProfileMenu = ({
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user_role");
     closeMenu();
     router.push("/login");
   };
@@ -73,11 +95,14 @@ const ProfileMenu = ({
     };
   }, [isOpen]);
 
-  const menuTabs = [
-    { href: "/orders", label: "Все заказы" },
-    { href: "/responses", label: "Мои отклики" },
-    { href: "/reviews", label: "Отзывы" },
-  ];
+  const menuTabs =
+    role === "Заказчик"
+      ? [{ href: "/customer/orders", label: "Мои заказы" }]
+      : [
+          { href: "/expert/orders", label: "Все заказы" },
+          { href: "/responses", label: "Мои отклики" },
+          { href: "/reviews", label: "Отзывы" },
+        ];
 
   return (
     <>

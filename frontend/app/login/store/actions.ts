@@ -3,7 +3,7 @@ import type { LoginFormData } from "./types";
 
 export async function handleLogin(
   data: LoginFormData,
-  onSuccess?: () => void,
+  onSuccess?: (role: string) => void,
   onError?: (error: string) => void
 ): Promise<void> {
   try {
@@ -19,10 +19,11 @@ export async function handleLogin(
 
     if (typeof window !== "undefined") {
       window.localStorage.setItem("user_id", String(user.id));
+      window.localStorage.setItem("user_role", user.role);
     }
 
     if (onSuccess) {
-      onSuccess();
+      onSuccess(user.role);
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Произошла ошибка";

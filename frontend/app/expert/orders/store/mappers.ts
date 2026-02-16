@@ -1,9 +1,12 @@
-import type { Badge } from "@/app/orders/components/OrderCard";
+import type { Badge } from "@/app/expert/orders/components/OrderCard";
 import type { OrderResponse, OrderCardViewModel } from "./types";
 
 const badgeVariantMap: Record<string, Badge["variant"]> = {
   BLUE: "blue",
   GREEN: "green",
+  GRAY: "gray",
+  ORANGE: "orange",
+  BROWN: "brown",
 };
 
 function mapBadgeVariant(value: string): Badge["variant"] {
