@@ -135,3 +135,67 @@ export async function updateResponseStatus(
     throw new Error(message);
   }
 }
+
+export async function updateExistingResponse(
+  responseId: number,
+  payload: CreateResponsePayload,
+): Promise<void> {
+  const apiBaseUrl = getApiBaseUrl();
+  const rawFiles = payload.files ?? [];
+
+  const buildFormData = (files: File[]) => {
+    const formData = new FormData();
+    formData.append("comment", payload.comment);
+    formData.append("proposed_sum_amount", String(payload.proposed_sum_amount));
+    formData.append("proposed_deadline", payload.proposed_deadline);
+    for (const file of files) {
+      formData.append("files", file);
+    }
+    return formData;
+  };
+
+  const response = await stableMultipartFetch({
+    input: `${apiBaseUrl}/responses/${responseId}`,
+    method: "PUT",
+    headers: {
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    files: rawFiles,
+    buildBody: buildFormData,
+  });
+
+  if (!response.ok) {
+    let message = "Не удалось обновить отклик";
+    try {
+      const body = (await response.json()) as { detail?: string };
+      if (body?.detail) {
+        message = body.detail;
+      }
+    } catch {
+    }
+    throw new Error(message);
+  }
+}
+
+export async function withdrawResponse(responseId: number): Promise<void> {
+  const apiBaseUrl = getApiBaseUrl();
+
+  const response = await fetch(`${apiBaseUrl}/responses/${responseId}`, {
+    method: "DELETE",
+    headers: {
+      "X-User-Id": String(getCurrentUserId()),
+    },
+  });
+
+  if (!response.ok) {
+    let message = "Не удалось отозвать отклик";
+    try {
+      const body = (await response.json()) as { detail?: string };
+      if (body?.detail) {
+        message = body.detail;
+      }
+    } catch {
+    }
+    throw new Error(message);
+  }
+}

@@ -24,6 +24,7 @@ export function mapOrderToCardViewModel(order: OrderResponse): OrderCardViewMode
     customer: order.customer_name,
     date: order.date,
     sum: normalizeSumDisplay(order.sum),
+    commissionAmount: normalizeSumDisplay(order.commission_amount),
     comment: order.comment,
     technicalFiles: order.technical_files || [],
     badges: order.badges.map((badge) => ({

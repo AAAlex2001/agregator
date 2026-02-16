@@ -235,6 +235,80 @@ class ResponseService:
 
         return await self.get_response_by_id(response_id)
 
+    async def update_response(
+        self,
+        response_id: int,
+        expert_id: int,
+        data: ResponseCreate,
+    ) -> OrderResponse:
+        """Update a REVIEW response (deadline, cost, comment)."""
+        await self.ensure_expert(expert_id)
+        response = await self.get_response_by_id(response_id)
+
+        if response.expert_id != expert_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нельзя редактировать чужой отклик",
+            )
+
+        if response.status != ResponseStatus.REVIEW:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Редактировать можно только отклик на рассмотрении",
+            )
+
+        response.comment = data.comment
+        response.proposed_sum_amount = data.proposed_sum_amount
+        response.proposed_deadline = data.proposed_deadline
+        await self.db.commit()
+
+        return await self.get_response_by_id(response_id)
+
+    async def withdraw_response(
+        self,
+        response_id: int,
+        expert_id: int,
+    ) -> int:
+        """Delete a REVIEW response so the expert can re-apply later.
+        Returns the order_id for broadcasting."""
+        response = await self.get_response_by_id(response_id)
+
+        if response.expert_id != expert_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нельзя отозвать чужой отклик",
+            )
+
+        if response.status != ResponseStatus.REVIEW:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Отозвать можно только отклик на рассмотрении",
+            )
+
+        order_id = response.order_id
+
+        if response.order and response.order.assigned_expert_id == expert_id:
+            response.order.assigned_expert_id = None
+            if response.order.status != OrderStatus.ARCHIVED:
+                response.order.status = OrderStatus.ACTIVE
+
+        await self.db.delete(response)
+        await self.db.commit()
+
+        order_result = await self.db.execute(
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(Order.id == order_id)
+        )
+        refreshed_order = order_result.scalars().first()
+        if refreshed_order and refreshed_order.assigned_expert_id is None:
+            await order_manager.broadcast({
+                "event": "order_created",
+                "data": OrderResponseSchema.from_order(refreshed_order).model_dump(),
+            })
+
+        return order_id
+
     async def get_response_by_id(self, response_id: int) -> OrderResponse:
         result = await self.db.execute(
             select(OrderResponse)

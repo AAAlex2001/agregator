@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 from models.order import OrderStatus, BadgeVariant
+from services.commission import CommissionCalculator
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
     ".pdf",
@@ -89,6 +90,8 @@ class OrderResponse(BaseModel):
     assigned_expert_id: int | None
     customer_name: str
     sum: str
+    sum_amount_raw: int
+    commission_amount: str
     date: str
     technical_files: list[str]
     badges: list[BadgeResponse]
@@ -96,20 +99,24 @@ class OrderResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+    @staticmethod
+    def _format_sum(amount_kopecks: int) -> str:
+        roubles = amount_kopecks // 100
+        formatted = f"{roubles:,}".replace(",", " ")
+        if amount_kopecks % 100:
+            kopecks = amount_kopecks % 100
+            return f"{formatted},{kopecks:02d} \u20bd"
+        return f"{formatted} \u20bd"
+
     @classmethod
     def from_order(cls, order) -> "OrderResponse":
         amount = order.sum_amount
-        roubles = amount // 100
-        formatted = f"{roubles:,}".replace(",", " ")
-        if amount % 100:
-            kopecks = amount % 100
-            sum_display = f"{formatted},{kopecks:02d} \u20bd"
-        else:
-            sum_display = f"{formatted} \u20bd"
+        sum_display = cls._format_sum(amount)
 
-        customer_name = ""
-        if order.customer:
-            customer_name = order.customer.email or order.customer.phone or ""
+        commission_kopecks = CommissionCalculator.commission_paid(amount)
+        commission_display = cls._format_sum(commission_kopecks)
+
+        customer_name = order.company or ""
 
         date_display = order.deadline.strftime("%d.%m.%Y")
 
@@ -128,6 +135,8 @@ class OrderResponse(BaseModel):
             assigned_expert_id=order.assigned_expert_id,
             customer_name=customer_name,
             sum=sum_display,
+            sum_amount_raw=amount,
+            commission_amount=commission_display,
             date=date_display,
             technical_files=order.technical_files or [],
             badges=badges,

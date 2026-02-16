@@ -12,6 +12,7 @@ from schemas.response import (
     ResponseCreate,
     ResponseTab,
 )
+from services.commission import CommissionCalculator
 from services.response import ResponseService
 
 router = APIRouter(tags=["responses"])
@@ -30,11 +31,22 @@ def to_item(entity) -> ExpertResponseItem:
     customer_name = ""
     customer_company = ""
     order_sum = ""
-    if order and order.customer:
-        customer_name = order.customer.email or order.customer.phone or ""
+    order_commission_amount = ""
     if order:
+        customer_name = order.company or ""
         customer_company = order.company or ""
         order_sum = format_sum(order.sum_amount)
+        order_commission_amount = format_sum(
+            CommissionCalculator.commission_paid(order.sum_amount)
+        )
+
+    commission_paid_str: str | None = None
+    balance_return_str: str | None = None
+    if entity.status == ResponseStatus.ACCEPTED and order:
+        paid = CommissionCalculator.commission_paid(order.sum_amount)
+        returned = CommissionCalculator.balance_return(order.sum_amount)
+        commission_paid_str = format_sum(paid)
+        balance_return_str = format_sum(returned)
 
     return ExpertResponseItem(
         id=entity.id,
@@ -56,6 +68,9 @@ def to_item(entity) -> ExpertResponseItem:
             for badge in (order.badges if order else [])
         ],
         created_at=entity.created_at,
+        order_commission_amount=order_commission_amount,
+        commission_paid=commission_paid_str,
+        balance_return=balance_return_str,
     )
 
 
@@ -132,3 +147,42 @@ async def update_response_status(
         new_status=new_status,
     )
     return to_item(updated)
+
+
+@router.put("/responses/{response_id}", response_model=ExpertResponseItem)
+async def update_response(
+    response_id: int,
+    comment: str = Form(""),
+    proposed_sum_amount: int = Form(...),
+    proposed_deadline: str = Form(...),
+    files: list[UploadFile] = File(default=[]),
+    db: AsyncSession = Depends(get_db),
+    x_user_id: int = Header(..., alias="X-User-Id"),
+):
+    data = ResponseCreate(
+        comment=comment,
+        proposed_sum_amount=proposed_sum_amount,
+        proposed_deadline=date_type.fromisoformat(proposed_deadline),
+    )
+    service = ResponseService(db)
+    updated = await service.update_response(
+        response_id=response_id, expert_id=x_user_id, data=data,
+    )
+
+    if files and files[0].filename:
+        updated = await service.upload_response_files(
+            response_id=updated.id, expert_id=x_user_id, files=files,
+        )
+
+    return to_item(updated)
+
+
+@router.delete("/responses/{response_id}")
+async def withdraw_response(
+    response_id: int,
+    db: AsyncSession = Depends(get_db),
+    x_user_id: int = Header(..., alias="X-User-Id"),
+):
+    service = ResponseService(db)
+    await service.withdraw_response(response_id=response_id, expert_id=x_user_id)
+    return {"detail": "Отклик отозван"}

@@ -16,7 +16,6 @@ import styles from "./responseAnswerCard2.module.scss";
 
 interface ResponseAnswerCard2Props {
   order: OrderDetails;
-  commission: number;
   onCancel: () => void;
   onSubmit: (data: Step2FormData) => void;
   isSubmitting: boolean;
@@ -24,7 +23,6 @@ interface ResponseAnswerCard2Props {
 
 export default function ResponseAnswerCard2({
   order,
-  commission,
   onCancel,
   onSubmit,
   isSubmitting,
@@ -78,7 +76,7 @@ export default function ResponseAnswerCard2({
         badges={order.badges}
         sum={order.sum}
       />
-      <CommissionConfirm commission={commission} />
+      <CommissionConfirm commissionDisplay={order.commissionAmount} />
       <InputFields
         deadline={deadline}
         onDeadlineChange={setDeadline}

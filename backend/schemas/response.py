@@ -47,6 +47,9 @@ class ExpertResponseItem(BaseModel):
     response_files: list[str] = []
     badges: list[dict[str, str]]
     created_at: datetime
+    order_commission_amount: str = ""
+    commission_paid: str | None = None
+    balance_return: str | None = None
 
     model_config = {"from_attributes": True}
 

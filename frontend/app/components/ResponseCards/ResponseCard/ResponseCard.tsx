@@ -40,14 +40,18 @@ export interface ResponseCardProps {
   reminderText?: string;
   reminderDays?: string;
   editBtnText?: string;
+  middleBtnText?: string;
   payBtnText?: string;
   onEdit?: () => void;
+  onMiddle?: () => void;
   onPay?: () => void;
   showActions?: boolean;
   editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  middleBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
   payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
   hideEditButton?: boolean;
   isEditLoading?: boolean;
+  isMiddleLoading?: boolean;
   isPayLoading?: boolean;
 }
 
@@ -105,13 +109,17 @@ const ResponseCard = (props: ResponseCardProps) => {
       {props.showActions !== false && (
         <ActionButtons
           editBtnText={props.editBtnText}
+          middleBtnText={props.middleBtnText}
           payBtnText={props.payBtnText}
           onEdit={props.onEdit}
+          onMiddle={props.onMiddle}
           onPay={props.onPay}
           editBtnVariant={props.editBtnVariant}
+          middleBtnVariant={props.middleBtnVariant}
           payBtnVariant={props.payBtnVariant}
           hideEditButton={props.hideEditButton}
           isEditLoading={props.isEditLoading}
+          isMiddleLoading={props.isMiddleLoading}
           isPayLoading={props.isPayLoading}
         />
       )}

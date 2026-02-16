@@ -30,8 +30,12 @@ export interface ResponseApiItem {
   customer_name: string;
   customer_company: string;
   technical_files: string[];
+  response_files: string[];
   badges: ResponseApiBadge[];
   created_at: string;
+  order_commission_amount: string;
+  commission_paid: string | null;
+  balance_return: string | null;
 }
 
 export interface ResponsesApiList {
@@ -42,6 +46,7 @@ export interface ResponsesApiList {
 
 export interface ResponseCardViewModel {
   id: number;
+  orderId: number;
   rawStatus: ResponseApiItem["status"];
   dateLabel: string;
   date: string;
@@ -59,10 +64,16 @@ export interface ResponseCardViewModel {
   costEstimate: string;
   commissionText: string;
   commissionAmount: string;
+  orderCommissionAmount: string;
   commentTitle: string;
   commentText: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  statusMessage?: string;
+  commissionStatus?: string;
+  balanceReturnText?: string;
+  balanceReturnAmount?: string;
+  reminderText?: string;
 }
 
 export interface ResponsesState {

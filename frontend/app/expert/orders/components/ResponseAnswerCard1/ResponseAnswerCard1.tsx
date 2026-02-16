@@ -12,11 +12,6 @@ interface ResponseAnswerCard1Props {
   onTopUp: () => void;
 }
 
-function parseSumToNumber(sum: string): number {
-  const cleaned = sum.replace(/[^\d.,]/g, "").replace(",", ".");
-  return parseFloat(cleaned) || 0;
-}
-
 export default function ResponseAnswerCard1({
   order,
   balance,
@@ -24,9 +19,6 @@ export default function ResponseAnswerCard1({
   onPay,
   onTopUp,
 }: ResponseAnswerCard1Props) {
-  const commission = Math.ceil(parseSumToNumber(order.sum) * 0.05);
-  const canPay = balance >= commission;
-
   return (
     <div className={styles.card}>
       <HeaderRow />
@@ -38,11 +30,11 @@ export default function ResponseAnswerCard1({
         sum={order.sum}
       />
       <CommissionSection
-        commission={commission}
+        commissionDisplay={order.commissionAmount}
         balance={balance}
         onTopUp={onTopUp}
       />
-      <ActionButtons canPay={canPay} onCancel={onCancel} onPay={onPay} />
+      <ActionButtons canPay onCancel={onCancel} onPay={onPay} />
     </div>
   );
 }

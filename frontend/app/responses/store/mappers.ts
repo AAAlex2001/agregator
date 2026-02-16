@@ -33,15 +33,18 @@ function mapStatus(status: ResponseApiItem["status"]): {
 
 export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewModel {
   const mappedStatus = mapStatus(item.status);
+  const isAccepted = item.status === "ACCEPTED";
 
   return {
     id: item.id,
+    orderId: item.order_id,
     rawStatus: item.status,
     dateLabel: "Отклик от",
     date: item.date,
     status: mappedStatus.label,
     statusColor: mappedStatus.color,
     statusBg: mappedStatus.bg,
+    statusMessage: isAccepted ? "Заказчик выбрал вас!" : undefined,
     orderTitle: item.order_title,
     orderCustomerSum: item.order_sum,
     customer: item.customer_name,
@@ -55,10 +58,15 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     deadline: item.proposed_deadline,
     costEstimate: item.proposed_sum,
     commissionText: "Взнос в размере",
-    commissionAmount: "0 ₽",
+    commissionAmount: isAccepted && item.commission_paid ? item.commission_paid : "0 ₽",
+    orderCommissionAmount: item.order_commission_amount,
+    commissionStatus: isAccepted && item.commission_paid ? "получен" : undefined,
+    balanceReturnText: isAccepted && item.balance_return ? "На ваш баланс вернется" : undefined,
+    balanceReturnAmount: isAccepted && item.balance_return ? item.balance_return : undefined,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
     techSpecTitle: item.technical_files.length > 0 ? "Техническое задание:" : undefined,
     techSpecFiles: item.technical_files,
+    reminderText: isAccepted ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
   };
 }

@@ -8,10 +8,7 @@ import { CommentSection, TechnicalSection, TopSection } from "./sections";
 import type { OrderDetails, Step2FormData } from "./types";
 import styles from "./orderDetailsModal.module.scss";
 
-function parseSumToNumber(sum: string): number {
-  const cleaned = sum.replace(/[^\d.,]/g, "").replace(",", ".");
-  return parseFloat(cleaned) || 0;
-}
+export type ModalStep = "details" | "step1" | "step2";
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
@@ -21,9 +18,8 @@ interface OrderDetailsModalProps {
   onRespond?: (order: OrderDetails, formData: Step2FormData) => void;
   onTopUp?: () => void;
   isResponding?: boolean;
+  initialStep?: ModalStep;
 }
-
-type ModalStep = "details" | "step1" | "step2";
 
 export default function OrderDetailsModal({
   isOpen,
@@ -33,18 +29,17 @@ export default function OrderDetailsModal({
   onRespond,
   onTopUp,
   isResponding = false,
+  initialStep = "details",
 }: OrderDetailsModalProps) {
-  const [step, setStep] = useState<ModalStep>("details");
+  const [step, setStep] = useState<ModalStep>(initialStep);
 
   useEffect(() => {
-    setStep("details");
-  }, [order?.id]);
+    setStep(initialStep);
+  }, [order?.id, initialStep]);
 
   if (!isOpen || !order) {
     return null;
   }
-
-  const commission = Math.ceil(parseSumToNumber(order.sum) * 0.05);
 
   const handleClose = () => {
     setStep("details");
@@ -101,7 +96,6 @@ export default function OrderDetailsModal({
         {step === "step2" && (
           <ResponseAnswerCard2
             order={order}
-            commission={commission}
             onCancel={() => setStep("step1")}
             onSubmit={(formData) => onRespond?.(order, formData)}
             isSubmitting={isResponding}

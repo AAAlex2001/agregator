@@ -10,11 +10,13 @@ import "swiper/css/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, ResponseCard, Title, Subtitle, Button } from "@/app/components";
 import { ArrowIcon } from "@/app/icons";
+import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
+import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import { ResponsesState, ResponsesTabs } from "./components";
 import { loadResponses } from "./store/actions";
-import { updateResponseStatus } from "./store/api";
+import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
 import { useResponsesState } from "./store/state";
-import type { ResponseTabKey } from "./store/types";
+import type { ResponseCardViewModel, ResponseTabKey } from "./store/types";
 import styles from "./responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
@@ -33,6 +35,8 @@ export default function ResponsesPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "start" | "complete" | null>>({});
+  const [editingResponse, setEditingResponse] = useState<ResponseCardViewModel | null>(null);
+  const [isEditSubmitting, setIsEditSubmitting] = useState(false);
 
   const isExpert = typeof window !== "undefined" && window.localStorage.getItem("user_role") === "EXPERT";
 
@@ -73,16 +77,67 @@ export default function ResponsesPage() {
     }));
   };
 
-  const handleWithdrawResponse = async (responseId: number) => {
+  const handleWithdrawReview = async (responseId: number) => {
     setActionLoading(responseId, "withdraw");
     try {
-      await updateResponseStatus(responseId, "REJECTED");
+      await withdrawResponse(responseId);
       await fetchData();
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось отозвать отклик";
       setError(message);
     } finally {
       setActionLoading(responseId, null);
+    }
+  };
+
+  const handleRejectResponse = async (responseId: number) => {
+    setActionLoading(responseId, "withdraw");
+    try {
+      await updateResponseStatus(responseId, "REJECTED");
+      await fetchData();
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось отклонить отклик";
+      setError(message);
+    } finally {
+      setActionLoading(responseId, null);
+    }
+  };
+
+  const handleOpenEditModal = (response: ResponseCardViewModel) => {
+    setEditingResponse(response);
+  };
+
+  const editOrderDetails: OrderDetails | null = editingResponse
+    ? {
+        id: editingResponse.orderId,
+        badges: editingResponse.badges,
+        title: editingResponse.orderTitle,
+        customer: editingResponse.customerCompany || editingResponse.customer,
+        date: editingResponse.orderDate,
+        sum: editingResponse.orderCustomerSum || editingResponse.sum,
+        commissionAmount: editingResponse.orderCommissionAmount,
+        comment: "",
+        technicalFiles: editingResponse.techSpecFiles || [],
+      }
+    : null;
+
+  const handleEditSubmit = async (_order: OrderDetails, formData: Step2FormData) => {
+    if (!editingResponse) return;
+    setIsEditSubmitting(true);
+    try {
+      await updateExistingResponse(editingResponse.id, {
+        comment: formData.comment,
+        proposed_sum_amount: formData.costEstimate,
+        proposed_deadline: formData.deadline,
+        files: formData.files,
+      });
+      setEditingResponse(null);
+      await fetchData();
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось обновить отклик";
+      setError(message);
+    } finally {
+      setIsEditSubmitting(false);
     }
   };
 
@@ -204,11 +259,26 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isExpertAcceptedOrInProgressCard =
-                        isExpert && (response.rawStatus === "ACCEPTED" || response.rawStatus === "IN_PROGRESS");
+                      const isReview = isExpert && response.rawStatus === "REVIEW";
+                      const isAcceptanceRequest = isExpert && response.rawStatus === "ACCEPTED";
+                      const isInProgress = isExpert && response.rawStatus === "IN_PROGRESS";
+                      const isExpertActionable = isReview || isAcceptanceRequest || isInProgress;
                       const isCompletedCard = response.rawStatus === "COMPLETED";
-                      const isInProgress = response.rawStatus === "IN_PROGRESS";
                       const actionLoading = loadingActionByResponseId[response.id] ?? null;
+
+                      const getEditBtnText = () => {
+                        if (isReview) return "Редактировать";
+                        if (isAcceptanceRequest) return "Отклонить";
+                        if (isInProgress) return "Отклонить отклик";
+                        return undefined;
+                      };
+
+                      const getPayBtnText = () => {
+                        if (isReview) return "Отозвать отклик";
+                        if (isAcceptanceRequest) return "Принять проект";
+                        if (isInProgress) return "Завершить проект";
+                        return undefined;
+                      };
 
                       return (
                     <ResponseCard
@@ -217,6 +287,7 @@ export default function ResponsesPage() {
                       status={response.status}
                       statusColor={response.statusColor}
                       statusBg={response.statusBg}
+                      statusMessage={isAcceptanceRequest ? response.statusMessage : undefined}
                       orderTitle={response.orderCustomerSum || response.orderTitle}
                       customer={response.customerCompany || response.customer}
                       orderDate={response.orderDate}
@@ -227,19 +298,26 @@ export default function ResponsesPage() {
                       costEstimate={response.costEstimate}
                       commissionText={response.commissionText}
                       commissionAmount={response.commissionAmount}
+                      commissionStatus={isAcceptanceRequest ? response.commissionStatus : undefined}
+                      balanceReturnText={isAcceptanceRequest ? response.balanceReturnText : undefined}
+                      balanceReturnAmount={isAcceptanceRequest ? response.balanceReturnAmount : undefined}
                       commentTitle={response.commentTitle}
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      editBtnText={isExpertAcceptedOrInProgressCard ? "Отклонить отклик" : undefined}
-                      payBtnText={isExpertAcceptedOrInProgressCard ? (isInProgress ? "Завершить проект" : "Начать работу") : undefined}
-                      editBtnVariant={isExpertAcceptedOrInProgressCard ? "outline" : undefined}
-                      payBtnVariant={isExpertAcceptedOrInProgressCard ? "green" : undefined}
-                      showActions={!isCompletedCard && isExpertAcceptedOrInProgressCard}
-                      onEdit={isExpertAcceptedOrInProgressCard ? () => void handleWithdrawResponse(response.id) : undefined}
-                      onPay={isExpertAcceptedOrInProgressCard ? () => void handleStartOrComplete(response.id, isInProgress) : undefined}
-                      isEditLoading={isExpertAcceptedOrInProgressCard && actionLoading === "withdraw"}
-                      isPayLoading={isExpertAcceptedOrInProgressCard && (actionLoading === "start" || actionLoading === "complete")}
+                      reminderText={isAcceptanceRequest ? response.reminderText : undefined}
+                      editBtnText={getEditBtnText()}
+                      editBtnVariant={isReview ? "outlineOrange" : "outline"}
+                      middleBtnText={isAcceptanceRequest ? "Перейти в чат" : undefined}
+                      middleBtnVariant={isAcceptanceRequest ? "secondary" : undefined}
+                      onMiddle={isAcceptanceRequest ? () => { /* TODO: navigate to chat */ } : undefined}
+                      payBtnText={getPayBtnText()}
+                      payBtnVariant={isReview ? "outline" : "green"}
+                      showActions={!isCompletedCard && isExpertActionable}
+                      onEdit={isReview ? () => handleOpenEditModal(response) : isExpertActionable ? () => void handleRejectResponse(response.id) : undefined}
+                      onPay={isReview ? () => void handleWithdrawReview(response.id) : isExpertActionable ? () => void handleStartOrComplete(response.id, isAcceptanceRequest ? false : true) : undefined}
+                      isEditLoading={!isReview && actionLoading === "withdraw"}
+                      isPayLoading={isReview ? actionLoading === "withdraw" : (actionLoading === "start" || actionLoading === "complete")}
                     />
                       );
                     })()}
@@ -282,6 +360,15 @@ export default function ResponsesPage() {
           </div>
         )}
       </div>
+
+      <OrderDetailsModal
+        isOpen={Boolean(editingResponse)}
+        order={editOrderDetails}
+        onClose={() => setEditingResponse(null)}
+        onRespond={handleEditSubmit}
+        isResponding={isEditSubmitting}
+        initialStep="step2"
+      />
     </>
   );
 }
