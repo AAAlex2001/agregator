@@ -1,4 +1,4 @@
-import type { Badge } from "@/app/expert/orders/components/OrderCard";
+import type { Badge } from "@/app/expert/orders/types";
 
 export interface OrderBadgeResponse {
   text: string;

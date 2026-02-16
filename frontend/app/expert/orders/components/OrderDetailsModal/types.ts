@@ -1,7 +1,4 @@
-export interface Badge {
-  text: string;
-  variant: "blue" | "green";
-}
+import type { Badge } from "@/app/expert/orders/types";
 
 export interface OrderDetails {
   id: number;
