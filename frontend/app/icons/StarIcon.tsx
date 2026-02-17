@@ -1,13 +1,15 @@
 interface StarIconProps {
   className?: string;
   filled?: boolean;
+  width?: number | string;
+  height?: number | string;
 }
 
-const StarIcon = ({ className, filled = true }: StarIconProps) => (
+const StarIcon = ({ className, filled = true, width = 16, height = 16 }: StarIconProps) => (
   <svg
     className={className}
-    width="16"
-    height="16"
+    width={width}
+    height={height}
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
