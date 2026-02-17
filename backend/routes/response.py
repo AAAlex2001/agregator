@@ -40,6 +40,16 @@ def to_item(entity) -> ExpertResponseItem:
             CommissionCalculator.commission_paid(order.sum_amount)
         )
 
+    expert = entity.expert
+    expert_name = ""
+    expert_rating: float | None = None
+    expert_review_count = 0
+    if expert:
+        parts = [expert.first_name or "", expert.last_name or ""]
+        expert_name = " ".join(p for p in parts if p)
+        expert_rating = float(expert.rating) if expert.rating is not None else None
+        expert_review_count = expert.review_count or 0
+
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
     if entity.status == ResponseStatus.ACCEPTED and order:
@@ -73,6 +83,9 @@ def to_item(entity) -> ExpertResponseItem:
         balance_return=balance_return_str,
         proposed_sum_amount_raw=entity.proposed_sum_amount,
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
+        expert_name=expert_name,
+        expert_rating=expert_rating,
+        expert_review_count=expert_review_count,
     )
 
 

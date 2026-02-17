@@ -318,6 +318,7 @@ class ResponseService:
             .options(
                 selectinload(OrderResponse.order).selectinload(Order.badges),
                 selectinload(OrderResponse.order).selectinload(Order.customer),
+                selectinload(OrderResponse.expert),
             )
             .where(OrderResponse.id == response_id)
         )
@@ -429,6 +430,7 @@ class ResponseService:
             .options(
                 selectinload(OrderResponse.order).selectinload(Order.badges),
                 selectinload(OrderResponse.order).selectinload(Order.customer),
+                selectinload(OrderResponse.expert),
             )
             .order_by(OrderResponse.created_at.desc())
             .offset(skip)
@@ -490,6 +492,7 @@ class ResponseService:
             .options(
                 selectinload(OrderResponse.order).selectinload(Order.badges),
                 selectinload(OrderResponse.order).selectinload(Order.customer),
+                selectinload(OrderResponse.expert),
             )
             .order_by(OrderResponse.created_at.desc())
             .offset(skip)

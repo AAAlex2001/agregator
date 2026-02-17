@@ -1,0 +1,117 @@
+.expertInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  background: #ebebeb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+  }
+}
+
+.ratingRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.ratingValues {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.ratingNumber {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+  }
+}
+
+.dot {
+  font-size: 14px;
+  line-height: 16px;
+  color: #1e1e1e;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+  }
+}
+
+.reviewCount {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration-line: underline;
+  color: #000000;
+
+  @media (min-width: 769px) {
+    font-size: 16px;
+  }
+}
+
+.historyBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 10px;
+  border: 1px solid #1a1a1a;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #1a1a1a;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}

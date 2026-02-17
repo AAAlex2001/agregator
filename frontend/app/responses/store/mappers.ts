@@ -81,6 +81,9 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     techSpecFiles: item.response_files,
     rawSumAmount: item.proposed_sum_amount_raw ?? 0,
     rawDeadline: item.proposed_deadline_raw ?? "",
+    expertName: item.expert_name || "",
+    expertRating: item.expert_rating ?? null,
+    expertReviewCount: item.expert_review_count ?? 0,
     reminderText: isAccepted ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
   };
 }

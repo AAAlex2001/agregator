@@ -3,7 +3,7 @@
 """
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, BigInteger, Enum, CheckConstraint
+from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, ForeignKey, BigInteger, Enum, CheckConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -22,9 +22,13 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     role = Column(Enum(UserRole),  nullable=False, index=True)
     is_active = Column(Boolean, default=True, nullable=False)
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
     email = Column(String, unique=True, index=True, nullable=True)
     phone = Column(String, unique=True, index=True, nullable=True)
     password = Column(String, nullable=False)
+    rating = Column(Numeric(2, 1), nullable=True)
+    review_count = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 

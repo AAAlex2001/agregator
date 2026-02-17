@@ -8,7 +8,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
-import { Loader, ResponseCard, Title, Subtitle, Button } from "@/app/components";
+import { Loader, Title, Subtitle, Button } from "@/app/components";
+import { CustomerResponseCard } from "@/app/components/ResponseCards";
 import { ArrowIcon } from "@/app/icons";
 import { ResponsesState, ResponsesTabs } from "@/app/responses/components";
 import { loadResponses } from "@/app/responses/store/actions";
@@ -183,30 +184,26 @@ export default function CustomerResponsesPage() {
               {items.map((response, index) => (
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
-                    <ResponseCard
+                    <CustomerResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
-                      status={response.status}
+                      status={response.rawStatus === "REVIEW" ? "Новый отклик" : response.status}
                       statusColor={response.statusColor}
                       statusBg={response.statusBg}
+                      expertName={response.expertName || ""}
+                      expertRating={response.expertRating}
+                      expertReviewCount={response.expertReviewCount}
+                      onExpertHistory={() => { /* TODO: navigate to expert history */ }}
                       orderTitle={response.orderTitle}
-                      customer={response.customer}
+                      customer={response.customerCompany || response.customer}
                       orderDate={response.orderDate}
                       badges={response.badges}
-                      sum={response.sum}
-                      deadline={response.deadline}
-                      costEstimate={response.costEstimate}
-                      commissionText={response.commissionText}
-                      commissionAmount={response.commissionAmount}
-                      commentTitle={response.commentTitle}
-                      commentText={response.commentText}
-                      techSpecTitle={response.techSpecTitle}
-                      techSpecFiles={response.techSpecFiles}
-                      editBtnText="Отклонить отклик"
-                      payBtnText="Одобрить отклик"
+                      sum={response.orderCustomerSum || response.sum}
                       showActions={response.rawStatus === "REVIEW"}
-                      onEdit={() => void handleStatusUpdate(response.id, "REJECTED")}
-                      onPay={() => void handleStatusUpdate(response.id, "ACCEPTED")}
+                      onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
+                      onAccept={() => void handleStatusUpdate(response.id, "ACCEPTED")}
+                      isRejectLoading={updatingId === response.id}
+                      isAcceptLoading={updatingId === response.id}
                     />
                   </div>
                 </SwiperSlide>

@@ -2,6 +2,7 @@
 
 import {
   StatusHeader,
+  ExpertInfo,
   OrderSection,
   ExpertTerms,
   CommissionInfo,
@@ -53,6 +54,10 @@ export interface ResponseCardProps {
   isEditLoading?: boolean;
   isMiddleLoading?: boolean;
   isPayLoading?: boolean;
+  expertName?: string;
+  expertRating?: number | null;
+  expertReviewCount?: number;
+  onExpertHistory?: () => void;
 }
 
 const ResponseCard = (props: ResponseCardProps) => {
@@ -67,6 +72,15 @@ const ResponseCard = (props: ResponseCardProps) => {
           statusBg={props.statusBg}
           statusMessage={props.statusMessage}
         />
+
+        {props.expertName && (
+          <ExpertInfo
+            expertName={props.expertName}
+            expertRating={props.expertRating ?? null}
+            expertReviewCount={props.expertReviewCount ?? 0}
+            onHistory={props.onExpertHistory}
+          />
+        )}
 
         <div className={styles.bottomContent}>
           <OrderSection

@@ -1,4 +1,5 @@
 export { default as StatusHeader } from "./StatusHeader";
+export { default as ExpertInfo } from "./ExpertInfo";
 export { default as OrderSection } from "./OrderSection";
 export { default as ExpertTerms } from "./ExpertTerms";
 export { default as CommissionInfo } from "./CommissionInfo";

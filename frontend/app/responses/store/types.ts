@@ -38,6 +38,9 @@ export interface ResponseApiItem {
   balance_return: string | null;
   proposed_sum_amount_raw: number;
   proposed_deadline_raw: string;
+  expert_name: string;
+  expert_rating: number | null;
+  expert_review_count: number;
 }
 
 export interface ResponsesApiList {
@@ -73,6 +76,9 @@ export interface ResponseCardViewModel {
   techSpecFiles?: string[];
   rawSumAmount: number;
   rawDeadline: string;
+  expertName: string;
+  expertRating: number | null;
+  expertReviewCount: number;
   statusMessage?: string;
   commissionStatus?: string;
   balanceReturnText?: string;

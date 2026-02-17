@@ -1,6 +1,9 @@
 export { default as ResponseCard } from "./ResponseCard";
 export type { ResponseCardProps } from "./ResponseCard";
 
+export { default as CustomerResponseCard } from "./CustomerResponseCard";
+export type { CustomerResponseCardProps } from "./CustomerResponseCard";
+
 export { default as EditOfferModal } from "./EditOfferModal";
 export type { EditOfferModalProps, EditOfferFormData } from "./EditOfferModal";
 
