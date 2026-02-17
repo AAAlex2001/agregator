@@ -1,3 +1,4 @@
+import { Input } from "@/app/components";
 import styles from "./sections.module.scss";
 
 interface InputFieldsProps {
@@ -20,14 +21,18 @@ export default function InputFields({
         <div className={styles.inputTitle}>Ваша оценка стоимости работ</div>
       </div>
       <div className={styles.inputRow}>
-        <input
+        <Input
           type="date"
+          variant="text"
+          active
           className={styles.inputField}
           value={deadline}
           onChange={(e) => onDeadlineChange(e.target.value)}
         />
-        <input
+        <Input
           type="text"
+          variant="text"
+          active
           className={styles.inputField}
           value={costEstimate}
           onChange={(e) => onCostEstimateChange(e.target.value)}

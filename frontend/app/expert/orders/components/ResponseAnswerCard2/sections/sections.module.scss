@@ -114,31 +114,10 @@
 }
 
 .inputField {
-  box-sizing: border-box;
   width: 100%;
-  padding: 8px 16px;
-  border: 1px solid #ffdda9;
-  border-radius: 8px;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
-  color: #1a1a1a;
-  background: #ffffff;
-  outline: none;
-
-  &::placeholder {
-    color: #a6acbf;
-  }
-
-  &:focus {
-    border-color: #ff8a00;
-  }
 
   @media (min-width: 768px) {
     flex: 1;
-    font-size: 16px;
-    line-height: 20px;
   }
 }
 
