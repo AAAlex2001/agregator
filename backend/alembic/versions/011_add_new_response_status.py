@@ -17,7 +17,9 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute("ALTER TYPE responsestatus ADD VALUE IF NOT EXISTS 'NEW'")
+    context = op.get_context()
+    with context.autocommit_block():
+        op.execute("ALTER TYPE responsestatus ADD VALUE IF NOT EXISTS 'NEW'")
     op.execute("UPDATE order_responses SET status = 'NEW' WHERE status = 'REVIEW'")
 
 
