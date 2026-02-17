@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from sqlalchemy import func
+from sqlalchemy import func, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -222,6 +222,15 @@ class ResponseService:
 
             if new_status == ResponseStatus.ACCEPTED:
                 response.order.assigned_expert_id = response.expert_id
+                await self.db.execute(
+                    update(OrderResponse)
+                    .where(
+                        OrderResponse.order_id == response.order_id,
+                        OrderResponse.id != response.id,
+                        OrderResponse.status != ResponseStatus.REJECTED,
+                    )
+                    .values(status=ResponseStatus.REJECTED)
+                )
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
         else:
