@@ -7,7 +7,7 @@
   max-width: 1640px;
   margin: 0 auto;
   position: relative;
-  overflow-x: clip;
+  overflow-x: hidden;
 
   @media (min-width: 768px) {
     padding: 40px 10px;
@@ -28,12 +28,15 @@
   gap: 8px;
 }
 
-.pageTitle {
-  margin: 0;
-  text-align: center;
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.pageSubtitle {
+.pageHead .pageTitle,
+.pageHead .pageSubtitle {
   margin: 0;
   text-align: center;
 }
@@ -58,7 +61,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 20px;
+  padding: 10px;
 
   @media (min-width: 768px) {
     display: grid;
@@ -69,7 +72,6 @@
     min-height: 712px;
     gap: 20px;
     min-width: 100%;
-    overscroll-behavior: contain;
   }
 }
 

@@ -116,7 +116,7 @@ export function getNormalizedWheelDelta({
   deltaMode,
   containerWidth,
 }: WheelDeltaParams): number {
-  const PIXEL_MULTIPLIER = 2;
+  const PIXEL_MULTIPLIER = 1.25;
   const LINE_HEIGHT = 40;
 
   let delta = Math.abs(deltaY) >= Math.abs(deltaX) ? deltaY : deltaX;

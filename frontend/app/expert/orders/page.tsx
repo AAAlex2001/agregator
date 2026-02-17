@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
-import { Loader, Subtitle, Title } from "@/app/components";
+import { Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { useOrdersPage } from "./utils/useOrdersPage";
 import styles from "./orders.module.scss";
@@ -22,25 +20,17 @@ export default function OrdersPage() {
     fetchOrdersData,
     setSelectedOrder,
     handleRespondToOrder,
-    handleOrdersWheel,
   } = useOrdersPage();
-
-  const knownIdsRef = useRef<Set<number>>(new Set());
-
-  useEffect(() => {
-    if (!isLoading && items.length > 0) {
-      for (const item of items) {
-        knownIdsRef.current.add(item.id);
-      }
-    }
-  }, [isLoading, items]);
 
   return (
     <>
       <AuthHeader />
       <div className={styles.wrapper}>
         <div className={styles.pageHead}>
-          <Title text="Все заказы" className={styles.pageTitle} as="h1" />
+          <div className={styles.titleRow}>
+            <Title text="Все заказы" className={styles.pageTitle} as="h1" />
+            <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки карточек заказов" />
+          </div>
           <Subtitle text="Актуальные заказы по направлениям" className={styles.pageSubtitle} />
         </div>
 
@@ -72,29 +62,19 @@ export default function OrdersPage() {
             <div className={styles.ordersContainer}>
               <div className={styles.shadeLeft} />
               <div className={styles.shadeRight} />
-              <div className={styles.orders} ref={ordersRef} onWheelCapture={handleOrdersWheel}>
-                <AnimatePresence mode="popLayout">
-                  {items.map((order) => (
-                    <motion.div
-                      key={order.id}
-                      layout
-                      style={{ height: "100%" }}
-                      initial={knownIdsRef.current.has(order.id) ? false : { opacity: 0, scale: 0.85 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.85 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                    >
-                      <OrderCard
-                        badges={order.badges}
-                        title={order.title}
-                        customer={order.customer}
-                        date={order.date}
-                        sum={order.sum}
-                        onClick={() => setSelectedOrder(order)}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+              <div className={styles.orders} ref={ordersRef}>
+                {items.map((order) => (
+                  <div key={order.id} style={{ height: "100%" }}>
+                    <OrderCard
+                      badges={order.badges}
+                      title={order.title}
+                      customer={order.customer}
+                      date={order.date}
+                      sum={order.sum}
+                      onClick={() => setSelectedOrder(order)}
+                    />
+                  </div>
+                ))}
                 {isLoadingMore && (
                   <div className={styles.loadMoreIndicator}>
                     <Loader label="" size="md" />

@@ -40,6 +40,8 @@ export function useOrdersPage() {
   const ordersRef = useRef<HTMLDivElement | null>(null);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const isLoadingMoreRef = useRef(false);
+  const scrollTargetRef = useRef<number | null>(null);
+  const scrollAnimationRef = useRef<number | null>(null);
 
   const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
   const [isResponding, setIsResponding] = useState(false);
@@ -91,6 +93,36 @@ export function useOrdersPage() {
     }
   };
 
+  const startSmoothHorizontalScroll = () => {
+    if (scrollAnimationRef.current !== null) {
+      return;
+    }
+
+    const animate = () => {
+      const element = ordersRef.current;
+      if (!element) {
+        scrollAnimationRef.current = null;
+        return;
+      }
+
+      const target = scrollTargetRef.current ?? element.scrollLeft;
+      const distance = target - element.scrollLeft;
+
+      if (Math.abs(distance) < 0.5) {
+        element.scrollLeft = target;
+        scrollAnimationRef.current = null;
+        maybeLoadMore();
+        return;
+      }
+
+      element.scrollLeft += distance * 0.22;
+      maybeLoadMore();
+      scrollAnimationRef.current = requestAnimationFrame(animate);
+    };
+
+    scrollAnimationRef.current = requestAnimationFrame(animate);
+  };
+
   const handleOrdersWheel = (event: { deltaX: number; deltaY: number; deltaMode: number; preventDefault: () => void }) => {
     const element = ordersRef.current;
     if (!element) {
@@ -102,7 +134,17 @@ export function useOrdersPage() {
       return;
     }
 
-    event.preventDefault();
+    if (!(event as WheelEvent).shiftKey) {
+      return;
+    }
+
+    if (event.deltaX === 0 && Math.abs(event.deltaY) > 0) {
+      const atStart = element.scrollLeft <= 0;
+      const atEnd = element.scrollLeft >= maxScroll - 1;
+      if (atStart || atEnd) {
+        return;
+      }
+    }
 
     const delta = getNormalizedWheelDelta({
       deltaX: event.deltaX,
@@ -111,8 +153,16 @@ export function useOrdersPage() {
       containerWidth: element.clientWidth,
     });
 
-    element.scrollLeft = clamp(element.scrollLeft + delta, 0, maxScroll);
-    maybeLoadMore();
+    const currentTarget = scrollTargetRef.current ?? element.scrollLeft;
+    const nextTarget = clamp(currentTarget + delta, 0, maxScroll);
+
+    if (nextTarget === currentTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    scrollTargetRef.current = nextTarget;
+    startSmoothHorizontalScroll();
   };
 
   const handleRespondToOrder = async (order: { id: number }, formData: Step2FormData) => {
@@ -156,6 +206,10 @@ export function useOrdersPage() {
     element.addEventListener("scroll", handleScroll);
 
     return () => {
+      if (scrollAnimationRef.current !== null) {
+        cancelAnimationFrame(scrollAnimationRef.current);
+        scrollAnimationRef.current = null;
+      }
       element.removeEventListener("wheel", handleWheelScroll, { capture: true });
       element.removeEventListener("scroll", handleScroll);
     };
@@ -203,6 +257,5 @@ export function useOrdersPage() {
     fetchOrdersData,
     setSelectedOrder,
     handleRespondToOrder,
-    handleOrdersWheel,
   };
 }

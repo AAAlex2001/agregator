@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
-import { Button, Loader, Title, Subtitle } from "@/app/components";
+import { Button, Loader, ScrollHintTooltip, Title, Subtitle } from "@/app/components";
 import EmptyState from "./components/EmptyState";
 import CreateOrderForm from "./components/CreateOrderForm";
 import { useCustomerOrdersPage } from "./utils/useCustomerOrdersPage";
@@ -19,27 +18,8 @@ export default function CustomerOrdersPage() {
     setShowCreateForm,
     handleCreateOrder,
     fetchOrders,
+    ordersRef,
   } = useCustomerOrdersPage();
-
-  const ordersRef = useRef<HTMLDivElement>(null);
-  const showOrders = !isLoading && !error && items.length > 0;
-
-  useEffect(() => {
-    if (!showOrders) return;
-    const element = ordersRef.current;
-    if (!element) return;
-
-    const handleWheel = (event: WheelEvent) => {
-      const maxScroll = element.scrollWidth - element.clientWidth;
-      if (maxScroll <= 0) return;
-      event.preventDefault();
-      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      element.scrollLeft = Math.max(0, Math.min(element.scrollLeft + delta, maxScroll));
-    };
-
-    element.addEventListener("wheel", handleWheel, { passive: false });
-    return () => element.removeEventListener("wheel", handleWheel);
-  }, [showOrders]);
 
   return (
     <>
@@ -75,7 +55,10 @@ export default function CustomerOrdersPage() {
             {!isLoading && !error && items.length > 0 && (
               <>
                 <div className={styles.pageHead}>
-                  <Title text="Мои заказы" className={styles.pageTitle} as="h1" />
+                  <div className={styles.titleRow}>
+                    <Title text="Мои заказы" className={styles.pageTitle} as="h1" />
+                    <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки карточек заказов" />
+                  </div>
                   <Subtitle text="Актуальные заказы по направлениям" className={styles.pageSubtitle} />
                 </div>
                 <Button

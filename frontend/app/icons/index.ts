@@ -26,3 +26,4 @@ export { default as NotificationsHeaderIcon } from "./NotificationsHeaderIcon";
 export { default as ProfileHeaderIcon } from "./ProfileHeaderIcon";
 export { default as BurgerHeaderIcon } from "./BurgerHeaderIcon";
 export { default as LogoMarkIcon } from "./LogoMarkIcon";
+export { default as InfoHintIcon } from "./InfoHintIcon";
