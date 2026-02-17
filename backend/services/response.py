@@ -268,6 +268,12 @@ class ResponseService:
                     "data": OrderResponseSchema.from_order(completed_order).model_dump(),
                 })
 
+        if status_to_set == ResponseStatus.ACCEPTED:
+            await order_manager.broadcast({
+                "event": "order_removed",
+                "data": {"id": response.order_id},
+            })
+
         return await self.get_response_by_id(response_id)
 
     async def update_response(

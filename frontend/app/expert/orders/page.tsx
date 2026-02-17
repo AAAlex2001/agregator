@@ -1,6 +1,7 @@
 "use client";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
+import { AnimatePresence, motion } from "framer-motion";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
 import { Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
 import OrderDetailsModal from "./components/OrderDetailsModal";
@@ -63,8 +64,23 @@ export default function OrdersPage() {
               <div className={styles.shadeLeft} />
               <div className={styles.shadeRight} />
               <div className={styles.orders} ref={ordersRef}>
+                <AnimatePresence initial={false} mode="popLayout">
                 {items.map((order) => (
-                  <div key={order.id} style={{ height: "100%" }}>
+                  <motion.div
+                    key={order.id}
+                    className={styles.orderItem}
+                    layout
+                    initial={{ opacity: 0, y: -10, scale: 0.97, filter: "blur(1px)" }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -10, scale: 0.97, filter: "blur(1px)" }}
+                    transition={{
+                      layout: { type: "spring", stiffness: 380, damping: 32 },
+                      opacity: { duration: 0.24, ease: "easeOut" },
+                      y: { duration: 0.24, ease: "easeOut" },
+                      scale: { duration: 0.24, ease: "easeOut" },
+                      filter: { duration: 0.18, ease: "easeOut" },
+                    }}
+                  >
                     <OrderCard
                       badges={order.badges}
                       title={order.title}
@@ -73,8 +89,9 @@ export default function OrdersPage() {
                       sum={order.sum}
                       onClick={() => setSelectedOrder(order)}
                     />
-                  </div>
+                  </motion.div>
                 ))}
+                </AnimatePresence>
                 {isLoadingMore && (
                   <div className={styles.loadMoreIndicator}>
                     <Loader label="" size="md" />

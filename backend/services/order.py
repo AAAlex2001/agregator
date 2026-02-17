@@ -3,12 +3,13 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi import HTTPException, UploadFile, status
-from sqlalchemy import func, delete, select
+from sqlalchemy import func, delete, select, not_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
+from models.response import OrderResponse as OrderResponseModel
 from models.user import User, UserRole
 from schemas.order import OrderCreate, OrderResponse, OrderUpdate
 from ws.manager import order_manager
@@ -82,13 +83,23 @@ class OrderService:
             )
             expert_role = expert_result.scalar_one_or_none()
             if expert_role is not None and expert_role == UserRole.EXPERT:
+                responded_by_expert = (
+                    select(OrderResponseModel.id)
+                    .where(
+                        OrderResponseModel.order_id == Order.id,
+                        OrderResponseModel.expert_id == expert_id,
+                    )
+                    .exists()
+                )
                 count_query = count_query.where(
                     Order.status == OrderStatus.ACTIVE,
                     Order.assigned_expert_id.is_(None),
+                    not_(responded_by_expert),
                 )
                 list_query = list_query.where(
                     Order.status == OrderStatus.ACTIVE,
                     Order.assigned_expert_id.is_(None),
+                    not_(responded_by_expert),
                 )
             elif expert_role is not None and expert_role == UserRole.CUSTOMER:
                 count_query = count_query.where(

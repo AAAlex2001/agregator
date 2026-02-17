@@ -175,6 +175,7 @@ export function useOrdersPage() {
         proposed_deadline: formData.deadline,
         files: formData.files,
       });
+      removeOrder(order.id);
       setSelectedOrder(null);
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось отправить отклик";
