@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -34,6 +35,7 @@ export default function CustomerResponsesPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -75,6 +77,9 @@ export default function CustomerResponsesPage() {
 
     try {
       await updateResponseStatus(responseId, newStatus);
+      if (newStatus === "COMPLETED") {
+        setIsCompletionModalOpen(true);
+      }
       await fetchData();
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось обновить статус отклика";
@@ -184,14 +189,15 @@ export default function CustomerResponsesPage() {
                       const isReview = response.rawStatus === "NEW" || response.rawStatus === "REVIEW";
                       const isInProgress = response.rawStatus === "IN_PROGRESS";
                       const isAccepted = response.rawStatus === "ACCEPTED";
+                      const isCompleted = response.rawStatus === "COMPLETED";
 
                       return (
                     <CustomerResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
                       status={isReview ? "Новый отклик" : response.status}
-                      statusColor={response.statusColor}
-                      statusBg={response.statusBg}
+                      statusColor={isCompleted ? "#137333" : response.statusColor}
+                      statusBg={isCompleted ? "#E6F4EA" : response.statusBg}
                       expertName={response.expertName || ""}
                       expertRating={response.expertRating}
                       expertReviewCount={response.expertReviewCount}
@@ -203,18 +209,24 @@ export default function CustomerResponsesPage() {
                       sum={response.orderCustomerSum || response.sum}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      showActions={isReview || isInProgress || isAccepted}
-                      showRejectAction={!isAccepted}
-                      acceptBtnText={isAccepted ? "Завершить проект" : isInProgress ? "Выбрать исполнителем" : "Пригласить в чат"}
+                      showActions={isReview || isInProgress || isAccepted || isCompleted}
+                      showRejectAction={!isAccepted && !isCompleted}
+                      acceptBtnText={isCompleted ? "Оставить отзыв" : isAccepted ? "Завершить проект" : isInProgress ? "Выбрать исполнителем" : "Пригласить в чат"}
                       rejectBtnVariant="transparent"
-                      acceptBtnVariant={isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
+                      acceptBtnVariant={isCompleted ? "secondary" : isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
                       onChat={(isInProgress || isAccepted) ? () => { /* TODO: navigate to chat */ } : undefined}
                       chatBtnText="Перейти в чат"
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
-                      onAccept={() => void handleStatusUpdate(
-                        response.id,
-                        isAccepted ? "COMPLETED" : isInProgress ? "ACCEPTED" : "IN_PROGRESS"
-                      )}
+                      onAccept={() => {
+                        if (isCompleted) {
+                          setIsCompletionModalOpen(true);
+                          return;
+                        }
+                        void handleStatusUpdate(
+                          response.id,
+                          isAccepted ? "COMPLETED" : isInProgress ? "ACCEPTED" : "IN_PROGRESS"
+                        );
+                      }}
                       isRejectLoading={updatingId === response.id}
                       isAcceptLoading={updatingId === response.id}
                     />
@@ -259,6 +271,45 @@ export default function CustomerResponsesPage() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+      {isCompletionModalOpen && (
+        <motion.div
+          className={styles.completionOverlay}
+          onClick={() => setIsCompletionModalOpen(false)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <motion.div
+            className={styles.completionModal}
+            onClick={(event) => event.stopPropagation()}
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.24, ease: "easeOut" }}
+          >
+            <div className={styles.completionContent}>
+              <div className={styles.completionTitle}>Проект успешно завершён</div>
+              <div className={styles.completionSubtitle}>Теперь вы можете оставить отзыв</div>
+            </div>
+            <div className={styles.completionActions}>
+              <Button
+                variant="primary"
+                size="md"
+                fullWidth
+                onClick={() => {
+                  setIsCompletionModalOpen(false);
+                }}
+              >
+                Оставить отзыв
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+      </AnimatePresence>
     </>
   );
 }
