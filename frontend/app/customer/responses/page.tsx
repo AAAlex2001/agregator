@@ -9,9 +9,9 @@ import "swiper/css/navigation";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
+import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import CustomerResponseCard from "./components/CustomerResponseCard";
 import { ArrowIcon } from "@/app/icons";
-import { ResponsesState, ResponsesTabs } from "@/app/expert/responses/components";
 import { loadResponses } from "@/app/expert/responses/store/actions";
 import { useResponsesState } from "@/app/expert/responses/store/state";
 import { updateResponseStatus } from "@/app/expert/responses/store/api";
@@ -139,7 +139,7 @@ export default function CustomerResponsesPage() {
           <Subtitle text="Просматривайте и принимайте решения по откликам" className={styles.pageSubtitle} />
         </div>
 
-        <ResponsesTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <ResponsesTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} styles={styles} />
 
         {isLoading ? (
           <div className={styles.statusState}>
@@ -149,6 +149,7 @@ export default function CustomerResponsesPage() {
           <ResponsesState
             title="Ошибка загрузки"
             subtitle={error}
+            styles={styles}
             action={
               <Button variant="primary" size="sm" onClick={() => void fetchData()}>
                 Повторить
@@ -156,7 +157,7 @@ export default function CustomerResponsesPage() {
             }
           />
         ) : items.length === 0 ? (
-          <ResponsesState title={activeTabLabel} subtitle="Пока нет откликов" />
+          <ResponsesState title={activeTabLabel} subtitle="Пока нет откликов" styles={styles} />
         ) : (
           <div className={styles.cardsSection}>
             <div className={styles.shadeLeft} />

@@ -15,7 +15,7 @@ export type InputVariant = "text" | "email" | "phone" | "emailOrPhone" | "passwo
 
 interface InputProps {
   id?: string;
-  type?: "text" | "email" | "tel" | "password";
+  type?: "text" | "email" | "tel" | "password" | "date";
   variant?: InputVariant;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

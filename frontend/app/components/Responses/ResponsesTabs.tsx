@@ -1,19 +1,17 @@
-import styles from "../responses.module.scss";
-import type { ResponseTabKey } from "../store/types";
-
-interface TabItem {
-  key: ResponseTabKey;
+interface TabItem<T extends string> {
+  key: T;
   label: string;
   count: number;
 }
 
-interface ResponsesTabsProps {
-  tabs: TabItem[];
-  activeTab: ResponseTabKey;
-  onChange: (tab: ResponseTabKey) => void;
+interface ResponsesTabsProps<T extends string> {
+  tabs: TabItem<T>[];
+  activeTab: T;
+  onChange: (tab: T) => void;
+  styles: Readonly<Record<string, string>>;
 }
 
-export default function ResponsesTabs({ tabs, activeTab, onChange }: ResponsesTabsProps) {
+export default function ResponsesTabs<T extends string>({ tabs, activeTab, onChange, styles }: ResponsesTabsProps<T>) {
   return (
     <div className={styles.tabBar}>
       {tabs.map((tab) => (

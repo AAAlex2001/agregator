@@ -1,13 +1,13 @@
-import { Title, Subtitle } from "@/app/components";
-import styles from "../responses.module.scss";
+import { Title, Subtitle } from "../Typography";
 
 interface ResponsesStateProps {
   title: string;
   subtitle: string;
   action?: React.ReactNode;
+  styles: Readonly<Record<string, string>>;
 }
 
-export default function ResponsesState({ title, subtitle, action }: ResponsesStateProps) {
+export default function ResponsesState({ title, subtitle, action, styles }: ResponsesStateProps) {
   return (
     <div className={styles.statusState}>
       <Title text={title} className={styles.statusTitle} as="h2" />

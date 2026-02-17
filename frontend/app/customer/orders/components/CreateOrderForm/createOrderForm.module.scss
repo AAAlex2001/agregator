@@ -59,27 +59,8 @@
   color: #1a1a1a;
 }
 
-.inputField {
-  box-sizing: border-box;
+.formInput {
   width: 100%;
-  padding: 8px 16px;
-  border: 1px solid #ffdda9;
-  border-radius: 8px;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  color: #1a1a1a;
-  outline: none;
-  background: transparent;
-
-  &::placeholder {
-    color: #a6acbf;
-  }
-
-  &:focus {
-    border-color: #ff8a00;
-  }
 }
 
 .commentBlock {

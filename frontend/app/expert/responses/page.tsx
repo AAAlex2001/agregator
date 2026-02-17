@@ -9,11 +9,11 @@ import "swiper/css/navigation";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
+import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import { ArrowIcon } from "@/app/icons";
 import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import ExpertResponseCard from "./components/ExpertResponseCard";
-import { ResponsesState, ResponsesTabs } from "./components";
 import { loadResponses } from "./store/actions";
 import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
 import { useResponsesState } from "./store/state";
@@ -215,7 +215,7 @@ export default function ResponsesPage() {
           <Subtitle text="Отслеживайте статус ваших откликов" className={styles.pageSubtitle} />
         </div>
 
-        <ResponsesTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <ResponsesTabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} styles={styles} />
 
         {isLoading ? (
           <div className={styles.statusState}>
@@ -225,6 +225,7 @@ export default function ResponsesPage() {
           <ResponsesState
             title="Ошибка загрузки"
             subtitle={error}
+            styles={styles}
             action={
               <Button variant="primary" size="sm" onClick={() => void fetchData()}>
                 Повторить
@@ -232,7 +233,7 @@ export default function ResponsesPage() {
             }
           />
         ) : items.length === 0 ? (
-          <ResponsesState title={activeTabLabel} subtitle="Пока нет откликов" />
+          <ResponsesState title={activeTabLabel} subtitle="Пока нет откликов" styles={styles} />
         ) : (
           <div className={styles.cardsSection}>
             <div className={styles.shadeLeft} />

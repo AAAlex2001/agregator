@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Button } from "@/app/components";
+import { Button, Input } from "@/app/components";
 import { useNotifications } from "@/app/components/Notifications";
 import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
 import { BadgeSelector, FileUpload, BADGE_OPTIONS } from "./sections";
@@ -99,22 +99,22 @@ export default function CreateOrderForm({
         <div className={styles.row}>
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>Название заказа</span>
-            <input
-              type="text"
-              className={styles.inputField}
+            <Input
+              variant="text"
               placeholder="Введите название"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className={styles.formInput}
             />
           </div>
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>Компания</span>
-            <input
-              type="text"
-              className={styles.inputField}
+            <Input
+              variant="text"
               placeholder="Название компании"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
+              className={styles.formInput}
             />
           </div>
         </div>
@@ -122,21 +122,22 @@ export default function CreateOrderForm({
         <div className={styles.row}>
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>Срок выполнения</span>
-            <input
+            <Input
               type="date"
-              className={styles.inputField}
+              variant="text"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
+              className={styles.formInput}
             />
           </div>
           <div className={styles.fieldGroup}>
             <span className={styles.fieldLabel}>Бюджет проекта, ₽</span>
-            <input
-              type="text"
-              className={styles.inputField}
+            <Input
+              variant="text"
               placeholder="Сумма в рублях"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
+              className={styles.formInput}
             />
           </div>
         </div>
@@ -149,12 +150,12 @@ export default function CreateOrderForm({
 
       <div className={styles.fieldGroup}>
         <span className={styles.fieldLabel}>Укажите типовые наименования</span>
-        <input
-          type="text"
-          className={styles.inputField}
+        <Input
+          variant="text"
           placeholder="Типовые наименования"
           value={typicalNames}
           onChange={(e) => setTypicalNames(e.target.value)}
+          className={styles.formInput}
         />
       </div>
 

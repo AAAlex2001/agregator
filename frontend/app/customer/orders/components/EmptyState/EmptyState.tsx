@@ -11,12 +11,14 @@ export default function EmptyState({ onCreateOrder }: EmptyStateProps) {
       <div className={styles.card}>
         <div className={styles.textBlock}>
           <h2 className={styles.title}>
-            У вас пока нет заказов
+            Вы ещё не создали ни одного заказа
           </h2>
           <p className={styles.subtitle}>
-            Создайте свой первый заказ
+            <span className={styles.subtitleAccent}>Опубликуйте заказ,</span> чтобы получить
             <br />
-            чтобы найти лучшего эксперта
+            отклики от экспертов по
+            <br />
+            промышленной безопасности
           </p>
         </div>
         <Button
@@ -26,7 +28,7 @@ export default function EmptyState({ onCreateOrder }: EmptyStateProps) {
           className={styles.button}
           onClick={onCreateOrder}
         >
-          Создать заказ
+          Добавить заказ
         </Button>
       </div>
     </div>
