@@ -90,9 +90,13 @@ export default function SettingsPage() {
   return (
     <>
       <AuthHeader />
-      <div className={styles.container}>
+      <div className={styles.wrapper}>
+        <div className={styles.pageHead}>
+          <Title text="Настройки профиля" as="h1" className={styles.pageTitle} />
+          <Subtitle text="Управляйте личными данными и финансами" className={styles.pageSubtitle} />
+        </div>
+
         <div className={styles.content}>
-          <Title text="Настройки профиля" as="h1" className={styles.title} />
           <div className={styles.buttons}>
             <Button variant="settings" size="sm" onClick={() => setActiveSection("personal")} isActive={activeSection === "personal"}>
               Личные данные

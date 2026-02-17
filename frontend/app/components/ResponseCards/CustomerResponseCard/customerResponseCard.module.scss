@@ -63,7 +63,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
 }
 
@@ -172,6 +172,11 @@
 .historyBtn {
   flex-shrink: 0;
   white-space: nowrap;
+  min-height: 34px;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 17px;
 }
 
 /* ---------- order ---------- */
@@ -182,6 +187,7 @@
   padding: 0 0 20px;
   gap: 8px;
   width: 100%;
+  border-bottom: 1px solid #ffdda9;
 }
 
 .orderTitle {
@@ -213,9 +219,14 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
+  gap: 8px;
   width: 100%;
   flex-wrap: wrap;
+
+  @media (min-width: 769px) {
+    gap: 24px;
+    flex-wrap: nowrap;
+  }
 }
 
 .orderDate {
@@ -284,9 +295,14 @@
 .cash {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
+
+  @media (min-width: 769px) {
+    justify-content: flex-end;
+    width: auto;
+  }
 }
 
 .sum {
