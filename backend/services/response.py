@@ -93,12 +93,6 @@ class ResponseService:
                 detail="Нельзя откликнуться на неактивный заказ",
             )
 
-        if order.assigned_expert_id is not None and order.assigned_expert_id != expert_id:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Заказ уже закреплен за другим экспертом",
-            )
-
         existing_result = await self.db.execute(
             select(OrderResponse).where(
                 OrderResponse.order_id == order_id,
@@ -119,7 +113,6 @@ class ResponseService:
             proposed_deadline=data.proposed_deadline,
             status=ResponseStatus.REVIEW,
         )
-        order.assigned_expert_id = expert_id
         self.db.add(entity)
 
         try:
@@ -130,11 +123,6 @@ class ResponseService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Отклик уже существует",
             )
-
-        await order_manager.broadcast({
-            "event": "order_removed",
-            "data": {"id": order_id},
-        })
 
         return await self.get_response_by_id(entity.id)
 
@@ -193,6 +181,8 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Заказчик может только отклонять или принимать отклики",
                 )
+            if new_status == ResponseStatus.ACCEPTED:
+                response.order.assigned_expert_id = response.expert_id
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
         else:

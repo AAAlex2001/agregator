@@ -194,6 +194,8 @@ export default function CustomerResponsesPage() {
                       orderDate={response.orderDate}
                       badges={response.badges}
                       sum={response.orderCustomerSum || response.sum}
+                      techSpecTitle={response.techSpecTitle}
+                      techSpecFiles={response.techSpecFiles}
                       showActions={response.rawStatus === "REVIEW"}
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                       onAccept={() => void handleStatusUpdate(response.id, "ACCEPTED")}

@@ -2,6 +2,7 @@
 
 import { ProfileIcon, StarIcon } from "@/app/icons";
 import { Button } from "@/app/components";
+import { TechSpecFiles } from "../sections";
 import type { ResponseBadge } from "../types";
 import styles from "./customerResponseCard.module.scss";
 
@@ -22,6 +23,8 @@ export interface CustomerResponseCardProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+  techSpecTitle?: string;
+  techSpecFiles?: string[];
 
   rejectBtnText?: string;
   acceptBtnText?: string;
@@ -57,6 +60,8 @@ const CustomerResponseCard = ({
   orderDate,
   badges,
   sum,
+  techSpecTitle,
+  techSpecFiles,
   rejectBtnText = "Отклонить",
   acceptBtnText = "Пригласить в чат",
   onReject,
@@ -145,6 +150,11 @@ const CustomerResponseCard = ({
             </div>
           </div>
         </div>
+
+        <TechSpecFiles
+          techSpecTitle={techSpecTitle}
+          techSpecFiles={techSpecFiles}
+        />
       </div>
 
       {/* actions */}

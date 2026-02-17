@@ -335,9 +335,19 @@
 /* ---------- mobile ---------- */
 @media (max-width: 767px) {
   .expertRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .expertDetails {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .historyBtn {
+    width: 100%;
   }
 
   .actions {
