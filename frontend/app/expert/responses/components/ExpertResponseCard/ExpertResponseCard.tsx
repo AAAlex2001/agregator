@@ -61,6 +61,19 @@ export interface ExpertResponseCardProps {
 }
 
 const ExpertResponseCard = (props: ExpertResponseCardProps) => {
+  const hasContentBelowOrder =
+    Boolean(props.deadline?.trim()) ||
+    Boolean(props.costEstimate?.trim()) ||
+    Boolean(props.commissionText?.trim()) ||
+    Boolean(props.commissionAmount?.trim()) ||
+    Boolean(props.commentTitle?.trim()) ||
+    Boolean(props.commentText?.trim()) ||
+    Boolean(props.techSpecTitle?.trim()) ||
+    Boolean(props.techSpecFiles?.length) ||
+    Boolean(props.reminderText?.trim()) ||
+    Boolean(props.reminderDays?.trim()) ||
+    props.showActions !== false;
+
   return (
     <article className={styles.card}>
       <div className={styles.content}>
@@ -90,6 +103,7 @@ const ExpertResponseCard = (props: ExpertResponseCardProps) => {
             badges={props.badges}
             sum={props.sum}
             collapsible={props.collapsibleOrderMeta}
+            hideDividerOnDesktop={!hasContentBelowOrder}
           />
 
           <div className={styles.infoSection}>

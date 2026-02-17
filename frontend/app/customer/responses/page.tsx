@@ -62,7 +62,7 @@ export default function CustomerResponsesPage() {
   useEffect(() => {
     setActiveIndex(0);
     setCurrentPage(1);
-    swiperRef?.slideToLoop(0);
+    swiperRef?.slideTo(0);
   }, [activeTab, swiperRef, items.length]);
 
   const handleStatusUpdate = async (responseId: number, newStatus: "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED") => {
@@ -119,7 +119,7 @@ export default function CustomerResponsesPage() {
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    swiperRef?.slideToLoop(page - 1);
+    swiperRef?.slideTo(page - 1);
   };
 
   const handlePrev = () => {
@@ -168,7 +168,7 @@ export default function CustomerResponsesPage() {
               slidesPerView="auto"
               spaceBetween={16}
               centeredSlides
-              loop={items.length > 1}
+              loop={false}
               breakpoints={{
                 768: {
                   spaceBetween: 20,

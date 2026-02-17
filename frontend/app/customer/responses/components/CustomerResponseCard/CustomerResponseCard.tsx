@@ -81,6 +81,7 @@ const CustomerResponseCard = ({
   isAcceptLoading = false,
 }: CustomerResponseCardProps) => {
   const isUpdating = isRejectLoading || isAcceptLoading;
+  const hasContentBelowOrder = Boolean(techSpecFiles?.length) || showActions;
 
   return (
     <article className={styles.card}>
@@ -140,7 +141,7 @@ const CustomerResponseCard = ({
         </div>
 
         {/* order */}
-        <div className={styles.orderSection}>
+        <div className={`${styles.orderSection} ${!hasContentBelowOrder ? styles.noDividerDesktop : ""}`}>
           <span className={styles.orderTitle}>{orderTitle}</span>
           <span className={styles.customer}>{customer}</span>
           <div className={styles.orderMeta}>

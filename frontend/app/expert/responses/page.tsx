@@ -68,7 +68,7 @@ export default function ResponsesPage() {
   useEffect(() => {
     setActiveIndex(0);
     setCurrentPage(1);
-    swiperRef?.slideToLoop(0);
+    swiperRef?.slideTo(0);
   }, [activeTab, swiperRef, items.length]);
 
   const setActionLoading = (responseId: number, mode: "withdraw" | "start" | "complete" | null) => {
@@ -195,7 +195,7 @@ export default function ResponsesPage() {
 
   const handlePageClick = (page: number) => {
     setCurrentPage(page);
-    swiperRef?.slideToLoop(page - 1);
+    swiperRef?.slideTo(page - 1);
   };
 
   const handlePrev = () => {
@@ -244,7 +244,7 @@ export default function ResponsesPage() {
               slidesPerView="auto"
               spaceBetween={16}
               centeredSlides
-              loop={items.length > 1}
+              loop={false}
               breakpoints={{
                 768: {
                   spaceBetween: 20,

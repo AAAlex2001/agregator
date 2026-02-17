@@ -210,6 +210,7 @@ export default function CreateOrderForm({
         <Button
           variant="transparent"
           size="md"
+          fullWidth
           className={styles.cancelButton}
           onClick={onCancel}
         >
@@ -218,6 +219,7 @@ export default function CreateOrderForm({
         <Button
           variant="primary"
           size="md"
+          fullWidth
           className={styles.submitButton}
           disabled={!canSubmit}
           isLoading={isSubmitting}

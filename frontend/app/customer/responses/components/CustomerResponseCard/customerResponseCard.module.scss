@@ -190,6 +190,11 @@
   border-bottom: 1px solid #ffdda9;
 }
 
+.noDividerDesktop {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
 .orderTitle {
   font-weight: 500;
   font-size: 14px;
@@ -350,18 +355,25 @@
 
   .expertRow {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 10px;
   }
 
+  .avatar {
+    order: 1;
+  }
+
   .expertDetails {
+    order: 2;
     flex: 1;
     min-width: 0;
   }
 
   .historyBtn {
-    width: 100%;
+    order: 3;
+    width: 100% !important;
+    max-width: none;
   }
 
   .actions {

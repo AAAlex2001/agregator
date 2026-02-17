@@ -12,6 +12,7 @@ interface OrderSectionProps {
   badges: ResponseBadge[];
   sum: string;
   collapsible?: boolean;
+  hideDividerOnDesktop?: boolean;
 }
 
 const OrderSection = ({
@@ -21,12 +22,13 @@ const OrderSection = ({
   badges,
   sum,
   collapsible = false,
+  hideDividerOnDesktop = false,
 }: OrderSectionProps) => {
   const [expanded, setExpanded] = useState(false);
   const showMeta = collapsible ? expanded : true;
 
   return (
-    <div className={styles.orderSection}>
+    <div className={`${styles.orderSection} ${hideDividerOnDesktop ? styles.noDividerDesktop : ""}`}>
       <button
         type="button"
         className={styles.orderTitleRow}
