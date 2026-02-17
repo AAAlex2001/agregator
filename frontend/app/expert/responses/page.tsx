@@ -380,6 +380,7 @@ export default function ResponsesPage() {
         }
         submitLabel="Сохранить"
       />
+
     </>
   );
 }

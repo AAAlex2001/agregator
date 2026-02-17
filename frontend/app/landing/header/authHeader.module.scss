@@ -150,11 +150,7 @@
 }
 
 .profileDesktopTrigger {
-  display: none;
-
-  @media (min-width: 768px) {
-    display: inline-flex;
-  }
+  display: inline-flex;
 }
 
 .profileIconMotion {
@@ -180,28 +176,3 @@
   }
 }
 
-.burgerTriggerWrap {
-  display: inline-flex;
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
-}
-
-.burgerTriggerButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 999px;
-  background: #ffffff;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  cursor: pointer;
-
-  @media (min-width: 768px) {
-    width: 48px;
-    height: 48px;
-  }
-}

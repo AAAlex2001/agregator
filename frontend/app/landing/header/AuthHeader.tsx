@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  BurgerHeaderIcon,
   ChatHeaderIcon,
   LogoIcon,
   LogoMarkIcon,
@@ -136,18 +135,6 @@ const AuthHeader = ({
                 triggerAriaLabel="Открыть профиль"
               />
             </div>
-          </div>
-          <div className={styles.burgerTriggerWrap}>
-            <ProfileMenu
-              name={name}
-              rating={rating}
-              reviewCount={reviewCount}
-              role={role}
-              balance={balance}
-              triggerIcon={<BurgerHeaderIcon />}
-              triggerClassName={styles.burgerTriggerButton}
-              triggerAriaLabel="Открыть меню"
-            />
           </div>
         </div>
       </div>

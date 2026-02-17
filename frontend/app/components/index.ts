@@ -11,3 +11,5 @@ export { default as OrderCard } from "../expert/orders/components/OrderCard";
 export { default as ReviewCard } from "./ReviewCard";
 export { ResponsesState, ResponsesTabs } from "./Responses";
 export { default as ScrollHintTooltip } from "./ScrollHintTooltip";
+export { default as CabinetMenuTabs } from "./CabinetMenuTabs";
+export type { CabinetMenuKey } from "./CabinetMenuTabs";

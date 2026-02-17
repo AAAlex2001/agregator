@@ -7,7 +7,6 @@ import {
   ProfileIcon,
   StarIcon,
   SettingsIcon,
-  ReviewIcon,
   LogoutIcon,
 } from "@/app/icons";
 import styles from "./profileMenu.module.scss";
@@ -95,14 +94,7 @@ const ProfileMenu = ({
     };
   }, [isOpen]);
 
-  const menuTabs =
-    role === "Заказчик"
-      ? [{ href: "/customer/orders", label: "Мои заказы" }]
-      : [
-          { href: "/expert/orders", label: "Все заказы" },
-          { href: "/responses", label: "Мои отклики" },
-          { href: "/reviews", label: "Отзывы" },
-        ];
+  const menuTabs: Array<{ href: string; label: string }> = [];
 
   return (
     <>
@@ -146,13 +138,6 @@ const ProfileMenu = ({
                   <span className={styles.roleBadgeText}>{role}</span>
                 </div>
               </div>
-              <button
-                className={styles.closeButton}
-                onClick={closeMenu}
-                aria-label="Закрыть меню"
-              >
-                <span className={styles.closeIcon} />
-              </button>
             </div>
 
             <div className={styles.balanceSection}>
@@ -166,20 +151,22 @@ const ProfileMenu = ({
               <button className={styles.topUpButton}>Пополнить</button>
             </div>
 
-            <nav className={styles.menuTabs}>
-              {menuTabs.map((tab) => (
-                <Link
-                  key={tab.href}
-                  href={tab.href}
-                  className={`${styles.menuTab} ${
-                    pathname === tab.href ? styles.menuTabActive : ""
-                  }`}
-                  onClick={closeMenu}
-                >
-                  {tab.label}
-                </Link>
-              ))}
-            </nav>
+            {menuTabs.length > 0 && (
+              <nav className={styles.menuTabs}>
+                {menuTabs.map((tab) => (
+                  <Link
+                    key={tab.href}
+                    href={tab.href}
+                    className={`${styles.menuTab} ${
+                      pathname === tab.href ? styles.menuTabActive : ""
+                    }`}
+                    onClick={closeMenu}
+                  >
+                    {tab.label}
+                  </Link>
+                ))}
+              </nav>
+            )}
 
             <div className={styles.bottomLinks}>
               <Link
@@ -189,14 +176,6 @@ const ProfileMenu = ({
               >
                 <SettingsIcon />
                 Настройки профиля
-              </Link>
-              <Link
-                href="/reviews"
-                className={styles.bottomLink}
-                onClick={closeMenu}
-              >
-                <ReviewIcon />
-                Отзывы
               </Link>
               <button className={styles.logoutButton} onClick={handleLogout}>
                 <LogoutIcon />
