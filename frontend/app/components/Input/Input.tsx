@@ -26,6 +26,7 @@ interface InputProps {
   className?: string;
   inputMode?: "text" | "email" | "tel" | "numeric";
   error?: string;
+  active?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -41,6 +42,7 @@ const Input: React.FC<InputProps> = ({
   className,
   inputMode,
   error,
+  active = false,
 }) => {
   const generatedId = useId();
   const inputId = id || generatedId;
@@ -137,7 +139,7 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className={`${styles.field} ${className || ""}`}>
       <div
-        className={`${styles.inputWrapper} ${isFocused ? styles.focused : ""} ${error ? styles.hasError : ""}`}
+        className={`${styles.inputWrapper} ${isFocused ? styles.focused : ""} ${error ? styles.hasError : ""} ${active ? styles.active : ""}`}
         data-emailorphone-type={emailOrPhoneType}
       >
         {hasLeftIcon && (

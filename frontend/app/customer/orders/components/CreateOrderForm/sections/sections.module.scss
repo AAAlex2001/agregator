@@ -88,7 +88,7 @@
   width: 64px;
   height: 64px;
   background: #ffffff;
-  border: 1px solid #ffdda9;
+  border: 1px solid #ffb800;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -96,7 +96,7 @@
   justify-content: center;
 
   &:hover {
-    border-color: #ff8a00;
+    border-color: #ffb800;
   }
 }
 
@@ -104,8 +104,8 @@
   box-sizing: border-box;
   width: 64px;
   height: 64px;
-  background: #f5f5f5;
-  border: 1px solid #ffdda9;
+  background: #ffffff;
+  border: 1px solid #ffb800;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -155,5 +155,5 @@
   font-weight: 400;
   font-size: 12px;
   line-height: 15px;
-  color: #a6acbf;
+  color: #808080;
 }

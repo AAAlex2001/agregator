@@ -39,6 +39,14 @@
   color: #FF8A00;
 }
 
+.inputWrapper.active .iconLeft {
+  color: #FF8A00;
+}
+
+.inputWrapper.active .lockDot {
+  color: #FF8A00 !important;
+}
+
 // EmailOrPhone icon special handling for "both" state
 .inputWrapper[data-emailorphone-type="both"]:hover .iconLeft {
   color: #808080;
@@ -119,6 +127,10 @@
     background: #F5F5F5;
     cursor: not-allowed;
   }
+}
+
+.inputWrapper.active .input {
+  border: 1px solid #FFB800;
 }
 
 .input.hasLeftIcon {

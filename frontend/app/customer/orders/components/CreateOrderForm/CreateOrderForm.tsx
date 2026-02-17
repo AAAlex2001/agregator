@@ -101,6 +101,7 @@ export default function CreateOrderForm({
             <span className={styles.fieldLabel}>Название заказа</span>
             <Input
               variant="text"
+              active
               placeholder="Введите название"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -111,6 +112,7 @@ export default function CreateOrderForm({
             <span className={styles.fieldLabel}>Компания</span>
             <Input
               variant="text"
+              active
               placeholder="Название компании"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
@@ -125,6 +127,7 @@ export default function CreateOrderForm({
             <Input
               type="date"
               variant="text"
+              active
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
               className={styles.formInput}
@@ -134,6 +137,7 @@ export default function CreateOrderForm({
             <span className={styles.fieldLabel}>Бюджет проекта, ₽</span>
             <Input
               variant="text"
+              active
               placeholder="Сумма в рублях"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
@@ -152,6 +156,7 @@ export default function CreateOrderForm({
         <span className={styles.fieldLabel}>Укажите типовые наименования</span>
         <Input
           variant="text"
+          active
           placeholder="Типовые наименования"
           value={typicalNames}
           onChange={(e) => setTypicalNames(e.target.value)}

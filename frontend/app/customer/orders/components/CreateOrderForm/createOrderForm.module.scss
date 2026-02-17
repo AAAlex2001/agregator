@@ -75,7 +75,7 @@
   width: 100%;
   height: 130px;
   padding: 10px 16px;
-  border: 1px solid #ffdda9;
+  border: 1px solid #ffb800;
   border-radius: 8px;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
@@ -87,11 +87,15 @@
   background: transparent;
 
   &::placeholder {
-    color: #a6acbf;
+    color: #808080;
+  }
+
+  &:hover {
+    border-color: #ffb800;
   }
 
   &:focus {
-    border-color: #ff8a00;
+    border-color: #ffb800;
   }
 }
 
