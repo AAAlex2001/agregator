@@ -10,8 +10,8 @@ import {
   TechSpecFiles,
   ReminderSection,
   ActionButtons,
-} from "@/app/components/ResponseCards/sections";
-import type { ResponseBadge } from "@/app/components/ResponseCards/types";
+} from "../sections";
+import type { ResponseBadge } from "../types";
 import styles from "./expertResponseCard.module.scss";
 
 export interface ExpertResponseCardProps {

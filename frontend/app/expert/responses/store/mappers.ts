@@ -1,4 +1,4 @@
-import type { ResponseBadge } from "@/app/components/ResponseCards";
+import type { ResponseBadge } from "../components/types";
 import type {
   ResponseApiItem,
   ResponseCardViewModel,

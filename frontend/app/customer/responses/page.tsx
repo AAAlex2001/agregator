@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
-import { CustomerResponseCard } from "@/app/components/ResponseCards";
+import CustomerResponseCard from "./components/CustomerResponseCard";
 import { ArrowIcon } from "@/app/icons";
 import { ResponsesState, ResponsesTabs } from "@/app/expert/responses/components";
 import { loadResponses } from "@/app/expert/responses/store/actions";
