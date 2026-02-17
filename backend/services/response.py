@@ -176,11 +176,49 @@ class ResponseService:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Нельзя изменять отклик к чужому заказу",
                 )
-            if new_status not in {ResponseStatus.REJECTED, ResponseStatus.ACCEPTED}:
+            if new_status not in {
+                ResponseStatus.REJECTED,
+                ResponseStatus.ACCEPTED,
+                ResponseStatus.IN_PROGRESS,
+                ResponseStatus.COMPLETED,
+            }:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Заказчик может только отклонять или принимать отклики",
+                    detail="Заказчик может только отклонять, принимать, переводить отклик в переговоры или завершать проект",
                 )
+
+            if new_status == ResponseStatus.IN_PROGRESS and response.status != ResponseStatus.REVIEW:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="В переговоры можно перевести только новый отклик",
+                )
+
+            if new_status == ResponseStatus.ACCEPTED and response.status not in {
+                ResponseStatus.REVIEW,
+                ResponseStatus.IN_PROGRESS,
+            }:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Выбрать исполнителем можно только отклик на рассмотрении или в переговорах",
+                )
+
+            if new_status == ResponseStatus.COMPLETED:
+                if response.status not in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Завершить можно только отклик со статусом исполнитель выбран или в переговорах",
+                    )
+                if (
+                    not response.order
+                    or response.order.assigned_expert_id is None
+                    or response.order.assigned_expert_id != response.expert_id
+                ):
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Нельзя завершить проект для незакрепленного исполнителя",
+                    )
+                response.order.status = OrderStatus.COMPLETED
+
             if new_status == ResponseStatus.ACCEPTED:
                 response.order.assigned_expert_id = response.expert_id
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:

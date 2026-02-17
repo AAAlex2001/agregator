@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createResponseForOrder } from "@/app/responses/store/api";
+import { createResponseForOrder } from "@/app/expert/responses/store/api";
 import type { Step2FormData } from "../components/OrderDetailsModal/types";
 import { mapOrderToCardViewModel } from "../store/mappers";
 import { useOrdersState } from "../store/state";

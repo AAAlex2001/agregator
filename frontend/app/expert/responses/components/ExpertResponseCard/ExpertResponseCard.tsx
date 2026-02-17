@@ -10,11 +10,11 @@ import {
   TechSpecFiles,
   ReminderSection,
   ActionButtons,
-} from "../sections";
-import type { ResponseBadge } from "../types";
-import styles from "./responseCard.module.scss";
+} from "@/app/components/ResponseCards/sections";
+import type { ResponseBadge } from "@/app/components/ResponseCards/types";
+import styles from "./expertResponseCard.module.scss";
 
-export interface ResponseCardProps {
+export interface ExpertResponseCardProps {
   dateLabel: string;
   date: string;
   status: string;
@@ -60,7 +60,7 @@ export interface ResponseCardProps {
   onExpertHistory?: () => void;
 }
 
-const ResponseCard = (props: ResponseCardProps) => {
+const ExpertResponseCard = (props: ExpertResponseCardProps) => {
   return (
     <article className={styles.card}>
       <div className={styles.content}>
@@ -141,4 +141,4 @@ const ResponseCard = (props: ResponseCardProps) => {
   );
 };
 
-export default ResponseCard;
+export default ExpertResponseCard;

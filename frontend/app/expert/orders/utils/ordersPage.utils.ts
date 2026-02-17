@@ -1,4 +1,4 @@
-import type { CreateResponsePayload } from "@/app/responses/store/types";
+import type { CreateResponsePayload } from "@/app/expert/responses/store/types";
 import { loadOrders } from "../store/actions";
 import type { OrderCardViewModel } from "../store/types";
 

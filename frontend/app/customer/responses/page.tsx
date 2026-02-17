@@ -11,12 +11,12 @@ import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
 import { CustomerResponseCard } from "@/app/components/ResponseCards";
 import { ArrowIcon } from "@/app/icons";
-import { ResponsesState, ResponsesTabs } from "@/app/responses/components";
-import { loadResponses } from "@/app/responses/store/actions";
-import { useResponsesState } from "@/app/responses/store/state";
-import { updateResponseStatus } from "@/app/responses/store/api";
-import type { ResponseTabKey } from "@/app/responses/store/types";
-import styles from "@/app/responses/responses.module.scss";
+import { ResponsesState, ResponsesTabs } from "@/app/expert/responses/components";
+import { loadResponses } from "@/app/expert/responses/store/actions";
+import { useResponsesState } from "@/app/expert/responses/store/state";
+import { updateResponseStatus } from "@/app/expert/responses/store/api";
+import type { ResponseTabKey } from "@/app/expert/responses/store/types";
+import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "all", label: "Все" },
@@ -65,7 +65,7 @@ export default function CustomerResponsesPage() {
     swiperRef?.slideToLoop(0);
   }, [activeTab, swiperRef, items.length]);
 
-  const handleStatusUpdate = async (responseId: number, newStatus: "REJECTED" | "ACCEPTED") => {
+  const handleStatusUpdate = async (responseId: number, newStatus: "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED") => {
     if (updatingId !== null) {
       return;
     }
@@ -179,10 +179,16 @@ export default function CustomerResponsesPage() {
               {items.map((response, index) => (
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
+                    {(() => {
+                      const isReview = response.rawStatus === "REVIEW";
+                      const isInProgress = response.rawStatus === "IN_PROGRESS";
+                      const isAccepted = response.rawStatus === "ACCEPTED";
+
+                      return (
                     <CustomerResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
-                      status={response.rawStatus === "REVIEW" ? "Новый отклик" : response.status}
+                      status={isReview ? "Новый отклик" : response.status}
                       statusColor={response.statusColor}
                       statusBg={response.statusBg}
                       expertName={response.expertName || ""}
@@ -196,12 +202,23 @@ export default function CustomerResponsesPage() {
                       sum={response.orderCustomerSum || response.sum}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      showActions={response.rawStatus === "REVIEW"}
+                      showActions={isReview || isInProgress || isAccepted}
+                      showRejectAction={!isAccepted}
+                      acceptBtnText={isAccepted ? "Завершить проект" : isInProgress ? "Выбрать исполнителем" : "Пригласить в чат"}
+                      rejectBtnVariant="transparent"
+                      acceptBtnVariant={isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
+                      onChat={(isInProgress || isAccepted) ? () => { /* TODO: navigate to chat */ } : undefined}
+                      chatBtnText="Перейти в чат"
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
-                      onAccept={() => void handleStatusUpdate(response.id, "ACCEPTED")}
+                      onAccept={() => void handleStatusUpdate(
+                        response.id,
+                        isAccepted ? "COMPLETED" : isInProgress ? "ACCEPTED" : "IN_PROGRESS"
+                      )}
                       isRejectLoading={updatingId === response.id}
                       isAcceptLoading={updatingId === response.id}
                     />
+                      );
+                    })()}
                   </div>
                 </SwiperSlide>
               ))}
