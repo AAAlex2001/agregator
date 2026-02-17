@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -12,6 +11,7 @@ import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
 import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import CustomerResponseCard from "./components/CustomerResponseCard";
+import CompletionModal from "./components/CompletionModal";
 import { ArrowIcon } from "@/app/icons";
 import { loadResponses } from "@/app/expert/responses/store/actions";
 import { useResponsesState } from "@/app/expert/responses/store/state";
@@ -272,44 +272,10 @@ export default function CustomerResponsesPage() {
         )}
       </div>
 
-      <AnimatePresence>
-      {isCompletionModalOpen && (
-        <motion.div
-          className={styles.completionOverlay}
-          onClick={() => setIsCompletionModalOpen(false)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-        >
-          <motion.div
-            className={styles.completionModal}
-            onClick={(event) => event.stopPropagation()}
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.96 }}
-            transition={{ duration: 0.24, ease: "easeOut" }}
-          >
-            <div className={styles.completionContent}>
-              <div className={styles.completionTitle}>Проект успешно завершён</div>
-              <div className={styles.completionSubtitle}>Теперь вы можете оставить отзыв</div>
-            </div>
-            <div className={styles.completionActions}>
-              <Button
-                variant="primary"
-                size="md"
-                fullWidth
-                onClick={() => {
-                  setIsCompletionModalOpen(false);
-                }}
-              >
-                Оставить отзыв
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      <CompletionModal
+        isOpen={isCompletionModalOpen}
+        onClose={() => setIsCompletionModalOpen(false)}
+      />
     </>
   );
 }
