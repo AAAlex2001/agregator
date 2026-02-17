@@ -142,12 +142,7 @@ export default function ReviewsPage() {
 
   return (
     <>
-      <AuthHeader
-        name="Иван Иванов"
-        rating={4.8}
-        reviewCount={12}
-        balance="150 000"
-      />
+      <AuthHeader />
       <div className={styles.wrapper}>
         <div className={styles.titleBlock}>
           <h1 className={styles.heading}>Отзывы наших клиентов</h1>

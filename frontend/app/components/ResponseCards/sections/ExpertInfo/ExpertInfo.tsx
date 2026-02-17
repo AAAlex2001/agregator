@@ -1,6 +1,7 @@
 "use client";
 
 import { ProfileIcon, StarIcon } from "@/app/icons";
+import { Button } from "@/app/components";
 import styles from "./expertInfo.module.scss";
 
 interface ExpertInfoProps {
@@ -34,7 +35,7 @@ const ExpertInfo = ({
 
       <div className={styles.details}>
         <span className={styles.name}>{expertName}</span>
-        {expertRating !== null && (
+        {expertRating !== null && expertReviewCount > 0 ? (
           <div className={styles.ratingRow}>
             <StarIcon filled />
             <div className={styles.ratingValues}>
@@ -47,13 +48,15 @@ const ExpertInfo = ({
               </span>
             </div>
           </div>
+        ) : (
+          <span className={styles.noReviews}>Отзывов пока нет</span>
         )}
       </div>
 
       {onHistory && (
-        <button type="button" className={styles.historyBtn} onClick={onHistory}>
+        <Button variant="outline" size="sm" onClick={onHistory} className={styles.historyBtn}>
           История заказов
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { ProfileIcon, StarIcon } from "@/app/icons";
-import { Loader } from "@/app/components";
+import { Button } from "@/app/components";
 import type { ResponseBadge } from "../types";
 import styles from "./customerResponseCard.module.scss";
 
@@ -96,7 +96,7 @@ const CustomerResponseCard = ({
 
           <div className={styles.expertDetails}>
             <span className={styles.expertName}>{expertName}</span>
-            {expertRating !== null && (
+            {expertRating !== null && expertReviewCount > 0 ? (
               <div className={styles.ratingRow}>
                 <StarIcon filled width={16} height={16} />
                 <div className={styles.ratingValues}>
@@ -112,17 +112,15 @@ const CustomerResponseCard = ({
                   </span>
                 </div>
               </div>
+            ) : (
+              <span className={styles.noReviews}>Отзывов пока нет</span>
             )}
           </div>
 
           {onExpertHistory && (
-            <button
-              type="button"
-              className={styles.historyBtn}
-              onClick={onExpertHistory}
-            >
+            <Button variant="outline" size="sm" onClick={onExpertHistory} className={styles.historyBtn}>
               История заказов
-            </button>
+            </Button>
           )}
         </div>
 
@@ -152,22 +150,28 @@ const CustomerResponseCard = ({
       {/* actions */}
       {showActions && (
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.rejectBtn}
+          <Button
+            variant="outline"
+            size="sm"
+            fullWidth
             onClick={onReject}
             disabled={isUpdating}
+            isLoading={isRejectLoading}
+            className={styles.rejectBtn}
           >
-            {isRejectLoading ? <Loader label="" size="sm" /> : rejectBtnText}
-          </button>
-          <button
-            type="button"
-            className={styles.acceptBtn}
+            {rejectBtnText}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            fullWidth
             onClick={onAccept}
             disabled={isUpdating}
+            isLoading={isAcceptLoading}
+            className={styles.acceptBtn}
           >
-            {isAcceptLoading ? <Loader label="" size="sm" /> : acceptBtnText}
-          </button>
+            {acceptBtnText}
+          </Button>
         </div>
       )}
     </article>

@@ -126,17 +126,21 @@ const ProfileMenu = ({
               <div className={styles.content}>
                 <div className={styles.profileInfo}>
                   <span className={styles.name}>{name}</span>
-                  <div className={styles.ratingRow}>
-                    <StarIcon className={styles.starIcon} filled />
-                    <div className={styles.ratingDetails}>
-                      <span className={styles.ratingValue}>
-                        {rating.toFixed(1).replace(".", ",")}
-                      </span>
-                      <span className={styles.dot}>&middot;</span>
-                      <span className={styles.reviewCount}>{reviewCount}</span>
-                      <span className={styles.reviewLabel}>отзывов</span>
+                  {reviewCount > 0 ? (
+                    <div className={styles.ratingRow}>
+                      <StarIcon className={styles.starIcon} filled />
+                      <div className={styles.ratingDetails}>
+                        <span className={styles.ratingValue}>
+                          {rating.toFixed(1).replace(".", ",")}
+                        </span>
+                        <span className={styles.dot}>&middot;</span>
+                        <span className={styles.reviewCount}>{reviewCount}</span>
+                        <span className={styles.reviewLabel}>отзывов</span>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <span className={styles.noReviews}>Отзывов пока нет</span>
+                  )}
                 </div>
                 <div className={styles.roleBadge}>
                   <span className={styles.roleBadgeText}>{role}</span>

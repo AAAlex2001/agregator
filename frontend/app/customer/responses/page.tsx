@@ -132,12 +132,7 @@ export default function CustomerResponsesPage() {
 
   return (
     <>
-      <AuthHeader
-        name="Иван Иванов"
-        rating={4.8}
-        reviewCount={12}
-        balance="150 000"
-      />
+      <AuthHeader />
       <div className={styles.wrapper}>
         <div className={styles.pageHead}>
           <Title text="Отклики по моим заказам" className={styles.pageTitle} as="h1" />

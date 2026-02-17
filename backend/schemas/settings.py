@@ -38,6 +38,8 @@ class UserSettingsResponse(BaseModel):
     phone: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    rating: Optional[float] = None
+    review_count: int = 0
 
     class Config:
         from_attributes = True

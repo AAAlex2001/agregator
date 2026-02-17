@@ -131,3 +131,25 @@
   width: 100%;
   max-width: 237px;
 }
+
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  width: 100%;
+}
+
+.successMessage {
+  text-align: center;
+  color: #2e7d32;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.errorMessage {
+  text-align: center;
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 16px;
+}

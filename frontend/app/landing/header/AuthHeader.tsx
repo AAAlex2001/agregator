@@ -12,15 +12,16 @@ import {
   NotificationsHeaderIcon,
   ProfileHeaderIcon,
 } from "@/app/icons";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import ProfileMenu from "./ProfileMenu";
 import styles from "./authHeader.module.scss";
 
 interface AuthHeaderProps {
-  name: string;
-  rating: number;
-  reviewCount: number;
+  name?: string;
+  rating?: number;
+  reviewCount?: number;
   role?: string;
-  balance: string;
+  balance?: string;
 }
 
 function useDisplayRole(roleProp?: string): string {
@@ -43,12 +44,19 @@ function useDisplayRole(roleProp?: string): string {
 }
 
 const AuthHeader = ({
-  name,
-  rating,
-  reviewCount,
+  name: nameProp,
+  rating: ratingProp,
+  reviewCount: reviewCountProp,
   role: roleProp,
-  balance,
+  balance: balanceProp,
 }: AuthHeaderProps) => {
+  const { displayName, rating: profileRating, reviewCount: profileReviewCount } = useUserProfile();
+
+  const name = nameProp ?? displayName;
+  const rating = ratingProp ?? profileRating;
+  const reviewCount = reviewCountProp ?? profileReviewCount;
+  const balance = balanceProp ?? "0";
+
   const role = useDisplayRole(roleProp);
   const pathname = usePathname();
   const iconMotion = {
