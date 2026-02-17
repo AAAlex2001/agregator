@@ -48,9 +48,7 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
     limit: String(limit),
   });
 
-  if (tab !== "all") {
-    query.set("tab", tab);
-  }
+  query.set("tab", tab);
 
   const response = await fetch(`${apiBaseUrl}/responses?${query.toString()}`, {
     method: "GET",

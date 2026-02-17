@@ -1,9 +1,9 @@
 import type { ResponseBadge } from "../components/types";
 
-export type ResponseTabKey = "all" | "review" | "rejected" | "accepted" | "completed" | "archive";
+export type ResponseTabKey = "new" | "review" | "rejected" | "accepted" | "completed" | "archive";
 
 export interface ResponseCounters {
-  all: number;
+  new: number;
   review: number;
   rejected: number;
   accepted: number;
@@ -19,7 +19,7 @@ export interface ResponseApiBadge {
 export interface ResponseApiItem {
   id: number;
   order_id: number;
-  status: "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
+  status: "NEW" | "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
   date: string;
   comment: string;
   proposed_sum: string;

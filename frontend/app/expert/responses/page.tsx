@@ -21,7 +21,7 @@ import type { ResponseCardViewModel, ResponseTabKey } from "./store/types";
 import styles from "./responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
-  { key: "all", label: "Все" },
+  { key: "new", label: "Новые" },
   { key: "review", label: "На рассмотрении" },
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "Принятые" },
@@ -31,7 +31,7 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
 
 export default function ResponsesPage() {
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
-  const [activeTab, setActiveTab] = useState<ResponseTabKey>("all");
+  const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -161,7 +161,7 @@ export default function ResponsesPage() {
   };
 
   const tabs = [
-    { key: "all" as const, label: "Все", count: counters.all },
+    { key: "new" as const, label: "Новые", count: counters.new },
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "Принятые", count: counters.accepted },
@@ -170,7 +170,7 @@ export default function ResponsesPage() {
   ];
 
   const totalPages = Math.max(1, items.length);
-  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Все";
+  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Новые";
 
   const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
@@ -257,7 +257,7 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isReview = isExpert && response.rawStatus === "REVIEW";
+                      const isReview = isExpert && (response.rawStatus === "NEW" || response.rawStatus === "REVIEW");
                       const isAcceptanceRequest = isExpert && response.rawStatus === "ACCEPTED";
                       const isInProgress = isExpert && response.rawStatus === "IN_PROGRESS";
                       const isExpertActionable = isReview || isAcceptanceRequest || isInProgress;

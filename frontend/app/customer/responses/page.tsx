@@ -19,7 +19,7 @@ import type { ResponseTabKey } from "@/app/expert/responses/store/types";
 import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
-  { key: "all", label: "Все" },
+  { key: "new", label: "Новые" },
   { key: "review", label: "На рассмотрении" },
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "Принятые" },
@@ -29,7 +29,7 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
 
 export default function CustomerResponsesPage() {
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
-  const [activeTab, setActiveTab] = useState<ResponseTabKey>("all");
+  const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +85,7 @@ export default function CustomerResponsesPage() {
   };
 
   const tabs = [
-    { key: "all" as const, label: "Все", count: counters.all },
+    { key: "new" as const, label: "Новые", count: counters.new },
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "Принятые", count: counters.accepted },
@@ -94,7 +94,7 @@ export default function CustomerResponsesPage() {
   ];
 
   const totalPages = Math.max(1, items.length);
-  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Все";
+  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Новые";
 
   const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
@@ -181,7 +181,7 @@ export default function CustomerResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isReview = response.rawStatus === "REVIEW";
+                      const isReview = response.rawStatus === "NEW" || response.rawStatus === "REVIEW";
                       const isInProgress = response.rawStatus === "IN_PROGRESS";
                       const isAccepted = response.rawStatus === "ACCEPTED";
 

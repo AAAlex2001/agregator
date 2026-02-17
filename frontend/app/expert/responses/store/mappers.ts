@@ -26,6 +26,8 @@ function mapStatus(status: ResponseApiItem["status"]): {
   bg: string;
 } {
   switch (status) {
+    case "NEW":
+      return { label: "Новый отклик", color: "#CC6E00", bg: "#FFF5E6" };
     case "REVIEW":
       return { label: "На рассмотрении", color: "#CC6E00", bg: "#FFF5E6" };
     case "REJECTED":

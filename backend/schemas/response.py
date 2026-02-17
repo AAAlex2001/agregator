@@ -7,7 +7,7 @@ from models.response import ResponseStatus
 
 
 class ResponseTab(str, PyEnum):
-    ALL = "all"
+    NEW = "new"
     REVIEW = "review"
     REJECTED = "rejected"
     ACCEPTED = "accepted"
@@ -22,7 +22,7 @@ class ResponseCreate(BaseModel):
 
 
 class ResponseCounters(BaseModel):
-    all: int = 0
+    new: int = 0
     review: int = 0
     rejected: int = 0
     accepted: int = 0
