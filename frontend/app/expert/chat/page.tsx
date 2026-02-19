@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Subtitle } from "@/app/components/Typography";
 import Loader from "@/app/components/Loader";
 import { ChatSearchIcon, ProfileIcon } from "@/app/icons";
-import { fetchChats, openChatByOrder, type ChatListItem } from "@/app/utils/chatApi";
+import { fetchChats, type ChatListItem } from "@/app/utils/chatApi";
 import styles from "./chat.module.scss";
 
 function ChatListAvatar({ avatarUrl, alt }: { avatarUrl?: string; alt: string }) {
@@ -50,35 +50,9 @@ function formatChatTime(value: string | null): string {
 
 export default function ChatListPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [chats, setChats] = useState<ChatListItem[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const orderIdParam = searchParams.get("orderId");
-    if (!orderIdParam) return;
-
-    const orderId = Number(orderIdParam);
-    if (!Number.isInteger(orderId) || orderId <= 0) return;
-
-    let cancelled = false;
-
-    const run = async () => {
-      try {
-        const detail = await openChatByOrder(orderId);
-        if (!cancelled) {
-          router.replace(`/expert/chat/${detail.id}`);
-        }
-      } catch {
-      }
-    };
-
-    run();
-    return () => {
-      cancelled = true;
-    };
-  }, [router, searchParams]);
 
   useEffect(() => {
     let cancelled = false;

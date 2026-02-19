@@ -14,6 +14,7 @@ import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import CustomerResponseCard from "./components/CustomerResponseCard";
 import CompletionModal from "./components/CompletionModal";
 import { ArrowIcon } from "@/app/icons";
+import { openChatByOrder } from "@/app/utils/chatApi";
 import { loadResponses } from "@/app/expert/responses/store/actions";
 import { useResponsesState } from "@/app/expert/responses/store/state";
 import { updateResponseStatus } from "@/app/expert/responses/store/api";
@@ -137,6 +138,14 @@ export default function CustomerResponsesPage() {
     swiperRef?.slideNext();
   };
 
+  const handleOpenChat = async (orderId: number) => {
+    try {
+      const detail = await openChatByOrder(orderId);
+      router.push(`/customer/chat/${detail.id}`);
+    } catch {
+    }
+  };
+
   return (
     <>
       <AuthHeader />
@@ -217,7 +226,7 @@ export default function CustomerResponsesPage() {
                       rejectBtnVariant="transparent"
                       acceptBtnVariant={isCompleted ? "secondary" : isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
                       onChat={(isInProgress || isAccepted) ? () => {
-                        router.push(`/customer/chat?orderId=${response.orderId}`);
+                        void handleOpenChat(response.orderId);
                       } : undefined}
                       chatBtnText="Перейти в чат"
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
