@@ -33,6 +33,7 @@ async def get_profile(
         phone=user.phone,
         first_name=user.first_name,
         last_name=user.last_name,
+        balance=user.balance or 0,
         rating=float(user.rating) if user.rating is not None else None,
         review_count=user.review_count or 0,
     )
@@ -86,6 +87,7 @@ async def update_profile(
         phone=user.phone,
         first_name=user.first_name,
         last_name=user.last_name,
+        balance=user.balance or 0,
         rating=float(user.rating) if user.rating is not None else None,
         review_count=user.review_count or 0,
     )

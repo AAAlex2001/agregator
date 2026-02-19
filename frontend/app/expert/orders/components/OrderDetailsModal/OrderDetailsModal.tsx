@@ -16,7 +16,7 @@ interface OrderDetailsModalProps {
   order: OrderDetails | null;
   balance?: number;
   onRespond?: (order: OrderDetails, formData: Step2FormData) => void;
-  onTopUp?: () => void;
+  onTopUp?: (amount: number) => void;
   isResponding?: boolean;
   initialStep?: ModalStep;
   initialData?: Step2InitialData;
@@ -93,7 +93,7 @@ export default function OrderDetailsModal({
             balance={balance}
             onCancel={() => setStep("details")}
             onPay={() => setStep("step2")}
-            onTopUp={() => onTopUp?.()}
+            onTopUp={() => onTopUp?.(order.commissionAmountRaw)}
           />
         )}
 

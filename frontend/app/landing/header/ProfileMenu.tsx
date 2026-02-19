@@ -148,7 +148,15 @@ const ProfileMenu = ({
                   <span className={styles.balanceCurrency}>{"\u20bd"}</span>
                 </div>
               </div>
-              <button className={styles.topUpButton}>Пополнить</button>
+              <button
+                className={styles.topUpButton}
+                onClick={() => {
+                  closeMenu();
+                  router.push("/settings?section=finance");
+                }}
+              >
+                Пополнить
+              </button>
             </div>
 
             {menuTabs.length > 0 && (

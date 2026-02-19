@@ -19,6 +19,8 @@ export default function ResponseAnswerCard1({
   onPay,
   onTopUp,
 }: ResponseAnswerCard1Props) {
+  const canPay = balance >= order.commissionAmountRaw;
+
   return (
     <div className={styles.card}>
       <HeaderRow />
@@ -32,9 +34,10 @@ export default function ResponseAnswerCard1({
       <CommissionSection
         commissionDisplay={order.commissionAmount}
         balance={balance}
+        canTopUp={!canPay}
         onTopUp={onTopUp}
       />
-      <ActionButtons canPay onCancel={onCancel} onPay={onPay} />
+      <ActionButtons canPay={canPay} onCancel={onCancel} onPay={onPay} />
     </div>
   );
 }

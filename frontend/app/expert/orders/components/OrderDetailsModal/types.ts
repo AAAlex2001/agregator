@@ -9,6 +9,7 @@ export interface OrderDetails {
   date: string;
   sum: string;
   commissionAmount: string;
+  commissionAmountRaw: number;
   comment: string;
   technicalFiles: string[];
 }

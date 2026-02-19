@@ -8,6 +8,7 @@ interface UseUserProfileResult {
   profile: UserProfile | null;
   isLoading: boolean;
   displayName: string;
+  balance: number;
   rating: number;
   reviewCount: number;
   reload: () => void;
@@ -36,6 +37,7 @@ export function useUserProfile(): UseUserProfileResult {
   const displayName = profile
     ? `${profile.first_name || ""} ${profile.last_name || ""}`.trim() || "Пользователь"
     : "Пользователь";
+  const balance = profile?.balance ?? 0;
   const rating = profile?.rating ?? 0;
   const reviewCount = profile?.review_count ?? 0;
 
@@ -43,6 +45,7 @@ export function useUserProfile(): UseUserProfileResult {
     profile,
     isLoading,
     displayName,
+    balance,
     rating,
     reviewCount,
     reload: () => void load(),

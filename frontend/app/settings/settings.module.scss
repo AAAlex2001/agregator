@@ -91,15 +91,85 @@
 .finance {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   width: 100%;
-  .subtitle {
-    text-align: left;
-    width: 100%;
-    white-space: nowrap;
+}
+
+.financeSubtitle {
+  margin: 0 !important;
+  text-align: left;
+  width: 100%;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
   }
 }
 
-.financeButtons{
+.financeColumns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.transactionColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.transaction {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.transactionDate {
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #000000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.transactionText {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+  flex: 1;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.financeButtons {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -118,6 +188,18 @@
   @media (min-width: 768px) {
     flex-direction: row;
     justify-content: space-between;
+  }
+}
+
+.emptyHistory {
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
   }
 }
 

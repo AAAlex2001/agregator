@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
@@ -9,6 +11,8 @@ import { useOrdersPage } from "./utils/useOrdersPage";
 import styles from "./orders.module.scss";
 
 export default function OrdersPage() {
+  const searchParams = useSearchParams();
+
   const {
     items,
     isLoading,
@@ -21,7 +25,18 @@ export default function OrdersPage() {
     fetchOrdersData,
     setSelectedOrder,
     handleRespondToOrder,
+    handleTopUp,
+    balance,
   } = useOrdersPage();
+
+  useEffect(() => {
+    const orderId = searchParams.get("orderId");
+    const step = searchParams.get("step");
+    if (orderId && step === "step2" && items.length > 0) {
+      const order = items.find((o) => String(o.id) === orderId);
+      if (order) setSelectedOrder(order);
+    }
+  }, [searchParams, items]);
 
   return (
     <>
@@ -108,7 +123,15 @@ export default function OrdersPage() {
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
           onRespond={handleRespondToOrder}
+          onTopUp={(amount) => selectedOrder && void handleTopUp(selectedOrder.id, amount)}
+          balance={balance}
           isResponding={isResponding}
+          initialStep={
+            searchParams.get("orderId") === String(selectedOrder?.id) &&
+            searchParams.get("step") === "step2"
+              ? "step2"
+              : "details"
+          }
         />
       </div>
     </>

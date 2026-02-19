@@ -13,6 +13,7 @@ const GUARANTEES = [
 interface CommissionSectionProps {
   commissionDisplay: string;
   balance: number;
+  canTopUp: boolean;
   onTopUp: () => void;
 }
 
@@ -20,7 +21,7 @@ function formatNumber(value: number): string {
   return value.toLocaleString("ru-RU");
 }
 
-export default function CommissionSection({ commissionDisplay, balance, onTopUp }: CommissionSectionProps) {
+export default function CommissionSection({ commissionDisplay, balance, canTopUp, onTopUp }: CommissionSectionProps) {
   const [guaranteesOpen, setGuaranteesOpen] = useState(false);
 
   return (
@@ -70,17 +71,23 @@ export default function CommissionSection({ commissionDisplay, balance, onTopUp 
       <div className={styles.balanceRow}>
         <div className={styles.balanceInfo}>
           <span className={styles.balanceLabel}>На вашем счёте:</span>
-          <span className={styles.balanceValue}>{formatNumber(balance)}{"\u00A0₽"}</span>
+          <span className={`${styles.balanceValue} ${!canTopUp ? styles.balanceValueOk : styles.balanceValueLow}`}>
+            {formatNumber(balance)}{"\u00A0₽"}
+          </span>
         </div>
         <Button
           variant="secondary"
           size="sm"
           className={styles.topUpButton}
           onClick={onTopUp}
+          disabled={!canTopUp}
         >
           Пополнить баланс
         </Button>
       </div>
+      {canTopUp && (
+        <span className={styles.balanceHint}>Недостаточно средств для подачи заявки</span>
+      )}
     </div>
   );
 }

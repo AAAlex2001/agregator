@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createResponseForOrder } from "@/app/expert/responses/store/api";
+import { createPayment } from "@/app/payments/api";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import type { Step2FormData } from "../components/OrderDetailsModal/types";
 import { mapOrderToCardViewModel } from "../store/mappers";
 import { useOrdersState } from "../store/state";
@@ -42,6 +44,8 @@ export function useOrdersPage() {
   const isLoadingMoreRef = useRef(false);
   const scrollTargetRef = useRef<number | null>(null);
   const scrollAnimationRef = useRef<number | null>(null);
+
+  const { balance } = useUserProfile();
 
   const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
   const [isResponding, setIsResponding] = useState(false);
@@ -165,6 +169,17 @@ export function useOrdersPage() {
     startSmoothHorizontalScroll();
   };
 
+  const handleTopUp = async (orderId: number, amountKopecks: number) => {
+    const returnUrl = `${window.location.origin}/expert/orders?orderId=${orderId}&step=step2`;
+    try {
+      const { confirmation_url } = await createPayment(amountKopecks);
+      window.location.href = confirmation_url + `&return_url=${encodeURIComponent(returnUrl)}`;
+    } catch {
+      // fallback — просто идём в настройки
+      window.location.href = `/settings?section=finance&returnOrderId=${orderId}`;
+    }
+  };
+
   const handleRespondToOrder = async (order: { id: number }, formData: Step2FormData) => {
     setIsResponding(true);
 
@@ -258,5 +273,7 @@ export function useOrdersPage() {
     fetchOrdersData,
     setSelectedOrder,
     handleRespondToOrder,
+    handleTopUp,
+    balance,
   };
 }

@@ -27,6 +27,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=True)
     phone = Column(String, unique=True, index=True, nullable=True)
     password = Column(String, nullable=False)
+    balance = Column(BigInteger, default=0, nullable=False)
     rating = Column(Numeric(2, 1), nullable=True)
     review_count = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
@@ -81,5 +82,11 @@ class User(Base):
     chat_messages = relationship(
         "ChatMessage",
         back_populates="sender",
+        cascade="all, delete-orphan",
+    )
+
+    payments = relationship(
+        "Payment",
+        back_populates="user",
         cascade="all, delete-orphan",
     )

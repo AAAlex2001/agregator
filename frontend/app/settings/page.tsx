@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button, Loader } from "@/app/components";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
@@ -8,6 +9,8 @@ import { Input } from "@/app/components/";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { fetchProfile, updateProfile, changePassword } from "./api";
 import type { UserProfile } from "./api";
+import { createPayment, fetchPaymentHistory } from "@/app/payments/api";
+import type { PaymentItem } from "@/app/payments/api";
 import styles from "./settings.module.scss";
 
 export default function SettingsPage() {
@@ -20,7 +23,14 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [activeSection, setActiveSection] = useState<"personal" | "finance">("personal");
+  const searchParams = useSearchParams();
+  const [activeSection, setActiveSection] = useState<"personal" | "finance">(
+    searchParams.get("section") === "finance" ? "finance" : "personal"
+  );
+  const [depositAmount, setDepositAmount] = useState("");
+  const [isDepositing, setIsDepositing] = useState(false);
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [userRole, setUserRole] = useState<string>("EXPERT");
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -38,10 +48,65 @@ export default function SettingsPage() {
       setFirstName(data.first_name || "");
       setPhone(data.phone || "");
       setEmail(data.email || "");
+
+      const role = typeof window !== "undefined" ? window.localStorage.getItem("user_role") : null;
+      setUserRole(role || "EXPERT");
+
+      if (role === "EXPERT") {
+        try {
+          const history = await fetchPaymentHistory();
+          setPayments(history);
+        } catch {
+          // ignore
+        }
+      }
     } catch {
       setSaveError("Не удалось загрузить профиль");
     } finally {
       setIsLoadingProfile(false);
+    }
+  };
+
+  const isExpert = userRole === "EXPERT";
+
+  const formatBalance = (kopecks: number): string => {
+    const rub = Math.floor(kopecks / 100);
+    return rub.toLocaleString("ru-RU") + " ₽";
+  };
+
+  const formatDate = (iso: string): string => {
+    const d = new Date(iso);
+    return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit" });
+  };
+
+  const formatTransactionText = (item: PaymentItem): string => {
+    const rub = formatBalance(item.amount);
+    if (item.status === "SUCCEEDED") return `Оплата ${rub}`;
+    if (item.status === "REFUNDED") return `Возврат ${rub}`;
+    if (item.status === "CANCELED") return `Отмена ${rub}`;
+    if (item.status === "PENDING") return `Ожидание ${rub}`;
+    return `${item.description}`;
+  };
+
+  const handleDeposit = async () => {
+    if (isDepositing) return;
+    const rub = parseFloat(depositAmount.replace(/\s/g, "").replace(",", "."));
+    if (!rub || rub <= 0) {
+      setSaveError("Введите корректную сумму");
+      return;
+    }
+    setIsDepositing(true);
+    setSaveMessage(null);
+    setSaveError(null);
+    try {
+      const kopecks = Math.round(rub * 100);
+      const { confirmation_url } = await createPayment(kopecks);
+      window.location.href = confirmation_url;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка создания платежа";
+      setSaveError(message);
+    } finally {
+      setIsDepositing(false);
     }
   };
 
@@ -101,9 +166,11 @@ export default function SettingsPage() {
             <Button variant="settings" size="sm" onClick={() => setActiveSection("personal")} isActive={activeSection === "personal"}>
               Личные данные
             </Button>
-            <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")} isActive={activeSection === "finance"}>
-              Финансы
-            </Button>
+            {isExpert && (
+              <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")} isActive={activeSection === "finance"}>
+                Финансы
+              </Button>
+            )}
           </div>
 
           {isLoadingProfile ? (
@@ -173,16 +240,54 @@ export default function SettingsPage() {
             </div>
           ) : (
             <div className={styles.finance}>
-              <div className={styles.infoContentFinance}>
-                <Subtitle text="Баланс: 150 000р" className={styles.subtitle} />
-                <div className={styles.financeButtons}>
-                  <Button variant="chat" size="md" fullWidth onClick={() => {}}>
-                    Пополнить
-                  </Button>
-                  <Button variant="outline" size="md" fullWidth onClick={() => {}}>
-                    Вывести средства
-                  </Button>
+              <Subtitle text={`Баланс: ${formatBalance(profile?.balance ?? 0)}`} className={styles.financeSubtitle} />
+
+              {payments.length > 0 ? (
+                <div className={styles.financeColumns}>
+                  {(() => {
+                    const mid = Math.ceil(payments.length / 2);
+                    const left = payments.slice(0, mid);
+                    const right = payments.slice(mid);
+                    return (
+                      <>
+                        <div className={styles.transactionColumn}>
+                          {left.map((item) => (
+                            <div key={item.id} className={styles.transaction}>
+                              <span className={styles.transactionDate}>{formatDate(item.created_at)}</span>
+                              <span className={styles.transactionText}>{formatTransactionText(item)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {right.length > 0 && (
+                          <div className={styles.transactionColumn}>
+                            {right.map((item) => (
+                              <div key={item.id} className={styles.transaction}>
+                                <span className={styles.transactionDate}>{formatDate(item.created_at)}</span>
+                                <span className={styles.transactionText}>{formatTransactionText(item)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
+              ) : (
+                <p className={styles.emptyHistory}>Операций пока нет</p>
+              )}
+
+              <div className={styles.financeButtons}>
+                <Input
+                  type="text"
+                  placeholder="Сумма в рублях"
+                  aria-label="Сумма пополнения"
+                  value={depositAmount}
+                  variant="text"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDepositAmount(e.target.value)}
+                />
+                <Button variant="chat" size="md" fullWidth onClick={() => void handleDeposit()} isLoading={isDepositing}>
+                  Пополнить
+                </Button>
               </div>
             </div>
           )}

@@ -14,6 +14,7 @@ export interface OrderResponse {
   sum: string;
   sum_amount_raw: number;
   commission_amount: string;
+  commission_amount_raw: number;
   date: string;
   technical_files: string[];
   badges: OrderBadgeResponse[];
@@ -33,6 +34,7 @@ export interface OrderCardViewModel {
   date: string;
   sum: string;
   commissionAmount: string;
+  commissionAmountRaw: number;
   comment: string;
   technicalFiles: string[];
 }

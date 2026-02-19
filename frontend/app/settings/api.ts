@@ -4,6 +4,7 @@ export interface UserProfile {
   phone: string | null;
   first_name: string | null;
   last_name: string | null;
+  balance: number;
   rating: number | null;
   review_count: number;
 }

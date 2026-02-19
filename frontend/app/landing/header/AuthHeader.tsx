@@ -49,12 +49,13 @@ const AuthHeader = ({
   role: roleProp,
   balance: balanceProp,
 }: AuthHeaderProps) => {
-  const { displayName, rating: profileRating, reviewCount: profileReviewCount } = useUserProfile();
+  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount } = useUserProfile();
 
   const name = nameProp ?? displayName;
   const rating = ratingProp ?? profileRating;
   const reviewCount = reviewCountProp ?? profileReviewCount;
-  const balance = balanceProp ?? "0";
+  const balanceKopecks = profileBalance;
+  const balance = balanceProp ?? Math.floor(balanceKopecks / 100).toLocaleString("ru-RU");
 
   const role = useDisplayRole(roleProp);
   const pathname = usePathname();

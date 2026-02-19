@@ -10,10 +10,12 @@ from fastapi import HTTPException, UploadFile, status
 
 from models.order import Order, OrderStatus
 from models.chat import Chat
+from models.payment import Payment, PaymentStatus, PaymentType
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
+from services.commission import CommissionCalculator
 from ws.manager import order_manager
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
@@ -94,6 +96,15 @@ class ResponseService:
                 detail="Нельзя откликнуться на неактивный заказ",
             )
 
+        commission = CommissionCalculator.commission_paid(order.sum_amount)
+        expert_result = await self.db.execute(select(User).where(User.id == expert_id))
+        expert = expert_result.scalars().first()
+        if expert.balance < commission:
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="Недостаточно средств на балансе для подачи заявки",
+            )
+
         existing_result = await self.db.execute(
             select(OrderResponse).where(
                 OrderResponse.order_id == order_id,
@@ -115,6 +126,16 @@ class ResponseService:
             status=ResponseStatus.NEW,
         )
         self.db.add(entity)
+
+        expert.balance = expert.balance - commission
+        commission_payment = Payment(
+            user_id=expert_id,
+            amount=commission,
+            payment_type=PaymentType.COMMISSION,
+            status=PaymentStatus.SUCCEEDED,
+            description=f"Взнос за участие в тендере #{order_id}",
+        )
+        self.db.add(commission_payment)
 
         try:
             await self.db.commit()

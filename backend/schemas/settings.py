@@ -38,6 +38,7 @@ class UserSettingsResponse(BaseModel):
     phone: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    balance: int = 0
     rating: Optional[float] = None
     review_count: int = 0
 
