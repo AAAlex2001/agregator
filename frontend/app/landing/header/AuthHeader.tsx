@@ -74,7 +74,7 @@ const AuthHeader = ({
         ]
       : [
           { href: "/expert/orders", label: "Все заказы" },
-          { href: "/responses", label: "Мои отклики" },
+          { href: "/expert/responses", label: "Мои отклики" },
           { href: "/reviews", label: "Отзывы" },
         ];
 
