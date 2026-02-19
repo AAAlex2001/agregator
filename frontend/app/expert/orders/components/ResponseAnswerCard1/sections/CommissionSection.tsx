@@ -71,7 +71,7 @@ export default function CommissionSection({ commissionDisplay, balance, canTopUp
       <div className={styles.balanceRow}>
         <div className={styles.balanceInfo}>
           <span className={styles.balanceLabel}>На вашем счёте:</span>
-          <span className={`${styles.balanceValue} ${!canTopUp ? styles.balanceValueOk : styles.balanceValueLow}`}>
+          <span className={styles.balanceValue}>
             {formatNumber(balance)}{"\u00A0₽"}
           </span>
         </div>
