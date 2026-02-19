@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from yookassa import Configuration, Payment as YooPayment, Refund as YooRefund
@@ -8,6 +9,7 @@ from yookassa import Configuration, Payment as YooPayment, Refund as YooRefund
 from models.payment import Payment, PaymentStatus, PaymentType
 from models.user import User
 
+load_dotenv()
 
 Configuration.account_id = os.getenv("YOOKASSA_SHOP_ID", "")
 Configuration.secret_key = os.getenv("YOOKASSA_SECRET_KEY", "")
@@ -160,6 +162,32 @@ class PaymentService:
         payment.status = PaymentStatus.REFUNDED
         user = await self.get_user(payment.user_id)
         user.balance = max(0, user.balance - payment.amount)
+        await self.db.commit()
+        await self.db.refresh(payment)
+        return payment
+
+    async def create_withdrawal(self, user_id: int, amount: int, card_number: str) -> Payment:
+        """Создание заявки на вывод средств."""
+        user = await self.get_user(user_id)
+
+        if amount <= 0:
+            raise ValueError("Сумма должна быть больше 0")
+        if user.balance < amount:
+            raise ValueError("Недостаточно средств на балансе")
+
+        card_masked = card_number[-4:].rjust(len(card_number), "*")
+
+        payment = Payment(
+            user_id=user.id,
+            amount=amount,
+            payment_type=PaymentType.WITHDRAWAL,
+            status=PaymentStatus.PENDING,
+            description=f"Вывод {self.kopecks_to_rub(amount)} ₽ на карту {card_masked}",
+        )
+        self.db.add(payment)
+
+        user.balance = user.balance - amount
+
         await self.db.commit()
         await self.db.refresh(payment)
         return payment

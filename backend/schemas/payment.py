@@ -40,3 +40,9 @@ class BalanceResponse(BaseModel):
 class RefundRequest(BaseModel):
     """Запрос на возврат."""
     payment_id: int
+
+
+class WithdrawRequest(BaseModel):
+    """Запрос на вывод средств."""
+    amount: int  # копейки
+    card_number: str

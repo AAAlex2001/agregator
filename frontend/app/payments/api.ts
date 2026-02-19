@@ -101,6 +101,39 @@ export async function fetchPaymentHistory(): Promise<PaymentItem[]> {
   return data.items;
 }
 
+export interface WithdrawResponse {
+  detail: string;
+  payment_id: number;
+  new_balance: number;
+}
+
+export async function withdrawFunds(
+  amountKopecks: number,
+  cardNumber: string,
+): Promise<WithdrawResponse> {
+  const apiBaseUrl = getApiBaseUrl();
+  const userId = getCurrentUserId();
+
+  const response = await fetch(`${apiBaseUrl}/payments/withdraw`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(userId),
+    },
+    body: JSON.stringify({
+      amount: amountKopecks,
+      card_number: cardNumber,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось создать заявку на вывод");
+  }
+
+  return response.json();
+}
+
 export async function refundPayment(paymentId: number): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
   const userId = getCurrentUserId();

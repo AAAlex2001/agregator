@@ -9,6 +9,7 @@ from schemas.payment import (
     PaymentItem,
     PaymentListResponse,
     RefundRequest,
+    WithdrawRequest,
 )
 from services.payment import PaymentService
 
@@ -124,3 +125,39 @@ async def refund_payment(
             detail=str(e),
         )
     return {"detail": "Возврат выполнен", "payment_id": payment.id}
+
+
+@router.post("/withdraw")
+async def withdraw(
+    data: WithdrawRequest,
+    db: AsyncSession = Depends(get_db),
+    x_user_id: int = Header(..., alias="X-User-Id"),
+):
+    """Вывод средств с баланса."""
+    if data.amount <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Сумма должна быть больше 0",
+        )
+
+    card = data.card_number.replace(" ", "")
+    if not card.isdigit() or len(card) < 13 or len(card) > 19:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Некорректный номер карты",
+        )
+
+    service = PaymentService(db)
+    try:
+        payment = await service.create_withdrawal(x_user_id, data.amount, card)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+    return {
+        "detail": "Заявка на вывод создана",
+        "payment_id": payment.id,
+        "new_balance": (await service.get_balance(x_user_id)),
+    }

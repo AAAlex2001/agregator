@@ -13,4 +13,5 @@ export { ResponsesState, ResponsesTabs } from "./Responses";
 export { default as ScrollHintTooltip } from "./ScrollHintTooltip";
 export { default as CabinetMenuTabs } from "./CabinetMenuTabs";
 export { default as BalanceTopUpModal } from "./BalanceTopUpModal";
+export { default as BalanceWithdrawModal } from "./BalanceWithdrawModal";
 export type { CabinetMenuKey } from "./CabinetMenuTabs";

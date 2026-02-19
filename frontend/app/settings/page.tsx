@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { BalanceTopUpModal, Button, Loader } from "@/app/components";
+import { BalanceTopUpModal, BalanceWithdrawModal, Button, Loader } from "@/app/components";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import { Input } from "@/app/components/";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { fetchProfile, updateProfile, changePassword } from "./api";
 import type { UserProfile } from "./api";
-import { createPayment, fetchPaymentHistory } from "@/app/payments/api";
+import { createPayment, fetchPaymentHistory, withdrawFunds } from "@/app/payments/api";
 import type { PaymentItem } from "@/app/payments/api";
 import styles from "./settings.module.scss";
 
@@ -30,6 +30,10 @@ function SettingsPageContent() {
   const [isDepositing, setIsDepositing] = useState(false);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [topUpAmount, setTopUpAmount] = useState("");
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawCard, setWithdrawCard] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [userRole, setUserRole] = useState<string>("EXPERT");
   const [isSaving, setIsSaving] = useState(false);
@@ -82,10 +86,14 @@ function SettingsPageContent() {
 
   const formatTransactionText = (item: PaymentItem): string => {
     const rub = formatBalance(item.amount);
+    const isWithdrawal = item.payment_type === "WITHDRAWAL";
+
+    if (item.status === "PENDING" && isWithdrawal) return `Вывод ${rub} (в обработке)`;
+    if (item.status === "PENDING") return `Ожидание ${rub}`;
+    if (item.status === "SUCCEEDED" && isWithdrawal) return `Вывод ${rub}`;
     if (item.status === "SUCCEEDED") return `Оплата ${rub}`;
     if (item.status === "REFUNDED") return `Возврат ${rub}`;
     if (item.status === "CANCELED") return `Отмена ${rub}`;
-    if (item.status === "PENDING") return `Ожидание ${rub}`;
     return `${item.description}`;
   };
 
@@ -110,6 +118,39 @@ function SettingsPageContent() {
       setSaveError(message);
     } finally {
       setIsDepositing(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (isWithdrawing) return;
+    const rub = parseFloat(withdrawAmount.replace(/\s/g, "").replace(",", "."));
+    if (!rub || rub <= 0) {
+      setSaveError("Введите корректную сумму");
+      return;
+    }
+    const card = withdrawCard.replace(/\s/g, "");
+    if (!card || card.length < 13 || card.length > 19) {
+      setSaveError("Введите корректный номер карты");
+      return;
+    }
+    setIsWithdrawing(true);
+    setSaveMessage(null);
+    setSaveError(null);
+    try {
+      const kopecks = Math.round(rub * 100);
+      const result = await withdrawFunds(kopecks, card);
+      setIsWithdrawModalOpen(false);
+      setWithdrawAmount("");
+      setWithdrawCard("");
+      setProfile((prev) => prev ? { ...prev, balance: result.new_balance } : prev);
+      setSaveMessage("Заявка на вывод создана");
+      const history = await fetchPaymentHistory();
+      setPayments(history);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка вывода средств";
+      setSaveError(message);
+    } finally {
+      setIsWithdrawing(false);
     }
   };
 
@@ -253,7 +294,12 @@ function SettingsPageContent() {
                   size="md"
                   fullWidth
                   className={styles.financeActionButton}
-                  onClick={() => setSaveError("Вывод средств пока недоступен")}
+                  onClick={() => {
+                    setWithdrawAmount("");
+                    setWithdrawCard("");
+                    setIsWithdrawModalOpen(true);
+                  }}
+                  isLoading={isWithdrawing}
                 >
                   Вывести средства
                 </Button>
@@ -333,6 +379,18 @@ function SettingsPageContent() {
           onClose={() => setIsTopUpModalOpen(false)}
           onSubmit={() => void handleDeposit()}
           isSubmitting={isDepositing}
+        />
+
+        <BalanceWithdrawModal
+          isOpen={isWithdrawModalOpen}
+          amount={withdrawAmount}
+          cardNumber={withdrawCard}
+          onAmountChange={setWithdrawAmount}
+          onCardNumberChange={setWithdrawCard}
+          onClose={() => setIsWithdrawModalOpen(false)}
+          onSubmit={() => void handleWithdraw()}
+          isSubmitting={isWithdrawing}
+          balance={profile?.balance ?? 0}
         />
 
       </div>
