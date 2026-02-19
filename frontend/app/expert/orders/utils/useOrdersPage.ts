@@ -170,10 +170,10 @@ export function useOrdersPage() {
   };
 
   const handleTopUp = async (orderId: number, amountKopecks: number) => {
-    const returnUrl = `${window.location.origin}/expert/orders?orderId=${orderId}&step=step2`;
+    const returnUrl = `${window.location.origin}/expert/orders?orderId=${orderId}`;
     try {
-      const { confirmation_url } = await createPayment(amountKopecks);
-      window.location.href = confirmation_url + `&return_url=${encodeURIComponent(returnUrl)}`;
+      const { confirmation_url } = await createPayment(amountKopecks, returnUrl);
+      window.location.href = confirmation_url;
     } catch {
       // fallback — просто идём в настройки
       window.location.href = `/settings?section=finance&returnOrderId=${orderId}`;

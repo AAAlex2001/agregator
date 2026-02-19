@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class CreatePaymentRequest(BaseModel):
     """Запрос на создание платежа (пополнение баланса)."""
     amount: int  # копейки
+    return_url: str
 
 
 class CreatePaymentResponse(BaseModel):

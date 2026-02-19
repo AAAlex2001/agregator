@@ -12,4 +12,5 @@ export { default as ReviewCard } from "./ReviewCard";
 export { ResponsesState, ResponsesTabs } from "./Responses";
 export { default as ScrollHintTooltip } from "./ScrollHintTooltip";
 export { default as CabinetMenuTabs } from "./CabinetMenuTabs";
+export { default as BalanceTopUpModal } from "./BalanceTopUpModal";
 export type { CabinetMenuKey } from "./CabinetMenuTabs";

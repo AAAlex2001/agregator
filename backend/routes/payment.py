@@ -30,7 +30,11 @@ async def create_payment(
 
     service = PaymentService(db)
     try:
-        payment, confirmation_url = await service.create_deposit(x_user_id, data.amount)
+        payment, confirmation_url = await service.create_deposit(
+            x_user_id,
+            data.amount,
+            data.return_url,
+        )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

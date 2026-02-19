@@ -3,6 +3,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { BalanceTopUpModal } from "@/app/components";
+import { createPayment } from "@/app/payments/api";
 import {
   ProfileIcon,
   StarIcon,
@@ -53,6 +55,9 @@ const ProfileMenu = ({
 }: ProfileMenuProps) => {
   const role = useDisplayRole(roleProp);
   const [isOpen, setIsOpen] = useState(false);
+  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
+  const [isDepositing, setIsDepositing] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState("");
   const pathname = usePathname();
   const router = useRouter();
 
@@ -72,6 +77,29 @@ const ProfileMenu = ({
     localStorage.removeItem("user_role");
     closeMenu();
     router.push("/login");
+  };
+
+  const handleDeposit = async () => {
+    if (isDepositing) return;
+
+    const rub = parseFloat(topUpAmount.replace(/\s/g, "").replace(",", "."));
+    if (!rub || rub <= 0) {
+      return;
+    }
+
+    setIsDepositing(true);
+    try {
+      const kopecks = Math.round(rub * 100);
+      const returnUrl = window.location.href;
+      const { confirmation_url } = await createPayment(kopecks, returnUrl);
+      setIsTopUpModalOpen(false);
+      window.location.href = confirmation_url;
+    } catch {
+      setIsTopUpModalOpen(false);
+      router.push("/settings?section=finance");
+    } finally {
+      setIsDepositing(false);
+    }
   };
 
   useEffect(() => {
@@ -152,7 +180,8 @@ const ProfileMenu = ({
                 className={styles.topUpButton}
                 onClick={() => {
                   closeMenu();
-                  router.push("/settings?section=finance");
+                  setTopUpAmount("");
+                  setIsTopUpModalOpen(true);
                 }}
               >
                 Пополнить
@@ -193,6 +222,15 @@ const ProfileMenu = ({
           </div>
         </>
       )}
+
+      <BalanceTopUpModal
+        isOpen={isTopUpModalOpen}
+        amount={topUpAmount}
+        onAmountChange={setTopUpAmount}
+        onClose={() => setIsTopUpModalOpen(false)}
+        onSubmit={() => void handleDeposit()}
+        isSubmitting={isDepositing}
+      />
     </>
   );
 };

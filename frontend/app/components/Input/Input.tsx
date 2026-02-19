@@ -24,6 +24,7 @@ interface InputProps {
   disabled?: boolean;
   autoComplete?: string;
   className?: string;
+  inputClassName?: string;
   inputMode?: "text" | "email" | "tel" | "numeric";
   error?: string;
   active?: boolean;
@@ -40,6 +41,7 @@ const Input: React.FC<InputProps> = ({
   disabled,
   autoComplete,
   className,
+  inputClassName,
   inputMode,
   error,
   active = false,
@@ -157,7 +159,7 @@ const Input: React.FC<InputProps> = ({
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className={`${styles.input} ${hasLeftIcon ? styles.hasLeftIcon : ""} ${hasRightIcon ? styles.hasRightIcon : ""}`}
+          className={`${styles.input} ${hasLeftIcon ? styles.hasLeftIcon : ""} ${hasRightIcon ? styles.hasRightIcon : ""} ${inputClassName ?? ""}`}
           placeholder={placeholder}
           required={required}
           disabled={disabled}

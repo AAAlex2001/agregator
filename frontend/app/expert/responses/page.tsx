@@ -29,6 +29,21 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "archive", label: "Архив" },
 ];
 
+function parseDisplayAmountToKopecks(value: string): number {
+  const normalized = value
+    .replace(/₽/g, "")
+    .replace(/\s/g, "")
+    .replace(",", ".")
+    .trim();
+
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+
+  return Math.round(parsed * 100);
+}
+
 export default function ResponsesPage() {
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
   const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
@@ -117,6 +132,7 @@ export default function ResponsesPage() {
         date: editingResponse.orderDate,
         sum: editingResponse.orderCustomerSum || editingResponse.sum,
         commissionAmount: editingResponse.orderCommissionAmount,
+        commissionAmountRaw: parseDisplayAmountToKopecks(editingResponse.orderCommissionAmount),
         comment: "",
         technicalFiles: editingResponse.techSpecFiles || [],
       }

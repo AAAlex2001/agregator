@@ -12,8 +12,6 @@ from models.user import User
 Configuration.account_id = os.getenv("YOOKASSA_SHOP_ID", "")
 Configuration.secret_key = os.getenv("YOOKASSA_SECRET_KEY", "")
 
-RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
-
 
 class PaymentService:
     """Сервис для работы с платежами YooKassa."""
@@ -33,9 +31,17 @@ class PaymentService:
             raise ValueError("Пользователь не найден")
         return user
 
-    async def create_deposit(self, user_id: int, amount: int) -> tuple[Payment, str]:
+    async def create_deposit(
+        self,
+        user_id: int,
+        amount: int,
+        return_url: str,
+    ) -> tuple[Payment, str]:
         """Создание платежа на пополнение баланса. Возвращает (Payment, confirmation_url)."""
         user = await self.get_user(user_id)
+        resolved_return_url = return_url.strip()
+        if not resolved_return_url:
+            raise ValueError("Не задан URL возврата после оплаты")
 
         payment = Payment(
             user_id=user.id,
@@ -56,7 +62,7 @@ class PaymentService:
                 },
                 "confirmation": {
                     "type": "redirect",
-                    "return_url": RETURN_URL,
+                    "return_url": resolved_return_url,
                 },
                 "capture": True,
                 "description": payment.description,

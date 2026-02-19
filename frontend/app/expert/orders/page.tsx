@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,8 +10,9 @@ import OrderDetailsModal from "./components/OrderDetailsModal";
 import { useOrdersPage } from "./utils/useOrdersPage";
 import styles from "./orders.module.scss";
 
-export default function OrdersPage() {
+function OrdersPageContent() {
   const searchParams = useSearchParams();
+  const returnOrderId = searchParams.get("orderId");
 
   const {
     items,
@@ -30,13 +31,15 @@ export default function OrdersPage() {
   } = useOrdersPage();
 
   useEffect(() => {
-    const orderId = searchParams.get("orderId");
-    const step = searchParams.get("step");
-    if (orderId && step === "step2" && items.length > 0) {
-      const order = items.find((o) => String(o.id) === orderId);
-      if (order) setSelectedOrder(order);
+    if (!returnOrderId || items.length === 0) {
+      return;
     }
-  }, [searchParams, items]);
+
+    const order = items.find((item) => String(item.id) === returnOrderId);
+    if (order) {
+      setSelectedOrder(order);
+    }
+  }, [returnOrderId, items, setSelectedOrder]);
 
   return (
     <>
@@ -123,17 +126,42 @@ export default function OrdersPage() {
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
           onRespond={handleRespondToOrder}
-          onTopUp={(amount) => selectedOrder && void handleTopUp(selectedOrder.id, amount)}
+          onTopUp={(amount) => {
+            if (!selectedOrder) {
+              return;
+            }
+            void handleTopUp(selectedOrder.id, amount);
+          }}
           balance={balance}
           isResponding={isResponding}
           initialStep={
-            searchParams.get("orderId") === String(selectedOrder?.id) &&
-            searchParams.get("step") === "step2"
-              ? "step2"
+            returnOrderId === String(selectedOrder?.id)
+              ? balance >= (selectedOrder?.commissionAmountRaw ?? Number.MAX_SAFE_INTEGER)
+                ? "step2"
+                : "step1"
               : "details"
           }
         />
       </div>
     </>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <AuthHeader />
+          <div className={styles.wrapper}>
+            <div className={styles.statusState}>
+              <Loader label="" size="lg" />
+            </div>
+          </div>
+        </>
+      }
+    >
+      <OrdersPageContent />
+    </Suspense>
   );
 }

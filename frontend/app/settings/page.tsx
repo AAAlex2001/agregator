@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button, Loader } from "@/app/components";
+import { BalanceTopUpModal, Button, Loader } from "@/app/components";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import { Input } from "@/app/components/";
@@ -13,7 +13,7 @@ import { createPayment, fetchPaymentHistory } from "@/app/payments/api";
 import type { PaymentItem } from "@/app/payments/api";
 import styles from "./settings.module.scss";
 
-export default function SettingsPage() {
+function SettingsPageContent() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
@@ -28,6 +28,8 @@ export default function SettingsPage() {
     searchParams.get("section") === "finance" ? "finance" : "personal"
   );
   const [isDepositing, setIsDepositing] = useState(false);
+  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState("");
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [userRole, setUserRole] = useState<string>("EXPERT");
   const [isSaving, setIsSaving] = useState(false);
@@ -89,9 +91,7 @@ export default function SettingsPage() {
 
   const handleDeposit = async () => {
     if (isDepositing) return;
-    const amountRaw = window.prompt("Введите сумму пополнения в рублях", "1000");
-    if (!amountRaw) return;
-    const rub = parseFloat(amountRaw.replace(/\s/g, "").replace(",", "."));
+    const rub = parseFloat(topUpAmount.replace(/\s/g, "").replace(",", "."));
     if (!rub || rub <= 0) {
       setSaveError("Введите корректную сумму");
       return;
@@ -101,7 +101,9 @@ export default function SettingsPage() {
     setSaveError(null);
     try {
       const kopecks = Math.round(rub * 100);
-      const { confirmation_url } = await createPayment(kopecks);
+      const returnUrl = `${window.location.origin}/settings?section=finance`;
+      const { confirmation_url } = await createPayment(kopecks, returnUrl);
+      setIsTopUpModalOpen(false);
       window.location.href = confirmation_url;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка создания платежа";
@@ -260,7 +262,10 @@ export default function SettingsPage() {
                   size="md"
                   fullWidth
                   className={styles.financeActionButton}
-                  onClick={() => void handleDeposit()}
+                  onClick={() => {
+                    setTopUpAmount("");
+                    setIsTopUpModalOpen(true);
+                  }}
                   isLoading={isDepositing}
                 >
                   Пополнить
@@ -320,7 +325,36 @@ export default function SettingsPage() {
             </Button>
           </div>
         )}
+
+        <BalanceTopUpModal
+          isOpen={isTopUpModalOpen}
+          amount={topUpAmount}
+          onAmountChange={setTopUpAmount}
+          onClose={() => setIsTopUpModalOpen(false)}
+          onSubmit={() => void handleDeposit()}
+          isSubmitting={isDepositing}
+        />
+
       </div>
     </>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <>
+          <AuthHeader />
+          <div className={styles.wrapper}>
+            <div className={styles.loaderWrapper}>
+              <Loader label="" size="lg" />
+            </div>
+          </div>
+        </>
+      }
+    >
+      <SettingsPageContent />
+    </React.Suspense>
   );
 }

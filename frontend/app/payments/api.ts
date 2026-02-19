@@ -42,7 +42,10 @@ export interface PaymentListResponse {
   items: PaymentItem[];
 }
 
-export async function createPayment(amountKopecks: number): Promise<CreatePaymentResponse> {
+export async function createPayment(
+  amountKopecks: number,
+  returnUrl: string,
+): Promise<CreatePaymentResponse> {
   const apiBaseUrl = getApiBaseUrl();
   const userId = getCurrentUserId();
 
@@ -52,7 +55,10 @@ export async function createPayment(amountKopecks: number): Promise<CreatePaymen
       "Content-Type": "application/json",
       "X-User-Id": String(userId),
     },
-    body: JSON.stringify({ amount: amountKopecks }),
+    body: JSON.stringify({
+      amount: amountKopecks,
+      return_url: returnUrl,
+    }),
   });
 
   if (!response.ok) {
