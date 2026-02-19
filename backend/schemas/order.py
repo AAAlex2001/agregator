@@ -92,6 +92,7 @@ class OrderResponse(BaseModel):
     sum: str
     sum_amount_raw: int
     commission_amount: str
+    commission_amount_raw: int
     date: str
     technical_files: list[str]
     badges: list[BadgeResponse]
@@ -137,6 +138,7 @@ class OrderResponse(BaseModel):
             sum=sum_display,
             sum_amount_raw=amount,
             commission_amount=commission_display,
+            commission_amount_raw=commission_kopecks,
             date=date_display,
             technical_files=order.technical_files or [],
             badges=badges,
