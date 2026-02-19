@@ -6,10 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import Button from "@/app/components/Button/Button";
+import Loader from "@/app/components/Loader";
 import {
   buildChatWebSocketUrl,
   fetchChatDetail,
-  fetchChatPresence,
   fetchChats,
   getCurrentUserId,
   sendChatMessage,
@@ -76,7 +76,7 @@ export default function ChatWindowPage() {
   const [search, setSearch] = useState("");
   const [chat, setChat] = useState<ChatDetailResponse | null>(null);
   const [chats, setChats] = useState<ChatListItem[]>([]);
-  const [bothOnline, setBothOnline] = useState(false);
+  const [loading, setLoading] = useState(true);
   const threadRef = useRef<HTMLDivElement>(null);
 
   const filteredChats = useMemo(
@@ -101,6 +101,8 @@ export default function ChatWindowPage() {
         setMessages(detail.messages);
         setChats(listResponse.items);
       } catch {
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
 
@@ -111,63 +113,48 @@ export default function ChatWindowPage() {
   }, [chatId]);
 
   useEffect(() => {
-    if (!Number.isInteger(chatId) || chatId <= 0) return;
+    if (!chat) return;
 
-    let cancelled = false;
+    const wsUrl = buildChatWebSocketUrl(chat.id);
+    let socket: WebSocket | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let disposed = false;
 
-    const pollPresence = async () => {
-      try {
-        const presence = await fetchChatPresence(chatId);
-        if (!cancelled) {
-          setBothOnline(presence.both_online);
-        }
-      } catch {
-      }
-    };
+    function connect() {
+      if (disposed) return;
+      socket = new WebSocket(wsUrl);
 
-    pollPresence();
-    const timer = window.setInterval(pollPresence, 5000);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, [chatId]);
-
-  useEffect(() => {
-    if (!chat || !bothOnline) return;
-
-    const socket = new WebSocket(buildChatWebSocketUrl(chat.id));
-
-    socket.onmessage = (event) => {
-      try {
-        const payload = JSON.parse(event.data) as {
-          event?: string;
-          data?: ChatMessage | { both_online?: boolean };
-        };
-
-        if (payload.event === "chat_message" && payload.data) {
-          const message = payload.data as ChatMessage;
-          setMessages((prev) => {
-            if (prev.some((item) => item.id === message.id)) return prev;
-            return [...prev, message];
-          });
-        }
-
-        if (payload.event === "chat_presence" && payload.data) {
-          const nextPresence = payload.data as { both_online?: boolean };
-          if (typeof nextPresence.both_online === "boolean") {
-            setBothOnline(nextPresence.both_online);
+      socket.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data) as { event?: string; data?: ChatMessage };
+          if (payload.event === "chat_message" && payload.data) {
+            const msg = payload.data;
+            if (msg.sender_id === currentUserId) return;
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === msg.id)) return prev;
+              return [...prev, msg];
+            });
           }
+        } catch {
+          /* ignore malformed frames */
         }
-      } catch {
-      }
-    };
+      };
+
+      socket.onclose = () => {
+        if (!disposed) reconnectTimer = setTimeout(connect, 3000);
+      };
+
+      socket.onerror = () => socket?.close();
+    }
+
+    connect();
 
     return () => {
-      socket.close();
+      disposed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      socket?.close();
     };
-  }, [bothOnline, chat]);
+  }, [chat]);
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
@@ -190,14 +177,10 @@ export default function ChatWindowPage() {
   const handleSend = async () => {
     const text = inputValue.trim();
     if (!text || !chat) return;
-
+    setInputValue("");
     try {
       const saved = await sendChatMessage(chat.id, text);
-      setMessages((prev) => {
-        if (prev.some((item) => item.id === saved.id)) return prev;
-        return [...prev, saved];
-      });
-      setInputValue("");
+      setMessages((prev) => [...prev, saved]);
     } catch {
     }
   };
@@ -301,6 +284,12 @@ export default function ChatWindowPage() {
           </div>
 
           <div className={styles.thread} ref={threadRef}>
+            {loading ? (
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1 }}>
+                <Loader size="lg" label="" />
+              </div>
+            ) : (
+              <>
             <div className={styles.dateSeparator}>
               <div className={styles.datePill}><span>Сегодня</span></div>
             </div>
@@ -333,6 +322,8 @@ export default function ChatWindowPage() {
                 </div>
               );
             })}
+              </>
+            )}
           </div>
 
           <div className={styles.inputBar}>
@@ -352,7 +343,7 @@ export default function ChatWindowPage() {
             <Button
               variant="primary"
               className={styles.sendBtn}
-              onClick={() => void handleSend()}
+              onClick={handleSend}
               disabled={!inputValue.trim()}
               aria-label="Отправить"
             >

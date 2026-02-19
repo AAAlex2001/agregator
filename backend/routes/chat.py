@@ -56,11 +56,11 @@ async def get_chat_presence(
 ):
     service = ChatService(db)
     await service.get_chat_for_actor(chat_id=chat_id, actor_id=x_user_id)
-    online_ids = sorted(chat_manager.get_online_user_ids(chat_id))
+    online_ids = chat_manager.get_online_user_ids(chat_id)
     return ChatPresenceResponse(
         chat_id=chat_id,
         online_user_ids=online_ids,
-        both_online=chat_manager.has_two_participants(chat_id),
+        both_online=len(online_ids) >= 2,
     )
 
 
@@ -73,12 +73,8 @@ async def send_message(
 ):
     service = ChatService(db)
     message = await service.send_message(chat_id=chat_id, sender_id=x_user_id, text=payload.text)
-    await chat_manager.broadcast_chat(
+    await chat_manager.broadcast(
         chat_id,
-        {
-            "event": "chat_message",
-            "data": message.model_dump(mode="json"),
-        },
-        require_two_participants=True,
+        {"event": "chat_message", "data": message.model_dump(mode="json")},
     )
     return message

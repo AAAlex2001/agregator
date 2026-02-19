@@ -34,79 +34,49 @@ order_manager = ConnectionManager()
 
 
 class ChatConnectionManager:
+    """Room-based WebSocket manager: chat_id -> user_id -> set[WebSocket]."""
+
     def __init__(self) -> None:
-        self.chat_connections: dict[int, dict[int, set[WebSocket]]] = defaultdict(lambda: defaultdict(set))
+        self.rooms: dict[int, dict[int, set[WebSocket]]] = defaultdict(lambda: defaultdict(set))
 
-    async def connect(self, chat_id: int, user_id: int, websocket: WebSocket) -> None:
-        await websocket.accept()
-        self.chat_connections[chat_id][user_id].add(websocket)
+    async def connect(self, chat_id: int, user_id: int, ws: WebSocket) -> None:
+        await ws.accept()
+        self.rooms[chat_id][user_id].add(ws)
 
-    def disconnect(self, chat_id: int, user_id: int, websocket: WebSocket) -> None:
-        chat_users = self.chat_connections.get(chat_id)
-        if not chat_users:
+    def disconnect(self, chat_id: int, user_id: int, ws: WebSocket) -> None:
+        room = self.rooms.get(chat_id)
+        if not room:
             return
+        sockets = room.get(user_id)
+        if sockets:
+            sockets.discard(ws)
+            if not sockets:
+                room.pop(user_id, None)
+        if not room:
+            self.rooms.pop(chat_id, None)
 
-        user_sockets = chat_users.get(user_id)
-        if user_sockets:
-            user_sockets.discard(websocket)
-            if not user_sockets:
-                chat_users.pop(user_id, None)
+    def get_online_user_ids(self, chat_id: int) -> list[int]:
+        room = self.rooms.get(chat_id)
+        if not room:
+            return []
+        return sorted(uid for uid, socks in room.items() if socks)
 
-        if not chat_users:
-            self.chat_connections.pop(chat_id, None)
-
-    def get_online_user_ids(self, chat_id: int) -> set[int]:
-        chat_users = self.chat_connections.get(chat_id)
-        if not chat_users:
-            return set()
-        return {user_id for user_id, sockets in chat_users.items() if sockets}
-
-    def has_two_participants(self, chat_id: int) -> bool:
-        return len(self.get_online_user_ids(chat_id)) >= 2
-
-    async def broadcast_chat(self, chat_id: int, data: dict[str, Any], require_two_participants: bool = False) -> None:
-        if require_two_participants and not self.has_two_participants(chat_id):
+    async def broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
+        room = self.rooms.get(chat_id)
+        if not room:
             return
-
-        chat_users = self.chat_connections.get(chat_id)
-        if not chat_users:
-            return
-
         stale: list[tuple[int, WebSocket]] = []
-        for user_id, sockets in chat_users.items():
-            for connection in sockets:
-                if connection.client_state != WebSocketState.CONNECTED:
-                    stale.append((user_id, connection))
+        for user_id, sockets in room.items():
+            for conn in sockets:
+                if conn.client_state != WebSocketState.CONNECTED:
+                    stale.append((user_id, conn))
                     continue
                 try:
-                    await connection.send_json(data)
+                    await conn.send_json(data)
                 except Exception:
-                    stale.append((user_id, connection))
-
-        for user_id, connection in stale:
-            self.disconnect(chat_id, user_id, connection)
-
-    async def send_user(self, chat_id: int, user_id: int, data: dict[str, Any]) -> None:
-        chat_users = self.chat_connections.get(chat_id)
-        if not chat_users:
-            return
-
-        sockets = chat_users.get(user_id)
-        if not sockets:
-            return
-
-        stale: list[WebSocket] = []
-        for connection in sockets:
-            if connection.client_state != WebSocketState.CONNECTED:
-                stale.append(connection)
-                continue
-            try:
-                await connection.send_json(data)
-            except Exception:
-                stale.append(connection)
-
-        for connection in stale:
-            self.disconnect(chat_id, user_id, connection)
+                    stale.append((user_id, conn))
+        for uid, conn in stale:
+            self.disconnect(chat_id, uid, conn)
 
 
 chat_manager = ChatConnectionManager()

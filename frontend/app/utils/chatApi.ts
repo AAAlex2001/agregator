@@ -41,11 +41,6 @@ export interface ChatDetailResponse {
   messages: ChatMessage[];
 }
 
-export interface ChatPresenceResponse {
-  chat_id: number;
-  online_user_ids: number[];
-  both_online: boolean;
-}
 
 function getApiBaseUrl(): string {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -135,23 +130,6 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailRespon
   }
 
   return (await response.json()) as ChatDetailResponse;
-}
-
-export async function fetchChatPresence(chatId: number): Promise<ChatPresenceResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}/presence`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return readError(response, "Не удалось получить присутствие в чате");
-  }
-
-  return (await response.json()) as ChatPresenceResponse;
 }
 
 export async function sendChatMessage(chatId: number, text: string): Promise<ChatMessage> {

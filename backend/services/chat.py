@@ -69,30 +69,7 @@ class ChatService:
         await self.db.refresh(chat)
         return chat
 
-    async def _get_last_messages_by_chat_id(self, chat_ids: list[int]) -> dict[int, ChatMessage]:
-        if not chat_ids:
-            return {}
-
-        subquery = (
-            select(ChatMessage.chat_id, func.max(ChatMessage.id).label("max_message_id"))
-            .where(ChatMessage.chat_id.in_(chat_ids))
-            .group_by(ChatMessage.chat_id)
-            .subquery()
-        )
-
-        rows = await self.db.execute(
-            select(ChatMessage)
-            .join(
-                subquery,
-                and_(
-                    ChatMessage.chat_id == subquery.c.chat_id,
-                    ChatMessage.id == subquery.c.max_message_id,
-                ),
-            )
-        )
-        return {message.chat_id: message for message in rows.scalars().all()}
-
-    def _resolve_counterpart(self, actor_id: int, actor_role: UserRole, chat: Chat) -> tuple[int, str, str | None]:
+    def resolve_counterpart(self, actor_id: int, actor_role: UserRole, chat: Chat) -> tuple[int, str, str | None]:
         if actor_role == UserRole.CUSTOMER:
             expert = chat.expert
             if expert is None:
@@ -110,7 +87,7 @@ class ChatService:
         return customer.id, display_name, None
 
     @staticmethod
-    def _format_sum(amount_kopecks: int) -> str:
+    def format_sum(amount_kopecks: int) -> str:
         roubles = amount_kopecks // 100
         formatted = f"{roubles:,}".replace(",", " ")
         if amount_kopecks % 100:
@@ -131,11 +108,25 @@ class ChatService:
         )
         chats = chats_result.scalars().all()
         chat_ids = [chat.id for chat in chats]
-        last_messages = await self._get_last_messages_by_chat_id(chat_ids)
+
+        last_messages: dict[int, ChatMessage] = {}
+        if chat_ids:
+            sub = (
+                select(ChatMessage.chat_id, func.max(ChatMessage.id).label("max_id"))
+                .where(ChatMessage.chat_id.in_(chat_ids))
+                .group_by(ChatMessage.chat_id)
+                .subquery()
+            )
+            rows = await self.db.execute(
+                select(ChatMessage).join(
+                    sub, and_(ChatMessage.chat_id == sub.c.chat_id, ChatMessage.id == sub.c.max_id),
+                )
+            )
+            last_messages = {m.chat_id: m for m in rows.scalars().all()}
 
         items: list[ChatListItemResponse] = []
         for chat in chats:
-            counterpart_id, counterpart_name, counterpart_avatar_url = self._resolve_counterpart(actor_id, actor.role, chat)
+            counterpart_id, counterpart_name, counterpart_avatar_url = self.resolve_counterpart(actor_id, actor.role, chat)
             last_message = last_messages.get(chat.id)
             items.append(
                 ChatListItemResponse(
@@ -185,7 +176,7 @@ class ChatService:
         messages_desc = message_rows.scalars().all()
         messages = list(reversed(messages_desc))
 
-        counterpart_id, counterpart_name, counterpart_avatar_url = self._resolve_counterpart(actor_id, actor.role, chat)
+        counterpart_id, counterpart_name, counterpart_avatar_url = self.resolve_counterpart(actor_id, actor.role, chat)
 
         return ChatDetailResponse(
             id=chat.id,
@@ -195,7 +186,7 @@ class ChatService:
             order_title=chat.order.title if chat.order else "",
             order_company=chat.order.company if chat.order else "",
             order_date=chat.order.deadline.strftime("%d.%m.%Y") if chat.order else "",
-            order_sum=self._format_sum(chat.order.sum_amount) if chat.order else "",
+            order_sum=self.format_sum(chat.order.sum_amount) if chat.order else "",
             order_badges=[
                 {"text": badge.text, "variant": badge.variant.value}
                 for badge in (chat.order.badges if chat.order else [])

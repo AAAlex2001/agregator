@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Subtitle } from "@/app/components/Typography";
+import Loader from "@/app/components/Loader";
 import { ChatSearchIcon, ProfileIcon } from "@/app/icons";
 import { fetchChats, openChatByOrder, type ChatListItem } from "@/app/utils/chatApi";
 import styles from "./chat.module.scss";
@@ -52,6 +53,7 @@ export default function ChatListPage() {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [chats, setChats] = useState<ChatListItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const orderIdParam = searchParams.get("orderId");
@@ -84,10 +86,10 @@ export default function ChatListPage() {
     const load = async () => {
       try {
         const response = await fetchChats();
-        if (!cancelled) {
-          setChats(response.items);
-        }
+        if (!cancelled) setChats(response.items);
       } catch {
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
 
@@ -123,7 +125,13 @@ export default function ChatListPage() {
 
           {/* List */}
           <div className={styles.listWrap}>
-            {filtered.map((chat) => (
+            {loading ? (
+              <div style={{ display: "flex", justifyContent: "center", padding: "40px 0" }}>
+                <Loader size="md" label="" />
+              </div>
+            ) : filtered.length === 0 ? (
+              <p style={{ textAlign: "center", padding: "40px 20px", color: "#999" }}>Нет чатов</p>
+            ) : filtered.map((chat) => (
               <Link
                 key={chat.id}
                 href={`/customer/chat/${chat.id}`}

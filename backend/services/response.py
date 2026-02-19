@@ -25,27 +25,6 @@ class ResponseService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def _ensure_chat_for_response(self, response: OrderResponse) -> None:
-        if not response.order:
-            return
-
-        existing_chat_result = await self.db.execute(
-            select(Chat).where(
-                Chat.order_id == response.order_id,
-                Chat.customer_id == response.order.customer_id,
-                Chat.expert_id == response.expert_id,
-            )
-        )
-        existing_chat = existing_chat_result.scalars().first()
-        if existing_chat is None:
-            self.db.add(
-                Chat(
-                    order_id=response.order_id,
-                    customer_id=response.order.customer_id,
-                    expert_id=response.expert_id,
-                )
-            )
-
     async def ensure_expert(self, expert_id: int) -> User:
         result = await self.db.execute(select(User).where(User.id == expert_id))
         user = result.scalars().first()
@@ -214,8 +193,6 @@ class ResponseService:
                     status_code=status.HTTP_409_CONFLICT,
                     detail="В переговоры можно перевести только новый отклик",
                 )
-            if new_status == ResponseStatus.IN_PROGRESS:
-                await self._ensure_chat_for_response(response)
 
             if new_status == ResponseStatus.ACCEPTED and response.status not in {
                 ResponseStatus.NEW,
@@ -246,7 +223,6 @@ class ResponseService:
 
             if new_status == ResponseStatus.ACCEPTED:
                 response.order.assigned_expert_id = response.expert_id
-                await self._ensure_chat_for_response(response)
 
                 await self.db.execute(
                     update(OrderResponse)
@@ -259,6 +235,21 @@ class ResponseService:
                 )
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
+
+            if new_status in {ResponseStatus.IN_PROGRESS, ResponseStatus.ACCEPTED} and response.order:
+                chat_exists = await self.db.execute(
+                    select(Chat.id).where(
+                        Chat.order_id == response.order_id,
+                        Chat.customer_id == response.order.customer_id,
+                        Chat.expert_id == response.expert_id,
+                    )
+                )
+                if not chat_exists.scalars().first():
+                    self.db.add(Chat(
+                        order_id=response.order_id,
+                        customer_id=response.order.customer_id,
+                        expert_id=response.expert_id,
+                    ))
         else:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
