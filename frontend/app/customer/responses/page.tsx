@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -29,6 +30,7 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
 ];
 
 export default function CustomerResponsesPage() {
+  const router = useRouter();
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
   const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
@@ -214,7 +216,9 @@ export default function CustomerResponsesPage() {
                       acceptBtnText={isCompleted ? "Оставить отзыв" : isAccepted ? "Завершить проект" : isInProgress ? "Выбрать исполнителем" : "Пригласить в чат"}
                       rejectBtnVariant="transparent"
                       acceptBtnVariant={isCompleted ? "secondary" : isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
-                      onChat={(isInProgress || isAccepted) ? () => { /* TODO: navigate to chat */ } : undefined}
+                      onChat={(isInProgress || isAccepted) ? () => {
+                        router.push(`/customer/chat?orderId=${response.orderId}`);
+                      } : undefined}
                       chatBtnText="Перейти в чат"
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                       onAccept={() => {

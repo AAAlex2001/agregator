@@ -1,21 +1,56 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import Button from "@/app/components/Button/Button";
+import {
+  buildChatWebSocketUrl,
+  fetchChatDetail,
+  fetchChatPresence,
+  fetchChats,
+  getCurrentUserId,
+  sendChatMessage,
+  type ChatDetailResponse,
+  type ChatListItem,
+  type ChatMessage,
+} from "@/app/utils/chatApi";
 import styles from "./chatWindow.module.scss";
 
 const ROUTE_BASE = "/customer/chat";
+
+function formatListTime(value: string | null): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const now = new Date();
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+
+  if (isToday) {
+    return date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
+}
+
+function formatMessageTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+}
 
 function ChatAvatar({ src, alt }: { src: string; alt: string }) {
   const [broken, setBroken] = useState(false);
 
   return (
     <div className={styles.msgAvatar} aria-label={alt}>
-      {!broken ? (
+      {!broken && src ? (
         <img
           src={src}
           alt={alt}
@@ -29,107 +64,110 @@ function ChatAvatar({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-const MOCK_CHAT_LIST = [
-  {
-    id: "1",
-    name: "ООО «СпецЭнергоМонтаж»",
-    avatarUrl: "/industry_1.jpg",
-    time: "9:23",
-    lastMsg: "Ждём Вас завтра",
-    unread: 3,
-    isMine: false,
-  },
-  {
-    id: "2",
-    name: "АО «ТехноПромСервис»",
-    avatarUrl: "/industry_3.jpg",
-    time: "05.10",
-    lastMsg: "Позже скажем Вам о решении",
-    unread: 0,
-    isMine: false,
-  },
-  {
-    id: "3",
-    name: "ИП Смирнов Д.А.",
-    avatarUrl: "",
-    time: "8:56",
-    lastMsg: "Сейчас найду файл и отправлю Вам",
-    unread: 0,
-    isMine: true,
-  },
-  {
-    id: "4",
-    name: "ООО «НефтеХимСтрой»",
-    avatarUrl: "",
-    time: "05.10",
-    lastMsg: "Нам нужна лаборатория для проверки",
-    unread: 0,
-    isMine: false,
-  },
-];
-
-const MOCK_CHAT_DATA: Record<string, {
-  name: string;
-  orderTitle: string;
-  customer: string;
-  customerAvatar: string;
-  expertAvatar: string;
-  date: string;
-  badges: { label: string; color: "blue" | "green" }[];
-  sum: string;
-  messages: { id: number; from: "customer" | "expert"; text: string; time: string }[];
-}> = {
-  "1": {
-    name: "ООО «СпецЭнергоМонтаж»",
-    orderTitle: "Промышленный экологический контроль оборудования на предприятии",
-    customer: "ООО «СпецЭнергоМонтаж»",
-    customerAvatar: "/industry_1.jpg",
-    expertAvatar: "/industry_2.jpg",
-    date: "18.02.2026",
-    badges: [
-      { label: "Э4 ТУ", color: "blue" },
-      { label: "Э4 ОБ", color: "green" },
-    ],
-    sum: "50 000 ₽",
-    messages: [
-      { id: 1, from: "customer", text: "Доброе утро, Сергей!", time: "09:00" },
-      { id: 2, from: "customer", text: "Могли бы Вы приложить документы к Вашему предложению?", time: "09:00" },
-      { id: 3, from: "expert", text: "Доброе утро!", time: "09:15" },
-      { id: 4, from: "customer", text: "Позже скажем Вам о решении", time: "09:21" },
-    ],
-  },
-  "2": {
-    name: "АО «ТехноПромСервис»",
-    orderTitle: "Техническое диагностирование трубопровода пара и горячей воды",
-    customer: "АО «ТехноПромСервис»",
-    customerAvatar: "/industry_3.jpg",
-    expertAvatar: "/industry_4.jpg",
-    date: "05.10.2025",
-    badges: [{ label: "Э4 ТУ", color: "blue" }],
-    sum: "30 000 ₽",
-    messages: [
-      { id: 1, from: "customer", text: "Добрый день! Нам нужна Ваша помощь.", time: "10:00" },
-      { id: 2, from: "expert", text: "Здравствуйте! Рад помочь.", time: "10:05" },
-    ],
-  },
-};
-
-const DEFAULT_CHAT = MOCK_CHAT_DATA["1"];
-
 export default function ChatWindowPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const chat = MOCK_CHAT_DATA[id] ?? DEFAULT_CHAT;
+  const chatId = Number(id);
+  const currentUserId = getCurrentUserId();
 
-  const [messages, setMessages] = useState(chat.messages);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [chat, setChat] = useState<ChatDetailResponse | null>(null);
+  const [chats, setChats] = useState<ChatListItem[]>([]);
+  const [bothOnline, setBothOnline] = useState(false);
   const threadRef = useRef<HTMLDivElement>(null);
 
-  const filteredChats = MOCK_CHAT_LIST.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  const filteredChats = useMemo(
+    () => chats.filter((item) => item.counterpart_name.toLowerCase().includes(search.toLowerCase())),
+    [chats, search],
   );
+
+  useEffect(() => {
+    if (!Number.isInteger(chatId) || chatId <= 0) return;
+
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const [detail, listResponse] = await Promise.all([
+          fetchChatDetail(chatId),
+          fetchChats(),
+        ]);
+
+        if (cancelled) return;
+        setChat(detail);
+        setMessages(detail.messages);
+        setChats(listResponse.items);
+      } catch {
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    if (!Number.isInteger(chatId) || chatId <= 0) return;
+
+    let cancelled = false;
+
+    const pollPresence = async () => {
+      try {
+        const presence = await fetchChatPresence(chatId);
+        if (!cancelled) {
+          setBothOnline(presence.both_online);
+        }
+      } catch {
+      }
+    };
+
+    pollPresence();
+    const timer = window.setInterval(pollPresence, 5000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    if (!chat || !bothOnline) return;
+
+    const socket = new WebSocket(buildChatWebSocketUrl(chat.id));
+
+    socket.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data) as {
+          event?: string;
+          data?: ChatMessage | { both_online?: boolean };
+        };
+
+        if (payload.event === "chat_message" && payload.data) {
+          const message = payload.data as ChatMessage;
+          setMessages((prev) => {
+            if (prev.some((item) => item.id === message.id)) return prev;
+            return [...prev, message];
+          });
+        }
+
+        if (payload.event === "chat_presence" && payload.data) {
+          const nextPresence = payload.data as { both_online?: boolean };
+          if (typeof nextPresence.both_online === "boolean") {
+            setBothOnline(nextPresence.both_online);
+          }
+        }
+      } catch {
+      }
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [bothOnline, chat]);
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
@@ -149,19 +187,25 @@ export default function ChatWindowPage() {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = inputValue.trim();
-    if (!text) return;
-    const now = new Date();
-    const time = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-    setMessages((prev) => [...prev, { id: Date.now(), from: "expert", text, time }]);
-    setInputValue("");
+    if (!text || !chat) return;
+
+    try {
+      const saved = await sendChatMessage(chat.id, text);
+      setMessages((prev) => {
+        if (prev.some((item) => item.id === saved.id)) return prev;
+        return [...prev, saved];
+      });
+      setInputValue("");
+    } catch {
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
   };
 
@@ -182,7 +226,8 @@ export default function ChatWindowPage() {
           </div>
           <div className={styles.sideList}>
             {filteredChats.map((item) => {
-              const isActive = item.id === id;
+              const isActive = item.id === chatId;
+              const isMine = item.last_message_sender_id === currentUserId;
 
               return (
                 <Link
@@ -191,23 +236,23 @@ export default function ChatWindowPage() {
                   className={`${styles.sideChatItem} ${isActive ? styles.sideChatItemActive : ""}`}
                 >
                   <div className={styles.sideAvatar}>
-                    {item.avatarUrl ? (
-                      <img src={item.avatarUrl} alt={`Аватар ${item.name}`} className={styles.sideAvatarImage} />
+                    {item.counterpart_avatar_url ? (
+                      <img src={item.counterpart_avatar_url} alt={`Аватар ${item.counterpart_name}`} className={styles.sideAvatarImage} />
                     ) : (
                       <ProfileIcon className={styles.sideAvatarIcon} />
                     )}
                   </div>
                   <div className={styles.sideContent}>
                     <div className={styles.sideTitleRow}>
-                      <span className={styles.sideName}>{item.name}</span>
-                      <span className={styles.sideTime}>{item.time}</span>
+                      <span className={styles.sideName}>{item.counterpart_name}</span>
+                      <span className={styles.sideTime}>{formatListTime(item.last_message_at)}</span>
                     </div>
                     <div className={styles.sideMsgRow}>
                       <span className={styles.sideMsg}>
-                        {item.isMine ? <span className={styles.sideMsgPrefix}>Вы: </span> : null}
-                        {item.lastMsg}
+                        {isMine ? <span className={styles.sideMsgPrefix}>Вы: </span> : null}
+                        {item.last_message_text || "Нет сообщений"}
                       </span>
-                      {item.unread > 0 ? <span className={styles.sideUnread}>{item.unread}</span> : null}
+                      {item.unread_count > 0 ? <span className={styles.sideUnread}>{item.unread_count}</span> : null}
                     </div>
                   </div>
                 </Link>
@@ -235,21 +280,21 @@ export default function ChatWindowPage() {
                 aria-expanded={isOrderOpen}
                 onClick={() => setIsOrderOpen((prev) => !prev)}
               >
-                <p className={styles.orderTitle}>{chat.orderTitle}</p>
+                <p className={styles.orderTitle}>{chat?.order_title ?? ""}</p>
                 <ChatChevronDownIcon className={`${styles.chevronIcon} ${isOrderOpen ? styles.chevronIconOpen : ""}`} />
               </Button>
               <div className={`${styles.orderDetails} ${isOrderOpen ? styles.orderDetailsOpen : ""}`}>
-                <p className={styles.orderCustomer}>{chat.customer}</p>
+                <p className={styles.orderCustomer}>{chat?.order_company ?? ""}</p>
                 <div className={styles.orderMeta}>
-                  <span className={styles.orderDate}>{chat.date}</span>
+                  <span className={styles.orderDate}>{chat?.order_date ?? ""}</span>
                   <div className={styles.orderBadges}>
-                    {chat.badges.map((badge) => (
-                      <span key={badge.label} className={badge.color === "blue" ? styles.badgeBlue : styles.badgeGreen}>
-                        <span>{badge.label}</span>
+                    {(chat?.order_badges ?? []).map((badge) => (
+                      <span key={badge.text} className={badge.variant === "BLUE" ? styles.badgeBlue : styles.badgeGreen}>
+                        <span>{badge.text}</span>
                       </span>
                     ))}
                   </div>
-                  <span className={styles.orderSum}>{chat.sum}</span>
+                  <span className={styles.orderSum}>{chat?.order_sum ?? ""}</span>
                 </div>
               </div>
             </div>
@@ -260,31 +305,34 @@ export default function ChatWindowPage() {
               <div className={styles.datePill}><span>Сегодня</span></div>
             </div>
 
-            {messages.map((message) =>
-              message.from === "customer" ? (
+            {messages.map((message) => {
+              const isMine = message.sender_id === currentUserId;
+              const senderLabel = message.sender_role === "CUSTOMER" ? "Заказчик" : "Эксперт";
+
+              return !isMine ? (
                 <div key={message.id} className={styles.msgGroupReceived}>
-                  <span className={styles.senderLabel}>Заказчик</span>
+                  <span className={styles.senderLabel}>{senderLabel}</span>
                   <div className={styles.msgRowReceived}>
-                    <ChatAvatar src={chat.customerAvatar} alt="Аватар заказчика" />
+                    <ChatAvatar src={chat?.counterpart_avatar_url ?? ""} alt="Аватар собеседника" />
                     <div className={`${styles.bubble} ${styles.bubbleReceived}`}>
                       <span className={styles.bubbleText}>{message.text}</span>
-                      <span className={styles.bubbleTime}>{message.time}</span>
+                      <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div key={message.id} className={styles.msgGroupSent}>
-                  <span className={`${styles.senderLabel} ${styles.alignRight}`}>Эксперт</span>
+                  <span className={`${styles.senderLabel} ${styles.alignRight}`}>{senderLabel}</span>
                   <div className={styles.msgRowSent}>
                     <div className={`${styles.bubble} ${styles.bubbleSent}`}>
                       <span className={styles.bubbleText}>{message.text}</span>
-                      <span className={styles.bubbleTime}>{message.time}</span>
+                      <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
                     </div>
-                    <ChatAvatar src={chat.expertAvatar} alt="Аватар эксперта" />
+                    <ChatAvatar src="" alt="Ваш аватар" />
                   </div>
                 </div>
-              )
-            )}
+              );
+            })}
           </div>
 
           <div className={styles.inputBar}>
@@ -304,7 +352,7 @@ export default function ChatWindowPage() {
             <Button
               variant="primary"
               className={styles.sendBtn}
-              onClick={handleSend}
+              onClick={() => void handleSend()}
               disabled={!inputValue.trim()}
               aria-label="Отправить"
             >

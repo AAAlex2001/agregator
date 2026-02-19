@@ -95,6 +95,12 @@ class Order(Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
+    chats = relationship(
+        "Chat",
+        back_populates="order",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
 
 
 class OrderBadge(Base):

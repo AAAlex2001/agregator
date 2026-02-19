@@ -1,0 +1,185 @@
+export interface ChatListItem {
+  id: number;
+  order_id: number;
+  counterpart_id: number;
+  counterpart_name: string;
+  counterpart_avatar_url: string | null;
+  last_message_text: string;
+  last_message_sender_id: number | null;
+  last_message_at: string | null;
+  unread_count: number;
+  updated_at: string;
+}
+
+export interface ChatListResponse {
+  items: ChatListItem[];
+  total: number;
+}
+
+export interface ChatMessage {
+  id: number;
+  chat_id: number;
+  sender_id: number;
+  sender_role: "CUSTOMER" | "EXPERT";
+  text: string;
+  created_at: string;
+}
+
+export interface ChatDetailResponse {
+  id: number;
+  order_id: number;
+  customer_id: number;
+  expert_id: number;
+  order_title: string;
+  order_company: string;
+  order_date: string;
+  order_sum: string;
+  order_badges: { text: string; variant: string }[];
+  counterpart_id: number;
+  counterpart_name: string;
+  counterpart_avatar_url: string | null;
+  messages: ChatMessage[];
+}
+
+export interface ChatPresenceResponse {
+  chat_id: number;
+  online_user_ids: number[];
+  both_online: boolean;
+}
+
+function getApiBaseUrl(): string {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiBaseUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL is not set");
+  }
+  return apiBaseUrl;
+}
+
+export function getCurrentUserId(): number {
+  if (typeof window !== "undefined") {
+    const stored = window.localStorage.getItem("user_id");
+    if (stored) {
+      const parsed = Number(stored);
+      if (Number.isInteger(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+  }
+
+  const fallback = Number(process.env.NEXT_PUBLIC_EXPERT_ID ?? "1");
+  if (Number.isInteger(fallback) && fallback > 0) {
+    return fallback;
+  }
+
+  throw new Error("Не удалось определить пользователя");
+}
+
+async function readError(response: Response, fallback: string): Promise<never> {
+  let message = fallback;
+  try {
+    const body = (await response.json()) as { detail?: string };
+    if (body?.detail) {
+      message = body.detail;
+    }
+  } catch {
+  }
+  throw new Error(message);
+}
+
+export async function fetchChats(): Promise<ChatListResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/chats/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось загрузить чаты");
+  }
+
+  return (await response.json()) as ChatListResponse;
+}
+
+export async function fetchChatDetail(chatId: number): Promise<ChatDetailResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось загрузить чат");
+  }
+
+  return (await response.json()) as ChatDetailResponse;
+}
+
+export async function openChatByOrder(orderId: number): Promise<ChatDetailResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/chats/open`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    body: JSON.stringify({ order_id: orderId }),
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось открыть чат");
+  }
+
+  return (await response.json()) as ChatDetailResponse;
+}
+
+export async function fetchChatPresence(chatId: number): Promise<ChatPresenceResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}/presence`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось получить присутствие в чате");
+  }
+
+  return (await response.json()) as ChatPresenceResponse;
+}
+
+export async function sendChatMessage(chatId: number, text: string): Promise<ChatMessage> {
+  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-User-Id": String(getCurrentUserId()),
+    },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось отправить сообщение");
+  }
+
+  return (await response.json()) as ChatMessage;
+}
+
+export function buildChatWebSocketUrl(chatId: number): string {
+  const explicitWsBase = process.env.NEXT_PUBLIC_WS_URL;
+  const userId = getCurrentUserId();
+
+  if (explicitWsBase) {
+    return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatId}?user_id=${userId}`;
+  }
+
+  const apiBase = getApiBaseUrl();
+  const wsBase = apiBase.replace(/^http/i, "ws").replace(/\/$/, "");
+  return `${wsBase}/ws/chats/${chatId}?user_id=${userId}`;
+}

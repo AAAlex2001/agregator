@@ -63,3 +63,23 @@ class User(Base):
         back_populates="expert",
         cascade="all, delete-orphan"
     )
+
+    customer_chats = relationship(
+        "Chat",
+        foreign_keys="Chat.customer_id",
+        back_populates="customer",
+        cascade="all, delete-orphan",
+    )
+
+    expert_chats = relationship(
+        "Chat",
+        foreign_keys="Chat.expert_id",
+        back_populates="expert",
+        cascade="all, delete-orphan",
+    )
+
+    chat_messages = relationship(
+        "ChatMessage",
+        back_populates="sender",
+        cascade="all, delete-orphan",
+    )
