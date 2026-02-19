@@ -27,7 +27,6 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<"personal" | "finance">(
     searchParams.get("section") === "finance" ? "finance" : "personal"
   );
-  const [depositAmount, setDepositAmount] = useState("");
   const [isDepositing, setIsDepositing] = useState(false);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [userRole, setUserRole] = useState<string>("EXPERT");
@@ -90,7 +89,9 @@ export default function SettingsPage() {
 
   const handleDeposit = async () => {
     if (isDepositing) return;
-    const rub = parseFloat(depositAmount.replace(/\s/g, "").replace(",", "."));
+    const amountRaw = window.prompt("Введите сумму пополнения в рублях", "1000");
+    if (!amountRaw) return;
+    const rub = parseFloat(amountRaw.replace(/\s/g, "").replace(",", "."));
     if (!rub || rub <= 0) {
       setSaveError("Введите корректную сумму");
       return;
@@ -151,6 +152,8 @@ export default function SettingsPage() {
       setIsSaving(false);
     }
   };
+
+
 
   return (
     <>
@@ -242,6 +245,28 @@ export default function SettingsPage() {
             <div className={styles.finance}>
               <Subtitle text={`Баланс: ${formatBalance(profile?.balance ?? 0)}`} className={styles.financeSubtitle} />
 
+              <div className={styles.financeButtons}>
+                <Button
+                  variant="outline"
+                  size="md"
+                  fullWidth
+                  className={styles.financeActionButton}
+                  onClick={() => setSaveError("Вывод средств пока недоступен")}
+                >
+                  Вывести средства
+                </Button>
+                <Button
+                  variant="chat"
+                  size="md"
+                  fullWidth
+                  className={styles.financeActionButton}
+                  onClick={() => void handleDeposit()}
+                  isLoading={isDepositing}
+                >
+                  Пополнить
+                </Button>
+              </div>
+
               {payments.length > 0 ? (
                 <div className={styles.financeColumns}>
                   {(() => {
@@ -275,20 +300,6 @@ export default function SettingsPage() {
               ) : (
                 <p className={styles.emptyHistory}>Операций пока нет</p>
               )}
-
-              <div className={styles.financeButtons}>
-                <Input
-                  type="text"
-                  placeholder="Сумма в рублях"
-                  aria-label="Сумма пополнения"
-                  value={depositAmount}
-                  variant="text"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDepositAmount(e.target.value)}
-                />
-                <Button variant="chat" size="md" fullWidth onClick={() => void handleDeposit()} isLoading={isDepositing}>
-                  Пополнить
-                </Button>
-              </div>
             </div>
           )}
         </div>
@@ -296,17 +307,19 @@ export default function SettingsPage() {
         {saveMessage && <p className={styles.successMessage}>{saveMessage}</p>}
         {saveError && <p className={styles.errorMessage}>{saveError}</p>}
 
-        <div className={styles.saveButtonWrapper}>
-          <Button
-            variant="chat"
-            size="md"
-            className={styles.saveButton}
-            onClick={() => void handleSave()}
-            isLoading={isSaving}
-          >
-            Сохранить изменения
-          </Button>
-        </div>
+        {activeSection === "personal" && (
+          <div className={styles.saveButtonWrapper}>
+            <Button
+              variant="chat"
+              size="md"
+              className={styles.saveButton}
+              onClick={() => void handleSave()}
+              isLoading={isSaving}
+            >
+              Сохранить изменения
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );
