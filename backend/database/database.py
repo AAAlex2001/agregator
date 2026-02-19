@@ -22,7 +22,11 @@ ECHO_SQL = os.getenv("ECHO_SQL", "False").lower() == "true"
 engine = create_async_engine(
     DATABASE_URL,
     echo=ECHO_SQL,
-    future=True
+    future=True,
+    pool_size=10,
+    max_overflow=20,
+    pool_recycle=300,
+    pool_pre_ping=True,
 )
 
 # Создание фабрики сессий

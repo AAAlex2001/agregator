@@ -6,8 +6,8 @@ services:
       POSTGRES_DB: agregator_db
       POSTGRES_USER: agregator
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped

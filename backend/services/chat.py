@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -145,7 +145,6 @@ class ChatService:
         return items
 
     async def get_chat_for_actor(self, chat_id: int, actor_id: int) -> Chat:
-        await self.get_user(actor_id)
         result = await self.db.execute(
             select(Chat)
             .options(
@@ -169,12 +168,11 @@ class ChatService:
 
         message_rows = await self.db.execute(
             select(ChatMessage)
-            .where(ChatMessage.chat_id == chat.id)
+            .where(ChatMessage.chat_id == chat_id)
             .order_by(ChatMessage.id.desc())
             .limit(limit)
         )
-        messages_desc = message_rows.scalars().all()
-        messages = list(reversed(messages_desc))
+        messages = list(reversed(message_rows.scalars().all()))
 
         counterpart_id, counterpart_name, counterpart_avatar_url = self.resolve_counterpart(actor_id, actor.role, chat)
 
@@ -216,19 +214,34 @@ class ChatService:
         if not normalized_text:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пустое сообщение отправить нельзя")
 
-        chat = await self.get_chat_for_actor(chat_id, sender_id)
+        chat_row = await self.db.execute(
+            select(Chat.id, Chat.customer_id)
+            .where(
+                Chat.id == chat_id,
+                or_(Chat.customer_id == sender_id, Chat.expert_id == sender_id),
+            )
+        )
+        chat_data = chat_row.first()
+        if not chat_data:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
+
         message = ChatMessage(
-            chat_id=chat.id,
+            chat_id=chat_id,
             sender_id=sender_id,
             text=normalized_text,
         )
-        chat.updated_at = datetime.now(timezone.utc)
-
         self.db.add(message)
-        await self.db.commit()
-        await self.db.refresh(message)
+        await self.db.flush()
 
-        sender_role = UserRole.CUSTOMER.value if sender_id == chat.customer_id else UserRole.EXPERT.value
+        await self.db.execute(
+            update(Chat)
+            .where(Chat.id == chat_id)
+            .values(updated_at=datetime.now(timezone.utc))
+        )
+
+        await self.db.commit()
+
+        sender_role = UserRole.CUSTOMER.value if sender_id == chat_data.customer_id else UserRole.EXPERT.value
         return ChatMessageResponse(
             id=message.id,
             chat_id=message.chat_id,

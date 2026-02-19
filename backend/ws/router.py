@@ -1,7 +1,8 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
-from services.chat import ChatService
+from models.chat import Chat
 from ws.manager import chat_manager, order_manager
 
 router = APIRouter(prefix="/ws")
@@ -22,9 +23,13 @@ async def orders_websocket(websocket: WebSocket) -> None:
 @router.websocket("/chats/{chat_id}")
 async def chat_websocket(websocket: WebSocket, chat_id: int, user_id: int) -> None:
     async with AsyncSessionLocal() as db:
-        try:
-            await ChatService(db).get_chat_for_actor(chat_id=chat_id, actor_id=user_id)
-        except Exception:
+        row = await db.execute(
+            select(Chat.id).where(
+                Chat.id == chat_id,
+                or_(Chat.customer_id == user_id, Chat.expert_id == user_id),
+            )
+        )
+        if not row.scalars().first():
             await websocket.close(code=4003)
             return
 
