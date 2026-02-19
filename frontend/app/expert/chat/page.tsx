@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import AuthHeader from "@/app/landing/header/AuthHeader";
+import { Subtitle } from "@/app/components/Typography";
 import { ChatSearchIcon, ProfileIcon } from "@/app/icons";
 import styles from "./chat.module.scss";
 
@@ -140,7 +141,7 @@ export default function ChatListPage() {
             {filtered.map((chat) => (
               <Link
                 key={chat.id}
-                href={`/chat/${chat.id}`}
+                href={`/expert/chat/${chat.id}`}
                 className={`${styles.chatItem} ${chat.active ? styles.chatItemActive : ""}`}
               >
                 {/* Avatar */}
@@ -170,6 +171,13 @@ export default function ChatListPage() {
             ))}
           </div>
         </div>
+
+        <section className={styles.desktopEmptyState} aria-label="Пустое состояние чата">
+          <Subtitle
+            text="Выберите кому написать в левой панели чатов"
+            className={styles.emptyStateText}
+          />
+        </section>
       </main>
     </>
   );

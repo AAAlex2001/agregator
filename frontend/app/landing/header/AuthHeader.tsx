@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ChatHeaderIcon,
@@ -58,6 +58,7 @@ const AuthHeader = ({
 
   const role = useDisplayRole(roleProp);
   const pathname = usePathname();
+  const router = useRouter();
   const iconMotion = {
     whileHover: { y: -2, scale: 1.06 },
     whileTap: { scale: 0.96 },
@@ -107,6 +108,7 @@ const AuthHeader = ({
               className={styles.iconRounded}
               type="button"
               aria-label="Чат"
+              onClick={() => router.push(role === "Заказчик" ? "/customer/chat" : "/expert/chat")}
               {...iconMotion}
             >
               <ChatHeaderIcon />

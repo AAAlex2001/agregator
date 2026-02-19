@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowIcon, ChatChevronDownIcon, ChatClipIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
+import { ArrowIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import Button from "@/app/components/Button/Button";
 import styles from "./chatWindow.module.scss";
+
+const ROUTE_BASE = "/customer/chat";
 
 function ChatAvatar({ src, alt }: { src: string; alt: string }) {
   const [broken, setBroken] = useState(false);
@@ -26,7 +29,45 @@ function ChatAvatar({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-// ─── Mock data ───────────────────────────────────────────────────────
+const MOCK_CHAT_LIST = [
+  {
+    id: "1",
+    name: "ООО «СпецЭнергоМонтаж»",
+    avatarUrl: "/industry_1.jpg",
+    time: "9:23",
+    lastMsg: "Ждём Вас завтра",
+    unread: 3,
+    isMine: false,
+  },
+  {
+    id: "2",
+    name: "АО «ТехноПромСервис»",
+    avatarUrl: "/industry_3.jpg",
+    time: "05.10",
+    lastMsg: "Позже скажем Вам о решении",
+    unread: 0,
+    isMine: false,
+  },
+  {
+    id: "3",
+    name: "ИП Смирнов Д.А.",
+    avatarUrl: "",
+    time: "8:56",
+    lastMsg: "Сейчас найду файл и отправлю Вам",
+    unread: 0,
+    isMine: true,
+  },
+  {
+    id: "4",
+    name: "ООО «НефтеХимСтрой»",
+    avatarUrl: "",
+    time: "05.10",
+    lastMsg: "Нам нужна лаборатория для проверки",
+    unread: 0,
+    isMine: false,
+  },
+];
+
 const MOCK_CHAT_DATA: Record<string, {
   name: string;
   orderTitle: string;
@@ -75,7 +116,6 @@ const MOCK_CHAT_DATA: Record<string, {
 
 const DEFAULT_CHAT = MOCK_CHAT_DATA["1"];
 
-// ─── Component ───────────────────────────────────────────────────────
 export default function ChatWindowPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -84,7 +124,12 @@ export default function ChatWindowPage() {
   const [messages, setMessages] = useState(chat.messages);
   const [inputValue, setInputValue] = useState("");
   const [isOrderOpen, setIsOrderOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const threadRef = useRef<HTMLDivElement>(null);
+
+  const filteredChats = MOCK_CHAT_LIST.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
@@ -99,7 +144,6 @@ export default function ChatWindowPage() {
     };
   }, []);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     const el = threadRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -125,22 +169,65 @@ export default function ChatWindowPage() {
     <>
       <AuthHeader />
       <main className={styles.body}>
+        <aside className={styles.desktopSidebar}>
+          <div className={styles.sideSearch}>
+            <ChatSearchIcon className={styles.sideSearchIcon} />
+            <input
+              type="text"
+              className={styles.sideSearchInput}
+              placeholder="Поиск по чатам"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className={styles.sideList}>
+            {filteredChats.map((item) => {
+              const isActive = item.id === id;
+
+              return (
+                <Link
+                  key={item.id}
+                  href={`${ROUTE_BASE}/${item.id}`}
+                  className={`${styles.sideChatItem} ${isActive ? styles.sideChatItemActive : ""}`}
+                >
+                  <div className={styles.sideAvatar}>
+                    {item.avatarUrl ? (
+                      <img src={item.avatarUrl} alt={`Аватар ${item.name}`} className={styles.sideAvatarImage} />
+                    ) : (
+                      <ProfileIcon className={styles.sideAvatarIcon} />
+                    )}
+                  </div>
+                  <div className={styles.sideContent}>
+                    <div className={styles.sideTitleRow}>
+                      <span className={styles.sideName}>{item.name}</span>
+                      <span className={styles.sideTime}>{item.time}</span>
+                    </div>
+                    <div className={styles.sideMsgRow}>
+                      <span className={styles.sideMsg}>
+                        {item.isMine ? <span className={styles.sideMsgPrefix}>Вы: </span> : null}
+                        {item.lastMsg}
+                      </span>
+                      {item.unread > 0 ? <span className={styles.sideUnread}>{item.unread}</span> : null}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </aside>
+
         <div className={styles.card}>
-          {/* Order Nav */}
           <div className={styles.orderNav}>
-            {/* Back button */}
             <Button
               variant="outline"
               className={styles.backBtn}
               aria-label="Назад"
-              onClick={() => router.push("/chat")}
+              onClick={() => router.push(ROUTE_BASE)}
             >
               <ArrowIcon color="currentColor" />
             </Button>
 
-            {/* Order info */}
             <div className={styles.orderInfo}>
-              {/* Title row with collapse chevron */}
               <Button
                 variant="transparent"
                 className={styles.orderTitleRow}
@@ -156,9 +243,9 @@ export default function ChatWindowPage() {
                 <div className={styles.orderMeta}>
                   <span className={styles.orderDate}>{chat.date}</span>
                   <div className={styles.orderBadges}>
-                    {chat.badges.map((b) => (
-                      <span key={b.label} className={b.color === "blue" ? styles.badgeBlue : styles.badgeGreen}>
-                        <span>{b.label}</span>
+                    {chat.badges.map((badge) => (
+                      <span key={badge.label} className={badge.color === "blue" ? styles.badgeBlue : styles.badgeGreen}>
+                        <span>{badge.label}</span>
                       </span>
                     ))}
                   </div>
@@ -168,33 +255,30 @@ export default function ChatWindowPage() {
             </div>
           </div>
 
-          {/* Message Thread */}
           <div className={styles.thread} ref={threadRef}>
-            {/* Date separator */}
             <div className={styles.dateSeparator}>
               <div className={styles.datePill}><span>Сегодня</span></div>
             </div>
 
-            {/* Messages */}
-            {messages.map((msg) =>
-              msg.from === "customer" ? (
-                <div key={msg.id} className={styles.msgGroupReceived}>
+            {messages.map((message) =>
+              message.from === "customer" ? (
+                <div key={message.id} className={styles.msgGroupReceived}>
                   <span className={styles.senderLabel}>Заказчик</span>
                   <div className={styles.msgRowReceived}>
                     <ChatAvatar src={chat.customerAvatar} alt="Аватар заказчика" />
                     <div className={`${styles.bubble} ${styles.bubbleReceived}`}>
-                      <span className={styles.bubbleText}>{msg.text}</span>
-                      <span className={styles.bubbleTime}>{msg.time}</span>
+                      <span className={styles.bubbleText}>{message.text}</span>
+                      <span className={styles.bubbleTime}>{message.time}</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div key={msg.id} className={styles.msgGroupSent}>
+                <div key={message.id} className={styles.msgGroupSent}>
                   <span className={`${styles.senderLabel} ${styles.alignRight}`}>Эксперт</span>
                   <div className={styles.msgRowSent}>
                     <div className={`${styles.bubble} ${styles.bubbleSent}`}>
-                      <span className={styles.bubbleText}>{msg.text}</span>
-                      <span className={styles.bubbleTime}>{msg.time}</span>
+                      <span className={styles.bubbleText}>{message.text}</span>
+                      <span className={styles.bubbleTime}>{message.time}</span>
                     </div>
                     <ChatAvatar src={chat.expertAvatar} alt="Аватар эксперта" />
                   </div>
@@ -203,7 +287,6 @@ export default function ChatWindowPage() {
             )}
           </div>
 
-          {/* Input Bar */}
           <div className={styles.inputBar}>
             <div className={styles.inputWrap}>
               <input
