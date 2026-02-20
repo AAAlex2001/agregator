@@ -163,18 +163,17 @@ const ProfileMenu = ({
                   <span className={styles.balanceCurrency}>{"\u20bd"}</span>
                 </div>
               </div>
-              <button
-                className={styles.topUpButton}
-                onClick={() => {
-                  if (role !== "Эксперт") {
-                    closeMenu();
-                  }
-                  setTopUpAmount("");
-                  setIsTopUpModalOpen(true);
-                }}
-              >
-                Пополнить
-              </button>
+              {role === "Эксперт" && (
+                <button
+                  className={styles.topUpButton}
+                  onClick={() => {
+                    setTopUpAmount("");
+                    setIsTopUpModalOpen(true);
+                  }}
+                >
+                  Пополнить
+                </button>
+              )}
             </div>
 
             {menuTabs.length > 0 && (

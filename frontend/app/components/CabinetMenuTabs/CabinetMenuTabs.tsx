@@ -20,7 +20,7 @@ export default function CabinetMenuTabs() {
   const { profile } = useUserProfile();
 
   const isCabinetArea = pathname.startsWith("/customer") || pathname.startsWith("/expert") || pathname.startsWith("/reviews") || pathname.startsWith("/settings");
-  const isChatWindow = /\/(customer|expert)\/chat\/\d+/.test(pathname);
+  const isChatWindow = /\/(customer|expert)\/chat\/.+/.test(pathname);
 
   const resolvedRole: "CUSTOMER" | "EXPERT" | null = useMemo(() => {
     if (pathname.startsWith("/expert")) return "EXPERT";

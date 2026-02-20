@@ -22,8 +22,8 @@ async def orders_websocket(websocket: WebSocket) -> None:
         order_manager.disconnect(websocket)
 
 
-@router.websocket("/chats/{chat_id}")
-async def chat_websocket(websocket: WebSocket, chat_id: int) -> None:
+@router.websocket("/chats/{chat_uuid}")
+async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
     session_id = websocket.cookies.get("session_id")
     if not session_id:
         await websocket.close(code=4001)
@@ -44,14 +44,16 @@ async def chat_websocket(websocket: WebSocket, chat_id: int) -> None:
         user_id = session.user_id
 
         row = await db.execute(
-            select(Chat.id).where(
-                Chat.id == chat_id,
+            select(Chat).where(
+                Chat.uuid == chat_uuid,
                 or_(Chat.customer_id == user_id, Chat.expert_id == user_id),
             )
         )
-        if not row.scalars().first():
+        chat = row.scalars().first()
+        if not chat:
             await websocket.close(code=4003)
             return
+        chat_id = chat.id
 
     await chat_manager.connect(chat_id, user_id, websocket)
     await chat_manager.broadcast(chat_id, {

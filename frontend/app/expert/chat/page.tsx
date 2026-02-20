@@ -108,7 +108,7 @@ export default function ChatListPage() {
             ) : filtered.map((chat) => (
               <Link
                 key={chat.id}
-                href={`/expert/chat/${chat.id}`}
+                href={`/expert/chat/${chat.uuid}`}
                 className={styles.chatItem}
               >
                 {/* Avatar */}

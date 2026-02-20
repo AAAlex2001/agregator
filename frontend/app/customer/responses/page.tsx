@@ -176,7 +176,7 @@ export default function CustomerResponsesPage() {
   const handleOpenChat = async (orderId: number) => {
     try {
       const detail = await openChatByOrder(orderId);
-      router.push(`/customer/chat/${detail.id}`);
+      router.push(`/customer/chat/${detail.uuid}`);
     } catch {
     }
   };

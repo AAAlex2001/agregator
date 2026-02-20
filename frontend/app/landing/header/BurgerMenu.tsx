@@ -98,11 +98,6 @@ const BurgerMenu = () => {
               FAQ
             </Link>
             <div className={styles.menuActions}>
-              {isCustomerCabinet && (
-                <Link href="/settings?section=finance" className={styles.menuTopUp} onClick={closeMenu}>
-                  Пополнить
-                </Link>
-              )}
               <Link href="/register" className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
             </div>
           </nav>

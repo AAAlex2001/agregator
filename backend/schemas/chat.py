@@ -24,6 +24,7 @@ class ChatMessageResponse(BaseModel):
 
 class ChatListItemResponse(BaseModel):
     id: int
+    uuid: str
     order_id: int
     counterpart_id: int
     counterpart_name: str
@@ -42,6 +43,7 @@ class ChatListResponse(BaseModel):
 
 class ChatDetailResponse(BaseModel):
     id: int
+    uuid: str
     order_id: int
     customer_id: int
     expert_id: int

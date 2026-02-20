@@ -65,9 +65,8 @@ function ChatAvatar({ src, alt }: { src: string; alt: string }) {
 }
 
 export default function ChatWindowPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: chatUuid } = useParams<{ id: string }>();
   const router = useRouter();
-  const chatId = Number(id);
   const { profile } = useUserProfile();
   const currentUserId = profile?.id ?? 0;
 
@@ -86,14 +85,14 @@ export default function ChatWindowPage() {
   );
 
   useEffect(() => {
-    if (!Number.isInteger(chatId) || chatId <= 0) return;
+    if (!chatUuid) return;
 
     let cancelled = false;
 
     const load = async () => {
       try {
         const [detail, listResponse] = await Promise.all([
-          fetchChatDetail(chatId),
+          fetchChatDetail(chatUuid),
           fetchChats(),
         ]);
 
@@ -111,12 +110,12 @@ export default function ChatWindowPage() {
     return () => {
       cancelled = true;
     };
-  }, [chatId]);
+  }, [chatUuid]);
 
   useEffect(() => {
     if (!chat) return;
 
-    const wsUrl = buildChatWebSocketUrl(chat.id);
+    const wsUrl = buildChatWebSocketUrl(chat.uuid);
     let socket: WebSocket | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
@@ -180,7 +179,7 @@ export default function ChatWindowPage() {
     if (!text || !chat) return;
     setInputValue("");
     try {
-      const saved = await sendChatMessage(chat.id, text);
+      const saved = await sendChatMessage(chat.uuid, text);
       setMessages((prev) => [...prev, saved]);
     } catch {
     }
@@ -210,13 +209,13 @@ export default function ChatWindowPage() {
           </div>
           <div className={styles.sideList}>
             {filteredChats.map((item) => {
-              const isActive = item.id === chatId;
+              const isActive = item.uuid === chatUuid;
               const isMine = item.last_message_sender_id === currentUserId;
 
               return (
                 <Link
                   key={item.id}
-                  href={`${ROUTE_BASE}/${item.id}`}
+                  href={`${ROUTE_BASE}/${item.uuid}`}
                   className={`${styles.sideChatItem} ${isActive ? styles.sideChatItemActive : ""}`}
                 >
                   <div className={styles.sideAvatar}>

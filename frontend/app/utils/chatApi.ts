@@ -2,6 +2,7 @@ import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
 
 export interface ChatListItem {
   id: number;
+  uuid: string;
   order_id: number;
   counterpart_id: number;
   counterpart_name: string;
@@ -29,6 +30,7 @@ export interface ChatMessage {
 
 export interface ChatDetailResponse {
   id: number;
+  uuid: string;
   order_id: number;
   customer_id: number;
   expert_id: number;
@@ -75,8 +77,8 @@ export async function fetchChats(): Promise<ChatListResponse> {
   return (await response.json()) as ChatListResponse;
 }
 
-export async function fetchChatDetail(chatId: number): Promise<ChatDetailResponse> {
-  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatId}`, {
+export async function fetchChatDetail(chatUuid: string): Promise<ChatDetailResponse> {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatUuid}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -105,8 +107,8 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailRespon
   return (await response.json()) as ChatDetailResponse;
 }
 
-export async function sendChatMessage(chatId: number, text: string): Promise<ChatMessage> {
-  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatId}/messages`, {
+export async function sendChatMessage(chatUuid: string, text: string): Promise<ChatMessage> {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatUuid}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -120,13 +122,13 @@ export async function sendChatMessage(chatId: number, text: string): Promise<Cha
   return (await response.json()) as ChatMessage;
 }
 
-export function buildChatWebSocketUrl(chatId: number): string {
+export function buildChatWebSocketUrl(chatUuid: string): string {
   const explicitWsBase = process.env.NEXT_PUBLIC_WS_URL;
 
   if (explicitWsBase) {
-    return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatId}`;
+    return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatUuid}`;
   }
 
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  return `${protocol}//${window.location.host}/api/ws/chats/${chatId}`;
+  return `${protocol}//${window.location.host}/api/ws/chats/${chatUuid}`;
 }

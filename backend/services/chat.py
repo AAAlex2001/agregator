@@ -24,6 +24,24 @@ class ChatService:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Пользователь неактивен")
         return user
 
+    async def get_chat_by_uuid(self, chat_uuid: str, actor_id: int) -> Chat:
+        result = await self.db.execute(
+            select(Chat)
+            .options(
+                selectinload(Chat.order),
+                selectinload(Chat.customer),
+                selectinload(Chat.expert),
+            )
+            .where(
+                Chat.uuid == chat_uuid,
+                or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
+            )
+        )
+        chat = result.scalars().first()
+        if not chat:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
+        return chat
+
     async def open_chat(self, actor_id: int, order_id: int) -> Chat:
         actor = await self.get_user(actor_id)
         order_result = await self.db.execute(
@@ -131,6 +149,7 @@ class ChatService:
             items.append(
                 ChatListItemResponse(
                     id=chat.id,
+                    uuid=str(chat.uuid),
                     order_id=chat.order_id,
                     counterpart_id=counterpart_id,
                     counterpart_name=counterpart_name,
@@ -178,6 +197,7 @@ class ChatService:
 
         return ChatDetailResponse(
             id=chat.id,
+            uuid=str(chat.uuid),
             order_id=chat.order_id,
             customer_id=chat.customer_id,
             expert_id=chat.expert_id,

@@ -38,44 +38,46 @@ async def list_chats(
     return ChatListResponse(items=items, total=len(items))
 
 
-@router.get("/{chat_id}", response_model=ChatDetailResponse)
+@router.get("/{chat_uuid}", response_model=ChatDetailResponse)
 async def get_chat(
-    chat_id: int,
+    chat_uuid: str,
     limit: int = Query(200, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ChatService(db)
-    return await service.get_chat_detail(chat_id=chat_id, actor_id=user_id, limit=limit)
+    chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
+    return await service.get_chat_detail(chat_id=chat.id, actor_id=user_id, limit=limit)
 
 
-@router.get("/{chat_id}/presence", response_model=ChatPresenceResponse)
+@router.get("/{chat_uuid}/presence", response_model=ChatPresenceResponse)
 async def get_chat_presence(
-    chat_id: int,
+    chat_uuid: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ChatService(db)
-    await service.get_chat_for_actor(chat_id=chat_id, actor_id=user_id)
-    online_ids = chat_manager.get_online_user_ids(chat_id)
+    chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
+    online_ids = chat_manager.get_online_user_ids(chat.id)
     return ChatPresenceResponse(
-        chat_id=chat_id,
+        chat_id=chat.id,
         online_user_ids=online_ids,
         both_online=len(online_ids) >= 2,
     )
 
 
-@router.post("/{chat_id}/messages", response_model=ChatMessageResponse)
+@router.post("/{chat_uuid}/messages", response_model=ChatMessageResponse)
 async def send_message(
-    chat_id: int,
+    chat_uuid: str,
     payload: ChatSendMessageRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ChatService(db)
-    message = await service.send_message(chat_id=chat_id, sender_id=user_id, text=payload.text)
+    chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
+    message = await service.send_message(chat_id=chat.id, sender_id=user_id, text=payload.text)
     await chat_manager.broadcast(
-        chat_id,
+        chat.id,
         {"event": "chat_message", "data": message.model_dump(mode="json")},
     )
     return message

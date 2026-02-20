@@ -29,18 +29,19 @@ const AuthHeader = ({
   role: roleProp,
   balance: balanceProp,
 }: AuthHeaderProps) => {
-  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount, role: profileRole } = useUserProfile();
+  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount, role: profileRole, isLoading } = useUserProfile();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const inferredRole = pathname.startsWith("/customer") ? "CUSTOMER" : pathname.startsWith("/expert") ? "EXPERT" : null;
+  const rawRole = roleProp ?? (isLoading ? (inferredRole ?? profileRole) : profileRole);
+  const role = rawRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
 
   const name = nameProp ?? displayName;
   const rating = ratingProp ?? profileRating;
   const reviewCount = reviewCountProp ?? profileReviewCount;
   const balanceKopecks = profileBalance;
   const balance = balanceProp ?? Math.floor(balanceKopecks / 100).toLocaleString("ru-RU");
-
-  const rawRole = roleProp ?? profileRole;
-  const role = rawRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
-  const pathname = usePathname();
-  const router = useRouter();
   const iconMotion = {
     whileHover: { y: -2, scale: 1.06 },
     whileTap: { scale: 0.96 },
