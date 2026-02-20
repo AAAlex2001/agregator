@@ -166,7 +166,9 @@ const ProfileMenu = ({
               <button
                 className={styles.topUpButton}
                 onClick={() => {
-                  closeMenu();
+                  if (role !== "Эксперт") {
+                    closeMenu();
+                  }
                   setTopUpAmount("");
                   setIsTopUpModalOpen(true);
                 }}

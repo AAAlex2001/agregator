@@ -90,3 +90,17 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    customer_reviews = relationship(
+        "Review",
+        foreign_keys="Review.customer_id",
+        back_populates="customer",
+        cascade="all, delete-orphan",
+    )
+
+    expert_reviews = relationship(
+        "Review",
+        foreign_keys="Review.expert_id",
+        back_populates="expert",
+        cascade="all, delete-orphan",
+    )

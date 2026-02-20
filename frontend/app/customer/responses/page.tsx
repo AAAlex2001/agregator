@@ -10,15 +10,19 @@ import "swiper/css/navigation";
 
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
+import { useNotifications } from "@/app/components/Notifications";
 import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import CustomerResponseCard from "./components/CustomerResponseCard";
 import CompletionModal from "./components/CompletionModal";
+import AddReviewModal from "./components/AddReviewModal/AddReviewModal";
 import { ArrowIcon } from "@/app/icons";
 import { openChatByOrder } from "@/app/utils/chatApi";
 import { loadResponses } from "@/app/expert/responses/store/actions";
 import { useResponsesState } from "@/app/expert/responses/store/state";
 import { updateResponseStatus } from "@/app/expert/responses/store/api";
 import type { ResponseTabKey } from "@/app/expert/responses/store/types";
+import type { ResponseCardViewModel } from "@/app/expert/responses/store/types";
+import { createReview } from "./store/api";
 import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
@@ -32,6 +36,7 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
 
 export default function CustomerResponsesPage() {
   const router = useRouter();
+  const { showSuccess, showError } = useNotifications();
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
   const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
@@ -39,6 +44,8 @@ export default function CustomerResponsesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewTarget, setReviewTarget] = useState<ResponseCardViewModel | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,6 +88,8 @@ export default function CustomerResponsesPage() {
     try {
       await updateResponseStatus(responseId, newStatus);
       if (newStatus === "COMPLETED") {
+        const target = items.find((item) => item.id === responseId) ?? null;
+        setReviewTarget(target);
         setIsCompletionModalOpen(true);
       }
       await fetchData();
@@ -89,6 +98,32 @@ export default function CustomerResponsesPage() {
       setError(message);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleOpenReviewModal = (target: ResponseCardViewModel) => {
+    setReviewTarget(target);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleSubmitReview = async (payload: { rating: number; comment: string }) => {
+    if (!reviewTarget) {
+      return;
+    }
+
+    try {
+      await createReview({
+        response_id: reviewTarget.id,
+        rating: payload.rating,
+        comment: payload.comment,
+      });
+      setIsReviewModalOpen(false);
+      setIsCompletionModalOpen(false);
+      showSuccess("Отзыв успешно опубликован");
+      await fetchData();
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось оставить отзыв";
+      showError(message);
     }
   };
 
@@ -232,7 +267,7 @@ export default function CustomerResponsesPage() {
                       onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                       onAccept={() => {
                         if (isCompleted) {
-                          setIsCompletionModalOpen(true);
+                          handleOpenReviewModal(response);
                           return;
                         }
                         void handleStatusUpdate(
@@ -288,6 +323,21 @@ export default function CustomerResponsesPage() {
       <CompletionModal
         isOpen={isCompletionModalOpen}
         onClose={() => setIsCompletionModalOpen(false)}
+        onLeaveReview={() => {
+          if (reviewTarget) {
+            setIsCompletionModalOpen(false);
+            setIsReviewModalOpen(true);
+          }
+        }}
+      />
+
+      <AddReviewModal
+        isOpen={isReviewModalOpen && !!reviewTarget}
+        customerName={reviewTarget?.customerCompany || reviewTarget?.customer || ""}
+        orderTitle={reviewTarget?.orderTitle || ""}
+        expertName={reviewTarget?.expertName || ""}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleSubmitReview}
       />
     </>
   );

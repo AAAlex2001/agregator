@@ -17,6 +17,7 @@ from models.response import OrderResponse
 from models.chat import Chat, ChatMessage
 from models.session import Session
 from models.payment import Payment
+from models.review import Review
 
 config = context.config
 
