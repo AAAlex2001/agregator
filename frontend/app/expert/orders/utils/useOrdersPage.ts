@@ -176,7 +176,7 @@ export function useOrdersPage() {
       window.location.href = confirmation_url;
     } catch {
       // fallback — просто идём в настройки
-      window.location.href = `/settings?section=finance&returnOrderId=${orderId}`;
+      window.location.href = `/expert/settings?section=finance&returnOrderId=${orderId}`;
     }
   };
 

@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import List
+
 from pydantic import BaseModel, Field
 
 
@@ -9,3 +12,21 @@ class CreateReviewRequest(BaseModel):
 
 class CreateReviewResponse(BaseModel):
     detail: str
+
+
+class ReviewItem(BaseModel):
+    id: int
+    order_title: str
+    company_name: str
+    rating: int
+    comment: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class ReviewListResponse(BaseModel):
+    reviews: List[ReviewItem]
+    total: int
+    avg_rating: float

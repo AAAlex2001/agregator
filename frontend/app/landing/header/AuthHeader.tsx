@@ -29,13 +29,13 @@ const AuthHeader = ({
   role: roleProp,
   balance: balanceProp,
 }: AuthHeaderProps) => {
-  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount, role: profileRole, isLoading } = useUserProfile();
+  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount, role: profileRole } = useUserProfile();
   const pathname = usePathname();
   const router = useRouter();
 
-  const inferredRole = pathname.startsWith("/customer") ? "CUSTOMER" : pathname.startsWith("/expert") ? "EXPERT" : null;
-  const rawRole = roleProp ?? (isLoading ? (inferredRole ?? profileRole) : profileRole);
+  const rawRole = roleProp ?? profileRole;
   const role = rawRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
+  const settingsHref = role === "Заказчик" ? "/customer/settings" : "/expert/settings";
 
   const name = nameProp ?? displayName;
   const rating = ratingProp ?? profileRating;
@@ -57,14 +57,14 @@ const AuthHeader = ({
       : [
           { href: "/expert/orders", label: "Все заказы" },
           { href: "/expert/responses", label: "Мои отклики" },
-          { href: "/reviews", label: "Отзывы" },
+          { href: "/expert/reviews", label: "Отзывы" },
         ];
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.brand}>
-          <Link href="/settings" className={styles.logo}>
+          <Link href={settingsHref} className={styles.logo}>
             <span className={styles.logoMobile}>
               <LogoMarkIcon />
             </span>

@@ -19,7 +19,7 @@ export default function CabinetMenuTabs() {
   const pathname = usePathname();
   const { profile } = useUserProfile();
 
-  const isCabinetArea = pathname.startsWith("/customer") || pathname.startsWith("/expert") || pathname.startsWith("/reviews") || pathname.startsWith("/settings");
+  const isCabinetArea = pathname.startsWith("/customer") || pathname.startsWith("/expert");
   const isChatWindow = /\/(customer|expert)\/chat\/.+/.test(pathname);
 
   const resolvedRole: "CUSTOMER" | "EXPERT" | null = useMemo(() => {
@@ -33,7 +33,7 @@ export default function CabinetMenuTabs() {
     return null;
   }
 
-  const activeKey: CabinetMenuKey = pathname.startsWith("/reviews")
+  const activeKey: CabinetMenuKey = pathname.includes("/reviews")
     ? "reviews"
     : pathname.includes("/responses")
       ? "responses"
@@ -42,7 +42,7 @@ export default function CabinetMenuTabs() {
   const items = [
     { key: "orders" as const, label: resolvedRole === "EXPERT" ? "Все заказы" : "Мои заказы", href: resolvedRole === "EXPERT" ? "/expert/orders" : "/customer/orders" },
     { key: "responses" as const, label: "Отклики", href: resolvedRole === "EXPERT" ? "/expert/responses" : "/customer/responses" },
-    { key: "reviews" as const, label: "Отзывы", href: "/reviews" },
+    ...(resolvedRole === "EXPERT" ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }] : []),
   ];
 
   return (

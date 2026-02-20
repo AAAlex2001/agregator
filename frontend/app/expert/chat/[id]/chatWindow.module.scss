@@ -267,27 +267,27 @@
   align-items: center;
   justify-content: center;
   gap: 0;
-  width: 40px;
-  height: 40px;
-  background: #fff;
-  border: 1px solid #ffdda9;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  background: #ffffff;
+  border: 2px solid #ffb800;
   border-radius: 10px;
   flex-shrink: 0;
   cursor: pointer;
-  padding: 10px;
   box-sizing: border-box;
   text-decoration: none;
-  color: #ffdda9 !important;
+  color: #1a1a1a !important;
   white-space: normal;
   font-weight: 400;
-  min-width: 40px;
 
   &:hover,
   &:active,
   &:focus-visible {
-    color: #ffffff !important;
-    background: #ff8a00 !important;
-    border-color: #ff8a00 !important;
+    color: #1a1a1a !important;
+    background: #ffdda9 !important;
+    border-color: #ffdda9 !important;
   }
 
   svg {

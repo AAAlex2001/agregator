@@ -8,13 +8,13 @@ import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import { Input } from "@/app/components/";
 import AuthHeader from "@/app/landing/header/AuthHeader";
-import { fetchProfile, updateProfile, changePassword } from "./api";
-import type { UserProfile } from "./api";
+import { fetchProfile, updateProfile, changePassword } from "@/app/settings/api";
+import type { UserProfile } from "@/app/settings/api";
 import { createPayment, fetchPaymentHistory, withdrawFunds } from "@/app/payments/api";
 import type { PaymentItem } from "@/app/payments/api";
 import styles from "./settings.module.scss";
 
-function SettingsPageContent() {
+function ExpertSettingsContent() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
@@ -37,7 +37,6 @@ function SettingsPageContent() {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const { showSuccess, showError } = useNotifications();
-  const [userRole, setUserRole] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -54,16 +53,11 @@ function SettingsPageContent() {
       setPhone(data.phone || "");
       setEmail(data.email || "");
 
-      const role = data.role ?? "EXPERT";
-      setUserRole(role);
-
-      if (role === "EXPERT") {
-        try {
-          const history = await fetchPaymentHistory();
-          setPayments(history);
-        } catch {
-          // игнорируем
-        }
+      try {
+        const history = await fetchPaymentHistory();
+        setPayments(history);
+      } catch {
+        // игнорируем
       }
     } catch {
       showError("Не удалось загрузить профиль");
@@ -71,8 +65,6 @@ function SettingsPageContent() {
       setIsLoadingProfile(false);
     }
   };
-
-  const isExpert = userRole === "EXPERT";
 
   const formatBalance = (kopecks: number): string => {
     const rub = Math.floor(kopecks / 100);
@@ -116,7 +108,7 @@ function SettingsPageContent() {
     setIsDepositing(true);
     try {
       const kopecks = Math.round(rub * 100);
-      const returnUrl = `${window.location.origin}/settings?section=finance`;
+      const returnUrl = `${window.location.origin}/expert/settings?section=finance`;
       const { confirmation_url } = await createPayment(kopecks, returnUrl);
       setIsTopUpModalOpen(false);
       window.location.href = confirmation_url;
@@ -199,8 +191,6 @@ function SettingsPageContent() {
     }
   };
 
-
-
   return (
     <>
       <AuthHeader />
@@ -215,11 +205,9 @@ function SettingsPageContent() {
             <Button variant="settings" size="sm" onClick={() => setActiveSection("personal")} isActive={activeSection === "personal"}>
               Личные данные
             </Button>
-            {isExpert && (
-              <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")} isActive={activeSection === "finance"}>
-                Финансы
-              </Button>
-            )}
+            <Button variant="settings" size="sm" onClick={() => setActiveSection("finance")} isActive={activeSection === "finance"}>
+              Финансы
+            </Button>
           </div>
 
           {isLoadingProfile ? (
@@ -392,13 +380,12 @@ function SettingsPageContent() {
           isSubmitting={isWithdrawing}
           balance={profile?.balance ?? 0}
         />
-
       </div>
     </>
   );
 }
 
-export default function SettingsPage() {
+export default function ExpertSettingsPage() {
   return (
     <NotificationProvider>
       <React.Suspense
@@ -413,7 +400,7 @@ export default function SettingsPage() {
           </>
         }
       >
-        <SettingsPageContent />
+        <ExpertSettingsContent />
       </React.Suspense>
     </NotificationProvider>
   );

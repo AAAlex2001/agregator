@@ -83,7 +83,7 @@ const ProfileMenu = ({
       window.location.href = confirmation_url;
     } catch {
       setIsTopUpModalOpen(false);
-      router.push("/settings?section=finance");
+      router.push("/expert/settings?section=finance");
     } finally {
       setIsDepositing(false);
     }
@@ -155,15 +155,15 @@ const ProfileMenu = ({
               </div>
             </div>
 
-            <div className={styles.balanceSection}>
-              <div className={styles.balanceInfo}>
-                <span className={styles.balanceLabel}>Баланс</span>
-                <div className={styles.balanceAmount}>
-                  <span className={styles.balanceValue}>{balance}</span>
-                  <span className={styles.balanceCurrency}>{"\u20bd"}</span>
+            {role === "Эксперт" && (
+              <div className={styles.balanceSection}>
+                <div className={styles.balanceInfo}>
+                  <span className={styles.balanceLabel}>Баланс</span>
+                  <div className={styles.balanceAmount}>
+                    <span className={styles.balanceValue}>{balance}</span>
+                    <span className={styles.balanceCurrency}>{"\u20bd"}</span>
+                  </div>
                 </div>
-              </div>
-              {role === "Эксперт" && (
                 <button
                   className={styles.topUpButton}
                   onClick={() => {
@@ -173,8 +173,8 @@ const ProfileMenu = ({
                 >
                   Пополнить
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
             {menuTabs.length > 0 && (
               <nav className={styles.menuTabs}>
@@ -195,7 +195,7 @@ const ProfileMenu = ({
 
             <div className={styles.bottomLinks}>
               <Link
-                href="/settings"
+                href={role === "Эксперт" ? "/expert/settings" : "/customer/settings"}
                 className={styles.bottomLink}
                 onClick={closeMenu}
               >
