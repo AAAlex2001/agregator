@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, or_, select, update
@@ -25,6 +26,11 @@ class ChatService:
         return user
 
     async def get_chat_by_uuid(self, chat_uuid: str, actor_id: int) -> Chat:
+        try:
+            parsed_uuid = UUID(chat_uuid)
+        except (ValueError, TypeError):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
+
         result = await self.db.execute(
             select(Chat)
             .options(
@@ -33,7 +39,7 @@ class ChatService:
                 selectinload(Chat.expert),
             )
             .where(
-                Chat.uuid == chat_uuid,
+                Chat.uuid == parsed_uuid,
                 or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
             )
         )

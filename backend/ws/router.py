@@ -1,5 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from datetime import datetime, timezone
+from uuid import UUID
 from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
@@ -30,6 +31,12 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
         return
 
     async with AsyncSessionLocal() as db:
+        try:
+            parsed_uuid = UUID(chat_uuid)
+        except (ValueError, TypeError):
+            await websocket.close(code=4003)
+            return
+
         sess = await db.execute(
             select(Session).where(Session.session_id == session_id)
         )
@@ -45,7 +52,7 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
 
         row = await db.execute(
             select(Chat).where(
-                Chat.uuid == chat_uuid,
+                Chat.uuid == parsed_uuid,
                 or_(Chat.customer_id == user_id, Chat.expert_id == user_id),
             )
         )
