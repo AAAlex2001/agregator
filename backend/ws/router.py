@@ -1,4 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from datetime import datetime, timezone
 from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
@@ -34,6 +35,10 @@ async def chat_websocket(websocket: WebSocket, chat_id: int) -> None:
         )
         session = sess.scalars().first()
         if not session:
+            await websocket.close(code=4001)
+            return
+        now = datetime.now(timezone.utc)
+        if now > session.max_expires_at or now > session.expires_at:
             await websocket.close(code=4001)
             return
         user_id = session.user_id

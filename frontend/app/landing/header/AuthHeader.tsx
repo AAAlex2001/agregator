@@ -63,7 +63,7 @@ const AuthHeader = ({
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.brand}>
-          <Link href="/" className={styles.logo}>
+          <Link href="/settings" className={styles.logo}>
             <span className={styles.logoMobile}>
               <LogoMarkIcon />
             </span>

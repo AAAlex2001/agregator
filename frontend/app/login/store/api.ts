@@ -1,11 +1,7 @@
 import type { LoginFormData, LoginResponse } from "./types";
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 function splitLogin(login: string): { email?: string; phone?: string } {

@@ -1,3 +1,5 @@
+import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
+
 export interface ChatListItem {
   id: number;
   order_id: number;
@@ -43,11 +45,7 @@ export interface ChatDetailResponse {
 
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 async function readError(response: Response, fallback: string): Promise<never> {
@@ -63,7 +61,7 @@ async function readError(response: Response, fallback: string): Promise<never> {
 }
 
 export async function fetchChats(): Promise<ChatListResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/chats/`, {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -78,7 +76,7 @@ export async function fetchChats(): Promise<ChatListResponse> {
 }
 
 export async function fetchChatDetail(chatId: number): Promise<ChatDetailResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}`, {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -93,7 +91,7 @@ export async function fetchChatDetail(chatId: number): Promise<ChatDetailRespons
 }
 
 export async function openChatByOrder(orderId: number): Promise<ChatDetailResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/chats/open`, {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/open`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -108,7 +106,7 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailRespon
 }
 
 export async function sendChatMessage(chatId: number, text: string): Promise<ChatMessage> {
-  const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}/messages`, {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatId}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -129,7 +127,6 @@ export function buildChatWebSocketUrl(chatId: number): string {
     return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatId}`;
   }
 
-  const apiBase = getApiBaseUrl();
-  const wsBase = apiBase.replace(/^http/i, "ws").replace(/\/$/, "");
-  return `${wsBase}/ws/chats/${chatId}`;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${window.location.host}/api/ws/chats/${chatId}`;
 }

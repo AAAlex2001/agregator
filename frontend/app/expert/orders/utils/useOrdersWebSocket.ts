@@ -9,12 +9,13 @@ interface UseOrdersWebSocketParams {
 
 function buildWsUrl(): string {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBase) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
+  if (apiBase) {
+    const wsBase = apiBase.replace(/^http/, "ws");
+    return `${wsBase}/ws/orders`;
   }
 
-  const wsBase = apiBase.replace(/^http/, "ws");
-  return `${wsBase}/ws/orders`;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${window.location.host}/api/ws/orders`;
 }
 
 export function useOrdersWebSocket({

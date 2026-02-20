@@ -52,13 +52,11 @@ const ProfileMenu = ({
 
   const handleLogout = async () => {
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (apiBaseUrl) {
-        await fetch(`${apiBaseUrl}/login/logout`, {
-          method: "POST",
-          credentials: "include",
-        });
-      }
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+      await fetch(`${apiBaseUrl}/login/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
     } catch {
     }
     localStorage.removeItem("access_token");
@@ -116,7 +114,7 @@ const ProfileMenu = ({
   return (
     <>
       <button
-        className={`${styles.profileButton} ${triggerClassName ?? ""}`}
+        className={`${styles.profileButton} ${isOpen ? styles.profileButtonOpen : ""} ${triggerClassName ?? ""}`}
         onClick={toggleMenu}
         aria-label={triggerAriaLabel ?? "Открыть профиль"}
         aria-expanded={isOpen}

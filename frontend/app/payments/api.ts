@@ -1,9 +1,7 @@
+import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
+
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 export interface CreatePaymentResponse {
@@ -35,7 +33,7 @@ export async function createPayment(
 ): Promise<CreatePaymentResponse> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/payments/create`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/payments/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -56,7 +54,7 @@ export async function createPayment(
 export async function fetchBalance(): Promise<number> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/payments/balance`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/payments/balance`, {
     credentials: "include",
   });
 
@@ -71,7 +69,7 @@ export async function fetchBalance(): Promise<number> {
 export async function fetchPaymentHistory(): Promise<PaymentItem[]> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/payments/history`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/payments/history`, {
     credentials: "include",
   });
 
@@ -95,7 +93,7 @@ export async function withdrawFunds(
 ): Promise<WithdrawResponse> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/payments/withdraw`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/payments/withdraw`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -116,7 +114,7 @@ export async function withdrawFunds(
 export async function refundPayment(paymentId: number): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/payments/refund`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/payments/refund`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "./burgerMenu.module.scss";
 
 const BurgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isCustomerCabinet = pathname.startsWith("/customer");
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -95,6 +98,11 @@ const BurgerMenu = () => {
               FAQ
             </Link>
             <div className={styles.menuActions}>
+              {isCustomerCabinet && (
+                <Link href="/settings?section=finance" className={styles.menuTopUp} onClick={closeMenu}>
+                  Пополнить
+                </Link>
+              )}
               <Link href="/register" className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
             </div>
           </nav>

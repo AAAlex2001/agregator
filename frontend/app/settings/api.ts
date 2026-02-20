@@ -1,3 +1,5 @@
+import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
+
 export interface UserProfile {
   id: number;
   email: string | null;
@@ -11,17 +13,13 @@ export interface UserProfile {
 }
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 export async function fetchProfile(): Promise<UserProfile> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/settings/profile`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/settings/profile`, {
     credentials: "include",
   });
 
@@ -40,7 +38,7 @@ export async function updateProfile(data: {
 }): Promise<UserProfile> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/settings/profile`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/settings/profile`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -61,7 +59,7 @@ export async function changePassword(
 ): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/settings/password`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/settings/password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

@@ -1,11 +1,7 @@
 import type { RegistrationFormData, RegistrationResponse } from "./types";
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 export async function registerUser(data: RegistrationFormData): Promise<RegistrationResponse> {

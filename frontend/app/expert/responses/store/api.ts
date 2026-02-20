@@ -5,13 +5,10 @@ import type {
   ResponsesApiList,
 } from "./types";
 import { stableMultipartFetch } from "@/app/utils/stableMultipartFetch";
+import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50): Promise<ResponsesApiList> {
@@ -24,7 +21,7 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
 
   query.set("tab", tab);
 
-  const response = await fetch(`${apiBaseUrl}/responses?${query.toString()}`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/responses?${query.toString()}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -86,7 +83,7 @@ export async function updateResponseStatus(
 ): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/responses/${responseId}/status?new_status=${newStatus}`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/responses/${responseId}/status?new_status=${newStatus}`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -146,7 +143,7 @@ export async function updateExistingResponse(
 export async function withdrawResponse(responseId: number): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
 
-  const response = await fetch(`${apiBaseUrl}/responses/${responseId}`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/responses/${responseId}`, {
     method: "DELETE",
     credentials: "include",
   });

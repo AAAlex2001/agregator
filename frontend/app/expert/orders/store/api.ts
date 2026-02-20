@@ -1,11 +1,8 @@
 import type { OrdersListResponse } from "./types";
+import { fetchWithSessionRefresh } from "@/app/utils/sessionAuth";
 
 function getApiBaseUrl(): string {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_URL is not set");
-  }
-  return apiBaseUrl;
+  return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
 export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersListResponse> {
@@ -16,7 +13,7 @@ export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersListRespo
     limit: String(limit),
   });
 
-  const response = await fetch(`${apiBaseUrl}/orders/?${query.toString()}`, {
+  const response = await fetchWithSessionRefresh(`${apiBaseUrl}/orders/?${query.toString()}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
