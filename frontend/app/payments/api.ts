@@ -6,19 +6,6 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
-function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) {
-      const parsed = Number(stored);
-      if (Number.isInteger(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-  }
-  return 1;
-}
-
 export interface CreatePaymentResponse {
   payment_id: number;
   confirmation_url: string;
@@ -47,14 +34,11 @@ export async function createPayment(
   returnUrl: string,
 ): Promise<CreatePaymentResponse> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/payments/create`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(userId),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       amount: amountKopecks,
       return_url: returnUrl,
@@ -71,10 +55,9 @@ export async function createPayment(
 
 export async function fetchBalance(): Promise<number> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/payments/balance`, {
-    headers: { "X-User-Id": String(userId) },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -87,10 +70,9 @@ export async function fetchBalance(): Promise<number> {
 
 export async function fetchPaymentHistory(): Promise<PaymentItem[]> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/payments/history`, {
-    headers: { "X-User-Id": String(userId) },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -112,14 +94,11 @@ export async function withdrawFunds(
   cardNumber: string,
 ): Promise<WithdrawResponse> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/payments/withdraw`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(userId),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       amount: amountKopecks,
       card_number: cardNumber,
@@ -136,14 +115,11 @@ export async function withdrawFunds(
 
 export async function refundPayment(paymentId: number): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/payments/refund`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(userId),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ payment_id: paymentId }),
   });
 

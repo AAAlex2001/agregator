@@ -3,6 +3,7 @@ import { createCustomerOrder } from "../store/api";
 import { loadCustomerOrders } from "../store/actions";
 import { useCustomerOrdersState } from "../store/state";
 import { clamp, getNormalizedWheelDelta } from "@/app/expert/orders/utils/ordersPage.utils";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 
 function parseBudgetToKopecks(value: string): number {
   const cleaned = value.replace(/[^\d.,]/g, "").replace(",", ".");
@@ -11,18 +12,10 @@ function parseBudgetToKopecks(value: string): number {
   return Math.round(parsed * 100);
 }
 
-function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) return Number(stored);
-  }
-  const fallback = process.env.NEXT_PUBLIC_EXPERT_ID;
-  return fallback ? Number(fallback) : 0;
-}
-
 const PAGE_LIMIT = 50;
 
 export function useCustomerOrdersPage() {
+  const { profile } = useUserProfile();
   const {
     items,
     total,
@@ -103,7 +96,7 @@ export function useCustomerOrdersPage() {
         company: data.company,
         typical_names: data.typicalNames,
         comment: data.comment,
-        customer_id: getCurrentUserId(),
+        customer_id: profile?.id ?? 0,
         sum_amount: sumAmount,
         deadline: data.deadline,
         badges: data.selectedBadges,

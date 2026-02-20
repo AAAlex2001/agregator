@@ -14,32 +14,6 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
-function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) {
-      const parsed = Number(stored);
-      if (Number.isInteger(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-  }
-
-  const fallback = Number(process.env.NEXT_PUBLIC_EXPERT_ID ?? "1");
-  if (Number.isInteger(fallback) && fallback > 0) {
-    return fallback;
-  }
-
-  throw new Error("Не удалось определить пользователя");
-}
-
-function getHeaders(): HeadersInit {
-  return {
-    "Content-Type": "application/json",
-    "X-User-Id": String(getCurrentUserId()),
-  };
-}
-
 export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50): Promise<ResponsesApiList> {
   const apiBaseUrl = getApiBaseUrl();
 
@@ -52,7 +26,8 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
 
   const response = await fetch(`${apiBaseUrl}/responses?${query.toString()}`, {
     method: "GET",
-    headers: getHeaders(),
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -88,9 +63,6 @@ export async function createResponseForOrder(orderId: number, payload: CreateRes
   const response = await stableMultipartFetch({
     input: `${apiBaseUrl}/orders/${orderId}/responses`,
     method: "POST",
-    headers: {
-      "X-User-Id": String(getCurrentUserId()),
-    },
     files: rawFiles,
     buildBody: buildFormData,
   });
@@ -116,9 +88,7 @@ export async function updateResponseStatus(
 
   const response = await fetch(`${apiBaseUrl}/responses/${responseId}/status?new_status=${newStatus}`, {
     method: "PATCH",
-    headers: {
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -156,9 +126,6 @@ export async function updateExistingResponse(
   const response = await stableMultipartFetch({
     input: `${apiBaseUrl}/responses/${responseId}`,
     method: "PUT",
-    headers: {
-      "X-User-Id": String(getCurrentUserId()),
-    },
     files: rawFiles,
     buildBody: buildFormData,
   });
@@ -181,9 +148,7 @@ export async function withdrawResponse(responseId: number): Promise<void> {
 
   const response = await fetch(`${apiBaseUrl}/responses/${responseId}`, {
     method: "DELETE",
-    headers: {
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    credentials: "include",
   });
 
   if (!response.ok) {

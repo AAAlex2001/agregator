@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { BalanceTopUpModal, BalanceWithdrawModal, Button, Loader } from "@/app/components";
+import { NotificationProvider, useNotifications } from "@/app/components/Notifications";
 import Title from "@/app/components/Typography/Title";
 import Subtitle from "@/app/components/Typography/Subtitle";
 import { Input } from "@/app/components/";
@@ -35,10 +36,9 @@ function SettingsPageContent() {
   const [withdrawCard, setWithdrawCard] = useState("");
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
-  const [userRole, setUserRole] = useState<string>("EXPERT");
+  const { showSuccess, showError } = useNotifications();
+  const [userRole, setUserRole] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     void loadProfile();
@@ -54,19 +54,19 @@ function SettingsPageContent() {
       setPhone(data.phone || "");
       setEmail(data.email || "");
 
-      const role = typeof window !== "undefined" ? window.localStorage.getItem("user_role") : null;
-      setUserRole(role || "EXPERT");
+      const role = data.role ?? "EXPERT";
+      setUserRole(role);
 
       if (role === "EXPERT") {
         try {
           const history = await fetchPaymentHistory();
           setPayments(history);
         } catch {
-          // ignore
+          // игнорируем
         }
       }
     } catch {
-      setSaveError("Не удалось загрузить профиль");
+      showError("Не удалось загрузить профиль");
     } finally {
       setIsLoadingProfile(false);
     }
@@ -85,28 +85,35 @@ function SettingsPageContent() {
   };
 
   const formatTransactionText = (item: PaymentItem): string => {
-    const rub = formatBalance(item.amount);
-    const isWithdrawal = item.payment_type === "WITHDRAWAL";
+    const rub = Math.floor(item.amount / 100).toLocaleString("ru-RU");
 
-    if (item.status === "PENDING" && isWithdrawal) return `Вывод ${rub} (в обработке)`;
-    if (item.status === "PENDING") return `Ожидание ${rub}`;
-    if (item.status === "SUCCEEDED" && isWithdrawal) return `Вывод ${rub}`;
-    if (item.status === "SUCCEEDED") return `Оплата ${rub}`;
-    if (item.status === "REFUNDED") return `Возврат ${rub}`;
-    if (item.status === "CANCELED") return `Отмена ${rub}`;
-    return `${item.description}`;
+    if (item.payment_type === "DEPOSIT") {
+      if (item.status === "SUCCEEDED") return `Пополнение баланса +${rub} ₽`;
+      if (item.status === "CANCELED") return `Пополнение баланса ${rub} ₽ (отменено)`;
+      return `Пополнение баланса ${rub} ₽ (в обработке)`;
+    }
+    if (item.payment_type === "COMMISSION") {
+      if (item.status === "SUCCEEDED") return `Комиссия за проект −${rub} ₽`;
+      if (item.status === "CANCELED") return `Комиссия за проект ${rub} ₽ (отменено)`;
+      return `Комиссия за проект −${rub} ₽ (в обработке)`;
+    }
+    if (item.payment_type === "WITHDRAWAL") {
+      if (item.status === "SUCCEEDED") return `Вывод средств −${rub} ₽`;
+      if (item.status === "CANCELED") return `Вывод средств ${rub} ₽ (отменено)`;
+      return `Вывод средств −${rub} ₽ (в обработке)`;
+    }
+    if (item.status === "REFUNDED") return `Возврат средств +${rub} ₽`;
+    return `Операция ${rub} ₽`;
   };
 
   const handleDeposit = async () => {
     if (isDepositing) return;
     const rub = parseFloat(topUpAmount.replace(/\s/g, "").replace(",", "."));
     if (!rub || rub <= 0) {
-      setSaveError("Введите корректную сумму");
+      showError("Введите корректную сумму");
       return;
     }
     setIsDepositing(true);
-    setSaveMessage(null);
-    setSaveError(null);
     try {
       const kopecks = Math.round(rub * 100);
       const returnUrl = `${window.location.origin}/settings?section=finance`;
@@ -115,7 +122,7 @@ function SettingsPageContent() {
       window.location.href = confirmation_url;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка создания платежа";
-      setSaveError(message);
+      showError(message);
     } finally {
       setIsDepositing(false);
     }
@@ -125,17 +132,15 @@ function SettingsPageContent() {
     if (isWithdrawing) return;
     const rub = parseFloat(withdrawAmount.replace(/\s/g, "").replace(",", "."));
     if (!rub || rub <= 0) {
-      setSaveError("Введите корректную сумму");
+      showError("Введите корректную сумму");
       return;
     }
     const card = withdrawCard.replace(/\s/g, "");
     if (!card || card.length < 13 || card.length > 19) {
-      setSaveError("Введите корректный номер карты");
+      showError("Введите корректный номер карты");
       return;
     }
     setIsWithdrawing(true);
-    setSaveMessage(null);
-    setSaveError(null);
     try {
       const kopecks = Math.round(rub * 100);
       const result = await withdrawFunds(kopecks, card);
@@ -143,12 +148,12 @@ function SettingsPageContent() {
       setWithdrawAmount("");
       setWithdrawCard("");
       setProfile((prev) => prev ? { ...prev, balance: result.new_balance } : prev);
-      setSaveMessage("Заявка на вывод создана");
+      showSuccess("Заявка на вывод создана");
       const history = await fetchPaymentHistory();
       setPayments(history);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка вывода средств";
-      setSaveError(message);
+      showError(message);
     } finally {
       setIsWithdrawing(false);
     }
@@ -157,8 +162,6 @@ function SettingsPageContent() {
   const handleSave = async () => {
     if (isSaving) return;
     setIsSaving(true);
-    setSaveMessage(null);
-    setSaveError(null);
 
     try {
       if (activeSection === "personal") {
@@ -172,12 +175,12 @@ function SettingsPageContent() {
 
         if (password) {
           if (password !== repeatPassword) {
-            setSaveError("Пароли не совпадают");
+            showError("Пароли не совпадают");
             setIsSaving(false);
             return;
           }
           if (password.length < 8) {
-            setSaveError("Пароль должен быть не менее 8 символов");
+            showError("Пароль должен быть не менее 8 символов");
             setIsSaving(false);
             return;
           }
@@ -186,11 +189,11 @@ function SettingsPageContent() {
           setRepeatPassword("");
         }
 
-        setSaveMessage("Данные сохранены");
+        showSuccess("Данные сохранены");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка сохранения";
-      setSaveError(message);
+      showError(message);
     } finally {
       setIsSaving(false);
     }
@@ -355,9 +358,6 @@ function SettingsPageContent() {
           )}
         </div>
 
-        {saveMessage && <p className={styles.successMessage}>{saveMessage}</p>}
-        {saveError && <p className={styles.errorMessage}>{saveError}</p>}
-
         {activeSection === "personal" && (
           <div className={styles.saveButtonWrapper}>
             <Button
@@ -400,19 +400,21 @@ function SettingsPageContent() {
 
 export default function SettingsPage() {
   return (
-    <React.Suspense
-      fallback={
-        <>
-          <AuthHeader />
-          <div className={styles.wrapper}>
-            <div className={styles.loaderWrapper}>
-              <Loader label="" size="lg" />
+    <NotificationProvider>
+      <React.Suspense
+        fallback={
+          <>
+            <AuthHeader />
+            <div className={styles.wrapper}>
+              <div className={styles.loaderWrapper}>
+                <Loader label="" size="lg" />
+              </div>
             </div>
-          </div>
-        </>
-      }
-    >
-      <SettingsPageContent />
-    </React.Suspense>
+          </>
+        }
+      >
+        <SettingsPageContent />
+      </React.Suspense>
+    </NotificationProvider>
   );
 }

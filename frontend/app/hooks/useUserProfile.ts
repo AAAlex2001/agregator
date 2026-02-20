@@ -11,6 +11,7 @@ interface UseUserProfileResult {
   balance: number;
   rating: number;
   reviewCount: number;
+  role: string;
   reload: () => void;
 }
 
@@ -40,6 +41,7 @@ export function useUserProfile(): UseUserProfileResult {
   const balance = profile?.balance ?? 0;
   const rating = profile?.rating ?? 0;
   const reviewCount = profile?.review_count ?? 0;
+  const role = profile?.role ?? "EXPERT";
 
   return {
     profile,
@@ -48,6 +50,7 @@ export function useUserProfile(): UseUserProfileResult {
     balance,
     rating,
     reviewCount,
+    role,
     reload: () => void load(),
   };
 }

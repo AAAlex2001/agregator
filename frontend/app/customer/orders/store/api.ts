@@ -12,15 +12,6 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
-function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) return Number(stored);
-  }
-  const fallback = process.env.NEXT_PUBLIC_EXPERT_ID;
-  return fallback ? Number(fallback) : 0;
-}
-
 export async function fetchCustomerOrders(
   skip = 0,
   limit = 50,
@@ -33,10 +24,8 @@ export async function fetchCustomerOrders(
 
   const response = await fetch(`${apiBaseUrl}/orders/?${query.toString()}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -51,7 +40,6 @@ export async function createCustomerOrder(
   payload: CreateOrderPayload,
 ): Promise<{ id: number }> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
   const rawFiles = payload.files ?? [];
 
   const buildFormData = (files: File[]) => {
@@ -73,7 +61,6 @@ export async function createCustomerOrder(
   const response = await stableMultipartFetch({
     input: `${apiBaseUrl}/orders/create-with-files`,
     method: "POST",
-    headers: { "X-User-Id": String(userId) },
     files: rawFiles,
     buildBody: buildFormData,
   });

@@ -13,6 +13,7 @@ import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
 import { ArrowIcon } from "@/app/icons";
 import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import ExpertResponseCard from "./components/ExpertResponseCard";
 import { loadResponses } from "./store/actions";
 import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
@@ -54,7 +55,8 @@ export default function ResponsesPage() {
   const [editingResponse, setEditingResponse] = useState<ResponseCardViewModel | null>(null);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
 
-  const isExpert = typeof window !== "undefined" && window.localStorage.getItem("user_role") === "EXPERT";
+  const { role } = useUserProfile();
+  const isExpert = role === "EXPERT";
 
   const fetchData = async () => {
     setLoading(true);

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -23,25 +22,6 @@ interface AuthHeaderProps {
   balance?: string;
 }
 
-function useDisplayRole(roleProp?: string): string {
-  const [displayRole, setDisplayRole] = useState(roleProp ?? "Эксперт");
-
-  useEffect(() => {
-    if (roleProp) {
-      setDisplayRole(roleProp);
-      return;
-    }
-    const stored = window.localStorage.getItem("user_role");
-    if (stored === "CUSTOMER") {
-      setDisplayRole("Заказчик");
-    } else {
-      setDisplayRole("Эксперт");
-    }
-  }, [roleProp]);
-
-  return displayRole;
-}
-
 const AuthHeader = ({
   name: nameProp,
   rating: ratingProp,
@@ -49,7 +29,7 @@ const AuthHeader = ({
   role: roleProp,
   balance: balanceProp,
 }: AuthHeaderProps) => {
-  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount } = useUserProfile();
+  const { displayName, balance: profileBalance, rating: profileRating, reviewCount: profileReviewCount, role: profileRole } = useUserProfile();
 
   const name = nameProp ?? displayName;
   const rating = ratingProp ?? profileRating;
@@ -57,7 +37,8 @@ const AuthHeader = ({
   const balanceKopecks = profileBalance;
   const balance = balanceProp ?? Math.floor(balanceKopecks / 100).toLocaleString("ru-RU");
 
-  const role = useDisplayRole(roleProp);
+  const rawRole = roleProp ?? profileRole;
+  const role = rawRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
   const pathname = usePathname();
   const router = useRouter();
   const iconMotion = {

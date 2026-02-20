@@ -15,6 +15,8 @@ from models.password_reset_code import PasswordResetCode
 from models.order import Order, OrderBadge
 from models.response import OrderResponse
 from models.chat import Chat, ChatMessage
+from models.session import Session
+from models.payment import Payment
 
 config = context.config
 

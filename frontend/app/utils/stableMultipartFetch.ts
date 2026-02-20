@@ -30,6 +30,7 @@ export async function stableMultipartFetch(options: StableMultipartFetchOptions)
     return await fetch(input, {
       method,
       headers,
+      credentials: "include",
       body: buildBody(files),
     });
   } catch (error) {
@@ -42,6 +43,7 @@ export async function stableMultipartFetch(options: StableMultipartFetchOptions)
     return await fetch(input, {
       method,
       headers,
+      credentials: "include",
       body: buildBody(stableFiles),
     });
   }

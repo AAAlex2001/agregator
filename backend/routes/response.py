@@ -1,9 +1,10 @@
 from datetime import date as date_type
 
-from fastapi import APIRouter, Depends, File, Form, Header, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.auth import get_current_user
 from models.response import ResponseStatus
 from models.user import UserRole
 from schemas.response import (
@@ -97,7 +98,7 @@ async def create_response_for_order(
     proposed_deadline: str = Form(...),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     data = ResponseCreate(
         comment=comment,
@@ -105,12 +106,12 @@ async def create_response_for_order(
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
     )
     service = ResponseService(db)
-    created = await service.create_response(order_id=order_id, expert_id=x_user_id, data=data)
+    created = await service.create_response(order_id=order_id, expert_id=user_id, data=data)
 
     if files and files[0].filename:
         created = await service.upload_response_files(
             response_id=created.id,
-            expert_id=x_user_id,
+            expert_id=user_id,
             files=files,
         )
 
@@ -123,20 +124,20 @@ async def get_my_responses(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     service = ResponseService(db)
-    actor = await service.get_actor(x_user_id)
+    actor = await service.get_actor(user_id)
     if actor.role == UserRole.CUSTOMER:
         items, total, counters = await service.list_customer_responses(
-            customer_id=x_user_id,
+            customer_id=user_id,
             tab=tab,
             skip=skip,
             limit=limit,
         )
     else:
         items, total, counters = await service.list_responses(
-            expert_id=x_user_id,
+            expert_id=user_id,
             tab=tab,
             skip=skip,
             limit=limit,
@@ -153,12 +154,12 @@ async def update_response_status(
     response_id: int,
     new_status: ResponseStatus,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     service = ResponseService(db)
     updated = await service.update_response_status(
         response_id=response_id,
-        actor_id=x_user_id,
+        actor_id=user_id,
         new_status=new_status,
     )
     return to_item(updated)
@@ -173,7 +174,7 @@ async def update_response(
     keep_files: str = Form(default="[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     import json as _json
     try:
@@ -188,13 +189,13 @@ async def update_response(
     )
     service = ResponseService(db)
     updated = await service.update_response(
-        response_id=response_id, expert_id=x_user_id, data=data,
+        response_id=response_id, expert_id=user_id, data=data,
         keep_files=keep_files_list,
     )
 
     if files and files[0].filename:
         updated = await service.upload_response_files(
-            response_id=updated.id, expert_id=x_user_id, files=files,
+            response_id=updated.id, expert_id=user_id, files=files,
         )
 
     return to_item(updated)
@@ -204,8 +205,8 @@ async def update_response(
 async def withdraw_response(
     response_id: int,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     service = ResponseService(db)
-    await service.withdraw_response(response_id=response_id, expert_id=x_user_id)
+    await service.withdraw_response(response_id=response_id, expert_id=user_id)
     return {"detail": "Отклик отозван"}

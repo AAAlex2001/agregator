@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { MenuOrdersIcon, MenuResponsesIcon, ReviewIcon } from "@/app/icons";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import styles from "./cabinetMenuTabs.module.scss";
 
 export type CabinetMenuKey = "orders" | "responses" | "reviews";
@@ -16,24 +17,19 @@ function renderIcon(key: CabinetMenuKey) {
 
 export default function CabinetMenuTabs() {
   const pathname = usePathname();
-  const [storedRole, setStoredRole] = useState<"CUSTOMER" | "EXPERT" | null>(null);
-
-  useEffect(() => {
-    const role = window.localStorage.getItem("user_role");
-    if (role === "CUSTOMER" || role === "EXPERT") {
-      setStoredRole(role);
-    }
-  }, []);
+  const { profile } = useUserProfile();
 
   const isCabinetArea = pathname.startsWith("/customer") || pathname.startsWith("/expert") || pathname.startsWith("/reviews") || pathname.startsWith("/settings");
+  const isChatWindow = /\/(customer|expert)\/chat\/\d+/.test(pathname);
 
-  const resolvedRole: "CUSTOMER" | "EXPERT" = useMemo(() => {
+  const resolvedRole: "CUSTOMER" | "EXPERT" | null = useMemo(() => {
     if (pathname.startsWith("/expert")) return "EXPERT";
     if (pathname.startsWith("/customer")) return "CUSTOMER";
-    return storedRole ?? "CUSTOMER";
-  }, [pathname, storedRole]);
+    if (profile?.role === "CUSTOMER" || profile?.role === "EXPERT") return profile.role as "CUSTOMER" | "EXPERT";
+    return null;
+  }, [pathname, profile]);
 
-  if (!isCabinetArea) {
+  if (!isCabinetArea || isChatWindow || resolvedRole === null) {
     return null;
   }
 
@@ -44,7 +40,7 @@ export default function CabinetMenuTabs() {
       : "orders";
 
   const items = [
-    { key: "orders" as const, label: "Все заказы", href: resolvedRole === "EXPERT" ? "/expert/orders" : "/customer/orders" },
+    { key: "orders" as const, label: resolvedRole === "EXPERT" ? "Все заказы" : "Мои заказы", href: resolvedRole === "EXPERT" ? "/expert/orders" : "/customer/orders" },
     { key: "responses" as const, label: "Отклики", href: resolvedRole === "EXPERT" ? "/expert/responses" : "/customer/responses" },
     { key: "reviews" as const, label: "Отзывы", href: "/reviews" },
   ];

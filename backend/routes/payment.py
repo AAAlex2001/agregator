@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.auth import get_current_user
 from schemas.payment import (
     BalanceResponse,
     CreatePaymentRequest,
@@ -20,7 +21,7 @@ router = APIRouter(prefix="/payments", tags=["payments"])
 async def create_payment(
     data: CreatePaymentRequest,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     """Создание платежа на пополнение баланса."""
     if data.amount <= 0:
@@ -32,7 +33,7 @@ async def create_payment(
     service = PaymentService(db)
     try:
         payment, confirmation_url = await service.create_deposit(
-            x_user_id,
+            user_id,
             data.amount,
             data.return_url,
         )
@@ -71,12 +72,12 @@ async def payment_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 @router.get("/balance", response_model=BalanceResponse)
 async def get_balance(
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     """Получение баланса пользователя."""
     service = PaymentService(db)
     try:
-        balance = await service.get_balance(x_user_id)
+        balance = await service.get_balance(user_id)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -88,11 +89,11 @@ async def get_balance(
 @router.get("/history", response_model=PaymentListResponse)
 async def get_payment_history(
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     """История платежей пользователя."""
     service = PaymentService(db)
-    payments = await service.list_payments(x_user_id)
+    payments = await service.list_payments(user_id)
 
     items = [
         PaymentItem(
@@ -113,12 +114,12 @@ async def get_payment_history(
 async def refund_payment(
     data: RefundRequest,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     """Возврат платежа."""
     service = PaymentService(db)
     try:
-        payment = await service.create_refund(data.payment_id, x_user_id)
+        payment = await service.create_refund(data.payment_id, user_id)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -131,7 +132,7 @@ async def refund_payment(
 async def withdraw(
     data: WithdrawRequest,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     """Вывод средств с баланса."""
     if data.amount <= 0:
@@ -149,7 +150,7 @@ async def withdraw(
 
     service = PaymentService(db)
     try:
-        payment = await service.create_withdrawal(x_user_id, data.amount, card)
+        payment = await service.create_withdrawal(user_id, data.amount, card)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -159,5 +160,5 @@ async def withdraw(
     return {
         "detail": "Заявка на вывод создана",
         "payment_id": payment.id,
-        "new_balance": (await service.get_balance(x_user_id)),
+        "new_balance": (await service.get_balance(user_id)),
     }

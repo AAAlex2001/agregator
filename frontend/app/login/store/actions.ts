@@ -17,11 +17,6 @@ export async function handleLogin(
 
     const user = await loginUser(data);
 
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("user_id", String(user.id));
-      window.localStorage.setItem("user_role", user.role);
-    }
-
     if (onSuccess) {
       onSuccess(user.role);
     }

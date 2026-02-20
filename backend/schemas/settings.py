@@ -32,7 +32,6 @@ class ChangePasswordRequest(BaseModel):
 
 
 class UserSettingsResponse(BaseModel):
-    """Ответ с данными пользователя для настроек"""
     id: int
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
@@ -41,6 +40,7 @@ class UserSettingsResponse(BaseModel):
     balance: int = 0
     rating: Optional[float] = None
     review_count: int = 0
+    role: str
 
     class Config:
         from_attributes = True

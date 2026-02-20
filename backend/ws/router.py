@@ -3,6 +3,7 @@ from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
 from models.chat import Chat
+from models.session import Session
 from ws.manager import chat_manager, order_manager
 
 router = APIRouter(prefix="/ws")
@@ -21,8 +22,22 @@ async def orders_websocket(websocket: WebSocket) -> None:
 
 
 @router.websocket("/chats/{chat_id}")
-async def chat_websocket(websocket: WebSocket, chat_id: int, user_id: int) -> None:
+async def chat_websocket(websocket: WebSocket, chat_id: int) -> None:
+    session_id = websocket.cookies.get("session_id")
+    if not session_id:
+        await websocket.close(code=4001)
+        return
+
     async with AsyncSessionLocal() as db:
+        sess = await db.execute(
+            select(Session).where(Session.session_id == session_id)
+        )
+        session = sess.scalars().first()
+        if not session:
+            await websocket.close(code=4001)
+            return
+        user_id = session.user_id
+
         row = await db.execute(
             select(Chat.id).where(
                 Chat.id == chat_id,

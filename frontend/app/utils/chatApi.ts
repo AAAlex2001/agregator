@@ -50,25 +50,6 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
-export function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) {
-      const parsed = Number(stored);
-      if (Number.isInteger(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-  }
-
-  const fallback = Number(process.env.NEXT_PUBLIC_EXPERT_ID ?? "1");
-  if (Number.isInteger(fallback) && fallback > 0) {
-    return fallback;
-  }
-
-  throw new Error("Не удалось определить пользователя");
-}
-
 async function readError(response: Response, fallback: string): Promise<never> {
   let message = fallback;
   try {
@@ -84,10 +65,8 @@ async function readError(response: Response, fallback: string): Promise<never> {
 export async function fetchChats(): Promise<ChatListResponse> {
   const response = await fetch(`${getApiBaseUrl()}/chats/`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -101,10 +80,8 @@ export async function fetchChats(): Promise<ChatListResponse> {
 export async function fetchChatDetail(chatId: number): Promise<ChatDetailResponse> {
   const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -118,10 +95,8 @@ export async function fetchChatDetail(chatId: number): Promise<ChatDetailRespons
 export async function openChatByOrder(orderId: number): Promise<ChatDetailResponse> {
   const response = await fetch(`${getApiBaseUrl()}/chats/open`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ order_id: orderId }),
   });
 
@@ -135,10 +110,8 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailRespon
 export async function sendChatMessage(chatId: number, text: string): Promise<ChatMessage> {
   const response = await fetch(`${getApiBaseUrl()}/chats/${chatId}/messages`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(getCurrentUserId()),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ text }),
   });
 
@@ -151,13 +124,12 @@ export async function sendChatMessage(chatId: number, text: string): Promise<Cha
 
 export function buildChatWebSocketUrl(chatId: number): string {
   const explicitWsBase = process.env.NEXT_PUBLIC_WS_URL;
-  const userId = getCurrentUserId();
 
   if (explicitWsBase) {
-    return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatId}?user_id=${userId}`;
+    return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatId}`;
   }
 
   const apiBase = getApiBaseUrl();
   const wsBase = apiBase.replace(/^http/i, "ws").replace(/\/$/, "");
-  return `${wsBase}/ws/chats/${chatId}?user_id=${userId}`;
+  return `${wsBase}/ws/chats/${chatId}`;
 }

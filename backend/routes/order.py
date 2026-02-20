@@ -2,10 +2,11 @@ import json
 from datetime import date as date_type
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, Header, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.auth import get_current_user
 from models.order import OrderStatus
 from schemas.order import (
     BadgeSchema,
@@ -25,10 +26,10 @@ async def get_orders(
     limit: int = Query(20, ge=1, le=100),
     status: Optional[OrderStatus] = None,
     db: AsyncSession = Depends(get_db),
-    x_user_id: Optional[int] = Header(None, alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
     service = OrderService(db)
-    orders, total = await service.get_orders(skip, limit, status, x_user_id)
+    orders, total = await service.get_orders(skip, limit, status, user_id)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
         total=total,

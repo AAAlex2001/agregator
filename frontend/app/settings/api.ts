@@ -7,6 +7,7 @@ export interface UserProfile {
   balance: number;
   rating: number | null;
   review_count: number;
+  role: string;
 }
 
 function getApiBaseUrl(): string {
@@ -17,25 +18,11 @@ function getApiBaseUrl(): string {
   return apiBaseUrl;
 }
 
-function getCurrentUserId(): number {
-  if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("user_id");
-    if (stored) {
-      const parsed = Number(stored);
-      if (Number.isInteger(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-  }
-  return 1;
-}
-
 export async function fetchProfile(): Promise<UserProfile> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/settings/profile`, {
-    headers: { "X-User-Id": String(userId) },
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -52,14 +39,11 @@ export async function updateProfile(data: {
   email?: string;
 }): Promise<UserProfile> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/settings/profile`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(userId),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
@@ -76,14 +60,11 @@ export async function changePassword(
   newPasswordConfirm: string,
 ): Promise<void> {
   const apiBaseUrl = getApiBaseUrl();
-  const userId = getCurrentUserId();
 
   const response = await fetch(`${apiBaseUrl}/settings/password`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-User-Id": String(userId),
-    },
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       new_password: newPassword,
       new_password_confirm: newPasswordConfirm,

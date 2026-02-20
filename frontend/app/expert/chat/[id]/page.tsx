@@ -11,12 +11,12 @@ import {
   buildChatWebSocketUrl,
   fetchChatDetail,
   fetchChats,
-  getCurrentUserId,
   sendChatMessage,
   type ChatDetailResponse,
   type ChatListItem,
   type ChatMessage,
 } from "@/app/utils/chatApi";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import styles from "./chatWindow.module.scss";
 
 const ROUTE_BASE = "/expert/chat";
@@ -68,7 +68,8 @@ export default function ChatWindowPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const chatId = Number(id);
-  const currentUserId = getCurrentUserId();
+  const { profile } = useUserProfile();
+  const currentUserId = profile?.id ?? 0;
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");

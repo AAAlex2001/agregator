@@ -26,6 +26,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
   const response = await fetch(`${apiBaseUrl}/login/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify(payload),
   });
 

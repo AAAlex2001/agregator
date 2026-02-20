@@ -24,25 +24,6 @@ interface ProfileMenuProps {
   triggerAriaLabel?: string;
 }
 
-function useDisplayRole(roleProp?: string): string {
-  const [displayRole, setDisplayRole] = useState(roleProp ?? "Эксперт");
-
-  useEffect(() => {
-    if (roleProp) {
-      setDisplayRole(roleProp);
-      return;
-    }
-    const stored = window.localStorage.getItem("user_role");
-    if (stored === "CUSTOMER") {
-      setDisplayRole("Заказчик");
-    } else {
-      setDisplayRole("Эксперт");
-    }
-  }, [roleProp]);
-
-  return displayRole;
-}
-
 const ProfileMenu = ({
   name,
   rating,
@@ -53,7 +34,7 @@ const ProfileMenu = ({
   triggerClassName,
   triggerAriaLabel,
 }: ProfileMenuProps) => {
-  const role = useDisplayRole(roleProp);
+  const role = roleProp ?? "Эксперт";
   const [isOpen, setIsOpen] = useState(false);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const [isDepositing, setIsDepositing] = useState(false);
@@ -69,12 +50,20 @@ const ProfileMenu = ({
     setIsOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiBaseUrl) {
+        await fetch(`${apiBaseUrl}/login/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+      }
+    } catch {
+    }
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_role");
     closeMenu();
     router.push("/login");
   };

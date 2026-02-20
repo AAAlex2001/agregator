@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from passlib.context import CryptContext
 
 from database.database import get_db
+from dependencies.auth import get_current_user
 from models.user import User
 from schemas.settings import (
     ChangePasswordRequest,
@@ -18,9 +19,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 @router.get("/settings/profile", response_model=UserSettingsResponse)
 async def get_profile(
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
-    result = await db.execute(select(User).where(User.id == x_user_id))
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
     if not user:
         raise HTTPException(
@@ -36,6 +37,7 @@ async def get_profile(
         balance=user.balance or 0,
         rating=float(user.rating) if user.rating is not None else None,
         review_count=user.review_count or 0,
+        role=user.role.value,
     )
 
 
@@ -43,9 +45,9 @@ async def get_profile(
 async def update_profile(
     data: UpdatePersonalDataRequest,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
-    result = await db.execute(select(User).where(User.id == x_user_id))
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
     if not user:
         raise HTTPException(
@@ -59,7 +61,7 @@ async def update_profile(
         user.last_name = data.last_name
     if data.phone is not None:
         existing = await db.execute(
-            select(User).where(User.phone == data.phone, User.id != x_user_id)
+            select(User).where(User.phone == data.phone, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(
@@ -69,7 +71,7 @@ async def update_profile(
         user.phone = data.phone
     if data.email is not None:
         existing = await db.execute(
-            select(User).where(User.email == data.email, User.id != x_user_id)
+            select(User).where(User.email == data.email, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(
@@ -90,6 +92,7 @@ async def update_profile(
         balance=user.balance or 0,
         rating=float(user.rating) if user.rating is not None else None,
         review_count=user.review_count or 0,
+        role=user.role.value,
     )
 
 
@@ -97,9 +100,9 @@ async def update_profile(
 async def change_password(
     data: ChangePasswordRequest,
     db: AsyncSession = Depends(get_db),
-    x_user_id: int = Header(..., alias="X-User-Id"),
+    user_id: int = Depends(get_current_user),
 ):
-    result = await db.execute(select(User).where(User.id == x_user_id))
+    result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
     if not user:
         raise HTTPException(
