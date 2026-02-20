@@ -47,7 +47,16 @@ async def get_chat(
 ):
     service = ChatService(db)
     chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
-    return await service.get_chat_detail(chat_id=chat.id, actor_id=user_id, limit=limit)
+    detail = await service.get_chat_detail(chat_id=chat.id, actor_id=user_id, limit=limit)
+
+    read_ids = await service.mark_messages_read(chat_id=chat.id, reader_id=user_id)
+    if read_ids:
+        await chat_manager.broadcast(chat.id, {
+            "event": "messages_read",
+            "data": {"message_ids": read_ids},
+        })
+
+    return detail
 
 
 @router.get("/{chat_uuid}/presence", response_model=ChatPresenceResponse)

@@ -223,6 +223,7 @@ class ChatService:
                         else UserRole.EXPERT.value
                     ),
                     text=message.text,
+                    is_read=message.is_read,
                     created_at=message.created_at,
                 )
                 for message in messages
@@ -268,5 +269,27 @@ class ChatService:
             sender_id=message.sender_id,
             sender_role=sender_role,
             text=message.text,
+            is_read=False,
             created_at=message.created_at,
         )
+
+    async def mark_messages_read(self, chat_id: int, reader_id: int) -> list[int]:
+        """Mark all unread messages in chat sent by the counterpart as read.
+        Returns the list of message IDs that were marked read."""
+        result = await self.db.execute(
+            select(ChatMessage.id)
+            .where(
+                ChatMessage.chat_id == chat_id,
+                ChatMessage.sender_id != reader_id,
+                ChatMessage.is_read == False,  # noqa: E712
+            )
+        )
+        ids = list(result.scalars().all())
+        if ids:
+            await self.db.execute(
+                update(ChatMessage)
+                .where(ChatMessage.id.in_(ids))
+                .values(is_read=True)
+            )
+            await self.db.commit()
+        return ids

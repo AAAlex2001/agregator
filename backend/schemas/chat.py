@@ -17,6 +17,7 @@ class ChatMessageResponse(BaseModel):
     sender_id: int
     sender_role: str
     text: str
+    is_read: bool = False
     created_at: datetime
 
     model_config = {"from_attributes": True}

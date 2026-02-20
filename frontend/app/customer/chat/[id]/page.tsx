@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
+import { ArrowIcon, ChatCheckReadIcon, ChatCheckSentIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import Button from "@/app/components/Button/Button";
 import Loader from "@/app/components/Loader";
@@ -126,14 +126,19 @@ export default function ChatWindowPage() {
 
       socket.onmessage = (event) => {
         try {
-          const payload = JSON.parse(event.data) as { event?: string; data?: ChatMessage };
+          const payload = JSON.parse(event.data) as { event?: string; data?: unknown };
           if (payload.event === "chat_message" && payload.data) {
-            const msg = payload.data;
+            const msg = payload.data as ChatMessage;
             if (msg.sender_id === currentUserId) return;
             setMessages((prev) => {
               if (prev.some((m) => m.id === msg.id)) return prev;
               return [...prev, msg];
             });
+          } else if (payload.event === "messages_read" && payload.data) {
+            const readIds = new Set<number>((payload.data as { message_ids: number[] }).message_ids ?? []);
+            if (readIds.size > 0) {
+              setMessages((prev) => prev.map((m) => (readIds.has(m.id) ? { ...m, is_read: true } : m)));
+            }
           }
         } catch {
           /* ignore malformed frames */
@@ -294,34 +299,64 @@ export default function ChatWindowPage() {
               <div className={styles.datePill}><span>Сегодня</span></div>
             </div>
 
-            {messages.map((message) => {
-              const isMine = message.sender_id === currentUserId;
-              const senderLabel = message.sender_role === "CUSTOMER" ? "Заказчик" : "Эксперт";
-
-              return !isMine ? (
-                <div key={message.id} className={styles.msgGroupReceived}>
-                  <span className={styles.senderLabel}>{senderLabel}</span>
-                  <div className={styles.msgRowReceived}>
-                    <ChatAvatar src={chat?.counterpart_avatar_url ?? ""} alt="Аватар собеседника" />
-                    <div className={`${styles.bubble} ${styles.bubbleReceived}`}>
-                      <span className={styles.bubbleText}>{message.text}</span>
-                      <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
-                    </div>
+            {(() => {
+              // Group consecutive messages from the same sender
+              const groups: { senderId: number; senderRole: string; messages: ChatMessage[] }[] = [];
+              for (const msg of messages) {
+                const last = groups[groups.length - 1];
+                if (last && last.senderId === msg.sender_id) {
+                  last.messages.push(msg);
+                } else {
+                  groups.push({ senderId: msg.sender_id, senderRole: msg.sender_role, messages: [msg] });
+                }
+              }
+              return groups.map((group, gi) => {
+                const isMine = group.senderId === currentUserId;
+                const senderLabel = group.senderRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
+                return (
+                  <div key={gi} className={isMine ? styles.msgGroupSent : styles.msgGroupReceived}>
+                    <span className={`${styles.senderLabel} ${isMine ? styles.alignRight : ""}`}>{senderLabel}</span>
+                    {group.messages.map((message, mi) => {
+                      const isLast = mi === group.messages.length - 1;
+                      return !isMine ? (
+                        <div key={message.id} className={styles.msgRowReceived}>
+                          {isLast ? (
+                            <ChatAvatar src={chat?.counterpart_avatar_url ?? ""} alt="Аватар собеседника" />
+                          ) : (
+                            <div className={styles.msgAvatarSpacer} />
+                          )}
+                          <div className={`${styles.bubble} ${styles.bubbleReceived}`}>
+                            <span className={styles.bubbleText}>{message.text}</span>
+                            <span className={styles.bubbleMeta}>
+                              <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div key={message.id} className={styles.msgRowSent}>
+                          <div className={`${styles.bubble} ${styles.bubbleSent}`}>
+                            <span className={styles.bubbleText}>{message.text}</span>
+                            <span className={styles.bubbleMeta}>
+                              <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
+                              {message.is_read ? (
+                                <ChatCheckReadIcon className={styles.checkIcon} />
+                              ) : (
+                                <ChatCheckSentIcon className={styles.checkIcon} />
+                              )}
+                            </span>
+                          </div>
+                          {isLast ? (
+                            <ChatAvatar src="" alt="Ваш аватар" />
+                          ) : (
+                            <div className={styles.msgAvatarSpacer} />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              ) : (
-                <div key={message.id} className={styles.msgGroupSent}>
-                  <span className={`${styles.senderLabel} ${styles.alignRight}`}>{senderLabel}</span>
-                  <div className={styles.msgRowSent}>
-                    <div className={`${styles.bubble} ${styles.bubbleSent}`}>
-                      <span className={styles.bubbleText}>{message.text}</span>
-                      <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
-                    </div>
-                    <ChatAvatar src="" alt="Ваш аватар" />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
               </>
             )}
           </div>

@@ -36,3 +36,5 @@ export { default as ChatPersonIcon } from "./ChatPersonIcon";
 export { default as ChatClipIcon } from "./ChatClipIcon";
 export { default as ChatSendIcon } from "./ChatSendIcon";
 export { default as ChatChevronDownIcon } from "./ChatChevronDownIcon";
+export { default as ChatCheckReadIcon } from "./ChatCheckReadIcon";
+export { default as ChatCheckSentIcon } from "./ChatCheckSentIcon";

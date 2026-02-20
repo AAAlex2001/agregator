@@ -25,6 +25,7 @@ export interface ChatMessage {
   sender_id: number;
   sender_role: "CUSTOMER" | "EXPERT";
   text: string;
+  is_read: boolean;
   created_at: string;
 }
 
