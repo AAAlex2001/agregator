@@ -257,9 +257,13 @@
 .orderNav {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   flex-shrink: 0;
+}
+
+.backBtnWrap {
+  padding-top: 8px;
 }
 
 .backBtn {
@@ -300,6 +304,10 @@
 
 @media (min-width: 1200px) {
   .backBtn {
+    display: none;
+  }
+
+  .backBtnWrap {
     display: none;
   }
 

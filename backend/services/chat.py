@@ -9,7 +9,7 @@ from sqlalchemy.orm import selectinload
 from models.chat import Chat, ChatMessage
 from models.order import Order
 from models.user import User, UserRole
-from schemas.chat import ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
+from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
 
 
 class ChatService:
@@ -133,20 +133,32 @@ class ChatService:
         chats = chats_result.scalars().all()
         chat_ids = [chat.id for chat in chats]
 
-        last_messages: dict[int, ChatMessage] = {}
-        if chat_ids:
-            sub = (
-                select(ChatMessage.chat_id, func.max(ChatMessage.id).label("max_id"))
-                .where(ChatMessage.chat_id.in_(chat_ids))
-                .group_by(ChatMessage.chat_id)
-                .subquery()
+        if not chat_ids:
+            return []
+
+        sub = (
+            select(ChatMessage.chat_id, func.max(ChatMessage.id).label("max_id"))
+            .where(ChatMessage.chat_id.in_(chat_ids))
+            .group_by(ChatMessage.chat_id)
+            .subquery()
+        )
+        rows = await self.db.execute(
+            select(ChatMessage).join(
+                sub, and_(ChatMessage.chat_id == sub.c.chat_id, ChatMessage.id == sub.c.max_id),
             )
-            rows = await self.db.execute(
-                select(ChatMessage).join(
-                    sub, and_(ChatMessage.chat_id == sub.c.chat_id, ChatMessage.id == sub.c.max_id),
-                )
+        )
+        last_messages: dict[int, ChatMessage] = {m.chat_id: m for m in rows.scalars().all()}
+
+        unread_rows = await self.db.execute(
+            select(ChatMessage.chat_id, func.count().label("cnt"))
+            .where(
+                ChatMessage.chat_id.in_(chat_ids),
+                ChatMessage.sender_id != actor_id,
+                ChatMessage.is_read == False,  # noqa: E712
             )
-            last_messages = {m.chat_id: m for m in rows.scalars().all()}
+            .group_by(ChatMessage.chat_id)
+        )
+        unread_counts: dict[int, int] = {row.chat_id: row.cnt for row in unread_rows}
 
         items: list[ChatListItemResponse] = []
         for chat in chats:
@@ -163,7 +175,7 @@ class ChatService:
                     last_message_text=last_message.text if last_message else "",
                     last_message_sender_id=last_message.sender_id if last_message else None,
                     last_message_at=last_message.created_at if last_message else None,
-                    unread_count=0,
+                    unread_count=unread_counts.get(chat.id, 0),
                     updated_at=chat.updated_at,
                 )
             )
@@ -188,8 +200,24 @@ class ChatService:
         return chat
 
     async def get_chat_detail(self, chat_id: int, actor_id: int, limit: int = 200) -> ChatDetailResponse:
-        actor = await self.get_user(actor_id)
-        chat = await self.get_chat_for_actor(chat_id, actor_id)
+        chat_row = await self.db.execute(
+            select(Chat, User)
+            .join(User, User.id == actor_id)
+            .options(
+                selectinload(Chat.order),
+                selectinload(Chat.customer),
+                selectinload(Chat.expert),
+            )
+            .where(
+                Chat.id == chat_id,
+                or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
+                User.is_active == True,  # noqa: E712
+            )
+        )
+        row = chat_row.first()
+        if not row:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
+        chat, actor = row
 
         message_rows = await self.db.execute(
             select(ChatMessage)
@@ -212,7 +240,7 @@ class ChatService:
             order_date=chat.order.deadline.strftime("%d.%m.%Y") if chat.order else "",
             order_sum=self.format_sum(chat.order.sum_amount) if chat.order else "",
             order_badges=[
-                {"text": badge.text, "variant": badge.variant.value}
+                ChatBadgeResponse(text=badge.text, variant=badge.variant.value)
                 for badge in (chat.order.badges if chat.order else [])
             ],
             counterpart_id=counterpart_id,
@@ -280,8 +308,7 @@ class ChatService:
         )
 
     async def mark_messages_read(self, chat_id: int, reader_id: int) -> list[int]:
-        """Mark all unread messages in chat sent by the counterpart as read.
-        Returns the list of message IDs that were marked read."""
+        """Mark unread messages from counterpart as read. Returns marked IDs."""
         result = await self.db.execute(
             select(ChatMessage.id)
             .where(

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from datetime import datetime, timezone
 from uuid import UUID
+
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
@@ -30,37 +31,42 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
         await websocket.close(code=4001)
         return
 
-    async with AsyncSessionLocal() as db:
-        try:
-            parsed_uuid = UUID(chat_uuid)
-        except (ValueError, TypeError):
-            await websocket.close(code=4003)
-            return
+    try:
+        parsed_uuid = UUID(chat_uuid)
+    except (ValueError, TypeError):
+        await websocket.close(code=4003)
+        return
 
-        sess = await db.execute(
-            select(Session).where(Session.session_id == session_id)
-        )
+    user_id: int
+    chat_id: int
+
+    async with AsyncSessionLocal() as db:
+        sess = await db.execute(select(Session).where(Session.session_id == session_id))
         session = sess.scalars().first()
         if not session:
             await websocket.close(code=4001)
             return
+
         now = datetime.now(timezone.utc)
         if now > session.max_expires_at or now > session.expires_at:
             await websocket.close(code=4001)
             return
+
         user_id = session.user_id
 
         row = await db.execute(
-            select(Chat).where(
+            select(Chat.id).where(
                 Chat.uuid == parsed_uuid,
                 or_(Chat.customer_id == user_id, Chat.expert_id == user_id),
             )
         )
-        chat = row.scalars().first()
-        if not chat:
-            await websocket.close(code=4003)
-            return
-        chat_id = chat.id
+        resolved_chat_id = row.scalar_one_or_none()
+
+    if resolved_chat_id is None:
+        await websocket.close(code=4003)
+        return
+
+    chat_id = resolved_chat_id
 
     await chat_manager.connect(chat_id, user_id, websocket)
     await chat_manager.broadcast(chat_id, {

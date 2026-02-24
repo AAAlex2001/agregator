@@ -147,8 +147,7 @@ export function buildChatWebSocketUrl(chatUuid: string): string {
     const normalizedApi = apiBase.replace(/\/$/, "");
     const wsBase = normalizedApi
       .replace(/^http:\/\//i, "ws://")
-      .replace(/^https:\/\//i, "wss://")
-      .replace(/\/api$/i, "");
+      .replace(/^https:\/\//i, "wss://");
     return `${wsBase}/ws/chats/${chatUuid}`;
   }
 

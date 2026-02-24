@@ -23,6 +23,11 @@ class ChatMessageResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ChatBadgeResponse(BaseModel):
+    text: str
+    variant: str
+
+
 class ChatListItemResponse(BaseModel):
     id: int
     uuid: str
@@ -52,7 +57,7 @@ class ChatDetailResponse(BaseModel):
     order_company: str
     order_date: str
     order_sum: str
-    order_badges: list[dict[str, str]]
+    order_badges: list[ChatBadgeResponse]
     counterpart_id: int
     counterpart_name: str
     counterpart_avatar_url: str | None = None

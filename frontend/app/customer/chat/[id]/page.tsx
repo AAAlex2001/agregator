@@ -257,14 +257,16 @@ export default function ChatWindowPage() {
 
         <div className={styles.card}>
           <div className={styles.orderNav}>
-            <Button
-              variant="outline"
-              className={styles.backBtn}
-              aria-label="Назад"
-              onClick={() => router.push(ROUTE_BASE)}
-            >
-              <ArrowIcon color="currentColor" />
-            </Button>
+            <div className={styles.backBtnWrap}>
+              <Button
+                variant="outline"
+                className={styles.backBtn}
+                aria-label="Назад"
+                onClick={() => router.push(ROUTE_BASE)}
+              >
+                <ArrowIcon color="currentColor" />
+              </Button>
+            </div>
 
             <div className={styles.orderInfo}>
               <Button
