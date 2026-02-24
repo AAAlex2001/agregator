@@ -329,13 +329,11 @@
 .orderTitleRow {
   display: flex;
   flex-direction: row;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   width: 100%;
-  height: auto;
   min-height: 40px;
-  max-height: none;
   min-width: 0;
   padding: 0;
   border: none;
@@ -343,13 +341,13 @@
   cursor: pointer;
   text-align: left;
   font-weight: 500;
-  line-height: normal;
-  white-space: normal !important;
+  white-space: normal;
 
   &:hover,
   &:focus-visible,
   &:active {
-    background: transparent !important;
+    background: transparent;
+    outline: none;
   }
 }
 

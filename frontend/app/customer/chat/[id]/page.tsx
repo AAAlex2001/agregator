@@ -126,6 +126,10 @@ export default function ChatWindowPage() {
       if (disposed) return;
       socket = new WebSocket(wsUrl);
 
+      socket.onopen = () => {
+        void markChatMessagesRead(activeChatUuid).catch(() => undefined);
+      };
+
       socket.onmessage = (event) => {
         try {
           const payload = JSON.parse(event.data) as { event?: string; data?: unknown };
@@ -269,8 +273,8 @@ export default function ChatWindowPage() {
             </div>
 
             <div className={styles.orderInfo}>
-              <Button
-                variant="transparent"
+              <button
+                type="button"
                 className={styles.orderTitleRow}
                 aria-label={isOrderOpen ? "Свернуть" : "Развернуть"}
                 aria-expanded={isOrderOpen}
@@ -278,7 +282,7 @@ export default function ChatWindowPage() {
               >
                 <p className={styles.orderTitle}>{chat?.order_title ?? ""}</p>
                 <ChatChevronDownIcon className={`${styles.chevronIcon} ${isOrderOpen ? styles.chevronIconOpen : ""}`} />
-              </Button>
+              </button>
               <div className={`${styles.orderDetails} ${isOrderOpen ? styles.orderDetailsOpen : ""}`}>
                 <p className={styles.orderCustomer}>{chat?.order_company ?? ""}</p>
                 <div className={styles.orderMeta}>
