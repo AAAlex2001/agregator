@@ -11,6 +11,7 @@ import {
   buildChatWebSocketUrl,
   fetchChatDetail,
   fetchChats,
+  markChatMessagesRead,
   sendChatMessage,
   type ChatDetailResponse,
   type ChatListItem,
@@ -113,9 +114,10 @@ export default function ChatWindowPage() {
   }, [chatUuid]);
 
   useEffect(() => {
-    if (!chat) return;
+    if (!chat || currentUserId <= 0) return;
 
-    const wsUrl = buildChatWebSocketUrl(chat.uuid);
+    const activeChatUuid = chat.uuid;
+    const wsUrl = buildChatWebSocketUrl(activeChatUuid);
     let socket: WebSocket | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
@@ -129,11 +131,15 @@ export default function ChatWindowPage() {
           const payload = JSON.parse(event.data) as { event?: string; data?: unknown };
           if (payload.event === "chat_message" && payload.data) {
             const msg = payload.data as ChatMessage;
-            if (msg.sender_id === currentUserId) return;
             setMessages((prev) => {
-              if (prev.some((m) => m.id === msg.id)) return prev;
+              if (prev.some((m) => m.id === msg.id)) {
+                return prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m));
+              }
               return [...prev, msg];
             });
+            if (msg.sender_id !== currentUserId) {
+              void markChatMessagesRead(activeChatUuid).catch(() => undefined);
+            }
           } else if (payload.event === "messages_read" && payload.data) {
             const readIds = new Set<number>((payload.data as { message_ids: number[] }).message_ids ?? []);
             if (readIds.size > 0) {
@@ -159,7 +165,7 @@ export default function ChatWindowPage() {
       if (reconnectTimer) clearTimeout(reconnectTimer);
       socket?.close();
     };
-  }, [chat]);
+  }, [chat, currentUserId]);
 
   useEffect(() => {
     const prevBodyOverflow = document.body.style.overflow;
@@ -185,7 +191,7 @@ export default function ChatWindowPage() {
     setInputValue("");
     try {
       const saved = await sendChatMessage(chat.uuid, text);
-      setMessages((prev) => [...prev, saved]);
+      setMessages((prev) => (prev.some((m) => m.id === saved.id) ? prev : [...prev, saved]));
     } catch {
     }
   };
@@ -329,6 +335,11 @@ export default function ChatWindowPage() {
                             <span className={styles.bubbleText}>{message.text}</span>
                             <span className={styles.bubbleMeta}>
                               <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
+                              {message.is_read ? (
+                                <ChatCheckReadIcon className={styles.checkIcon} />
+                              ) : (
+                                <ChatCheckSentIcon className={styles.checkIcon} />
+                              )}
                             </span>
                           </div>
                         </div>

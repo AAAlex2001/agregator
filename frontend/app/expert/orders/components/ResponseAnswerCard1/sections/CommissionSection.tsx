@@ -17,8 +17,9 @@ interface CommissionSectionProps {
   onTopUp: () => void;
 }
 
-function formatNumber(value: number): string {
-  return value.toLocaleString("ru-RU");
+function formatBalance(kopecks: number): string {
+  const rub = Math.floor(kopecks / 100);
+  return `${rub.toLocaleString("ru-RU")} ₽`;
 }
 
 export default function CommissionSection({ commissionDisplay, balance, canTopUp, onTopUp }: CommissionSectionProps) {
@@ -71,9 +72,7 @@ export default function CommissionSection({ commissionDisplay, balance, canTopUp
       <div className={styles.balanceRow}>
         <div className={styles.balanceInfo}>
           <span className={styles.balanceLabel}>На вашем счёте:</span>
-          <span className={styles.balanceValue}>
-            {formatNumber(balance)}{"\u00A0₽"}
-          </span>
+          <span className={styles.balanceValue}>{formatBalance(balance)}</span>
         </div>
         <Button
           variant="secondary"

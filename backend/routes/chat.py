@@ -75,6 +75,23 @@ async def get_chat_presence(
     )
 
 
+@router.post("/{chat_uuid}/read")
+async def mark_chat_read(
+    chat_uuid: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = ChatService(db)
+    chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
+    read_ids = await service.mark_messages_read(chat_id=chat.id, reader_id=user_id)
+    if read_ids:
+        await chat_manager.broadcast(chat.id, {
+            "event": "messages_read",
+            "data": {"message_ids": read_ids},
+        })
+    return {"updated": len(read_ids)}
+
+
 @router.post("/{chat_uuid}/messages", response_model=ChatMessageResponse)
 async def send_message(
     chat_uuid: str,

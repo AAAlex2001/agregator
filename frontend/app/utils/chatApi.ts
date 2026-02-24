@@ -123,11 +123,33 @@ export async function sendChatMessage(chatUuid: string, text: string): Promise<C
   return (await response.json()) as ChatMessage;
 }
 
+export async function markChatMessagesRead(chatUuid: string): Promise<void> {
+  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatUuid}/read`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось отметить сообщения как прочитанные");
+  }
+}
+
 export function buildChatWebSocketUrl(chatUuid: string): string {
   const explicitWsBase = process.env.NEXT_PUBLIC_WS_URL;
 
   if (explicitWsBase) {
     return `${explicitWsBase.replace(/\/$/, "")}/ws/chats/${chatUuid}`;
+  }
+
+  const apiBase = process.env.NEXT_PUBLIC_API_URL;
+  if (apiBase && /^https?:\/\//i.test(apiBase)) {
+    const normalizedApi = apiBase.replace(/\/$/, "");
+    const wsBase = normalizedApi
+      .replace(/^http:\/\//i, "ws://")
+      .replace(/^https:\/\//i, "wss://")
+      .replace(/\/api$/i, "");
+    return `${wsBase}/ws/chats/${chatUuid}`;
   }
 
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
