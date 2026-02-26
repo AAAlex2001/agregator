@@ -14,7 +14,14 @@ import { ArrowIcon } from "@/app/icons";
 import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
-import ExpertResponseCard from "./components/ExpertResponseCard";
+import {
+  AcceptedCard,
+  ArchivedCard,
+  CompletedCard,
+  InProgressCard,
+  RejectedCard,
+  ReviewCard,
+} from "./components/cards";
 import WithdrawConfirmModal from "./components/WithdrawConfirmModal/WithdrawConfirmModal";
 import { loadResponses } from "./store/actions";
 import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
@@ -24,9 +31,9 @@ import styles from "./responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "review", label: "На рассмотрении" },
-  { key: "in_progress", label: "В переговорах" },
+  { key: "in_progress", label: "В работе" },
   { key: "rejected", label: "Отклоненные" },
-  { key: "accepted", label: "Принятые" },
+  { key: "accepted", label: "В переговорах" },
   { key: "completed", label: "Завершены" },
   { key: "archive", label: "Архив" },
 ];
@@ -182,9 +189,9 @@ export default function ResponsesPage() {
 
   const tabs = [
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
-    { key: "in_progress" as const, label: "В переговорах", count: counters.in_progress },
+    { key: "in_progress" as const, label: "В работе", count: counters.in_progress },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
-    { key: "accepted" as const, label: "Принятые", count: counters.accepted },
+    { key: "accepted" as const, label: "В переговорах", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
     { key: "archive" as const, label: "Архив", count: counters.archive },
   ];
@@ -277,56 +284,169 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      // isReview: REVIEW — отклик на рассмотрении
-                      const isReview = isExpert && response.rawStatus === "REVIEW";
-                      // isInvitation: ACCEPTED — заказчик пригласил в чат
-                      const isInvitation = isExpert && response.rawStatus === "ACCEPTED";
-                      // isNegotiation: IN_PROGRESS — отклик в переговорах
-                      const isNegotiation = isExpert && response.rawStatus === "IN_PROGRESS";
-                      const isExpertActionable = isReview || isInvitation || isNegotiation;
-                      const isCompletedCard = response.rawStatus === "COMPLETED";
                       const actionLoading = loadingActionByResponseId[response.id] ?? null;
 
-                      return (
-                    <ExpertResponseCard
-                      dateLabel={response.dateLabel}
-                      date={response.date}
-                      status={response.status}
-                      statusColor={response.statusColor}
-                      statusBg={response.statusBg}
-                      statusMessage={undefined}
-                      orderTitle={response.orderCustomerSum || response.orderTitle}
-                      customer={response.customerCompany || response.customer}
-                      orderDate={response.orderDate}
-                      badges={response.badges}
-                      sum={response.orderCustomerSum || response.sum}
-                      collapsibleOrderMeta
-                      deadline={response.deadline}
-                      costEstimate={response.costEstimate}
-                      commissionText={response.commissionText}
-                      commissionAmount={response.commissionAmount}
-                      commissionStatus={response.commissionStatus}
-                      balanceReturnText={response.balanceReturnText}
-                      balanceReturnAmount={response.balanceReturnAmount}
-                      commentTitle={response.commentTitle}
-                      commentText={response.commentText}
-                      techSpecTitle={response.techSpecTitle}
-                      techSpecFiles={response.techSpecFiles}
-                      reminderText={(isInvitation || isNegotiation) ? response.reminderText : undefined}
-                      editBtnText={isReview ? "Отозвать отклик" : isExpertActionable ? "Отклонить" : undefined}
-                      editBtnVariant="outline"
-                      middleBtnText={isNegotiation ? "Перейти в чат" : undefined}
-                      middleBtnVariant="secondary"
-                      onMiddle={isNegotiation ? () => { /* TODO: navigate to chat */ } : undefined}
-                      payBtnText={isReview ? "Изменить предложение" : isInvitation ? "Принять проект" : isNegotiation ? "Завершить проект" : undefined}
-                      payBtnVariant={isReview ? "outlineOrange" : "green"}
-                      showActions={!isCompletedCard && isExpertActionable}
-                      onEdit={isReview ? () => setWithdrawTarget(response) : isExpertActionable ? () => setWithdrawTarget(response) : undefined}
-                      onPay={isReview ? () => handleOpenEditModal(response) : isInvitation ? () => void handleStartOrComplete(response.id, false) : isNegotiation ? () => void handleStartOrComplete(response.id, true) : undefined}
-                      isEditLoading={isReview ? false : actionLoading === "withdraw"}
-                      isPayLoading={actionLoading === "start" || actionLoading === "complete"}
-                    />
-                      );
+                      switch (response.rawStatus) {
+                        case "REVIEW":
+                          return (
+                            <ReviewCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              onWithdraw={() => setWithdrawTarget(response)}
+                              onChangeOffer={() => handleOpenEditModal(response)}
+                              isWithdrawLoading={actionLoading === "withdraw"}
+                            />
+                          );
+                        case "ACCEPTED":
+                          return (
+                            <AcceptedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              reminderText={response.reminderText}
+                              onReject={() => setWithdrawTarget(response)}
+                              onAccept={() => void handleStartOrComplete(response.id, false)}
+                              isRejectLoading={actionLoading === "withdraw"}
+                              isAcceptLoading={actionLoading === "start"}
+                            />
+                          );
+                        case "IN_PROGRESS":
+                          return (
+                            <InProgressCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              reminderText={response.reminderText}
+                              onReject={() => setWithdrawTarget(response)}
+                              onChat={() => { /* TODO: navigate to chat */ }}
+                              onComplete={() => void handleStartOrComplete(response.id, true)}
+                              isRejectLoading={actionLoading === "withdraw"}
+                              isCompleteLoading={actionLoading === "complete"}
+                            />
+                          );
+                        case "REJECTED":
+                          return (
+                            <RejectedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                            />
+                          );
+                        case "COMPLETED":
+                          return (
+                            <CompletedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                            />
+                          );
+                        case "ARCHIVED":
+                        default:
+                          return (
+                            <ArchivedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              deadline={response.deadline}
+                              costEstimate={response.costEstimate}
+                              commissionText={response.commissionText}
+                              commissionAmount={response.commissionAmount}
+                              commissionStatus={response.commissionStatus}
+                              commentTitle={response.commentTitle}
+                              commentText={response.commentText}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                            />
+                          );
+                      }
                     })()}
                   </div>
                 </SwiperSlide>

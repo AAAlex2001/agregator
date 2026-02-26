@@ -5,7 +5,7 @@
   gap: 8px;
   width: 100%;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     flex-direction: row;
     gap: 16px;
   }
@@ -27,7 +27,7 @@
   line-height: 17px;
   color: #1a1a1a;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
     line-height: 20px;
   }
@@ -39,7 +39,7 @@
   line-height: 17px;
   color: #1a1a1a;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
     line-height: 20px;
   }
@@ -51,7 +51,7 @@
   line-height: 17px;
   color: #1a1a1a;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
     line-height: 20px;
   }
@@ -66,7 +66,7 @@
   width: 100%;
   flex: 1;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     justify-content: flex-end;
   }
 }
@@ -77,7 +77,7 @@
   line-height: 17px;
   color: #ff8a00;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
     line-height: 20px;
   }
@@ -89,7 +89,7 @@
   line-height: 17px;
   color: #ff8a00;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
     line-height: 20px;
   }

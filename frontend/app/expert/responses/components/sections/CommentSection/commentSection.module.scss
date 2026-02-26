@@ -5,7 +5,7 @@
   gap: 0;
   width: 100%;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     flex-direction: row;
     gap: 10px;
   }
@@ -18,7 +18,7 @@
   color: #000000;
   white-space: nowrap;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
   }
 }
@@ -33,7 +33,7 @@
   overflow-wrap: anywhere;
   word-break: break-word;
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     font-size: 16px;
   }
 }

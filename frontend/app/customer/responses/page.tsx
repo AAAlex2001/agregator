@@ -27,9 +27,9 @@ import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "review", label: "На рассмотрении" },
-  { key: "in_progress", label: "В переговорах" },
+  { key: "in_progress", label: "В работе" },
   { key: "rejected", label: "Отклоненные" },
-  { key: "accepted", label: "Принятые" },
+  { key: "accepted", label: "В переговорах" },
   { key: "completed", label: "Завершены" },
   { key: "archive", label: "Архив" },
 ];
@@ -129,9 +129,9 @@ export default function CustomerResponsesPage() {
 
   const tabs = [
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
-    { key: "in_progress" as const, label: "В переговорах", count: counters.in_progress },
+    { key: "in_progress" as const, label: "В работе", count: counters.in_progress },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
-    { key: "accepted" as const, label: "Принятые", count: counters.accepted },
+    { key: "accepted" as const, label: "В переговорах", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
     { key: "archive" as const, label: "Архив", count: counters.archive },
   ];

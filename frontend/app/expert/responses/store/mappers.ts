@@ -31,9 +31,9 @@ function mapStatus(status: ResponseApiItem["status"]): {
     case "REJECTED":
       return { label: "Отклонен", color: "#C62828", bg: "#FFEBEE" };
     case "ACCEPTED":
-      return { label: "Приглашение на собеседование", color: "#FFFFFF", bg: "#FF8A00" };
-    case "IN_PROGRESS":
       return { label: "В переговорах", color: "#FFFFFF", bg: "#FF8A00" };
+    case "IN_PROGRESS":
+      return { label: "В работе", color: "#FFFFFF", bg: "#FF8A00" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
     case "ARCHIVED":
