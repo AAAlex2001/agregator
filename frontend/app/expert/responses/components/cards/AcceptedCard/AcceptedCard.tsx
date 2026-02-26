@@ -34,6 +34,7 @@ export interface AcceptedCardProps {
   orderComment?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  orderTechSpecFiles?: string[];
   reminderText?: string;
   onReject: () => void;
   onChat: () => void;
@@ -64,15 +65,10 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
           />
 
           <div className={styles.infoSection}>
-            <ExpertTerms
-              deadline={props.deadline}
-              costEstimate={props.costEstimate}
-            />
-
-            {props.orderComment && (
-              <CommentSection
-                title="Комментарий заказчика:"
-                text={props.orderComment}
+            {(props.deadline || props.costEstimate) && (
+              <ExpertTerms
+                deadline={props.deadline}
+                costEstimate={props.costEstimate}
               />
             )}
 
@@ -83,6 +79,21 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
               />
             )}
 
+            {props.orderComment && (
+              <CommentSection
+                title="Комментарий заказчика:"
+                text={props.orderComment}
+              />
+            )}
+
+            {props.commissionAmount && props.commissionAmount !== "0 ₽" && (
+              <CommissionInfo
+                commissionText={props.commissionText}
+                commissionAmount={props.commissionAmount}
+                commissionStatus={props.commissionStatus}
+              />
+            )}
+
             {props.techSpecFiles && props.techSpecFiles.length > 0 && (
               <TechSpecFiles
                 techSpecTitle={props.techSpecTitle}
@@ -90,11 +101,12 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
               />
             )}
 
-            <CommissionInfo
-              text={props.commissionText}
-              amount={props.commissionAmount}
-              status={props.commissionStatus}
-            />
+            {props.orderTechSpecFiles && props.orderTechSpecFiles.length > 0 && (
+              <TechSpecFiles
+                techSpecTitle="Техническое задание:"
+                techSpecFiles={props.orderTechSpecFiles}
+              />
+            )}
 
             {props.reminderText && (
               <ReminderSection text={props.reminderText} />

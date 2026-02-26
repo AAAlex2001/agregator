@@ -339,6 +339,7 @@ export default function ResponsesPage() {
                               commentTitle={response.commentTitle}
                               commentText={response.commentText}                                orderComment={response.orderComment}                              techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              orderTechSpecFiles={response.orderTechSpecFiles}
                               reminderText={response.reminderText}
                               onReject={() => setWithdrawTarget(response)}
                                 onChat={() => { /* TODO: navigate to chat */ }}
