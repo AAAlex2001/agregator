@@ -27,4 +27,9 @@ export interface Step2InitialData {
   costEstimate: string;
   comment: string;
   existingFiles: string[];
+  dateLabel?: string;
+  date?: string;
+  status?: string;
+  statusColor?: string;
+  statusBg?: string;
 }

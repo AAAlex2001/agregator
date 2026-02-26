@@ -75,7 +75,15 @@ export default function ResponseAnswerCard2({
 
   return (
     <div className={styles.card}>
-      <HeaderRow />
+      <HeaderRow 
+        title={isEditMode ? "Изменение отклика" : "Отклик на заказ"} 
+        step={isEditMode ? "" : "Шаг 2. Дополнение заявки"} 
+        dateLabel={initialData?.dateLabel}
+        date={initialData?.date}
+        status={initialData?.status}
+        statusColor={initialData?.statusColor}
+        statusBg={initialData?.statusBg}
+      />
       <OrderSummary
         title={order.title}
         customer={order.customer}

@@ -1,7 +1,7 @@
 .headerRow {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
   width: 100%;
@@ -10,6 +10,51 @@
     flex-direction: row;
     align-items: center;
   }
+}
+
+.dateRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.dateLabel {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.dateValue {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.statusBadge {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 10px;
+  gap: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  white-space: nowrap;
 }
 
 .headerTitle {

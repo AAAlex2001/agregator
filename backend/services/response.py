@@ -245,15 +245,25 @@ class ResponseService:
                 response.order.assigned_expert_id = response.expert_id
 
             if new_status == ResponseStatus.ACCEPTED:
-                await self.db.execute(
-                    update(OrderResponse)
+                other_responses_result = await self.db.execute(
+                    select(OrderResponse)
                     .where(
                         OrderResponse.order_id == response.order_id,
                         OrderResponse.id != response.id,
                         OrderResponse.status != ResponseStatus.REJECTED,
                     )
-                    .values(status=ResponseStatus.REJECTED)
                 )
+                other_responses = other_responses_result.scalars().all()
+                
+                if other_responses:
+                    refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
+                    for other_resp in other_responses:
+                        other_resp.status = ResponseStatus.REJECTED
+                        expert_result = await self.db.execute(select(User).where(User.id == other_resp.expert_id))
+                        expert = expert_result.scalars().first()
+                        if expert:
+                            expert.balance += refund_amount
+
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
 
@@ -277,7 +287,16 @@ class ResponseService:
                 detail="Недостаточно прав для изменения статуса",
             )
 
+        old_status = response.status
         response.status = status_to_set
+        
+        if status_to_set == ResponseStatus.REJECTED and old_status != ResponseStatus.REJECTED and response.order:
+            refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
+            expert_result = await self.db.execute(select(User).where(User.id == response.expert_id))
+            expert = expert_result.scalars().first()
+            if expert:
+                expert.balance += refund_amount
+
         await self.db.commit()
 
         if status_to_set == ResponseStatus.REJECTED and response.order:
@@ -371,6 +390,13 @@ class ResponseService:
             )
 
         order_id = response.order_id
+
+        if response.order:
+            refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
+            expert_result = await self.db.execute(select(User).where(User.id == expert_id))
+            expert = expert_result.scalars().first()
+            if expert:
+                expert.balance += refund_amount
 
         if response.order and response.order.assigned_expert_id == expert_id:
             response.order.assigned_expert_id = None

@@ -508,6 +508,11 @@ export default function ResponsesPage() {
                   : "",
                 comment: editingResponse.commentText,
                 existingFiles: editingResponse.techSpecFiles ?? [],
+                dateLabel: editingResponse.dateLabel,
+                date: editingResponse.date,
+                status: editingResponse.status,
+                statusColor: editingResponse.statusColor,
+                statusBg: editingResponse.statusBg,
               }
             : undefined
         }
