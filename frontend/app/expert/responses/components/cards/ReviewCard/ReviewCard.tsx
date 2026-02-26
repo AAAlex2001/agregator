@@ -86,9 +86,16 @@ export const ReviewCard = (props: ReviewCardProps) => {
               balanceReturnAmount={props.balanceReturnAmount}
             />
 
+            {props.techSpecFiles && props.techSpecFiles.length > 0 && (
+              <TechSpecFiles
+                techSpecTitle={props.techSpecTitle || "Файлы отклика:"}
+                techSpecFiles={props.techSpecFiles}
+              />
+            )}
+
             {props.orderTechSpecFiles && props.orderTechSpecFiles.length > 0 && (
               <TechSpecFiles
-                techSpecTitle="Файлы технического задания:"
+                techSpecTitle="Техническое задание:"
                 techSpecFiles={props.orderTechSpecFiles}
               />
             )}

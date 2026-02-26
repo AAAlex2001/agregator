@@ -322,6 +322,38 @@
   }
 }
 
+/* ---------- comment ---------- */
+.commentRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+}
+
+.commentTitle {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+  white-space: nowrap;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.commentText {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
 /* ---------- actions ---------- */
 .actions {
   display: flex;
@@ -336,6 +368,10 @@
 .acceptBtn,
 .chatBtn {
   flex: 1;
+}
+
+.rejectBtnFixed {
+  flex: none;
 }
 
 /* ---------- mobile ---------- */

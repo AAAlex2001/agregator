@@ -33,7 +33,7 @@ import { createReview } from "./store/api";
 import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
-  { key: "review", label: "На рассмотрении" },
+  { key: "review", label: "Новые" },
   { key: "in_progress", label: "В работе" },
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "В переговорах" },
@@ -135,7 +135,7 @@ export default function CustomerResponsesPage() {
   };
 
   const tabs = [
-    { key: "review" as const, label: "На рассмотрении", count: counters.review },
+    { key: "review" as const, label: "Новые", count: counters.review },
     { key: "in_progress" as const, label: "В работе", count: counters.in_progress },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "В переговорах", count: counters.accepted },
@@ -245,7 +245,7 @@ export default function CustomerResponsesPage() {
                             <ReviewCard
                               dateLabel={response.dateLabel}
                               date={response.date}
-                              status={response.status}
+                              status="Новый отклик"
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
                               expertName={response.expertName || ""}
@@ -257,6 +257,9 @@ export default function CustomerResponsesPage() {
                               orderDate={response.orderDate}
                               badges={response.badges}
                               sum={response.orderCustomerSum || response.sum}
+                              commentText={response.commentText}
+                              expertPrice={response.costEstimate}
+                              expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
@@ -270,9 +273,9 @@ export default function CustomerResponsesPage() {
                             <AcceptedCard
                               dateLabel={response.dateLabel}
                               date={response.date}
-                              status={response.status}
-                              statusColor={response.statusColor}
-                              statusBg={response.statusBg}
+                              status="В переговорах"
+                              statusColor="#FFFFFF"
+                              statusBg="#FF8A00"
                               expertName={response.expertName || ""}
                               expertRating={response.expertRating}
                               expertReviewCount={response.expertReviewCount}
@@ -282,10 +285,15 @@ export default function CustomerResponsesPage() {
                               orderDate={response.orderDate}
                               badges={response.badges}
                               sum={response.orderCustomerSum || response.sum}
+                              commentText={response.commentText}
+                              expertPrice={response.costEstimate}
+                              expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                               onSelectExpert={() => void handleStatusUpdate(response.id, "IN_PROGRESS")}
                               onChat={() => void handleOpenChat(response.orderId)}
+                              isRejectLoading={updatingId === response.id}
                               isSelectLoading={updatingId === response.id}
                             />
                           );
