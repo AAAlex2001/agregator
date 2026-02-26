@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader } from "@/app/components";
 import {
   createThumbnailBlobUrlFromImageUrl,
@@ -144,7 +145,7 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
           ))}
         </div>
       </div>
-      {selectedImage && (
+      {selectedImage && createPortal(
         <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>
           <div className={styles.previewModal} onClick={(event) => event.stopPropagation()}>
             <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
@@ -155,7 +156,8 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
               alt={getFileNameFromPath(selectedImage)}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

@@ -53,7 +53,7 @@ def to_item(entity) -> ExpertResponseItem:
 
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
-    if entity.status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS} and order:
+    if order and entity.status in {ResponseStatus.NEW, ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
         paid = CommissionCalculator.commission_paid(order.sum_amount)
         returned = CommissionCalculator.balance_return(order.sum_amount)
         commission_paid_str = format_sum(paid)

@@ -305,9 +305,9 @@ export default function ResponsesPage() {
                       costEstimate={response.costEstimate}
                       commissionText={response.commissionText}
                       commissionAmount={response.commissionAmount}
-                      commissionStatus={isChosen ? response.commissionStatus : undefined}
-                      balanceReturnText={isChosen ? response.balanceReturnText : undefined}
-                      balanceReturnAmount={isChosen ? response.balanceReturnAmount : undefined}
+                      commissionStatus={response.commissionStatus}
+                      balanceReturnText={response.balanceReturnText}
+                      balanceReturnAmount={response.balanceReturnAmount}
                       commentTitle={response.commentTitle}
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
