@@ -59,6 +59,29 @@ class ChatService:
         if not order:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Заказ не найден")
 
+        if actor.role == UserRole.CUSTOMER:
+            existing_chat_result = await self.db.execute(
+                select(Chat)
+                .where(
+                    Chat.order_id == order.id,
+                    Chat.customer_id == actor.id,
+                )
+                .order_by(Chat.updated_at.desc(), Chat.id.desc())
+            )
+        else:
+            existing_chat_result = await self.db.execute(
+                select(Chat)
+                .where(
+                    Chat.order_id == order.id,
+                    Chat.expert_id == actor.id,
+                )
+                .order_by(Chat.updated_at.desc(), Chat.id.desc())
+            )
+
+        existing_chat = existing_chat_result.scalars().first()
+        if existing_chat:
+            return existing_chat
+
         if order.assigned_expert_id is None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

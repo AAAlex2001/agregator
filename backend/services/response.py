@@ -12,6 +12,7 @@ from models.order import Order, OrderStatus
 from models.chat import Chat
 from models.payment import Payment, PaymentStatus, PaymentType
 from models.response import OrderResponse, ResponseStatus
+from models.review import Review
 from models.user import User, UserRole
 from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
@@ -540,7 +541,6 @@ class ResponseService:
                 selectinload(OrderResponse.order).selectinload(Order.badges),
                 selectinload(OrderResponse.order).selectinload(Order.customer),
                 selectinload(OrderResponse.expert),
-                selectinload(OrderResponse.reviews),
             )
             .order_by(OrderResponse.created_at.desc())
             .offset(skip)
@@ -610,6 +610,20 @@ class ResponseService:
         )
         list_result = await self.db.execute(list_query)
         items = list(list_result.scalars().unique().all())
+
+        if items:
+            response_ids = [item.id for item in items]
+            reviewed_rows = await self.db.execute(
+                select(Review.response_id)
+                .where(
+                    Review.customer_id == customer_id,
+                    Review.response_id.in_(response_ids),
+                )
+                .group_by(Review.response_id)
+            )
+            reviewed_ids = set(reviewed_rows.scalars().all())
+            for item in items:
+                setattr(item, "has_review_for_customer", item.id in reviewed_ids)
 
         grouped = await self.db.execute(
             select(OrderResponse.status, func.count(OrderResponse.id))

@@ -30,7 +30,6 @@ def format_sum(sum_amount: int) -> str:
 def to_item(
     entity,
     actor_role: UserRole | None = None,
-    actor_id: int | None = None,
 ) -> ExpertResponseItem:
     order = entity.order
     effective_status = entity.status
@@ -67,11 +66,7 @@ def to_item(
         commission_paid_str = format_sum(paid)
         balance_return_str = format_sum(returned)
 
-    reviews = getattr(entity, "reviews", None) or []
-    if actor_role == UserRole.CUSTOMER and actor_id is not None:
-        has_review = any(review.customer_id == actor_id for review in reviews)
-    else:
-        has_review = len(reviews) > 0
+    has_review = bool(getattr(entity, "has_review_for_customer", False)) if actor_role == UserRole.CUSTOMER else False
 
     return ExpertResponseItem(
         id=entity.id,
@@ -165,7 +160,7 @@ async def get_my_responses(
             limit=limit,
         )
     return ExpertResponseList(
-        items=[to_item(item, actor.role, actor.id) for item in items],
+        items=[to_item(item, actor.role) for item in items],
         total=total,
         counters=counters,
     )
