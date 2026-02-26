@@ -33,9 +33,9 @@ function mapStatus(status: ResponseApiItem["status"]): {
     case "REJECTED":
       return { label: "Отклонен", color: "#C62828", bg: "#FFEBEE" };
     case "ACCEPTED":
-      return { label: "Исполнитель выбран", color: "#137333", bg: "#E6F4EA" };
+      return { label: "Приглашение на собеседование", color: "#FFFFFF", bg: "#FF8A00" };
     case "IN_PROGRESS":
-      return { label: "В переговорах", color: "#FFFFFF", bg: "#FF8A00" };
+      return { label: "Принято", color: "#137333", bg: "#E6F4EA" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
     case "ARCHIVED":
@@ -47,7 +47,8 @@ function mapStatus(status: ResponseApiItem["status"]): {
 
 export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewModel {
   const mappedStatus = mapStatus(item.status);
-  const isAccepted = item.status === "ACCEPTED";
+  const isInvitation = item.status === "ACCEPTED";
+  const isChosen = item.status === "IN_PROGRESS";
 
   return {
     id: item.id,
@@ -58,7 +59,7 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     status: mappedStatus.label,
     statusColor: mappedStatus.color,
     statusBg: mappedStatus.bg,
-    statusMessage: isAccepted ? "Заказчик выбрал вас!" : undefined,
+    statusMessage: isChosen ? "Заказчик выбрал вас!" : undefined,
     orderTitle: item.order_title,
     orderCustomerSum: item.order_sum,
     customer: item.customer_name,
@@ -75,8 +76,8 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     commissionAmount: item.commission_paid ?? "0 ₽",
     orderCommissionAmount: item.order_commission_amount,
     commissionStatus: item.commission_paid ? "получен" : undefined,
-    balanceReturnText: isAccepted && item.balance_return ? "На ваш баланс вернется" : undefined,
-    balanceReturnAmount: isAccepted && item.balance_return ? item.balance_return : undefined,
+    balanceReturnText: isChosen && item.balance_return ? "На ваш баланс вернется" : undefined,
+    balanceReturnAmount: isChosen && item.balance_return ? item.balance_return : undefined,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
     techSpecTitle: item.response_files.length > 0 ? "Файлы отклика:" : undefined,
@@ -86,6 +87,6 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     expertName: item.expert_name || "",
     expertRating: item.expert_rating ?? null,
     expertReviewCount: item.expert_review_count ?? 0,
-    reminderText: isAccepted ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
+    reminderText: isChosen ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
   };
 }

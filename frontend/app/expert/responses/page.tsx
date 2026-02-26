@@ -15,6 +15,7 @@ import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal"
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
 import ExpertResponseCard from "./components/ExpertResponseCard";
+import WithdrawConfirmModal from "./components/WithdrawConfirmModal/WithdrawConfirmModal";
 import { loadResponses } from "./store/actions";
 import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
 import { useResponsesState } from "./store/state";
@@ -54,6 +55,7 @@ export default function ResponsesPage() {
   const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "start" | "complete" | null>>({});
   const [editingResponse, setEditingResponse] = useState<ResponseCardViewModel | null>(null);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
+  const [withdrawTarget, setWithdrawTarget] = useState<ResponseCardViewModel | null>(null);
 
   const { role } = useUserProfile();
   const isExpert = role === "EXPERT";
@@ -275,26 +277,15 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
+                      // isReview: NEW/REVIEW — отклик на рассмотрении
                       const isReview = isExpert && (response.rawStatus === "NEW" || response.rawStatus === "REVIEW");
-                      const isAcceptanceRequest = isExpert && response.rawStatus === "ACCEPTED";
-                      const isInProgress = isExpert && response.rawStatus === "IN_PROGRESS";
-                      const isExpertActionable = isReview || isAcceptanceRequest || isInProgress;
+                      // isInvitation: ACCEPTED — заказчик пригласил в чат
+                      const isInvitation = isExpert && response.rawStatus === "ACCEPTED";
+                      // isChosen: IN_PROGRESS — заказчик выбрал исполнителем
+                      const isChosen = isExpert && response.rawStatus === "IN_PROGRESS";
+                      const isExpertActionable = isReview || isInvitation || isChosen;
                       const isCompletedCard = response.rawStatus === "COMPLETED";
                       const actionLoading = loadingActionByResponseId[response.id] ?? null;
-
-                      const getEditBtnText = () => {
-                        if (isReview) return "Редактировать";
-                        if (isAcceptanceRequest) return "Отклонить";
-                        if (isInProgress) return "Отклонить отклик";
-                        return undefined;
-                      };
-
-                      const getPayBtnText = () => {
-                        if (isReview) return "Отозвать отклик";
-                        if (isAcceptanceRequest) return "Принять проект";
-                        if (isInProgress) return "Завершить проект";
-                        return undefined;
-                      };
 
                       return (
                     <ExpertResponseCard
@@ -303,7 +294,7 @@ export default function ResponsesPage() {
                       status={response.status}
                       statusColor={response.statusColor}
                       statusBg={response.statusBg}
-                      statusMessage={isAcceptanceRequest ? response.statusMessage : undefined}
+                      statusMessage={isChosen ? response.statusMessage : undefined}
                       orderTitle={response.orderCustomerSum || response.orderTitle}
                       customer={response.customerCompany || response.customer}
                       orderDate={response.orderDate}
@@ -314,26 +305,26 @@ export default function ResponsesPage() {
                       costEstimate={response.costEstimate}
                       commissionText={response.commissionText}
                       commissionAmount={response.commissionAmount}
-                      commissionStatus={isAcceptanceRequest ? response.commissionStatus : undefined}
-                      balanceReturnText={isAcceptanceRequest ? response.balanceReturnText : undefined}
-                      balanceReturnAmount={isAcceptanceRequest ? response.balanceReturnAmount : undefined}
+                      commissionStatus={isChosen ? response.commissionStatus : undefined}
+                      balanceReturnText={isChosen ? response.balanceReturnText : undefined}
+                      balanceReturnAmount={isChosen ? response.balanceReturnAmount : undefined}
                       commentTitle={response.commentTitle}
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      reminderText={isAcceptanceRequest ? response.reminderText : undefined}
-                      editBtnText={getEditBtnText()}
-                      editBtnVariant={isReview ? "outlineOrange" : "outline"}
-                      middleBtnText={isAcceptanceRequest ? "Перейти в чат" : undefined}
-                      middleBtnVariant={isAcceptanceRequest ? "secondary" : undefined}
-                      onMiddle={isAcceptanceRequest ? () => { /* TODO: navigate to chat */ } : undefined}
-                      payBtnText={getPayBtnText()}
-                      payBtnVariant={isReview ? "outline" : "green"}
+                      reminderText={isChosen ? response.reminderText : undefined}
+                      editBtnText={isReview ? "Отозвать отклик" : isExpertActionable ? "Отклонить" : undefined}
+                      editBtnVariant="outline"
+                      middleBtnText={isInvitation || isChosen ? "Перейти в чат" : undefined}
+                      middleBtnVariant="secondary"
+                      onMiddle={isInvitation || isChosen ? () => { /* TODO: navigate to chat */ } : undefined}
+                      payBtnText={isReview ? "Изменить предложение" : isChosen ? "Принять проект" : undefined}
+                      payBtnVariant={isReview ? "outlineOrange" : "green"}
                       showActions={!isCompletedCard && isExpertActionable}
-                      onEdit={isReview ? () => handleOpenEditModal(response) : isExpertActionable ? () => void handleRejectResponse(response.id) : undefined}
-                      onPay={isReview ? () => void handleWithdrawReview(response.id) : isExpertActionable ? () => void handleStartOrComplete(response.id, isAcceptanceRequest ? false : true) : undefined}
-                      isEditLoading={!isReview && actionLoading === "withdraw"}
-                      isPayLoading={isReview ? actionLoading === "withdraw" : (actionLoading === "start" || actionLoading === "complete")}
+                      onEdit={isReview ? () => setWithdrawTarget(response) : isExpertActionable ? () => void handleRejectResponse(response.id) : undefined}
+                      onPay={isReview ? () => handleOpenEditModal(response) : isChosen ? () => void handleStartOrComplete(response.id, true) : undefined}
+                      isEditLoading={isReview ? false : actionLoading === "withdraw"}
+                      isPayLoading={actionLoading === "start" || actionLoading === "complete"}
                     />
                       );
                     })()}
@@ -397,6 +388,27 @@ export default function ResponsesPage() {
             : undefined
         }
         submitLabel="Сохранить"
+      />
+
+      <WithdrawConfirmModal
+        isOpen={Boolean(withdrawTarget)}
+        onCancel={() => setWithdrawTarget(null)}
+        onConfirm={() => {
+          if (!withdrawTarget) return;
+          void handleWithdrawReview(withdrawTarget.id);
+          setWithdrawTarget(null);
+        }}
+        isLoading={withdrawTarget ? loadingActionByResponseId[withdrawTarget.id] === "withdraw" : false}
+        dateLabel={withdrawTarget?.dateLabel ?? ""}
+        date={withdrawTarget?.date ?? ""}
+        status={withdrawTarget?.status ?? ""}
+        statusColor={withdrawTarget?.statusColor ?? ""}
+        statusBg={withdrawTarget?.statusBg ?? ""}
+        orderTitle={withdrawTarget?.orderTitle ?? ""}
+        customer={withdrawTarget?.customerCompany || (withdrawTarget?.customer ?? "")}
+        orderDate={withdrawTarget?.orderDate ?? ""}
+        badges={withdrawTarget?.badges ?? []}
+        sum={withdrawTarget?.orderCustomerSum || (withdrawTarget?.sum ?? "")}
       />
 
     </>

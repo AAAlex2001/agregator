@@ -20,9 +20,9 @@ interface ActionButtonsProps {
 }
 
 const ActionButtons = ({
-  editBtnText = "Редактировать отклик",
+  editBtnText,
   middleBtnText,
-  payBtnText = "Оплатить и получить заказ",
+  payBtnText,
   onEdit,
   onMiddle,
   onPay,
@@ -35,7 +35,7 @@ const ActionButtons = ({
   isPayLoading = false,
 }: ActionButtonsProps) => (
   <div className={styles.actions}>
-    {!hideEditButton && (
+    {!hideEditButton && editBtnText && (
       <Button
         variant={editBtnVariant}
         size="sm"
@@ -59,16 +59,18 @@ const ActionButtons = ({
         {middleBtnText}
       </Button>
     )}
-    <Button
-      variant={payBtnVariant}
-      size="sm"
-      fullWidth
-      onClick={onPay}
-      className={styles.payBtn}
-      isLoading={isPayLoading}
-    >
-      {payBtnText}
-    </Button>
+    {payBtnText && (
+      <Button
+        variant={payBtnVariant}
+        size="sm"
+        fullWidth
+        onClick={onPay}
+        className={styles.payBtn}
+        isLoading={isPayLoading}
+      >
+        {payBtnText}
+      </Button>
+    )}
   </div>
 );
 
