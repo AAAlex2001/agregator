@@ -85,8 +85,8 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
 
             {props.techSpecFiles && props.techSpecFiles.length > 0 && (
               <TechSpecFiles
-                title={props.techSpecTitle}
-                files={props.techSpecFiles}
+                techSpecTitle={props.techSpecTitle}
+                techSpecFiles={props.techSpecFiles}
               />
             )}
 

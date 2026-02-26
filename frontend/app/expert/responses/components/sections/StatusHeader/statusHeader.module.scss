@@ -80,5 +80,11 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 17px;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    white-space: nowrap;
+  }
 }
