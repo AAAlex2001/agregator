@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowIcon } from "@/app/icons";
 import { Button, Loader } from "@/app/components";
 import {
@@ -156,7 +157,7 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
         <ArrowIcon className={styles.actionArrow} color="#FFFFFF" />
       </Button>
 
-      {selectedImage && (
+      {selectedImage && createPortal(
         <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>
           <div className={styles.previewModal} onClick={(event) => event.stopPropagation()}>
             <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
@@ -167,7 +168,8 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
               alt={getFileNameFromPath(selectedImage)}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
