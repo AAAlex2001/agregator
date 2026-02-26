@@ -52,7 +52,7 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     id: item.id,
     orderId: item.order_id,
     rawStatus: item.status,
-    dateLabel: "Отклик от",
+    dateLabel: isInvitation ? "Приглашение на собеседование от" : "Отклик от",
     date: item.date,
     status: mappedStatus.label,
     statusColor: mappedStatus.color,

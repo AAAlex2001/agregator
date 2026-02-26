@@ -10,9 +10,9 @@ interface ActionButtonsProps {
   onEdit?: () => void;
   onMiddle?: () => void;
   onPay?: () => void;
-  editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
-  middleBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
-  payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green";
+  editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
+  middleBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
+  payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
   hideEditButton?: boolean;
   isEditLoading?: boolean;
   isMiddleLoading?: boolean;

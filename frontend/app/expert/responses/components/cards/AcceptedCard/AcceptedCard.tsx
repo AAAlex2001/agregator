@@ -31,13 +31,14 @@ export interface AcceptedCardProps {
   commissionStatus?: string;
   commentTitle: string;
   commentText: string;
+  orderComment?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
   reminderText?: string;
   onReject: () => void;
-  onAccept: () => void;
+  onChat: () => void;
   isRejectLoading?: boolean;
-  isAcceptLoading?: boolean;
+  isChatLoading?: boolean;
 }
 
 export const AcceptedCard = (props: AcceptedCardProps) => {
@@ -67,6 +68,13 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
               deadline={props.deadline}
               costEstimate={props.costEstimate}
             />
+
+            {props.orderComment && (
+              <CommentSection
+                title="Комментарий заказчика:"
+                text={props.orderComment}
+              />
+            )}
 
             {props.commentText && (
               <CommentSection
@@ -100,10 +108,10 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
         editBtnVariant="outline"
         onEdit={props.onReject}
         isEditLoading={props.isRejectLoading}
-        payBtnText="Принять проект"
-        payBtnVariant="green"
-        onPay={props.onAccept}
-        isPayLoading={props.isAcceptLoading}
+        middleBtnText="Перейти в чат"
+        middleBtnVariant="secondary"
+        onMiddle={props.onChat}
+        isMiddleLoading={props.isChatLoading}
       />
     </article>
   );

@@ -337,14 +337,13 @@ export default function ResponsesPage() {
                               commissionAmount={response.commissionAmount}
                               commissionStatus={response.commissionStatus}
                               commentTitle={response.commentTitle}
-                              commentText={response.commentText}
-                              techSpecTitle={response.techSpecTitle}
+                              commentText={response.commentText}                                orderComment={response.orderComment}                              techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               reminderText={response.reminderText}
                               onReject={() => setWithdrawTarget(response)}
-                              onAccept={() => void handleStartOrComplete(response.id, false)}
-                              isRejectLoading={actionLoading === "withdraw"}
-                              isAcceptLoading={actionLoading === "start"}
+                                onChat={() => { /* TODO: navigate to chat */ }}
+                                isRejectLoading={actionLoading === "withdraw"}
+                                isChatLoading={actionLoading === "chat"}
                             />
                           );
                         case "IN_PROGRESS":

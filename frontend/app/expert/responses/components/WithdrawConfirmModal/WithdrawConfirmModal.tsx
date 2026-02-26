@@ -111,8 +111,8 @@ const WithdrawConfirmModal = ({
         </div>
 
         <div className={styles.buttons}>
-          <Button variant="primary" fullWidth onClick={onCancel}>
-            Остаться
+          <Button variant="chat" fullWidth onClick={onCancel}>
+            Отменить
           </Button>
           <Button variant="outline" fullWidth onClick={onConfirm} isLoading={isLoading}>
             Отозвать отклик
