@@ -27,10 +27,14 @@ export interface CompletedCardProps {
   commissionText: string;
   commissionAmount: string;
   commissionStatus?: string;
+  balanceReturnText?: string;
+  balanceReturnAmount?: string;
   commentTitle: string;
   commentText: string;
+  orderComment?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  orderTechSpecFiles?: string[];
 }
 
 export const CompletedCard = (props: CompletedCardProps) => {
@@ -61,25 +65,34 @@ export const CompletedCard = (props: CompletedCardProps) => {
               costEstimate={props.costEstimate}
             />
 
-            {props.commentText && (
+            {props.orderComment && (
               <CommentSection
-                title={props.commentTitle}
-                text={props.commentText}
-              />
-            )}
-
-            {props.techSpecFiles && props.techSpecFiles.length > 0 && (
-              <TechSpecFiles
-                title={props.techSpecTitle}
-                files={props.techSpecFiles}
+                commentTitle="Комментарий заказчика:"
+                commentText={props.orderComment}
               />
             )}
 
             <CommissionInfo
-              text={props.commissionText}
-              amount={props.commissionAmount}
-              status={props.commissionStatus}
+              commissionText={props.commissionText}
+              commissionAmount={props.commissionAmount}
+              commissionStatus={props.commissionStatus}
+              balanceReturnText={props.balanceReturnText}
+              balanceReturnAmount={props.balanceReturnAmount}
             />
+
+            {props.techSpecFiles && props.techSpecFiles.length > 0 && (
+              <TechSpecFiles
+                techSpecTitle={props.techSpecTitle || "Файлы отклика:"}
+                techSpecFiles={props.techSpecFiles}
+              />
+            )}
+
+            {props.orderTechSpecFiles && props.orderTechSpecFiles.length > 0 && (
+              <TechSpecFiles
+                techSpecTitle="Техническое задание:"
+                techSpecFiles={props.orderTechSpecFiles}
+              />
+            )}
           </div>
         </div>
       </div>

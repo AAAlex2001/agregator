@@ -101,5 +101,6 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     expertReviewCount: item.expert_review_count ?? 0,
     expertConfirmed: expertConfirmed,
     reminderText: (isNegotiation && !expertConfirmed) && item.confirm_deadline ? `Подтвердите согласие до ${item.confirm_deadline}` : undefined,
+    hasReview: item.has_review ?? false,
   };
 }

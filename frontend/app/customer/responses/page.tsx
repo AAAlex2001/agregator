@@ -48,6 +48,7 @@ export default function CustomerResponsesPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [chatOpeningId, setChatOpeningId] = useState<number | null>(null);
   const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewTarget, setReviewTarget] = useState<ResponseCardViewModel | null>(null);
@@ -84,7 +85,7 @@ export default function CustomerResponsesPage() {
 
   const handleStatusUpdate = async (responseId: number, newStatus: "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED") => {
     if (updatingId !== null) {
-      return;
+      return false;
     }
 
     setUpdatingId(responseId);
@@ -98,9 +99,11 @@ export default function CustomerResponsesPage() {
         setIsCompletionModalOpen(true);
       }
       await fetchData();
+      return true;
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Не удалось обновить статус отклика";
       setError(message);
+      return false;
     } finally {
       setUpdatingId(null);
     }
@@ -122,6 +125,13 @@ export default function CustomerResponsesPage() {
         rating: payload.rating,
         comment: payload.comment,
       });
+      setItems(
+        items.map((item) =>
+          item.id === reviewTarget.id
+            ? { ...item, hasReview: true }
+            : item
+        )
+      );
       setIsReviewModalOpen(false);
       setIsCompletionModalOpen(false);
       showSuccess("Отзыв успешно опубликован");
@@ -177,11 +187,23 @@ export default function CustomerResponsesPage() {
     swiperRef?.slideNext();
   };
 
-  const handleOpenChat = async (orderId: number) => {
+  const handleOpenChat = async (responseId: number, orderId: number) => {
+    setChatOpeningId(responseId);
     try {
       const detail = await openChatByOrder(orderId);
       router.push(`/customer/chat/${detail.uuid}`);
-    } catch {
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось открыть чат";
+      showError(message);
+    } finally {
+      setChatOpeningId(null);
+    }
+  };
+
+  const handleInviteToChat = async (responseId: number, orderId: number) => {
+    const updated = await handleStatusUpdate(responseId, "ACCEPTED");
+    if (updated) {
+      await handleOpenChat(responseId, orderId);
     }
   };
 
@@ -260,9 +282,9 @@ export default function CustomerResponsesPage() {
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
-                              onAccept={() => void handleStatusUpdate(response.id, "ACCEPTED")}
+                              onAccept={() => void handleInviteToChat(response.id, response.orderId)}
                               isRejectLoading={updatingId === response.id}
-                              isAcceptLoading={updatingId === response.id}
+                              isAcceptLoading={updatingId === response.id || chatOpeningId === response.id}
                             />
                           );
                         case "ACCEPTED":
@@ -270,9 +292,9 @@ export default function CustomerResponsesPage() {
                             <AcceptedCard
                               dateLabel={response.dateLabel}
                               date={response.date}
-                              status="В переговорах"
-                              statusColor="#FFFFFF"
-                              statusBg="#FF8A00"
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
                               expertName={response.expertName || ""}
                               expertRating={response.expertRating}
                               expertReviewCount={response.expertReviewCount}
@@ -289,9 +311,10 @@ export default function CustomerResponsesPage() {
                               techSpecFiles={response.techSpecFiles}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                               onSelectExpert={() => void handleStatusUpdate(response.id, "IN_PROGRESS")}
-                              onChat={() => void handleOpenChat(response.orderId)}
+                              onChat={() => void handleOpenChat(response.id, response.orderId)}
                               isRejectLoading={updatingId === response.id}
                               isSelectLoading={updatingId === response.id}
+                              isChatLoading={chatOpeningId === response.id}
                             />
                           );
                         case "IN_PROGRESS":
@@ -317,9 +340,10 @@ export default function CustomerResponsesPage() {
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
-                              onChat={() => void handleOpenChat(response.orderId)}
+                              onChat={() => void handleOpenChat(response.id, response.orderId)}
                               onComplete={() => void handleStatusUpdate(response.id, "COMPLETED")}
                               isRejectLoading={updatingId === response.id}
+                              isChatLoading={chatOpeningId === response.id}
                               isCompleteLoading={updatingId === response.id}
                             />
                           );
@@ -329,8 +353,8 @@ export default function CustomerResponsesPage() {
                               dateLabel={response.dateLabel}
                               date={response.date}
                               status={response.status}
-                              statusColor="#137333"
-                              statusBg="#E6F4EA"
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
                               expertName={response.expertName || ""}
                               expertRating={response.expertRating}
                               expertReviewCount={response.expertReviewCount}
@@ -340,8 +364,12 @@ export default function CustomerResponsesPage() {
                               orderDate={response.orderDate}
                               badges={response.badges}
                               sum={response.orderCustomerSum || response.sum}
+                              commentText={response.commentText}
+                              expertPrice={response.costEstimate}
+                              expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              hasReview={response.hasReview}
                               onLeaveReview={() => handleOpenReviewModal(response)}
                             />
                           );
@@ -362,6 +390,9 @@ export default function CustomerResponsesPage() {
                               orderDate={response.orderDate}
                               badges={response.badges}
                               sum={response.orderCustomerSum || response.sum}
+                              commentText={response.commentText}
+                              expertPrice={response.costEstimate}
+                              expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                             />

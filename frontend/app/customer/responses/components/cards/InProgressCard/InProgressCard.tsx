@@ -126,15 +126,16 @@ export const InProgressCard = ({
         </div>
 
         <div className={styles.orderSection}>
-          <div
-            style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", gap: 8, width: "100%", cursor: "pointer" }}
+          <button
+            type="button"
+            className={styles.orderTitleRow}
             onClick={() => setOrderExpanded((prev) => !prev)}
           >
-            <span className={styles.orderTitle} style={{ flex: 1 }}>{orderTitle}</span>
-            <span style={{ flexShrink: 0, transform: orderExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>
+            <span className={styles.orderTitle}>{orderTitle}</span>
+            <span className={`${styles.chevron} ${orderExpanded ? styles.chevronExpanded : ""}`}>
               <ChevronIcon color="#FFDDA9" />
             </span>
-          </div>
+          </button>
           {orderExpanded && (
             <>
               <span className={styles.customer}>{customer}</span>

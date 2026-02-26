@@ -68,11 +68,16 @@ export default function ResponsesPage() {
   const { role } = useUserProfile();
   const isExpert = role === "EXPERT";
 
-  const handleOpenChat = async (orderId: number) => {
+  const handleOpenChat = async (responseId: number, orderId: number) => {
+    setActionLoading(responseId, "chat");
     try {
       const detail = await openChatByOrder(orderId);
       router.push(`/expert/chat/${detail.uuid}`);
-    } catch {
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Не удалось открыть чат";
+      setError(message);
+    } finally {
+      setActionLoading(responseId, null);
     }
   };
 
@@ -354,9 +359,9 @@ export default function ResponsesPage() {
                               orderTechSpecFiles={response.orderTechSpecFiles}
                               reminderText={response.reminderText}
                               onReject={() => setWithdrawTarget(response)}
-                                onChat={() => void handleOpenChat(response.orderId)}
-                                isRejectLoading={actionLoading === "withdraw"}
-                                isChatLoading={actionLoading === "chat"}
+                              onChat={() => void handleOpenChat(response.id, response.orderId)}
+                              isRejectLoading={actionLoading === "withdraw"}
+                              isChatLoading={actionLoading === "chat"}
                             />
                           );
                         case "IN_PROGRESS":
@@ -389,7 +394,7 @@ export default function ResponsesPage() {
                               reminderText={response.reminderText}
                               expertConfirmed={response.expertConfirmed}
                               onReject={() => setWithdrawTarget(response)}
-                              onChat={() => void handleOpenChat(response.orderId)}
+                              onChat={() => void handleOpenChat(response.id, response.orderId)}
                               onAcceptProject={() => void handleStartOrComplete(response.id, false)}
                               onComplete={() => void handleStartOrComplete(response.id, true)}
                               isRejectLoading={actionLoading === "withdraw"}
@@ -440,10 +445,14 @@ export default function ResponsesPage() {
                               commissionText={response.commissionText}
                               commissionAmount={response.commissionAmount}
                               commissionStatus={response.commissionStatus}
+                              balanceReturnText={response.balanceReturnText}
+                              balanceReturnAmount={response.balanceReturnAmount}
                               commentTitle={response.commentTitle}
                               commentText={response.commentText}
+                              orderComment={response.orderComment}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              orderTechSpecFiles={response.orderTechSpecFiles}
                             />
                           );
                         default:

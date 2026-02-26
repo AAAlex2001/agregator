@@ -1,6 +1,7 @@
 "use client";
 
-import { ProfileIcon, StarIcon } from "@/app/icons";
+import { useState } from "react";
+import { ProfileIcon, StarIcon, ChevronIcon } from "@/app/icons";
 import { Button } from "@/app/components";
 import { TechSpecFiles } from "../../sections";
 import type { ResponseBadge } from "../../types";
@@ -23,9 +24,14 @@ export interface CompletedCardProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+
+  commentText?: string;
+  expertPrice?: string;
+  expertDeadline?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
 
+  hasReview?: boolean;
   onLeaveReview?: () => void;
   isReviewLoading?: boolean;
 }
@@ -54,11 +60,17 @@ export const CompletedCard = ({
   orderDate,
   badges,
   sum,
+  commentText,
+  expertPrice,
+  expertDeadline,
   techSpecTitle,
   techSpecFiles,
+  hasReview = false,
   onLeaveReview,
   isReviewLoading = false,
 }: CompletedCardProps) => {
+  const [orderExpanded, setOrderExpanded] = useState(false);
+
   return (
     <article className={styles.card}>
       <div className={styles.header}>
@@ -107,38 +119,74 @@ export const CompletedCard = ({
         </div>
 
         <div className={styles.orderSection}>
-          <span className={styles.orderTitle}>{orderTitle}</span>
-          <span className={styles.customer}>{customer}</span>
-          <div className={styles.orderMeta}>
-            <span className={styles.orderDate}>{orderDate}</span>
-            <div className={styles.badges}>
-              {badges.map((badge, index) => (
-                <span key={index} className={`${styles.badge} ${styles[badge.variant]}`}>
-                  {badge.text}
-                </span>
-              ))}
-            </div>
-            <div className={styles.cash}>
-              <span className={styles.sum}>{sum}</span>
-            </div>
-          </div>
+          <button
+            type="button"
+            className={styles.orderTitleRow}
+            onClick={() => setOrderExpanded((prev) => !prev)}
+          >
+            <span className={styles.orderTitle}>{orderTitle}</span>
+            <span className={`${styles.chevron} ${orderExpanded ? styles.chevronExpanded : ""}`}>
+              <ChevronIcon color="#FFDDA9" />
+            </span>
+          </button>
+          {orderExpanded && (
+            <>
+              <span className={styles.customer}>{customer}</span>
+              <div className={styles.orderMeta}>
+                <span className={styles.orderDate}>{orderDate}</span>
+                <div className={styles.badges}>
+                  {badges.map((badge, index) => (
+                    <span key={index} className={`${styles.badge} ${styles[badge.variant]}`}>
+                      {badge.text}
+                    </span>
+                  ))}
+                </div>
+                <div className={styles.cash}>
+                  <span className={styles.sum}>{sum}</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
+
+        {commentText && (
+          <div className={styles.commentRow}>
+            <span className={styles.commentTitle}>Комментарий:</span>
+            <span className={styles.commentText}>{commentText}</span>
+          </div>
+        )}
+
+        {expertPrice && (
+          <div className={styles.commentRow}>
+            <span className={styles.commentTitle}>Цена:</span>
+            <span className={styles.commentText}>{expertPrice}</span>
+          </div>
+        )}
+
+        {expertDeadline && (
+          <div className={styles.commentRow}>
+            <span className={styles.commentTitle}>Срок:</span>
+            <span className={styles.commentText}>до {expertDeadline}</span>
+          </div>
+        )}
 
         <TechSpecFiles techSpecTitle={techSpecTitle} techSpecFiles={techSpecFiles} />
       </div>
 
-      <div className={styles.actions}>
-        <Button
-          variant="secondary"
-          size="sm"
-          fullWidth
-          onClick={onLeaveReview}
-          isLoading={isReviewLoading}
-          className={styles.acceptBtn}
-        >
-          Оставить отзыв
-        </Button>
-      </div>
+      {!hasReview && onLeaveReview && (
+        <div className={styles.actions}>
+          <Button
+            variant="secondary"
+            size="sm"
+            fullWidth
+            onClick={onLeaveReview}
+            isLoading={isReviewLoading}
+            className={styles.acceptBtn}
+          >
+            Оставить отзыв
+          </Button>
+        </div>
+      )}
     </article>
   );
 };

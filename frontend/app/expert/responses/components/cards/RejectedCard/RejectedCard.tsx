@@ -63,22 +63,22 @@ export const RejectedCard = (props: RejectedCardProps) => {
 
             {props.commentText && (
               <CommentSection
-                title={props.commentTitle}
-                text={props.commentText}
+                commentTitle={props.commentTitle}
+                commentText={props.commentText}
               />
             )}
 
             {props.techSpecFiles && props.techSpecFiles.length > 0 && (
               <TechSpecFiles
-                title={props.techSpecTitle}
-                files={props.techSpecFiles}
+                techSpecTitle={props.techSpecTitle}
+                techSpecFiles={props.techSpecFiles}
               />
             )}
 
             <CommissionInfo
-              text={props.commissionText}
-              amount={props.commissionAmount}
-              status={props.commissionStatus}
+              commissionText={props.commissionText}
+              commissionAmount={props.commissionAmount}
+              commissionStatus={props.commissionStatus}
             />
           </div>
         </div>

@@ -27,7 +27,11 @@ def format_sum(sum_amount: int) -> str:
     return f"{formatted} ₽"
 
 
-def to_item(entity) -> ExpertResponseItem:
+def to_item(
+    entity,
+    actor_role: UserRole | None = None,
+    actor_id: int | None = None,
+) -> ExpertResponseItem:
     order = entity.order
     effective_status = entity.status
     date_source = entity.created_at
@@ -63,6 +67,12 @@ def to_item(entity) -> ExpertResponseItem:
         commission_paid_str = format_sum(paid)
         balance_return_str = format_sum(returned)
 
+    reviews = getattr(entity, "reviews", None) or []
+    if actor_role == UserRole.CUSTOMER and actor_id is not None:
+        has_review = any(review.customer_id == actor_id for review in reviews)
+    else:
+        has_review = len(reviews) > 0
+
     return ExpertResponseItem(
         id=entity.id,
         order_id=entity.order_id,
@@ -93,7 +103,7 @@ def to_item(entity) -> ExpertResponseItem:
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
         expert_confirmed=entity.expert_confirmed or False,
-        has_review=bool(getattr(entity, 'reviews', None) and len(entity.reviews) > 0),
+        has_review=has_review,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
@@ -155,7 +165,7 @@ async def get_my_responses(
             limit=limit,
         )
     return ExpertResponseList(
-        items=[to_item(item) for item in items],
+        items=[to_item(item, actor.role, actor.id) for item in items],
         total=total,
         counters=counters,
     )

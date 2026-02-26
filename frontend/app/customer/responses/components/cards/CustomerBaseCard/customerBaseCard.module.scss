@@ -5,12 +5,18 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 16px 20px;
-  gap: 24px;
-  width: 100%;
-  max-width: 660px;
+  gap: 16px;
+  width: 340px;
+  height: auto;
   background: #ffffff;
   border: 1px solid #ffdda9;
   border-radius: 16px;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    width: 660px;
+    height: auto;
+  }
 }
 
 /* ---------- status + date ---------- */
@@ -33,11 +39,12 @@
 .dateValue {
   font-weight: 400;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 17px;
   color: #000000;
 
   @media (min-width: 768px) {
     font-size: 16px;
+    line-height: 20px;
   }
 }
 
@@ -55,7 +62,13 @@
   font-size: 14px;
   line-height: 17px;
   color: #cc6e00;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    white-space: nowrap;
+  }
 }
 
 /* ---------- content ---------- */
@@ -63,7 +76,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
 }
 
@@ -197,25 +210,54 @@
 
 .orderTitle {
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
   color: #000000;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   @media (min-width: 768px) {
     font-size: 16px;
+    line-height: 20px;
   }
+}
+
+.orderTitleRow {
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.chevron {
+  flex-shrink: 0;
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+  color: #ff8a00;
+}
+
+.chevronExpanded {
+  transform: rotate(0deg);
 }
 
 .customer {
   font-weight: 600;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 17px;
   color: #ff8a00;
   width: 100%;
 
   @media (min-width: 768px) {
     font-size: 16px;
+    line-height: 20px;
   }
 }
 
@@ -229,7 +271,7 @@
   flex-wrap: wrap;
 
   @media (min-width: 769px) {
-    gap: 24px;
+    gap: 16px;
     flex-wrap: nowrap;
   }
 }
@@ -263,12 +305,13 @@
   border-radius: 8px;
   font-weight: 400;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 17px;
   text-align: right;
   white-space: nowrap;
 
   @media (min-width: 768px) {
     font-size: 16px;
+    line-height: 20px;
   }
 }
 
@@ -325,16 +368,21 @@
 /* ---------- comment ---------- */
 .commentRow {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 0;
   width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 10px;
+  }
 }
 
 .commentTitle {
   font-weight: 500;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 24px;
   color: #000000;
   white-space: nowrap;
 
@@ -346,8 +394,12 @@
 .commentText {
   font-weight: 400;
   font-size: 14px;
-  line-height: 20px;
-  color: #000000;
+  line-height: 24px;
+  color: #1a1a1a;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   @media (min-width: 768px) {
     font-size: 16px;
@@ -360,7 +412,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   width: 100%;
 }
 
