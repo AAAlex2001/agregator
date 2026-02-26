@@ -1,12 +1,23 @@
+import asyncio
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routes import login, registration, forgot_password, order, response, settings, chat, payment, review
 from ws.router import router as ws_router
+from tasks.auto_reject import run_auto_reject_loop
 
-app = FastAPI(title="Resurs Plus API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    task = asyncio.create_task(run_auto_reject_loop())
+    yield
+    task.cancel()
+
+
+app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

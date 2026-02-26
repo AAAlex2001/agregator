@@ -41,6 +41,7 @@ export interface ResponseApiItem {
   expert_name: string;
   expert_rating: number | null;
   expert_review_count: number;
+  confirm_deadline: string;
 }
 
 export interface ResponsesApiList {

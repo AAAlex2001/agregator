@@ -1,4 +1,4 @@
-from datetime import date as date_type
+from datetime import date as date_type, timedelta
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,7 +53,7 @@ def to_item(entity) -> ExpertResponseItem:
 
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
-    if entity.status == ResponseStatus.ACCEPTED and order:
+    if entity.status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS} and order:
         paid = CommissionCalculator.commission_paid(order.sum_amount)
         returned = CommissionCalculator.balance_return(order.sum_amount)
         commission_paid_str = format_sum(paid)
@@ -87,6 +87,11 @@ def to_item(entity) -> ExpertResponseItem:
         expert_name=expert_name,
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
+        confirm_deadline=(
+            ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
+            if entity.status == ResponseStatus.IN_PROGRESS
+            else ""
+        ),
     )
 
 

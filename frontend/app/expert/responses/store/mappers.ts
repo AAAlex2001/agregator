@@ -87,6 +87,6 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     expertName: item.expert_name || "",
     expertRating: item.expert_rating ?? null,
     expertReviewCount: item.expert_review_count ?? 0,
-    reminderText: isChosen ? `Подтвердите согласие до ${item.proposed_deadline}` : undefined,
+    reminderText: isChosen && item.confirm_deadline ? `Подтвердите согласие до ${item.confirm_deadline}` : undefined,
   };
 }

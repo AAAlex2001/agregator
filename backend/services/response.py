@@ -242,9 +242,10 @@ class ResponseService:
                     )
                 response.order.status = OrderStatus.COMPLETED
 
-            if new_status == ResponseStatus.ACCEPTED:
+            if new_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
                 response.order.assigned_expert_id = response.expert_id
 
+            if new_status == ResponseStatus.ACCEPTED:
                 await self.db.execute(
                     update(OrderResponse)
                     .where(

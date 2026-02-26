@@ -19,10 +19,10 @@ interface WithdrawConfirmModalProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+  balanceReturnAmount?: string;
 }
 
-const WITHDRAW_WARNINGS = [
-  "Взнос за участие в тендере не возвращается",
+const WITHDRAW_WARNINGS_BASE = [
   "Заказчик больше не увидит ваше предложение",
   "Вы сможете откликнуться на этот заказ повторно",
 ];
@@ -42,8 +42,13 @@ const WithdrawConfirmModal = ({
   orderDate,
   badges,
   sum,
+  balanceReturnAmount,
 }: WithdrawConfirmModalProps) => {
   if (!isOpen) return null;
+
+  const warnings = balanceReturnAmount
+    ? WITHDRAW_WARNINGS_BASE
+    : ["Взнос за участие в тендере не возвращается", ...WITHDRAW_WARNINGS_BASE];
 
   return (
     <div className={styles.overlay} onClick={onCancel}>
@@ -86,7 +91,15 @@ const WithdrawConfirmModal = ({
             <div className={styles.infoBlock}>
               <span className={styles.infoTitle}>Обратите внимание:</span>
               <ul className={styles.bulletList}>
-                {WITHDRAW_WARNINGS.map((text) => (
+                {balanceReturnAmount && (
+                  <li className={styles.bulletItem}>
+                    <span className={styles.bulletDot} />
+                    <span className={styles.bulletText}>
+                      На ваш баланс вернется <strong>{balanceReturnAmount}</strong>
+                    </span>
+                  </li>
+                )}
+                {warnings.map((text) => (
                   <li key={text} className={styles.bulletItem}>
                     <span className={styles.bulletDot} />
                     <span className={styles.bulletText}>{text}</span>

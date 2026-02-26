@@ -315,14 +315,14 @@ export default function ResponsesPage() {
                       reminderText={isChosen ? response.reminderText : undefined}
                       editBtnText={isReview ? "Отозвать отклик" : isExpertActionable ? "Отклонить" : undefined}
                       editBtnVariant="outline"
-                      middleBtnText={isInvitation || isChosen ? "Перейти в чат" : undefined}
+                      middleBtnText={isChosen ? "Перейти в чат" : undefined}
                       middleBtnVariant="secondary"
-                      onMiddle={isInvitation || isChosen ? () => { /* TODO: navigate to chat */ } : undefined}
-                      payBtnText={isReview ? "Изменить предложение" : isChosen ? "Принять проект" : undefined}
+                      onMiddle={isChosen ? () => { /* TODO: navigate to chat */ } : undefined}
+                      payBtnText={isReview ? "Изменить предложение" : isInvitation ? "Принять проект" : isChosen ? "Завершить проект" : undefined}
                       payBtnVariant={isReview ? "outlineOrange" : "green"}
                       showActions={!isCompletedCard && isExpertActionable}
-                      onEdit={isReview ? () => setWithdrawTarget(response) : isExpertActionable ? () => void handleRejectResponse(response.id) : undefined}
-                      onPay={isReview ? () => handleOpenEditModal(response) : isChosen ? () => void handleStartOrComplete(response.id, true) : undefined}
+                      onEdit={isReview ? () => setWithdrawTarget(response) : isExpertActionable ? () => setWithdrawTarget(response) : undefined}
+                      onPay={isReview ? () => handleOpenEditModal(response) : isInvitation ? () => void handleStartOrComplete(response.id, false) : isChosen ? () => void handleStartOrComplete(response.id, true) : undefined}
                       isEditLoading={isReview ? false : actionLoading === "withdraw"}
                       isPayLoading={actionLoading === "start" || actionLoading === "complete"}
                     />
@@ -409,6 +409,7 @@ export default function ResponsesPage() {
         orderDate={withdrawTarget?.orderDate ?? ""}
         badges={withdrawTarget?.badges ?? []}
         sum={withdrawTarget?.orderCustomerSum || (withdrawTarget?.sum ?? "")}
+        balanceReturnAmount={withdrawTarget?.balanceReturnAmount}
       />
 
     </>
