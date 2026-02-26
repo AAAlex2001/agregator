@@ -12,7 +12,14 @@ import AuthHeader from "@/app/landing/header/AuthHeader";
 import { Loader, Title, Subtitle, Button } from "@/app/components";
 import { useNotifications } from "@/app/components/Notifications";
 import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
-import CustomerResponseCard from "./components/CustomerResponseCard";
+import {
+  ReviewCard,
+  AcceptedCard,
+  InProgressCard,
+  CompletedCard,
+  RejectedCard,
+  ArchivedCard,
+} from "./components/cards";
 import CompletionModal from "./components/CompletionModal";
 import AddReviewModal from "./components/AddReviewModal/AddReviewModal";
 import { ArrowIcon } from "@/app/icons";
@@ -232,53 +239,148 @@ export default function CustomerResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isReview = response.rawStatus === "REVIEW";
-                      const isInProgress = response.rawStatus === "IN_PROGRESS";
-                      const isAccepted = response.rawStatus === "ACCEPTED";
-                      const isCompleted = response.rawStatus === "COMPLETED";
-
-                      return (
-                    <CustomerResponseCard
-                      dateLabel={response.dateLabel}
-                      date={response.date}
-                      status={response.status}
-                      statusColor={isCompleted ? "#137333" : response.statusColor}
-                      statusBg={isCompleted ? "#E6F4EA" : response.statusBg}
-                      expertName={response.expertName || ""}
-                      expertRating={response.expertRating}
-                      expertReviewCount={response.expertReviewCount}
-                      onExpertHistory={() => { /* TODO: navigate to expert history */ }}
-                      orderTitle={response.orderTitle}
-                      customer={response.customerCompany || response.customer}
-                      orderDate={response.orderDate}
-                      badges={response.badges}
-                      sum={response.orderCustomerSum || response.sum}
-                      techSpecTitle={response.techSpecTitle}
-                      techSpecFiles={response.techSpecFiles}
-                      showActions={isReview || isInProgress || isAccepted || isCompleted}
-                      showRejectAction={!isAccepted && !isCompleted}
-                      acceptBtnText={isCompleted ? "Оставить отзыв" : isInProgress ? "Завершить проект" : isAccepted ? "Выбрать исполнителем" : "Пригласить в чат"}
-                      rejectBtnVariant="transparent"
-                      acceptBtnVariant={isCompleted ? "secondary" : isInProgress ? "green" : isAccepted ? "outline" : "secondary"}
-                      onChat={(isInProgress || isAccepted) ? () => {
-                        void handleOpenChat(response.orderId);
-                      } : undefined}
-                      chatBtnText="Перейти в чат"
-                      onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
-                      onAccept={() => {
-                        if (isCompleted) {
-                          handleOpenReviewModal(response);
-                          return;
-                        }
-                        void handleStatusUpdate(
-                          response.id,
-                          isInProgress ? "COMPLETED" : isAccepted ? "IN_PROGRESS" : "ACCEPTED"
-                        );
-                      }}
-                      isRejectLoading={updatingId === response.id}
-                      isAcceptLoading={updatingId === response.id}
-                    />
-                      );
+                      switch (response.rawStatus) {
+                        case "REVIEW":
+                          return (
+                            <ReviewCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
+                              onAccept={() => void handleStatusUpdate(response.id, "ACCEPTED")}
+                              isRejectLoading={updatingId === response.id}
+                              isAcceptLoading={updatingId === response.id}
+                            />
+                          );
+                        case "ACCEPTED":
+                          return (
+                            <AcceptedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              onSelectExpert={() => void handleStatusUpdate(response.id, "IN_PROGRESS")}
+                              onChat={() => void handleOpenChat(response.orderId)}
+                              isSelectLoading={updatingId === response.id}
+                            />
+                          );
+                        case "IN_PROGRESS":
+                          return (
+                            <InProgressCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
+                              onChat={() => void handleOpenChat(response.orderId)}
+                              onComplete={() => void handleStatusUpdate(response.id, "COMPLETED")}
+                              isRejectLoading={updatingId === response.id}
+                              isCompleteLoading={updatingId === response.id}
+                            />
+                          );
+                        case "COMPLETED":
+                          return (
+                            <CompletedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor="#137333"
+                              statusBg="#E6F4EA"
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                              onLeaveReview={() => handleOpenReviewModal(response)}
+                            />
+                          );
+                        case "REJECTED":
+                          return (
+                            <RejectedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                            />
+                          );
+                        case "ARCHIVED":
+                        default:
+                          return (
+                            <ArchivedCard
+                              dateLabel={response.dateLabel}
+                              date={response.date}
+                              status={response.status}
+                              statusColor={response.statusColor}
+                              statusBg={response.statusBg}
+                              expertName={response.expertName || ""}
+                              expertRating={response.expertRating}
+                              expertReviewCount={response.expertReviewCount}
+                              onExpertHistory={() => { /* TODO */ }}
+                              orderTitle={response.orderTitle}
+                              customer={response.customerCompany || response.customer}
+                              orderDate={response.orderDate}
+                              badges={response.badges}
+                              sum={response.orderCustomerSum || response.sum}
+                              techSpecTitle={response.techSpecTitle}
+                              techSpecFiles={response.techSpecFiles}
+                            />
+                          );
+                      }
                     })()}
                   </div>
                 </SwiperSlide>
