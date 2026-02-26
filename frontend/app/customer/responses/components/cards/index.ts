@@ -12,6 +12,3 @@ export type { CompletedCardProps } from "./CompletedCard";
 
 export { RejectedCard } from "./RejectedCard";
 export type { RejectedCardProps } from "./RejectedCard";
-
-export { ArchivedCard } from "./ArchivedCard";
-export type { ArchivedCardProps } from "./ArchivedCard";

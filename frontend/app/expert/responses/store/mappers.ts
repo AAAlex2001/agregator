@@ -36,8 +36,6 @@ function mapStatus(status: ResponseApiItem["status"]): {
       return { label: "Принято", color: "#137333", bg: "#E6F4EA" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
-    case "ARCHIVED":
-      return { label: "Архив", color: "#555555", bg: "#F5F5F5" };
     default:
       return { label: "На рассмотрении", color: "#CC6E00", bg: "#FFF5E6" };
   }

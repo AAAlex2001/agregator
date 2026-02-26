@@ -400,7 +400,7 @@ class ResponseService:
 
         if response.order and response.order.assigned_expert_id == expert_id:
             response.order.assigned_expert_id = None
-            if response.order.status != OrderStatus.ARCHIVED:
+            if response.order.status != OrderStatus.COMPLETED:
                 response.order.status = OrderStatus.ACTIVE
 
         await self.db.delete(response)
@@ -507,8 +507,6 @@ class ResponseService:
             return [ResponseStatus.ACCEPTED]
         if tab == ResponseTab.COMPLETED:
             return [ResponseStatus.COMPLETED]
-        if tab == ResponseTab.ARCHIVE:
-            return [ResponseStatus.ARCHIVED]
         return None
 
     async def list_responses(
@@ -562,7 +560,6 @@ class ResponseService:
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
             accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
-            archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )
 
         return items, total, counters
@@ -625,7 +622,6 @@ class ResponseService:
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
             accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
-            archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )
 
         return items, total, counters

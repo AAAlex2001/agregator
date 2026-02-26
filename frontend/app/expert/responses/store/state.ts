@@ -16,7 +16,6 @@ const initialState: ResponsesState = {
     rejected: 0,
     accepted: 0,
     completed: 0,
-    archive: 0,
   },
   isLoading: false,
   error: null,

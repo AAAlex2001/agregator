@@ -12,7 +12,6 @@ class ResponseTab(str, PyEnum):
     REJECTED = "rejected"
     ACCEPTED = "accepted"
     COMPLETED = "completed"
-    ARCHIVE = "archive"
 
 
 class ResponseCreate(BaseModel):
@@ -27,7 +26,6 @@ class ResponseCounters(BaseModel):
     rejected: int = 0
     accepted: int = 0
     completed: int = 0
-    archive: int = 0
 
 
 class ExpertResponseItem(BaseModel):
@@ -58,6 +56,7 @@ class ExpertResponseItem(BaseModel):
     expert_review_count: int = 0
     confirm_deadline: str = ""
     expert_confirmed: bool = False
+    has_review: bool = False
 
     model_config = {"from_attributes": True}
 

@@ -18,7 +18,6 @@ import {
   InProgressCard,
   CompletedCard,
   RejectedCard,
-  ArchivedCard,
 } from "./components/cards";
 import CompletionModal from "./components/CompletionModal";
 import AddReviewModal from "./components/AddReviewModal/AddReviewModal";
@@ -38,7 +37,6 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "В переговорах" },
   { key: "completed", label: "Завершены" },
-  { key: "archive", label: "Архив" },
 ];
 
 export default function CustomerResponsesPage() {
@@ -140,7 +138,6 @@ export default function CustomerResponsesPage() {
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "В переговорах", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
-    { key: "archive" as const, label: "Архив", count: counters.archive },
   ];
 
   const totalPages = Math.max(1, items.length);
@@ -302,7 +299,7 @@ export default function CustomerResponsesPage() {
                             <InProgressCard
                               dateLabel={response.dateLabel}
                               date={response.date}
-                              status={response.status}
+                              status={`В работе от ${response.date}`}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
                               expertName={response.expertName || ""}
@@ -314,6 +311,9 @@ export default function CustomerResponsesPage() {
                               orderDate={response.orderDate}
                               badges={response.badges}
                               sum={response.orderCustomerSum || response.sum}
+                              commentText={response.commentText}
+                              expertPrice={response.costEstimate}
+                              expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
@@ -366,28 +366,8 @@ export default function CustomerResponsesPage() {
                               techSpecFiles={response.techSpecFiles}
                             />
                           );
-                        case "ARCHIVED":
                         default:
-                          return (
-                            <ArchivedCard
-                              dateLabel={response.dateLabel}
-                              date={response.date}
-                              status={response.status}
-                              statusColor={response.statusColor}
-                              statusBg={response.statusBg}
-                              expertName={response.expertName || ""}
-                              expertRating={response.expertRating}
-                              expertReviewCount={response.expertReviewCount}
-                              onExpertHistory={() => { /* TODO */ }}
-                              orderTitle={response.orderTitle}
-                              customer={response.customerCompany || response.customer}
-                              orderDate={response.orderDate}
-                              badges={response.badges}
-                              sum={response.orderCustomerSum || response.sum}
-                              techSpecTitle={response.techSpecTitle}
-                              techSpecFiles={response.techSpecFiles}
-                            />
-                          );
+                          return null;
                       }
                     })()}
                   </div>

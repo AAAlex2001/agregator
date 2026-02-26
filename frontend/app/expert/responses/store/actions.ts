@@ -13,7 +13,6 @@ export async function loadResponses(
       rejected: number;
       accepted: number;
       completed: number;
-      archive: number;
     };
   }) => void,
   onError?: (message: string) => void

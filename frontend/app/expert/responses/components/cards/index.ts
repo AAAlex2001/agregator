@@ -3,4 +3,3 @@ export * from "./AcceptedCard/AcceptedCard";
 export * from "./InProgressCard/InProgressCard";
 export * from "./RejectedCard/RejectedCard";
 export * from "./CompletedCard/CompletedCard";
-export * from "./ArchivedCard/ArchivedCard";

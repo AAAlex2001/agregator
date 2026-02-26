@@ -31,7 +31,7 @@ def to_item(entity) -> ExpertResponseItem:
     order = entity.order
     effective_status = entity.status
     date_source = entity.created_at
-    if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED, ResponseStatus.ARCHIVED}:
+    if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
         date_source = entity.updated_at or entity.created_at
     customer_name = ""
     customer_company = ""
@@ -93,6 +93,7 @@ def to_item(entity) -> ExpertResponseItem:
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
         expert_confirmed=entity.expert_confirmed or False,
+        has_review=bool(getattr(entity, 'reviews', None) and len(entity.reviews) > 0),
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}

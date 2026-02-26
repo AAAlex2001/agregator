@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -14,9 +15,9 @@ import { ArrowIcon } from "@/app/icons";
 import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
+import { openChatByOrder } from "@/app/utils/chatApi";
 import {
   AcceptedCard,
-  ArchivedCard,
   CompletedCard,
   InProgressCard,
   RejectedCard,
@@ -35,7 +36,6 @@ const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "В переговорах" },
   { key: "completed", label: "Завершены" },
-  { key: "archive", label: "Архив" },
 ];
 
 function parseDisplayAmountToKopecks(value: string): number {
@@ -54,6 +54,7 @@ function parseDisplayAmountToKopecks(value: string): number {
 }
 
 export default function ResponsesPage() {
+  const router = useRouter();
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
   const [activeTab, setActiveTab] = useState<ResponseTabKey>("review");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
@@ -66,6 +67,14 @@ export default function ResponsesPage() {
 
   const { role } = useUserProfile();
   const isExpert = role === "EXPERT";
+
+  const handleOpenChat = async (orderId: number) => {
+    try {
+      const detail = await openChatByOrder(orderId);
+      router.push(`/expert/chat/${detail.uuid}`);
+    } catch {
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -193,7 +202,6 @@ export default function ResponsesPage() {
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "В переговорах", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
-    { key: "archive" as const, label: "Архив", count: counters.archive },
   ];
 
   const totalPages = Math.max(1, items.length);
@@ -346,7 +354,7 @@ export default function ResponsesPage() {
                               orderTechSpecFiles={response.orderTechSpecFiles}
                               reminderText={response.reminderText}
                               onReject={() => setWithdrawTarget(response)}
-                                onChat={() => { /* TODO: navigate to chat */ }}
+                                onChat={() => void handleOpenChat(response.orderId)}
                                 isRejectLoading={actionLoading === "withdraw"}
                                 isChatLoading={actionLoading === "chat"}
                             />
@@ -381,7 +389,7 @@ export default function ResponsesPage() {
                               reminderText={response.reminderText}
                               expertConfirmed={response.expertConfirmed}
                               onReject={() => setWithdrawTarget(response)}
-                              onChat={() => { /* TODO: navigate to chat */ }}
+                              onChat={() => void handleOpenChat(response.orderId)}
                               onAcceptProject={() => void handleStartOrComplete(response.id, false)}
                               onComplete={() => void handleStartOrComplete(response.id, true)}
                               isRejectLoading={actionLoading === "withdraw"}
@@ -438,31 +446,8 @@ export default function ResponsesPage() {
                               techSpecFiles={response.techSpecFiles}
                             />
                           );
-                        case "ARCHIVED":
                         default:
-                          return (
-                            <ArchivedCard
-                              dateLabel={response.dateLabel}
-                              date={response.date}
-                              status={response.status}
-                              statusColor={response.statusColor}
-                              statusBg={response.statusBg}
-                              orderTitle={response.orderTitle}
-                              customer={response.customerCompany || response.customer}
-                              orderDate={response.orderDate}
-                              badges={response.badges}
-                              sum={response.orderCustomerSum || response.sum}
-                              deadline={response.deadline}
-                              costEstimate={response.costEstimate}
-                              commissionText={response.commissionText}
-                              commissionAmount={response.commissionAmount}
-                              commissionStatus={response.commissionStatus}
-                              commentTitle={response.commentTitle}
-                              commentText={response.commentText}
-                              techSpecTitle={response.techSpecTitle}
-                              techSpecFiles={response.techSpecFiles}
-                            />
-                          );
+                          return null;
                       }
                     })()}
                   </div>

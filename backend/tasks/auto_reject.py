@@ -34,7 +34,7 @@ async def reject_expired_responses() -> None:
             response.status = ResponseStatus.REJECTED
             if response.order and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
-                if response.order.status != OrderStatus.ARCHIVED:
+                if response.order.status != OrderStatus.COMPLETED:
                     response.order.status = OrderStatus.ACTIVE
 
         if expired:

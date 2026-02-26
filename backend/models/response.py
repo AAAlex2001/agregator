@@ -13,7 +13,6 @@ class ResponseStatus(str, PyEnum):
     ACCEPTED = "ACCEPTED"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
-    ARCHIVED = "ARCHIVED"
 
 
 class OrderResponse(Base):
@@ -60,3 +59,4 @@ class OrderResponse(Base):
 
     order = relationship("Order", back_populates="responses")
     expert = relationship("User", back_populates="responses")
+    reviews = relationship("Review", back_populates="response", lazy="select")
