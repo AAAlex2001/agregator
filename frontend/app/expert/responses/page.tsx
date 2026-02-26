@@ -295,7 +295,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}
@@ -305,10 +305,14 @@ export default function ResponsesPage() {
                               commissionText={response.commissionText}
                               commissionAmount={response.commissionAmount}
                               commissionStatus={response.commissionStatus}
+                              balanceReturnText={response.balanceReturnText}
+                              balanceReturnAmount={response.balanceReturnAmount}
                               commentTitle={response.commentTitle}
                               commentText={response.commentText}
+                              orderComment={response.orderComment}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              orderTechSpecFiles={response.orderTechSpecFiles}
                               onWithdraw={() => setWithdrawTarget(response)}
                               onChangeOffer={() => handleOpenEditModal(response)}
                               isWithdrawLoading={actionLoading === "withdraw"}
@@ -322,7 +326,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}
@@ -351,7 +355,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}
@@ -381,7 +385,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}
@@ -405,7 +409,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}
@@ -430,7 +434,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
-                              orderTitle={response.orderCustomerSum || response.orderTitle}
+                              orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
                               badges={response.badges}

@@ -41,6 +41,7 @@ class ExpertResponseItem(BaseModel):
     order_title: str
     order_sum: str
     order_date: str
+    order_comment: str = ""
     customer_name: str
     customer_company: str
     technical_files: list[str]

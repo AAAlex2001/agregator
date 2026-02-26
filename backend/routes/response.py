@@ -74,6 +74,7 @@ def to_item(entity) -> ExpertResponseItem:
         order_title=order.title if order else "",
         order_sum=order_sum,
         order_date=order.deadline.strftime("%d.%m.%Y") if order else "",
+        order_comment=order.comment if order else "",
         customer_name=customer_name,
         customer_company=customer_company,
         technical_files=order.technical_files if order and order.technical_files else [],

@@ -13,6 +13,7 @@ interface OrderSectionProps {
   sum: string;
   collapsible?: boolean;
   hideDividerOnDesktop?: boolean;
+  hideSum?: boolean;
 }
 
 const OrderSection = ({
@@ -23,6 +24,7 @@ const OrderSection = ({
   sum,
   collapsible = false,
   hideDividerOnDesktop = false,
+  hideSum = false,
 }: OrderSectionProps) => {
   const [expanded, setExpanded] = useState(false);
   const showMeta = collapsible ? expanded : true;
@@ -40,7 +42,9 @@ const OrderSection = ({
         }}
       >
         <span className={styles.orderTitle}>{orderTitle}</span>
-        <ChevronIcon className={`${styles.chevron} ${showMeta ? styles.chevronExpanded : ""}`} />
+        {collapsible && (
+          <ChevronIcon className={`${styles.chevron} ${expanded ? styles.chevronExpanded : ""}`} />
+        )}
       </button>
       {showMeta && (
         <>
@@ -57,9 +61,11 @@ const OrderSection = ({
                 </span>
               ))}
             </div>
-            <div className={styles.cash}>
-              <span className={styles.sum}>{sum}</span>
-            </div>
+            {!hideSum && (
+              <div className={styles.cash}>
+                <span className={styles.sum}>{sum}</span>
+              </div>
+            )}
           </div>
         </>
       )}

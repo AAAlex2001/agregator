@@ -9,6 +9,7 @@ interface StatusHeaderProps {
   statusColor: string;
   statusBg: string;
   statusMessage?: string;
+  orderTitle?: string;
 }
 
 const StatusHeader = ({
@@ -18,11 +19,18 @@ const StatusHeader = ({
   statusColor,
   statusBg,
   statusMessage,
+  orderTitle,
 }: StatusHeaderProps) => (
   <div className={styles.statusDateRow}>
     <div className={styles.dateRow}>
-      <span className={styles.dateLabel}>{dateLabel}</span>
-      <span className={styles.dateValue}>{date}</span>
+      {orderTitle ? (
+        <span className={styles.orderTitle}>{orderTitle}</span>
+      ) : (
+        <>
+          <span className={styles.dateLabel}>{dateLabel}</span>
+          <span className={styles.dateValue}>{date}</span>
+        </>
+      )}
     </div>
     {statusMessage && (
       <span className={styles.statusMessage}>{statusMessage}</span>

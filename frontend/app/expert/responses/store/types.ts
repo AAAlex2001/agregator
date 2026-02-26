@@ -27,6 +27,7 @@ export interface ResponseApiItem {
   order_title: string;
   order_sum: string;
   order_date: string;
+  order_comment?: string;
   customer_name: string;
   customer_company: string;
   technical_files: string[];
@@ -73,8 +74,10 @@ export interface ResponseCardViewModel {
   orderCommissionAmount: string;
   commentTitle: string;
   commentText: string;
+  orderComment?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  orderTechSpecFiles?: string[];
   rawSumAmount: number;
   rawDeadline: string;
   expertName: string;

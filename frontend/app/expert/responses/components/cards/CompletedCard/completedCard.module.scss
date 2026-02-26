@@ -7,7 +7,7 @@
   padding: 16px 20px;
   gap: 24px;
   width: 340px;
-  height: 582px;
+  height: auto;
   background: #ffffff;
   border: 1px solid #ffdda9;
   border-radius: 16px;
@@ -15,7 +15,7 @@
 
   @media (min-width: 768px) {
     width: 660px;
-    height: 380px;
+    height: auto;
   }
 }
 

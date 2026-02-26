@@ -44,6 +44,22 @@
   }
 }
 
+.orderTitle {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000000;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
+
 .statusMessage {
   font-weight: 500;
   font-size: 16px;
