@@ -16,6 +16,8 @@ export interface RegistrationFormData {
   login: string;
   password: string;
   repeatPassword: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface RegistrationState {
@@ -25,6 +27,8 @@ export interface RegistrationState {
   login: string;
   password: string;
   repeatPassword: string;
+  firstName: string;
+  lastName: string;
   isLoading: boolean;
   error: string | null;
 }

@@ -69,6 +69,8 @@ export default function RegisterPage() {
           login: state.login,
           password: state.password,
           repeatPassword: state.repeatPassword,
+          firstName: state.firstName,
+          lastName: state.lastName,
         },
         (userId) => {
           console.log("Успешная регистрация, ID:", userId);
@@ -170,6 +172,26 @@ export default function RegisterPage() {
           ) : (
             <div className={styles.stepContent} key="step2">
               <form onSubmit={handleSubmit} className={styles.form}>
+                {state.selectedRole === 2 && (
+                  <>
+                    <Input
+                      id="lastName"
+                      variant="text"
+                      value={state.lastName}
+                      onChange={(e) => state.setLastName(e.target.value)}
+                      placeholder="Фамилия"
+                      required
+                    />
+                    <Input
+                      id="firstName"
+                      variant="text"
+                      value={state.firstName}
+                      onChange={(e) => state.setFirstName(e.target.value)}
+                      placeholder="Имя"
+                      required
+                    />
+                  </>
+                )}
                 <Input
                   id="login"
                   variant="emailOrPhone"

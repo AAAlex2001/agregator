@@ -15,6 +15,8 @@ class UserRegistration(BaseModel):
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
     password: str = Field(..., description="Пароль пользователя")
     email: Optional[EmailStr] = Field(None, description="Почта пользователя")
+    first_name: Optional[str] = Field(None, description="Имя", max_length=100)
+    last_name: Optional[str] = Field(None, description="Фамилия", max_length=100)
 
     @model_validator(mode="after")
     def phone_or_email_required(self):

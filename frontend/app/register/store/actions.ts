@@ -12,6 +12,15 @@ export async function handleRegistration(
       throw new Error("Укажите email или телефон");
     }
 
+    if (data.role === "EXPERT") {
+      if (!data.firstName?.trim()) {
+        throw new Error("Укажите имя");
+      }
+      if (!data.lastName?.trim()) {
+        throw new Error("Укажите фамилию");
+      }
+    }
+
     if (data.password.length < 6) {
       throw new Error("Пароль должен быть не менее 6 символов");
     }

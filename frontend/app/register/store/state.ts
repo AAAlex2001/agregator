@@ -8,6 +8,8 @@ export function useRegistrationState(): RegistrationState & {
   setLogin: (login: string) => void;
   setPassword: (password: string) => void;
   setRepeatPassword: (repeatPassword: string) => void;
+  setFirstName: (firstName: string) => void;
+  setLastName: (lastName: string) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   reset: () => void;
@@ -19,6 +21,8 @@ export function useRegistrationState(): RegistrationState & {
     login: "",
     password: "",
     repeatPassword: "",
+    firstName: "",
+    lastName: "",
     isLoading: false,
     error: null,
   };
@@ -30,6 +34,8 @@ export function useRegistrationState(): RegistrationState & {
     | { type: "SET_LOGIN"; payload: string }
     | { type: "SET_PASSWORD"; payload: string }
     | { type: "SET_REPEAT_PASSWORD"; payload: string }
+    | { type: "SET_FIRST_NAME"; payload: string }
+    | { type: "SET_LAST_NAME"; payload: string }
     | { type: "SET_LOADING"; payload: boolean }
     | { type: "SET_ERROR"; payload: string | null }
     | { type: "RESET" };
@@ -48,6 +54,10 @@ export function useRegistrationState(): RegistrationState & {
         return { ...state, password: action.payload };
       case "SET_REPEAT_PASSWORD":
         return { ...state, repeatPassword: action.payload };
+      case "SET_FIRST_NAME":
+        return { ...state, firstName: action.payload };
+      case "SET_LAST_NAME":
+        return { ...state, lastName: action.payload };
       case "SET_LOADING":
         return { ...state, isLoading: action.payload };
       case "SET_ERROR":
@@ -69,6 +79,8 @@ export function useRegistrationState(): RegistrationState & {
     setLogin: (login) => dispatch({ type: "SET_LOGIN", payload: login }),
     setPassword: (password) => dispatch({ type: "SET_PASSWORD", payload: password }),
     setRepeatPassword: (repeatPassword) => dispatch({ type: "SET_REPEAT_PASSWORD", payload: repeatPassword }),
+    setFirstName: (firstName) => dispatch({ type: "SET_FIRST_NAME", payload: firstName }),
+    setLastName: (lastName) => dispatch({ type: "SET_LAST_NAME", payload: lastName }),
     setIsLoading: (loading) => dispatch({ type: "SET_LOADING", payload: loading }),
     setError: (error) => dispatch({ type: "SET_ERROR", payload: error }),
     reset: () => dispatch({ type: "RESET" }),

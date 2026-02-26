@@ -12,6 +12,8 @@ export async function registerUser(data: RegistrationFormData): Promise<Registra
     email: data.login.includes("@") ? data.login : undefined,
     phone: !data.login.includes("@") ? data.login : undefined,
     password: data.password,
+    first_name: data.firstName || undefined,
+    last_name: data.lastName || undefined,
   };
 
   const response = await fetch(`${apiBaseUrl}/register/`, {

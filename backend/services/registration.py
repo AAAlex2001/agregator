@@ -45,6 +45,8 @@ class RegistrationService:
             phone=data.phone,
             email=data.email,
             password=self.hash_password(data.password),
+            first_name=data.first_name,
+            last_name=data.last_name,
         )
 
         self.db.add(new_user)
