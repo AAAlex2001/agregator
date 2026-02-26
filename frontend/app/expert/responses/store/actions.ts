@@ -8,8 +8,8 @@ export async function loadResponses(
     items: ReturnType<typeof mapResponseItemToCard>[];
     total: number;
     counters: {
-      new: number;
       review: number;
+        in_progress: number;
       rejected: number;
       accepted: number;
       completed: number;

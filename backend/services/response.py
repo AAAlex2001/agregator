@@ -123,7 +123,7 @@ class ResponseService:
             comment=data.comment,
             proposed_sum_amount=data.proposed_sum_amount,
             proposed_deadline=data.proposed_deadline,
-            status=ResponseStatus.NEW,
+            status=ResponseStatus.REVIEW,
         )
         self.db.add(entity)
 
@@ -209,14 +209,13 @@ class ResponseService:
                     detail="Заказчик может только отклонять, принимать, переводить отклик в переговоры или завершать проект",
                 )
 
-            if new_status == ResponseStatus.IN_PROGRESS and response.status not in {ResponseStatus.NEW, ResponseStatus.REVIEW}:
+            if new_status == ResponseStatus.IN_PROGRESS and response.status not in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail="В переговоры можно перевести только новый отклик",
+                    detail="В переговоры можно перевести только отклик после приглашения в чат",
                 )
 
             if new_status == ResponseStatus.ACCEPTED and response.status not in {
-                ResponseStatus.NEW,
                 ResponseStatus.REVIEW,
                 ResponseStatus.IN_PROGRESS,
             }:
@@ -322,7 +321,7 @@ class ResponseService:
         data: ResponseCreate,
         keep_files: list[str] | None = None,
     ) -> OrderResponse:
-        """Update a NEW response (deadline, cost, comment, files)."""
+        """Update a review-stage response (deadline, cost, comment, files)."""
         await self.ensure_expert(expert_id)
         response = await self.get_response_by_id(response_id)
 
@@ -332,7 +331,7 @@ class ResponseService:
                 detail="Нельзя редактировать чужой отклик",
             )
 
-        if response.status not in {ResponseStatus.NEW, ResponseStatus.REVIEW}:
+        if response.status != ResponseStatus.REVIEW:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Редактировать можно только отклик на рассмотрении",
@@ -355,7 +354,7 @@ class ResponseService:
         response_id: int,
         expert_id: int,
     ) -> int:
-        """Delete a NEW response so the expert can re-apply later.
+        """Delete a response so the expert can re-apply later.
         Returns the order_id for broadcasting."""
         response = await self.get_response_by_id(response_id)
 
@@ -365,7 +364,7 @@ class ResponseService:
                 detail="Нельзя отозвать чужой отклик",
             )
 
-        if response.status not in {ResponseStatus.NEW, ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
+        if response.status not in {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Отозвать можно только отклик на рассмотрении, принятый или в работе",
@@ -470,14 +469,16 @@ class ResponseService:
 
     @staticmethod
     def statuses_for_tab(tab: ResponseTab | None) -> list[ResponseStatus] | None:
-        if tab is None or tab == ResponseTab.NEW:
-            return [ResponseStatus.NEW, ResponseStatus.REVIEW]
+        if tab is None:
+            return [ResponseStatus.REVIEW]
         if tab == ResponseTab.REVIEW:
-            return [ResponseStatus.NEW, ResponseStatus.REVIEW]
+            return [ResponseStatus.REVIEW]
+        if tab == ResponseTab.IN_PROGRESS:
+            return [ResponseStatus.IN_PROGRESS]
         if tab == ResponseTab.REJECTED:
             return [ResponseStatus.REJECTED]
         if tab == ResponseTab.ACCEPTED:
-            return [ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS]
+            return [ResponseStatus.ACCEPTED]
         if tab == ResponseTab.COMPLETED:
             return [ResponseStatus.COMPLETED]
         if tab == ResponseTab.ARCHIVE:
@@ -530,10 +531,10 @@ class ResponseService:
 
         counters_map = {status: count for status, count in grouped.all()}
         counters = ResponseCounters(
-            new=counters_map.get(ResponseStatus.NEW, 0) + counters_map.get(ResponseStatus.REVIEW, 0),
-            review=counters_map.get(ResponseStatus.NEW, 0) + counters_map.get(ResponseStatus.REVIEW, 0),
+            review=counters_map.get(ResponseStatus.REVIEW, 0),
+            in_progress=counters_map.get(ResponseStatus.IN_PROGRESS, 0),
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
-            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0) + counters_map.get(ResponseStatus.IN_PROGRESS, 0),
+            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
             archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )
@@ -593,10 +594,10 @@ class ResponseService:
 
         counters_map = {status: count for status, count in grouped.all()}
         counters = ResponseCounters(
-            new=counters_map.get(ResponseStatus.NEW, 0) + counters_map.get(ResponseStatus.REVIEW, 0),
-            review=counters_map.get(ResponseStatus.NEW, 0) + counters_map.get(ResponseStatus.REVIEW, 0),
+            review=counters_map.get(ResponseStatus.REVIEW, 0),
+            in_progress=counters_map.get(ResponseStatus.IN_PROGRESS, 0),
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
-            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0) + counters_map.get(ResponseStatus.IN_PROGRESS, 0),
+            accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
             completed=counters_map.get(ResponseStatus.COMPLETED, 0),
             archive=counters_map.get(ResponseStatus.ARCHIVED, 0),
         )

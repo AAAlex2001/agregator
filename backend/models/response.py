@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from sqlalchemy import Column, Integer, BigInteger, Text, Date, DateTime, ForeignKey, Enum, JSON, UniqueConstraint
@@ -8,7 +8,6 @@ from models.base import Base
 
 
 class ResponseStatus(str, PyEnum):
-    NEW = "NEW"
     REVIEW = "REVIEW"
     REJECTED = "REJECTED"
     ACCEPTED = "ACCEPTED"
@@ -44,7 +43,7 @@ class OrderResponse(Base):
         Enum(ResponseStatus, name="responsestatus"),
         nullable=False,
         index=True,
-        default=ResponseStatus.NEW,
+        default=ResponseStatus.REVIEW,
     )
     created_at = Column(
         DateTime(timezone=True),

@@ -26,8 +26,8 @@ import { createReview } from "./store/api";
 import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
-  { key: "new", label: "Новые" },
   { key: "review", label: "На рассмотрении" },
+  { key: "in_progress", label: "В переговорах" },
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "Принятые" },
   { key: "completed", label: "Завершены" },
@@ -38,7 +38,7 @@ export default function CustomerResponsesPage() {
   const router = useRouter();
   const { showSuccess, showError } = useNotifications();
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
-  const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
+  const [activeTab, setActiveTab] = useState<ResponseTabKey>("review");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,8 +128,8 @@ export default function CustomerResponsesPage() {
   };
 
   const tabs = [
-    { key: "new" as const, label: "Новые", count: counters.new },
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
+    { key: "in_progress" as const, label: "В переговорах", count: counters.in_progress },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "Принятые", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
@@ -137,7 +137,7 @@ export default function CustomerResponsesPage() {
   ];
 
   const totalPages = Math.max(1, items.length);
-  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Новые";
+  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "На рассмотрении";
 
   const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
@@ -232,7 +232,7 @@ export default function CustomerResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      const isReview = response.rawStatus === "NEW" || response.rawStatus === "REVIEW";
+                      const isReview = response.rawStatus === "REVIEW";
                       const isInProgress = response.rawStatus === "IN_PROGRESS";
                       const isAccepted = response.rawStatus === "ACCEPTED";
                       const isCompleted = response.rawStatus === "COMPLETED";
@@ -241,7 +241,7 @@ export default function CustomerResponsesPage() {
                     <CustomerResponseCard
                       dateLabel={response.dateLabel}
                       date={response.date}
-                      status={isReview ? "Новый отклик" : response.status}
+                      status={response.status}
                       statusColor={isCompleted ? "#137333" : response.statusColor}
                       statusBg={isCompleted ? "#E6F4EA" : response.statusBg}
                       expertName={response.expertName || ""}
@@ -257,9 +257,9 @@ export default function CustomerResponsesPage() {
                       techSpecFiles={response.techSpecFiles}
                       showActions={isReview || isInProgress || isAccepted || isCompleted}
                       showRejectAction={!isAccepted && !isCompleted}
-                      acceptBtnText={isCompleted ? "Оставить отзыв" : isAccepted ? "Завершить проект" : isInProgress ? "Выбрать исполнителем" : "Пригласить в чат"}
+                      acceptBtnText={isCompleted ? "Оставить отзыв" : isInProgress ? "Завершить проект" : isAccepted ? "Выбрать исполнителем" : "Пригласить в чат"}
                       rejectBtnVariant="transparent"
-                      acceptBtnVariant={isCompleted ? "secondary" : isAccepted ? "green" : isInProgress ? "outline" : "secondary"}
+                      acceptBtnVariant={isCompleted ? "secondary" : isInProgress ? "green" : isAccepted ? "outline" : "secondary"}
                       onChat={(isInProgress || isAccepted) ? () => {
                         void handleOpenChat(response.orderId);
                       } : undefined}
@@ -272,7 +272,7 @@ export default function CustomerResponsesPage() {
                         }
                         void handleStatusUpdate(
                           response.id,
-                          isAccepted ? "COMPLETED" : isInProgress ? "ACCEPTED" : "IN_PROGRESS"
+                          isInProgress ? "COMPLETED" : isAccepted ? "IN_PROGRESS" : "ACCEPTED"
                         );
                       }}
                       isRejectLoading={updatingId === response.id}

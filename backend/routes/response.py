@@ -29,6 +29,10 @@ def format_sum(sum_amount: int) -> str:
 
 def to_item(entity) -> ExpertResponseItem:
     order = entity.order
+    effective_status = entity.status
+    date_source = entity.created_at
+    if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED, ResponseStatus.ARCHIVED}:
+        date_source = entity.updated_at or entity.created_at
     customer_name = ""
     customer_company = ""
     order_sum = ""
@@ -53,7 +57,7 @@ def to_item(entity) -> ExpertResponseItem:
 
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
-    if order and entity.status in {ResponseStatus.NEW, ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
+    if order and effective_status in {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
         paid = CommissionCalculator.commission_paid(order.sum_amount)
         returned = CommissionCalculator.balance_return(order.sum_amount)
         commission_paid_str = format_sum(paid)
@@ -62,8 +66,8 @@ def to_item(entity) -> ExpertResponseItem:
     return ExpertResponseItem(
         id=entity.id,
         order_id=entity.order_id,
-        status=entity.status,
-        date=entity.created_at.strftime("%d.%m.%Y"),
+        status=effective_status,
+        date=date_source.strftime("%d.%m.%Y"),
         comment=entity.comment,
         proposed_sum=format_sum(entity.proposed_sum_amount),
         proposed_deadline=entity.proposed_deadline.strftime("%d.%m.%Y"),
@@ -89,7 +93,7 @@ def to_item(entity) -> ExpertResponseItem:
         expert_review_count=expert_review_count,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
-            if entity.status == ResponseStatus.IN_PROGRESS
+            if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
             else ""
         ),
     )

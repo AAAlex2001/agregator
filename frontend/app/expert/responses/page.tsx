@@ -23,8 +23,8 @@ import type { ResponseCardViewModel, ResponseTabKey } from "./store/types";
 import styles from "./responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [
-  { key: "new", label: "Новые" },
   { key: "review", label: "На рассмотрении" },
+  { key: "in_progress", label: "В переговорах" },
   { key: "rejected", label: "Отклоненные" },
   { key: "accepted", label: "Принятые" },
   { key: "completed", label: "Завершены" },
@@ -48,7 +48,7 @@ function parseDisplayAmountToKopecks(value: string): number {
 
 export default function ResponsesPage() {
   const { items, counters, isLoading, error, setLoading, setError, setItems, setCounters } = useResponsesState();
-  const [activeTab, setActiveTab] = useState<ResponseTabKey>("new");
+  const [activeTab, setActiveTab] = useState<ResponseTabKey>("review");
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -181,8 +181,8 @@ export default function ResponsesPage() {
   };
 
   const tabs = [
-    { key: "new" as const, label: "Новые", count: counters.new },
     { key: "review" as const, label: "На рассмотрении", count: counters.review },
+    { key: "in_progress" as const, label: "В переговорах", count: counters.in_progress },
     { key: "rejected" as const, label: "Отклоненные", count: counters.rejected },
     { key: "accepted" as const, label: "Принятые", count: counters.accepted },
     { key: "completed" as const, label: "Завершены", count: counters.completed },
@@ -190,7 +190,7 @@ export default function ResponsesPage() {
   ];
 
   const totalPages = Math.max(1, items.length);
-  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "Новые";
+  const activeTabLabel = TAB_META.find((tab) => tab.key === activeTab)?.label ?? "На рассмотрении";
 
   const paginationItems: (number | "ellipsis")[] = (() => {
     if (totalPages <= 4) {
@@ -277,13 +277,13 @@ export default function ResponsesPage() {
                 <SwiperSlide key={response.id} className={styles.slide}>
                   <div className={`${styles.slideInner} ${index === activeIndex ? styles.slideActive : ""}`}>
                     {(() => {
-                      // isReview: NEW/REVIEW — отклик на рассмотрении
-                      const isReview = isExpert && (response.rawStatus === "NEW" || response.rawStatus === "REVIEW");
+                      // isReview: REVIEW — отклик на рассмотрении
+                      const isReview = isExpert && response.rawStatus === "REVIEW";
                       // isInvitation: ACCEPTED — заказчик пригласил в чат
                       const isInvitation = isExpert && response.rawStatus === "ACCEPTED";
-                      // isChosen: IN_PROGRESS — заказчик выбрал исполнителем
-                      const isChosen = isExpert && response.rawStatus === "IN_PROGRESS";
-                      const isExpertActionable = isReview || isInvitation || isChosen;
+                      // isNegotiation: IN_PROGRESS — отклик в переговорах
+                      const isNegotiation = isExpert && response.rawStatus === "IN_PROGRESS";
+                      const isExpertActionable = isReview || isInvitation || isNegotiation;
                       const isCompletedCard = response.rawStatus === "COMPLETED";
                       const actionLoading = loadingActionByResponseId[response.id] ?? null;
 
@@ -294,7 +294,7 @@ export default function ResponsesPage() {
                       status={response.status}
                       statusColor={response.statusColor}
                       statusBg={response.statusBg}
-                      statusMessage={isChosen ? response.statusMessage : undefined}
+                      statusMessage={undefined}
                       orderTitle={response.orderCustomerSum || response.orderTitle}
                       customer={response.customerCompany || response.customer}
                       orderDate={response.orderDate}
@@ -312,17 +312,17 @@ export default function ResponsesPage() {
                       commentText={response.commentText}
                       techSpecTitle={response.techSpecTitle}
                       techSpecFiles={response.techSpecFiles}
-                      reminderText={isChosen ? response.reminderText : undefined}
+                      reminderText={(isInvitation || isNegotiation) ? response.reminderText : undefined}
                       editBtnText={isReview ? "Отозвать отклик" : isExpertActionable ? "Отклонить" : undefined}
                       editBtnVariant="outline"
-                      middleBtnText={isChosen ? "Перейти в чат" : undefined}
+                      middleBtnText={isNegotiation ? "Перейти в чат" : undefined}
                       middleBtnVariant="secondary"
-                      onMiddle={isChosen ? () => { /* TODO: navigate to chat */ } : undefined}
-                      payBtnText={isReview ? "Изменить предложение" : isInvitation ? "Принять проект" : isChosen ? "Завершить проект" : undefined}
+                      onMiddle={isNegotiation ? () => { /* TODO: navigate to chat */ } : undefined}
+                      payBtnText={isReview ? "Изменить предложение" : isInvitation ? "Принять проект" : isNegotiation ? "Завершить проект" : undefined}
                       payBtnVariant={isReview ? "outlineOrange" : "green"}
                       showActions={!isCompletedCard && isExpertActionable}
                       onEdit={isReview ? () => setWithdrawTarget(response) : isExpertActionable ? () => setWithdrawTarget(response) : undefined}
-                      onPay={isReview ? () => handleOpenEditModal(response) : isInvitation ? () => void handleStartOrComplete(response.id, false) : isChosen ? () => void handleStartOrComplete(response.id, true) : undefined}
+                      onPay={isReview ? () => handleOpenEditModal(response) : isInvitation ? () => void handleStartOrComplete(response.id, false) : isNegotiation ? () => void handleStartOrComplete(response.id, true) : undefined}
                       isEditLoading={isReview ? false : actionLoading === "withdraw"}
                       isPayLoading={actionLoading === "start" || actionLoading === "complete"}
                     />

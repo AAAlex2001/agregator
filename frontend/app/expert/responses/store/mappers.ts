@@ -26,8 +26,6 @@ function mapStatus(status: ResponseApiItem["status"]): {
   bg: string;
 } {
   switch (status) {
-    case "NEW":
-      return { label: "Новый отклик", color: "#CC6E00", bg: "#FFF5E6" };
     case "REVIEW":
       return { label: "На рассмотрении", color: "#CC6E00", bg: "#FFF5E6" };
     case "REJECTED":
@@ -35,7 +33,7 @@ function mapStatus(status: ResponseApiItem["status"]): {
     case "ACCEPTED":
       return { label: "Приглашение на собеседование", color: "#FFFFFF", bg: "#FF8A00" };
     case "IN_PROGRESS":
-      return { label: "Принято", color: "#137333", bg: "#E6F4EA" };
+      return { label: "В переговорах", color: "#FFFFFF", bg: "#FF8A00" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
     case "ARCHIVED":
@@ -48,7 +46,7 @@ function mapStatus(status: ResponseApiItem["status"]): {
 export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewModel {
   const mappedStatus = mapStatus(item.status);
   const isInvitation = item.status === "ACCEPTED";
-  const isChosen = item.status === "IN_PROGRESS";
+  const isNegotiation = item.status === "IN_PROGRESS";
 
   return {
     id: item.id,
@@ -59,7 +57,6 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     status: mappedStatus.label,
     statusColor: mappedStatus.color,
     statusBg: mappedStatus.bg,
-    statusMessage: isChosen ? "Заказчик выбрал вас!" : undefined,
     orderTitle: item.order_title,
     orderCustomerSum: item.order_sum,
     customer: item.customer_name,
@@ -87,6 +84,6 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     expertName: item.expert_name || "",
     expertRating: item.expert_rating ?? null,
     expertReviewCount: item.expert_review_count ?? 0,
-    reminderText: isChosen && item.confirm_deadline ? `Подтвердите согласие до ${item.confirm_deadline}` : undefined,
+    reminderText: (isInvitation || isNegotiation) && item.confirm_deadline ? `Ответьте в течение 3 дней (до ${item.confirm_deadline})` : undefined,
   };
 }

@@ -11,8 +11,8 @@ type Action =
 const initialState: ResponsesState = {
   items: [],
   counters: {
-    new: 0,
     review: 0,
+    in_progress: 0,
     rejected: 0,
     accepted: 0,
     completed: 0,
