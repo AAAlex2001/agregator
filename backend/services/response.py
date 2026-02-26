@@ -170,7 +170,7 @@ class ResponseService:
                     detail="Эксперт может только начать или завершить проект",
                 )
             if new_status == ResponseStatus.IN_PROGRESS:
-                if response.status != ResponseStatus.ACCEPTED:
+                if response.status not in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail="В работу можно перевести только принятый отклик",
@@ -180,6 +180,7 @@ class ResponseService:
                         status_code=status.HTTP_409_CONFLICT,
                         detail="Нельзя начать работу по незакрепленному заказу",
                     )
+                response.expert_confirmed = True
             if new_status == ResponseStatus.COMPLETED:
                 if response.status not in {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
                     raise HTTPException(

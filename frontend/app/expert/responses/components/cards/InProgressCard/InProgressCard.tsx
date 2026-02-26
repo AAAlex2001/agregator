@@ -19,6 +19,7 @@ export interface InProgressCardProps {
   status: string;
   statusColor: string;
   statusBg: string;
+  statusMessage?: string;
   orderTitle: string;
   customer: string;
   orderDate: string;
@@ -29,20 +30,29 @@ export interface InProgressCardProps {
   commissionText: string;
   commissionAmount: string;
   commissionStatus?: string;
+  balanceReturnText?: string;
+  balanceReturnAmount?: string;
   commentTitle: string;
   commentText: string;
+  orderComment?: string;
   techSpecTitle?: string;
   techSpecFiles?: string[];
+  orderTechSpecFiles?: string[];
   reminderText?: string;
+  expertConfirmed?: boolean;
   onReject: () => void;
   onChat: () => void;
+  onAcceptProject?: () => void;
   onComplete: () => void;
   isRejectLoading?: boolean;
   isChatLoading?: boolean;
+  isAcceptProjectLoading?: boolean;
   isCompleteLoading?: boolean;
 }
 
 export const InProgressCard = (props: InProgressCardProps) => {
+  const confirmed = props.expertConfirmed ?? false;
+
   return (
     <article className={styles.card}>
       <div className={styles.content}>
@@ -52,6 +62,7 @@ export const InProgressCard = (props: InProgressCardProps) => {
           status={props.status}
           statusColor={props.statusColor}
           statusBg={props.statusBg}
+          statusMessage={props.statusMessage}
         />
 
         <div className={styles.bottomContent}>
@@ -65,52 +76,85 @@ export const InProgressCard = (props: InProgressCardProps) => {
           />
 
           <div className={styles.infoSection}>
-            <ExpertTerms
-              deadline={props.deadline}
-              costEstimate={props.costEstimate}
-            />
+            {(props.deadline || props.costEstimate) && (
+              <ExpertTerms
+                deadline={props.deadline}
+                costEstimate={props.costEstimate}
+              />
+            )}
 
             {props.commentText && (
               <CommentSection
-                title={props.commentTitle}
-                text={props.commentText}
+                commentTitle={props.commentTitle}
+                commentText={props.commentText}
+              />
+            )}
+
+            {props.orderComment && (
+              <CommentSection
+                commentTitle="Комментарий заказчика:"
+                commentText={props.orderComment}
               />
             )}
 
             {props.techSpecFiles && props.techSpecFiles.length > 0 && (
               <TechSpecFiles
-                title={props.techSpecTitle}
-                files={props.techSpecFiles}
+                techSpecTitle={props.techSpecTitle}
+                techSpecFiles={props.techSpecFiles}
               />
             )}
 
-            <CommissionInfo
-              text={props.commissionText}
-              amount={props.commissionAmount}
-              status={props.commissionStatus}
-            />
+            {props.orderTechSpecFiles && props.orderTechSpecFiles.length > 0 && (
+              <TechSpecFiles
+                techSpecTitle="Техническое задание:"
+                techSpecFiles={props.orderTechSpecFiles}
+              />
+            )}
+
+            {props.commissionAmount && props.commissionAmount !== "0 ₽" && (
+              <CommissionInfo
+                commissionText={props.commissionText}
+                commissionAmount={props.commissionAmount}
+                commissionStatus={props.commissionStatus}
+                balanceReturnText={!confirmed ? props.balanceReturnText : undefined}
+                balanceReturnAmount={!confirmed ? props.balanceReturnAmount : undefined}
+              />
+            )}
 
             {props.reminderText && (
-              <ReminderSection text={props.reminderText} />
+              <ReminderSection reminderText={props.reminderText} />
             )}
           </div>
         </div>
       </div>
 
-      <ActionButtons
-        editBtnText="Отклонить"
-        editBtnVariant="outline"
-        onEdit={props.onReject}
-        isEditLoading={props.isRejectLoading}
-        middleBtnText="Перейти в чат"
-        middleBtnVariant="secondary"
-        onMiddle={props.onChat}
-        isMiddleLoading={props.isChatLoading}
-        payBtnText="Завершить проект"
-        payBtnVariant="green"
-        onPay={props.onComplete}
-        isPayLoading={props.isCompleteLoading}
-      />
+      {!confirmed ? (
+        <ActionButtons
+          editBtnText="Отклонить"
+          editBtnVariant="outline"
+          onEdit={props.onReject}
+          isEditLoading={props.isRejectLoading}
+          middleBtnText="Перейти в чат"
+          middleBtnVariant="secondary"
+          onMiddle={props.onChat}
+          isMiddleLoading={props.isChatLoading}
+          payBtnText="Принять проект"
+          payBtnVariant="green"
+          onPay={props.onAcceptProject}
+          isPayLoading={props.isAcceptProjectLoading}
+        />
+      ) : (
+        <ActionButtons
+          middleBtnText="Перейти в чат"
+          middleBtnVariant="secondary"
+          onMiddle={props.onChat}
+          isMiddleLoading={props.isChatLoading}
+          payBtnText="Завершить проект"
+          payBtnVariant="green"
+          onPay={props.onComplete}
+          isPayLoading={props.isCompleteLoading}
+        />
+      )}
     </article>
   );
 };

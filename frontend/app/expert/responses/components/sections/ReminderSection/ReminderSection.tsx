@@ -11,12 +11,12 @@ const ReminderSection = ({
   reminderText,
   reminderDays,
 }: ReminderSectionProps) => {
-  if (!reminderText || !reminderDays) return null;
+  if (!reminderText) return null;
 
   return (
     <div className={styles.reminderRow}>
       <span className={styles.reminderText}>{reminderText}</span>
-      <span className={styles.reminderDays}>{reminderDays}</span>
+      {reminderDays && <span className={styles.reminderDays}>{reminderDays}</span>}
     </div>
   );
 };

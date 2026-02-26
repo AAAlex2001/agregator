@@ -33,7 +33,7 @@ function mapStatus(status: ResponseApiItem["status"]): {
     case "ACCEPTED":
       return { label: "В переговорах", color: "#FFFFFF", bg: "#FF8A00" };
     case "IN_PROGRESS":
-      return { label: "В работе", color: "#FFFFFF", bg: "#FF8A00" };
+      return { label: "Принято", color: "#137333", bg: "#E6F4EA" };
     case "COMPLETED":
       return { label: "Завершен", color: "#555555", bg: "#F5F5F5" };
     case "ARCHIVED":
@@ -47,6 +47,20 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
   const mappedStatus = mapStatus(item.status);
   const isInvitation = item.status === "ACCEPTED";
   const isNegotiation = item.status === "IN_PROGRESS";
+  const expertConfirmed = item.expert_confirmed ?? false;
+
+  let statusLabel = mappedStatus.label;
+  let statusColor = mappedStatus.color;
+  let statusBg = mappedStatus.bg;
+  let statusMessage: string | undefined;
+
+  if (isInvitation) {
+    statusLabel = `Приглашение на собеседование от ${item.date}`;
+  } else if (isNegotiation && !expertConfirmed) {
+    statusMessage = "Заказчик выбрал вас!";
+  } else if (isNegotiation && expertConfirmed) {
+    statusLabel = `Принято ${item.date}`;
+  }
 
   return {
     id: item.id,
@@ -54,9 +68,10 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     rawStatus: item.status,
     dateLabel: "Отклик от",
     date: item.date,
-    status: isInvitation ? `Приглашение на собеседование от ${item.date}` : mappedStatus.label,
-    statusColor: mappedStatus.color,
-    statusBg: mappedStatus.bg,
+    status: statusLabel,
+    statusColor: statusColor,
+    statusBg: statusBg,
+    statusMessage: statusMessage,
     orderTitle: item.order_title,
     orderCustomerSum: item.order_sum,
     customer: item.customer_name,
@@ -86,6 +101,7 @@ export function mapResponseItemToCard(item: ResponseApiItem): ResponseCardViewMo
     expertName: item.expert_name || "",
     expertRating: item.expert_rating ?? null,
     expertReviewCount: item.expert_review_count ?? 0,
-    reminderText: (isInvitation || isNegotiation) && item.confirm_deadline ? `Ответьте в течение 3 дней (до ${item.confirm_deadline})` : undefined,
+    expertConfirmed: expertConfirmed,
+    reminderText: (isNegotiation && !expertConfirmed) && item.confirm_deadline ? `Подтвердите согласие до ${item.confirm_deadline}` : undefined,
   };
 }

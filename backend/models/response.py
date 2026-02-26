@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
-from sqlalchemy import Column, Integer, BigInteger, Text, Date, DateTime, ForeignKey, Enum, JSON, UniqueConstraint
+from sqlalchemy import Column, Integer, BigInteger, Text, Date, DateTime, ForeignKey, Enum, JSON, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -39,6 +39,7 @@ class OrderResponse(Base):
     proposed_sum_amount = Column(BigInteger, nullable=False)
     proposed_deadline = Column(Date, nullable=False)
     technical_files = Column(JSON, nullable=False, default=list)
+    expert_confirmed = Column(Boolean, nullable=False, default=False, server_default="false")
     status = Column(
         Enum(ResponseStatus, name="responsestatus"),
         nullable=False,

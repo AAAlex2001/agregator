@@ -57,6 +57,7 @@ class ExpertResponseItem(BaseModel):
     expert_rating: float | None = None
     expert_review_count: int = 0
     confirm_deadline: str = ""
+    expert_confirmed: bool = False
 
     model_config = {"from_attributes": True}
 

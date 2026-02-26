@@ -29,6 +29,8 @@ export interface AcceptedCardProps {
   commissionText: string;
   commissionAmount: string;
   commissionStatus?: string;
+  balanceReturnText?: string;
+  balanceReturnAmount?: string;
   commentTitle: string;
   commentText: string;
   orderComment?: string;
@@ -74,15 +76,15 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
 
             {props.commentText && (
               <CommentSection
-                title={props.commentTitle}
-                text={props.commentText}
+                commentTitle={props.commentTitle}
+                commentText={props.commentText}
               />
             )}
 
             {props.orderComment && (
               <CommentSection
-                title="Комментарий заказчика:"
-                text={props.orderComment}
+                commentTitle="Комментарий заказчика:"
+                commentText={props.orderComment}
               />
             )}
 
@@ -91,6 +93,8 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
                 commissionText={props.commissionText}
                 commissionAmount={props.commissionAmount}
                 commissionStatus={props.commissionStatus}
+                balanceReturnText={props.balanceReturnText}
+                balanceReturnAmount={props.balanceReturnAmount}
               />
             )}
 
@@ -109,14 +113,14 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
             )}
 
             {props.reminderText && (
-              <ReminderSection text={props.reminderText} />
+              <ReminderSection reminderText={props.reminderText} />
             )}
           </div>
         </div>
       </div>
 
       <ActionButtons
-        editBtnText="Отклонить"
+        editBtnText="Отозвать отклик"
         editBtnVariant="outline"
         onEdit={props.onReject}
         isEditLoading={props.isRejectLoading}

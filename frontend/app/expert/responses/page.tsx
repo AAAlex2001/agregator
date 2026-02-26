@@ -59,7 +59,7 @@ export default function ResponsesPage() {
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "start" | "complete" | null>>({});
+  const [loadingActionByResponseId, setLoadingActionByResponseId] = useState<Record<number, "withdraw" | "start" | "complete" | "chat" | null>>({});
   const [editingResponse, setEditingResponse] = useState<ResponseCardViewModel | null>(null);
   const [isEditSubmitting, setIsEditSubmitting] = useState(false);
   const [withdrawTarget, setWithdrawTarget] = useState<ResponseCardViewModel | null>(null);
@@ -97,7 +97,7 @@ export default function ResponsesPage() {
     swiperRef?.slideTo(0);
   }, [activeTab, swiperRef, items.length]);
 
-  const setActionLoading = (responseId: number, mode: "withdraw" | "start" | "complete" | null) => {
+  const setActionLoading = (responseId: number, mode: "withdraw" | "start" | "complete" | "chat" | null) => {
     setLoadingActionByResponseId((previous) => ({
       ...previous,
       [responseId]: mode,
@@ -336,8 +336,12 @@ export default function ResponsesPage() {
                               commissionText={response.commissionText}
                               commissionAmount={response.commissionAmount}
                               commissionStatus={response.commissionStatus}
+                              balanceReturnText={response.balanceReturnText}
+                              balanceReturnAmount={response.balanceReturnAmount}
                               commentTitle={response.commentTitle}
-                              commentText={response.commentText}                                orderComment={response.orderComment}                              techSpecTitle={response.techSpecTitle}
+                              commentText={response.commentText}
+                              orderComment={response.orderComment}
+                              techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               orderTechSpecFiles={response.orderTechSpecFiles}
                               reminderText={response.reminderText}
@@ -355,6 +359,7 @@ export default function ResponsesPage() {
                               status={response.status}
                               statusColor={response.statusColor}
                               statusBg={response.statusBg}
+                              statusMessage={response.statusMessage}
                               orderTitle={response.orderTitle}
                               customer={response.customerCompany || response.customer}
                               orderDate={response.orderDate}
@@ -365,15 +370,23 @@ export default function ResponsesPage() {
                               commissionText={response.commissionText}
                               commissionAmount={response.commissionAmount}
                               commissionStatus={response.commissionStatus}
+                              balanceReturnText={response.balanceReturnText}
+                              balanceReturnAmount={response.balanceReturnAmount}
                               commentTitle={response.commentTitle}
                               commentText={response.commentText}
+                              orderComment={response.orderComment}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              orderTechSpecFiles={response.orderTechSpecFiles}
                               reminderText={response.reminderText}
+                              expertConfirmed={response.expertConfirmed}
                               onReject={() => setWithdrawTarget(response)}
                               onChat={() => { /* TODO: navigate to chat */ }}
+                              onAcceptProject={() => void handleStartOrComplete(response.id, false)}
                               onComplete={() => void handleStartOrComplete(response.id, true)}
                               isRejectLoading={actionLoading === "withdraw"}
+                              isChatLoading={actionLoading === "chat"}
+                              isAcceptProjectLoading={actionLoading === "start"}
                               isCompleteLoading={actionLoading === "complete"}
                             />
                           );

@@ -43,6 +43,7 @@ export interface ResponseApiItem {
   expert_rating: number | null;
   expert_review_count: number;
   confirm_deadline: string;
+  expert_confirmed: boolean;
 }
 
 export interface ResponsesApiList {
@@ -88,6 +89,7 @@ export interface ResponseCardViewModel {
   balanceReturnText?: string;
   balanceReturnAmount?: string;
   reminderText?: string;
+  expertConfirmed?: boolean;
 }
 
 export interface ResponsesState {

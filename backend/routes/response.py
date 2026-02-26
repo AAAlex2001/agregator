@@ -92,6 +92,7 @@ def to_item(entity) -> ExpertResponseItem:
         expert_name=expert_name,
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
+        expert_confirmed=entity.expert_confirmed or False,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
