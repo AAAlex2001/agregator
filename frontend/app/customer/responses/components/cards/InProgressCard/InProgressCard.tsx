@@ -31,6 +31,8 @@ export interface InProgressCardProps {
   techSpecTitle?: string;
   techSpecFiles?: string[];
 
+  expertConfirmed?: boolean;
+
   onReject?: () => void;
   onChat?: () => void;
   onComplete?: () => void;
@@ -68,6 +70,7 @@ export const InProgressCard = ({
   expertDeadline,
   techSpecTitle,
   techSpecFiles,
+  expertConfirmed = false,
   onReject,
   onChat,
   onComplete,
@@ -205,17 +208,19 @@ export const InProgressCard = ({
             Перейти в чат
           </Button>
         )}
-        <Button
-          variant="green"
-          size="sm"
-          fullWidth
-          onClick={onComplete}
-          disabled={isUpdating}
-          isLoading={isCompleteLoading}
-          className={styles.acceptBtn}
-        >
-          Завершить проект
-        </Button>
+        {expertConfirmed && (
+          <Button
+            variant="green"
+            size="sm"
+            fullWidth
+            onClick={onComplete}
+            disabled={isUpdating}
+            isLoading={isCompleteLoading}
+            className={styles.acceptBtn}
+          >
+            Завершить проект
+          </Button>
+        )}
       </div>
     </article>
   );

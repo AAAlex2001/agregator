@@ -339,6 +339,7 @@ export default function CustomerResponsesPage() {
                               expertDeadline={response.deadline}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              expertConfirmed={response.expertConfirmed}
                               onReject={() => void handleStatusUpdate(response.id, "REJECTED")}
                               onChat={() => void handleOpenChat(response.id, response.orderId)}
                               onComplete={() => void handleStatusUpdate(response.id, "COMPLETED")}

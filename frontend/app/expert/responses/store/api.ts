@@ -25,6 +25,7 @@ export async function fetchResponses(tab: ResponseTabKey, skip = 0, limit = 50):
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
   });
 
   if (!response.ok) {

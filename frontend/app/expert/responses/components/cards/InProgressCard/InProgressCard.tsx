@@ -43,7 +43,7 @@ export interface InProgressCardProps {
   onReject: () => void;
   onChat: () => void;
   onAcceptProject?: () => void;
-  onComplete: () => void;
+  onComplete?: () => void;
   isRejectLoading?: boolean;
   isChatLoading?: boolean;
   isAcceptProjectLoading?: boolean;
@@ -145,14 +145,10 @@ export const InProgressCard = (props: InProgressCardProps) => {
         />
       ) : (
         <ActionButtons
-          middleBtnText="Перейти в чат"
-          middleBtnVariant="secondary"
-          onMiddle={props.onChat}
-          isMiddleLoading={props.isChatLoading}
-          payBtnText="Завершить проект"
-          payBtnVariant="green"
-          onPay={props.onComplete}
-          isPayLoading={props.isCompleteLoading}
+          payBtnText="Перейти в чат"
+          payBtnVariant="secondary"
+          onPay={props.onChat}
+          isPayLoading={props.isChatLoading}
         />
       )}
     </article>
