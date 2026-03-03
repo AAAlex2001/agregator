@@ -34,36 +34,6 @@ class ForgotPasswordRequest(BaseModel):
             raise ValueError("Необходимо указать либо телефон, либо email")
         return self
     
-    @model_validator(mode="after")
-    def new_password_length(cls, values):
-        """
-        Валидатор: новый пароль должен быть не менее 8 символов.
-        """
-        new_password = values.get("new_password")
-        if new_password and len(new_password) < 8:
-            raise ValueError("Новый пароль должен быть не менее 8 символов")
-        return values
-    
-    @model_validator(mode="after")
-    def code_length(cls, values):
-        """
-        Валидатор: код должен быть не менее 6 символов.
-        """
-        code = values.get("code")
-        if code and len(code) < 6:
-            raise ValueError("Код должен быть не менее 6 символов")
-        return values
-    
-    @model_validator(mode="after")
-    def new_password_check(cls, values):
-        """
-        Валидатор: новый пароль должен совпадать с подтверждением.
-        """
-        new_password = values.get("new_password")
-        new_password_confirm = values.get("new_password_confirm")
-        if new_password != new_password_confirm:
-            raise ValueError("Новый пароль и его подтверждение не совпадают")
-        return values
     
 class ForgotPasswordResponse(BaseModel):
     "модель для ответа на фронтенд"

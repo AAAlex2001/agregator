@@ -1,3 +1,4 @@
+import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models.user import User
@@ -12,6 +13,28 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class RegistrationService:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    def validate_password(self, password: str) -> None:
+        if len(password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать не менее 8 символов",
+            )
+        if not re.search(r'[A-Z]', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать хотя бы одну заглавную букву",
+            )
+        if not re.search(r'[a-z]', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать хотя бы одну строчную букву",
+            )
+        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~]+$', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать только латинские буквы",
+            )
 
     def hash_password(self, password: str) -> str:
         return pwd_context.hash(password)
@@ -28,6 +51,8 @@ class RegistrationService:
         return result.scalars().first()
 
     async def create_user(self, data: UserRegistration) -> User:
+        self.validate_password(data.password)
+
         if data.email and await self.get_user_by_email(data.email):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

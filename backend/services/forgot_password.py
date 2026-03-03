@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timezone
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -79,12 +80,36 @@ class ForgotPasswordService:
         reset_code.is_used = True
         await self.db.commit()
     
+    def validate_password(self, password: str) -> None:
+        if len(password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать не менее 8 символов",
+            )
+        if not re.search(r'[A-Z]', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать хотя бы одну заглавную букву",
+            )
+        if not re.search(r'[a-z]', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать хотя бы одну строчную букву",
+            )
+        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~]+$', password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пароль должен содержать только латинские буквы",
+            )
+
     def hash_password(self, password: str) -> str:
         """Хеширует пароль"""
         return pwd_context.hash(password)
-    
+
     async def reset_password(self, user_id: int, code: str, new_password: str) -> bool:
         """Сбрасывает пароль пользователя"""
+        self.validate_password(new_password)
+
         reset_code = await self.verify_reset_code(user_id, code)
         if not reset_code:
             raise HTTPException(
