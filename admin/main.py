@@ -88,6 +88,13 @@ class UserAdmin(ModelView, model=User):
         User.balance, User.rating, User.review_count,
     ]
 
+    column_formatters = {
+        User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
+    }
+    column_formatters_detail = {
+        User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
+    }
+
     column_labels = {
         User.id: "ID",
         User.role: "Роль",
@@ -311,6 +318,13 @@ class PaymentAdmin(ModelView, model=Payment):
         Payment.user, Payment.yookassa_id, Payment.amount,
         Payment.payment_type, Payment.status, Payment.description,
     ]
+
+    column_formatters = {
+        Payment.amount: lambda m, a: f"{m.amount / 100:.2f} ₽" if m.amount is not None else "0.00 ₽",
+    }
+    column_formatters_detail = {
+        Payment.amount: lambda m, a: f"{m.amount / 100:.2f} ₽" if m.amount is not None else "0.00 ₽",
+    }
 
     column_labels = {
         Payment.id: "ID",
