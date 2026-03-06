@@ -210,6 +210,21 @@ export default function RegisterPage() {
                   required
                 />
 
+                <ul className={styles.passwordRequirements}>
+                  <li className={state.password.length >= 6 ? styles.requirementMet : ''}>
+                    Не менее 6 символов
+                  </li>
+                  <li className={/[A-Z]/.test(state.password) ? styles.requirementMet : ''}>
+                    Хотя бы одна заглавная буква (A-Z)
+                  </li>
+                  <li className={/[a-z]/.test(state.password) ? styles.requirementMet : ''}>
+                    Хотя бы одна строчная буква (a-z)
+                  </li>
+                  <li className={state.password.length > 0 && /^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/`~ ]+$/.test(state.password) ? styles.requirementMet : ''}>
+                    Только латинские буквы, цифры и спецсимволы
+                  </li>
+                </ul>
+
                 <Input
                   id="repeatPassword"
                   variant="password"

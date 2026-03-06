@@ -15,25 +15,19 @@ class RegistrationService:
         self.db = db
 
     def validate_password(self, password: str) -> None:
-        if len(password) < 8:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль должен содержать не менее 8 символов",
-            )
+        errors = []
+        if len(password) < 6:
+            errors.append("Не менее 6 символов")
         if not re.search(r'[A-Z]', password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль должен содержать хотя бы одну заглавную букву",
-            )
+            errors.append("Хотя бы одна заглавная буква")
         if not re.search(r'[a-z]', password):
+            errors.append("Хотя бы одна строчная буква")
+        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~ ]+$', password):
+            errors.append("Только латинские буквы, цифры и спецсимволы")
+        if errors:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль должен содержать хотя бы одну строчную букву",
-            )
-        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~]+$', password):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль должен содержать только латинские буквы",
+                detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
 
     def hash_password(self, password: str) -> str:

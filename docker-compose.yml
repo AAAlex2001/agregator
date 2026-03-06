@@ -58,6 +58,26 @@ services:
     depends_on:
       - frontend
       - backend
+      - admin
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: agregator-admin
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      ADMIN_SECRET: ${ADMIN_SECRET:-supersecretkey-change-me}
+    expose:
+      - "8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - agregator-network

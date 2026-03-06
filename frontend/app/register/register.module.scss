@@ -341,3 +341,39 @@
   gap: 10px;
 }
 
+.passwordRequirements {
+  list-style: none;
+  padding: 0;
+  margin: -4px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  li {
+    font-size: 12px;
+    line-height: 16px;
+    color: #999999;
+    padding-left: 16px;
+    position: relative;
+    transition: color 0.3s ease;
+
+    &::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      font-size: 10px;
+      color: #999999;
+      transition: color 0.3s ease;
+    }
+  }
+}
+
+.requirementMet {
+  color: #4CAF50 !important;
+
+  &::before {
+    content: '✓' !important;
+    color: #4CAF50 !important;
+  }
+}
+
