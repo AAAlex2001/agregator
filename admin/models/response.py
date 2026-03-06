@@ -35,3 +35,6 @@ class OrderResponse(Base):
     order = relationship("Order", back_populates="responses")
     expert = relationship("User", back_populates="responses")
     reviews = relationship("Review", back_populates="response")
+
+    def __str__(self):
+        return f"Отклик #{self.id} [{self.status}]"

@@ -26,6 +26,9 @@ class Chat(Base):
     expert = relationship("User", foreign_keys=[expert_id], back_populates="expert_chats")
     messages = relationship("ChatMessage", back_populates="chat", order_by="ChatMessage.created_at.asc()")
 
+    def __str__(self):
+        return f"Чат #{self.id} (заказ #{self.order_id})"
+
 
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
@@ -39,3 +42,6 @@ class ChatMessage(Base):
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User", back_populates="chat_messages")
+
+    def __str__(self):
+        return f"{self.text[:50]}"

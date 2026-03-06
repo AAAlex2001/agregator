@@ -34,3 +34,6 @@ class Payment(Base):
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
     user = relationship("User", back_populates="payments")
+
+    def __str__(self):
+        return f"Платёж #{self.id} {self.amount} [{self.status}]"

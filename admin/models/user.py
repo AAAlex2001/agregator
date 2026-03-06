@@ -42,3 +42,8 @@ class User(Base):
     payments = relationship("Payment", back_populates="user")
     customer_reviews = relationship("Review", foreign_keys="Review.customer_id", back_populates="customer")
     expert_reviews = relationship("Review", foreign_keys="Review.expert_id", back_populates="expert")
+
+    def __str__(self):
+        name = " ".join(filter(None, [self.first_name, self.last_name]))
+        contact = self.email or self.phone or f"id:{self.id}"
+        return f"{name} ({contact})" if name else contact

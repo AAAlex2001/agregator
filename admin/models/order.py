@@ -43,6 +43,9 @@ class Order(Base):
     responses = relationship("OrderResponse", back_populates="order")
     chats = relationship("Chat", back_populates="order")
 
+    def __str__(self):
+        return f"#{self.id} {self.title[:40]}"
+
 
 class OrderBadge(Base):
     __tablename__ = "order_badges"
@@ -53,3 +56,6 @@ class OrderBadge(Base):
     variant = Column(Enum(BadgeVariant), nullable=False)
 
     order = relationship("Order", back_populates="badges")
+
+    def __str__(self):
+        return f"{self.text} ({self.variant})"

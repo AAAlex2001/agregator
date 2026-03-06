@@ -23,3 +23,6 @@ class Review(Base):
     customer = relationship("User", foreign_keys=[customer_id], back_populates="customer_reviews")
     expert = relationship("User", foreign_keys=[expert_id], back_populates="expert_reviews")
     response = relationship("OrderResponse", back_populates="reviews")
+
+    def __str__(self):
+        return f"Отзыв #{self.id} ★{self.rating}"

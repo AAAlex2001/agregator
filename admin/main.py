@@ -44,7 +44,7 @@ class AdminAuth(AuthenticationBackend):
 
 
 # --- FastAPI ---
-app = FastAPI(title="Ресурс-Плюс Админ-панель", root_path="/admin")
+app = FastAPI(title="Ресурс-Плюс Админ-панель")
 
 authentication_backend = AdminAuth(secret_key=ADMIN_SECRET)
 admin = Admin(
@@ -52,7 +52,7 @@ admin = Admin(
     engine,
     authentication_backend=authentication_backend,
     title="Ресурс-Плюс | Админка",
-    base_url="/",
+    base_url="/admin",
 )
 
 
