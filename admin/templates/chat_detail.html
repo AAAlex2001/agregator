@@ -1,0 +1,122 @@
+{% extends "sqladmin/layout.html" %}
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Чат #{{ model.id }}</h3>
+    </div>
+    <div class="card-body border-bottom py-3">
+      <div class="table-responsive">
+        <table class="table card-table table-vcenter text-nowrap table-hover table-bordered">
+          <thead>
+            <tr>
+              <th class="w-1">Поле</th>
+              <th class="w-1">Значение</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ID</td><td>{{ model.id }}</td></tr>
+            <tr><td>UUID</td><td>{{ model.uuid }}</td></tr>
+            <tr>
+              <td>Заказ</td>
+              <td>
+                {% if model.order %}
+                  <a href="{{ model_view._build_url_for('admin:details', request, model.order) }}">{{ model.order }}</a>
+                {% else %}
+                  #{{ model.order_id }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Заказчик</td>
+              <td>
+                {% if model.customer %}
+                  <a href="{{ model_view._build_url_for('admin:details', request, model.customer) }}">{{ model.customer }}</a>
+                {% else %}
+                  ID: {{ model.customer_id }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Эксперт</td>
+              <td>
+                {% if model.expert %}
+                  <a href="{{ model_view._build_url_for('admin:details', request, model.expert) }}">{{ model.expert }}</a>
+                {% else %}
+                  ID: {{ model.expert_id }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr><td>Создан</td><td>{{ model.created_at.strftime('%d.%m.%Y %H:%M') if model.created_at else '—' }}</td></tr>
+            <tr><td>Обновлён</td><td>{{ model.updated_at.strftime('%d.%m.%Y %H:%M') if model.updated_at else '—' }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      {# === ПЕРЕПИСКА === #}
+      <div class="mt-4">
+        <h3 class="card-title mb-3">Переписка ({{ messages|length }} сообщ.)</h3>
+        <div style="max-width:700px;background:#f0f2f5;border-radius:12px;padding:20px;max-height:600px;overflow-y:auto;">
+          {% if not messages %}
+            <div style="text-align:center;color:#999;padding:40px;font-size:16px;">Сообщений пока нет</div>
+          {% endif %}
+          {% set prev_date = namespace(value='') %}
+          {% for msg in messages %}
+            {% set msg_date = msg.created_at.strftime('%d.%m.%Y') %}
+            {% if msg_date != prev_date.value %}
+              <div style="text-align:center;margin:12px 0 6px;font-size:12px;color:#999;">{{ msg_date }}</div>
+              {% set prev_date.value = msg_date %}
+            {% endif %}
+            {% set is_customer = (msg.sender_id == model.customer_id) %}
+            <div style="display:flex;flex-direction:column;margin-bottom:12px;{{ 'align-items:flex-start' if is_customer else 'align-items:flex-end' }}">
+              <div style="max-width:70%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5;word-wrap:break-word;{{ 'background:#e3f2fd;color:#1a1a1a;border-bottom-left-radius:4px;' if is_customer else 'background:#4361ee;color:#fff;border-bottom-right-radius:4px;' }}">
+                {{ msg.text }}
+              </div>
+              <div style="font-size:11px;color:#999;margin-top:3px;padding:0 4px;{{ 'text-align:right' if not is_customer else '' }}">
+                {% if msg.sender %}
+                  {{ msg.sender.first_name or '' }} {{ msg.sender.last_name or '' }}
+                {% else %}
+                  ID:{{ msg.sender_id }}
+                {% endif %}
+                &middot; {{ msg.created_at.strftime('%H:%M') }}
+                {% if msg.is_read %}
+                  <span style="color:#4caf50;font-size:10px;">&#10003;&#10003;</span>
+                {% else %}
+                  <span style="color:#ccc;font-size:10px;">&#10003;</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card-footer container mt-3">
+        <div class="row">
+          <div class="col-md-1">
+            <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn">Назад</a>
+          </div>
+          {% if model_view.can_delete %}
+          <div class="col-md-1">
+            <a href="#" data-name="{{ model_view.name }}" data-pk="{{ get_object_identifier(model) }}"
+              data-url="{{ model_view._url_for_delete(request, model) }}" data-bs-toggle="modal"
+              data-bs-target="#modal-delete" class="btn btn-danger">
+              Удалить
+            </a>
+          </div>
+          {% endif %}
+          {% if model_view.can_edit %}
+          <div class="col-md-1">
+            <a href="{{ model_view._build_url_for('admin:edit', request, model) }}" class="btn btn-primary">
+              Редакт.
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% if model_view.can_delete %}
+{% include 'sqladmin/modals/delete.html' %}
+{% endif %}
+{% endblock %}

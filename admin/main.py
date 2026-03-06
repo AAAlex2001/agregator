@@ -1,4 +1,5 @@
 import os
+from markupsafe import Markup
 from fastapi import FastAPI
 from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
@@ -53,7 +54,36 @@ admin = Admin(
     authentication_backend=authentication_backend,
     title="Ресурс-Плюс | Админка",
     base_url="/admin",
+    templates_dir=os.path.join(os.path.dirname(__file__), "templates"),
 )
+
+
+# ========== УТИЛИТЫ ==========
+
+def format_technical_files(m, a):
+    files = getattr(m, "technical_files", None)
+    if not files:
+        return "—"
+    if isinstance(files, list):
+        parts = []
+        for f in files:
+            if isinstance(f, str):
+                name = f.rsplit("/", 1)[-1]
+                ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+                if ext in ("jpg", "jpeg", "png", "gif", "webp", "svg"):
+                    parts.append(
+                        f'<div style="margin:4px 0">'
+                        f'<a href="{f}" target="_blank">'
+                        f'<img src="{f}" style="max-width:200px;max-height:150px;border-radius:6px;border:1px solid #ddd;" />'
+                        f'</a>'
+                        f'<br><small>{name}</small></div>'
+                    )
+                else:
+                    parts.append(f'<div style="margin:4px 0"><a href="{f}" target="_blank">{name}</a></div>')
+            else:
+                parts.append(str(f))
+        return Markup("".join(parts))
+    return str(files)
 
 
 # ========== ВЬЮШКИ ==========
@@ -90,9 +120,11 @@ class UserAdmin(ModelView, model=User):
 
     column_formatters = {
         User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
+        User.role: lambda m, a: str(m.role),
     }
     column_formatters_detail = {
         User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
+        User.role: lambda m, a: str(m.role),
     }
 
     column_labels = {
@@ -146,6 +178,17 @@ class OrderAdmin(ModelView, model=Order):
         Order.sum_amount, Order.deadline, Order.status,
     ]
 
+    column_formatters = {
+        Order.sum_amount: lambda m, a: f"{m.sum_amount / 100:.2f} ₽" if m.sum_amount is not None else "0.00 ₽",
+        Order.status: lambda m, a: str(m.status),
+        Order.technical_files: format_technical_files,
+    }
+    column_formatters_detail = {
+        Order.sum_amount: lambda m, a: f"{m.sum_amount / 100:.2f} ₽" if m.sum_amount is not None else "0.00 ₽",
+        Order.status: lambda m, a: str(m.status),
+        Order.technical_files: format_technical_files,
+    }
+
     column_labels = {
         Order.id: "ID",
         Order.title: "Название",
@@ -174,6 +217,10 @@ class OrderBadgeAdmin(ModelView, model=OrderBadge):
     column_list = [OrderBadge.id, OrderBadge.order, OrderBadge.text, OrderBadge.variant]
     column_searchable_list = [OrderBadge.text]
     column_sortable_list = [OrderBadge.id]
+
+    column_formatters = {
+        OrderBadge.variant: lambda m, a: str(m.variant),
+    }
 
     column_labels = {
         OrderBadge.id: "ID",
@@ -214,6 +261,17 @@ class OrderResponseAdmin(ModelView, model=OrderResponse):
         OrderResponse.status,
     ]
 
+    column_formatters = {
+        OrderResponse.proposed_sum_amount: lambda m, a: f"{m.proposed_sum_amount / 100:.2f} ₽" if m.proposed_sum_amount is not None else "0.00 ₽",
+        OrderResponse.status: lambda m, a: str(m.status),
+        OrderResponse.technical_files: format_technical_files,
+    }
+    column_formatters_detail = {
+        OrderResponse.proposed_sum_amount: lambda m, a: f"{m.proposed_sum_amount / 100:.2f} ₽" if m.proposed_sum_amount is not None else "0.00 ₽",
+        OrderResponse.status: lambda m, a: str(m.status),
+        OrderResponse.technical_files: format_technical_files,
+    }
+
     column_labels = {
         OrderResponse.id: "ID",
         OrderResponse.order: "Заказ",
@@ -234,6 +292,7 @@ class ChatAdmin(ModelView, model=Chat):
     name = "Чат"
     name_plural = "Чаты"
     icon = "fa-solid fa-comments"
+    details_template = "chat_detail.html"
 
     column_list = [
         Chat.id, Chat.uuid, Chat.order, Chat.customer,
@@ -244,7 +303,7 @@ class ChatAdmin(ModelView, model=Chat):
 
     column_details_list = [
         Chat.id, Chat.uuid, Chat.order, Chat.customer, Chat.expert,
-        Chat.created_at, Chat.updated_at, Chat.messages,
+        Chat.created_at, Chat.updated_at,
     ]
 
     form_columns = [Chat.order, Chat.customer, Chat.expert]
@@ -257,41 +316,11 @@ class ChatAdmin(ModelView, model=Chat):
         Chat.expert: "Эксперт",
         Chat.created_at: "Создан",
         Chat.updated_at: "Обновлён",
-        Chat.messages: "Сообщения",
     }
 
-
-class ChatMessageAdmin(ModelView, model=ChatMessage):
-    name = "Сообщение"
-    name_plural = "Сообщения"
-    icon = "fa-solid fa-message"
-
-    column_list = [
-        ChatMessage.id, ChatMessage.chat, ChatMessage.sender,
-        ChatMessage.text, ChatMessage.is_read, ChatMessage.created_at,
-    ]
-    column_searchable_list = [ChatMessage.text]
-    column_sortable_list = [ChatMessage.id, ChatMessage.is_read, ChatMessage.created_at]
-    column_default_sort = (ChatMessage.id, True)
-
-    column_details_list = [
-        ChatMessage.id, ChatMessage.chat, ChatMessage.sender,
-        ChatMessage.text, ChatMessage.is_read, ChatMessage.created_at,
-    ]
-
-    form_columns = [
-        ChatMessage.chat, ChatMessage.sender,
-        ChatMessage.text, ChatMessage.is_read,
-    ]
-
-    column_labels = {
-        ChatMessage.id: "ID",
-        ChatMessage.chat: "Чат",
-        ChatMessage.sender: "Отправитель",
-        ChatMessage.text: "Текст",
-        ChatMessage.is_read: "Прочитано",
-        ChatMessage.created_at: "Создано",
-    }
+    async def get_object_for_details(self, value):
+        model = await super().get_object_for_details(value)
+        return model
 
 
 class PaymentAdmin(ModelView, model=Payment):
@@ -321,9 +350,13 @@ class PaymentAdmin(ModelView, model=Payment):
 
     column_formatters = {
         Payment.amount: lambda m, a: f"{m.amount / 100:.2f} ₽" if m.amount is not None else "0.00 ₽",
+        Payment.status: lambda m, a: str(m.status),
+        Payment.payment_type: lambda m, a: str(m.payment_type),
     }
     column_formatters_detail = {
         Payment.amount: lambda m, a: f"{m.amount / 100:.2f} ₽" if m.amount is not None else "0.00 ₽",
+        Payment.status: lambda m, a: str(m.status),
+        Payment.payment_type: lambda m, a: str(m.payment_type),
     }
 
     column_labels = {
@@ -433,7 +466,6 @@ admin.add_view(OrderAdmin)
 admin.add_view(OrderBadgeAdmin)
 admin.add_view(OrderResponseAdmin)
 admin.add_view(ChatAdmin)
-admin.add_view(ChatMessageAdmin)
 admin.add_view(PaymentAdmin)
 admin.add_view(ReviewAdmin)
 admin.add_view(SessionAdmin)

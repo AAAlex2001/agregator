@@ -13,6 +13,16 @@ class ResponseStatus(str, PyEnum):
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
 
+    def __str__(self):
+        labels = {
+            "REVIEW": "На рассмотрении",
+            "REJECTED": "Отклонён",
+            "ACCEPTED": "Принят",
+            "IN_PROGRESS": "В работе",
+            "COMPLETED": "Завершён",
+        }
+        return labels.get(self.value, self.value)
+
 
 class OrderResponse(Base):
     __tablename__ = "order_responses"
@@ -37,4 +47,4 @@ class OrderResponse(Base):
     reviews = relationship("Review", back_populates="response")
 
     def __str__(self):
-        return f"Отклик #{self.id} [{self.status}]"
+        return f"Отклик #{self.id} [{str(self.status)}]"

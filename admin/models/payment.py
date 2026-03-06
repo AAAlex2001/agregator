@@ -13,11 +13,25 @@ class PaymentStatus(str, PyEnum):
     CANCELED = "CANCELED"
     REFUNDED = "REFUNDED"
 
+    def __str__(self):
+        labels = {
+            "PENDING": "Ожидает",
+            "WAITING_FOR_CAPTURE": "Ожидает подтверждения",
+            "SUCCEEDED": "Успешен",
+            "CANCELED": "Отменён",
+            "REFUNDED": "Возврат",
+        }
+        return labels.get(self.value, self.value)
+
 
 class PaymentType(str, PyEnum):
     DEPOSIT = "DEPOSIT"
     WITHDRAWAL = "WITHDRAWAL"
     COMMISSION = "COMMISSION"
+
+    def __str__(self):
+        labels = {"DEPOSIT": "Пополнение", "WITHDRAWAL": "Вывод", "COMMISSION": "Комиссия"}
+        return labels.get(self.value, self.value)
 
 
 class Payment(Base):
@@ -36,4 +50,4 @@ class Payment(Base):
     user = relationship("User", back_populates="payments")
 
     def __str__(self):
-        return f"Платёж #{self.id} {self.amount} [{self.status}]"
+        return f"Платёж #{self.id} {self.amount / 100:.2f} ₽ [{str(self.status)}]"

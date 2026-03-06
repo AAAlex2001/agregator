@@ -10,6 +10,10 @@ class UserRole(str, PyEnum):
     CUSTOMER = "CUSTOMER"
     EXPERT = "EXPERT"
 
+    def __str__(self):
+        labels = {"CUSTOMER": "Заказчик", "EXPERT": "Эксперт"}
+        return labels.get(self.value, self.value)
+
 
 class User(Base):
     __tablename__ = "users"

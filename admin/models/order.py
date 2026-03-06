@@ -11,6 +11,10 @@ class OrderStatus(str, PyEnum):
     COMPLETED = "COMPLETED"
     ARCHIVED = "ARCHIVED"
 
+    def __str__(self):
+        labels = {"ACTIVE": "Активен", "COMPLETED": "Завершён", "ARCHIVED": "Архив"}
+        return labels.get(self.value, self.value)
+
 
 class BadgeVariant(str, PyEnum):
     BLUE = "BLUE"
@@ -18,6 +22,10 @@ class BadgeVariant(str, PyEnum):
     GRAY = "GRAY"
     ORANGE = "ORANGE"
     BROWN = "BROWN"
+
+    def __str__(self):
+        labels = {"BLUE": "Синий", "GREEN": "Зелёный", "GRAY": "Серый", "ORANGE": "Оранжевый", "BROWN": "Коричневый"}
+        return labels.get(self.value, self.value)
 
 
 class Order(Base):
@@ -58,4 +66,4 @@ class OrderBadge(Base):
     order = relationship("Order", back_populates="badges")
 
     def __str__(self):
-        return f"{self.text} ({self.variant})"
+        return f"{self.text} ({str(self.variant)})"
