@@ -187,11 +187,11 @@ async def upload_order_files(
     return OrderResponse.from_order(order)
 
 
-@router.delete("/{order_id}", response_model=OrderResponse)
+@router.delete("/{order_id}")
 async def delete_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
 ):
     service = OrderService(db)
-    order = await service.delete_order(order_id)
-    return OrderResponse.from_order(order)
+    await service.delete_order(order_id)
+    return {"ok": True}

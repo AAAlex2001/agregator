@@ -77,9 +77,11 @@ export default function ChatWindowPage() {
   const [search, setSearch] = useState("");
   const [chat, setChat] = useState<ChatDetailResponse | null>(null);
   const [chats, setChats] = useState<ChatListItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [chatsLoaded, setChatsLoaded] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(true);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
+  const [sendingFile, setSendingFile] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const threadRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,31 +92,30 @@ export default function ChatWindowPage() {
   );
 
   useEffect(() => {
-    if (!chatUuid) return;
-
+    if (chatsLoaded) return;
     let cancelled = false;
+    fetchChats()
+      .then((res) => { if (!cancelled) { setChats(res.items); setChatsLoaded(true); } })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [chatsLoaded]);
 
-    const load = async () => {
-      try {
-        const [detail, listResponse] = await Promise.all([
-          fetchChatDetail(chatUuid),
-          fetchChats(),
-        ]);
+  useEffect(() => {
+    if (!chatUuid) return;
+    let cancelled = false;
+    setMessagesLoading(true);
 
+    fetchChatDetail(chatUuid)
+      .then((detail) => {
         if (cancelled) return;
         setChat(detail);
         setMessages(detail.messages);
-        setChats(listResponse.items);
-      } catch {
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
+        setChats((prev) => prev.map((c) => c.uuid === chatUuid ? { ...c, unread_count: 0 } : c));
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setMessagesLoading(false); });
 
-    load();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [chatUuid]);
 
   useEffect(() => {
@@ -201,6 +202,7 @@ export default function ChatWindowPage() {
     const fileToSend = pendingFile;
     setPendingFile(null);
     setSending(true);
+    setSendingFile(Boolean(fileToSend));
     setUploadProgress(0);
     try {
       const saved = await sendChatMessage(chat.uuid, text, fileToSend, (pct) => setUploadProgress(pct));
@@ -208,6 +210,7 @@ export default function ChatWindowPage() {
     } catch {
     } finally {
       setSending(false);
+      setSendingFile(false);
       setUploadProgress(0);
     }
   };
@@ -313,7 +316,7 @@ export default function ChatWindowPage() {
           </div>
 
           <div className={styles.thread} ref={threadRef}>
-            {loading ? (
+            {messagesLoading ? (
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1 }}>
                 <Loader size="lg" label="" />
               </div>
@@ -401,7 +404,7 @@ export default function ChatWindowPage() {
           </div>
 
           <div className={styles.inputBar}>
-            {sending && (
+            {sendingFile && (
               <div className={styles.uploadProgress}>
                 <div className={styles.uploadProgressBar} style={{ width: `${uploadProgress}%` }} />
                 <span className={styles.uploadProgressText}>{uploadProgress}%</span>
@@ -450,6 +453,7 @@ export default function ChatWindowPage() {
               className={styles.sendBtn}
               onClick={handleSend}
               disabled={sending || (!inputValue.trim() && !pendingFile)}
+              isLoading={sending && !sendingFile}
               aria-label="Отправить"
             >
               <ChatSendIcon />

@@ -83,6 +83,27 @@
   color: #808080;
 }
 
+.previewBadges {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.previewBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
 .fileSection {
   display: flex;
   flex-direction: column;

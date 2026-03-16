@@ -17,6 +17,15 @@ export const BADGE_OPTIONS: BadgeOption[] = [
   { text: "ОБ", variant: "PURPLE", bg: "#F3E5F5", color: "#7B1FA2", label: "Укажите типовые наименования ОБ" },
 ];
 
+function buildPreviewNames(badgeText: string, input: string): string[] {
+  if (!input.trim()) return [];
+  return input
+    .split(",")
+    .map((n) => n.trim())
+    .filter(Boolean)
+    .map((n) => `${badgeText} ${n}`);
+}
+
 interface BadgeSelectorProps {
   selected: string[];
   onToggle: (variant: string) => void;
@@ -30,6 +39,11 @@ export default function BadgeSelector({
   typicalNamesMap,
   onTypicalNamesChange,
 }: BadgeSelectorProps) {
+  const handleTypicalInput = (variant: string, value: string) => {
+    const cleaned = value.replace(/[^\d,\s]/g, "");
+    onTypicalNamesChange(variant, cleaned);
+  };
+
   return (
     <div className={styles.fieldGroup}>
       <span className={styles.fieldLabel}>Выберите объект(-ы) экспертизы</span>
@@ -53,18 +67,34 @@ export default function BadgeSelector({
           );
         })}
       </div>
-      {BADGE_OPTIONS.filter((b) => selected.includes(b.variant)).map((badge) => (
-        <div key={badge.variant} className={styles.typicalNameField}>
-          <span className={styles.typicalNameLabel}>{badge.label}</span>
-          <input
-            type="text"
-            className={styles.inputField}
-            placeholder="Например: Э4, Э5, ТУ1, Д3"
-            value={typicalNamesMap[badge.variant] ?? ""}
-            onChange={(e) => onTypicalNamesChange(badge.variant, e.target.value)}
-          />
-        </div>
-      ))}
+      {BADGE_OPTIONS.filter((b) => selected.includes(b.variant)).map((badge) => {
+        const preview = buildPreviewNames(badge.text, typicalNamesMap[badge.variant] ?? "");
+        return (
+          <div key={badge.variant} className={styles.typicalNameField}>
+            <span className={styles.typicalNameLabel}>{badge.label}</span>
+            <input
+              type="text"
+              className={styles.inputField}
+              placeholder="Например: 1, 2, 3"
+              value={typicalNamesMap[badge.variant] ?? ""}
+              onChange={(e) => handleTypicalInput(badge.variant, e.target.value)}
+            />
+            {preview.length > 0 && (
+              <div className={styles.previewBadges}>
+                {preview.map((name) => (
+                  <span
+                    key={name}
+                    className={styles.previewBadge}
+                    style={{ background: badge.bg, color: badge.color }}
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

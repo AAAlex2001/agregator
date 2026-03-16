@@ -256,13 +256,12 @@ class OrderService:
         })
         return updated_order
 
-    async def delete_order(self, order_id: int) -> Order:
+    async def delete_order(self, order_id: int) -> int:
         order = await self.get_order_by_id(order_id)
-        order.status = OrderStatus.ARCHIVED
+        await self.db.delete(order)
         await self.db.commit()
-        await self.db.refresh(order)
         await order_manager.broadcast({
             "event": "order_removed",
             "data": {"id": order_id},
         })
-        return order
+        return order_id

@@ -97,35 +97,33 @@ export default function CustomerOrdersPage() {
                   <div className={styles.shadeRight} />
                   <div className={styles.orders} ref={ordersRef}>
                   {items.map((order) => (
-                    <div key={order.id} className={styles.orderCardWrap}>
-                      <OrderCard
-                        badges={order.badges}
-                        title={order.title}
-                        customer={order.customer}
-                        date={order.date}
-                        sum={order.sum}
-                      />
-                      <div className={styles.orderActions}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={styles.actionBtn}
-                          onClick={() => handleEditOrder(order)}
-                        >
-                          Редактировать
-                        </Button>
-                        <Button
-                          variant="transparent"
-                          size="sm"
-                          className={styles.deleteBtnStyled}
-                          disabled={isDeleting === order.id}
-                          isLoading={isDeleting === order.id}
-                          onClick={() => handleDeleteOrder(order.id)}
-                        >
-                          Удалить
-                        </Button>
-                      </div>
-                    </div>
+                    <OrderCard
+                      key={order.id}
+                      badges={order.badges}
+                      title={order.title}
+                      customer={order.customer}
+                      date={order.date}
+                      sum={order.sum}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={styles.actionBtn}
+                        onClick={(e) => { e.stopPropagation(); handleEditOrder(order); }}
+                      >
+                        Редактировать
+                      </Button>
+                      <Button
+                        variant="transparent"
+                        size="sm"
+                        className={styles.deleteBtnStyled}
+                        disabled={isDeleting === order.id}
+                        isLoading={isDeleting === order.id}
+                        onClick={(e) => { e.stopPropagation(); handleDeleteOrder(order.id); }}
+                      >
+                        Удалить
+                      </Button>
+                    </OrderCard>
                   ))}
                   </div>
                 </div>

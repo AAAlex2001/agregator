@@ -5,6 +5,7 @@ import { Button, Input } from "@/app/components";
 import { useNotifications } from "@/app/components/Notifications";
 import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
 import { BadgeSelector, FileUpload, BADGE_OPTIONS } from "./sections";
+import sectionStyles from "./sections/sections.module.scss";
 import styles from "./createOrderForm.module.scss";
 
 export interface OrderFormData {
@@ -98,6 +99,7 @@ export default function CreateOrderForm({
   const [comment, setComment] = useState(initialData?.comment ?? "");
   const [files, setFiles] = useState<File[]>([]);
   const [keepFiles, setKeepFiles] = useState<string[]>(initialData?.existingFiles ?? []);
+  const [fullscreenUrl, setFullscreenUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleToggleBadge = (variant: string) => {
@@ -255,16 +257,34 @@ export default function CreateOrderForm({
       {isEdit && keepFiles.length > 0 && (
         <div className={styles.commentBlock}>
           <span className={styles.fieldLabel}>Текущие файлы</span>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div className={sectionStyles.fileRow}>
             {keepFiles.map((url, i) => {
               const name = url.split("/").pop() ?? "Файл";
+              const isImage = /\.(jpe?g|png)$/i.test(name);
               return (
-                <div key={url} style={{ display: "flex", alignItems: "center", gap: 4, background: "#fff8eb", padding: "4px 8px", borderRadius: 8, fontSize: 13 }}>
-                  <span>{name}</span>
+                <div key={url} className={sectionStyles.fileThumbnail}>
+                  {isImage ? (
+                    <img
+                      src={url}
+                      alt={name}
+                      className={sectionStyles.filePreviewImage}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setFullscreenUrl(url)}
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      className={sectionStyles.fileName}
+                      style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      onClick={() => setFullscreenUrl(url)}
+                    >
+                      {name}
+                    </button>
+                  )}
                   <button
                     type="button"
+                    className={sectionStyles.fileRemove}
                     onClick={() => handleRemoveExistingFile(i)}
-                    style={{ border: "none", background: "none", cursor: "pointer", color: "#f73c1d", fontSize: 16, padding: 0 }}
                   >
                     ×
                   </button>
@@ -272,6 +292,16 @@ export default function CreateOrderForm({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {fullscreenUrl && (
+        <div className={styles.fullscreenOverlay} onClick={() => setFullscreenUrl(null)}>
+          {/\.(jpe?g|png)$/i.test(fullscreenUrl) ? (
+            <img src={fullscreenUrl} alt="" className={styles.fullscreenImage} />
+          ) : (
+            <iframe src={fullscreenUrl} className={styles.fullscreenIframe} title="Просмотр файла" />
+          )}
         </div>
       )}
 

@@ -156,3 +156,29 @@
     flex: 1;
   }
 }
+
+.fullscreenOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fullscreenImage {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.fullscreenIframe {
+  width: 90vw;
+  height: 90vh;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+}

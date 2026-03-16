@@ -65,10 +65,10 @@
   @media (min-width: 768px) {
     display: grid;
     align-items: initial;
-    grid-template-rows: repeat(3, 224px);
+    grid-template-rows: repeat(3, 260px);
     grid-auto-flow: column;
     grid-auto-columns: 350px;
-    min-height: 712px;
+    min-height: 820px;
     gap: 20px;
     min-width: 100%;
   }
@@ -113,18 +113,6 @@
   background: linear-gradient(270deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.orderCardWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.orderActions {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  justify-content: flex-end;
-}
 
 .actionBtn {
   font-size: 13px !important;

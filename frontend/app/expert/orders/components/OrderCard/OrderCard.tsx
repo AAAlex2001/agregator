@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import styles from "./orderCard.module.scss";
 import { BadgesSection, DateMoneySection, OrderInfoSection } from "./sections";
 import type { Badge } from "./types";
@@ -10,6 +11,7 @@ export interface OrderCardProps {
   sum: string;
   responsesDeadline?: string | null;
   onClick?: () => void;
+  children?: ReactNode;
 }
 
 const OrderCard = ({
@@ -20,6 +22,7 @@ const OrderCard = ({
   sum,
   responsesDeadline,
   onClick,
+  children,
 }: OrderCardProps) => {
   return (
     <article className={styles.card} onClick={onClick}>
@@ -29,6 +32,7 @@ const OrderCard = ({
       </div>
 
       <DateMoneySection date={date} sum={sum} responsesDeadline={responsesDeadline} />
+      {children && <div className={styles.cardActions}>{children}</div>}
     </article>
   );
 };
