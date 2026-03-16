@@ -13,6 +13,7 @@ interface CreateOrderFormProps {
     title: string;
     company: string;
     deadline: string;
+    responsesDeadline: string;
     budget: string;
     selectedBadges: { text: string; variant: string }[];
     typicalNames: string;
@@ -31,6 +32,7 @@ export default function CreateOrderForm({
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [responsesDeadline, setResponsesDeadline] = useState("");
   const [budget, setBudget] = useState("");
   const [selectedBadgeVariants, setSelectedBadgeVariants] = useState<string[]>([]);
   const [typicalNames, setTypicalNames] = useState("");
@@ -83,6 +85,7 @@ export default function CreateOrderForm({
       title: title.trim(),
       company: company.trim(),
       deadline,
+      responsesDeadline,
       budget,
       selectedBadges: badges,
       typicalNames: typicalNames.trim(),
@@ -144,6 +147,19 @@ export default function CreateOrderForm({
               className={styles.formInput}
             />
           </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.fieldGroup}>
+            <span className={styles.fieldLabel}>Приём откликов до</span>
+            <input
+              type="datetime-local"
+              value={responsesDeadline}
+              onChange={(e) => setResponsesDeadline(e.target.value)}
+              className={styles.nativeInput}
+            />
+          </div>
+          <div className={styles.fieldGroup} />
         </div>
       </div>
 

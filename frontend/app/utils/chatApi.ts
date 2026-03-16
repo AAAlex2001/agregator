@@ -25,6 +25,8 @@ export interface ChatMessage {
   sender_id: number;
   sender_role: "CUSTOMER" | "EXPERT";
   text: string;
+  file_url: string | null;
+  file_name: string | null;
   is_read: boolean;
   created_at: string;
 }
@@ -108,13 +110,25 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailRespon
   return (await response.json()) as ChatDetailResponse;
 }
 
-export async function sendChatMessage(chatUuid: string, text: string): Promise<ChatMessage> {
-  const response = await fetchWithSessionRefresh(`${getApiBaseUrl()}/chats/${chatUuid}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ text }),
-  });
+export async function sendChatMessage(
+  chatUuid: string,
+  text: string,
+  file?: File | null,
+): Promise<ChatMessage> {
+  const formData = new FormData();
+  formData.append("text", text);
+  if (file) {
+    formData.append("file", file);
+  }
+
+  const response = await fetchWithSessionRefresh(
+    `${getApiBaseUrl()}/chats/${chatUuid}/messages`,
+    {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    },
+  );
 
   if (!response.ok) {
     return readError(response, "Не удалось отправить сообщение");

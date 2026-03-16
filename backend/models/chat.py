@@ -46,6 +46,8 @@ class ChatMessage(Base):
     chat_id = Column(Integer, ForeignKey("chats.id", ondelete="CASCADE"), nullable=False, index=True)
     sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     text = Column(String(5000), nullable=False)
+    file_url = Column(String(1000), nullable=True)
+    file_name = Column(String(500), nullable=True)
     is_read = Column(Boolean, default=False, nullable=False, server_default="false")
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 

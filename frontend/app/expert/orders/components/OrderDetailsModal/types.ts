@@ -7,6 +7,7 @@ export interface OrderDetails {
   title: string;
   customer: string;
   date: string;
+  responsesDeadline?: string | null;
   sum: string;
   commissionAmount: string;
   commissionAmountRaw: number;

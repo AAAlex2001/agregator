@@ -5,7 +5,23 @@ interface TopSectionProps {
   order: OrderDetails;
 }
 
+function formatDeadline(isoString: string): string {
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function TopSection({ order }: TopSectionProps) {
+  const deadlineExpired = order.responsesDeadline
+    ? new Date(order.responsesDeadline) <= new Date()
+    : false;
+
   return (
     <div className={styles.top}>
       <div className={styles.dateMoney}>
@@ -21,6 +37,14 @@ export default function TopSection({ order }: TopSectionProps) {
           <span className={styles.sum}>{order.sum}</span>
         </div>
       </div>
+
+      {order.responsesDeadline && (
+        <div className={styles.responsesDeadline}>
+          <span className={deadlineExpired ? styles.deadlineExpired : styles.deadlineActive}>
+            Приём откликов до: {formatDeadline(order.responsesDeadline)}
+          </span>
+        </div>
+      )}
 
       <div className={styles.orderInfo}>
         <p className={styles.title}>{order.title}</p>

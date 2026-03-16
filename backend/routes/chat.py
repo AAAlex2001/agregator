@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -9,7 +9,6 @@ from schemas.chat import (
     ChatMessageResponse,
     ChatOpenRequest,
     ChatPresenceResponse,
-    ChatSendMessageRequest,
 )
 from services.chat import ChatService
 from ws.manager import chat_manager
@@ -95,13 +94,16 @@ async def mark_chat_read(
 @router.post("/{chat_uuid}/messages", response_model=ChatMessageResponse)
 async def send_message(
     chat_uuid: str,
-    payload: ChatSendMessageRequest,
+    text: str = Form(""),
+    file: UploadFile | None = File(default=None),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ChatService(db)
     chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
-    message = await service.send_message(chat_id=chat.id, sender_id=user_id, text=payload.text)
+    message = await service.send_message(
+        chat_id=chat.id, sender_id=user_id, text=text, file=file,
+    )
     await chat_manager.broadcast(
         chat.id,
         {"event": "chat_message", "data": message.model_dump(mode="json")},

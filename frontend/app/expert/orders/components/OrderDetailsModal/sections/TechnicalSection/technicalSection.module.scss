@@ -109,6 +109,22 @@
   transform: translateX(6px) rotate(0deg);
 }
 
+.actionArea {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.deadlineExpiredHint {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+  color: #f73c1d;
+  text-align: center;
+}
+
 .previewOverlay {
   position: fixed;
   inset: 0;

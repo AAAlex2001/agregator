@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
-from uuid import UUID
+from pathlib import Path
+from uuid import UUID, uuid4
 
-from fastapi import HTTPException, status
+import aiofiles
+from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -10,6 +12,9 @@ from models.chat import Chat, ChatMessage
 from models.order import Order
 from models.user import User, UserRole
 from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
+
+CHAT_ALLOWED_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx"}
+UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 
 class ChatService:
@@ -280,6 +285,8 @@ class ChatService:
                         else UserRole.EXPERT.value
                     ),
                     text=message.text,
+                    file_url=message.file_url,
+                    file_name=message.file_name,
                     is_read=message.is_read,
                     created_at=message.created_at,
                 )
@@ -287,10 +294,13 @@ class ChatService:
             ],
         )
 
-    async def send_message(self, chat_id: int, sender_id: int, text: str) -> ChatMessageResponse:
+    async def send_message(
+        self, chat_id: int, sender_id: int, text: str,
+        file: UploadFile | None = None,
+    ) -> ChatMessageResponse:
         normalized_text = text.strip()
-        if not normalized_text:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пустое сообщение отправить нельзя")
+        if not normalized_text and not (file and file.filename):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Сообщение не может быть пустым")
 
         chat_row = await self.db.execute(
             select(Chat.id, Chat.customer_id)
@@ -303,10 +313,31 @@ class ChatService:
         if not chat_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
 
+        file_url = None
+        file_name = None
+        if file and file.filename:
+            extension = Path(file.filename).suffix.lower()
+            if extension not in CHAT_ALLOWED_EXTENSIONS:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX",
+                )
+            upload_dir = Path(__file__).resolve().parents[1] / "uploads" / "chats" / str(chat_id)
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            generated_name = f"{uuid4().hex}{extension}"
+            file_path = upload_dir / generated_name
+            async with aiofiles.open(file_path, "wb") as f:
+                while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                    await f.write(chunk)
+            file_url = f"/uploads/chats/{chat_id}/{generated_name}"
+            file_name = file.filename
+
         message = ChatMessage(
             chat_id=chat_id,
             sender_id=sender_id,
             text=normalized_text,
+            file_url=file_url,
+            file_name=file_name,
         )
         self.db.add(message)
         await self.db.flush()
@@ -326,6 +357,8 @@ class ChatService:
             sender_id=message.sender_id,
             sender_role=sender_role,
             text=message.text,
+            file_url=message.file_url,
+            file_name=message.file_name,
             is_read=False,
             created_at=message.created_at,
         )

@@ -48,6 +48,9 @@ export async function createCustomerOrder(
     formData.append("customer_id", String(payload.customer_id));
     formData.append("sum_amount", String(payload.sum_amount));
     formData.append("deadline", payload.deadline);
+    if (payload.responses_deadline) {
+      formData.append("responses_deadline", payload.responses_deadline);
+    }
     formData.append("badges_json", JSON.stringify(payload.badges));
     for (const file of files) {
       formData.append("files", file);

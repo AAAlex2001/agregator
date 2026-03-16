@@ -55,6 +55,7 @@ export interface CreateOrderPayload {
   customer_id: number;
   sum_amount: number;
   deadline: string;
+  responses_deadline?: string;
   badges: BadgeOption[];
   files?: File[];
 }

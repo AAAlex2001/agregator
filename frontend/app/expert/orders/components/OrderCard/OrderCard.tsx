@@ -8,6 +8,7 @@ export interface OrderCardProps {
   customer: string;
   date: string;
   sum: string;
+  responsesDeadline?: string | null;
   onClick?: () => void;
 }
 
@@ -17,6 +18,7 @@ const OrderCard = ({
   customer,
   date,
   sum,
+  responsesDeadline,
   onClick,
 }: OrderCardProps) => {
   return (
@@ -26,7 +28,7 @@ const OrderCard = ({
         <OrderInfoSection title={title} customer={customer} />
       </div>
 
-      <DateMoneySection date={date} sum={sum} />
+      <DateMoneySection date={date} sum={sum} responsesDeadline={responsesDeadline} />
     </article>
   );
 };

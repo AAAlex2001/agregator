@@ -55,6 +55,7 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - /etc/letsencrypt/live/plus-resurs.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - /etc/letsencrypt/live/plus-resurs.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - backend_uploads:/app/uploads:ro
     depends_on:
       - frontend
       - backend

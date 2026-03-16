@@ -2,6 +2,7 @@ from typing import Optional
 from pathlib import Path
 from uuid import uuid4
 
+import aiofiles
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import func, delete, select, not_
 from sqlalchemy.exc import IntegrityError
@@ -24,6 +25,8 @@ ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
     ".xls",
     ".xlsx",
 }
+
+UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 
 class OrderService:
@@ -56,9 +59,9 @@ class OrderService:
                 )
             generated_name = f"{uuid4().hex}{extension}"
             file_path = upload_dir / generated_name
-            content = await file.read()
-            with open(file_path, "wb") as f:
-                f.write(content)
+            async with aiofiles.open(file_path, "wb") as f:
+                while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                    await f.write(chunk)
             saved_paths.append(f"/uploads/orders/{order_id}/{generated_name}")
 
         return saved_paths
@@ -162,6 +165,7 @@ class OrderService:
             technical_files=data.technical_files,
             sum_amount=data.sum_amount,
             deadline=data.deadline,
+            responses_deadline=data.responses_deadline,
             status=data.status,
         )
         self.db.add(order)

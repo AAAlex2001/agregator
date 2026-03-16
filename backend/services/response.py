@@ -1,7 +1,9 @@
 from pathlib import Path
 from uuid import uuid4
+from datetime import datetime, timezone
 
-from sqlalchemy import func, update
+import aiofiles
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -22,6 +24,8 @@ from ws.manager import order_manager
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
     ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
 }
+
+UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 
 class ResponseService:
@@ -95,6 +99,12 @@ class ResponseService:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Нельзя откликнуться на неактивный заказ",
+            )
+
+        if order.responses_deadline and datetime.now(timezone.utc) > order.responses_deadline:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Срок приёма откликов истёк",
             )
 
         commission = CommissionCalculator.commission_paid(order.sum_amount)
@@ -483,9 +493,9 @@ class ResponseService:
             generated_name = f"{uuid4().hex}{extension}"
             file_path = upload_dir / generated_name
 
-            file_content = await file.read()
-            with open(file_path, "wb") as file_handle:
-                file_handle.write(file_content)
+            async with aiofiles.open(file_path, "wb") as file_handle:
+                while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                    await file_handle.write(chunk)
 
             saved_files.append(f"/uploads/responses/{response_id}/{generated_name}")
 

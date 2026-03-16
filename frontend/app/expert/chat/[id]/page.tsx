@@ -78,7 +78,9 @@ export default function ChatWindowPage() {
   const [chat, setChat] = useState<ChatDetailResponse | null>(null);
   const [chats, setChats] = useState<ChatListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filteredChats = useMemo(
     () => chats.filter((item) => item.counterpart_name.toLowerCase().includes(search.toLowerCase())),
@@ -191,10 +193,13 @@ export default function ChatWindowPage() {
 
   const handleSend = async () => {
     const text = inputValue.trim();
-    if (!text || !chat) return;
+    if (!text && !pendingFile) return;
+    if (!chat) return;
     setInputValue("");
+    const fileToSend = pendingFile;
+    setPendingFile(null);
     try {
-      const saved = await sendChatMessage(chat.uuid, text);
+      const saved = await sendChatMessage(chat.uuid, text, fileToSend);
       setMessages((prev) => (prev.some((m) => m.id === saved.id) ? prev : [...prev, saved]));
     } catch {
     }
@@ -338,7 +343,12 @@ export default function ChatWindowPage() {
                             <div className={styles.msgAvatarSpacer} />
                           )}
                           <div className={`${styles.bubble} ${styles.bubbleReceived}`}>
-                            <span className={styles.bubbleText}>{message.text}</span>
+                            {message.text && <span className={styles.bubbleText}>{message.text}</span>}
+                            {message.file_url && (
+                              <a href={message.file_url} target="_blank" rel="noreferrer" className={styles.bubbleFile} download={message.file_name || undefined}>
+                                📎 {message.file_name || "Файл"}
+                              </a>
+                            )}
                             <span className={styles.bubbleMeta}>
                               <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
                               {message.is_read ? (
@@ -352,7 +362,12 @@ export default function ChatWindowPage() {
                       ) : (
                         <div key={message.id} className={styles.msgRowSent}>
                           <div className={`${styles.bubble} ${styles.bubbleSent}`}>
-                            <span className={styles.bubbleText}>{message.text}</span>
+                            {message.text && <span className={styles.bubbleText}>{message.text}</span>}
+                            {message.file_url && (
+                              <a href={message.file_url} target="_blank" rel="noreferrer" className={styles.bubbleFile} download={message.file_name || undefined}>
+                                📎 {message.file_name || "Файл"}
+                              </a>
+                            )}
                             <span className={styles.bubbleMeta}>
                               <span className={styles.bubbleTime}>{formatMessageTime(message.created_at)}</span>
                               {message.is_read ? (
@@ -379,6 +394,12 @@ export default function ChatWindowPage() {
           </div>
 
           <div className={styles.inputBar}>
+            {pendingFile && (
+              <div className={styles.filePending}>
+                <span className={styles.filePendingName}>📎 {pendingFile.name}</span>
+                <button type="button" className={styles.filePendingRemove} onClick={() => setPendingFile(null)}>×</button>
+              </div>
+            )}
             <div className={styles.inputWrap}>
               <input
                 className={styles.messageInput}
@@ -388,15 +409,32 @@ export default function ChatWindowPage() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
               />
-              <Button variant="transparent" className={styles.clipBtn} aria-label="Прикрепить файл">
+              <Button
+                variant="transparent"
+                className={styles.clipBtn}
+                aria-label="Прикрепить файл"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <ChatClipIcon />
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx"
+                style={{ display: "none" }}
+                tabIndex={-1}
+                onChange={(e) => {
+                  const f = e.currentTarget.files?.[0] ?? null;
+                  if (f) setPendingFile(f);
+                  e.currentTarget.value = "";
+                }}
+              />
             </div>
             <Button
               variant="primary"
               className={styles.sendBtn}
               onClick={handleSend}
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() && !pendingFile}
               aria-label="Отправить"
             >
               <ChatSendIcon />

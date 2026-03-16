@@ -73,7 +73,6 @@ export const ReviewCard = ({
 }: ReviewCardProps) => {
   const isUpdating = isRejectLoading || isAcceptLoading;
   const [orderExpanded, setOrderExpanded] = useState(false);
-  const hasExtraContent = Boolean(commentText?.trim()) || Boolean(techSpecFiles?.length);
 
   return (
     <article className={styles.card}>

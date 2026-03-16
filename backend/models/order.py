@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
@@ -55,6 +55,7 @@ class Order(Base):
     technical_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
+    responses_deadline = Column(DateTime(timezone=True), nullable=True)
     status = Column(
         Enum(OrderStatus),
         nullable=False,

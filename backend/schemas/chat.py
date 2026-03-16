@@ -17,6 +17,8 @@ class ChatMessageResponse(BaseModel):
     sender_id: int
     sender_role: str
     text: str
+    file_url: str | None = None
+    file_name: str | None = None
     is_read: bool = False
     created_at: datetime
 

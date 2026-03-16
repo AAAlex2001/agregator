@@ -121,6 +121,26 @@
   flex-grow: 0;
 }
 
+.responsesDeadline {
+  width: 100%;
+}
+
+.deadlineActive {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  color: #ff8a00;
+}
+
+.deadlineExpired {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  color: #f73c1d;
+}
+
 .orderInfo {
   display: flex;
   flex-direction: column;

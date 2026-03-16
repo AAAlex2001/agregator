@@ -63,6 +63,33 @@
   width: 100%;
 }
 
+.nativeInput {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #ffb800;
+  border-radius: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  line-height: 125%;
+  color: #1a1a1a;
+  background: #ffffff;
+  transition: border-color 0.3s ease;
+  outline: none;
+
+  &:hover {
+    border-color: #ffdda9;
+  }
+
+  &:focus {
+    border-color: #ffb800;
+  }
+
+  &::placeholder {
+    color: #808080;
+  }
+}
+
 .commentBlock {
   display: flex;
   flex-direction: column;

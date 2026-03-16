@@ -81,6 +81,7 @@ export default function OrderDetailsModal({
             <CommentSection comment={order.comment} />
             <TechnicalSection
               technicalFiles={order.technicalFiles}
+              responsesDeadline={order.responsesDeadline}
               onRespond={() => setStep("step1")}
               isResponding={isResponding}
             />

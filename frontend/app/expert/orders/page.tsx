@@ -105,6 +105,7 @@ function OrdersPageContent() {
                       customer={order.customer}
                       date={order.date}
                       sum={order.sum}
+                      responsesDeadline={order.responsesDeadline}
                       onClick={() => setSelectedOrder(order)}
                     />
                   </motion.div>

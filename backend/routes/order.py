@@ -1,5 +1,5 @@
 import json
-from datetime import date as date_type
+from datetime import date as date_type, datetime as datetime_type
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
@@ -65,6 +65,7 @@ async def create_order_with_files(
     customer_id: int = Form(...),
     sum_amount: int = Form(...),
     deadline: str = Form(...),
+    responses_deadline: str = Form(""),
     badges_json: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
@@ -79,6 +80,10 @@ async def create_order_with_files(
         for b in badge_list
     ]
 
+    parsed_responses_deadline = None
+    if responses_deadline:
+        parsed_responses_deadline = datetime_type.fromisoformat(responses_deadline)
+
     data = OrderCreate(
         title=title,
         company=company,
@@ -87,6 +92,7 @@ async def create_order_with_files(
         customer_id=customer_id,
         sum_amount=sum_amount,
         deadline=date_type.fromisoformat(deadline),
+        responses_deadline=parsed_responses_deadline,
         badges=badges,
     )
 

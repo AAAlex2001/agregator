@@ -23,6 +23,7 @@ export function mapOrderToCardViewModel(order: OrderResponse): OrderCardViewMode
     title: order.title,
     customer: order.customer_name,
     date: order.date,
+    responsesDeadline: order.responses_deadline ?? null,
     sum: normalizeSumDisplay(order.sum),
     commissionAmount: normalizeSumDisplay(order.commission_amount),
     commissionAmountRaw: order.commission_amount_raw ?? 0,

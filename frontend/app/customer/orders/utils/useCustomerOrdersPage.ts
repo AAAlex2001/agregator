@@ -75,6 +75,7 @@ export function useCustomerOrdersPage() {
     title: string;
     company: string;
     deadline: string;
+    responsesDeadline: string;
     budget: string;
     selectedBadges: { text: string; variant: string }[];
     typicalNames: string;
@@ -99,6 +100,7 @@ export function useCustomerOrdersPage() {
         customer_id: profile?.id ?? 0,
         sum_amount: sumAmount,
         deadline: data.deadline,
+        responses_deadline: data.responsesDeadline || undefined,
         badges: data.selectedBadges,
         files: data.files,
       });

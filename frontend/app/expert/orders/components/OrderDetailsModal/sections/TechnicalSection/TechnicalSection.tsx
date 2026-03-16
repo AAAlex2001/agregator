@@ -18,6 +18,7 @@ import styles from "./technicalSection.module.scss";
 
 interface TechnicalSectionProps {
   technicalFiles: string[];
+  responsesDeadline?: string | null;
   onRespond?: () => void;
   isResponding?: boolean;
 }
@@ -108,8 +109,12 @@ function PreviewImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-export default function TechnicalSection({ technicalFiles, onRespond, isResponding = false }: TechnicalSectionProps) {
+export default function TechnicalSection({ technicalFiles, responsesDeadline, onRespond, isResponding = false }: TechnicalSectionProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const deadlineExpired = responsesDeadline
+    ? new Date(responsesDeadline) <= new Date()
+    : false;
 
   const handleFileClick = async (filePath: string) => {
     if (isImageFilePath(filePath)) {
@@ -145,17 +150,23 @@ export default function TechnicalSection({ technicalFiles, onRespond, isRespondi
         </div>
       </div>
 
-      <Button
-        type="button"
-        variant="primary"
-        size="md"
-        className={styles.actionButton}
-        onClick={onRespond}
-        isLoading={isResponding}
-      >
-        <span className={styles.actionText}>Откликнуться</span>
-        <ArrowIcon className={styles.actionArrow} color="#FFFFFF" />
-      </Button>
+      <div className={styles.actionArea}>
+        {deadlineExpired && (
+          <span className={styles.deadlineExpiredHint}>На заказ больше нельзя откликнуться</span>
+        )}
+        <Button
+          type="button"
+          variant="primary"
+          size="md"
+          className={styles.actionButton}
+          onClick={onRespond}
+          isLoading={isResponding}
+          disabled={deadlineExpired}
+        >
+          <span className={styles.actionText}>Откликнуться</span>
+          <ArrowIcon className={styles.actionArrow} color="#FFFFFF" />
+        </Button>
+      </div>
 
       {selectedImage && createPortal(
         <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>

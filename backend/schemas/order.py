@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
 
@@ -49,6 +49,7 @@ class OrderCreate(BaseModel):
     customer_id: int = Field(..., ge=1)
     sum_amount: int = Field(..., gt=0)
     deadline: date
+    responses_deadline: datetime | None = None
     technical_files: list[str] = Field(default_factory=list)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
@@ -66,6 +67,7 @@ class OrderUpdate(BaseModel):
     comment: Optional[str] = Field(None, max_length=5000)
     sum_amount: Optional[int] = Field(None, gt=0)
     deadline: Optional[date] = None
+    responses_deadline: Optional[datetime] = None
     technical_files: Optional[list[str]] = None
     badges: Optional[list[BadgeSchema]] = None
     status: Optional[OrderStatus] = None
@@ -94,6 +96,7 @@ class OrderResponse(BaseModel):
     commission_amount: str
     commission_amount_raw: int
     date: str
+    responses_deadline: str | None = None
     technical_files: list[str]
     badges: list[BadgeResponse]
     status: OrderStatus
@@ -121,6 +124,10 @@ class OrderResponse(BaseModel):
 
         date_display = order.deadline.strftime("%d.%m.%Y")
 
+        responses_deadline_display = None
+        if order.responses_deadline:
+            responses_deadline_display = order.responses_deadline.isoformat()
+
         badges = [
             BadgeResponse(text=b.text, variant=b.variant.value)
             for b in order.badges
@@ -140,6 +147,7 @@ class OrderResponse(BaseModel):
             commission_amount=commission_display,
             commission_amount_raw=commission_kopecks,
             date=date_display,
+            responses_deadline=responses_deadline_display,
             technical_files=order.technical_files or [],
             badges=badges,
             status=order.status,
