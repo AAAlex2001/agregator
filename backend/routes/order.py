@@ -16,6 +16,7 @@ from schemas.order import (
     OrderListResponse,
 )
 from services.order import OrderService
+from ws.manager import order_manager
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -109,6 +110,69 @@ async def update_order(
 ):
     service = OrderService(db)
     order = await service.update_order(order_id, data)
+    return OrderResponse.from_order(order)
+
+
+@router.patch("/{order_id}/update-with-files", response_model=OrderResponse)
+async def update_order_with_files(
+    order_id: int,
+    title: str = Form(...),
+    company: str = Form(""),
+    typical_names: str = Form(""),
+    comment: str = Form(""),
+    sum_amount: int = Form(...),
+    deadline: str = Form(...),
+    responses_deadline: str = Form(""),
+    badges_json: str = Form("[]"),
+    keep_files: str = Form("[]"),
+    files: list[UploadFile] = File(default=[]),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    try:
+        badge_list = json.loads(badges_json)
+    except json.JSONDecodeError:
+        badge_list = []
+
+    try:
+        keep_list = json.loads(keep_files)
+    except json.JSONDecodeError:
+        keep_list = []
+
+    badges = [
+        BadgeSchema(text=b["text"], variant=b["variant"])
+        for b in badge_list
+    ]
+
+    parsed_responses_deadline = None
+    if responses_deadline:
+        parsed_responses_deadline = datetime_type.fromisoformat(responses_deadline)
+
+    data = OrderUpdate(
+        title=title,
+        company=company,
+        typical_names=typical_names,
+        comment=comment,
+        sum_amount=sum_amount,
+        deadline=date_type.fromisoformat(deadline),
+        responses_deadline=parsed_responses_deadline,
+        badges=badges,
+        technical_files=keep_list,
+    )
+
+    service = OrderService(db)
+    order = await service.update_order(order_id, data)
+
+    if files:
+        new_paths = await service.save_uploaded_files(order_id, files)
+        order.technical_files = list(order.technical_files or []) + new_paths
+        await db.commit()
+        order = await service.get_order_by_id(order_id)
+        await order_manager.broadcast({
+            "event": "order_updated",
+            "data": OrderResponse.from_order(order).model_dump(),
+        })
+
     return OrderResponse.from_order(order)
 
 

@@ -6,6 +6,7 @@ const badgeVariantMap = {
   GRAY: "gray",
   ORANGE: "orange",
   BROWN: "brown",
+  PURPLE: "purple",
 } as const;
 
 function mapBadgeVariant(value: string): CustomerOrderCardVM["badges"][number]["variant"] {
@@ -26,5 +27,13 @@ export function mapOrderToCustomerCard(
       variant: mapBadgeVariant(b.variant),
     })),
     status: order.status,
+    company: order.company,
+    typicalNames: order.typical_names,
+    comment: order.comment,
+    sumAmountRaw: order.sum_amount_raw,
+    deadline: order.date,
+    responsesDeadline: order.responses_deadline ?? null,
+    technicalFiles: order.technical_files ?? [],
+    badgesRaw: order.badges,
   };
 }

@@ -114,6 +114,7 @@ export async function sendChatMessage(
   chatUuid: string,
   text: string,
   file?: File | null,
+  onProgress?: (pct: number) => void,
 ): Promise<ChatMessage> {
   const formData = new FormData();
   formData.append("text", text);
@@ -121,14 +122,43 @@ export async function sendChatMessage(
     formData.append("file", file);
   }
 
-  const response = await fetchWithSessionRefresh(
-    `${getApiBaseUrl()}/chats/${chatUuid}/messages`,
-    {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    },
-  );
+  const url = `${getApiBaseUrl()}/chats/${chatUuid}/messages`;
+
+  if (file && onProgress) {
+    return new Promise<ChatMessage>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url);
+      xhr.withCredentials = true;
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          onProgress(Math.round((e.loaded / e.total) * 100));
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(JSON.parse(xhr.responseText) as ChatMessage);
+        } else {
+          let message = "Не удалось отправить сообщение";
+          try {
+            const body = JSON.parse(xhr.responseText) as { detail?: string };
+            if (body?.detail) message = body.detail;
+          } catch { /* ignore */ }
+          reject(new Error(message));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Ошибка сети"));
+      xhr.send(formData);
+    });
+  }
+
+  const response = await fetchWithSessionRefresh(url, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
 
   if (!response.ok) {
     return readError(response, "Не удалось отправить сообщение");

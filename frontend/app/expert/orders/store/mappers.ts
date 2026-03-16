@@ -7,6 +7,7 @@ const badgeVariantMap: Record<string, Badge["variant"]> = {
   GRAY: "gray",
   ORANGE: "orange",
   BROWN: "brown",
+  PURPLE: "purple",
 };
 
 function mapBadgeVariant(value: string): Badge["variant"] {

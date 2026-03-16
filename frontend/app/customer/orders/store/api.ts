@@ -1,5 +1,6 @@
 import type {
   CreateOrderPayload,
+  UpdateOrderPayload,
   CustomerOrdersListResponse,
 } from "./types";
 import { stableMultipartFetch } from "@/app/utils/stableMultipartFetch";
@@ -71,4 +72,62 @@ export async function createCustomerOrder(
   }
 
   return response.json();
+}
+
+export async function updateCustomerOrder(
+  orderId: number,
+  payload: UpdateOrderPayload,
+): Promise<{ id: number }> {
+  const apiBaseUrl = getApiBaseUrl();
+  const rawFiles = payload.files ?? [];
+
+  const buildFormData = (files: File[]) => {
+    const formData = new FormData();
+    formData.append("title", payload.title);
+    formData.append("company", payload.company);
+    formData.append("typical_names", payload.typical_names);
+    formData.append("comment", payload.comment);
+    formData.append("sum_amount", String(payload.sum_amount));
+    formData.append("deadline", payload.deadline);
+    if (payload.responses_deadline) {
+      formData.append("responses_deadline", payload.responses_deadline);
+    }
+    formData.append("badges_json", JSON.stringify(payload.badges));
+    formData.append("keep_files", JSON.stringify(payload.keepFiles ?? []));
+    for (const file of files) {
+      formData.append("files", file);
+    }
+    return formData;
+  };
+
+  const response = await stableMultipartFetch({
+    input: `${apiBaseUrl}/orders/${orderId}/update-with-files`,
+    method: "PATCH",
+    files: rawFiles,
+    buildBody: buildFormData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.detail ?? "Не удалось обновить заказ");
+  }
+
+  return response.json();
+}
+
+export async function deleteCustomerOrder(orderId: number): Promise<void> {
+  const apiBaseUrl = getApiBaseUrl();
+
+  const response = await fetchWithSessionRefresh(
+    `${apiBaseUrl}/orders/${orderId}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.detail ?? "Не удалось удалить заказ");
+  }
 }

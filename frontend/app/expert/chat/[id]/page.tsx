@@ -79,6 +79,8 @@ export default function ChatWindowPage() {
   const [chats, setChats] = useState<ChatListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [sending, setSending] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const threadRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -194,14 +196,19 @@ export default function ChatWindowPage() {
   const handleSend = async () => {
     const text = inputValue.trim();
     if (!text && !pendingFile) return;
-    if (!chat) return;
+    if (!chat || sending) return;
     setInputValue("");
     const fileToSend = pendingFile;
     setPendingFile(null);
+    setSending(true);
+    setUploadProgress(0);
     try {
-      const saved = await sendChatMessage(chat.uuid, text, fileToSend);
+      const saved = await sendChatMessage(chat.uuid, text, fileToSend, (pct) => setUploadProgress(pct));
       setMessages((prev) => (prev.some((m) => m.id === saved.id) ? prev : [...prev, saved]));
     } catch {
+    } finally {
+      setSending(false);
+      setUploadProgress(0);
     }
   };
 
@@ -394,7 +401,13 @@ export default function ChatWindowPage() {
           </div>
 
           <div className={styles.inputBar}>
-            {pendingFile && (
+            {sending && (
+              <div className={styles.uploadProgress}>
+                <div className={styles.uploadProgressBar} style={{ width: `${uploadProgress}%` }} />
+                <span className={styles.uploadProgressText}>{uploadProgress}%</span>
+              </div>
+            )}
+            {pendingFile && !sending && (
               <div className={styles.filePending}>
                 <span className={styles.filePendingName}>📎 {pendingFile.name}</span>
                 <button type="button" className={styles.filePendingRemove} onClick={() => setPendingFile(null)}>×</button>
@@ -408,12 +421,14 @@ export default function ChatWindowPage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
+                disabled={sending}
               />
               <Button
                 variant="transparent"
                 className={styles.clipBtn}
                 aria-label="Прикрепить файл"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={sending}
               >
                 <ChatClipIcon />
               </Button>
@@ -434,7 +449,7 @@ export default function ChatWindowPage() {
               variant="primary"
               className={styles.sendBtn}
               onClick={handleSend}
-              disabled={!inputValue.trim() && !pendingFile}
+              disabled={sending || (!inputValue.trim() && !pendingFile)}
               aria-label="Отправить"
             >
               <ChatSendIcon />

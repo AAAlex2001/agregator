@@ -16,6 +16,7 @@ export default function OrderSummary({ title, customer, date, badges, sum }: Ord
     gray: styles.badgeGray,
     orange: styles.badgeOrange,
     brown: styles.badgeBrown,
+    purple: styles.badgePurple,
   };
 
   return (

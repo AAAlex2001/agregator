@@ -112,3 +112,35 @@
   right: 0;
   background: linear-gradient(270deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 100%);
 }
+
+.orderCardWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orderActions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+  min-width: auto !important;
+}
+
+.deleteBtnStyled {
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+  min-width: auto !important;
+  color: #e53935 !important;
+
+  &:hover {
+    color: #c62828 !important;
+  }
+}

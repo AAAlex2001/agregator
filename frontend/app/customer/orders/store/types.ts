@@ -19,7 +19,9 @@ export interface CustomerOrderResponse {
   customer_id: number;
   customer_name: string;
   sum: string;
+  sum_amount_raw: number;
   date: string;
+  responses_deadline: string | null;
   technical_files: string[];
   badges: OrderBadgeResponse[];
   status: string;
@@ -38,6 +40,14 @@ export interface CustomerOrderCardVM {
   sum: string;
   badges: Badge[];
   status: string;
+  company: string;
+  typicalNames: string;
+  comment: string;
+  sumAmountRaw: number;
+  deadline: string;
+  responsesDeadline: string | null;
+  technicalFiles: string[];
+  badgesRaw: OrderBadgeResponse[];
 }
 
 export interface CustomerOrdersState {
@@ -58,4 +68,17 @@ export interface CreateOrderPayload {
   responses_deadline?: string;
   badges: BadgeOption[];
   files?: File[];
+}
+
+export interface UpdateOrderPayload {
+  title: string;
+  company: string;
+  typical_names: string;
+  comment: string;
+  sum_amount: number;
+  deadline: string;
+  responses_deadline?: string;
+  badges: BadgeOption[];
+  files?: File[];
+  keepFiles?: string[];
 }

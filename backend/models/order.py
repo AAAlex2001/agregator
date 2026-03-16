@@ -30,6 +30,7 @@ class BadgeVariant(str, PyEnum):
     GRAY = "GRAY"
     ORANGE = "ORANGE"
     BROWN = "BROWN"
+    PURPLE = "PURPLE"
 
 
 class Order(Base):

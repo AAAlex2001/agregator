@@ -15,11 +15,33 @@ export default function CustomerOrdersPage() {
     error,
     showCreateForm,
     isSubmitting,
+    editingOrder,
+    isDeleting,
     setShowCreateForm,
+    setEditingOrder,
     handleCreateOrder,
+    handleEditOrder,
+    handleUpdateOrder,
+    handleDeleteOrder,
     fetchOrders,
     ordersRef,
   } = useCustomerOrdersPage();
+
+  if (editingOrder) {
+    return (
+      <>
+        <AuthHeader />
+        <div className={styles.wrapper}>
+          <CreateOrderForm
+            onCancel={() => setEditingOrder(null)}
+            onSubmit={handleUpdateOrder}
+            isSubmitting={isSubmitting}
+            initialData={editingOrder}
+          />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -75,14 +97,35 @@ export default function CustomerOrdersPage() {
                   <div className={styles.shadeRight} />
                   <div className={styles.orders} ref={ordersRef}>
                   {items.map((order) => (
-                    <OrderCard
-                      key={order.id}
-                      badges={order.badges}
-                      title={order.title}
-                      customer={order.customer}
-                      date={order.date}
-                      sum={order.sum}
-                    />
+                    <div key={order.id} className={styles.orderCardWrap}>
+                      <OrderCard
+                        badges={order.badges}
+                        title={order.title}
+                        customer={order.customer}
+                        date={order.date}
+                        sum={order.sum}
+                      />
+                      <div className={styles.orderActions}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={styles.actionBtn}
+                          onClick={() => handleEditOrder(order)}
+                        >
+                          Редактировать
+                        </Button>
+                        <Button
+                          variant="transparent"
+                          size="sm"
+                          className={styles.deleteBtnStyled}
+                          disabled={isDeleting === order.id}
+                          isLoading={isDeleting === order.id}
+                          onClick={() => handleDeleteOrder(order.id)}
+                        >
+                          Удалить
+                        </Button>
+                      </div>
+                    </div>
                   ))}
                   </div>
                 </div>

@@ -1,15 +1,77 @@
 import { useEffect, useRef, useState } from "react";
-import { createCustomerOrder } from "../store/api";
+import { createCustomerOrder, updateCustomerOrder, deleteCustomerOrder } from "../store/api";
 import { loadCustomerOrders } from "../store/actions";
 import { useCustomerOrdersState } from "../store/state";
 import { clamp, getNormalizedWheelDelta } from "@/app/expert/orders/utils/ordersPage.utils";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
+import type { CustomerOrderCardVM } from "../store/types";
+import type { OrderInitialData } from "../components/CreateOrderForm/CreateOrderForm";
+import { BADGE_OPTIONS } from "../components/CreateOrderForm/sections";
 
 function parseBudgetToKopecks(value: string): number {
   const cleaned = value.replace(/[^\d.,]/g, "").replace(",", ".");
   const parsed = parseFloat(cleaned);
   if (isNaN(parsed) || parsed <= 0) return 0;
   return Math.round(parsed * 100);
+}
+
+function toIsoWithTimezone(localDatetime: string): string {
+  if (!localDatetime) return "";
+  const d = new Date(localDatetime);
+  if (isNaN(d.getTime())) return localDatetime;
+  return d.toISOString();
+}
+
+function buildInitialDataFromOrder(order: CustomerOrderCardVM): OrderInitialData {
+  const selectedVariants: string[] = [];
+  const typicalNamesMap: Record<string, string> = {};
+
+  for (const badge of order.badgesRaw) {
+    const variant = badge.variant;
+    if (!selectedVariants.includes(variant)) {
+      selectedVariants.push(variant);
+    }
+    const opt = BADGE_OPTIONS.find((b) => b.variant === variant);
+    if (opt) {
+      const prefix = opt.text + " ";
+      const name = badge.text.startsWith(prefix)
+        ? badge.text.slice(prefix.length)
+        : badge.text === opt.text
+          ? ""
+          : badge.text;
+      if (name) {
+        const existing = typicalNamesMap[variant];
+        typicalNamesMap[variant] = existing ? `${existing}, ${name}` : name;
+      }
+    }
+  }
+
+  const deadlineParts = order.date.split(".");
+  const deadlineIso = deadlineParts.length === 3
+    ? `${deadlineParts[2]}-${deadlineParts[1]}-${deadlineParts[0]}`
+    : order.date;
+
+  let responsesDeadlineLocal = "";
+  if (order.responsesDeadline) {
+    const d = new Date(order.responsesDeadline);
+    if (!isNaN(d.getTime())) {
+      const pad = (n: number) => String(n).padStart(2, "0");
+      responsesDeadlineLocal = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+  }
+
+  return {
+    id: order.id,
+    title: order.title,
+    company: order.company,
+    deadline: deadlineIso,
+    responsesDeadline: responsesDeadlineLocal,
+    budget: String(Math.round(order.sumAmountRaw / 100)),
+    selectedBadgeVariants: selectedVariants,
+    typicalNamesMap,
+    comment: order.comment,
+    existingFiles: order.technicalFiles,
+  };
 }
 
 const PAGE_LIMIT = 50;
@@ -30,6 +92,8 @@ export function useCustomerOrdersPage() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<OrderInitialData | null>(null);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const ordersRef = useRef<HTMLDivElement | null>(null);
   const scrollTargetRef = useRef<number | null>(null);
   const scrollAnimationRef = useRef<number | null>(null);
@@ -100,7 +164,7 @@ export function useCustomerOrdersPage() {
         customer_id: profile?.id ?? 0,
         sum_amount: sumAmount,
         deadline: data.deadline,
-        responses_deadline: data.responsesDeadline || undefined,
+        responses_deadline: toIsoWithTimezone(data.responsesDeadline) || undefined,
         badges: data.selectedBadges,
         files: data.files,
       });
@@ -113,6 +177,72 @@ export function useCustomerOrdersPage() {
       setError(message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleEditOrder = (order: CustomerOrderCardVM) => {
+    setEditingOrder(buildInitialDataFromOrder(order));
+  };
+
+  const handleUpdateOrder = async (data: {
+    title: string;
+    company: string;
+    deadline: string;
+    responsesDeadline: string;
+    budget: string;
+    selectedBadges: { text: string; variant: string }[];
+    typicalNames: string;
+    comment: string;
+    files: File[];
+    keepFiles?: string[];
+  }) => {
+    if (!editingOrder) return;
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const sumAmount = parseBudgetToKopecks(data.budget);
+      if (sumAmount <= 0) {
+        setError("Укажите корректный бюджет");
+        return;
+      }
+
+      await updateCustomerOrder(editingOrder.id, {
+        title: data.title,
+        company: data.company,
+        typical_names: data.typicalNames,
+        comment: data.comment,
+        sum_amount: sumAmount,
+        deadline: data.deadline,
+        responses_deadline: toIsoWithTimezone(data.responsesDeadline) || undefined,
+        badges: data.selectedBadges,
+        files: data.files,
+        keepFiles: data.keepFiles,
+      });
+
+      setEditingOrder(null);
+      await fetchOrders();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Не удалось обновить заказ";
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    if (!confirm("Вы уверены, что хотите удалить этот заказ?")) return;
+    setIsDeleting(orderId);
+    try {
+      await deleteCustomerOrder(orderId);
+      await fetchOrders();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Не удалось удалить заказ";
+      setError(message);
+    } finally {
+      setIsDeleting(null);
     }
   };
 
@@ -180,8 +310,14 @@ export function useCustomerOrdersPage() {
     error,
     showCreateForm,
     isSubmitting,
+    editingOrder,
+    isDeleting,
     setShowCreateForm,
+    setEditingOrder,
     handleCreateOrder,
+    handleEditOrder,
+    handleUpdateOrder,
+    handleDeleteOrder,
     fetchOrders,
     ordersRef,
   };

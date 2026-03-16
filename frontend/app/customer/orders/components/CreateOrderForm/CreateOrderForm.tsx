@@ -7,37 +7,97 @@ import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
 import { BadgeSelector, FileUpload, BADGE_OPTIONS } from "./sections";
 import styles from "./createOrderForm.module.scss";
 
+export interface OrderFormData {
+  title: string;
+  company: string;
+  deadline: string;
+  responsesDeadline: string;
+  budget: string;
+  selectedBadges: { text: string; variant: string }[];
+  typicalNames: string;
+  comment: string;
+  files: File[];
+  keepFiles?: string[];
+}
+
+export interface OrderInitialData {
+  id: number;
+  title: string;
+  company: string;
+  deadline: string;
+  responsesDeadline: string;
+  budget: string;
+  selectedBadgeVariants: string[];
+  typicalNamesMap: Record<string, string>;
+  comment: string;
+  existingFiles: string[];
+}
+
 interface CreateOrderFormProps {
   onCancel: () => void;
-  onSubmit: (data: {
-    title: string;
-    company: string;
-    deadline: string;
-    responsesDeadline: string;
-    budget: string;
-    selectedBadges: { text: string; variant: string }[];
-    typicalNames: string;
-    comment: string;
-    files: File[];
-  }) => void;
+  onSubmit: (data: OrderFormData) => void;
   isSubmitting: boolean;
+  initialData?: OrderInitialData;
+}
+
+function buildBadgesFromMap(
+  selectedVariants: string[],
+  typicalNamesMap: Record<string, string>,
+): { text: string; variant: string }[] {
+  const badges: { text: string; variant: string }[] = [];
+
+  for (const variant of selectedVariants) {
+    const opt = BADGE_OPTIONS.find((b) => b.variant === variant);
+    if (!opt) continue;
+
+    const namesStr = (typicalNamesMap[variant] ?? "").trim();
+    if (namesStr) {
+      const names = namesStr.split(",").map((n) => n.trim()).filter(Boolean);
+      for (const name of names) {
+        badges.push({ text: `${opt.text} ${name}`, variant });
+      }
+    } else {
+      badges.push({ text: opt.text, variant });
+    }
+  }
+
+  return badges;
+}
+
+function buildTypicalNamesString(
+  selectedVariants: string[],
+  typicalNamesMap: Record<string, string>,
+): string {
+  const parts: string[] = [];
+  for (const variant of selectedVariants) {
+    const val = (typicalNamesMap[variant] ?? "").trim();
+    if (val) parts.push(val);
+  }
+  return parts.join(", ");
 }
 
 export default function CreateOrderForm({
   onCancel,
   onSubmit,
   isSubmitting,
+  initialData,
 }: CreateOrderFormProps) {
+  const isEdit = Boolean(initialData);
   const { showError } = useNotifications();
-  const [title, setTitle] = useState("");
-  const [company, setCompany] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [responsesDeadline, setResponsesDeadline] = useState("");
-  const [budget, setBudget] = useState("");
-  const [selectedBadgeVariants, setSelectedBadgeVariants] = useState<string[]>([]);
-  const [typicalNames, setTypicalNames] = useState("");
-  const [comment, setComment] = useState("");
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [company, setCompany] = useState(initialData?.company ?? "");
+  const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
+  const [responsesDeadline, setResponsesDeadline] = useState(initialData?.responsesDeadline ?? "");
+  const [budget, setBudget] = useState(initialData?.budget ?? "");
+  const [selectedBadgeVariants, setSelectedBadgeVariants] = useState<string[]>(
+    initialData?.selectedBadgeVariants ?? [],
+  );
+  const [typicalNamesMap, setTypicalNamesMap] = useState<Record<string, string>>(
+    initialData?.typicalNamesMap ?? {},
+  );
+  const [comment, setComment] = useState(initialData?.comment ?? "");
   const [files, setFiles] = useState<File[]>([]);
+  const [keepFiles, setKeepFiles] = useState<string[]>(initialData?.existingFiles ?? []);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleToggleBadge = (variant: string) => {
@@ -46,6 +106,15 @@ export default function CreateOrderForm({
         ? prev.filter((v) => v !== variant)
         : [...prev, variant],
     );
+  };
+
+  const handleTypicalNamesChange = (variant: string, value: string) => {
+    setTypicalNamesMap((prev) => ({ ...prev, [variant]: value }));
+  };
+
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^\d]/g, "");
+    setBudget(val);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,15 +140,17 @@ export default function CreateOrderForm({
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleRemoveExistingFile = (index: number) => {
+    setKeepFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const canSubmit = title.trim().length > 0 && deadline.length > 0 && budget.length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit || isSubmitting) return;
 
-    const badges = selectedBadgeVariants.map((variant) => {
-      const opt = BADGE_OPTIONS.find((b) => b.variant === variant);
-      return { text: opt?.text ?? "", variant };
-    });
+    const badges = buildBadgesFromMap(selectedBadgeVariants, typicalNamesMap);
+    const typicalNames = buildTypicalNamesString(selectedBadgeVariants, typicalNamesMap);
 
     onSubmit({
       title: title.trim(),
@@ -88,15 +159,16 @@ export default function CreateOrderForm({
       responsesDeadline,
       budget,
       selectedBadges: badges,
-      typicalNames: typicalNames.trim(),
+      typicalNames,
       comment: comment.trim(),
       files,
+      keepFiles: isEdit ? keepFiles : undefined,
     });
   };
 
   return (
     <div className={styles.card}>
-      <h2 className={styles.title}>Создание заказа</h2>
+      <h2 className={styles.title}>{isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
 
       <div className={styles.fieldsBlock}>
         <div className={styles.row}>
@@ -143,7 +215,7 @@ export default function CreateOrderForm({
               active
               placeholder="Сумма в рублях"
               value={budget}
-              onChange={(e) => setBudget(e.target.value)}
+              onChange={handleBudgetChange}
               className={styles.formInput}
             />
           </div>
@@ -166,19 +238,9 @@ export default function CreateOrderForm({
       <BadgeSelector
         selected={selectedBadgeVariants}
         onToggle={handleToggleBadge}
+        typicalNamesMap={typicalNamesMap}
+        onTypicalNamesChange={handleTypicalNamesChange}
       />
-
-      <div className={styles.fieldGroup}>
-        <span className={styles.fieldLabel}>Укажите типовые наименования</span>
-        <Input
-          variant="text"
-          active
-          placeholder="Типовые наименования"
-          value={typicalNames}
-          onChange={(e) => setTypicalNames(e.target.value)}
-          className={styles.formInput}
-        />
-      </div>
 
       <div className={styles.commentBlock}>
         <span className={styles.fieldLabel}>Комментарий к заказу</span>
@@ -190,12 +252,33 @@ export default function CreateOrderForm({
         />
       </div>
 
+      {isEdit && keepFiles.length > 0 && (
+        <div className={styles.commentBlock}>
+          <span className={styles.fieldLabel}>Текущие файлы</span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {keepFiles.map((url, i) => {
+              const name = url.split("/").pop() ?? "Файл";
+              return (
+                <div key={url} style={{ display: "flex", alignItems: "center", gap: 4, background: "#fff8eb", padding: "4px 8px", borderRadius: 8, fontSize: 13 }}>
+                  <span>{name}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingFile(i)}
+                    style={{ border: "none", background: "none", cursor: "pointer", color: "#f73c1d", fontSize: 16, padding: 0 }}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <FileUpload
         files={files}
         onAddFile={() => {
-          if (!fileInputRef.current) {
-            return;
-          }
+          if (!fileInputRef.current) return;
           fileInputRef.current.value = "";
           fileInputRef.current.click();
         }}
@@ -241,7 +324,7 @@ export default function CreateOrderForm({
           isLoading={isSubmitting}
           onClick={handleSubmit}
         >
-          Создать заказ
+          {isEdit ? "Сохранить" : "Создать заказ"}
         </Button>
       </div>
     </div>
