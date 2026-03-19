@@ -23,9 +23,9 @@ async def login_user(
     service = LoginService(db)
     user = None
     if data.email:
-        user = await service.get_user_by_email(data.email)
+        user = await service.get_user_by_email_and_role(data.email, data.role)
     elif data.phone:
-        user = await service.get_user_by_phone(data.phone)
+        user = await service.get_user_by_phone_and_role(data.phone, data.role)
 
     if not user:
         raise HTTPException(

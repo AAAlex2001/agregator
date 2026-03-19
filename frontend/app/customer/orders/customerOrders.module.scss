@@ -58,17 +58,17 @@
   gap: 20px;
   width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   padding: 10px;
 
   @media (min-width: 768px) {
     display: grid;
     align-items: initial;
-    grid-template-rows: repeat(3, 260px);
+    grid-template-rows: repeat(3, 310px);
     grid-auto-flow: column;
     grid-auto-columns: 350px;
-    min-height: 820px;
+    min-height: 970px;
     gap: 20px;
     min-width: 100%;
   }

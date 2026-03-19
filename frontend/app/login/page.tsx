@@ -21,7 +21,7 @@ export default function LoginPage() {
 
     try {
       await handleLogin(
-        { login: state.login, password: state.password },
+        { login: state.login, password: state.password, role: state.role },
         (role) => {
           router.push(role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
         },
@@ -48,6 +48,24 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className={styles.form}>
             {state.error && <div className={styles.errorMessage}>{state.error}</div>}
+
+            <div className={styles.roleTabs}>
+              <button
+                type="button"
+                className={`${styles.roleTab} ${state.role === "CUSTOMER" ? styles.roleTabActive : ""}`}
+                onClick={() => state.setRole("CUSTOMER")}
+              >
+                Заказчик
+              </button>
+              <button
+                type="button"
+                className={`${styles.roleTab} ${state.role === "EXPERT" ? styles.roleTabActive : ""}`}
+                onClick={() => state.setRole("EXPERT")}
+              >
+                Эксперт
+              </button>
+            </div>
+
             <Input
               id="login"
               variant="emailOrPhone"
@@ -89,4 +107,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

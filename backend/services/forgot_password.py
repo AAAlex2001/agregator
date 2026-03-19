@@ -26,6 +26,16 @@ class ForgotPasswordService:
         query = select(User).where(User.phone == phone)
         result = await self.db.execute(query)
         return result.scalars().first()
+
+    async def get_all_users_by_email(self, email: str) -> list[User]:
+        query = select(User).where(User.email == email)
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def get_all_users_by_phone(self, phone: str) -> list[User]:
+        query = select(User).where(User.phone == phone)
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
     
     async def validate_user_exists(self, email: str | None, phone: str | None) -> User | None:
         user = None
@@ -101,7 +111,6 @@ class ForgotPasswordService:
         return pwd_context.hash(password)
 
     async def reset_password(self, user_id: int, code: str, new_password: str) -> bool:
-        """Сбрасывает пароль пользователя"""
         self.validate_password(new_password)
 
         reset_code = await self.verify_reset_code(user_id, code)
@@ -114,15 +123,25 @@ class ForgotPasswordService:
         query = select(User).where(User.id == user_id)
         result = await self.db.execute(query)
         user = result.scalars().first()
-        
+
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Пользователь не найден",
             )
 
-        user.password = self.hash_password(new_password)
-        
+        hashed = self.hash_password(new_password)
+        user.password = hashed
+
+        siblings: list[User] = []
+        if user.email:
+            siblings = await self.get_all_users_by_email(user.email)
+        elif user.phone:
+            siblings = await self.get_all_users_by_phone(user.phone)
+        for sibling in siblings:
+            if sibling.id != user.id:
+                sibling.password = hashed
+
         await self.mark_code_as_used(reset_code)
         
         await self.db.commit()

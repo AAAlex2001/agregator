@@ -10,7 +10,18 @@ import styles from "./customerOrders.module.scss";
 
 function copyOrderLink(publicId: string) {
   const url = `${window.location.origin}/order/${publicId}`;
-  void navigator.clipboard.writeText(url);
+  if (navigator.clipboard) {
+    void navigator.clipboard.writeText(url);
+    return;
+  }
+  const ta = document.createElement("textarea");
+  ta.value = url;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
 }
 
 export default function CustomerOrdersPage() {

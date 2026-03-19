@@ -61,7 +61,7 @@ async def update_profile(
         user.last_name = data.last_name
     if data.phone is not None:
         existing = await db.execute(
-            select(User).where(User.phone == data.phone, User.id != user_id)
+            select(User).where(User.phone == data.phone, User.role == user.role, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(
@@ -71,7 +71,7 @@ async def update_profile(
         user.phone = data.phone
     if data.email is not None:
         existing = await db.execute(
-            select(User).where(User.email == data.email, User.id != user_id)
+            select(User).where(User.email == data.email, User.role == user.role, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(

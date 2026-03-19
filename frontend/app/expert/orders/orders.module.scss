@@ -54,10 +54,10 @@
   @media (min-width: 768px) {
     display: grid;
     align-items: initial;
-    grid-template-rows: repeat(3, 224px);
+    grid-template-rows: repeat(3, 274px);
     grid-auto-flow: column;
     grid-auto-columns: 350px;
-    min-height: 712px;
+    min-height: 862px;
     gap: 20px;
     min-width: 100%;
   }
@@ -163,6 +163,13 @@
   @media (min-width: 768px) {
     display: none;
   }
+}
+
+.shareBtn {
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  height: auto !important;
+  min-width: auto !important;
 }
 
 

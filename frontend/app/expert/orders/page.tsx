@@ -5,10 +5,26 @@ import { useSearchParams } from "next/navigation";
 import AuthHeader from "@/app/landing/header/AuthHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
-import { Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
+import { Button, Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { useOrdersPage } from "./utils/useOrdersPage";
 import styles from "./orders.module.scss";
+
+function copyOrderLink(publicId: string) {
+  const url = `${window.location.origin}/order/${publicId}`;
+  if (navigator.clipboard) {
+    void navigator.clipboard.writeText(url);
+    return;
+  }
+  const ta = document.createElement("textarea");
+  ta.value = url;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+}
 
 function OrdersPageContent() {
   const searchParams = useSearchParams();
@@ -107,7 +123,16 @@ function OrdersPageContent() {
                       sum={order.sum}
                       responsesDeadline={order.responsesDeadline}
                       onClick={() => setSelectedOrder(order)}
-                    />
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={styles.shareBtn}
+                        onClick={(e) => { e.stopPropagation(); copyOrderLink(order.publicId); }}
+                      >
+                        Поделиться
+                      </Button>
+                    </OrderCard>
                   </motion.div>
                 ))}
                 </AnimatePresence>

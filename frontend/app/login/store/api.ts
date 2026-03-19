@@ -17,6 +17,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
   const payload = {
     ...splitLogin(data.login),
     password: data.password,
+    role: data.role,
   };
 
   const response = await fetch(`${apiBaseUrl}/login/`, {

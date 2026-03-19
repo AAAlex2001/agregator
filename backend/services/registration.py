@@ -1,7 +1,7 @@
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models.user import User
+from models.user import User, UserRole
 from schemas.registration import UserRegistration
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
@@ -33,14 +33,13 @@ class RegistrationService:
     def hash_password(self, password: str) -> str:
         return pwd_context.hash(password)
 
-    async def get_user_by_email(self, email: str) -> User | None:
-        query = select(User).where(User.email == email)
+    async def get_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
+        query = select(User).where(User.email == email, User.role == role)
         result = await self.db.execute(query)
         return result.scalars().first()
 
-
-    async def get_user_by_phone(self, phone: str) -> User | None:
-        query = select(User).where(User.phone == phone)
+    async def get_user_by_phone_and_role(self, phone: str, role: UserRole) -> User | None:
+        query = select(User).where(User.phone == phone, User.role == role)
         result = await self.db.execute(query)
         return result.scalars().first()
 
@@ -48,19 +47,19 @@ class RegistrationService:
         self.validate_password(data.password)
 
         if data.email:
-            existing = await self.get_user_by_email(data.email)
+            existing = await self.get_user_by_email_and_role(data.email, data.role)
             if existing:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким email уже зарегистрирован",
+                    detail="Пользователь с таким email и ролью уже зарегистрирован",
                 )
 
         if data.phone:
-            existing = await self.get_user_by_phone(data.phone)
+            existing = await self.get_user_by_phone_and_role(data.phone, data.role)
             if existing:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким номером уже зарегистрирован",
+                    detail="Пользователь с таким номером и ролью уже зарегистрирован",
                 )
 
         new_user = User(
