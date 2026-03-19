@@ -149,9 +149,7 @@ function OrdersPageContent() {
           isResponding={isResponding}
           initialStep={
             returnOrderId === String(selectedOrder?.id)
-              ? balance >= (selectedOrder?.commissionAmountRaw ?? Number.MAX_SAFE_INTEGER)
-                ? "step2"
-                : "step1"
+              ? "step1"
               : "details"
           }
         />
