@@ -18,6 +18,7 @@ export interface ResponseApiBadge {
 export interface ResponseApiItem {
   id: number;
   order_id: number;
+  order_public_id: string;
   status: "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
   date: string;
   comment: string;
@@ -55,6 +56,7 @@ export interface ResponsesApiList {
 export interface ResponseCardViewModel {
   id: number;
   orderId: number;
+  orderPublicId: string;
   rawStatus: ResponseApiItem["status"];
   dateLabel: string;
   date: string;

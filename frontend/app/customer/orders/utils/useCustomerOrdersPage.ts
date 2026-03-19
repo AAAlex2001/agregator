@@ -11,9 +11,10 @@ import type { OrderInitialData } from "../components/CreateOrderForm/CreateOrder
 import { BADGE_OPTIONS } from "../components/CreateOrderForm/sections";
 
 function parseBudgetToKopecks(value: string): number {
+  if (!value.trim()) return 0;
   const cleaned = value.replace(/[^\d.,]/g, "").replace(",", ".");
   const parsed = parseFloat(cleaned);
-  if (isNaN(parsed) || parsed <= 0) return 0;
+  if (isNaN(parsed) || parsed < 0) return -1;
   return Math.round(parsed * 100);
 }
 
@@ -160,7 +161,7 @@ export function useCustomerOrdersPage() {
 
     try {
       const sumAmount = parseBudgetToKopecks(data.budget);
-      if (sumAmount <= 0) {
+      if (sumAmount < 0) {
         setError("Укажите корректный бюджет");
         showErrorToast("Укажите корректный бюджет");
         return;
@@ -214,7 +215,7 @@ export function useCustomerOrdersPage() {
 
     try {
       const sumAmount = parseBudgetToKopecks(data.budget);
-      if (sumAmount <= 0) {
+      if (sumAmount < 0) {
         setError("Укажите корректный бюджет");
         showErrorToast("Укажите корректный бюджет");
         return;

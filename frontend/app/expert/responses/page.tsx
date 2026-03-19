@@ -15,6 +15,8 @@ import { ArrowIcon } from "@/app/icons";
 import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
 import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
+import { useNotifications } from "@/app/components/Notifications";
+import { copyOrderLink } from "@/app/utils/copyOrderLink";
 import { openChatByOrder } from "@/app/utils/chatApi";
 import {
   AcceptedCard,
@@ -67,6 +69,11 @@ export default function ResponsesPage() {
 
   const { role } = useUserProfile();
   const isExpert = role === "EXPERT";
+  const { showSuccess } = useNotifications();
+
+  const handleShare = (publicId: string) => {
+    copyOrderLink(publicId, () => showSuccess("Ссылка скопирована"));
+  };
 
   const handleOpenChat = async (responseId: number, orderId: number) => {
     setActionLoading(responseId, "chat");
@@ -330,6 +337,7 @@ export default function ResponsesPage() {
                               orderTechSpecFiles={response.orderTechSpecFiles}
                               onWithdraw={() => setWithdrawTarget(response)}
                               onChangeOffer={() => handleOpenEditModal(response)}
+                              onShare={() => handleShare(response.orderPublicId)}
                               isWithdrawLoading={actionLoading === "withdraw"}
                             />
                           );
@@ -362,6 +370,7 @@ export default function ResponsesPage() {
                               reminderText={response.reminderText}
                               onReject={() => setWithdrawTarget(response)}
                               onChat={() => void handleOpenChat(response.id, response.orderId)}
+                              onShare={() => handleShare(response.orderPublicId)}
                               isRejectLoading={actionLoading === "withdraw"}
                               isChatLoading={actionLoading === "chat"}
                             />
@@ -397,6 +406,7 @@ export default function ResponsesPage() {
                               expertConfirmed={response.expertConfirmed}
                               onReject={() => setWithdrawTarget(response)}
                               onChat={() => void handleOpenChat(response.id, response.orderId)}
+                              onShare={() => handleShare(response.orderPublicId)}
                               onAcceptProject={() => void handleStartOrComplete(response.id, false)}
                               onComplete={() => void handleStartOrComplete(response.id, true)}
                               isRejectLoading={actionLoading === "withdraw"}
@@ -427,6 +437,7 @@ export default function ResponsesPage() {
                               commentText={response.commentText}
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
+                              onShare={() => handleShare(response.orderPublicId)}
                             />
                           );
                         case "COMPLETED":
@@ -455,6 +466,7 @@ export default function ResponsesPage() {
                               techSpecTitle={response.techSpecTitle}
                               techSpecFiles={response.techSpecFiles}
                               orderTechSpecFiles={response.orderTechSpecFiles}
+                              onShare={() => handleShare(response.orderPublicId)}
                             />
                           );
                         default:

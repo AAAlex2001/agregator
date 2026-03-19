@@ -53,7 +53,7 @@ export default function ResponseAnswerCard2({
     if (isSubmitting) return;
 
     const costKopecks = Math.round(parsedCost * 100);
-    if (costKopecks > order.sumAmountRaw) {
+    if (order.sumAmountRaw > 0 && costKopecks > order.sumAmountRaw) {
       showError("Стоимость не может превышать бюджет заказчика");
       return;
     }

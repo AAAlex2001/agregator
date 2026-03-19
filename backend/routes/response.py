@@ -43,9 +43,10 @@ def to_item(
     if order:
         customer_name = order.company or ""
         customer_company = order.company or ""
-        order_sum = format_sum(order.sum_amount)
+        order_sum = "Не определено" if order.sum_amount == 0 else format_sum(order.sum_amount)
+        commission_base = order.sum_amount if order.sum_amount > 0 else entity.proposed_sum_amount
         order_commission_amount = format_sum(
-            CommissionCalculator.commission_paid(order.sum_amount)
+            CommissionCalculator.commission_paid(commission_base)
         )
 
     expert = entity.expert
@@ -61,8 +62,9 @@ def to_item(
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
     if order and effective_status in {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
-        paid = CommissionCalculator.commission_paid(order.sum_amount)
-        returned = CommissionCalculator.balance_return(order.sum_amount)
+        commission_base = order.sum_amount if order.sum_amount > 0 else entity.proposed_sum_amount
+        paid = CommissionCalculator.commission_paid(commission_base)
+        returned = CommissionCalculator.balance_return(commission_base)
         commission_paid_str = format_sum(paid)
         balance_return_str = format_sum(returned)
 
@@ -71,6 +73,7 @@ def to_item(
     return ExpertResponseItem(
         id=entity.id,
         order_id=entity.order_id,
+        order_public_id=order.public_id if order else "",
         status=effective_status,
         date=date_source.strftime("%d.%m.%Y"),
         comment=entity.comment,

@@ -5,6 +5,18 @@ interface CommissionConfirmProps {
 }
 
 export default function CommissionConfirm({ commissionDisplay }: CommissionConfirmProps) {
+  const isUndefined = commissionDisplay === "Не определено" || commissionDisplay === "0 ₽";
+
+  if (isUndefined) {
+    return (
+      <div className={styles.commissionConfirm}>
+        <span className={styles.commissionText}>
+          Взнос 5% будет рассчитан от вашей предложенной стоимости
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.commissionConfirm}>
       <span className={styles.commissionText}>Взнос в размере</span>

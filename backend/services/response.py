@@ -101,7 +101,7 @@ class ResponseService:
                 detail="Нельзя откликнуться на неактивный заказ",
             )
 
-        if data.proposed_sum_amount > order.sum_amount:
+        if order.sum_amount > 0 and data.proposed_sum_amount > order.sum_amount:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Стоимость не может превышать бюджет заказчика",
@@ -119,7 +119,8 @@ class ResponseService:
                 detail="Срок приёма откликов истёк",
             )
 
-        commission = CommissionCalculator.commission_paid(order.sum_amount)
+        commission_base = order.sum_amount if order.sum_amount > 0 else data.proposed_sum_amount
+        commission = CommissionCalculator.commission_paid(commission_base)
         expert_result = await self.db.execute(select(User).where(User.id == expert_id))
         expert = expert_result.scalars().first()
         if expert.balance < commission:
@@ -379,7 +380,7 @@ class ResponseService:
             )
 
         order = response.order
-        if order and data.proposed_sum_amount > order.sum_amount:
+        if order and order.sum_amount > 0 and data.proposed_sum_amount > order.sum_amount:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Стоимость не может превышать бюджет заказчика",

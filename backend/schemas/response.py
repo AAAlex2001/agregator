@@ -31,6 +31,7 @@ class ResponseCounters(BaseModel):
 class ExpertResponseItem(BaseModel):
     id: int
     order_id: int
+    order_public_id: str = ""
     status: ResponseStatus
     date: str
     comment: str

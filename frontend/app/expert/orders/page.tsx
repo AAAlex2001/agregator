@@ -7,22 +7,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import OrderCard from "@/app/expert/orders/components/OrderCard";
 import { Button, Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
 import { useNotifications } from "@/app/components/Notifications";
+import { copyOrderLink } from "@/app/utils/copyOrderLink";
 import OrderDetailsModal from "./components/OrderDetailsModal";
 import { useOrdersPage } from "./utils/useOrdersPage";
 import styles from "./orders.module.scss";
-
-function copyOrderLink(publicId: string, onSuccess: () => void) {
-  const url = `${window.location.origin}/order/${publicId}`;
-  const ta = document.createElement("textarea");
-  ta.value = url;
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand("copy");
-  document.body.removeChild(ta);
-  onSuccess();
-}
 
 function OrdersPageContent() {
   const searchParams = useSearchParams();

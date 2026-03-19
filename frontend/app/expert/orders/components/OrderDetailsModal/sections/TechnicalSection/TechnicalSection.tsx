@@ -9,9 +9,11 @@ import {
   revokeBlobImagePreview,
 } from "@/app/utils/blobImagePreview";
 import {
-  downloadFileByPath,
   getFileNameFromPath,
   isImageFilePath,
+  isPdfFilePath,
+  isMobileDevice,
+  openFileInBrowser,
   resolveFileUrl,
 } from "@/app/utils/fileAttachments";
 import styles from "./technicalSection.module.scss";
@@ -109,20 +111,50 @@ function PreviewImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+function PreviewPdf({ src }: { src: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className={styles.previewLoaderWrap}>
+          <Loader label="" size="lg" />
+        </div>
+      )}
+      <iframe
+        src={src}
+        className={styles.previewPdf}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+        title="PDF Preview"
+      />
+    </>
+  );
+}
+
 export default function TechnicalSection({ technicalFiles, responsesDeadline, onRespond, isResponding = false }: TechnicalSectionProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const deadlineExpired = responsesDeadline
     ? new Date(responsesDeadline) <= new Date()
     : false;
 
-  const handleFileClick = async (filePath: string) => {
+  const handleFileClick = (filePath: string) => {
     if (isImageFilePath(filePath)) {
-      setSelectedImage(filePath);
+      setSelectedFile(filePath);
       return;
     }
 
-    await downloadFileByPath(filePath);
+    if (isPdfFilePath(filePath)) {
+      if (isMobileDevice()) {
+        openFileInBrowser(filePath);
+      } else {
+        setSelectedFile(filePath);
+      }
+      return;
+    }
+
+    openFileInBrowser(filePath);
   };
 
   return (
@@ -135,7 +167,7 @@ export default function TechnicalSection({ technicalFiles, responsesDeadline, on
               key={`${filePath}-${index}`}
               type="button"
               className={styles.fileItem}
-              onClick={() => void handleFileClick(filePath)}
+              onClick={() => handleFileClick(filePath)}
             >
               {isImageFilePath(filePath) ? (
                 <ImageThumbnail
@@ -168,16 +200,24 @@ export default function TechnicalSection({ technicalFiles, responsesDeadline, on
         </Button>
       </div>
 
-      {selectedImage && createPortal(
-        <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>
-          <div className={styles.previewModal} onClick={(event) => event.stopPropagation()}>
-            <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
+      {selectedFile && createPortal(
+        <div className={styles.previewOverlay} onClick={() => setSelectedFile(null)}>
+          <div
+            className={`${styles.previewModal} ${isPdfFilePath(selectedFile) ? styles.previewModalPdf : ""}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button type="button" className={styles.previewClose} onClick={() => setSelectedFile(null)}>
               ×
             </button>
-            <PreviewImage
-              src={resolveFileUrl(selectedImage)}
-              alt={getFileNameFromPath(selectedImage)}
-            />
+            {isImageFilePath(selectedFile) && (
+              <PreviewImage
+                src={resolveFileUrl(selectedFile)}
+                alt={getFileNameFromPath(selectedFile)}
+              />
+            )}
+            {isPdfFilePath(selectedFile) && (
+              <PreviewPdf src={resolveFileUrl(selectedFile)} />
+            )}
           </div>
         </div>,
         document.body

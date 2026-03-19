@@ -7,6 +7,7 @@ import {
   CommissionInfo,
   CommentSection,
   TechSpecFiles,
+  ActionButtons,
 } from "../../sections";
 import type { ResponseBadge } from "../../types";
 import styles from "./completedCard.module.scss";
@@ -35,6 +36,7 @@ export interface CompletedCardProps {
   techSpecTitle?: string;
   techSpecFiles?: string[];
   orderTechSpecFiles?: string[];
+  onShare?: () => void;
 }
 
 export const CompletedCard = (props: CompletedCardProps) => {
@@ -96,6 +98,11 @@ export const CompletedCard = (props: CompletedCardProps) => {
           </div>
         </div>
       </div>
+
+      <ActionButtons
+        shareBtnText="Поделиться"
+        onShare={props.onShare}
+      />
     </article>
   );
 };

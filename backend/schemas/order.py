@@ -47,7 +47,7 @@ class OrderCreate(BaseModel):
     typical_names: str = Field(default="", max_length=1000)
     comment: str = Field(default="", max_length=5000)
     customer_id: int = Field(..., ge=1)
-    sum_amount: int = Field(..., gt=0)
+    sum_amount: int = Field(..., ge=0)
     deadline: date
     responses_deadline: datetime | None = None
     technical_files: list[str] = Field(default_factory=list)
@@ -65,7 +65,7 @@ class OrderUpdate(BaseModel):
     company: Optional[str] = Field(None, max_length=500)
     typical_names: Optional[str] = Field(None, max_length=1000)
     comment: Optional[str] = Field(None, max_length=5000)
-    sum_amount: Optional[int] = Field(None, gt=0)
+    sum_amount: Optional[int] = Field(None, ge=0)
     deadline: Optional[date] = None
     responses_deadline: Optional[datetime] = None
     technical_files: Optional[list[str]] = None
@@ -116,10 +116,10 @@ class OrderResponse(BaseModel):
     @classmethod
     def from_order(cls, order) -> "OrderResponse":
         amount = order.sum_amount
-        sum_display = cls._format_sum(amount)
+        sum_display = "Не определено" if amount == 0 else cls._format_sum(amount)
 
         commission_kopecks = CommissionCalculator.commission_paid(amount)
-        commission_display = cls._format_sum(commission_kopecks)
+        commission_display = cls._format_sum(commission_kopecks) if amount > 0 else "Не определено"
 
         customer_name = order.company or ""
 

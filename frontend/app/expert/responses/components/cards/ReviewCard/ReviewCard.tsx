@@ -38,6 +38,7 @@ export interface ReviewCardProps {
   orderTechSpecFiles?: string[];
   onWithdraw: () => void;
   onChangeOffer: () => void;
+  onShare?: () => void;
   isWithdrawLoading?: boolean;
   isEditLoading?: boolean;
 }
@@ -112,6 +113,8 @@ export const ReviewCard = (props: ReviewCardProps) => {
         payBtnVariant="outlineOrange"
         onPay={props.onChangeOffer}
         isPayLoading={props.isEditLoading}
+        shareBtnText="Поделиться"
+        onShare={props.onShare}
       />
     </article>
   );

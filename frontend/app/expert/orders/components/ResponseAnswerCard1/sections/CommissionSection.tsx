@@ -25,13 +25,21 @@ function formatBalance(kopecks: number): string {
 export default function CommissionSection({ commissionDisplay, balance, canTopUp, onTopUp }: CommissionSectionProps) {
   const [guaranteesOpen, setGuaranteesOpen] = useState(false);
 
+  const isUndefined = commissionDisplay === "Не определено" || commissionDisplay === "0 ₽";
+
   return (
     <div className={styles.commission}>
       <div className={styles.commissionInfo}>
-        <span className={styles.commissionLabel}>Для подачи заявки требуется взнос 5% от суммы заказа:</span>
-        <div className={styles.commissionAmount}>
-          <span className={styles.commissionValue}>{commissionDisplay}</span>
-        </div>
+        <span className={styles.commissionLabel}>
+          {isUndefined
+            ? "Бюджет заказа не определён. Взнос 5% будет рассчитан от вашей предложенной стоимости."
+            : "Для подачи заявки требуется взнос 5% от суммы заказа:"}
+        </span>
+        {!isUndefined && (
+          <div className={styles.commissionAmount}>
+            <span className={styles.commissionValue}>{commissionDisplay}</span>
+          </div>
+        )}
       </div>
 
       <div className={styles.guarantees}>

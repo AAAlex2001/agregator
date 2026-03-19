@@ -42,6 +42,7 @@ export interface InProgressCardProps {
   expertConfirmed?: boolean;
   onReject: () => void;
   onChat: () => void;
+  onShare?: () => void;
   onAcceptProject?: () => void;
   onComplete?: () => void;
   isRejectLoading?: boolean;
@@ -142,6 +143,8 @@ export const InProgressCard = (props: InProgressCardProps) => {
           payBtnVariant="green"
           onPay={props.onAcceptProject}
           isPayLoading={props.isAcceptProjectLoading}
+          shareBtnText="Поделиться"
+          onShare={props.onShare}
         />
       ) : (
         <ActionButtons
@@ -149,6 +152,8 @@ export const InProgressCard = (props: InProgressCardProps) => {
           payBtnVariant="secondary"
           onPay={props.onChat}
           isPayLoading={props.isChatLoading}
+          shareBtnText="Поделиться"
+          onShare={props.onShare}
         />
       )}
     </article>

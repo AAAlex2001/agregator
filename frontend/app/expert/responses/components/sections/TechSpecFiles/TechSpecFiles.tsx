@@ -8,9 +8,11 @@ import {
   revokeBlobImagePreview,
 } from "@/app/utils/blobImagePreview";
 import {
-  downloadFileByPath,
   getFileNameFromPath,
   isImageFilePath,
+  isPdfFilePath,
+  isMobileDevice,
+  openFileInBrowser,
   resolveFileUrl,
 } from "@/app/utils/fileAttachments";
 import styles from "./techSpecFiles.module.scss";
@@ -106,20 +108,53 @@ function PreviewImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+function PreviewPdf({ src }: { src: string }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <>
+      {!loaded && (
+        <div className={styles.previewLoaderWrap}>
+          <Loader label="" size="lg" />
+        </div>
+      )}
+      <iframe
+        src={src}
+        className={styles.previewPdf}
+        style={loaded ? undefined : { display: "none" }}
+        onLoad={() => setLoaded(true)}
+        title="PDF Preview"
+      />
+    </>
+  );
+}
+
 const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   if (!techSpecTitle || !techSpecFiles || techSpecFiles.length === 0)
     return null;
 
-  const handleFileClick = async (filePath: string) => {
+  const handleFileClick = (filePath: string) => {
     if (isImageFilePath(filePath)) {
-      setSelectedImage(filePath);
+      setSelectedFile(filePath);
       return;
     }
 
-    await downloadFileByPath(filePath);
+    if (isPdfFilePath(filePath)) {
+      if (isMobileDevice()) {
+        openFileInBrowser(filePath);
+      } else {
+        setSelectedFile(filePath);
+      }
+      return;
+    }
+
+    openFileInBrowser(filePath);
   };
+
+  const selectedIsImage = selectedFile ? isImageFilePath(selectedFile) : false;
+  const selectedIsPdf = selectedFile ? isPdfFilePath(selectedFile) : false;
 
   return (
     <>
@@ -131,7 +166,7 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
               key={index}
               type="button"
               className={styles.fileItem}
-              onClick={() => void handleFileClick(file)}
+              onClick={() => handleFileClick(file)}
             >
               {isImageFilePath(file) ? (
                 <ImageThumbnail
@@ -145,16 +180,24 @@ const TechSpecFiles = ({ techSpecTitle, techSpecFiles }: TechSpecFilesProps) => 
           ))}
         </div>
       </div>
-      {selectedImage && createPortal(
-        <div className={styles.previewOverlay} onClick={() => setSelectedImage(null)}>
-          <div className={styles.previewModal} onClick={(event) => event.stopPropagation()}>
-            <button type="button" className={styles.previewClose} onClick={() => setSelectedImage(null)}>
+      {selectedFile && createPortal(
+        <div className={styles.previewOverlay} onClick={() => setSelectedFile(null)}>
+          <div
+            className={`${styles.previewModal} ${selectedIsPdf ? styles.previewModalPdf : ""}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button type="button" className={styles.previewClose} onClick={() => setSelectedFile(null)}>
               ×
             </button>
-            <PreviewImage
-              src={resolveFileUrl(selectedImage)}
-              alt={getFileNameFromPath(selectedImage)}
-            />
+            {selectedIsImage && (
+              <PreviewImage
+                src={resolveFileUrl(selectedFile)}
+                alt={getFileNameFromPath(selectedFile)}
+              />
+            )}
+            {selectedIsPdf && (
+              <PreviewPdf src={resolveFileUrl(selectedFile)} />
+            )}
           </div>
         </div>,
         document.body

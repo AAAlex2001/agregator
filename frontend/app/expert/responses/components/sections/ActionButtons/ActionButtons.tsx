@@ -7,9 +7,11 @@ interface ActionButtonsProps {
   editBtnText?: string;
   middleBtnText?: string;
   payBtnText?: string;
+  shareBtnText?: string;
   onEdit?: () => void;
   onMiddle?: () => void;
   onPay?: () => void;
+  onShare?: () => void;
   editBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
   middleBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
   payBtnVariant?: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
@@ -23,9 +25,11 @@ const ActionButtons = ({
   editBtnText,
   middleBtnText,
   payBtnText,
+  shareBtnText,
   onEdit,
   onMiddle,
   onPay,
+  onShare,
   editBtnVariant = "outline",
   middleBtnVariant = "secondary",
   payBtnVariant = "secondary",
@@ -69,6 +73,17 @@ const ActionButtons = ({
         isLoading={isPayLoading}
       >
         {payBtnText}
+      </Button>
+    )}
+    {shareBtnText && (
+      <Button
+        variant="outline"
+        size="sm"
+        fullWidth
+        onClick={onShare}
+        className={styles.shareBtn}
+      >
+        {shareBtnText}
       </Button>
     )}
   </div>

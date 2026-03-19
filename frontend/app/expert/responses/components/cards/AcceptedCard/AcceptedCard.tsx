@@ -40,6 +40,7 @@ export interface AcceptedCardProps {
   reminderText?: string;
   onReject: () => void;
   onChat: () => void;
+  onShare?: () => void;
   isRejectLoading?: boolean;
   isChatLoading?: boolean;
 }
@@ -128,6 +129,8 @@ export const AcceptedCard = (props: AcceptedCardProps) => {
         middleBtnVariant="secondary"
         onMiddle={props.onChat}
         isMiddleLoading={props.isChatLoading}
+        shareBtnText="Поделиться"
+        onShare={props.onShare}
       />
     </article>
   );

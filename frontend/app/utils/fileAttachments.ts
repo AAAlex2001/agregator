@@ -19,6 +19,17 @@ export function isImageFilePath(filePath: string): boolean {
   return IMAGE_EXTENSIONS.includes(extension);
 }
 
+export function isPdfFilePath(filePath: string): boolean {
+  const cleanPath = stripQueryAndHash(filePath);
+  return cleanPath.split(".").pop()?.toLowerCase() === "pdf";
+}
+
+export function isMobileDevice(): boolean {
+  if (typeof window === "undefined") return false;
+  return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints > 0 && window.innerWidth < 768);
+}
+
 export function resolveFileUrl(filePath: string): string {
   if (/^https?:\/\//i.test(filePath)) {
     return filePath;
@@ -80,5 +91,25 @@ export async function downloadFileByPath(filePath: string): Promise<void> {
     document.body.appendChild(fallbackLink);
     fallbackLink.click();
     fallbackLink.remove();
+  }
+}
+
+const BROWSER_PREVIEWABLE_EXTENSIONS = [
+  ...IMAGE_EXTENSIONS,
+  "pdf",
+];
+
+export function openFileInBrowser(filePath: string): void {
+  const fileUrl = resolveFileUrl(filePath);
+  const ext = stripQueryAndHash(filePath).split(".").pop()?.toLowerCase() || "";
+
+  if (BROWSER_PREVIEWABLE_EXTENSIONS.includes(ext)) {
+    window.open(fileUrl, "_blank", "noopener,noreferrer");
+  } else {
+    window.open(
+      `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   }
 }

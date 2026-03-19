@@ -153,7 +153,7 @@ export default function CreateOrderForm({
     setKeepFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const canSubmit = title.trim().length > 0 && deadline.length > 0 && budget.length > 0;
+  const canSubmit = title.trim().length > 0 && deadline.length > 0;
 
   const handleSubmit = () => {
     if (!canSubmit || isSubmitting) return;
@@ -222,7 +222,7 @@ export default function CreateOrderForm({
             <Input
               variant="text"
               active
-              placeholder="Сумма в рублях"
+              placeholder="Сумма в рублях (0 — не определено)"
               value={budget}
               onChange={handleBudgetChange}
               className={styles.formInput}
