@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input, Tabs } from "@/app/components";
@@ -14,6 +15,15 @@ export default function LoginPage() {
   const router = useRouter();
   const state = useLoginState();
   const { showError } = useNotifications();
+  const [fromOrder, setFromOrder] = useState(false);
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("pendingOrderUuid");
+    if (pending) {
+      setFromOrder(true);
+      state.setRole("EXPERT");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,15 +68,21 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className={styles.form}>
             {state.error && <div className={styles.errorMessage}>{state.error}</div>}
 
-            <Tabs
-              tabs={[
-                { id: "CUSTOMER", label: "Заказчик" },
-                { id: "EXPERT", label: "Эксперт" },
-              ]}
-              activeTab={state.role}
-              onTabChange={(id) => state.setRole(id as "CUSTOMER" | "EXPERT")}
-              className={styles.loginTabs}
-            />
+            {!fromOrder && (
+              <Tabs
+                tabs={[
+                  { id: "CUSTOMER", label: "Заказчик" },
+                  { id: "EXPERT", label: "Эксперт" },
+                ]}
+                activeTab={state.role}
+                onTabChange={(id) => state.setRole(id as "CUSTOMER" | "EXPERT")}
+                className={styles.loginTabs}
+              />
+            )}
+
+            {fromOrder && (
+              <p className={styles.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
+            )}
 
             <Input
               id="login"

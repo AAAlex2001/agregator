@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Loader } from "@/app/components";
 import { LogoIcon } from "@/app/icons";
+import { fetchProfile } from "@/app/settings/api";
 import styles from "./orderPreview.module.scss";
 
 interface BadgeData {
@@ -60,6 +61,7 @@ export default function OrderPreviewPage() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     if (uuid) {
@@ -81,12 +83,35 @@ export default function OrderPreviewPage() {
   }, [uuid]);
 
   useEffect(() => {
-    const token = document.cookie.split(";").find((c) => c.trim().startsWith("access_token="));
-    const role = localStorage.getItem("role");
-    if (token && role === "EXPERT" && order) {
-      router.push(`/expert/orders?orderId=${order.id}`);
-    }
+    if (!order) return;
+    fetchProfile()
+      .then((profile) => {
+        if (profile.role === "EXPERT") {
+          sessionStorage.removeItem("pendingOrderUuid");
+          router.replace(`/expert/orders?orderId=${order.id}`);
+        } else {
+          setCheckingAuth(false);
+        }
+      })
+      .catch(() => {
+        setCheckingAuth(false);
+      });
   }, [order, router]);
+
+  if (checkingAuth && !error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.background} />
+        <div className={styles.content}>
+          <div className={styles.card}>
+            <div className={styles.loaderWrapper}>
+              <Loader label="" size="lg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -114,10 +139,16 @@ export default function OrderPreviewPage() {
 
           {order && (
             <>
-              <h1 className={styles.orderTitle}>{order.title}</h1>
+              <div className={styles.infoBlock}>
+                <span className={styles.infoLabel}>Название заказа</span>
+                <h1 className={styles.orderTitle}>{order.title}</h1>
+              </div>
 
               {order.company && (
-                <div className={styles.company}>{order.company}</div>
+                <div className={styles.infoBlock}>
+                  <span className={styles.infoLabel}>Название компании</span>
+                  <span className={styles.company}>{order.company}</span>
+                </div>
               )}
 
               <div className={styles.meta}>
@@ -138,22 +169,18 @@ export default function OrderPreviewPage() {
               </div>
 
               {order.badges.length > 0 && (
-                <div className={styles.badges}>
-                  {order.badges.map((badge) => (
-                    <span
-                      key={badge.text}
-                      className={`${styles.badge} ${styles[variantClassMap[badge.variant] || "badgeGray"]}`}
-                    >
-                      {badge.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {order.typical_names && (
                 <div className={styles.infoBlock}>
                   <span className={styles.infoLabel}>Типовые наименования</span>
-                  <p className={styles.infoText}>{order.typical_names}</p>
+                  <div className={styles.badges}>
+                    {order.badges.map((badge) => (
+                      <span
+                        key={badge.text}
+                        className={`${styles.badge} ${styles[variantClassMap[badge.variant] || "badgeGray"]}`}
+                      >
+                        {badge.text}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -182,7 +209,7 @@ export default function OrderPreviewPage() {
               <div className={styles.divider} />
 
               <p className={styles.ctaText}>
-                Войдите или зарегистрируйтесь, чтобы откликнуться на заказ
+                Войдите или зарегистрируйтесь как эксперт, чтобы откликнуться на заказ
               </p>
 
               <div className={styles.actions}>

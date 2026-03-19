@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -43,6 +44,14 @@ export default function RegisterPage() {
   const router = useRouter();
   const state = useRegistrationState();
   const { showSuccess, showError } = useNotifications();
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("pendingOrderUuid");
+    if (pending) {
+      state.setSelectedRole(2);
+      state.setStep(2);
+    }
+  }, []);
 
   const toggleCard = (id: number) => {
     state.setOpenedCardId(state.openedCardId === id ? null : id);
