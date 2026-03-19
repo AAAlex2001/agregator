@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input, Tabs } from "@/app/components";
+import { useNotifications } from "@/app/components/Notifications";
 import Button from "@/app/components/Button/Button";
 import { LogoIcon } from "@/app/icons";
 import styles from "./login.module.scss";
@@ -12,6 +13,7 @@ import { useLoginState } from "./store/state";
 export default function LoginPage() {
   const router = useRouter();
   const state = useLoginState();
+  const { showError } = useNotifications();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +25,17 @@ export default function LoginPage() {
       await handleLogin(
         { login: state.login, password: state.password, role: state.role },
         (role) => {
-          router.push(role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
+          const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
+          if (role === "EXPERT" && pendingUuid) {
+            sessionStorage.removeItem("pendingOrderUuid");
+            router.push(`/order/${pendingUuid}`);
+          } else {
+            router.push(role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
+          }
         },
         (error) => {
           state.setError(error);
+          showError(error);
         }
       );
     } finally {
@@ -56,6 +65,7 @@ export default function LoginPage() {
               ]}
               activeTab={state.role}
               onTabChange={(id) => state.setRole(id as "CUSTOMER" | "EXPERT")}
+              className={styles.loginTabs}
             />
 
             <Input

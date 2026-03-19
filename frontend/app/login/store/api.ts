@@ -37,5 +37,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
     throw new Error(message);
   }
 
-  return (await response.json()) as LoginResponse;
+  const result = (await response.json()) as LoginResponse;
+  localStorage.setItem("role", result.role);
+  return result;
 }

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button, Input } from "@/app/components";
+import { useNotifications } from "@/app/components/Notifications";
 import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/app/icons";
 import styles from "./register.module.scss";
 
@@ -41,6 +42,7 @@ const roles: Role[] = [
 export default function RegisterPage() {
   const router = useRouter();
   const state = useRegistrationState();
+  const { showSuccess, showError } = useNotifications();
 
   const toggleCard = (id: number) => {
     state.setOpenedCardId(state.openedCardId === id ? null : id);
@@ -56,6 +58,7 @@ export default function RegisterPage() {
     
     if (!state.selectedRole) {
       state.setError("Выберите роль");
+      showError("Выберите роль");
       return;
     }
 
@@ -73,11 +76,12 @@ export default function RegisterPage() {
           lastName: state.lastName,
         },
         (userId) => {
-          console.log("Успешная регистрация, ID:", userId);
+          showSuccess("Регистрация прошла успешно");
           router.push("/login");
         },
         (error) => {
           state.setError(error);
+          showError(error);
         }
       );
     } catch (err) {

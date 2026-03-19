@@ -4,6 +4,8 @@ import { loadCustomerOrders } from "../store/actions";
 import { useCustomerOrdersState } from "../store/state";
 import { clamp, getNormalizedWheelDelta } from "@/app/expert/orders/utils/ordersPage.utils";
 import { useUserProfile } from "@/app/hooks/useUserProfile";
+import { useNotifications } from "@/app/components/Notifications";
+import { getDraft, saveDraft, clearDraft } from "../store/draft";
 import type { CustomerOrderCardVM } from "../store/types";
 import type { OrderInitialData } from "../components/CreateOrderForm/CreateOrderForm";
 import { BADGE_OPTIONS } from "../components/CreateOrderForm/sections";
@@ -78,6 +80,7 @@ const PAGE_LIMIT = 50;
 
 export function useCustomerOrdersPage() {
   const { profile } = useUserProfile();
+  const { showSuccess, showError: showErrorToast } = useNotifications();
   const {
     items,
     total,
@@ -90,9 +93,15 @@ export function useCustomerOrdersPage() {
     prependOrder,
   } = useCustomerOrdersState();
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showCreateForm, setShowCreateFormRaw] = useState(getDraft().showCreateForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingOrder, setEditingOrder] = useState<OrderInitialData | null>(null);
+
+  const setShowCreateForm = (value: boolean) => {
+    setShowCreateFormRaw(value);
+    saveDraft({ showCreateForm: value });
+    if (!value) clearDraft();
+  };
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const ordersRef = useRef<HTMLDivElement | null>(null);
   const scrollTargetRef = useRef<number | null>(null);
@@ -153,6 +162,7 @@ export function useCustomerOrdersPage() {
       const sumAmount = parseBudgetToKopecks(data.budget);
       if (sumAmount <= 0) {
         setError("Укажите корректный бюджет");
+        showErrorToast("Укажите корректный бюджет");
         return;
       }
 
@@ -169,12 +179,14 @@ export function useCustomerOrdersPage() {
         files: data.files,
       });
 
+      showSuccess("Заказ создан");
       setShowCreateForm(false);
       await fetchOrders();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Не удалось создать заказ";
       setError(message);
+      showErrorToast(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -204,6 +216,7 @@ export function useCustomerOrdersPage() {
       const sumAmount = parseBudgetToKopecks(data.budget);
       if (sumAmount <= 0) {
         setError("Укажите корректный бюджет");
+        showErrorToast("Укажите корректный бюджет");
         return;
       }
 
@@ -220,12 +233,14 @@ export function useCustomerOrdersPage() {
         keepFiles: data.keepFiles,
       });
 
+      showSuccess("Заказ обновлён");
       setEditingOrder(null);
       await fetchOrders();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Не удалось обновить заказ";
       setError(message);
+      showErrorToast(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -236,11 +251,13 @@ export function useCustomerOrdersPage() {
     setIsDeleting(orderId);
     try {
       await deleteCustomerOrder(orderId);
+      showSuccess("Заказ удалён");
       await fetchOrders();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Не удалось удалить заказ";
       setError(message);
+      showErrorToast(message);
     } finally {
       setIsDeleting(null);
     }

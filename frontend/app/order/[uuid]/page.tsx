@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Loader } from "@/app/components";
 import { LogoIcon } from "@/app/icons";
@@ -17,9 +17,12 @@ interface OrderData {
   public_id: string;
   title: string;
   company: string;
+  typical_names: string;
   comment: string;
   sum: string;
   date: string;
+  responses_deadline: string | null;
+  technical_files: string[];
   badges: BadgeData[];
   status: string;
 }
@@ -37,12 +40,32 @@ function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL || "/api";
 }
 
+function formatResponsesDeadline(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function getFileName(url: string): string {
+  const parts = url.split("/");
+  const last = parts[parts.length - 1];
+  return last.split("?")[0] || last;
+}
+
 export default function OrderPreviewPage() {
   const params = useParams();
+  const router = useRouter();
   const uuid = params.uuid as string;
   const [order, setOrder] = useState<OrderData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (uuid) {
+      sessionStorage.setItem("pendingOrderUuid", uuid);
+    }
+  }, [uuid]);
 
   useEffect(() => {
     if (!uuid) return;
@@ -56,6 +79,14 @@ export default function OrderPreviewPage() {
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
   }, [uuid]);
+
+  useEffect(() => {
+    const token = document.cookie.split(";").find((c) => c.trim().startsWith("access_token="));
+    const role = localStorage.getItem("role");
+    if (token && role === "EXPERT" && order) {
+      router.push(`/expert/orders?orderId=${order.id}`);
+    }
+  }, [order, router]);
 
   return (
     <div className={styles.container}>
@@ -95,9 +126,15 @@ export default function OrderPreviewPage() {
                   <span className={styles.metaValue}>{order.date}</span>
                 </div>
                 <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Мин. стоимость</span>
+                  <span className={styles.metaLabel}>Бюджет</span>
                   <span className={styles.metaValue}>{order.sum}</span>
                 </div>
+                {order.responses_deadline && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Приём откликов до</span>
+                    <span className={styles.metaValue}>{formatResponsesDeadline(order.responses_deadline)}</span>
+                  </div>
+                )}
               </div>
 
               {order.badges.length > 0 && (
@@ -113,10 +150,32 @@ export default function OrderPreviewPage() {
                 </div>
               )}
 
+              {order.typical_names && (
+                <div className={styles.infoBlock}>
+                  <span className={styles.infoLabel}>Типовые наименования</span>
+                  <p className={styles.infoText}>{order.typical_names}</p>
+                </div>
+              )}
+
               {order.comment && (
-                <div className={styles.commentBlock}>
-                  <span className={styles.commentLabel}>Описание</span>
-                  <p className={styles.commentText}>{order.comment}</p>
+                <div className={styles.infoBlock}>
+                  <span className={styles.infoLabel}>Комментарий заказчика</span>
+                  <p className={styles.infoText}>{order.comment}</p>
+                </div>
+              )}
+
+              {order.technical_files.length > 0 && (
+                <div className={styles.infoBlock}>
+                  <span className={styles.infoLabel}>Прикреплённые файлы</span>
+                  <div className={styles.filesGrid}>
+                    {order.technical_files.map((file) => (
+                      <div key={file} className={styles.fileItem}>
+                        <span className={styles.fileIcon}>📎</span>
+                        <span className={styles.fileName}>{getFileName(file)}</span>
+                        <div className={styles.fileBlur} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

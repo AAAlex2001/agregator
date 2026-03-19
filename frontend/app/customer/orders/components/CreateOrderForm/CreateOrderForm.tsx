@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Input } from "@/app/components";
 import { useNotifications } from "@/app/components/Notifications";
 import { mergeFilesWithLimits } from "@/app/utils/fileUploadValidation";
+import { getDraft, saveDraft } from "../../store/draft";
 import { BadgeSelector, FileUpload, BADGE_OPTIONS } from "./sections";
 import sectionStyles from "./sections/sections.module.scss";
 import styles from "./createOrderForm.module.scss";
@@ -85,22 +86,28 @@ export default function CreateOrderForm({
 }: CreateOrderFormProps) {
   const isEdit = Boolean(initialData);
   const { showError } = useNotifications();
-  const [title, setTitle] = useState(initialData?.title ?? "");
-  const [company, setCompany] = useState(initialData?.company ?? "");
-  const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
-  const [responsesDeadline, setResponsesDeadline] = useState(initialData?.responsesDeadline ?? "");
-  const [budget, setBudget] = useState(initialData?.budget ?? "");
+  const saved = isEdit ? null : getDraft();
+  const [title, setTitle] = useState(initialData?.title ?? saved?.title ?? "");
+  const [company, setCompany] = useState(initialData?.company ?? saved?.company ?? "");
+  const [deadline, setDeadline] = useState(initialData?.deadline ?? saved?.deadline ?? "");
+  const [responsesDeadline, setResponsesDeadline] = useState(initialData?.responsesDeadline ?? saved?.responsesDeadline ?? "");
+  const [budget, setBudget] = useState(initialData?.budget ?? saved?.budget ?? "");
   const [selectedBadgeVariants, setSelectedBadgeVariants] = useState<string[]>(
-    initialData?.selectedBadgeVariants ?? [],
+    initialData?.selectedBadgeVariants ?? saved?.selectedBadgeVariants ?? [],
   );
   const [typicalNamesMap, setTypicalNamesMap] = useState<Record<string, string>>(
-    initialData?.typicalNamesMap ?? {},
+    initialData?.typicalNamesMap ?? saved?.typicalNamesMap ?? {},
   );
-  const [comment, setComment] = useState(initialData?.comment ?? "");
-  const [files, setFiles] = useState<File[]>([]);
+  const [comment, setComment] = useState(initialData?.comment ?? saved?.comment ?? "");
+  const [files, setFiles] = useState<File[]>(saved?.files ?? []);
   const [keepFiles, setKeepFiles] = useState<string[]>(initialData?.existingFiles ?? []);
   const [fullscreenUrl, setFullscreenUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEdit) return;
+    saveDraft({ title, company, deadline, responsesDeadline, budget, selectedBadgeVariants, typicalNamesMap, comment, files });
+  }, [title, company, deadline, responsesDeadline, budget, selectedBadgeVariants, typicalNamesMap, comment, files, isEdit]);
 
   const handleToggleBadge = (variant: string) => {
     setSelectedBadgeVariants((prev) =>

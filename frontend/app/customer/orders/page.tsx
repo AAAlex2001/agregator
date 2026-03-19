@@ -8,18 +8,6 @@ import CreateOrderForm from "./components/CreateOrderForm";
 import { useCustomerOrdersPage } from "./utils/useCustomerOrdersPage";
 import styles from "./customerOrders.module.scss";
 
-function copyOrderLink(publicId: string) {
-  const url = `${window.location.origin}/order/${publicId}`;
-  const ta = document.createElement("textarea");
-  ta.value = url;
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand("copy");
-  document.body.removeChild(ta);
-}
-
 export default function CustomerOrdersPage() {
   const {
     items,
@@ -117,14 +105,6 @@ export default function CustomerOrdersPage() {
                       date={order.date}
                       sum={order.sum}
                     >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={styles.shareBtn}
-                        onClick={(e) => { e.stopPropagation(); copyOrderLink(order.publicId); }}
-                      >
-                        Поделиться
-                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
