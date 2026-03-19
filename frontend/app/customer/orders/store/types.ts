@@ -12,6 +12,7 @@ export interface OrderBadgeResponse {
 
 export interface CustomerOrderResponse {
   id: number;
+  public_id: string;
   title: string;
   company: string;
   typical_names: string;
@@ -34,6 +35,7 @@ export interface CustomerOrdersListResponse {
 
 export interface CustomerOrderCardVM {
   id: number;
+  publicId: string;
   title: string;
   customer: string;
   date: string;

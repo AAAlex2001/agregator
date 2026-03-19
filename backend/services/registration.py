@@ -47,17 +47,21 @@ class RegistrationService:
     async def create_user(self, data: UserRegistration) -> User:
         self.validate_password(data.password)
 
-        if data.email and await self.get_user_by_email(data.email):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким email уже существует",
-            )
+        if data.email:
+            existing = await self.get_user_by_email(data.email)
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Пользователь с таким email уже зарегистрирован",
+                )
 
-        if data.phone and await self.get_user_by_phone(data.phone):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким номером уже существует",
-            )
+        if data.phone:
+            existing = await self.get_user_by_phone(data.phone)
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Пользователь с таким номером уже зарегистрирован",
+                )
 
         new_user = User(
             role=data.role,

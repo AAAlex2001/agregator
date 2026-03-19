@@ -29,7 +29,9 @@ export default function OrderSummary({ title, customer, date, badges, sum }: Ord
       </div>
       <span className={styles.orderCustomer}>{customer}</span>
       <div className={styles.orderMeta}>
-        <span className={styles.orderDate}>{date}</span>
+        <span className={styles.orderDate}>
+          <span className={styles.metaLabel}>Срок выполнения:</span> {date}
+        </span>
         <div className={styles.orderBadges}>
           {badges.map((badge) => (
             <span
@@ -40,7 +42,9 @@ export default function OrderSummary({ title, customer, date, badges, sum }: Ord
             </span>
           ))}
         </div>
-        <span className={styles.orderSum}>{sum}</span>
+        <span className={styles.orderSum}>
+          <span className={styles.metaLabel}>Мин. стоимость:</span> {sum}
+        </span>
       </div>
     </div>
   );

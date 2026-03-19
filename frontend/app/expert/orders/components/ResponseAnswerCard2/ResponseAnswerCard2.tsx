@@ -14,6 +14,12 @@ import {
 } from "./sections";
 import styles from "./responseAnswerCard2.module.scss";
 
+function parseRuDate(ddmmyyyy: string): Date | null {
+  const parts = ddmmyyyy.split(".");
+  if (parts.length !== 3) return null;
+  return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+}
+
 interface ResponseAnswerCard2Props {
   order: OrderDetails;
   onCancel: () => void;
@@ -45,9 +51,23 @@ export default function ResponseAnswerCard2({
 
   const handleSubmit = () => {
     if (isSubmitting) return;
+
+    const costKopecks = Math.round(parsedCost * 100);
+    if (costKopecks > order.sumAmountRaw) {
+      showError("Стоимость не может превышать бюджет заказчика");
+      return;
+    }
+
+    const orderDeadline = parseRuDate(order.deadlineRaw);
+    const proposedDeadline = deadline ? new Date(deadline) : null;
+    if (orderDeadline && proposedDeadline && proposedDeadline > orderDeadline) {
+      showError("Срок не может быть позже дедлайна заказчика");
+      return;
+    }
+
     onSubmit({
       deadline,
-      costEstimate: Math.round(parsedCost * 100),
+      costEstimate: costKopecks,
       comment,
       files,
       keepFiles: existingFiles,

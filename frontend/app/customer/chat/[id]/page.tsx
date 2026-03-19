@@ -110,8 +110,6 @@ export default function ChatWindowPage() {
         if (cancelled) return;
         setChat(detail);
         setMessages(detail.messages);
-    };
-        // Clear unread badge in sidebar for this chat
         setChats((prev) => prev.map((c) => c.uuid === chatUuid ? { ...c, unread_count: 0 } : c));
       })
       .catch(() => {})

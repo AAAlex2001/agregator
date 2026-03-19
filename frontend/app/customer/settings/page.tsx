@@ -145,7 +145,6 @@ function CustomerSettingsContent() {
               <div className={styles.passwordSection}>
                 <div className={styles.infoContent}>
                   <Input
-                    type="password"
                     placeholder="Введите новый пароль"
                     aria-label="Пароль"
                     variant="password"
@@ -153,7 +152,6 @@ function CustomerSettingsContent() {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   />
                   <Input
-                    type="password"
                     placeholder="Повторите новый пароль"
                     aria-label="Повторите пароль"
                     variant="password"

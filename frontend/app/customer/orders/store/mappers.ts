@@ -18,6 +18,7 @@ export function mapOrderToCustomerCard(
 ): CustomerOrderCardVM {
   return {
     id: order.id,
+    publicId: order.public_id,
     title: order.title,
     customer: order.company,
     date: order.date,

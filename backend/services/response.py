@@ -101,6 +101,18 @@ class ResponseService:
                 detail="Нельзя откликнуться на неактивный заказ",
             )
 
+        if data.proposed_sum_amount > order.sum_amount:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Стоимость не может превышать бюджет заказчика",
+            )
+
+        if data.proposed_deadline > order.deadline:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Срок не может быть позже дедлайна заказчика",
+            )
+
         if order.responses_deadline and datetime.now(timezone.utc) > order.responses_deadline:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -351,7 +363,6 @@ class ResponseService:
         data: ResponseCreate,
         keep_files: list[str] | None = None,
     ) -> OrderResponse:
-        """Update a review-stage response (deadline, cost, comment, files)."""
         await self.ensure_expert(expert_id)
         response = await self.get_response_by_id(response_id)
 
@@ -365,6 +376,19 @@ class ResponseService:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Редактировать можно только отклик на рассмотрении",
+            )
+
+        order = response.order
+        if order and data.proposed_sum_amount > order.sum_amount:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Стоимость не может превышать бюджет заказчика",
+            )
+
+        if order and data.proposed_deadline > order.deadline:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Срок не может быть позже дедлайна заказчика",
             )
 
         response.comment = data.comment

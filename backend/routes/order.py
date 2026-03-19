@@ -37,6 +37,16 @@ async def get_orders(
     )
 
 
+@router.get("/public/{public_id}", response_model=OrderResponse)
+async def get_order_public(
+    public_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    service = OrderService(db)
+    order = await service.get_order_by_public_id(public_id)
+    return OrderResponse.from_order(order)
+
+
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order(
     order_id: int,

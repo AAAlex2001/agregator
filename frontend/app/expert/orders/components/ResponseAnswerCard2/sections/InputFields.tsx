@@ -1,3 +1,4 @@
+import React from "react";
 import { Input } from "@/app/components";
 import styles from "./sections.module.scss";
 
@@ -14,6 +15,11 @@ export default function InputFields({
   costEstimate,
   onCostEstimateChange,
 }: InputFieldsProps) {
+  const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filtered = e.target.value.replace(/[^0-9]/g, "");
+    onCostEstimateChange(filtered);
+  };
+
   return (
     <div className={styles.inputSection}>
       <div className={styles.inputTitles}>
@@ -35,7 +41,7 @@ export default function InputFields({
           active
           className={styles.inputField}
           value={costEstimate}
-          onChange={(e) => onCostEstimateChange(e.target.value)}
+          onChange={handleCostChange}
           placeholder="Сумма в рублях"
           inputMode="numeric"
         />

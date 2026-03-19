@@ -141,6 +141,21 @@ class OrderService:
             )
         return order
 
+    async def get_order_by_public_id(self, public_id: str) -> Order:
+        query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(Order.public_id == public_id)
+        )
+        result = await self.db.execute(query)
+        order = result.scalars().first()
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказ не найден",
+            )
+        return order
+
     async def create_order(
         self,
         data: OrderCreate,

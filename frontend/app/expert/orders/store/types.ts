@@ -7,6 +7,7 @@ export interface OrderBadgeResponse {
 
 export interface OrderResponse {
   id: number;
+  public_id: string;
   title: string;
   comment: string;
   customer_id: number;
@@ -29,12 +30,15 @@ export interface OrdersListResponse {
 
 export interface OrderCardViewModel {
   id: number;
+  publicId: string;
   badges: Badge[];
   title: string;
   customer: string;
   date: string;
+  deadlineRaw: string;
   responsesDeadline?: string | null;
   sum: string;
+  sumAmountRaw: number;
   commissionAmount: string;
   commissionAmountRaw: number;
   comment: string;

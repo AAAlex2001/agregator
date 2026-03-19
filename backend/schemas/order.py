@@ -84,6 +84,7 @@ class OrderUpdate(BaseModel):
 
 class OrderResponse(BaseModel):
     id: int
+    public_id: str
     title: str
     company: str
     typical_names: str
@@ -135,6 +136,7 @@ class OrderResponse(BaseModel):
 
         return cls(
             id=order.id,
+            public_id=order.public_id,
             title=order.title,
             company=order.company or "",
             typical_names=order.typical_names or "",

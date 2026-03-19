@@ -21,11 +21,14 @@ function normalizeSumDisplay(value: string): string {
 export function mapOrderToCardViewModel(order: OrderResponse): OrderCardViewModel {
   return {
     id: order.id,
+    publicId: order.public_id,
     title: order.title,
     customer: order.customer_name,
     date: order.date,
+    deadlineRaw: order.date,
     responsesDeadline: order.responses_deadline ?? null,
     sum: normalizeSumDisplay(order.sum),
+    sumAmountRaw: order.sum_amount_raw,
     commissionAmount: normalizeSumDisplay(order.commission_amount),
     commissionAmountRaw: order.commission_amount_raw ?? 0,
     comment: order.comment,
