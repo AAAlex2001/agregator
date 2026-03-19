@@ -12,10 +12,6 @@ import styles from "./orders.module.scss";
 
 function copyOrderLink(publicId: string) {
   const url = `${window.location.origin}/order/${publicId}`;
-  if (navigator.clipboard) {
-    void navigator.clipboard.writeText(url);
-    return;
-  }
   const ta = document.createElement("textarea");
   ta.value = url;
   ta.style.position = "fixed";

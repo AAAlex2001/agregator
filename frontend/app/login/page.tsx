@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Input } from "@/app/components";
+import { Input, Tabs } from "@/app/components";
 import Button from "@/app/components/Button/Button";
 import { LogoIcon } from "@/app/icons";
 import styles from "./login.module.scss";
@@ -49,22 +49,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className={styles.form}>
             {state.error && <div className={styles.errorMessage}>{state.error}</div>}
 
-            <div className={styles.roleTabs}>
-              <button
-                type="button"
-                className={`${styles.roleTab} ${state.role === "CUSTOMER" ? styles.roleTabActive : ""}`}
-                onClick={() => state.setRole("CUSTOMER")}
-              >
-                Заказчик
-              </button>
-              <button
-                type="button"
-                className={`${styles.roleTab} ${state.role === "EXPERT" ? styles.roleTabActive : ""}`}
-                onClick={() => state.setRole("EXPERT")}
-              >
-                Эксперт
-              </button>
-            </div>
+            <Tabs
+              tabs={[
+                { id: "CUSTOMER", label: "Заказчик" },
+                { id: "EXPERT", label: "Эксперт" },
+              ]}
+              activeTab={state.role}
+              onTabChange={(id) => state.setRole(id as "CUSTOMER" | "EXPERT")}
+            />
 
             <Input
               id="login"

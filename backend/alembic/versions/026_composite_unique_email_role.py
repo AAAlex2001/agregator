@@ -21,6 +21,14 @@ def _find_unique_constraint(inspector, table, columns):
     return None
 
 
+def _find_index(inspector, table, columns):
+    target = set(columns)
+    for idx in inspector.get_indexes(table):
+        if set(idx["column_names"]) == target:
+            return idx["name"], idx.get("unique", False)
+    return None, False
+
+
 def upgrade() -> None:
     conn = op.get_bind()
     inspector = inspect(conn)
@@ -32,6 +40,16 @@ def upgrade() -> None:
     phone_uc = _find_unique_constraint(inspector, "users", ["phone"])
     if phone_uc:
         op.drop_constraint(phone_uc, "users", type_="unique")
+
+    email_idx, email_idx_unique = _find_index(inspector, "users", ["email"])
+    if email_idx and email_idx_unique:
+        op.drop_index(email_idx, table_name="users")
+        op.create_index("ix_users_email", "users", ["email"], unique=False)
+
+    phone_idx, phone_idx_unique = _find_index(inspector, "users", ["phone"])
+    if phone_idx and phone_idx_unique:
+        op.drop_index(phone_idx, table_name="users")
+        op.create_index("ix_users_phone", "users", ["phone"], unique=False)
 
     email_role_uc = _find_unique_constraint(inspector, "users", ["email", "role"])
     if not email_role_uc:
@@ -53,6 +71,16 @@ def downgrade() -> None:
     phone_role_uc = _find_unique_constraint(inspector, "users", ["phone", "role"])
     if phone_role_uc:
         op.drop_constraint(phone_role_uc, "users", type_="unique")
+
+    email_idx, email_idx_unique = _find_index(inspector, "users", ["email"])
+    if email_idx and not email_idx_unique:
+        op.drop_index(email_idx, table_name="users")
+        op.create_index("ix_users_email", "users", ["email"], unique=True)
+
+    phone_idx, phone_idx_unique = _find_index(inspector, "users", ["phone"])
+    if phone_idx and not phone_idx_unique:
+        op.drop_index(phone_idx, table_name="users")
+        op.create_index("ix_users_phone", "users", ["phone"], unique=True)
 
     email_uc = _find_unique_constraint(inspector, "users", ["email"])
     if not email_uc:

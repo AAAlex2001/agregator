@@ -39,6 +39,7 @@
 .cardActions {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
   width: 100%;
