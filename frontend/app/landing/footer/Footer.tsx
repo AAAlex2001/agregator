@@ -66,7 +66,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <h2>Документы</h2>
-                  <Link href="#company-details">Реквизиты компании</Link>
+                  <Link href="/requisites">Реквизиты компании</Link>
                   <Link href="#offer">Оферта</Link>
                 </div>
               </div>

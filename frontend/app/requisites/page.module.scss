@@ -1,0 +1,183 @@
+/* ── Page shell with fixed background ─────────────── */
+.page {
+  position: relative;
+  min-height: 100vh;
+  padding: 60px 16px 80px;
+  isolation: isolate;
+}
+
+/* ── Background image ─────────────────────────────── */
+.bgWrap {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+}
+
+/* ── Orange-dark overlay ──────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 8, 0, 0.82) 0%,
+    rgba(180, 80, 0, 0.62) 50%,
+    rgba(20, 8, 0, 0.88) 100%
+  );
+}
+
+/* ── Content container ────────────────────────────── */
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── Back link ────────────────────────────────────── */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  margin-bottom: 40px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #FFB800;
+  }
+}
+
+/* ── Hero ─────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 10px;
+  line-height: 1.15;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  font-size: 16px;
+  color: rgba(255, 184, 0, 0.9);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* ── Glass section card ───────────────────────────── */
+.section {
+  margin-bottom: 20px;
+  border-radius: 18px;
+  overflow: hidden;
+
+  /* glassmorphism */
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* ── Section header — orange gradient ─────────────── */
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: #ffffff;
+  padding: 12px 22px;
+  margin: 0;
+  background: linear-gradient(90deg, #FFB800 0%, #FF6B00 100%);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Table rows ───────────────────────────────────── */
+.table {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 12px;
+  padding: 13px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.15s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba(255, 184, 0, 0.08);
+  }
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.5;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ── Links ────────────────────────────────────────── */
+.link {
+  color: #FFB800;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #FF8A00;
+    text-decoration: underline;
+  }
+}
+
+/* ── Footer note ──────────────────────────────────── */
+.note {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  margin-top: 32px;
+  line-height: 1.6;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding: 10px 16px;
+  }
+
+  .sectionTitle {
+    padding: 10px 16px;
+  }
+
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
