@@ -16,11 +16,12 @@ class LoadSettings(BaseModel):
     base_url: str = Field(default="https://plus-resurs.com")
     db_url: str | None = None
     rate_per_second: int = Field(default=10, ge=1)
-    duration_seconds: int = Field(default=10, ge=1)
-    request_timeout_seconds: float = Field(default=30.0, gt=0)
+    duration_seconds: int = Field(default=5, ge=1)
+    request_timeout_seconds: float = Field(default=10.0, gt=0)
     expert_balance_rub: int = Field(default=10000, ge=1)
     order_budget_rub: int = Field(default=100, ge=1)
     max_failures: int = Field(default=0, ge=0)
+    max_concurrency: int | None = Field(default=None, ge=1)
     verify_ssl: bool = True
 
     @property
@@ -36,6 +37,10 @@ class LoadSettings(BaseModel):
     @property
     def total_iterations(self) -> int:
         return self.rate_per_second * self.duration_seconds
+
+    @property
+    def effective_max_concurrency(self) -> int:
+        return min(self.max_concurrency or self.rate_per_second, self.total_iterations)
 
     @property
     def expert_balance_kopecks(self) -> int:

@@ -17,11 +17,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     group.addoption("--load-base-url", action="store", default=None)
     group.addoption("--load-db-url", action="store", default=None)
     group.addoption("--load-rate", action="store", type=int, default=10)
-    group.addoption("--load-duration", action="store", type=int, default=10)
-    group.addoption("--load-timeout", action="store", type=float, default=30.0)
+    group.addoption("--load-duration", action="store", type=int, default=5)
+    group.addoption("--load-timeout", action="store", type=float, default=10.0)
     group.addoption("--load-expert-balance-rub", action="store", type=int, default=10000)
     group.addoption("--load-order-budget-rub", action="store", type=int, default=100)
     group.addoption("--load-max-failures", action="store", type=int, default=0)
+    group.addoption("--load-max-concurrency", action="store", type=int, default=None)
     group.addoption("--load-disable-ssl-verify", action="store_true", default=False)
 
 
@@ -47,5 +48,6 @@ def load_settings(pytestconfig: pytest.Config) -> LoadSettings:
         expert_balance_rub=pytestconfig.getoption("--load-expert-balance-rub"),
         order_budget_rub=pytestconfig.getoption("--load-order-budget-rub"),
         max_failures=pytestconfig.getoption("--load-max-failures"),
+        max_concurrency=pytestconfig.getoption("--load-max-concurrency"),
         verify_ssl=not pytestconfig.getoption("--load-disable-ssl-verify"),
     )

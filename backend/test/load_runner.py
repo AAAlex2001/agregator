@@ -88,20 +88,31 @@ async def run_load_scenario(
     scenario: str,
     rate_per_second: int,
     duration_seconds: int,
+    max_concurrency: int,
     execute: Callable[[int], Awaitable[None]],
 ) -> ScenarioReport:
     total_requests = rate_per_second * duration_seconds
     started_at = perf_counter()
-    tasks = []
+    tasks: set[asyncio.Task[ScenarioRequestResult]] = set()
+    results: list[ScenarioRequestResult] = []
 
     for iteration in range(total_requests):
         scheduled_at = started_at + (iteration / rate_per_second)
         delay = scheduled_at - perf_counter()
         if delay > 0:
             await asyncio.sleep(delay)
-        tasks.append(asyncio.create_task(run_iteration(iteration, execute)))
 
-    results = await asyncio.gather(*tasks)
+        while len(tasks) >= max_concurrency:
+            done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+            results.extend(task.result() for task in done)
+            tasks = set(pending)
+
+        tasks.add(asyncio.create_task(run_iteration(iteration, execute)))
+
+    if tasks:
+        done, _ = await asyncio.wait(tasks)
+        results.extend(task.result() for task in done)
+
     finished_at = perf_counter()
     return ScenarioReport.from_results(scenario, results, started_at, finished_at)
 
