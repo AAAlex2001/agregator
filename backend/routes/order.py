@@ -16,7 +16,6 @@ from schemas.order import (
     OrderListResponse,
 )
 from services.order import OrderService
-from ws.manager import order_manager
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -171,18 +170,7 @@ async def update_order_with_files(
     )
 
     service = OrderService(db)
-    order = await service.update_order(order_id, data)
-
-    if files:
-        new_paths = await service.save_uploaded_files(order_id, files)
-        order.technical_files = list(order.technical_files or []) + new_paths
-        await db.commit()
-        order = await service.get_order_by_id(order_id)
-        await order_manager.broadcast({
-            "event": "order_updated",
-            "data": OrderResponse.from_order(order).model_dump(),
-        })
-
+    order = await service.update_order_with_files(order_id, data, files=files if files else None)
     return OrderResponse.from_order(order)
 
 

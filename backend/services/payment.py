@@ -77,8 +77,7 @@ class PaymentService:
         )
 
         payment.yookassa_id = yoo_payment.id
-        await self.db.commit()
-        await self.db.refresh(payment)
+        await self.db.flush()
 
         confirmation_url = yoo_payment.confirmation.confirmation_url
         return payment, confirmation_url
@@ -112,17 +111,17 @@ class PaymentService:
         if payment.payment_type == PaymentType.DEPOSIT:
             user.balance = user.balance + payment.amount
 
-        await self.db.commit()
+        await self.db.flush()
 
     async def handle_waiting_for_capture(self, payment: Payment) -> None:
         """Платёж ожидает подтверждения."""
         payment.status = PaymentStatus.WAITING_FOR_CAPTURE
-        await self.db.commit()
+        await self.db.flush()
 
     async def handle_canceled(self, payment: Payment) -> None:
         """Платёж отменён."""
         payment.status = PaymentStatus.CANCELED
-        await self.db.commit()
+        await self.db.flush()
 
     async def handle_refund_succeeded(self, payment: Payment) -> None:
         """Возврат успешен — списываем с баланса."""
@@ -132,7 +131,7 @@ class PaymentService:
         payment.status = PaymentStatus.REFUNDED
         user = await self.get_user(payment.user_id)
         user.balance = max(0, user.balance - payment.amount)
-        await self.db.commit()
+        await self.db.flush()
 
     async def create_refund(self, payment_id: int, user_id: int) -> Payment:
         """Создание возврата через YooKassa."""
@@ -162,8 +161,7 @@ class PaymentService:
         payment.status = PaymentStatus.REFUNDED
         user = await self.get_user(payment.user_id)
         user.balance = max(0, user.balance - payment.amount)
-        await self.db.commit()
-        await self.db.refresh(payment)
+        await self.db.flush()
         return payment
 
     async def create_withdrawal(self, user_id: int, amount: int, card_number: str) -> Payment:
@@ -188,8 +186,7 @@ class PaymentService:
 
         user.balance = user.balance - amount
 
-        await self.db.commit()
-        await self.db.refresh(payment)
+        await self.db.flush()
         return payment
 
     async def get_balance(self, user_id: int) -> int:

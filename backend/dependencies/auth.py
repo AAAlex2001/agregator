@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 from fastapi import Cookie, Depends, HTTPException, status
-from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -30,8 +29,6 @@ async def get_current_user(
 
     now = datetime.now(timezone.utc)
     if now > session.max_expires_at:
-        await db.execute(delete(Session).where(Session.id == session.id))
-        await db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Сессия истекла",

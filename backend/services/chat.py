@@ -117,8 +117,7 @@ class ChatService:
             expert_id=order.assigned_expert_id,
         )
         self.db.add(chat)
-        await self.db.commit()
-        await self.db.refresh(chat)
+        await self.db.flush()
         return chat
 
     def resolve_counterpart(self, actor_id: int, actor_role: UserRole, chat: Chat) -> tuple[int, str, str | None]:
@@ -348,7 +347,7 @@ class ChatService:
             .values(updated_at=datetime.now(timezone.utc))
         )
 
-        await self.db.commit()
+        await self.db.flush()
 
         sender_role = UserRole.CUSTOMER.value if sender_id == chat_data.customer_id else UserRole.EXPERT.value
         return ChatMessageResponse(
@@ -380,5 +379,5 @@ class ChatService:
                 .where(ChatMessage.id.in_(ids))
                 .values(is_read=True)
             )
-            await self.db.commit()
+            await self.db.flush()
         return ids

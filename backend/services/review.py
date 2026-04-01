@@ -69,9 +69,8 @@ class ReviewService:
         expert.rating = new_rating
 
         try:
-            await self.db.commit()
+            await self.db.flush()
         except IntegrityError:
-            await self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Отзыв по этому отклику уже оставлен",

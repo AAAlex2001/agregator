@@ -3,11 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models.user import User, UserRole
 from schemas.registration import UserRegistration
-from passlib.context import CryptContext
 from fastapi import HTTPException, status
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from utils.passwords import hash_password
 
 
 class RegistrationService:
@@ -29,9 +26,6 @@ class RegistrationService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
-
-    def hash_password(self, password: str) -> str:
-        return pwd_context.hash(password)
 
     async def get_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
         query = select(User).where(User.email == email, User.role == role)
@@ -66,13 +60,12 @@ class RegistrationService:
             role=data.role,
             phone=data.phone,
             email=data.email,
-            password=self.hash_password(data.password),
+            password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,
         )
 
         self.db.add(new_user)
-        await self.db.commit()
-        await self.db.refresh(new_user)
+        await self.db.flush()
 
         return new_user

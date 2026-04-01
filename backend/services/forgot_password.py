@@ -5,12 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from models.user import User
 from models.password_reset_code import PasswordResetCode
-from passlib.context import CryptContext
 import random
 import secrets
 import string
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from utils.passwords import hash_password
 
 
 class ForgotPasswordService:
@@ -69,8 +67,7 @@ class ForgotPasswordService:
         )
         
         self.db.add(reset_code)
-        await self.db.commit()
-        await self.db.refresh(reset_code)
+        await self.db.flush()
         
         return code
     
@@ -88,7 +85,6 @@ class ForgotPasswordService:
     async def mark_code_as_used(self, reset_code: PasswordResetCode):
         """Помечает код как использованный"""
         reset_code.is_used = True
-        await self.db.commit()
     
     def validate_password(self, password: str) -> None:
         errors = []
@@ -105,10 +101,6 @@ class ForgotPasswordService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
-
-    def hash_password(self, password: str) -> str:
-        """Хеширует пароль"""
-        return pwd_context.hash(password)
 
     async def reset_password(self, user_id: int, code: str, new_password: str) -> bool:
         self.validate_password(new_password)
@@ -130,7 +122,7 @@ class ForgotPasswordService:
                 detail="Пользователь не найден",
             )
 
-        hashed = self.hash_password(new_password)
+        hashed = await hash_password(new_password)
         user.password = hashed
 
         siblings: list[User] = []
@@ -143,7 +135,6 @@ class ForgotPasswordService:
                 sibling.password = hashed
 
         await self.mark_code_as_used(reset_code)
-        
-        await self.db.commit()
+
         return True
     

@@ -187,7 +187,6 @@ class OrderService:
         try:
             await self.db.flush()
         except IntegrityError:
-            await self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Некорректные данные заказа",
@@ -206,8 +205,6 @@ class OrderService:
                 for badge in data.badges
             ]
             self.db.add_all(badge_objects)
-
-        await self.db.commit()
 
         created_order = await self.get_order_by_id(order.id)
         await order_manager.broadcast({
@@ -232,13 +229,12 @@ class OrderService:
         new_paths = await self.save_uploaded_files(order_id, files)
         order.technical_files = list(order.technical_files or []) + new_paths
 
-        await self.db.commit()
-        await self.db.refresh(order)
+        await self.db.flush()
 
         return await self.get_order_by_id(order_id)
 
     async def update_order(
-        self, order_id: int, data: OrderUpdate
+        self, order_id: int, data: OrderUpdate, notify: bool = True
     ) -> Order:
         order = await self.get_order_by_id(order_id)
 
@@ -262,19 +258,39 @@ class OrderService:
             ]
             self.db.add_all(badge_objects)
 
-        await self.db.commit()
+        await self.db.flush()
 
         updated_order = await self.get_order_by_id(order_id)
+        if notify:
+            await order_manager.broadcast({
+                "event": "order_updated",
+                "data": OrderResponse.from_order(updated_order).model_dump(),
+            })
+        return updated_order
+
+    async def update_order_with_files(
+        self,
+        order_id: int,
+        data: OrderUpdate,
+        files: list[UploadFile] | None = None,
+    ) -> Order:
+        order = await self.update_order(order_id, data, notify=False)
+        if files:
+            new_paths = await self.save_uploaded_files(order_id, files)
+            order.technical_files = list(order.technical_files or []) + new_paths
+            await self.db.flush()
+            order = await self.get_order_by_id(order_id)
+
         await order_manager.broadcast({
             "event": "order_updated",
-            "data": OrderResponse.from_order(updated_order).model_dump(),
+            "data": OrderResponse.from_order(order).model_dump(),
         })
-        return updated_order
+        return order
 
     async def delete_order(self, order_id: int) -> int:
         order = await self.get_order_by_id(order_id)
         await self.db.delete(order)
-        await self.db.commit()
+        await self.db.flush()
         await order_manager.broadcast({
             "event": "order_removed",
             "data": {"id": order_id},

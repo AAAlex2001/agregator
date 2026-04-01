@@ -162,9 +162,8 @@ class ResponseService:
         self.db.add(commission_payment)
 
         try:
-            await self.db.commit()
+            await self.db.flush()
         except IntegrityError:
-            await self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Отклик уже существует",
@@ -321,7 +320,7 @@ class ResponseService:
             if expert:
                 expert.balance += refund_amount
 
-        await self.db.commit()
+        await self.db.flush()
 
         if status_to_set == ResponseStatus.REJECTED and response.order:
             order_result = await self.db.execute(
@@ -400,7 +399,7 @@ class ResponseService:
             existing = list(response.technical_files or [])
             response.technical_files = [f for f in existing if f in keep_files]
 
-        await self.db.commit()
+        await self.db.flush()
 
         return await self.get_response_by_id(response_id)
 
@@ -440,7 +439,7 @@ class ResponseService:
                 response.order.status = OrderStatus.ACTIVE
 
         await self.db.delete(response)
-        await self.db.commit()
+        await self.db.flush()
 
         order_result = await self.db.execute(
             select(Order)
@@ -525,8 +524,7 @@ class ResponseService:
             saved_files.append(f"/uploads/responses/{response_id}/{generated_name}")
 
         response.technical_files = saved_files
-        await self.db.commit()
-        await self.db.refresh(response)
+        await self.db.flush()
 
         return await self.get_response_by_id(response_id)
 
