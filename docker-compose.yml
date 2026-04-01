@@ -94,6 +94,88 @@ services:
     networks:
       - agregator-network
 
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: agregator-prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      - backend
+      - cadvisor
+      - node-exporter
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: agregator-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin123}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://176.57.215.114:3000}
+      GF_INSTALL_PLUGINS: ""
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: agregator-cadvisor
+    ports:
+      - "8088:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    privileged: true
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: agregator-node-exporter
+    command:
+      - "--path.rootfs=/host"
+    ports:
+      - "9100:9100"
+    volumes:
+      - /:/host:ro,rslave
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  k6:
+    image: grafana/k6:0.53.0
+    container_name: agregator-k6
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["while true; do sleep 3600; done"]
+    volumes:
+      - ./monitoring/k6/scripts:/scripts
+    environment:
+      BASE_URL: ${K6_BASE_URL:-http://176.57.215.114}
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
 networks:
   agregator-network:
     driver: bridge
@@ -101,6 +183,8 @@ networks:
 volumes:
   postgres_data:
   backend_uploads:
+  prometheus_data:
+  grafana_data:
 
 
 
