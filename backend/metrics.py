@@ -1,4 +1,5 @@
 import time
+import re
 from typing import Optional
 
 from fastapi import FastAPI, Request
@@ -74,6 +75,32 @@ ENDPOINT_NAMES_RU = {
 }
 
 
+UUID_PATTERN = re.compile(
+    r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\b"
+)
+NUMBER_PATTERN = re.compile(r"(?<=/)\d+(?=/|$)")
+
+
+def normalize_endpoint_path(path: str) -> str:
+    normalized = UUID_PATTERN.sub("{chat_uuid}", path)
+    normalized = NUMBER_PATTERN.sub("{id}", normalized)
+    normalized = normalized.replace("/public/{id}", "/public/{public_id}")
+
+    path_mapping = {
+        "/api/orders/{id}": "/api/orders/{order_id}",
+        "/api/orders/{order_id}/files": "/api/orders/{order_id}/files",
+        "/api/orders/{order_id}/responses": "/api/orders/{order_id}/responses",
+        "/api/orders/{order_id}/update-with-files": "/api/orders/{order_id}/update-with-files",
+        "/api/responses/{id}": "/api/responses/{response_id}",
+        "/api/responses/{response_id}/status": "/api/responses/{response_id}/status",
+        "/api/chats/{chat_uuid}": "/api/chats/{chat_uuid}",
+        "/api/chats/{chat_uuid}/presence": "/api/chats/{chat_uuid}/presence",
+        "/api/chats/{chat_uuid}/read": "/api/chats/{chat_uuid}/read",
+        "/api/chats/{chat_uuid}/messages": "/api/chats/{chat_uuid}/messages",
+    }
+    return path_mapping.get(normalized, normalized)
+
+
 def result_and_reason(status_code: int, exception_name: Optional[str] = None) -> tuple[str, str]:
     if 200 <= status_code < 400:
         return "success", "none"
@@ -88,10 +115,6 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         start = time.perf_counter()
-        route = request.scope.get("route")
-        endpoint = getattr(route, "path", request.url.path)
-        endpoint_ru = ENDPOINT_NAMES_RU.get(endpoint, f"Неизвестный эндпоинт: {endpoint}")
-
         status_code = 500
         exception_name: Optional[str] = None
 
@@ -104,6 +127,10 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
             raise
         finally:
             duration = time.perf_counter() - start
+            route = request.scope.get("route")
+            raw_endpoint = getattr(route, "path", request.url.path)
+            endpoint = normalize_endpoint_path(raw_endpoint)
+            endpoint_ru = ENDPOINT_NAMES_RU.get(endpoint, f"Неизвестный эндпоинт: {endpoint}")
             result, fail_reason = result_and_reason(status_code, exception_name=exception_name)
             status_code_str = str(status_code)
 

@@ -31,6 +31,15 @@ GRAFANA_ADMIN_USER=admin
 GRAFANA_ADMIN_PASSWORD=change_me_now
 GRAFANA_ROOT_URL=http://176.57.215.114:3000
 K6_BASE_URL=http://176.57.215.114
+
+# Производительность backend
+WEB_CONCURRENCY=2
+UVICORN_TIMEOUT_KEEP_ALIVE=10
+DB_POOL_SIZE=20
+DB_MAX_OVERFLOW=20
+DB_POOL_TIMEOUT=30
+DB_POOL_RECYCLE=1800
+DB_COMMAND_TIMEOUT=30
 ```
 
 2. Поднимите все контейнеры:
@@ -85,3 +94,50 @@ docker compose exec -e BASE_URL=http://176.57.215.114 k6 k6 run /scripts/smoke.j
 - алерты в Telegram/Email (Grafana Alerting)
 - отдельный дашборд для БД (PostgreSQL exporter)
 - более детальные k6-сценарии для `login/orders/payments/chat`
+
+## Максимальная производительность: чек-лист
+
+### 1) Рекомендуемые значения `.env` (сервер ~1 vCPU / ~2 GB RAM)
+
+```env
+WEB_CONCURRENCY=2
+UVICORN_TIMEOUT_KEEP_ALIVE=10
+
+DB_POOL_SIZE=15
+DB_MAX_OVERFLOW=10
+DB_POOL_TIMEOUT=30
+DB_POOL_RECYCLE=1800
+DB_COMMAND_TIMEOUT=30
+```
+
+### 2) Применить изменения
+
+```bash
+docker compose up -d --build postgres backend
+```
+
+### 3) Для уже существующей БД включить `pg_stat_statements` вручную
+
+При существующем `postgres_data` init-скрипты не запускаются повторно, поэтому один раз выполните:
+
+```bash
+docker compose exec postgres psql -U agregator -d agregator_db -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
+```
+
+### 4) Получить топ медленных SQL и точечно ускорять
+
+```bash
+docker compose exec postgres psql -U agregator -d agregator_db -c "
+SELECT
+  round(total_exec_time::numeric, 2) AS total_ms,
+  calls,
+  round((total_exec_time / calls)::numeric, 2) AS mean_ms,
+  rows,
+  query
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 20;
+"
+```
+
+После этого оптимизация делается по факту: `EXPLAIN (ANALYZE, BUFFERS)` на самых дорогих запросах.

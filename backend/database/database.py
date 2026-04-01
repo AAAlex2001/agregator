@@ -18,16 +18,23 @@ if not DATABASE_URL:
 # Создание движка базы данных
 # Логирование SQL запросов (только в режиме разработки)
 ECHO_SQL = os.getenv("ECHO_SQL", "False").lower() == "true"
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "20"))
+DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "20"))
+DB_POOL_TIMEOUT = int(os.getenv("DB_POOL_TIMEOUT", "30"))
+DB_POOL_RECYCLE = int(os.getenv("DB_POOL_RECYCLE", "1800"))
+DB_COMMAND_TIMEOUT = int(os.getenv("DB_COMMAND_TIMEOUT", "30"))
 
 engine = create_async_engine(
     DATABASE_URL,
     echo=ECHO_SQL,
     future=True,
-    pool_size=60,
-    max_overflow=30,
-    pool_timeout=15,
-    pool_recycle=300,
+    pool_size=DB_POOL_SIZE,
+    max_overflow=DB_MAX_OVERFLOW,
+    pool_timeout=DB_POOL_TIMEOUT,
+    pool_recycle=DB_POOL_RECYCLE,
     pool_pre_ping=True,
+    pool_use_lifo=True,
+    connect_args={"command_timeout": DB_COMMAND_TIMEOUT},
 )
 
 # Создание фабрики сессий

@@ -2,6 +2,26 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: agregator-postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track=all"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "max_connections=300"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=768MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "random_page_cost=1.1"
     environment:
       POSTGRES_DB: agregator_db
       POSTGRES_USER: agregator
@@ -10,6 +30,7 @@ services:
       - "5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./monitoring/postgres/init:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
     networks:
       - agregator-network
@@ -28,6 +49,13 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
       ECHO_SQL: ${ECHO_SQL:-false}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      UVICORN_TIMEOUT_KEEP_ALIVE: ${UVICORN_TIMEOUT_KEEP_ALIVE:-10}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-20}
+      DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-20}
+      DB_POOL_TIMEOUT: ${DB_POOL_TIMEOUT:-30}
+      DB_POOL_RECYCLE: ${DB_POOL_RECYCLE:-1800}
+      DB_COMMAND_TIMEOUT: ${DB_COMMAND_TIMEOUT:-30}
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_PORT: ${EMAIL_PORT}
       EMAIL_HOST_USER: ${EMAIL_HOST_USER}
