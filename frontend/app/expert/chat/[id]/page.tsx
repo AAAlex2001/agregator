@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowIcon, ChatCheckReadIcon, ChatCheckSentIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/app/icons";
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import Button from "@/app/components/Button/Button";
-import Loader from "@/app/components/Loader";
+import { ArrowIcon, ChatCheckReadIcon, ChatCheckSentIcon, ChatChevronDownIcon, ChatClipIcon, ChatSearchIcon, ChatSendIcon, ProfileIcon } from "@/shared/ui/icons";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import Button from "@/shared/ui/Button/Button";
+import Loader from "@/shared/ui/Loader";
 import {
   buildChatWebSocketUrl,
   fetchChatDetail,
@@ -16,8 +16,8 @@ import {
   type ChatDetailResponse,
   type ChatListItem,
   type ChatMessage,
-} from "@/app/utils/chatApi";
-import { useUserProfile } from "@/app/hooks/useUserProfile";
+} from "@/shared/lib/chatApi";
+import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
 import styles from "./chatWindow.module.scss";
 
 const ROUTE_BASE = "/expert/chat";

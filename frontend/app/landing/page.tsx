@@ -1,15 +1,15 @@
 import styles from "./page.module.scss";
-import Header from "./header/Header";
-import Hero from "./hero/Hero";
-import IndustryDirections from "./industry-directions/IndustryDirections";
-import HowItWorks from "./how-it-works/HowItWorks";
-import Orders from "./orders/Orders";
-import Advantages from "./advantages/Advantages";
-import Reviews from "./reviews/Reviews";
-import FAQ from "./FAQ/FAQ";
-import Footer from "./footer/Footer";
-import CtaFooter from "./footer/CtaFooter";
-import KeyAdvantages from "./key-advantages/KeyAdvantages";
+import Header from "@/widgets/header/Header";
+import Hero from "@/widgets/landing-hero/Hero";
+import IndustryDirections from "@/widgets/landing-industry-directions/IndustryDirections";
+import HowItWorks from "@/widgets/landing-how-it-works/HowItWorks";
+import Orders from "@/widgets/landing-orders/Orders";
+import Advantages from "@/widgets/landing-advantages/Advantages";
+import Reviews from "@/widgets/landing-reviews/Reviews";
+import FAQ from "@/widgets/landing-faq/FAQ";
+import Footer from "@/widgets/footer/Footer";
+import CtaFooter from "@/widgets/footer/CtaFooter";
+import KeyAdvantages from "@/widgets/landing-key-advantages/KeyAdvantages";
 
 import type { Metadata } from "next";
 import {
@@ -20,7 +20,7 @@ import {
   getKeyAdvantagesSteps,
   getOrders,
   getReviews,
-} from "./landing.data";
+} from "@/shared/config/landing.data";
 
 export const metadata: Metadata = {
   title: "Промышленная безопасность — платформа экспертов и заказов",

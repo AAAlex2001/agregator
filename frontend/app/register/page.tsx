@@ -3,14 +3,14 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Button, Input } from "@/app/components";
-import { useNotifications } from "@/app/components/Notifications";
-import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/app/icons";
+import { Button, Input } from "@/shared/ui";
+import { useNotifications } from "@/shared/ui/Notifications";
+import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/shared/ui/icons";
 import styles from "./register.module.scss";
 
-import { useRegistrationState } from "./store/state";
-import { handleRegistration, getRoleType } from "./store/actions";
-import type { Role } from "./store/types";
+import { useRegistrationState } from "@/features/auth/register/model/state";
+import { handleRegistration, getRoleType } from "@/features/auth/register/model/actions";
+import type { Role } from "@/features/auth/register/model/types";
 
 const roles: Role[] = [
   {

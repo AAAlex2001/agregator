@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import CabinetMenuTabs from "@/app/components/CabinetMenuTabs";
-import { NotificationProvider } from "@/app/components/Notifications";
+import CabinetMenuTabs from "@/features/cabinet/menu-tabs/ui/CabinetMenuTabs";
+import { NotificationProvider } from "@/shared/ui/Notifications";
 import "./globals.css";
 
 const montserrat = Montserrat({

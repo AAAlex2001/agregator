@@ -2,14 +2,14 @@
 
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import AuthHeader from "@/app/landing/header/AuthHeader";
+import AuthHeader from "@/widgets/header/AuthHeader";
 import { AnimatePresence, motion } from "framer-motion";
-import OrderCard from "@/app/expert/orders/components/OrderCard";
-import { Button, Loader, ScrollHintTooltip, Subtitle, Title } from "@/app/components";
-import { useNotifications } from "@/app/components/Notifications";
-import { copyOrderLink } from "@/app/utils/copyOrderLink";
-import OrderDetailsModal from "./components/OrderDetailsModal";
-import { useOrdersPage } from "./utils/useOrdersPage";
+import OrderCard from "@/entities/order/ui/OrderCard";
+import { Button, Loader, ScrollHintTooltip, Subtitle, Title } from "@/shared/ui";
+import { useNotifications } from "@/shared/ui/Notifications";
+import { copyOrderLink } from "@/shared/lib/copyOrderLink";
+import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
+import { useOrdersPage } from "@/features/order/list-expert/lib/useOrdersPage";
 import styles from "./orders.module.scss";
 
 function OrdersPageContent() {

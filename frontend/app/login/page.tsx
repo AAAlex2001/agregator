@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Input, Tabs } from "@/app/components";
-import { useNotifications } from "@/app/components/Notifications";
-import Button from "@/app/components/Button/Button";
-import { LogoIcon } from "@/app/icons";
+import { Input, Tabs } from "@/shared/ui";
+import { useNotifications } from "@/shared/ui/Notifications";
+import Button from "@/shared/ui/Button/Button";
+import { LogoIcon } from "@/shared/ui/icons";
 import styles from "./login.module.scss";
-import { handleLogin } from "./store/actions";
-import { useLoginState } from "./store/state";
+import { handleLogin } from "@/features/auth/login/model/actions";
+import { useLoginState } from "@/features/auth/login/model/state";
 
 export default function LoginPage() {
   const router = useRouter();

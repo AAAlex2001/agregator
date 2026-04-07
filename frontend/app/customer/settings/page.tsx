@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Loader } from "@/app/components";
-import { NotificationProvider, useNotifications } from "@/app/components/Notifications";
-import Title from "@/app/components/Typography/Title";
-import Subtitle from "@/app/components/Typography/Subtitle";
-import { Input } from "@/app/components/";
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import { fetchProfile, updateProfile, changePassword } from "@/app/settings/api";
-import type { UserProfile } from "@/app/settings/api";
+import { Button, Loader } from "@/shared/ui";
+import { NotificationProvider, useNotifications } from "@/shared/ui/Notifications";
+import Title from "@/shared/ui/Typography/Title";
+import Subtitle from "@/shared/ui/Typography/Subtitle";
+import { Input } from "@/shared/ui";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import { fetchProfile, updateProfile, changePassword } from "@/features/profile/settings/model/api";
+import type { UserProfile } from "@/features/profile/settings/model/api";
 import styles from "./settings.module.scss";
 
 function CustomerSettingsContent() {

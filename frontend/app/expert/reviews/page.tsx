@@ -7,12 +7,12 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import ReviewCard from "@/app/components/ReviewCard";
-import { Loader } from "@/app/components";
-import { ArrowIcon, StarIcon } from "@/app/icons";
-import { fetchMyReviews } from "./api";
-import type { ReviewItem } from "./api";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import ReviewCard from "@/entities/review/ui/ReviewCard";
+import { Loader } from "@/shared/ui";
+import { ArrowIcon, StarIcon } from "@/shared/ui/icons";
+import { fetchMyReviews } from "@/features/response/review/model/api";
+import type { ReviewItem } from "@/features/response/review/model/api";
 import styles from "./reviews.module.scss";
 
 export default function ExpertReviewsPage() {

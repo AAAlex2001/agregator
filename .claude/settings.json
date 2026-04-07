@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -0 sed -i -e 's|@/app/expert/orders/components/OrderCard|@/entities/order/ui/OrderCard|g' -e 's|@/app/components/ReviewCard|@/entities/review/ui/ReviewCard|g')",
+      "Bash(sed -i 's|from \"\\\\.\\\\./\\\\.\\\\./model/draft\"|from \"@/features/order/list-customer/model/draft\"|' src/features/order/create/ui/CreateOrderForm/CreateOrderForm.tsx)",
+      "Bash(sed -i 's|from \"\\\\.\\\\./OrderDetailsModal/types\"|from \"@/features/order/details/ui/OrderDetailsModal/types\"|' src/features/order/respond/ui/ResponseAnswerCard1/ResponseAnswerCard1.tsx src/features/order/respond/ui/ResponseAnswerCard2/ResponseAnswerCard2.tsx)",
+      "Bash(sed -i 's|from \"\\\\.\\\\./\\\\.\\\\./OrderDetailsModal/types\"|from \"@/features/order/details/ui/OrderDetailsModal/types\"|' src/features/order/respond/ui/ResponseAnswerCard1/sections/OrderSummary.tsx)",
+      "Bash(sed -i 's|from \"\\\\.\\\\./components/types\"|from \"../ui/component-types\"|' src/features/response/list-expert/model/mappers.ts src/features/response/list-expert/model/types.ts)",
+      "Bash(sed -i 's|from \"\\\\.\\\\./types\"|from \"../component-types\"|' src/features/response/list-expert/ui/ExpertResponseCard/ExpertResponseCard.tsx)"
+    ]
+  }
+}

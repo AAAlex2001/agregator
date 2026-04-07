@@ -8,28 +8,28 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import { Loader, Title, Subtitle, Button } from "@/app/components";
-import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
-import { ArrowIcon } from "@/app/icons";
-import OrderDetailsModal from "@/app/expert/orders/components/OrderDetailsModal";
-import type { OrderDetails, Step2FormData } from "@/app/expert/orders/components/OrderDetailsModal/types";
-import { useUserProfile } from "@/app/hooks/useUserProfile";
-import { useNotifications } from "@/app/components/Notifications";
-import { copyOrderLink } from "@/app/utils/copyOrderLink";
-import { openChatByOrder } from "@/app/utils/chatApi";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import { Loader, Title, Subtitle, Button } from "@/shared/ui";
+import { ResponsesState, ResponsesTabs } from "@/widgets/responses-state";
+import { ArrowIcon } from "@/shared/ui/icons";
+import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
+import type { OrderDetails, Step2FormData } from "@/features/order/details/ui/OrderDetailsModal/types";
+import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
+import { useNotifications } from "@/shared/ui/Notifications";
+import { copyOrderLink } from "@/shared/lib/copyOrderLink";
+import { openChatByOrder } from "@/shared/lib/chatApi";
 import {
   AcceptedCard,
   CompletedCard,
   InProgressCard,
   RejectedCard,
   ReviewCard,
-} from "./components/cards";
-import WithdrawConfirmModal from "./components/WithdrawConfirmModal/WithdrawConfirmModal";
-import { loadResponses } from "./store/actions";
-import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "./store/api";
-import { useResponsesState } from "./store/state";
-import type { ResponseCardViewModel, ResponseTabKey } from "./store/types";
+} from "@/features/response/list-expert/ui/cards";
+import WithdrawConfirmModal from "@/features/balance/withdraw/ui/WithdrawConfirmModal/WithdrawConfirmModal";
+import { loadResponses } from "@/features/response/list-expert/model/actions";
+import { updateResponseStatus, updateExistingResponse, withdrawResponse } from "@/features/response/list-expert/model/api";
+import { useResponsesState } from "@/features/response/list-expert/model/state";
+import type { ResponseCardViewModel, ResponseTabKey } from "@/features/response/list-expert/model/types";
 import styles from "./responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [

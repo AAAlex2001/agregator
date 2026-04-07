@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Loader } from "@/app/components";
-import { LogoIcon } from "@/app/icons";
-import { fetchProfile } from "@/app/settings/api";
+import { Button, Loader } from "@/shared/ui";
+import { LogoIcon } from "@/shared/ui/icons";
+import { fetchProfile } from "@/features/profile/settings/model/api";
 import styles from "./orderPreview.module.scss";
 
 interface BadgeData {

@@ -8,27 +8,27 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import { Loader, Title, Subtitle, Button } from "@/app/components";
-import { useNotifications } from "@/app/components/Notifications";
-import { ResponsesState, ResponsesTabs } from "@/app/components/Responses";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import { Loader, Title, Subtitle, Button } from "@/shared/ui";
+import { useNotifications } from "@/shared/ui/Notifications";
+import { ResponsesState, ResponsesTabs } from "@/widgets/responses-state";
 import {
   ReviewCard,
   AcceptedCard,
   InProgressCard,
   CompletedCard,
   RejectedCard,
-} from "./components/cards";
-import CompletionModal from "./components/CompletionModal";
-import AddReviewModal from "./components/AddReviewModal/AddReviewModal";
-import { ArrowIcon } from "@/app/icons";
-import { openChatByOrder } from "@/app/utils/chatApi";
-import { loadResponses } from "@/app/expert/responses/store/actions";
-import { useResponsesState } from "@/app/expert/responses/store/state";
-import { updateResponseStatus } from "@/app/expert/responses/store/api";
-import type { ResponseTabKey } from "@/app/expert/responses/store/types";
-import type { ResponseCardViewModel } from "@/app/expert/responses/store/types";
-import { createReview } from "./store/api";
+} from "@/features/response/list-customer/ui/cards";
+import CompletionModal from "@/features/response/complete/ui/CompletionModal";
+import AddReviewModal from "@/features/response/review/ui/AddReviewModal/AddReviewModal";
+import { ArrowIcon } from "@/shared/ui/icons";
+import { openChatByOrder } from "@/shared/lib/chatApi";
+import { loadResponses } from "@/features/response/list-expert/model/actions";
+import { useResponsesState } from "@/features/response/list-expert/model/state";
+import { updateResponseStatus } from "@/features/response/list-expert/model/api";
+import type { ResponseTabKey } from "@/features/response/list-expert/model/types";
+import type { ResponseCardViewModel } from "@/features/response/list-expert/model/types";
+import { createReview } from "@/features/response/list-customer/model/api";
 import styles from "@/app/expert/responses/responses.module.scss";
 
 const TAB_META: Array<{ key: ResponseTabKey; label: string }> = [

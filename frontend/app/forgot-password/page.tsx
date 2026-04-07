@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Input } from "@/app/components";
-import { LogoIcon } from "@/app/icons";
+import { Input } from "@/shared/ui";
+import { LogoIcon } from "@/shared/ui/icons";
 import styles from "./forgot-password.module.scss";
 
 export default function ForgotPasswordPage() {

@@ -1,11 +1,11 @@
 "use client";
 
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import OrderCard from "@/app/expert/orders/components/OrderCard";
-import { Button, Loader, ScrollHintTooltip, Title, Subtitle } from "@/app/components";
-import EmptyState from "./components/EmptyState";
-import CreateOrderForm from "./components/CreateOrderForm";
-import { useCustomerOrdersPage } from "./utils/useCustomerOrdersPage";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import OrderCard from "@/entities/order/ui/OrderCard";
+import { Button, Loader, ScrollHintTooltip, Title, Subtitle } from "@/shared/ui";
+import EmptyState from "@/features/order/list-customer/ui/EmptyState";
+import CreateOrderForm from "@/features/order/create/ui/CreateOrderForm";
+import { useCustomerOrdersPage } from "@/features/order/list-customer/lib/useCustomerOrdersPage";
 import styles from "./customerOrders.module.scss";
 
 export default function CustomerOrdersPage() {

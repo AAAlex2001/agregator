@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import AuthHeader from "@/app/landing/header/AuthHeader";
-import { Subtitle } from "@/app/components/Typography";
-import Loader from "@/app/components/Loader";
-import { ChatSearchIcon, ProfileIcon } from "@/app/icons";
-import { fetchChats, type ChatListItem } from "@/app/utils/chatApi";
+import AuthHeader from "@/widgets/header/AuthHeader";
+import { Subtitle } from "@/shared/ui/Typography";
+import Loader from "@/shared/ui/Loader";
+import { ChatSearchIcon, ProfileIcon } from "@/shared/ui/icons";
+import { fetchChats, type ChatListItem } from "@/shared/lib/chatApi";
 import styles from "./chat.module.scss";
 
 function ChatListAvatar({ avatarUrl, alt }: { avatarUrl?: string; alt: string }) {
