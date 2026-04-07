@@ -41,7 +41,7 @@ export interface ChatDetailResponse {
   order_company: string;
   order_date: string;
   order_sum: string;
-  order_badges: { text: string; variant: string }[];
+  order_badges: { text: string; variant: "BLUE" | "GREEN" }[];
   counterpart_id: number;
   counterpart_name: string;
   counterpart_avatar_url: string | null;

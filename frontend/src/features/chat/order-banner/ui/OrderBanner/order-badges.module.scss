@@ -1,0 +1,37 @@
+.badges {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+
+  span {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.blue {
+  background: #e3f2fd;
+
+  span {
+    color: #1565c0;
+  }
+}
+
+.green {
+  background: #e8f5e9;
+
+  span {
+    color: #2e7d32;
+  }
+}

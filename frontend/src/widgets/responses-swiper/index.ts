@@ -1,0 +1,1 @@
+export { ResponsesSwiper } from "./ResponsesSwiper";

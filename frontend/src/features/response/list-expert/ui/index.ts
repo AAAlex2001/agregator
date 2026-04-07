@@ -1,2 +1,2 @@
-export { default as ExpertResponseCard } from "./ExpertResponseCard";
+export { ExpertResponseCard } from "./ExpertResponseCard";
 export * from "./cards";

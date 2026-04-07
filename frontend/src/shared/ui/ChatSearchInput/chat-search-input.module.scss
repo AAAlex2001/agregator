@@ -1,0 +1,42 @@
+.wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  height: 44px;
+  background: #f8f8f8;
+  border: 1px solid #e3e3e3;
+  border-radius: 14px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  &:hover,
+  &:active,
+  &:focus-within {
+    border-color: #ff8a00;
+  }
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #868686;
+}
+
+.input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #131313;
+
+  &::placeholder {
+    color: #868686;
+  }
+}

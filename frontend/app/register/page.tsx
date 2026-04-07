@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { Button, Input } from "@/shared/ui";
 import { useNotifications } from "@/shared/ui/Notifications";
-import { LogoIcon, CustomerIcon, ExpertIcon, ChevronIcon, BulletIcon } from "@/shared/ui/icons";
+import { LogoIcon, CustomerIcon, ExpertIcon } from "@/shared/ui/icons";
 import styles from "./register.module.scss";
 
 import { useRegistrationState } from "@/features/auth/register/model/state";
 import { handleRegistration, getRoleType } from "@/features/auth/register/model/actions";
 import type { Role } from "@/features/auth/register/model/types";
+import { RoleSelectStep } from "@/features/auth/register/ui/RoleSelectStep";
+import { CredentialsStep } from "@/features/auth/register/ui/CredentialsStep";
 
 const roles: Role[] = [
   {
@@ -21,9 +21,9 @@ const roles: Role[] = [
     description: [
       "Разместите заказ на платформе",
       "Договаривайтесь с подходящими аттестованными экспертами",
-      "Напишите отзыв и оцените работу"
+      "Напишите отзыв и оцените работу",
     ],
-    photo: "/advantages__3.jpg"
+    photo: "/advantages__3.jpg",
   },
   {
     id: 2,
@@ -33,10 +33,10 @@ const roles: Role[] = [
     description: [
       "Найдите свой проект и участвуйте в тендере",
       "Договаривайтесь напрямую",
-      "Выполните заказ, получите отзыв и оценку"
+      "Выполните заказ, получите отзыв и оценку",
     ],
-    photo: "/advantages_1.jpg"
-  }
+    photo: "/advantages_1.jpg",
+  },
 ];
 
 export default function RegisterPage() {
@@ -44,18 +44,8 @@ export default function RegisterPage() {
   const state = useRegistrationState();
   const { showSuccess, showError } = useNotifications();
 
-  const toggleCard = (id: number) => {
-    state.setOpenedCardId(state.openedCardId === id ? null : id);
-  };
-
-  const handleSelectRole = (roleId: number) => {
-    state.setSelectedRole(roleId);
-    state.setStep(2);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!state.selectedRole) {
       state.setError("Выберите роль");
       showError("Выберите роль");
@@ -75,16 +65,16 @@ export default function RegisterPage() {
           firstName: state.firstName,
           lastName: state.lastName,
         },
-        (userId) => {
+        () => {
           showSuccess("Регистрация прошла успешно");
           router.push("/login");
         },
         (error) => {
           state.setError(error);
           showError(error);
-        }
+        },
       );
-    } catch (err) {
+    } catch {
     } finally {
       state.setIsLoading(false);
     }
@@ -109,146 +99,33 @@ export default function RegisterPage() {
             </span>
           </div>
 
-          {state.error && (
-            <div className={styles.errorMessage}>
-              {state.error}
-            </div>
-          )}
+          {state.error && <div className={styles.errorMessage}>{state.error}</div>}
 
           {state.step === 1 ? (
-            <div className={styles.stepContent} key="step1">
-              <div className={styles.rolesContainer}>
-                {roles.map((role) => {
-                  const isOpen = state.openedCardId === role.id;
-                  return (
-                    <div
-                      key={role.id}
-                      className={`${styles.roleCard} ${isOpen ? styles.roleCardOpen : ''}`}
-                      onClick={() => toggleCard(role.id)}
-                    >
-                      {role.photo && (
-                        <div className={`${styles.roleImage} ${isOpen ? styles.visible : ''}`}>
-                          <Image src={role.photo} alt={role.title} fill style={{ objectFit: "cover" }} />
-                        </div>
-                      )}
-                      <div className={styles.roleContent}>
-                        <div className={styles.roleHeader}>
-                          <div className={styles.roleIcon}>{role.icon}</div>
-                          <h3 className={styles.roleTitle}>{role.title}</h3>
-                          <ChevronIcon
-                            className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
-                            color="#FFB800"
-                          />
-                        </div>
-                        <div className={`${styles.roleDescriptionWrapper} ${isOpen ? styles.roleDescriptionOpen : ''}`}>
-                          <div className={styles.roleDescriptionInner}>
-                            <h4 className={styles.expandedTitle}>{role.expandedTitle}</h4>
-                            <ul className={styles.descriptionList}>
-                              {role.description.map((item, index) => (
-                                <li key={index} className={styles.descriptionItem}>
-                                  <span className={styles.bullet}>
-                                    <BulletIcon />
-                                  </span>
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                            <Button
-                              variant="outlineOrange"
-                              size="md"
-                              fullWidth
-                              className={styles.selectButton}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSelectRole(role.id);
-                              }}
-                            >
-                              Выбрать
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <RoleSelectStep
+              roles={roles}
+              openedCardId={state.openedCardId}
+              onToggleCard={(id) => state.setOpenedCardId(state.openedCardId === id ? null : id)}
+              onSelectRole={(id) => { state.setSelectedRole(id); state.setStep(2); }}
+              styles={styles}
+            />
           ) : (
-            <div className={styles.stepContent} key="step2">
-              <form onSubmit={handleSubmit} className={styles.form}>
-                {state.selectedRole === 2 && (
-                  <>
-                    <Input
-                      id="lastName"
-                      variant="text"
-                      value={state.lastName}
-                      onChange={(e) => state.setLastName(e.target.value)}
-                      placeholder="Фамилия"
-                      required
-                    />
-                    <Input
-                      id="firstName"
-                      variant="text"
-                      value={state.firstName}
-                      onChange={(e) => state.setFirstName(e.target.value)}
-                      placeholder="Имя"
-                      required
-                    />
-                  </>
-                )}
-                <Input
-                  id="login"
-                  variant="emailOrPhone"
-                  value={state.login}
-                  onChange={(e) => state.setLogin(e.target.value)}
-                  placeholder="Электронная почта или телефон"
-                  required
-                />
-
-                <Input
-                  id="password"
-                  variant="password"
-                  value={state.password}
-                  onChange={(e) => state.setPassword(e.target.value)}
-                  placeholder="Пароль"
-                  required
-                />
-
-                <ul className={styles.passwordRequirements}>
-                  <li className={state.password.length >= 6 ? styles.requirementMet : ''}>
-                    Не менее 6 символов
-                  </li>
-                  <li className={/[A-Z]/.test(state.password) ? styles.requirementMet : ''}>
-                    Хотя бы одна заглавная буква (A-Z)
-                  </li>
-                  <li className={/[a-z]/.test(state.password) ? styles.requirementMet : ''}>
-                    Хотя бы одна строчная буква (a-z)
-                  </li>
-                  <li className={state.password.length > 0 && /^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/`~ ]+$/.test(state.password) ? styles.requirementMet : ''}>
-                    Только латинские буквы, цифры и спецсимволы
-                  </li>
-                </ul>
-
-                <Input
-                  id="repeatPassword"
-                  variant="password"
-                  value={state.repeatPassword}
-                  onChange={(e) => state.setRepeatPassword(e.target.value)}
-                  placeholder="Повторите пароль"
-                  required
-                />
-
-                  <Button
-                    type="submit"
-                    variant="chat"
-                    size="lg"
-                    fullWidth
-                    isLoading={state.isLoading}
-                  >
-                    Зарегистрироваться
-                  </Button>
-              </form>
-            </div>
+            <CredentialsStep
+              selectedRole={state.selectedRole}
+              lastName={state.lastName}
+              firstName={state.firstName}
+              login={state.login}
+              password={state.password}
+              repeatPassword={state.repeatPassword}
+              isLoading={state.isLoading}
+              onLastNameChange={state.setLastName}
+              onFirstNameChange={state.setFirstName}
+              onLoginChange={state.setLogin}
+              onPasswordChange={state.setPassword}
+              onRepeatPasswordChange={state.setRepeatPassword}
+              onSubmit={handleSubmit}
+              styles={styles}
+            />
           )}
 
           <div className={styles.footer}>
@@ -264,4 +141,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

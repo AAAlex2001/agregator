@@ -1,0 +1,34 @@
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #ebebeb;
+  border: 1px solid #e3e3e3;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fallback {
+  width: 24px;
+  height: 24px;
+
+  path {
+    fill: #4d4d4d;
+  }
+}
+
+.spacer {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}

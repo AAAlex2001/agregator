@@ -6,7 +6,10 @@
       "Bash(sed -i 's|from \"\\\\.\\\\./OrderDetailsModal/types\"|from \"@/features/order/details/ui/OrderDetailsModal/types\"|' src/features/order/respond/ui/ResponseAnswerCard1/ResponseAnswerCard1.tsx src/features/order/respond/ui/ResponseAnswerCard2/ResponseAnswerCard2.tsx)",
       "Bash(sed -i 's|from \"\\\\.\\\\./\\\\.\\\\./OrderDetailsModal/types\"|from \"@/features/order/details/ui/OrderDetailsModal/types\"|' src/features/order/respond/ui/ResponseAnswerCard1/sections/OrderSummary.tsx)",
       "Bash(sed -i 's|from \"\\\\.\\\\./components/types\"|from \"../ui/component-types\"|' src/features/response/list-expert/model/mappers.ts src/features/response/list-expert/model/types.ts)",
-      "Bash(sed -i 's|from \"\\\\.\\\\./types\"|from \"../component-types\"|' src/features/response/list-expert/ui/ExpertResponseCard/ExpertResponseCard.tsx)"
+      "Bash(sed -i 's|from \"\\\\.\\\\./types\"|from \"../component-types\"|' src/features/response/list-expert/ui/ExpertResponseCard/ExpertResponseCard.tsx)",
+      "Bash(sed -i -e 's|from \"./chat.module.scss\"|from \"./chat-list.module.scss\"|' -e 's|export default function ChatListPage\\(\\)|export default function ChatList\\({ routeBase }: { routeBase: string }\\)|' -e 's|`/customer/chat/${chat.uuid}`|`${routeBase}/${chat.uuid}`|' src/widgets/chat-list/ChatList.tsx)",
+      "Bash(sed -i -e 's|from \"./chatWindow.module.scss\"|from \"./chat-window.module.scss\"|' -e 's|^const ROUTE_BASE = \"/customer/chat\";|// routeBase comes from props|' -e 's|export default function ChatWindowPage\\(\\)|export default function ChatWindow\\({ routeBase }: { routeBase: string }\\)|' -e 's|ROUTE_BASE|routeBase|g' src/widgets/chat-window/ChatWindow.tsx)",
+      "Read(//c/Users/HomePC/.claude/projects/c--Users-HomePC-Documents-GitHub-agregator/**)"
     ]
   }
 }

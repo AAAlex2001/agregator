@@ -1,0 +1,87 @@
+.body {
+  height: calc(100dvh - 74px);
+  min-height: calc(100dvh - 74px);
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 0;
+  background: #fff;
+  border: 1px solid #ffdda9;
+  border-radius: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 138, 0, 0.25);
+    border-radius: 4px;
+  }
+}
+
+.loader,
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.desktopEmptyState {
+  display: none;
+}
+
+.emptyStateText {
+  margin: 0;
+  text-align: center;
+}
+
+@media (min-width: 1200px) {
+  .body {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .card {
+    flex: 0 0 24%;
+    min-width: 0;
+  }
+
+  .desktopEmptyState {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #ffdda9;
+    border-radius: 24px;
+    box-sizing: border-box;
+  }
+}
