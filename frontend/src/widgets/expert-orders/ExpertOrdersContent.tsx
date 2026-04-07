@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { useRef } from "react";
 import AuthHeader from "@/widgets/header/AuthHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import OrderCard from "@/entities/order/ui/OrderCard";
@@ -11,7 +11,7 @@ import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
 import { useExpertOrdersState } from "@/features/order/list-expert/model/state";
 import styles from "./expert-orders.module.scss";
 
-function OrdersPageContent() {
+export function ExpertOrdersContent() {
   const { showSuccess } = useNotifications();
   const s = useExpertOrdersState();
 
@@ -99,13 +99,5 @@ function OrdersPageContent() {
         />
       </div>
     </>
-  );
-}
-
-export function ExpertOrdersContent() {
-  return (
-    <Suspense fallback={<><AuthHeader /><div className={styles.wrapper}><div className={styles.statusState}><Loader label="" size="lg" /></div></div></>}>
-      <OrdersPageContent />
-    </Suspense>
   );
 }

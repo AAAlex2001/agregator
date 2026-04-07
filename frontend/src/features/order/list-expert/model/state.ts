@@ -1,5 +1,4 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { useOrdersWebSocket } from "../lib/useOrdersWebSocket";
@@ -47,8 +46,10 @@ export function useExpertOrdersState() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { balance } = useUserProfile();
 
-  const searchParams = useSearchParams();
-  const returnOrderId = searchParams.get("orderId");
+  const [returnOrderId] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("orderId");
+  });
 
   const [selectedOrder, setSelectedOrder] = useState<OrderCardViewModel | null>(null);
   const [isResponding, setIsResponding] = useState(false);
