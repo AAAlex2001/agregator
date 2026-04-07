@@ -1,19 +1,7 @@
 import { fetchWithSessionRefresh } from "@/shared/lib/sessionAuth";
+import type { ReviewListResponse } from "./types";
 
-export interface ReviewItem {
-  id: number;
-  order_title: string;
-  company_name: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-}
-
-export interface ReviewListResponse {
-  reviews: ReviewItem[];
-  total: number;
-  avg_rating: number;
-}
+export type { ReviewItem, ReviewListResponse } from "./types";
 
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL || "/api";

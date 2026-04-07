@@ -1,64 +1,107 @@
-import { useReducer } from "react";
-import type { ResponseCardViewModel, ResponseCounters, ResponsesState } from "./types";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useResponsesState } from "@/features/response/shared/model/state";
+import { EXPERT_TAB_META } from "@/features/response/shared/model/tab-meta";
+import type { ResponseCardViewModel, ResponseTabKey } from "@/features/response/shared/model/types";
+import type { Step2FormData } from "@/features/order/details/ui/OrderDetailsModal/types";
+import {
+  fetchExpertResponses,
+  handleShareResponse,
+  handleOpenChat,
+  handleWithdrawReview,
+  handleStartOrComplete,
+  handleEditResponse,
+  buildEditOrderDetails,
+  buildEditInitialData,
+  buildWithdrawProps,
+} from "./actions";
 
-type Action =
-  | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_ERROR"; payload: string | null }
-  | { type: "SET_ITEMS"; payload: ResponseCardViewModel[] }
-  | { type: "SET_COUNTERS"; payload: ResponseCounters }
-  | { type: "RESET" };
+export { useResponsesState } from "@/features/response/shared/model/state";
 
-const initialState: ResponsesState = {
-  items: [],
-  counters: {
-    review: 0,
-    in_progress: 0,
-    rejected: 0,
-    accepted: 0,
-    completed: 0,
-  },
-  isLoading: false,
-  error: null,
-};
+type ActionMode = "withdraw" | "start" | "complete" | "chat" | null;
 
-function reducer(state: ResponsesState, action: Action): ResponsesState {
-  switch (action.type) {
-    case "SET_LOADING":
-      return { ...state, isLoading: action.payload };
-    case "SET_ERROR":
-      return { ...state, error: action.payload };
-    case "SET_ITEMS":
-      return { ...state, items: action.payload };
-    case "SET_COUNTERS":
-      return { ...state, counters: action.payload };
-    case "RESET":
-      return initialState;
-    default:
-      return state;
-  }
-}
+export function useExpertResponsesState() {
+  const rs = useResponsesState();
+  const router = useRouter();
 
-export function useResponsesState(): ResponsesState & {
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  setItems: (items: ResponseCardViewModel[]) => void;
-  setCounters: (counters: ResponseCounters) => void;
-  reset: () => void;
-} {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [activeTab, setActiveTab] = useState<ResponseTabKey>("review");
+  const [actionLoading, setActionLoadingMap] = useState<Record<number, ActionMode>>({});
+  const [editingResponse, setEditingResponse] = useState<ResponseCardViewModel | null>(null);
+  const [isEditSubmitting, setIsEditSubmitting] = useState(false);
+  const [withdrawTarget, setWithdrawTarget] = useState<ResponseCardViewModel | null>(null);
 
-  const setLoading = (loading: boolean) => dispatch({ type: "SET_LOADING", payload: loading });
-  const setError = (error: string | null) => dispatch({ type: "SET_ERROR", payload: error });
-  const setItems = (items: ResponseCardViewModel[]) => dispatch({ type: "SET_ITEMS", payload: items });
-  const setCounters = (counters: ResponseCounters) => dispatch({ type: "SET_COUNTERS", payload: counters });
-  const reset = () => dispatch({ type: "RESET" });
+  const setAction = (id: number, mode: ActionMode) =>
+    setActionLoadingMap((prev) => ({ ...prev, [id]: mode }));
+
+  const reload = async () => {
+    rs.setLoading(true);
+    rs.setError(null);
+    try {
+      await fetchExpertResponses(activeTab,
+        ({ items, counters }) => { rs.setItems(items); rs.setCounters(counters); },
+        (msg) => rs.setError(msg),
+      );
+    } finally { rs.setLoading(false); }
+  };
+
+  useEffect(() => { void reload(); }, [activeTab]);
+
+  const tabs = EXPERT_TAB_META.map((m) => ({ ...m, count: rs.counters[m.key] }));
+  const activeTabLabel = EXPERT_TAB_META.find((t) => t.key === activeTab)?.label ?? "На рассмотрении";
 
   return {
-    ...state,
-    setLoading,
-    setError,
-    setItems,
-    setCounters,
-    reset,
+    ...rs, activeTab, setActiveTab, tabs, activeTabLabel,
+    actionLoading, editingResponse, setEditingResponse,
+    isEditSubmitting, withdrawTarget, setWithdrawTarget,
+    reload,
+
+    editOrderDetails: editingResponse ? buildEditOrderDetails(editingResponse) : null,
+    editInitialData: editingResponse ? buildEditInitialData(editingResponse) : undefined,
+    withdrawProps: buildWithdrawProps(withdrawTarget),
+
+    onShare: (publicId: string, onCopied: () => void) => handleShareResponse(publicId, onCopied),
+
+    onChat: (rid: number, oid: number) => {
+      setAction(rid, "chat");
+      void handleOpenChat(oid,
+        (uuid) => { setAction(rid, null); router.push(`/expert/chat/${uuid}`); },
+        (msg) => { setAction(rid, null); rs.setError(msg); },
+      );
+    },
+
+    onStart: (id: number) => {
+      setAction(id, "start");
+      void handleStartOrComplete(id, false,
+        () => { setAction(id, null); void reload(); },
+        (msg) => { setAction(id, null); rs.setError(msg); },
+      );
+    },
+
+    onComplete: (id: number) => {
+      setAction(id, "complete");
+      void handleStartOrComplete(id, true,
+        () => { setAction(id, null); void reload(); },
+        (msg) => { setAction(id, null); rs.setError(msg); },
+      );
+    },
+
+    onWithdrawConfirm: () => {
+      if (!withdrawTarget) return;
+      const wid = withdrawTarget.id;
+      setAction(wid, "withdraw");
+      void handleWithdrawReview(wid,
+        () => { setAction(wid, null); setWithdrawTarget(null); void reload(); },
+        (msg) => { setAction(wid, null); rs.setError(msg); },
+      );
+    },
+
+    onEditSubmit: (_order: unknown, formData: Step2FormData) => {
+      if (!editingResponse) return;
+      setIsEditSubmitting(true);
+      void handleEditResponse(editingResponse.id, formData,
+        () => { setIsEditSubmitting(false); setEditingResponse(null); void reload(); },
+        (msg) => { setIsEditSubmitting(false); rs.setError(msg); },
+      );
+    },
   };
 }

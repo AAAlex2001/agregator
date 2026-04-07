@@ -41,3 +41,11 @@ export function parseRubToKopecks(raw: string): number {
   if (!rub || rub <= 0 || !Number.isFinite(rub)) return 0;
   return Math.round(rub * 100);
 }
+
+/** Парсит отображаемую сумму "1 234,56 ₽" → копейки. 0 если невалидно */
+export function parseDisplayAmountToKopecks(value: string): number {
+  const normalized = value.replace(/₽/g, "").replace(/\s/g, "").replace(",", ".").trim();
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed <= 0) return 0;
+  return Math.round(parsed * 100);
+}

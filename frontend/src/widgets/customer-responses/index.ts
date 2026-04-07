@@ -1,0 +1,1 @@
+export { CustomerResponsesContent } from "./CustomerResponsesContent";
