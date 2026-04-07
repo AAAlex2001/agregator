@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchChats, type ChatListItem } from "@/shared/lib/chatApi";
 
-export function useChatList() {
+export function useChatListState() {
   const [chats, setChats] = useState<ChatListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,9 +23,4 @@ export function useChatList() {
   }, []);
 
   return { chats, setChats, loading };
-}
-
-export function filterChats(chats: ChatListItem[], search: string) {
-  const q = search.toLowerCase();
-  return chats.filter((c) => c.counterpart_name.toLowerCase().includes(q));
 }

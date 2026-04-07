@@ -6,7 +6,8 @@ import { NotificationProvider, useNotifications } from "@/shared/ui/Notification
 import Title from "@/shared/ui/Typography/Title";
 import Subtitle from "@/shared/ui/Typography/Subtitle";
 import AuthHeader from "@/widgets/header/AuthHeader";
-import { fetchProfile, type UserProfile } from "@/features/profile/settings/model/api";
+import { fetchProfile } from "@/features/profile/settings/model/api";
+import type { UserProfile } from "@/features/profile/settings/model/types";
 import { PersonalDataForm } from "@/features/profile/settings/ui/PersonalDataForm";
 import styles from "./settings.module.scss";
 

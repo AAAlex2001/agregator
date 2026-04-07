@@ -7,7 +7,8 @@ import { NotificationProvider, useNotifications } from "@/shared/ui/Notification
 import Title from "@/shared/ui/Typography/Title";
 import Subtitle from "@/shared/ui/Typography/Subtitle";
 import AuthHeader from "@/widgets/header/AuthHeader";
-import { fetchProfile, type UserProfile } from "@/features/profile/settings/model/api";
+import { fetchProfile } from "@/features/profile/settings/model/api";
+import type { UserProfile } from "@/features/profile/settings/model/types";
 import { PersonalDataForm } from "@/features/profile/settings/ui/PersonalDataForm";
 import { FinancePanel } from "@/features/balance/finance-panel/ui/FinancePanel";
 import styles from "./settings.module.scss";
@@ -57,7 +58,7 @@ function ExpertSettingsContent() {
           ) : (
             <FinancePanel
               balance={profile.balance ?? 0}
-              onBalanceChange={(b) => setProfile((prev) => (prev ? { ...prev, balance: b } : prev))}
+              onBalanceChange={(b) => setProfile((prev: UserProfile | null) => (prev ? { ...prev, balance: b } : prev))}
               returnUrl={typeof window !== "undefined" ? `${window.location.origin}/expert/settings?section=finance` : ""}
               styles={styles}
             />

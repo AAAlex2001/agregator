@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { fetchProfile } from "@/features/profile/settings/model/api";
-import type { UserProfile } from "@/features/profile/settings/model/api";
+import type { UserProfile } from "@/features/profile/settings/model/types";
 
 interface UseUserProfileResult {
   profile: UserProfile | null;

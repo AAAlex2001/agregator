@@ -7,7 +7,7 @@ import Loader from "@/shared/ui/Loader";
 import { ArrowIcon } from "@/shared/ui/icons";
 import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
 import { useLockBodyScroll } from "@/shared/lib/hooks/useLockBodyScroll";
-import { useChatList } from "@/features/chat/use-chat-list";
+import { useChatListState } from "@/features/chat/use-chat-list";
 import { useChatThread, groupMessages } from "@/features/chat/use-chat-thread";
 import { SendMessageBar } from "@/features/chat/send-message";
 import { OrderBanner } from "@/features/chat/order-banner";
@@ -23,7 +23,7 @@ export default function ChatWindow({ routeBase }: { routeBase: string }) {
 
   useLockBodyScroll();
 
-  const { chats, setChats } = useChatList();
+  const { chats, setChats } = useChatListState();
   const { chat, messages, loading, threadRef, appendMessage } = useChatThread(chatUuid, currentUserId);
 
   const groups = groupMessages(messages);

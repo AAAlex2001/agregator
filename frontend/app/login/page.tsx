@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Input, Tabs } from "@/shared/ui";
 import { useNotifications } from "@/shared/ui/Notifications";
-import Button from "@/shared/ui/Button/Button";
 import { LogoIcon } from "@/shared/ui/icons";
+import { useLoginState, handleLogin, LoginForm } from "@/features/auth/login";
 import styles from "./login.module.scss";
-import { handleLogin } from "@/features/auth/login/model/actions";
-import { useLoginState } from "@/features/auth/login/model/state";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,7 +24,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     state.setIsLoading(true);
     state.setError(null);
 
@@ -46,7 +42,7 @@ export default function LoginPage() {
         (error) => {
           state.setError(error);
           showError(error);
-        }
+        },
       );
     } finally {
       state.setIsLoading(false);
@@ -56,7 +52,6 @@ export default function LoginPage() {
   return (
     <div className={styles.container}>
       <div className={styles.background} />
-
       <div className={styles.content}>
         <div className={styles.formContainer}>
           <div className={styles.header}>
@@ -65,59 +60,27 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className={styles.form}>
-            {state.error && <div className={styles.errorMessage}>{state.error}</div>}
-
-            {!fromOrder && (
-              <Tabs
-                tabs={[
-                  { id: "CUSTOMER", label: "Заказчик" },
-                  { id: "EXPERT", label: "Эксперт" },
-                ]}
-                activeTab={state.role}
-                onTabChange={(id) => state.setRole(id as "CUSTOMER" | "EXPERT")}
-                className={styles.loginTabs}
-              />
-            )}
-
-            {fromOrder && (
-              <p className={styles.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
-            )}
-
-            <Input
-              id="login"
-              variant="emailOrPhone"
-              value={state.login}
-              onChange={(e) => state.setLogin(e.target.value)}
-              placeholder="Электронная почта или телефон"
-              required
-            />
-
-            <Input
-              id="password"
-              variant="password"
-              value={state.password}
-              onChange={(e) => state.setPassword(e.target.value)}
-              placeholder="Введите пароль"
-              required
-            />
-
-            <Button type="submit" variant="primary" fullWidth isLoading={state.isLoading}>
-              Войти
-            </Button>
-          </form>
+          <LoginForm
+            login={state.login}
+            password={state.password}
+            role={state.role}
+            isLoading={state.isLoading}
+            error={state.error}
+            fromOrder={fromOrder}
+            onLoginChange={state.setLogin}
+            onPasswordChange={state.setPassword}
+            onRoleChange={state.setRole}
+            onSubmit={handleSubmit}
+            styles={styles}
+          />
 
           <div className={styles.footer}>
             <p>
               Нет аккаунта?{" "}
-              <Link href="/register" className={styles.link}>
-                Зарегистрироваться
-              </Link>
+              <Link href="/register" className={styles.link}>Зарегистрироваться</Link>
             </p>
             <p>
-              <Link href="/forgot-password" className={styles.forgotLink}>
-                Забыли пароль?
-              </Link>
+              <Link href="/forgot-password" className={styles.forgotLink}>Забыли пароль?</Link>
             </p>
           </div>
         </div>

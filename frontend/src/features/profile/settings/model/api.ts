@@ -1,16 +1,5 @@
 import { fetchWithSessionRefresh } from "@/shared/lib/sessionAuth";
-
-export interface UserProfile {
-  id: number;
-  email: string | null;
-  phone: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  balance: number;
-  rating: number | null;
-  review_count: number;
-  role: string;
-}
+import type { UserProfile, UpdateProfilePayload } from "./types";
 
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL || "/api";
@@ -30,12 +19,7 @@ export async function fetchProfile(): Promise<UserProfile> {
   return response.json();
 }
 
-export async function updateProfile(data: {
-  first_name?: string;
-  last_name?: string;
-  phone?: string;
-  email?: string;
-}): Promise<UserProfile> {
+export async function updateProfile(data: UpdateProfilePayload): Promise<UserProfile> {
   const apiBaseUrl = getApiBaseUrl();
 
   const response = await fetchWithSessionRefresh(`${apiBaseUrl}/settings/profile`, {

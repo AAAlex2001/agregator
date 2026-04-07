@@ -6,13 +6,7 @@ import {
   markChatMessagesRead,
   type ChatMessage,
 } from "@/shared/lib/chatApi";
-
-interface UseChatWebSocketArgs {
-  chatUuid: string | null;
-  currentUserId: number;
-  onMessage: (msg: ChatMessage) => void;
-  onRead: (ids: number[]) => void;
-}
+import type { UseChatWebSocketArgs } from "./types";
 
 export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }: UseChatWebSocketArgs) {
   useEffect(() => {

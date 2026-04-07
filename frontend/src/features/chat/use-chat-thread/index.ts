@@ -1,2 +1,3 @@
-export { useChatThread } from "./model/useChatThread";
-export { groupMessages } from "./model/groupMessages";
+export { useChatThread } from "./model/state";
+export { groupMessages } from "./model/mappers";
+export type { UseChatWebSocketArgs } from "./model/types";

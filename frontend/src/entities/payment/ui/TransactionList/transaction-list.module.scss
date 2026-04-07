@@ -1,0 +1,51 @@
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.date {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #868686;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+
+.text {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #131313;
+}
+
+.empty {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+}
