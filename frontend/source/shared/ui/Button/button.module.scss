@@ -1,0 +1,175 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  width: fit-content;
+  gap: 20px;
+  white-space: nowrap;
+  transition: background 0.4s ease;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &:disabled .arrow {
+    transform: none;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.primary {
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  color: #FFF8EB;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
+}
+
+.secondary {
+  background: #FFDDA9;
+  color: #4D4D4D;
+  font-weight: 600;
+
+  &:hover,
+  &:focus-visible {
+    background-color: #FFAF38;
+  }
+}
+
+.chat {
+  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+  color: #1A1A1A;
+
+  &:hover,
+  &:focus-visible {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
+}
+
+.outline {
+  background: #ffffff;
+  color: #1A1A1A;
+  border: 2px solid #FFB800;
+
+
+
+  &:hover,
+  &:focus-visible {
+    background: #FFDDA9;
+    border-color: #FFDDA9;
+  }
+}
+
+.outlineOrange {
+  background: #ffffff;
+  color: #1A1A1A;
+  border: 2px solid #FF8A00;
+
+  &:hover,
+  &:focus-visible {
+    background: #FF8A00;
+    border-color: #FF8A00;
+    color: #ffffff;
+  }
+}
+
+.green {
+  background: #E6F4EA;
+  color: #137333;
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #D4EDDA;
+  }
+}
+
+.transparent {
+  background: transparent;
+  color: #1A1A1A;
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: #F5F5F5;
+  }
+}
+
+.settings {
+  border-radius: 40px;
+  background: #ffffff;
+  border: 2px solid #FFDDA94D;
+
+
+  &:hover,
+  &:focus-visible {
+    background-color: #FFDDA9;
+  }
+
+  &.active {
+    background: #FFDDA9;
+    border-color: transparent;
+  }
+}
+
+.sm {
+  font-size: 14px;
+  line-height: 18px;
+  padding: 12px 24px;
+  max-height: 40px;
+}
+
+.md {
+  font-size: 16px;
+  line-height: 20px;
+  padding: 12px 32px;
+  max-height: 40px;
+}
+
+.lg {
+  font-size: 18px;
+  line-height: 22px;
+  padding: 14px 40px;
+  max-height: 40px;
+}
+
+.arrow {
+  display: inline-flex;
+  transition: transform 0.5s ease;
+  color: currentColor;
+
+  svg {
+    stroke: currentColor;
+  }
+}
+
+.button:hover .arrow,
+.button:focus-visible .arrow {
+  transform: translateX(12px);
+}
+
+.inlineLoader {
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .sm {
+    font-size: 16px;
+    line-height: 20px;
+  }
+  
+  .md {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
