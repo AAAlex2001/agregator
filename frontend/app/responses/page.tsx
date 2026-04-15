@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+"use client";
 
-export default function ResponsesRedirectPage() {
-  redirect("/expert/responses");
+import { ResponsesWidget } from "@/source/widgets/responses";
+
+export default function ResponsesPage() {
+  return <ResponsesWidget />;
 }

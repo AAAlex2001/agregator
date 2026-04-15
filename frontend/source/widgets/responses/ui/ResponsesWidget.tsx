@@ -15,7 +15,7 @@ import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
 import WithdrawConfirmModal from "@/features/balance/withdraw/ui/WithdrawConfirmModal/WithdrawConfirmModal";
 import CompletionModal from "@/features/response/complete/ui/CompletionModal";
 import AddReviewModal from "@/features/response/review/ui/AddReviewModal/AddReviewModal";
-import styles from "./ResponsesWidget.module.scss";
+import s from "./ResponsesWidget.module.scss";
 
 const PAGE_TEXT: Record<UserRole, { title: string; subtitle: string }> = {
   expert: { title: "Все отклики", subtitle: "Отслеживайте статус ваших откликов" },
@@ -41,55 +41,56 @@ function buildEditInit(r: { rawDeadline: string; rawSumAmount: number; commentTe
   };
 }
 
-export function ResponsesWidget({ role }: { role: UserRole }) {
-  useUserProfile();
+export function ResponsesWidget() {
+  const { role: profileRole } = useUserProfile();
+  const role: UserRole = profileRole === "CUSTOMER" ? "customer" : "expert";
   const { showSuccess } = useNotifications();
-  const s = useResponses(role);
+  const h = useResponses(role);
   const text = PAGE_TEXT[role];
 
   const handlers = {
-    onWithdraw: s.onWithdraw,
-    onEdit: s.onEdit,
-    onShare: (pid: string) => s.onShare(pid, () => showSuccess("Ссылка скопирована")),
-    onChat: s.onChat,
-    onStart: s.onStart,
-    onComplete: s.onComplete,
-    onReject: s.onReject,
-    onAccept: s.onAccept,
-    onSelect: s.onSelect,
-    onLeaveReview: s.onLeaveReview,
+    onWithdraw: h.onWithdraw,
+    onEdit: h.onEdit,
+    onShare: (pid: string) => h.onShare(pid, () => showSuccess("Ссылка скопирована")),
+    onChat: h.onChat,
+    onStart: h.onStart,
+    onComplete: h.onComplete,
+    onReject: h.onReject,
+    onAccept: h.onAccept,
+    onSelect: h.onSelect,
+    onLeaveReview: h.onLeaveReview,
   };
 
-  const activeLabel = s.tabs.find((t) => t.id === s.activeTab)?.label ?? "";
+  const activeLabel = h.tabs.find((t) => t.id === h.activeTab)?.label ?? "";
 
   return (
     <>
       <AuthHeader />
-      <div className={styles.wrapper}>
-        <div className={styles.pageHead}>
-          <Title text={text.title} as="h1" className={styles.pageTitle} />
-          <Subtitle text={text.subtitle} className={styles.pageSubtitle} />
+      <div className={s.wrapper}>
+        <div className={s.pageHead}>
+          <Title text={text.title} as="h1" className={s.pageTitle} />
+          <Subtitle text={text.subtitle} className={s.pageSubtitle} />
         </div>
 
         <Tabs
           variant="pill"
-          tabs={s.tabs.map((t) => ({ id: t.id, label: t.label, count: t.count }))}
-          activeTab={s.activeTab}
-          onTabChange={(id) => s.setTab(id as ResponseTabKey)}
+          tabs={h.tabs.map((t) => ({ id: t.id, label: t.label, count: t.count }))}
+          activeTab={h.activeTab}
+          onTabChange={(id) => h.setTab(id as ResponseTabKey)}
         />
 
-        {s.isLoading ? (
-          <div className={styles.statusState}><Loader label="" size="lg" /></div>
-        ) : s.error ? (
-          <ResponsesState title="Ошибка загрузки" subtitle={s.error} styles={styles}
-            action={<Button variant="primary" size="sm" onClick={() => void s.reload()}>Повторить</Button>} />
-        ) : s.items.length === 0 ? (
-          <ResponsesState title={activeLabel} subtitle="Пока нет откликов" styles={styles} />
+        {h.isLoading ? (
+          <div className={s.statusState}><Loader label="" size="lg" /></div>
+        ) : h.error ? (
+          <ResponsesState title="Ошибка загрузки" subtitle={h.error} styles={s}
+            action={<Button variant="primary" size="sm" onClick={() => void h.reload()}>Повторить</Button>} />
+        ) : h.items.length === 0 ? (
+          <ResponsesState title={activeLabel} subtitle="Пока нет откликов" styles={s} />
         ) : (
-          <ResponsesSwiper items={s.items} resetKey={s.activeTab} getKey={(r) => r.id}
+          <ResponsesSwiper items={h.items} resetKey={h.activeTab} getKey={(r) => r.id}
             renderItem={(r) => (
               <ResponseCard card={r} role={role}
-                actions={getCardActions(r, s.actionLoading[r.id] ?? null, role, handlers)} />
+                actions={getCardActions(r, h.actionLoading[r.id] ?? null, role, handlers)} />
             )}
           />
         )}
@@ -98,31 +99,31 @@ export function ResponsesWidget({ role }: { role: UserRole }) {
       {role === "expert" && (
         <>
           <OrderDetailsModal
-            isOpen={Boolean(s.editing)}
-            order={s.editing ? buildEditOrder(s.editing) : null}
-            onClose={s.closeEdit}
-            onRespond={(order: unknown, form: { comment: string; costEstimate: number; deadline: string; files?: File[]; keepFiles?: string[] }) => s.onEditSubmit(form)}
-            isResponding={s.editSubmitting}
+            isOpen={Boolean(h.editing)}
+            order={h.editing ? buildEditOrder(h.editing) : null}
+            onClose={h.closeEdit}
+            onRespond={(order: unknown, form: { comment: string; costEstimate: number; deadline: string; files?: File[]; keepFiles?: string[] }) => h.onEditSubmit(form)}
+            isResponding={h.editSubmitting}
             initialStep="step2"
-            initialData={s.editing ? buildEditInit(s.editing) : undefined}
+            initialData={h.editing ? buildEditInit(h.editing) : undefined}
             submitLabel="Сохранить"
           />
           <WithdrawConfirmModal
-            isOpen={Boolean(s.withdrawTarget)}
-            onCancel={s.closeWithdraw}
-            onConfirm={s.onWithdrawConfirm}
-            isLoading={s.withdrawTarget ? s.actionLoading[s.withdrawTarget.id] === "withdraw" : false}
-            dateLabel={s.withdrawTarget?.dateLabel ?? ""}
-            date={s.withdrawTarget?.date ?? ""}
-            status={s.withdrawTarget?.status ?? ""}
-            statusColor={s.withdrawTarget?.statusColor ?? ""}
-            statusBg={s.withdrawTarget?.statusBg ?? ""}
-            orderTitle={s.withdrawTarget?.orderTitle ?? ""}
-            customer={s.withdrawTarget?.customer ?? ""}
-            orderDate={s.withdrawTarget?.orderDate ?? ""}
-            badges={s.withdrawTarget?.badges ?? []}
-            sum={s.withdrawTarget?.orderSum || s.withdrawTarget?.sum || ""}
-            balanceReturnAmount={s.withdrawTarget?.balanceReturnAmount}
+            isOpen={Boolean(h.withdrawTarget)}
+            onCancel={h.closeWithdraw}
+            onConfirm={h.onWithdrawConfirm}
+            isLoading={h.withdrawTarget ? h.actionLoading[h.withdrawTarget.id] === "withdraw" : false}
+            dateLabel={h.withdrawTarget?.dateLabel ?? ""}
+            date={h.withdrawTarget?.date ?? ""}
+            status={h.withdrawTarget?.status ?? ""}
+            statusColor={h.withdrawTarget?.statusColor ?? ""}
+            statusBg={h.withdrawTarget?.statusBg ?? ""}
+            orderTitle={h.withdrawTarget?.orderTitle ?? ""}
+            customer={h.withdrawTarget?.customer ?? ""}
+            orderDate={h.withdrawTarget?.orderDate ?? ""}
+            badges={h.withdrawTarget?.badges ?? []}
+            sum={h.withdrawTarget?.orderSum || h.withdrawTarget?.sum || ""}
+            balanceReturnAmount={h.withdrawTarget?.balanceReturnAmount}
           />
         </>
       )}
@@ -130,18 +131,18 @@ export function ResponsesWidget({ role }: { role: UserRole }) {
       {role === "customer" && (
         <>
           <CompletionModal
-            isOpen={s.completionModal}
-            onClose={s.closeCompletion}
-            onLeaveReview={s.openReviewFromCompletion}
+            isOpen={h.completionModal}
+            onClose={h.closeCompletion}
+            onLeaveReview={h.openReviewFromCompletion}
           />
           <AddReviewModal
-            isOpen={s.reviewModal && Boolean(s.reviewTarget)}
-            customerName={s.reviewTarget?.customer ?? ""}
-            orderTitle={s.reviewTarget?.orderTitle ?? ""}
-            expertName={s.reviewTarget?.expertName ?? ""}
-            onClose={s.closeReview}
+            isOpen={h.reviewModal && Boolean(h.reviewTarget)}
+            customerName={h.reviewTarget?.customer ?? ""}
+            orderTitle={h.reviewTarget?.orderTitle ?? ""}
+            expertName={h.reviewTarget?.expertName ?? ""}
+            onClose={h.closeReview}
             onSubmit={async (payload) => {
-              await s.onSubmitReview(payload);
+              await h.onSubmitReview(payload);
               showSuccess("Отзыв успешно опубликован");
             }}
           />
