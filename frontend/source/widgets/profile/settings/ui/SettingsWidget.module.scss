@@ -1,0 +1,177 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  gap: 24px;
+  max-width: 1640px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (min-width: 768px) { gap: 40px; }
+}
+
+.pageHead {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageTitle {
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+
+  @media (min-width: 768px) { font-size: 24px; line-height: 32px; }
+}
+
+.pageSubtitle {
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 20px;
+  color: #808080;
+
+  @media (min-width: 768px) { font-size: 16px; line-height: 24px; }
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 655px;
+  gap: 24px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  width: 100%;
+}
+
+.error {
+  text-align: center;
+  color: #d32f2f;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Finance section — passed as styles prop to FinancePanel */
+
+.finance {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.financeSubtitle {
+  margin: 0 !important;
+  text-align: left;
+  width: 100%;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+
+  @media (min-width: 768px) { font-size: 16px; }
+}
+
+.financeColumns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+
+  @media (min-width: 768px) { gap: 40px; }
+}
+
+.transactionColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1 1 200px;
+}
+
+.transaction {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.transactionDate {
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #000000;
+
+  @media (min-width: 768px) { font-size: 16px; }
+}
+
+.transactionText {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+  flex: 1;
+  min-width: 0;
+
+  @media (min-width: 768px) { font-size: 16px; }
+}
+
+.financeButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  @media (min-width: 768px) { flex-direction: row; gap: 8px; }
+}
+
+.financeActionButton {
+  border-radius: 10px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+
+.infoContentFinance {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  @media (min-width: 768px) { flex-direction: row; justify-content: space-between; }
+}
+
+.emptyHistory {
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #808080;
+
+  @media (min-width: 768px) { font-size: 16px; }
+}
