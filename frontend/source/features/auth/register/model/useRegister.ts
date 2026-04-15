@@ -1,73 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "../api/register.api";
 import { validateRegisterForm, getRoleType } from "./validation";
+import { registerReducer, initialRegisterState } from "./reducer";
 
 export function useRegister() {
   const router = useRouter();
+  const [state, dispatch] = useReducer(registerReducer, initialRegisterState);
 
-  const [step, setStep] = useState<1 | 2>(1);
-  const [selectedRole, setSelectedRole] = useState<number | null>(null);
-  const [openedCardId, setOpenedCardId] = useState<number | null>(null);
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const selectRole = (id: number) => {
-    setSelectedRole(id);
-    setStep(2);
-  };
-
-  const toggleCard = (id: number) => {
-    setOpenedCardId(openedCardId === id ? null : id);
-  };
+  const selectRole = (id: number) => dispatch({ type: "SELECT_ROLE", payload: id });
+  const toggleCard = (id: number) => dispatch({ type: "TOGGLE_CARD", payload: id });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRole) {
-      setError("Выберите роль");
+    if (!state.selectedRole) {
+      dispatch({ type: "SET_ERROR", payload: "Выберите роль" });
       return;
     }
 
     const formData = {
-      role: getRoleType(selectedRole),
-      login,
-      password,
-      repeatPassword,
-      firstName,
-      lastName,
+      role: getRoleType(state.selectedRole),
+      login: state.login,
+      password: state.password,
+      repeatPassword: state.repeatPassword,
+      firstName: state.firstName,
+      lastName: state.lastName,
     };
 
     const validationError = validateRegisterForm(formData);
     if (validationError) {
-      setError(validationError);
+      dispatch({ type: "SET_ERROR", payload: validationError });
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
+    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "SET_ERROR", payload: null });
 
     try {
       await registerUser(formData);
       router.push("/login");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Произошла ошибка";
-      setError(msg);
+      dispatch({ type: "SET_ERROR", payload: msg });
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
   return {
-    step, selectedRole, openedCardId, login, password, repeatPassword,
-    firstName, lastName, isLoading, error,
-    setLogin, setPassword, setRepeatPassword, setFirstName, setLastName,
-    selectRole, toggleCard, handleSubmit,
+    ...state,
+    setLogin: (v: string) => dispatch({ type: "SET_FIELD", field: "login", value: v }),
+    setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
+    setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
+    setFirstName: (v: string) => dispatch({ type: "SET_FIELD", field: "firstName", value: v }),
+    setLastName: (v: string) => dispatch({ type: "SET_FIELD", field: "lastName", value: v }),
+    selectRole,
+    toggleCard,
+    handleSubmit,
   };
 }

@@ -1,0 +1,40 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.errorMessage {
+  background: rgba(255, 138, 0, 0.12);
+  color: #1A1A1A;
+  border: 1px solid rgba(255, 138, 0, 0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.loginTabs {
+  border-width: 1px;
+  border-radius: 16px;
+  padding: 4px;
+  gap: 4px;
+  flex-direction: row;
+
+  span {
+    font-size: 13px !important;
+    line-height: 16px !important;
+    padding: 6px 0 !important;
+    border-radius: 12px !important;
+  }
+}
+
+.orderHint {
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #808080;
+  text-align: center;
+  margin: 0;
+}

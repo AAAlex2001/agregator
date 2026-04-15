@@ -27,3 +27,27 @@ export interface RegisterResponse {
   phone?: string;
   created_at: string;
 }
+
+/* ── Reducer ── */
+
+export interface RegisterState {
+  step: 1 | 2;
+  selectedRole: number | null;
+  openedCardId: number | null;
+  login: string;
+  password: string;
+  repeatPassword: string;
+  firstName: string;
+  lastName: string;
+  isLoading: boolean;
+  error: string | null;
+}
+
+type RegisterFormField = "login" | "password" | "repeatPassword" | "firstName" | "lastName";
+
+export type RegisterAction =
+  | { type: "SELECT_ROLE"; payload: number }
+  | { type: "TOGGLE_CARD"; payload: number }
+  | { type: "SET_FIELD"; field: RegisterFormField; value: string }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null };
