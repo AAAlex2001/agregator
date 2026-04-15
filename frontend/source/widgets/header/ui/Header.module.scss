@@ -1,0 +1,127 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1302;
+  backdrop-filter: blur(16px);
+  padding: 15px 10px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  gap: 12px;
+
+  @media (min-width: 768px) { gap: 20px; }
+  @media (min-width: 1440px) { gap: 32px; }
+}
+
+.logo {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    width: 212px;
+  }
+}
+
+.logoMobile {
+  display: inline-flex;
+
+  svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+  }
+
+  @media (min-width: 768px) { display: none; }
+}
+
+.logoDesktop {
+  display: none;
+
+  svg {
+    width: 212px;
+    height: 38px;
+    display: block;
+  }
+
+  @media (min-width: 768px) { display: inline-flex; }
+}
+
+.nav {
+  display: none;
+  flex: 1;
+
+  @media (min-width: 1440px) {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  a {
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 16px;
+    color: #1a1a1a;
+    padding: 14px 20px;
+    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    transition: background-color 0.3s ease;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba(255, 221, 169, 0.75);
+    }
+  }
+}
+
+.navActive {
+  background: rgba(255, 138, 0, 0.4) !important;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 138, 0, 0.5) !important;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 6px;
+
+  @media (min-width: 768px) { gap: 10px; }
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover { transform: translateY(-2px) scale(1.06); }
+  &:active { transform: scale(0.96); }
+
+  svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+  }
+}

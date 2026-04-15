@@ -1,10 +1,11 @@
 "use client";
 
-import AuthHeader from "@/widgets/header/AuthHeader";
+import { Header } from "@/source/widgets/header";
 import { Loader, Button } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
-import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
+import { usePathname } from "next/navigation";
+import { getRole } from "@/source/shared/lib/getRole";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { ResponsesState } from "@/widgets/responses-state";
 import { ResponsesSwiper } from "@/widgets/responses-swiper";
@@ -42,8 +43,8 @@ function buildEditInit(r: { rawDeadline: string; rawSumAmount: number; commentTe
 }
 
 export function ResponsesWidget() {
-  const { role: profileRole } = useUserProfile();
-  const role: UserRole = profileRole === "CUSTOMER" ? "customer" : "expert";
+  const pathname = usePathname();
+  const role: UserRole = getRole(pathname) === "CUSTOMER" ? "customer" : "expert";
   const { showSuccess } = useNotifications();
   const h = useResponses(role);
   const text = PAGE_TEXT[role];
@@ -65,7 +66,7 @@ export function ResponsesWidget() {
 
   return (
     <>
-      <AuthHeader />
+      <Header />
       <div className={s.wrapper}>
         <div className={s.pageHead}>
           <Title text={text.title} as="h1" className={s.pageTitle} />

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import AuthHeader from "@/widgets/header/AuthHeader";
+import { Header } from "@/source/widgets/header";
 import { fetchProfile, PersonalDataForm } from "@/source/features/profile/settings";
 import type { UserProfile } from "@/source/features/profile/settings";
 import { FinancePanel } from "@/source/features/finance";
@@ -35,7 +35,7 @@ export function SettingsWidget() {
 
   return (
     <>
-      <AuthHeader />
+      <Header />
       <div className={s.wrapper}>
         <div className={s.pageHead}>
           <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
