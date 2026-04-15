@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Button from "@/source/shared/ui/Button";
+import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import AuthHeader from "@/widgets/header/AuthHeader";
@@ -21,6 +21,10 @@ export function SettingsWidget() {
   );
 
   const isExpert = profile?.role === "EXPERT";
+
+  const tabs = isExpert
+    ? [{ id: "personal", label: "Личные данные" }, { id: "finance", label: "Финансы" }]
+    : [{ id: "personal", label: "Личные данные" }];
 
   useEffect(() => {
     fetchProfile()
@@ -41,18 +45,12 @@ export function SettingsWidget() {
           />
         </div>
         <div className={s.content}>
-          <div className={s.buttons}>
-            <Button variant="settings" size="sm"
-              onClick={() => setSection("personal")} isActive={section === "personal"}>
-              Личные данные
-            </Button>
-            {isExpert && (
-              <Button variant="settings" size="sm"
-                onClick={() => setSection("finance")} isActive={section === "finance"}>
-                Финансы
-              </Button>
-            )}
-          </div>
+          <Tabs
+            variant="pill"
+            tabs={tabs}
+            activeTab={section}
+            onTabChange={(id) => setSection(id as "personal" | "finance")}
+          />
 
           {error && <p className={s.error}>{error}</p>}
 
