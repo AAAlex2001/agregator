@@ -1,0 +1,24 @@
+.statusRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  @media (min-width: 768px) { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+.dateRow { display: flex; gap: 4px; align-items: center; }
+.dateLabel { font-size: 14px; color: #000; @media (min-width: 768px) { font-size: 16px; } }
+.dateValue { font-weight: 500; font-size: 14px; color: #000; @media (min-width: 768px) { font-size: 16px; } }
+.statusMessage { font-weight: 500; font-size: 16px; color: #1a1a1a; text-align: center; flex: 1; }
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: normal;
+  text-align: center;
+  word-break: break-word;
+  @media (min-width: 768px) { white-space: nowrap; }
+}

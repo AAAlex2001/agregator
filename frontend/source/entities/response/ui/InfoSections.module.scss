@@ -1,0 +1,95 @@
+/* ExpertTerms */
+.termsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  @media (min-width: 768px) { flex-direction: row; }
+}
+.termItem { display: flex; align-items: center; gap: 4px; }
+.termCost {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  @media (min-width: 768px) { flex-direction: row; justify-content: flex-end; align-items: center; }
+}
+.termLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1a1a1a;
+  white-space: nowrap;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+.termValue { font-size: 14px; color: #1a1a1a; white-space: nowrap; @media (min-width: 768px) { font-size: 16px; } }
+
+/* CommentSection */
+.commentRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  @media (min-width: 768px) { flex-direction: row; gap: 10px; }
+}
+.commentTitle {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #000;
+  white-space: nowrap;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+.commentText {
+  font-size: 14px;
+  line-height: 24px;
+  color: #1a1a1a;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+
+/* CommissionInfo */
+.commissionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  @media (min-width: 768px) { flex-direction: row; gap: 16px; }
+}
+.commissionMain { display: flex; align-items: center; gap: 4px; flex: 1; }
+.commissionLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1a1a1a;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+.commissionAmount {
+  font-weight: 500;
+  font-size: 14px;
+  color: #1a1a1a;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+.balanceReturn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  @media (min-width: 768px) { justify-content: flex-end; }
+}
+.returnLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #ff8a00;
+  @media (min-width: 768px) { font-size: 16px; }
+}
+
+/* ReminderSection */
+.reminderRow { display: flex; align-items: center; gap: 4px; width: 100%; }
+.reminderText {
+  font-weight: 500;
+  font-size: 14px;
+  color: #ff8a00;
+  @media (min-width: 768px) { font-size: 16px; }
+}

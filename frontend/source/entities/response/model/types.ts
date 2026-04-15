@@ -1,0 +1,96 @@
+export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
+export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted" | "completed";
+export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
+
+export interface ResponseBadge { text: string; variant: BadgeVariant }
+
+export interface ResponseCounters {
+  review: number;
+  in_progress: number;
+  rejected: number;
+  accepted: number;
+  completed: number;
+}
+
+export interface ResponseApiBadge { text: string; variant: string }
+
+export interface ResponseApiItem {
+  id: number;
+  order_id: number;
+  order_public_id: string;
+  status: ResponseStatus;
+  date: string;
+  comment: string;
+  proposed_sum: string;
+  proposed_deadline: string;
+  order_title: string;
+  order_sum: string;
+  order_date: string;
+  order_comment?: string;
+  customer_name: string;
+  customer_company: string;
+  technical_files: string[];
+  response_files: string[];
+  badges: ResponseApiBadge[];
+  created_at: string;
+  order_commission_amount: string;
+  commission_paid: string | null;
+  balance_return: string | null;
+  proposed_sum_amount_raw: number;
+  proposed_deadline_raw: string;
+  expert_name: string;
+  expert_rating: number | null;
+  expert_review_count: number;
+  confirm_deadline: string;
+  expert_confirmed: boolean;
+  has_review: boolean;
+}
+
+export interface ResponsesApiList {
+  items: ResponseApiItem[];
+  total: number;
+  counters: ResponseCounters;
+}
+
+export interface ResponseCardData {
+  id: number;
+  orderId: number;
+  orderPublicId: string;
+  rawStatus: ResponseStatus;
+  dateLabel: string;
+  date: string;
+  status: string;
+  statusColor: string;
+  statusBg: string;
+  statusMessage?: string;
+  orderTitle: string;
+  orderSum: string;
+  customer: string;
+  orderDate: string;
+  badges: ResponseBadge[];
+  sum: string;
+  deadline: string;
+  costEstimate: string;
+  commissionText: string;
+  commissionAmount: string;
+  orderCommissionAmount: string;
+  commissionStatus?: string;
+  balanceReturnText?: string;
+  balanceReturnAmount?: string;
+  commentTitle: string;
+  commentText: string;
+  orderComment?: string;
+  techSpecFiles: string[];
+  orderTechSpecFiles: string[];
+  rawSumAmount: number;
+  rawDeadline: string;
+  expertConfirmed: boolean;
+  reminderText?: string;
+}
+
+export interface CardAction {
+  text: string;
+  variant: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
+  onClick: () => void;
+  isLoading?: boolean;
+}
