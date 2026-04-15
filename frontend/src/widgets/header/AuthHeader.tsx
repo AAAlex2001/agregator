@@ -35,7 +35,7 @@ const AuthHeader = ({
 
   const rawRole = roleProp ?? profileRole;
   const role = rawRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
-  const settingsHref = role === "Заказчик" ? "/customer/settings" : "/expert/settings";
+  const settingsHref = "/settings";
 
   const name = nameProp ?? displayName;
   const rating = ratingProp ?? profileRating;

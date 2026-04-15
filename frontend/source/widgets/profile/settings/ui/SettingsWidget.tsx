@@ -8,7 +8,7 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import AuthHeader from "@/widgets/header/AuthHeader";
 import { fetchProfile, PersonalDataForm } from "@/source/features/profile/settings";
 import type { UserProfile } from "@/source/features/profile/settings";
-import { FinancePanel } from "@/features/balance/finance-panel/ui/FinancePanel";
+import { FinancePanel } from "@/source/features/finance";
 import s from "./SettingsWidget.module.scss";
 
 export function SettingsWidget() {
@@ -65,9 +65,8 @@ export function SettingsWidget() {
               balance={profile.balance ?? 0}
               onBalanceChange={(b) => setProfile((prev) => prev ? { ...prev, balance: b } : prev)}
               returnUrl={typeof window !== "undefined"
-                ? `${window.location.origin}/expert/settings?section=finance`
+                ? `${window.location.origin}/settings?section=finance`
                 : ""}
-              styles={s}
             />
           )}
         </div>

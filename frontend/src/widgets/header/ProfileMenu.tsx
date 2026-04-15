@@ -83,7 +83,7 @@ const ProfileMenu = ({
       window.location.href = confirmation_url;
     } catch {
       setIsTopUpModalOpen(false);
-      router.push("/expert/settings?section=finance");
+      router.push("/settings?section=finance");
     } finally {
       setIsDepositing(false);
     }
@@ -195,7 +195,7 @@ const ProfileMenu = ({
 
             <div className={styles.bottomLinks}>
               <Link
-                href={role === "Эксперт" ? "/expert/settings" : "/customer/settings"}
+                href="/settings"
                 className={styles.bottomLink}
                 onClick={closeMenu}
               >

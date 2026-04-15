@@ -55,6 +55,6 @@ export async function handleTopUp(
     const { confirmation_url } = await createPayment(amountKopecks, returnUrl);
     window.location.href = confirmation_url;
   } catch {
-    window.location.href = `/expert/settings?section=finance&returnOrderId=${orderId}`;
+    window.location.href = `/settings?section=finance&returnOrderId=${orderId}`;
   }
 }
