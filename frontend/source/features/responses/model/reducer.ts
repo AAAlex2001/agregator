@@ -1,6 +1,6 @@
 import type { ResponseCardData, ResponseCounters, ResponseTabKey } from "@/source/entities/response";
 
-type ActionMode = "withdraw" | "start" | "complete" | "chat" | null;
+type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | null;
 
 export interface State {
   items: ResponseCardData[];
@@ -12,6 +12,9 @@ export interface State {
   editing: ResponseCardData | null;
   editSubmitting: boolean;
   withdrawTarget: ResponseCardData | null;
+  completionModal: boolean;
+  reviewModal: boolean;
+  reviewTarget: ResponseCardData | null;
 }
 
 export type Action =
@@ -22,7 +25,10 @@ export type Action =
   | { type: "ACTION_LOADING"; id: number; mode: ActionMode }
   | { type: "EDITING"; value: ResponseCardData | null }
   | { type: "EDIT_SUBMITTING"; value: boolean }
-  | { type: "WITHDRAW_TARGET"; value: ResponseCardData | null };
+  | { type: "WITHDRAW_TARGET"; value: ResponseCardData | null }
+  | { type: "COMPLETION_MODAL"; value: boolean }
+  | { type: "REVIEW_MODAL"; value: boolean }
+  | { type: "REVIEW_TARGET"; value: ResponseCardData | null };
 
 export const initial: State = {
   items: [],
@@ -34,6 +40,9 @@ export const initial: State = {
   editing: null,
   editSubmitting: false,
   withdrawTarget: null,
+  completionModal: false,
+  reviewModal: false,
+  reviewTarget: null,
 };
 
 export function reducer(state: State, action: Action): State {
@@ -46,6 +55,9 @@ export function reducer(state: State, action: Action): State {
     case "EDITING":          return { ...state, editing: action.value };
     case "EDIT_SUBMITTING":  return { ...state, editSubmitting: action.value };
     case "WITHDRAW_TARGET":  return { ...state, withdrawTarget: action.value };
+    case "COMPLETION_MODAL": return { ...state, completionModal: action.value };
+    case "REVIEW_MODAL":     return { ...state, reviewModal: action.value };
+    case "REVIEW_TARGET":    return { ...state, reviewTarget: action.value };
     default:                 return state;
   }
 }

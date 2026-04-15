@@ -63,5 +63,9 @@ export function mapApiToCard(item: ResponseApiItem): ResponseCardData {
       item.status === "IN_PROGRESS" && !confirmed && item.confirm_deadline
         ? `Подтвердите согласие до ${item.confirm_deadline}`
         : undefined,
+    expertName: item.expert_name || "",
+    expertRating: item.expert_rating,
+    expertReviewCount: item.expert_review_count ?? 0,
+    hasReview: item.has_review ?? false,
   };
 }

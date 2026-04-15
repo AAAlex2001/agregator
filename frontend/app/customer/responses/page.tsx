@@ -1,7 +1,7 @@
 "use client";
 
-import { CustomerResponsesContent } from "@/widgets/customer-responses";
+import { ResponsesWidget } from "@/source/widgets/responses";
 
 export default function CustomerResponsesPage() {
-  return <CustomerResponsesContent />;
+  return <ResponsesWidget role="customer" />;
 }

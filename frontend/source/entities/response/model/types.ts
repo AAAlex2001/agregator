@@ -1,6 +1,7 @@
 export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted" | "completed";
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
+export type UserRole = "expert" | "customer";
 
 export interface ResponseBadge { text: string; variant: BadgeVariant }
 
@@ -86,11 +87,15 @@ export interface ResponseCardData {
   rawDeadline: string;
   expertConfirmed: boolean;
   reminderText?: string;
+  expertName: string;
+  expertRating: number | null;
+  expertReviewCount: number;
+  hasReview: boolean;
 }
 
 export interface CardAction {
   text: string;
-  variant: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat";
+  variant: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat" | "transparent";
   onClick: () => void;
   isLoading?: boolean;
 }

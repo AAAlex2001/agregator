@@ -1,37 +1,45 @@
-import type { ResponseCardData, CardAction } from "../model/types";
+import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { StatusHeader } from "./StatusHeader";
+import { ExpertInfo } from "./ExpertInfo";
 import { OrderSection } from "./OrderSection";
 import { ExpertTerms, CommentSection, CommissionInfo, ReminderSection } from "./InfoSections";
 import { TechSpecFiles } from "./TechSpecFiles";
 import { ActionButtons } from "./ActionButtons";
 import s from "./ResponseCard.module.scss";
 
-function getFlags(card: ResponseCardData) {
+function getFlags(card: ResponseCardData, role: UserRole) {
+  if (role === "customer") {
+    return { expertInfo: true, comment: true, orderComment: false, commission: false, balanceReturn: false, reminder: false };
+  }
   const c = card.expertConfirmed;
   switch (card.rawStatus) {
     case "REVIEW":
-      return { comment: false, orderComment: true,  commission: true,  balanceReturn: true,  reminder: false };
+      return { expertInfo: false, comment: false, orderComment: true,  commission: true,  balanceReturn: true,  reminder: false };
     case "ACCEPTED":
-      return { comment: true,  orderComment: true,  commission: true,  balanceReturn: true,  reminder: true };
+      return { expertInfo: false, comment: true,  orderComment: true,  commission: true,  balanceReturn: true,  reminder: true };
     case "IN_PROGRESS":
-      return { comment: !c,    orderComment: !c,    commission: true,  balanceReturn: !c,    reminder: !c };
+      return { expertInfo: false, comment: !c,    orderComment: !c,    commission: true,  balanceReturn: !c,    reminder: !c };
     case "REJECTED":
-      return { comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
     case "COMPLETED":
-      return { comment: false, orderComment: true,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: false, orderComment: true,  commission: true,  balanceReturn: false, reminder: false };
     default:
-      return { comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
   }
 }
 
 interface Props {
   card: ResponseCardData;
   actions: CardAction[];
+  role: UserRole;
 }
 
-export function ResponseCard({ card, actions }: Props) {
-  const f = getFlags(card);
+export function ResponseCard({ card, actions, role }: Props) {
+  const f = getFlags(card, role);
   const hasCommission = f.commission && card.commissionAmount && card.commissionAmount !== "0 ₽";
+  const termsLabels = role === "customer"
+    ? { deadline: "Срок:", cost: "Цена:" }
+    : { deadline: "Ваши сроки:", cost: "Ваша оценка стоимости работ:" };
 
   return (
     <article className={s.card}>
@@ -41,6 +49,9 @@ export function ResponseCard({ card, actions }: Props) {
           status={card.status} statusColor={card.statusColor}
           statusBg={card.statusBg} statusMessage={card.statusMessage}
         />
+        {f.expertInfo && card.expertName && (
+          <ExpertInfo name={card.expertName} rating={card.expertRating} reviewCount={card.expertReviewCount} />
+        )}
         <OrderSection
           title={card.orderTitle} customer={card.customer}
           date={card.orderDate} badges={card.badges}
@@ -48,7 +59,10 @@ export function ResponseCard({ card, actions }: Props) {
         />
         <div className={s.info}>
           {(card.deadline || card.costEstimate) && (
-            <ExpertTerms deadline={card.deadline} cost={card.costEstimate} />
+            <ExpertTerms
+              deadlineLabel={termsLabels.deadline} deadline={card.deadline}
+              costLabel={termsLabels.cost} cost={card.costEstimate}
+            />
           )}
           {f.comment && card.commentText && (
             <CommentSection title={card.commentTitle} text={card.commentText} />

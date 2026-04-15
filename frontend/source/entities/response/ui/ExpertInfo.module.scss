@@ -1,0 +1,25 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ffdda9;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.details { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.name { font-weight: 600; font-size: 16px; color: #1a1a1a; }
+.ratingRow { display: flex; align-items: center; gap: 4px; }
+.rating { font-weight: 500; font-size: 14px; color: #1a1a1a; }
+.dot { color: #999; font-size: 14px; }
+.reviews { font-size: 14px; color: #666; }
+.noReviews { font-size: 14px; color: #999; }

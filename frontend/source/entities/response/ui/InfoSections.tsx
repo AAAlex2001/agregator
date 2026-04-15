@@ -1,14 +1,21 @@
 import s from "./InfoSections.module.scss";
 
-export function ExpertTerms({ deadline, cost }: { deadline: string; cost: string }) {
+interface TermsProps {
+  deadlineLabel?: string;
+  deadline: string;
+  costLabel?: string;
+  cost: string;
+}
+
+export function ExpertTerms({ deadlineLabel = "Ваши сроки:", deadline, costLabel = "Ваша оценка стоимости работ:", cost }: TermsProps) {
   return (
     <div className={s.termsRow}>
       <div className={s.termItem}>
-        <span className={s.termLabel}>Ваши сроки:</span>
+        <span className={s.termLabel}>{deadlineLabel}</span>
         <span className={s.termValue}>{deadline}</span>
       </div>
       <div className={s.termCost}>
-        <span className={s.termLabel}>Ваша оценка стоимости работ:</span>
+        <span className={s.termLabel}>{costLabel}</span>
         <span className={s.termValue}>{cost}</span>
       </div>
     </div>

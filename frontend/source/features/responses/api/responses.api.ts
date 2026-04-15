@@ -1,22 +1,21 @@
+import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
 import type { ResponseTabKey, ResponsesApiList } from "@/source/entities/response";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "/api";
-
 export async function fetchResponses(tab: ResponseTabKey): Promise<ResponsesApiList> {
-  const res = await fetchWithSession(`${API}/responses?tab=${tab}&skip=0&limit=50`);
+  const res = await fetchWithSession(`${API_URL}/responses?tab=${tab}&skip=0&limit=50`);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить отклики");
   return res.json();
 }
 
 export async function updateStatus(id: number, status: string): Promise<void> {
-  const res = await fetchWithSession(`${API}/responses/${id}/status?new_status=${status}`, { method: "PATCH" });
+  const res = await fetchWithSession(`${API_URL}/responses/${id}/status?new_status=${status}`, { method: "PATCH" });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Ошибка обновления статуса");
 }
 
 export async function deleteResponse(id: number): Promise<void> {
-  const res = await fetchWithSession(`${API}/responses/${id}`, { method: "DELETE" });
+  const res = await fetchWithSession(`${API_URL}/responses/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось отозвать отклик");
 }
 
@@ -40,10 +39,19 @@ export async function editResponse(id: number, p: EditPayload): Promise<void> {
   };
 
   const res = await stableMultipartFetch({
-    input: `${API}/responses/${id}`,
+    input: `${API_URL}/responses/${id}`,
     method: "PUT",
     files: p.files ?? [],
     buildBody: build,
   });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось обновить отклик");
+}
+
+export async function createReview(payload: { response_id: number; rating: number; comment: string }): Promise<void> {
+  const res = await fetchWithSession(`${API_URL}/reviews`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось оставить отзыв");
 }

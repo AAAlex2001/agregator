@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+import { API_URL } from "./config";
 
 let refreshInFlight: Promise<boolean> | null = null;
 
