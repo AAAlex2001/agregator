@@ -4,8 +4,7 @@ import { Header } from "@/source/widgets/header";
 import { Loader, Button } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
-import { usePathname } from "next/navigation";
-import { getRole } from "@/source/shared/lib/getRole";
+import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { ResponsesState } from "@/widgets/responses-state";
 import { ResponsesSwiper } from "@/widgets/responses-swiper";
@@ -21,6 +20,11 @@ import s from "./ResponsesWidget.module.scss";
 const PAGE_TEXT: Record<UserRole, { title: string; subtitle: string }> = {
   expert: { title: "Все отклики", subtitle: "Отслеживайте статус ваших откликов" },
   customer: { title: "Отклики по моим заказам", subtitle: "Просматривайте и принимайте решения по откликам" },
+};
+
+const DEFAULT_TEXT = {
+  title: "Отклики",
+  subtitle: "Загрузка данных пользователя",
 };
 
 function buildEditOrder(r: { orderId: number; orderTitle: string; customer: string; orderDate: string; badges: { text: string; variant: "blue" | "green" | "gray" | "orange" | "brown" | "purple" }[]; orderSum: string; orderCommissionAmount: string; orderTechSpecFiles: string[] }) {
@@ -43,11 +47,15 @@ function buildEditInit(r: { rawDeadline: string; rawSumAmount: number; commentTe
 }
 
 export function ResponsesWidget() {
-  const pathname = usePathname();
-  const role: UserRole = getRole(pathname) === "CUSTOMER" ? "customer" : "expert";
+  const { user, isLoading: isSessionLoading } = useSession();
+  const role: UserRole | null = user?.role === "CUSTOMER"
+    ? "customer"
+    : user?.role === "EXPERT"
+      ? "expert"
+      : null;
   const { showSuccess } = useNotifications();
   const h = useResponses(role);
-  const text = PAGE_TEXT[role];
+  const text = role ? PAGE_TEXT[role] : DEFAULT_TEXT;
 
   const handlers = {
     onWithdraw: h.onWithdraw,
@@ -80,7 +88,9 @@ export function ResponsesWidget() {
           onTabChange={(id) => h.setTab(id as ResponseTabKey)}
         />
 
-        {h.isLoading ? (
+        {isSessionLoading || !role ? (
+          <div className={s.statusState}><Loader label="" size="lg" /></div>
+        ) : h.isLoading ? (
           <div className={s.statusState}><Loader label="" size="lg" /></div>
         ) : h.error ? (
           <ResponsesState title="Ошибка загрузки" subtitle={h.error} styles={s}

@@ -1,5 +1,6 @@
 import { fetchWithSession } from "@/source/shared/api/session";
-import type { UserProfile, UpdateProfilePayload } from "../model/types";
+import type { UserProfile } from "@/source/entities/user";
+import type { UpdateProfilePayload } from "../model/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 

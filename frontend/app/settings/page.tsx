@@ -1,10 +1,13 @@
-import { Suspense } from "react";
 import { SettingsWidget } from "@/source/widgets/profile/settings";
 
-export default function SettingsPage() {
+interface SettingsPageProps {
+  searchParams: Promise<{ section?: string }>;
+}
+
+export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+  const params = await searchParams;
+
   return (
-    <Suspense>
-      <SettingsWidget />
-    </Suspense>
+    <SettingsWidget initialSection={params.section === "finance" ? "finance" : "personal"} />
   );
 }

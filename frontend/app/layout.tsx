@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import CabinetMenuTabs from "@/features/cabinet/menu-tabs/ui/CabinetMenuTabs";
+import { SessionProvider } from "@/source/features/session";
 import { NotificationProvider } from "@/shared/ui/Notifications";
 import "./globals.css";
 
@@ -24,8 +25,10 @@ export default function RootLayout({
     <html lang="ru" className={montserrat.className}>
       <body className="antialiased">
         <NotificationProvider>
-          {children}
-          <CabinetMenuTabs />
+          <SessionProvider>
+            {children}
+            <CabinetMenuTabs />
+          </SessionProvider>
         </NotificationProvider>
       </body>
     </html>

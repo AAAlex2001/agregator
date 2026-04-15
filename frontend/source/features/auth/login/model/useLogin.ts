@@ -2,11 +2,13 @@
 
 import { useReducer, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/source/features/session";
 import { loginUser } from "../api/login.api";
 import { loginReducer, initialLoginState } from "./reducer";
 
 export function useLogin() {
   const router = useRouter();
+  const { reload } = useSession();
   const [state, dispatch] = useReducer(loginReducer, initialLoginState);
   const [fromOrder, setFromOrder] = useState(false);
 
@@ -38,8 +40,7 @@ export function useLogin() {
         password: state.password,
         role: state.role,
       });
-
-      localStorage.setItem("role", user.role);
+      await reload();
 
       const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
       if (user.role === "EXPERT" && pendingUuid) {

@@ -26,11 +26,12 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
   ],
 };
 
-export function useResponses(role: UserRole) {
+export function useResponses(role: UserRole | null) {
   const [s, d] = useReducer(reducer, initial);
   const router = useRouter();
 
   const reload = async () => {
+    if (!role) return;
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
     try {
@@ -43,10 +44,15 @@ export function useResponses(role: UserRole) {
     }
   };
 
-  useEffect(() => { void reload(); }, [s.activeTab]);
+  useEffect(() => {
+    if (!role) return;
+    void reload();
+  }, [role, s.activeTab]);
 
   const setTab = (tab: ResponseTabKey) => d({ type: "TAB", tab });
-  const tabs = TAB_LABELS[role].map((t) => ({ id: t.key, label: t.label, count: s.counters[t.key] }));
+  const tabs = role
+    ? TAB_LABELS[role].map((t) => ({ id: t.key, label: t.label, count: s.counters[t.key] }))
+    : [];
 
   const statusAction = async (id: number, mode: string, status: string, after?: () => void) => {
     d({ type: "ACTION_LOADING", id, mode: mode as never });
@@ -62,6 +68,7 @@ export function useResponses(role: UserRole) {
   };
 
   const onChat = async (rid: number, oid: number) => {
+    if (!role) return;
     d({ type: "ACTION_LOADING", id: rid, mode: "chat" });
     try {
       const detail = await openChatByOrder(oid);

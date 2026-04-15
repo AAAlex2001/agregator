@@ -1,37 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { useSession } from "@/source/features/session";
 import { Header } from "@/source/widgets/header";
-import { fetchProfile, PersonalDataForm } from "@/source/features/profile/settings";
-import type { UserProfile } from "@/source/features/profile/settings";
+import { PersonalDataForm } from "@/source/features/profile/settings";
 import { FinancePanel } from "@/source/features/finance";
 import s from "./SettingsWidget.module.scss";
 
-export function SettingsWidget() {
-  const searchParams = useSearchParams();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [section, setSection] = useState<"personal" | "finance">(
-    searchParams.get("section") === "finance" ? "finance" : "personal",
-  );
+interface SettingsWidgetProps {
+  initialSection: "personal" | "finance";
+}
 
-  const isExpert = profile?.role === "EXPERT";
+export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
+  const { user, isLoading, error, setUser, mergeUser } = useSession();
+  const [section, setSection] = useState<"personal" | "finance">(initialSection);
+
+  useEffect(() => {
+    setSection(initialSection);
+  }, [initialSection]);
+
+  const isExpert = user?.role === "EXPERT";
 
   const tabs = isExpert
     ? [{ id: "personal", label: "Личные данные" }, { id: "finance", label: "Финансы" }]
     : [{ id: "personal", label: "Личные данные" }];
-
-  useEffect(() => {
-    fetchProfile()
-      .then(setProfile)
-      .catch(() => setError("Не удалось загрузить профиль"))
-      .finally(() => setIsLoading(false));
-  }, []);
 
   return (
     <>
@@ -54,14 +49,14 @@ export function SettingsWidget() {
 
           {error && <p className={s.error}>{error}</p>}
 
-          {isLoading || !profile ? (
+          {isLoading || !user ? (
             <div className={s.loaderWrapper}><Loader label="" size="lg" /></div>
           ) : section === "personal" || !isExpert ? (
-            <PersonalDataForm profile={profile} onProfileUpdate={setProfile} />
+            <PersonalDataForm profile={user} onProfileUpdate={setUser} />
           ) : (
             <FinancePanel
-              balance={profile.balance ?? 0}
-              onBalanceChange={(b) => setProfile((prev) => prev ? { ...prev, balance: b } : prev)}
+              balance={user.balance ?? 0}
+              onBalanceChange={(b) => mergeUser({ balance: b })}
               returnUrl={typeof window !== "undefined"
                 ? `${window.location.origin}/settings?section=finance`
                 : ""}
