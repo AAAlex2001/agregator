@@ -14,13 +14,7 @@ if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
     raise RuntimeError("EMAIL_HOST_USER or EMAIL_HOST_PASSWORD is not set in environment")
 
 async def send_code_reset_email(email: str, id: int, body: str) -> None:
-    """Отправляет письмо с кодом верификации на указанный email
-
-    Args:
-        email: Email получателя
-        subject: Тема письма
-        body: Текст письма
-    """
+    """Отправляет письмо с кодом верификации на указанный email"""
     message = MIMEMultipart()
     message["From"] = EMAIL_HOST_USER
     message["To"] = email

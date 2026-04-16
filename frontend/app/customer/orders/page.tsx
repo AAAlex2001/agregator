@@ -1,7 +1,7 @@
 "use client";
 
-import { CustomerOrdersContent } from "@/widgets/customer-orders";
+import { CustomerOrdersWidget } from "@/source/widgets/customer-orders";
 
 export default function CustomerOrdersPage() {
-  return <CustomerOrdersContent />;
+  return <CustomerOrdersWidget />;
 }

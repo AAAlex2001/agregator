@@ -1,7 +1,7 @@
 "use client";
 
-import { ExpertOrdersContent } from "@/widgets/expert-orders";
+import { ExpertOrdersWidget } from "@/source/widgets/expert-orders";
 
 export default function OrdersPage() {
-  return <ExpertOrdersContent />;
+  return <ExpertOrdersWidget />;
 }
