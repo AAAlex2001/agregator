@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "lightgallery/css/lightgallery.css";
+@import "lightgallery/css/lg-thumbnail.css";
 
 :root {
   --background: #ffffff;

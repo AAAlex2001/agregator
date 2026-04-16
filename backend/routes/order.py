@@ -1,5 +1,3 @@
-import json
-from datetime import date as date_type, datetime as datetime_type
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
@@ -9,15 +7,21 @@ from database.database import get_db
 from dependencies.auth import get_current_user
 from models.order import OrderStatus
 from schemas.order import (
-    BadgeSchema,
+    BadgeOptionResponse,
     OrderCreate,
     OrderUpdate,
     OrderResponse,
     OrderListResponse,
 )
 from services.order import OrderService
+from utils.order_forms import BADGE_OPTIONS, build_order_create_data, build_order_update_data
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+@router.get("/badge-options", response_model=list[BadgeOptionResponse])
+async def get_badge_options():
+    return BADGE_OPTIONS
 
 
 @router.get("/", response_model=OrderListResponse)
@@ -76,34 +80,22 @@ async def create_order_with_files(
     sum_amount: int = Form(...),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
+    badge_inputs_json: str = Form(""),
     badges_json: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
 ):
-    try:
-        badge_list = json.loads(badges_json)
-    except json.JSONDecodeError:
-        badge_list = []
-
-    badges = [
-        BadgeSchema(text=b["text"], variant=b["variant"])
-        for b in badge_list
-    ]
-
-    parsed_responses_deadline = None
-    if responses_deadline:
-        parsed_responses_deadline = datetime_type.fromisoformat(responses_deadline)
-
-    data = OrderCreate(
+    data = build_order_create_data(
         title=title,
         company=company,
         typical_names=typical_names,
         comment=comment,
         customer_id=customer_id,
         sum_amount=sum_amount,
-        deadline=date_type.fromisoformat(deadline),
-        responses_deadline=parsed_responses_deadline,
-        badges=badges,
+        deadline=deadline,
+        responses_deadline=responses_deadline,
+        badge_inputs_json=badge_inputs_json,
+        badges_json=badges_json,
     )
 
     service = OrderService(db)
@@ -132,41 +124,24 @@ async def update_order_with_files(
     sum_amount: int = Form(...),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
+    badge_inputs_json: str = Form(""),
     badges_json: str = Form("[]"),
     keep_files: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    try:
-        badge_list = json.loads(badges_json)
-    except json.JSONDecodeError:
-        badge_list = []
-
-    try:
-        keep_list = json.loads(keep_files)
-    except json.JSONDecodeError:
-        keep_list = []
-
-    badges = [
-        BadgeSchema(text=b["text"], variant=b["variant"])
-        for b in badge_list
-    ]
-
-    parsed_responses_deadline = None
-    if responses_deadline:
-        parsed_responses_deadline = datetime_type.fromisoformat(responses_deadline)
-
-    data = OrderUpdate(
+    data = build_order_update_data(
         title=title,
         company=company,
         typical_names=typical_names,
         comment=comment,
         sum_amount=sum_amount,
-        deadline=date_type.fromisoformat(deadline),
-        responses_deadline=parsed_responses_deadline,
-        badges=badges,
-        technical_files=keep_list,
+        deadline=deadline,
+        responses_deadline=responses_deadline,
+        badge_inputs_json=badge_inputs_json,
+        badges_json=badges_json,
+        keep_files=keep_files,
     )
 
     service = OrderService(db)

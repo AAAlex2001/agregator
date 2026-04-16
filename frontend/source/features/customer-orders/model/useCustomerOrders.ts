@@ -6,7 +6,9 @@ import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "../api/customer-orders.api";
+import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
+import type { OrderFormValues } from "./schema";
 
 export function useCustomerOrders() {
   const [s, d] = useReducer(reducer, initial);
@@ -32,10 +34,10 @@ export function useCustomerOrders() {
   const openEdit = (order: OrderCardData) => d({ type: "MODE", mode: "edit", editTarget: order });
   const backToList = () => d({ type: "MODE", mode: "list" });
 
-  const onCreate = async (formData: Record<string, unknown>) => {
+  const onCreate = async (values: OrderFormValues, files: File[]) => {
     d({ type: "SUBMITTING", value: true });
     try {
-      await createOrder({ ...formData, customer_id: user?.id ?? 0 } as Parameters<typeof createOrder>[0]);
+      await createOrder(buildCreatePayload(values, files, user?.id ?? 0));
       showSuccess("Заказ создан");
       backToList();
       void reload();
@@ -46,11 +48,11 @@ export function useCustomerOrders() {
     }
   };
 
-  const onUpdate = async (formData: Record<string, unknown>) => {
+  const onUpdate = async (values: OrderFormValues, files: File[], keepFiles: string[]) => {
     if (!s.editTarget) return;
     d({ type: "SUBMITTING", value: true });
     try {
-      await updateOrder(s.editTarget.id, formData as Parameters<typeof updateOrder>[1]);
+      await updateOrder(s.editTarget.id, buildUpdatePayload(values, files, keepFiles));
       showSuccess("Заказ обновлён");
       backToList();
       void reload();

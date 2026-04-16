@@ -1,0 +1,100 @@
+.fileRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fileRowActive {
+  filter: brightness(0.98);
+}
+
+.fileAdd {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  background: #ffffff;
+  border: 1px solid #ffb800;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: #ffb800;
+  }
+}
+
+.fileThumbnail {
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  background: #ffffff;
+  border: 1px solid #ffb800;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.filePreviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.fileName {
+  font-size: 9px;
+  line-height: 11px;
+  color: #1a1a1a;
+  text-align: center;
+  word-break: break-all;
+}
+
+.fileNameButton {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.fileRemove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.hint {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  line-height: 15px;
+  color: #7d7d7d;
+}
+
+.anchor {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
