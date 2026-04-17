@@ -5,7 +5,7 @@ import { Header } from "@/source/widgets/header";
 import { OrderCard } from "@/source/entities/order";
 import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { useHorizontalScroll } from "@/shared/lib/hooks/useHorizontalScroll";
+import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
 import { useCustomerOrders } from "@/source/features/customer-orders";
 import s from "./CustomerOrdersWidget.module.scss";

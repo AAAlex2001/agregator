@@ -3,7 +3,7 @@ import {
   clamp,
   getNormalizedWheelDelta,
   hasReachedHorizontalEnd,
-} from "@/source/shared/lib/horizontalScroll";
+} from "./horizontalScroll";
 
 interface UseHorizontalScrollOptions {
   deps?: unknown[];
@@ -19,79 +19,97 @@ export function useHorizontalScroll(
   const scrollTargetRef = useRef<number | null>(null);
   const scrollAnimationRef = useRef<number | null>(null);
 
-  // Desktop: wheel → smooth horizontal scroll
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    const element = containerRef.current;
+    if (!element) return;
 
     const maybeLoadMore = () => {
-      if (onReachEnd && hasReachedHorizontalEnd(el.scrollLeft, el.clientWidth, el.scrollWidth)) {
+      if (onReachEnd && hasReachedHorizontalEnd(element.scrollLeft, element.clientWidth, element.scrollWidth)) {
         onReachEnd();
       }
     };
 
     const startSmoothScroll = () => {
       if (scrollAnimationRef.current !== null) return;
+
       const animate = () => {
-        const e = containerRef.current;
-        if (!e) { scrollAnimationRef.current = null; return; }
-        const target = scrollTargetRef.current ?? e.scrollLeft;
-        const distance = target - e.scrollLeft;
+        const currentElement = containerRef.current;
+        if (!currentElement) {
+          scrollAnimationRef.current = null;
+          return;
+        }
+
+        const target = scrollTargetRef.current ?? currentElement.scrollLeft;
+        const distance = target - currentElement.scrollLeft;
+
         if (Math.abs(distance) < 0.5) {
-          e.scrollLeft = target;
+          currentElement.scrollLeft = target;
           scrollAnimationRef.current = null;
           maybeLoadMore();
           return;
         }
-        e.scrollLeft += distance * 0.22;
+
+        currentElement.scrollLeft += distance * 0.22;
         maybeLoadMore();
         scrollAnimationRef.current = requestAnimationFrame(animate);
       };
+
       scrollAnimationRef.current = requestAnimationFrame(animate);
     };
 
     const handleWheel = (event: WheelEvent) => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
+      const maxScroll = element.scrollWidth - element.clientWidth;
       if (maxScroll <= 0 || !event.shiftKey) return;
+
       if (event.deltaX === 0 && Math.abs(event.deltaY) > 0) {
-        if (el.scrollLeft <= 0 || el.scrollLeft >= maxScroll - 1) return;
+        if (element.scrollLeft <= 0 || element.scrollLeft >= maxScroll - 1) return;
       }
+
       const delta = getNormalizedWheelDelta({
-        deltaX: event.deltaX, deltaY: event.deltaY,
-        deltaMode: event.deltaMode, containerWidth: el.clientWidth,
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaMode: event.deltaMode,
+        containerWidth: element.clientWidth,
       });
-      const currentTarget = scrollTargetRef.current ?? el.scrollLeft;
+
+      const currentTarget = scrollTargetRef.current ?? element.scrollLeft;
       const nextTarget = clamp(currentTarget + delta, 0, maxScroll);
       if (nextTarget === currentTarget) return;
+
       event.preventDefault();
       scrollTargetRef.current = nextTarget;
       startSmoothScroll();
     };
 
-    el.addEventListener("wheel", handleWheel, { passive: false, capture: true });
-    if (onReachEnd) el.addEventListener("scroll", maybeLoadMore);
+    element.addEventListener("wheel", handleWheel, { passive: false, capture: true });
+    if (onReachEnd) element.addEventListener("scroll", maybeLoadMore);
 
     return () => {
-      if (scrollAnimationRef.current !== null) cancelAnimationFrame(scrollAnimationRef.current);
+      if (scrollAnimationRef.current !== null) {
+        cancelAnimationFrame(scrollAnimationRef.current);
+      }
+
       scrollAnimationRef.current = null;
-      el.removeEventListener("wheel", handleWheel, { capture: true });
-      if (onReachEnd) el.removeEventListener("scroll", maybeLoadMore);
+      element.removeEventListener("wheel", handleWheel, { capture: true });
+      if (onReachEnd) element.removeEventListener("scroll", maybeLoadMore);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
-  // Mobile: IntersectionObserver for infinite scroll
   useEffect(() => {
     if (!onReachEnd || !sentinelRef) return;
     if (typeof window === "undefined" || window.innerWidth >= 768) return;
+
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
+
     const observer = new IntersectionObserver(
-      (entries) => { if (entries[0]?.isIntersecting) onReachEnd(); },
+      (entries) => {
+        if (entries[0]?.isIntersecting) onReachEnd();
+      },
       { root: null, rootMargin: "200px 0px", threshold: 0 },
     );
+
     observer.observe(sentinel);
     return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

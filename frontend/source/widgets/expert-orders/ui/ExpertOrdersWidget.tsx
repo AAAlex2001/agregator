@@ -7,7 +7,7 @@ import { OrderCard } from "@/source/entities/order";
 import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/shared/ui/Notifications";
-import { useHorizontalScroll } from "@/shared/lib/hooks/useHorizontalScroll";
+import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
 import { useExpertOrders } from "@/source/features/expert-orders";
 import s from "./ExpertOrdersWidget.module.scss";
