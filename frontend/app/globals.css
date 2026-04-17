@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-datepicker/dist/react-datepicker.css";
 @import "lightgallery/css/lightgallery.css";
 @import "lightgallery/css/lg-thumbnail.css";
 

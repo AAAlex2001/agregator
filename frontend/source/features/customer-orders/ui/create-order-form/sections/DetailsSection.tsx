@@ -1,5 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import { Input } from "@/shared/ui";
+import { CalendarInput } from "@/source/shared/ui";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./detailsSection.module.scss";
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export function DetailsSection({ form }: Props) {
-  const { watch, setValue, register, formState } = form;
+  const { watch, setValue } = form;
 
   return (
     <section className={base.section}>
@@ -22,7 +23,6 @@ export function DetailsSection({ form }: Props) {
             placeholder="Введите название"
             value={watch("title")}
             onChange={(event) => setValue("title", event.target.value, { shouldDirty: true })}
-            error={formState.errors.title?.message}
           />
         </div>
 
@@ -39,13 +39,9 @@ export function DetailsSection({ form }: Props) {
 
         <div className={s.field}>
           <span className={base.label}>Срок выполнения</span>
-          <Input
-            type="date"
-            variant="text"
-            active
+          <CalendarInput
             value={watch("deadline")}
-            onChange={(event) => setValue("deadline", event.target.value, { shouldDirty: true })}
-            error={formState.errors.deadline?.message}
+            onChange={(value) => setValue("deadline", value, { shouldDirty: true })}
           />
         </div>
 
@@ -62,7 +58,11 @@ export function DetailsSection({ form }: Props) {
 
         <div className={s.field}>
           <span className={base.label}>Приём откликов до</span>
-          <input type="datetime-local" className={s.nativeInput} {...register("responsesDeadline")} />
+          <CalendarInput
+            value={watch("responsesDeadline")}
+            onChange={(value) => setValue("responsesDeadline", value, { shouldDirty: true })}
+            withTime
+          />
         </div>
       </div>
     </section>
