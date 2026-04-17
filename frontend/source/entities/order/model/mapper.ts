@@ -1,4 +1,5 @@
 import type { OrderApiItem, OrderCardData, BadgeVariant } from "./types";
+import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
 
 const VARIANT_MAP: Record<string, BadgeVariant> = {
   BLUE: "blue", GREEN: "green", GRAY: "gray",
@@ -27,7 +28,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     commissionAmount:    normalizeCurrency(item.commission_amount),
     commissionAmountRaw: item.commission_amount_raw ?? 0,
     responsesDeadline:   item.responses_deadline ?? null,
-    technicalFiles:      item.technical_files ?? [],
+    technicalFiles:      resolveFileUrls(item.technical_files ?? []),
     badges:              item.badges.map((b) => ({
       text: b.text,
       variant: VARIANT_MAP[b.variant] ?? "blue",

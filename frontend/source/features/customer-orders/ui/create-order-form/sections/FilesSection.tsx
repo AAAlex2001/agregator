@@ -5,6 +5,7 @@ import LightGallery from "lightgallery/react";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import { useDropzone } from "react-dropzone";
 import type { DropzoneOptions } from "react-dropzone";
+import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import base from "./sectionBase.module.scss";
 import s from "./filesSection.module.scss";
 
@@ -92,20 +93,21 @@ export function FilesSection({
           </button>
 
           {existingFiles.map((file, index) => {
+            const fileUrl = resolveFileUrl(file);
             const name = file.split("/").pop() ?? "Файл";
             const isImage = isImageName(name);
 
             return (
               <div key={file} className={s.fileThumbnail}>
                 {isImage ? (
-                  <a href={file} className={s.anchor}>
-                    <img src={file} alt={name} className={s.filePreviewImage} />
+                  <a href={fileUrl} className={s.anchor}>
+                    <img src={fileUrl} alt={name} className={s.filePreviewImage} />
                   </a>
                 ) : (
                   <button
                     type="button"
                     className={`${s.anchor} ${s.fileNameButton}`}
-                    onClick={() => window.open(file, "_blank", "noopener,noreferrer")}
+                    onClick={() => window.open(fileUrl, "_blank", "noopener,noreferrer")}
                   >
                     <span className={s.fileName}>{shortName(name)}</span>
                   </button>

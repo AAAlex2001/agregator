@@ -1,4 +1,5 @@
 import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant } from "./types";
+import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
 
 const BADGE_MAP: Record<string, BadgeVariant> = {
   green: "green", gray: "gray", orange: "orange", brown: "brown", purple: "purple",
@@ -54,8 +55,8 @@ export function mapApiToCard(item: ResponseApiItem): ResponseCardData {
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
     orderComment: item.order_comment,
-    techSpecFiles: item.response_files,
-    orderTechSpecFiles: item.technical_files,
+    techSpecFiles: resolveFileUrls(item.response_files),
+    orderTechSpecFiles: resolveFileUrls(item.technical_files),
     rawSumAmount: item.proposed_sum_amount_raw ?? 0,
     rawDeadline: item.proposed_deadline_raw ?? "",
     expertConfirmed: confirmed,
