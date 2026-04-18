@@ -48,10 +48,16 @@ export function CustomerOrdersWidget() {
         )}
 
         {!h.isLoading && !h.error && h.items.length === 0 && (
-          <div className={s.center}>
-            <Title text="Мои заказы" as="h2" />
-            <Subtitle text="У вас пока нет заказов" />
-            <Button variant="primary" size="md" onClick={h.openCreate}>Создать заказ</Button>
+          <div className={s.empty}>
+            <div className={s.emptyCard}>
+              <div className={s.emptyText}>
+                <p className={s.emptyTitle}>У вас пока нет заказов</p>
+                <p className={s.emptyHint}>Создайте свой первый заказ</p>
+              </div>
+              <button type="button" className={s.emptyBtn} onClick={h.openCreate}>
+                Создать заказ
+              </button>
+            </div>
           </div>
         )}
 
@@ -73,7 +79,15 @@ export function CustomerOrdersWidget() {
               <div className={s.shadeL} /><div className={s.shadeR} />
               <div className={s.grid} ref={ref}>
                 {h.items.map((o) => (
-                  <OrderCard key={o.id} badges={o.badges} title={o.title} customer={o.customer} date={o.date} sum={o.sum}>
+                  <OrderCard
+                    key={o.id}
+                    badges={o.badges}
+                    title={o.title}
+                    customer={o.customer}
+                    date={o.date}
+                    sum={o.sum}
+                    responsesDeadline={o.responsesDeadline}
+                  >
                     <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
                       Редактировать
                     </Button>

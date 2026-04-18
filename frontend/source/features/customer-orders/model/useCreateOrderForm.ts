@@ -108,9 +108,18 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     },
   };
 
-  const submit = form.handleSubmit((values) => {
-    onSubmit(values, fileState.files, isEdit ? fileState.keepFiles : undefined);
-  });
+  const submit = form.handleSubmit(
+    (values) => {
+      onSubmit(values, fileState.files, isEdit ? fileState.keepFiles : undefined);
+    },
+    (errors) => {
+      Object.values(errors).forEach((error) => {
+        if (error && "message" in error && typeof error.message === "string") {
+          showError(error.message);
+        }
+      });
+    },
+  );
 
   return {
     isEdit,

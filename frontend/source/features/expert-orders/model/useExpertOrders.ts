@@ -10,12 +10,16 @@ import { useOrdersWs } from "../lib/useOrdersWs";
 import { reducer, initial } from "./reducer";
 import type { Step2FormData } from "@/features/order/details/ui/OrderDetailsModal/types";
 
+type ModalStep = "details" | "step1";
+
 const PAGE = 50;
 
 export function useExpertOrders() {
   const [s, d] = useReducer(reducer, initial);
-  const { balance } = useSession();
+  const { user } = useSession();
+  const balance = user?.balance ?? 0;
   const loadingMoreRef = useRef(false);
+  const [pendingStep, setPendingStep] = useState<ModalStep>("details");
 
   const [returnOrderId] = useState(() =>
     typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("orderId") : null,
@@ -48,7 +52,10 @@ export function useExpertOrders() {
   useEffect(() => {
     if (!returnOrderId || s.items.length === 0) return;
     const found = s.items.find((i) => String(i.id) === returnOrderId);
-    if (found) d({ type: "SELECT", order: found });
+    if (found) {
+      setPendingStep("step1");
+      d({ type: "SELECT", order: found });
+    }
   }, [returnOrderId, s.items]);
 
   const hasMore = s.items.length < s.total;
@@ -68,7 +75,20 @@ export function useExpertOrders() {
     }
   };
 
-  const select = (order: OrderCardData | null) => d({ type: "SELECT", order });
+  const openDetails = (order: OrderCardData) => {
+    setPendingStep("details");
+    d({ type: "SELECT", order });
+  };
+
+  const openRespond = (order: OrderCardData) => {
+    setPendingStep("step1");
+    d({ type: "SELECT", order });
+  };
+
+  const closeModal = () => {
+    setPendingStep("details");
+    d({ type: "SELECT", order: null });
+  };
 
   const onShare = (publicId: string, onCopied: () => void) => copyOrderLink(publicId, onCopied);
 
@@ -82,7 +102,7 @@ export function useExpertOrders() {
         files: form.files,
       });
       d({ type: "REMOVE", id: order.id });
-      select(null);
+      closeModal();
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
     } finally {
@@ -102,7 +122,7 @@ export function useExpertOrders() {
   };
 
   return {
-    ...s, balance, returnOrderId, hasMore,
-    reload, loadMore, select, onShare, onRespond, onTopUp,
+    ...s, balance, returnOrderId, hasMore, pendingStep,
+    reload, loadMore, openDetails, openRespond, closeModal, onShare, onRespond, onTopUp,
   };
 }

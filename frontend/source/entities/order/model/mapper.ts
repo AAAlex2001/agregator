@@ -12,6 +12,13 @@ function normalizeCurrency(value: string): string {
   return value.replace(/\s*₽$/, "\u00A0₽");
 }
 
+function toIsoDate(displayDate: string): string {
+  const match = displayDate.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  if (!match) return displayDate;
+  const [, day, month, year] = match;
+  return `${year}-${month}-${day}`;
+}
+
 export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
   return {
     id:                  item.id,
@@ -22,7 +29,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     typicalNames:        item.typical_names ?? "",
     comment:             item.comment,
     date:                item.date,
-    deadlineRaw:         item.date,
+    deadlineRaw:         toIsoDate(item.date),
     sum:                 normalizeCurrency(item.sum),
     sumAmountRaw:        item.sum_amount_raw,
     commissionAmount:    normalizeCurrency(item.commission_amount),

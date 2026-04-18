@@ -18,7 +18,9 @@ const anim = {
   exit: { opacity: 0, y: -10, scale: 0.97 },
   transition: {
     layout: { type: "spring" as const, stiffness: 380, damping: 32 },
-    opacity: { duration: 0.24 }, y: { duration: 0.24 }, scale: { duration: 0.24 },
+    opacity: { duration: 0.24 },
+    y: { duration: 0.24 },
+    scale: { duration: 0.24 },
   },
 };
 
@@ -47,7 +49,11 @@ export function ExpertOrdersWidget() {
           <Subtitle text="Актуальные заказы по направлениям" />
         </div>
 
-        {h.isLoading && <div className={s.center}><Loader label="" size="lg" /></div>}
+        {h.isLoading && (
+          <div className={s.center}>
+            <Loader label="" size="lg" />
+          </div>
+        )}
 
         {!h.isLoading && h.error && (
           <div className={s.center}>
@@ -58,32 +64,63 @@ export function ExpertOrdersWidget() {
         )}
 
         {!h.isLoading && !h.error && h.items.length === 0 && (
-          <div className={s.center}>
-            <Title text="Все заказы" as="h2" />
-            <Subtitle text="Пока нет заказов" />
+          <div className={s.empty}>
+            <div className={s.emptyCard}>
+              <div className={s.emptyText}>
+                <p className={s.emptyTitle}>Пока нет доступных заказов</p>
+                <p className={s.emptyHint}>Загляните позже — мы пришлём новые</p>
+              </div>
+            </div>
           </div>
         )}
 
         {!h.isLoading && !h.error && h.items.length > 0 && (
           <>
             <div className={s.container}>
-              <div className={s.shadeL} /><div className={s.shadeR} />
+              <div className={s.shadeL} />
+              <div className={s.shadeR} />
               <div className={s.grid} ref={gridRef}>
                 <AnimatePresence initial={false} mode="popLayout">
                   {h.items.map((o) => (
                     <motion.div key={o.id} className={s.item} layout {...anim}>
-                      <OrderCard badges={o.badges} title={o.title} customer={o.customer}
-                        date={o.date} sum={o.sum} responsesDeadline={o.responsesDeadline}
-                        onClick={() => h.select(o)}
+                      <OrderCard
+                        badges={o.badges}
+                        title={o.title}
+                        customer={o.customer}
+                        date={o.date}
+                        sum={o.sum}
+                        responsesDeadline={o.responsesDeadline}
+                        onClick={() => h.openDetails(o)}
                       >
-                        <Button variant="outline" size="sm" className={s.shareBtn}
-                          onClick={(e) => { e.stopPropagation(); h.onShare(o.publicId, () => showSuccess("Ссылка скопирована")); }}
-                        >Поделиться</Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={s.btn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            h.onShare(o.publicId, () => showSuccess("Ссылка скопирована"));
+                          }}
+                        >
+                          Поделиться
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          className={s.btn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            h.openRespond(o);
+                          }}
+                        >
+                          Откликнуться
+                        </Button>
                       </OrderCard>
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                {h.isLoadingMore && <div className={s.loadMore}><Loader label="" size="md" /></div>}
+                {h.isLoadingMore && (
+                  <div className={s.loadMore}><Loader label="" size="md" /></div>
+                )}
               </div>
             </div>
             <div ref={sentinelRef} className={s.sentinel} aria-hidden="true" />
@@ -91,10 +128,14 @@ export function ExpertOrdersWidget() {
         )}
 
         <OrderDetailsModal
-          isOpen={Boolean(h.selectedOrder)} order={h.selectedOrder}
-          onClose={() => h.select(null)} onRespond={h.onRespond} onTopUp={h.onTopUp}
-          balance={h.balance} isResponding={h.isResponding}
-          initialStep={h.returnOrderId === String(h.selectedOrder?.id) ? "step1" : "details"}
+          isOpen={Boolean(h.selectedOrder)}
+          order={h.selectedOrder}
+          onClose={h.closeModal}
+          onRespond={h.onRespond}
+          onTopUp={h.onTopUp}
+          balance={h.balance}
+          isResponding={h.isResponding}
+          initialStep={h.pendingStep}
         />
       </div>
     </>
