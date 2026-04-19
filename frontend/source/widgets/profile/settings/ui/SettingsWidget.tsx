@@ -5,7 +5,6 @@ import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useSession } from "@/source/features/session";
-import { Header } from "@/source/widgets/header";
 import { PersonalDataForm } from "@/source/features/profile/settings";
 import { FinancePanel } from "@/source/features/finance";
 import s from "./SettingsWidget.module.scss";
@@ -29,41 +28,38 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
     : [{ id: "personal", label: "Личные данные" }];
 
   return (
-    <>
-      <Header />
-      <div className={s.wrapper}>
-        <div className={s.pageHead}>
-          <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
-          <Subtitle
-            text={isExpert ? "Управляйте личными данными и финансами" : "Управляйте личными данными"}
-            className={s.pageSubtitle}
-          />
-        </div>
-        <div className={s.content}>
-          <Tabs
-            variant="pill"
-            tabs={tabs}
-            activeTab={section}
-            onTabChange={(id) => setSection(id as "personal" | "finance")}
-          />
-
-          {error && <p className={s.error}>{error}</p>}
-
-          {isLoading || !user ? (
-            <div className={s.loaderWrapper}><Loader label="" size="lg" /></div>
-          ) : section === "personal" || !isExpert ? (
-            <PersonalDataForm profile={user} onProfileUpdate={setUser} />
-          ) : (
-            <FinancePanel
-              balance={user.balance ?? 0}
-              onBalanceChange={(b) => mergeUser({ balance: b })}
-              returnUrl={typeof window !== "undefined"
-                ? `${window.location.origin}/settings?section=finance`
-                : ""}
-            />
-          )}
-        </div>
+    <div className={s.wrapper}>
+      <div className={s.pageHead}>
+        <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
+        <Subtitle
+          text={isExpert ? "Управляйте личными данными и финансами" : "Управляйте личными данными"}
+          className={s.pageSubtitle}
+        />
       </div>
-    </>
+      <div className={s.content}>
+        <Tabs
+          variant="pill"
+          tabs={tabs}
+          activeTab={section}
+          onTabChange={(id) => setSection(id as "personal" | "finance")}
+        />
+
+        {error && <p className={s.error}>{error}</p>}
+
+        {isLoading || !user ? (
+          <div className={s.loaderWrapper}><Loader label="" size="lg" /></div>
+        ) : section === "personal" || !isExpert ? (
+          <PersonalDataForm profile={user} onProfileUpdate={setUser} />
+        ) : (
+          <FinancePanel
+            balance={user.balance ?? 0}
+            onBalanceChange={(b) => mergeUser({ balance: b })}
+            returnUrl={typeof window !== "undefined"
+              ? `${window.location.origin}/settings?section=finance`
+              : ""}
+          />
+        )}
+      </div>
+    </div>
   );
 }

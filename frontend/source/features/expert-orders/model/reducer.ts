@@ -14,7 +14,7 @@ export type Action =
   | { type: "RESPONDING"; value: boolean };
 
 export const initial: ExpertOrdersState = {
-  items: [], total: 0, isLoading: false, isLoadingMore: false,
+  items: [], total: 0, isLoading: true, isLoadingMore: false,
   error: null, selectedOrder: null, isResponding: false,
 };
 

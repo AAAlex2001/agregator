@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/source/widgets/header";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
 import { CompletionModal, useResponses } from "@/source/features/responses";
@@ -25,7 +24,6 @@ export function CustomerResponsesWidget() {
 
   return (
     <>
-      <Header />
       <ResponsesList
         role="customer"
         title="Отклики по моим заказам"

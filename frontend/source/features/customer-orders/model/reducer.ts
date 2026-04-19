@@ -10,7 +10,7 @@ export type Action =
   | { type: "DELETING"; id: number | null };
 
 export const initial: CustomerOrdersState = {
-  items: [], total: 0, isLoading: false, error: null,
+  items: [], total: 0, isLoading: true, error: null,
   mode: "list", editTarget: null, submitting: false, deletingId: null,
 };
 

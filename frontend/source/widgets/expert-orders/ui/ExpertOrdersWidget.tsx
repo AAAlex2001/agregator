@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Header } from "@/source/widgets/header";
 import { OrderCard } from "@/source/entities/order";
 import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
@@ -43,103 +42,102 @@ export function ExpertOrdersWidget() {
     sentinelRef,
   });
 
+  if (h.isLoading) {
+    return <ExpertOrdersSkeleton />;
+  }
+
   return (
-    <>
-      <Header />
-      <div className={s.wrapper}>
-        {!isEmpty && (
-          <div className={s.pageHead}>
-            <div className={s.titleRow}>
-              <Title text="Все заказы" as="h1" />
-              <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
-            </div>
-            <Subtitle text="Актуальные заказы по направлениям" />
+    <div className={s.wrapper}>
+      {!isEmpty && (
+        <div className={s.pageHead}>
+          <div className={s.titleRow}>
+            <Title text="Все заказы" as="h1" />
+            <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
           </div>
-        )}
+          <Subtitle text="Актуальные заказы по направлениям" />
+        </div>
+      )}
 
-        {h.isLoading && <ExpertOrdersSkeleton />}
+      {h.error && (
+        <div className={s.center}>
+          <Title text="Ошибка загрузки" as="h2" />
+          <Subtitle text={h.error} />
+          <button className={s.retry} onClick={() => void h.reload()}>Повторить</button>
+        </div>
+      )}
 
-        {!h.isLoading && h.error && (
-          <div className={s.center}>
-            <Title text="Ошибка загрузки" as="h2" />
-            <Subtitle text={h.error} />
-            <button className={s.retry} onClick={() => void h.reload()}>Повторить</button>
-          </div>
-        )}
-
-        {isEmpty && (
-          <EmptyStateCard
-            fullPage
-            title="Пока нет доступных заказов"
-            subtitle="Загляните позже — мы пришлём новые"
-          />
-        )}
-
-        {!h.isLoading && !h.error && h.items.length > 0 && (
-          <>
-            <div className={s.container}>
-              <div className={s.shadeL} />
-              <div className={s.shadeR} />
-              <div className={s.grid} ref={gridRef}>
-                <AnimatePresence initial={false} mode="popLayout">
-                  {h.items.map((o) => (
-                    <motion.div key={o.id} className={s.item} layout {...anim}>
-                      <OrderCard
-                        badges={o.badges}
-                        title={o.title}
-                        customer={o.customer}
-                        date={o.date}
-                        sum={o.sum}
-                        responsesDeadline={o.responsesDeadline}
-                        onClick={() => h.openDetails(o)}
-                      >
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className={s.btn}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            h.onShare(o.publicId, () => showSuccess("Ссылка скопирована"));
-                          }}
-                        >
-                          Поделиться
-                        </Button>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          className={s.btn}
-                          disabled={isResponsesDeadlineExpired(o.responsesDeadline)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            h.openRespond(o);
-                          }}
-                        >
-                          Откликнуться
-                        </Button>
-                      </OrderCard>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {h.isLoadingMore && (
-                  <div className={s.loadMore}><Loader label="" size="md" /></div>
-                )}
-              </div>
-            </div>
-            <div ref={sentinelRef} className={s.sentinel} aria-hidden="true" />
-          </>
-        )}
-
-        <OrderModal
-          isOpen={Boolean(h.selectedOrder)}
-          order={h.selectedOrder}
-          onClose={h.closeModal}
-          onRespond={h.onRespond}
-          onTopUp={h.onTopUp}
-          balance={h.balance}
-          isResponding={h.isResponding}
-          initialStep={h.pendingStep}
+      {isEmpty && (
+        <EmptyStateCard
+          fullPage
+          title="Пока нет доступных заказов"
+          subtitle="Загляните позже — мы пришлём новые"
         />
-      </div>
-    </>
+      )}
+
+      {!h.error && h.items.length > 0 && (
+        <>
+          <div className={s.container}>
+            <div className={s.shadeL} />
+            <div className={s.shadeR} />
+            <div className={s.grid} ref={gridRef}>
+              <AnimatePresence initial={false} mode="popLayout">
+                {h.items.map((o) => (
+                  <motion.div key={o.id} className={s.item} layout {...anim}>
+                    <OrderCard
+                      badges={o.badges}
+                      title={o.title}
+                      customer={o.customer}
+                      date={o.date}
+                      sum={o.sum}
+                      responsesDeadline={o.responsesDeadline}
+                      onClick={() => h.openDetails(o)}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={s.btn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          h.onShare(o.publicId, () => showSuccess("Ссылка скопирована"));
+                        }}
+                      >
+                        Поделиться
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className={s.btn}
+                        disabled={isResponsesDeadlineExpired(o.responsesDeadline)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          h.openRespond(o);
+                        }}
+                      >
+                        Откликнуться
+                      </Button>
+                    </OrderCard>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              {h.isLoadingMore && (
+                <div className={s.loadMore}><Loader label="" size="md" /></div>
+              )}
+            </div>
+          </div>
+          <div ref={sentinelRef} className={s.sentinel} aria-hidden="true" />
+        </>
+      )}
+
+      <OrderModal
+        isOpen={Boolean(h.selectedOrder)}
+        order={h.selectedOrder}
+        onClose={h.closeModal}
+        onRespond={h.onRespond}
+        onTopUp={h.onTopUp}
+        balance={h.balance}
+        isResponding={h.isResponding}
+        initialStep={h.pendingStep}
+      />
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/source/widgets/header";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { EditResponseModalContainer, useResponses, WithdrawResponseModalContainer } from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";
@@ -24,7 +23,6 @@ export function ExpertResponsesWidget() {
 
   return (
     <>
-      <Header />
       <ResponsesList
         role="expert"
         title="Все отклики"

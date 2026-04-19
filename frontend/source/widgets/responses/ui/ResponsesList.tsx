@@ -23,6 +23,10 @@ interface Props {
 export function ResponsesList({ role, title, subtitle, model, actionHandlers }: Props) {
   const activeLabel = model.tabs.find((tab) => tab.id === model.activeTab)?.label ?? "";
 
+  if (model.isLoading) {
+    return <ResponsesSkeleton />;
+  }
+
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
@@ -37,9 +41,7 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers }: 
         onTabChange={(id) => model.setTab(id as ResponseTabKey)}
       />
 
-      {model.isLoading ? (
-        <ResponsesSkeleton />
-      ) : model.error ? (
+      {model.error ? (
         <ResponsesState
           title="Ошибка загрузки"
           subtitle={model.error}

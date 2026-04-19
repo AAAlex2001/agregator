@@ -1,1 +1,0 @@
-export { ChatSidebarItem } from "./ChatSidebarItem";
