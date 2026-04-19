@@ -1,6 +1,5 @@
 import { fetchWithSession } from "@/source/shared/api/session";
 import type { UserProfile } from "@/source/entities/user";
-import { writeCachedSessionRole } from "@/source/features/session/model/sessionRole";
 import type { UpdateProfilePayload } from "../model/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
@@ -13,8 +12,6 @@ export async function logout(): Promise<void> {
     });
   } catch {
   }
-
-  writeCachedSessionRole(null);
 }
 
 export async function fetchProfile(): Promise<UserProfile> {

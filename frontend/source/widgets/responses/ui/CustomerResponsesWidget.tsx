@@ -26,8 +26,8 @@ export function CustomerResponsesWidget() {
     <>
       <ResponsesList
         role="customer"
-        title="Отклики по моим заказам"
-        subtitle="Просматривайте и принимайте решения по откликам"
+        title="Взаимодействие по заказам"
+        subtitle="Все отклики в одном месте — просмотр, управление и контроль статусов"
         model={model}
         actionHandlers={actionHandlers}
       />

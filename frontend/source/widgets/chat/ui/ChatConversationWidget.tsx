@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
-import Loader from "@/source/shared/ui/Loader";
 import { ArrowIcon } from "@/source/shared/ui/icons";
 import { MessageGroup, type ChatMessageData, type ChatMessageGroupData } from "@/source/entities/chat";
 import { ChatComposer, ChatOrderBanner, useChatThread } from "@/source/features/chat";
+import { ChatConversationSkeleton } from "./ChatConversationSkeleton";
 import s from "./ChatConversationWidget.module.scss";
 
 interface ChatConversationWidgetProps {
@@ -39,6 +39,10 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
   const { chat, messages, loading, error, threadRef, appendMessage } = useChatThread(chatUuid, currentUserId);
   const groups = groupMessages(messages);
 
+  if (loading) {
+    return <ChatConversationSkeleton />;
+  }
+
   return (
     <div className={s.card}>
       <div className={s.orderNav}>
@@ -60,11 +64,7 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
       </div>
 
       <div className={s.thread} ref={threadRef}>
-        {loading ? (
-          <div className={s.threadLoader}>
-            <Loader size="lg" label="" />
-          </div>
-        ) : error ? (
+        {error ? (
           <div className={s.threadLoader}>
             <p className={s.error}>{error}</p>
           </div>

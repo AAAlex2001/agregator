@@ -38,12 +38,8 @@
   gap: 24px;
 }
 
-.loaderWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 60px 0;
-  width: 100%;
+.tabs {
+  justify-content: center !important;
 }
 
 .error {

@@ -28,6 +28,14 @@ async def login_user(
         max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
         path="/",
     )
+    response.set_cookie(
+        key="user_role",
+        value=user.role.value,
+        secure=True,
+        samesite="none",
+        max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
+        path="/",
+    )
     return response
 
 
@@ -57,6 +65,15 @@ async def refresh_session(
         max_age=remaining_seconds,
         path="/",
     )
+    if session.user is not None:
+        response.set_cookie(
+            key="user_role",
+            value=session.user.role.value,
+            secure=True,
+            samesite="none",
+            max_age=remaining_seconds,
+            path="/",
+        )
     return response
 
 
@@ -70,4 +87,5 @@ async def logout_user(
 
     response = JSONResponse(content={"detail": "ok"})
     response.delete_cookie(key="session_id", path="/", secure=True, samesite="none")
+    response.delete_cookie(key="user_role", path="/", secure=True, samesite="none")
     return response

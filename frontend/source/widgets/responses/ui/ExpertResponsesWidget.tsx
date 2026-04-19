@@ -25,8 +25,8 @@ export function ExpertResponsesWidget() {
     <>
       <ResponsesList
         role="expert"
-        title="Все отклики"
-        subtitle="Отслеживайте статус ваших откликов"
+        title="Взаимодействие по заказам"
+        subtitle="Все отклики в одном месте — просмотр, управление и контроль статусов"
         model={model}
         actionHandlers={actionHandlers}
       />

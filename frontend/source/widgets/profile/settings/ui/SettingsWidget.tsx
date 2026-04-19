@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Tabs from "@/source/shared/ui/Tabs";
-import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useSession } from "@/source/features/session";
 import { PersonalDataForm } from "@/source/features/profile/settings";
 import { FinancePanel } from "@/source/features/finance";
+import { SettingsSkeleton } from "./SettingsSkeleton";
 import s from "./SettingsWidget.module.scss";
 
 interface SettingsWidgetProps {
@@ -32,7 +32,7 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
       <div className={s.pageHead}>
         <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
         <Subtitle
-          text={isExpert ? "Управляйте личными данными и финансами" : "Управляйте личными данными"}
+          text="Управляйте личными данными"
           className={s.pageSubtitle}
         />
       </div>
@@ -42,12 +42,13 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
           tabs={tabs}
           activeTab={section}
           onTabChange={(id) => setSection(id as "personal" | "finance")}
+          className={s.tabs}
         />
 
         {error && <p className={s.error}>{error}</p>}
 
         {isLoading || !user ? (
-          <div className={s.loaderWrapper}><Loader label="" size="lg" /></div>
+          <SettingsSkeleton section={section} />
         ) : section === "personal" || !isExpert ? (
           <PersonalDataForm profile={user} onProfileUpdate={setUser} />
         ) : (

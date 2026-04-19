@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from models.session import Session
 from models.user import User, UserRole
 from schemas.login import UserLogin
@@ -71,7 +72,11 @@ class LoginService:
         return session
 
     async def refresh_session(self, session_id: str) -> Session:
-        result = await self.db.execute(select(Session).where(Session.session_id == session_id))
+        result = await self.db.execute(
+            select(Session)
+            .options(selectinload(Session.user))
+            .where(Session.session_id == session_id)
+        )
         session = result.scalar_one_or_none()
         if not session:
             raise HTTPException(

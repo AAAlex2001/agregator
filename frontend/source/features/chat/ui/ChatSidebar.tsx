@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChatListItem } from "@/source/entities/chat";
 import { ChatSearchInput } from "@/source/shared/ui/ChatSearchInput";
-import Loader from "@/source/shared/ui/Loader";
 import { useChatListContext } from "../model/chatListContext";
+import { ChatSidebarSkeleton } from "./ChatSidebarSkeleton";
 import s from "./ChatSidebar.module.scss";
 
 interface ChatSidebarProps {
@@ -29,7 +29,7 @@ export function ChatSidebar({ currentUserId }: ChatSidebarProps) {
 
       <div className={s.list}>
         {loading ? (
-          <div className={s.status}><Loader size="md" label="" /></div>
+          <ChatSidebarSkeleton />
         ) : error ? (
           <p className={s.status}>{error}</p>
         ) : filteredChats.length === 0 ? (

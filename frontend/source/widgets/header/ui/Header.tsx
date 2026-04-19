@@ -31,7 +31,6 @@ export function Header() {
 
   const key = getRouteSessionRole(pathname) ?? resolvedRole;
   const links = key ? NAV[key] : [];
-  const placeholders = ["lg", "md", "sm"] as const;
 
   return (
     <header className={s.header}>
@@ -42,19 +41,15 @@ export function Header() {
         </Link>
 
         <nav className={s.nav}>
-          {links.length > 0
-            ? links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={pathname === link.href ? s.navActive : undefined}
-              >
-                {link.label}
-              </Link>
-            ))
-            : placeholders.map((size) => (
-              <span key={size} className={`${s.navPlaceholder} ${s[`navPlaceholder${size.toUpperCase()}`]}`.trim()} aria-hidden="true" />
-            ))}
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={pathname === link.href ? s.navActive : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         <div className={s.actions}>

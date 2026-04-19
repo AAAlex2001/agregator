@@ -86,27 +86,6 @@
   }
 }
 
-.navPlaceholder {
-  display: block;
-  height: 44px;
-  border-radius: 40px;
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-}
-
-.navPlaceholderLG {
-  width: 148px;
-}
-
-.navPlaceholderMD {
-  width: 134px;
-}
-
-.navPlaceholderSM {
-  width: 120px;
-}
-
 .navActive {
   background: rgba(255, 138, 0, 0.4) !important;
 

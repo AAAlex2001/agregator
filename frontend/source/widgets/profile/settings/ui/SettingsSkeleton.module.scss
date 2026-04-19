@@ -1,0 +1,85 @@
+.form,
+.finance {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionTitle {
+  width: 180px;
+  height: 20px;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+}
+
+.actions,
+.financeButtons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.actionButton,
+.financeButton {
+  width: 100%;
+  max-width: 237px;
+  height: 40px;
+}
+
+.balance {
+  width: 160px;
+  height: 20px;
+}
+
+.financeList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.financeItem {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #ffdda9;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.financeLineWide {
+  width: 100%;
+  height: 16px;
+}
+
+.financeLineShort {
+  width: 42%;
+  height: 14px;
+}

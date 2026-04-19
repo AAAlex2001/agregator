@@ -1,26 +1,21 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { usePathname } from "next/navigation";
 import type { UserProfile } from "@/source/entities/user";
 import { fetchSessionUser } from "../api/session.api";
 import { SessionContext } from "../model/context";
 import type { SessionRole } from "../model/types";
 import { initialSessionState, sessionReducer } from "../model/reducer";
-import {
-  getRouteSessionRole,
-  normalizeSessionRole,
-  readCachedSessionRole,
-  writeCachedSessionRole,
-} from "../model/sessionRole";
+import { getRouteSessionRole, normalizeSessionRole } from "../model/sessionRole";
 
 interface SessionProviderProps {
+  initialRole?: SessionRole | null;
   children: React.ReactNode;
 }
 
-export function SessionProvider({ children }: SessionProviderProps) {
+export function SessionProvider({ initialRole = null, children }: SessionProviderProps) {
   const [state, dispatch] = useReducer(sessionReducer, initialSessionState);
-  const [cachedRole, setCachedRole] = useState<SessionRole | null>(null);
   const pathname = usePathname();
   const routeRole = getRouteSessionRole(pathname);
 
@@ -46,35 +41,10 @@ export function SessionProvider({ children }: SessionProviderProps) {
   };
 
   useEffect(() => {
-    setCachedRole(readCachedSessionRole());
     void reload();
   }, []);
 
-  useEffect(() => {
-    if (!routeRole || routeRole === cachedRole) return;
-
-    setCachedRole(routeRole);
-    writeCachedSessionRole(routeRole);
-  }, [routeRole, cachedRole]);
-
-  useEffect(() => {
-    const nextRole = normalizeSessionRole(state.user?.role);
-
-    if (nextRole) {
-      if (nextRole !== cachedRole) {
-        setCachedRole(nextRole);
-        writeCachedSessionRole(nextRole);
-      }
-      return;
-    }
-
-    if (!state.isLoading && state.error === null && cachedRole) {
-      setCachedRole(null);
-      writeCachedSessionRole(null);
-    }
-  }, [state.user, state.isLoading, state.error, cachedRole]);
-
-  const resolvedRole = routeRole ?? normalizeSessionRole(state.user?.role) ?? cachedRole;
+  const resolvedRole = normalizeSessionRole(state.user?.role) ?? routeRole ?? initialRole;
 
   return (
     <SessionContext.Provider value={{ ...state, resolvedRole, reload, setUser, mergeUser }}>

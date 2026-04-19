@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -15,17 +15,26 @@ router = APIRouter(tags=["settings"])
 
 @router.get("/settings/profile", response_model=UserSettingsResponse)
 async def get_profile(
+    response: Response,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = SettingsService(db)
     user = await service.get_user_or_404(user_id)
+    response.set_cookie(
+        key="user_role",
+        value=user.role.value,
+        secure=True,
+        samesite="none",
+        path="/",
+    )
     return service.to_response(user)
 
 
 @router.put("/settings/profile", response_model=UserSettingsResponse)
 async def update_profile(
     data: UpdatePersonalDataRequest,
+    response: Response,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
@@ -47,6 +56,13 @@ async def update_profile(
         user.inn = data.inn
 
     await db.flush()
+    response.set_cookie(
+        key="user_role",
+        value=user.role.value,
+        secure=True,
+        samesite="none",
+        path="/",
+    )
     return service.to_response(user)
 
 
