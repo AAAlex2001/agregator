@@ -19,11 +19,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 12px;
-
-  @media (min-width: 768px) {
-    gap: 20px;
-  }
+  gap: 8px;
 }
 
 .pageTitle,
@@ -39,11 +35,31 @@
   gap: 12px;
 }
 
+.ratingIconSkeleton {
+  width: 20px;
+  height: 20px;
+}
+
 .ratingDetails {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 5px;
+}
+
+.ratingValueSkeleton {
+  width: 36px;
+  height: 20px;
+}
+
+.reviewCountSkeleton {
+  width: 28px;
+  height: 20px;
+}
+
+.reviewLabelSkeleton {
+  width: 72px;
+  height: 20px;
 }
 
 .ratingValue,

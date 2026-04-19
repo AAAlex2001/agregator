@@ -3,9 +3,10 @@
 import { ReviewCard } from "@/source/entities/review";
 import { useExpertReviews } from "@/source/features/reviews";
 import Button from "@/source/shared/ui/Button";
-import Loader from "@/source/shared/ui/Loader";
+import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { StarIcon } from "@/source/shared/ui/icons";
+import { ExpertReviewsSkeleton } from "./ExpertReviewsSkeleton";
 import { ReviewsCarousel } from "./ReviewsCarousel";
 import s from "./ExpertReviewsWidget.module.scss";
 
@@ -29,26 +30,39 @@ export function ExpertReviewsWidget() {
         <Subtitle text="Смотрите оценки и комментарии по завершённым заказам" className={s.pageSubtitle} />
 
         <div className={s.ratingInfo}>
-          <StarIcon filled />
+          {model.isLoading ? (
+            <>
+              <Skeleton className={s.ratingIconSkeleton} rounded="md" />
 
-          <div className={s.ratingDetails}>
-            <span className={s.ratingValue}>
-              {model.avgRating.toLocaleString("ru-RU", {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })}
-            </span>
-            <span className={s.dot}>&middot;</span>
-            <span className={s.reviewCount}>{model.totalReviews}</span>
-            <span className={s.reviewLabel}>отзывов</span>
-          </div>
+              <div className={s.ratingDetails}>
+                <Skeleton className={s.ratingValueSkeleton} rounded="pill" />
+                <span className={s.dot}>&middot;</span>
+                <Skeleton className={s.reviewCountSkeleton} rounded="pill" />
+                <Skeleton className={s.reviewLabelSkeleton} rounded="pill" />
+              </div>
+            </>
+          ) : (
+            <>
+              <StarIcon filled />
+
+              <div className={s.ratingDetails}>
+                <span className={s.ratingValue}>
+                  {model.avgRating.toLocaleString("ru-RU", {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })}
+                </span>
+                <span className={s.dot}>&middot;</span>
+                <span className={s.reviewCount}>{model.totalReviews}</span>
+                <span className={s.reviewLabel}>отзывов</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {model.isLoading ? (
-        <div className={s.statusState}>
-          <Loader label="" size="lg" />
-        </div>
+        <ExpertReviewsSkeleton />
       ) : model.error ? (
         <div className={s.statusState}>
           <p className={s.statusTitle}>Ошибка загрузки</p>

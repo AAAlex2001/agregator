@@ -1,5 +1,7 @@
 import type { UserProfile } from "@/source/entities/user";
 
+export type SessionRole = "CUSTOMER" | "EXPERT";
+
 export interface SessionState {
   user: UserProfile | null;
   isLoading: boolean;
@@ -7,6 +9,7 @@ export interface SessionState {
 }
 
 export interface SessionContextValue extends SessionState {
+  resolvedRole: SessionRole | null;
   reload: () => Promise<void>;
   setUser: (user: UserProfile | null) => void;
   mergeUser: (patch: Partial<UserProfile>) => void;

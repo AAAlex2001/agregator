@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
+import { getRouteSessionRole } from "@/source/features/session/model/sessionRole";
 import {
   ChatHeaderIcon,
   LogoIcon,
@@ -26,10 +27,11 @@ const NAV: Record<string, { href: string; label: string }[]> = {
 
 export function Header() {
   const pathname = usePathname();
-  const { user } = useSession();
+  const { resolvedRole } = useSession();
 
-  const key = user?.role === "CUSTOMER" ? "CUSTOMER" : user?.role === "EXPERT" ? "EXPERT" : null;
+  const key = getRouteSessionRole(pathname) ?? resolvedRole;
   const links = key ? NAV[key] : [];
+  const placeholders = ["lg", "md", "sm"] as const;
 
   return (
     <header className={s.header}>
@@ -40,23 +42,25 @@ export function Header() {
         </Link>
 
         <nav className={s.nav}>
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={pathname === link.href ? s.navActive : undefined}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.length > 0
+            ? links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={pathname === link.href ? s.navActive : undefined}
+              >
+                {link.label}
+              </Link>
+            ))
+            : placeholders.map((size) => (
+              <span key={size} className={`${s.navPlaceholder} ${s[`navPlaceholder${size.toUpperCase()}`]}`.trim()} aria-hidden="true" />
+            ))}
         </nav>
 
         <div className={s.actions}>
-          {key && (
-            <Link className={s.iconBtn} href="/chat" aria-label="Чат">
-              <ChatHeaderIcon />
-            </Link>
-          )}
+          <Link className={s.iconBtn} href="/chat" aria-label="Чат">
+            <ChatHeaderIcon />
+          </Link>
           <button className={s.iconBtn} type="button" aria-label="Уведомления">
             <NotificationsHeaderIcon />
           </button>

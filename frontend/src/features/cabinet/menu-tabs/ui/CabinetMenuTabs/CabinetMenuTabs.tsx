@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "@/source/features/session";
+import { getRouteSessionRole } from "@/source/features/session/model/sessionRole";
 import { MenuOrdersIcon, MenuResponsesIcon, ReviewIcon } from "@/shared/ui/icons";
-import { useUserProfile } from "@/shared/lib/hooks/useUserProfile";
 import styles from "./cabinetMenuTabs.module.scss";
 
 export type CabinetMenuKey = "orders" | "responses" | "reviews";
@@ -17,19 +17,14 @@ function renderIcon(key: CabinetMenuKey) {
 
 export default function CabinetMenuTabs() {
   const pathname = usePathname();
-  const { profile } = useUserProfile();
+  const { resolvedRole } = useSession();
 
   const isCabinetArea = pathname.startsWith("/customer") || pathname.startsWith("/expert");
-  const isChatWindow = /\/(customer|expert)\/chat\/.+/.test(pathname);
+  const isChatWindow = pathname.startsWith("/chat/");
 
-  const resolvedRole: "CUSTOMER" | "EXPERT" | null = useMemo(() => {
-    if (pathname.startsWith("/expert")) return "EXPERT";
-    if (pathname.startsWith("/customer")) return "CUSTOMER";
-    if (profile?.role === "CUSTOMER" || profile?.role === "EXPERT") return profile.role as "CUSTOMER" | "EXPERT";
-    return null;
-  }, [pathname, profile]);
+  const role = getRouteSessionRole(pathname) ?? resolvedRole;
 
-  if (!isCabinetArea || isChatWindow || resolvedRole === null) {
+  if (!isCabinetArea || isChatWindow || role === null) {
     return null;
   }
 
@@ -40,9 +35,9 @@ export default function CabinetMenuTabs() {
       : "orders";
 
   const items = [
-    { key: "orders" as const, label: resolvedRole === "EXPERT" ? "Все заказы" : "Мои заказы", href: resolvedRole === "EXPERT" ? "/expert/orders" : "/customer/orders" },
-    { key: "responses" as const, label: "Отклики", href: resolvedRole === "EXPERT" ? "/expert/responses" : "/customer/responses" },
-    ...(resolvedRole === "EXPERT" ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }] : []),
+    { key: "orders" as const, label: role === "EXPERT" ? "Все заказы" : "Мои заказы", href: role === "EXPERT" ? "/expert/orders" : "/customer/orders" },
+    { key: "responses" as const, label: "Отклики", href: "/responses" },
+    ...(role === "EXPERT" ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }] : []),
   ];
 
   return (

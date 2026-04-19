@@ -15,6 +15,7 @@ export function CustomerOrdersWidget() {
   const h = useCustomerOrders();
   const ref = useRef<HTMLDivElement>(null);
   useHorizontalScroll(ref, { deps: [h.isLoading] });
+  const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
 
   if (h.mode === "create" || h.mode === "edit") {
     return (
@@ -31,10 +32,6 @@ export function CustomerOrdersWidget() {
     );
   }
 
-  if (h.isLoading) {
-    return <CustomerOrdersSkeleton />;
-  }
-
   return (
     <div className={s.wrapper}>
       {h.error && (
@@ -45,7 +42,7 @@ export function CustomerOrdersWidget() {
         </div>
       )}
 
-      {!h.error && h.items.length === 0 && (
+      {!h.isLoading && !h.error && h.items.length === 0 && (
         <EmptyStateCard
           fullPage
           title="Вы ещё не создали ни одного заказа"
@@ -55,7 +52,7 @@ export function CustomerOrdersWidget() {
         />
       )}
 
-      {!h.error && h.items.length > 0 && (
+      {showOrdersContent && (
         <>
           <div className={s.pageHead}>
             <div className={s.titleRow}>
@@ -69,30 +66,34 @@ export function CustomerOrdersWidget() {
             Добавить заказ
           </Button>
 
-          <div className={s.container}>
-            <div className={s.shadeL} /><div className={s.shadeR} />
-            <div className={s.grid} ref={ref}>
-              {h.items.map((o) => (
-                <OrderCard
-                  key={o.id}
-                  badges={o.badges}
-                  title={o.title}
-                  customer={o.customer}
-                  date={o.date}
-                  sum={o.sum}
-                  responsesDeadline={o.responsesDeadline}
-                >
-                  <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
-                    Редактировать
-                  </Button>
-                  <Button variant="transparent" size="sm" className={s.btnDel}
-                    disabled={h.deletingId === o.id} isLoading={h.deletingId === o.id}
-                    onClick={(e) => { e.stopPropagation(); void h.onDelete(o.id); }}
-                  >Удалить</Button>
-                </OrderCard>
-              ))}
+          {h.isLoading ? (
+            <CustomerOrdersSkeleton />
+          ) : (
+            <div className={s.container}>
+              <div className={s.shadeL} /><div className={s.shadeR} />
+              <div className={s.grid} ref={ref}>
+                {h.items.map((o) => (
+                  <OrderCard
+                    key={o.id}
+                    badges={o.badges}
+                    title={o.title}
+                    customer={o.customer}
+                    date={o.date}
+                    sum={o.sum}
+                    responsesDeadline={o.responsesDeadline}
+                  >
+                    <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
+                      Редактировать
+                    </Button>
+                    <Button variant="transparent" size="sm" className={s.btnDel}
+                      disabled={h.deletingId === o.id} isLoading={h.deletingId === o.id}
+                      onClick={(e) => { e.stopPropagation(); void h.onDelete(o.id); }}
+                    >Удалить</Button>
+                  </OrderCard>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </div>

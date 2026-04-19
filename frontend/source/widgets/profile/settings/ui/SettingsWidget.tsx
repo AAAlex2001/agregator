@@ -14,14 +14,14 @@ interface SettingsWidgetProps {
 }
 
 export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
-  const { user, isLoading, error, setUser, mergeUser } = useSession();
+  const { user, resolvedRole, isLoading, error, setUser, mergeUser } = useSession();
   const [section, setSection] = useState<"personal" | "finance">(initialSection);
 
   useEffect(() => {
     setSection(initialSection);
   }, [initialSection]);
 
-  const isExpert = user?.role === "EXPERT";
+  const isExpert = resolvedRole === "EXPERT";
 
   const tabs = isExpert
     ? [{ id: "personal", label: "Личные данные" }, { id: "finance", label: "Финансы" }]
