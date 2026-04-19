@@ -1,18 +1,24 @@
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
+import { LogoutIcon } from "@/source/shared/ui/icons";
 import { useNotifications } from "@/shared/ui/Notifications";
+import { logout } from "../api/settings.api";
 import { useProfileForm } from "../model/useProfileForm";
 import type { UserProfile } from "../model/types";
 import s from "./PersonalDataForm.module.scss";
 
 interface Props {
   profile: UserProfile;
-  onProfileUpdate: (p: UserProfile) => void;
+  onProfileUpdate: (p: UserProfile | null) => void;
 }
 
 export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
   const form = useProfileForm(profile);
   const { showError, showSuccess } = useNotifications();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleSave = async () => {
     const result = await form.handleSave();
@@ -29,6 +35,23 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
     if (result.successMessage) {
       showSuccess(result.successMessage);
     }
+  };
+
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    await logout();
+
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("token");
+
+    onProfileUpdate(null);
+    router.push("/login");
   };
 
   return (
@@ -59,8 +82,21 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
 
       <div className={s.saveWrapper}>
         <Button variant="chat" size="md" className={s.saveButton}
+          disabled={isLoggingOut}
           onClick={() => void handleSave()} isLoading={form.isSaving}>
           Сохранить изменения
+        </Button>
+        <Button
+          variant="transparent"
+          size="md"
+          className={s.logoutButton}
+          disabled={form.isSaving || isLoggingOut}
+          onClick={() => void handleLogout()}
+        >
+          <span className={s.logoutContent}>
+            <LogoutIcon className={s.logoutIcon} />
+            <span>Выйти из профиля</span>
+          </span>
         </Button>
       </div>
     </>

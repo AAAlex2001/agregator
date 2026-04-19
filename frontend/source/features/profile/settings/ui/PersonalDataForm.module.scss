@@ -32,6 +32,9 @@
 
 .saveWrapper {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
   width: 100%;
 }
@@ -39,4 +42,31 @@
 .saveButton {
   width: 100%;
   max-width: 237px;
+}
+
+.logoutButton {
+  width: 100%;
+  max-width: 237px;
+}
+
+.logoutButton.logoutButton {
+  background: #FFFFFF;
+  color: #E7000B;
+  transition: background-color 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #FFF0F0;
+  }
+}
+
+.logoutContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logoutIcon {
+  flex-shrink: 0;
 }

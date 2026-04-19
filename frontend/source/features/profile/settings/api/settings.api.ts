@@ -4,6 +4,16 @@ import type { UpdateProfilePayload } from "../model/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${API_URL}/login/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch {
+  }
+}
+
 export async function fetchProfile(): Promise<UserProfile> {
   const res = await fetchWithSession(`${API_URL}/settings/profile`);
   if (!res.ok) throw new Error("Не удалось загрузить профиль");
