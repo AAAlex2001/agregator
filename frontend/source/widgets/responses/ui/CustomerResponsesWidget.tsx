@@ -2,9 +2,8 @@
 
 import { Header } from "@/source/widgets/header";
 import { useNotifications } from "@/shared/ui/Notifications";
-import CompletionModal from "@/features/response/complete/ui/CompletionModal";
-import AddReviewModal from "@/features/response/review/ui/AddReviewModal/AddReviewModal";
-import { useResponses } from "@/source/features/responses";
+import { AddReviewModalContainer } from "@/source/features/reviews";
+import { CompletionModal, useResponses } from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";
 
 export function CustomerResponsesWidget() {
@@ -41,7 +40,7 @@ export function CustomerResponsesWidget() {
         onLeaveReview={model.openReviewFromCompletion}
       />
 
-      <AddReviewModal
+      <AddReviewModalContainer
         isOpen={model.reviewModal && Boolean(model.reviewTarget)}
         customerName={model.reviewTarget?.customer ?? ""}
         orderTitle={model.reviewTarget?.orderTitle ?? ""}

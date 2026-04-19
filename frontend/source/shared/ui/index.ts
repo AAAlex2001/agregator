@@ -14,7 +14,7 @@ export { EmptyStateCard } from "./EmptyStateCard/EmptyStateCard";
 
 // Cross-layer convenience re-exports for ergonomic page imports.
 export { OrderCard } from "@/entities/order";
-export { ReviewCard } from "@/entities/review";
+export { ReviewCard } from "@/source/entities/review";
 export { ResponsesState, ResponsesTabs } from "@/widgets/responses-state";
 export { default as CabinetMenuTabs } from "@/features/cabinet/menu-tabs/ui/CabinetMenuTabs";
 export { default as BalanceTopUpModal } from "@/features/balance/topup/ui/BalanceTopUpModal";

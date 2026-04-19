@@ -1,0 +1,55 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 340px;
+  min-height: 158px;
+  padding: 16px 20px;
+  gap: 24px;
+  background: #ffffff;
+  border: 1px solid #ffdda9;
+  border-radius: 16px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.title {
+  width: 100%;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 600;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  width: 100%;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.actions {
+  display: flex;
+  width: 100%;
+}

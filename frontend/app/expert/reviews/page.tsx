@@ -1,7 +1,5 @@
-"use client";
-
-import { ExpertReviewsContent } from "@/widgets/expert-reviews";
+import { ExpertReviewsWidget } from "@/source/widgets/expert-reviews";
 
 export default function ExpertReviewsPage() {
-  return <ExpertReviewsContent />;
+  return <ExpertReviewsWidget />;
 }

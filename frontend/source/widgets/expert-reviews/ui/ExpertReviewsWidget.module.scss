@@ -1,0 +1,93 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 20px 10px;
+  gap: 24px;
+  overflow-x: hidden;
+
+  @media (min-width: 768px) {
+    gap: 40px;
+  }
+}
+
+.pageHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    gap: 20px;
+  }
+}
+
+.pageTitle,
+.pageSubtitle {
+  margin: 0;
+  text-align: center;
+}
+
+.ratingInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.ratingDetails {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.ratingValue,
+.reviewCount,
+.reviewLabel {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.dot {
+  font-size: 16px;
+  line-height: 16px;
+  color: #1e1e1e;
+}
+
+.statusState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 180px;
+  padding: 16px;
+  gap: 12px;
+}
+
+.statusTitle,
+.statusSubtitle {
+  margin: 0;
+  text-align: center;
+}
+
+.statusTitle {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.statusSubtitle {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #666666;
+}
