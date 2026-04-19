@@ -6,8 +6,24 @@ interface MergeFilesResult {
   errorMessage: string | null;
 }
 
+function getFileSignature(file: File): string {
+  return [file.name, file.size, file.type, file.lastModified].join("::");
+}
+
 export function mergeFilesWithLimits(currentFiles: File[], addedFiles: File[]): MergeFilesResult {
-  const mergedFiles = [...currentFiles, ...addedFiles];
+  const seen = new Set(currentFiles.map(getFileSignature));
+  const uniqueAddedFiles = addedFiles.filter((file) => {
+    const signature = getFileSignature(file);
+
+    if (seen.has(signature)) {
+      return false;
+    }
+
+    seen.add(signature);
+    return true;
+  });
+
+  const mergedFiles = [...currentFiles, ...uniqueAddedFiles];
 
   if (mergedFiles.length > MAX_ATTACH_FILES_COUNT) {
     return {

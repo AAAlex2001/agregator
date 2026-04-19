@@ -27,7 +27,7 @@ function formatBalance(value: number) {
 }
 
 export function TenderStep({ order, balance, onBack, onContinue, onTopUp }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const needsTopUp = order.commissionAmountRaw > 0 && balance < order.commissionAmountRaw;
   const isUndefined = order.commissionAmount === "Не определено" || order.commissionAmount === "0 ₽" || order.commissionAmount === "0 ₽";
 

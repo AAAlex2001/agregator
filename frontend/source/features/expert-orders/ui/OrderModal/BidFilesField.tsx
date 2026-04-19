@@ -31,9 +31,7 @@ export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const nextPreviews = files
-      .filter(isImageFile)
-      .map((file) => ({ file, url: URL.createObjectURL(file) }));
+    const nextPreviews = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
 
     setPreviews(nextPreviews);
 
@@ -82,7 +80,10 @@ export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
             multiple
             accept=".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx"
             className={base.hiddenInput}
-            onChange={(event) => onAddFiles(event.currentTarget.files)}
+            onChange={(event) => {
+              onAddFiles(event.currentTarget.files);
+              event.currentTarget.value = "";
+            }}
           />
         )}
       />
