@@ -1,7 +1,6 @@
 "use client";
 
-import type { SyntheticEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ru } from "date-fns/locale/ru";
 import Button from "../Button";
@@ -55,24 +54,39 @@ export function CalendarInput({
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = parseValue(value);
+  const [draftDate, setDraftDate] = useState<Date | null>(parseValue(value));
 
-  const handleChange = (date: Date | null, event?: SyntheticEvent<HTMLElement>) => {
-    if (!date) return;
-    onChange(formatIso(date, withTime));
+  useEffect(() => {
+    if (!isOpen) {
+      setDraftDate(parseValue(value));
+    }
+  }, [isOpen, value]);
 
-    if (!withTime) {
-      setIsOpen(false);
+  const handleOpen = () => {
+    setDraftDate(parseValue(value));
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setDraftDate(parseValue(value));
+    setIsOpen(false);
+  };
+
+  const handleChange = (date: Date | null) => {
+    setDraftDate(date);
+  };
+
+  const handleConfirm = () => {
+    if (!draftDate) {
       return;
     }
 
-    const target = event?.target;
-    const clickedTime =
-      target instanceof HTMLElement &&
-      target.closest(".react-datepicker__time-list-item");
-    if (clickedTime) setIsOpen(false);
+    onChange(formatIso(draftDate, withTime));
+    setIsOpen(false);
   };
 
   const handleClear = () => {
+    setDraftDate(null);
     onChange("");
     setIsOpen(false);
   };
@@ -82,7 +96,7 @@ export function CalendarInput({
       <button
         type="button"
         className={`${s.trigger} ${active ? s.triggerActive : ""} ${isOpen ? s.triggerOpen : ""}`.trim()}
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
       >
         <span className={selected ? s.value : s.placeholder}>
           {selected ? formatDisplay(selected, withTime) : placeholder}
@@ -94,13 +108,13 @@ export function CalendarInput({
       </button>
 
       {isOpen && (
-        <div className={s.overlay} onClick={() => setIsOpen(false)}>
+        <div className={s.overlay} onClick={handleClose}>
           <div
             className={`${s.modal} ${withTime ? s.modalWithTime : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
             <DatePicker
-              selected={selected}
+              selected={draftDate}
               onChange={handleChange}
               inline
               locale="ru"
@@ -121,6 +135,17 @@ export function CalendarInput({
                 onClick={handleClear}
               >
                 Очистить
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                size="md"
+                fullWidth
+                className={s.confirmButton}
+                onClick={handleConfirm}
+                disabled={!draftDate}
+              >
+                Подтвердить
               </Button>
             </div>
           </div>

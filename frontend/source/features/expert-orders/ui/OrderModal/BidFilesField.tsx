@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  getFileDisplayName,
   getFileGalleryPreviewUrl,
   getFileGalleryThumbUrl,
   isImageFileName,
@@ -13,8 +14,10 @@ import s from "./BidFilesField.module.scss";
 
 interface Props {
   files: File[];
+  existingFiles?: Array<{ key: string; url: string }>;
   onAddFiles: (files: FileList | null) => void;
   onRemoveFile: (index: number) => void;
+  onRemoveExistingFile?: (index: number) => void;
 }
 
 interface PreviewItem {
@@ -26,7 +29,13 @@ function isImageFile(file: File) {
   return file.type.startsWith("image/") || isImageFileName(file.name);
 }
 
-export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
+export function BidFilesField({
+  files,
+  existingFiles = [],
+  onAddFiles,
+  onRemoveFile,
+  onRemoveExistingFile,
+}: Props) {
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,7 +49,22 @@ export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
     };
   }, [files]);
 
-  const items: FileGalleryItem[] = files.map((file, index) => {
+  const existingItems: FileGalleryItem[] = existingFiles.map((file, index) => {
+    const name = getFileDisplayName(file.url);
+    const isImage = isImageFileName(name);
+
+    return {
+      id: `existing-${file.key}-${index}`,
+      name,
+      url: file.url,
+      previewUrl: isImage ? file.url : getFileGalleryPreviewUrl(file.url, name),
+      thumbnailUrl: getFileGalleryThumbUrl(file.url, name),
+      isImage,
+      onRemove: onRemoveExistingFile ? () => onRemoveExistingFile(index) : undefined,
+    };
+  });
+
+  const newItems: FileGalleryItem[] = files.map((file, index) => {
     const preview = previews.find((item) => item.file === file);
     const previewUrl = preview?.url ?? "";
     const isImage = isImageFile(file);
@@ -55,6 +79,8 @@ export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
       onRemove: () => onRemoveFile(index),
     };
   }).filter((item) => item.url);
+
+  const items: FileGalleryItem[] = [...existingItems, ...newItems];
 
   return (
     <div className={s.fileField}>

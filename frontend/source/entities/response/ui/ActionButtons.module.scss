@@ -4,12 +4,22 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  @media (min-width: 768px) { flex-direction: row; }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 }
+
 .actionBtn {
   flex: 1;
+  min-width: 0;
   max-height: 44px;
   font-size: 14px !important;
   line-height: 17px !important;
-  @media (min-width: 768px) { font-size: unset !important; line-height: unset !important; }
+
+  @media (min-width: 768px) {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
 }

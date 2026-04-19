@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Header } from "@/source/widgets/header";
 import { OrderCard } from "@/source/entities/order";
 import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
+import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
@@ -48,17 +49,13 @@ export function CustomerOrdersWidget() {
         )}
 
         {!h.isLoading && !h.error && h.items.length === 0 && (
-          <div className={s.empty}>
-            <div className={s.emptyCard}>
-              <div className={s.emptyText}>
-                <p className={s.emptyTitle}>У вас пока нет заказов</p>
-                <p className={s.emptyHint}>Создайте свой первый заказ</p>
-              </div>
-              <button type="button" className={s.emptyBtn} onClick={h.openCreate}>
-                Создать заказ
-              </button>
-            </div>
-          </div>
+          <EmptyStateCard
+            fullPage
+            title="Вы ещё не создали ни одного заказа"
+            subtitle="Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности"
+            actionLabel="Добавить заказ"
+            onAction={h.openCreate}
+          />
         )}
 
         {!h.isLoading && !h.error && h.items.length > 0 && (

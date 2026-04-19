@@ -146,7 +146,11 @@ export function FileGallery({
                     <button
                       type="button"
                       className={s.removeButton}
-                      onClick={item.onRemove}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        item.onRemove?.();
+                      }}
                       aria-label={`Удалить файл ${item.name}`}
                     >
                       ×

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Header } from "@/source/widgets/header";
 import { OrderCard } from "@/source/entities/order";
 import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
+import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
@@ -30,6 +31,7 @@ function isResponsesDeadlineExpired(responsesDeadline?: string | null): boolean 
 export function ExpertOrdersWidget() {
   const { showSuccess } = useNotifications();
   const h = useExpertOrders();
+  const isEmpty = !h.isLoading && !h.error && h.items.length === 0;
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -44,13 +46,15 @@ export function ExpertOrdersWidget() {
     <>
       <Header />
       <div className={s.wrapper}>
-        <div className={s.pageHead}>
-          <div className={s.titleRow}>
-            <Title text="Все заказы" as="h1" />
-            <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
+        {!isEmpty && (
+          <div className={s.pageHead}>
+            <div className={s.titleRow}>
+              <Title text="Все заказы" as="h1" />
+              <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
+            </div>
+            <Subtitle text="Актуальные заказы по направлениям" />
           </div>
-          <Subtitle text="Актуальные заказы по направлениям" />
-        </div>
+        )}
 
         {h.isLoading && (
           <div className={s.center}>
@@ -66,15 +70,12 @@ export function ExpertOrdersWidget() {
           </div>
         )}
 
-        {!h.isLoading && !h.error && h.items.length === 0 && (
-          <div className={s.empty}>
-            <div className={s.emptyCard}>
-              <div className={s.emptyText}>
-                <p className={s.emptyTitle}>Пока нет доступных заказов</p>
-                <p className={s.emptyHint}>Загляните позже — мы пришлём новые</p>
-              </div>
-            </div>
-          </div>
+        {isEmpty && (
+          <EmptyStateCard
+            fullPage
+            title="Пока нет доступных заказов"
+            subtitle="Загляните позже — мы пришлём новые"
+          />
         )}
 
         {!h.isLoading && !h.error && h.items.length > 0 && (

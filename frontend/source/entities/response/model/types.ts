@@ -81,6 +81,7 @@ export interface ResponseCardData {
   commentTitle: string;
   commentText: string;
   orderComment?: string;
+  rawTechSpecFiles: string[];
   techSpecFiles: string[];
   orderTechSpecFiles: string[];
   rawSumAmount: number;

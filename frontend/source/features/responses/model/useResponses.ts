@@ -36,7 +36,7 @@ export function useResponses(role: UserRole | null) {
     d({ type: "ERROR", value: null });
     try {
       const data = await fetchResponses(s.activeTab);
-      d({ type: "DATA", items: data.items.map(mapApiToCard), counters: data.counters });
+      d({ type: "DATA", items: data.items.map((item) => mapApiToCard(item, role)), counters: data.counters });
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
     } finally {

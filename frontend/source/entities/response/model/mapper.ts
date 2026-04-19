@@ -1,4 +1,4 @@
-import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant } from "./types";
+import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant, UserRole } from "./types";
 import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
 
 const BADGE_MAP: Record<string, BadgeVariant> = {
@@ -13,16 +13,28 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   COMPLETED:   { label: "Завершен",        color: "#555555", bg: "#F5F5F5" },
 };
 
-export function mapApiToCard(item: ResponseApiItem): ResponseCardData {
+export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCardData {
   const s = STATUS_MAP[item.status] ?? STATUS_MAP.REVIEW;
   const confirmed = item.expert_confirmed ?? false;
 
   let status = s.label;
   let statusMessage: string | undefined;
 
-  if (item.status === "ACCEPTED") status = `Приглашение на собеседование от ${item.date}`;
-  else if (item.status === "IN_PROGRESS" && !confirmed) statusMessage = "Заказчик выбрал вас!";
-  else if (item.status === "IN_PROGRESS" && confirmed) status = `Принято ${item.date}`;
+  if (role === "expert") {
+    if (item.status === "ACCEPTED") {
+      status = `Приглашение на собеседование от ${item.date}`;
+    } else if (item.status === "IN_PROGRESS" && !confirmed) {
+      statusMessage = "Заказчик выбрал вас!";
+    } else if (item.status === "IN_PROGRESS" && confirmed) {
+      status = `Принято ${item.date}`;
+    }
+  } else {
+    if (item.status === "ACCEPTED") {
+      status = "В переговорах";
+    } else if (item.status === "IN_PROGRESS") {
+      status = "Исполнитель выбран";
+    }
+  }
 
   return {
     id: item.id,
@@ -55,6 +67,7 @@ export function mapApiToCard(item: ResponseApiItem): ResponseCardData {
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
     orderComment: item.order_comment,
+    rawTechSpecFiles: item.response_files ?? [],
     techSpecFiles: resolveFileUrls(item.response_files),
     orderTechSpecFiles: resolveFileUrls(item.technical_files),
     rawSumAmount: item.proposed_sum_amount_raw ?? 0,

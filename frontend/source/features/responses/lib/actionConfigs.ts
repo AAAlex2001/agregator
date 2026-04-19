@@ -32,19 +32,19 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
     case "ACCEPTED":
       return [
         { text: "Отказаться", variant: "outline", onClick: () => h.onWithdraw?.(card), isLoading: loading === "withdraw" },
-        { text: "Чат с заказчиком", variant: "chat", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         share,
       ];
     case "IN_PROGRESS":
       if (card.expertConfirmed) {
         return [
-          { text: "Чат с заказчиком", variant: "chat", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+          { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
           share,
         ];
       }
       return [
         { text: "Отказаться", variant: "outline", onClick: () => h.onWithdraw?.(card), isLoading: loading === "withdraw" },
-        { text: "Чат с заказчиком", variant: "chat", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         { text: "Принять проект", variant: "green", onClick: () => h.onStart?.(card.id), isLoading: loading === "start" },
         share,
       ];
@@ -71,7 +71,7 @@ function customerActions(card: ResponseCardData, loading: Loading, h: Handlers):
         ...(card.expertConfirmed ? [] : [
           { text: "Отклонить", variant: "transparent" as const, onClick: () => h.onReject?.(card.id), isLoading: loading === "reject" },
         ]),
-        { text: "Чат с экспертом", variant: "chat", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с экспертом", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         { text: "Завершить проект", variant: "green", onClick: () => h.onComplete?.(card.id), isLoading: loading === "complete" },
       ];
     case "COMPLETED":
