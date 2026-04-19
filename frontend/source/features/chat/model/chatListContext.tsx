@@ -21,6 +21,24 @@ function sortChats(chats: ChatListItemData[]) {
   });
 }
 
+function getMessagePreview(message: ChatMessageData): string {
+  const normalizedText = message.text.trim();
+
+  if (normalizedText) {
+    return normalizedText;
+  }
+
+  if (message.attachments.length === 1) {
+    return message.attachments[0].name;
+  }
+
+  if (message.attachments.length > 1) {
+    return `Файлы: ${message.attachments.length}`;
+  }
+
+  return message.file_name || "Файл";
+}
+
 export function ChatListProvider({ children }: { children: ReactNode }) {
   const [chats, setChats] = useState<ChatListItemData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +77,7 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
 
         return {
           ...chat,
-          last_message_text: message.text || message.file_name || "Файл",
+          last_message_text: getMessagePreview(message),
           last_message_sender_id: message.sender_id,
           last_message_at: message.created_at,
           updated_at: message.created_at,

@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
+import { InnSuggestionsInput } from "./InnSuggestionsInput";
 import s from "./CredentialsStep.module.scss";
 
 interface Props {
@@ -8,20 +9,24 @@ interface Props {
   lastName: string;
   firstName: string;
   login: string;
+  inn: string;
+  innQuery: string;
   password: string;
   repeatPassword: string;
   isLoading: boolean;
   onLastNameChange: (v: string) => void;
   onFirstNameChange: (v: string) => void;
   onLoginChange: (v: string) => void;
+  onInnChange: (v: string) => void;
+  onInnQueryChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
   onRepeatPasswordChange: (v: string) => void;
   onSubmit: (e: FormEvent) => void;
 }
 
 export function CredentialsStep({
-  selectedRole, lastName, firstName, login, password, repeatPassword,
-  isLoading, onLastNameChange, onFirstNameChange, onLoginChange,
+  selectedRole, lastName, firstName, login, inn, innQuery, password, repeatPassword,
+  isLoading, onLastNameChange, onFirstNameChange, onLoginChange, onInnChange, onInnQueryChange,
   onPasswordChange, onRepeatPasswordChange, onSubmit,
 }: Props) {
   return (
@@ -35,6 +40,13 @@ export function CredentialsStep({
               onChange={(e) => onFirstNameChange(e.target.value)} placeholder="Имя" required />
           </>
         )}
+        <InnSuggestionsInput
+          value={inn}
+          query={innQuery}
+          disabled={isLoading}
+          onValueChange={onInnChange}
+          onQueryChange={onInnQueryChange}
+        />
         <Input id="login" variant="emailOrPhone" value={login}
           onChange={(e) => onLoginChange(e.target.value)} placeholder="Электронная почта или телефон" required />
         <Input id="password" variant="password" value={password}

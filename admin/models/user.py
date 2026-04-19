@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint
+from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -23,6 +23,7 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
+    inn = Column(String(12), index=True, nullable=True)
     email = Column(String, unique=True, index=True, nullable=True)
     phone = Column(String, unique=True, index=True, nullable=True)
     password = Column(String, nullable=False)
@@ -34,6 +35,9 @@ class User(Base):
 
     __table_args__ = (
         CheckConstraint("(email IS NOT NULL OR phone IS NOT NULL)", name="user_email_or_phone_required"),
+        UniqueConstraint("inn", "role", name="uq_users_inn_role"),
+        UniqueConstraint("email", "role", name="uq_users_email_role"),
+        UniqueConstraint("phone", "role", name="uq_users_phone_role"),
     )
 
     password_reset_codes = relationship("PasswordResetCode", back_populates="user")

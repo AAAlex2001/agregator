@@ -154,6 +154,7 @@ class ChatMessageResponse(BaseModel):
     text: str
     file_url: str | None = None
     file_name: str | None = None
+    attachments: list[dict[str, str]] = Field(default_factory=list)
     is_read: bool = False
     created_at: datetime
 

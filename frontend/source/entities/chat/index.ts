@@ -1,4 +1,5 @@
 export type {
+  ChatAttachmentData,
   ChatBadge,
   ChatListItemData,
   ChatMessageData,

@@ -6,21 +6,21 @@ import type { UserRole } from "../model/types";
 import s from "./LoginForm.module.scss";
 
 interface Props {
-  login: string;
+  inn: string;
   password: string;
   role: UserRole;
   isLoading: boolean;
   error: string | null;
   fromOrder: boolean;
-  onLoginChange: (v: string) => void;
+  onInnChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
   onRoleChange: (role: UserRole) => void;
   onSubmit: (e: FormEvent) => void;
 }
 
 export function LoginForm({
-  login, password, role, isLoading, error, fromOrder,
-  onLoginChange, onPasswordChange, onRoleChange, onSubmit,
+  inn, password, role, isLoading, error, fromOrder,
+  onInnChange, onPasswordChange, onRoleChange, onSubmit,
 }: Props) {
   return (
     <form onSubmit={onSubmit} className={s.form}>
@@ -42,8 +42,16 @@ export function LoginForm({
         <p className={s.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
       )}
 
-      <Input id="login" variant="emailOrPhone" value={login}
-        onChange={(e) => onLoginChange(e.target.value)} placeholder="Электронная почта или телефон" required />
+      <Input
+        id="inn"
+        variant="text"
+        value={inn}
+        onChange={(event) => onInnChange(event.target.value)}
+        placeholder="ИНН"
+        inputMode="numeric"
+        required
+        disabled={isLoading}
+      />
       <Input id="password" variant="password" value={password}
         onChange={(e) => onPasswordChange(e.target.value)} placeholder="Введите пароль" required />
 

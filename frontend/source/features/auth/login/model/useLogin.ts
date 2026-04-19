@@ -3,6 +3,7 @@
 import { useReducer, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
+import { isValidInn, normalizeInn } from "@/source/shared/lib/inn";
 import { loginUser } from "../api/login.api";
 import { loginReducer, initialLoginState } from "./reducer";
 
@@ -22,8 +23,10 @@ export function useLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!state.login.trim()) {
-      dispatch({ type: "SET_ERROR", payload: "Укажите email или телефон" });
+    const inn = normalizeInn(state.inn);
+
+    if (!isValidInn(inn)) {
+      dispatch({ type: "SET_ERROR", payload: "Укажите корректный ИНН из 10 или 12 цифр" });
       return;
     }
     if (!state.password.trim()) {
@@ -36,7 +39,7 @@ export function useLogin() {
 
     try {
       const user = await loginUser({
-        login: state.login,
+        inn,
         password: state.password,
         role: state.role,
       });
@@ -60,7 +63,7 @@ export function useLogin() {
   return {
     ...state,
     fromOrder,
-    setLogin: (v: string) => dispatch({ type: "SET_FIELD", field: "login", value: v }),
+    setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
     setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
     setRole: (role: "CUSTOMER" | "EXPERT") => dispatch({ type: "SET_ROLE", payload: role }),
     handleSubmit,

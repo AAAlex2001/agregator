@@ -41,6 +41,16 @@ class SettingsService:
                 detail="Этот email уже используется",
             )
 
+    async def ensure_unique_inn(self, inn: str, role, user_id: int) -> None:
+        existing = await self.db.execute(
+            select(User).where(User.inn == inn, User.role == role, User.id != user_id)
+        )
+        if existing.scalars().first():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Этот ИНН уже используется",
+            )
+
     async def update_password(self, user_id: int, new_password: str) -> None:
         user = await self.get_user_or_404(user_id)
         user.password = await hash_password(new_password)
@@ -50,6 +60,7 @@ class SettingsService:
     def to_response(user: User) -> UserSettingsResponse:
         return UserSettingsResponse(
             id=user.id,
+            inn=user.inn,
             email=user.email,
             phone=user.phone,
             first_name=user.first_name,

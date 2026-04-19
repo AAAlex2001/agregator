@@ -1,7 +1,7 @@
 import type { LoginState, LoginAction } from "./types";
 
 export const initialLoginState: LoginState = {
-  login: "",
+  inn: "",
   password: "",
   role: "CUSTOMER",
   isLoading: false,

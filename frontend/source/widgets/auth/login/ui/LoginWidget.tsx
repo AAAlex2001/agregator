@@ -20,13 +20,13 @@ export function LoginWidget() {
           </div>
 
           <LoginForm
-            login={auth.login}
+            inn={auth.inn}
             password={auth.password}
             role={auth.role}
             isLoading={auth.isLoading}
             error={auth.error}
             fromOrder={auth.fromOrder}
-            onLoginChange={auth.setLogin}
+            onInnChange={auth.setInn}
             onPasswordChange={auth.setPassword}
             onRoleChange={auth.setRole}
             onSubmit={auth.handleSubmit}

@@ -24,6 +24,7 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
+    inn = Column(String(12), index=True, nullable=True)
     email = Column(String, index=True, nullable=True)
     phone = Column(String, index=True, nullable=True)
     password = Column(String, nullable=False)
@@ -38,6 +39,7 @@ class User(Base):
             "(email IS NOT NULL OR phone IS NOT NULL)",
             name="user_email_or_phone_required"
         ),
+        UniqueConstraint("inn", "role", name="uq_users_inn_role"),
         UniqueConstraint("email", "role", name="uq_users_email_role"),
         UniqueConstraint("phone", "role", name="uq_users_phone_role"),
     )

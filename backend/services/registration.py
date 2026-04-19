@@ -37,8 +37,20 @@ class RegistrationService:
         result = await self.db.execute(query)
         return result.scalars().first()
 
+    async def get_user_by_inn_and_role(self, inn: str, role: UserRole) -> User | None:
+        query = select(User).where(User.inn == inn, User.role == role)
+        result = await self.db.execute(query)
+        return result.scalars().first()
+
     async def create_user(self, data: UserRegistration) -> User:
         self.validate_password(data.password)
+
+        existing_by_inn = await self.get_user_by_inn_and_role(data.inn, data.role)
+        if existing_by_inn:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пользователь с таким ИНН и ролью уже зарегистрирован",
+            )
 
         if data.email:
             existing = await self.get_user_by_email_and_role(data.email, data.role)
@@ -60,6 +72,7 @@ class RegistrationService:
             role=data.role,
             phone=data.phone,
             email=data.email,
+            inn=data.inn,
             password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,

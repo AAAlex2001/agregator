@@ -1,0 +1,43 @@
+import os
+
+import httpx
+from fastapi import HTTPException, status
+
+
+DADATA_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party"
+
+
+class DaDataService:
+    def __init__(self) -> None:
+        self.token = os.getenv("DADATA_API_KEY", "")
+        self.secret = os.getenv("DADATA_SECRET_KEY", "")
+
+    async def suggest_parties(self, query: str, count: int = 10) -> list[dict]:
+        if not self.token:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Интеграция с DaData не настроена",
+            )
+
+        headers = {
+            "Authorization": f"Token {self.token}",
+            "Content-Type": "application/json",
+        }
+        if self.secret:
+            headers["X-Secret"] = self.secret
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                DADATA_URL,
+                headers=headers,
+                json={"query": query, "count": count},
+            )
+
+        if response.status_code >= 400:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Не удалось получить подсказки DaData",
+            )
+
+        body = response.json()
+        return body.get("suggestions", [])

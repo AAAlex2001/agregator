@@ -26,30 +26,33 @@ function formatMessageTime(value: string): string {
 
 export function MessageBubble({ message, isMine }: MessageBubbleProps) {
   const CheckIcon = message.is_read ? ChatCheckReadIcon : ChatCheckSentIcon;
-  const fileItem: FileGalleryItem | null = message.file_url
-    ? (() => {
-        const url = resolveFileUrl(message.file_url);
-        const name = message.file_name || "Файл";
-        const isImage = isImageFileName(name);
+  const items: FileGalleryItem[] = (message.attachments.length
+    ? message.attachments
+    : message.file_url
+      ? [{ url: message.file_url, name: message.file_name || "Файл" }]
+      : []
+  ).map((attachment, index) => {
+    const url = resolveFileUrl(attachment.url);
+    const name = attachment.name || `Файл ${index + 1}`;
+    const isImage = isImageFileName(name);
 
-        return {
-          id: `chat-file-${message.id}`,
-          name,
-          url,
-          previewUrl: isImage ? url : getFileGalleryPreviewUrl(url, name),
-          thumbnailUrl: getFileGalleryThumbUrl(url, name),
-          isImage,
-        };
-      })()
-    : null;
+    return {
+      id: `chat-file-${message.id}-${index}`,
+      name,
+      url,
+      previewUrl: isImage ? url : getFileGalleryPreviewUrl(url, name),
+      thumbnailUrl: getFileGalleryThumbUrl(url, name),
+      isImage,
+    };
+  });
 
   return (
     <div className={`${s.bubble} ${isMine ? s.sent : s.received}`.trim()}>
       <div className={s.content}>
         {message.text ? <span className={s.text}>{message.text}</span> : null}
-        {fileItem ? (
+        {items.length ? (
           <FileGallery
-            items={[fileItem]}
+            items={items}
             hideWhenEmpty
             blockClassName={s.gallery}
             gridProps={{ className: s.galleryGrid }}

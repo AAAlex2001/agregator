@@ -96,13 +96,17 @@ async def send_message(
     chat_uuid: str,
     text: str = Form(""),
     file: UploadFile | None = File(default=None),
+    files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ChatService(db)
     chat = await service.get_chat_by_uuid(chat_uuid, actor_id=user_id)
+    upload_files = [current_file for current_file in files if current_file.filename]
+    if file and file.filename:
+        upload_files.insert(0, file)
     message = await service.send_message(
-        chat_id=chat.id, sender_id=user_id, text=text, file=file,
+        chat_id=chat.id, sender_id=user_id, text=text, files=upload_files,
     )
     await chat_manager.broadcast(
         chat.id,

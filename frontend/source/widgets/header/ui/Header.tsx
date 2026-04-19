@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import {
   ChatHeaderIcon,
@@ -24,19 +24,12 @@ const NAV: Record<string, { href: string; label: string }[]> = {
   ],
 };
 
-const CHAT: Record<string, string> = {
-  CUSTOMER: "/customer/chat",
-  EXPERT: "/expert/chat",
-};
-
 export function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const { user } = useSession();
 
   const key = user?.role === "CUSTOMER" ? "CUSTOMER" : user?.role === "EXPERT" ? "EXPERT" : null;
   const links = key ? NAV[key] : [];
-  const chatHref = key ? CHAT[key] : null;
 
   return (
     <header className={s.header}>
@@ -59,15 +52,10 @@ export function Header() {
         </nav>
 
         <div className={s.actions}>
-          {chatHref && (
-            <button
-              className={s.iconBtn}
-              type="button"
-              aria-label="Чат"
-              onClick={() => router.push(chatHref)}
-            >
+          {key && (
+            <Link className={s.iconBtn} href="/chat" aria-label="Чат">
               <ChatHeaderIcon />
-            </button>
+            </Link>
           )}
           <button className={s.iconBtn} type="button" aria-label="Уведомления">
             <NotificationsHeaderIcon />

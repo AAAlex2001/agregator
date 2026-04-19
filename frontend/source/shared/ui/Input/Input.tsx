@@ -19,6 +19,8 @@ interface InputProps {
   variant?: InputVariant;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -36,6 +38,8 @@ const Input: React.FC<InputProps> = ({
   variant = "text",
   value,
   onChange,
+  onFocus,
+  onBlur,
   placeholder,
   required,
   disabled,
@@ -157,8 +161,14 @@ const Input: React.FC<InputProps> = ({
           inputMode={getInputMode()}
           value={value}
           onChange={onChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={(event) => {
+            setIsFocused(true);
+            onFocus?.(event);
+          }}
+          onBlur={(event) => {
+            setIsFocused(false);
+            onBlur?.(event);
+          }}
           className={`${styles.input} ${hasLeftIcon ? styles.hasLeftIcon : ""} ${hasRightIcon ? styles.hasRightIcon : ""} ${inputClassName ?? ""}`}
           placeholder={placeholder}
           required={required}

@@ -42,6 +42,9 @@ async def update_profile(
     if data.email is not None:
         await service.ensure_unique_email(data.email, user.role, user_id)
         user.email = data.email
+    if data.inn is not None:
+        await service.ensure_unique_inn(data.inn, user.role, user_id)
+        user.inn = data.inn
 
     await db.flush()
     return service.to_response(user)

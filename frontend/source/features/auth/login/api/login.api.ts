@@ -6,8 +6,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
     method: "POST",
     credentials: "include",
     body: {
-      email: data.login.includes("@") ? data.login.trim() : undefined,
-      phone: !data.login.includes("@") ? data.login.trim() : undefined,
+      inn: data.inn,
       password: data.password,
       role: data.role,
     },

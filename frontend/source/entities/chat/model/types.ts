@@ -3,6 +3,11 @@ export interface ChatBadge {
   variant: string;
 }
 
+export interface ChatAttachmentData {
+  url: string;
+  name: string;
+}
+
 export interface ChatListItemData {
   id: number;
   uuid: string;
@@ -25,6 +30,7 @@ export interface ChatMessageData {
   text: string;
   file_url: string | null;
   file_name: string | null;
+  attachments: ChatAttachmentData[];
   is_read: boolean;
   created_at: string;
 }

@@ -31,10 +31,17 @@ class LoginService:
         result = await self.db.execute(query)
         return result.scalars().first()
 
+    async def get_user_by_inn_and_role(self, inn: str, role: UserRole) -> User | None:
+        query = select(User).where(User.inn == inn, User.role == role)
+        result = await self.db.execute(query)
+        return result.scalars().first()
+
     async def authenticate_user(self, data: UserLogin) -> User:
         user = None
         if data.email:
             user = await self.get_user_by_email_and_role(data.email, data.role)
+        elif data.inn:
+            user = await self.get_user_by_inn_and_role(data.inn, data.role)
         elif data.phone:
             user = await self.get_user_by_phone_and_role(data.phone, data.role)
 

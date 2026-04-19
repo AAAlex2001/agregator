@@ -5,6 +5,8 @@ export const initialRegisterState: RegisterState = {
   selectedRole: null,
   openedCardId: null,
   login: "",
+  inn: "",
+  innQuery: "",
   password: "",
   repeatPassword: "",
   firstName: "",

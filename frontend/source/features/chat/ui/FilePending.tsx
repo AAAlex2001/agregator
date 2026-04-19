@@ -11,32 +11,42 @@ import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import s from "./FilePending.module.scss";
 
 interface FilePendingProps {
-  file: File;
-  onRemove: () => void;
+  files: File[];
+  onRemove: (index: number) => void;
 }
 
-export function FilePending({ file, onRemove }: FilePendingProps) {
-  const [previewUrl, setPreviewUrl] = useState("");
+interface PreviewItem {
+  file: File;
+  url: string;
+}
+
+export function FilePending({ files, onRemove }: FilePendingProps) {
+  const [previews, setPreviews] = useState<PreviewItem[]>([]);
 
   useEffect(() => {
-    const nextPreviewUrl = URL.createObjectURL(file);
-    setPreviewUrl(nextPreviewUrl);
+    const nextPreviews = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
+    setPreviews(nextPreviews);
 
     return () => {
-      URL.revokeObjectURL(nextPreviewUrl);
+      nextPreviews.forEach((item) => URL.revokeObjectURL(item.url));
     };
-  }, [file]);
+  }, [files]);
 
-  const isImage = isImageFileName(file.name);
-  const items: FileGalleryItem[] = previewUrl ? [{
-    id: `pending-${file.name}-${file.lastModified}`,
-    name: file.name,
-    url: previewUrl,
-    previewUrl: isImage ? previewUrl : getFileGalleryPreviewUrl(previewUrl, file.name),
-    thumbnailUrl: getFileGalleryThumbUrl(previewUrl, file.name),
-    isImage,
-    onRemove,
-  }] : [];
+  const items: FileGalleryItem[] = files.map((file, index) => {
+    const preview = previews.find((item) => item.file === file);
+    const url = preview?.url ?? "";
+    const isImage = isImageFileName(file.name);
+
+    return {
+      id: `pending-${file.name}-${file.lastModified}-${index}`,
+      name: file.name,
+      url,
+      previewUrl: isImage ? url : getFileGalleryPreviewUrl(url, file.name),
+      thumbnailUrl: getFileGalleryThumbUrl(url, file.name),
+      isImage,
+      onRemove: () => onRemove(index),
+    };
+  }).filter((item) => item.url);
 
   return (
     <FileGallery
@@ -44,7 +54,7 @@ export function FilePending({ file, onRemove }: FilePendingProps) {
       hideWhenEmpty
       variant="editable"
       blockClassName={s.filePending}
-      hint="PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX"
+      hint="До 6 файлов: PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX"
       hintClassName={s.hint}
     />
   );

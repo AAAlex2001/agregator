@@ -6,6 +6,7 @@ export async function registerUser(data: RegisterFormData): Promise<RegisterResp
     method: "POST",
     body: {
       role: data.role,
+      inn: data.inn,
       email: data.login.includes("@") ? data.login : undefined,
       phone: !data.login.includes("@") ? data.login : undefined,
       password: data.password,

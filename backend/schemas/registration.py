@@ -13,6 +13,7 @@ class UserRegistration(BaseModel):
     "модель валидации пользователя"
     role: UserRole = Field(..., description="Роль пользователя")
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
+    inn: str = Field(..., description="ИНН", min_length=10, max_length=12)
     password: str = Field(..., description="Пароль пользователя")
     email: Optional[EmailStr] = Field(None, description="Почта пользователя")
     first_name: Optional[str] = Field(None, description="Имя", max_length=100)
@@ -25,7 +26,28 @@ class UserRegistration(BaseModel):
         """
         if not self.phone and not self.email:
             raise ValueError("Необходимо указать либо телефон, либо email")
+        if not self.inn.isdigit() or len(self.inn) not in {10, 12}:
+            raise ValueError("ИНН должен содержать 10 или 12 цифр")
         return self
+
+
+class PartySuggestionRequest(BaseModel):
+    query: str = Field(..., min_length=2, max_length=200)
+    count: int = Field(default=10, ge=1, le=10)
+
+
+class PartySuggestionData(BaseModel):
+    inn: str | None = None
+    kpp: str | None = None
+    ogrn: str | None = None
+    name: str | None = None
+    short_name: str | None = None
+
+
+class PartySuggestionResponse(BaseModel):
+    value: str
+    unrestricted_value: str
+    data: PartySuggestionData
     
 
 
@@ -33,6 +55,7 @@ class UserResponse(BaseModel):
     "модель для ответа на фронтенд"
     id: int
     role: UserRole
+    inn: str | None = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     created_at: datetime

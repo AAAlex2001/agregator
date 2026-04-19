@@ -1,7 +1,9 @@
 import type { RegisterFormData, UserRole } from "./types";
+import { isValidInn } from "@/source/shared/lib/inn";
 
 export function validateRegisterForm(data: RegisterFormData): string | null {
   if (!data.login.trim()) return "Укажите email или телефон";
+  if (!isValidInn(data.inn)) return "Укажите корректный ИНН из 10 или 12 цифр";
 
   if (data.role === "EXPERT") {
     if (!data.firstName?.trim()) return "Укажите имя";

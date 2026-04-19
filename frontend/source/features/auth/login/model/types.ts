@@ -1,14 +1,14 @@
 export type UserRole = "CUSTOMER" | "EXPERT";
 
 export interface LoginState {
-  login: string;
+  inn: string;
   password: string;
   role: UserRole;
   isLoading: boolean;
   error: string | null;
 }
 
-type LoginField = "login" | "password";
+type LoginField = "inn" | "password";
 
 export type LoginAction =
   | { type: "SET_FIELD"; field: LoginField; value: string }
@@ -17,7 +17,7 @@ export type LoginAction =
   | { type: "SET_ERROR"; payload: string | null };
 
 export interface LoginFormData {
-  login: string;
+  inn: string;
   password: string;
   role: UserRole;
 }
@@ -25,6 +25,7 @@ export interface LoginFormData {
 export interface LoginResponse {
   id: number;
   role: UserRole;
+  inn: string | null;
   email: string | null;
   phone: string | null;
   created_at: string;

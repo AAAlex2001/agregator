@@ -9,12 +9,15 @@ class UpdatePersonalDataRequest(BaseModel):
     first_name: Optional[str] = Field(None, description="Имя", max_length=100)
     phone: Optional[str] = Field(None, description="Номер телефона")
     email: Optional[EmailStr] = Field(None, description="Электронная почта")
+    inn: Optional[str] = Field(None, description="ИНН", min_length=10, max_length=12)
 
     @model_validator(mode="after")
     def validate_phone_format(self):
         """Проверка формата телефона"""
         if self.phone and (not self.phone.isdigit() or len(self.phone) < 10):
             raise ValueError("Номер телефона должен содержать минимум 10 цифр")
+        if self.inn and (not self.inn.isdigit() or len(self.inn) not in {10, 12}):
+            raise ValueError("ИНН должен содержать 10 или 12 цифр")
         return self
 
 
@@ -33,6 +36,7 @@ class ChangePasswordRequest(BaseModel):
 
 class UserSettingsResponse(BaseModel):
     id: int
+    inn: Optional[str] = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     first_name: Optional[str] = None

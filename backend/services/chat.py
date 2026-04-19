@@ -11,10 +11,11 @@ from sqlalchemy.orm import selectinload
 from models.chat import Chat, ChatMessage
 from models.order import Order
 from models.user import User, UserRole
-from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
+from schemas.chat import ChatAttachmentResponse, ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
 
 CHAT_ALLOWED_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx"}
 UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
+CHAT_MAX_ATTACHMENTS = 6
 
 
 class ChatService:
@@ -145,6 +146,35 @@ class ChatService:
             return f"{formatted},{amount_kopecks % 100:02d} ₽"
         return f"{formatted} ₽"
 
+    @staticmethod
+    def build_attachments(message: ChatMessage) -> list[ChatAttachmentResponse]:
+        raw_attachments = list(message.attachments or [])
+        if not raw_attachments and message.file_url and message.file_name:
+            raw_attachments = [{"url": message.file_url, "name": message.file_name}]
+
+        return [
+            ChatAttachmentResponse(url=item["url"], name=item["name"])
+            for item in raw_attachments
+            if item.get("url") and item.get("name")
+        ]
+
+    @classmethod
+    def get_last_message_text(cls, message: ChatMessage | None) -> str:
+        if not message:
+            return ""
+
+        normalized_text = message.text.strip()
+        if normalized_text:
+            return normalized_text
+
+        attachments = cls.build_attachments(message)
+        if len(attachments) == 1:
+            return attachments[0].name
+        if len(attachments) > 1:
+            return f"Файлы: {len(attachments)}"
+
+        return ""
+
     async def list_chats(self, actor_id: int) -> list[ChatListItemResponse]:
         actor = await self.get_user(actor_id)
         chats_result = await self.db.execute(
@@ -199,7 +229,7 @@ class ChatService:
                     counterpart_id=counterpart_id,
                     counterpart_name=counterpart_name,
                     counterpart_avatar_url=counterpart_avatar_url,
-                    last_message_text=last_message.text if last_message else "",
+                    last_message_text=self.get_last_message_text(last_message),
                     last_message_sender_id=last_message.sender_id if last_message else None,
                     last_message_at=last_message.created_at if last_message else None,
                     unread_count=unread_counts.get(chat.id, 0),
@@ -286,6 +316,7 @@ class ChatService:
                     text=message.text,
                     file_url=message.file_url,
                     file_name=message.file_name,
+                    attachments=self.build_attachments(message),
                     is_read=message.is_read,
                     created_at=message.created_at,
                 )
@@ -295,10 +326,18 @@ class ChatService:
 
     async def send_message(
         self, chat_id: int, sender_id: int, text: str,
-        file: UploadFile | None = None,
+        files: list[UploadFile] | None = None,
     ) -> ChatMessageResponse:
         normalized_text = text.strip()
-        if not normalized_text and not (file and file.filename):
+        upload_files = [file for file in (files or []) if file and file.filename]
+
+        if len(upload_files) > CHAT_MAX_ATTACHMENTS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Можно прикрепить не больше {CHAT_MAX_ATTACHMENTS} файлов",
+            )
+
+        if not normalized_text and not upload_files:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Сообщение не может быть пустым")
 
         chat_row = await self.db.execute(
@@ -312,24 +351,32 @@ class ChatService:
         if not chat_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
 
-        file_url = None
-        file_name = None
-        if file and file.filename:
-            extension = Path(file.filename).suffix.lower()
-            if extension not in CHAT_ALLOWED_EXTENSIONS:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX",
-                )
+        attachments: list[dict[str, str]] = []
+        if upload_files:
             upload_dir = Path(__file__).resolve().parents[1] / "uploads" / "chats" / str(chat_id)
             upload_dir.mkdir(parents=True, exist_ok=True)
-            generated_name = f"{uuid4().hex}{extension}"
-            file_path = upload_dir / generated_name
-            async with aiofiles.open(file_path, "wb") as f:
-                while chunk := await file.read(UPLOAD_CHUNK_SIZE):
-                    await f.write(chunk)
-            file_url = f"/uploads/chats/{chat_id}/{generated_name}"
-            file_name = file.filename
+
+            for file in upload_files:
+                extension = Path(file.filename or "").suffix.lower()
+                if extension not in CHAT_ALLOWED_EXTENSIONS:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX",
+                    )
+
+                generated_name = f"{uuid4().hex}{extension}"
+                file_path = upload_dir / generated_name
+                async with aiofiles.open(file_path, "wb") as file_handle:
+                    while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                        await file_handle.write(chunk)
+
+                attachments.append({
+                    "url": f"/uploads/chats/{chat_id}/{generated_name}",
+                    "name": file.filename or generated_name,
+                })
+
+        file_url = attachments[0]["url"] if attachments else None
+        file_name = attachments[0]["name"] if attachments else None
 
         message = ChatMessage(
             chat_id=chat_id,
@@ -337,6 +384,7 @@ class ChatService:
             text=normalized_text,
             file_url=file_url,
             file_name=file_name,
+            attachments=attachments,
         )
         self.db.add(message)
         await self.db.flush()
@@ -358,6 +406,7 @@ class ChatService:
             text=message.text,
             file_url=message.file_url,
             file_name=message.file_name,
+            attachments=self.build_attachments(message),
             is_read=False,
             created_at=message.created_at,
         )

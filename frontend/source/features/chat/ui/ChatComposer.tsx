@@ -15,17 +15,18 @@ interface ChatComposerProps {
 
 const ACCEPT = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
+const MAX_FILES = 6;
 
 export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
   const [text, setText] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const sendingFile = sending && file !== null;
-  const canSend = !sending && (text.trim().length > 0 || file !== null);
+  const sendingFiles = sending && files.length > 0;
+  const canSend = !sending && (text.trim().length > 0 || files.length > 0);
 
   async function handleSend() {
     if (!canSend) {
@@ -37,9 +38,9 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
     setProgress(0);
 
     try {
-      const saved = await sendChatMessage(chatUuid, text.trim(), file, (percent) => setProgress(percent));
+      const saved = await sendChatMessage(chatUuid, text.trim(), files, (percent) => setProgress(percent));
       setText("");
-      setFile(null);
+      setFiles([]);
       onSent(saved);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось отправить сообщение");
@@ -50,26 +51,33 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const nextFile = event.currentTarget.files?.[0] ?? null;
+    const nextFiles = Array.from(event.currentTarget.files ?? []);
     event.currentTarget.value = "";
 
-    if (!nextFile) {
+    if (!nextFiles.length) {
       return;
     }
 
-    if (nextFile.size > MAX_FILE_SIZE) {
-      setError("Файл больше 100 МБ не поддерживается");
+    if (files.length + nextFiles.length > MAX_FILES) {
+      setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
       return;
+    }
+
+    for (const nextFile of nextFiles) {
+      if (nextFile.size > MAX_FILE_SIZE) {
+        setError(`Файл ${nextFile.name} больше 100 МБ не поддерживается`);
+        return;
+      }
     }
 
     setError(null);
-    setFile(nextFile);
+    setFiles((currentFiles) => [...currentFiles, ...nextFiles]);
   }
 
   return (
     <div className={s.wrap}>
-      {sendingFile ? <UploadProgress percent={progress} /> : null}
-      {file && !sending ? <FilePending file={file} onRemove={() => setFile(null)} /> : null}
+      {sendingFiles ? <UploadProgress percent={progress} /> : null}
+      {files.length && !sending ? <FilePending files={files} onRemove={(index) => setFiles((currentFiles) => currentFiles.filter((_, fileIndex) => fileIndex !== index))} /> : null}
       {error ? <p className={s.error}>{error}</p> : null}
 
       <div className={s.bar}>
@@ -93,7 +101,14 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
             type="button"
             className={s.clip}
             aria-label="Прикрепить файл"
-            onClick={() => fileRef.current?.click()}
+            onClick={() => {
+              if (files.length >= MAX_FILES) {
+                setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
+                return;
+              }
+
+              fileRef.current?.click();
+            }}
             disabled={sending}
           >
             <ChatClipIcon />
@@ -103,6 +118,7 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
             ref={fileRef}
             type="file"
             accept={ACCEPT}
+            multiple
             hidden
             onChange={handleFileChange}
           />
@@ -115,7 +131,7 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
           disabled={!canSend}
           aria-label="Отправить"
         >
-          {sending && !sendingFile ? <Loader size="sm" label="" /> : <ChatSendIcon />}
+          {sending ? <Loader size="sm" label="" /> : <ChatSendIcon />}
         </button>
       </div>
     </div>

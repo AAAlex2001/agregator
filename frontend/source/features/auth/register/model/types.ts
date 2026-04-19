@@ -14,6 +14,7 @@ export interface Role {
 export interface RegisterFormData {
   role: UserRole;
   login: string;
+  inn: string;
   password: string;
   repeatPassword: string;
   firstName?: string;
@@ -23,6 +24,7 @@ export interface RegisterFormData {
 export interface RegisterResponse {
   id: number;
   role: UserRole;
+  inn?: string;
   email?: string;
   phone?: string;
   created_at: string;
@@ -35,6 +37,8 @@ export interface RegisterState {
   selectedRole: number | null;
   openedCardId: number | null;
   login: string;
+  inn: string;
+  innQuery: string;
   password: string;
   repeatPassword: string;
   firstName: string;
@@ -43,7 +47,7 @@ export interface RegisterState {
   error: string | null;
 }
 
-type RegisterFormField = "login" | "password" | "repeatPassword" | "firstName" | "lastName";
+type RegisterFormField = "login" | "inn" | "innQuery" | "password" | "repeatPassword" | "firstName" | "lastName";
 
 export type RegisterAction =
   | { type: "SELECT_ROLE"; payload: number }

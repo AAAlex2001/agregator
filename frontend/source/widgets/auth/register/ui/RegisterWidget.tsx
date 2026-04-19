@@ -69,12 +69,16 @@ export function RegisterWidget() {
               lastName={reg.lastName}
               firstName={reg.firstName}
               login={reg.login}
+              inn={reg.inn}
+              innQuery={reg.innQuery}
               password={reg.password}
               repeatPassword={reg.repeatPassword}
               isLoading={reg.isLoading}
               onLastNameChange={reg.setLastName}
               onFirstNameChange={reg.setFirstName}
               onLoginChange={reg.setLogin}
+              onInnChange={reg.setInn}
+              onInnQueryChange={reg.setInnQuery}
               onPasswordChange={reg.setPassword}
               onRepeatPasswordChange={reg.setRepeatPassword}
               onSubmit={reg.handleSubmit}

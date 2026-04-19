@@ -66,18 +66,18 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailData> 
 export async function sendChatMessage(
   chatUuid: string,
   text: string,
-  file?: File | null,
+  files: File[] = [],
   onProgress?: (percent: number) => void,
 ): Promise<ChatMessageData> {
   const formData = new FormData();
   formData.append("text", text);
-  if (file) {
-    formData.append("file", file);
+  for (const file of files) {
+    formData.append("files", file);
   }
 
   const url = `${API_URL}/chats/${chatUuid}/messages`;
 
-  if (file && onProgress) {
+  if (files.length > 0 && onProgress) {
     return new Promise<ChatMessageData>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", url);

@@ -3,6 +3,11 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
+class ChatAttachmentResponse(BaseModel):
+    url: str
+    name: str
+
+
 class ChatOpenRequest(BaseModel):
     order_id: int = Field(..., ge=1)
 
@@ -19,6 +24,7 @@ class ChatMessageResponse(BaseModel):
     text: str
     file_url: str | None = None
     file_name: str | None = None
+    attachments: list[ChatAttachmentResponse] = Field(default_factory=list)
     is_read: bool = False
     created_at: datetime
 
