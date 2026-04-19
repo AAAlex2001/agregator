@@ -31,10 +31,12 @@ export function useProfileForm(profile: UserProfile) {
 
     const pwError = validatePassword(state.password, state.repeatPassword);
     if (pwError) {
+      dispatch({ type: "SET_ERROR", payload: pwError });
       return { errorMessage: pwError } satisfies SaveProfileResult;
     }
 
     dispatch({ type: "SET_SAVING", payload: true });
+    dispatch({ type: "SET_ERROR", payload: null });
 
     try {
       const updated = await updateProfile({
@@ -49,13 +51,16 @@ export function useProfileForm(profile: UserProfile) {
         dispatch({ type: "RESET_PASSWORD" });
       }
 
+      dispatch({ type: "SET_SUCCESS", payload: "Данные сохранены" });
       return {
         profile: updated,
         successMessage: "Данные сохранены",
       } satisfies SaveProfileResult;
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Ошибка сохранения";
+      dispatch({ type: "SET_ERROR", payload: errorMessage });
       return {
-        errorMessage: err instanceof Error ? err.message : "Ошибка сохранения",
+        errorMessage,
       } satisfies SaveProfileResult;
     } finally {
       dispatch({ type: "SET_SAVING", payload: false });

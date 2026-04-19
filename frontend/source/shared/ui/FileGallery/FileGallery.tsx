@@ -9,7 +9,6 @@ import {
   getFileExtension,
   getFileGalleryPreviewUrl,
   getFileGalleryThumbUrl,
-  getShortFileName,
   isImageFileName,
 } from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
@@ -61,7 +60,7 @@ export function FileGallery({
   hintClassName,
   gridProps,
 }: Props) {
-  const resolvedItems = items ?? files.map((file, index) => {
+  const resolvedItems: FileGalleryItem[] = items ?? files.map((file, index) => {
     const fileUrl = resolveFileUrl(file);
     const name = getFileDisplayName(file, `Файл ${index + 1}`);
     const isImage = isImageFileName(name);
@@ -73,7 +72,7 @@ export function FileGallery({
       previewUrl: isImage ? fileUrl : getFileGalleryPreviewUrl(fileUrl, name),
       thumbnailUrl: getFileGalleryThumbUrl(fileUrl, name),
       isImage,
-    } satisfies FileGalleryItem;
+    };
   });
 
   if (!resolvedItems.length && !onAdd && hideWhenEmpty) {
@@ -139,7 +138,6 @@ export function FileGallery({
                       <span className={s.fileMeta}>
                         <FileIcon className={s.fileIcon} />
                         <span className={s.fileExtension}>{getFileExtension(item.name)}</span>
-                        <span className={s.fileName}>{getShortFileName(item.name)}</span>
                       </span>
                     )}
                   </a>

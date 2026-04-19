@@ -1,4 +1,4 @@
-import { Button, Input } from "@/shared/ui";
+import { Button, CalendarInput, Input } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
@@ -54,12 +54,10 @@ export function OfferStep({
       <div className={s.formRow}>
         <div className={base.fieldGroup}>
           <span className={base.fieldLabel}>Укажите ваши сроки</span>
-          <Input
-            type="date"
-            variant="text"
-            active
+          <CalendarInput
             value={deadline}
-            onChange={(event) => onDeadlineChange(event.target.value)}
+            onChange={onDeadlineChange}
+            placeholder="Выберите дату"
           />
         </div>
 

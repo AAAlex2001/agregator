@@ -26,7 +26,7 @@ export async function respondToOrder(orderId: number, p: RespondPayload): Promis
     return fd;
   };
   const res = await stableMultipartFetch({
-    input: `${API_URL}/responses/order/${orderId}`,
+    input: `${API_URL}/orders/${orderId}/responses`,
     method: "POST", files: p.files ?? [], buildBody: build,
   });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось отправить отклик");

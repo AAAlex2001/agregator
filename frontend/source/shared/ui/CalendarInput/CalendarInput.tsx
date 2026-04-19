@@ -15,6 +15,7 @@ interface Props {
   onChange: (value: string) => void;
   placeholder?: string;
   withTime?: boolean;
+  className?: string;
 }
 
 function parseValue(value: string): Date | null {
@@ -48,6 +49,7 @@ export function CalendarInput({
   onChange,
   placeholder = "Выберите дату",
   withTime = false,
+  className,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = parseValue(value);
@@ -74,7 +76,7 @@ export function CalendarInput({
   };
 
   return (
-    <div className={s.field}>
+    <div className={`${s.field} ${className ?? ""}`.trim()}>
       <button
         type="button"
         className={`${s.trigger} ${isOpen ? s.triggerOpen : ""}`}

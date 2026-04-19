@@ -14,6 +14,8 @@ export function createInitialState(profile: {
     password: "",
     repeatPassword: "",
     isSaving: false,
+    error: null,
+    success: null,
   };
 }
 
@@ -23,9 +25,13 @@ export function profileFormReducer(
 ): ProfileFormState {
   switch (action.type) {
     case "SET_FIELD":
-      return { ...state, [action.field]: action.value };
+      return { ...state, [action.field]: action.value, error: null, success: null };
     case "SET_SAVING":
       return { ...state, isSaving: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload, success: null };
+    case "SET_SUCCESS":
+      return { ...state, success: action.payload, error: null };
     case "RESET_PASSWORD":
       return { ...state, password: "", repeatPassword: "" };
     default:
