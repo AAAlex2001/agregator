@@ -1,4 +1,11 @@
+import {
+  getFileGalleryPreviewUrl,
+  getFileGalleryThumbUrl,
+  isImageFileName,
+} from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
+import { FileGallery } from "@/source/shared/ui/FileGallery";
+import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import { ChatCheckReadIcon, ChatCheckSentIcon } from "@/source/shared/ui/icons";
 import type { ChatMessageData } from "@/source/entities/chat";
 import s from "./MessageBubble.module.scss";
@@ -19,22 +26,36 @@ function formatMessageTime(value: string): string {
 
 export function MessageBubble({ message, isMine }: MessageBubbleProps) {
   const CheckIcon = message.is_read ? ChatCheckReadIcon : ChatCheckSentIcon;
-  const fileUrl = message.file_url ? resolveFileUrl(message.file_url) : null;
+  const fileItem: FileGalleryItem | null = message.file_url
+    ? (() => {
+        const url = resolveFileUrl(message.file_url);
+        const name = message.file_name || "Файл";
+        const isImage = isImageFileName(name);
+
+        return {
+          id: `chat-file-${message.id}`,
+          name,
+          url,
+          previewUrl: isImage ? url : getFileGalleryPreviewUrl(url, name),
+          thumbnailUrl: getFileGalleryThumbUrl(url, name),
+          isImage,
+        };
+      })()
+    : null;
 
   return (
     <div className={`${s.bubble} ${isMine ? s.sent : s.received}`.trim()}>
-      {message.text ? <span className={s.text}>{message.text}</span> : null}
-      {fileUrl ? (
-        <a
-          href={fileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className={s.file}
-          download={message.file_name || undefined}
-        >
-          📎 {message.file_name || "Файл"}
-        </a>
-      ) : null}
+      <div className={s.content}>
+        {message.text ? <span className={s.text}>{message.text}</span> : null}
+        {fileItem ? (
+          <FileGallery
+            items={[fileItem]}
+            hideWhenEmpty
+            blockClassName={s.gallery}
+            gridProps={{ className: s.galleryGrid }}
+          />
+        ) : null}
+      </div>
       <span className={s.meta}>
         <span className={s.time}>{formatMessageTime(message.created_at)}</span>
         <CheckIcon className={s.check} />

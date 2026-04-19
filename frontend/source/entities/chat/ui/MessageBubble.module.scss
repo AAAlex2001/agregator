@@ -1,12 +1,19 @@
 .bubble {
   display: inline-flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: 12px;
   max-width: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
 .received {
@@ -25,7 +32,16 @@
   font-size: 14px;
   line-height: 17px;
   color: #131313;
+  white-space: pre-wrap;
   word-break: break-word;
+}
+
+.gallery {
+  width: 100%;
+}
+
+.galleryGrid {
+  gap: 8px;
 }
 
 .meta {
@@ -33,6 +49,7 @@
   flex-direction: row;
   align-items: center;
   gap: 2px;
+  align-self: flex-end;
   flex-shrink: 0;
 }
 
@@ -49,21 +66,4 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-}
-
-.file {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 16px;
-  color: #1565c0;
-  text-decoration: none;
-  word-break: break-all;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }

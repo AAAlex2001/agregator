@@ -1,3 +1,13 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  getFileGalleryPreviewUrl,
+  getFileGalleryThumbUrl,
+  isImageFileName,
+} from "@/source/shared/lib/filePreview";
+import { FileGallery } from "@/source/shared/ui/FileGallery";
+import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import s from "./FilePending.module.scss";
 
 interface FilePendingProps {
@@ -6,13 +16,37 @@ interface FilePendingProps {
 }
 
 export function FilePending({ file, onRemove }: FilePendingProps) {
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    const nextPreviewUrl = URL.createObjectURL(file);
+    setPreviewUrl(nextPreviewUrl);
+
+    return () => {
+      URL.revokeObjectURL(nextPreviewUrl);
+    };
+  }, [file]);
+
+  const isImage = isImageFileName(file.name);
+  const items: FileGalleryItem[] = previewUrl ? [{
+    id: `pending-${file.name}-${file.lastModified}`,
+    name: file.name,
+    url: previewUrl,
+    previewUrl: isImage ? previewUrl : getFileGalleryPreviewUrl(previewUrl, file.name),
+    thumbnailUrl: getFileGalleryThumbUrl(previewUrl, file.name),
+    isImage,
+    onRemove,
+  }] : [];
+
   return (
-    <div className={s.filePending}>
-      <span className={s.name}>📎 {file.name}</span>
-      <button type="button" className={s.remove} onClick={onRemove}>
-        ×
-      </button>
-    </div>
+    <FileGallery
+      items={items}
+      hideWhenEmpty
+      variant="editable"
+      blockClassName={s.filePending}
+      hint="PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX"
+      hintClassName={s.hint}
+    />
   );
 }
 
