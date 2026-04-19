@@ -216,6 +216,7 @@ class ResponseService:
                         detail="Нельзя завершить незакрепленный заказ",
                     )
                 response.order.status = OrderStatus.COMPLETED
+                
         elif actor.role == UserRole.CUSTOMER:
             if not response.order or response.order.customer_id != actor.id:
                 raise HTTPException(

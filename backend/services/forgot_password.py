@@ -6,8 +6,6 @@ from sqlalchemy.future import select
 from models.user import User
 from models.password_reset_code import PasswordResetCode
 import random
-import secrets
-import string
 from utils.passwords import hash_password
 
 
