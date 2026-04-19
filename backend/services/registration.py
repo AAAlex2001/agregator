@@ -45,6 +45,15 @@ class RegistrationService:
     async def create_user(self, data: UserRegistration) -> User:
         self.validate_password(data.password)
 
+        company_inn = None
+        if data.company_data:
+            company_inn = ((data.company_data.get("data") or {}).get("inn") if isinstance(data.company_data, dict) else None)
+            if company_inn and company_inn != data.inn:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Выбранная компания не соответствует указанному ИНН",
+                )
+
         existing_by_inn = await self.get_user_by_inn_and_role(data.inn, data.role)
         if existing_by_inn:
             raise HTTPException(
@@ -73,6 +82,7 @@ class RegistrationService:
             phone=data.phone,
             email=data.email,
             inn=data.inn,
+            company_data=data.company_data,
             password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint, UniqueConstraint
+from sqlalchemy import JSON, Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -24,8 +24,9 @@ class User(Base):
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     inn = Column(String(12), index=True, nullable=True)
-    email = Column(String, unique=True, index=True, nullable=True)
-    phone = Column(String, unique=True, index=True, nullable=True)
+    company_data = Column(JSON, nullable=True)
+    email = Column(String, index=True, nullable=True)
+    phone = Column(String, index=True, nullable=True)
     password = Column(String, nullable=False)
     balance = Column(BigInteger, default=0, nullable=False)
     rating = Column(Numeric(2, 1), nullable=True)

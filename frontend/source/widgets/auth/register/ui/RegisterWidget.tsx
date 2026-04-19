@@ -77,6 +77,7 @@ export function RegisterWidget() {
               onLoginChange={reg.setLogin}
               onInnChange={reg.setInn}
               onInnQueryChange={reg.setInnQuery}
+              onSuggestionSelect={reg.setSelectedParty}
               onPasswordChange={reg.setPassword}
               onRepeatPasswordChange={reg.setRepeatPassword}
               onSubmit={reg.handleSubmit}

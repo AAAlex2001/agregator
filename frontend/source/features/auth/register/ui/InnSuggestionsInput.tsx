@@ -13,6 +13,7 @@ interface InnSuggestionsInputProps {
   disabled?: boolean;
   onValueChange: (value: string) => void;
   onQueryChange: (query: string) => void;
+  onSuggestionSelect: (suggestion: PartySuggestion | null) => void;
 }
 
 export function InnSuggestionsInput({
@@ -21,6 +22,7 @@ export function InnSuggestionsInput({
   disabled,
   onValueChange,
   onQueryChange,
+  onSuggestionSelect,
 }: InnSuggestionsInputProps) {
   const [items, setItems] = useState<PartySuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,12 +66,14 @@ export function InnSuggestionsInput({
   function handleInputChange(nextQuery: string) {
     onQueryChange(nextQuery);
     onValueChange(normalizeInn(nextQuery));
+    onSuggestionSelect(null);
     setIsOpen(true);
   }
 
   function handleSelect(item: PartySuggestion) {
     onQueryChange(item.value);
     onValueChange(normalizeInn(item.data.inn ?? ""));
+    onSuggestionSelect(item);
     setIsOpen(false);
   }
 

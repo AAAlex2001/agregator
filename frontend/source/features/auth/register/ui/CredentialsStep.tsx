@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
+import type { PartySuggestion } from "../api/partySuggestions.api";
 import { InnSuggestionsInput } from "./InnSuggestionsInput";
 import s from "./CredentialsStep.module.scss";
 
@@ -19,6 +20,7 @@ interface Props {
   onLoginChange: (v: string) => void;
   onInnChange: (v: string) => void;
   onInnQueryChange: (v: string) => void;
+  onSuggestionSelect: (suggestion: PartySuggestion | null) => void;
   onPasswordChange: (v: string) => void;
   onRepeatPasswordChange: (v: string) => void;
   onSubmit: (e: FormEvent) => void;
@@ -26,7 +28,7 @@ interface Props {
 
 export function CredentialsStep({
   selectedRole, lastName, firstName, login, inn, innQuery, password, repeatPassword,
-  isLoading, onLastNameChange, onFirstNameChange, onLoginChange, onInnChange, onInnQueryChange,
+  isLoading, onLastNameChange, onFirstNameChange, onLoginChange, onInnChange, onInnQueryChange, onSuggestionSelect,
   onPasswordChange, onRepeatPasswordChange, onSubmit,
 }: Props) {
   return (
@@ -46,6 +48,7 @@ export function CredentialsStep({
           disabled={isLoading}
           onValueChange={onInnChange}
           onQueryChange={onInnQueryChange}
+          onSuggestionSelect={onSuggestionSelect}
         />
         <Input id="login" variant="emailOrPhone" value={login}
           onChange={(e) => onLoginChange(e.target.value)} placeholder="Электронная почта или телефон" required />

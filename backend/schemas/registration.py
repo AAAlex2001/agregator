@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field, EmailStr, model_validator
 from enum import Enum
 
@@ -14,6 +14,7 @@ class UserRegistration(BaseModel):
     role: UserRole = Field(..., description="Роль пользователя")
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
     inn: str = Field(..., description="ИНН", min_length=10, max_length=12)
+    company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
     password: str = Field(..., description="Пароль пользователя")
     email: Optional[EmailStr] = Field(None, description="Почта пользователя")
     first_name: Optional[str] = Field(None, description="Имя", max_length=100)
@@ -36,18 +37,10 @@ class PartySuggestionRequest(BaseModel):
     count: int = Field(default=10, ge=1, le=10)
 
 
-class PartySuggestionData(BaseModel):
-    inn: str | None = None
-    kpp: str | None = None
-    ogrn: str | None = None
-    name: str | None = None
-    short_name: str | None = None
-
-
 class PartySuggestionResponse(BaseModel):
     value: str
     unrestricted_value: str
-    data: PartySuggestionData
+    data: dict[str, Any] = Field(default_factory=dict)
     
 
 
@@ -56,6 +49,7 @@ class UserResponse(BaseModel):
     id: int
     role: UserRole
     inn: str | None = None
+    company_data: dict[str, Any] | None = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     created_at: datetime

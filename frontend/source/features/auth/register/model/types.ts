@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { PartySuggestion } from "../api/partySuggestions.api";
 
 export type UserRole = "CUSTOMER" | "EXPERT";
 
@@ -15,6 +16,7 @@ export interface RegisterFormData {
   role: UserRole;
   login: string;
   inn: string;
+  companyData?: PartySuggestion | null;
   password: string;
   repeatPassword: string;
   firstName?: string;

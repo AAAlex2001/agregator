@@ -1,10 +1,11 @@
 "use client";
 
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { normalizeInn } from "@/source/shared/lib/inn";
 import { registerUser } from "../api/register.api";
+import type { PartySuggestion } from "../api/partySuggestions.api";
 import { validateRegisterForm, getRoleType } from "./validation";
 import { registerReducer, initialRegisterState } from "./reducer";
 
@@ -12,6 +13,7 @@ export function useRegister() {
   const router = useRouter();
   const { showError, showSuccess } = useNotifications();
   const [state, dispatch] = useReducer(registerReducer, initialRegisterState);
+  const [selectedParty, setSelectedParty] = useState<PartySuggestion | null>(null);
 
   const selectRole = (id: number) => dispatch({ type: "SELECT_ROLE", payload: id });
   const toggleCard = (id: number) => dispatch({ type: "TOGGLE_CARD", payload: id });
@@ -27,6 +29,7 @@ export function useRegister() {
       role: getRoleType(state.selectedRole),
       login: state.login,
       inn: normalizeInn(state.inn),
+      companyData: selectedParty,
       password: state.password,
       repeatPassword: state.repeatPassword,
       firstName: state.firstName,
@@ -59,6 +62,7 @@ export function useRegister() {
     setLogin: (v: string) => dispatch({ type: "SET_FIELD", field: "login", value: v }),
     setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
     setInnQuery: (v: string) => dispatch({ type: "SET_FIELD", field: "innQuery", value: v }),
+    setSelectedParty,
     setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
     setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
     setFirstName: (v: string) => dispatch({ type: "SET_FIELD", field: "firstName", value: v }),

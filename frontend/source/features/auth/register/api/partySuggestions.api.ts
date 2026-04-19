@@ -4,11 +4,17 @@ export interface PartySuggestion {
   value: string;
   unrestricted_value: string;
   data: {
-    inn: string | null;
-    kpp: string | null;
-    ogrn: string | null;
-    name: string | null;
-    short_name: string | null;
+    inn?: string | null;
+    kpp?: string | null;
+    ogrn?: string | null;
+    name?: {
+      full_with_opf?: string | null;
+      short_with_opf?: string | null;
+      full?: string | null;
+      short?: string | null;
+      latin?: string | null;
+    } | null;
+    [key: string]: unknown;
   };
 }
 

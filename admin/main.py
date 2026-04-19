@@ -1,5 +1,6 @@
+import json
 import os
-from markupsafe import Markup
+from markupsafe import Markup, escape
 from fastapi import FastAPI
 from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
@@ -86,6 +87,15 @@ def format_technical_files(m, a):
     return str(files)
 
 
+def format_json_payload(value):
+    if not value:
+        return "—"
+    pretty = json.dumps(value, ensure_ascii=False, indent=2)
+    return Markup(
+        f'<pre style="white-space:pre-wrap;word-break:break-word;max-width:960px;font-size:12px;line-height:1.5">{escape(pretty)}</pre>'
+    )
+
+
 # ========== ВЬЮШКИ ==========
 
 class UserAdmin(ModelView, model=User):
@@ -94,18 +104,19 @@ class UserAdmin(ModelView, model=User):
     icon = "fa-solid fa-users"
 
     column_list = [
-        User.id, User.role, User.email, User.phone,
+        User.id, User.role, User.inn, User.email, User.phone,
         User.first_name, User.last_name, User.balance,
         User.rating, User.review_count, User.is_active, User.created_at,
     ]
-    column_searchable_list = [User.email, User.phone, User.first_name, User.last_name]
+    column_searchable_list = [User.inn, User.email, User.phone, User.first_name, User.last_name]
     column_sortable_list = [User.id, User.role, User.balance, User.rating, User.created_at]
     column_default_sort = (User.id, True)
 
     column_details_list = [
         User.id, User.role, User.is_active,
-        User.first_name, User.last_name,
+        User.first_name, User.last_name, User.inn,
         User.email, User.phone, User.password,
+        User.company_data,
         User.balance, User.rating, User.review_count,
         User.created_at, User.updated_at,
         User.orders, User.assigned_orders, User.responses,
@@ -114,7 +125,7 @@ class UserAdmin(ModelView, model=User):
 
     form_columns = [
         User.role, User.is_active, User.first_name, User.last_name,
-        User.email, User.phone, User.password,
+        User.inn, User.email, User.phone, User.password,
         User.balance, User.rating, User.review_count,
     ]
 
@@ -125,6 +136,7 @@ class UserAdmin(ModelView, model=User):
     column_formatters_detail = {
         User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
         User.role: lambda m, a: str(m.role),
+        User.company_data: lambda m, a: format_json_payload(m.company_data),
     }
 
     column_labels = {
@@ -133,9 +145,11 @@ class UserAdmin(ModelView, model=User):
         User.is_active: "Активен",
         User.first_name: "Имя",
         User.last_name: "Фамилия",
+        User.inn: "ИНН",
         User.email: "Email",
         User.phone: "Телефон",
         User.password: "Пароль (хеш)",
+        User.company_data: "Данные компании (DaData)",
         User.balance: "Баланс",
         User.rating: "Рейтинг",
         User.review_count: "Кол-во отзывов",
