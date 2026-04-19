@@ -50,7 +50,7 @@ export function useExpertOrders() {
     if (!returnOrderId || s.items.length === 0) return;
     const found = s.items.find((item) => String(item.id) === returnOrderId);
     if (found) {
-      setPendingStep("tender");
+      setPendingStep("details");
       d({ type: "SELECT", order: found });
     }
   }, [returnOrderId, s.items]);
@@ -78,7 +78,7 @@ export function useExpertOrders() {
   };
 
   const openRespond = (order: OrderCardData) => {
-    setPendingStep("tender");
+    setPendingStep("details");
     d({ type: "SELECT", order });
   };
 

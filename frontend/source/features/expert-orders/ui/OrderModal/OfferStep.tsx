@@ -66,6 +66,7 @@ export function OfferStep({
           <Input
             type="text"
             variant="text"
+            placeholder="Сумма в рублях"
             active
             inputMode="numeric"
             value={cost}
