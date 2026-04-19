@@ -1,4 +1,7 @@
+import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
+import { LogoutIcon } from "@/source/shared/ui/icons";
+import formStyles from "@/source/features/profile/settings/ui/PersonalDataForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
 interface SettingsSkeletonProps {
@@ -28,27 +31,34 @@ export function SettingsSkeleton({ section }: SettingsSkeletonProps) {
 
   return (
     <div className={s.form} aria-hidden="true">
-      <div className={s.section}>
-        <Skeleton className={s.sectionTitle} rounded="pill" />
-        <div className={s.grid}>
+      <div className={formStyles.section}>
+        <h2 className={formStyles.subtitle}>Персональные данные</h2>
+        <div className={formStyles.grid}>
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className={s.input} rounded="lg" />
           ))}
         </div>
       </div>
 
-      <div className={s.section}>
-        <Skeleton className={s.sectionTitle} rounded="pill" />
-        <div className={s.grid}>
+      <div className={formStyles.section}>
+        <h2 className={formStyles.subtitle}>Изменить пароль</h2>
+        <div className={formStyles.grid}>
           {Array.from({ length: 2 }, (_, index) => (
             <Skeleton key={index} className={s.input} rounded="lg" />
           ))}
         </div>
       </div>
 
-      <div className={s.actions}>
-        <Skeleton className={s.actionButton} rounded="lg" />
-        <Skeleton className={s.actionButton} rounded="lg" />
+      <div className={formStyles.saveWrapper}>
+        <Button variant="chat" size="md" className={formStyles.saveButton} disabled>
+          Сохранить изменения
+        </Button>
+        <Button variant="transparent" size="md" className={formStyles.logoutButton} disabled>
+          <span className={formStyles.logoutContent}>
+            <LogoutIcon className={formStyles.logoutIcon} />
+            <span>Выйти из профиля</span>
+          </span>
+        </Button>
       </div>
     </div>
   );

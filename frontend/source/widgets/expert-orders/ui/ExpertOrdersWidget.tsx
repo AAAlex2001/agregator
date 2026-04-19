@@ -3,8 +3,9 @@
 import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { OrderCard } from "@/source/entities/order";
-import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
+import { Button, Loader } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
+import ToolTip from "@/source/shared/ui/Tooltip";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
@@ -49,7 +50,7 @@ export function ExpertOrdersWidget() {
         <div className={s.pageHead}>
           <div className={s.titleRow}>
             <Title text="Все заказы" as="h1" className={s.pageTitle} />
-            <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
+            <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
           </div>
           <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
         </div>

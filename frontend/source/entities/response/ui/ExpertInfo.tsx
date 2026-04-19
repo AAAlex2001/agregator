@@ -1,4 +1,5 @@
-import { ProfileIcon, StarIcon } from "@/shared/ui/icons";
+import { StarIcon } from "@/shared/ui/icons";
+import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import s from "./ExpertInfo.module.scss";
 
 function pluralReviews(n: number) {
@@ -12,14 +13,15 @@ function pluralReviews(n: number) {
 
 interface Props {
   name: string;
+  avatarUrl?: string | null;
   rating: number | null;
   reviewCount: number;
 }
 
-export function ExpertInfo({ name, rating, reviewCount }: Props) {
+export function ExpertInfo({ name, avatarUrl, rating, reviewCount }: Props) {
   return (
     <div className={s.row}>
-      <div className={s.avatar}><ProfileIcon width={24} height={24} /></div>
+      <UserAvatar src={avatarUrl} alt={`Фото ${name || "эксперта"}`} className={s.avatar} />
       <div className={s.details}>
         <span className={s.name}>{name}</span>
         {rating !== null && reviewCount > 0 ? (

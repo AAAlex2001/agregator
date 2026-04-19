@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, File, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -76,3 +76,22 @@ async def change_password(
     await service.update_password(user_id, data.new_password)
 
     return {"detail": "Пароль успешно изменён"}
+
+
+@router.post("/settings/avatar", response_model=UserSettingsResponse)
+async def upload_avatar(
+    response: Response,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = SettingsService(db)
+    user = await service.upload_avatar(user_id, file)
+    response.set_cookie(
+        key="user_role",
+        value=user.role.value,
+        secure=True,
+        samesite="none",
+        path="/",
+    )
+    return service.to_response(user)

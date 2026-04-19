@@ -12,10 +12,11 @@ export interface ChatMessageGroupData {
 interface MessageGroupProps {
   group: ChatMessageGroupData;
   isMine: boolean;
+  currentUserAvatarUrl?: string | null;
   counterpartAvatarUrl?: string | null;
 }
 
-export function MessageGroup({ group, isMine, counterpartAvatarUrl }: MessageGroupProps) {
+export function MessageGroup({ group, isMine, currentUserAvatarUrl, counterpartAvatarUrl }: MessageGroupProps) {
   const senderLabel = group.senderRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
   const groupClass = isMine ? s.sent : s.received;
   const labelClass = `${s.label} ${isMine ? s.alignRight : ""}`.trim();
@@ -25,8 +26,9 @@ export function MessageGroup({ group, isMine, counterpartAvatarUrl }: MessageGro
       <span className={labelClass}>{senderLabel}</span>
       {group.messages.map((message, messageIndex) => {
         const isLast = messageIndex === group.messages.length - 1;
+        const avatarSrc = isMine ? currentUserAvatarUrl : counterpartAvatarUrl;
         const avatarSlot = isLast
-          ? <ChatAvatar src={isMine ? "" : counterpartAvatarUrl} alt={isMine ? "Ваш аватар" : "Аватар собеседника"} />
+          ? <ChatAvatar src={avatarSrc} alt={isMine ? "Ваш аватар" : "Аватар собеседника"} />
           : <ChatAvatarSpacer />;
 
         return (

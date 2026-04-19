@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
-import { getRouteSessionRole } from "@/source/features/session/model/sessionRole";
+import ToolTip from "@/source/shared/ui/Tooltip";
+import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import {
   ChatHeaderIcon,
   LogoIcon,
   LogoMarkIcon,
   NotificationsHeaderIcon,
   ProfileHeaderIcon,
-} from "@/shared/ui/icons";
+} from "@/source/shared/ui/icons";
 import s from "./Header.module.scss";
 
 const NAV: Record<string, { href: string; label: string }[]> = {
@@ -27,10 +28,12 @@ const NAV: Record<string, { href: string; label: string }[]> = {
 
 export function Header() {
   const pathname = usePathname();
-  const { resolvedRole } = useSession();
+  const { resolvedRole, user } = useSession();
 
-  const key = getRouteSessionRole(pathname) ?? resolvedRole;
+  const key = resolvedRole;
   const links = key ? NAV[key] : [];
+  const isChatActive = pathname === "/chat" || pathname.startsWith("/chat/");
+  const isProfileActive = pathname === "/settings";
 
   return (
     <header className={s.header}>
@@ -53,15 +56,33 @@ export function Header() {
         </nav>
 
         <div className={s.actions}>
-          <Link className={s.iconBtn} href="/chat" aria-label="Чат">
-            <ChatHeaderIcon />
-          </Link>
-          <button className={s.iconBtn} type="button" aria-label="Уведомления">
-            <NotificationsHeaderIcon />
-          </button>
-          <Link href="/settings" className={s.iconBtn} aria-label="Профиль">
-            <ProfileHeaderIcon />
-          </Link>
+          <ToolTip message="Чат" side="bottom">
+            <Link
+              className={`${s.iconBtn} ${isChatActive ? s.iconBtnActive : ""}`.trim()}
+              href="/chat"
+              aria-label="Чат"
+            >
+              <ChatHeaderIcon />
+            </Link>
+          </ToolTip>
+          <ToolTip message="Уведомления" side="bottom">
+            <button className={s.iconBtn} type="button" aria-label="Уведомления">
+              <NotificationsHeaderIcon />
+            </button>
+          </ToolTip>
+          <ToolTip message="Профиль" side="bottom">
+            <Link
+              href="/settings"
+              className={`${s.iconBtn} ${user?.avatar_url ? s.avatarBtn : ""} ${isProfileActive ? s.iconBtnActive : ""}`.trim()}
+              aria-label="Профиль"
+            >
+              {user?.avatar_url ? (
+                <UserAvatar src={user.avatar_url} alt="Ваше фото" className={s.headerAvatar} />
+              ) : (
+                <ProfileHeaderIcon />
+              )}
+            </Link>
+          </ToolTip>
         </div>
       </div>
     </header>

@@ -2,8 +2,9 @@
 
 import { useRef } from "react";
 import { OrderCard } from "@/source/entities/order";
-import { Button, ScrollHintTooltip } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
+import ToolTip from "@/source/shared/ui/Tooltip";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
@@ -57,7 +58,7 @@ export function CustomerOrdersWidget() {
           <div className={s.pageHead}>
             <div className={s.titleRow}>
               <Title text="Мои заказы" as="h1" className={s.pageTitle} />
-              <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
+              <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
             </div>
             <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
           </div>

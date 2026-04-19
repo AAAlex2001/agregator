@@ -111,17 +111,46 @@
   border: 0;
   padding: 0;
   background: transparent;
+  color: #8f8f8f;
+  --header-icon-bg: rgba(26, 26, 26, 0.08);
   width: 44px;
   height: 44px;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: color 0.2s ease;
 
-  &:hover { transform: translateY(-2px) scale(1.06); }
-  &:active { transform: scale(0.96); }
+  &:hover,
+  &:focus-visible {
+    color: #ff8a00;
+    --header-icon-bg: rgba(255, 221, 169, 0.85);
+  }
 
   svg {
     width: 44px;
     height: 44px;
     display: block;
   }
+}
+
+.iconBtnActive {
+  color: #ff8a00;
+  --header-icon-bg: rgba(255, 221, 169, 0.85);
+}
+
+.avatarBtn {
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--header-icon-bg);
+}
+
+.headerAvatar {
+  width: 38px;
+  height: 38px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.avatarBtn:hover .headerAvatar,
+.avatarBtn:focus-visible .headerAvatar,
+.iconBtnActive .headerAvatar {
+  border-color: rgba(255, 138, 0, 0.35);
 }

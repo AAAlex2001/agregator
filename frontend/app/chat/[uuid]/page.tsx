@@ -1,11 +1,11 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { ChatConversationWidget } from "@/source/widgets/chat";
 
-interface ChatPageProps {
-  params: Promise<{ uuid: string }>;
-}
+export default function ChatConversationPage() {
+  const params = useParams<{ uuid: string }>();
+  const chatUuid = Array.isArray(params.uuid) ? params.uuid[0] : params.uuid;
 
-export default async function Page({ params }: ChatPageProps) {
-  const { uuid } = await params;
-
-  return <ChatConversationWidget chatUuid={uuid} />;
+  return chatUuid ? <ChatConversationWidget chatUuid={chatUuid} /> : null;
 }

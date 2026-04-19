@@ -78,6 +78,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
         ? `Подтвердите согласие до ${item.confirm_deadline}`
         : undefined,
     expertName: item.expert_name || "",
+    expertAvatarUrl: item.expert_avatar_url ?? null,
     expertRating: item.expert_rating,
     expertReviewCount: item.expert_review_count ?? 0,
     hasReview: item.has_review ?? false,

@@ -1,8 +1,12 @@
-.scrollHint {
+.toolTip {
   position: relative;
-  display: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.hideOnMobile {
+  display: none;
 
   @media (min-width: 768px) {
     display: inline-flex;
@@ -39,16 +43,13 @@
 
 .hintTooltip {
   position: absolute;
-  top: 50%;
-  left: calc(100% + 10px);
-  transform: translateY(-50%) translateX(-4px);
   width: 235px;
   min-height: 24px;
   padding: 4px 8px;
   border-radius: 5px;
   background: linear-gradient(0deg, #FFFFFF, #FFFFFF), #FFFFFF;
   color: #0D0D0D;
-  font-family: BlinkMacSystemFont, sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -62,9 +63,23 @@
   z-index: 20;
 }
 
+.hintTooltipVisible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.right .hintTooltip {
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%) translateX(-4px);
+}
+
 .hintTooltip::before {
   content: "";
   position: absolute;
+}
+
+.right .hintTooltip::before {
   left: -8px;
   top: 50%;
   transform: translateY(-50%);
@@ -75,9 +90,32 @@
   border-right: 8px solid #FFFFFF;
 }
 
-.scrollHint:hover .hintTooltip,
-.scrollHint:focus-within .hintTooltip {
-  visibility: visible;
-  opacity: 1;
+.bottom .hintTooltip {
+  top: calc(100% + 10px);
+  left: 50%;
+  width: max-content;
+  min-width: 90px;
+  max-width: 220px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.bottom .hintTooltip::before {
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 8px solid #FFFFFF;
+}
+
+.right .hintTooltipVisible {
   transform: translateY(-50%) translateX(0);
+}
+
+.bottom .hintTooltipVisible {
+  transform: translateX(-50%) translateY(0);
 }

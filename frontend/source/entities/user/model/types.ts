@@ -3,6 +3,7 @@ export interface UserProfile {
   inn: string | null;
   email: string | null;
   phone: string | null;
+  avatar_url: string | null;
   first_name: string | null;
   last_name: string | null;
   balance: number;

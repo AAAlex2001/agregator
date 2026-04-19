@@ -1,5 +1,6 @@
 import { fetchWithSession } from "@/source/shared/api/session";
 import type { UserProfile } from "@/source/entities/user";
+import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
 import type { UpdateProfilePayload } from "../model/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
@@ -49,4 +50,28 @@ export async function changePassword(
     const body = await res.json().catch(() => null);
     throw new Error(body?.detail || "Не удалось сменить пароль");
   }
+}
+
+export async function uploadAvatar(file: File): Promise<UserProfile> {
+  const res = await stableMultipartFetch({
+    input: `${API_URL}/settings/avatar`,
+    method: "POST",
+    files: [file],
+    buildBody: (files) => {
+      const formData = new FormData();
+
+      if (files[0]) {
+        formData.append("file", files[0]);
+      }
+
+      return formData;
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось загрузить фото");
+  }
+
+  return res.json();
 }

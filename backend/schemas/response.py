@@ -53,6 +53,7 @@ class ExpertResponseItem(BaseModel):
     proposed_sum_amount_raw: int = 0
     proposed_deadline_raw: str = ""
     expert_name: str = ""
+    expert_avatar_url: str | None = None
     expert_rating: float | None = None
     expert_review_count: int = 0
     confirm_deadline: str = ""

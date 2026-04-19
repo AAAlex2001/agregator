@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
-import { getRouteSessionRole } from "@/source/features/session/model/sessionRole";
 import { CabinetMenuTabsView, type CabinetMenuKey } from "./CabinetMenuTabsView";
 
 export function CabinetMenuTabs() {
@@ -13,7 +12,7 @@ export function CabinetMenuTabs() {
   const isOrdersPage = pathname.startsWith("/customer") || pathname.startsWith("/expert");
   const isReviewsPage = pathname.startsWith("/expert/reviews");
   const isChatWindow = pathname.startsWith("/chat/");
-  const role = getRouteSessionRole(pathname) ?? resolvedRole;
+  const role = resolvedRole;
 
   if ((!isOrdersPage && !isResponsesPage && !isReviewsPage) || isChatWindow || role === null) {
     return null;
@@ -28,7 +27,7 @@ export function CabinetMenuTabs() {
   const items = [
     {
       key: "orders" as const,
-      label: role === "EXPERT" ? "Все заказы" : "Мои заказы",
+      label: "Заказы",
       href: role === "EXPERT" ? "/expert/orders" : "/customer/orders",
     },
     {

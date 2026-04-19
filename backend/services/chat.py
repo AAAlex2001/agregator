@@ -127,7 +127,7 @@ class ChatService:
             if expert is None:
                 return chat.expert_id, f"Эксперт #{chat.expert_id}", None
             full_name = " ".join(part for part in [expert.first_name, expert.last_name] if part).strip()
-            return expert.id, full_name or f"Эксперт #{expert.id}", None
+            return expert.id, full_name or f"Эксперт #{expert.id}", expert.avatar_url
 
         customer = chat.customer
         if customer is None:
@@ -136,7 +136,7 @@ class ChatService:
         company_name = chat.order.company if chat.order and chat.order.company else ""
         full_name = " ".join(part for part in [customer.first_name, customer.last_name] if part).strip()
         display_name = company_name or full_name or f"Заказчик #{customer.id}"
-        return customer.id, display_name, None
+        return customer.id, display_name, customer.avatar_url
 
     @staticmethod
     def format_sum(amount_kopecks: int) -> str:

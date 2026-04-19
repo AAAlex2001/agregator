@@ -1,0 +1,169 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #808080;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.input {
+  display: none;
+}
+
+.triggerWrap {
+  width: 72px;
+  height: 72px;
+
+  @media (min-width: 1024px) {
+    width: 248px;
+  }
+}
+
+.trigger {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  gap: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.avatarFrame {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.avatar,
+.emptyAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ffdda9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(26, 26, 26, 0.08);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plusWrap {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff8a00;
+}
+
+.plus {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.editBadge {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(26, 26, 26, 0.14);
+}
+
+.editBadgeIcon {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.labelViewport {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-right: 20px;
+}
+
+.labelInner {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.actionLabel {
+  white-space: nowrap;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4d4d4d;
+}
+
+.hint {
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 24px;
+  color: #ccced5;
+  text-align: left;
+}
+
+.error {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: #e7000b;
+  text-align: left;
+  max-width: 220px;
+}

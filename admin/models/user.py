@@ -27,6 +27,7 @@ class User(Base):
     company_data = Column(JSON, nullable=True)
     email = Column(String, index=True, nullable=True)
     phone = Column(String, index=True, nullable=True)
+    avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)
     balance = Column(BigInteger, default=0, nullable=False)
     rating = Column(Numeric(2, 1), nullable=True)

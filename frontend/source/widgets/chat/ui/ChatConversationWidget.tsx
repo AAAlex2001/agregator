@@ -78,6 +78,7 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
                 key={`${group.senderId}-${index}`}
                 group={group}
                 isMine={group.senderId === currentUserId}
+                currentUserAvatarUrl={user?.avatar_url ?? null}
                 counterpartAvatarUrl={chat?.counterpart_avatar_url}
               />
             ))}

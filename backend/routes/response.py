@@ -51,11 +51,13 @@ def to_item(
 
     expert = entity.expert
     expert_name = ""
+    expert_avatar_url: str | None = None
     expert_rating: float | None = None
     expert_review_count = 0
     if expert:
         parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in parts if p)
+        expert_avatar_url = expert.avatar_url
         expert_rating = float(expert.rating) if expert.rating is not None else None
         expert_review_count = expert.review_count or 0
 
@@ -98,6 +100,7 @@ def to_item(
         proposed_sum_amount_raw=entity.proposed_sum_amount,
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
         expert_name=expert_name,
+        expert_avatar_url=expert_avatar_url,
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
         expert_confirmed=entity.expert_confirmed or False,

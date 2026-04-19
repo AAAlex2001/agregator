@@ -50,7 +50,12 @@ export function ResponseCard({ card, actions, role }: Props) {
           statusBg={card.statusBg} statusMessage={card.statusMessage}
         />
         {f.expertInfo && card.expertName && (
-          <ExpertInfo name={card.expertName} rating={card.expertRating} reviewCount={card.expertReviewCount} />
+          <ExpertInfo
+            name={card.expertName}
+            avatarUrl={card.expertAvatarUrl}
+            rating={card.expertRating}
+            reviewCount={card.expertReviewCount}
+          />
         )}
         <OrderSection
           title={card.orderTitle} customer={card.customer}

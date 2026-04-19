@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
-import { updateProfile, changePassword } from "../api/settings.api";
+import { updateProfile, changePassword, uploadAvatar } from "../api/settings.api";
 import { profileFormReducer, createInitialState } from "./reducer";
 import { validatePassword } from "./validation";
 import type { UserProfile } from "./types";
@@ -24,7 +24,7 @@ export function useProfileForm(profile: UserProfile) {
     createInitialState,
   );
 
-  const handleSave = async () => {
+  const handleSave = async (avatarFile?: File | null) => {
     if (state.isSaving) {
       return {} satisfies SaveProfileResult;
     }
@@ -39,12 +39,16 @@ export function useProfileForm(profile: UserProfile) {
     dispatch({ type: "SET_ERROR", payload: null });
 
     try {
-      const updated = await updateProfile({
+      let updated = await updateProfile({
         first_name: state.firstName,
         last_name: state.lastName,
         phone: state.phone || undefined,
         email: state.email || undefined,
       });
+
+      if (avatarFile) {
+        updated = await uploadAvatar(avatarFile);
+      }
 
       if (state.password) {
         await changePassword(state.password, state.repeatPassword);

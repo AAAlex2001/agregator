@@ -40,6 +40,7 @@ export interface ResponseApiItem {
   proposed_sum_amount_raw: number;
   proposed_deadline_raw: string;
   expert_name: string;
+  expert_avatar_url: string | null;
   expert_rating: number | null;
   expert_review_count: number;
   confirm_deadline: string;
@@ -89,6 +90,7 @@ export interface ResponseCardData {
   expertConfirmed: boolean;
   reminderText?: string;
   expertName: string;
+  expertAvatarUrl: string | null;
   expertRating: number | null;
   expertReviewCount: number;
   hasReview: boolean;

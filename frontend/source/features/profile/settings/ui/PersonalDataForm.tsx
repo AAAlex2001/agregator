@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
@@ -7,6 +7,7 @@ import { useNotifications } from "@/shared/ui/Notifications";
 import { logout } from "../api/settings.api";
 import { useProfileForm } from "../model/useProfileForm";
 import type { UserProfile } from "../model/types";
+import { ProfileAvatarUpload } from "./ProfileAvatarUpload";
 import s from "./PersonalDataForm.module.scss";
 
 interface Props {
@@ -19,9 +20,20 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
   const { showError, showSuccess } = useNotifications();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreviewUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(avatarPreviewUrl);
+      }
+    };
+  }, [avatarPreviewUrl]);
 
   const handleSave = async () => {
-    const result = await form.handleSave();
+    const result = await form.handleSave(avatarFile);
 
     if (result.errorMessage) {
       showError(result.errorMessage);
@@ -30,6 +42,15 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
 
     if (result.profile) {
       onProfileUpdate(result.profile);
+      setAvatarFile(null);
+      setAvatarError(null);
+      setAvatarPreviewUrl((currentPreviewUrl) => {
+        if (currentPreviewUrl?.startsWith("blob:")) {
+          URL.revokeObjectURL(currentPreviewUrl);
+        }
+
+        return null;
+      });
     }
 
     if (result.successMessage) {
@@ -54,8 +75,48 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
     router.push("/login");
   };
 
+  const handleAvatarSelect = (file: File | null) => {
+    if (!file) {
+      return;
+    }
+
+    const isAllowedType = ["image/jpeg", "image/png"].includes(file.type) || /\.(jpe?g|png)$/i.test(file.name);
+
+    if (!isAllowedType) {
+      const message = "Можно загрузить только JPG или PNG размером до 5 МБ";
+      setAvatarError(message);
+      showError(message);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      const message = "Размер фото не должен превышать 5 МБ";
+      setAvatarError(message);
+      showError(message);
+      return;
+    }
+
+    setAvatarError(null);
+    setAvatarFile(file);
+    setAvatarPreviewUrl((currentPreviewUrl) => {
+      if (currentPreviewUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(currentPreviewUrl);
+      }
+
+      return URL.createObjectURL(file);
+    });
+  };
+
   return (
     <>
+      <ProfileAvatarUpload
+        avatarUrl={profile.avatar_url}
+        previewUrl={avatarPreviewUrl}
+        disabled={form.isSaving || isLoggingOut}
+        error={avatarError}
+        onSelect={handleAvatarSelect}
+      />
+
       <div className={s.section}>
         <h2 className={s.subtitle}>Персональные данные</h2>
         <div className={s.grid}>

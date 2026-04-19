@@ -28,6 +28,26 @@ export function ChatConversationSkeleton() {
           <Skeleton className={s.messageOtherWide} rounded="lg" />
           <Skeleton className={s.messageOtherShort} rounded="lg" />
         </div>
+        <div className={s.messageMine}>
+          <Skeleton className={s.messageWide} rounded="lg" />
+          <Skeleton className={s.messageShort} rounded="lg" />
+        </div>
+        <div className={s.messageOther}>
+          <Skeleton className={s.messageOtherWide} rounded="lg" />
+          <Skeleton className={s.messageOtherShort} rounded="lg" />
+        </div>
+        <div className={s.messageMine}>
+          <Skeleton className={s.messageWide} rounded="lg" />
+          <Skeleton className={s.messageShort} rounded="lg" />
+        </div>
+        <div className={s.messageOther}>
+          <Skeleton className={s.messageOtherWide} rounded="lg" />
+          <Skeleton className={s.messageOtherShort} rounded="lg" />
+        </div>
+        <div className={s.messageMine}>
+          <Skeleton className={s.messageWide} rounded="lg" />
+          <Skeleton className={s.messageShort} rounded="lg" />
+        </div>
       </div>
 
       <div className={s.composer}>
