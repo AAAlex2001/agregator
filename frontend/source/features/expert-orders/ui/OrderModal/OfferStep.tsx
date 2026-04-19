@@ -1,9 +1,10 @@
 import { Button, Input } from "@/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
+import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
 import { ModalHeader } from "./ModalHeader";
 import { OrderSummaryPanel } from "./OrderSummaryPanel";
-import s from "./orderFlow.module.scss";
+import s from "./OfferStep.module.scss";
 
 interface Props {
   order: OrderCardData;
@@ -42,17 +43,17 @@ export function OfferStep({
     : "Взнос 5% будет рассчитан от вашей предложенной стоимости.";
 
   return (
-    <div className={s.stepStack}>
+    <div className={base.section}>
       <ModalHeader title="Отклик на заказ" step="Шаг 2. Дополнение заявки" />
       <OrderSummaryPanel order={order} />
 
-      <div className={s.infoCard}>
-        <span className={s.accentText}>{commissionText}</span>
+      <div>
+        <span className={s.commissionText}>{commissionText}</span>
       </div>
 
       <div className={s.formRow}>
-        <div className={s.fieldGroup}>
-          <span className={s.fieldLabel}>Укажите ваши сроки</span>
+        <div className={base.fieldGroup}>
+          <span className={base.fieldLabel}>Укажите ваши сроки</span>
           <Input
             type="date"
             variant="text"
@@ -62,8 +63,8 @@ export function OfferStep({
           />
         </div>
 
-        <div className={s.fieldGroup}>
-          <span className={s.fieldLabel}>Ваша оценка стоимости работ</span>
+        <div className={base.fieldGroup}>
+          <span className={base.fieldLabel}>Ваша оценка стоимости работ</span>
           <Input
             type="text"
             variant="text"
@@ -81,7 +82,7 @@ export function OfferStep({
       </span>
 
       <div className={s.textareaGroup}>
-        <span className={s.fieldLabel}>Комментарий для заказчика</span>
+        <span className={base.fieldLabel}>Комментарий для заказчика</span>
         <textarea
           className={s.textarea}
           value={comment}
@@ -93,7 +94,7 @@ export function OfferStep({
 
       <BidFilesField files={files} onAddFiles={onAddFiles} onRemoveFile={onRemoveFile} />
 
-      <div className={s.actionRow}>
+      <div className={base.actionRow}>
         <Button variant="outline" size="sm" fullWidth onClick={onBack}>
           Назад
         </Button>

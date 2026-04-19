@@ -1,0 +1,54 @@
+.commissionText {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: #ff8a00;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}
+
+.formHint {
+  font-size: 12px;
+  line-height: 15px;
+  color: #1a1a1a;
+}
+
+.textareaGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 130px;
+  padding: 10px 16px;
+  border: 1px solid #ffb800;
+  border-radius: 8px;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  resize: vertical;
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: #808080;
+}

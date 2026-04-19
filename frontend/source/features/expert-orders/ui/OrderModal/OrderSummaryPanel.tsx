@@ -1,5 +1,5 @@
 import type { Badge, OrderCardData } from "@/source/entities/order";
-import s from "./orderFlow.module.scss";
+import s from "./OrderSummaryPanel.module.scss";
 
 const BADGE_CLASS: Record<Badge["variant"], string> = {
   blue: s.badgeBlue,
@@ -16,22 +16,22 @@ interface Props {
 
 export function OrderSummaryPanel({ order }: Props) {
   return (
-    <div className={s.summaryCard}>
-      <div className={s.summaryTitleRow}>
-        <span className={s.summaryTitle}>{order.title}</span>
-        <svg className={s.summaryChevron} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <div className={s.card}>
+      <div className={s.titleRow}>
+        <span className={s.title}>{order.title}</span>
+        <svg className={s.chevron} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 9L12 15L18 9" stroke="#FFDDA9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
 
-      <span className={s.summaryCustomer}>{order.customer}</span>
+      <span className={s.customer}>{order.customer}</span>
 
-      <div className={s.summaryMeta}>
-        <span className={s.summaryMetaText}>
-          <span className={s.summaryMetaLabel}>Срок выполнения:</span> {order.date}
+      <div className={s.meta}>
+        <span className={s.metaText}>
+          <span className={s.metaLabel}>Срок выполнения:</span> {order.date}
         </span>
 
-        <div className={s.summaryBadges}>
+        <div className={s.badges}>
           {order.badges.map((badge, index) => (
             <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
               {badge.text}
@@ -39,8 +39,8 @@ export function OrderSummaryPanel({ order }: Props) {
           ))}
         </div>
 
-        <span className={s.summaryMetaText}>
-          <span className={s.summaryMetaLabel}>Мин. стоимость:</span> {order.sum}
+        <span className={s.metaText}>
+          <span className={s.metaLabel}>Мин. стоимость:</span> {order.sum}
         </span>
       </div>
     </div>

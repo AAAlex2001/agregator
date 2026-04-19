@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Button } from "@/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
+import base from "./sectionBase.module.scss";
 import { ModalHeader } from "./ModalHeader";
 import { OrderSummaryPanel } from "./OrderSummaryPanel";
-import s from "./orderFlow.module.scss";
+import s from "./TenderStep.module.scss";
 
 const GUARANTEES = [
   "При выборе вашей кандидатуры спишется только 5% от вашей цены, остаток вернётся на счёт",
@@ -31,7 +32,7 @@ export function TenderStep({ order, balance, onBack, onContinue, onTopUp }: Prop
   const isUndefined = order.commissionAmount === "Не определено" || order.commissionAmount === "0 ₽" || order.commissionAmount === "0 ₽";
 
   return (
-    <div className={s.stepStack}>
+    <div className={base.section}>
       <ModalHeader title="Отклик на заказ" step="Шаг 1. Участие в тендере" />
       <OrderSummaryPanel order={order} />
 
@@ -78,10 +79,10 @@ export function TenderStep({ order, balance, onBack, onContinue, onTopUp }: Prop
           </Button>
         </div>
 
-        {needsTopUp && <span className={s.expiredHint}>Недостаточно средств для подачи заявки</span>}
+        {needsTopUp && <span className={s.warning}>Недостаточно средств для подачи заявки</span>}
       </div>
 
-      <div className={s.actionRow}>
+      <div className={base.actionRow}>
         <Button variant="outline" size="sm" fullWidth onClick={onBack}>
           Отменить
         </Button>

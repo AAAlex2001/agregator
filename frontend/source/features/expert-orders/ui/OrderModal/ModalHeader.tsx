@@ -1,4 +1,4 @@
-import s from "./orderFlow.module.scss";
+import s from "./ModalHeader.module.scss";
 
 interface Props {
   title: string;
@@ -8,8 +8,8 @@ interface Props {
 export function ModalHeader({ title, step }: Props) {
   return (
     <div className={s.header}>
-      <span className={s.headerTitle}>{title}</span>
-      <span className={s.headerStep}>{step}</span>
+      <span className={s.title}>{title}</span>
+      <span className={s.step}>{step}</span>
     </div>
   );
 }

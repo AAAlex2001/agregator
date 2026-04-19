@@ -6,6 +6,12 @@ import { profileFormReducer, createInitialState } from "./reducer";
 import { validatePassword } from "./validation";
 import type { UserProfile } from "./types";
 
+interface SaveProfileResult {
+  profile?: UserProfile;
+  errorMessage?: string;
+  successMessage?: string;
+}
+
 export function useProfileForm(profile: UserProfile) {
   const [state, dispatch] = useReducer(
     profileFormReducer,
@@ -19,12 +25,13 @@ export function useProfileForm(profile: UserProfile) {
   );
 
   const handleSave = async () => {
-    if (state.isSaving) return;
+    if (state.isSaving) {
+      return {} satisfies SaveProfileResult;
+    }
 
     const pwError = validatePassword(state.password, state.repeatPassword);
     if (pwError) {
-      dispatch({ type: "SET_ERROR", payload: pwError });
-      return;
+      return { errorMessage: pwError } satisfies SaveProfileResult;
     }
 
     dispatch({ type: "SET_SAVING", payload: true });
@@ -42,11 +49,14 @@ export function useProfileForm(profile: UserProfile) {
         dispatch({ type: "RESET_PASSWORD" });
       }
 
-      dispatch({ type: "SET_SUCCESS", payload: "Данные сохранены" });
-      return updated;
+      return {
+        profile: updated,
+        successMessage: "Данные сохранены",
+      } satisfies SaveProfileResult;
     } catch (err) {
-      dispatch({ type: "SET_ERROR", payload: err instanceof Error ? err.message : "Ошибка сохранения" });
-      return undefined;
+      return {
+        errorMessage: err instanceof Error ? err.message : "Ошибка сохранения",
+      } satisfies SaveProfileResult;
     } finally {
       dispatch({ type: "SET_SAVING", payload: false });
     }

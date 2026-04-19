@@ -1,5 +1,6 @@
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
+import { useNotifications } from "@/shared/ui/Notifications";
 import { useProfileForm } from "../model/useProfileForm";
 import type { UserProfile } from "../model/types";
 import s from "./PersonalDataForm.module.scss";
@@ -11,17 +12,27 @@ interface Props {
 
 export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
   const form = useProfileForm(profile);
+  const { showError, showSuccess } = useNotifications();
 
   const handleSave = async () => {
-    const updated = await form.handleSave();
-    if (updated) onProfileUpdate(updated);
+    const result = await form.handleSave();
+
+    if (result.errorMessage) {
+      showError(result.errorMessage);
+      return;
+    }
+
+    if (result.profile) {
+      onProfileUpdate(result.profile);
+    }
+
+    if (result.successMessage) {
+      showSuccess(result.successMessage);
+    }
   };
 
   return (
     <>
-      {form.error && <p className={s.error}>{form.error}</p>}
-      {form.success && <p className={s.success}>{form.success}</p>}
-
       <div className={s.section}>
         <h2 className={s.subtitle}>Персональные данные</h2>
         <div className={s.grid}>

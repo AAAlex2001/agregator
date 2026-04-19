@@ -1,0 +1,17 @@
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.expiredHint {
+  font-size: 14px;
+  line-height: 17px;
+  color: #f73c1d;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}

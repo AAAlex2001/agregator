@@ -22,6 +22,10 @@
   gap: 10px;
 }
 
+.item {
+  position: relative;
+}
+
 .tile {
   box-sizing: border-box;
   display: flex;
@@ -39,6 +43,20 @@
   text-align: center;
 }
 
+.tileReadonly {
+  border: 1px solid #ffdda9;
+  background: #f5f5f5;
+}
+
+.tileEditable {
+  border: 1px solid #ffb800;
+  background: #ffffff;
+}
+
+.addButton {
+  cursor: pointer;
+}
+
 .imageTile {
   padding: 0;
 }
@@ -53,8 +71,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 2px;
   max-width: 100%;
+}
+
+.fileIcon {
+  color: #ced2d6;
 }
 
 .fileExtension {
@@ -69,9 +92,34 @@
 .empty {
   font-size: 10px;
   line-height: 12px;
-  word-break: break-word;
+  word-break: break-all;
 }
 
 .empty {
   color: #808080;
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 15px;
+  color: #7d7d7d;
+}
+
+.removeButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }

@@ -1,0 +1,147 @@
+.infoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.commissionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.accentText {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: #ff8a00;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.commissionValue {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.guaranteesCard {
+  border-bottom: 1px solid #ffdda9;
+}
+
+.guaranteesToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.guaranteesTitle {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.guaranteesChevron {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.guaranteesChevronOpen {
+  transform: rotate(180deg);
+}
+
+.guaranteesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.guaranteeItem {
+  display: flex;
+  gap: 6px;
+}
+
+.checkIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.guaranteeText {
+  font-size: 14px;
+  line-height: 17px;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.balanceRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.balanceInfo {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.balanceLabel,
+.balanceValue {
+  font-size: 14px;
+  line-height: 17px;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.warning {
+  font-size: 14px;
+  line-height: 17px;
+  color: #f73c1d;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}

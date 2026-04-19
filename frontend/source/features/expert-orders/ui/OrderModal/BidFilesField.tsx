@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import s from "./orderFlow.module.scss";
+import {
+  getFileGalleryPreviewUrl,
+  getFileGalleryThumbUrl,
+  isImageFileName,
+} from "@/source/shared/lib/filePreview";
+import { FileGallery } from "@/source/shared/ui/FileGallery";
+import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import base from "./sectionBase.module.scss";
+import s from "./BidFilesField.module.scss";
 
 interface Props {
   files: File[];
@@ -15,11 +23,7 @@ interface PreviewItem {
 }
 
 function isImageFile(file: File) {
-  return file.type.startsWith("image/") || /\.(jpe?g|png|gif|webp)$/i.test(file.name);
-}
-
-function shortName(name: string) {
-  return name.length > 10 ? `${name.slice(0, 10)}…` : name;
+  return file.type.startsWith("image/") || isImageFileName(file.name);
 }
 
 export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
@@ -38,54 +42,49 @@ export function BidFilesField({ files, onAddFiles, onRemoveFile }: Props) {
     };
   }, [files]);
 
+  const items: FileGalleryItem[] = files.map((file, index) => {
+    const preview = previews.find((item) => item.file === file);
+    const previewUrl = preview?.url ?? "";
+    const isImage = isImageFile(file);
+
+    return {
+      id: `${file.name}-${index}`,
+      name: file.name,
+      url: previewUrl,
+      previewUrl: isImage ? previewUrl : getFileGalleryPreviewUrl(previewUrl, file.name),
+      thumbnailUrl: getFileGalleryThumbUrl(previewUrl, file.name),
+      isImage,
+      onRemove: () => onRemoveFile(index),
+    };
+  }).filter((item) => item.url);
+
   return (
     <div className={s.fileField}>
-      <div className={s.fieldHeader}>
-        <span className={s.fieldLabel}>Ваши файлы</span>
-        <span className={s.fieldHint}>Максимум 6 файлов и 100 МБ суммарно</span>
-      </div>
+      <FileGallery
+        items={items}
+        label="Ваши файлы"
+        labelClassName={base.fieldLabel}
+        hint="Максимум 6 файлов и 100 МБ суммарно"
+        hintClassName={base.fieldHint}
+        variant="editable"
+        onAdd={() => {
+          if (!inputRef.current) {
+            return;
+          }
 
-      <div className={s.fileGrid}>
-        <button
-          type="button"
-          className={s.fileAddButton}
-          onClick={() => {
-            if (!inputRef.current) return;
-            inputRef.current.value = "";
-            inputRef.current.click();
-          }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 5V19M5 12H19" stroke="#FF8A00" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-
-        {files.map((file, index) => {
-          const preview = previews.find((item) => item.file === file);
-
-          return (
-            <div key={`${file.name}-${index}`} className={s.fileTile}>
-              {preview ? (
-                <img src={preview.url} alt={file.name} className={s.fileImage} />
-              ) : (
-                <span className={s.fileTileName}>{shortName(file.name)}</span>
-              )}
-
-              <button type="button" className={s.fileRemoveButton} onClick={() => onRemoveFile(index)}>
-                ×
-              </button>
-            </div>
-          );
-        })}
-      </div>
-
-      <input
-        ref={inputRef}
-        type="file"
-        multiple
-        accept=".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx"
-        className={s.hiddenInput}
-        onChange={(event) => onAddFiles(event.currentTarget.files)}
+          inputRef.current.value = "";
+          inputRef.current.click();
+        }}
+        input={(
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            accept=".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx"
+            className={base.hiddenInput}
+            onChange={(event) => onAddFiles(event.currentTarget.files)}
+          />
+        )}
       />
     </div>
   );
