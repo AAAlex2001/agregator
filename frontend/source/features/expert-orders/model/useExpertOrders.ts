@@ -7,10 +7,8 @@ import { useSession } from "@/source/features/session";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder, createPayment } from "../api/expert-orders.api";
 import { useOrdersWs } from "../lib/useOrdersWs";
+import type { ModalStep, RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
-import type { Step2FormData } from "@/features/order/details/ui/OrderDetailsModal/types";
-
-type ModalStep = "details" | "step1";
 
 const PAGE = 50;
 
@@ -25,14 +23,12 @@ export function useExpertOrders() {
     typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("orderId") : null,
   );
 
-  // WebSocket
   useOrdersWs({
     onCreated: (raw) => d({ type: "PREPEND", item: mapApiToOrderCard(raw) }),
     onUpdated: (raw) => d({ type: "UPDATE", item: mapApiToOrderCard(raw) }),
     onRemoved: (id) => d({ type: "REMOVE", id }),
   });
 
-  // Initial fetch
   const reload = async () => {
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
@@ -46,14 +42,15 @@ export function useExpertOrders() {
     }
   };
 
-  useEffect(() => { void reload(); }, []);
+  useEffect(() => {
+    void reload();
+  }, []);
 
-  // Deep-link: auto-select order after payment return
   useEffect(() => {
     if (!returnOrderId || s.items.length === 0) return;
-    const found = s.items.find((i) => String(i.id) === returnOrderId);
+    const found = s.items.find((item) => String(item.id) === returnOrderId);
     if (found) {
-      setPendingStep("step1");
+      setPendingStep("tender");
       d({ type: "SELECT", order: found });
     }
   }, [returnOrderId, s.items]);
@@ -81,7 +78,7 @@ export function useExpertOrders() {
   };
 
   const openRespond = (order: OrderCardData) => {
-    setPendingStep("step1");
+    setPendingStep("tender");
     d({ type: "SELECT", order });
   };
 
@@ -92,12 +89,12 @@ export function useExpertOrders() {
 
   const onShare = (publicId: string, onCopied: () => void) => copyOrderLink(publicId, onCopied);
 
-  const onRespond = async (order: { id: number }, form: Step2FormData) => {
+  const onRespond = async (order: OrderCardData, form: RespondFormData) => {
     d({ type: "RESPONDING", value: true });
     try {
       await respondToOrder(order.id, {
         comment: form.comment,
-        proposed_sum_amount: form.costEstimate,
+        proposed_sum_amount: form.costAmount,
         proposed_deadline: form.deadline,
         files: form.files,
       });
@@ -122,7 +119,18 @@ export function useExpertOrders() {
   };
 
   return {
-    ...s, balance, returnOrderId, hasMore, pendingStep,
-    reload, loadMore, openDetails, openRespond, closeModal, onShare, onRespond, onTopUp,
+    ...s,
+    balance,
+    returnOrderId,
+    hasMore,
+    pendingStep,
+    reload,
+    loadMore,
+    openDetails,
+    openRespond,
+    closeModal,
+    onShare,
+    onRespond,
+    onTopUp,
   };
 }

@@ -1,0 +1,21 @@
+import type { OrderCardData } from "@/source/entities/order";
+
+export type ModalStep = "details" | "tender" | "offer";
+
+export interface RespondFormData {
+  deadline: string;
+  costAmount: number;
+  comment: string;
+  files: File[];
+}
+
+export interface OrderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  order: OrderCardData | null;
+  balance: number;
+  onRespond: (order: OrderCardData, formData: RespondFormData) => void;
+  onTopUp: (amount: number) => void | Promise<void>;
+  isResponding: boolean;
+  initialStep?: ModalStep;
+}

@@ -8,8 +8,7 @@ import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
-import OrderDetailsModal from "@/features/order/details/ui/OrderDetailsModal";
-import { useExpertOrders } from "@/source/features/expert-orders";
+import { OrderModal, useExpertOrders } from "@/source/features/expert-orders";
 import s from "./ExpertOrdersWidget.module.scss";
 
 const anim = {
@@ -23,6 +22,10 @@ const anim = {
     scale: { duration: 0.24 },
   },
 };
+
+function isResponsesDeadlineExpired(responsesDeadline?: string | null): boolean {
+  return responsesDeadline ? new Date(responsesDeadline) <= new Date() : false;
+}
 
 export function ExpertOrdersWidget() {
   const { showSuccess } = useNotifications();
@@ -107,6 +110,7 @@ export function ExpertOrdersWidget() {
                           variant="primary"
                           size="sm"
                           className={s.btn}
+                          disabled={isResponsesDeadlineExpired(o.responsesDeadline)}
                           onClick={(e) => {
                             e.stopPropagation();
                             h.openRespond(o);
@@ -127,7 +131,7 @@ export function ExpertOrdersWidget() {
           </>
         )}
 
-        <OrderDetailsModal
+        <OrderModal
           isOpen={Boolean(h.selectedOrder)}
           order={h.selectedOrder}
           onClose={h.closeModal}
