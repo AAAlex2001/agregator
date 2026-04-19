@@ -10,6 +10,7 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { OrderModal, useExpertOrders } from "@/source/features/expert-orders";
+import { ExpertOrdersSkeleton } from "./ExpertOrdersSkeleton";
 import s from "./ExpertOrdersWidget.module.scss";
 
 const anim = {
@@ -56,11 +57,7 @@ export function ExpertOrdersWidget() {
           </div>
         )}
 
-        {h.isLoading && (
-          <div className={s.center}>
-            <Loader label="" size="lg" />
-          </div>
-        )}
+        {h.isLoading && <ExpertOrdersSkeleton />}
 
         {!h.isLoading && h.error && (
           <div className={s.center}>

@@ -1,4 +1,4 @@
-import { Loader, Button } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
 import { ResponsesState } from "@/widgets/responses-state";
@@ -7,6 +7,7 @@ import { ResponseCard } from "@/source/entities/response";
 import type { ResponseTabKey, UserRole } from "@/source/entities/response";
 import { getCardActions } from "@/source/features/responses";
 import type { useResponses } from "@/source/features/responses";
+import { ResponsesSkeleton } from "./ResponsesSkeleton";
 import s from "./ResponsesWidget.module.scss";
 
 type ResponsesModel = ReturnType<typeof useResponses>;
@@ -37,7 +38,7 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers }: 
       />
 
       {model.isLoading ? (
-        <div className={s.statusState}><Loader label="" size="lg" /></div>
+        <ResponsesSkeleton />
       ) : model.error ? (
         <ResponsesState
           title="Ошибка загрузки"

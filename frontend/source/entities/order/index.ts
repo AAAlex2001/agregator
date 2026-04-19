@@ -1,4 +1,5 @@
 export { OrderCard } from "./ui/OrderCard";
+export { OrderCardSkeleton } from "./ui/OrderCardSkeleton";
 export { mapApiToOrderCard } from "./model/mapper";
 export type {
   Badge, BadgeVariant, OrderApiBadge,

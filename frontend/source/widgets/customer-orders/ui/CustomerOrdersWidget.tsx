@@ -3,12 +3,13 @@
 import { useRef } from "react";
 import { Header } from "@/source/widgets/header";
 import { OrderCard } from "@/source/entities/order";
-import { Button, Loader, ScrollHintTooltip } from "@/shared/ui";
+import { Button, ScrollHintTooltip } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
 import { useCustomerOrders } from "@/source/features/customer-orders";
+import { CustomerOrdersSkeleton } from "./CustomerOrdersSkeleton";
 import s from "./CustomerOrdersWidget.module.scss";
 
 export function CustomerOrdersWidget() {
@@ -38,7 +39,7 @@ export function CustomerOrdersWidget() {
     <>
       <Header />
       <div className={s.wrapper}>
-        {h.isLoading && <div className={s.center}><Loader label="" size="lg" /></div>}
+        {h.isLoading && <CustomerOrdersSkeleton />}
 
         {!h.isLoading && h.error && (
           <div className={s.center}>
