@@ -5,6 +5,12 @@ import LightGallery from "lightgallery/react";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import { useDropzone } from "react-dropzone";
 import type { DropzoneOptions } from "react-dropzone";
+import {
+  getFileGalleryPreviewUrl,
+  getFileGalleryThumbUrl,
+  getShortFileName,
+  isImageFileName,
+} from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import base from "./sectionBase.module.scss";
 import s from "./filesSection.module.scss";
@@ -42,11 +48,11 @@ function FileIcon() {
 }
 
 function isImageName(name: string) {
-  return /\.(jpe?g|png|gif|webp)$/i.test(name);
+  return isImageFileName(name);
 }
 
 function shortName(name: string) {
-  return name.length > 10 ? `${name.slice(0, 10)}…` : name;
+  return getShortFileName(name, 10);
 }
 
 export function FilesSection({
@@ -63,9 +69,7 @@ export function FilesSection({
   });
 
   useEffect(() => {
-    const nextPreviews = files
-      .filter((file) => isImageName(file.name))
-      .map((file) => ({ file, url: URL.createObjectURL(file) }));
+    const nextPreviews = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
 
     setPreviews(nextPreviews);
 
@@ -78,7 +82,7 @@ export function FilesSection({
     <section className={base.section}>
       <span className={base.label}>Файлы</span>
 
-      <LightGallery plugins={[lgThumbnail]} selector="a" speed={300} download={false}>
+      <LightGallery plugins={[lgThumbnail]} selector="a" speed={300} download={false} exThumbImage="data-thumb">
         <div
           {...dropzone.getRootProps({
             className: `${s.fileRow} ${dropzone.isDragActive ? s.fileRowActive : ""}`,
@@ -96,21 +100,26 @@ export function FilesSection({
             const fileUrl = resolveFileUrl(file);
             const name = file.split("/").pop() ?? "Файл";
             const isImage = isImageName(name);
+            const previewUrl = isImage ? fileUrl : getFileGalleryPreviewUrl(fileUrl, name);
 
             return (
               <div key={file} className={s.fileThumbnail}>
                 {isImage ? (
-                  <a href={fileUrl} className={s.anchor}>
+                  <a href={fileUrl} data-src={fileUrl} data-thumb={getFileGalleryThumbUrl(fileUrl, name)} className={s.anchor}>
                     <img src={fileUrl} alt={name} className={s.filePreviewImage} />
                   </a>
                 ) : (
-                  <button
-                    type="button"
+                  <a
+                    href={previewUrl}
+                    data-src={previewUrl}
+                    data-thumb={getFileGalleryThumbUrl(fileUrl, name)}
+                    data-iframe="true"
+                    data-iframe-title={name}
                     className={`${s.anchor} ${s.fileNameButton}`}
-                    onClick={() => window.open(fileUrl, "_blank", "noopener,noreferrer")}
+                    title={name}
                   >
                     <span className={s.fileName}>{shortName(name)}</span>
-                  </button>
+                  </a>
                 )}
                 <button type="button" className={s.fileRemove} onClick={() => onRemoveExistingFile(index)}>×</button>
               </div>
@@ -119,12 +128,30 @@ export function FilesSection({
 
           {files.map((file, index) => {
             const preview = previews.find((item) => item.file === file);
+            const previewUrl = preview?.url;
+            const isImage = isImageName(file.name);
+            const galleryPreviewUrl = previewUrl ? (isImage ? previewUrl : getFileGalleryPreviewUrl(previewUrl, file.name)) : "";
 
             return (
               <div key={`${file.name}-${index}`} className={s.fileThumbnail}>
-                {preview ? (
-                  <a href={preview.url} className={s.anchor}>
-                    <img src={preview.url} alt={file.name} className={s.filePreviewImage} />
+                {previewUrl ? (
+                  <a
+                    href={galleryPreviewUrl}
+                    data-src={galleryPreviewUrl}
+                    data-thumb={getFileGalleryThumbUrl(previewUrl, file.name)}
+                    data-iframe={isImage ? undefined : "true"}
+                    data-iframe-title={isImage ? undefined : file.name}
+                    className={s.anchor}
+                    title={file.name}
+                  >
+                    {isImage ? (
+                      <img src={previewUrl} alt={file.name} className={s.filePreviewImage} />
+                    ) : (
+                      <>
+                        <FileIcon />
+                        <span className={s.fileName}>{shortName(file.name)}</span>
+                      </>
+                    )}
                   </a>
                 ) : (
                   <>

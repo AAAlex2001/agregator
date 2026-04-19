@@ -9,6 +9,7 @@ export { CalendarInput } from "./CalendarInput";
 export { default as CardInput } from "./CardInput";
 export { default as Loader } from "./Loader";
 export { default as ScrollHintTooltip } from "./ScrollHintTooltip";
+export { FileGallery } from "./FileGallery";
 
 // Cross-layer convenience re-exports for ergonomic page imports.
 export { OrderCard } from "@/entities/order";

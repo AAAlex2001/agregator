@@ -2,6 +2,7 @@
 @import "react-datepicker/dist/react-datepicker.css";
 @import "lightgallery/css/lightgallery.css";
 @import "lightgallery/css/lg-thumbnail.css";
+@import "lightgallery/css/lg-zoom.css";
 
 :root {
   --background: #ffffff;
@@ -22,4 +23,26 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+.lg-backdrop {
+  z-index: 20000 !important;
+}
+
+.lg-container,
+.lg-outer,
+.lg-components,
+.lg-toolbar,
+.lg-prev,
+.lg-next,
+.lg-sub-html,
+.lg-thumb-outer,
+.lg-dropdown {
+  z-index: 20010 !important;
+}
+
+.lg-outer .lg-has-iframe {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
 }
