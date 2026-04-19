@@ -66,7 +66,8 @@ export function RegisterWidget() {
               selectedRole={reg.selectedRole}
               lastName={reg.lastName}
               firstName={reg.firstName}
-              login={reg.login}
+              email={reg.email}
+              phone={reg.phone}
               inn={reg.inn}
               innQuery={reg.innQuery}
               password={reg.password}
@@ -74,7 +75,8 @@ export function RegisterWidget() {
               isLoading={reg.isLoading}
               onLastNameChange={reg.setLastName}
               onFirstNameChange={reg.setFirstName}
-              onLoginChange={reg.setLogin}
+              onEmailChange={reg.setEmail}
+              onPhoneChange={reg.setPhone}
               onInnChange={reg.setInn}
               onInnQueryChange={reg.setInnQuery}
               onSuggestionSelect={reg.setSelectedParty}

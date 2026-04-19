@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
+import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import type { PartySuggestion } from "../api/partySuggestions.api";
 import { InnSuggestionsInput } from "./InnSuggestionsInput";
 import s from "./CredentialsStep.module.scss";
@@ -9,7 +10,8 @@ interface Props {
   selectedRole: number | null;
   lastName: string;
   firstName: string;
-  login: string;
+  email: string;
+  phone: string;
   inn: string;
   innQuery: string;
   password: string;
@@ -17,7 +19,8 @@ interface Props {
   isLoading: boolean;
   onLastNameChange: (v: string) => void;
   onFirstNameChange: (v: string) => void;
-  onLoginChange: (v: string) => void;
+  onEmailChange: (v: string) => void;
+  onPhoneChange: (v: string) => void;
   onInnChange: (v: string) => void;
   onInnQueryChange: (v: string) => void;
   onSuggestionSelect: (suggestion: PartySuggestion | null) => void;
@@ -27,18 +30,21 @@ interface Props {
 }
 
 export function CredentialsStep({
-  selectedRole, lastName, firstName, login, inn, innQuery, password, repeatPassword,
-  isLoading, onLastNameChange, onFirstNameChange, onLoginChange, onInnChange, onInnQueryChange, onSuggestionSelect,
+  selectedRole, lastName, firstName, email, phone, inn, innQuery, password, repeatPassword,
+  isLoading, onLastNameChange, onFirstNameChange, onEmailChange, onPhoneChange, onInnChange, onInnQueryChange, onSuggestionSelect,
   onPasswordChange, onRepeatPasswordChange, onSubmit,
 }: Props) {
   return (
     <div className={s.stepContent}>
-      <form onSubmit={onSubmit} className={s.form}>
+      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+        <AutofillGuard idPrefix="register" />
         {selectedRole === 2 && (
           <>
-            <Input id="lastName" variant="text" value={lastName}
+            <Input id="lastName" name="register-last-name" variant="text" value={lastName}
+              autoComplete="off"
               onChange={(e) => onLastNameChange(e.target.value)} placeholder="Фамилия" required />
-            <Input id="firstName" variant="text" value={firstName}
+            <Input id="firstName" name="register-first-name" variant="text" value={firstName}
+              autoComplete="off"
               onChange={(e) => onFirstNameChange(e.target.value)} placeholder="Имя" required />
           </>
         )}
@@ -50,9 +56,15 @@ export function CredentialsStep({
           onQueryChange={onInnQueryChange}
           onSuggestionSelect={onSuggestionSelect}
         />
-        <Input id="login" variant="emailOrPhone" value={login}
-          onChange={(e) => onLoginChange(e.target.value)} placeholder="Электронная почта или телефон" required />
-        <Input id="password" variant="password" value={password}
+        <Input id="email" name="register-email" type="email" variant="email" value={email}
+          autoComplete="off"
+          onChange={(e) => onEmailChange(e.target.value)} placeholder="Электронная почта" />
+        <Input id="phone" name="register-phone" type="tel" variant="phone" value={phone}
+          autoComplete="off"
+          onChange={(e) => onPhoneChange(e.target.value)} placeholder="+7-999-999-99-12" />
+        <p className={s.contactHint}>Укажите хотя бы один способ связи: email или телефон</p>
+        <Input id="password" name="register-password" variant="password" value={password}
+          autoComplete="new-password"
           onChange={(e) => onPasswordChange(e.target.value)} placeholder="Пароль" required />
 
         <ul className={s.passwordRequirements}>
@@ -64,7 +76,8 @@ export function CredentialsStep({
           </li>
         </ul>
 
-        <Input id="repeatPassword" variant="password" value={repeatPassword}
+        <Input id="repeatPassword" name="register-password-repeat" variant="password" value={repeatPassword}
+          autoComplete="new-password"
           onChange={(e) => onRepeatPasswordChange(e.target.value)} placeholder="Повторите пароль" required />
 
         <Button type="submit" variant="chat" size="lg" fullWidth isLoading={isLoading}>

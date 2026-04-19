@@ -15,9 +15,10 @@ export type InputVariant = "text" | "email" | "phone" | "emailOrPhone" | "passwo
 
 interface InputProps {
   id?: string;
+  name?: string;
   type?: "text" | "email" | "tel" | "password" | "date";
   variant?: InputVariant;
-  value: string;
+  value: string | null | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -34,6 +35,7 @@ interface InputProps {
 
 const Input: React.FC<InputProps> = ({
   id,
+  name,
   type,
   variant = "text",
   value,
@@ -52,6 +54,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   const generatedId = useId();
   const inputId = id || generatedId;
+  const inputValue = value ?? "";
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -92,16 +95,16 @@ const Input: React.FC<InputProps> = ({
   };
 
   const getEmailOrPhoneType = (): "email" | "phone" | "both" => {
-    if (!value.trim()) {
+    if (!inputValue.trim()) {
       return "both";
     }
     
-    if (value.includes("@")) {
+    if (inputValue.includes("@")) {
       return "email";
     }
     
     const phonePattern = /^[\d\s\+\-\(\)]+$/;
-    if (phonePattern.test(value)) {
+    if (phonePattern.test(inputValue)) {
       return "phone";
     }
     
@@ -157,9 +160,10 @@ const Input: React.FC<InputProps> = ({
         )}
         <input
           id={inputId}
+          name={name}
           type={getInputType()}
           inputMode={getInputMode()}
-          value={value}
+          value={inputValue}
           onChange={onChange}
           onFocus={(event) => {
             setIsFocused(true);

@@ -2,6 +2,7 @@ import { FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
 import Tabs from "@/source/shared/ui/Tabs";
+import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import type { UserRole } from "../model/types";
 import { InnCodeInput } from "./InnCodeInput";
 import s from "./LoginForm.module.scss";
@@ -23,7 +24,8 @@ export function LoginForm({
   onInnChange, onPasswordChange, onRoleChange, onSubmit,
 }: Props) {
   return (
-    <form onSubmit={onSubmit} className={s.form}>
+    <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <AutofillGuard idPrefix="login" />
       {!fromOrder && (
         <Tabs
           tabs={[
@@ -41,7 +43,8 @@ export function LoginForm({
       )}
 
       <InnCodeInput value={inn} onChange={onInnChange} disabled={isLoading} />
-      <Input id="password" variant="password" value={password}
+      <Input id="password" name="login-auth-secret" variant="password" value={password}
+        autoComplete="new-password"
         onChange={(e) => onPasswordChange(e.target.value)} placeholder="Введите пароль" required />
 
       <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>

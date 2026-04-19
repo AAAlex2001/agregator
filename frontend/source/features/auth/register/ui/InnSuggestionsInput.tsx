@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "@/source/shared/ui/Input";
 import Loader from "@/source/shared/ui/Loader";
 import { normalizeInn } from "@/source/shared/lib/inn";
@@ -27,9 +27,15 @@ export function InnSuggestionsInput({
   const [items, setItems] = useState<PartySuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const skipNextFetchRef = useRef(false);
   const shouldShowDropdown = isOpen && (loading || items.length > 0);
 
   useEffect(() => {
+    if (skipNextFetchRef.current) {
+      skipNextFetchRef.current = false;
+      return;
+    }
+
     if (disabled || query.trim().length < 2) {
       setItems([]);
       setLoading(false);
@@ -71,9 +77,11 @@ export function InnSuggestionsInput({
   }
 
   function handleSelect(item: PartySuggestion) {
+    skipNextFetchRef.current = true;
     onQueryChange(item.value);
     onValueChange(normalizeInn(item.data.inn ?? ""));
     onSuggestionSelect(item);
+    setItems([]);
     setIsOpen(false);
   }
 
@@ -81,6 +89,7 @@ export function InnSuggestionsInput({
     <div className={s.wrap}>
       <Input
         id="inn"
+        name="register-company-query"
         variant="text"
         className={s.field}
         inputClassName={shouldShowDropdown ? s.inputOpen : undefined}

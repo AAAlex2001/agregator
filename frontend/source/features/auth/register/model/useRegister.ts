@@ -4,6 +4,7 @@ import { useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { normalizeInn } from "@/source/shared/lib/inn";
+import { formatRussianPhone } from "@/source/shared/lib/phone";
 import { registerUser } from "../api/register.api";
 import type { PartySuggestion } from "../api/partySuggestions.api";
 import { validateRegisterForm, getRoleType } from "./validation";
@@ -27,7 +28,8 @@ export function useRegister() {
 
     const formData = {
       role: getRoleType(state.selectedRole),
-      login: state.login,
+      email: state.email,
+      phone: state.phone,
       inn: normalizeInn(state.inn),
       companyData: selectedParty,
       password: state.password,
@@ -59,7 +61,8 @@ export function useRegister() {
 
   return {
     ...state,
-    setLogin: (v: string) => dispatch({ type: "SET_FIELD", field: "login", value: v }),
+    setEmail: (v: string) => dispatch({ type: "SET_FIELD", field: "email", value: v }),
+    setPhone: (v: string) => dispatch({ type: "SET_FIELD", field: "phone", value: formatRussianPhone(v) }),
     setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
     setInnQuery: (v: string) => dispatch({ type: "SET_FIELD", field: "innQuery", value: v }),
     setSelectedParty,

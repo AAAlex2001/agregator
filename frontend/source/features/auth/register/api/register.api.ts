@@ -1,4 +1,5 @@
 import { fetchBase } from "@/source/shared/api/base";
+import { toRussianPhoneApiValue } from "@/source/shared/lib/phone";
 import type { RegisterFormData, RegisterResponse } from "../model/types";
 
 export async function registerUser(data: RegisterFormData): Promise<RegisterResponse> {
@@ -8,8 +9,8 @@ export async function registerUser(data: RegisterFormData): Promise<RegisterResp
       role: data.role,
       inn: data.inn,
       company_data: data.companyData ?? undefined,
-      email: data.login.includes("@") ? data.login : undefined,
-      phone: !data.login.includes("@") ? data.login : undefined,
+      email: data.email.trim() || undefined,
+      phone: toRussianPhoneApiValue(data.phone) || undefined,
       password: data.password,
       first_name: data.firstName || undefined,
       last_name: data.lastName || undefined,

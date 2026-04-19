@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
+import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import s from "./EmailStep.module.scss";
 
 interface Props {
@@ -14,8 +15,10 @@ export function EmailStep({ email, isLoading, onChange, onSubmit }: Props) {
   return (
     <>
       <p className={s.stepText}>Шаг 1. Введите электронную почту</p>
-      <form onSubmit={onSubmit} className={s.form}>
-        <Input id="email" variant="email" value={email}
+      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+        <AutofillGuard idPrefix="forgot-password-email" />
+        <Input id="email" name="forgot-password-email" variant="email" value={email}
+          autoComplete="off"
           onChange={(e) => onChange(e.target.value)} placeholder="Электронная почта" required />
         <Button type="submit" variant="primary" fullWidth isLoading={isLoading} disabled={!email.trim()}>
           Подтвердить
