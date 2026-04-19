@@ -55,6 +55,7 @@ export function OfferStep({
         <div className={base.fieldGroup}>
           <span className={base.fieldLabel}>Укажите ваши сроки</span>
           <CalendarInput
+            active
             value={deadline}
             onChange={onDeadlineChange}
             placeholder="Выберите дату"
@@ -66,7 +67,6 @@ export function OfferStep({
           <Input
             type="text"
             variant="text"
-            placeholder="Сумма в рублях"
             active
             inputMode="numeric"
             value={cost}

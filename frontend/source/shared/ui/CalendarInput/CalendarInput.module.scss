@@ -25,6 +25,14 @@
   }
 }
 
+.triggerActive {
+  border: 1px solid #ffb800;
+
+  &:hover {
+    border-color: #ffb800;
+  }
+}
+
 .triggerOpen {
   border-color: #ffb800;
 }

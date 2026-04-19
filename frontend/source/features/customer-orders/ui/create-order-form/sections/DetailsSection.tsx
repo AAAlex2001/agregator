@@ -19,6 +19,7 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Название заказа</span>
           <Input
             variant="text"
+            active
             placeholder="Введите название"
             value={watch("title")}
             onChange={(event) => setValue("title", event.target.value, { shouldDirty: true })}
@@ -29,6 +30,7 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Компания</span>
           <Input
             variant="text"
+            active
             placeholder="Название компании"
             value={watch("company")}
             onChange={(event) => setValue("company", event.target.value, { shouldDirty: true })}
@@ -38,6 +40,7 @@ export function DetailsSection({ form }: Props) {
         <div className={s.field}>
           <span className={base.label}>Срок выполнения</span>
           <CalendarInput
+            active
             value={watch("deadline")}
             onChange={(value) => setValue("deadline", value, { shouldDirty: true })}
           />
@@ -47,6 +50,7 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Бюджет проекта, ₽</span>
           <Input
             variant="text"
+            active
             placeholder="Сумма в рублях (0 — не определено)"
             value={watch("budget")}
             onChange={(event) => setValue("budget", event.target.value.replace(/[^\d]/g, ""), { shouldDirty: true })}
@@ -56,6 +60,7 @@ export function DetailsSection({ form }: Props) {
         <div className={s.field}>
           <span className={base.label}>Приём откликов до</span>
           <CalendarInput
+            active
             value={watch("responsesDeadline")}
             onChange={(value) => setValue("responsesDeadline", value, { shouldDirty: true })}
             withTime

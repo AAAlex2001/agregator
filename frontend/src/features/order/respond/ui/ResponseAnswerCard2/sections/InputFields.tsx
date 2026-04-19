@@ -1,5 +1,6 @@
 import React from "react";
 import { Input } from "@/shared/ui";
+import { CalendarInput } from "@/source/shared/ui";
 import styles from "./sections.module.scss";
 
 interface InputFieldsProps {
@@ -27,13 +28,11 @@ export default function InputFields({
         <div className={styles.inputTitle}>Ваша оценка стоимости работ</div>
       </div>
       <div className={styles.inputRow}>
-        <Input
-          type="date"
-          variant="text"
+        <CalendarInput
           active
           className={styles.inputField}
           value={deadline}
-          onChange={(e) => onDeadlineChange(e.target.value)}
+          onChange={onDeadlineChange}
         />
         <Input
           type="text"

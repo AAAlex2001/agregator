@@ -16,6 +16,7 @@ interface Props {
   placeholder?: string;
   withTime?: boolean;
   className?: string;
+  active?: boolean;
 }
 
 function parseValue(value: string): Date | null {
@@ -50,6 +51,7 @@ export function CalendarInput({
   placeholder = "Выберите дату",
   withTime = false,
   className,
+  active = false,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = parseValue(value);
@@ -79,7 +81,7 @@ export function CalendarInput({
     <div className={`${s.field} ${className ?? ""}`.trim()}>
       <button
         type="button"
-        className={`${s.trigger} ${isOpen ? s.triggerOpen : ""}`}
+        className={`${s.trigger} ${active ? s.triggerActive : ""} ${isOpen ? s.triggerOpen : ""}`.trim()}
         onClick={() => setIsOpen(true)}
       >
         <span className={selected ? s.value : s.placeholder}>
@@ -87,7 +89,7 @@ export function CalendarInput({
         </span>
         <ChevronIcon
           className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`}
-          color="#383F45"
+          color={active || isOpen ? "#FF8A00" : "#383F45"}
         />
       </button>
 
