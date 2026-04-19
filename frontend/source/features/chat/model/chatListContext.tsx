@@ -1,0 +1,89 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { ChatListItemData, ChatMessageData } from "@/source/entities/chat";
+import { fetchChatList } from "../api/chat.api";
+
+interface ChatListContextValue {
+  chats: ChatListItemData[];
+  loading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+  markChatAsRead: (chatUuid: string) => void;
+  syncChatMessage: (chatUuid: string, message: ChatMessageData, currentUserId: number) => void;
+}
+
+const ChatListContext = createContext<ChatListContextValue | null>(null);
+
+function sortChats(chats: ChatListItemData[]) {
+  return [...chats].sort((left, right) => {
+    return Date.parse(right.last_message_at || right.updated_at) - Date.parse(left.last_message_at || left.updated_at);
+  });
+}
+
+export function ChatListProvider({ children }: { children: ReactNode }) {
+  const [chats, setChats] = useState<ChatListItemData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function refresh() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const items = await fetchChatList();
+      setChats(sortChats(items));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось загрузить чаты");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refresh();
+  }, []);
+
+  function markChatAsRead(chatUuid: string) {
+    setChats((currentChats) => currentChats.map((chat) => (
+      chat.uuid === chatUuid ? { ...chat, unread_count: 0 } : chat
+    )));
+  }
+
+  function syncChatMessage(chatUuid: string, message: ChatMessageData, currentUserId: number) {
+    setChats((currentChats) => {
+      const nextChats = currentChats.map((chat) => {
+        if (chat.uuid !== chatUuid) {
+          return chat;
+        }
+
+        return {
+          ...chat,
+          last_message_text: message.text || message.file_name || "Файл",
+          last_message_sender_id: message.sender_id,
+          last_message_at: message.created_at,
+          updated_at: message.created_at,
+          unread_count: message.sender_id === currentUserId ? 0 : chat.unread_count + 1,
+        };
+      });
+
+      return sortChats(nextChats);
+    });
+  }
+
+  return (
+    <ChatListContext.Provider value={{ chats, loading, error, refresh, markChatAsRead, syncChatMessage }}>
+      {children}
+    </ChatListContext.Provider>
+  );
+}
+
+export function useChatListContext() {
+  const value = useContext(ChatListContext);
+
+  if (!value) {
+    throw new Error("useChatListContext must be used within ChatListProvider");
+  }
+
+  return value;
+}

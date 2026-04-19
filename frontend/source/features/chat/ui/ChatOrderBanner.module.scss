@@ -1,0 +1,142 @@
+.banner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ffdda9;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 500;
+}
+
+.chevron {
+  flex-shrink: 0;
+  transition: transform 0.28s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000;
+  margin: 0;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease, margin-top 0.3s ease;
+}
+
+.detailsOpen {
+  margin-top: 8px;
+  max-height: 140px;
+  opacity: 1;
+}
+
+.customer {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ff8a00;
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  background: #fff8eb;
+  color: #131313;
+}
+
+.badge[data-variant="BLUE"] {
+  background: #e6f0ff;
+  color: #1657c5;
+}
+
+.badge[data-variant="GREEN"] {
+  background: #e6f7e9;
+  color: #1d7c2c;
+}
+
+.badge[data-variant="GRAY"] {
+  background: #f0f0f0;
+  color: #5d5d5d;
+}
+
+.badge[data-variant="ORANGE"] {
+  background: #fff0d6;
+  color: #c25b00;
+}
+
+.badge[data-variant="BROWN"] {
+  background: #f3e6d4;
+  color: #6e4a1e;
+}
+
+.badge[data-variant="PURPLE"] {
+  background: #f0e6ff;
+  color: #5a2ec5;
+}
+
+.date,
+.sum {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 28px;
+  color: #000;
+}
+
+.sum {
+  font-weight: 500;
+  color: #1a1a1a;
+}

@@ -1,0 +1,125 @@
+.card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #ffdda9;
+  border-radius: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.orderNav {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.backBtnWrap {
+  padding-top: 8px;
+}
+
+.backBtn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px !important;
+  gap: 15px;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  background: #ffffff;
+  border: 1px solid #ffdda9;
+  border-radius: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: #ffdda9 !important;
+  white-space: normal;
+  font-weight: 400;
+
+  &:hover,
+  &:active,
+  &:focus-visible {
+    color: #ffffff !important;
+    background: #ff8a00 !important;
+    border-color: #ff8a00 !important;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    transform: rotate(180deg);
+  }
+}
+
+@media (min-width: 1200px) {
+  .backBtn,
+  .backBtnWrap {
+    display: none;
+  }
+
+  .orderNav {
+    gap: 0;
+  }
+}
+
+.thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 138, 0, 0.25);
+    border-radius: 4px;
+  }
+}
+
+.threadLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.dateSeparator {
+  display: flex;
+  justify-content: center;
+}
+
+.datePill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 32px;
+  background: #fff8eb;
+  border-radius: 14px;
+
+  span {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    color: #868686;
+  }
+}
+
+.error {
+  margin: 0;
+  text-align: center;
+  color: #d32f2f;
+}

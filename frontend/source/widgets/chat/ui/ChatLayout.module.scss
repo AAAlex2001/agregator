@@ -1,0 +1,42 @@
+.body {
+  height: calc(100dvh - 74px);
+  min-height: calc(100dvh - 74px);
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.sidebarPane,
+.contentPane {
+  width: 100%;
+  min-height: 0;
+}
+
+@media (min-width: 1200px) {
+  .body {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .sidebarPane {
+    flex: 0 0 24%;
+  }
+
+  .contentPane {
+    flex: 1 1 0;
+  }
+}
+
+@media (max-width: 1199px) {
+  .sidebarPaneHiddenMobile {
+    display: none;
+  }
+}

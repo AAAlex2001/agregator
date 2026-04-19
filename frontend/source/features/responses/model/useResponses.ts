@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { mapApiToCard } from "@/source/entities/response";
 import type { ResponseCardData, ResponseTabKey, UserRole } from "@/source/entities/response";
 import { fetchResponses, deleteResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
-import { copyOrderLink } from "@/shared/lib/copyOrderLink";
-import { openChatByOrder } from "@/shared/lib/chatApi";
+import { openChatByOrder } from "@/source/features/chat";
+import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
 
 const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>> = {
@@ -72,7 +72,7 @@ export function useResponses(role: UserRole | null) {
     d({ type: "ACTION_LOADING", id: rid, mode: "chat" });
     try {
       const detail = await openChatByOrder(oid);
-      router.push(`/${role}/chat/${detail.uuid}`);
+      router.push(`/chat/${detail.uuid}`);
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Не удалось открыть чат" });
     } finally {
