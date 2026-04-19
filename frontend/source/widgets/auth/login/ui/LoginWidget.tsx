@@ -24,7 +24,6 @@ export function LoginWidget() {
             password={auth.password}
             role={auth.role}
             isLoading={auth.isLoading}
-            error={auth.error}
             fromOrder={auth.fromOrder}
             onInnChange={auth.setInn}
             onPasswordChange={auth.setPassword}

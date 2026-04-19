@@ -3,6 +3,7 @@
 import { useReducer, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
+import { useNotifications } from "@/shared/ui/Notifications";
 import { isValidInn, normalizeInn } from "@/source/shared/lib/inn";
 import { loginUser } from "../api/login.api";
 import { loginReducer, initialLoginState } from "./reducer";
@@ -10,6 +11,7 @@ import { loginReducer, initialLoginState } from "./reducer";
 export function useLogin() {
   const router = useRouter();
   const { reload } = useSession();
+  const { showError } = useNotifications();
   const [state, dispatch] = useReducer(loginReducer, initialLoginState);
   const [fromOrder, setFromOrder] = useState(false);
 
@@ -26,11 +28,11 @@ export function useLogin() {
     const inn = normalizeInn(state.inn);
 
     if (!isValidInn(inn)) {
-      dispatch({ type: "SET_ERROR", payload: "Укажите корректный ИНН из 10 или 12 цифр" });
+      showError("Укажите корректный ИНН из 10 или 12 цифр");
       return;
     }
     if (!state.password.trim()) {
-      dispatch({ type: "SET_ERROR", payload: "Введите пароль" });
+      showError("Введите пароль");
       return;
     }
 
@@ -54,7 +56,7 @@ export function useLogin() {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Произошла ошибка";
-      dispatch({ type: "SET_ERROR", payload: msg });
+      showError(msg);
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
     }

@@ -2,6 +2,7 @@
 
 import { useReducer } from "react";
 import { useRouter } from "next/navigation";
+import { useNotifications } from "@/shared/ui/Notifications";
 import { normalizeInn } from "@/source/shared/lib/inn";
 import { registerUser } from "../api/register.api";
 import { validateRegisterForm, getRoleType } from "./validation";
@@ -9,6 +10,7 @@ import { registerReducer, initialRegisterState } from "./reducer";
 
 export function useRegister() {
   const router = useRouter();
+  const { showError, showSuccess } = useNotifications();
   const [state, dispatch] = useReducer(registerReducer, initialRegisterState);
 
   const selectRole = (id: number) => dispatch({ type: "SELECT_ROLE", payload: id });
@@ -17,7 +19,7 @@ export function useRegister() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!state.selectedRole) {
-      dispatch({ type: "SET_ERROR", payload: "Выберите роль" });
+      showError("Выберите роль");
       return;
     }
 
@@ -33,7 +35,7 @@ export function useRegister() {
 
     const validationError = validateRegisterForm(formData);
     if (validationError) {
-      dispatch({ type: "SET_ERROR", payload: validationError });
+      showError(validationError);
       return;
     }
 
@@ -42,10 +44,11 @@ export function useRegister() {
 
     try {
       await registerUser(formData);
+      showSuccess("Регистрация завершена");
       router.push("/login");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Произошла ошибка";
-      dispatch({ type: "SET_ERROR", payload: msg });
+      showError(msg);
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
     }

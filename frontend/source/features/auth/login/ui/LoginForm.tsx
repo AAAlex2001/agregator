@@ -3,6 +3,7 @@ import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
 import Tabs from "@/source/shared/ui/Tabs";
 import type { UserRole } from "../model/types";
+import { InnCodeInput } from "./InnCodeInput";
 import s from "./LoginForm.module.scss";
 
 interface Props {
@@ -10,7 +11,6 @@ interface Props {
   password: string;
   role: UserRole;
   isLoading: boolean;
-  error: string | null;
   fromOrder: boolean;
   onInnChange: (v: string) => void;
   onPasswordChange: (v: string) => void;
@@ -19,13 +19,11 @@ interface Props {
 }
 
 export function LoginForm({
-  inn, password, role, isLoading, error, fromOrder,
+  inn, password, role, isLoading, fromOrder,
   onInnChange, onPasswordChange, onRoleChange, onSubmit,
 }: Props) {
   return (
     <form onSubmit={onSubmit} className={s.form}>
-      {error && <div className={s.errorMessage}>{error}</div>}
-
       {!fromOrder && (
         <Tabs
           tabs={[
@@ -42,16 +40,7 @@ export function LoginForm({
         <p className={s.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
       )}
 
-      <Input
-        id="inn"
-        variant="text"
-        value={inn}
-        onChange={(event) => onInnChange(event.target.value)}
-        placeholder="ИНН"
-        inputMode="numeric"
-        required
-        disabled={isLoading}
-      />
+      <InnCodeInput value={inn} onChange={onInnChange} disabled={isLoading} />
       <Input id="password" variant="password" value={password}
         onChange={(e) => onPasswordChange(e.target.value)} placeholder="Введите пароль" required />
 

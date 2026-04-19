@@ -54,8 +54,6 @@ export function RegisterWidget() {
             </span>
           </div>
 
-          {reg.error && <div className={styles.errorMessage}>{reg.error}</div>}
-
           {reg.step === 1 ? (
             <RoleSelectStep
               roles={roles}
