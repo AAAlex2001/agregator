@@ -65,10 +65,10 @@ export function CustomerOrdersWidget() {
           <>
             <div className={s.pageHead}>
               <div className={s.titleRow}>
-                <Title text="Мои заказы" as="h1" />
+                <Title text="Мои заказы" as="h1" className={s.pageTitle} />
                 <ScrollHintTooltip message="Используйте Shift + колесо мыши для прокрутки" />
               </div>
-              <Subtitle text="Актуальные заказы по направлениям" />
+              <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
             </div>
 
             <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={h.openCreate}>

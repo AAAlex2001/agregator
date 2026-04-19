@@ -23,6 +23,12 @@
   text-align: center;
 }
 
+.pageTitle,
+.pageSubtitle {
+  margin: 0;
+  text-align: center;
+}
+
 .titleRow {
   display: flex;
   align-items: center;
@@ -58,9 +64,12 @@
 
 .createBtn {
   width: 100%;
-  max-width: 768px;
-  height: 44px;
+  min-height: 56px;
+  max-height: 56px !important;
+  height: 56px;
+  padding: 16px 24px !important;
   font-size: 18px;
+  line-height: 22px;
 }
 
 .container {
