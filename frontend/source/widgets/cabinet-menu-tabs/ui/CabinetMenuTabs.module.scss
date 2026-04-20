@@ -1,7 +1,7 @@
 .spacer {
   height: 96px;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1440px) {
     display: none;
   }
 }
@@ -22,7 +22,7 @@
   border-radius: 100px;
   z-index: 1100;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1440px) {
     display: none;
   }
 }

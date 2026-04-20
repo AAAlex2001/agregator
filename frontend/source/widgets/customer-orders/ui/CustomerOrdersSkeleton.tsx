@@ -9,7 +9,7 @@ export function CustomerOrdersSkeleton() {
         <div className={layout.shadeL} />
         <div className={layout.shadeR} />
         <div className={layout.grid}>
-          {Array.from({ length: 8 }, (_, index) => (
+          {Array.from({ length: 10 }, (_, index) => (
             <OrderCardSkeleton key={index} />
           ))}
         </div>

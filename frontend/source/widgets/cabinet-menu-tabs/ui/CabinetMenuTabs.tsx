@@ -8,15 +8,13 @@ export function CabinetMenuTabs() {
   const pathname = usePathname();
   const { role } = useSession();
 
-  const isResponsesPage = pathname === "/responses";
-  const isOrdersPage = pathname.startsWith("/customer") || pathname.startsWith("/expert");
-  const isReviewsPage = pathname.startsWith("/expert/reviews");
-  const isChatWindow = pathname.startsWith("/chat/");
-  const currentRole = role;
-
-  if ((!isOrdersPage && !isResponsesPage && !isReviewsPage) || isChatWindow || currentRole === null) {
+  if (role === null) {
     return null;
   }
+
+  const isReviewsPage = pathname.startsWith("/expert/reviews");
+  const isResponsesPage = pathname === "/responses";
+  const currentRole = role;
 
   const activeKey: CabinetMenuKey = isReviewsPage
     ? "reviews"

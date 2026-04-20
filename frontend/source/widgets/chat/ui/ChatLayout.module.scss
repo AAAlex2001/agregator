@@ -1,6 +1,6 @@
 .body {
-  height: calc(100dvh - 74px);
-  min-height: calc(100dvh - 74px);
+  height: calc(100dvh - 74px - 96px);
+  min-height: calc(100dvh - 74px - 96px);
   width: 100%;
   max-width: 1620px;
   margin: 0 auto;
@@ -10,6 +10,11 @@
   padding: 20px 10px;
   box-sizing: border-box;
   overflow: hidden;
+
+  @media (min-width: 1440px) {
+    height: calc(100dvh - 74px);
+    min-height: calc(100dvh - 74px);
+  }
 }
 
 .sidebarPane,

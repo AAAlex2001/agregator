@@ -7,7 +7,7 @@ export function ExpertOrdersSkeleton() {
       <div className={layout.shadeL} />
       <div className={layout.shadeR} />
       <div className={layout.grid}>
-        {Array.from({ length: 8 }, (_, index) => (
+        {Array.from({ length: 10 }, (_, index) => (
           <div key={index} className={layout.item}>
             <OrderCardSkeleton />
           </div>
