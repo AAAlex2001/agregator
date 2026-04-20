@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "@/source/features/session";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import {
@@ -28,6 +29,34 @@ const NAV: Record<string, { href: string; label: string }[]> = {
 export function Header() {
   const pathname = usePathname();
   const { role, user } = useSession();
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY.current;
+
+      if (currentScrollY <= 0) {
+        setIsHidden(false);
+      } else if (scrollDelta > 0) {
+        setIsHidden(true);
+      } else if (scrollDelta < 0) {
+        setIsHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsHidden(false);
+  }, [pathname]);
 
   const key = role;
   const links = key ? NAV[key] : [];
@@ -35,7 +64,7 @@ export function Header() {
   const isProfileActive = pathname === "/settings";
 
   return (
-    <header className={s.header}>
+    <header className={`${s.header} ${isHidden ? s.headerHidden : ""}`.trim()}>
       <div className={s.container}>
         <Link href="/settings" className={s.logo}>
           <span className={s.logoMobile}><LogoMarkIcon /></span>
