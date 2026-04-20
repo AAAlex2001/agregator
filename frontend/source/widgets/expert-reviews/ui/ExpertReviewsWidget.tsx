@@ -2,6 +2,7 @@
 
 import { ReviewCard } from "@/source/entities/review";
 import { useExpertReviews } from "@/source/features/reviews";
+import { EmptyStateCard } from "@/source/shared/ui";
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -22,6 +23,8 @@ function formatDateFull(value: string) {
 
 export function ExpertReviewsWidget() {
   const model = useExpertReviews();
+  const isEmpty = !model.isLoading && !model.error && model.reviews.length === 0;
+  const showRatingInfo = model.isLoading || (!model.error && model.totalReviews > 0);
 
   return (
     <div className={s.wrapper}>
@@ -29,36 +32,38 @@ export function ExpertReviewsWidget() {
         <Title text="Отзывы наших клиентов" as="h1" className={s.pageTitle} />
         <Subtitle text="Смотрите оценки и комментарии по завершённым заказам" className={s.pageSubtitle} />
 
-        <div className={s.ratingInfo}>
-          {model.isLoading ? (
-            <>
-              <Skeleton className={s.ratingIconSkeleton} rounded="md" />
+        {showRatingInfo && (
+          <div className={s.ratingInfo}>
+            {model.isLoading ? (
+              <>
+                <Skeleton className={s.ratingIconSkeleton} rounded="md" />
 
-              <div className={s.ratingDetails}>
-                <Skeleton className={s.ratingValueSkeleton} rounded="pill" />
-                <span className={s.dot}>&middot;</span>
-                <Skeleton className={s.reviewCountSkeleton} rounded="pill" />
-                <Skeleton className={s.reviewLabelSkeleton} rounded="pill" />
-              </div>
-            </>
-          ) : (
-            <>
-              <StarIcon filled />
+                <div className={s.ratingDetails}>
+                  <Skeleton className={s.ratingValueSkeleton} rounded="pill" />
+                  <span className={s.dot}>&middot;</span>
+                  <Skeleton className={s.reviewCountSkeleton} rounded="pill" />
+                  <Skeleton className={s.reviewLabelSkeleton} rounded="pill" />
+                </div>
+              </>
+            ) : (
+              <>
+                <StarIcon filled />
 
-              <div className={s.ratingDetails}>
-                <span className={s.ratingValue}>
-                  {model.avgRating.toLocaleString("ru-RU", {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  })}
-                </span>
-                <span className={s.dot}>&middot;</span>
-                <span className={s.reviewCount}>{model.totalReviews}</span>
-                <span className={s.reviewLabel}>отзывов</span>
-              </div>
-            </>
-          )}
-        </div>
+                <div className={s.ratingDetails}>
+                  <span className={s.ratingValue}>
+                    {model.avgRating.toLocaleString("ru-RU", {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })}
+                  </span>
+                  <span className={s.dot}>&middot;</span>
+                  <span className={s.reviewCount}>{model.totalReviews}</span>
+                  <span className={s.reviewLabel}>отзывов</span>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {model.isLoading ? (
@@ -71,9 +76,12 @@ export function ExpertReviewsWidget() {
             Повторить
           </Button>
         </div>
-      ) : model.reviews.length === 0 ? (
-        <div className={s.statusState}>
-          <p className={s.statusSubtitle}>Отзывов пока нет</p>
+      ) : isEmpty ? (
+        <div className={s.emptyState}>
+          <EmptyStateCard
+            title="Пока нет отзывов"
+            subtitle="После завершения заказов здесь появятся оценки и комментарии заказчиков"
+          />
         </div>
       ) : (
         <ReviewsCarousel

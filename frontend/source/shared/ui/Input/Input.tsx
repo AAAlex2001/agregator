@@ -163,6 +163,7 @@ const Input: React.FC<InputProps> = ({
           name={name}
           type={getInputType()}
           inputMode={getInputMode()}
+          suppressHydrationWarning
           value={inputValue}
           onChange={onChange}
           onFocus={(event) => {
@@ -178,6 +179,8 @@ const Input: React.FC<InputProps> = ({
           required={required}
           disabled={disabled}
           autoComplete={autoComplete}
+          data-lpignore="true"
+          data-1p-ignore="true"
         />
         {hasRightIcon && (
           <button

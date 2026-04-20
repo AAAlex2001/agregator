@@ -16,7 +16,7 @@ export function CustomerOrdersWidget() {
   const h = useCustomerOrders();
   const ref = useRef<HTMLDivElement>(null);
   useHorizontalScroll(ref, { deps: [h.isLoading] });
-  const showOrdersContent = !h.isLoading && !h.error && h.items.length > 0;
+  const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
 
   if (h.mode === "create" || h.mode === "edit") {
     return (
@@ -35,9 +35,15 @@ export function CustomerOrdersWidget() {
 
   return (
     <div className={s.wrapper}>
-      {h.isLoading && <CustomerOrdersSkeleton />}
+      <div className={s.pageHead}>
+        <div className={s.titleRow}>
+          <Title text="Мои заказы" as="h1" className={s.pageTitle} />
+          <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
+        </div>
+        <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
+      </div>
 
-      {!h.isLoading && h.error && (
+      {h.error && (
         <div className={s.center}>
           <Title text="Ошибка загрузки" as="h2" />
           <Subtitle text={h.error} />
@@ -46,53 +52,50 @@ export function CustomerOrdersWidget() {
       )}
 
       {!h.isLoading && !h.error && h.items.length === 0 && (
-        <EmptyStateCard
-          fullPage
-          title="Вы ещё не создали ни одного заказа"
-          subtitle="Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности"
-          actionLabel="Добавить заказ"
-          onAction={h.openCreate}
-        />
+        <div className={s.emptyState}>
+          <EmptyStateCard
+            title="Вы ещё не создали ни одного заказа"
+            subtitle="Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности"
+            actionLabel="Добавить заказ"
+            onAction={h.openCreate}
+          />
+        </div>
       )}
 
       {showOrdersContent && (
         <>
-          <div className={s.pageHead}>
-            <div className={s.titleRow}>
-              <Title text="Мои заказы" as="h1" className={s.pageTitle} />
-              <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
-            </div>
-            <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
-          </div>
-
           <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={h.openCreate}>
             Добавить заказ
           </Button>
 
-          <div className={s.container}>
-            <div className={s.shadeL} /><div className={s.shadeR} />
-            <div className={s.grid} ref={ref}>
-              {h.items.map((o) => (
-                <OrderCard
-                  key={o.id}
-                  badges={o.badges}
-                  title={o.title}
-                  customer={o.customer}
-                  date={o.date}
-                  sum={o.sum}
-                  responsesDeadline={o.responsesDeadline}
-                >
-                  <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
-                    Редактировать
-                  </Button>
-                  <Button variant="transparent" size="sm" className={s.btnDel}
-                    disabled={h.deletingId === o.id} isLoading={h.deletingId === o.id}
-                    onClick={(e) => { e.stopPropagation(); void h.onDelete(o.id); }}
-                  >Удалить</Button>
-                </OrderCard>
-              ))}
+          {h.isLoading ? (
+            <CustomerOrdersSkeleton />
+          ) : (
+            <div className={s.container}>
+              <div className={s.shadeL} /><div className={s.shadeR} />
+              <div className={s.grid} ref={ref}>
+                {h.items.map((o) => (
+                  <OrderCard
+                    key={o.id}
+                    badges={o.badges}
+                    title={o.title}
+                    customer={o.customer}
+                    date={o.date}
+                    sum={o.sum}
+                    responsesDeadline={o.responsesDeadline}
+                  >
+                    <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
+                      Редактировать
+                    </Button>
+                    <Button variant="transparent" size="sm" className={s.btnDel}
+                      disabled={h.deletingId === o.id} isLoading={h.deletingId === o.id}
+                      onClick={(e) => { e.stopPropagation(); void h.onDelete(o.id); }}
+                    >Удалить</Button>
+                  </OrderCard>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </div>

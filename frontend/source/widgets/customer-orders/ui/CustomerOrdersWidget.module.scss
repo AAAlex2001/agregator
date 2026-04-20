@@ -47,6 +47,15 @@
   padding: 16px;
 }
 
+.emptyState {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(360px, calc(100dvh - 260px), 640px);
+}
+
 .retry {
   padding: 10px 16px;
   border: none;

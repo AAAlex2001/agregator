@@ -46,15 +46,13 @@ export function ExpertOrdersWidget() {
 
   return (
     <div className={s.wrapper}>
-      {showOrdersContent && (
-        <div className={s.pageHead}>
-          <div className={s.titleRow}>
-            <Title text="Все заказы" as="h1" className={s.pageTitle} />
-            <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
-          </div>
-          <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
+      <div className={s.pageHead}>
+        <div className={s.titleRow}>
+          <Title text="Все заказы" as="h1" className={s.pageTitle} />
+          <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
         </div>
-      )}
+        <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
+      </div>
 
       {h.error && (
         <div className={s.center}>
@@ -65,11 +63,12 @@ export function ExpertOrdersWidget() {
       )}
 
       {isEmpty && (
-        <EmptyStateCard
-          fullPage
-          title="Пока нет доступных заказов"
-          subtitle="Загляните позже — мы пришлём новые"
-        />
+        <div className={s.emptyState}>
+          <EmptyStateCard
+            title="Пока нет доступных заказов"
+            subtitle="Загляните позже — мы пришлём новые"
+          />
+        </div>
       )}
 
       {showOrdersContent && (

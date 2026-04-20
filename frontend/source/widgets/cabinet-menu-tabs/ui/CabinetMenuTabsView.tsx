@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import {
+  ReviewIcon,
   TabOrdersIcon,
   TabResponsesIcon,
-  TabReviewsIcon,
   TabChatIcon,
   TabProfileIcon,
 } from "@/source/shared/ui/icons";
@@ -26,7 +26,7 @@ interface CabinetMenuTabsViewProps {
 function renderIcon(key: CabinetMenuKey) {
   if (key === "orders") return <TabOrdersIcon />;
   if (key === "responses") return <TabResponsesIcon />;
-  if (key === "reviews") return <TabReviewsIcon />;
+  if (key === "reviews") return <ReviewIcon />;
   if (key === "chat") return <TabChatIcon />;
   return <TabProfileIcon />;
 }

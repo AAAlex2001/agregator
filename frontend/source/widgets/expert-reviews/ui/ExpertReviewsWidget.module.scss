@@ -88,6 +88,15 @@
   gap: 12px;
 }
 
+.emptyState {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(360px, calc(100dvh - 260px), 640px);
+}
+
 .statusTitle,
 .statusSubtitle {
   margin: 0;

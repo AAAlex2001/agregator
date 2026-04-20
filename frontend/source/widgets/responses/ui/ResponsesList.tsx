@@ -1,4 +1,5 @@
 import { Button } from "@/shared/ui";
+import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
 import { ResponsesState } from "@/widgets/responses-state";
@@ -49,7 +50,12 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers }: 
               action={<Button variant="primary" size="sm" onClick={() => void model.reload()}>Повторить</Button>}
             />
           ) : model.items.length === 0 ? (
-            <ResponsesState title={activeLabel} subtitle="Пока нет откликов" styles={s} />
+            <div className={s.emptyState}>
+              <EmptyStateCard
+                title="Пока нет откликов"
+                subtitle={activeLabel ? `В разделе «${activeLabel}» пока пусто` : "Здесь пока нет откликов"}
+              />
+            </div>
           ) : (
             <ResponsesSwiper
               items={model.items}

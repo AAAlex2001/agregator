@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
+import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import { LogoutIcon } from "@/source/shared/ui/icons";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { logout } from "../api/settings.api";
@@ -56,6 +57,11 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
     if (result.successMessage) {
       showSuccess(result.successMessage);
     }
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void handleSave();
   };
 
   const handleLogout = async () => {
@@ -117,49 +123,109 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
         onSelect={handleAvatarSelect}
       />
 
-      <div className={s.section}>
-        <h2 className={s.subtitle}>Персональные данные</h2>
-        <div className={s.grid}>
-          <Input variant="text" placeholder="Фамилия" aria-label="Фамилия"
-            value={form.lastName} onChange={(e) => form.setLastName(e.target.value)} />
-          <Input variant="phone" placeholder="Введите телефон" aria-label="Телефон"
-            value={form.phone} onChange={(e) => form.setPhone(e.target.value)} />
-          <Input variant="text" placeholder="Имя" aria-label="Имя"
-            value={form.firstName} onChange={(e) => form.setFirstName(e.target.value)} />
-          <Input variant="email" placeholder="Введите электронную почту" aria-label="Email"
-            value={form.email} onChange={(e) => form.setEmail(e.target.value)} />
-        </div>
-      </div>
+      <form className={s.form} onSubmit={handleSubmit} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+        <AutofillGuard idPrefix="profile" />
 
-      <div className={s.section}>
-        <h2 className={s.subtitle}>Изменить пароль</h2>
-        <div className={s.grid}>
-          <Input variant="password" placeholder="Введите новый пароль" aria-label="Пароль"
-            value={form.password} onChange={(e) => form.setPassword(e.target.value)} />
-          <Input variant="password" placeholder="Повторите новый пароль" aria-label="Повторите пароль"
-            value={form.repeatPassword} onChange={(e) => form.setRepeatPassword(e.target.value)} />
+        <div className={s.section}>
+          <h2 className={s.subtitle}>Персональные данные</h2>
+          <div className={s.grid}>
+            <Input
+              id="lastName"
+              name="profile-last-name"
+              variant="text"
+              placeholder="Фамилия"
+              aria-label="Фамилия"
+              autoComplete="off"
+              value={form.lastName}
+              onChange={(e) => form.setLastName(e.target.value)}
+            />
+            <Input
+              id="phone"
+              name="profile-phone"
+              type="tel"
+              variant="phone"
+              placeholder="+7-999-999-99-12"
+              aria-label="Телефон"
+              autoComplete="off"
+              value={form.phone}
+              onChange={(e) => form.setPhone(e.target.value)}
+            />
+            <Input
+              id="firstName"
+              name="profile-first-name"
+              variant="text"
+              placeholder="Имя"
+              aria-label="Имя"
+              autoComplete="off"
+              value={form.firstName}
+              onChange={(e) => form.setFirstName(e.target.value)}
+            />
+            <Input
+              id="email"
+              name="profile-email"
+              type="email"
+              variant="email"
+              placeholder="Электронная почта"
+              aria-label="Email"
+              autoComplete="off"
+              value={form.email}
+              onChange={(e) => form.setEmail(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
-      <div className={s.saveWrapper}>
-        <Button variant="chat" size="md" className={s.saveButton}
-          disabled={isLoggingOut}
-          onClick={() => void handleSave()} isLoading={form.isSaving}>
-          Сохранить изменения
-        </Button>
-        <Button
-          variant="transparent"
-          size="md"
-          className={s.logoutButton}
-          disabled={form.isSaving || isLoggingOut}
-          onClick={() => void handleLogout()}
-        >
-          <span className={s.logoutContent}>
-            <LogoutIcon className={s.logoutIcon} />
-            <span>Выйти из профиля</span>
-          </span>
-        </Button>
-      </div>
+        <div className={s.section}>
+          <h2 className={s.subtitle}>Изменить пароль</h2>
+          <div className={s.grid}>
+            <Input
+              id="password"
+              name="profile-password"
+              variant="password"
+              placeholder="Введите новый пароль"
+              aria-label="Пароль"
+              autoComplete="new-password"
+              value={form.password}
+              onChange={(e) => form.setPassword(e.target.value)}
+            />
+            <Input
+              id="repeatPassword"
+              name="profile-password-repeat"
+              variant="password"
+              placeholder="Повторите новый пароль"
+              aria-label="Повторите пароль"
+              autoComplete="new-password"
+              value={form.repeatPassword}
+              onChange={(e) => form.setRepeatPassword(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className={s.saveWrapper}>
+          <Button
+            type="submit"
+            variant="chat"
+            size="md"
+            className={s.saveButton}
+            disabled={isLoggingOut}
+            isLoading={form.isSaving}
+          >
+            Сохранить изменения
+          </Button>
+          <Button
+            type="button"
+            variant="transparent"
+            size="md"
+            className={s.logoutButton}
+            disabled={form.isSaving || isLoggingOut}
+            onClick={() => void handleLogout()}
+          >
+            <span className={s.logoutContent}>
+              <LogoutIcon className={s.logoutIcon} />
+              <span>Выйти из профиля</span>
+            </span>
+          </Button>
+        </div>
+      </form>
     </>
   );
 }

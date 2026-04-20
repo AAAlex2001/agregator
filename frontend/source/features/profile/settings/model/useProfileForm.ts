@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducer } from "react";
+import { formatRussianPhone, toRussianPhoneApiValue } from "@/source/shared/lib/phone";
 import { updateProfile, changePassword, uploadAvatar } from "../api/settings.api";
 import { profileFormReducer, createInitialState } from "./reducer";
 import { validatePassword } from "./validation";
@@ -18,7 +19,7 @@ export function useProfileForm(profile: UserProfile) {
     {
       firstName: profile.first_name || "",
       lastName: profile.last_name || "",
-      phone: profile.phone || "",
+      phone: formatRussianPhone(profile.phone || ""),
       email: profile.email || "",
     },
     createInitialState,
@@ -42,7 +43,7 @@ export function useProfileForm(profile: UserProfile) {
       let updated = await updateProfile({
         first_name: state.firstName,
         last_name: state.lastName,
-        phone: state.phone || undefined,
+        phone: toRussianPhoneApiValue(state.phone) || undefined,
         email: state.email || undefined,
       });
 
@@ -75,7 +76,7 @@ export function useProfileForm(profile: UserProfile) {
     ...state,
     setFirstName: (v: string) => dispatch({ type: "SET_FIELD", field: "firstName", value: v }),
     setLastName: (v: string) => dispatch({ type: "SET_FIELD", field: "lastName", value: v }),
-    setPhone: (v: string) => dispatch({ type: "SET_FIELD", field: "phone", value: v }),
+    setPhone: (v: string) => dispatch({ type: "SET_FIELD", field: "phone", value: formatRussianPhone(v) }),
     setEmail: (v: string) => dispatch({ type: "SET_FIELD", field: "email", value: v }),
     setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
     setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
