@@ -28,8 +28,10 @@ export function Header() {
   const links = role ? NAV[role] : [];
 
   return (
-    <header className={s.header}>
-      <div className={s.container}>
+    <>
+      <div className={s.spacer} aria-hidden="true" />
+      <header className={s.header}>
+        <div className={s.container}>
         <Link href="/settings" className={s.logo}>
           <span className={s.logoMobile}><LogoMarkIcon /></span>
           <span className={s.logoDesktop}><LogoIcon /></span>
@@ -52,7 +54,8 @@ export function Header() {
             <NotificationsHeaderIcon />
           </button>
         </div>
-      </div>
-    </header>
+        </div>
+      </header>
+    </>
   );
 }
