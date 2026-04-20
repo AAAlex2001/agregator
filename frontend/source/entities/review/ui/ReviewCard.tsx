@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { FileGallery } from "@/source/shared/ui/FileGallery";
 import { ChevronIcon, StarIcon } from "@/source/shared/ui/icons";
 import s from "./ReviewCard.module.scss";
@@ -19,19 +22,6 @@ export interface ReviewCardProps {
   comment: string;
 }
 
-function Field({ label, value }: { label: string; value?: string }) {
-  if (!value) {
-    return null;
-  }
-
-  return (
-    <div className={s.field}>
-      <span className={s.fieldLabel}>{label}</span>
-      <span className={s.fieldValue}>{value}</span>
-    </div>
-  );
-}
-
 export function ReviewCard({
   customer,
   order,
@@ -45,36 +35,96 @@ export function ReviewCard({
   date,
   comment,
 }: ReviewCardProps) {
+  const [open, setOpen] = useState(false);
+  const hasOrderDetails = Boolean(order || badges.length > 0 || orderDeadline || orderSum);
+  const hasTerms = Boolean(expertDeadline || expertSum);
+
   return (
     <article className={s.card}>
-      <details className={s.orderDetails} open>
-        <summary className={s.summary}>
-          <span className={s.summaryLabel}>От кого:</span>
-          <span className={s.summaryValue}>{customer}</span>
-          <ChevronIcon className={s.chevron} />
-        </summary>
+      <button
+        type="button"
+        className={s.header}
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+      >
+        <span className={s.headerLabel}>От:</span>
+        <span className={s.headerValue}>{customer}</span>
+        <ChevronIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`} />
+      </button>
 
+      {open && (
         <div className={s.dropdown}>
-          <Field label="Заказ:" value={order} />
-          {badges.length > 0 && (
-            <div className={s.field}>
-              <span className={s.fieldLabel}>Бейджи:</span>
-              <div className={s.badges}>
-                {badges.map((badge, index) => (
-                  <span key={`${badge.text}-${index}`} className={`${s.badge} ${s[badge.variant]}`}>
-                    {badge.text}
-                  </span>
-                ))}
-              </div>
+          {hasOrderDetails && (
+            <div className={s.orderSection}>
+              {order && (
+                <div className={s.detailRow}>
+                  <span className={s.detailLabel}>Заказ:</span>
+                  <span className={s.detailValue}>{order}</span>
+                </div>
+              )}
+
+              {badges.length > 0 && (
+                <div className={s.detailRow}>
+                  <span className={s.detailLabel}>Типовые наименования:</span>
+                  <div className={s.badgesWrap}>
+                    <div className={s.badges}>
+                      {badges.map((badge, index) => (
+                        <span key={`${badge.text}-${index}`} className={`${s.badge} ${s[badge.variant]}`}>
+                          {badge.text}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(orderDeadline || orderSum) && (
+                <div className={s.termsRow}>
+                  {orderDeadline ? (
+                    <div className={s.termItem}>
+                      <span className={s.termLabel}>Дедлайн:</span>
+                      <span className={s.termValue}>{orderDeadline}</span>
+                    </div>
+                  ) : (
+                    <span className={s.termSpacer} />
+                  )}
+
+                  {orderSum ? (
+                    <div className={s.termCost}>
+                      <span className={s.termLabel}>Сумма заказа:</span>
+                      <span className={s.termValue}>{orderSum}</span>
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
           )}
-          <Field label="Сумма заказа:" value={orderSum} />
-          <Field label="Срок заказа:" value={orderDeadline} />
-          <Field label="Срок эксперта:" value={expertDeadline} />
-          <Field label="Сумма от эксперта:" value={expertSum} />
-          <FileGallery files={technicalFiles} label="Техническое задание:" hideWhenEmpty />
+
+          <div className={s.info}>
+            {hasTerms && (
+              <div className={s.termsRow}>
+                {expertDeadline ? (
+                  <div className={s.termItem}>
+                    <span className={s.termLabel}>Срок эксперта:</span>
+                    <span className={s.termValue}>{expertDeadline}</span>
+                  </div>
+                ) : (
+                  <span className={s.termSpacer} />
+                )}
+
+                {expertSum ? (
+                  <div className={s.termCost}>
+                    <span className={s.termLabel}>Сумма от эксперта:</span>
+                    <span className={s.termValue}>{expertSum}</span>
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            <FileGallery files={technicalFiles} label="Техническое задание:" hideWhenEmpty />
+          </div>
         </div>
-      </details>
+      )}
 
       <div className={s.ratingDate}>
         <div className={s.stars}>

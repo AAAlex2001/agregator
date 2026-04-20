@@ -17,19 +17,19 @@
   }
 }
 
-.summary {
+.header {
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
 }
 
-.summaryLabel {
-  width: 68px;
+.headerLabel {
+  width: 32px;
   height: 18px;
 }
 
-.summaryValue {
+.headerValue {
   width: 52%;
   height: 18px;
 }
@@ -37,30 +37,92 @@
 .dropdown {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   width: 100%;
 }
 
-.field {
+.orderSection {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 12px;
   width: 100%;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #ffdda9;
 }
 
-.fieldLabel {
-  width: 92px;
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+.detailLabel {
+  width: 72px;
   height: 18px;
 }
 
-.fieldValue {
+.detailValue {
+  width: 56%;
+  height: 18px;
+}
+
+.badges {
+  width: 96px;
+  height: 18px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.termsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.termItem,
+.termCost {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.termLabel {
+  width: 52px;
+  height: 18px;
+}
+
+.termWideLabel {
   width: 120px;
   height: 18px;
 }
 
-.fieldWideValue {
-  width: 46%;
+.termValue {
+  width: 108px;
   height: 18px;
+}
+
+.filesLabel {
+  width: 180px;
+  height: 20px;
 }
 
 .ratingDate {

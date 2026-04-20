@@ -27,10 +27,55 @@
   gap: 8px;
 }
 
+.pageTitleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
+
 .pageTitle,
 .pageSubtitle {
   margin: 0;
   text-align: center;
+}
+
+.expertName {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  @media (min-width: 1440px) {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}
+
+.expertNameSkeleton {
+  width: 200px;
+  max-width: 100%;
+  height: 28px;
+
+  @media (min-width: 768px) {
+    width: 240px;
+    height: 32px;
+  }
 }
 
 .ratingInfo {

@@ -25,9 +25,8 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
   const model = useExpertReviews(publicId);
   const isEmpty = !model.isLoading && !model.error && model.reviews.length === 0;
   const showRatingInfo = model.isLoading || (!model.error && model.totalReviews > 0);
-  const title = publicId
-    ? (model.expertName ? `Отзывы об эксперте ${model.expertName}` : "Отзывы об эксперте")
-    : "Отзывы наших клиентов";
+  const showPublicExpertTitle = Boolean(publicId);
+  const title = publicId ? "Отзывы об эксперте" : "Отзывы наших клиентов";
   const subtitle = publicId
     ? "Оценки и комментарии заказчиков по завершённым заказам"
     : "Смотрите оценки и комментарии по завершённым заказам";
@@ -35,7 +34,18 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text={title} as="h1" className={s.pageTitle} />
+        {showPublicExpertTitle ? (
+          <div className={s.pageTitleGroup}>
+            <Title text={title} as="h1" className={s.pageTitle} />
+            {model.isLoading ? (
+              <Skeleton className={s.expertNameSkeleton} rounded="pill" />
+            ) : model.expertName ? (
+              <span className={s.expertName}>{model.expertName}</span>
+            ) : null}
+          </div>
+        ) : (
+          <Title text={title} as="h1" className={s.pageTitle} />
+        )}
         <Subtitle text={subtitle} className={s.pageSubtitle} />
 
         {showRatingInfo && (

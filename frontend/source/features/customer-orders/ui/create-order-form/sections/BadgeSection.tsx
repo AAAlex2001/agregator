@@ -61,9 +61,9 @@ export function BadgeSection({
               <input
                 type="text"
                 className={s.input}
-                placeholder="Например: 1, 2, 3"
+                placeholder="Например: Э14.1, 14.2, 3.1"
                 value={typicalNamesMap[option.variant] ?? ""}
-                onChange={(event) => onChangeTypicalNames(option.variant, event.target.value.replace(/[^\d,\s]/g, ""))}
+                onChange={(event) => onChangeTypicalNames(option.variant, event.target.value.replace(/[^\dA-Za-zА-Яа-яЁё.,\s-]/g, ""))}
               />
               {preview.length > 0 && (
                 <div className={s.preview}>

@@ -17,24 +17,19 @@
   }
 }
 
-.orderDetails {
-  width: 100%;
-}
-
-.summary {
+.header {
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
   cursor: pointer;
-  list-style: none;
-
-  &::-webkit-details-marker {
-    display: none;
-  }
 }
 
-.summaryLabel {
+.headerLabel {
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
@@ -42,11 +37,10 @@
 
   @media (min-width: 768px) {
     font-size: 16px;
-    line-height: 20px;
   }
 }
 
-.summaryValue {
+.headerValue {
   flex: 1;
   min-width: 0;
   font-size: 14px;
@@ -58,7 +52,6 @@
 
   @media (min-width: 768px) {
     font-size: 16px;
-    line-height: 20px;
   }
 }
 
@@ -69,49 +62,130 @@
   transition: transform 0.2s ease;
 }
 
-.orderDetails[open] .chevron {
+.chevronOpen {
   transform: rotate(0deg);
 }
 
 .dropdown {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   width: 100%;
   padding-top: 12px;
 }
 
-.field {
+.orderSection {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #ffdda9;
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   width: 100%;
 
-  @media (max-width: 767px) {
-    flex-direction: column;
-    gap: 4px;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-start;
   }
 }
 
-.fieldLabel {
+.detailLabel {
+  font-weight: 500;
   font-size: 14px;
-  line-height: 20px;
-  color: #666;
-  flex-shrink: 0;
+  line-height: 24px;
+  color: #1a1a1a;
+  white-space: nowrap;
 
   @media (min-width: 768px) {
     font-size: 16px;
   }
 }
 
-.fieldValue {
+.detailValue {
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 24px;
+  color: #1a1a1a;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.badgesWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.termsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 16px;
+  }
+}
+
+.termItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.termCost {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+
+  @media (min-width: 768px) {
+    justify-content: flex-end;
+  }
+}
+
+.termSpacer {
+  flex: 1;
+}
+
+.termLabel {
   font-weight: 500;
-  color: #000;
-  text-align: right;
-  margin-left: auto;
+  font-size: 14px;
+  color: #1a1a1a;
+  white-space: nowrap;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.termValue {
+  font-size: 14px;
+  color: #1a1a1a;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   @media (min-width: 768px) {
     font-size: 16px;
@@ -122,7 +196,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .badge {

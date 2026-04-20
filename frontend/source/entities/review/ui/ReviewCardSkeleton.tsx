@@ -4,19 +4,50 @@ import s from "./ReviewCardSkeleton.module.scss";
 export function ReviewCardSkeleton() {
   return (
     <article className={s.card}>
-      <div className={s.summary}>
-        <Skeleton className={s.summaryLabel} />
-        <Skeleton className={s.summaryValue} />
+      <div className={s.header}>
+        <Skeleton className={s.headerLabel} />
+        <Skeleton className={s.headerValue} />
       </div>
 
       <div className={s.dropdown}>
-        <div className={s.field}>
-          <Skeleton className={s.fieldLabel} />
-          <Skeleton className={s.fieldValue} />
+        <div className={s.orderSection}>
+          <div className={s.detailRow}>
+            <Skeleton className={s.detailLabel} />
+            <Skeleton className={s.detailValue} />
+          </div>
+
+          <div className={s.detailRow}>
+            <Skeleton className={s.detailLabel} />
+            <Skeleton className={s.badges} />
+          </div>
+
+          <div className={s.termsRow}>
+            <div className={s.termItem}>
+              <Skeleton className={s.termLabel} />
+              <Skeleton className={s.termValue} />
+            </div>
+
+            <div className={s.termCost}>
+              <Skeleton className={s.termWideLabel} />
+              <Skeleton className={s.termValue} />
+            </div>
+          </div>
         </div>
-        <div className={s.field}>
-          <Skeleton className={s.fieldLabel} />
-          <Skeleton className={s.fieldWideValue} />
+
+        <div className={s.info}>
+          <div className={s.termsRow}>
+            <div className={s.termItem}>
+              <Skeleton className={s.termWideLabel} />
+              <Skeleton className={s.termValue} />
+            </div>
+
+            <div className={s.termCost}>
+              <Skeleton className={s.termWideLabel} />
+              <Skeleton className={s.termValue} />
+            </div>
+          </div>
+
+          <Skeleton className={s.filesLabel} />
         </div>
       </div>
 
