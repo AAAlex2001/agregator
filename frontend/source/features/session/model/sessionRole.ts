@@ -13,6 +13,19 @@ export function readSessionRoleFromCookie(): SessionRole | null {
   return normalizeSessionRole(match ? decodeURIComponent(match[1]) : null);
 }
 
+export function writeSessionRoleCookie(role: SessionRole | null) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  if (role === null) {
+    document.cookie = "user_role=; Max-Age=0; Path=/; SameSite=Lax";
+    return;
+  }
+
+  document.cookie = `user_role=${encodeURIComponent(role)}; Max-Age=2592000; Path=/; SameSite=Lax`;
+}
+
 export function getRouteSessionRole(pathname: string): SessionRole | null {
   if (pathname.startsWith("/customer")) return "CUSTOMER";
   if (pathname.startsWith("/expert")) return "EXPERT";

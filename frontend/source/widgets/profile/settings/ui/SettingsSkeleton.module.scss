@@ -6,6 +6,28 @@
   gap: 24px;
 }
 
+.avatarSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatarTriggerWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 296px);
+  max-width: 296px;
+  height: 72px;
+}
+
+.avatarCircle {
+  width: 72px;
+  height: 72px;
+}
+
 .section {
   width: 100%;
   display: flex;

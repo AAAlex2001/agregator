@@ -35,7 +35,16 @@ export function ResponsesSkeleton({ compact = false }: ResponsesSkeletonProps) {
   );
 
   if (compact) {
-    return <div aria-hidden="true">{cardsSection}</div>;
+    return (
+      <div className={s.compact} aria-hidden="true">
+        <div className={s.tabs}>
+          <Skeleton className={s.tabPrimary} rounded="pill" />
+          <Skeleton className={s.tabSecondary} rounded="pill" />
+          <Skeleton className={s.tabTertiary} rounded="pill" />
+        </div>
+        {cardsSection}
+      </div>
+    );
   }
 
   return (

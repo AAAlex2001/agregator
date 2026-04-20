@@ -5,12 +5,12 @@ import { ExpertResponsesWidget } from "./ExpertResponsesWidget";
 import { CustomerResponsesWidget } from "./CustomerResponsesWidget";
 
 export function ResponsesWidget() {
-  const { resolvedRole } = useSession();
-  const role = resolvedRole === "CUSTOMER" ? "customer" : resolvedRole === "EXPERT" ? "expert" : null;
+  const { role } = useSession();
+  const currentRole = role === "CUSTOMER" ? "customer" : role === "EXPERT" ? "expert" : null;
 
-  if (!role) {
+  if (!currentRole) {
     return null;
   }
 
-  return role === "expert" ? <ExpertResponsesWidget /> : <CustomerResponsesWidget />;
+  return currentRole === "expert" ? <ExpertResponsesWidget /> : <CustomerResponsesWidget />;
 }

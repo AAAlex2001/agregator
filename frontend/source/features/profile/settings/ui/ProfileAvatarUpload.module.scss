@@ -1,14 +1,15 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 20px;
-}
-
+  width: 100%;
+  border: 0;
 .heading {
-  display: flex;
+  overflow: visible;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .title {
@@ -25,8 +26,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
 .input {
@@ -34,32 +36,41 @@
 }
 
 .triggerWrap {
-  width: 72px;
+  width: min(100%, 296px);
+  max-width: 296px;
   height: 72px;
-
-  @media (min-width: 1024px) {
-    width: 248px;
-  }
 }
 
 .trigger {
-  width: 72px;
+  position: relative;
+  width: 100%;
   height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  display: block;
   padding: 0;
-  gap: 14px;
-  border: 0;
+  border: 2px solid transparent;
   border-radius: 999px;
   background: transparent;
   overflow: hidden;
   cursor: pointer;
+  box-sizing: border-box;
 
   &:disabled {
     cursor: not-allowed;
     opacity: 0.7;
   }
+}
+
+.avatarRail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.avatarRailExpanded {
+  justify-content: flex-end;
 }
 
 .avatarFrame {
@@ -108,8 +119,8 @@
 
 .editBadge {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
+  right: 4px;
+  bottom: 4px;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -125,28 +136,29 @@
   display: block;
 }
 
-.labelViewport {
-  flex: 1;
-  min-width: 0;
+.labelLayer {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  padding-right: 20px;
-}
-
-.labelInner {
-  display: inline-flex;
-  align-items: center;
-  overflow: hidden;
+  justify-content: center;
+  padding: 0 92px 0 20px;
+  box-sizing: border-box;
+  pointer-events: none;
 }
 
 .actionLabel {
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
   color: #4d4d4d;
+  white-space: normal;
 }
 
 .hint {
@@ -156,7 +168,7 @@
   font-size: 12px;
   line-height: 24px;
   color: #ccced5;
-  text-align: left;
+  text-align: center;
 }
 
 .error {
@@ -164,6 +176,6 @@
   font-size: 12px;
   line-height: 16px;
   color: #e7000b;
-  text-align: left;
-  max-width: 220px;
+  text-align: center;
+  max-width: 296px;
 }

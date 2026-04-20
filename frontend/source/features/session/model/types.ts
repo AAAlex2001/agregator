@@ -10,7 +10,6 @@ export interface SessionState {
 }
 
 export interface SessionContextValue extends SessionState {
-  resolvedRole: SessionRole | null;
   reload: () => Promise<void>;
   setUser: (user: UserProfile | null) => void;
   mergeUser: (patch: Partial<UserProfile>) => void;

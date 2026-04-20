@@ -7,7 +7,7 @@ import { fetchSessionUser } from "../api/session.api";
 import { SessionContext } from "../model/context";
 import type { SessionRole } from "../model/types";
 import { initialSessionState, sessionReducer } from "../model/reducer";
-import { getRouteSessionRole, normalizeSessionRole, readSessionRoleFromCookie } from "../model/sessionRole";
+import { getRouteSessionRole, normalizeSessionRole, readSessionRoleFromCookie, writeSessionRoleCookie } from "../model/sessionRole";
 
 interface SessionProviderProps {
   initialRole?: SessionRole | null;
@@ -29,6 +29,10 @@ export function SessionProvider({ initialRole = null, children }: SessionProvide
       dispatch({ type: "SET_ROLE", role: routeRole });
     }
   }, [routeRole, state.role]);
+
+  useEffect(() => {
+    writeSessionRoleCookie(state.role);
+  }, [state.role]);
 
   const reload = async () => {
     dispatch({ type: "LOADING" });
@@ -84,10 +88,8 @@ export function SessionProvider({ initialRole = null, children }: SessionProvide
     };
   }, [initialSessionRole]);
 
-  const resolvedRole = state.role;
-
   return (
-    <SessionContext.Provider value={{ ...state, resolvedRole, reload, setUser, mergeUser }}>
+    <SessionContext.Provider value={{ ...state, reload, setUser, mergeUser }}>
       {children}
     </SessionContext.Provider>
   );

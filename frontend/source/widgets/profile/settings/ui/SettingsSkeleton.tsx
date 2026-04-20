@@ -1,6 +1,7 @@
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { LogoutIcon } from "@/source/shared/ui/icons";
+import avatarStyles from "@/source/features/profile/settings/ui/ProfileAvatarUpload.module.scss";
 import formStyles from "@/source/features/profile/settings/ui/PersonalDataForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
@@ -31,6 +32,18 @@ export function SettingsSkeleton({ section }: SettingsSkeletonProps) {
 
   return (
     <div className={s.form} aria-hidden="true">
+      <div className={s.avatarSection}>
+        <div className={avatarStyles.heading}>
+          <h2 className={avatarStyles.title}>Фото профиля</h2>
+        </div>
+        <div className={avatarStyles.content}>
+          <div className={s.avatarTriggerWrap}>
+            <Skeleton className={s.avatarCircle} rounded="pill" />
+          </div>
+          <span className={avatarStyles.hint}>JPG, PNG до 5 МБ</span>
+        </div>
+      </div>
+
       <div className={formStyles.section}>
         <h2 className={formStyles.subtitle}>Персональные данные</h2>
         <div className={formStyles.grid}>
