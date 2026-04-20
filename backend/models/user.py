@@ -3,6 +3,8 @@
 """
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
+from uuid import uuid4
+
 from sqlalchemy import JSON, Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint
 from sqlalchemy.orm import relationship
 
@@ -20,6 +22,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    public_id = Column(String(36), unique=True, nullable=False, default=lambda: str(uuid4()), index=True)
     role = Column(Enum(UserRole),  nullable=False, index=True)
     is_active = Column(Boolean, default=True, nullable=False)
     first_name = Column(String(100), nullable=True)

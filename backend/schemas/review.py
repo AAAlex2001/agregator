@@ -30,3 +30,12 @@ class ReviewListResponse(BaseModel):
     reviews: List[ReviewItem]
     total: int
     avg_rating: float
+
+
+class PublicExpertReviewsResponse(BaseModel):
+    expert_public_id: str
+    expert_name: str
+    expert_avatar_url: str | None = None
+    reviews: List[ReviewItem]
+    total: int
+    avg_rating: float

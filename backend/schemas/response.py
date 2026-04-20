@@ -56,6 +56,7 @@ class ExpertResponseItem(BaseModel):
     expert_avatar_url: str | None = None
     expert_rating: float | None = None
     expert_review_count: int = 0
+    expert_public_id: str = ""
     confirm_deadline: str = ""
     expert_confirmed: bool = False
     has_review: bool = False

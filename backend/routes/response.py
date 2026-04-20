@@ -54,12 +54,14 @@ def to_item(
     expert_avatar_url: str | None = None
     expert_rating: float | None = None
     expert_review_count = 0
+    expert_public_id = ""
     if expert:
         parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in parts if p)
         expert_avatar_url = expert.avatar_url
         expert_rating = float(expert.rating) if expert.rating is not None else None
         expert_review_count = expert.review_count or 0
+        expert_public_id = expert.public_id or ""
 
     commission_paid_str: str | None = None
     balance_return_str: str | None = None
@@ -103,6 +105,7 @@ def to_item(
         expert_avatar_url=expert_avatar_url,
         expert_rating=expert_rating,
         expert_review_count=expert_review_count,
+        expert_public_id=expert_public_id,
         expert_confirmed=entity.expert_confirmed or False,
         has_review=has_review,
         confirm_deadline=(

@@ -3,7 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.review import CreateReviewRequest, CreateReviewResponse, ReviewListResponse, ReviewItem
+from schemas.review import (
+    CreateReviewRequest,
+    CreateReviewResponse,
+    PublicExpertReviewsResponse,
+    ReviewItem,
+    ReviewListResponse,
+)
 from services.review import ReviewService
 
 router = APIRouter(tags=["reviews"])
@@ -36,4 +42,22 @@ async def get_my_reviews(
         reviews=[ReviewItem(**i) for i in items],
         total=total,
         avg_rating=avg_rating,
+    )
+
+
+@router.get("/experts/{public_id}/reviews", response_model=PublicExpertReviewsResponse)
+async def get_expert_public_reviews(
+    public_id: str,
+    db: AsyncSession = Depends(get_db),
+    _user_id: int = Depends(get_current_user),
+):
+    service = ReviewService(db)
+    data = await service.get_expert_reviews_by_public_id(public_id)
+    return PublicExpertReviewsResponse(
+        expert_public_id=data["expert_public_id"],
+        expert_name=data["expert_name"],
+        expert_avatar_url=data["expert_avatar_url"],
+        reviews=[ReviewItem(**i) for i in data["reviews"]],
+        total=data["total"],
+        avg_rating=data["avg_rating"],
     )

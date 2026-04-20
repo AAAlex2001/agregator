@@ -117,3 +117,26 @@ class ReviewService:
             avg_rating = round(sum(i["rating"] for i in items) / total, 1)
 
         return items, total, avg_rating
+
+    async def get_expert_reviews_by_public_id(self, public_id: str):
+        """Публичный доступ к отзывам исполнителя по UUID."""
+        result = await self.db.execute(
+            select(User).where(User.public_id == public_id, User.role == UserRole.EXPERT)
+        )
+        expert = result.scalars().first()
+        if not expert:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Исполнитель не найден")
+
+        items, total, avg_rating = await self.get_expert_reviews(expert.id)
+
+        expert_name_parts = [expert.first_name or "", expert.last_name or ""]
+        expert_name = " ".join(p for p in expert_name_parts if p).strip()
+
+        return {
+            "expert_public_id": expert.public_id,
+            "expert_name": expert_name,
+            "expert_avatar_url": expert.avatar_url,
+            "reviews": items,
+            "total": total,
+            "avg_rating": avg_rating,
+        }
