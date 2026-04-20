@@ -2,10 +2,10 @@
 
 import styles from "./advantages.module.scss";
 import { useState } from "react";
-import { Card } from "@/shared/ui";
-import { DiplomaIcon, QuickIcon, SearchIcon, CommentIcon } from "@/shared/ui/icons";
+import Card from "@/source/shared/ui/Card";
+import { CommentIcon, DiplomaIcon, QuickIcon, SearchIcon } from "@/source/shared/ui/icons";
 
-import type { AdvantageIconKey, LandingAdvantage } from "@/shared/config/landing.data";
+import type { AdvantageIconKey, LandingAdvantage } from "../model/landing.data";
 
 type AdvantagesProps = {
   features: LandingAdvantage[];

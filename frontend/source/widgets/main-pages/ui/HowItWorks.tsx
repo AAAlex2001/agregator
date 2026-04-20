@@ -3,9 +3,10 @@
 import styles from "./how-it-works.module.scss";
 import { useState } from "react";
 import Image from "next/image";
-import { Tabs, Title, Subtitle } from "@/shared/ui";
+import Tabs from "@/source/shared/ui/Tabs";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingStep } from "@/shared/config/landing.data";
+import type { LandingStep } from "../model/landing.data";
 
 type HowItWorksProps = {
   clientSteps: LandingStep[];

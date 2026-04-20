@@ -3,9 +3,10 @@
 import styles from "./key-advantages.module.scss";
 import { useState } from "react";
 import Image from "next/image";
-import { Tabs, Title, Subtitle } from "@/shared/ui";
+import Tabs from "@/source/shared/ui/Tabs";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingStep } from "@/shared/config/landing.data";
+import type { LandingStep } from "../model/landing.data";
 
 type KeyAdvantagesProps = {
   clientSteps: LandingStep[];
@@ -41,8 +42,8 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
                     <div className={styles.description}>
                       <h3>{value.title}</h3>
                       <p>{value.description}</p>
-                      {value.subDesription && (
-                        <span className={styles.subDescription}>{value.subDesription}</span>
+                      {value.subDescription && (
+                        <span className={styles.subDescription}>{value.subDescription}</span>
                       )}
                     </div>
                   </div>

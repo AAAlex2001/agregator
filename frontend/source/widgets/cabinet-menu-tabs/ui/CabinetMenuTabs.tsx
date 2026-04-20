@@ -12,30 +12,26 @@ export function CabinetMenuTabs() {
     return null;
   }
 
-  const isReviewsPage = pathname.startsWith("/expert/reviews");
-  const isResponsesPage = pathname === "/responses";
-  const currentRole = role;
-
-  const activeKey: CabinetMenuKey = isReviewsPage
-    ? "reviews"
-    : isResponsesPage
-      ? "responses"
-      : "orders";
+  const activeKey: CabinetMenuKey | null =
+    pathname === "/settings" ? "profile" :
+    pathname.startsWith("/chat") ? "chat" :
+    pathname.startsWith("/expert/reviews") ? "reviews" :
+    pathname === "/responses" ? "responses" :
+    pathname.startsWith("/customer") || pathname.startsWith("/expert") ? "orders" :
+    null;
 
   const items = [
     {
       key: "orders" as const,
       label: "Заказы",
-      href: currentRole === "EXPERT" ? "/expert/orders" : "/customer/orders",
+      href: role === "EXPERT" ? "/expert/orders" : "/customer/orders",
     },
-    {
-      key: "responses" as const,
-      label: "Отклики",
-      href: "/responses",
-    },
-    ...(currentRole === "EXPERT"
+    { key: "responses" as const, label: "Отклики", href: "/responses" },
+    ...(role === "EXPERT"
       ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }]
       : []),
+    { key: "chat" as const, label: "Чат", href: "/chat" },
+    { key: "profile" as const, label: "Профиль", href: "/settings" },
   ];
 
   return <CabinetMenuTabsView items={items} activeKey={activeKey} />;

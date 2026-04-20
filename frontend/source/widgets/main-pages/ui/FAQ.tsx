@@ -3,9 +3,10 @@
 import { useState } from "react";
 import styles from "./faq.module.scss";
 import Image from "next/image";
-import { Accordion, Title, Subtitle } from "@/shared/ui";
+import Accordion from "@/source/shared/ui/Accordion";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingFaqItem } from "@/shared/config/landing.data";
+import type { LandingFaqItem } from "../model/landing.data";
 type FAQProps = {
   items: LandingFaqItem[];
 };

@@ -7,9 +7,11 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./reviews.module.scss";
-import { SwiperNavigation, Card, Title, Subtitle } from "@/shared/ui";
+import Card from "@/source/shared/ui/Card";
+import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingReview } from "@/shared/config/landing.data";
+import type { LandingReview } from "../model/landing.data";
 type ReviewsProps = {
   reviews: LandingReview[];
 };

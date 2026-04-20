@@ -1,6 +1,7 @@
 import styles from "./hero.module.scss";
-import { Button, Title, Subtitle } from "@/shared/ui";
-import { CheckIcon } from "@/shared/ui/icons";
+import Button from "@/source/shared/ui/Button";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { CheckIcon } from "@/source/shared/ui/icons";
 
 const Hero = () => {
   return (

@@ -7,9 +7,12 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import styles from "./orders.module.scss";
-import { SwiperNavigation, Card, Button, Title, Subtitle } from "@/shared/ui";
+import Button from "@/source/shared/ui/Button";
+import Card from "@/source/shared/ui/Card";
+import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingOrder } from "@/shared/config/landing.data";
+import type { LandingOrder } from "../model/landing.data";
 type OrdersProps = {
   orders: LandingOrder[];
 };

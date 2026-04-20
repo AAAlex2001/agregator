@@ -8,9 +8,11 @@ import "swiper/css/pagination";
 import styles from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
-import { SwiperNavigation, Card, Title, Subtitle } from "@/shared/ui";
+import Card from "@/source/shared/ui/Card";
+import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
-import type { LandingIndustry } from "@/shared/config/landing.data";
+import type { LandingIndustry } from "../model/landing.data";
 type IndustryDirectionsProps = {
   industries: LandingIndustry[];
 };
