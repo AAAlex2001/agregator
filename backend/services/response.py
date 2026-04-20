@@ -15,7 +15,7 @@ from models.chat import Chat
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
 from models.user import User, UserRole
-from schemas.notification import ResponseStatusChangeReason
+from schemas.notification import ResponseStatusChangeReason, ResponseUpdateKind
 from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
 from services.commission import CommissionCalculator
@@ -63,7 +63,11 @@ class ResponseService:
 
         return "Открыть чат", f"/chat/{chat_uuid}"
 
-    async def notify_response_updated(self, response: OrderResponse) -> None:
+    async def notify_response_updated(
+        self,
+        response: OrderResponse,
+        kind: ResponseUpdateKind = ResponseUpdateKind.UPDATED,
+    ) -> None:
         order = response.order
         if order is None:
             return
@@ -72,6 +76,7 @@ class ResponseService:
         await service.create_response_updated_notification(
             user_id=order.customer_id,
             order_title=self.get_order_title(order, response.order_id),
+            kind=kind,
             action_url=self.get_responses_action()[1],
         )
 
@@ -289,7 +294,9 @@ class ResponseService:
                 detail="Отклик уже существует",
             )
 
-        return await self.get_response_by_id(entity.id)
+        created = await self.get_response_by_id(entity.id)
+        await self.notify_response_updated(created, kind=ResponseUpdateKind.CREATED)
+        return created
 
     async def update_response_status(
         self,
@@ -534,7 +541,9 @@ class ResponseService:
 
         await self.db.flush()
 
-        return await self.get_response_by_id(response_id)
+        updated = await self.get_response_by_id(response_id)
+        await self.notify_response_updated(updated, kind=ResponseUpdateKind.UPDATED)
+        return updated
 
     async def withdraw_response(
         self,
@@ -558,6 +567,8 @@ class ResponseService:
             )
 
         order_id = response.order_id
+        customer_id = response.order.customer_id if response.order else None
+        order_title = self.get_order_title(response.order, order_id)
 
         if response.order:
             refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
@@ -573,6 +584,15 @@ class ResponseService:
 
         await self.db.delete(response)
         await self.db.flush()
+
+        if customer_id is not None:
+            service = NotificationService(self.db)
+            await service.create_response_updated_notification(
+                user_id=customer_id,
+                order_title=order_title,
+                kind=ResponseUpdateKind.WITHDRAWN,
+                action_url=self.get_responses_action()[1],
+            )
 
         order_result = await self.db.execute(
             select(Order)

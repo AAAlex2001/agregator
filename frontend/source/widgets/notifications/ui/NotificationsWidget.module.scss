@@ -47,7 +47,7 @@
 
 .panel {
   position: fixed;
-  top: 86px;
+  top: 76px;
   right: max(10px, calc((100vw - 1600px) / 2 + 10px));
   z-index: 1405;
   display: flex;
@@ -65,7 +65,7 @@
 
 @media (max-width: 767px) {
   .panel {
-    top: 82px;
+    top: 72px;
     right: 10px;
   }
 }

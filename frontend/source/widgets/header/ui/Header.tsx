@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NotificationsPopover } from "@/source/features/notifications";
 import { useSession } from "@/source/features/session";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import {
   ChatHeaderIcon,
   LogoIcon,
   LogoMarkIcon,
-  NotificationsHeaderIcon,
   ProfileHeaderIcon,
 } from "@/source/shared/ui/icons";
 import s from "./Header.module.scss";
@@ -62,9 +62,7 @@ export function AuthHeader() {
             >
               <ChatHeaderIcon />
             </Link>
-            <button className={s.iconBtn} type="button" aria-label="Уведомления">
-              <NotificationsHeaderIcon />
-            </button>
+            <NotificationsPopover buttonClassName={s.iconBtn} activeClassName={s.iconBtnActive} />
             <Link
               href="/settings"
               className={`${s.iconBtn} ${s.desktopOnly} ${user?.avatar_url ? s.avatarBtn : ""} ${isProfileActive ? s.iconBtnActive : ""}`.trim()}

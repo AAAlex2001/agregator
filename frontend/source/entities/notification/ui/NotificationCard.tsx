@@ -22,11 +22,7 @@ export function NotificationCard({
   onDismiss,
 }: NotificationCardProps) {
   const hasAction = Boolean(item.actionUrl && item.actionLabel);
-  const cardClassName = [
-    s.card,
-    item.isRead ? s.read : s.unread,
-    hasAction ? s.withAction : "",
-  ].filter(Boolean).join(" ");
+  const cardClassName = [s.card, item.isRead ? s.read : s.unread].filter(Boolean).join(" ");
 
   return (
     <div className={cardClassName}>

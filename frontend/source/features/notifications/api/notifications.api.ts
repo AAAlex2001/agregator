@@ -14,7 +14,7 @@ async function parseMutationResponse(response: Response, fallbackMessage: string
 }
 
 export async function fetchNotifications(limit = 50): Promise<NotificationListResponse | null> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}?limit=${limit}&offset=0`);
+  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/?limit=${limit}&offset=0`);
 
   if (response.status === 401) {
     return null;

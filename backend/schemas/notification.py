@@ -13,12 +13,19 @@ class ResponseStatusChangeReason(str, PyEnum):
     SELECTED_ANOTHER = "SELECTED_ANOTHER"
 
 
+class ResponseUpdateKind(str, PyEnum):
+    CREATED = "CREATED"
+    UPDATED = "UPDATED"
+    WITHDRAWN = "WITHDRAWN"
+
+
 class NotificationPayloadModel(BaseModel):
     model_config = {"extra": "forbid"}
 
 
 class ResponseUpdatedNotificationPayload(NotificationPayloadModel):
     order_title: str
+    kind: ResponseUpdateKind = ResponseUpdateKind.UPDATED
 
 
 class ResponseStatusChangedNotificationPayload(NotificationPayloadModel):

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select, update
+from sqlalchemy import delete as sa_delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.notification import Notification, NotificationType
@@ -18,6 +18,7 @@ from schemas.notification import (
     ResponseStatusChangeReason,
     ResponseStatusChangedNotificationItemResponse,
     ResponseStatusChangedNotificationPayload,
+    ResponseUpdateKind,
     ResponseUpdatedNotificationItemResponse,
     ResponseUpdatedNotificationPayload,
 )
@@ -92,12 +93,13 @@ class NotificationService:
         self,
         user_id: int,
         order_title: str,
+        kind: ResponseUpdateKind = ResponseUpdateKind.UPDATED,
         action_url: str | None = None,
     ) -> Notification:
         return await self._create_notification(
             user_id=user_id,
             notification_type=NotificationType.RESPONSE_UPDATED,
-            payload=ResponseUpdatedNotificationPayload(order_title=order_title),
+            payload=ResponseUpdatedNotificationPayload(order_title=order_title, kind=kind),
             action_url=action_url,
         )
 
@@ -192,20 +194,31 @@ class NotificationService:
         )
 
     async def mark_read(self, notification_id: int, user_id: int) -> NotificationMutationResponse:
-        notification = await self.get_notification_or_404(notification_id, user_id)
-        updated = 0
+        now = datetime.now(timezone.utc)
 
-        if not notification.is_read:
-            notification.is_read = True
-            notification.read_at = datetime.now(timezone.utc)
-            updated = 1
+        result = await self.db.execute(
+            update(Notification)
+            .where(
+                Notification.id == notification_id,
+                Notification.user_id == user_id,
+                Notification.is_read == False,  # noqa: E712
+            )
+            .values(is_read=True, read_at=now)
+            .returning(Notification.id)
+        )
+        updated = 1 if result.scalar_one_or_none() is not None else 0
 
+        if updated:
             await self.db.execute(
                 update(User)
                 .where(User.id == user_id)
                 .values(notification_unread_count=func.greatest(User.notification_unread_count - 1, 0))
             )
-            await self.db.flush()
+
+        await self.db.flush()
+
+        notification = await self.get_notification_or_404(notification_id, user_id)
+        await self.db.refresh(notification)
 
         return NotificationMutationResponse(
             unread_count=await self.get_unread_count(user_id),
@@ -239,19 +252,29 @@ class NotificationService:
         )
 
     async def delete_notification(self, notification_id: int, user_id: int) -> NotificationMutationResponse:
-        notification = await self.get_notification_or_404(notification_id, user_id)
-        was_unread = not notification.is_read
+        result = await self.db.execute(
+            sa_delete(Notification)
+            .where(
+                Notification.id == notification_id,
+                Notification.user_id == user_id,
+            )
+            .returning(Notification.is_read)
+        )
+        row = result.first()
+        if row is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Уведомление не найдено",
+            )
 
-        await self.db.delete(notification)
-        await self.db.flush()
-
-        if was_unread:
+        if not row[0]:
             await self.db.execute(
                 update(User)
                 .where(User.id == user_id)
                 .values(notification_unread_count=func.greatest(User.notification_unread_count - 1, 0))
             )
-            await self.db.flush()
+
+        await self.db.flush()
 
         return NotificationMutationResponse(
             unread_count=await self.get_unread_count(user_id),

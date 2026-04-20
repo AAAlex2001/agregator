@@ -25,7 +25,6 @@ export function NotificationsPopover({ buttonClassName, activeClassName }: Notif
       buttonClassName={buttonClassName}
       activeClassName={activeClassName}
       onToggle={model.toggleOpen}
-      onClose={model.close}
       onRetry={model.reload}
       onOpenItem={model.openItem}
       onDismissItem={model.dismissItem}

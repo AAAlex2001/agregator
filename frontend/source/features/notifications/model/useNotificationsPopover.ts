@@ -85,7 +85,13 @@ export function useNotificationsPopover(limit = 50) {
     pendingId: notifications.pendingId,
     pendingMode: notifications.pendingMode,
     isMarkingAll: notifications.isMarkingAll,
-    toggleOpen: () => setIsOpen((currentState) => !currentState),
+    toggleOpen: () => {
+      setIsOpen((currentState) => {
+        const next = !currentState;
+        if (next) void notifications.reload();
+        return next;
+      });
+    },
     close: () => setIsOpen(false),
     reload: notifications.reload,
     openItem,

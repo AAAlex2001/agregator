@@ -13,6 +13,31 @@ function getOrderTitle(orderTitle: string | undefined): string {
 function mapResponseUpdated(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as ResponseUpdatedNotificationPayload;
   const orderTitle = getOrderTitle(payload.order_title);
+  const kind = payload.kind ?? "UPDATED";
+
+  if (kind === "CREATED") {
+    return {
+      id: item.id,
+      title: "Новый отклик на заказ",
+      message: `Эксперт откликнулся на заказ «${orderTitle}».`,
+      actionLabel: item.action_url ? "Открыть отклики" : null,
+      actionUrl: item.action_url,
+      isRead: item.is_read,
+      createdAt: item.created_at,
+    };
+  }
+
+  if (kind === "WITHDRAWN") {
+    return {
+      id: item.id,
+      title: "Эксперт отозвал отклик",
+      message: `Эксперт отозвал отклик по заказу «${orderTitle}».`,
+      actionLabel: item.action_url ? "Открыть отклики" : null,
+      actionUrl: item.action_url,
+      isRead: item.is_read,
+      createdAt: item.created_at,
+    };
+  }
 
   return {
     id: item.id,

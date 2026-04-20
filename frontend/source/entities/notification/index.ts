@@ -1,4 +1,5 @@
 export { NotificationCard } from "./ui/NotificationCard";
+export { NotificationCardSkeleton } from "./ui/NotificationCardSkeleton";
 export { formatNotificationTime } from "./model/formatters";
 export type {
   ChatMessageNotificationPayload,
@@ -12,5 +13,6 @@ export type {
   NotificationReason,
   NotificationResponseStatus,
   ResponseStatusChangedNotificationPayload,
+  ResponseUpdateKind,
   ResponseUpdatedNotificationPayload,
 } from "./model/types";

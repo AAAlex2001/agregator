@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import type { RefObject } from "react";
-import { NotificationCard } from "@/source/entities/notification";
+import { NotificationCard, NotificationCardSkeleton } from "@/source/entities/notification";
 import type { NotificationCardModel } from "@/source/entities/notification";
 import Button from "@/source/shared/ui/Button";
-import Loader from "@/source/shared/ui/Loader";
-import { NotificationsHeaderIcon, SettingsIcon } from "@/source/shared/ui/icons";
+import { NotificationsHeaderIcon } from "@/source/shared/ui/icons";
 import s from "./NotificationsWidget.module.scss";
 
 interface NotificationsWidgetProps {
@@ -22,7 +20,6 @@ interface NotificationsWidgetProps {
   buttonClassName?: string;
   activeClassName?: string;
   onToggle: () => void;
-  onClose: () => void;
   onRetry: () => void | Promise<void>;
   onOpenItem: (notificationId: number) => void | Promise<void>;
   onDismissItem: (notificationId: number) => void | Promise<void>;
@@ -42,7 +39,6 @@ export function NotificationsWidget({
   buttonClassName,
   activeClassName,
   onToggle,
-  onClose,
   onRetry,
   onOpenItem,
   onDismissItem,
@@ -76,21 +72,14 @@ export function NotificationsWidget({
               <p className={s.headTitle}>Уведомления</p>
               <span className={s.headBadge}>{unreadCount}</span>
             </div>
-
-            <Link
-              href="/settings"
-              className={s.settingsBtn}
-              aria-label="Настройки"
-              onClick={onClose}
-            >
-              <SettingsIcon />
-            </Link>
           </div>
 
           <div className={s.content}>
             {isLoading ? (
-              <div className={s.state}>
-                <Loader label="" size="md" />
+              <div className={s.list}>
+                <NotificationCardSkeleton />
+                <NotificationCardSkeleton />
+                <NotificationCardSkeleton />
               </div>
             ) : error ? (
               <div className={s.errorState}>

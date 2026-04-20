@@ -2,9 +2,11 @@ export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | 
 export type NotificationActorRole = "CUSTOMER" | "EXPERT";
 export type NotificationResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type NotificationReason = "DIRECT_CHANGE" | "SELECTED_ANOTHER";
+export type ResponseUpdateKind = "CREATED" | "UPDATED" | "WITHDRAWN";
 
 export interface ResponseUpdatedNotificationPayload {
   order_title: string;
+  kind?: ResponseUpdateKind;
 }
 
 export interface ResponseStatusChangedNotificationPayload {
