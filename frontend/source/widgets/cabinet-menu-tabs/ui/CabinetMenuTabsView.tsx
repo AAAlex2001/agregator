@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { MenuOrdersIcon, MenuResponsesIcon, ReviewIcon } from "@/shared/ui/icons";
+import {
+  TabOrdersIcon,
+  TabResponsesIcon,
+  TabReviewsIcon,
+  TabChatIcon,
+  TabProfileIcon,
+} from "@/source/shared/ui/icons";
 import s from "./CabinetMenuTabs.module.scss";
 
-export type CabinetMenuKey = "orders" | "responses" | "reviews";
+export type CabinetMenuKey = "orders" | "responses" | "reviews" | "chat" | "profile";
 
 interface CabinetMenuItem {
   key: CabinetMenuKey;
@@ -14,13 +20,15 @@ interface CabinetMenuItem {
 
 interface CabinetMenuTabsViewProps {
   items: CabinetMenuItem[];
-  activeKey: CabinetMenuKey;
+  activeKey: CabinetMenuKey | null;
 }
 
 function renderIcon(key: CabinetMenuKey) {
-  if (key === "orders") return <MenuOrdersIcon />;
-  if (key === "responses") return <MenuResponsesIcon />;
-  return <ReviewIcon width={16} height={16} />;
+  if (key === "orders") return <TabOrdersIcon />;
+  if (key === "responses") return <TabResponsesIcon />;
+  if (key === "reviews") return <TabReviewsIcon />;
+  if (key === "chat") return <TabChatIcon />;
+  return <TabProfileIcon />;
 }
 
 export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewProps) {
@@ -35,7 +43,7 @@ export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewPro
             <Link
               key={item.key}
               href={item.href}
-              className={`${s.tab} ${isActive ? s.tabActive : ""}`}
+              className={`${s.tab} ${isActive ? s.tabActive : ""}`.trim()}
               aria-current={isActive ? "page" : undefined}
             >
               <span className={s.icon}>{renderIcon(item.key)}</span>

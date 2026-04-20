@@ -1,5 +1,5 @@
 .spacer {
-  height: 96px;
+  height: 72px;
 
   @media (min-width: 1440px) {
     display: none;
@@ -7,19 +7,18 @@
 }
 
 .menuTabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0;
-  position: fixed;
-  width: calc(100% - 20px);
-  height: 56px;
-  left: 10px;
-  bottom: max(30px, env(safe-area-inset-bottom));
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(16px);
-  border-radius: 100px;
+  align-items: stretch;
+  width: 100%;
+  padding: 6px 4px;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 1px solid #e6e6e6;
   z-index: 1100;
 
   @media (min-width: 1440px) {
@@ -28,31 +27,27 @@
 }
 
 .tab {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px 8px;
   gap: 4px;
-  height: 56px;
-  border-radius: 40px;
+  padding: 6px 4px;
+  min-width: 0;
   text-decoration: none;
-  color: #1a1a1a;
-  flex: 1;
-  background: transparent;
+  color: #8a8a8a;
 }
 
 .tabActive {
-  background: linear-gradient(0deg, rgba(255, 138, 0, 0.4), rgba(255, 138, 0, 0.4)), rgba(255, 255, 255, 0.6);
+  color: #ff8a00;
 }
 
 .icon {
-  width: 16px;
-  height: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #1a1a1a;
+  color: currentColor;
 
   svg {
     display: block;
@@ -61,10 +56,9 @@
 
 .text {
   font-family: "Montserrat", sans-serif;
-  font-style: normal;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 11px;
+  line-height: 14px;
   text-align: center;
-  color: #1a1a1a;
+  color: currentColor;
 }

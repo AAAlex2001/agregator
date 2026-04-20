@@ -2,15 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 import { useSession } from "@/source/features/session";
-import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import {
-  ChatHeaderIcon,
   LogoIcon,
   LogoMarkIcon,
   NotificationsHeaderIcon,
-  ProfileHeaderIcon,
 } from "@/source/shared/ui/icons";
 import s from "./Header.module.scss";
 
@@ -28,43 +24,11 @@ const NAV: Record<string, { href: string; label: string }[]> = {
 
 export function Header() {
   const pathname = usePathname();
-  const { role, user } = useSession();
-  const [isHidden, setIsHidden] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    lastScrollY.current = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollDelta = currentScrollY - lastScrollY.current;
-
-      if (currentScrollY <= 0) {
-        setIsHidden(false);
-      } else if (scrollDelta > 0) {
-        setIsHidden(true);
-      } else if (scrollDelta < 0) {
-        setIsHidden(false);
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setIsHidden(false);
-  }, [pathname]);
-
-  const key = role;
-  const links = key ? NAV[key] : [];
-  const isChatActive = pathname === "/chat" || pathname.startsWith("/chat/");
-  const isProfileActive = pathname === "/settings";
+  const { role } = useSession();
+  const links = role ? NAV[role] : [];
 
   return (
-    <header className={`${s.header} ${isHidden ? s.headerHidden : ""}`.trim()}>
+    <header className={s.header}>
       <div className={s.container}>
         <Link href="/settings" className={s.logo}>
           <span className={s.logoMobile}><LogoMarkIcon /></span>
@@ -84,27 +48,9 @@ export function Header() {
         </nav>
 
         <div className={s.actions}>
-          <Link
-            className={`${s.iconBtn} ${isChatActive ? s.iconBtnActive : ""}`.trim()}
-            href="/chat"
-            aria-label="Чат"
-          >
-            <ChatHeaderIcon />
-          </Link>
           <button className={s.iconBtn} type="button" aria-label="Уведомления">
             <NotificationsHeaderIcon />
           </button>
-          <Link
-            href="/settings"
-            className={`${s.iconBtn} ${user?.avatar_url ? s.avatarBtn : ""} ${isProfileActive ? s.iconBtnActive : ""}`.trim()}
-            aria-label="Профиль"
-          >
-            {user?.avatar_url ? (
-              <UserAvatar src={user.avatar_url} alt="Ваше фото" className={s.headerAvatar} />
-            ) : (
-              <ProfileHeaderIcon />
-            )}
-          </Link>
         </div>
       </div>
     </header>
