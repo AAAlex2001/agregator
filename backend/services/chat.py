@@ -12,6 +12,7 @@ from models.chat import Chat, ChatMessage
 from models.order import Order
 from models.user import User, UserRole
 from schemas.chat import ChatAttachmentResponse, ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
+from services.notification import NotificationService
 
 CHAT_ALLOWED_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx"}
 UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
@@ -21,6 +22,15 @@ CHAT_MAX_ATTACHMENTS = 6
 class ChatService:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    @staticmethod
+    def build_notification_preview(text: str, attachments_count: int) -> str:
+        normalized_text = text.strip()
+        if normalized_text:
+            return normalized_text if len(normalized_text) <= 140 else f"{normalized_text[:137]}..."
+        if attachments_count == 1:
+            return "Новое сообщение с вложением"
+        return f"Новое сообщение с {attachments_count} файлами"
 
     async def get_user(self, user_id: int) -> User:
         result = await self.db.execute(select(User).where(User.id == user_id))
@@ -174,6 +184,25 @@ class ChatService:
             return f"Файлы: {len(attachments)}"
 
         return ""
+
+    async def notify_about_new_message(
+        self,
+        chat: Chat,
+        sender_id: int,
+        text: str,
+        attachments_count: int,
+    ) -> None:
+        recipient_id = chat.expert_id if sender_id == chat.customer_id else chat.customer_id
+        order_title = chat.order.title if chat.order and chat.order.title else f"Заказ #{chat.order_id}"
+        preview = self.build_notification_preview(text, attachments_count)
+        service = NotificationService(self.db)
+        await service.create_chat_message_notification(
+            user_id=recipient_id,
+            order_title=order_title,
+            sender_role=UserRole.CUSTOMER if sender_id == chat.customer_id else UserRole.EXPERT,
+            preview=preview,
+            action_url=f"/chat/{chat.uuid}",
+        )
 
     async def list_chats(self, actor_id: int) -> list[ChatListItemResponse]:
         actor = await self.get_user(actor_id)
@@ -341,14 +370,15 @@ class ChatService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Сообщение не может быть пустым")
 
         chat_row = await self.db.execute(
-            select(Chat.id, Chat.customer_id)
+            select(Chat)
+            .options(selectinload(Chat.order))
             .where(
                 Chat.id == chat_id,
                 or_(Chat.customer_id == sender_id, Chat.expert_id == sender_id),
             )
         )
-        chat_data = chat_row.first()
-        if not chat_data:
+        chat = chat_row.scalars().first()
+        if not chat:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден")
 
         attachments: list[dict[str, str]] = []
@@ -397,7 +427,14 @@ class ChatService:
 
         await self.db.flush()
 
-        sender_role = UserRole.CUSTOMER.value if sender_id == chat_data.customer_id else UserRole.EXPERT.value
+        await self.notify_about_new_message(
+            chat=chat,
+            sender_id=sender_id,
+            text=normalized_text,
+            attachments_count=len(attachments),
+        )
+
+        sender_role = UserRole.CUSTOMER.value if sender_id == chat.customer_id else UserRole.EXPERT.value
         return ChatMessageResponse(
             id=message.id,
             chat_id=message.chat_id,

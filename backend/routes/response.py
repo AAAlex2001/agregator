@@ -221,6 +221,8 @@ async def update_response(
             response_id=updated.id, expert_id=user_id, files=files,
         )
 
+    await service.notify_response_updated(updated)
+
     return to_item(updated)
 
 

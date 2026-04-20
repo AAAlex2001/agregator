@@ -8,7 +8,6 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
     body: {
       inn: data.inn,
       password: data.password,
-      role: data.role,
     },
   });
 }

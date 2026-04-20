@@ -8,7 +8,6 @@ class UserLogin(BaseModel):
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
     inn: Optional[str] = Field(None, description="ИНН пользователя")
     password: str = Field(..., description="Пароль пользователя")
-    role: str = Field(..., description="Роль: CUSTOMER или EXPERT")
 
     @model_validator(mode="after")
     def phone_or_email_required(self):

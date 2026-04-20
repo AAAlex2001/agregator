@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from models.session import Session
-from models.user import User, UserRole
+from models.user import User
 from schemas.login import UserLogin
 from utils.passwords import verify_password
 
@@ -22,42 +22,56 @@ class LoginService:
     async def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return await verify_password(plain_password, hashed_password)
 
-    async def get_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
-        query = select(User).where(User.email == email, User.role == role)
+    async def get_users_by_email(self, email: str) -> list[User]:
+        query = select(User).where(User.email == email)
         result = await self.db.execute(query)
-        return result.scalars().first()
+        return list(result.scalars().all())
 
-    async def get_user_by_phone_and_role(self, phone: str, role: UserRole) -> User | None:
-        query = select(User).where(User.phone == phone, User.role == role)
+    async def get_users_by_phone(self, phone: str) -> list[User]:
+        query = select(User).where(User.phone == phone)
         result = await self.db.execute(query)
-        return result.scalars().first()
+        return list(result.scalars().all())
 
-    async def get_user_by_inn_and_role(self, inn: str, role: UserRole) -> User | None:
-        query = select(User).where(User.inn == inn, User.role == role)
+    async def get_users_by_inn(self, inn: str) -> list[User]:
+        query = select(User).where(User.inn == inn)
         result = await self.db.execute(query)
-        return result.scalars().first()
+        return list(result.scalars().all())
 
     async def authenticate_user(self, data: UserLogin) -> User:
-        user = None
-        if data.email:
-            user = await self.get_user_by_email_and_role(data.email, data.role)
-        elif data.inn:
-            user = await self.get_user_by_inn_and_role(data.inn, data.role)
-        elif data.phone:
-            user = await self.get_user_by_phone_and_role(data.phone, data.role)
+        candidates: list[User] = []
 
-        if not user:
+        if data.email:
+            candidates = await self.get_users_by_email(data.email)
+        elif data.inn:
+            candidates = await self.get_users_by_inn(data.inn)
+        elif data.phone:
+            candidates = await self.get_users_by_phone(data.phone)
+
+        if not candidates:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Пользователь не найден",
             )
 
-        if not await self.verify_password(data.password, user.password):
+        matched_users: list[User] = []
+
+        for candidate in candidates:
+            if await self.verify_password(data.password, candidate.password):
+                matched_users.append(candidate)
+
+        if not matched_users:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Неверный пароль",
             )
-        return user
+
+        if len(matched_users) > 1:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Найдено несколько аккаунтов с одинаковыми данными входа. Обратитесь в поддержку",
+            )
+
+        return matched_users[0]
 
     async def create_session(self, user_id: int) -> Session:
         now = datetime.now(timezone.utc)

@@ -8,7 +8,11 @@
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
+  min-height: calc(100dvh - 74px - 72px);
   @media (min-width: 768px) { gap: 40px; }
+  @media (min-width: 1440px) {
+    min-height: calc(100dvh - 74px);
+  }
 }
 
 .pageHead {
@@ -21,8 +25,34 @@
 .pageHead .pageTitle,
 .pageHead .pageSubtitle { margin: 0; text-align: center; }
 
+.contentArea {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 0;
+
+  @media (min-width: 768px) {
+    gap: 32px;
+  }
+}
+
+.tabs {
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.contentBody {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .statusState {
   width: 100%;
+  flex: 1 1 auto;
   min-height: 180px;
   display: flex;
   flex-direction: column;
@@ -38,8 +68,8 @@
   width: 100%;
   box-sizing: border-box;
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  min-height: clamp(360px, calc(100dvh - 260px), 640px);
-  margin-top: -56px;
+  padding: 0 0 150px;
 }

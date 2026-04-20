@@ -27,18 +27,18 @@ class RegistrationService:
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
 
-    async def get_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
-        query = select(User).where(User.email == email, User.role == role)
+    async def get_user_by_email(self, email: str) -> User | None:
+        query = select(User).where(User.email == email)
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def get_user_by_phone_and_role(self, phone: str, role: UserRole) -> User | None:
-        query = select(User).where(User.phone == phone, User.role == role)
+    async def get_user_by_phone(self, phone: str) -> User | None:
+        query = select(User).where(User.phone == phone)
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def get_user_by_inn_and_role(self, inn: str, role: UserRole) -> User | None:
-        query = select(User).where(User.inn == inn, User.role == role)
+    async def get_user_by_inn(self, inn: str) -> User | None:
+        query = select(User).where(User.inn == inn)
         result = await self.db.execute(query)
         return result.scalars().first()
 
@@ -54,27 +54,27 @@ class RegistrationService:
                     detail="Выбранная компания не соответствует указанному ИНН",
                 )
 
-        existing_by_inn = await self.get_user_by_inn_and_role(data.inn, data.role)
+        existing_by_inn = await self.get_user_by_inn(data.inn)
         if existing_by_inn:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким ИНН и ролью уже зарегистрирован",
+                detail="Пользователь с таким ИНН уже зарегистрирован",
             )
 
         if data.email:
-            existing = await self.get_user_by_email_and_role(data.email, data.role)
+            existing = await self.get_user_by_email(data.email)
             if existing:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким email и ролью уже зарегистрирован",
+                    detail="Пользователь с таким email уже зарегистрирован",
                 )
 
         if data.phone:
-            existing = await self.get_user_by_phone_and_role(data.phone, data.role)
+            existing = await self.get_user_by_phone(data.phone)
             if existing:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким номером и ролью уже зарегистрирован",
+                    detail="Пользователь с таким номером уже зарегистрирован",
                 )
 
         new_user = User(

@@ -46,13 +46,13 @@ async def update_profile(
     if data.last_name is not None:
         user.last_name = data.last_name
     if data.phone is not None:
-        await service.ensure_unique_phone(data.phone, user.role, user_id)
+        await service.ensure_unique_phone(data.phone, user_id)
         user.phone = data.phone
     if data.email is not None:
-        await service.ensure_unique_email(data.email, user.role, user_id)
+        await service.ensure_unique_email(data.email, user_id)
         user.email = data.email
     if data.inn is not None:
-        await service.ensure_unique_inn(data.inn, user.role, user_id)
+        await service.ensure_unique_inn(data.inn, user_id)
         user.inn = data.inn
 
     await db.flush()

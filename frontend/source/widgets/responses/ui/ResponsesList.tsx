@@ -34,43 +34,46 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers }: 
       {model.isLoading ? (
         <ResponsesSkeleton compact />
       ) : (
-        <>
+        <div className={s.contentArea}>
           <Tabs
             variant="pill"
             tabs={model.tabs.map((tab) => ({ id: tab.id, label: tab.label, count: tab.count }))}
             activeTab={model.activeTab}
             onTabChange={(id) => model.setTab(id as ResponseTabKey)}
+            className={s.tabs}
           />
 
-          {model.error ? (
-            <ResponsesState
-              title="Ошибка загрузки"
-              subtitle={model.error}
-              styles={s}
-              action={<Button variant="primary" size="sm" onClick={() => void model.reload()}>Повторить</Button>}
-            />
-          ) : model.items.length === 0 ? (
-            <div className={s.emptyState}>
-              <EmptyStateCard
-                title="Пока нет откликов"
-                subtitle={activeLabel ? `В разделе «${activeLabel}» пока пусто` : "Здесь пока нет откликов"}
+          <div className={s.contentBody}>
+            {model.error ? (
+              <ResponsesState
+                title="Ошибка загрузки"
+                subtitle={model.error}
+                styles={s}
+                action={<Button variant="primary" size="sm" onClick={() => void model.reload()}>Повторить</Button>}
               />
-            </div>
-          ) : (
-            <ResponsesSwiper
-              items={model.items}
-              resetKey={model.activeTab}
-              getKey={(item) => item.id}
-              renderItem={(item) => (
-                <ResponseCard
-                  card={item}
-                  role={role}
-                  actions={getCardActions(item, model.actionLoading[item.id] ?? null, role, actionHandlers)}
+            ) : model.items.length === 0 ? (
+              <div className={s.emptyState}>
+                <EmptyStateCard
+                  title="Пока нет откликов"
+                  subtitle={activeLabel ? `В разделе «${activeLabel}» пока пусто` : "Здесь пока нет откликов"}
                 />
-              )}
-            />
-          )}
-        </>
+              </div>
+            ) : (
+              <ResponsesSwiper
+                items={model.items}
+                resetKey={model.activeTab}
+                getKey={(item) => item.id}
+                renderItem={(item) => (
+                  <ResponseCard
+                    card={item}
+                    role={role}
+                    actions={getCardActions(item, model.actionLoading[item.id] ?? null, role, actionHandlers)}
+                  />
+                )}
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

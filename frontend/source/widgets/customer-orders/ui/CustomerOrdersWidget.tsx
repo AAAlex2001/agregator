@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { OrderCard } from "@/source/entities/order";
 import { Button } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
+import Skeleton from "@/source/shared/ui/Skeleton";
 import ToolTip from "@/source/shared/ui/Tooltip";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
@@ -64,9 +65,13 @@ export function CustomerOrdersWidget() {
 
       {showOrdersContent && (
         <>
-          <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={h.openCreate}>
-            Добавить заказ
-          </Button>
+          {h.isLoading ? (
+            <Skeleton className={s.createBtn} rounded="md" />
+          ) : (
+            <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={h.openCreate}>
+              Добавить заказ
+            </Button>
+          )}
 
           {h.isLoading ? (
             <CustomerOrdersSkeleton />

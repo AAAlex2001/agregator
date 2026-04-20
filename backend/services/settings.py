@@ -31,9 +31,9 @@ class SettingsService:
             )
         return user
 
-    async def ensure_unique_phone(self, phone: str, role, user_id: int) -> None:
+    async def ensure_unique_phone(self, phone: str, user_id: int) -> None:
         existing = await self.db.execute(
-            select(User).where(User.phone == phone, User.role == role, User.id != user_id)
+            select(User).where(User.phone == phone, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(
@@ -41,9 +41,9 @@ class SettingsService:
                 detail="Этот номер телефона уже используется",
             )
 
-    async def ensure_unique_email(self, email: str, role, user_id: int) -> None:
+    async def ensure_unique_email(self, email: str, user_id: int) -> None:
         existing = await self.db.execute(
-            select(User).where(User.email == email, User.role == role, User.id != user_id)
+            select(User).where(User.email == email, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(
@@ -51,9 +51,9 @@ class SettingsService:
                 detail="Этот email уже используется",
             )
 
-    async def ensure_unique_inn(self, inn: str, role, user_id: int) -> None:
+    async def ensure_unique_inn(self, inn: str, user_id: int) -> None:
         existing = await self.db.execute(
-            select(User).where(User.inn == inn, User.role == role, User.id != user_id)
+            select(User).where(User.inn == inn, User.id != user_id)
         )
         if existing.scalars().first():
             raise HTTPException(

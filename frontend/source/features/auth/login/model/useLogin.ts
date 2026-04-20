@@ -19,7 +19,6 @@ export function useLogin() {
     const pending = sessionStorage.getItem("pendingOrderUuid");
     if (pending) {
       setFromOrder(true);
-      dispatch({ type: "SET_ROLE", payload: "EXPERT" });
     }
   }, []);
 
@@ -43,7 +42,6 @@ export function useLogin() {
       const user = await loginUser({
         inn,
         password: state.password,
-        role: state.role,
       });
       await reload();
 
@@ -51,6 +49,10 @@ export function useLogin() {
       if (user.role === "EXPERT" && pendingUuid) {
         sessionStorage.removeItem("pendingOrderUuid");
         router.push(`/order/${pendingUuid}`);
+      } else if (pendingUuid) {
+        sessionStorage.removeItem("pendingOrderUuid");
+        showError("Этот аккаунт зарегистрирован как заказчик. Для отклика нужен аккаунт эксперта");
+        router.push("/customer/orders");
       } else {
         router.push(user.role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
       }
@@ -67,7 +69,6 @@ export function useLogin() {
     fromOrder,
     setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
     setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
-    setRole: (role: "CUSTOMER" | "EXPERT") => dispatch({ type: "SET_ROLE", payload: role }),
     handleSubmit,
   };
 }

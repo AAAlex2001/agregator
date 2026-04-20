@@ -8,9 +8,14 @@
   margin: 0 auto;
   padding: 20px 10px;
   overflow-x: hidden;
+  min-height: calc(100dvh - 74px - 72px);
 
   @media (min-width: 768px) {
     gap: 40px;
+  }
+
+  @media (min-width: 1440px) {
+    min-height: calc(100dvh - 74px);
   }
 }
 
@@ -51,9 +56,10 @@
   width: 100%;
   box-sizing: border-box;
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  min-height: clamp(360px, calc(100dvh - 260px), 640px);
+  padding: 0 0 150px;
 }
 
 .retry {

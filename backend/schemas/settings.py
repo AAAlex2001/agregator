@@ -14,8 +14,12 @@ class UpdatePersonalDataRequest(BaseModel):
     @model_validator(mode="after")
     def validate_phone_format(self):
         """Проверка формата телефона"""
-        if self.phone and (not self.phone.isdigit() or len(self.phone) < 10):
-            raise ValueError("Номер телефона должен содержать минимум 10 цифр")
+        if self.phone:
+            phone_digits = "".join(symbol for symbol in self.phone if symbol.isdigit())
+
+            if len(phone_digits) < 10:
+                raise ValueError("Номер телефона должен содержать минимум 10 цифр")
+
         if self.inn and (not self.inn.isdigit() or len(self.inn) not in {10, 12}):
             raise ValueError("ИНН должен содержать 10 или 12 цифр")
         return self

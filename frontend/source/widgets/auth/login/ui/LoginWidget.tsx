@@ -22,12 +22,10 @@ export function LoginWidget() {
           <LoginForm
             inn={auth.inn}
             password={auth.password}
-            role={auth.role}
             isLoading={auth.isLoading}
             fromOrder={auth.fromOrder}
             onInnChange={auth.setInn}
             onPasswordChange={auth.setPassword}
-            onRoleChange={auth.setRole}
             onSubmit={auth.handleSubmit}
           />
 

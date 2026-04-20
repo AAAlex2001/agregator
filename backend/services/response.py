@@ -15,9 +15,11 @@ from models.chat import Chat
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
 from models.user import User, UserRole
+from schemas.notification import ResponseStatusChangeReason
 from schemas.order import OrderResponse as OrderResponseSchema
 from schemas.response import ResponseCreate, ResponseCounters, ResponseTab
 from services.commission import CommissionCalculator
+from services.notification import NotificationService
 from ws.manager import order_manager
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
@@ -30,6 +32,145 @@ UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 class ResponseService:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    @staticmethod
+    def get_responses_action() -> tuple[str, str]:
+        return "Открыть отклики", "/responses"
+
+    @staticmethod
+    def get_order_title(order: Order | None, order_id: int) -> str:
+        if order and order.title:
+            return order.title
+        return f"Заказ #{order_id}"
+
+    async def get_chat_action(self, response: OrderResponse) -> tuple[str, str]:
+        order = response.order
+        if order is None:
+            return self.get_responses_action()
+
+        result = await self.db.execute(
+            select(Chat.uuid)
+            .where(
+                Chat.order_id == response.order_id,
+                Chat.customer_id == order.customer_id,
+                Chat.expert_id == response.expert_id,
+            )
+            .order_by(Chat.id.desc())
+        )
+        chat_uuid = result.scalars().first()
+        if not chat_uuid:
+            return self.get_responses_action()
+
+        return "Открыть чат", f"/chat/{chat_uuid}"
+
+    async def notify_response_updated(self, response: OrderResponse) -> None:
+        order = response.order
+        if order is None:
+            return
+
+        service = NotificationService(self.db)
+        await service.create_response_updated_notification(
+            user_id=order.customer_id,
+            order_title=self.get_order_title(order, response.order_id),
+            action_url=self.get_responses_action()[1],
+        )
+
+    async def notify_response_status_change(
+        self,
+        response: OrderResponse,
+        actor: User,
+        old_status: ResponseStatus,
+        new_status: ResponseStatus,
+        expert_was_confirmed: bool,
+        auto_rejected_expert_ids: list[int],
+    ) -> None:
+        order = response.order
+        if order is None:
+            return
+
+        order_title = self.get_order_title(order, response.order_id)
+        responses_action_url = self.get_responses_action()[1]
+        chat_action_url = (await self.get_chat_action(response))[1]
+        service = NotificationService(self.db)
+
+        if actor.role == UserRole.CUSTOMER:
+            if new_status == ResponseStatus.ACCEPTED and old_status != ResponseStatus.ACCEPTED:
+                await service.create_response_status_changed_notification(
+                    user_id=response.expert_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=chat_action_url,
+                )
+
+            if new_status == ResponseStatus.IN_PROGRESS and old_status != ResponseStatus.IN_PROGRESS:
+                await service.create_response_status_changed_notification(
+                    user_id=response.expert_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=chat_action_url,
+                )
+
+                for rejected_expert_id in auto_rejected_expert_ids:
+                    await service.create_response_status_changed_notification(
+                        user_id=rejected_expert_id,
+                        order_title=order_title,
+                        actor_role=actor.role,
+                        status_from=old_status,
+                        status_to=ResponseStatus.REJECTED,
+                        reason=ResponseStatusChangeReason.SELECTED_ANOTHER,
+                        action_url=responses_action_url,
+                    )
+
+            if new_status == ResponseStatus.REJECTED and old_status != ResponseStatus.REJECTED:
+                await service.create_response_status_changed_notification(
+                    user_id=response.expert_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=responses_action_url,
+                )
+
+            if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
+                await service.create_response_status_changed_notification(
+                    user_id=response.expert_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=responses_action_url,
+                )
+
+        if actor.role == UserRole.EXPERT:
+            if new_status == ResponseStatus.IN_PROGRESS and not expert_was_confirmed:
+                await service.create_response_status_changed_notification(
+                    user_id=order.customer_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=chat_action_url,
+                )
+
+            if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
+                await service.create_response_status_changed_notification(
+                    user_id=order.customer_id,
+                    order_title=order_title,
+                    actor_role=actor.role,
+                    status_from=old_status,
+                    status_to=new_status,
+                    reason=ResponseStatusChangeReason.DIRECT_CHANGE,
+                    action_url=responses_action_url,
+                )
 
     async def ensure_expert(self, expert_id: int) -> User:
         result = await self.db.execute(select(User).where(User.id == expert_id))
@@ -159,6 +300,8 @@ class ResponseService:
         actor = await self.get_actor(actor_id)
         response = await self.get_response_by_id(response_id)
         status_to_set = new_status
+        expert_was_confirmed = response.expert_confirmed or False
+        auto_rejected_expert_ids: list[int] = []
 
         if actor.role == UserRole.EXPERT:
             if response.expert_id != actor.id:
@@ -262,6 +405,7 @@ class ResponseService:
                     refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
                     for other_resp in other_responses:
                         other_resp.status = ResponseStatus.REJECTED
+                        auto_rejected_expert_ids.append(other_resp.expert_id)
                         expert_result = await self.db.execute(select(User).where(User.id == other_resp.expert_id))
                         expert = expert_result.scalars().first()
                         if expert:
@@ -301,6 +445,15 @@ class ResponseService:
                 expert.balance += refund_amount
 
         await self.db.flush()
+
+        await self.notify_response_status_change(
+            response=response,
+            actor=actor,
+            old_status=old_status,
+            new_status=status_to_set,
+            expert_was_confirmed=expert_was_confirmed,
+            auto_rejected_expert_ids=auto_rejected_expert_ids,
+        )
 
         if status_to_set == ResponseStatus.REJECTED and response.order:
             order_result = await self.db.execute(

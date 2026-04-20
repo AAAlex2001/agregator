@@ -39,6 +39,7 @@ export { default as ChatSendIcon } from "./ChatSendIcon";
 export { default as ChatChevronDownIcon } from "./ChatChevronDownIcon";
 export { default as ChatCheckReadIcon } from "./ChatCheckReadIcon";
 export { default as ChatCheckSentIcon } from "./ChatCheckSentIcon";
+export { default as CloseIcon } from "./CloseIcon";
 export { default as TabOrdersIcon } from "./TabOrdersIcon";
 export { default as TabResponsesIcon } from "./TabResponsesIcon";
 export { default as TabChatIcon } from "./TabChatIcon";
