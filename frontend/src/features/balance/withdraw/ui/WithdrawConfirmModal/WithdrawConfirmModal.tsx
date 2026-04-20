@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/shared/ui/Button";
-import type { ResponseBadge } from "@/features/response/shared/model/types";
+import type { ResponseBadge } from "@/source/entities/response";
 import styles from "./withdrawConfirmModal.module.scss";
 
 interface WithdrawConfirmModalProps {

@@ -6,7 +6,7 @@ import { formatBalance } from "@/shared/lib/formatMoney";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { BalanceTopUpModal, useDepositState, usePaymentHistoryState, handleDeposit } from "@/features/balance/topup";
 import { BalanceWithdrawModal, useWithdrawState, handleWithdraw } from "@/features/balance/withdraw";
-import { TransactionList } from "@/entities/payment";
+import { TransactionList } from "@/source/entities/payment";
 
 interface FinancePanelProps {
   balance: number;

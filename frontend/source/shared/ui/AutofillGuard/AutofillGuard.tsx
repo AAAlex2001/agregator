@@ -1,14 +1,16 @@
+import type React from "react";
+
 interface AutofillGuardProps {
   idPrefix: string;
 }
 
-const hiddenFieldStyle = {
+const hiddenFieldStyle: React.CSSProperties = {
   position: "absolute",
   left: "-9999px",
   width: "1px",
   height: "1px",
   opacity: 0,
-  pointerEvents: "none" as const,
+  pointerEvents: "none",
 };
 
 export default function AutofillGuard({ idPrefix }: AutofillGuardProps) {

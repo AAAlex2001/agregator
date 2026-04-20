@@ -1,17 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState, type FocusEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlusIcon } from "@/source/shared/ui/icons";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import s from "./ProfileAvatarUpload.module.scss";
-
-const uploadMotion = {
-  type: "spring",
-  stiffness: 360,
-  damping: 28,
-  mass: 0.9,
-} as const;
 
 interface ProfileAvatarUploadProps {
   avatarUrl?: string | null;
@@ -29,22 +22,22 @@ export function ProfileAvatarUpload({
   onSelect,
 }: ProfileAvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [canHover, setCanHover] = useState(false);
   const imageSrc = previewUrl ?? avatarUrl ?? null;
-  const isInteractive = !disabled && isExpanded;
+  const expanded = hover && canHover && !disabled;
 
-  const handleBlur = (event: FocusEvent<HTMLButtonElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      setIsExpanded(false);
-    }
-  };
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover)");
+    const update = () => setCanHover(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   return (
     <div className={s.wrapper}>
-      <div className={s.heading}>
-        <h2 className={s.title}>Фото профиля</h2>
-      </div>
-
+      <h2 className={s.title}>Фото профиля</h2>
       <div className={s.content}>
         <input
           ref={inputRef}
@@ -52,93 +45,46 @@ export function ProfileAvatarUpload({
           accept=".jpg,.jpeg,.png,image/jpeg,image/png"
           className={s.input}
           disabled={disabled}
-          onChange={(event) => {
-            onSelect(event.target.files?.[0] ?? null);
-            event.currentTarget.value = "";
+          onChange={(e) => {
+            onSelect(e.target.files?.[0] ?? null);
+            e.currentTarget.value = "";
           }}
         />
-
-        <div className={s.triggerWrap}>
-          <button
-            type="button"
-            className={s.trigger}
-            disabled={disabled}
-            onClick={() => inputRef.current?.click()}
-            onMouseEnter={() => {
-              if (!disabled) {
-                setIsExpanded(true);
-              }
-            }}
-            onMouseLeave={() => setIsExpanded(false)}
-            onFocus={() => {
-              if (!disabled) {
-                setIsExpanded(true);
-              }
-            }}
-            onBlur={handleBlur}
-          >
-            <motion.span
-              layout
-              className={`${s.avatarRail} ${isInteractive ? s.avatarRailExpanded : ""}`.trim()}
-              transition={uploadMotion}
-            >
-              <motion.span layout className={s.avatarFrame} transition={uploadMotion}>
-                {imageSrc ? (
-                  <>
-                    <UserAvatar src={imageSrc} alt="Фото профиля" className={s.avatar} imageClassName={s.avatarImage} />
-                    <motion.span
-                      className={s.editBadge}
-                      animate={{
-                        rotate: isInteractive ? 90 : 0,
-                        backgroundColor: isInteractive ? "#FF8A00" : "#FFFFFF",
-                        color: isInteractive ? "#FFFFFF" : "#FF8A00",
-                      }}
-                      transition={uploadMotion}
-                    >
-                      <PlusIcon className={s.editBadgeIcon} />
-                    </motion.span>
-                  </>
-                ) : (
-                  <motion.span
-                    className={s.emptyAvatar}
-                    animate={{
-                      backgroundColor: isInteractive ? "#FF8A00" : "#FFDDA9",
-                      boxShadow: isInteractive ? "0 14px 30px rgba(255, 138, 0, 0.28)" : "0 0 0 rgba(255, 138, 0, 0)",
-                    }}
-                    transition={uploadMotion}
-                  >
-                    <motion.span
-                      className={s.plusWrap}
-                      animate={{
-                        rotate: isInteractive ? 90 : 0,
-                        color: isInteractive ? "#FFFFFF" : "#FF8A00",
-                      }}
-                      transition={uploadMotion}
-                    >
-                      <PlusIcon className={s.plus} />
-                    </motion.span>
-                  </motion.span>
-                )}
+        <motion.button
+          type="button"
+          className={s.trigger}
+          disabled={disabled}
+          onClick={() => inputRef.current?.click()}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          animate={{
+            width: expanded ? 260 : 72,
+            backgroundColor: expanded ? "#FFDDA9" : "rgba(255, 221, 169, 0)",
+          }}
+          transition={{ type: "spring", stiffness: 260, damping: 26 }}
+        >
+          <AnimatePresence>
+            {expanded && (
+              <motion.span
+                key="label"
+                className={s.label}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                Загрузите Ваше фото
               </motion.span>
-            </motion.span>
-
-            <AnimatePresence initial={false}>
-              {isInteractive ? (
-                <motion.span
-                  key="avatar-upload-label"
-                  className={s.labelLayer}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -8 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  <span className={s.actionLabel}>Загрузите Ваше фото</span>
-                </motion.span>
-              ) : null}
-            </AnimatePresence>
-          </button>
-        </div>
-
+            )}
+          </AnimatePresence>
+          <span className={s.avatar}>
+            {imageSrc ? (
+              <UserAvatar src={imageSrc} alt="Фото профиля" className={s.avatar} imageClassName={s.avatarImage} />
+            ) : (
+              <PlusIcon className={s.plus} />
+            )}
+          </span>
+        </motion.button>
         <span className={s.hint}>JPG, PNG до 5 МБ</span>
         {error ? <span className={s.error}>{error}</span> : null}
       </div>

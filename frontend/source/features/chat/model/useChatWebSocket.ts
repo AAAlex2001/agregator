@@ -25,7 +25,8 @@ export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }:
       return;
     }
 
-    const wsUrl = buildChatWebSocketUrl(chatUuid);
+    const uuid = chatUuid;
+    const wsUrl = buildChatWebSocketUrl(uuid);
     let socket: WebSocket | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
@@ -38,7 +39,7 @@ export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }:
       socket = new WebSocket(wsUrl);
 
       socket.onopen = () => {
-        void markChatMessagesRead(chatUuid).catch(() => undefined);
+        void markChatMessagesRead(uuid).catch(() => undefined);
       };
 
       socket.onmessage = (event) => {
@@ -50,7 +51,7 @@ export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }:
             onMessageRef.current(message);
 
             if (message.sender_id !== currentUserId) {
-              void markChatMessagesRead(chatUuid).catch(() => undefined);
+              void markChatMessagesRead(uuid).catch(() => undefined);
             }
           }
 

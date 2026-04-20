@@ -1,10 +1,67 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Loader } from "@/shared/ui";
 import { LogoIcon } from "@/shared/ui/icons";
-import { useOrderPreviewState } from "@/features/order/preview/model/state";
+import { fetchWithSession } from "@/source/shared/api/session";
+import { API_URL } from "@/source/shared/api/config";
 import styles from "./order-preview.module.scss";
+
+interface PreviewBadge { text: string; variant: string; }
+interface PreviewOrder {
+  id: number;
+  title: string;
+  company: string | null;
+  date: string;
+  sum: string;
+  responses_deadline: string | null;
+  badges: PreviewBadge[];
+  comment: string;
+  technical_files: string[];
+}
+
+function useOrderPreviewState() {
+  const params = useParams();
+  const router = useRouter();
+  const uuid = params?.uuid as string | undefined;
+  const [order, setOrder] = useState<PreviewOrder | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    if (uuid) sessionStorage.setItem("pendingOrderUuid", uuid);
+  }, [uuid]);
+
+  useEffect(() => {
+    if (!uuid) return;
+    setIsLoading(true);
+    fetchWithSession(`${API_URL}/orders/public/${uuid}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Заказ не найден"))))
+      .then((data: PreviewOrder) => setOrder(data))
+      .catch((e) => setError(e instanceof Error ? e.message : "Заказ не найден"))
+      .finally(() => setIsLoading(false));
+  }, [uuid]);
+
+  useEffect(() => {
+    if (!order) return;
+    fetchWithSession(`${API_URL}/users/me`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((profile: { role: string }) => {
+        if (profile.role === "EXPERT") {
+          sessionStorage.removeItem("pendingOrderUuid");
+          router.replace(`/expert/orders?orderId=${order.id}`);
+        } else {
+          setCheckingAuth(false);
+        }
+      })
+      .catch(() => setCheckingAuth(false));
+  }, [order, router]);
+
+  return { order, isLoading, error, checkingAuth };
+}
 
 const variantClassMap: Record<string, string> = {
   BLUE: "badgeBlue", GREEN: "badgeGreen", GRAY: "badgeGray",
