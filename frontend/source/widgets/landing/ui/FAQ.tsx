@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./faq.module.scss";
+import s from "./faq.module.scss";
 import Image from "next/image";
 import Accordion from "@/source/shared/ui/Accordion";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -19,30 +19,33 @@ const FAQ = ({ items }: FAQProps) => {
   };
 
   return (
-    <section className={styles.section} id="faq">
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.backgroundImageCoal}>
+    <section className={s.section} id="faq">
+      <div className={s.content}>
+        <div className={s.header}>
+          <div className={s.backgroundImageCoal}>
             <Image
               src="/coal.svg"
               alt="coal"
               fill
+              unoptimized
               style={{ objectFit: "contain" }}
             />
           </div>
-          <div className={styles.backgroundImageCoal}>
+          <div className={s.backgroundImageCoal}>
             <Image
               src="/gold.svg"
               alt="gold"
               fill
+              unoptimized
               style={{ objectFit: "contain" }}
             />
           </div>
-          <div className={styles.backgroundImageCoal}>
+          <div className={s.backgroundImageCoal}>
             <Image
               src="/copper.svg"
               alt="cooper"
               fill
+              unoptimized
               style={{ objectFit: "contain" }}
             />
           </div>

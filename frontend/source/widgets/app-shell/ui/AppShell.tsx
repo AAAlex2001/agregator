@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Header } from "@/source/widgets/header";
+import { AuthHeader } from "@/source/widgets/header";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      {shouldShowHeader(pathname) ? <Header /> : null}
+      {shouldShowHeader(pathname) ? <AuthHeader /> : null}
       {children}
     </>
   );

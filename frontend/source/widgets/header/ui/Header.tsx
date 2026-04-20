@@ -22,7 +22,7 @@ const NAV: Record<string, { href: string; label: string }[]> = {
   ],
 };
 
-export function Header() {
+export function AuthHeader() {
   const pathname = usePathname();
   const { role } = useSession();
   const links = role ? NAV[role] : [];

@@ -137,7 +137,6 @@ export function ExpertOrdersWidget() {
         order={h.selectedOrder}
         onClose={h.closeModal}
         onRespond={h.onRespond}
-        onTopUp={h.onTopUp}
         balance={h.balance}
         isResponding={h.isResponding}
         initialStep={h.pendingStep}

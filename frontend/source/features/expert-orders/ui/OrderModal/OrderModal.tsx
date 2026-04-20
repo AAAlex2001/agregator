@@ -24,7 +24,6 @@ export function OrderModal({
   order,
   balance,
   onRespond,
-  onTopUp,
   isResponding,
   initialStep = "details",
 }: OrderModalProps) {
@@ -126,7 +125,6 @@ export function OrderModal({
             balance={balance}
             onBack={() => setStep("details")}
             onContinue={() => setStep("offer")}
-            onTopUp={() => void onTopUp(order.commissionAmountRaw)}
           />
         )}
 

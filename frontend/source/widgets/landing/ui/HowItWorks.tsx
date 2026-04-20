@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./how-it-works.module.scss";
+import s from "./how-it-works.module.scss";
 import { useState } from "react";
 import Image from "next/image";
 import Tabs from "@/source/shared/ui/Tabs";
@@ -18,37 +18,37 @@ const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
     const [isExpert, setIsExpert] = useState(false);
 
   return (
-    <section className={styles.section} id="how-it-works">
-        <div className={styles.content}>
-            <div className={styles.header}>
-                <div className={styles.backgroundImage}>
-        <Image src="/belaz.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
+      <section className={s.section} id="how-it-works">
+    <div className={s.content}>
+        <div className={s.header}>
+      <div className={s.backgroundImage}>
+    <Image src="/belaz.svg" alt="Industry background" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
-                <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      <div className={s.backgroundImageCoal}>
+    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
-                <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      <div className={s.backgroundImageCoal}>
+    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
-                <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      <div className={s.backgroundImageCoal}>
+    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
-                <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      <div className={s.backgroundImageCoal}>
+    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
-                <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+      <div className={s.backgroundImageCoal}>
+    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
 
             <Title text="Начните работать за 4 простых шага" />
             <Subtitle text="Платформа устроена максимально прозрачно. Выбирайте свою роль:" />
             </div>
-                <div className={styles.stepsInfo}>
+                <div className={s.stepsInfo}>
                         <Tabs
                           tabs={[
                             { id: 'client', label: 'Я заказчик' },
@@ -57,13 +57,13 @@ const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
                           activeTab={isExpert ? 'expert' : 'client'}
                           onTabChange={(tabId) => setIsExpert(tabId === 'expert')}
                         />
-              <div className={styles.steps}>
+              <div className={s.steps}>
                 {(isExpert ? expertSteps : clientSteps).map((value) => (
-                  <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-                    <div className={styles.iconWrapper}>
-                      <img src={value.icon} alt={value.title} />
+                  <div className={s.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
+                    <div className={s.iconWrapper}>
+                      <img src={value.icon} alt={value.title} loading="lazy" decoding="async" />
                     </div>
-                    <div className={styles.description}>
+                    <div className={s.description}>
                       <h3>{value.title}</h3>
                       <p>{value.description}</p>
                     </div>

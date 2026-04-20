@@ -1,30 +1,29 @@
 import Link from "next/link";
-import styles from "./footer.module.scss";
 import Image from "next/image";
-import Button from "@/source/shared/ui/Button";
+import s from "./footer.module.scss";
 
 const Footer = () => {
   return (
-    <footer className={styles.footer} id="footer">
-        <div className={styles.content}>
-      <div className={styles.primary}>
-          <div className={styles.backgroundImage}>
-        <Image src="/belaz_3.svg" alt="Industry background" fill style={{ objectFit: "contain" }} />
+    <footer className={s.footer} id="footer">
+        <div className={s.content}>
+      <div className={s.primary}>
+          <div className={s.backgroundImage}>
+        <Image src="/belaz_3.svg" alt="Industry background" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
-          <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+          <div className={s.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
-            <div className={styles.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+            <div className={s.backgroundImageCoal}>
+        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
       </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            <div className={s.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+            <div className={s.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
-          <div className={styles.primaryLogo}>
-        <span className={styles.logo}>
+          <div className={s.primaryLogo}>
+        <span className={s.logo}>
 
             <svg width="240" height="43" viewBox="0 0 240 43" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18.0544 22.2405L18.4621 22.4454C19.5354 22.9817 20.719 23.2611 21.919 23.2611C23.119 23.2611 24.3026 22.9817 25.3758 22.4454L25.7835 22.2405M16.1221 10.6519C16.1221 9.62744 16.5293 8.64491 17.254 7.92047C17.9788 7.19605 18.9617 6.78906 19.9866 6.78906H23.8512C24.8762 6.78906 25.8592 7.19605 26.5839 7.92047C27.3087 8.64491 27.7158 9.62744 27.7158 10.6519V12.5834H16.1221V10.6519Z" stroke="url(#paint0_linear_644_2260)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -46,7 +45,7 @@ const Footer = () => {
 
           <h1>Площадка для аттестованных экспертовпромышленной безопасности</h1>
           </div>
-              <div className={styles.links}>
+              <div className={s.links}>
                 <div>
                   <h2>Платформа</h2>
                   <Link href="#about">О нас</Link>
@@ -71,32 +70,14 @@ const Footer = () => {
                 </div>
               </div>
 
-          <div className={styles.chatBlock}>
-                <Button variant="chat" size="md">
-              Чат с поддержкой
-            </Button>
-              <div className={styles.navLinks}>
-                <span className={styles.navLink}>
-                  <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.6667 0C7.46667 0 0 7.46667 0 16.6667C0 25.8667 7.46667 33.3333 16.6667 33.3333C25.8667 33.3333 33.3333 25.8667 33.3333 16.6667C33.3333 7.46667 25.8667 0 16.6667 0ZM24.4 11.3333C24.15 13.9667 23.0667 20.3667 22.5167 23.3167C22.2833 24.5667 21.8167 24.9833 21.3833 25.0333C20.4167 25.1167 19.6833 24.4 18.75 23.7833C17.2833 22.8167 16.45 22.2167 15.0333 21.2833C13.3833 20.2 14.45 19.6 15.4 18.6333C15.65 18.3833 19.9167 14.5 20 14.15C20.0116 14.097 20.01 14.042 19.9955 13.9897C19.981 13.9374 19.9539 13.8894 19.9167 13.85C19.8167 13.7667 19.6833 13.8 19.5667 13.8167C19.4167 13.85 17.0833 15.4 12.5333 18.4667C11.8667 18.9167 11.2667 19.15 10.7333 19.1333C10.1333 19.1167 9 18.8 8.15 18.5167C7.1 18.1833 6.28333 18 6.35 17.4167C6.38333 17.1167 6.8 16.8167 7.58333 16.5C12.45 14.3833 15.6833 12.9833 17.3 12.3167C21.9333 10.3833 22.8833 10.05 23.5167 10.05C23.65 10.05 23.9667 10.0833 24.1667 10.25C24.3333 10.3833 24.3833 10.5667 24.4 10.7C24.3833 10.8 24.4167 11.1 24.4 11.3333Z" fill="white"/>
-</svg>
-                </span>
-                <span className={styles.navLink}>
-                  <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M33.3333 16.6667C33.3333 7.46667 25.8667 0 16.6667 0C7.46667 0 0 7.46667 0 16.6667C0 24.7333 5.73333 31.45 13.3333 33V21.6667H10V16.6667H13.3333V12.5C13.3333 9.28333 15.95 6.66667 19.1667 6.66667H23.3333V11.6667H20C19.0833 11.6667 18.3333 12.4167 18.3333 13.3333V16.6667H23.3333V21.6667H18.3333V33.25C26.75 32.4167 33.3333 25.3167 33.3333 16.6667Z" fill="white"/>
-</svg>
-                </span>
-                <span className={styles.navLink}>
-                  <svg width="34" height="24" viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.3333 16.6667L21.9833 11.6667L13.3333 6.66667V16.6667ZM32.6 3.61667C32.8167 4.4 32.9667 5.45 33.0667 6.78333C33.1833 8.11667 33.2333 9.26667 33.2333 10.2667L33.3333 11.6667C33.3333 15.3167 33.0667 18 32.6 19.7167C32.1833 21.2167 31.2167 22.1833 29.7167 22.6C28.9333 22.8167 27.5 22.9667 25.3 23.0667C23.1333 23.1833 21.15 23.2333 19.3167 23.2333L16.6667 23.3333C9.68333 23.3333 5.33333 23.0667 3.61667 22.6C2.11667 22.1833 1.15 21.2167 0.733333 19.7167C0.516667 18.9333 0.366667 17.8833 0.266667 16.55C0.15 15.2167 0.0999999 14.0667 0.0999999 13.0667L0 11.6667C0 8.01667 0.266667 5.33333 0.733333 3.61667C1.15 2.11667 2.11667 1.15 3.61667 0.733333C4.4 0.516667 5.83333 0.366666 8.03333 0.266666C10.2 0.15 12.1833 0.0999999 14.0167 0.0999999L16.6667 0C23.65 0 28 0.266667 29.7167 0.733333C31.2167 1.15 32.1833 2.11667 32.6 3.61667Z" fill="white"/>
-</svg>
-                </span>
-              </div>
+          {/*
+          <div className={s.chatBlock}>
           </div>
+          */}
 
       </div>
-      <div className={styles.bottom}>
-        <div className={styles.bottomLinks}>
+      <div className={s.bottom}>
+        <div className={s.bottomLinks}>
             <span>*Все эксперты имеют аттестацию Ростехнадзора согласно
             <a href="https://www.gosnadzor.ru/service/list/certification%20experts/%D0%9F%D1%80-287%20%D0%BE%D1%82%2031.08.2022.pdf?ysclid=mi265psds810889564"
                target="_blank"
@@ -105,7 +86,7 @@ const Footer = () => {
             Приказу № 287 от 31.08.2022 г.
             </a>
             </span>
-            <div className={styles.bottomLinksButtoms}>
+            <div className={s.bottomLinksButtoms}>
           <p>Пользовательское соглашение</p>
           <p>Политика конфиденциальности</p>
           <p>Политика обработки данных</p>

@@ -9,9 +9,9 @@ import { OrderSummaryPanel } from "./OrderSummaryPanel";
 import s from "./TenderStep.module.scss";
 
 const GUARANTEES = [
-  "При выборе вашей кандидатуры спишется только 5% от вашей цены, остаток вернётся на счёт",
-  "При отклонении заказчиком вашей кандидатуры средства возвращаются в полном объёме",
-  "Все возвраты выполняются автоматически в течение 1-10 рабочих дней",
+  "Подача заявки сейчас бесплатна и доступна сразу после заполнения предложения.",
+  "После отправки отклик сразу появится у заказчика в работе по заказу.",
+  "Если заказчик выберет вас, детали можно будет согласовать напрямую в чате.",
 ];
 
 interface Props {
@@ -19,36 +19,30 @@ interface Props {
   balance: number;
   onBack: () => void;
   onContinue: () => void;
-  onTopUp: () => void;
 }
 
 function formatBalance(value: number) {
   return `${Math.floor(value / 100).toLocaleString("ru-RU")} ₽`;
 }
 
-export function TenderStep({ order, balance, onBack, onContinue, onTopUp }: Props) {
+export function TenderStep({ order, balance, onBack, onContinue }: Props) {
   const [isOpen, setIsOpen] = useState(true);
-  const needsTopUp = order.commissionAmountRaw > 0 && balance < order.commissionAmountRaw;
-  const isUndefined = order.commissionAmount === "Не определено" || order.commissionAmount === "0 ₽" || order.commissionAmount === "0 ₽";
 
   return (
     <div className={base.section}>
-      <ModalHeader title="Отклик на заказ" step="Шаг 1. Участие в тендере" />
+      <ModalHeader title="Отклик на заказ" step="Шаг 1. Подтверждение заявки" />
       <OrderSummaryPanel order={order} />
 
       <div className={s.infoCard}>
         <div className={s.commissionRow}>
           <span className={s.accentText}>
-            {isUndefined
-              ? "Бюджет заказа не определён. Взнос 5% будет рассчитан от вашей предложенной стоимости."
-              : "Для подачи заявки требуется взнос 5% от суммы заказа:"}
+            Подача заявки сейчас бесплатна. Проверьте условия заказа и переходите к заполнению предложения.
           </span>
-          {!isUndefined && <span className={s.commissionValue}>{order.commissionAmount}</span>}
         </div>
 
         <div className={s.guaranteesCard}>
           <button type="button" className={s.guaranteesToggle} onClick={() => setIsOpen((prev) => !prev)}>
-            <span className={s.guaranteesTitle}>Ваши гарантии</span>
+            <span className={s.guaranteesTitle}>Что будет дальше</span>
             <svg className={`${s.guaranteesChevron} ${isOpen ? s.guaranteesChevronOpen : ""}`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 9L12 15L18 9" stroke="#FFDDA9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -70,24 +64,18 @@ export function TenderStep({ order, balance, onBack, onContinue, onTopUp }: Prop
 
         <div className={s.balanceRow}>
           <div className={s.balanceInfo}>
-            <span className={s.balanceLabel}>На вашем счёте:</span>
+            <span className={s.balanceLabel}>Текущий баланс:</span>
             <span className={s.balanceValue}>{formatBalance(balance)}</span>
           </div>
-
-          <Button variant="secondary" size="sm" onClick={onTopUp} disabled={!needsTopUp}>
-            Пополнить баланс
-          </Button>
         </div>
-
-        {needsTopUp && <span className={s.warning}>Недостаточно средств для подачи заявки</span>}
       </div>
 
       <div className={base.actionRow}>
         <Button variant="outline" size="sm" fullWidth onClick={onBack}>
           Отменить
         </Button>
-        <Button variant="primary" size="sm" fullWidth disabled={needsTopUp} onClick={onContinue}>
-          Оплатить участие
+        <Button variant="primary" size="sm" fullWidth onClick={onContinue}>
+          Продолжить
         </Button>
       </div>
     </div>

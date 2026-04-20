@@ -38,9 +38,7 @@ export function OfferStep({
   onSubmit,
 }: Props) {
   const canSubmit = deadline.trim() !== "" && Number(cost) > 0;
-  const commissionText = order.commissionAmountRaw > 0
-    ? `Взнос ${order.commissionAmount} будет удержан после выбора вашей кандидатуры.`
-    : "Взнос 5% будет рассчитан от вашей предложенной стоимости.";
+  const commissionText = "Подача заявки бесплатна. После отправки заказчик сразу увидит ваше предложение и сможет связаться с вами.";
 
   return (
     <div className={base.section}>

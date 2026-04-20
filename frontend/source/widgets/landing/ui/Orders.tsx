@@ -6,7 +6,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Image from "next/image";
 
-import styles from "./orders.module.scss";
+import s from "./orders.module.scss";
 import Button from "@/source/shared/ui/Button";
 import Card from "@/source/shared/ui/Card";
 import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
@@ -19,16 +19,16 @@ type OrdersProps = {
 
 const Orders = ({ orders }: OrdersProps) => {
   return (
-    <section className={styles.section} id="orders">
-      <div className={styles.content}>
-        <header className={styles.header}>
+    <section className={s.section} id="orders">
+      <div className={s.content}>
+        <header className={s.header}>
           <Title text="Примеры работ на платформе" />
           <Subtitle text="Актуальные проекты от предприятий горнодобывающей отрасли. Находите подходящие и откликайтесь напрямую" />
         </header>
       </div>
 
-      <div className={styles.list}>
-  <div className={styles.arrows}>
+      <div className={s.list}>
+  <div className={s.arrows}>
     <SwiperNavigation
       prevClassName="orders-nav-btn--prev"
       nextClassName="orders-nav-btn--next"
@@ -51,7 +51,7 @@ const Orders = ({ orders }: OrdersProps) => {
     className="orders-swiper"
   >
     {orders.map((order) => (
-      <SwiperSlide key={order.title} className={styles.slide}>
+      <SwiperSlide key={order.title} className={s.slide}>
         <Card
           variant="order"
           title={order.title}
@@ -63,12 +63,12 @@ const Orders = ({ orders }: OrdersProps) => {
   </Swiper>
       </div>
 
-      <Button variant="secondary" className={styles.checkButton}>
+      <Button variant="secondary" className={s.checkButton}>
         Смотреть все заказы
       </Button>
 
-      <div className={styles.backgroundImage}>
-        <Image src="/orderss.png" alt="Orders background" fill style={{ objectFit: "cover" }} />
+      <div className={s.backgroundImage}>
+        <Image src="/orderss.png" alt="Orders background" fill sizes="100vw" quality={70} style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

@@ -6,7 +6,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Image from "next/image";
 
-import styles from "./reviews.module.scss";
+import s from "./reviews.module.scss";
 import Card from "@/source/shared/ui/Card";
 import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -18,26 +18,26 @@ type ReviewsProps = {
 
 const Reviews = ({ reviews }: ReviewsProps) => {
   return (
-    <section className={styles.section} id="reviews">
-      <div className={styles.content}>
-        <div className={styles.headerRow}>
-          <header className={styles.header}>
+    <section className={s.section} id="reviews">
+      <div className={s.content}>
+        <div className={s.headerRow}>
+          <header className={s.header}>
             <Title text="О&nbsp;нас говорят профессионалы" />
             <Subtitle text="Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный заказ на&nbsp;нашей платформе" />
           </header>
 
-          <div className={styles.arrows}>
-            <div className={styles.backgroundImageBelAz}>
-              <Image src="/belaz_2.svg" alt="Belaz" fill style={{ objectFit: "contain" }} />
+          <div className={s.arrows}>
+            <div className={s.backgroundImageBelAz}>
+              <Image src="/belaz_2.svg" alt="Belaz" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/coal.svg" alt="coal" fill style={{ objectFit: "contain" }} />
+            <div className={s.backgroundImageCoal}>
+              <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
-            <div className={styles.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill style={{ objectFit: "contain" }} />
+            <div className={s.backgroundImageCoal}>
+              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
-              <div className={styles.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="cooper" fill style={{ objectFit: "contain" }} />
+              <div className={s.backgroundImageCoal}>
+              <Image src="/copper.svg" alt="cooper" fill unoptimized style={{ objectFit: "contain" }} />
             </div>
             <SwiperNavigation
               prevClassName="reviews-nav-btn--prev"
@@ -47,7 +47,7 @@ const Reviews = ({ reviews }: ReviewsProps) => {
         </div>
       </div>
 
-      <div className={styles.list}>
+      <div className={s.list}>
         <Swiper
           className="reviews-swiper"
           modules={[Navigation, Pagination]}
@@ -64,7 +64,7 @@ const Reviews = ({ reviews }: ReviewsProps) => {
           }}
         >
           {reviews.map((review) => (
-            <SwiperSlide key={review.id} className={styles.slide}>
+            <SwiperSlide key={review.id} className={s.slide}>
               <Card
                 variant="review"
                 text={review.text}
@@ -76,11 +76,13 @@ const Reviews = ({ reviews }: ReviewsProps) => {
         </Swiper>
       </div>
 
-      <div className={styles.backgroundImage}>
+      <div className={s.backgroundImage}>
         <Image
           src="/reviews.png"
           alt="Reviews background"
           fill
+          sizes="100vw"
+          quality={70}
           style={{ objectFit: "cover" }}
         />
       </div>

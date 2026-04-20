@@ -5,7 +5,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import styles from "./industry-directions.module.scss";
+import s from "./industry-directions.module.scss";
 import Image from "next/image";
 import { useState } from "react";
 import Card from "@/source/shared/ui/Card";
@@ -21,13 +21,13 @@ const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
   return (
-    <section className={styles.section} id="advantages">
-      <div className={styles.content}>
-        <Title text="Эксперты по промышленной безопасности для всех отраслей промышленности" className={styles.title} />
-        <Subtitle text="От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации" className={styles.subtitle} />
+    <section className={s.section} id="advantages">
+      <div className={s.content}>
+        <Title text="Эксперты по промышленной безопасности для всех отраслей промышленности" className={s.title} />
+        <Subtitle text="От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации" className={s.subtitle} />
       </div>
-      <div className={styles.card}>
-        <div className={styles.arrows}>
+      <div className={s.card}>
+        <div className={s.arrows}>
           <SwiperNavigation
             prevClassName="industry-nav-btn--prev"
             nextClassName="industry-nav-btn--next"
@@ -52,10 +52,10 @@ const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
               allowTouchMove: false,
             },
           }}
-          className={`${styles.swiper} industry-swiper`}
+          className={`${s.swiper} industry-swiper`}
         >
           {industries.map((industry) => (
-            <SwiperSlide key={industry.id} className={styles.slide}>
+            <SwiperSlide key={industry.id} className={s.slide}>
               <Card
                 variant="industry"
                 title={industry.title}
@@ -69,8 +69,8 @@ const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
           ))}
         </Swiper>
       </div>
-      <div className={styles.backgroundImage}>
-        <Image src="/industry.png" alt="Industry background" fill style={{ objectFit: "cover" }} />
+      <div className={s.backgroundImage}>
+        <Image src="/industry.png" alt="Industry background" fill sizes="100vw" quality={70} style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

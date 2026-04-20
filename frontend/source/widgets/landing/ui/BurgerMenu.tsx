@@ -5,7 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { scrollToAnchor } from "../lib/scrollToAnchor";
-import styles from "./burgerMenu.module.scss";
+import s from "./burgerMenu.module.scss";
 
 const NAV_LINKS = [
   { href: "#how-it-works", label: "Как это работает" },
@@ -34,7 +34,7 @@ const BurgerMenu = () => {
   return (
     <>
       <button
-        className={`${styles.burgerButton} ${isOpen ? styles.open : ""}`}
+        className={`${s.burgerButton} ${isOpen ? s.open : ""}`}
         onClick={toggleMenu}
         aria-label="Открыть меню"
         aria-expanded={isOpen}
@@ -46,9 +46,9 @@ const BurgerMenu = () => {
 
       {isOpen && (
         <>
-          <nav className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
-            <div className={styles.menuHeader}>
-              <div className={styles.menuLogo}>
+          <nav className={`${s.menu} ${isOpen ? s.menuOpen : ""}`}>
+            <div className={s.menuHeader}>
+              <div className={s.menuLogo}>
                 <LogoIcon />
               </div>
             </div>
@@ -57,13 +57,13 @@ const BurgerMenu = () => {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleSmoothScroll(e, link.href)}
-                className={styles.menuLink}
+                className={s.menuLink}
               >
                 {link.label}
               </Link>
             ))}
-            <div className={styles.menuActions}>
-              <Link href="/register" className={styles.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
+            <div className={s.menuActions}>
+              <Link href="/register" className={s.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
             </div>
           </nav>
         </>

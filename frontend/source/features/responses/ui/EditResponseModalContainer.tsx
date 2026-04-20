@@ -51,6 +51,10 @@ function buildOrder(response: ResponseCardData): OrderCardData {
 }
 
 function buildCommissionText(response: ResponseCardData): string {
+  if (!response.commissionAmount || response.commissionAmount === "0 ₽" || response.commissionAmount === "0 ₽") {
+    return "Подача заявки бесплатна";
+  }
+
   return [response.commissionText, response.commissionAmount, response.commissionStatus]
     .filter(Boolean)
     .join(" ");

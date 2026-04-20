@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./advantages.module.scss";
+import s from "./advantages.module.scss";
 import { useState } from "react";
 import Card from "@/source/shared/ui/Card";
 import { CommentIcon, DiplomaIcon, QuickIcon, SearchIcon } from "@/source/shared/ui/icons";
@@ -40,8 +40,8 @@ const Advantages = ({ features }: AdvantagesProps) => {
   };
 
   return (
-    <section className={styles.section} id="advantages">
-      <div className={styles.card}>
+    <section className={s.section} id="advantages">
+      <div className={s.card}>
         {features.map((feature) => {
           const isOpen = openedCards.has(feature.id);
           return (

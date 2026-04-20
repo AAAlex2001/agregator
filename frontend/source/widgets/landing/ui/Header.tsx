@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import BurgerMenu from "./BurgerMenu";
 import { scrollToAnchor } from "../lib/scrollToAnchor";
-import styles from "./header.module.scss";
+import s from "./header.module.scss";
 
 const NAV_LINKS = [
   { href: "#how-it-works", label: "Как это работает" },
@@ -21,28 +21,28 @@ const Header = () => {
   };
 
   return (
-    <header className={styles.header}>
-      <div className={styles.container}>
-        <div className={styles.brand}>
-          <span className={styles.logo}>
+    <header className={s.header}>
+      <div className={s.container}>
+        <div className={s.brand}>
+          <span className={s.logo}>
             <LogoIcon />
           </span>
         </div>
-        <nav className={styles.nav}>
+        <nav className={s.nav}>
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} onClick={(e) => handleSmoothScroll(e, link.href)}>
               {link.label}
             </Link>
           ))}
         </nav>
-        <div className={styles.actions}>
-          <Link href="/login" className={styles.login}> Войти
+        <div className={s.actions}>
+          <Link href="/login" className={s.login}> Войти
           </Link>
-          <Link href="/register" className={styles.signUp}>  Зарегистрироваться
+          <Link href="/register" className={s.signUp}>  Зарегистрироваться
           </Link>
         </div>
-        <div className={styles.mobileActions}>
-          <Link href="/login" className={styles.mobileLogin}>Войти</Link>
+        <div className={s.mobileActions}>
+          <Link href="/login" className={s.mobileLogin}>Войти</Link>
           <BurgerMenu />
         </div>
       </div>

@@ -19,7 +19,7 @@ import {
 	LandingKeyAdvantages,
 	LandingOrders,
 	LandingReviews,
-} from "@/source/widgets/main-pages";
+} from "@/source/widgets/landing";
 
 export const metadata: Metadata = {
 	title: "Промышленная безопасность — платформа экспертов и заказов",

@@ -1,6 +1,6 @@
 "use client"
 
-import styles from "./key-advantages.module.scss";
+import s from "./key-advantages.module.scss";
 import { useState } from "react";
 import Image from "next/image";
 import Tabs from "@/source/shared/ui/Tabs";
@@ -18,13 +18,13 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
     const [isExpert, setIsExpert] = useState(false);
 
   return (
-    <section className={styles.section} id="key-advantages">
-        <div className={styles.content}>
-            <div className={styles.header}>
+    <section className={s.section} id="key-advantages">
+      <div className={s.content}>
+        <div className={s.header}>
             <Title text="Начните работать за 4 простых шага" />
             <Subtitle text="Платформа устроена максимально прозрачно. Выбирайте свою роль:" />
             </div>
-                <div className={styles.stepsInfo}>
+          <div className={s.stepsInfo}>
                         <Tabs
                           tabs={[
                             { id: 'client', label: 'Я заказчик' },
@@ -33,17 +33,17 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
                           activeTab={isExpert ? 'expert' : 'client'}
                           onTabChange={(tabId) => setIsExpert(tabId === 'expert')}
                         />
-              <div className={styles.steps}>
+              <div className={s.steps}>
                 {(isExpert ? expertSteps : clientSteps).map((value) => (
-                  <div className={styles.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
-                    <div className={styles.iconWrapper}>
-                      <img src={value.icon} alt={value.title} />
+                  <div className={s.step} key={`${isExpert ? 'expert' : 'client'}-${value.id}`}>
+                    <div className={s.iconWrapper}>
+                      <img src={value.icon} alt={value.title} loading="lazy" decoding="async" />
                     </div>
-                    <div className={styles.description}>
+                    <div className={s.description}>
                       <h3>{value.title}</h3>
                       <p>{value.description}</p>
                       {value.subDescription && (
-                        <span className={styles.subDescription}>{value.subDescription}</span>
+                        <span className={s.subDescription}>{value.subDescription}</span>
                       )}
                     </div>
                   </div>
@@ -51,8 +51,8 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
               </div>
                     </div>
             </div>
-      <div className={styles.backgroundImage}>
-        <Image src="/key-advantages.png" alt="Key advantages background" fill style={{ objectFit: "cover"  }} />
+      <div className={s.backgroundImage}>
+        <Image src="/key-advantages.png" alt="Key advantages background" fill sizes="100vw" quality={70} style={{ objectFit: "cover"  }} />
       </div>
     </section>
   );

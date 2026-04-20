@@ -15,7 +15,6 @@ export interface OrderModalProps {
   order: OrderCardData | null;
   balance: number;
   onRespond: (order: OrderCardData, formData: RespondFormData) => void;
-  onTopUp: (amount: number) => void | Promise<void>;
   isResponding: boolean;
   initialStep?: ModalStep;
 }

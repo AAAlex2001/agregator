@@ -5,7 +5,7 @@ import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
-import { fetchOrders, respondToOrder, createPayment } from "../api/expert-orders.api";
+import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
 import { useOrdersWs } from "../lib/useOrdersWs";
 import type { ModalStep, RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
@@ -107,17 +107,6 @@ export function useExpertOrders() {
     }
   };
 
-  const onTopUp = async (amount: number) => {
-    if (!s.selectedOrder) return;
-    const returnUrl = `${window.location.origin}/expert/orders?orderId=${s.selectedOrder.id}`;
-    try {
-      const { confirmation_url } = await createPayment(amount, returnUrl);
-      window.location.href = confirmation_url;
-    } catch {
-      window.location.href = `/settings?section=finance&returnOrderId=${s.selectedOrder.id}`;
-    }
-  };
-
   return {
     ...s,
     balance,
@@ -131,6 +120,5 @@ export function useExpertOrders() {
     closeModal,
     onShare,
     onRespond,
-    onTopUp,
   };
 }
