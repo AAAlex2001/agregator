@@ -81,6 +81,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     expertAvatarUrl: item.expert_avatar_url ?? null,
     expertRating: item.expert_rating,
     expertReviewCount: item.expert_review_count ?? 0,
+    expertPublicId: item.expert_public_id || "",
     hasReview: item.has_review ?? false,
   };
 }

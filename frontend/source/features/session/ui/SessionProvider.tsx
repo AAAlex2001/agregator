@@ -25,7 +25,7 @@ export function SessionProvider({ initialRole = null, children }: SessionProvide
   );
 
   useEffect(() => {
-    if (routeRole && state.role !== routeRole) {
+    if (routeRole && state.role === null) {
       dispatch({ type: "SET_ROLE", role: routeRole });
     }
   }, [routeRole, state.role]);

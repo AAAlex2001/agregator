@@ -28,6 +28,7 @@ export function writeSessionRoleCookie(role: SessionRole | null) {
 
 export function getRouteSessionRole(pathname: string): SessionRole | null {
   if (pathname.startsWith("/customer")) return "CUSTOMER";
-  if (pathname.startsWith("/expert")) return "EXPERT";
+  if (pathname === "/expert/reviews") return "EXPERT";
+  if (pathname === "/expert/orders" || pathname.startsWith("/expert/orders/")) return "EXPERT";
   return null;
 }

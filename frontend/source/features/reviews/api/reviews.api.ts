@@ -11,3 +11,13 @@ export async function fetchMyReviews(): Promise<ReviewListResponse> {
 
   return response.json();
 }
+
+export async function fetchExpertReviews(publicId: string): Promise<ReviewListResponse> {
+  const response = await fetchWithSession(`${API_URL}/experts/${publicId}/reviews`);
+
+  if (!response.ok) {
+    throw new Error("Не удалось загрузить отзывы");
+  }
+
+  return response.json();
+}

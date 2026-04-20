@@ -4,8 +4,21 @@ import s from "./ReviewCardSkeleton.module.scss";
 export function ReviewCardSkeleton() {
   return (
     <article className={s.card}>
-      <Skeleton className={s.customer} />
-      <Skeleton className={s.order} />
+      <div className={s.summary}>
+        <Skeleton className={s.summaryLabel} />
+        <Skeleton className={s.summaryValue} />
+      </div>
+
+      <div className={s.dropdown}>
+        <div className={s.field}>
+          <Skeleton className={s.fieldLabel} />
+          <Skeleton className={s.fieldValue} />
+        </div>
+        <div className={s.field}>
+          <Skeleton className={s.fieldLabel} />
+          <Skeleton className={s.fieldWideValue} />
+        </div>
+      </div>
 
       <div className={s.ratingDate}>
         <div className={s.stars}>

@@ -43,6 +43,7 @@ export interface ResponseApiItem {
   expert_avatar_url: string | null;
   expert_rating: number | null;
   expert_review_count: number;
+  expert_public_id: string;
   confirm_deadline: string;
   expert_confirmed: boolean;
   has_review: boolean;
@@ -93,6 +94,7 @@ export interface ResponseCardData {
   expertAvatarUrl: string | null;
   expertRating: number | null;
   expertReviewCount: number;
+  expertPublicId: string;
   hasReview: boolean;
 }
 

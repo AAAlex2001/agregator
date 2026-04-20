@@ -55,6 +55,7 @@ export function ResponseCard({ card, actions, role }: Props) {
             avatarUrl={card.expertAvatarUrl}
             rating={card.expertRating}
             reviewCount={card.expertReviewCount}
+            expertPublicId={card.expertPublicId}
           />
         )}
         <OrderSection

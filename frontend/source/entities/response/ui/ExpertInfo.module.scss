@@ -18,8 +18,26 @@
 }
 .details { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
 .name { font-weight: 600; font-size: 16px; color: #1a1a1a; }
-.ratingRow { display: flex; align-items: center; gap: 4px; }
-.rating { font-weight: 500; font-size: 14px; color: #1a1a1a; }
-.dot { color: #999; font-size: 14px; }
-.reviews { font-size: 14px; color: #666; }
+.ratingRow { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.rating { font-weight: 500; font-size: 16px; line-height: 20px; color: #000; }
+.dot { color: #1e1e1e; font-size: 16px; line-height: 16px; }
+.reviews,
+.reviewsLink {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #000;
+}
+
+.reviewsLink {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.reviewsLink:hover,
+.reviewsLink:focus-visible {
+  color: #ff8a00;
+}
+
 .noReviews { font-size: 14px; color: #999; }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { StarIcon } from "@/shared/ui/icons";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import s from "./ExpertInfo.module.scss";
@@ -16,9 +17,12 @@ interface Props {
   avatarUrl?: string | null;
   rating: number | null;
   reviewCount: number;
+  expertPublicId?: string;
 }
 
-export function ExpertInfo({ name, avatarUrl, rating, reviewCount }: Props) {
+export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicId }: Props) {
+  const reviewsText = pluralReviews(reviewCount);
+
   return (
     <div className={s.row}>
       <UserAvatar src={avatarUrl} alt={`Фото ${name || "эксперта"}`} className={s.avatar} />
@@ -31,7 +35,13 @@ export function ExpertInfo({ name, avatarUrl, rating, reviewCount }: Props) {
               {rating.toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
             </span>
             <span className={s.dot}>&middot;</span>
-            <span className={s.reviews}>{pluralReviews(reviewCount)}</span>
+            {expertPublicId ? (
+              <Link href={`/expert/reviews/${expertPublicId}`} className={s.reviewsLink}>
+                {reviewsText}
+              </Link>
+            ) : (
+              <span className={s.reviews}>{reviewsText}</span>
+            )}
           </div>
         ) : (
           <span className={s.noReviews}>Отзывов пока нет</span>

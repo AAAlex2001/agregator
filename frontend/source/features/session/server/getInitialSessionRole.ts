@@ -8,14 +8,10 @@ export async function getInitialSessionRole(): Promise<SessionRole | null> {
   const cookieStore = await cookies();
   const cookieRole = normalizeSessionRole(cookieStore.get("user_role")?.value);
 
-  if (cookieRole) {
-    return cookieRole;
-  }
-
   const sessionId = cookieStore.get("session_id")?.value;
 
   if (!sessionId) {
-    return null;
+    return cookieRole;
   }
 
   const envApiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -44,12 +40,12 @@ export async function getInitialSessionRole(): Promise<SessionRole | null> {
     });
 
     if (!response.ok) {
-      return null;
+      return cookieRole;
     }
 
     const body = (await response.json()) as { role?: string };
-    return normalizeSessionRole(body.role);
+    return normalizeSessionRole(body.role) ?? cookieRole;
   } catch {
-    return null;
+    return cookieRole;
   }
 }

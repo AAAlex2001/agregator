@@ -14,10 +14,21 @@ class CreateReviewResponse(BaseModel):
     detail: str
 
 
+class ReviewBadgeItem(BaseModel):
+    text: str
+    variant: str
+
+
 class ReviewItem(BaseModel):
     id: int
     order_title: str
     company_name: str
+    order_sum: str = ""
+    order_deadline: str = ""
+    expert_deadline: str = ""
+    expert_sum: str = ""
+    technical_files: List[str] = Field(default_factory=list)
+    badges: List[ReviewBadgeItem] = Field(default_factory=list)
     rating: int
     comment: str
     created_at: datetime

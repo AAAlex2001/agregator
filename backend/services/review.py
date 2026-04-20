@@ -12,6 +12,17 @@ from models.review import Review
 from models.user import User, UserRole
 
 
+def format_sum(sum_amount: int | None) -> str:
+    if not sum_amount:
+        return "Не определено"
+
+    roubles = sum_amount // 100
+    formatted = f"{roubles:,}".replace(",", " ")
+    if sum_amount % 100:
+        return f"{formatted},{sum_amount % 100:02d} ₽"
+    return f"{formatted} ₽"
+
+
 class ReviewService:
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -82,30 +93,41 @@ class ReviewService:
         """Возвращает все отзывы, оставленные для данного эксперта."""
         result = await self.db.execute(
             select(Review)
-            .options(
-                selectinload(Review.customer),
-            )
             .where(Review.expert_id == expert_id)
             .order_by(Review.created_at.desc())
         )
         reviews = result.scalars().all()
-        order_ids = list({r.order_id for r in reviews})
-        orders_map = {}
-        if order_ids:
-            orders_result = await self.db.execute(
-                select(Order).where(Order.id.in_(order_ids))
+        response_ids = list({r.response_id for r in reviews})
+        responses_map = {}
+        if response_ids:
+            responses_result = await self.db.execute(
+                select(OrderResponse)
+                .options(
+                    selectinload(OrderResponse.order).selectinload(Order.badges),
+                )
+                .where(OrderResponse.id.in_(response_ids))
             )
-            for o in orders_result.scalars().all():
-                orders_map[o.id] = o
+            for response in responses_result.scalars().all():
+                responses_map[response.id] = response
 
         items = []
         for r in reviews:
-            order = orders_map.get(r.order_id)
+            response = responses_map.get(r.response_id)
+            order = response.order if response else None
             company_name = (order.company if order and order.company else "Компания не указана")
             items.append({
                 "id": r.id,
                 "order_title": order.title if order else "",
                 "company_name": company_name,
+                "order_sum": format_sum(order.sum_amount if order else None),
+                "order_deadline": order.deadline.strftime("%d.%m.%Y") if order and order.deadline else "",
+                "expert_deadline": response.proposed_deadline.strftime("%d.%m.%Y") if response and response.proposed_deadline else "",
+                "expert_sum": format_sum(response.proposed_sum_amount if response else None),
+                "technical_files": order.technical_files if order and order.technical_files else [],
+                "badges": [
+                    {"text": badge.text, "variant": badge.variant.value.lower()}
+                    for badge in (order.badges if order and order.badges else [])
+                ],
                 "rating": r.rating,
                 "comment": r.comment,
                 "created_at": r.created_at,

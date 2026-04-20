@@ -21,16 +21,22 @@ function formatDateFull(value: string) {
   });
 }
 
-export function ExpertReviewsWidget() {
-  const model = useExpertReviews();
+export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
+  const model = useExpertReviews(publicId);
   const isEmpty = !model.isLoading && !model.error && model.reviews.length === 0;
   const showRatingInfo = model.isLoading || (!model.error && model.totalReviews > 0);
+  const title = publicId
+    ? (model.expertName ? `Отзывы об эксперте ${model.expertName}` : "Отзывы об эксперте")
+    : "Отзывы наших клиентов";
+  const subtitle = publicId
+    ? "Оценки и комментарии заказчиков по завершённым заказам"
+    : "Смотрите оценки и комментарии по завершённым заказам";
 
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Отзывы наших клиентов" as="h1" className={s.pageTitle} />
-        <Subtitle text="Смотрите оценки и комментарии по завершённым заказам" className={s.pageSubtitle} />
+        <Title text={title} as="h1" className={s.pageTitle} />
+        <Subtitle text={subtitle} className={s.pageSubtitle} />
 
         {showRatingInfo && (
           <div className={s.ratingInfo}>
@@ -91,6 +97,12 @@ export function ExpertReviewsWidget() {
             <ReviewCard
               customer={review.company_name}
               order={review.order_title}
+              orderSum={review.order_sum}
+              orderDeadline={review.order_deadline}
+              expertDeadline={review.expert_deadline}
+              expertSum={review.expert_sum}
+              technicalFiles={review.technical_files}
+              badges={review.badges}
               rating={review.rating}
               date={formatDateFull(review.created_at)}
               comment={review.comment}
