@@ -49,7 +49,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
       ECHO_SQL: ${ECHO_SQL:-false}
-      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
       UVICORN_TIMEOUT_KEEP_ALIVE: ${UVICORN_TIMEOUT_KEEP_ALIVE:-10}
       DB_POOL_SIZE: ${DB_POOL_SIZE:-20}
       DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-20}
