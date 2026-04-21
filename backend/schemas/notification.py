@@ -11,6 +11,7 @@ from models.user import UserRole
 class ResponseStatusChangeReason(str, PyEnum):
     DIRECT_CHANGE = "DIRECT_CHANGE"
     SELECTED_ANOTHER = "SELECTED_ANOTHER"
+    SELECTED_ANOTHER_REVERTED = "SELECTED_ANOTHER_REVERTED"
 
 
 class ResponseUpdateKind(str, PyEnum):

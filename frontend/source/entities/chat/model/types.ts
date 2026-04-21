@@ -35,10 +35,13 @@ export interface ChatMessageData {
   created_at: string;
 }
 
+export type ChatResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
+
 export interface ChatDetailData {
   id: number;
   uuid: string;
   order_id: number;
+  order_public_id: string;
   customer_id: number;
   expert_id: number;
   order_title: string;
@@ -49,5 +52,6 @@ export interface ChatDetailData {
   counterpart_id: number;
   counterpart_name: string;
   counterpart_avatar_url: string | null;
+  response_status: ChatResponseStatus | null;
   messages: ChatMessageData[];
 }

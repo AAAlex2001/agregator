@@ -20,7 +20,12 @@
   background: none;
   cursor: pointer;
   text-align: left;
-  font-weight: 500;
+  color: inherit;
+
+  &:hover .title,
+  &:focus-visible .title {
+    color: #ff8a00;
+  }
 }
 
 .chevron {
@@ -41,23 +46,17 @@
   line-height: 20px;
   color: #000;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .details {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 0;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, opacity 0.2s ease, margin-top 0.3s ease;
-}
-
-.detailsOpen {
   margin-top: 8px;
-  max-height: 140px;
-  opacity: 1;
 }
 
 .customer {
@@ -139,4 +138,24 @@
 .sum {
   font-weight: 500;
   color: #1a1a1a;
+}
+
+.orderLinkRow {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000;
+}
+
+.orderLink {
+  color: #ff8a00;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover,
+  &:focus-visible {
+    color: #c25b00;
+  }
 }

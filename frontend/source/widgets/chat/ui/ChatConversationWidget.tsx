@@ -59,6 +59,7 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
             date={chat.order_date}
             sum={chat.order_sum}
             badges={chat.order_badges}
+            responseStatus={chat.response_status}
           />
         ) : null}
       </div>

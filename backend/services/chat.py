@@ -10,6 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from models.chat import Chat, ChatMessage
 from models.order import Order
+from models.response import OrderResponse
 from models.user import User, UserRole
 from schemas.chat import ChatAttachmentResponse, ChatBadgeResponse, ChatDetailResponse, ChatListItemResponse, ChatMessageResponse
 from services.notification import NotificationService
@@ -315,10 +316,21 @@ class ChatService:
 
         counterpart_id, counterpart_name, counterpart_avatar_url = self.resolve_counterpart(actor_id, actor.role, chat)
 
+        response_status_row = await self.db.execute(
+            select(OrderResponse.status)
+            .where(
+                OrderResponse.order_id == chat.order_id,
+                OrderResponse.expert_id == chat.expert_id,
+            )
+        )
+        response_status_value = response_status_row.scalar_one_or_none()
+        response_status = response_status_value.value if response_status_value is not None else None
+
         return ChatDetailResponse(
             id=chat.id,
             uuid=str(chat.uuid),
             order_id=chat.order_id,
+            order_public_id=chat.order.public_id if chat.order else "",
             customer_id=chat.customer_id,
             expert_id=chat.expert_id,
             order_title=chat.order.title if chat.order else "",
@@ -332,6 +344,7 @@ class ChatService:
             counterpart_id=counterpart_id,
             counterpart_name=counterpart_name,
             counterpart_avatar_url=counterpart_avatar_url,
+            response_status=response_status,
             messages=[
                 ChatMessageResponse(
                     id=message.id,

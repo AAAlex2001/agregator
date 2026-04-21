@@ -37,6 +37,13 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
         setChat(detail);
         setMessages(detail.messages);
         markChatAsRead(chatUuid);
+
+        const hasUnreadFromCounterpart = detail.messages.some(
+          (message) => !message.is_read && message.sender_id !== currentUserId,
+        );
+        if (hasUnreadFromCounterpart) {
+          void markChatMessagesRead(chatUuid).catch(() => undefined);
+        }
       })
       .catch((err) => {
         if (cancelled) {

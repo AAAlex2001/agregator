@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { mapApiToCard } from "@/source/entities/response";
 import type { ResponseCardData, ResponseTabKey, UserRole } from "@/source/entities/response";
 import { fetchResponses, deleteResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
 import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
+
+const VALID_TABS: ResponseTabKey[] = ["review", "in_progress", "rejected", "accepted", "completed"];
 
 const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>> = {
   expert: [
@@ -27,7 +29,12 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
 };
 
 export function useResponses(role: UserRole | null) {
-  const [s, d] = useReducer(reducer, initial);
+  const searchParams = useSearchParams();
+  const initialTab = searchParams?.get("tab") as ResponseTabKey | null;
+  const [s, d] = useReducer(
+    reducer,
+    initialTab && VALID_TABS.includes(initialTab) ? { ...initial, activeTab: initialTab } : initial,
+  );
   const router = useRouter();
 
   const reload = async () => {

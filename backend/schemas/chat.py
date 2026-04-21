@@ -59,6 +59,7 @@ class ChatDetailResponse(BaseModel):
     id: int
     uuid: str
     order_id: int
+    order_public_id: str
     customer_id: int
     expert_id: int
     order_title: str
@@ -69,6 +70,7 @@ class ChatDetailResponse(BaseModel):
     counterpart_id: int
     counterpart_name: str
     counterpart_avatar_url: str | None = None
+    response_status: str | None = None
     messages: list[ChatMessageResponse]
 
 

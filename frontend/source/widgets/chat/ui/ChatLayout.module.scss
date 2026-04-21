@@ -32,11 +32,13 @@
   }
 
   .sidebarPane {
-    flex: 0 0 24%;
+    flex: 0 0 360px;
+    max-width: 360px;
   }
 
   .contentPane {
     flex: 1 1 0;
+    min-width: 0;
   }
 }
 

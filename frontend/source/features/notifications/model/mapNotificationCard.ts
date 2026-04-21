@@ -57,6 +57,18 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
   const statusTo = payload.status_to;
   const reason = payload.reason;
 
+  if (actorRole === "CUSTOMER" && statusTo === "REVIEW" && reason === "SELECTED_ANOTHER_REVERTED") {
+    return {
+      id: item.id,
+      title: "Ваш отклик снова на рассмотрении",
+      message: `Заказчик отклонил ранее выбранного исполнителя по заказу «${orderTitle}». Ваш отклик снова участвует в рассмотрении.`,
+      actionLabel: item.action_url ? "Открыть отклики" : null,
+      actionUrl: item.action_url,
+      isRead: item.is_read,
+      createdAt: item.created_at,
+    };
+  }
+
   if (actorRole === "CUSTOMER" && statusTo === "ACCEPTED") {
     return {
       id: item.id,

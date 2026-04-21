@@ -68,9 +68,7 @@ function customerActions(card: ResponseCardData, loading: Loading, h: Handlers):
       ];
     case "IN_PROGRESS":
       return [
-        ...(card.expertConfirmed ? [] : [
-          { text: "Отклонить", variant: "transparent" as const, onClick: () => h.onReject?.(card.id), isLoading: loading === "reject" },
-        ]),
+        { text: "Отклонить", variant: "transparent", onClick: () => h.onReject?.(card.id), isLoading: loading === "reject" },
         { text: "Чат с экспертом", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         { text: "Завершить проект", variant: "green", onClick: () => h.onComplete?.(card.id), isLoading: loading === "complete" },
       ];

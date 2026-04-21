@@ -4,6 +4,7 @@ export type {
   ChatListItemData,
   ChatMessageData,
   ChatDetailData,
+  ChatResponseStatus,
 } from "./model/types";
 export { ChatAvatar, ChatAvatarSpacer } from "./ui/ChatAvatar";
 export { ChatListItem } from "./ui/ChatListItem";

@@ -39,6 +39,7 @@ class OrderResponse(Base):
     proposed_deadline = Column(Date, nullable=False)
     technical_files = Column(JSON, nullable=False, default=list)
     expert_confirmed = Column(Boolean, nullable=False, default=False, server_default="false")
+    auto_rejected = Column(Boolean, nullable=False, default=False, server_default="false")
     status = Column(
         Enum(ResponseStatus, name="responsestatus"),
         nullable=False,

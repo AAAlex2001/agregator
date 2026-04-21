@@ -80,6 +80,41 @@ class ResponseService:
             action_url=self.get_responses_action()[1],
         )
 
+    async def _revert_auto_rejections(
+        self,
+        order_id: int,
+        order_sum_amount: int,
+        exclude_response_id: int,
+    ) -> list[int]:
+        """Restore auto-rejected responses back to REVIEW when the chosen
+        expert is later rejected. Returns affected expert ids."""
+        result = await self.db.execute(
+            select(OrderResponse).where(
+                OrderResponse.order_id == order_id,
+                OrderResponse.id != exclude_response_id,
+                OrderResponse.status == ResponseStatus.REJECTED,
+                OrderResponse.auto_rejected == True,  # noqa: E712
+            )
+        )
+        reverted = list(result.scalars().all())
+        if not reverted:
+            return []
+
+        charge_amount = CommissionCalculator.balance_return(order_sum_amount)
+        reverted_expert_ids: list[int] = []
+        for item in reverted:
+            item.status = ResponseStatus.REVIEW
+            item.auto_rejected = False
+            reverted_expert_ids.append(item.expert_id)
+            if charge_amount:
+                expert_result = await self.db.execute(
+                    select(User).where(User.id == item.expert_id)
+                )
+                expert = expert_result.scalars().first()
+                if expert:
+                    expert.balance -= charge_amount
+        return reverted_expert_ids
+
     async def notify_response_status_change(
         self,
         response: OrderResponse,
@@ -88,6 +123,7 @@ class ResponseService:
         new_status: ResponseStatus,
         expert_was_confirmed: bool,
         auto_rejected_expert_ids: list[int],
+        reverted_expert_ids: list[int] | None = None,
     ) -> None:
         order = response.order
         if order is None:
@@ -142,6 +178,17 @@ class ResponseService:
                     reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                     action_url=responses_action_url,
                 )
+
+                for reverted_expert_id in (reverted_expert_ids or []):
+                    await service.create_response_status_changed_notification(
+                        user_id=reverted_expert_id,
+                        order_title=order_title,
+                        actor_role=actor.role,
+                        status_from=ResponseStatus.REJECTED,
+                        status_to=ResponseStatus.REVIEW,
+                        reason=ResponseStatusChangeReason.SELECTED_ANOTHER_REVERTED,
+                        action_url=responses_action_url,
+                    )
 
             if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
                 await service.create_response_status_changed_notification(
@@ -309,6 +356,7 @@ class ResponseService:
         status_to_set = new_status
         expert_was_confirmed = response.expert_confirmed or False
         auto_rejected_expert_ids: list[int] = []
+        reverted_expert_ids: list[int] = []
 
         if actor.role == UserRole.EXPERT:
             if response.expert_id != actor.id:
@@ -412,6 +460,7 @@ class ResponseService:
                     refund_amount = CommissionCalculator.balance_return(response.order.sum_amount)
                     for other_resp in other_responses:
                         other_resp.status = ResponseStatus.REJECTED
+                        other_resp.auto_rejected = True
                         auto_rejected_expert_ids.append(other_resp.expert_id)
                         expert_result = await self.db.execute(select(User).where(User.id == other_resp.expert_id))
                         expert = expert_result.scalars().first()
@@ -420,6 +469,14 @@ class ResponseService:
 
             if new_status == ResponseStatus.REJECTED and response.order.assigned_expert_id == response.expert_id:
                 response.order.assigned_expert_id = None
+                if response.order.status != OrderStatus.COMPLETED:
+                    response.order.status = OrderStatus.ACTIVE
+                reverted_expert_ids = await self._revert_auto_rejections(
+                    order_id=response.order_id,
+                    order_sum_amount=response.order.sum_amount,
+                    exclude_response_id=response.id,
+                )
+                response.auto_rejected = False
 
             if new_status in {ResponseStatus.IN_PROGRESS, ResponseStatus.ACCEPTED} and response.order:
                 chat_exists = await self.db.execute(
@@ -460,6 +517,7 @@ class ResponseService:
             new_status=status_to_set,
             expert_was_confirmed=expert_was_confirmed,
             auto_rejected_expert_ids=auto_rejected_expert_ids,
+            reverted_expert_ids=reverted_expert_ids,
         )
 
         if status_to_set == ResponseStatus.REJECTED and response.order:
