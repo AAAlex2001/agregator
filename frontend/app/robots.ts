@@ -3,7 +3,7 @@ import { SITE_URL } from "@/source/shared/api/config";
 
 export const dynamic = "force-dynamic";
 
-const INDEXABLE_PATHS: string[] = ["/", "/login", "/register", "/forgot-password"];
+const INDEXABLE_PATHS: string[] = ["/", "/login", "/register", "/forgot-password", "/requisites"];
 
 const DISALLOWED_PATHS = [
   "/admin",
@@ -14,7 +14,6 @@ const DISALLOWED_PATHS = [
   "/order",
   "/responses",
   "/settings",
-  "/requisites",
 ];
 
 export default function robots(): MetadataRoute.Robots {

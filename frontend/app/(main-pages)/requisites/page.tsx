@@ -6,6 +6,13 @@ import styles from "./page.module.scss";
 export const metadata: Metadata = {
   title: "Реквизиты компании — Ресурс Плюс",
   description: "Официальные реквизиты ООО «НПИ «Недра»: ИНН, ОГРН, банковские реквизиты, лицензии.",
+  alternates: {
+    canonical: "/requisites",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 type Row = { label: string; value: string; href?: string };
