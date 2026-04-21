@@ -560,6 +560,7 @@ class ResponseService:
         expert_id: int,
         data: ResponseCreate,
         keep_files: list[str] | None = None,
+        new_files: list[UploadFile] | None = None,
     ) -> OrderResponse:
         await self.ensure_expert(expert_id)
         response = await self.get_response_by_id(response_id)
@@ -598,6 +599,11 @@ class ResponseService:
             response.technical_files = [f for f in existing if f in keep_files]
 
         await self.db.flush()
+
+        if new_files:
+            await self.upload_response_files(
+                response_id=response_id, expert_id=expert_id, files=new_files,
+            )
 
         updated = await self.get_response_by_id(response_id)
         await self.notify_response_updated(updated, kind=ResponseUpdateKind.UPDATED)

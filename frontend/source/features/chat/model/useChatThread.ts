@@ -34,13 +34,21 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
           return;
         }
 
-        setChat(detail);
-        setMessages(detail.messages);
-        markChatAsRead(chatUuid);
-
         const hasUnreadFromCounterpart = detail.messages.some(
           (message) => !message.is_read && message.sender_id !== currentUserId,
         );
+        const patchedMessages = hasUnreadFromCounterpart
+          ? detail.messages.map((message) => (
+              !message.is_read && message.sender_id !== currentUserId
+                ? { ...message, is_read: true }
+                : message
+            ))
+          : detail.messages;
+
+        setChat(detail);
+        setMessages(patchedMessages);
+        markChatAsRead(chatUuid);
+
         if (hasUnreadFromCounterpart) {
           void markChatMessagesRead(chatUuid).catch(() => undefined);
         }

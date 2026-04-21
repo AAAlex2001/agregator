@@ -217,14 +217,8 @@ async def update_response(
     updated = await service.update_response(
         response_id=response_id, expert_id=user_id, data=data,
         keep_files=keep_files_list,
+        new_files=[f for f in files if f.filename] or None,
     )
-
-    if files and files[0].filename:
-        updated = await service.upload_response_files(
-            response_id=updated.id, expert_id=user_id, files=files,
-        )
-
-    await service.notify_response_updated(updated)
 
     return to_item(updated)
 

@@ -105,8 +105,13 @@ async def send_message(
     upload_files = [current_file for current_file in files if current_file.filename]
     if file and file.filename:
         upload_files.insert(0, file)
+
+    recipient_id = chat.expert_id if user_id == chat.customer_id else chat.customer_id
+    recipient_online = recipient_id in chat_manager.get_online_user_ids(chat.id)
+
     message = await service.send_message(
         chat_id=chat.id, sender_id=user_id, text=text, files=upload_files,
+        mark_as_read=recipient_online,
     )
     await chat_manager.broadcast(
         chat.id,

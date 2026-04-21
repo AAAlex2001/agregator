@@ -369,6 +369,7 @@ class ChatService:
     async def send_message(
         self, chat_id: int, sender_id: int, text: str,
         files: list[UploadFile] | None = None,
+        mark_as_read: bool = False,
     ) -> ChatMessageResponse:
         normalized_text = text.strip()
         upload_files = [file for file in (files or []) if file and file.filename]
@@ -428,6 +429,7 @@ class ChatService:
             file_url=file_url,
             file_name=file_name,
             attachments=attachments,
+            is_read=mark_as_read,
         )
         self.db.add(message)
         await self.db.flush()
@@ -457,7 +459,7 @@ class ChatService:
             file_url=message.file_url,
             file_name=message.file_name,
             attachments=self.build_attachments(message),
-            is_read=False,
+            is_read=mark_as_read,
             created_at=message.created_at,
         )
 
