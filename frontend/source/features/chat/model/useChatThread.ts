@@ -23,6 +23,10 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
       return;
     }
 
+    if (currentUserId <= 0) {
+      return;
+    }
+
     let cancelled = false;
 
     setLoading(true);
@@ -71,7 +75,7 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
     return () => {
       cancelled = true;
     };
-  }, [chatUuid]);
+  }, [chatUuid, currentUserId]);
 
   useEffect(() => {
     const element = threadRef.current;
