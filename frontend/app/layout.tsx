@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { SITE_URL } from "@/source/shared/api/config";
 import { NotificationProvider } from "@/shared/ui/Notifications";
 import "./globals.css";
 
@@ -10,6 +11,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Ресурс Плюс",
   description: "Экспертиза промышленной безопасности ОПО",
 };
