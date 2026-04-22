@@ -12,7 +12,14 @@
   max-width: 1640px;
   margin-left: 0;
   padding: 0 10px;
-  margin-bottom: 60px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+  width: 100%;
 }
 
 .backgroundImage {

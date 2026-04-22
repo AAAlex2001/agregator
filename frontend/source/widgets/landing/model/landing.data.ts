@@ -54,13 +54,13 @@ export function getHowItWorksSteps() {
       id: 2,
       title: "Выберите исполнителя",
       description: "Изучите рейтинг, портфолио и отзывы. Пообщайтесь в чате и выберите лучшего кандидата",
-      icon: "/number_3.svg",
+      icon: "/number_2.svg",
     },
     {
       id: 3,
       title: "Получите отклики",
       description: "На ваш заказ откликнутся десятки экспертов с портфолио и рейтингами",
-      icon: "/number_2.svg",
+      icon: "/number_3.svg",
     },
     {
       id: 4,
@@ -81,14 +81,14 @@ export function getHowItWorksSteps() {
       id: 2,
       title: "Откликнитесь и обсудите",
       description: "Напишите коммерческое предложение и обсудите детали напрямую c заказчиком",
-      icon: "/number_3.svg",
+      icon: "/number_2.svg",
     },
     {
       id: 3,
       title: "Найдите свой проект и участвуйте в тендере",
       description:
         "Используйте поиск и фильтры, чтобы найти подходящие проекты. Откликайтесь бесплатно, отправляйте предложение и обсуждайте детали напрямую с заказчиком",
-      icon: "/number_2.svg",
+      icon: "/number_3.svg",
     },
     {
       id: 4,
@@ -113,14 +113,14 @@ export function getKeyAdvantagesSteps() {
       id: 2,
       title: "Прямые контакты с исполнителями",
       description: "Живое общение в чате для обсуждения деталей и согласование условий сотрудничества",
-      icon: "/number_3.svg",
+      icon: "/number_2.svg",
     },
     {
       id: 3,
       title: "Специалисты разного уровня сложности",
       description: "Подбор исполнителей для задач любой глубины — от геологоразведки до сопровождения работ",
       subDescription: "",
-      icon: "/number_2.svg",
+      icon: "/number_3.svg",
     },
     {
       id: 4,
@@ -141,7 +141,7 @@ export function getKeyAdvantagesSteps() {
       id: 2,
       title: "Прямые договорённости с предприятиями",
       description: "Открытое общение заказчиками для согласования технических заданий и условий",
-      icon: "/number_3.svg",
+      icon: "/number_2.svg",
     },
     {
       id: 3,
@@ -149,7 +149,7 @@ export function getKeyAdvantagesSteps() {
       description: "Работайте над задачами, которые точно соответствуют вашей специализации и квалификации",
       subDescription:
         "*Сейчас отклики на платформе отправляются бесплатно, чтобы можно было протестировать весь сценарий работы",
-      icon: "/number_2.svg",
+      icon: "/number_3.svg",
     },
     {
       id: 4,

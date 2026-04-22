@@ -27,39 +27,6 @@
   gap: 30px;
 }
 
-.stepsTabs {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border: 2px solid #FFB800;
-  border-radius: 30px;
-  justify-content: center ;
-  align-items: center;
-  padding: 10px;
-
-  span {
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    border-radius: 25px;
-    transition: background-color 0.5s ease, padding 0.5s ease;
-    white-space: nowrap;
-
-    &:hover{
-    background-color: #FFDDA9;
-  }
-
-    &.active {
-      background-color: #FFDDA9;
-    }
-  }
-
-}
-
 .steps {
   display: flex;
   flex-direction: column;
@@ -68,7 +35,7 @@
 
 @keyframes fadeIn {
   from {
-  padding: 0 10px;
+    opacity: 0;
   }
   to {
     opacity: 1;
@@ -145,18 +112,6 @@
     font-size: 18px;
     line-height: 24px;
   }
-}
-
-  .stepsTabs {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-
-  span {
-    font-size: 20px;
-    line-height: 24px;
-  }
-
 }
 
   .steps {

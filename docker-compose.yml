@@ -86,6 +86,7 @@ services:
       - /etc/letsencrypt/live/plus-resurs.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - /etc/letsencrypt/live/plus-resurs.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
       - backend_uploads:/app/uploads:ro
+      - nginx_image_cache:/var/cache/nginx/images
     depends_on:
       - frontend
       - backend
@@ -215,6 +216,7 @@ volumes:
   backend_uploads:
   prometheus_data:
   grafana_data:
+  nginx_image_cache:
 
 
 
