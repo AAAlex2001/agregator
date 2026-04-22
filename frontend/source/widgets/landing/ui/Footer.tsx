@@ -7,15 +7,15 @@ const Footer = () => {
     <footer className={s.footer} id="footer">
         <div className={s.content}>
       <div className={s.primary}>
-          <div className={s.backgroundImage}>
-        <Image src="/belaz_3.webp" alt="" aria-hidden="true" fill sizes="354px" style={{ objectFit: "contain" }} />
-      </div>
-          <div className={s.backgroundImageCoal}>
-        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-      </div>
+            <div className={s.backgroundImage}>
+              <Image src="/belaz_3.webp" alt="" aria-hidden="true" fill sizes="354px" style={{ objectFit: "contain" }} />
+            </div>
             <div className={s.backgroundImageCoal}>
-        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-      </div>
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+            </div>
+            <div className={s.backgroundImageCoal}>
+              <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+            </div>
             <div className={s.backgroundImageCoal}>
               <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
