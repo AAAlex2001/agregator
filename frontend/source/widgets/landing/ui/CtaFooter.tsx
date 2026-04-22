@@ -9,41 +9,41 @@ const CtaFooter = () => {
       <div className={s.cta}>
         <div className={s.ctaCard}>
             <div className={s.backgroundImage}>
-        <Image src="/belaz_3.svg" alt="Industry background" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/belaz_3.webp" alt="" aria-hidden="true" fill sizes="354px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageBelAz}>
-        <Image src="/belaz_2.svg" alt="Belaz" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/belaz_2.webp" alt="" aria-hidden="true" fill sizes="672px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="cooper" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/copper.webp" alt="" aria-hidden="true" fill sizes="390px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal}>
-        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
 
             <div className={s.backgroundImageCoal2}>
-        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageCoal2}>
-              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal2}>
-              <Image src="/copper.svg" alt="cooper" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/copper.webp" alt="" aria-hidden="true" fill sizes="390px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal2}>
-        <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+        <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
             <div className={s.backgroundImageCoal2}>
-              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
           <div className={s.ctaLeft}>
             <span className={s.ctaChip}>Действуйте прямо сейчас</span>

@@ -52,7 +52,7 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
                     </div>
             </div>
       <div className={s.backgroundImage}>
-        <Image src="/key-advantages.png" alt="Key advantages background" fill sizes="100vw" quality={70} style={{ objectFit: "cover"  }} />
+        <Image src="/key-advantages.webp" alt="" aria-hidden="true" fill sizes="100vw" style={{ objectFit: "cover"  }} />
       </div>
     </section>
   );

@@ -117,7 +117,7 @@ export default function RequisitesPage() {
       {/* Background */}
       <div className={styles.bgWrap}>
         <Image
-          src="/carier.png"
+          src="/carier.webp"
           alt="Промышленный карьер"
           fill
           priority

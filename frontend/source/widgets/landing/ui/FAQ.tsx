@@ -24,28 +24,31 @@ const FAQ = ({ items }: FAQProps) => {
         <div className={s.header}>
           <div className={s.backgroundImageCoal}>
             <Image
-              src="/coal.svg"
-              alt="coal"
+              src="/coal.webp"
+              alt=""
+              aria-hidden="true"
               fill
-              unoptimized
+              sizes="246px"
               style={{ objectFit: "contain" }}
             />
           </div>
           <div className={s.backgroundImageCoal}>
             <Image
-              src="/gold.svg"
-              alt="gold"
+              src="/gold.webp"
+              alt=""
+              aria-hidden="true"
               fill
-              unoptimized
+              sizes="486px"
               style={{ objectFit: "contain" }}
             />
           </div>
           <div className={s.backgroundImageCoal}>
             <Image
-              src="/copper.svg"
-              alt="cooper"
+              src="/copper.webp"
+              alt=""
+              aria-hidden="true"
               fill
-              unoptimized
+              sizes="390px"
               style={{ objectFit: "contain" }}
             />
           </div>

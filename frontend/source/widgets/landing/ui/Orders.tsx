@@ -68,7 +68,7 @@ const Orders = ({ orders }: OrdersProps) => {
       </Button>
 
       <div className={s.backgroundImage}>
-        <Image src="/orderss.png" alt="Orders background" fill sizes="100vw" quality={70} style={{ objectFit: "cover" }} />
+        <Image src="/orderss.webp" alt="" aria-hidden="true" fill sizes="100vw" style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

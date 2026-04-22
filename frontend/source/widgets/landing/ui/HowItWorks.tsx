@@ -22,27 +22,27 @@ const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
     <div className={s.content}>
         <div className={s.header}>
       <div className={s.backgroundImage}>
-    <Image src="/belaz.svg" alt="Industry background" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/belaz.webp" alt="" aria-hidden="true" fill sizes="630px" style={{ objectFit: "contain" }} />
       </div>
 
       <div className={s.backgroundImageCoal}>
-    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
       <div className={s.backgroundImageCoal}>
-    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
       <div className={s.backgroundImageCoal}>
-    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
       <div className={s.backgroundImageCoal}>
-    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
       <div className={s.backgroundImageCoal}>
-    <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+    <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
             <Title text="Начните работать за 4 простых шага" />

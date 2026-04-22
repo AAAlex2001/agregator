@@ -70,7 +70,7 @@ const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
         </Swiper>
       </div>
       <div className={s.backgroundImage}>
-        <Image src="/industry.png" alt="Industry background" fill sizes="100vw" quality={70} style={{ objectFit: "cover" }} />
+        <Image src="/industry.webp" alt="" aria-hidden="true" fill sizes="100vw" style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

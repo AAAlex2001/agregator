@@ -17,7 +17,7 @@ const roles: Role[] = [
       "Договаривайтесь с подходящими аттестованными экспертами",
       "Напишите отзыв и оцените работу",
     ],
-    photo: "/advantages__3.jpg",
+    photo: "/advantages__3.webp",
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const roles: Role[] = [
       "Договаривайтесь напрямую",
       "Выполните заказ, получите отзыв и оценку",
     ],
-    photo: "/advantages_1.jpg",
+    photo: "/advantages_1.webp",
   },
 ];
 

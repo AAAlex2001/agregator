@@ -6,6 +6,7 @@ import { NotificationProvider } from "@/shared/ui/Notifications";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108708847;
+const GOOGLE_TAG_ID = "G-QGC88WQWTJ";
 
 const montserrat = Montserrat({
   subsets: ["latin", "cyrillic"],
@@ -27,6 +28,18 @@ export default async function RootLayout({
   return (
     <html lang="ru" className={montserrat.className}>
       <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_TAG_ID}');
+          `}
+        </Script>
         <Script id="yandex-metrika" strategy="beforeInteractive">
           {`
             (function(m,e,t,r,i,k,a){

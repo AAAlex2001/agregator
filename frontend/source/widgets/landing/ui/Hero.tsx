@@ -1,3 +1,4 @@
+import Image from "next/image";
 import s from "./hero.module.scss";
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -14,13 +15,14 @@ const Hero = () => {
         </Button>
       </div>
       <div className={s.visual} aria-hidden="true">
-        <img
-          src="/hero_svg.svg"
+        <Image
+          src="/hero_svg.webp"
           alt="Карьер"
+          width={787}
+          height={412}
+          priority
+          sizes="(max-width: 1440px) 100vw, 787px"
           className={s.heroImage}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
         />
 
         <div className={s.visualDecoration1}>

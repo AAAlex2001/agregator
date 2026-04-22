@@ -353,13 +353,13 @@ export function getIndustries(): LandingIndustry[] {
       id: 1,
       title: "ДОБЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
       description: ["Угольная, сланцевая, торфяная (Э1)", "Горнорудная и нерудная (Э2)", "Нефтегазодобыча (Э4)", "Геологоразведка (Э6)"],
-      photo: "/industry_1.jpg",
+      photo: "/industry_1.webp",
     },
     {
       id: 2,
       title: "ОБРАБАТЫВАЮЩАЯ ПРОМЫШЛЕННОСТЬ",
       description: ["Химическая, нефтехимическая (Э7)", "Металлургия (Э13)", "Пищевая промышленность (Э10)", "Переработка сырья (Э15)"],
-      photo: "/industry_2.jpg",
+      photo: "/industry_2.webp",
     },
     {
       id: 3,
@@ -370,19 +370,19 @@ export function getIndustries(): LandingIndustry[] {
         "Газоснабжение (Э11)",
         "Канатные дороги (Э14.1, Э14.2)",
       ],
-      photo: "/industry_3.jpg",
+      photo: "/industry_3.webp",
     },
     {
       id: 4,
       title: "ЭНЕРГЕТИКА И ОПАСНЫЕ ПРОИЗВОДСТВА",
       description: ["Тепло- и электроэнергетика (Э12)", "Взрывчатые материалы (Э3.1, Э3.2)", "Водоподготовка (Э9)"],
-      photo: "/industry_4.jpg",
+      photo: "/industry_4.webp",
     },
     {
       id: 5,
       title: "СПЕЦИАЛЬНЫЕ ОБЪЕКТЫ",
       description: ["Грузоподъемные механизмы (Э14.4)"],
-      photo: "/industry_5.jpg",
+      photo: "/industry_5.webp",
     },
   ];
 }
@@ -425,7 +425,7 @@ export function getAdvantages(): LandingAdvantage[] {
       description:
         "Специалисты всех 15 областей аттестации по Приказу Ростехнадзора. Самостоятельно выбирайте для себя подходящих экспертов",
       iconKey: "diploma",
-      photo: "/advantages_1.jpg",
+      photo: "/advantages_1.webp",
     },
     {
       id: 2,
@@ -433,7 +433,7 @@ export function getAdvantages(): LandingAdvantage[] {
       description:
         "Размещайте заказы и получайте отклики от исполнителей. Первые предложения могут поступить уже в день размещения",
       iconKey: "quick",
-      photo: "/advantages_2.jpg",
+      photo: "/advantages_2.webp",
     },
     {
       id: 3,
@@ -441,7 +441,7 @@ export function getAdvantages(): LandingAdvantage[] {
       description:
         "Ищите заказы и экспертов с фильтрами по отраслям и видам работ. Используйте возможности поиска на платформе",
       iconKey: "search",
-      photo: "/advantages_3.jpg",
+      photo: "/advantages_3.webp",
     },
     {
       id: 4,
@@ -449,7 +449,7 @@ export function getAdvantages(): LandingAdvantage[] {
       description:
         "После завершения работы заказчик ставит оценку и пишет отзыв. Так на платформе формируется репутация эксперта",
       iconKey: "comment",
-      photo: "/advantages_4.jpg",
+      photo: "/advantages_4.webp",
     },
   ];
 }

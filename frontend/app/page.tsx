@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import styles from "./page.module.scss";
 import type { Metadata } from "next";
 import {
@@ -44,6 +45,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-static";
 
 export default function LandingPage() {
+	ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
+
 	const howItWorksSteps = getHowItWorksSteps();
 	const keyAdvantagesSteps = getKeyAdvantagesSteps();
 	const orders = getOrders();

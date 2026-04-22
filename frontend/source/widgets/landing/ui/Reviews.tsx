@@ -28,16 +28,16 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 
           <div className={s.arrows}>
             <div className={s.backgroundImageBelAz}>
-              <Image src="/belaz_2.svg" alt="Belaz" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/belaz_2.webp" alt="" aria-hidden="true" fill sizes="672px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal}>
-              <Image src="/coal.svg" alt="coal" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
             </div>
             <div className={s.backgroundImageCoal}>
-              <Image src="/gold.svg" alt="gold" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
               <div className={s.backgroundImageCoal}>
-              <Image src="/copper.svg" alt="cooper" fill unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/copper.webp" alt="" aria-hidden="true" fill sizes="390px" style={{ objectFit: "contain" }} />
             </div>
             <SwiperNavigation
               prevClassName="reviews-nav-btn--prev"
@@ -78,11 +78,11 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 
       <div className={s.backgroundImage}>
         <Image
-          src="/reviews.png"
-          alt="Reviews background"
+          src="/reviews.webp"
+          alt=""
+          aria-hidden="true"
           fill
           sizes="100vw"
-          quality={70}
           style={{ objectFit: "cover" }}
         />
       </div>
