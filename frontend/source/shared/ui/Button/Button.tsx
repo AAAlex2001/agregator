@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import styles from "./button.module.scss";
 import { ArrowIcon } from "@/shared/ui/icons";
 import Loader from "../Loader";
@@ -19,6 +20,7 @@ interface ButtonProps {
   isActive?: boolean;
   disabled?: boolean;
   isLoading?: boolean;
+  href?: string;
 }
 
 const Button = ({
@@ -33,6 +35,7 @@ const Button = ({
   isActive = false,
   disabled = false,
   isLoading = false,
+  href,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
@@ -45,6 +48,25 @@ const Button = ({
     .filter(Boolean)
     .join(" ");
 
+  const content = (
+    <>
+      {isLoading ? <Loader size="sm" label="" className={styles.inlineLoader} /> : children}
+      {!isLoading && showArrow && (
+        <span aria-hidden="true" className={styles.arrow}>
+          <ArrowIcon />
+        </span>
+      )}
+    </>
+  );
+
+  if (href && !disabled && !isLoading) {
+    return (
+      <Link href={href} className={buttonClasses}>
+        {content}
+      </Link>
+    );
+  }
+
   return (
     <button
       type={type}
@@ -53,12 +75,7 @@ const Button = ({
       disabled={disabled || isLoading}
       aria-busy={isLoading}
     >
-      {isLoading ? <Loader size="sm" label="" className={styles.inlineLoader} /> : children}
-      {!isLoading && showArrow && (
-        <span aria-hidden="true" className={styles.arrow}>
-          <ArrowIcon />
-        </span>
-      )}
+      {content}
     </button>
   );
 };

@@ -45,8 +45,8 @@ const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
     <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
-            <Title text="Начните работать за 4 простых шага" />
-            <Subtitle text="Платформа устроена максимально прозрачно. Выбирайте свою роль:" />
+            <Title text="Как работает платформа поиска экспертов промышленной безопасности" />
+            <Subtitle text="Прозрачный процесс от размещения заказа до получения экспертного заключения — 4 шага для заказчиков и экспертов Ростехнадзора" />
             </div>
                 <div className={s.stepsInfo}>
                         <Tabs

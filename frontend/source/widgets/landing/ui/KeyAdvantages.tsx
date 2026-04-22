@@ -21,8 +21,8 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
     <section className={s.section} id="key-advantages">
       <div className={s.content}>
         <div className={s.header}>
-            <Title text="Начните работать за 4 простых шага" />
-            <Subtitle text="Платформа устроена максимально прозрачно. Выбирайте свою роль:" />
+            <Title text="Преимущества работы с аттестованными экспертами промышленной безопасности" />
+            <Subtitle text="Прямое взаимодействие заказчиков и специалистов с действующими аттестациями Ростехнадзора по всем 15 областям экспертизы ОПО" />
             </div>
           <div className={s.stepsInfo}>
                         <Tabs

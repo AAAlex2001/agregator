@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import BurgerMenu from "./BurgerMenu";
@@ -8,29 +9,38 @@ import { scrollToAnchor } from "../lib/scrollToAnchor";
 import s from "./header.module.scss";
 
 const NAV_LINKS = [
-  { href: "#how-it-works", label: "Как это работает" },
-  { href: "#advantages", label: "Преимущества" },
-  { href: "#reviews", label: "Отзывы" },
-  { href: "#faq", label: "FAQ" },
+  { anchor: "#how-it-works", label: "Как это работает" },
+  { anchor: "#advantages", label: "Преимущества" },
+  { anchor: "#reviews", label: "Отзывы" },
+  { anchor: "#faq", label: "FAQ" },
 ] as const;
 
 const Header = () => {
-  const handleSmoothScroll = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    scrollToAnchor(href);
+  const pathname = usePathname();
+  const isLanding = pathname === "/";
+
+  const handleAnchorClick = (e: MouseEvent<HTMLAnchorElement>, anchor: string) => {
+    if (isLanding) {
+      e.preventDefault();
+      scrollToAnchor(anchor);
+    }
   };
 
   return (
     <header className={s.header}>
       <div className={s.container}>
-        <div className={s.brand}>
+        <Link href="/" className={s.brand} aria-label="На главную">
           <span className={s.logo}>
             <LogoIcon />
           </span>
-        </div>
+        </Link>
         <nav className={s.nav}>
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} onClick={(e) => handleSmoothScroll(e, link.href)}>
+            <Link
+              key={link.anchor}
+              href={`/${link.anchor}`}
+              onClick={(e) => handleAnchorClick(e, link.anchor)}
+            >
               {link.label}
             </Link>
           ))}
@@ -51,4 +61,3 @@ const Header = () => {
 };
 
 export default Header;
-

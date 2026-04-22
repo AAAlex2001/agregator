@@ -1,4 +1,8 @@
 export { default as Button } from "./Button";
+export { DocContent } from "./DocContent";
+export type { DocContentProps, DocBlock, DocSection, DocTableBlock } from "./DocContent";
+export { DocToc } from "./DocToc";
+export type { DocTocProps, DocTocItem } from "./DocToc";
 export { default as Tabs } from "./Tabs";
 export { default as SwiperNavigation } from "./SwiperNavigation";
 export { default as Card } from "./Card";

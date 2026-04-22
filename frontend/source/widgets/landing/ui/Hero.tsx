@@ -6,17 +6,17 @@ import { CheckIcon } from "@/source/shared/ui/icons";
 
 const Hero = () => {
   return (
-    <section className={s.hero}>
+    <section className={s.hero} id="about">
       <div className={s.leftSection}>
         <header className={s.heroHeader}>
           <Title text="Первая единая площадка для поиска аттестованных экспертов промышленной безопасности" />
           <Subtitle text="Размещайте заказы и находите проекты среди специалистов по всей России. Все эксперты имеют официальные аттестации Ростехнадзора" />
         </header>
-        <Button variant="primary" showArrow className={s.heroButton}>
+        <Button href="/register" variant="primary" showArrow className={s.heroButton}>
           Начать работать
         </Button>
       </div>
-      <div className={s.visual} aria-hidden="true">
+      <div className={s.visual} aria-hidden="true" data-nosnippet>
         <Image
           src="/hero_svg.webp"
           alt="Карьер"

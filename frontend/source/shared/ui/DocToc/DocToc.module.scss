@@ -1,0 +1,73 @@
+.nav {
+  @media (min-width: 1440px) {
+    position: sticky;
+    top: 96px;
+    align-self: start;
+  }
+}
+
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #FFFFFF;
+  border: 1px solid #E6E6E6;
+  border-radius: 12px;
+
+  @media (min-width: 768px) {
+    padding: 24px;
+    gap: 20px;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #1A1A1A;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1A1A1A;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: #FF8A00;
+  }
+}
+
+.num {
+  flex: none;
+  font-weight: 600;
+  color: #FF8A00;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+}

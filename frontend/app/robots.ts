@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/source/shared/api/config";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-const INDEXABLE_PATHS: string[] = ["/", "/login", "/register", "/forgot-password", "/requisites"];
+const INDEXABLE_PATHS: string[] = ["/", "/login", "/register", "/forgot-password", "/requisites", "/offer", "/user-agreement"];
 
 const DISALLOWED_PATHS = [
   "/admin",

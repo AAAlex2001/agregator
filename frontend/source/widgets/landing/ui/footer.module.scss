@@ -2,8 +2,72 @@
   display: flex;
   flex-direction: column;
   background: #000000;
+  color: #FFFFFF;
   position: relative;
   overflow: visible;
+}
+
+.footer.light {
+  background: #FFFFFF;
+  color: #1A1A1A;
+
+  &::before {
+    display: none;
+  }
+
+  .backgroundImage,
+  .backgroundImageCoal {
+    display: none;
+  }
+
+  .primaryLogo h1 {
+    color: #1A1A1A;
+  }
+
+  .links > div {
+    h2 {
+      color: #1A1A1A;
+    }
+
+    a {
+      color: #1A1A1A;
+
+      &:hover,
+      &:focus-visible {
+        color: #FF8A00;
+      }
+    }
+  }
+
+  .bottom > span {
+    color: #1A1A1A;
+  }
+
+  .bottom a {
+    color: #1A1A1A;
+  }
+
+  .bottomLinks span {
+    color: #808080;
+  }
+
+  .bottomLinks a {
+    color: #808080;
+  }
+}
+
+@media (min-width: 2000px) {
+
+  .footer {
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 140px,
+    #000000 140px,
+    #000000 100%
+  );
+}
+
 }
 
 .footer::before {
@@ -79,7 +143,7 @@
   display: flex;
   padding: 0 10px;
   flex-direction: column;
-  max-width: 1640px;
+  max-width: 1600px;
   margin: 0 auto 20px auto;
   width: 100%;
   position: relative;
@@ -268,7 +332,8 @@
   gap: 8px;
 
 
-    p {
+    p,
+    a {
       font-size: 12px;
       line-height: 15px;
       color: #FFFFFF;
@@ -283,6 +348,7 @@
       white-space: nowrap;
       cursor: pointer;
       text-align: center;
+      text-decoration: none;
 
       &:hover,
       &:focus-visible {
@@ -333,7 +399,8 @@
   flex-direction: row;
 
 
-    p {
+    p,
+    a {
       max-width: 250px;
     }
 
@@ -386,6 +453,18 @@
 
 }
 
+ .footer::before {
+  content: "";
+  position: absolute;
+  top: -350px;
+  left: 50%;
+  right: auto;
+  width: 100vw;
+  background-size: cover;
+  transform: translateX(-50%);
+  
+}
+
   .primaryLogo {
   margin: 0 auto 62px 0;
     justify-content: flex-start;
@@ -426,7 +505,8 @@
     flex-direction: row;
 
 
-    p {
+    p,
+    a {
       max-width: 250px;
     }
 

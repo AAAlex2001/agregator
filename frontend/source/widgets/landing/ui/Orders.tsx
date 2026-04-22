@@ -63,7 +63,7 @@ const Orders = ({ orders }: OrdersProps) => {
   </Swiper>
       </div>
 
-      <Button variant="secondary" className={s.checkButton}>
+      <Button href="/register" variant="secondary" className={s.checkButton}>
         Смотреть все заказы
       </Button>
 

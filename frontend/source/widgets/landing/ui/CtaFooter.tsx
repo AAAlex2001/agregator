@@ -1,5 +1,6 @@
 import s from "./cta-footer.module.scss";
 import Image from "next/image";
+import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { BulletIcon } from "@/source/shared/ui/icons";
 
@@ -46,7 +47,7 @@ const CtaFooter = () => {
               <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
           <div className={s.ctaLeft}>
-            <span className={s.ctaChip}>Действуйте прямо сейчас</span>
+            <Link href="/register" className={s.ctaChip}>Действуйте прямо сейчас</Link>
             <h1>Найдите эксперта по промышленной безопасности или заявите о своей специализации</h1>
           </div>
           <div className={s.ctaRight}>
@@ -78,10 +79,10 @@ const CtaFooter = () => {
               </li>
             </ul>
             <div className={s.ctaActions}>
-              <Button variant="primary" size="sm" fullWidth>
+              <Button href="/register" variant="primary" size="sm" fullWidth>
                 Найти эксперта
               </Button>
-              <Button variant="secondary" size="sm" fullWidth>
+              <Button href="/register" variant="secondary" size="sm" fullWidth>
                 Стать экспертом на платформе
               </Button>
             </div>
