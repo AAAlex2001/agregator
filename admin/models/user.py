@@ -42,16 +42,16 @@ class User(Base):
         UniqueConstraint("phone", "role", name="uq_users_phone_role"),
     )
 
-    password_reset_codes = relationship("PasswordResetCode", back_populates="user")
-    orders = relationship("Order", foreign_keys="Order.customer_id", back_populates="customer")
-    assigned_orders = relationship("Order", foreign_keys="Order.assigned_expert_id", back_populates="assigned_expert")
-    responses = relationship("OrderResponse", back_populates="expert")
-    customer_chats = relationship("Chat", foreign_keys="Chat.customer_id", back_populates="customer")
-    expert_chats = relationship("Chat", foreign_keys="Chat.expert_id", back_populates="expert")
-    chat_messages = relationship("ChatMessage", back_populates="sender")
-    payments = relationship("Payment", back_populates="user")
-    customer_reviews = relationship("Review", foreign_keys="Review.customer_id", back_populates="customer")
-    expert_reviews = relationship("Review", foreign_keys="Review.expert_id", back_populates="expert")
+    password_reset_codes = relationship("PasswordResetCode", back_populates="user", passive_deletes=True)
+    orders = relationship("Order", foreign_keys="Order.customer_id", back_populates="customer", passive_deletes=True)
+    assigned_orders = relationship("Order", foreign_keys="Order.assigned_expert_id", back_populates="assigned_expert", passive_deletes=True)
+    responses = relationship("OrderResponse", back_populates="expert", passive_deletes=True)
+    customer_chats = relationship("Chat", foreign_keys="Chat.customer_id", back_populates="customer", passive_deletes=True)
+    expert_chats = relationship("Chat", foreign_keys="Chat.expert_id", back_populates="expert", passive_deletes=True)
+    chat_messages = relationship("ChatMessage", back_populates="sender", passive_deletes=True)
+    payments = relationship("Payment", back_populates="user", passive_deletes=True)
+    customer_reviews = relationship("Review", foreign_keys="Review.customer_id", back_populates="customer", passive_deletes=True)
+    expert_reviews = relationship("Review", foreign_keys="Review.expert_id", back_populates="expert", passive_deletes=True)
 
     def __str__(self):
         name = " ".join(filter(None, [self.first_name, self.last_name]))

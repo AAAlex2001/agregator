@@ -47,9 +47,9 @@ class Order(Base):
 
     customer = relationship("User", foreign_keys=[customer_id], back_populates="orders")
     assigned_expert = relationship("User", foreign_keys=[assigned_expert_id], back_populates="assigned_orders")
-    badges = relationship("OrderBadge", back_populates="order")
-    responses = relationship("OrderResponse", back_populates="order")
-    chats = relationship("Chat", back_populates="order")
+    badges = relationship("OrderBadge", back_populates="order", passive_deletes=True)
+    responses = relationship("OrderResponse", back_populates="order", passive_deletes=True)
+    chats = relationship("Chat", back_populates="order", passive_deletes=True)
 
     def __str__(self):
         return f"#{self.id} {self.title[:40]}"

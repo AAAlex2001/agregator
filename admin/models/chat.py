@@ -24,7 +24,7 @@ class Chat(Base):
     order = relationship("Order", back_populates="chats")
     customer = relationship("User", foreign_keys=[customer_id], back_populates="customer_chats")
     expert = relationship("User", foreign_keys=[expert_id], back_populates="expert_chats")
-    messages = relationship("ChatMessage", back_populates="chat", order_by="ChatMessage.created_at.asc()")
+    messages = relationship("ChatMessage", back_populates="chat", order_by="ChatMessage.created_at.asc()", passive_deletes=True)
 
     def __str__(self):
         return f"Чат #{self.id} (заказ #{self.order_id})"
