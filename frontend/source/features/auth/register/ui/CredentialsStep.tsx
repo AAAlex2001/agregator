@@ -1,73 +1,108 @@
-import { FormEvent } from "react";
+import Link from "next/link";
+import type { UseFormReturn } from "react-hook-form";
 import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
-import type { PartySuggestion } from "../api/partySuggestions.api";
-import { InnSuggestionsInput } from "./InnSuggestionsInput";
+import { Checkbox } from "@/source/shared/ui";
+import type { RegisterFormValues } from "../model/schema";
 import s from "./CredentialsStep.module.scss";
 
 interface Props {
+  form: UseFormReturn<RegisterFormValues>;
   selectedRole: number | null;
-  lastName: string;
-  firstName: string;
-  email: string;
-  phone: string;
-  inn: string;
-  innQuery: string;
-  password: string;
-  repeatPassword: string;
   isLoading: boolean;
-  onLastNameChange: (v: string) => void;
-  onFirstNameChange: (v: string) => void;
-  onEmailChange: (v: string) => void;
   onPhoneChange: (v: string) => void;
-  onInnChange: (v: string) => void;
-  onInnQueryChange: (v: string) => void;
-  onSuggestionSelect: (suggestion: PartySuggestion | null) => void;
-  onPasswordChange: (v: string) => void;
-  onRepeatPasswordChange: (v: string) => void;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: () => void;
 }
 
-export function CredentialsStep({
-  selectedRole, lastName, firstName, email, phone, inn, innQuery, password, repeatPassword,
-  isLoading, onLastNameChange, onFirstNameChange, onEmailChange, onPhoneChange, onInnChange, onInnQueryChange, onSuggestionSelect,
-  onPasswordChange, onRepeatPasswordChange, onSubmit,
-}: Props) {
+export function CredentialsStep({ form, selectedRole, isLoading, onPhoneChange, onSubmit }: Props) {
+  const { watch, setValue, formState } = form;
+  const isExpert = selectedRole === 2;
+  const password = watch("password");
+  const agreePrivacy = watch("agreePrivacy");
+  const agreeTerms = watch("agreeTerms");
+
+  const shouldValidate = formState.isSubmitted;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
     <div className={s.stepContent}>
-      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="register" />
-        {selectedRole === 2 && (
+
+        {isExpert && (
           <>
-            <Input id="lastName" name="register-last-name" variant="text" value={lastName}
+            <Input
+              id="lastName"
+              variant="text"
+              value={watch("lastName")}
               autoComplete="off"
-              onChange={(e) => onLastNameChange(e.target.value)} placeholder="Фамилия" required />
-            <Input id="firstName" name="register-first-name" variant="text" value={firstName}
+              onChange={(e) => setValue("lastName", e.target.value, { shouldValidate })}
+              placeholder="Фамилия"
+              error={formState.errors.lastName?.message}
+            />
+            <Input
+              id="firstName"
+              variant="text"
+              value={watch("firstName")}
               autoComplete="off"
-              onChange={(e) => onFirstNameChange(e.target.value)} placeholder="Имя" required />
+              onChange={(e) => setValue("firstName", e.target.value, { shouldValidate })}
+              placeholder="Имя"
+              error={formState.errors.firstName?.message}
+            />
           </>
         )}
-        <InnSuggestionsInput
-          value={inn}
-          query={innQuery}
-          disabled={isLoading}
-          onValueChange={onInnChange}
-          onQueryChange={onInnQueryChange}
-          onSuggestionSelect={onSuggestionSelect}
-        />
-        <Input id="email" name="register-email" type="email" variant="email" value={email}
-          autoComplete="off"
-          onChange={(e) => onEmailChange(e.target.value)} placeholder="Электронная почта" />
-        <Input id="phone" name="register-phone" type="tel" variant="phone" value={phone}
-          autoComplete="off"
-          onChange={(e) => onPhoneChange(e.target.value)} placeholder="+7-999-999-99-12" />
-        <p className={s.contactHint}>Укажите хотя бы один способ связи: email или телефон</p>
-        <Input id="password" name="register-password" variant="password" value={password}
-          autoComplete="new-password"
-          onChange={(e) => onPasswordChange(e.target.value)} placeholder="Пароль" required />
 
-        <ul className={s.passwordRequirements}>
+        <Input
+          id="email"
+          type="email"
+          variant="email"
+          value={watch("email")}
+          autoComplete="off"
+          onChange={(e) => setValue("email", e.target.value, { shouldValidate })}
+          placeholder="Электронная почта"
+          error={formState.errors.email?.message}
+        />
+
+        <div className={s.phoneBlock}>
+          <Input
+            id="phone"
+            type="tel"
+            variant="phone"
+            value={watch("phone")}
+            autoComplete="off"
+            onChange={(e) => onPhoneChange(e.target.value)}
+            placeholder="+7-999-999-99-12"
+            error={formState.errors.phone?.message}
+          />
+          <p className={s.contactHint}>Номер телефона необязателен</p>
+        </div>
+
+        <Input
+          id="password"
+          variant="password"
+          value={watch("password")}
+          autoComplete="new-password"
+          onChange={(e) => setValue("password", e.target.value, { shouldValidate })}
+          placeholder="Пароль"
+          error={formState.errors.password?.message}
+        />
+
+        <Input
+          id="repeatPassword"
+          variant="password"
+          value={watch("repeatPassword")}
+          autoComplete="new-password"
+          onChange={(e) => setValue("repeatPassword", e.target.value, { shouldValidate })}
+          placeholder="Повторите пароль"
+          error={formState.errors.repeatPassword?.message}
+        />
+
+        <ul className={`${s.passwordRequirements} ${s.fullRow}`}>
           <li className={password.length >= 6 ? s.requirementMet : ""}>Не менее 6 символов</li>
           <li className={/[A-Z]/.test(password) ? s.requirementMet : ""}>Хотя бы одна заглавная буква (A-Z)</li>
           <li className={/[a-z]/.test(password) ? s.requirementMet : ""}>Хотя бы одна строчная буква (a-z)</li>
@@ -76,11 +111,32 @@ export function CredentialsStep({
           </li>
         </ul>
 
-        <Input id="repeatPassword" name="register-password-repeat" variant="password" value={repeatPassword}
-          autoComplete="new-password"
-          onChange={(e) => onRepeatPasswordChange(e.target.value)} placeholder="Повторите пароль" required />
+        <div className={`${s.agreements} ${s.fullRow}`}>
+          <Checkbox
+            id="agreePrivacy"
+            checked={agreePrivacy}
+            onChange={(checked) => setValue("agreePrivacy", checked, { shouldValidate })}
+            error={formState.errors.agreePrivacy?.message}
+          >
+            Я соглашаюсь с{" "}
+            <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer" className={s.agreementLink}>
+              Политикой конфиденциальности
+            </Link>
+          </Checkbox>
+          <Checkbox
+            id="agreeTerms"
+            checked={agreeTerms}
+            onChange={(checked) => setValue("agreeTerms", checked, { shouldValidate })}
+            error={formState.errors.agreeTerms?.message}
+          >
+            Я соглашаюсь с{" "}
+            <Link href="/user-agreement" target="_blank" rel="noopener noreferrer" className={s.agreementLink}>
+              Пользовательским соглашением
+            </Link>
+          </Checkbox>
+        </div>
 
-        <Button type="submit" variant="chat" size="lg" fullWidth isLoading={isLoading}>
+        <Button type="submit" variant="chat" size="lg" fullWidth isLoading={isLoading} className={s.fullRow}>
           Зарегистрироваться
         </Button>
       </form>

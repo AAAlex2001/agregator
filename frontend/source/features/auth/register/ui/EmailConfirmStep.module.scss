@@ -1,0 +1,49 @@
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeInSlide 0.4s ease-in-out;
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stepText {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #FF8A00;
+  text-align: center;
+}
+
+.emailHint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #808080;
+  text-align: center;
+
+  span {
+    color: #1A1A1A;
+    font-weight: 500;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.helperText {
+  margin: 0;
+  font-family: 'Inter', 'Montserrat', sans-serif;
+  font-size: 12px;
+  line-height: 15px;
+  color: #A6ACBF;
+  text-align: center;
+}

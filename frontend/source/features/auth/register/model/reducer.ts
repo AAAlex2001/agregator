@@ -1,33 +1,39 @@
-import type { RegisterState, RegisterAction } from "./types";
+export interface RegisterWizardState {
+  step: 1 | 2 | 3;
+  selectedRole: number | null;
+  openedCardId: number | null;
+  pendingEmail: string;
+}
 
-export const initialRegisterState: RegisterState = {
+export type RegisterWizardAction =
+  | { type: "SELECT_ROLE"; payload: number }
+  | { type: "TOGGLE_CARD"; payload: number }
+  | { type: "BACK_TO_ROLES" }
+  | { type: "GO_TO_CONFIRM"; payload: string };
+
+export const initialRegisterWizardState: RegisterWizardState = {
   step: 1,
   selectedRole: null,
   openedCardId: null,
-  email: "",
-  phone: "",
-  inn: "",
-  innQuery: "",
-  password: "",
-  repeatPassword: "",
-  firstName: "",
-  lastName: "",
-  isLoading: false,
-  error: null,
+  pendingEmail: "",
 };
 
-export function registerReducer(state: RegisterState, action: RegisterAction): RegisterState {
+export function registerWizardReducer(
+  state: RegisterWizardState,
+  action: RegisterWizardAction,
+): RegisterWizardState {
   switch (action.type) {
     case "SELECT_ROLE":
       return { ...state, selectedRole: action.payload, step: 2 };
     case "TOGGLE_CARD":
-      return { ...state, openedCardId: state.openedCardId === action.payload ? null : action.payload };
-    case "SET_FIELD":
-      return { ...state, [action.field]: action.value };
-    case "SET_LOADING":
-      return { ...state, isLoading: action.payload };
-    case "SET_ERROR":
-      return { ...state, error: action.payload };
+      return {
+        ...state,
+        openedCardId: state.openedCardId === action.payload ? null : action.payload,
+      };
+    case "BACK_TO_ROLES":
+      return { ...state, step: 1 };
+    case "GO_TO_CONFIRM":
+      return { ...state, step: 3, pendingEmail: action.payload };
     default:
       return state;
   }

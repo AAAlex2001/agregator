@@ -1,74 +1,69 @@
 "use client";
 
-import { useReducer, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/shared/ui/Notifications";
-import { isValidInn, normalizeInn } from "@/source/shared/lib/inn";
 import { loginUser } from "../api/login.api";
-import { loginReducer, initialLoginState } from "./reducer";
+import { loginFormSchema, type LoginFormValues } from "./schema";
+
+const emptyValues: LoginFormValues = { email: "", password: "" };
 
 export function useLogin() {
   const router = useRouter();
   const { reload } = useSession();
   const { showError } = useNotifications();
-  const [state, dispatch] = useReducer(loginReducer, initialLoginState);
   const [fromOrder, setFromOrder] = useState(false);
 
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: emptyValues,
+    mode: "onBlur",
+  });
+
   useEffect(() => {
-    const pending = sessionStorage.getItem("pendingOrderUuid");
-    if (pending) {
+    if (sessionStorage.getItem("pendingOrderUuid")) {
       setFromOrder(true);
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const inn = normalizeInn(state.inn);
+  const submit = form.handleSubmit(
+    async (values) => {
+      try {
+        const user = await loginUser({ email: values.email.trim(), password: values.password });
+        await reload();
 
-    if (!isValidInn(inn)) {
-      showError("Укажите корректный ИНН из 10 или 12 цифр");
-      return;
-    }
-    if (!state.password.trim()) {
-      showError("Введите пароль");
-      return;
-    }
-
-    dispatch({ type: "SET_LOADING", payload: true });
-    dispatch({ type: "SET_ERROR", payload: null });
-
-    try {
-      const user = await loginUser({
-        inn,
-        password: state.password,
-      });
-      await reload();
-
-      const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
-      if (user.role === "EXPERT" && pendingUuid) {
-        sessionStorage.removeItem("pendingOrderUuid");
-        router.push(`/order/${pendingUuid}`);
-      } else if (pendingUuid) {
-        sessionStorage.removeItem("pendingOrderUuid");
-        showError("Этот аккаунт зарегистрирован как заказчик. Для отклика нужен аккаунт эксперта");
-        router.push("/customer/orders");
-      } else {
+        const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
+        if (user.role === "EXPERT" && pendingUuid) {
+          sessionStorage.removeItem("pendingOrderUuid");
+          router.push(`/order/${pendingUuid}`);
+          return;
+        }
+        if (pendingUuid) {
+          sessionStorage.removeItem("pendingOrderUuid");
+          showError("Этот аккаунт зарегистрирован как заказчик. Для отклика нужен аккаунт эксперта");
+          router.push("/customer/orders");
+          return;
+        }
         router.push(user.role === "CUSTOMER" ? "/customer/orders" : "/expert/orders");
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
       }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Произошла ошибка";
-      showError(msg);
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
+    },
+    (errors) => {
+      const first = Object.values(errors)[0];
+      if (first && "message" in first && typeof first.message === "string") {
+        showError(first.message);
+      }
+    },
+  );
 
   return {
-    ...state,
+    form,
     fromOrder,
-    setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
-    setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
-    handleSubmit,
+    isLoading: form.formState.isSubmitting,
+    submit,
   };
 }

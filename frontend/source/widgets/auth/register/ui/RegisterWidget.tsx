@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { LogoIcon, CustomerIcon, ExpertIcon } from "@/source/shared/ui/icons";
-import { useRegister, RoleSelectStep, CredentialsStep } from "@/source/features/auth/register";
+import { useRegister, RoleSelectStep, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
 import type { Role } from "@/source/features/auth/register";
 import styles from "./RegisterWidget.module.scss";
 
@@ -33,14 +33,24 @@ const roles: Role[] = [
   },
 ];
 
+const stepLabels: Record<1 | 2 | 3, string> = {
+  1: "Шаг 1. Выбор роли",
+  2: "Шаг 2. Данные",
+  3: "Шаг 3. Код",
+};
+
 export function RegisterWidget() {
   const reg = useRegister();
+
+  const formContainerClass = [styles.formContainer, reg.step === 3 ? styles.compact : ""]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={styles.container}>
       <div className={styles.background} />
       <div className={styles.content}>
-        <div className={styles.formContainer}>
+        <div className={formContainerClass}>
           <div className={styles.header}>
             <Link href="/" className={styles.logo}>
               <LogoIcon title="Ресурс-Плюс" />
@@ -49,40 +59,32 @@ export function RegisterWidget() {
 
           <div className={styles.stepsHeader}>
             <h2 className={styles.registrationTitle}>Регистрация</h2>
-            <span className={styles.stepIndicator}>
-              {reg.step === 1 ? "Шаг 1. Выбор роли" : "Шаг 2. Данные"}
-            </span>
+            <span className={styles.stepIndicator}>{stepLabels[reg.step]}</span>
           </div>
 
-          {reg.step === 1 ? (
+          {reg.step === 1 && (
             <RoleSelectStep
               roles={roles}
               openedCardId={reg.openedCardId}
               onToggleCard={reg.toggleCard}
               onSelectRole={reg.selectRole}
             />
-          ) : (
+          )}
+          {reg.step === 2 && (
             <CredentialsStep
+              form={reg.form}
               selectedRole={reg.selectedRole}
-              lastName={reg.lastName}
-              firstName={reg.firstName}
-              email={reg.email}
-              phone={reg.phone}
-              inn={reg.inn}
-              innQuery={reg.innQuery}
-              password={reg.password}
-              repeatPassword={reg.repeatPassword}
               isLoading={reg.isLoading}
-              onLastNameChange={reg.setLastName}
-              onFirstNameChange={reg.setFirstName}
-              onEmailChange={reg.setEmail}
               onPhoneChange={reg.setPhone}
-              onInnChange={reg.setInn}
-              onInnQueryChange={reg.setInnQuery}
-              onSuggestionSelect={reg.setSelectedParty}
-              onPasswordChange={reg.setPassword}
-              onRepeatPasswordChange={reg.setRepeatPassword}
-              onSubmit={reg.handleSubmit}
+              onSubmit={reg.submit}
+            />
+          )}
+          {reg.step === 3 && (
+            <EmailConfirmStep
+              form={reg.confirmForm}
+              email={reg.pendingEmail}
+              isLoading={reg.isConfirmLoading}
+              onSubmit={reg.confirmSubmit}
             />
           )}
 

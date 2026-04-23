@@ -34,6 +34,7 @@ class Chat(Base):
         "ChatMessage",
         back_populates="chat",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         lazy="noload",
         order_by="ChatMessage.created_at.asc()",
     )

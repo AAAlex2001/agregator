@@ -1,26 +1,41 @@
-import { FormEvent } from "react";
+import type { UseFormReturn } from "react-hook-form";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import type { ForgotEmailValues } from "../model/schema";
 import s from "./EmailStep.module.scss";
 
 interface Props {
-  email: string;
+  form: UseFormReturn<ForgotEmailValues>;
   isLoading: boolean;
-  onChange: (v: string) => void;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: () => void;
 }
 
-export function EmailStep({ email, isLoading, onChange, onSubmit }: Props) {
+export function EmailStep({ form, isLoading, onSubmit }: Props) {
+  const { watch, setValue, formState } = form;
+  const shouldValidate = formState.isSubmitted;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
     <>
       <p className={s.stepText}>Шаг 1. Введите электронную почту</p>
-      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="forgot-password-email" />
-        <Input id="email" name="forgot-password-email" variant="email" value={email}
+        <Input
+          id="email"
+          type="email"
+          variant="email"
+          value={watch("email")}
           autoComplete="off"
-          onChange={(e) => onChange(e.target.value)} placeholder="Электронная почта" required />
-        <Button type="submit" variant="primary" fullWidth isLoading={isLoading} disabled={!email.trim()}>
+          onChange={(e) => setValue("email", e.target.value, { shouldValidate })}
+          placeholder="Электронная почта"
+          error={formState.errors.email?.message}
+        />
+        <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
           Подтвердить
         </Button>
       </form>

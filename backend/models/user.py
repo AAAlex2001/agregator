@@ -30,6 +30,7 @@ class User(Base):
     inn = Column(String(12), index=True, unique=True, nullable=True)
     company_data = Column(JSON, nullable=True)
     email = Column(String, index=True, unique=True, nullable=True)
+    email_verified = Column(Boolean, default=False, nullable=False)
     phone = Column(String, index=True, unique=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)
@@ -50,26 +51,30 @@ class User(Base):
     password_reset_codes = relationship(
         "PasswordResetCode",
         back_populates="user",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     orders = relationship(
         "Order",
         foreign_keys="Order.customer_id",
         back_populates="customer",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     assigned_orders = relationship(
         "Order",
         foreign_keys="Order.assigned_expert_id",
         back_populates="assigned_expert",
+        passive_deletes=True,
     )
 
     responses = relationship(
         "OrderResponse",
         back_populates="expert",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     customer_chats = relationship(
@@ -77,6 +82,7 @@ class User(Base):
         foreign_keys="Chat.customer_id",
         back_populates="customer",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     expert_chats = relationship(
@@ -84,24 +90,28 @@ class User(Base):
         foreign_keys="Chat.expert_id",
         back_populates="expert",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     chat_messages = relationship(
         "ChatMessage",
         back_populates="sender",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     notifications = relationship(
         "Notification",
         back_populates="user",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     payments = relationship(
         "Payment",
         back_populates="user",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     customer_reviews = relationship(
@@ -109,6 +119,7 @@ class User(Base):
         foreign_keys="Review.customer_id",
         back_populates="customer",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     expert_reviews = relationship(
@@ -116,4 +127,5 @@ class User(Base):
         foreign_keys="Review.expert_id",
         back_populates="expert",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )

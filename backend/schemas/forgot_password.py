@@ -1,20 +1,18 @@
 from typing import Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
+from pydantic import BaseModel, Field, EmailStr
 
 
 class SendResetCodeRequest(BaseModel):
-    """Модель для запроса отправки кода сброса пароля"""
+    "Модель для запроса отправки кода сброса пароля"
     email: Optional[EmailStr] = Field(None, description="Почта пользователя")
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
 
-    @model_validator(mode="after")
-    def phone_or_email_required(self):
-        """
-        Валидатор: должен быть указан либо phone, либо email.
-        """
-        if not self.phone and not self.email:
-            raise ValueError("Необходимо указать либо телефон, либо email")
-        return self
+
+class VerifyCodeRequest(BaseModel):
+    "Проверка кода без смены пароля (для перехода на шаг ввода нового пароля)"
+    email: Optional[EmailStr] = Field(None, description="Почта пользователя")
+    phone: Optional[str] = Field(None, description="Номер телефона пользователя")
+    code: str = Field(..., description="Код восстановления")
 
 
 class ForgotPasswordRequest(BaseModel):
@@ -23,21 +21,11 @@ class ForgotPasswordRequest(BaseModel):
     phone: Optional[str] = Field(None, description="Номер телефона пользователя")
     code: str = Field(..., description="Код для восстановления пароля")
     new_password: str = Field(..., description="Новый пароль пользователя")
-    new_password_confirm: str = Field(..., description="Подтверждение нового пароля")
 
-    @model_validator(mode="after")
-    def phone_or_email_required(self):
-        """
-        Валидатор: должен быть указан либо phone, либо email.
-        """
-        if not self.phone and not self.email:
-            raise ValueError("Необходимо указать либо телефон, либо email")
-        return self
-    
-    
+
 class ForgotPasswordResponse(BaseModel):
     "модель для ответа на фронтенд"
     message: str
 
     class Config:
-        from_attributes = True    
+        from_attributes = True

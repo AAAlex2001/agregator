@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
@@ -44,12 +44,6 @@ async def refresh_session(
     session_id: str = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ):
-    if not session_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Необходима авторизация",
-        )
-
     service = LoginService(db)
     session = await service.refresh_session(session_id)
 

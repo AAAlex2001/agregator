@@ -20,13 +20,10 @@ export function LoginWidget() {
           </div>
 
           <LoginForm
-            inn={auth.inn}
-            password={auth.password}
+            form={auth.form}
             isLoading={auth.isLoading}
             fromOrder={auth.fromOrder}
-            onInnChange={auth.setInn}
-            onPasswordChange={auth.setPassword}
-            onSubmit={auth.handleSubmit}
+            onSubmit={auth.submit}
           />
 
           <div className={styles.footer}>

@@ -12,6 +12,17 @@
   flex-direction: column;
   gap: 16px;
   margin-bottom: 16px;
+
+  @media (min-width: 1440px) {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.rolesContainer > .roleCard {
+  @media (min-width: 1440px) {
+    flex: 1 1 0;
+  }
 }
 
 .roleCard {
@@ -172,7 +183,7 @@
 .bullet {
   display: flex;
   flex-direction: row;
-  margin-top: 8px;
+  align-self: flex-start;
 }
 
 .selectButton {
@@ -184,4 +195,59 @@
 .roleDescriptionOpen .selectButton {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (min-width: 1440px) {
+  .roleCard {
+    cursor: default;
+  }
+
+  .chevron,
+  .roleIcon {
+    display: none;
+  }
+
+  .roleImage {
+    opacity: 0.12;
+  }
+
+  .roleHeader,
+  .roleCardOpen .roleHeader {
+    opacity: 1;
+    transform: none;
+    max-height: 40px;
+  }
+
+  .roleContent {
+    flex: 1;
+  }
+
+  .roleDescriptionWrapper,
+  .roleDescriptionOpen {
+    grid-template-rows: 1fr;
+    flex: 1;
+  }
+
+  .roleDescriptionInner {
+    height: 100%;
+    gap: 16px;
+  }
+
+  .descriptionList {
+    margin: 0;
+  }
+
+  .selectButton {
+    margin-top: auto;
+  }
+
+  .expandedTitle,
+  .roleDescriptionOpen .expandedTitle,
+  .descriptionItem,
+  .roleDescriptionOpen .descriptionItem,
+  .selectButton,
+  .roleDescriptionOpen .selectButton {
+    opacity: 1;
+    transform: none;
+  }
 }

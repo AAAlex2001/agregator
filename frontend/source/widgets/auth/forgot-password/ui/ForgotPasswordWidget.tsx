@@ -39,31 +39,16 @@ export function ForgotPasswordWidget() {
 
           <h1 className={styles.title}>Восстановление пароля</h1>
 
-          {fp.error && <div className={styles.errorMessage}>{fp.error}</div>}
-
           {fp.step === 1 && (
-            <EmailStep
-              email={fp.email}
-              isLoading={fp.isLoading}
-              onChange={fp.setEmail}
-              onSubmit={fp.submitEmail}
-            />
+            <EmailStep form={fp.emailForm} isLoading={fp.isEmailLoading} onSubmit={fp.submitEmail} />
           )}
           {fp.step === 2 && (
-            <CodeStep
-              code={fp.code}
-              isLoading={fp.isLoading}
-              onChange={fp.setCode}
-              onSubmit={fp.submitCode}
-            />
+            <CodeStep form={fp.codeForm} isLoading={fp.isCodeLoading} onSubmit={fp.submitCode} />
           )}
           {fp.step === 3 && (
             <NewPasswordStep
-              password={fp.password}
-              repeatPassword={fp.repeatPassword}
-              isLoading={fp.isLoading}
-              onPasswordChange={fp.setPassword}
-              onRepeatPasswordChange={fp.setRepeatPassword}
+              form={fp.passwordForm}
+              isLoading={fp.isPasswordLoading}
               onSubmit={fp.submitPassword}
             />
           )}

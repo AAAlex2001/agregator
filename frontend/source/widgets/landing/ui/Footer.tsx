@@ -75,6 +75,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <Link href="/requisites">Реквизиты компании</Link>
                   <Link href="/offer">Публичная оферта</Link>
                   <Link href="/user-agreement">Пользовательское соглашение</Link>
+                  <Link href="/privacy-policy">Политика конфиденциальности</Link>
                 </div>
               </div>
 

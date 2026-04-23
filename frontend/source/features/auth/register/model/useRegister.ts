@@ -1,77 +1,119 @@
 "use client";
 
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/shared/ui/Notifications";
-import { normalizeInn } from "@/source/shared/lib/inn";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
-import { registerUser } from "../api/register.api";
-import type { PartySuggestion } from "../api/partySuggestions.api";
-import { validateRegisterForm, getRoleType } from "./validation";
-import { registerReducer, initialRegisterState } from "./reducer";
+import { confirmRegistrationEmail, registerUser, toRegisterPayload } from "../api/register.api";
+import {
+  registerConfirmSchema,
+  registerFormSchema,
+  type RegisterConfirmValues,
+  type RegisterFormValues,
+} from "./schema";
+import {
+  initialRegisterWizardState,
+  registerWizardReducer,
+} from "./reducer";
+
+const emptyFormValues: RegisterFormValues = {
+  role: "CUSTOMER",
+  email: "",
+  phone: "",
+  firstName: "",
+  lastName: "",
+  password: "",
+  repeatPassword: "",
+  agreePrivacy: false,
+  agreeTerms: false,
+};
 
 export function useRegister() {
   const router = useRouter();
   const { showError, showSuccess } = useNotifications();
-  const [state, dispatch] = useReducer(registerReducer, initialRegisterState);
-  const [selectedParty, setSelectedParty] = useState<PartySuggestion | null>(null);
+  const [wizard, dispatch] = useReducer(registerWizardReducer, initialRegisterWizardState);
 
-  const selectRole = (id: number) => dispatch({ type: "SELECT_ROLE", payload: id });
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema),
+    defaultValues: emptyFormValues,
+    mode: "onBlur",
+  });
+
+  const confirmForm = useForm<RegisterConfirmValues>({
+    resolver: zodResolver(registerConfirmSchema),
+    defaultValues: { code: "" },
+    mode: "onBlur",
+  });
+
+  const selectRole = (id: number) => {
+    form.setValue("role", id === 1 ? "CUSTOMER" : "EXPERT");
+    dispatch({ type: "SELECT_ROLE", payload: id });
+  };
+
   const toggleCard = (id: number) => dispatch({ type: "TOGGLE_CARD", payload: id });
+  const backToRoles = () => dispatch({ type: "BACK_TO_ROLES" });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!state.selectedRole) {
-      showError("Выберите роль");
-      return;
-    }
+  const submit = form.handleSubmit(
+    async (values) => {
+      if (!wizard.selectedRole) {
+        showError("Выберите роль");
+        return;
+      }
+      try {
+        await registerUser(toRegisterPayload(values, wizard.selectedRole));
+        dispatch({ type: "GO_TO_CONFIRM", payload: values.email.trim() });
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
+      }
+    },
+    (errors) => {
+      const firstError = Object.values(errors)[0];
+      if (firstError && "message" in firstError && typeof firstError.message === "string") {
+        showError(firstError.message);
+      }
+    },
+  );
 
-    const formData = {
-      role: getRoleType(state.selectedRole),
-      email: state.email,
-      phone: state.phone,
-      inn: normalizeInn(state.inn),
-      companyData: selectedParty,
-      password: state.password,
-      repeatPassword: state.repeatPassword,
-      firstName: state.firstName,
-      lastName: state.lastName,
-    };
+  const confirmSubmit = confirmForm.handleSubmit(
+    async (values) => {
+      try {
+        await confirmRegistrationEmail(wizard.pendingEmail, values.code);
+        showSuccess("Почта подтверждена. Войдите в аккаунт");
+        router.push("/login");
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
+      }
+    },
+    (errors) => {
+      const first = Object.values(errors)[0];
+      if (first && "message" in first && typeof first.message === "string") {
+        showError(first.message);
+      }
+    },
+  );
 
-    const validationError = validateRegisterForm(formData);
-    if (validationError) {
-      showError(validationError);
-      return;
-    }
-
-    dispatch({ type: "SET_LOADING", payload: true });
-    dispatch({ type: "SET_ERROR", payload: null });
-
-    try {
-      await registerUser(formData);
-      showSuccess("Регистрация завершена");
-      router.push("/login");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Произошла ошибка";
-      showError(msg);
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
+  const setPhone = (raw: string) => {
+    form.setValue("phone", formatRussianPhone(raw), {
+      shouldValidate: form.formState.isSubmitted,
+    });
   };
 
   return {
-    ...state,
-    setEmail: (v: string) => dispatch({ type: "SET_FIELD", field: "email", value: v }),
-    setPhone: (v: string) => dispatch({ type: "SET_FIELD", field: "phone", value: formatRussianPhone(v) }),
-    setInn: (v: string) => dispatch({ type: "SET_FIELD", field: "inn", value: normalizeInn(v) }),
-    setInnQuery: (v: string) => dispatch({ type: "SET_FIELD", field: "innQuery", value: v }),
-    setSelectedParty,
-    setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
-    setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
-    setFirstName: (v: string) => dispatch({ type: "SET_FIELD", field: "firstName", value: v }),
-    setLastName: (v: string) => dispatch({ type: "SET_FIELD", field: "lastName", value: v }),
+    step: wizard.step,
+    selectedRole: wizard.selectedRole,
+    openedCardId: wizard.openedCardId,
+    pendingEmail: wizard.pendingEmail,
+    form,
+    confirmForm,
+    isLoading: form.formState.isSubmitting,
+    isConfirmLoading: confirmForm.formState.isSubmitting,
     selectRole,
     toggleCard,
-    handleSubmit,
+    backToRoles,
+    submit,
+    confirmSubmit,
+    setPhone,
   };
 }

@@ -1,27 +1,37 @@
-import { FormEvent } from "react";
-import Input from "@/source/shared/ui/Input";
+import type { UseFormReturn } from "react-hook-form";
 import Button from "@/source/shared/ui/Button";
-import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import { OtpCodeInput } from "@/source/shared/ui";
+import type { ForgotCodeValues } from "../model/schema";
 import s from "./CodeStep.module.scss";
 
 interface Props {
-  code: string;
+  form: UseFormReturn<ForgotCodeValues>;
   isLoading: boolean;
-  onChange: (v: string) => void;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: () => void;
 }
 
-export function CodeStep({ code, isLoading, onChange, onSubmit }: Props) {
+export function CodeStep({ form, isLoading, onSubmit }: Props) {
+  const { watch, setValue, formState } = form;
+  const code = watch("code");
+  const shouldValidate = formState.isSubmitted;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
     <>
       <p className={s.stepText}>Шаг 2. Введите код, отправленный на почту</p>
-      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
-        <AutofillGuard idPrefix="forgot-password-code" />
-        <Input id="code" name="forgot-password-code" variant="code" value={code}
-          autoComplete="off"
-          onChange={(e) => onChange(e.target.value)} placeholder="Код" required />
+      <form onSubmit={handleSubmit} className={s.form}>
+        <OtpCodeInput
+          value={code}
+          onChange={(next) => setValue("code", next, { shouldValidate })}
+          error={Boolean(formState.errors.code)}
+          autoFocus
+        />
         <p className={s.helperText}>Если код отсутствует, проверьте папку «Спам»</p>
-        <Button type="submit" variant="primary" fullWidth isLoading={isLoading} disabled={!code.trim()}>
+        <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
           Подтвердить код
         </Button>
       </form>

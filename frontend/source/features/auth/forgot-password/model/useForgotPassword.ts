@@ -1,77 +1,99 @@
 "use client";
 
-import { useReducer } from "react";
-import { requestPasswordReset, confirmResetCode, resetPassword } from "../api/forgot-password.api";
-import { forgotPasswordReducer, initialForgotPasswordState } from "./reducer";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNotifications } from "@/shared/ui/Notifications";
+import { confirmResetCode, requestPasswordReset, resetPassword } from "../api/forgot-password.api";
+import {
+  forgotCodeSchema,
+  forgotEmailSchema,
+  forgotNewPasswordSchema,
+  type ForgotCodeValues,
+  type ForgotEmailValues,
+  type ForgotNewPasswordValues,
+} from "./schema";
+
+export type ForgotPasswordStep = 1 | 2 | 3 | 4;
 
 export function useForgotPassword() {
-  const [state, dispatch] = useReducer(forgotPasswordReducer, initialForgotPasswordState);
+  const { showError } = useNotifications();
+  const [step, setStep] = useState<ForgotPasswordStep>(1);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
 
-  const submitEmail = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!state.email.trim()) {
-      dispatch({ type: "SET_ERROR", payload: "Введите электронную почту" });
-      return;
-    }
-    dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      await requestPasswordReset(state.email);
-      dispatch({ type: "SET_STEP", payload: 2 });
-    } catch (err) {
-      dispatch({ type: "SET_ERROR", payload: err instanceof Error ? err.message : "Произошла ошибка" });
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
+  const emailForm = useForm<ForgotEmailValues>({
+    resolver: zodResolver(forgotEmailSchema),
+    defaultValues: { email: "" },
+    mode: "onBlur",
+  });
+
+  const codeForm = useForm<ForgotCodeValues>({
+    resolver: zodResolver(forgotCodeSchema),
+    defaultValues: { code: "" },
+    mode: "onBlur",
+  });
+
+  const passwordForm = useForm<ForgotNewPasswordValues>({
+    resolver: zodResolver(forgotNewPasswordSchema),
+    defaultValues: { password: "", repeatPassword: "" },
+    mode: "onBlur",
+  });
+
+  const showFirstError = (errors: Record<string, { message?: string } | undefined>) => {
+    const first = Object.values(errors)[0];
+    if (first && "message" in first && typeof first.message === "string") {
+      showError(first.message);
     }
   };
 
-  const submitCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!state.code.trim()) {
-      dispatch({ type: "SET_ERROR", payload: "Введите код" });
-      return;
-    }
-    dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      await confirmResetCode(state.email, state.code);
-      dispatch({ type: "SET_STEP", payload: 3 });
-    } catch (err) {
-      dispatch({ type: "SET_ERROR", payload: err instanceof Error ? err.message : "Произошла ошибка" });
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
+  const submitEmail = emailForm.handleSubmit(
+    async (values) => {
+      try {
+        await requestPasswordReset(values.email.trim());
+        setEmail(values.email.trim());
+        setStep(2);
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
+      }
+    },
+    showFirstError,
+  );
 
-  const submitPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!state.password.trim()) {
-      dispatch({ type: "SET_ERROR", payload: "Введите пароль" });
-      return;
-    }
-    if (state.password.length < 6) {
-      dispatch({ type: "SET_ERROR", payload: "Пароль должен быть не менее 6 символов" });
-      return;
-    }
-    if (state.password !== state.repeatPassword) {
-      dispatch({ type: "SET_ERROR", payload: "Пароли не совпадают" });
-      return;
-    }
-    dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      await resetPassword(state.email, state.code, state.password);
-      dispatch({ type: "SET_STEP", payload: 4 });
-    } catch (err) {
-      dispatch({ type: "SET_ERROR", payload: err instanceof Error ? err.message : "Произошла ошибка" });
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
+  const submitCode = codeForm.handleSubmit(
+    async (values) => {
+      try {
+        await confirmResetCode(email, values.code);
+        setCode(values.code);
+        setStep(3);
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
+      }
+    },
+    showFirstError,
+  );
+
+  const submitPassword = passwordForm.handleSubmit(
+    async (values) => {
+      try {
+        await resetPassword(email, code, values.password);
+        setStep(4);
+      } catch (err) {
+        showError(err instanceof Error ? err.message : "Произошла ошибка");
+      }
+    },
+    showFirstError,
+  );
 
   return {
-    ...state,
-    setEmail: (v: string) => dispatch({ type: "SET_FIELD", field: "email", value: v }),
-    setCode: (v: string) => dispatch({ type: "SET_FIELD", field: "code", value: v }),
-    setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
-    setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
+    step,
+    email,
+    emailForm,
+    codeForm,
+    passwordForm,
+    isEmailLoading: emailForm.formState.isSubmitting,
+    isCodeLoading: codeForm.formState.isSubmitting,
+    isPasswordLoading: passwordForm.formState.isSubmitting,
     submitEmail,
     submitCode,
     submitPassword,

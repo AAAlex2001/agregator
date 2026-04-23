@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Any, Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
+from pydantic import BaseModel, Field, EmailStr
 from enum import Enum
 
 
@@ -12,24 +12,22 @@ class UserRole(str, Enum):
 class UserRegistration(BaseModel):
     "модель валидации пользователя"
     role: UserRole = Field(..., description="Роль пользователя")
-    phone: Optional[str] = Field(None, description="Номер телефона пользователя")
-    inn: str = Field(..., description="ИНН", min_length=10, max_length=12)
-    company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
+    email: EmailStr = Field(..., description="Почта пользователя")
     password: str = Field(..., description="Пароль пользователя")
-    email: Optional[EmailStr] = Field(None, description="Почта пользователя")
+    phone: Optional[str] = Field(None, description="Номер телефона пользователя")
+    inn: Optional[str] = Field(None, description="ИНН")
+    company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
     first_name: Optional[str] = Field(None, description="Имя", max_length=100)
     last_name: Optional[str] = Field(None, description="Фамилия", max_length=100)
 
-    @model_validator(mode="after")
-    def phone_or_email_required(self):
-        """
-        Валидатор: должен быть указан либо phone, либо email.
-        """
-        if not self.phone and not self.email:
-            raise ValueError("Необходимо указать либо телефон, либо email")
-        if not self.inn.isdigit() or len(self.inn) not in {10, 12}:
-            raise ValueError("ИНН должен содержать 10 или 12 цифр")
-        return self
+
+class EmailConfirmRequest(BaseModel):
+    email: EmailStr = Field(..., description="Почта пользователя")
+    code: str = Field(..., description="Код подтверждения")
+
+
+class EmailConfirmResponse(BaseModel):
+    message: str
 
 
 class PartySuggestionRequest(BaseModel):
@@ -41,7 +39,6 @@ class PartySuggestionResponse(BaseModel):
     value: str
     unrestricted_value: str
     data: dict[str, Any] = Field(default_factory=dict)
-    
 
 
 class UserResponse(BaseModel):

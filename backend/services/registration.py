@@ -1,15 +1,21 @@
 import re
+
+from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models.user import User, UserRole
+
+from models.user import User
 from schemas.registration import UserRegistration
-from fastapi import HTTPException, status
+from services.verification import VerificationService
 from utils.passwords import hash_password
+
+EMAIL_CONFIRMATION_SUBJECT = "Подтверждение почты на Ресурс-Плюс"
 
 
 class RegistrationService:
     def __init__(self, db: AsyncSession):
         self.db = db
+        self.verification = VerificationService(db)
 
     def validate_password(self, password: str) -> None:
         errors = []
@@ -27,6 +33,15 @@ class RegistrationService:
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
 
+    def validate_inn_format(self, inn: str | None) -> None:
+        if not inn:
+            return
+        if not inn.isdigit() or len(inn) not in {10, 12}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ИНН должен содержать 10 или 12 цифр",
+            )
+
     async def get_user_by_email(self, email: str) -> User | None:
         query = select(User).where(User.email == email)
         result = await self.db.execute(query)
@@ -42,53 +57,93 @@ class RegistrationService:
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def create_user(self, data: UserRegistration) -> User:
-        self.validate_password(data.password)
+    async def ensure_email_is_free(self, email: str) -> None:
+        existing = await self.get_user_by_email(email)
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пользователь с таким email уже зарегистрирован",
+            )
 
-        company_inn = None
-        if data.company_data:
-            company_inn = ((data.company_data.get("data") or {}).get("inn") if isinstance(data.company_data, dict) else None)
-            if company_inn and company_inn != data.inn:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Выбранная компания не соответствует указанному ИНН",
-                )
+    async def ensure_phone_is_free(self, phone: str | None) -> None:
+        if not phone:
+            return
+        existing = await self.get_user_by_phone(phone)
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пользователь с таким номером уже зарегистрирован",
+            )
 
-        existing_by_inn = await self.get_user_by_inn(data.inn)
-        if existing_by_inn:
+    async def ensure_inn_is_free(self, inn: str | None) -> None:
+        if not inn:
+            return
+        existing = await self.get_user_by_inn(inn)
+        if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Пользователь с таким ИНН уже зарегистрирован",
             )
 
-        if data.email:
-            existing = await self.get_user_by_email(data.email)
-            if existing:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким email уже зарегистрирован",
-                )
+    def ensure_company_matches_inn(self, inn: str | None, company_data: dict | None) -> None:
+        if not inn or not isinstance(company_data, dict):
+            return
+        company_inn = (company_data.get("data") or {}).get("inn")
+        if company_inn and company_inn != inn:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Выбранная компания не соответствует указанному ИНН",
+            )
 
-        if data.phone:
-            existing = await self.get_user_by_phone(data.phone)
-            if existing:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Пользователь с таким номером уже зарегистрирован",
-                )
+    async def create_user(self, data: UserRegistration) -> User:
+        self.validate_password(data.password)
+        self.validate_inn_format(data.inn)
+        self.ensure_company_matches_inn(data.inn, data.company_data)
+
+        await self.ensure_email_is_free(data.email)
+        await self.ensure_phone_is_free(data.phone)
+        await self.ensure_inn_is_free(data.inn)
 
         new_user = User(
             role=data.role,
             phone=data.phone,
             email=data.email,
+            email_verified=False,
             inn=data.inn,
             company_data=data.company_data,
             password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,
         )
-
         self.db.add(new_user)
         await self.db.flush()
-
         return new_user
+
+    async def send_email_confirmation(self, user: User) -> None:
+        if not user.email:
+            return
+        await self.verification.send_code_to_email(
+            user.id,
+            user.email,
+            EMAIL_CONFIRMATION_SUBJECT,
+        )
+
+    async def schedule_email_confirmation(self, user: User, background_tasks: BackgroundTasks) -> None:
+        "Выдаёт код в БД и отправляет письмо в фоне — регистрация отвечает клиенту сразу."
+        if not user.email:
+            return
+        await self.verification.schedule_code_email(
+            user.id,
+            user.email,
+            EMAIL_CONFIRMATION_SUBJECT,
+            background_tasks,
+        )
+
+    async def confirm_email(self, email: str, code: str) -> User:
+        user = await self.get_user_by_email(email)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь не найден",
+            )
+        return await self.verification.confirm_email(user, code)

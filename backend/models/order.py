@@ -91,18 +91,21 @@ class Order(Base):
         "OrderBadge",
         back_populates="order",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         lazy="selectin",
     )
     responses = relationship(
         "OrderResponse",
         back_populates="order",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         lazy="selectin",
     )
     chats = relationship(
         "Chat",
         back_populates="order",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         lazy="selectin",
     )
 
