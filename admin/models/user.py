@@ -26,6 +26,7 @@ class User(Base):
     inn = Column(String(12), index=True, nullable=True)
     company_data = Column(JSON, nullable=True)
     email = Column(String, index=True, nullable=True)
+    email_notifications_enabled = Column(Boolean, default=True, nullable=False, server_default="true")
     phone = Column(String, index=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)

@@ -122,6 +122,7 @@ class SettingsService:
             id=user.id,
             inn=user.inn,
             email=user.email,
+            email_verified=bool(user.email_verified),
             phone=user.phone,
             avatar_url=user.avatar_url,
             first_name=user.first_name,
@@ -130,4 +131,5 @@ class SettingsService:
             rating=float(user.rating) if user.rating is not None else None,
             review_count=user.review_count or 0,
             role=user.role.value,
+            email_notifications_enabled=bool(user.email_notifications_enabled),
         )

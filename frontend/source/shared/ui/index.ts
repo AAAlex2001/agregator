@@ -1,5 +1,6 @@
 export { default as Button } from "./Button";
 export { Checkbox } from "./Checkbox";
+export { Switch } from "./Switch";
 export { OtpCodeInput } from "./OtpCodeInput";
 export { DocContent } from "./DocContent";
 export type { DocContentProps, DocBlock, DocSection, DocTableBlock } from "./DocContent";

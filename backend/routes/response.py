@@ -1,9 +1,9 @@
 from datetime import date as date_type, timedelta
 
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.database import get_db
+from database.database import AsyncSessionLocal, get_db
 from dependencies.auth import get_current_user
 from models.response import ResponseStatus
 from models.user import UserRole
@@ -15,6 +15,7 @@ from schemas.response import (
 )
 from services.commission import CommissionCalculator
 from services.response import ResponseService
+from services.response_email import send_response_notification
 
 router = APIRouter(tags=["responses"])
 
@@ -119,6 +120,7 @@ def to_item(
 @router.post("/orders/{order_id}/responses", response_model=ExpertResponseItem)
 async def create_response_for_order(
     order_id: int,
+    background_tasks: BackgroundTasks,
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
     proposed_deadline: str = Form(...),
@@ -141,7 +143,17 @@ async def create_response_for_order(
             files=files,
         )
 
+    background_tasks.add_task(dispatch_response_notification, created.id)
     return to_item(created)
+
+
+async def dispatch_response_notification(response_id: int) -> None:
+    "Отправка письма заказчику — в фоне, со своей сессией БД (Depends-сессия уже закрыта)."
+    async with AsyncSessionLocal() as session:
+        try:
+            await send_response_notification(session, response_id)
+        finally:
+            await session.close()
 
 
 @router.get("/responses", response_model=ExpertResponseList)

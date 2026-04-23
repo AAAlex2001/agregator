@@ -10,6 +10,10 @@ class UpdatePersonalDataRequest(BaseModel):
     phone: Optional[str] = Field(None, description="Номер телефона")
     email: Optional[EmailStr] = Field(None, description="Электронная почта")
     inn: Optional[str] = Field(None, description="ИНН", min_length=10, max_length=12)
+    email_notifications_enabled: Optional[bool] = Field(
+        None,
+        description="Получать ли письма об откликах на заказы",
+    )
 
     @model_validator(mode="after")
     def validate_phone_format(self):
@@ -42,6 +46,7 @@ class UserSettingsResponse(BaseModel):
     id: int
     inn: Optional[str] = None
     email: Optional[EmailStr] = None
+    email_verified: bool = False
     phone: Optional[str] = None
     avatar_url: Optional[str] = None
     first_name: Optional[str] = None
@@ -50,6 +55,7 @@ class UserSettingsResponse(BaseModel):
     rating: Optional[float] = None
     review_count: int = 0
     role: str
+    email_notifications_enabled: bool = True
 
     class Config:
         from_attributes = True

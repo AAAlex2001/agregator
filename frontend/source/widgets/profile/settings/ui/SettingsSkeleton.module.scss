@@ -57,6 +57,48 @@
   height: 48px;
 }
 
+.verifiedBadge {
+  width: 160px;
+  height: 20px;
+  align-self: flex-start;
+}
+
+.notificationsRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #F0F0F2;
+}
+
+.notificationsText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationsLabel {
+  width: 60%;
+  max-width: 220px;
+  height: 14px;
+}
+
+.notificationsDescription {
+  width: 90%;
+  max-width: 320px;
+  height: 12px;
+}
+
+.switchTrack {
+  width: 36px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
 .actions,
 .financeButtons {
   display: flex;

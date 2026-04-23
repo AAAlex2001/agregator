@@ -7,9 +7,10 @@ import s from "./SettingsSkeleton.module.scss";
 
 interface SettingsSkeletonProps {
   section: "personal" | "finance";
+  isCustomer?: boolean;
 }
 
-export function SettingsSkeleton({ section }: SettingsSkeletonProps) {
+export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkeletonProps) {
   if (section === "finance") {
     return (
       <div className={s.finance} aria-hidden="true">
@@ -47,10 +48,24 @@ export function SettingsSkeleton({ section }: SettingsSkeletonProps) {
       <div className={formStyles.section}>
         <h2 className={formStyles.subtitle}>Персональные данные</h2>
         <div className={formStyles.grid}>
-          {Array.from({ length: 4 }, (_, index) => (
-            <Skeleton key={index} className={s.input} rounded="lg" />
-          ))}
+          <Skeleton className={s.input} rounded="lg" />
+          <Skeleton className={s.input} rounded="lg" />
+          <Skeleton className={s.input} rounded="lg" />
+          <div className={formStyles.emailCell}>
+            <Skeleton className={s.input} rounded="lg" />
+            <Skeleton className={s.verifiedBadge} rounded="pill" />
+          </div>
         </div>
+
+        {isCustomer && (
+          <div className={s.notificationsRow}>
+            <div className={s.notificationsText}>
+              <Skeleton className={s.notificationsLabel} rounded="pill" />
+              <Skeleton className={s.notificationsDescription} rounded="pill" />
+            </div>
+            <Skeleton className={s.switchTrack} rounded="pill" />
+          </div>
+        )}
       </div>
 
       <div className={formStyles.section}>

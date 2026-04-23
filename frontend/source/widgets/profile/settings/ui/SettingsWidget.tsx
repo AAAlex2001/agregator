@@ -48,7 +48,7 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
         {error && <p className={s.error}>{error}</p>}
 
         {isLoading || !user ? (
-          <SettingsSkeleton section={section} />
+          <SettingsSkeleton section={section} isCustomer={!isExpert} />
         ) : section === "personal" || !isExpert ? (
           <PersonalDataForm profile={user} onProfileUpdate={setUser} />
         ) : (

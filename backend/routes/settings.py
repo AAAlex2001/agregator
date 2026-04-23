@@ -54,6 +54,8 @@ async def update_profile(
     if data.inn is not None:
         await service.ensure_unique_inn(data.inn, user_id)
         user.inn = data.inn
+    if data.email_notifications_enabled is not None:
+        user.email_notifications_enabled = data.email_notifications_enabled
 
     await db.flush()
     response.set_cookie(

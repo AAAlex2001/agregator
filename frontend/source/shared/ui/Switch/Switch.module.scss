@@ -1,0 +1,79 @@
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wrapper.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.label {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.description {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: #8A8F99;
+}
+
+.track {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 36px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #D7DADF;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.track:disabled {
+  cursor: not-allowed;
+}
+
+.track:focus-visible {
+  outline: 2px solid #FF8A00;
+  outline-offset: 2px;
+}
+
+.trackOn {
+  background: #FF8A00;
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  transform: translate(0, -50%);
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.trackOn .thumb {
+  transform: translate(16px, -50%);
+}

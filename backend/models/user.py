@@ -31,6 +31,7 @@ class User(Base):
     company_data = Column(JSON, nullable=True)
     email = Column(String, index=True, unique=True, nullable=True)
     email_verified = Column(Boolean, default=False, nullable=False)
+    email_notifications_enabled = Column(Boolean, default=True, nullable=False, server_default="true")
     phone = Column(String, index=True, unique=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)

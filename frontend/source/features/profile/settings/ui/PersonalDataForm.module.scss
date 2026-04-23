@@ -37,6 +37,35 @@
   }
 }
 
+.emailCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #E6F7EC;
+  color: #118A3D;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.notifications {
+  padding-top: 14px;
+  border-top: 1px solid #F0F0F2;
+}
+
 .saveWrapper {
   display: flex;
   align-items: center;

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import { Switch } from "@/source/shared/ui/Switch";
 import { LogoutIcon } from "@/source/shared/ui/icons";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { logout } from "../api/settings.api";
@@ -62,6 +63,20 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void handleSave();
+  };
+
+  const handleToggleNotifications = async (next: boolean) => {
+    const result = await form.toggleEmailNotifications(next);
+    if (result.errorMessage) {
+      showError(result.errorMessage);
+      return;
+    }
+    if (result.profile) {
+      onProfileUpdate(result.profile);
+    }
+    if (result.successMessage) {
+      showSuccess(result.successMessage);
+    }
   };
 
   const handleLogout = async () => {
@@ -160,18 +175,49 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
               value={form.firstName}
               onChange={(e) => form.setFirstName(e.target.value)}
             />
-            <Input
-              id="email"
-              name="profile-email"
-              type="email"
-              variant="email"
-              placeholder="Электронная почта"
-              aria-label="Email"
-              autoComplete="off"
-              value={form.email}
-              onChange={(e) => form.setEmail(e.target.value)}
-            />
+            <div className={s.emailCell}>
+              <Input
+                id="email"
+                name="profile-email"
+                type="email"
+                variant="email"
+                placeholder="Электронная почта"
+                aria-label="Email"
+                autoComplete="off"
+                value={form.email}
+                onChange={(e) => form.setEmail(e.target.value)}
+              />
+              {profile.email_verified && (
+                <span className={s.verifiedBadge}>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M11.2 4.2 5.833 9.567 2.8 6.533l.933-.933 2.1 2.1 4.434-4.433.933.933Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Почта подтверждена
+                </span>
+              )}
+            </div>
           </div>
+
+          {profile.role === "CUSTOMER" && (
+            <Switch
+              id="email-notifications"
+              checked={form.emailNotificationsEnabled}
+              onChange={(next) => void handleToggleNotifications(next)}
+              label="Письма об откликах на заказ"
+              description="Приходят на указанную почту, когда эксперт откликается на вашу заявку"
+              disabled={form.isSaving}
+              className={s.notifications}
+            />
+          )}
         </div>
 
         <div className={s.section}>
