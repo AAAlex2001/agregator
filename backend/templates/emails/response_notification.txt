@@ -1,0 +1,29 @@
+Новый отклик на вашу заявку
+
+Здравствуйте, {{ customer_greeting }}! На вашу заявку «{{ order_title }}» откликнулся эксперт.
+
+— Заявка —
+{% if order.company %}Компания: {{ order.company }}
+{% endif %}Бюджет: {{ order.sum_amount | rubles }}
+Срок: {{ order.deadline | date_ru }}
+{% if order.comment %}Комментарий:
+{{ order.comment }}
+{% endif %}
+— Эксперт —
+Имя: {{ expert.name }}
+{% if expert.contact %}Контакты: {{ expert.contact }}
+{% endif %}{% if expert.review_count > 0 %}Отзывов: {{ expert.review_count }}{% if expert.avg_rating is not none %}, средняя оценка {{ expert.avg_rating | rating }} из 5{% endif %}
+{% else %}Отзывов пока нет
+{% endif %}
+— Предложение эксперта —
+Стоимость: {{ response.proposed_sum_amount | rubles }}
+Срок: {{ response.proposed_deadline | date_ru }}
+{% if response.comment %}Комментарий:
+{{ response.comment }}
+{% endif %}{% if response.files_count %}Файлов приложено: {{ response.files_count }}
+{% endif %}
+Открыть отклики: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com
+Вы получили это письмо, так как в настройках профиля включены уведомления об откликах. Отключить: plus-resurs.com/settings

@@ -1,11 +1,11 @@
 import mimetypes
 import os
 from dataclasses import dataclass
+from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr, formatdate, make_msgid
-from email import encoders
 from pathlib import Path
 
 import aiosmtplib
@@ -34,27 +34,34 @@ class EmailAttachment:
 async def send_email(
     email: str,
     subject: str,
-    body: str,
+    text_body: str,
+    html_body: str | None = None,
     attachments: list[EmailAttachment] | None = None,
 ) -> None:
-    "Универсальная отправка письма. Вложения пропускаются, если превышают суммарный лимит."
+    "Универсальная отправка письма. Собирает multipart/mixed → alternative(text+html) + attachments."
     sender_domain = EMAIL_HOST_USER.split("@")[-1] or "localhost"
-    message = MIMEMultipart("mixed")
-    message["From"] = formataddr((EMAIL_FROM_NAME, EMAIL_HOST_USER))
-    message["To"] = email
-    message["Reply-To"] = EMAIL_HOST_USER
-    message["Subject"] = subject
-    message["Date"] = formatdate(localtime=False)
-    message["Message-ID"] = make_msgid(domain=sender_domain)
-    message["MIME-Version"] = "1.0"
-    message.attach(MIMEText(body, "plain", "utf-8"))
 
-    attach_files_to_message(message, attachments or [])
+    outer = MIMEMultipart("mixed")
+    outer["From"] = formataddr((EMAIL_FROM_NAME, EMAIL_HOST_USER))
+    outer["To"] = email
+    outer["Reply-To"] = EMAIL_HOST_USER
+    outer["Subject"] = subject
+    outer["Date"] = formatdate(localtime=False)
+    outer["Message-ID"] = make_msgid(domain=sender_domain)
+    outer["MIME-Version"] = "1.0"
+
+    alternative = MIMEMultipart("alternative")
+    alternative.attach(MIMEText(text_body, "plain", "utf-8"))
+    if html_body:
+        alternative.attach(MIMEText(html_body, "html", "utf-8"))
+    outer.attach(alternative)
+
+    attach_files_to_message(outer, attachments or [])
 
     use_ssl = EMAIL_PORT == 465
     try:
         await aiosmtplib.send(
-            message,
+            outer,
             hostname=EMAIL_HOST,
             port=EMAIL_PORT,
             username=EMAIL_HOST_USER,
@@ -88,14 +95,5 @@ def attach_files_to_message(message: MIMEMultipart, attachments: list[EmailAttac
             part.set_payload(file_handle.read())
 
         encoders.encode_base64(part)
-        part.add_header(
-            "Content-Disposition",
-            "attachment",
-            filename=attachment.filename,
-        )
+        part.add_header("Content-Disposition", "attachment", filename=attachment.filename)
         message.attach(part)
-
-
-async def send_code_reset_email(email: str, subject: str, body: str) -> None:
-    "Письмо с кодом верификации. Обёртка вокруг send_email без вложений."
-    await send_email(email, subject, body)

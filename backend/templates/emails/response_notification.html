@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="margin:0 0 8px 0;font-size:22px;line-height:28px;font-weight:600;color:#1A1A1A;">Новый отклик на вашу заявку</h1>
+<p style="margin:0 0 24px 0;font-size:14px;line-height:22px;color:#4A4F57;">
+  Здравствуйте, {{ customer_greeting }}! На вашу заявку <strong style="color:#1A1A1A;">«{{ order_title }}»</strong> откликнулся эксперт.
+</p>
+
+{# ── Заявка ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;border:1px solid #EEEFF2;border-radius:12px;overflow:hidden;">
+  <tr>
+    <td style="padding:12px 18px;background:#FAFAFB;border-bottom:1px solid #EEEFF2;font-size:11px;line-height:16px;font-weight:600;color:#8A8F99;text-transform:uppercase;letter-spacing:0.6px;">
+      Заявка
+    </td>
+  </tr>
+  {% if order.company %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;border-bottom:1px solid #F5F6F8;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Компания</span>{{ order.company }}
+    </td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;border-bottom:1px solid #F5F6F8;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Бюджет</span>{{ order.sum_amount | rubles }}
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;{% if order.comment %}border-bottom:1px solid #F5F6F8;{% endif %}">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Срок</span>{{ order.deadline | date_ru }}
+    </td>
+  </tr>
+  {% if order.comment %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;">
+      <p style="margin:0 0 4px 0;color:#8A8F99;">Комментарий</p>
+      <p style="margin:0;white-space:pre-wrap;">{{ order.comment }}</p>
+    </td>
+  </tr>
+  {% endif %}
+</table>
+
+{# ── Эксперт ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0;border:1px solid #EEEFF2;border-radius:12px;overflow:hidden;">
+  <tr>
+    <td style="padding:12px 18px;background:#FAFAFB;border-bottom:1px solid #EEEFF2;font-size:11px;line-height:16px;font-weight:600;color:#8A8F99;text-transform:uppercase;letter-spacing:0.6px;">
+      Эксперт
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;border-bottom:1px solid #F5F6F8;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Имя</span>{{ expert.name }}
+    </td>
+  </tr>
+  {% if expert.contact %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;border-bottom:1px solid #F5F6F8;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Контакты</span>{{ expert.contact }}
+    </td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Репутация</span>
+      {% if expert.review_count > 0 %}
+        Отзывов: <strong>{{ expert.review_count }}</strong>
+        {% if expert.avg_rating is not none %}
+          · средняя оценка <strong>{{ expert.avg_rating | rating }}</strong> из 5
+        {% endif %}
+      {% else %}
+        <span style="color:#8A8F99;">отзывов пока нет</span>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+{# ── Предложение ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;border:1px solid #FFDDA9;border-radius:12px;overflow:hidden;">
+  <tr>
+    <td style="padding:12px 18px;background:#FFF7EC;border-bottom:1px solid #FFDDA9;font-size:11px;line-height:16px;font-weight:600;color:#FF8A00;text-transform:uppercase;letter-spacing:0.6px;">
+      Предложение эксперта
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;border-bottom:1px solid #FFF0D6;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Стоимость</span><strong>{{ response.proposed_sum_amount | rubles }}</strong>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;{% if response.comment or response.files_count %}border-bottom:1px solid #FFF0D6;{% endif %}">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Срок</span>{{ response.proposed_deadline | date_ru }}
+    </td>
+  </tr>
+  {% if response.comment %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;{% if response.files_count %}border-bottom:1px solid #FFF0D6;{% endif %}">
+      <p style="margin:0 0 4px 0;color:#8A8F99;">Комментарий</p>
+      <p style="margin:0;white-space:pre-wrap;">{{ response.comment }}</p>
+    </td>
+  </tr>
+  {% endif %}
+  {% if response.files_count %}
+  <tr>
+    <td style="padding:10px 18px;font-size:14px;line-height:20px;color:#1A1A1A;">
+      <span style="display:inline-block;min-width:120px;color:#8A8F99;">Файлы</span>приложено {{ response.files_count }}
+    </td>
+  </tr>
+  {% endif %}
+</table>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="border-radius:10px;background:#FF8A00;">
+      <a href="{{ cta_url }}" style="display:inline-block;padding:12px 28px;font-size:14px;line-height:20px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:10px;">
+        Открыть отклики
+      </a>
+    </td>
+  </tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+<p style="margin:0 0 4px 0;">Вы получили это письмо, так как в настройках профиля включены уведомления об откликах.</p>
+<p style="margin:0;">Отключить письма: <a href="https://plus-resurs.com/settings" style="color:#FF8A00;text-decoration:none;">plus-resurs.com/settings</a></p>
+{% endblock %}

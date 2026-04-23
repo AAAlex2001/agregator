@@ -8,15 +8,18 @@ from sqlalchemy.future import select
 from models.password_reset_code import PasswordResetCode
 from models.user import User
 from utils.code import generate_numeric_code
-from utils.email import send_code_reset_email
+from utils.email import send_email
+from utils.email_templates import render_email
 
 logger = logging.getLogger(__name__)
 
+VERIFICATION_CODE_TTL_MINUTES = 15
 
-async def deliver_code_email(email: str, subject: str, body: str) -> None:
+
+async def deliver_code_email(email: str, subject: str, text: str, html: str) -> None:
     "Обёртка для BackgroundTasks: отправляет письмо, ошибки SMTP пишет в лог, но не роняет запрос."
     try:
-        await send_code_reset_email(email, subject, body)
+        await send_email(email, subject, text, html)
     except Exception as exc:
         logger.exception("Не удалось отправить код на %s: %s", email, exc)
 
@@ -35,8 +38,8 @@ class VerificationService:
 
     async def send_code_to_email(self, user_id: int, email: str, subject: str) -> str:
         code = await self.issue_code(user_id)
-        body = self.build_body(subject, code)
-        await send_code_reset_email(email, subject, body)
+        rendered = self.render_code_email(subject, code)
+        await send_email(email, rendered.subject, rendered.text, rendered.html)
         return code
 
     async def schedule_code_email(
@@ -48,16 +51,26 @@ class VerificationService:
     ) -> None:
         "Выпускает код в БД и ставит отправку письма в фон — клиент не ждёт SMTP."
         code = await self.issue_code(user_id)
-        body = self.build_body(subject, code)
-        background_tasks.add_task(deliver_code_email, email, subject, body)
+        rendered = self.render_code_email(subject, code)
+        background_tasks.add_task(
+            deliver_code_email,
+            email,
+            rendered.subject,
+            rendered.text,
+            rendered.html,
+        )
 
     @staticmethod
-    def build_body(subject: str, code: str) -> str:
-        return (
-            f"{subject}\n\n"
-            f"Ваш код подтверждения: {code}\n\n"
-            f"Код действителен 15 минут. Если вы не запрашивали его — "
-            f"просто проигнорируйте это письмо."
+    def render_code_email(subject: str, code: str):
+        return render_email(
+            name="verification_code",
+            subject=subject,
+            context={
+                "heading": subject,
+                "intro": "Используйте одноразовый код, чтобы завершить действие на Ресурс-Плюс:",
+                "code": code,
+                "expire_minutes": VERIFICATION_CODE_TTL_MINUTES,
+            },
         )
 
     async def find_active_code(self, user_id: int, code: str) -> PasswordResetCode | None:

@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
@@ -12,16 +13,57 @@ from models.response import OrderResponse
 from models.review import Review
 from models.user import User
 from utils.email import EmailAttachment, send_email
+from utils.email_templates import render_email
 
 logger = logging.getLogger(__name__)
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 UPLOADS_PREFIX = "/uploads/"
 RESPONSE_NOTIFICATION_SUBJECT = "Новый отклик на вашу заявку — Ресурс-Плюс"
+RESPONSES_CTA_URL = "https://plus-resurs.com/customer/orders"
+
+
+@dataclass(frozen=True)
+class ExpertStats:
+    review_count: int
+    avg_rating: float | None
+
+
+@dataclass(frozen=True)
+class OrderBrief:
+    company: str
+    sum_amount: int | None
+    deadline: date | None
+    comment: str
+
+
+@dataclass(frozen=True)
+class ExpertBrief:
+    name: str
+    contact: str
+    review_count: int
+    avg_rating: float | None
+
+
+@dataclass(frozen=True)
+class ResponseBrief:
+    proposed_sum_amount: int
+    proposed_deadline: date
+    comment: str
+    files_count: int
+
+
+@dataclass(frozen=True)
+class ResponseNotificationContext:
+    customer_greeting: str
+    order_title: str
+    cta_url: str
+    order: OrderBrief
+    expert: ExpertBrief
+    response: ResponseBrief
 
 
 async def send_response_notification(db: AsyncSession, response_id: int) -> None:
-    "Отправляет заказчику письмо о новом отклике. Тихо выходит, если уведомления отключены."
     service = ResponseEmailService(db)
     await service.notify_customer(response_id)
 
@@ -42,14 +84,20 @@ class ResponseEmailService:
             return
 
         expert_stats = await self.load_expert_stats(response.expert_id)
-        body = self.build_body(response, customer, expert_stats)
+        context = self.build_context(response, customer, expert_stats)
+        rendered = render_email(
+            name="response_notification",
+            subject=RESPONSE_NOTIFICATION_SUBJECT,
+            context=context.__dict__,
+        )
         attachments = self.collect_attachments(response)
 
         try:
             await send_email(
                 customer.email,
-                RESPONSE_NOTIFICATION_SUBJECT,
-                body,
+                rendered.subject,
+                rendered.text,
+                rendered.html,
                 attachments,
             )
         except Exception as exc:
@@ -71,12 +119,10 @@ class ResponseEmailService:
         )
         return result.scalars().first()
 
-    async def load_expert_stats(self, expert_id: int) -> "ExpertStats":
+    async def load_expert_stats(self, expert_id: int) -> ExpertStats:
         result = await self.db.execute(
-            select(
-                func.count(Review.id),
-                func.avg(Review.rating),
-            ).where(Review.expert_id == expert_id)
+            select(func.count(Review.id), func.avg(Review.rating))
+            .where(Review.expert_id == expert_id)
         )
         count, avg = result.one()
         return ExpertStats(
@@ -84,89 +130,49 @@ class ResponseEmailService:
             avg_rating=float(avg) if avg is not None else None,
         )
 
-    def build_body(
+    def build_context(
         self,
         response: OrderResponse,
         customer: User,
-        expert_stats: "ExpertStats",
-    ) -> str:
+        expert_stats: ExpertStats,
+    ) -> ResponseNotificationContext:
         order = response.order
         expert = response.expert
+        order_title = (order.title if order else None) or f"Заказ #{response.order_id}"
 
-        customer_greeting = self.greeting_for(customer)
-        order_title = (order.title if order else f"Заказ #{response.order_id}") or f"Заказ #{response.order_id}"
-        expert_name = self.full_name(expert) or "Эксперт"
-        expert_contact = self.contact_line(expert)
-
-        lines: list[str] = []
-        lines.append(f"Здравствуйте, {customer_greeting}!")
-        lines.append("")
-        lines.append(f"На вашу заявку «{order_title}» откликнулся новый эксперт.")
-        lines.append("")
-
-        lines.append("— Заявка —")
-        if order is not None:
-            if order.company:
-                lines.append(f"Компания: {order.company}")
-            lines.append(f"Бюджет: {self.format_rubles(order.sum_amount)}")
-            lines.append(f"Срок выполнения: {self.format_date(order.deadline)}")
-            if order.comment:
-                lines.append("Комментарий:")
-                lines.append(order.comment)
-        lines.append("")
-
-        lines.append("— Эксперт —")
-        lines.append(f"Имя: {expert_name}")
-        if expert_contact:
-            lines.append(f"Контакты: {expert_contact}")
-        if expert_stats.review_count > 0:
-            rating_part = (
-                f" (средняя оценка {expert_stats.avg_rating:.1f} из 5)"
-                if expert_stats.avg_rating is not None
-                else ""
-            )
-            lines.append(f"Отзывов на платформе: {expert_stats.review_count}{rating_part}")
-        else:
-            lines.append("Отзывов на платформе пока нет")
-        lines.append("")
-
-        lines.append("— Предложение эксперта —")
-        lines.append(f"Стоимость: {self.format_rubles(response.proposed_sum_amount)}")
-        lines.append(f"Срок: {self.format_date(response.proposed_deadline)}")
-        if response.comment:
-            lines.append("Комментарий:")
-            lines.append(response.comment)
-        lines.append("")
-
-        if response.technical_files:
-            lines.append(
-                f"К отклику приложено файлов: {len(response.technical_files)} "
-                f"(см. вложения или полный список в личном кабинете)."
-            )
-            lines.append("")
-
-        lines.append(
-            "Ответить эксперту и принять решение можно в личном кабинете на plus-resurs.com."
+        return ResponseNotificationContext(
+            customer_greeting=self.greeting_for(customer),
+            order_title=order_title,
+            cta_url=RESPONSES_CTA_URL,
+            order=OrderBrief(
+                company=(order.company if order else "") or "",
+                sum_amount=order.sum_amount if order else None,
+                deadline=order.deadline if order else None,
+                comment=(order.comment if order else "") or "",
+            ),
+            expert=ExpertBrief(
+                name=self.full_name(expert) or "Эксперт",
+                contact=self.contact_line(expert),
+                review_count=expert_stats.review_count,
+                avg_rating=expert_stats.avg_rating,
+            ),
+            response=ResponseBrief(
+                proposed_sum_amount=response.proposed_sum_amount,
+                proposed_deadline=response.proposed_deadline,
+                comment=response.comment or "",
+                files_count=len(response.technical_files or []),
+            ),
         )
-        lines.append("")
-        lines.append(
-            "Отключить письма об откликах можно в настройках профиля."
-        )
-
-        return "\n".join(lines)
 
     def collect_attachments(self, response: OrderResponse) -> list[EmailAttachment]:
         attachments: list[EmailAttachment] = []
         for stored in response.technical_files or []:
             if not isinstance(stored, str) or not stored.startswith(UPLOADS_PREFIX):
                 continue
-            relative = stored.lstrip("/")
-            path = BACKEND_ROOT / relative
+            path = BACKEND_ROOT / stored.lstrip("/")
             if not path.exists() or not path.is_file():
                 continue
-            attachments.append(
-                EmailAttachment(path=path, filename=path.name)
-            )
+            attachments.append(EmailAttachment(path=path, filename=path.name))
         return attachments
 
     @staticmethod
@@ -190,26 +196,3 @@ class ResponseEmailService:
             return ""
         parts = [part for part in (user.email, user.phone) if part]
         return ", ".join(parts)
-
-    @staticmethod
-    def format_rubles(sum_amount: int) -> str:
-        if sum_amount is None:
-            return "не указана"
-        roubles = sum_amount // 100
-        kopeks = sum_amount % 100
-        formatted = f"{roubles:,}".replace(",", " ")
-        if kopeks:
-            return f"{formatted},{kopeks:02d} ₽"
-        return f"{formatted} ₽"
-
-    @staticmethod
-    def format_date(value: date | None) -> str:
-        if value is None:
-            return "не указан"
-        return value.strftime("%d.%m.%Y")
-
-
-class ExpertStats:
-    def __init__(self, review_count: int, avg_rating: float | None):
-        self.review_count = review_count
-        self.avg_rating = avg_rating
