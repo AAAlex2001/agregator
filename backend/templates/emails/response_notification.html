@@ -3,138 +3,147 @@
 {% block preheader %}Эксперт {{ expert.name }} откликнулся на заявку «{{ order_title }}»{% endblock %}
 
 {% block content %}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 16px 0;">
-  <tr>
-    <td>
-      <span style="display: inline-block; padding: 5px 12px; background: #FFF7EB; border: 1px solid #FFD591; color: #C2410C; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; border-radius: 999px;">
-        Новый отклик
-      </span>
-    </td>
-  </tr>
-</table>
-
-<h1 style="margin: 0 0 8px 0; font-size: 22px; line-height: 30px; font-weight: 700; color: #0F172A; letter-spacing: -0.3px;">Здравствуйте, {{ customer_greeting }}!</h1>
-<p style="margin: 0 0 24px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  На вашу заявку <span style="color: #0F172A; font-weight: 600;">«{{ order_title }}»</span> откликнулся эксперт. Ниже — детали.
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Новый отклик
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Здравствуйте, {{ customer_greeting }}
+</h1>
+<p style="margin: 0 0 36px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  На вашу заявку <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span> откликнулся эксперт. Ниже — детали.
 </p>
 
 {# ── Заявка ── #}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 14px 0; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td style="padding: 12px 20px; background: #F8FAFC; font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #E2E8F0;">
-      Заявка
-    </td>
-  </tr>
-  {% if order.company %}
-  <tr>
-    <td style="padding: 14px 20px; border-bottom: 1px solid #F1F5F9; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Компания</span>{{ order.company }}
-    </td>
-  </tr>
-  {% endif %}
-  <tr>
-    <td style="padding: 14px 20px; border-bottom: 1px solid #F1F5F9; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Бюджет</span><strong>{{ order.sum_amount | rubles }}</strong>
-    </td>
-  </tr>
-  <tr>
-    <td style="padding: 14px 20px; {% if order.comment %}border-bottom: 1px solid #F1F5F9;{% endif %} font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Срок</span>{{ order.deadline | date_ru }}
-    </td>
-  </tr>
-  {% if order.comment %}
-  <tr>
-    <td style="padding: 14px 20px; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <p style="margin: 0 0 4px 0; color: #94A3B8;">Комментарий</p>
-      <p style="margin: 0; white-space: pre-wrap;">{{ order.comment }}</p>
-    </td>
-  </tr>
-  {% endif %}
-</table>
+    <td style="padding: 24px 24px 24px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 16px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">Заявка</p>
 
-{# ── Эксперт ── #}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 14px 0; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-  <tr>
-    <td style="padding: 12px 20px; background: #F8FAFC; font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #E2E8F0;">
-      Эксперт
-    </td>
-  </tr>
-  <tr>
-    <td style="padding: 14px 20px; border-bottom: 1px solid #F1F5F9; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Имя</span><strong>{{ expert.name }}</strong>
-    </td>
-  </tr>
-  {% if expert.contact %}
-  <tr>
-    <td style="padding: 14px 20px; border-bottom: 1px solid #F1F5F9; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Контакты</span>{{ expert.contact }}
-    </td>
-  </tr>
-  {% endif %}
-  <tr>
-    <td style="padding: 14px 20px; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Репутация</span>
-      {% if expert.review_count > 0 %}
-        <span style="color: #F59E0B;">★</span>
-        <strong>{% if expert.avg_rating is not none %}{{ expert.avg_rating | rating }}{% else %}—{% endif %}</strong>
-        <span style="color: #64748B;">· {{ expert.review_count }} отзыв(ов)</span>
-      {% else %}
-        <span style="color: #94A3B8;">отзывов пока нет</span>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        {% if order.company %}
+        <tr>
+          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Компания</td>
+          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ order.company }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Бюджет</td>
+          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #0F172A; font-weight: 500; text-align: right;">{{ order.sum_amount | rubles }}</td>
+        </tr>
+        <tr{% if not order.comment %} class="kv-row-last"{% endif %}>
+          <td class="kv-label" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Срок</td>
+          <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ order.deadline | date_ru }}</td>
+        </tr>
+      </table>
+
+      {% if order.comment %}
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #E2E8F0;">
+        <p style="margin: 0 0 4px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">Комментарий</p>
+        <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ order.comment }}</p>
+      </div>
       {% endif %}
     </td>
   </tr>
 </table>
 
-{# ── Предложение (оранжевый акцент) ── #}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 28px 0; border: 1px solid #FFD591; border-radius: 12px; overflow: hidden;">
-  <tr>
-    <td style="padding: 12px 20px; background: #FFF7EB; font-size: 11px; font-weight: 700; color: #C2410C; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #FFD591;">
-      Предложение эксперта
-    </td>
-  </tr>
-  <tr>
-    <td style="padding: 14px 20px; border-bottom: 1px solid #FFF0D6; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Стоимость</span><strong style="color: #C2410C;">{{ response.proposed_sum_amount | rubles }}</strong>
-    </td>
-  </tr>
-  <tr>
-    <td style="padding: 14px 20px; {% if response.comment or response.files_count %}border-bottom: 1px solid #FFF0D6;{% endif %} font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Срок</span>{{ response.proposed_deadline | date_ru }}
-    </td>
-  </tr>
-  {% if response.comment %}
-  <tr>
-    <td style="padding: 14px 20px; {% if response.files_count %}border-bottom: 1px solid #FFF0D6;{% endif %} font-size: 14px; line-height: 22px; color: #0F172A;">
-      <p style="margin: 0 0 4px 0; color: #94A3B8;">Комментарий</p>
-      <p style="margin: 0; white-space: pre-wrap;">{{ response.comment }}</p>
-    </td>
-  </tr>
-  {% endif %}
-  {% if response.files_count %}
-  <tr>
-    <td style="padding: 14px 20px; font-size: 14px; line-height: 22px; color: #0F172A;">
-      <span class="row-label" style="display: inline-block; min-width: 100px; color: #94A3B8;">Файлы</span>приложено {{ response.files_count }}
-    </td>
-  </tr>
-  {% endif %}
+{# ── spacer ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 20px; line-height: 20px; font-size: 0;" height="20">&nbsp;</td></tr>
 </table>
 
-{# ── CTA: bulletproof button (VML for Outlook, inline a tag for everyone else) ── #}
+{# ── Эксперт ── #}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td align="center">
+    <td style="padding: 24px 24px 24px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 16px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">Эксперт</p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Имя</td>
+          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #0F172A; font-weight: 500; text-align: right;">{{ expert.name }}</td>
+        </tr>
+        {% if expert.contact %}
+        <tr>
+          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Контакты</td>
+          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #E2E8F0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ expert.contact }}</td>
+        </tr>
+        {% endif %}
+        <tr class="kv-row-last">
+          <td class="kv-label" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #64748B; width: 40%;">Репутация</td>
+          <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">
+            {% if expert.review_count > 0 %}
+              <span style="color: #F59E0B;">★</span>
+              <strong>{% if expert.avg_rating is not none %}{{ expert.avg_rating | rating }}{% else %}—{% endif %}</strong>
+              <span style="color: #94A3B8;">· {{ expert.review_count }} отзыв(ов)</span>
+            {% else %}
+              <span style="color: #94A3B8;">отзывов пока нет</span>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+{# ── spacer ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 20px; line-height: 20px; font-size: 0;" height="20">&nbsp;</td></tr>
+</table>
+
+{# ── Предложение (оранжевый акцент-карточка) ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 24px 24px 24px 24px; background: #FFF7EB; border-radius: 12px;">
+      <p style="margin: 0 0 16px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #C2410C; text-transform: uppercase; letter-spacing: 1.4px;">Предложение эксперта</p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="kv-label" style="padding: 12px 0; border-bottom: 1px solid #FBD6A1; font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Стоимость</td>
+          <td class="kv-value" style="padding: 12px 0; border-bottom: 1px solid #FBD6A1; font-size: 20px; line-height: 26px; color: #0F172A; font-weight: 700; letter-spacing: -0.3px; text-align: right;">{{ response.proposed_sum_amount | rubles }}</td>
+        </tr>
+        <tr{% if not response.files_count %} class="kv-row-last"{% endif %}>
+          <td class="kv-label" style="padding: 10px 0; {% if response.files_count %}border-bottom: 1px solid #FBD6A1;{% endif %} font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Срок</td>
+          <td class="kv-value" style="padding: 10px 0; {% if response.files_count %}border-bottom: 1px solid #FBD6A1;{% endif %} font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ response.proposed_deadline | date_ru }}</td>
+        </tr>
+        {% if response.files_count %}
+        <tr class="kv-row-last">
+          <td class="kv-label" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Файлы</td>
+          <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">приложено {{ response.files_count }}</td>
+        </tr>
+        {% endif %}
+      </table>
+
+      {% if response.comment %}
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #FBD6A1;">
+        <p style="margin: 0 0 4px 0; font-size: 12px; line-height: 16px; color: #C2410C; font-weight: 600;">Комментарий</p>
+        <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ response.comment }}</p>
+      </div>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+{# ── spacer перед CTA ── #}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
+</table>
+
+{# ── CTA ── #}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
       <!--[if mso]>
       <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
                    href="{{ cta_url }}"
-                   style="height:48px;v-text-anchor:middle;width:260px;"
-                   arcsize="21%" stroke="f" fillcolor="#FF8A00">
+                   style="height:44px;v-text-anchor:middle;width:200px;"
+                   arcsize="18%" stroke="f" fillcolor="#0F172A">
         <w:anchorlock/>
-        <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:600;">Открыть отклики</center>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Открыть отклики</center>
       </v:roundrect>
       <![endif]-->
       <!--[if !mso]><!-->
-      <a class="cta-button" href="{{ cta_url }}"
-         style="background: #FF8A00; border-radius: 10px; color: #FFFFFF; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 600; line-height: 48px; text-align: center; text-decoration: none; width: 260px; -webkit-text-size-adjust: none;">
+      <a href="{{ cta_url }}"
+         style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">
         Открыть отклики
       </a>
       <!--<![endif]-->
@@ -144,6 +153,6 @@
 {% endblock %}
 
 {% block footer %}
-<p style="margin: 0 0 6px 0;">Вы получили это письмо, так как в настройках профиля включены уведомления об откликах.</p>
-<p style="margin: 0;">Отключить в личном кабинете: <a href="https://plus-resurs.com/settings" style="color: #FF8A00; text-decoration: none;">plus-resurs.com/settings</a></p>
+Вы получаете это письмо, так как в настройках профиля включены уведомления об откликах.
+<a href="https://plus-resurs.com/settings" style="color: #94A3B8; text-decoration: underline;">Отключить</a>
 {% endblock %}
