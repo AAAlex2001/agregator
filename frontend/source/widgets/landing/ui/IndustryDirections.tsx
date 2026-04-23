@@ -37,7 +37,7 @@ const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
         </div>
         <Swiper
           modules={[Navigation, Pagination]}
-          loop={false}
+          loop={true}
           centeredSlides={true}
           slidesPerView={"auto"}
           spaceBetween={20}

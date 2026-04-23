@@ -164,6 +164,10 @@
   font-size: 14px;
   color: #FFFFFF;
   background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
+
+  &:last-child {
+    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
+  }
 }
 
 tbody tr:nth-child(odd) .td {
