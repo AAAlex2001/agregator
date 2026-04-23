@@ -13,10 +13,10 @@ from utils.email import send_code_reset_email
 logger = logging.getLogger(__name__)
 
 
-async def deliver_code_email(email: str, user_id: int, body: str) -> None:
+async def deliver_code_email(email: str, subject: str, body: str) -> None:
     "Обёртка для BackgroundTasks: отправляет письмо, ошибки SMTP пишет в лог, но не роняет запрос."
     try:
-        await send_code_reset_email(email, user_id, body)
+        await send_code_reset_email(email, subject, body)
     except Exception as exc:
         logger.exception("Не удалось отправить код на %s: %s", email, exc)
 
@@ -35,7 +35,8 @@ class VerificationService:
 
     async def send_code_to_email(self, user_id: int, email: str, subject: str) -> str:
         code = await self.issue_code(user_id)
-        await send_code_reset_email(email, user_id, f"{subject}\nВаш код: {code}")
+        body = self.build_body(subject, code)
+        await send_code_reset_email(email, subject, body)
         return code
 
     async def schedule_code_email(
@@ -47,8 +48,17 @@ class VerificationService:
     ) -> None:
         "Выпускает код в БД и ставит отправку письма в фон — клиент не ждёт SMTP."
         code = await self.issue_code(user_id)
-        body = f"{subject}\nВаш код: {code}"
-        background_tasks.add_task(deliver_code_email, email, user_id, body)
+        body = self.build_body(subject, code)
+        background_tasks.add_task(deliver_code_email, email, subject, body)
+
+    @staticmethod
+    def build_body(subject: str, code: str) -> str:
+        return (
+            f"{subject}\n\n"
+            f"Ваш код подтверждения: {code}\n\n"
+            f"Код действителен 15 минут. Если вы не запрашивали его — "
+            f"просто проигнорируйте это письмо."
+        )
 
     async def find_active_code(self, user_id: int, code: str) -> PasswordResetCode | None:
         query = select(PasswordResetCode).where(
