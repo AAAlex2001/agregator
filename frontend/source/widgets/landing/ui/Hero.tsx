@@ -4,16 +4,22 @@ import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { CheckIcon } from "@/source/shared/ui/icons";
 
-const Hero = () => {
+type HeroProps = {
+  title: string;
+  subtitle: string;
+  buttonText: string;
+};
+
+const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
   return (
     <section className={s.hero} id="about">
       <div className={s.leftSection}>
         <header className={s.heroHeader}>
-          <Title text="Первая единая площадка для поиска аттестованных экспертов промышленной безопасности" />
-          <Subtitle text="Размещайте заказы и находите проекты среди специалистов по всей России. Все эксперты имеют официальные аттестации Ростехнадзора" />
+          <Title text={title} />
+          <Subtitle text={subtitle} />
         </header>
         <Button href="/register" variant="primary" showArrow className={s.heroButton}>
-          Начать работать
+          {buttonText}
         </Button>
       </div>
       <div className={s.visual} aria-hidden="true" data-nosnippet>

@@ -9,9 +9,11 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import type { LandingFaqItem } from "../model/landing.data";
 type FAQProps = {
   items: LandingFaqItem[];
+  title: string;
+  subtitle: string;
 };
 
-const FAQ = ({ items }: FAQProps) => {
+const FAQ = ({ items, title, subtitle }: FAQProps) => {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const toggle = (id: string) => {
@@ -52,8 +54,8 @@ const FAQ = ({ items }: FAQProps) => {
               style={{ objectFit: "contain" }}
             />
           </div>
-          <Title text="Частые вопросы" />
-          <Subtitle text="Всё, что важно знать перед началом работы" />
+          <Title text={title} />
+          <Subtitle text={subtitle} />
         </div>
 
         <Accordion items={items} activeId={activeId} onToggle={toggle} />

@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routes import login, registration, forgot_password, order, response, settings, chat, payment, review, notification
+from routes import login, registration, forgot_password, order, response, settings, chat, payment, review, notification, landing
 from ws.router import router as ws_router
 from tasks.auto_reject import run_auto_reject_loop
 from metrics import setup_metrics
@@ -42,6 +42,7 @@ app.include_router(chat.router, prefix="/api")
 app.include_router(payment.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")
+app.include_router(landing.router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
 os.makedirs("uploads", exist_ok=True)

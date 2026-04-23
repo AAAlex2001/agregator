@@ -2,13 +2,6 @@ import ReactDOM from "react-dom";
 import styles from "./page.module.scss";
 import type { Metadata } from "next";
 import {
-	getAdvantages,
-	getFaq,
-	getHowItWorksSteps,
-	getIndustries,
-	getKeyAdvantagesSteps,
-	getOrders,
-	getReviews,
 	LandingAdvantages,
 	LandingCtaFooter,
 	LandingFaq,
@@ -20,6 +13,7 @@ import {
 	LandingKeyAdvantages,
 	LandingOrders,
 	LandingReviews,
+	loadLandingSnapshot,
 } from "@/source/widgets/landing";
 
 export const metadata: Metadata = {
@@ -42,32 +36,57 @@ export const metadata: Metadata = {
 	},
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function LandingPage() {
+export default async function LandingPage() {
 	ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
 
-	const howItWorksSteps = getHowItWorksSteps();
-	const keyAdvantagesSteps = getKeyAdvantagesSteps();
-	const orders = getOrders();
-	const industries = getIndustries();
-	const reviews = getReviews();
-	const faq = getFaq();
-	const advantages = getAdvantages();
+	const { hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq } =
+		await loadLandingSnapshot();
 
 	return (
 		<>
 			<LandingHeader />
 			<div className={styles.page}>
 				<main>
-					<LandingHero />
-					<LandingHowItWorks clientSteps={howItWorksSteps.client} expertSteps={howItWorksSteps.expert} />
-					<LandingKeyAdvantages clientSteps={keyAdvantagesSteps.client} expertSteps={keyAdvantagesSteps.expert} />
-					<LandingOrders orders={orders} />
+					<LandingHero
+						title={hero.title}
+						subtitle={hero.subtitle}
+						buttonText={hero.buttonText}
+					/>
+					<LandingHowItWorks
+						clientSteps={howItWorks.client}
+						expertSteps={howItWorks.expert}
+						title={sectionHeaders.howItWorks.title}
+						subtitle={sectionHeaders.howItWorks.subtitle}
+					/>
+					<LandingKeyAdvantages
+						clientSteps={keyAdvantages.client}
+						expertSteps={keyAdvantages.expert}
+						title={sectionHeaders.keyAdvantages.title}
+						subtitle={sectionHeaders.keyAdvantages.subtitle}
+					/>
+					<LandingOrders
+						orders={orders}
+						title={sectionHeaders.orders.title}
+						subtitle={sectionHeaders.orders.subtitle}
+					/>
 					<LandingAdvantages features={advantages} />
-					<LandingIndustryDirections industries={industries} />
-					<LandingReviews reviews={reviews} />
-					<LandingFaq items={faq} />
+					<LandingIndustryDirections
+						industries={industries}
+						title={sectionHeaders.industries.title}
+						subtitle={sectionHeaders.industries.subtitle}
+					/>
+					<LandingReviews
+						reviews={reviews}
+						title={sectionHeaders.reviews.title}
+						subtitle={sectionHeaders.reviews.subtitle}
+					/>
+					<LandingFaq
+						items={faq}
+						title={sectionHeaders.faq.title}
+						subtitle={sectionHeaders.faq.subtitle}
+					/>
 				</main>
 				<LandingCtaFooter />
 				<LandingFooter />

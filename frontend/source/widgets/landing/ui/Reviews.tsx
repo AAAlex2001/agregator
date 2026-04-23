@@ -14,16 +14,18 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import type { LandingReview } from "../model/landing.data";
 type ReviewsProps = {
   reviews: LandingReview[];
+  title: string;
+  subtitle: string;
 };
 
-const Reviews = ({ reviews }: ReviewsProps) => {
+const Reviews = ({ reviews, title, subtitle }: ReviewsProps) => {
   return (
     <section className={s.section} id="reviews">
       <div className={s.content}>
         <div className={s.headerRow}>
           <header className={s.header}>
-            <Title text="О&nbsp;нас говорят профессионалы" />
-            <Subtitle text="Мнение тех, кто&nbsp;уже нашёл исполнителя или&nbsp;получил выгодный заказ на&nbsp;нашей платформе" />
+            <Title text={title} />
+            <Subtitle text={subtitle} />
           </header>
 
           <div className={s.arrows}>

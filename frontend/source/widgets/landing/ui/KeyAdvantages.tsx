@@ -11,9 +11,11 @@ import type { LandingStep } from "../model/landing.data";
 type KeyAdvantagesProps = {
   clientSteps: LandingStep[];
   expertSteps: LandingStep[];
+  title: string;
+  subtitle: string;
 };
 
-const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
+const KeyAdvantages = ({ clientSteps, expertSteps, title, subtitle }: KeyAdvantagesProps) => {
 
     const [isExpert, setIsExpert] = useState(false);
 
@@ -21,8 +23,8 @@ const KeyAdvantages = ({ clientSteps, expertSteps }: KeyAdvantagesProps) => {
     <section className={s.section} id="key-advantages">
       <div className={s.content}>
         <div className={s.header}>
-            <Title text="Преимущества работы с аттестованными экспертами промышленной безопасности" />
-            <Subtitle text="Прямое взаимодействие заказчиков и специалистов с действующими аттестациями Ростехнадзора по всем 15 областям экспертизы ОПО" />
+            <Title text={title} />
+            <Subtitle text={subtitle} />
             </div>
           <div className={s.stepsInfo}>
                         <Tabs

@@ -15,17 +15,19 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import type { LandingIndustry } from "../model/landing.data";
 type IndustryDirectionsProps = {
   industries: LandingIndustry[];
+  title: string;
+  subtitle: string;
 };
 
-const IndustryDirections = ({ industries }: IndustryDirectionsProps) => {
+const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsProps) => {
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
   return (
     <section className={s.section} id="advantages">
       <div className={s.content}>
         <header className={s.header}>
-          <Title text="Эксперты по промышленной безопасности для всех отраслей промышленности" className={s.title} />
-          <Subtitle text="От шахт до объектов переработки сырья. Найдите специалиста или проект в вашей аккредитации" className={s.subtitle} />
+          <Title text={title} className={s.title} />
+          <Subtitle text={subtitle} className={s.subtitle} />
         </header>
       </div>
       <div className={s.card}>

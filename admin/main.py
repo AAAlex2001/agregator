@@ -12,6 +12,8 @@ from sqlalchemy.orm import sessionmaker
 from models import (
     Base, User, Order, OrderBadge, OrderResponse, Chat, ChatMessage,
     Payment, Review, Session, PasswordResetCode,
+    LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
+    LandingAdvantage, LandingIndustry, LandingReview, LandingFaq,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -862,6 +864,175 @@ class PasswordResetCodeAdmin(ModelView, model=PasswordResetCode):
     }
 
 
+# ========== ЛЕНДИНГ — редактируемый контент ==========
+
+
+class LandingHeroAdmin(ModelView, model=LandingHero):
+    name = "Hero (шапка лендинга)"
+    name_plural = "Лендинг · Hero"
+    icon = "fa-solid fa-flag"
+    category = "Лендинг"
+
+    can_create = True
+    can_delete = False
+
+    column_list = [LandingHero.id, LandingHero.title, LandingHero.button_text]
+    form_columns = [LandingHero.title, LandingHero.subtitle, LandingHero.button_text]
+    column_labels = {
+        LandingHero.id: "ID",
+        LandingHero.title: "Заголовок",
+        LandingHero.subtitle: "Подзаголовок",
+        LandingHero.button_text: "Текст кнопки",
+    }
+
+
+class LandingSectionHeaderAdmin(ModelView, model=LandingSectionHeader):
+    name = "Шапка секции"
+    name_plural = "Лендинг · Шапки секций"
+    icon = "fa-solid fa-heading"
+    category = "Лендинг"
+
+    column_list = [LandingSectionHeader.block_key, LandingSectionHeader.title]
+    form_columns = [LandingSectionHeader.block_key, LandingSectionHeader.title, LandingSectionHeader.subtitle]
+    column_labels = {
+        LandingSectionHeader.block_key: "Ключ блока",
+        LandingSectionHeader.title: "Заголовок",
+        LandingSectionHeader.subtitle: "Подзаголовок",
+    }
+
+
+class LandingStepAdmin(ModelView, model=LandingStep):
+    name = "Шаг"
+    name_plural = "Лендинг · Шаги (как работает / преимущества)"
+    icon = "fa-solid fa-list-ol"
+    category = "Лендинг"
+
+    column_list = [
+        LandingStep.id, LandingStep.block, LandingStep.role,
+        LandingStep.position, LandingStep.title,
+    ]
+    column_sortable_list = [LandingStep.block, LandingStep.role, LandingStep.position]
+    column_default_sort = [(LandingStep.block, False), (LandingStep.role, False), (LandingStep.position, False)]
+    form_columns = [
+        LandingStep.block, LandingStep.role, LandingStep.position,
+        LandingStep.title, LandingStep.description, LandingStep.sub_description, LandingStep.icon,
+    ]
+    column_labels = {
+        LandingStep.block: "Блок",
+        LandingStep.role: "Роль",
+        LandingStep.position: "Порядок",
+        LandingStep.title: "Заголовок",
+        LandingStep.description: "Описание",
+        LandingStep.sub_description: "Доп. текст",
+        LandingStep.icon: "Иконка (путь)",
+    }
+
+
+class LandingOrderExampleAdmin(ModelView, model=LandingOrderExample):
+    name = "Пример заказа"
+    name_plural = "Лендинг · Примеры заказов"
+    icon = "fa-solid fa-briefcase"
+    category = "Лендинг"
+
+    column_list = [
+        LandingOrderExample.position, LandingOrderExample.title,
+        LandingOrderExample.price,
+    ]
+    column_sortable_list = [LandingOrderExample.position]
+    column_default_sort = (LandingOrderExample.position, False)
+    form_columns = [
+        LandingOrderExample.position, LandingOrderExample.title,
+        LandingOrderExample.price, LandingOrderExample.description,
+    ]
+    column_labels = {
+        LandingOrderExample.position: "Порядок",
+        LandingOrderExample.title: "Заголовок",
+        LandingOrderExample.price: "Цена",
+        LandingOrderExample.description: "Описание",
+    }
+
+
+class LandingAdvantageAdmin(ModelView, model=LandingAdvantage):
+    name = "Преимущество"
+    name_plural = "Лендинг · Преимущества"
+    icon = "fa-solid fa-award"
+    category = "Лендинг"
+
+    column_list = [LandingAdvantage.position, LandingAdvantage.title, LandingAdvantage.icon_key]
+    column_sortable_list = [LandingAdvantage.position]
+    column_default_sort = (LandingAdvantage.position, False)
+    form_columns = [
+        LandingAdvantage.position, LandingAdvantage.title,
+        LandingAdvantage.description, LandingAdvantage.icon_key, LandingAdvantage.photo,
+    ]
+    column_labels = {
+        LandingAdvantage.position: "Порядок",
+        LandingAdvantage.title: "Заголовок",
+        LandingAdvantage.description: "Описание",
+        LandingAdvantage.icon_key: "Иконка",
+        LandingAdvantage.photo: "Фото (путь)",
+    }
+
+
+class LandingIndustryAdmin(ModelView, model=LandingIndustry):
+    name = "Отрасль"
+    name_plural = "Лендинг · Отрасли"
+    icon = "fa-solid fa-industry"
+    category = "Лендинг"
+
+    column_list = [LandingIndustry.position, LandingIndustry.title]
+    column_sortable_list = [LandingIndustry.position]
+    column_default_sort = (LandingIndustry.position, False)
+    form_columns = [
+        LandingIndustry.position, LandingIndustry.title,
+        LandingIndustry.descriptions, LandingIndustry.photo,
+    ]
+    column_labels = {
+        LandingIndustry.position: "Порядок",
+        LandingIndustry.title: "Название",
+        LandingIndustry.descriptions: "Пункты (JSON-массив строк)",
+        LandingIndustry.photo: "Фото (путь)",
+    }
+
+
+class LandingReviewAdmin(ModelView, model=LandingReview):
+    name = "Отзыв"
+    name_plural = "Лендинг · Отзывы"
+    icon = "fa-solid fa-comment"
+    category = "Лендинг"
+
+    column_list = [LandingReview.position, LandingReview.reviewer, LandingReview.reviewer_position]
+    column_sortable_list = [LandingReview.position]
+    column_default_sort = (LandingReview.position, False)
+    form_columns = [
+        LandingReview.position, LandingReview.reviewer,
+        LandingReview.reviewer_position, LandingReview.text,
+    ]
+    column_labels = {
+        LandingReview.position: "Порядок",
+        LandingReview.reviewer: "Автор",
+        LandingReview.reviewer_position: "Должность",
+        LandingReview.text: "Текст отзыва",
+    }
+
+
+class LandingFaqAdmin(ModelView, model=LandingFaq):
+    name = "FAQ"
+    name_plural = "Лендинг · FAQ"
+    icon = "fa-solid fa-circle-question"
+    category = "Лендинг"
+
+    column_list = [LandingFaq.position, LandingFaq.question]
+    column_sortable_list = [LandingFaq.position]
+    column_default_sort = (LandingFaq.position, False)
+    form_columns = [LandingFaq.position, LandingFaq.question, LandingFaq.answer]
+    column_labels = {
+        LandingFaq.position: "Порядок",
+        LandingFaq.question: "Вопрос",
+        LandingFaq.answer: "Ответ",
+    }
+
+
 # --- Регистрация вьюшек ---
 admin.add_view(UserAdmin)
 admin.add_view(OrderAdmin)
@@ -872,3 +1043,12 @@ admin.add_view(PaymentAdmin)
 admin.add_view(ReviewAdmin)
 admin.add_view(SessionAdmin)
 admin.add_view(PasswordResetCodeAdmin)
+
+admin.add_view(LandingHeroAdmin)
+admin.add_view(LandingSectionHeaderAdmin)
+admin.add_view(LandingStepAdmin)
+admin.add_view(LandingOrderExampleAdmin)
+admin.add_view(LandingAdvantageAdmin)
+admin.add_view(LandingIndustryAdmin)
+admin.add_view(LandingReviewAdmin)
+admin.add_view(LandingFaqAdmin)

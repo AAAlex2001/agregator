@@ -11,9 +11,11 @@ import type { LandingStep } from "../model/landing.data";
 type HowItWorksProps = {
   clientSteps: LandingStep[];
   expertSteps: LandingStep[];
+  title: string;
+  subtitle: string;
 };
 
-const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
+const HowItWorks = ({ clientSteps, expertSteps, title, subtitle }: HowItWorksProps) => {
 
     const [isExpert, setIsExpert] = useState(false);
 
@@ -45,8 +47,8 @@ const HowItWorks = ({ clientSteps, expertSteps }: HowItWorksProps) => {
     <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
       </div>
 
-            <Title text="Как работает платформа поиска экспертов промышленной безопасности" />
-            <Subtitle text="Прозрачный процесс от размещения заказа до получения экспертного заключения — 4 шага для заказчиков и экспертов Ростехнадзора" />
+            <Title text={title} />
+            <Subtitle text={subtitle} />
             </div>
                 <div className={s.stepsInfo}>
                         <Tabs

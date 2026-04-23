@@ -15,15 +15,17 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import type { LandingOrder } from "../model/landing.data";
 type OrdersProps = {
   orders: LandingOrder[];
+  title: string;
+  subtitle: string;
 };
 
-const Orders = ({ orders }: OrdersProps) => {
+const Orders = ({ orders, title, subtitle }: OrdersProps) => {
   return (
     <section className={s.section} id="orders">
       <div className={s.content}>
         <header className={s.header}>
-          <Title text="Примеры работ на платформе" />
-          <Subtitle text="Актуальные проекты от предприятий горнодобывающей отрасли. Находите подходящие и откликайтесь напрямую" />
+          <Title text={title} />
+          <Subtitle text={subtitle} />
         </header>
       </div>
 
