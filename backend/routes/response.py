@@ -1,9 +1,10 @@
+import json as json_lib
 from datetime import date as date_type, timedelta
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.database import AsyncSessionLocal, get_db
+from database.database import get_db
 from dependencies.auth import get_current_user
 from models.response import ResponseStatus
 from models.user import UserRole
@@ -14,10 +15,57 @@ from schemas.response import (
     ResponseTab,
 )
 from services.commission import CommissionCalculator
-from services.response import ResponseService
-from services.response_email import send_response_notification
+from services.email import (
+    EmailDispatcher,
+    EmailRepository,
+    SendBiddingFinishedEmailUseCase,
+    SendExpertRejectedEmailUseCase,
+    SendResponseCreatedEmailUseCase,
+    SendResponseUpdatedEmailUseCase,
+)
+from services.notification import NotificationService
+from services.responses import (
+    CreateResponseUseCase,
+    GetResponseByIdUseCase,
+    ListCustomerResponsesUseCase,
+    ListExpertResponsesUseCase,
+    ResponseBroadcaster,
+    ResponseFileStorage,
+    ResponseInAppNotifier,
+    ResponseRepository,
+    ResponseStatusRules,
+    ResponseValidator,
+    UpdateResponseStatusUseCase,
+    UpdateResponseUseCase,
+    UploadResponseFilesUseCase,
+    WithdrawResponseUseCase,
+)
 
 router = APIRouter(tags=["responses"])
+
+
+def build_repo(db: AsyncSession) -> ResponseRepository:
+    return ResponseRepository(db)
+
+
+def build_get_response(db: AsyncSession) -> GetResponseByIdUseCase:
+    return GetResponseByIdUseCase(build_repo(db))
+
+
+def build_in_app(db: AsyncSession, repo: ResponseRepository) -> ResponseInAppNotifier:
+    return ResponseInAppNotifier(repo, NotificationService(db))
+
+
+def build_upload_files(db: AsyncSession, repo: ResponseRepository) -> UploadResponseFilesUseCase:
+    return UploadResponseFilesUseCase(
+        repo=repo,
+        get_response=GetResponseByIdUseCase(repo),
+        files=ResponseFileStorage(),
+    )
+
+
+def build_email_repo(db: AsyncSession) -> EmailRepository:
+    return EmailRepository(db)
 
 
 def format_sum(sum_amount: int) -> str:
@@ -133,27 +181,26 @@ async def create_response_for_order(
         proposed_sum_amount=proposed_sum_amount,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
     )
-    service = ResponseService(db)
-    created = await service.create_response(order_id=order_id, expert_id=user_id, data=data)
+    repo = build_repo(db)
+    get_response = GetResponseByIdUseCase(repo)
+    create_use_case = CreateResponseUseCase(
+        repo=repo,
+        validator=ResponseValidator(repo),
+        get_response=get_response,
+        in_app=build_in_app(db, repo),
+    )
+    created = await create_use_case.execute(order_id=order_id, expert_id=user_id, data=data)
 
     if files and files[0].filename:
-        created = await service.upload_response_files(
-            response_id=created.id,
-            expert_id=user_id,
-            files=files,
-        )
+        upload_use_case = build_upload_files(db, repo)
+        created = await upload_use_case.execute(created.id, user_id, files)
 
-    background_tasks.add_task(dispatch_response_notification, created.id)
+    email_use_case = SendResponseCreatedEmailUseCase(
+        repo=EmailRepository(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
+    await email_use_case.execute(created.id)
     return to_item(created)
-
-
-async def dispatch_response_notification(response_id: int) -> None:
-    "Отправка письма заказчику — в фоне, со своей сессией БД (Depends-сессия уже закрыта)."
-    async with AsyncSessionLocal() as session:
-        try:
-            await send_response_notification(session, response_id)
-        finally:
-            await session.close()
 
 
 @router.get("/responses", response_model=ExpertResponseList)
@@ -164,22 +211,17 @@ async def get_my_responses(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = ResponseService(db)
-    actor = await service.get_actor(user_id)
+    repo = build_repo(db)
+    validator = ResponseValidator(repo)
+    actor = await validator.get_actor(user_id)
+
     if actor.role == UserRole.CUSTOMER:
-        items, total, counters = await service.list_customer_responses(
-            customer_id=user_id,
-            tab=tab,
-            skip=skip,
-            limit=limit,
-        )
+        use_case = ListCustomerResponsesUseCase(repo, validator)
+        items, total, counters = await use_case.execute(user_id, tab, skip, limit)
     else:
-        items, total, counters = await service.list_responses(
-            expert_id=user_id,
-            tab=tab,
-            skip=skip,
-            limit=limit,
-        )
+        use_case = ListExpertResponsesUseCase(repo, validator)
+        items, total, counters = await use_case.execute(user_id, tab, skip, limit)
+
     return ExpertResponseList(
         items=[to_item(item, actor.role) for item in items],
         total=total,
@@ -191,14 +233,26 @@ async def get_my_responses(
 async def update_response_status(
     response_id: int,
     new_status: ResponseStatus,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = ResponseService(db)
-    updated = await service.update_response_status(
-        response_id=response_id,
-        actor_id=user_id,
-        new_status=new_status,
+    repo = build_repo(db)
+    send_bidding = SendBiddingFinishedEmailUseCase(
+        repo=build_email_repo(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
+    use_case = UpdateResponseStatusUseCase(
+        repo=repo,
+        validator=ResponseValidator(repo),
+        rules=ResponseStatusRules(),
+        get_response=GetResponseByIdUseCase(repo),
+        in_app=build_in_app(db, repo),
+        broadcaster=ResponseBroadcaster(),
+        send_bidding_email=send_bidding,
+    )
+    updated = await use_case.execute(
+        response_id=response_id, actor_id=user_id, new_status=new_status
     )
     return to_item(updated)
 
@@ -206,6 +260,7 @@ async def update_response_status(
 @router.put("/responses/{response_id}", response_model=ExpertResponseItem)
 async def update_response(
     response_id: int,
+    background_tasks: BackgroundTasks,
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
     proposed_deadline: str = Form(...),
@@ -214,9 +269,8 @@ async def update_response(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    import json as _json
     try:
-        keep_files_list: list[str] = _json.loads(keep_files)
+        keep_files_list: list[str] = json_lib.loads(keep_files)
     except (ValueError, TypeError):
         keep_files_list = []
 
@@ -225,22 +279,48 @@ async def update_response(
         proposed_sum_amount=proposed_sum_amount,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
     )
-    service = ResponseService(db)
-    updated = await service.update_response(
-        response_id=response_id, expert_id=user_id, data=data,
+
+    repo = build_repo(db)
+    send_updated = SendResponseUpdatedEmailUseCase(
+        repo=build_email_repo(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
+    use_case = UpdateResponseUseCase(
+        repo=repo,
+        validator=ResponseValidator(repo),
+        get_response=GetResponseByIdUseCase(repo),
+        upload_files=build_upload_files(db, repo),
+        in_app=build_in_app(db, repo),
+        send_updated_email=send_updated,
+    )
+    updated = await use_case.execute(
+        response_id=response_id,
+        expert_id=user_id,
+        data=data,
         keep_files=keep_files_list,
         new_files=[f for f in files if f.filename] or None,
     )
-
     return to_item(updated)
 
 
 @router.delete("/responses/{response_id}")
 async def withdraw_response(
     response_id: int,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = ResponseService(db)
-    await service.withdraw_response(response_id=response_id, expert_id=user_id)
+    repo = build_repo(db)
+    send_rejected = SendExpertRejectedEmailUseCase(
+        repo=build_email_repo(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
+    use_case = WithdrawResponseUseCase(
+        repo=repo,
+        get_response=GetResponseByIdUseCase(repo),
+        in_app=build_in_app(db, repo),
+        broadcaster=ResponseBroadcaster(),
+        send_rejected_email=send_rejected,
+    )
+    await use_case.execute(response_id=response_id, expert_id=user_id)
     return {"detail": "Отклик отозван"}

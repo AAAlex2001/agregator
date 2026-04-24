@@ -8,6 +8,12 @@ class ChatAttachmentResponse(BaseModel):
     name: str
 
 
+class ChatAttachmentData(BaseModel):
+    "Вложение чата после сохранения на диск (внутренняя модель между FileStorage и use case)."
+    url: str
+    name: str
+
+
 class ChatOpenRequest(BaseModel):
     order_id: int = Field(..., ge=1)
 

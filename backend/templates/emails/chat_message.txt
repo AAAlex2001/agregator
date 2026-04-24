@@ -1,0 +1,10 @@
+Новое сообщение в чате
+
+Здравствуйте, {{ recipient_greeting }}. {{ sender_name }} написал вам по заявке «{{ order_title }}».
+
+{{ message_preview }}
+
+Открыть чат: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com

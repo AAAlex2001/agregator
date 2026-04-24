@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
-import { Switch } from "@/source/shared/ui/Switch";
 import { LogoutIcon } from "@/source/shared/ui/icons";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { logout } from "../api/settings.api";
@@ -65,19 +64,6 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
     void handleSave();
   };
 
-  const handleToggleNotifications = async (next: boolean) => {
-    const result = await form.toggleEmailNotifications(next);
-    if (result.errorMessage) {
-      showError(result.errorMessage);
-      return;
-    }
-    if (result.profile) {
-      onProfileUpdate(result.profile);
-    }
-    if (result.successMessage) {
-      showSuccess(result.successMessage);
-    }
-  };
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -207,17 +193,6 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
             </div>
           </div>
 
-          {profile.role === "CUSTOMER" && (
-            <Switch
-              id="email-notifications"
-              checked={form.emailNotificationsEnabled}
-              onChange={(next) => void handleToggleNotifications(next)}
-              label="Письма об откликах на заказ"
-              description="Приходят на указанную почту, когда эксперт откликается на вашу заявку"
-              disabled={form.isSaving}
-              className={s.notifications}
-            />
-          )}
         </div>
 
         <div className={s.section}>

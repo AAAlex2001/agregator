@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block preheader %}Эксперт {{ expert.name }} обновил отклик на заявку «{{ order_title }}»{% endblock %}
+
+{% block content %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Отклик обновлён
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Здравствуйте, {{ customer_greeting }}
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Эксперт <span style="color: #0F172A; font-weight: 500;">{{ expert.name }}</span>
+  внёс изменения в отклик на заявку
+  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">Что изменилось</p>
+      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ changes_summary }}</p>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 20px; line-height: 20px; font-size: 0;" height="20">&nbsp;</td></tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 22px 24px; background: #FFF7EB; border-radius: 12px;">
+      <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #C2410C; text-transform: uppercase; letter-spacing: 1.4px;">Текущее предложение</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="kv-label" style="padding: 10px 0; border-bottom: 1px solid #FBD6A1; font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Стоимость</td>
+          <td class="kv-value" style="padding: 10px 0; border-bottom: 1px solid #FBD6A1; font-size: 18px; line-height: 24px; color: #0F172A; font-weight: 700; text-align: right;">{{ response.proposed_sum_amount | rubles }}</td>
+        </tr>
+        <tr{% if not response.comment and not response.files_count %} class="kv-row-last"{% endif %}>
+          <td class="kv-label" style="padding: 10px 0; {% if response.comment or response.files_count %}border-bottom: 1px solid #FBD6A1;{% endif %} font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Срок</td>
+          <td class="kv-value" style="padding: 10px 0; {% if response.comment or response.files_count %}border-bottom: 1px solid #FBD6A1;{% endif %} font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ response.proposed_deadline | date_ru }}</td>
+        </tr>
+        {% if response.files_count %}
+        <tr class="kv-row-last">
+          <td class="kv-label" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #78350F; width: 40%;">Файлы</td>
+          <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">приложено {{ response.files_count }}</td>
+        </tr>
+        {% endif %}
+      </table>
+      {% if response.comment %}
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #FBD6A1;">
+        <p style="margin: 0 0 4px 0; font-size: 12px; line-height: 16px; color: #C2410C; font-weight: 600;">Комментарий</p>
+        <p style="margin: 0; font-size: 14px; line-height: 22px; color: #0F172A; white-space: pre-wrap;">{{ response.comment }}</p>
+      </div>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
+</table>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ cta_url }}" style="height:44px;v-text-anchor:middle;width:200px;" arcsize="18%" stroke="f" fillcolor="#0F172A">
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Открыть отклики</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-->
+      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Открыть отклики</a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+</table>
+{% endblock %}

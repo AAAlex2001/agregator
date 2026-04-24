@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import JSON, Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint, UniqueConstraint
+from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint, UniqueConstraint
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -24,9 +25,15 @@ class User(Base):
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     inn = Column(String(12), index=True, nullable=True)
-    company_data = Column(JSON, nullable=True)
+    company_data = Column(JSONB, nullable=True)
     email = Column(String, index=True, nullable=True)
-    email_notifications_enabled = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_response_created = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_response_updated = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_expert_rejected = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_new_order = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_order_updated = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_bidding_finished = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_chat_message = Column(Boolean, default=True, nullable=False, server_default="true")
     phone = Column(String, index=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)

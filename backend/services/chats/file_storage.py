@@ -1,0 +1,73 @@
+from pathlib import Path
+from uuid import uuid4
+
+import aiofiles
+from fastapi import HTTPException, UploadFile, status
+
+from schemas.chat import ChatAttachmentData
+
+ALLOWED_EXTENSIONS = {
+    ".pdf",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+}
+UPLOAD_CHUNK_SIZE = 1024 * 1024
+MAX_ATTACHMENTS = 6
+
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
+
+
+class ChatFileStorage:
+    "Сохраняет вложения чата. Проверяет расширение и лимит количества."
+
+    async def save(
+        self, chat_id: int, uploads: list[UploadFile]
+    ) -> list[ChatAttachmentData]:
+        self.ensure_limit(uploads)
+        upload_dir = BACKEND_ROOT / "uploads" / "chats" / str(chat_id)
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        attachments: list[ChatAttachmentData] = []
+        for upload in uploads:
+            attachments.append(await self.save_one(upload_dir, upload, chat_id))
+        return attachments
+
+    async def save_one(
+        self, upload_dir: Path, upload: UploadFile, chat_id: int
+    ) -> ChatAttachmentData:
+        extension = Path(upload.filename or "").suffix.lower()
+        self.ensure_extension_allowed(extension)
+
+        generated_name = f"{uuid4().hex}{extension}"
+        full_path = upload_dir / generated_name
+        async with aiofiles.open(full_path, "wb") as handle:
+            while chunk := await upload.read(UPLOAD_CHUNK_SIZE):
+                await handle.write(chunk)
+
+        return ChatAttachmentData(
+            url=f"/uploads/chats/{chat_id}/{generated_name}",
+            name=upload.filename or generated_name,
+        )
+
+    @staticmethod
+    def ensure_limit(uploads: list[UploadFile]) -> None:
+        if len(uploads) <= MAX_ATTACHMENTS:
+            return
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Можно прикрепить не больше {MAX_ATTACHMENTS} файлов",
+        )
+
+    @staticmethod
+    def ensure_extension_allowed(extension: str) -> None:
+        if extension in ALLOWED_EXTENSIONS:
+            return
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX",
+        )

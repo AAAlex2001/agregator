@@ -13,12 +13,6 @@ interface SaveProfileResult {
   successMessage?: string;
 }
 
-interface TogglePreferenceResult {
-  profile?: UserProfile;
-  errorMessage?: string;
-  successMessage?: string;
-}
-
 export function useProfileForm(profile: UserProfile) {
   const [state, dispatch] = useReducer(
     profileFormReducer,
@@ -27,7 +21,6 @@ export function useProfileForm(profile: UserProfile) {
       lastName: profile.last_name || "",
       phone: formatRussianPhone(profile.phone || ""),
       email: profile.email || "",
-      emailNotificationsEnabled: profile.email_notifications_enabled ?? true,
     },
     createInitialState,
   );
@@ -52,7 +45,6 @@ export function useProfileForm(profile: UserProfile) {
         last_name: state.lastName,
         phone: toRussianPhoneApiValue(state.phone) || undefined,
         email: state.email || undefined,
-        email_notifications_enabled: state.emailNotificationsEnabled,
       });
 
       if (avatarFile) {
@@ -80,23 +72,6 @@ export function useProfileForm(profile: UserProfile) {
     }
   };
 
-  const toggleEmailNotifications = async (next: boolean): Promise<TogglePreferenceResult> => {
-    dispatch({ type: "SET_EMAIL_NOTIFICATIONS", payload: next });
-    try {
-      const updated = await updateProfile({ email_notifications_enabled: next });
-      return {
-        profile: updated,
-        successMessage: next
-          ? "Письма об откликах включены"
-          : "Письма об откликах отключены",
-      } satisfies TogglePreferenceResult;
-    } catch (err) {
-      dispatch({ type: "SET_EMAIL_NOTIFICATIONS", payload: !next });
-      const errorMessage = err instanceof Error ? err.message : "Не удалось сохранить настройку";
-      return { errorMessage } satisfies TogglePreferenceResult;
-    }
-  };
-
   return {
     ...state,
     setFirstName: (v: string) => dispatch({ type: "SET_FIELD", field: "firstName", value: v }),
@@ -105,7 +80,6 @@ export function useProfileForm(profile: UserProfile) {
     setEmail: (v: string) => dispatch({ type: "SET_FIELD", field: "email", value: v }),
     setPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "password", value: v }),
     setRepeatPassword: (v: string) => dispatch({ type: "SET_FIELD", field: "repeatPassword", value: v }),
-    toggleEmailNotifications,
     handleSave,
   };
 }

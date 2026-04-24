@@ -1,9 +1,48 @@
 .form,
-.finance {
+.finance,
+.notifications {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.notificationsHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notificationsTitle {
+  width: 180px;
+  height: 20px;
+}
+
+.notificationsSubtitle {
+  width: 80%;
+  max-width: 360px;
+  height: 14px;
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #EEF0F2;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.notificationsItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: #FFFFFF;
+}
+
+.notificationsItem + .notificationsItem {
+  border-top: 1px solid #F0F0F2;
 }
 
 .avatarSection {

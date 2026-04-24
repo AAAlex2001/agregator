@@ -1,11 +1,32 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from models.order import OrderStatus
+from services.email import (
+    EmailDispatcher,
+    EmailRepository,
+    SendNewOrderEmailUseCase,
+    SendOrderUpdatedEmailUseCase,
+)
+from services.orders import (
+    CreateOrderUseCase,
+    CreateOrderWithFilesUseCase,
+    DeleteOrderUseCase,
+    GetOrderByIdUseCase,
+    GetOrderByPublicIdUseCase,
+    ListOrdersUseCase,
+    OrderBroadcaster,
+    OrderFileStorage,
+    OrderRepository,
+    OrderValidator,
+    UpdateOrderUseCase,
+    UpdateOrderWithFilesUseCase,
+    UploadOrderFilesUseCase,
+)
 from schemas.order import (
     BadgeOptionResponse,
     OrderCreate,
@@ -13,10 +34,35 @@ from schemas.order import (
     OrderResponse,
     OrderListResponse,
 )
-from services.order import OrderService
 from utils.order_forms import BADGE_OPTIONS, build_order_create_data, build_order_update_data
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+def build_repo(db: AsyncSession) -> OrderRepository:
+    return OrderRepository(db)
+
+
+def build_get_order(db: AsyncSession) -> GetOrderByIdUseCase:
+    return GetOrderByIdUseCase(build_repo(db))
+
+
+def build_send_new_order_email(
+    db: AsyncSession, background_tasks: BackgroundTasks
+) -> SendNewOrderEmailUseCase:
+    return SendNewOrderEmailUseCase(
+        repo=EmailRepository(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
+
+
+def build_send_order_updated_email(
+    db: AsyncSession, background_tasks: BackgroundTasks
+) -> SendOrderUpdatedEmailUseCase:
+    return SendOrderUpdatedEmailUseCase(
+        repo=EmailRepository(db),
+        dispatcher=EmailDispatcher(background_tasks),
+    )
 
 
 @router.get("/badge-options", response_model=list[BadgeOptionResponse])
@@ -32,8 +78,8 @@ async def get_orders(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = OrderService(db)
-    orders, total = await service.get_orders(skip, limit, status, user_id)
+    use_case = ListOrdersUseCase(build_repo(db))
+    orders, total = await use_case.execute(skip, limit, status, user_id)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
         total=total,
@@ -45,8 +91,8 @@ async def get_order_public(
     public_id: str,
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    order = await service.get_order_by_public_id(public_id)
+    use_case = GetOrderByPublicIdUseCase(build_repo(db))
+    order = await use_case.execute(public_id)
     return OrderResponse.from_order(order)
 
 
@@ -55,23 +101,30 @@ async def get_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    order = await service.get_order_by_id(order_id)
+    order = await build_get_order(db).execute(order_id)
     return OrderResponse.from_order(order)
 
 
 @router.post("/", response_model=OrderResponse)
 async def create_order(
     data: OrderCreate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    order = await service.create_order(data)
+    repo = build_repo(db)
+    use_case = CreateOrderUseCase(
+        repo=repo,
+        validator=OrderValidator(repo),
+        broadcaster=OrderBroadcaster(),
+        send_new_order_email=build_send_new_order_email(db, background_tasks),
+    )
+    order = await use_case.execute(data)
     return OrderResponse.from_order(order)
 
 
 @router.post("/create-with-files", response_model=OrderResponse)
 async def create_order_with_files(
+    background_tasks: BackgroundTasks,
     title: str = Form(...),
     company: str = Form(""),
     typical_names: str = Form(""),
@@ -97,9 +150,19 @@ async def create_order_with_files(
         badge_inputs_json=badge_inputs_json,
         badges_json=badges_json,
     )
-
-    service = OrderService(db)
-    order = await service.create_order(data, files=files if files else None)
+    repo = build_repo(db)
+    create = CreateOrderUseCase(
+        repo=repo,
+        validator=OrderValidator(repo),
+        broadcaster=OrderBroadcaster(),
+        send_new_order_email=build_send_new_order_email(db, background_tasks),
+    )
+    use_case = CreateOrderWithFilesUseCase(
+        create_order=create,
+        repo=repo,
+        files=OrderFileStorage(),
+    )
+    order = await use_case.execute(data, uploads=files if files else None)
     return OrderResponse.from_order(order)
 
 
@@ -107,16 +170,25 @@ async def create_order_with_files(
 async def update_order(
     order_id: int,
     data: OrderUpdate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    order = await service.update_order(order_id, data)
+    repo = build_repo(db)
+    get_order = GetOrderByIdUseCase(repo)
+    use_case = UpdateOrderUseCase(
+        repo=repo,
+        get_order=get_order,
+        broadcaster=OrderBroadcaster(),
+        send_updated_email=build_send_order_updated_email(db, background_tasks),
+    )
+    order = await use_case.execute(order_id, data)
     return OrderResponse.from_order(order)
 
 
 @router.patch("/{order_id}/update-with-files", response_model=OrderResponse)
 async def update_order_with_files(
     order_id: int,
+    background_tasks: BackgroundTasks,
     title: str = Form(...),
     company: str = Form(""),
     typical_names: str = Form(""),
@@ -143,9 +215,22 @@ async def update_order_with_files(
         badges_json=badges_json,
         keep_files=keep_files,
     )
-
-    service = OrderService(db)
-    order = await service.update_order_with_files(order_id, data, files=files if files else None)
+    repo = build_repo(db)
+    broadcaster = OrderBroadcaster()
+    get_order = GetOrderByIdUseCase(repo)
+    send_updated = build_send_order_updated_email(db, background_tasks)
+    update = UpdateOrderUseCase(
+        repo=repo, get_order=get_order, broadcaster=broadcaster
+    )
+    use_case = UpdateOrderWithFilesUseCase(
+        update_order=update,
+        get_order=get_order,
+        repo=repo,
+        files=OrderFileStorage(),
+        broadcaster=broadcaster,
+        send_updated_email=send_updated,
+    )
+    order = await use_case.execute(order_id, data, uploads=files if files else None)
     return OrderResponse.from_order(order)
 
 
@@ -155,8 +240,14 @@ async def upload_order_files(
     files: list[UploadFile] = File(...),
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    order = await service.upload_order_files(order_id, files)
+    repo = build_repo(db)
+    use_case = UploadOrderFilesUseCase(
+        repo=repo,
+        get_order=GetOrderByIdUseCase(repo),
+        files=OrderFileStorage(),
+        validator=OrderValidator(repo),
+    )
+    order = await use_case.execute(order_id, files)
     return OrderResponse.from_order(order)
 
 
@@ -165,6 +256,11 @@ async def delete_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
 ):
-    service = OrderService(db)
-    await service.delete_order(order_id)
+    repo = build_repo(db)
+    use_case = DeleteOrderUseCase(
+        repo=repo,
+        get_order=GetOrderByIdUseCase(repo),
+        broadcaster=OrderBroadcaster(),
+    )
+    await use_case.execute(order_id)
     return {"ok": True}

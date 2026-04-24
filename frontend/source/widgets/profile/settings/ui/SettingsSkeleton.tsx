@@ -5,32 +5,66 @@ import avatarStyles from "@/source/features/profile/settings/ui/ProfileAvatarUpl
 import formStyles from "@/source/features/profile/settings/ui/PersonalDataForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
+type SettingsSection = "personal" | "notifications" | "finance";
+
 interface SettingsSkeletonProps {
-  section: "personal" | "finance";
+  section: SettingsSection;
   isCustomer?: boolean;
 }
 
 export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkeletonProps) {
   if (section === "finance") {
-    return (
-      <div className={s.finance} aria-hidden="true">
-        <Skeleton className={s.balance} rounded="pill" />
-        <div className={s.financeButtons}>
-          <Skeleton className={s.financeButton} rounded="lg" />
-          <Skeleton className={s.financeButton} rounded="lg" />
-        </div>
-        <div className={s.financeList}>
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className={s.financeItem}>
-              <Skeleton className={s.financeLineWide} />
-              <Skeleton className={s.financeLineShort} rounded="pill" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <FinanceSkeleton />;
   }
+  if (section === "notifications") {
+    return <NotificationsSkeleton />;
+  }
+  return <PersonalSkeleton isCustomer={isCustomer} />;
+}
 
+function FinanceSkeleton() {
+  return (
+    <div className={s.finance} aria-hidden="true">
+      <Skeleton className={s.balance} rounded="pill" />
+      <div className={s.financeButtons}>
+        <Skeleton className={s.financeButton} rounded="lg" />
+        <Skeleton className={s.financeButton} rounded="lg" />
+      </div>
+      <div className={s.financeList}>
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className={s.financeItem}>
+            <Skeleton className={s.financeLineWide} />
+            <Skeleton className={s.financeLineShort} rounded="pill" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NotificationsSkeleton() {
+  return (
+    <div className={s.notifications} aria-hidden="true">
+      <div className={s.notificationsHeader}>
+        <Skeleton className={s.notificationsTitle} rounded="pill" />
+        <Skeleton className={s.notificationsSubtitle} rounded="pill" />
+      </div>
+      <div className={s.notificationsList}>
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className={s.notificationsItem}>
+            <div className={s.notificationsText}>
+              <Skeleton className={s.notificationsLabel} rounded="pill" />
+              <Skeleton className={s.notificationsDescription} rounded="pill" />
+            </div>
+            <Skeleton className={s.switchTrack} rounded="pill" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
   return (
     <div className={s.form} aria-hidden="true">
       <div className={s.avatarSection}>
@@ -56,16 +90,6 @@ export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkelet
             <Skeleton className={s.verifiedBadge} rounded="pill" />
           </div>
         </div>
-
-        {isCustomer && (
-          <div className={s.notificationsRow}>
-            <div className={s.notificationsText}>
-              <Skeleton className={s.notificationsLabel} rounded="pill" />
-              <Skeleton className={s.notificationsDescription} rounded="pill" />
-            </div>
-            <Skeleton className={s.switchTrack} rounded="pill" />
-          </div>
-        )}
       </div>
 
       <div className={formStyles.section}>

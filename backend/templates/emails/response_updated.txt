@@ -1,0 +1,18 @@
+Эксперт обновил отклик
+
+Здравствуйте, {{ customer_greeting }}. Эксперт {{ expert.name }} внёс изменения в отклик на заявку «{{ order_title }}».
+
+Что изменилось:
+{{ changes_summary }}
+
+Текущее предложение:
+Стоимость: {{ response.proposed_sum_amount | rubles }}
+Срок: {{ response.proposed_deadline | date_ru }}
+{% if response.files_count %}Файлов: {{ response.files_count }}
+{% endif %}{% if response.comment %}Комментарий:
+{{ response.comment }}
+{% endif %}
+Открыть отклики: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com

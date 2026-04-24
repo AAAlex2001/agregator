@@ -5,6 +5,7 @@ from database.database import get_db
 from dependencies.auth import get_current_user
 from schemas.settings import (
     ChangePasswordRequest,
+    UpdateEmailPreferencesRequest,
     UpdatePersonalDataRequest,
     UserSettingsResponse,
 )
@@ -54,8 +55,6 @@ async def update_profile(
     if data.inn is not None:
         await service.ensure_unique_inn(data.inn, user_id)
         user.inn = data.inn
-    if data.email_notifications_enabled is not None:
-        user.email_notifications_enabled = data.email_notifications_enabled
 
     await db.flush()
     response.set_cookie(
@@ -65,6 +64,21 @@ async def update_profile(
         samesite="none",
         path="/",
     )
+    return service.to_response(user)
+
+
+@router.put("/settings/email-preferences", response_model=UserSettingsResponse)
+async def update_email_preferences(
+    data: UpdateEmailPreferencesRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    patch = data.model_dump(exclude_unset=True)
+    service = SettingsService(db)
+    if not patch:
+        user = await service.get_user_or_404(user_id)
+    else:
+        user = await service.update_email_preferences(user_id, patch)
     return service.to_response(user)
 
 

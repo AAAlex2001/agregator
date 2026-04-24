@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block preheader %}
+{% if outcome == "won" %}Вас выбрали исполнителем по заявке «{{ order_title }}»{% else %}Заказчик выбрал другого исполнителя по заявке «{{ order_title }}»{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if outcome == "won" %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #047857; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Вас выбрали исполнителем
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Поздравляем, {{ expert_greeting }}
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Заказчик выбрал вас исполнителем по заявке
+  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>.
+  Свяжитесь с ним в чате, чтобы согласовать детали и начать работу.
+</p>
+{% else %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Заказчик выбрал другого эксперта
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Здравствуйте, {{ expert_greeting }}
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  По заявке
+  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>
+  заказчик выбрал другого исполнителя. Спасибо за отклик — на платформе постоянно появляются новые заявки.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #334155;">
+        Комиссия за участие в торгах возвращена на ваш баланс.
+      </p>
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
+</table>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+                   href="{{ cta_url }}"
+                   style="height:44px;v-text-anchor:middle;width:200px;"
+                   arcsize="18%" stroke="f" fillcolor="#0F172A">
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Перейти к заявкам</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-->
+      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Перейти к заявкам</a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+</table>
+{% endblock %}

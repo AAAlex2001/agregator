@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from models.user import User
-from schemas.settings import UserSettingsResponse
+from schemas.settings import EmailPreferences, UserSettingsResponse
 from utils.passwords import hash_password
 
 
@@ -116,6 +116,13 @@ class SettingsService:
 
         return user
 
+    async def update_email_preferences(self, user_id: int, patch: dict) -> User:
+        user = await self.get_user_or_404(user_id)
+        for field, value in patch.items():
+            setattr(user, field, value)
+        await self.db.flush()
+        return user
+
     @staticmethod
     def to_response(user: User) -> UserSettingsResponse:
         return UserSettingsResponse(
@@ -131,5 +138,5 @@ class SettingsService:
             rating=float(user.rating) if user.rating is not None else None,
             review_count=user.review_count or 0,
             role=user.role.value,
-            email_notifications_enabled=bool(user.email_notifications_enabled),
+            email_preferences=EmailPreferences.model_validate(user),
         )

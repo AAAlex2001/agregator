@@ -5,7 +5,6 @@ export function createInitialState(profile: {
   lastName: string;
   phone: string;
   email: string;
-  emailNotificationsEnabled: boolean;
 }): ProfileFormState {
   return {
     firstName: profile.firstName,
@@ -14,7 +13,6 @@ export function createInitialState(profile: {
     email: profile.email,
     password: "",
     repeatPassword: "",
-    emailNotificationsEnabled: profile.emailNotificationsEnabled,
     isSaving: false,
     error: null,
     success: null,
@@ -28,8 +26,6 @@ export function profileFormReducer(
   switch (action.type) {
     case "SET_FIELD":
       return { ...state, [action.field]: action.value, error: null, success: null };
-    case "SET_EMAIL_NOTIFICATIONS":
-      return { ...state, emailNotificationsEnabled: action.payload, error: null, success: null };
     case "SET_SAVING":
       return { ...state, isSaving: action.payload };
     case "SET_ERROR":

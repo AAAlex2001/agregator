@@ -65,7 +65,7 @@ class NotificationService:
 
         raise ValueError(f"Unsupported notification type: {notification.type}")
 
-    async def _create_notification(
+    async def create_notification(
         self,
         user_id: int,
         notification_type: NotificationType,
@@ -96,7 +96,7 @@ class NotificationService:
         kind: ResponseUpdateKind = ResponseUpdateKind.UPDATED,
         action_url: str | None = None,
     ) -> Notification:
-        return await self._create_notification(
+        return await self.create_notification(
             user_id=user_id,
             notification_type=NotificationType.RESPONSE_UPDATED,
             payload=ResponseUpdatedNotificationPayload(order_title=order_title, kind=kind),
@@ -113,7 +113,7 @@ class NotificationService:
         reason: ResponseStatusChangeReason,
         action_url: str | None = None,
     ) -> Notification:
-        return await self._create_notification(
+        return await self.create_notification(
             user_id=user_id,
             notification_type=NotificationType.RESPONSE_STATUS_CHANGED,
             payload=ResponseStatusChangedNotificationPayload(
@@ -134,7 +134,7 @@ class NotificationService:
         preview: str,
         action_url: str | None = None,
     ) -> Notification:
-        return await self._create_notification(
+        return await self.create_notification(
             user_id=user_id,
             notification_type=NotificationType.CHAT_MESSAGE,
             payload=ChatMessageNotificationPayload(

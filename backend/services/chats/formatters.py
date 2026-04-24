@@ -1,0 +1,109 @@
+from dataclasses import dataclass
+
+from models.chat import Chat, ChatMessage
+from models.user import UserRole
+from schemas.chat import ChatAttachmentResponse
+
+NOTIFICATION_PREVIEW_MAX = 140
+
+
+@dataclass(frozen=True)
+class CounterpartInfo:
+    id: int
+    display_name: str
+    avatar_url: str | None
+
+
+class ChatFormatter:
+    "Форматирование данных чата для API-ответов и уведомлений."
+
+    @staticmethod
+    def format_sum(amount_kopecks: int) -> str:
+        roubles = amount_kopecks // 100
+        formatted = f"{roubles:,}".replace(",", " ")
+        if amount_kopecks % 100:
+            return f"{formatted},{amount_kopecks % 100:02d} ₽"
+        return f"{formatted} ₽"
+
+    @staticmethod
+    def build_attachments(message: ChatMessage) -> list[ChatAttachmentResponse]:
+        raw = list(message.attachments or [])
+        if not raw and message.file_url and message.file_name:
+            raw = [{"url": message.file_url, "name": message.file_name}]
+        return [
+            ChatAttachmentResponse(url=item["url"], name=item["name"])
+            for item in raw
+            if item.get("url") and item.get("name")
+        ]
+
+    @classmethod
+    def last_message_text(cls, message: ChatMessage | None) -> str:
+        if message is None:
+            return ""
+        text = (message.text or "").strip()
+        if text:
+            return text
+        attachments = cls.build_attachments(message)
+        if len(attachments) == 1:
+            return attachments[0].name
+        if len(attachments) > 1:
+            return f"Файлы: {len(attachments)}"
+        return ""
+
+    @staticmethod
+    def notification_preview(text: str, attachments_count: int) -> str:
+        normalized = text.strip()
+        if normalized:
+            if len(normalized) <= NOTIFICATION_PREVIEW_MAX:
+                return normalized
+            return f"{normalized[: NOTIFICATION_PREVIEW_MAX - 3]}..."
+        if attachments_count == 1:
+            return "Новое сообщение с вложением"
+        return f"Новое сообщение с {attachments_count} файлами"
+
+    @classmethod
+    def counterpart(cls, actor_role: UserRole, chat: Chat) -> CounterpartInfo:
+        if actor_role == UserRole.CUSTOMER:
+            return cls.counterpart_for_customer(chat)
+        return cls.counterpart_for_expert(chat)
+
+    @staticmethod
+    def counterpart_for_customer(chat: Chat) -> CounterpartInfo:
+        expert = chat.expert
+        if expert is None:
+            return CounterpartInfo(
+                id=chat.expert_id, display_name=f"Эксперт #{chat.expert_id}", avatar_url=None
+            )
+        full_name = " ".join(
+            part for part in [expert.first_name, expert.last_name] if part
+        ).strip()
+        return CounterpartInfo(
+            id=expert.id,
+            display_name=full_name or f"Эксперт #{expert.id}",
+            avatar_url=expert.avatar_url,
+        )
+
+    @staticmethod
+    def counterpart_for_expert(chat: Chat) -> CounterpartInfo:
+        customer = chat.customer
+        if customer is None:
+            return CounterpartInfo(
+                id=chat.customer_id,
+                display_name=f"Заказчик #{chat.customer_id}",
+                avatar_url=None,
+            )
+        company = chat.order.company if chat.order and chat.order.company else ""
+        full_name = " ".join(
+            part for part in [customer.first_name, customer.last_name] if part
+        ).strip()
+        return CounterpartInfo(
+            id=customer.id,
+            display_name=company or full_name or f"Заказчик #{customer.id}",
+            avatar_url=customer.avatar_url,
+        )
+
+    @staticmethod
+    def sender_role(chat: Chat, sender_id: int) -> UserRole:
+        if sender_id == chat.customer_id:
+            return UserRole.CUSTOMER
+        return UserRole.EXPERT
