@@ -64,7 +64,6 @@ async def prepare_response_worlds(
         customer = await api.create_authenticated_session(scenario, iteration, "CUSTOMER")
         expert = await api.create_authenticated_session(scenario, iteration, "EXPERT")
         try:
-            await api.set_expert_balance(expert.user.id)
             order = await api.create_order(customer, scenario, iteration)
             worlds.append(PreparedResponseWorld(customer=customer, expert=expert, order=order))
         except Exception:

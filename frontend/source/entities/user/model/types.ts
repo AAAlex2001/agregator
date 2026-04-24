@@ -17,7 +17,6 @@ export interface UserProfile {
   avatar_url: string | null;
   first_name: string | null;
   last_name: string | null;
-  balance: number;
   rating: number | null;
   review_count: number;
   role: string;

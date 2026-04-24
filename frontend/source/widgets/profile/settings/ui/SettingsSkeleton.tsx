@@ -5,7 +5,7 @@ import avatarStyles from "@/source/features/profile/settings/ui/ProfileAvatarUpl
 import formStyles from "@/source/features/profile/settings/ui/PersonalDataForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
-type SettingsSection = "personal" | "notifications" | "finance";
+type SettingsSection = "personal" | "notifications" | "subscription";
 
 interface SettingsSkeletonProps {
   section: SettingsSection;
@@ -13,8 +13,8 @@ interface SettingsSkeletonProps {
 }
 
 export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkeletonProps) {
-  if (section === "finance") {
-    return <FinanceSkeleton />;
+  if (section === "subscription") {
+    return <SubscriptionSkeleton />;
   }
   if (section === "notifications") {
     return <NotificationsSkeleton />;
@@ -22,16 +22,12 @@ export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkelet
   return <PersonalSkeleton isCustomer={isCustomer} />;
 }
 
-function FinanceSkeleton() {
+function SubscriptionSkeleton() {
   return (
     <div className={s.finance} aria-hidden="true">
       <Skeleton className={s.balance} rounded="pill" />
-      <div className={s.financeButtons}>
-        <Skeleton className={s.financeButton} rounded="lg" />
-        <Skeleton className={s.financeButton} rounded="lg" />
-      </div>
       <div className={s.financeList}>
-        {Array.from({ length: 4 }, (_, index) => (
+        {Array.from({ length: 3 }, (_, index) => (
           <div key={index} className={s.financeItem}>
             <Skeleton className={s.financeLineWide} />
             <Skeleton className={s.financeLineShort} rounded="pill" />

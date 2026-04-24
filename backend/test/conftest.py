@@ -19,7 +19,6 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     group.addoption("--load-rate", action="store", type=int, default=10)
     group.addoption("--load-duration", action="store", type=int, default=5)
     group.addoption("--load-timeout", action="store", type=float, default=10.0)
-    group.addoption("--load-expert-balance-rub", action="store", type=int, default=10000)
     group.addoption("--load-order-budget-rub", action="store", type=int, default=100)
     group.addoption("--load-max-failures", action="store", type=int, default=0)
     group.addoption("--load-max-concurrency", action="store", type=int, default=None)
@@ -45,7 +44,6 @@ def load_settings(pytestconfig: pytest.Config) -> LoadSettings:
         rate_per_second=pytestconfig.getoption("--load-rate"),
         duration_seconds=pytestconfig.getoption("--load-duration"),
         request_timeout_seconds=pytestconfig.getoption("--load-timeout"),
-        expert_balance_rub=pytestconfig.getoption("--load-expert-balance-rub"),
         order_budget_rub=pytestconfig.getoption("--load-order-budget-rub"),
         max_failures=pytestconfig.getoption("--load-max-failures"),
         max_concurrency=pytestconfig.getoption("--load-max-concurrency"),

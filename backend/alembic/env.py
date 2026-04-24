@@ -18,6 +18,7 @@ from models.chat import Chat, ChatMessage
 from models.notification import Notification
 from models.session import Session
 from models.payment import Payment
+from models.pricing import PricingPlan, UserSubscription
 from models.review import Review
 from models.landing import (
     LandingHero,

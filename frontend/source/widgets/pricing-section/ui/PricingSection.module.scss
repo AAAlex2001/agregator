@@ -1,0 +1,151 @@
+.section {
+  width: 100%;
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 40px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.title {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 29px;
+  color: #1A1A1A;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  color: #808080;
+}
+
+.tabs {
+  width: 100%;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.gridItem {
+  flex: 1 1 100%;
+  display: flex;
+  order: 1;
+}
+
+.gridItem > * {
+  width: 100%;
+}
+
+.gridItemHighlighted {
+  order: 0;
+}
+
+.customerCard {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #FFFFFF;
+  border-radius: 32px;
+  box-shadow: -2px 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.customerHeadline {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  text-align: center;
+  color: #1A1A1A;
+}
+
+.customerFeatures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customerFeature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  color: #0D0D0D;
+}
+
+.error {
+  margin: 0;
+  padding: 12px 16px;
+  background: #FFF0F0;
+  color: #B1302A;
+  border-radius: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+}
+
+.footnote {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #808080;
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding: 80px 32px;
+  }
+  .gridItem {
+    flex: 1 1 calc(50% - 10px);
+  }
+  .gridItemHighlighted {
+    flex: 1 1 100%;
+  }
+  .customerFeatures {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+  .customerFeature {
+    flex: 1 1 calc(50% - 20px);
+    min-width: 280px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .section {
+    padding: 100px 40px;
+  }
+  .gridItem,
+  .gridItemHighlighted {
+    flex: 0 1 433px;
+    order: 0;
+  }
+}

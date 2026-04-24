@@ -3,11 +3,11 @@
 import { useSearchParams } from "next/navigation";
 import { SettingsWidget } from "@/source/widgets/profile/settings";
 
-type Section = "personal" | "notifications" | "finance";
+type Section = "personal" | "notifications" | "subscription";
 
 function resolveSection(value: string | null): Section {
-  if (value === "finance") {
-    return "finance";
+  if (value === "subscription") {
+    return "subscription";
   }
   if (value === "notifications") {
     return "notifications";

@@ -14,7 +14,6 @@ from schemas.response import (
     ResponseCreate,
     ResponseTab,
 )
-from services.commission import CommissionCalculator
 from services.email import (
     EmailDispatcher,
     EmailRepository,
@@ -24,6 +23,7 @@ from services.email import (
     SendResponseUpdatedEmailUseCase,
 )
 from services.notification import NotificationService
+from services.subscriptions import SubscriptionAccess
 from services.responses import (
     CreateResponseUseCase,
     GetResponseByIdUseCase,
@@ -88,15 +88,10 @@ def to_item(
     customer_name = ""
     customer_company = ""
     order_sum = ""
-    order_commission_amount = ""
     if order:
         customer_name = order.company or ""
         customer_company = order.company or ""
         order_sum = "Не определено" if order.sum_amount == 0 else format_sum(order.sum_amount)
-        commission_base = order.sum_amount if order.sum_amount > 0 else entity.proposed_sum_amount
-        order_commission_amount = format_sum(
-            CommissionCalculator.commission_paid(commission_base)
-        )
 
     expert = entity.expert
     expert_name = ""
@@ -111,15 +106,6 @@ def to_item(
         expert_rating = float(expert.rating) if expert.rating is not None else None
         expert_review_count = expert.review_count or 0
         expert_public_id = expert.public_id or ""
-
-    commission_paid_str: str | None = None
-    balance_return_str: str | None = None
-    if order and effective_status in {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}:
-        commission_base = order.sum_amount if order.sum_amount > 0 else entity.proposed_sum_amount
-        paid = CommissionCalculator.commission_paid(commission_base)
-        returned = CommissionCalculator.balance_return(commission_base)
-        commission_paid_str = format_sum(paid)
-        balance_return_str = format_sum(returned)
 
     has_review = bool(getattr(entity, "has_review_for_customer", False)) if actor_role == UserRole.CUSTOMER else False
 
@@ -145,9 +131,6 @@ def to_item(
             for badge in (order.badges if order else [])
         ],
         created_at=entity.created_at,
-        order_commission_amount=order_commission_amount,
-        commission_paid=commission_paid_str,
-        balance_return=balance_return_str,
         proposed_sum_amount_raw=entity.proposed_sum_amount,
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
         expert_name=expert_name,
@@ -188,6 +171,7 @@ async def create_response_for_order(
         validator=ResponseValidator(repo),
         get_response=get_response,
         in_app=build_in_app(db, repo),
+        subscription_access=SubscriptionAccess(db),
     )
     created = await create_use_case.execute(order_id=order_id, expert_id=user_id, data=data)
 

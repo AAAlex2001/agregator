@@ -34,9 +34,6 @@ export interface ResponseApiItem {
   response_files: string[];
   badges: ResponseApiBadge[];
   created_at: string;
-  order_commission_amount: string;
-  commission_paid: string | null;
-  balance_return: string | null;
   proposed_sum_amount_raw: number;
   proposed_deadline_raw: string;
   expert_name: string;
@@ -74,12 +71,6 @@ export interface ResponseCardData {
   sum: string;
   deadline: string;
   costEstimate: string;
-  commissionText: string;
-  commissionAmount: string;
-  orderCommissionAmount: string;
-  commissionStatus?: string;
-  balanceReturnText?: string;
-  balanceReturnAmount?: string;
   commentTitle: string;
   commentText: string;
   orderComment?: string;

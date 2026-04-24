@@ -21,8 +21,6 @@ export interface OrderApiItem {
   typical_names: string;
   sum: string;
   sum_amount_raw: number;
-  commission_amount: string;
-  commission_amount_raw: number;
   date: string;
   responses_deadline: string | null;
   technical_files: string[];
@@ -46,8 +44,6 @@ export interface OrderCardData {
   date: string;
   sum: string;
   sumAmountRaw: number;
-  commissionAmount: string;
-  commissionAmountRaw: number;
   deadlineRaw: string;
   responsesDeadline: string | null;
   technicalFiles: string[];

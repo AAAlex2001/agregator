@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 
 from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
-from services.commission import CommissionCalculator
 from services.email import SendExpertRejectedEmailUseCase
 from services.responses.broadcaster import ResponseBroadcaster
 from services.responses.in_app_notifier import ResponseInAppNotifier
@@ -43,7 +42,6 @@ class WithdrawResponseUseCase:
         customer_id = order.customer_id if order else None
         was_assigned = response.status in ASSIGNED_STATUSES
 
-        await self.refund_expert(response, expert_id)
         self.release_assignment(response, expert_id)
 
         if was_assigned and self.send_rejected_email is not None:
@@ -78,14 +76,6 @@ class WithdrawResponseUseCase:
             status_code=status.HTTP_409_CONFLICT,
             detail="Отозвать можно только отклик на рассмотрении, принятый или в работе",
         )
-
-    async def refund_expert(self, response: OrderResponse, expert_id: int) -> None:
-        if response.order is None:
-            return
-        refund = CommissionCalculator.balance_return(response.order.sum_amount)
-        expert = await self.repo.find_user(expert_id)
-        if expert is not None:
-            expert.balance += refund
 
     @staticmethod
     def release_assignment(response: OrderResponse, expert_id: int) -> None:

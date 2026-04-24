@@ -11,6 +11,7 @@ from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
 from services.responses.validators import ResponseValidator
+from services.subscriptions import SubscriptionAccess
 
 
 class CreateResponseUseCase:
@@ -20,11 +21,13 @@ class CreateResponseUseCase:
         validator: ResponseValidator,
         get_response: GetResponseByIdUseCase,
         in_app: ResponseInAppNotifier,
+        subscription_access: SubscriptionAccess | None = None,
     ):
         self.repo = repo
         self.validator = validator
         self.get_response = get_response
         self.in_app = in_app
+        self.subscription_access = subscription_access
 
     async def execute(
         self,
@@ -40,9 +43,16 @@ class CreateResponseUseCase:
         self.check_responses_deadline(order)
         await self.check_not_duplicated(order_id, expert_id)
 
+        subscription = None
+        if self.subscription_access is not None:
+            subscription = await self.subscription_access.require_for_response(expert_id)
+
         entity = self.build_entity(order_id, expert_id, data)
         await self.repo.add(entity)
         await self.flush_or_reject()
+
+        if subscription is not None and self.subscription_access is not None:
+            await self.subscription_access.consume_for_response(subscription)
 
         created = await self.get_response.execute(entity.id)
         await self.in_app.response_updated(created, kind=ResponseUpdateKind.CREATED)

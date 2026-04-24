@@ -31,32 +31,6 @@ export function CommentSection({ title, text }: { title: string; text: string })
   );
 }
 
-interface CommissionProps {
-  text: string;
-  amount: string;
-  status?: string;
-  returnText?: string;
-  returnAmount?: string;
-}
-
-export function CommissionInfo({ text, amount, status, returnText, returnAmount }: CommissionProps) {
-  return (
-    <div className={s.commissionRow}>
-      <div className={s.commissionMain}>
-        <span className={s.commissionLabel}>{text}</span>
-        <span className={s.commissionAmount}>{amount}</span>
-        {status && <span className={s.commissionAmount}>{status}</span>}
-      </div>
-      {returnText && returnAmount && (
-        <div className={s.balanceReturn}>
-          <span className={s.returnLabel}>{returnText}</span>
-          <span className={s.returnLabel}>{returnAmount}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function ReminderSection({ text }: { text: string }) {
   return (
     <div className={s.reminderRow}>

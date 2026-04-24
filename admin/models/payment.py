@@ -27,10 +27,9 @@ class PaymentStatus(str, PyEnum):
 class PaymentType(str, PyEnum):
     DEPOSIT = "DEPOSIT"
     WITHDRAWAL = "WITHDRAWAL"
-    COMMISSION = "COMMISSION"
 
     def __str__(self):
-        labels = {"DEPOSIT": "Пополнение", "WITHDRAWAL": "Вывод", "COMMISSION": "Комиссия"}
+        labels = {"DEPOSIT": "Пополнение", "WITHDRAWAL": "Вывод"}
         return labels.get(self.value, self.value)
 
 

@@ -9,23 +9,18 @@ import { OrderSummaryPanel } from "./OrderSummaryPanel";
 import s from "./TenderStep.module.scss";
 
 const GUARANTEES = [
-  "Подача заявки сейчас бесплатна и доступна сразу после заполнения предложения.",
-  "После отправки отклик сразу появится у заказчика в работе по заказу.",
-  "Если заказчик выберет вас, детали можно будет согласовать напрямую в чате.",
+  "Отклик спишется с вашего тарифа сразу после отправки.",
+  "Заказчик увидит ваше предложение и сможет связаться с вами в чате.",
+  "Если заказчик выберет вас, детали можно будет согласовать напрямую.",
 ];
 
 interface Props {
   order: OrderCardData;
-  balance: number;
   onBack: () => void;
   onContinue: () => void;
 }
 
-function formatBalance(value: number) {
-  return `${Math.floor(value / 100).toLocaleString("ru-RU")} ₽`;
-}
-
-export function TenderStep({ order, balance, onBack, onContinue }: Props) {
+export function TenderStep({ order, onBack, onContinue }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -34,9 +29,9 @@ export function TenderStep({ order, balance, onBack, onContinue }: Props) {
       <OrderSummaryPanel order={order} />
 
       <div className={s.infoCard}>
-        <div className={s.commissionRow}>
+        <div className={s.accentRow}>
           <span className={s.accentText}>
-            Подача заявки сейчас бесплатна. Проверьте условия заказа и переходите к заполнению предложения.
+            Проверьте условия заказа — на следующем шаге заполните предложение.
           </span>
         </div>
 
@@ -60,13 +55,6 @@ export function TenderStep({ order, balance, onBack, onContinue }: Props) {
               ))}
             </div>
           )}
-        </div>
-
-        <div className={s.balanceRow}>
-          <div className={s.balanceInfo}>
-            <span className={s.balanceLabel}>Текущий баланс:</span>
-            <span className={s.balanceValue}>{formatBalance(balance)}</span>
-          </div>
         </div>
       </div>
 

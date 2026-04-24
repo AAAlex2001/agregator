@@ -48,40 +48,6 @@
   @media (min-width: 768px) { font-size: 16px; }
 }
 
-.commissionRow {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  @media (min-width: 768px) { flex-direction: row; gap: 16px; }
-}
-.commissionMain { display: flex; align-items: center; gap: 4px; flex: 1; }
-.commissionLabel {
-  font-weight: 500;
-  font-size: 14px;
-  color: #1a1a1a;
-  @media (min-width: 768px) { font-size: 16px; }
-}
-.commissionAmount {
-  font-weight: 500;
-  font-size: 14px;
-  color: #1a1a1a;
-  @media (min-width: 768px) { font-size: 16px; }
-}
-.balanceReturn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  @media (min-width: 768px) { justify-content: flex-end; }
-}
-.returnLabel {
-  font-weight: 500;
-  font-size: 14px;
-  color: #ff8a00;
-  @media (min-width: 768px) { font-size: 16px; }
-}
-
 .reminderRow { display: flex; align-items: center; gap: 4px; width: 100%; }
 .reminderText {
   font-weight: 500;

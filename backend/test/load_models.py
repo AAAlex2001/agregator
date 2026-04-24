@@ -18,7 +18,6 @@ class LoadSettings(BaseModel):
     rate_per_second: int = Field(default=10, ge=1)
     duration_seconds: int = Field(default=5, ge=1)
     request_timeout_seconds: float = Field(default=10.0, gt=0)
-    expert_balance_rub: int = Field(default=10000, ge=1)
     order_budget_rub: int = Field(default=100, ge=1)
     max_failures: int = Field(default=0, ge=0)
     max_concurrency: int | None = Field(default=None, ge=1)
@@ -41,10 +40,6 @@ class LoadSettings(BaseModel):
     @property
     def effective_max_concurrency(self) -> int:
         return min(self.max_concurrency or self.rate_per_second, self.total_iterations)
-
-    @property
-    def expert_balance_kopecks(self) -> int:
-        return self.expert_balance_rub * 100
 
     @property
     def order_budget_kopecks(self) -> int:
@@ -121,7 +116,6 @@ class OrderApiResponse(BaseModel):
     customer_id: int
     assigned_expert_id: int | None = None
     sum_amount_raw: int
-    commission_amount_raw: int
     date: str
     responses_deadline: str | None = None
     status: str
@@ -142,7 +136,6 @@ class UserSettingsResponse(BaseModel):
     phone: str | None = None
     first_name: str | None = None
     last_name: str | None = None
-    balance: int
     role: str
 
 

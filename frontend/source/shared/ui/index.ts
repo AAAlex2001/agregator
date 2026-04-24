@@ -26,6 +26,4 @@ export { OrderCard } from "@/entities/order";
 export { ReviewCard } from "@/source/entities/review";
 export { ResponsesState, ResponsesTabs } from "@/widgets/responses-state";
 export { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
-export { default as BalanceTopUpModal } from "@/features/balance/topup/ui/BalanceTopUpModal";
-export { default as BalanceWithdrawModal } from "@/features/balance/withdraw/ui/BalanceWithdrawModal";
 export type { CabinetMenuKey } from "@/source/widgets/cabinet-menu-tabs";

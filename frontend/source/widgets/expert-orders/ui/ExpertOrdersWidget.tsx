@@ -32,8 +32,8 @@ function isResponsesDeadlineExpired(responsesDeadline?: string | null): boolean 
 export function ExpertOrdersWidget() {
   const { showSuccess } = useNotifications();
   const h = useExpertOrders();
-  const isEmpty = !h.isLoading && !h.error && h.items.length === 0;
-  const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
+  const isEmpty = !h.isLoading && h.items.length === 0;
+  const showOrdersContent = h.isLoading || h.items.length > 0;
 
   const gridRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -53,14 +53,6 @@ export function ExpertOrdersWidget() {
         </div>
         <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
       </div>
-
-      {h.error && (
-        <div className={s.center}>
-          <Title text="Ошибка загрузки" as="h2" />
-          <Subtitle text={h.error} />
-          <button className={s.retry} onClick={() => void h.reload()}>Повторить</button>
-        </div>
-      )}
 
       {isEmpty && (
         <div className={s.emptyState}>
@@ -136,7 +128,6 @@ export function ExpertOrdersWidget() {
         order={h.selectedOrder}
         onClose={h.closeModal}
         onRespond={h.onRespond}
-        balance={h.balance}
         isResponding={h.isResponding}
         initialStep={h.pendingStep}
       />

@@ -1,8 +1,7 @@
 from models.chat import Chat
-from models.order import Order, OrderStatus
+from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
-from services.commission import CommissionCalculator
 from services.email import SendBiddingFinishedEmailUseCase
 from services.email.use_cases.send_bidding_finished_email import OUTCOME_LOST, OUTCOME_WON
 from services.responses.broadcaster import ResponseBroadcaster
@@ -14,7 +13,7 @@ from services.responses.validators import ResponseValidator
 
 
 class UpdateResponseStatusUseCase:
-    "Смена статуса отклика с учётом ролевых правил, возвратов комиссии и фан-аута статусов."
+    "Смена статуса отклика с учётом ролевых правил и фан-аута статусов."
 
     def __init__(
         self,
@@ -57,9 +56,6 @@ class UpdateResponseStatusUseCase:
 
         old_status = response.status
         response.status = new_status
-
-        if self.is_fresh_rejection(old_status, new_status) and response.order:
-            await self.refund_expert(response)
 
         await self.repo.flush()
 
@@ -133,13 +129,11 @@ class UpdateResponseStatusUseCase:
         siblings = await self.repo.list_active_siblings(response.order_id, response.id)
         if not siblings:
             return []
-        refund = CommissionCalculator.balance_return(response.order.sum_amount)
         rejected_ids: list[int] = []
         for sibling in siblings:
             sibling.status = ResponseStatus.REJECTED
             sibling.auto_rejected = True
             rejected_ids.append(sibling.expert_id)
-            await self.credit_expert(sibling.expert_id, refund)
         return rejected_ids
 
     async def release_if_assigned(self, response: OrderResponse) -> list[int]:
@@ -156,14 +150,11 @@ class UpdateResponseStatusUseCase:
         reverted = await self.repo.list_auto_rejected(response.order_id, response.id)
         if not reverted:
             return []
-        charge = CommissionCalculator.balance_return(response.order.sum_amount)
         expert_ids: list[int] = []
         for item in reverted:
             item.status = ResponseStatus.REVIEW
             item.auto_rejected = False
             expert_ids.append(item.expert_id)
-            if charge:
-                await self.charge_expert(item.expert_id, charge)
         return expert_ids
 
     async def ensure_chat_exists(self, response: OrderResponse) -> None:
@@ -180,27 +171,6 @@ class UpdateResponseStatusUseCase:
                 expert_id=response.expert_id,
             )
         )
-
-    @staticmethod
-    def is_fresh_rejection(old_status: ResponseStatus, new_status: ResponseStatus) -> bool:
-        return (
-            new_status == ResponseStatus.REJECTED
-            and old_status != ResponseStatus.REJECTED
-        )
-
-    async def refund_expert(self, response: OrderResponse) -> None:
-        refund = CommissionCalculator.balance_return(response.order.sum_amount)
-        await self.credit_expert(response.expert_id, refund)
-
-    async def credit_expert(self, expert_id: int, amount: int) -> None:
-        expert = await self.repo.find_user(expert_id)
-        if expert is not None:
-            expert.balance += amount
-
-    async def charge_expert(self, expert_id: int, amount: int) -> None:
-        expert = await self.repo.find_user(expert_id)
-        if expert is not None:
-            expert.balance -= amount
 
     async def broadcast_side_effects(
         self, response: OrderResponse, new_status: ResponseStatus

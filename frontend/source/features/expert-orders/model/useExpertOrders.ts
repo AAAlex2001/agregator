@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
+import { useNotifications } from "@/shared/ui/Notifications";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
 import { useOrdersWs } from "../lib/useOrdersWs";
@@ -15,7 +17,8 @@ const PAGE = 50;
 export function useExpertOrders() {
   const [s, d] = useReducer(reducer, initial);
   const { user } = useSession();
-  const balance = user?.balance ?? 0;
+  const router = useRouter();
+  const { showError } = useNotifications();
   const loadingMoreRef = useRef(false);
   const [pendingStep, setPendingStep] = useState<ModalStep>("details");
 
@@ -31,12 +34,11 @@ export function useExpertOrders() {
 
   const reload = async () => {
     d({ type: "LOADING", value: true });
-    d({ type: "ERROR", value: null });
     try {
       const data = await fetchOrders(0, PAGE);
       d({ type: "DATA", items: data.items.map(mapApiToOrderCard), total: data.total });
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
+      showError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
       d({ type: "LOADING", value: false });
     }
@@ -65,7 +67,7 @@ export function useExpertOrders() {
       const data = await fetchOrders(s.items.length, PAGE);
       d({ type: "APPEND", items: data.items.map(mapApiToOrderCard), total: data.total });
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
+      showError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
       loadingMoreRef.current = false;
       d({ type: "LOADING_MORE", value: false });
@@ -101,7 +103,11 @@ export function useExpertOrders() {
       d({ type: "REMOVE", id: order.id });
       closeModal();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      const message = e instanceof Error ? e.message : "Ошибка";
+      showError(message);
+      if (message.toLowerCase().includes("подписк") || message.includes("402")) {
+        router.push("/settings?section=subscription");
+      }
     } finally {
       d({ type: "RESPONDING", value: false });
     }
@@ -109,7 +115,6 @@ export function useExpertOrders() {
 
   return {
     ...s,
-    balance,
     returnOrderId,
     hasMore,
     pendingStep,

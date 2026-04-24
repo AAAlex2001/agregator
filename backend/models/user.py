@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from enum import Enum as PyEnum
 from uuid import uuid4
 
-from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, BigInteger, Enum, CheckConstraint
+from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -43,7 +43,6 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)
     notification_unread_count = Column(Integer, default=0, nullable=False, server_default="0")
-    balance = Column(BigInteger, default=0, nullable=False)
     rating = Column(Numeric(2, 1), nullable=True)
     review_count = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
@@ -117,6 +116,13 @@ class User(Base):
 
     payments = relationship(
         "Payment",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    subscriptions = relationship(
+        "UserSubscription",
         back_populates="user",
         cascade="all, delete-orphan",
         passive_deletes=True,

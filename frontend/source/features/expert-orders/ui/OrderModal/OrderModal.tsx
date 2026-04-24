@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/shared/ui/Notifications";
 import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
+import { respondFormSchema, type RespondFormValues } from "../../model/respond.schema";
 import { DetailsStep } from "./DetailsStep";
 import { OfferStep } from "./OfferStep";
 import { TenderStep } from "./TenderStep";
 import type { ModalStep, OrderModalProps } from "./types";
 import styles from "./OrderModal.module.scss";
 
-function parseDeadline(value: string): Date | null {
-  if (!value) {
-    return null;
-  }
+const emptyValues: RespondFormValues = { deadline: "", cost: "", comment: "" };
 
+function parseDeadline(value: string): Date | null {
+  if (!value) return null;
   const date = new Date(`${value}T00:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 }
@@ -22,49 +24,37 @@ export function OrderModal({
   isOpen,
   onClose,
   order,
-  balance,
   onRespond,
   isResponding,
   initialStep = "details",
 }: OrderModalProps) {
   const { showError } = useNotifications();
   const [step, setStep] = useState<ModalStep>(initialStep);
-  const [deadline, setDeadline] = useState("");
-  const [cost, setCost] = useState("");
-  const [comment, setComment] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+
+  const form = useForm<RespondFormValues>({
+    resolver: zodResolver(respondFormSchema),
+    defaultValues: emptyValues,
+    mode: "onBlur",
+  });
 
   useEffect(() => {
     setStep(initialStep);
-    setDeadline("");
-    setCost("");
-    setComment("");
+    form.reset(emptyValues);
     setFiles([]);
-  }, [order?.id, initialStep]);
+  }, [order?.id, initialStep, form]);
 
   if (!isOpen || !order) {
     return null;
   }
 
-  const handleClose = () => {
-    onClose();
-  };
-
-  const handleCostChange = (value: string) => {
-    setCost(value.replace(/[^0-9]/g, ""));
-  };
-
   const handleAddFiles = (nextFiles: FileList | null) => {
-    if (!nextFiles || nextFiles.length === 0) {
-      return;
-    }
-
+    if (!nextFiles || nextFiles.length === 0) return;
     const result = mergeFilesWithLimits(files, Array.from(nextFiles));
     if (result.errorMessage) {
       showError(result.errorMessage);
       return;
     }
-
     setFiles(result.nextFiles);
   };
 
@@ -72,34 +62,40 @@ export function OrderModal({
     setFiles((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
   };
 
-  const handleSubmit = () => {
-    if (isResponding) {
-      return;
-    }
+  const submit = form.handleSubmit(
+    (values) => {
+      if (isResponding) return;
 
-    const costAmount = Math.round(Number(cost) * 100);
-    if (order.sumAmountRaw > 0 && costAmount > order.sumAmountRaw) {
-      showError("Стоимость не может превышать бюджет заказчика");
-      return;
-    }
+      const costAmount = Math.round(Number(values.cost) * 100);
+      if (order.sumAmountRaw > 0 && costAmount > order.sumAmountRaw) {
+        showError("Стоимость не может превышать бюджет заказчика");
+        return;
+      }
 
-    const customerDeadline = parseDeadline(order.deadlineRaw);
-    const offerDeadline = parseDeadline(deadline);
-    if (customerDeadline && offerDeadline && offerDeadline > customerDeadline) {
-      showError("Срок не может быть позже дедлайна заказчика");
-      return;
-    }
+      const customerDeadline = parseDeadline(order.deadlineRaw);
+      const offerDeadline = parseDeadline(values.deadline);
+      if (customerDeadline && offerDeadline && offerDeadline > customerDeadline) {
+        showError("Срок не может быть позже дедлайна заказчика");
+        return;
+      }
 
-    onRespond(order, {
-      deadline,
-      costAmount,
-      comment,
-      files,
-    });
-  };
+      onRespond(order, {
+        deadline: values.deadline,
+        costAmount,
+        comment: values.comment,
+        files,
+      });
+    },
+    (errors) => {
+      const first = Object.values(errors)[0];
+      if (first && "message" in first && typeof first.message === "string") {
+        showError(first.message);
+      }
+    },
+  );
 
   return (
-    <div className={styles.overlay} onClick={handleClose} role="presentation">
+    <div className={styles.overlay} onClick={onClose} role="presentation">
       <div
         className={styles.modal}
         onClick={(event) => event.stopPropagation()}
@@ -109,7 +105,7 @@ export function OrderModal({
         <button
           type="button"
           className={styles.closeButton}
-          onClick={handleClose}
+          onClick={onClose}
           aria-label="Закрыть"
         >
           ×
@@ -122,7 +118,6 @@ export function OrderModal({
         {step === "tender" && (
           <TenderStep
             order={order}
-            balance={balance}
             onBack={() => setStep("details")}
             onContinue={() => setStep("offer")}
           />
@@ -131,18 +126,13 @@ export function OrderModal({
         {step === "offer" && (
           <OfferStep
             order={order}
-            deadline={deadline}
-            cost={cost}
-            comment={comment}
+            form={form}
             files={files}
             isSubmitting={isResponding}
-            onDeadlineChange={setDeadline}
-            onCostChange={handleCostChange}
-            onCommentChange={setComment}
             onAddFiles={handleAddFiles}
             onRemoveFile={handleRemoveFile}
             onBack={() => setStep("tender")}
-            onSubmit={handleSubmit}
+            onSubmit={submit}
           />
         )}
       </div>

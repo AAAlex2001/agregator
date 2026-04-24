@@ -6,11 +6,11 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useSession } from "@/source/features/session";
 import { PersonalDataForm } from "@/source/features/profile/settings";
 import { NotificationPreferencesForm } from "@/source/features/profile/notifications";
-import { FinancePanel } from "@/source/features/finance";
+import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import s from "./SettingsWidget.module.scss";
 
-type SettingsSection = "personal" | "notifications" | "finance";
+type SettingsSection = "personal" | "notifications" | "subscription";
 
 interface SettingsWidgetProps {
   initialSection: SettingsSection;
@@ -22,13 +22,13 @@ function buildTabs(isExpert: boolean): Array<{ id: SettingsSection; label: strin
     { id: "notifications", label: "Уведомления" },
   ];
   if (isExpert) {
-    base.push({ id: "finance", label: "Финансы" });
+    base.push({ id: "subscription", label: "Подписка" });
   }
   return base;
 }
 
 export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
-  const { user, role, isLoading, error, setUser, mergeUser } = useSession();
+  const { user, role, isLoading, error, setUser } = useSession();
   const [section, setSection] = useState<SettingsSection>(initialSection);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
         <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
         <Subtitle text="Управляйте личными данными" className={s.pageSubtitle} />
       </div>
-      <div className={s.content}>
+      <div className={`${s.content} ${section === "subscription" ? s.contentWide : ""}`}>
         <Tabs
           variant="pill"
           tabs={tabs}
@@ -62,7 +62,6 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
             section={section}
             user={user}
             onProfileUpdate={setUser}
-            onBalanceChange={(balance) => mergeUser({ balance })}
           />
         )}
       </div>
@@ -74,23 +73,14 @@ interface SettingsContentProps {
   section: SettingsSection;
   user: NonNullable<ReturnType<typeof useSession>["user"]>;
   onProfileUpdate: ReturnType<typeof useSession>["setUser"];
-  onBalanceChange: (balance: number) => void;
 }
 
-function SettingsContent({ section, user, onProfileUpdate, onBalanceChange }: SettingsContentProps) {
+function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProps) {
   if (section === "notifications") {
     return <NotificationPreferencesForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
-  if (section === "finance" && user.role === "EXPERT") {
-    return (
-      <FinancePanel
-        balance={user.balance ?? 0}
-        onBalanceChange={onBalanceChange}
-        returnUrl={typeof window !== "undefined"
-          ? `${window.location.origin}/settings?section=finance`
-          : ""}
-      />
-    );
+  if (section === "subscription" && user.role === "EXPERT") {
+    return <SubscriptionPanel />;
   }
   return <PersonalDataForm profile={user} onProfileUpdate={onProfileUpdate} />;
 }

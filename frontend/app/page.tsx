@@ -15,6 +15,8 @@ import {
 	LandingReviews,
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
+import { PricingSection } from "@/source/widgets/pricing-section";
+import { fetchPricingPlans } from "@/source/entities/pricing";
 
 export const metadata: Metadata = {
 	title: "Промышленная безопасность — платформа экспертов и заказов",
@@ -41,8 +43,8 @@ export const dynamic = "force-dynamic";
 export default async function LandingPage() {
 	ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
 
-	const { hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq } =
-		await loadLandingSnapshot();
+	const [{ hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq }, pricingPlans] =
+		await Promise.all([loadLandingSnapshot(), fetchPricingPlans()]);
 
 	return (
 		<>
@@ -82,6 +84,14 @@ export default async function LandingPage() {
 						title={sectionHeaders.reviews.title}
 						subtitle={sectionHeaders.reviews.subtitle}
 					/>
+					{pricingPlans.length > 0 ? (
+						<PricingSection
+							title="Готовы откликаться на проекты?"
+							subtitle="Выберите тариф и начните откликаться на проекты уже сегодня"
+							footnote="Заказчики размещают проекты бесплатно — эксперты получают доступ к заказам по тарифу"
+							plans={pricingPlans}
+						/>
+					) : null}
 					<LandingFaq
 						items={faq}
 						title={sectionHeaders.faq.title}

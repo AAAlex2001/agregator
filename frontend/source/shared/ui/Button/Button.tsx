@@ -5,7 +5,17 @@ import styles from "./button.module.scss";
 import { ArrowIcon } from "@/shared/ui/icons";
 import Loader from "../Loader";
 
-type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline" | "outlineOrange" | "green" | "transparent";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "chat"
+  | "settings"
+  | "outline"
+  | "outlineOrange"
+  | "green"
+  | "transparent"
+  | "rounded"
+  | "roundedMuted";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {

@@ -13,7 +13,6 @@ export interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: OrderCardData | null;
-  balance: number;
   onRespond: (order: OrderCardData, formData: RespondFormData) => void;
   isResponding: boolean;
   initialStep?: ModalStep;

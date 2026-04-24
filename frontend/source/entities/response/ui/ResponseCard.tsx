@@ -2,29 +2,29 @@ import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { StatusHeader } from "./StatusHeader";
 import { ExpertInfo } from "./ExpertInfo";
 import { OrderSection } from "./OrderSection";
-import { ExpertTerms, CommentSection, CommissionInfo, ReminderSection } from "./InfoSections";
+import { ExpertTerms, CommentSection, ReminderSection } from "./InfoSections";
 import { TechSpecFiles } from "./TechSpecFiles";
 import { ActionButtons } from "./ActionButtons";
 import s from "./ResponseCard.module.scss";
 
 function getFlags(card: ResponseCardData, role: UserRole) {
   if (role === "customer") {
-    return { expertInfo: true, comment: true, orderComment: false, commission: false, balanceReturn: false, reminder: false };
+    return { expertInfo: true, comment: true, orderComment: false, reminder: false };
   }
   const c = card.expertConfirmed;
   switch (card.rawStatus) {
     case "REVIEW":
-      return { expertInfo: false, comment: false, orderComment: true,  commission: true,  balanceReturn: true,  reminder: false };
+      return { expertInfo: false, comment: false, orderComment: true,  reminder: false };
     case "ACCEPTED":
-      return { expertInfo: false, comment: true,  orderComment: true,  commission: true,  balanceReturn: true,  reminder: true };
+      return { expertInfo: false, comment: true,  orderComment: true,  reminder: true };
     case "IN_PROGRESS":
-      return { expertInfo: false, comment: !c,    orderComment: !c,    commission: true,  balanceReturn: !c,    reminder: !c };
+      return { expertInfo: false, comment: !c,    orderComment: !c,    reminder: !c };
     case "REJECTED":
-      return { expertInfo: false, comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: true,  orderComment: false, reminder: false };
     case "COMPLETED":
-      return { expertInfo: false, comment: false, orderComment: true,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: false, orderComment: true,  reminder: false };
     default:
-      return { expertInfo: false, comment: true,  orderComment: false,  commission: true,  balanceReturn: false, reminder: false };
+      return { expertInfo: false, comment: true,  orderComment: false, reminder: false };
   }
 }
 
@@ -36,7 +36,6 @@ interface Props {
 
 export function ResponseCard({ card, actions, role }: Props) {
   const f = getFlags(card, role);
-  const hasCommission = f.commission && card.commissionAmount && card.commissionAmount !== "0 ₽";
   const termsLabels = role === "customer"
     ? { deadline: "Срок:", cost: "Цена:" }
     : { deadline: "Ваши сроки:", cost: "Ваша оценка стоимости работ:" };
@@ -81,14 +80,6 @@ export function ResponseCard({ card, actions, role }: Props) {
           )}
           {card.orderTechSpecFiles.length > 0 && (
             <TechSpecFiles title="Техническое задание:" files={card.orderTechSpecFiles} />
-          )}
-          {hasCommission && (
-            <CommissionInfo
-              text={card.commissionText} amount={card.commissionAmount}
-              status={card.commissionStatus}
-              returnText={f.balanceReturn ? card.balanceReturnText : undefined}
-              returnAmount={f.balanceReturn ? card.balanceReturnAmount : undefined}
-            />
           )}
           {f.reminder && card.reminderText && (
             <ReminderSection text={card.reminderText} />

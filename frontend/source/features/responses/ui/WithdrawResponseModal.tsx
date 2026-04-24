@@ -13,7 +13,6 @@ interface WithdrawResponseModalProps {
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
-  balanceReturnAmount?: string;
   warnings: string[];
   isLoading: boolean;
   onCancel: () => void;
@@ -31,7 +30,6 @@ export function WithdrawResponseModal({
   orderDate,
   badges,
   sum,
-  balanceReturnAmount,
   warnings,
   isLoading,
   onCancel,
@@ -75,14 +73,6 @@ export function WithdrawResponseModal({
             <div className={s.infoBlock}>
               <span className={s.infoTitle}>Обратите внимание:</span>
               <ul className={s.bulletList}>
-                {balanceReturnAmount ? (
-                  <li className={s.bulletItem}>
-                    <span className={s.bulletDot} />
-                    <span className={s.bulletText}>
-                      На ваш баланс вернется <strong>{balanceReturnAmount}</strong>
-                    </span>
-                  </li>
-                ) : null}
                 {warnings.map((text) => (
                   <li key={text} className={s.bulletItem}>
                     <span className={s.bulletDot} />

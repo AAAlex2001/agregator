@@ -5,7 +5,6 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 from models.order import OrderStatus, BadgeVariant
-from services.commission import CommissionCalculator
 
 ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
     ".pdf",
@@ -100,8 +99,6 @@ class OrderResponse(BaseModel):
     customer_name: str
     sum: str
     sum_amount_raw: int
-    commission_amount: str
-    commission_amount_raw: int
     date: str
     responses_deadline: str | None = None
     technical_files: list[str]
@@ -123,9 +120,6 @@ class OrderResponse(BaseModel):
     def from_order(cls, order) -> "OrderResponse":
         amount = order.sum_amount
         sum_display = "Не определено" if amount == 0 else cls._format_sum(amount)
-
-        commission_kopecks = CommissionCalculator.commission_paid(amount)
-        commission_display = cls._format_sum(commission_kopecks) if amount > 0 else "Не определено"
 
         customer_name = order.company or ""
 
@@ -152,8 +146,6 @@ class OrderResponse(BaseModel):
             customer_name=customer_name,
             sum=sum_display,
             sum_amount_raw=amount,
-            commission_amount=commission_display,
-            commission_amount_raw=commission_kopecks,
             date=date_display,
             responses_deadline=responses_deadline_display,
             technical_files=order.technical_files or [],

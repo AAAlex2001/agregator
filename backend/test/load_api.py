@@ -37,15 +37,6 @@ class DatabaseController:
     def __init__(self, db_url: str):
         self.engine: AsyncEngine = create_async_engine(db_url, future=True, pool_pre_ping=True)
 
-    async def set_user_balance(self, user_id: int, balance_kopecks: int) -> None:
-        async with self.engine.begin() as connection:
-            result = await connection.execute(
-                text("UPDATE users SET balance = :balance WHERE id = :user_id"),
-                {"balance": balance_kopecks, "user_id": user_id},
-            )
-        if result.rowcount != 1:
-            raise RuntimeError(f"Не удалось обновить баланс пользователя {user_id}")
-
     async def close(self) -> None:
         await self.engine.dispose()
 
@@ -132,11 +123,6 @@ class LoadApi:
         except Exception:
             await client.aclose()
             raise
-
-    async def set_expert_balance(self, user_id: int) -> None:
-        if self.database is None:
-            raise RuntimeError("Для этого сценария нужен доступ к БД через LOAD_DB_URL или DATABASE_URL")
-        await self.database.set_user_balance(user_id, self.settings.expert_balance_kopecks)
 
     async def create_order(self, session: UserSession, scenario: str, iteration: int) -> OrderApiResponse:
         title_seed = uuid4().hex[:6]

@@ -32,8 +32,6 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     deadlineRaw:         toIsoDate(item.date),
     sum:                 normalizeCurrency(item.sum),
     sumAmountRaw:        item.sum_amount_raw,
-    commissionAmount:    normalizeCurrency(item.commission_amount),
-    commissionAmountRaw: item.commission_amount_raw ?? 0,
     responsesDeadline:   item.responses_deadline ?? null,
     technicalFiles:      resolveFileUrls(item.technical_files ?? []),
     badges:              item.badges.map((b) => ({

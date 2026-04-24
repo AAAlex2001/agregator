@@ -1,0 +1,134 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: #ffffff;
+  border-radius: 32px;
+  box-shadow: -2px 8px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  border-radius: 30px;
+}
+
+.pillsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px;
+  border-radius: 20px;
+}
+
+.pillsRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.pillsDefault {
+  background: #F5F5F5;
+}
+
+.pillsHighlighted {
+  background: linear-gradient(90deg, #FFF8EB 0%, #FFC580 69.56%, #FF8A00 100%);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.pillName {
+  background: #FFFFFF;
+  color: #231D4F;
+}
+
+.pillBadge {
+  background: #FF8A00;
+  color: #FFFFFF;
+}
+
+.price {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.priceValue {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 34px;
+  color: #231D4F;
+  white-space: nowrap;
+}
+
+.pricePeriod {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 21px;
+  color: #1A1A1A;
+  white-space: nowrap;
+}
+
+.description {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 18px;
+  color: #1A1A1A;
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 18px;
+  color: #0D0D0D;
+}
+
+.check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+@media (min-width: 768px) {
+  .features {
+    padding: 16px;
+    gap: 10px;
+  }
+}

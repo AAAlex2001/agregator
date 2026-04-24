@@ -8,6 +8,11 @@ interface WithdrawResponseModalContainerProps {
   onConfirm: () => void;
 }
 
+const WARNINGS = [
+  "Заказчик больше не увидит ваше предложение",
+  "Вы сможете откликнуться на этот заказ повторно",
+];
+
 export function WithdrawResponseModalContainer({
   response,
   isLoading,
@@ -17,28 +22,6 @@ export function WithdrawResponseModalContainer({
   if (!response) {
     return null;
   }
-
-  const hasCommission = Boolean(
-    response.commissionAmount
-    && response.commissionAmount !== "0 ₽"
-    && response.commissionAmount !== "0 ₽",
-  );
-
-  const warnings = response.balanceReturnAmount
-    ? [
-      "Заказчик больше не увидит ваше предложение",
-      "Вы сможете откликнуться на этот заказ повторно",
-    ]
-    : hasCommission
-      ? [
-        "Взнос за участие в тендере не возвращается",
-        "Заказчик больше не увидит ваше предложение",
-        "Вы сможете откликнуться на этот заказ повторно",
-      ]
-      : [
-        "Заказчик больше не увидит ваше предложение",
-        "Вы сможете откликнуться на этот заказ повторно",
-      ];
 
   return (
     <WithdrawResponseModal
@@ -52,8 +35,7 @@ export function WithdrawResponseModalContainer({
       orderDate={response.orderDate}
       badges={response.badges}
       sum={response.orderSum || response.sum}
-      balanceReturnAmount={response.balanceReturnAmount}
-      warnings={warnings}
+      warnings={WARNINGS}
       isLoading={isLoading}
       onCancel={onCancel}
       onConfirm={onConfirm}

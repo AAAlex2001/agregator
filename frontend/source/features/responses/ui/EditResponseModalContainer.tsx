@@ -39,8 +39,6 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     date: response.orderDate,
     sum: response.orderSum || response.sum,
     sumAmountRaw: 0,
-    commissionAmount: response.orderCommissionAmount,
-    commissionAmountRaw: 0,
     deadlineRaw: response.orderDate,
     responsesDeadline: null,
     technicalFiles: response.orderTechSpecFiles,
@@ -48,16 +46,6 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     badgesRaw: response.badges.map((badge) => ({ text: badge.text, variant: badge.variant })),
     status: response.rawStatus,
   };
-}
-
-function buildCommissionText(response: ResponseCardData): string {
-  if (!response.commissionAmount || response.commissionAmount === "0 ₽" || response.commissionAmount === "0 ₽") {
-    return "Подача заявки бесплатна";
-  }
-
-  return [response.commissionText, response.commissionAmount, response.commissionStatus]
-    .filter(Boolean)
-    .join(" ");
 }
 
 export function EditResponseModalContainer({
@@ -132,7 +120,6 @@ export function EditResponseModalContainer({
       statusColor={response.statusColor}
       statusBg={response.statusBg}
       order={buildOrder(response)}
-      commissionText={buildCommissionText(response)}
       deadline={deadline}
       cost={cost}
       comment={comment}

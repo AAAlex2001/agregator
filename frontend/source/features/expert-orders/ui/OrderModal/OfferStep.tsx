@@ -1,5 +1,7 @@
+import type { UseFormReturn } from "react-hook-form";
 import { Button, CalendarInput, Input } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
+import type { RespondFormValues } from "../../model/respond.schema";
 import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
 import { ModalHeader } from "./ModalHeader";
@@ -8,14 +10,9 @@ import s from "./OfferStep.module.scss";
 
 interface Props {
   order: OrderCardData;
-  deadline: string;
-  cost: string;
-  comment: string;
+  form: UseFormReturn<RespondFormValues>;
   files: File[];
   isSubmitting: boolean;
-  onDeadlineChange: (value: string) => void;
-  onCostChange: (value: string) => void;
-  onCommentChange: (value: string) => void;
   onAddFiles: (files: FileList | null) => void;
   onRemoveFile: (index: number) => void;
   onBack: () => void;
@@ -24,30 +21,29 @@ interface Props {
 
 export function OfferStep({
   order,
-  deadline,
-  cost,
-  comment,
+  form,
   files,
   isSubmitting,
-  onDeadlineChange,
-  onCostChange,
-  onCommentChange,
   onAddFiles,
   onRemoveFile,
   onBack,
   onSubmit,
 }: Props) {
-  const canSubmit = deadline.trim() !== "" && Number(cost) > 0;
-  const commissionText = "Подача заявки бесплатна. После отправки заказчик сразу увидит ваше предложение и сможет связаться с вами.";
+  const { watch, setValue, formState } = form;
+  const shouldValidate = formState.isSubmitted;
+  const deadline = watch("deadline");
+  const cost = watch("cost");
+  const comment = watch("comment");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
 
   return (
-    <div className={base.section}>
+    <form onSubmit={handleSubmit} className={base.section}>
       <ModalHeader title="Отклик на заказ" step="Шаг 2. Дополнение заявки" />
       <OrderSummaryPanel order={order} />
-
-      <div>
-        <span className={s.commissionText}>{commissionText}</span>
-      </div>
 
       <div className={s.formRow}>
         <div className={base.fieldGroup}>
@@ -55,7 +51,7 @@ export function OfferStep({
           <CalendarInput
             active
             value={deadline}
-            onChange={onDeadlineChange}
+            onChange={(value) => setValue("deadline", value, { shouldValidate })}
             placeholder="Выберите дату"
           />
         </div>
@@ -68,8 +64,11 @@ export function OfferStep({
             active
             inputMode="numeric"
             value={cost}
-            onChange={(event) => onCostChange(event.target.value)}
+            onChange={(event) =>
+              setValue("cost", event.target.value.replace(/[^0-9]/g, ""), { shouldValidate })
+            }
             placeholder="Сумма в рублях"
+            error={formState.errors.cost?.message}
           />
         </div>
       </div>
@@ -83,7 +82,7 @@ export function OfferStep({
         <textarea
           className={s.textarea}
           value={comment}
-          onChange={(event) => onCommentChange(event.target.value)}
+          onChange={(event) => setValue("comment", event.target.value, { shouldValidate })}
           placeholder="Напишите комментарий для заказчика..."
           maxLength={5000}
         />
@@ -95,10 +94,10 @@ export function OfferStep({
         <Button variant="outline" size="sm" fullWidth onClick={onBack}>
           Назад
         </Button>
-        <Button variant="primary" size="sm" fullWidth disabled={!canSubmit} isLoading={isSubmitting} onClick={onSubmit}>
+        <Button type="submit" variant="primary" size="sm" fullWidth isLoading={isSubmitting}>
           Подать заявку
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

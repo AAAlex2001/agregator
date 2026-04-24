@@ -18,7 +18,6 @@ class PaymentStatus(str, PyEnum):
 class PaymentType(str, PyEnum):
     DEPOSIT = "DEPOSIT"
     WITHDRAWAL = "WITHDRAWAL"
-    COMMISSION = "COMMISSION"
 
 
 class Payment(Base):

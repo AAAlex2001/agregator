@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 
 from models import (
     Base, User, Order, OrderBadge, OrderResponse, Chat, ChatMessage,
-    Payment, Review, Session, PasswordResetCode,
+    Payment, PricingPlan, UserSubscription, Review, Session, PasswordResetCode,
     LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
     LandingAdvantage, LandingIndustry, LandingReview, LandingFaq,
 )
@@ -494,35 +494,33 @@ class UserAdmin(ModelView, model=User):
 
     column_list = [
         User.id, User.role, User.inn, User.email, User.phone,
-        User.first_name, User.last_name, User.balance,
+        User.first_name, User.last_name,
         User.rating, User.review_count, User.is_active, User.created_at,
     ]
     column_searchable_list = [User.inn, User.email, User.phone, User.first_name, User.last_name]
-    column_sortable_list = [User.id, User.role, User.balance, User.rating, User.created_at]
+    column_sortable_list = [User.id, User.role, User.rating, User.created_at]
     column_default_sort = (User.id, True)
 
     column_details_list = [
         User.id, User.role, User.is_active,
         User.first_name, User.last_name, User.inn,
         User.email, User.phone, User.password,
-        User.balance, User.rating, User.review_count,
+        User.rating, User.review_count,
         User.created_at, User.updated_at,
         User.orders, User.assigned_orders, User.responses,
-        User.payments, User.customer_reviews, User.expert_reviews,
+        User.payments, User.subscriptions, User.customer_reviews, User.expert_reviews,
     ]
 
     form_columns = [
         User.role, User.is_active, User.first_name, User.last_name,
         User.inn, User.email, User.phone, User.password,
-        User.balance, User.rating, User.review_count,
+        User.rating, User.review_count,
     ]
 
     column_formatters = {
-        User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
         User.role: lambda m, a: str(m.role),
     }
     column_formatters_detail = {
-        User.balance: lambda m, a: f"{m.balance / 100:.2f} ₽" if m.balance is not None else "0.00 ₽",
         User.role: lambda m, a: str(m.role),
     }
 
@@ -537,7 +535,6 @@ class UserAdmin(ModelView, model=User):
         User.phone: "Телефон",
         User.password: "Пароль (хеш)",
         User.company_data: "Данные компании (DaData)",
-        User.balance: "Баланс",
         User.rating: "Рейтинг",
         User.review_count: "Кол-во отзывов",
         User.created_at: "Создан",
@@ -546,6 +543,7 @@ class UserAdmin(ModelView, model=User):
         User.assigned_orders: "Заказы (эксперт)",
         User.responses: "Отклики",
         User.payments: "Платежи",
+        User.subscriptions: "Подписки",
         User.customer_reviews: "Отзывы (заказчик)",
         User.expert_reviews: "Отзывы (эксперт)",
     }
@@ -864,6 +862,124 @@ class PasswordResetCodeAdmin(ModelView, model=PasswordResetCode):
     }
 
 
+# ========== ТАРИФЫ ==========
+
+
+class PricingPlanAdmin(ModelView, model=PricingPlan):
+    name = "Тариф"
+    name_plural = "Тарифы"
+    icon = "fa-solid fa-tags"
+    category = "Тарифы"
+
+    column_list = [
+        PricingPlan.id, PricingPlan.kind, PricingPlan.name,
+        PricingPlan.price_kopecks, PricingPlan.period_label, PricingPlan.duration_days,
+        PricingPlan.badge, PricingPlan.highlighted,
+        PricingPlan.is_active, PricingPlan.sort_order,
+    ]
+    column_sortable_list = [PricingPlan.sort_order, PricingPlan.kind, PricingPlan.price_kopecks, PricingPlan.is_active]
+    column_default_sort = (PricingPlan.sort_order, False)
+
+    column_details_list = [
+        PricingPlan.id, PricingPlan.kind, PricingPlan.name,
+        PricingPlan.badge, PricingPlan.price_kopecks, PricingPlan.period_label,
+        PricingPlan.duration_days,
+        PricingPlan.description, PricingPlan.cta_label, PricingPlan.features,
+        PricingPlan.highlighted, PricingPlan.is_active, PricingPlan.sort_order,
+        PricingPlan.created_at, PricingPlan.updated_at,
+    ]
+
+    form_columns = [
+        PricingPlan.kind, PricingPlan.name, PricingPlan.badge,
+        PricingPlan.price_kopecks, PricingPlan.period_label, PricingPlan.duration_days,
+        PricingPlan.description, PricingPlan.cta_label, PricingPlan.features,
+        PricingPlan.highlighted, PricingPlan.is_active, PricingPlan.sort_order,
+    ]
+
+    column_formatters = {
+        PricingPlan.price_kopecks: lambda m, a: f"{m.price_kopecks / 100:,.2f} ₽".replace(",", " "),
+        PricingPlan.kind: lambda m, a: str(m.kind),
+    }
+    column_formatters_detail = {
+        PricingPlan.price_kopecks: lambda m, a: f"{m.price_kopecks / 100:,.2f} ₽".replace(",", " "),
+        PricingPlan.kind: lambda m, a: str(m.kind),
+    }
+
+    column_labels = {
+        PricingPlan.id: "ID",
+        PricingPlan.kind: "Тип",
+        PricingPlan.name: "Название",
+        PricingPlan.badge: "Бейдж",
+        PricingPlan.price_kopecks: "Цена (в копейках)",
+        PricingPlan.period_label: "Подпись периода",
+        PricingPlan.duration_days: "Срок действия (дней, пусто для разового)",
+        PricingPlan.description: "Описание",
+        PricingPlan.cta_label: "Текст кнопки",
+        PricingPlan.features: "Список фич (JSON-массив строк)",
+        PricingPlan.highlighted: "Выделенный (градиент)",
+        PricingPlan.is_active: "Активен",
+        PricingPlan.sort_order: "Порядок",
+        PricingPlan.created_at: "Создан",
+        PricingPlan.updated_at: "Обновлён",
+    }
+
+
+class UserSubscriptionAdmin(ModelView, model=UserSubscription):
+    name = "Подписка"
+    name_plural = "Подписки пользователей"
+    icon = "fa-solid fa-id-card"
+    category = "Тарифы"
+
+    column_list = [
+        UserSubscription.id, UserSubscription.user, UserSubscription.plan,
+        UserSubscription.kind, UserSubscription.status,
+        UserSubscription.activated_at, UserSubscription.expires_at,
+        UserSubscription.responses_remaining,
+    ]
+    column_sortable_list = [
+        UserSubscription.id, UserSubscription.status, UserSubscription.activated_at, UserSubscription.expires_at,
+    ]
+    column_default_sort = (UserSubscription.id, True)
+
+    column_details_list = [
+        UserSubscription.id, UserSubscription.user, UserSubscription.plan,
+        UserSubscription.kind, UserSubscription.status,
+        UserSubscription.activated_at, UserSubscription.expires_at,
+        UserSubscription.responses_remaining, UserSubscription.payment,
+        UserSubscription.created_at, UserSubscription.updated_at,
+    ]
+
+    form_columns = [
+        UserSubscription.user, UserSubscription.plan,
+        UserSubscription.kind, UserSubscription.status,
+        UserSubscription.activated_at, UserSubscription.expires_at,
+        UserSubscription.responses_remaining, UserSubscription.payment,
+    ]
+
+    column_formatters = {
+        UserSubscription.kind: lambda m, a: str(m.kind),
+        UserSubscription.status: lambda m, a: str(m.status),
+    }
+    column_formatters_detail = {
+        UserSubscription.kind: lambda m, a: str(m.kind),
+        UserSubscription.status: lambda m, a: str(m.status),
+    }
+
+    column_labels = {
+        UserSubscription.id: "ID",
+        UserSubscription.user: "Пользователь",
+        UserSubscription.plan: "Тариф",
+        UserSubscription.kind: "Тип",
+        UserSubscription.status: "Статус",
+        UserSubscription.activated_at: "Активирована",
+        UserSubscription.expires_at: "Истекает",
+        UserSubscription.responses_remaining: "Остаток откликов",
+        UserSubscription.payment: "Платёж",
+        UserSubscription.created_at: "Создана",
+        UserSubscription.updated_at: "Обновлена",
+    }
+
+
 # ========== ЛЕНДИНГ — редактируемый контент ==========
 
 
@@ -1040,6 +1156,8 @@ admin.add_view(OrderBadgeAdmin)
 admin.add_view(OrderResponseAdmin)
 admin.add_view(ChatAdmin)
 admin.add_view(PaymentAdmin)
+admin.add_view(PricingPlanAdmin)
+admin.add_view(UserSubscriptionAdmin)
 admin.add_view(ReviewAdmin)
 admin.add_view(SessionAdmin)
 admin.add_view(PasswordResetCodeAdmin)

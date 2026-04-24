@@ -10,7 +10,6 @@ interface EditResponseModalProps {
   statusColor: string;
   statusBg: string;
   order: OrderCardData;
-  commissionText: string;
   deadline: string;
   cost: string;
   comment: string;
@@ -34,7 +33,6 @@ export function EditResponseModal({
   statusColor,
   statusBg,
   order,
-  commissionText,
   deadline,
   cost,
   comment,
@@ -79,8 +77,6 @@ export function EditResponseModal({
         </div>
 
         <OrderSummaryPanel order={order} />
-
-        <span className={s.commissionText}>{commissionText}</span>
 
         <div className={s.formRow}>
           <div className={s.fieldGroup}>

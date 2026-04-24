@@ -72,39 +72,10 @@ class UserSettingsResponse(BaseModel):
     avatar_url: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    balance: int = 0
     rating: Optional[float] = None
     review_count: int = 0
     role: str
     email_preferences: EmailPreferences
-
-    class Config:
-        from_attributes = True
-
-
-class FinanceOperationType(str):
-    DEPOSIT = "deposit"
-    COMMISSION = "commission"
-    REFUND = "refund"
-    PARTICIPATION_FEE = "participation_fee"
-
-
-class FinanceOperationResponse(BaseModel):
-    """История финансовых операций"""
-    id: int
-    date: datetime
-    operation_type: str = Field(..., description="Тип операции")
-    amount: float = Field(..., description="Сумма операции")
-    description: str = Field(..., description="Описание операции")
-
-    class Config:
-        from_attributes = True
-
-
-class BalanceResponse(BaseModel):
-    """Баланс пользователя"""
-    balance: float = Field(..., description="Текущий баланс")
-    currency: str = Field(default="RUB", description="Валюта")
 
     class Config:
         from_attributes = True
