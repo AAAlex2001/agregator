@@ -47,7 +47,7 @@ export function OrderSummaryPanel({ order }: Props) {
             </div>
 
             <span className={s.metaText}>
-              <span className={s.metaLabel}>Мин. стоимость:</span> {order.sum}
+              <span className={s.metaLabel}>Начальная максимальная цена:</span> {order.sum}
             </span>
           </div>
         </>
