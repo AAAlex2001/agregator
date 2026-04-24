@@ -1,14 +1,12 @@
-import os
-
 from passlib.context import CryptContext
 from starlette.concurrency import run_in_threadpool
 
 
-BCRYPT_ROUNDS = int(os.getenv("BCRYPT_ROUNDS", "12"))
 password_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__rounds=BCRYPT_ROUNDS,
+    schemes=["argon2"],
+    argon2__time_cost=2,
+    argon2__memory_cost=19456,
+    argon2__parallelism=1,
 )
 
 
