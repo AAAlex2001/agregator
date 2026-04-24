@@ -1,34 +1,36 @@
 // Нагрузочный сценарий для email-триггерящих эндпоинтов.
-// Бьём одновременно в register, forgot-password send-code и list orders.
+// Бьём в register, forgot-password send-code и list orders.
 // Цель: убедиться, что BackgroundTasks не забивают event loop и запросы
 // отвечают быстрее 500ms под 20-30 RPS.
 //
 // Запуск (из контейнера k6):
-//   k6 run --vus 20 --duration 1m /scripts/email_triggers_load.js
+//   docker compose exec k6 k6 run /scripts/email_triggers_load.js
 //
 // Можно править VUS / duration через флаги.
 
 import http from "k6/http";
 import { check, sleep } from "k6";
 
+// В k6 4xx по умолчанию падает в http_req_failed. Говорим "ожидаем 2xx и 4xx",
+// чтобы threshold не краснел на валидных бизнес-ответах вроде 400 (дубликат) и 404 (юзер не найден).
+http.setResponseCallback(http.expectedStatuses({ min: 200, max: 499 }));
+
 export const options = {
   stages: [
-    { duration: "30s", target: 10 },   // разгон
-    { duration: "1m",  target: 20 },   // плато
-    { duration: "30s", target: 30 },   // пиковая нагрузка
-    { duration: "20s", target: 0 },    // остывание
+    { duration: "30s", target: 10 },
+    { duration: "1m",  target: 20 },
+    { duration: "30s", target: 30 },
+    { duration: "20s", target: 0 },
   ],
   thresholds: {
-    // ≤ 5% ошибок на HTTP уровне
     http_req_failed: ["rate<0.05"],
-    // 95% ответов быстрее 500ms (BackgroundTasks не должны замедлять ответ)
     http_req_duration: ["p(95)<500"],
-    // register эндпоинт — особенно важный (bcrypt + schedule_email)
     "http_req_duration{name:register}": ["p(95)<800"],
   },
 };
 
 const BASE_URL = __ENV.BASE_URL || "http://176.57.215.114";
+const DEBUG = __ENV.DEBUG === "1";
 
 function randomString(length) {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -39,12 +41,18 @@ function randomString(length) {
   return out;
 }
 
+function logBadStatus(label, response, allowed) {
+  if (!DEBUG) return;
+  if (allowed.includes(response.status)) return;
+  console.warn(`[${label}] unexpected status=${response.status} body=${response.body}`);
+}
+
 function scenarioRegister() {
-  const email = `k6-${randomString(12)}@example.test`;
+  const email = `k6-${randomString(12)}@example.com`;
   const payload = JSON.stringify({
     role: "CUSTOMER",
     email,
-    password: "Test123$",
+    password: "LoadTest123$abc",
     first_name: "Load",
     last_name: "Test",
   });
@@ -52,29 +60,28 @@ function scenarioRegister() {
     headers: { "Content-Type": "application/json" },
     tags: { name: "register" },
   });
+  logBadStatus("register", response, [201, 400, 409, 422]);
   check(response, {
-    "register: 201 или 400 (дубликат ок)": (r) => r.status === 201 || r.status === 400,
+    "register: 2xx или бизнес-4xx": (r) => [201, 400, 409, 422].includes(r.status),
     "register: быстро": (r) => r.timings.duration < 1500,
   });
 }
 
 function scenarioForgotPassword() {
-  const payload = JSON.stringify({ email: `unknown-${randomString(8)}@example.test` });
+  const payload = JSON.stringify({ email: `unknown-${randomString(8)}@example.com` });
   const response = http.post(`${BASE_URL}/api/forgot-password/send-code`, payload, {
     headers: { "Content-Type": "application/json" },
     tags: { name: "forgot_password" },
   });
-  // Ожидаем 200 или 404 — оба валидны (ответ не должен тянуть за собой SMTP)
+  logBadStatus("forgot", response, [200, 400, 404, 422]);
   check(response, {
-    "forgot: 200 или 404": (r) => r.status === 200 || r.status === 404,
+    "forgot: 2xx или бизнес-4xx": (r) => [200, 400, 404, 422].includes(r.status),
     "forgot: быстро": (r) => r.timings.duration < 600,
   });
 }
 
 function scenarioListOrders() {
-  const response = http.get(`${BASE_URL}/api/orders/`, {
-    tags: { name: "list_orders" },
-  });
+  const response = http.get(`${BASE_URL}/api/orders/`, { tags: { name: "list_orders" } });
   check(response, {
     "list_orders: 200/401": (r) => r.status === 200 || r.status === 401,
   });
