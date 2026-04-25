@@ -1,17 +1,18 @@
 import json
 from datetime import date as date_type, datetime as datetime_type
 
-from schemas.order import BadgeOptionResponse, BadgeSchema, OrderCreate, OrderUpdate
+from schemas.order import BadgeSchema, OrderCreate, OrderUpdate
 
 
-BADGE_OPTIONS: list[BadgeOptionResponse] = [
-    BadgeOptionResponse(text="ТУ", variant="BLUE", label="Укажите типовые наименования ТУ"),
-    BadgeOptionResponse(text="КЛ", variant="GRAY", label="Укажите типовые наименования КЛ"),
-    BadgeOptionResponse(text="ТП", variant="ORANGE", label="Укажите типовые наименования ТП"),
-    BadgeOptionResponse(text="Д", variant="BROWN", label="Укажите типовые наименования Д"),
-    BadgeOptionResponse(text="ЗС", variant="GREEN", label="Укажите типовые наименования ЗС"),
-    BadgeOptionResponse(text="ОБ", variant="PURPLE", label="Укажите типовые наименования ОБ"),
-]
+TYPE_VARIANT = {
+    "ТУ": "ORANGE",
+    "КЛ": "BLUE",
+    "ТП": "BLUE",
+    "КЛ/ТП": "BLUE",
+    "ЗС": "GREEN",
+    "Д": "BROWN",
+    "ОБ": "GRAY",
+}
 
 
 def parse_json_list(raw: str) -> list:
@@ -29,108 +30,60 @@ def parse_responses_deadline(raw: str) -> datetime_type | None:
     return datetime_type.fromisoformat(raw)
 
 
-def parse_badges_json(raw: str) -> list[BadgeSchema]:
+def code_to_variant(code: str) -> str:
+    parts = code.split(" ", 1)
+    if len(parts) < 2:
+        return "ORANGE"
+    return TYPE_VARIANT.get(parts[1].strip(), "ORANGE")
+
+
+def parse_badge_codes(raw: str) -> list[BadgeSchema]:
     return [
-        BadgeSchema(text=item["text"], variant=item["variant"])
-        for item in parse_json_list(raw)
+        BadgeSchema(text=str(code).strip(), variant=code_to_variant(str(code)))
+        for code in parse_json_list(raw)
+        if str(code).strip()
     ]
-
-
-def build_badges_from_inputs(raw: str) -> tuple[list[BadgeSchema], str]:
-    options_by_variant = {item.variant: item for item in BADGE_OPTIONS}
-    badges: list[BadgeSchema] = []
-    typical_names_parts: list[str] = []
-
-    for item in parse_json_list(raw):
-        variant = str(item.get("variant", "")).strip()
-        option = options_by_variant.get(variant)
-        if not option:
-            continue
-
-        names = [
-            name.strip()
-            for name in str(item.get("names", "")).split(",")
-            if name.strip()
-        ]
-
-        if not names:
-            badges.append(BadgeSchema(text=option.text, variant=option.variant))
-            continue
-
-        typical_names_parts.extend(names)
-        for name in names:
-            badges.append(BadgeSchema(text=f"{option.text} {name}", variant=option.variant))
-
-    return badges, ", ".join(typical_names_parts)
-
-
-def resolve_badges_and_typical_names(
-    badge_inputs_json: str,
-    badges_json: str,
-    typical_names: str,
-) -> tuple[list[BadgeSchema], str]:
-    if badge_inputs_json:
-        return build_badges_from_inputs(badge_inputs_json)
-    return parse_badges_json(badges_json), typical_names
 
 
 def build_order_create_data(
     title: str,
     company: str,
-    typical_names: str,
     comment: str,
     customer_id: int,
     sum_amount: int,
     deadline: str,
     responses_deadline: str,
-    badge_inputs_json: str,
-    badges_json: str,
+    badge_codes_json: str,
 ) -> OrderCreate:
-    badges, resolved_typical_names = resolve_badges_and_typical_names(
-        badge_inputs_json,
-        badges_json,
-        typical_names,
-    )
-
     return OrderCreate(
         title=title,
         company=company,
-        typical_names=resolved_typical_names,
         comment=comment,
         customer_id=customer_id,
         sum_amount=sum_amount,
         deadline=date_type.fromisoformat(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
-        badges=badges,
+        badges=parse_badge_codes(badge_codes_json),
     )
 
 
 def build_order_update_data(
     title: str,
     company: str,
-    typical_names: str,
     comment: str,
     sum_amount: int,
     deadline: str,
     responses_deadline: str,
-    badge_inputs_json: str,
-    badges_json: str,
+    badge_codes_json: str,
     keep_files: str,
 ) -> OrderUpdate:
-    badges, resolved_typical_names = resolve_badges_and_typical_names(
-        badge_inputs_json,
-        badges_json,
-        typical_names,
-    )
-
     return OrderUpdate(
         title=title,
         company=company,
-        typical_names=resolved_typical_names,
         comment=comment,
         sum_amount=sum_amount,
         deadline=date_type.fromisoformat(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
-        badges=badges,
+        badges=parse_badge_codes(badge_codes_json),
         technical_files=parse_json_list(keep_files),
     )

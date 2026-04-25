@@ -9,9 +9,14 @@ import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "../a
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
 import type { OrderFormValues } from "./schema";
+import { hasDraft } from "./orderDraft";
 
 export function useCustomerOrders() {
   const [s, d] = useReducer(reducer, initial);
+
+  useEffect(() => {
+    if (hasDraft()) d({ type: "MODE", mode: "create" });
+  }, []);
   const { user } = useSession();
   const { showSuccess, showError } = useNotifications();
 

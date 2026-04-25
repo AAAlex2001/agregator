@@ -1,14 +1,13 @@
 import { useState } from "react";
-import type { BadgeOptionDto } from "../../../api/customer-orders.api";
+import type { UseFormReturn } from "react-hook-form";
+import { TABLE, TYPES, type ExpertiseType } from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
+import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./badgeSection.module.scss";
 
 interface Props {
-  options: readonly BadgeOptionDto[];
-  selectedBadgeVariants: string[];
-  typicalNamesMap: Record<string, string>;
-  onToggleBadge: (variant: string) => void;
-  onChangeTypicalNames: (variant: string, value: string) => void;
+  form: UseFormReturn<OrderFormValues>;
+  onShowHelp: () => void;
 }
 
 const OPO_ROWS: string[][] = [
@@ -17,45 +16,64 @@ const OPO_ROWS: string[][] = [
   ["13", "14.1", "14.2", "14.3", "14.4", "15"],
 ];
 
-function getColorClass(variant: string) {
-  return s[variant.toLowerCase() as keyof typeof s] ?? s.gray;
-}
+const TYPE_COLOR: Record<ExpertiseType, string> = {
+  "КЛ/ТП": "blue",
+  "ТУ": "orange",
+  "ЗС": "green",
+  "Д": "brown",
+  "ОБ": "gray",
+};
 
-function shortenLabel(text: string) {
-  return text.replace(/^Э\d+\s+/i, "").trim() || text;
-}
+export function BadgeSection({ form, onShowHelp }: Props) {
+  const selections = (form.watch("selectionsByType") ?? {}) as Record<ExpertiseType, string[]>;
+  const [activeType, setActiveType] = useState<ExpertiseType | null>(null);
 
-export function BadgeSection({
-  options,
-  selectedBadgeVariants,
-  onToggleBadge,
-}: Props) {
-  const [selectedOpo, setSelectedOpo] = useState<string[]>([]);
+  const setSelections = (next: Record<ExpertiseType, string[]>) =>
+    form.setValue("selectionsByType", next, { shouldDirty: true });
 
-  const toggleOpo = (code: string) => {
-    setSelectedOpo((prev) =>
-      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
-    );
+  const toggleType = (type: ExpertiseType) => {
+    setActiveType((prev) => (prev === type ? null : type));
   };
+
+  const toggleOpo = (opo: string) => {
+    if (!activeType) return;
+    const current = selections[activeType] ?? [];
+    const nextOpos = current.includes(opo) ? current.filter((x) => x !== opo) : [...current, opo];
+    setSelections({ ...selections, [activeType]: nextOpos });
+  };
+
+  const activeOpos = activeType ? (selections[activeType] ?? []) : [];
+
+  const resultCodes = Object.entries(selections).flatMap(([type, opos]) =>
+    opos.flatMap((opo) => TABLE[opo]?.[type as ExpertiseType] ?? []),
+  );
+
+  const HelpTrigger = (
+    <button type="button" className={s.helpTrigger} onClick={onShowHelp}>
+      (Что это?)
+    </button>
+  );
 
   return (
     <>
       <section className={base.section}>
         <span className={base.label}>
           Выберите основной(-ые) объект(-ы) экспертизы
+          {HelpTrigger}
         </span>
 
         <div className={s.row}>
-          {options.map((option) => {
-            const active = selectedBadgeVariants.includes(option.variant);
+          {TYPES.map((type) => {
+            const active = activeType === type;
+            const hasSelections = (selections[type]?.length ?? 0) > 0;
             return (
               <button
-                key={option.variant}
+                key={type}
                 type="button"
-                className={`${s.mainBadge} ${getColorClass(option.variant)} ${active ? s.active : ""}`}
-                onClick={() => onToggleBadge(option.variant)}
+                className={`${s.mainBadge} ${s[TYPE_COLOR[type]]} ${active || hasSelections ? s.active : ""}`}
+                onClick={() => toggleType(type)}
               >
-                {shortenLabel(option.text)}
+                {type}
               </button>
             );
           })}
@@ -65,19 +83,22 @@ export function BadgeSection({
       <section className={base.section}>
         <span className={base.label}>
           Выберите тип(-ы) опасных производственных объектов
+          {HelpTrigger}
         </span>
 
         <div className={s.opoRows}>
           {OPO_ROWS.map((row, rowIdx) => (
             <div key={rowIdx} className={s.row}>
               {row.map((code) => {
-                const active = selectedOpo.includes(code);
+                const active = activeOpos.includes(code);
+                const enabled = activeType !== null && Boolean(TABLE[code]?.[activeType]);
                 return (
                   <button
                     key={code}
                     type="button"
-                    className={`${s.opoBadge} ${active ? s.active : ""}`}
+                    className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
                     onClick={() => toggleOpo(code)}
+                    disabled={!enabled}
                   >
                     {code}
                   </button>
@@ -87,6 +108,19 @@ export function BadgeSection({
           ))}
         </div>
       </section>
+
+      {resultCodes.length > 0 && (
+        <section className={base.section}>
+          <span className={base.label}>Будут добавлены к заказу</span>
+          <div className={s.resultRow}>
+            {resultCodes.map((code) => (
+              <span key={code} className={s.resultChip}>
+                {code}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }

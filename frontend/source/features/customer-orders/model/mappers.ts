@@ -1,4 +1,5 @@
 import type { OrderCardData } from "@/source/entities/order";
+import { TABLE, type ExpertiseType } from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
 import type { OrderFormValues } from "./schema";
 
 export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
@@ -9,26 +10,9 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
       deadline: "",
       responsesDeadline: "",
       budget: "",
-      selectedBadgeVariants: [],
-      typicalNamesMap: {},
+      selectionsByType: {},
       comment: "",
     };
-  }
-
-  const selectedBadgeVariants = [...new Set(editTarget.badgesRaw.map((badge) => badge.variant))];
-  const typicalNamesMap: Record<string, string> = {};
-
-  for (const variant of selectedBadgeVariants) {
-    const names = editTarget.badgesRaw
-      .filter((badge) => badge.variant === variant)
-      .map((badge) => {
-        const [prefix, ...rest] = badge.text.trim().split(/\s+/);
-        if (!rest.length) return "";
-        return badge.text.slice(prefix.length).trim();
-      })
-      .filter(Boolean);
-
-    typicalNamesMap[variant] = names.join(", ");
   }
 
   return {
@@ -37,17 +21,15 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     deadline: editTarget.deadlineRaw,
     responsesDeadline: editTarget.responsesDeadline ?? "",
     budget: editTarget.sumAmountRaw > 0 ? String(editTarget.sumAmountRaw / 100) : "",
-    selectedBadgeVariants,
-    typicalNamesMap,
+    selectionsByType: {},
     comment: editTarget.comment,
   };
 }
 
-function buildBadgeInputs(selectedBadgeVariants: string[], typicalNamesMap: Record<string, string>) {
-  return selectedBadgeVariants.map((variant) => ({
-    variant,
-    names: (typicalNamesMap[variant] ?? "").trim(),
-  }));
+function flattenCodes(selections: Record<string, string[]>): string[] {
+  return Object.entries(selections).flatMap(([type, opos]) =>
+    opos.flatMap((opo) => TABLE[opo]?.[type as ExpertiseType] ?? []),
+  );
 }
 
 export function buildCreatePayload(values: OrderFormValues, files: File[], userId: number) {
@@ -57,7 +39,7 @@ export function buildCreatePayload(values: OrderFormValues, files: File[], userI
     deadline: values.deadline,
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
-    badge_inputs: buildBadgeInputs(values.selectedBadgeVariants, values.typicalNamesMap),
+    badge_codes: flattenCodes(values.selectionsByType),
     comment: values.comment.trim(),
     customer_id: userId,
     files,
@@ -71,7 +53,7 @@ export function buildUpdatePayload(values: OrderFormValues, files: File[], keepF
     deadline: values.deadline,
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
-    badge_inputs: buildBadgeInputs(values.selectedBadgeVariants, values.typicalNamesMap),
+    badge_codes: flattenCodes(values.selectionsByType),
     comment: values.comment.trim(),
     files,
     keepFiles,

@@ -40,12 +40,6 @@ class BadgeResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class BadgeOptionResponse(BaseModel):
-    text: str
-    variant: str
-    label: str
-
-
 class OrderCreate(BaseModel):
     title: str = Field(..., max_length=500)
     company: str = Field(default="", max_length=500)

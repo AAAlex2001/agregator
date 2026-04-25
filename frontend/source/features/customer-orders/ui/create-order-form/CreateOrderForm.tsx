@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
+import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { OrderFormValues } from "../../model/schema";
 import { BadgeSection } from "./sections/BadgeSection";
@@ -17,38 +20,65 @@ interface Props {
   editTarget?: OrderCardData;
 }
 
+type View = "form" | "help";
+
+const transition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
+
 export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }: Props) {
   const formState = useCreateOrderForm({ editTarget, onSubmit });
+  const [view, setView] = useState<View>("form");
 
   return (
-    <form className={s.form} onSubmit={formState.submit}>
-      <h2 className={s.title}>{formState.isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
+    <div className={`${s.shell} ${view === "help" ? s.shellWide : ""}`}>
+      <AnimatePresence mode="wait" initial={false}>
+        {view === "form" ? (
+          <motion.form
+            key="form"
+            className={s.form}
+            onSubmit={formState.submit}
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={transition}
+          >
+            <h2 className={s.title}>{formState.isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
 
-      <DetailsSection form={formState.form} />
+            <DetailsSection form={formState.form} />
 
-      <BadgeSection
-        options={formState.badgeOptions}
-        selectedBadgeVariants={formState.selectedBadgeVariants}
-        typicalNamesMap={formState.typicalNamesMap}
-        onToggleBadge={formState.toggleBadge}
-        onChangeTypicalNames={formState.setTypicalNames}
-      />
+            <BadgeSection
+              form={formState.form}
+              onShowHelp={() => setView("help")}
+            />
 
-      <CommentSection form={formState.form} />
+            <CommentSection form={formState.form} />
 
-      <FilesSection
-        existingFiles={formState.keepFiles}
-        files={formState.files}
-        dropzoneOptions={formState.dropzoneOptions}
-        onRemoveFile={formState.removeFile}
-        onRemoveExistingFile={formState.removeExistingFile}
-      />
+            <FilesSection
+              existingFiles={formState.keepFiles}
+              files={formState.files}
+              dropzoneOptions={formState.dropzoneOptions}
+              onRemoveFile={formState.removeFile}
+              onRemoveExistingFile={formState.removeExistingFile}
+            />
 
-      <FormActions
-        isEdit={formState.isEdit}
-        isSubmitting={isSubmitting}
-        onCancel={onCancel}
-      />
-    </form>
+            <FormActions
+              isEdit={formState.isEdit}
+              isSubmitting={isSubmitting}
+              onCancel={onCancel}
+            />
+          </motion.form>
+        ) : (
+          <motion.div
+            key="help"
+            className={s.form}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 16 }}
+            transition={transition}
+          >
+            <ExpertiseCodesView onBack={() => setView("form")} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

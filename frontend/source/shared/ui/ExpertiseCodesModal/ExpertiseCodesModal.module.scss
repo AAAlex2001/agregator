@@ -1,0 +1,90 @@
+.view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.scroll {
+  width: 100%;
+  border-radius: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #1a1a1a;
+}
+
+.th1,
+.th2,
+.th3 {
+  padding: 10px;
+  background: linear-gradient(90deg, #ffb800 0%, #ff8a00 100%);
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.th1:last-child,
+.th2:last-child,
+.th3:last-child {
+  border-right: none;
+}
+
+.th1 { font-size: 14px; }
+.th2 { font-size: 12px; font-weight: 500; }
+.th3 { font-size: 12px; font-weight: 500; }
+
+/* Round top corners of the header to match the container */
+thead tr:first-child > .th1:first-child {
+  border-top-left-radius: 10px;
+}
+thead tr:first-child > .th1:last-child {
+  border-top-right-radius: 10px;
+}
+
+.td {
+  padding: 10px;
+  border: 1px solid #ffe5b8;
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+  background: #ffffff;
+}
+
+.tdName {
+  text-align: left;
+  white-space: normal;
+  font-weight: 500;
+  width: 280px;
+  min-width: 280px;
+}
+
+tbody tr:nth-child(even) .td {
+  background: #fff8e8;
+}

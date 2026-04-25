@@ -3,33 +3,16 @@ import { fetchWithSession } from "@/source/shared/api/session";
 import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
 import type { OrdersApiList } from "@/source/entities/order";
 
-export interface BadgeOptionDto {
-  text: string;
-  variant: string;
-  label: string;
-}
-
-interface BadgeInputDto {
-  variant: string;
-  names: string;
-}
-
 export async function fetchCustomerOrders(skip = 0, limit = 50): Promise<OrdersApiList> {
   const res = await fetchWithSession(`${API_URL}/orders/?skip=${skip}&limit=${limit}`);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить заказы");
   return res.json();
 }
 
-export async function fetchOrderBadgeOptions(): Promise<BadgeOptionDto[]> {
-  const res = await fetchWithSession(`${API_URL}/orders/badge-options`);
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить бейджи");
-  return res.json();
-}
-
 interface CreatePayload {
   title: string; company: string; comment: string;
   customer_id: number; sum_amount: number; deadline: string;
-  responses_deadline?: string; badge_inputs: BadgeInputDto[];
+  responses_deadline?: string; badge_codes: string[];
   files?: File[];
 }
 
@@ -43,7 +26,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     fd.append("sum_amount", String(p.sum_amount));
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
-    fd.append("badge_inputs_json", JSON.stringify(p.badge_inputs));
+    fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     for (const f of files) fd.append("files", f);
     return fd;
   };
@@ -55,7 +38,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
 interface UpdatePayload {
   title: string; company: string; comment: string;
   sum_amount: number; deadline: string; responses_deadline?: string;
-  badge_inputs: BadgeInputDto[]; files?: File[]; keepFiles?: string[];
+  badge_codes: string[]; files?: File[]; keepFiles?: string[];
 }
 
 export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: number }> {
@@ -67,7 +50,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     fd.append("sum_amount", String(p.sum_amount));
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
-    fd.append("badge_inputs_json", JSON.stringify(p.badge_inputs));
+    fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     fd.append("keep_files", JSON.stringify(p.keepFiles ?? []));
     for (const f of files) fd.append("files", f);
     return fd;

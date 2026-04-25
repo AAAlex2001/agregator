@@ -28,13 +28,12 @@ from services.orders import (
     UploadOrderFilesUseCase,
 )
 from schemas.order import (
-    BadgeOptionResponse,
     OrderCreate,
     OrderUpdate,
     OrderResponse,
     OrderListResponse,
 )
-from utils.order_forms import BADGE_OPTIONS, build_order_create_data, build_order_update_data
+from utils.order_forms import build_order_create_data, build_order_update_data
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -63,11 +62,6 @@ def build_send_order_updated_email(
         repo=EmailRepository(db),
         dispatcher=EmailDispatcher(background_tasks),
     )
-
-
-@router.get("/badge-options", response_model=list[BadgeOptionResponse])
-async def get_badge_options():
-    return BADGE_OPTIONS
 
 
 @router.get("/", response_model=OrderListResponse)
@@ -127,28 +121,24 @@ async def create_order_with_files(
     background_tasks: BackgroundTasks,
     title: str = Form(...),
     company: str = Form(""),
-    typical_names: str = Form(""),
     comment: str = Form(""),
     customer_id: int = Form(...),
     sum_amount: int = Form(...),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
-    badge_inputs_json: str = Form(""),
-    badges_json: str = Form("[]"),
+    badge_codes_json: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
 ):
     data = build_order_create_data(
         title=title,
         company=company,
-        typical_names=typical_names,
         comment=comment,
         customer_id=customer_id,
         sum_amount=sum_amount,
         deadline=deadline,
         responses_deadline=responses_deadline,
-        badge_inputs_json=badge_inputs_json,
-        badges_json=badges_json,
+        badge_codes_json=badge_codes_json,
     )
     repo = build_repo(db)
     create = CreateOrderUseCase(
@@ -191,13 +181,11 @@ async def update_order_with_files(
     background_tasks: BackgroundTasks,
     title: str = Form(...),
     company: str = Form(""),
-    typical_names: str = Form(""),
     comment: str = Form(""),
     sum_amount: int = Form(...),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
-    badge_inputs_json: str = Form(""),
-    badges_json: str = Form("[]"),
+    badge_codes_json: str = Form("[]"),
     keep_files: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
@@ -206,13 +194,11 @@ async def update_order_with_files(
     data = build_order_update_data(
         title=title,
         company=company,
-        typical_names=typical_names,
         comment=comment,
         sum_amount=sum_amount,
         deadline=deadline,
         responses_deadline=responses_deadline,
-        badge_inputs_json=badge_inputs_json,
-        badges_json=badges_json,
+        badge_codes_json=badge_codes_json,
         keep_files=keep_files,
     )
     repo = build_repo(db)
