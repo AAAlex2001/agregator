@@ -7,7 +7,7 @@ export const orderFormSchema = z.object({
   responsesDeadline: z.string(),
   budget: z.string(),
   /** Per-type OPO selections: { "ТУ": ["1", "2"], "Д": ["3.1", "10"] }. */
-  selectionsByType: z.record(z.string(), z.array(z.string())).default({}),
+  selectionsByType: z.record(z.string(), z.array(z.string())),
   comment: z.string(),
 });
 
