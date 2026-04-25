@@ -13,7 +13,7 @@ from models import (
     Base, User, Order, OrderBadge, OrderResponse, Chat, ChatMessage,
     Payment, PricingPlan, UserSubscription, Review, Session, PasswordResetCode,
     LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
-    LandingAdvantage, LandingIndustry, LandingReview, LandingFaq,
+    LandingAdvantage, LandingIndustry, LandingReview, LandingFaq, LandingPricingContent,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -1149,6 +1149,49 @@ class LandingFaqAdmin(ModelView, model=LandingFaq):
     }
 
 
+class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
+    name = "Тарифы (тексты)"
+    name_plural = "Лендинг · Тарифы"
+    icon = "fa-solid fa-tags"
+    category = "Лендинг"
+
+    can_create = False
+    can_delete = False
+
+    column_list = [
+        LandingPricingContent.id,
+        LandingPricingContent.expert_title,
+        LandingPricingContent.customer_title,
+    ]
+
+    form_columns = [
+        LandingPricingContent.expert_title,
+        LandingPricingContent.expert_subtitle,
+        LandingPricingContent.expert_footnote,
+        LandingPricingContent.customer_title,
+        LandingPricingContent.customer_subtitle,
+        LandingPricingContent.customer_headline,
+        LandingPricingContent.customer_features,
+        LandingPricingContent.customer_footnote,
+        LandingPricingContent.customer_cta_label,
+        LandingPricingContent.customer_cta_href,
+    ]
+
+    column_labels = {
+        LandingPricingContent.id: "ID",
+        LandingPricingContent.expert_title: "Эксперт · Заголовок",
+        LandingPricingContent.expert_subtitle: "Эксперт · Подзаголовок",
+        LandingPricingContent.expert_footnote: "Эксперт · Сноска под карточками",
+        LandingPricingContent.customer_title: "Заказчик · Заголовок",
+        LandingPricingContent.customer_subtitle: "Заказчик · Подзаголовок",
+        LandingPricingContent.customer_headline: "Заказчик · Большой текст по центру",
+        LandingPricingContent.customer_features: "Заказчик · Список преимуществ (JSON-массив строк)",
+        LandingPricingContent.customer_footnote: "Заказчик · Сноска",
+        LandingPricingContent.customer_cta_label: "Заказчик · Текст кнопки",
+        LandingPricingContent.customer_cta_href: "Заказчик · Ссылка кнопки",
+    }
+
+
 # --- Регистрация вьюшек ---
 admin.add_view(UserAdmin)
 admin.add_view(OrderAdmin)
@@ -1170,3 +1213,4 @@ admin.add_view(LandingAdvantageAdmin)
 admin.add_view(LandingIndustryAdmin)
 admin.add_view(LandingReviewAdmin)
 admin.add_view(LandingFaqAdmin)
+admin.add_view(LandingPricingContentAdmin)

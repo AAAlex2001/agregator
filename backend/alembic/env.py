@@ -29,6 +29,7 @@ from models.landing import (
     LandingIndustry,
     LandingReview,
     LandingFaq,
+    LandingPricingContent,
 )
 
 config = context.config

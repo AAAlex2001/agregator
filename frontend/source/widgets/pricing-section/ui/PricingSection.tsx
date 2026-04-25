@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
@@ -37,6 +38,7 @@ interface Props {
   customerFeatures: string[];
   customerFootnote?: string;
   customerCta?: CustomerCta;
+  redirectOnSelect?: string;
 }
 
 export function PricingSection({
@@ -49,10 +51,23 @@ export function PricingSection({
   customerFeatures,
   customerFootnote,
   customerCta,
+  redirectOnSelect,
 }: Props) {
+  const router = useRouter();
   const { select, pendingPlanId } = useSubscribeToPlan();
   const [role, setRole] = useState<Role>(defaultRole);
   const header = role === "expert" ? expert : customer;
+
+  const handleSelect = (plan: PricingPlan) => {
+    if (redirectOnSelect) {
+      router.push(redirectOnSelect);
+      return;
+    }
+    select(plan);
+  };
+  const isPending = (planId: number) => !redirectOnSelect && pendingPlanId === planId;
+  const isCardDisabled = (planId: number) =>
+    !redirectOnSelect && pendingPlanId !== null && pendingPlanId !== planId;
 
   return (
     <section className={s.section} id="pricing">
@@ -80,9 +95,9 @@ export function PricingSection({
                     >
                       <PricingCard
                         plan={plan}
-                        onSelect={select}
-                        isLoading={pendingPlanId === plan.id}
-                        disabled={pendingPlanId !== null && pendingPlanId !== plan.id}
+                        onSelect={handleSelect}
+                        isLoading={isPending(plan.id)}
+                        disabled={isCardDisabled(plan.id)}
                       />
                     </div>
                   ))}

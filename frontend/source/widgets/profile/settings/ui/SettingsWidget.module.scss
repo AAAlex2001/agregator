@@ -49,7 +49,11 @@
 }
 
 .tabs {
-  justify-content: center !important;
+  justify-content: flex-start !important;
+
+  @media (min-width: 500px) {
+    justify-content: center !important;
+  }
 }
 
 .error {

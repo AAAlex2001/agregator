@@ -43,7 +43,7 @@ export const dynamic = "force-dynamic";
 export default async function LandingPage() {
 	ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
 
-	const [{ hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq }, pricingPlans] =
+	const [{ hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq, pricingContent }, pricingPlans] =
 		await Promise.all([loadLandingSnapshot(), fetchPricingPlans()]);
 
 	return (
@@ -87,24 +87,20 @@ export default async function LandingPage() {
 					{pricingPlans.length > 0 ? (
 						<PricingSection
 							expert={{
-								title: "Готовы откликаться на проекты?",
-								subtitle: "Выберите тариф и начните откликаться на проекты уже сегодня",
+								title: pricingContent.expertTitle,
+								subtitle: pricingContent.expertSubtitle,
 							}}
 							customer={{
-								title: "Готовы разместить заказ?",
-								subtitle: "Публикуйте задачи и получайте отклики от аттестованных экспертов по всей России",
+								title: pricingContent.customerTitle,
+								subtitle: pricingContent.customerSubtitle,
 							}}
-							footnote="Заказчики размещают проекты бесплатно — эксперты получают доступ к заказам по тарифу"
+							footnote={pricingContent.expertFootnote}
 							plans={pricingPlans}
-							customerHeadline="Размещение заказов — бесплатно"
-							customerFeatures={[
-								"Размещение заказов без оплаты",
-								"Десятки откликов от экспертов",
-								"Выбор исполнителя по рейтингу и опыту",
-								"Прямое общение без посредников",
-							]}
-							customerFootnote="Заказчики размещают проекты бесплатно — эксперты получают доступ к заказам по тарифу"
-							customerCta={{ label: "Разместить заказ", href: "/register" }}
+							customerHeadline={pricingContent.customerHeadline}
+							customerFeatures={pricingContent.customerFeatures}
+							customerFootnote={pricingContent.customerFootnote}
+							customerCta={{ label: pricingContent.customerCtaLabel, href: pricingContent.customerCtaHref }}
+							redirectOnSelect="/register"
 						/>
 					) : null}
 					<LandingFaq

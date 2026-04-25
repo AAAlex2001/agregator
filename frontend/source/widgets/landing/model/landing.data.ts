@@ -67,6 +67,19 @@ export type LandingHeroContent = {
   buttonText: string;
 };
 
+export type LandingPricingContent = {
+  expertTitle: string;
+  expertSubtitle: string;
+  expertFootnote: string;
+  customerTitle: string;
+  customerSubtitle: string;
+  customerHeadline: string;
+  customerFeatures: string[];
+  customerFootnote: string;
+  customerCtaLabel: string;
+  customerCtaHref: string;
+};
+
 export type LandingSnapshot = {
   hero: LandingHeroContent;
   sectionHeaders: LandingSectionHeaders;
@@ -77,6 +90,7 @@ export type LandingSnapshot = {
   industries: LandingIndustry[];
   reviews: LandingReview[];
   faq: LandingFaqItem[];
+  pricingContent: LandingPricingContent;
 };
 
 type ApiStep = {
@@ -100,6 +114,19 @@ type ApiSectionHeaders = {
   faq: ApiSectionHeader;
 };
 
+type ApiPricingContent = {
+  expert_title: string;
+  expert_subtitle: string;
+  expert_footnote: string;
+  customer_title: string;
+  customer_subtitle: string;
+  customer_headline: string;
+  customer_features: string[];
+  customer_footnote: string;
+  customer_cta_label: string;
+  customer_cta_href: string;
+};
+
 type ApiSnapshot = {
   hero: { title: string; subtitle: string; button_text: string };
   section_headers: ApiSectionHeaders;
@@ -110,6 +137,7 @@ type ApiSnapshot = {
   industries: Array<{ id: number; title: string; description: string[]; photo: string }>;
   reviews: Array<{ id: number; reviewer: string; position: string; text: string }>;
   faq: Array<{ id: string; question: string; answer: string }>;
+  pricing_content: ApiPricingContent;
 };
 
 export class LandingApi {
@@ -175,6 +203,22 @@ export class LandingApi {
         question: item.question,
         answer: item.answer,
       })),
+      pricingContent: this.mapPricingContent(api.pricing_content),
+    };
+  }
+
+  mapPricingContent(api: ApiPricingContent): LandingPricingContent {
+    return {
+      expertTitle: api.expert_title,
+      expertSubtitle: api.expert_subtitle,
+      expertFootnote: api.expert_footnote,
+      customerTitle: api.customer_title,
+      customerSubtitle: api.customer_subtitle,
+      customerHeadline: api.customer_headline,
+      customerFeatures: api.customer_features ?? [],
+      customerFootnote: api.customer_footnote,
+      customerCtaLabel: api.customer_cta_label,
+      customerCtaHref: api.customer_cta_href,
     };
   }
 

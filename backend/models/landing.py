@@ -121,3 +121,23 @@ class LandingFaq(Base):
 
     def __str__(self):
         return self.question[:60] or f"FAQ #{self.id}"
+
+
+class LandingPricingContent(Base):
+    "Тексты pricing-секции на лендинге (singleton). Сами тарифы лежат в pricing_plans."
+    __tablename__ = "landing_pricing_content"
+
+    id = Column(Integer, primary_key=True)
+    expert_title = Column(Text, nullable=False, default="")
+    expert_subtitle = Column(Text, nullable=False, default="")
+    expert_footnote = Column(Text, nullable=False, default="")
+    customer_title = Column(Text, nullable=False, default="")
+    customer_subtitle = Column(Text, nullable=False, default="")
+    customer_headline = Column(Text, nullable=False, default="")
+    customer_features = Column(JSONB, nullable=False, default=list)
+    customer_footnote = Column(Text, nullable=False, default="")
+    customer_cta_label = Column(String(200), nullable=False, default="")
+    customer_cta_href = Column(String(500), nullable=False, default="")
+
+    def __str__(self):
+        return "Pricing content"

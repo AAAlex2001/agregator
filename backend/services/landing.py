@@ -7,6 +7,7 @@ from models.landing import (
     LandingHero,
     LandingIndustry,
     LandingOrderExample,
+    LandingPricingContent,
     LandingReview,
     LandingSectionHeader,
     LandingStep,
@@ -17,6 +18,7 @@ from schemas.landing import (
     LandingHeroDto,
     LandingIndustryDto,
     LandingOrderExampleDto,
+    LandingPricingContentDto,
     LandingReviewDto,
     LandingSectionHeaderDto,
     LandingSectionHeadersDto,
@@ -41,6 +43,37 @@ class LandingService:
             industries=await self.get_industries(),
             reviews=await self.get_reviews(),
             faq=await self.get_faq(),
+            pricing_content=await self.get_pricing_content(),
+        )
+
+    async def get_pricing_content(self) -> LandingPricingContentDto:
+        row = (
+            await self.db.execute(select(LandingPricingContent).limit(1))
+        ).scalar_one_or_none()
+        if row is None:
+            return LandingPricingContentDto(
+                expert_title="",
+                expert_subtitle="",
+                expert_footnote="",
+                customer_title="",
+                customer_subtitle="",
+                customer_headline="",
+                customer_features=[],
+                customer_footnote="",
+                customer_cta_label="",
+                customer_cta_href="",
+            )
+        return LandingPricingContentDto(
+            expert_title=row.expert_title,
+            expert_subtitle=row.expert_subtitle,
+            expert_footnote=row.expert_footnote,
+            customer_title=row.customer_title,
+            customer_subtitle=row.customer_subtitle,
+            customer_headline=row.customer_headline,
+            customer_features=list(row.customer_features or []),
+            customer_footnote=row.customer_footnote,
+            customer_cta_label=row.customer_cta_label,
+            customer_cta_href=row.customer_cta_href,
         )
 
     async def get_hero(self) -> LandingHeroDto:

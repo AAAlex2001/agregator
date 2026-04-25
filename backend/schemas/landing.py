@@ -73,6 +73,19 @@ class LandingFaqItemDto(BaseModel):
     answer: str
 
 
+class LandingPricingContentDto(BaseModel):
+    expert_title: str
+    expert_subtitle: str
+    expert_footnote: str
+    customer_title: str
+    customer_subtitle: str
+    customer_headline: str
+    customer_features: List[str]
+    customer_footnote: str
+    customer_cta_label: str
+    customer_cta_href: str
+
+
 class LandingSnapshot(BaseModel):
     hero: LandingHeroDto
     section_headers: LandingSectionHeadersDto
@@ -83,3 +96,4 @@ class LandingSnapshot(BaseModel):
     industries: List[LandingIndustryDto]
     reviews: List[LandingReviewDto]
     faq: List[LandingFaqItemDto]
+    pricing_content: LandingPricingContentDto
