@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
 import { respondFormSchema, type RespondFormValues } from "../../model/respond.schema";
 import { DetailsStep } from "./DetailsStep";

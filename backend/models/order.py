@@ -41,7 +41,6 @@ class Order(Base):
     public_id = Column(String(36), unique=True, nullable=False, default=lambda: str(uuid4()), index=True)
     title = Column(String(500), nullable=False)
     company = Column(String(500), nullable=False, default="")
-    typical_names = Column(String(1000), nullable=False, default="")
     comment = Column(Text, nullable=False, default="")
     customer_id = Column(
         Integer,

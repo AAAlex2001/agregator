@@ -2,6 +2,21 @@ import type { OrderCardData } from "@/source/entities/order";
 import { TABLE, type ExpertiseType } from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
 import type { OrderFormValues } from "./schema";
 
+function parseBadges(badges: { text: string }[]): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
+  for (const { text } of badges) {
+    const match = text.trim().match(/^Э([\d.]+)\s+(.+)$/);
+    if (!match) continue;
+    const [, opo, rawType] = match;
+    const type: ExpertiseType =
+      rawType === "КЛ" || rawType === "ТП" ? "КЛ/ТП" : (rawType as ExpertiseType);
+    if (!TABLE[opo]?.[type]) continue;
+    const list = result[type] ?? (result[type] = []);
+    if (!list.includes(opo)) list.push(opo);
+  }
+  return result;
+}
+
 export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
   if (!editTarget) {
     return {
@@ -21,7 +36,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     deadline: editTarget.deadlineRaw,
     responsesDeadline: editTarget.responsesDeadline ?? "",
     budget: editTarget.sumAmountRaw > 0 ? String(editTarget.sumAmountRaw / 100) : "",
-    selectionsByType: {},
+    selectionsByType: parseBadges(editTarget.badgesRaw),
     comment: editTarget.comment,
   };
 }

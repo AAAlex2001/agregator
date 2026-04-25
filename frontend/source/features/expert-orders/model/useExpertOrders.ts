@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
 import { useOrdersWs } from "../lib/useOrdersWs";

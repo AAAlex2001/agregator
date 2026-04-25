@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { confirmResetCode, requestPasswordReset, resetPassword } from "../api/forgot-password.api";
 import {
   forgotCodeSchema,

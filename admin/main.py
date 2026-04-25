@@ -7,10 +7,10 @@ from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import selectinload, sessionmaker
 
 from models import (
-    Base, User, Order, OrderBadge, OrderResponse, Chat, ChatMessage,
+    Base, User, Order, OrderResponse, Chat, ChatMessage,
     Payment, PricingPlan, UserSubscription, Review, Session, PasswordResetCode,
     LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
     LandingAdvantage, LandingIndustry, LandingReview, LandingFaq, LandingPricingContent,
@@ -562,12 +562,12 @@ class OrderAdmin(ModelView, model=Order):
         Order.sum_amount, Order.deadline, Order.customer, Order.assigned_expert,
         Order.created_at,
     ]
-    column_searchable_list = [Order.title, Order.company, Order.typical_names]
+    column_searchable_list = [Order.title, Order.company]
     column_sortable_list = [Order.id, Order.status, Order.sum_amount, Order.deadline, Order.created_at]
     column_default_sort = (Order.id, True)
 
     column_details_list = [
-        Order.id, Order.title, Order.company, Order.typical_names,
+        Order.id, Order.title, Order.company,
         Order.comment, Order.customer, Order.assigned_expert,
         Order.technical_files, Order.sum_amount, Order.deadline,
         Order.status, Order.created_at, Order.updated_at,
@@ -575,7 +575,7 @@ class OrderAdmin(ModelView, model=Order):
     ]
 
     form_columns = [
-        Order.title, Order.company, Order.typical_names, Order.comment,
+        Order.title, Order.company, Order.comment,
         Order.customer, Order.assigned_expert,
         Order.sum_amount, Order.deadline, Order.status,
     ]
@@ -595,7 +595,6 @@ class OrderAdmin(ModelView, model=Order):
         Order.id: "ID",
         Order.title: "Название",
         Order.company: "Компания",
-        Order.typical_names: "Типовые названия",
         Order.comment: "Описание",
         Order.customer: "Заказчик",
         Order.assigned_expert: "Назначенный эксперт",
@@ -608,27 +607,6 @@ class OrderAdmin(ModelView, model=Order):
         Order.badges: "Бейджи",
         Order.responses: "Отклики",
         Order.chats: "Чаты",
-    }
-
-
-class OrderBadgeAdmin(ModelView, model=OrderBadge):
-    name = "Бейдж заказа"
-    name_plural = "Бейджи заказов"
-    icon = "fa-solid fa-tags"
-
-    column_list = [OrderBadge.id, OrderBadge.order, OrderBadge.text, OrderBadge.variant]
-    column_searchable_list = [OrderBadge.text]
-    column_sortable_list = [OrderBadge.id]
-
-    column_formatters = {
-        OrderBadge.variant: lambda m, a: str(m.variant),
-    }
-
-    column_labels = {
-        OrderBadge.id: "ID",
-        OrderBadge.order: "Заказ",
-        OrderBadge.text: "Текст",
-        OrderBadge.variant: "Вариант",
     }
 
 
@@ -721,8 +699,13 @@ class ChatAdmin(ModelView, model=Chat):
     }
 
     async def get_object_for_details(self, value):
-        model = await super().get_object_for_details(value)
-        return model
+        stmt = self._stmt_by_identifier(value)
+        for relation in self._details_relations:
+            stmt = stmt.options(selectinload(relation))
+        stmt = stmt.options(
+            selectinload(Chat.messages).selectinload(ChatMessage.sender),
+        )
+        return await self._get_object_by_pk(stmt)
 
 
 class PaymentAdmin(ModelView, model=Payment):
@@ -1195,7 +1178,6 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
 # --- Регистрация вьюшек ---
 admin.add_view(UserAdmin)
 admin.add_view(OrderAdmin)
-admin.add_view(OrderBadgeAdmin)
 admin.add_view(OrderResponseAdmin)
 admin.add_view(ChatAdmin)
 admin.add_view(PaymentAdmin)

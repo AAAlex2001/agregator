@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { DropzoneOptions } from "react-dropzone";
 import type { OrderCardData } from "@/source/entities/order";
 import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { clearDraft, loadDraft, saveDraft } from "./orderDraft";
 import { createInitialFormFilesState, formFilesReducer } from "./formReducer";
 import { getDefaultValues } from "./mappers";

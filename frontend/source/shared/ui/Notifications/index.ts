@@ -1,3 +1,2 @@
-export { ErrorNotification } from './ErrorNotification';
-export { SuccessNotification } from './SuccessNotification';
-export { NotificationProvider, useNotifications } from './NotificationProvider';
+export { NotificationProvider, useNotifications } from "./NotificationProvider";
+export { Toast, type ToastType } from "./Toast";

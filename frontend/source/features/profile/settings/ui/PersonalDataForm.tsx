@@ -4,7 +4,7 @@ import Input from "@/source/shared/ui/Input";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import { LogoutIcon } from "@/source/shared/ui/icons";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { logout } from "../api/settings.api";
 import { useProfileForm } from "../model/useProfileForm";
 import type { UserProfile } from "../model/types";

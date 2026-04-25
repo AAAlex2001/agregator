@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import { SITE_URL } from "@/source/shared/api/config";
-import { NotificationProvider } from "@/shared/ui/Notifications";
+import { NotificationProvider } from "@/source/shared/ui/Notifications";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108708847;

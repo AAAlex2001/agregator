@@ -4,7 +4,7 @@ import { useReducer } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
 import { confirmRegistrationEmail, registerUser, toRegisterPayload } from "../api/register.api";
 import {

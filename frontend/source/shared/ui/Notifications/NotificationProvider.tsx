@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { ErrorNotification } from './ErrorNotification';
-import { SuccessNotification } from './SuccessNotification';
+import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { Toast, type ToastType } from "./Toast";
+import s from "./Toast.module.scss";
 
-interface Notification {
+interface ToastItem {
   id: string;
-  type: 'success' | 'error';
+  type: ToastType;
   message: string;
 }
 
@@ -15,61 +15,45 @@ interface NotificationContextType {
   showError: (message: string) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | null>(null);
+const Ctx = createContext<NotificationContextType | null>(null);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [item, setItem] = useState<ToastItem | null>(null);
 
-  const showSuccess = (message: string) => {
-    const id = `${Date.now()}-${Math.random()}`;
-    setNotifications([{ id, type: 'success', message }]);
-  };
+  const dismiss = useCallback((id: string) => {
+    setItem((prev) => (prev && prev.id === id ? null : prev));
+  }, []);
 
-  const showError = (message: string) => {
-    const id = `${Date.now()}-${Math.random()}`;
-    setNotifications([{ id, type: 'error', message }]);
-  };
-
-  const handleClose = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
+  const push = useCallback((type: ToastType, message: string) => {
+    setItem({ id: `${Date.now()}-${Math.random()}`, type, message });
+  }, []);
 
   return (
-    <NotificationContext.Provider value={{ showSuccess, showError }}>
+    <Ctx.Provider
+      value={{
+        showSuccess: (message) => push("success", message),
+        showError: (message) => push("error", message),
+      }}
+    >
       {children}
-      <div style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 10000,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-      }}>
-        {notifications.map(notification => (
-          notification.type === 'success' ? (
-            <SuccessNotification
-              key={notification.id}
-              message={notification.message}
-              onClose={() => handleClose(notification.id)}
-            />
-          ) : (
-            <ErrorNotification
-              key={notification.id}
-              message={notification.message}
-              onClose={() => handleClose(notification.id)}
-            />
-          )
-        ))}
+      <div className={s.stack}>
+        {item && (
+          <Toast
+            key={item.id}
+            message={item.message}
+            type={item.type}
+            onDismiss={() => dismiss(item.id)}
+          />
+        )}
       </div>
-    </NotificationContext.Provider>
+    </Ctx.Provider>
   );
 }
 
 export function useNotifications() {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotifications must be used within NotificationProvider');
+  const ctx = useContext(Ctx);
+  if (!ctx) {
+    throw new Error("useNotifications must be used within NotificationProvider");
   }
-  return context;
+  return ctx;
 }

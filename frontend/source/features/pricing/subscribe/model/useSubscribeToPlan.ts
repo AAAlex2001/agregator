@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { PricingPlan } from "@/source/entities/pricing";
 import { subscribeToPlan } from "../api/pricing.api";
 

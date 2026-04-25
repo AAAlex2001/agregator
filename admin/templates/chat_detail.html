@@ -55,23 +55,49 @@
 
       {# === ПЕРЕПИСКА === #}
       <div class="mt-4">
-        <h3 class="card-title mb-3">Переписка ({{ messages|length }} сообщ.)</h3>
+        <h3 class="card-title mb-3">Переписка ({{ model.messages|length }} сообщ.)</h3>
         <div style="max-width:700px;background:#f0f2f5;border-radius:12px;padding:20px;max-height:600px;overflow-y:auto;">
-          {% if not messages %}
+          {% if not model.messages %}
             <div style="text-align:center;color:#999;padding:40px;font-size:16px;">Сообщений пока нет</div>
           {% endif %}
           {% set prev_date = namespace(value='') %}
-          {% for msg in messages %}
+          {% for msg in model.messages %}
             {% set msg_date = msg.created_at.strftime('%d.%m.%Y') %}
             {% if msg_date != prev_date.value %}
               <div style="text-align:center;margin:12px 0 6px;font-size:12px;color:#999;">{{ msg_date }}</div>
               {% set prev_date.value = msg_date %}
             {% endif %}
             {% set is_customer = (msg.sender_id == model.customer_id) %}
+            {% set attachments = msg.attachments or [] %}
+            {% if not attachments and msg.file_url and msg.file_name %}
+              {% set attachments = [{'url': msg.file_url, 'name': msg.file_name}] %}
+            {% endif %}
             <div style="display:flex;flex-direction:column;margin-bottom:12px;{{ 'align-items:flex-start' if is_customer else 'align-items:flex-end' }}">
-              <div style="max-width:70%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5;word-wrap:break-word;{{ 'background:#e3f2fd;color:#1a1a1a;border-bottom-left-radius:4px;' if is_customer else 'background:#4361ee;color:#fff;border-bottom-right-radius:4px;' }}">
-                {{ msg.text }}
-              </div>
+              {% if msg.text %}
+                <div style="max-width:70%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5;word-wrap:break-word;{{ 'background:#e3f2fd;color:#1a1a1a;border-bottom-left-radius:4px;' if is_customer else 'background:#4361ee;color:#fff;border-bottom-right-radius:4px;' }}">
+                  {{ msg.text }}
+                </div>
+              {% endif %}
+              {% if attachments %}
+                <div style="max-width:70%;margin-top:{{ '6px' if msg.text else '0' }};display:flex;flex-direction:column;gap:6px;{{ 'align-items:flex-start' if is_customer else 'align-items:flex-end' }}">
+                  {% for att in attachments %}
+                    {% set ext = att.name.rsplit('.', 1)[-1]|lower if '.' in att.name else '' %}
+                    {% if ext in ['jpg','jpeg','png','gif','webp','svg','bmp'] %}
+                      <a href="{{ att.url }}" target="_blank" download="{{ att.name }}" style="display:block;">
+                        <img src="{{ att.url }}" alt="{{ att.name }}"
+                             style="max-width:240px;max-height:180px;border-radius:8px;border:1px solid #ddd;display:block;" />
+                        <div style="font-size:11px;color:#666;margin-top:2px;{{ 'text-align:left' if is_customer else 'text-align:right' }}">{{ att.name }}</div>
+                      </a>
+                    {% else %}
+                      <a href="{{ att.url }}" target="_blank" download="{{ att.name }}"
+                         style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border:1px solid #d0d7de;border-radius:8px;text-decoration:none;color:#1a1a1a;font-size:13px;max-width:100%;">
+                        <i class="fa-solid fa-paperclip" style="color:#4361ee;"></i>
+                        <span style="word-break:break-all;">{{ att.name }}</span>
+                      </a>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
               <div style="font-size:11px;color:#999;margin-top:3px;padding:0 4px;{{ 'text-align:right' if not is_customer else '' }}">
                 {% if msg.sender %}
                   {{ msg.sender.first_name or '' }} {{ msg.sender.last_name or '' }}

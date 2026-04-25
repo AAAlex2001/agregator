@@ -7,7 +7,7 @@ import { Button, Loader } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import ToolTip from "@/source/shared/ui/Tooltip";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { OrderModal, useExpertOrders } from "@/source/features/expert-orders";
 import { ExpertOrdersSkeleton } from "./ExpertOrdersSkeleton";

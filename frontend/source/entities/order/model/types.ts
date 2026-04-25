@@ -18,7 +18,6 @@ export interface OrderApiItem {
   customer_id: number;
   customer_name: string;
   company: string;
-  typical_names: string;
   sum: string;
   sum_amount_raw: number;
   date: string;
@@ -39,7 +38,6 @@ export interface OrderCardData {
   title: string;
   customer: string;
   company: string;
-  typicalNames: string;
   comment: string;
   date: string;
   sum: string;

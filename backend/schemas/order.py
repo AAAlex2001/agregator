@@ -43,7 +43,6 @@ class BadgeResponse(BaseModel):
 class OrderCreate(BaseModel):
     title: str = Field(..., max_length=500)
     company: str = Field(default="", max_length=500)
-    typical_names: str = Field(default="", max_length=1000)
     comment: str = Field(default="", max_length=5000)
     customer_id: int = Field(..., ge=1)
     sum_amount: int = Field(..., ge=0)
@@ -62,7 +61,6 @@ class OrderCreate(BaseModel):
 class OrderUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=500)
     company: Optional[str] = Field(None, max_length=500)
-    typical_names: Optional[str] = Field(None, max_length=1000)
     comment: Optional[str] = Field(None, max_length=5000)
     sum_amount: Optional[int] = Field(None, ge=0)
     deadline: Optional[date] = None
@@ -86,7 +84,6 @@ class OrderResponse(BaseModel):
     public_id: str
     title: str
     company: str
-    typical_names: str
     comment: str
     customer_id: int
     assigned_expert_id: int | None
@@ -133,7 +130,6 @@ class OrderResponse(BaseModel):
             public_id=order.public_id,
             title=order.title,
             company=order.company or "",
-            typical_names=order.typical_names or "",
             comment=order.comment or "",
             customer_id=order.customer_id,
             assigned_expert_id=order.assigned_expert_id,

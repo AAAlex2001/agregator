@@ -4,7 +4,7 @@ import { useEffect, useReducer } from "react";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "../api/customer-orders.api";
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";

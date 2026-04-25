@@ -44,7 +44,6 @@ class CreateOrderUseCase:
         return Order(
             title=data.title,
             company=data.company,
-            typical_names=data.typical_names,
             comment=data.comment,
             customer_id=data.customer_id,
             technical_files=data.technical_files,

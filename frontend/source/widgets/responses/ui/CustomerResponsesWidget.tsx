@@ -1,6 +1,6 @@
 "use client";
 
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
 import { CompletionModal, useResponses } from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";

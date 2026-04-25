@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MAX_ATTACH_FILES_COUNT, mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { OrderCardData } from "@/source/entities/order";
 import type { ResponseCardData } from "@/source/entities/response";
 import { EditResponseModal } from "./EditResponseModal";
@@ -34,7 +34,6 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     title: response.orderTitle,
     customer: response.customer,
     company: response.customer,
-    typicalNames: "",
     comment: response.orderComment ?? "",
     date: response.orderDate,
     sum: response.orderSum || response.sum,

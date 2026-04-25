@@ -1,7 +1,7 @@
 "use client";
 
 import { Switch } from "@/source/shared/ui/Switch";
-import { useNotifications } from "@/shared/ui/Notifications";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { UserProfile } from "@/source/entities/user";
 import { NOTIFICATION_DESCRIPTORS } from "../model/descriptors";
 import { useEmailPreferences } from "../model/useEmailPreferences";

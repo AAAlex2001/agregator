@@ -26,7 +26,6 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     title:               item.title,
     customer:            item.company || item.customer_name,
     company:             item.company,
-    typicalNames:        item.typical_names ?? "",
     comment:             item.comment,
     date:                item.date,
     deadlineRaw:         toIsoDate(item.date),
