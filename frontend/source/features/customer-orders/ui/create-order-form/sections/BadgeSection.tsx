@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { BadgeOptionDto } from "../../../api/customer-orders.api";
 import base from "./sectionBase.module.scss";
 import s from "./badgeSection.module.scss";
@@ -10,73 +11,82 @@ interface Props {
   onChangeTypicalNames: (variant: string, value: string) => void;
 }
 
-function buildPreview(text: string, input: string) {
-  return input
-    .split(",")
-    .map((name) => name.trim())
-    .filter(Boolean)
-    .map((name) => `${text} ${name}`);
-}
+const OPO_ROWS: string[][] = [
+  ["1", "2", "3.1", "3.2", "4", "5"],
+  ["6", "7", "8", "9", "10", "11", "12"],
+  ["13", "14.1", "14.2", "14.3", "14.4", "15"],
+];
 
 function getColorClass(variant: string) {
   return s[variant.toLowerCase() as keyof typeof s] ?? s.gray;
 }
 
+function shortenLabel(text: string) {
+  return text.replace(/^Э\d+\s+/i, "").trim() || text;
+}
+
 export function BadgeSection({
   options,
   selectedBadgeVariants,
-  typicalNamesMap,
   onToggleBadge,
-  onChangeTypicalNames,
 }: Props) {
+  const [selectedOpo, setSelectedOpo] = useState<string[]>([]);
+
+  const toggleOpo = (code: string) => {
+    setSelectedOpo((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
+    );
+  };
+
   return (
-    <section className={base.section}>
-      <span className={base.label}>Выберите объект(-ы) экспертизы</span>
+    <>
+      <section className={base.section}>
+        <span className={base.label}>
+          Выберите основной(-ые) объект(-ы) экспертизы
+        </span>
 
-      <div className={s.row}>
-        {options.map((option) => {
-          const active = selectedBadgeVariants.includes(option.variant);
+        <div className={s.row}>
+          {options.map((option) => {
+            const active = selectedBadgeVariants.includes(option.variant);
+            return (
+              <button
+                key={option.variant}
+                type="button"
+                className={`${s.mainBadge} ${getColorClass(option.variant)} ${active ? s.active : ""}`}
+                onClick={() => onToggleBadge(option.variant)}
+              >
+                {shortenLabel(option.text)}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
-          return (
-            <button
-              key={option.variant}
-              type="button"
-              className={`${s.button} ${getColorClass(option.variant)} ${active ? "" : s.inactive}`}
-              onClick={() => onToggleBadge(option.variant)}
-            >
-              {option.text}
-            </button>
-          );
-        })}
-      </div>
+      <section className={base.section}>
+        <span className={base.label}>
+          Выберите тип(-ы) опасных производственных объектов
+        </span>
 
-      {options
-        .filter((option) => selectedBadgeVariants.includes(option.variant))
-        .map((option) => {
-          const preview = buildPreview(option.text, typicalNamesMap[option.variant] ?? "");
-
-          return (
-            <div key={option.variant} className={s.field}>
-              <span className={base.label}>{option.label}</span>
-              <input
-                type="text"
-                className={s.input}
-                placeholder="Например: Э14.1, 14.2, 3.1"
-                value={typicalNamesMap[option.variant] ?? ""}
-                onChange={(event) => onChangeTypicalNames(option.variant, event.target.value.replace(/[^\dA-Za-zА-Яа-яЁё.,\s-]/g, ""))}
-              />
-              {preview.length > 0 && (
-                <div className={s.preview}>
-                  {preview.map((item) => (
-                    <span key={item} className={`${s.chip} ${getColorClass(option.variant)}`}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              )}
+        <div className={s.opoRows}>
+          {OPO_ROWS.map((row, rowIdx) => (
+            <div key={rowIdx} className={s.row}>
+              {row.map((code) => {
+                const active = selectedOpo.includes(code);
+                return (
+                  <button
+                    key={code}
+                    type="button"
+                    className={`${s.opoBadge} ${active ? s.active : ""}`}
+                    onClick={() => toggleOpo(code)}
+                  >
+                    {code}
+                  </button>
+                );
+              })}
             </div>
-          );
-        })}
-    </section>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
