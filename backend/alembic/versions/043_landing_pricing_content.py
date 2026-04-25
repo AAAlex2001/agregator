@@ -1,7 +1,7 @@
 """add landing_pricing_content table
 
 Revision ID: 043
-Revises: 042
+Revises: 041
 
 Тексты pricing-секции на лендинге (singleton, редактируется из админки).
 Сидим текущими дефолтами, чтобы лендинг не сломался после миграции.
@@ -14,7 +14,7 @@ from sqlalchemy.dialects import postgresql
 
 
 revision: str = "043"
-down_revision: Union[str, None] = "042"
+down_revision: Union[str, None] = "041"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
