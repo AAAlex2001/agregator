@@ -53,6 +53,7 @@ export function OfferStep({
             value={deadline}
             onChange={(value) => setValue("deadline", value, { shouldValidate })}
             placeholder="Выберите дату"
+            error={formState.errors.deadline?.message}
           />
         </div>
 

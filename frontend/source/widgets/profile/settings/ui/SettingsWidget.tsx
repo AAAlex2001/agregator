@@ -13,29 +13,33 @@ import s from "./SettingsWidget.module.scss";
 type SettingsSection = "personal" | "notifications" | "subscription";
 
 interface SettingsWidgetProps {
-  initialSection: SettingsSection;
+  explicitSection: SettingsSection | null;
 }
 
 function buildTabs(isExpert: boolean): Array<{ id: SettingsSection; label: string }> {
-  const base: Array<{ id: SettingsSection; label: string }> = [
-    { id: "personal", label: "Личные данные" },
-    { id: "notifications", label: "Уведомления" },
-  ];
+  const base: Array<{ id: SettingsSection; label: string }> = [];
   if (isExpert) {
     base.push({ id: "subscription", label: "Подписка" });
   }
+  base.push({ id: "personal", label: "Личные данные" });
+  base.push({ id: "notifications", label: "Уведомления" });
   return base;
 }
 
-export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
+function defaultSection(isExpert: boolean): SettingsSection {
+  return isExpert ? "subscription" : "personal";
+}
+
+export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
   const { user, role, isLoading, error, setUser } = useSession();
-  const [section, setSection] = useState<SettingsSection>(initialSection);
+  const isExpert = role === "EXPERT";
+  const initial = explicitSection ?? defaultSection(isExpert);
+  const [section, setSection] = useState<SettingsSection>(initial);
 
   useEffect(() => {
-    setSection(initialSection);
-  }, [initialSection]);
+    setSection(explicitSection ?? defaultSection(isExpert));
+  }, [explicitSection, isExpert]);
 
-  const isExpert = role === "EXPERT";
   const tabs = buildTabs(isExpert);
 
   return (
@@ -55,7 +59,9 @@ export function SettingsWidget({ initialSection }: SettingsWidgetProps) {
 
         {error && <p className={s.error}>{error}</p>}
 
-        {isLoading || !user ? (
+        {section === "subscription" ? (
+          <SubscriptionPanel />
+        ) : isLoading || !user ? (
           <SettingsSkeleton section={section} isCustomer />
         ) : (
           <SettingsContent

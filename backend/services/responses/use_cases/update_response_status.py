@@ -10,6 +10,7 @@ from services.responses.repository import ResponseRepository
 from services.responses.status_rules import ResponseStatusRules
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
 from services.responses.validators import ResponseValidator
+from services.subscriptions import SubscriptionAccess
 
 
 class UpdateResponseStatusUseCase:
@@ -24,6 +25,7 @@ class UpdateResponseStatusUseCase:
         in_app: ResponseInAppNotifier,
         broadcaster: ResponseBroadcaster,
         send_bidding_email: SendBiddingFinishedEmailUseCase | None = None,
+        subscription_access: SubscriptionAccess | None = None,
     ):
         self.repo = repo
         self.validator = validator
@@ -32,6 +34,7 @@ class UpdateResponseStatusUseCase:
         self.in_app = in_app
         self.broadcaster = broadcaster
         self.send_bidding_email = send_bidding_email
+        self.subscription_access = subscription_access
 
     async def execute(
         self,
@@ -134,6 +137,8 @@ class UpdateResponseStatusUseCase:
             sibling.status = ResponseStatus.REJECTED
             sibling.auto_rejected = True
             rejected_ids.append(sibling.expert_id)
+            if self.subscription_access is not None:
+                await self.subscription_access.restore_response_slot(sibling.expert_id)
         return rejected_ids
 
     async def release_if_assigned(self, response: OrderResponse) -> list[int]:

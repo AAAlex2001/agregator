@@ -39,7 +39,13 @@
 }
 
 .contentWide {
-  max-width: 1340px;
+  max-width: 900px;
+}
+
+@media (min-width: 1440px) {
+  .contentWide {
+    max-width: 1340px;
+  }
 }
 
 .tabs {

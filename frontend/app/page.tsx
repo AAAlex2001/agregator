@@ -16,7 +16,7 @@ import {
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
-import { fetchPricingPlans } from "@/source/entities/pricing";
+import { fetchPricingPlans } from "@/source/features/pricing/subscribe";
 
 export const metadata: Metadata = {
 	title: "Промышленная безопасность — платформа экспертов и заказов",
@@ -90,6 +90,13 @@ export default async function LandingPage() {
 							subtitle="Выберите тариф и начните откликаться на проекты уже сегодня"
 							footnote="Заказчики размещают проекты бесплатно — эксперты получают доступ к заказам по тарифу"
 							plans={pricingPlans}
+							customerMessage="Заказчики размещают проекты бесплатно — эксперты получают доступ к заказам по тарифу"
+							customerFeatures={[
+								"Размещайте проекты без ограничений",
+								"Выбирайте эксперта из откликов",
+								"Оплата только исполнителю, без комиссии",
+								"Связь напрямую в чате",
+							]}
 						/>
 					) : null}
 					<LandingFaq

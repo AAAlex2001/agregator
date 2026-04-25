@@ -14,8 +14,10 @@ type ButtonVariant =
   | "outlineOrange"
   | "green"
   | "transparent"
-  | "rounded"
-  | "roundedMuted";
+  | "pill"
+  | "pillMuted"
+  | "pillActive"
+  | "pillDisabled";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {

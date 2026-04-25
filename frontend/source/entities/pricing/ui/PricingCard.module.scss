@@ -8,6 +8,25 @@
   overflow: hidden;
 }
 
+/* Disabled — заблокирована старшим тарифом, ховер не работает, всё серое */
+.cardDisabled {
+  pointer-events: none;
+}
+
+.cardDisabled .pillsBlock::before {
+  opacity: 0 !important;
+  background: linear-gradient(90deg, #F5F5F5 0%, #CCCED5 69.56%, #A6ACBF 100%);
+}
+
+.cardHighlighted.cardDisabled .pillsBlock::before {
+  opacity: 1 !important;
+}
+
+.cardDisabled .check {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
 .inner {
   display: flex;
   flex-direction: column;
@@ -19,11 +38,31 @@
 }
 
 .pillsBlock {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 15px;
   border-radius: 20px;
+  background: #F5F5F5;
+  overflow: hidden;
+}
+
+.pillsBlock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #FFF8EB 0%, #FFC580 69.56%, #FF8A00 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
+
+.pillsRow,
+.price {
+  position: relative;
+  z-index: 1;
 }
 
 .pillsRow {
@@ -31,27 +70,36 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: 20px;
   width: 100%;
 }
 
-.pillsDefault {
-  background: #F5F5F5;
+/* Между блоком пилюль+цена и описанием — 20px (Frame 1321317753 в Figma) */
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.pillsHighlighted {
-  background: linear-gradient(90deg, #FFF8EB 0%, #FFC580 69.56%, #FF8A00 100%);
+/* Подсветка highlighted-карточки контролируется CSS-переменной,
+   которую виджет сбрасывает в 0, когда другая карточка под ховером. */
+.pillsHighlighted::before {
+  opacity: var(--pricing-highlight-opacity, 1);
+}
+
+.card:hover .pillsBlock::before {
+  opacity: 1;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 100px;
   font-family: "Montserrat", sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
   line-height: 20px;
   white-space: nowrap;
 }
@@ -64,12 +112,21 @@
 .pillBadge {
   background: #FF8A00;
   color: #FFFFFF;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* На градиентной (highlighted) карточке бейдж без подложки, текст чёрный */
+.cardHighlighted .pillBadge,
+/* При ховере любой карточки — то же самое */
+.card:hover .pillBadge {
+  background: transparent;
+  color: #000000;
 }
 
 .price {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: nowrap;
 }
 

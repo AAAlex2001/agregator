@@ -4,6 +4,7 @@ export { default as PlusIcon } from "./PlusIcon";
 export { default as FileIcon } from "./FileIcon";
 export { default as BulletIcon } from "./BulletIcon";
 export { default as CheckIcon } from "./CheckIcon";
+export { default as PricingFeatureIcon } from "./PricingFeatureIcon";
 export { default as LogoIcon } from "./LogoIcon";
 export { default as EmailIcon } from "./EmailIcon";
 export { default as PhoneIcon } from "./PhoneIcon";

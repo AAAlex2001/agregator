@@ -16,6 +16,7 @@ interface Props {
   withTime?: boolean;
   className?: string;
   active?: boolean;
+  error?: string;
 }
 
 function parseValue(value: string): Date | null {
@@ -51,6 +52,7 @@ export function CalendarInput({
   withTime = false,
   className,
   active = false,
+  error,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = parseValue(value);
@@ -95,7 +97,7 @@ export function CalendarInput({
     <div className={`${s.field} ${className ?? ""}`.trim()}>
       <button
         type="button"
-        className={`${s.trigger} ${active ? s.triggerActive : ""} ${isOpen ? s.triggerOpen : ""}`.trim()}
+        className={`${s.trigger} ${active ? s.triggerActive : ""} ${isOpen ? s.triggerOpen : ""} ${error ? s.triggerError : ""}`.trim()}
         onClick={handleOpen}
       >
         <span className={selected ? s.value : s.placeholder}>
@@ -106,6 +108,8 @@ export function CalendarInput({
           color={active || isOpen ? "#FF8A00" : "#383F45"}
         />
       </button>
+
+      {error ? <span className={s.errorMessage}>{error}</span> : null}
 
       {isOpen && (
         <div className={s.overlay} onClick={handleClose}>

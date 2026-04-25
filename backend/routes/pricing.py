@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from models.payment import PaymentStatus
+from models.pricing import SubscriptionKind, UserSubscription
 from schemas.pricing import (
     PricingPlansResponse,
     SubscribeRequest,
@@ -15,6 +16,36 @@ from services.subscriptions import SubscriptionPurchaseService, SubscriptionRepo
 
 
 router = APIRouter(prefix="/pricing", tags=["pricing"])
+
+
+def build_active_label(subscription: UserSubscription, payment_pending: bool) -> str:
+    if payment_pending:
+        return "Платёж в обработке"
+    if subscription.kind == SubscriptionKind.SINGLE:
+        remaining = subscription.responses_remaining or 0
+        return f"Активен — осталось откликов: {remaining}" if remaining > 0 else "Использован"
+    if subscription.expires_at is not None:
+        return f"Активен до {subscription.expires_at.strftime('%d.%m.%Y')}"
+    return "Активен"
+
+
+def serialize_subscription(subscription: UserSubscription) -> UserSubscriptionResponse:
+    payment_pending = bool(
+        subscription.payment is not None
+        and subscription.payment.status != PaymentStatus.SUCCEEDED
+    )
+    return UserSubscriptionResponse(
+        id=subscription.id,
+        plan_id=subscription.plan_id,
+        plan_name=subscription.plan.name if subscription.plan else "",
+        kind=subscription.kind,
+        status=subscription.status,
+        activated_at=subscription.activated_at,
+        expires_at=subscription.expires_at,
+        responses_remaining=subscription.responses_remaining,
+        payment_pending=payment_pending,
+        active_label=build_active_label(subscription, payment_pending),
+    )
 
 
 @router.get("/", response_model=PricingPlansResponse)
@@ -47,16 +78,4 @@ async def get_my_subscription(
     subscription = await repo.find_active_for_user(user_id)
     if subscription is None:
         return None
-    return UserSubscriptionResponse(
-        id=subscription.id,
-        plan_id=subscription.plan_id,
-        plan_name=subscription.plan.name if subscription.plan else "",
-        kind=subscription.kind,
-        status=subscription.status,
-        activated_at=subscription.activated_at,
-        expires_at=subscription.expires_at,
-        responses_remaining=subscription.responses_remaining,
-        payment_pending=bool(
-            subscription.payment is not None and subscription.payment.status != PaymentStatus.SUCCEEDED
-        ),
-    )
+    return serialize_subscription(subscription)

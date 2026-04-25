@@ -5,19 +5,16 @@ import { SettingsWidget } from "@/source/widgets/profile/settings";
 
 type Section = "personal" | "notifications" | "subscription";
 
-function resolveSection(value: string | null): Section {
-  if (value === "subscription") {
-    return "subscription";
-  }
-  if (value === "notifications") {
-    return "notifications";
-  }
-  return "personal";
+function resolveExplicitSection(value: string | null): Section | null {
+  if (value === "subscription") return "subscription";
+  if (value === "notifications") return "notifications";
+  if (value === "personal") return "personal";
+  return null;
 }
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
-  const section = resolveSection(searchParams.get("section"));
+  const explicitSection = resolveExplicitSection(searchParams.get("section"));
 
-  return <SettingsWidget initialSection={section} />;
+  return <SettingsWidget explicitSection={explicitSection} />;
 }

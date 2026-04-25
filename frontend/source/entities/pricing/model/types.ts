@@ -27,4 +27,23 @@ export interface UserSubscription {
   expires_at: string | null;
   responses_remaining: number | null;
   payment_pending: boolean;
+  active_label: string;
+}
+
+export type PricingCardState = "available" | "active" | "disabled";
+
+export const SUBSCRIPTION_TIER: Record<SubscriptionKind, number> = {
+  SINGLE: 1,
+  MONTHLY: 2,
+  YEARLY: 3,
+};
+
+export function derivePricingCardState(
+  plan: PricingPlan,
+  subscription: UserSubscription | null,
+): PricingCardState {
+  if (!subscription || subscription.payment_pending) return "available";
+  if (subscription.kind === plan.kind) return "active";
+  if (SUBSCRIPTION_TIER[plan.kind] < SUBSCRIPTION_TIER[subscription.kind]) return "disabled";
+  return "available";
 }

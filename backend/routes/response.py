@@ -234,6 +234,7 @@ async def update_response_status(
         in_app=build_in_app(db, repo),
         broadcaster=ResponseBroadcaster(),
         send_bidding_email=send_bidding,
+        subscription_access=SubscriptionAccess(db),
     )
     updated = await use_case.execute(
         response_id=response_id, actor_id=user_id, new_status=new_status
@@ -305,6 +306,7 @@ async def withdraw_response(
         in_app=build_in_app(db, repo),
         broadcaster=ResponseBroadcaster(),
         send_rejected_email=send_rejected,
+        subscription_access=SubscriptionAccess(db),
     )
     await use_case.execute(response_id=response_id, expert_id=user_id)
     return {"detail": "Отклик отозван"}

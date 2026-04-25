@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  max-width: 1340px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 60px 20px;
   display: flex;
@@ -57,6 +57,10 @@
 
 .gridItemHighlighted {
   order: 0;
+}
+
+.grid:has(.gridItem:not(.gridItemHighlighted):hover) .gridItemHighlighted {
+  --pricing-highlight-opacity: 0;
 }
 
 .customerCard {
@@ -120,6 +124,7 @@
 
 @media (min-width: 768px) {
   .section {
+    max-width: 900px;
     padding: 80px 32px;
   }
   .gridItem {
@@ -141,6 +146,7 @@
 
 @media (min-width: 1440px) {
   .section {
+    max-width: 1340px;
     padding: 100px 40px;
   }
   .gridItem,

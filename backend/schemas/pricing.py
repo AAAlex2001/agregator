@@ -38,6 +38,7 @@ class UserSubscriptionResponse(BaseModel):
     expires_at: datetime | None = None
     responses_remaining: int | None = None
     payment_pending: bool = False
+    active_label: str
 
 
 class SubscribeRequest(BaseModel):

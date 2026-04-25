@@ -1,72 +1,90 @@
 "use client";
 
 import Button from "@/source/shared/ui/Button";
-import type { PricingPlan } from "../model/types";
+import { PricingFeatureIcon } from "@/source/shared/ui/icons";
+import type { PricingCardState, PricingPlan } from "../model/types";
 import s from "./PricingCard.module.scss";
 
 interface Props {
   plan: PricingPlan;
+  state?: PricingCardState;
   onSelect?: (plan: PricingPlan) => void;
   isLoading?: boolean;
   disabled?: boolean;
 }
 
-function CheckIcon() {
-  return (
-    <svg className={s.check} viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="10" cy="10" r="10" fill="#FFB800" fillOpacity="0.12" />
-      <path
-        d="M5.83 10.42l2.5 2.5 5.84-5.84"
-        stroke="#FFB800"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-export function PricingCard({ plan, onSelect, isLoading, disabled }: Props) {
+export function PricingCard({
+  plan,
+  state = "available",
+  onSelect,
+  isLoading,
+  disabled,
+}: Props) {
   const highlighted = plan.highlighted;
-  const pillsStyle = highlighted ? s.pillsHighlighted : s.pillsDefault;
+  const isActive = state === "active";
+  const isDisabled = state === "disabled";
+
+  const cardClass = [
+    s.card,
+    highlighted ? s.cardHighlighted : "",
+    isActive ? s.cardActive : "",
+    isDisabled ? s.cardDisabled : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const buttonVariant = isActive
+    ? "pillActive"
+    : isDisabled
+      ? "pillDisabled"
+      : highlighted
+        ? "pill"
+        : "pillMuted";
+
+  const buttonLabel = isActive ? "Активен" : plan.cta_label;
 
   return (
-    <article className={`${s.card} ${highlighted ? s.cardHighlighted : ""}`}>
+    <article className={cardClass}>
       <div className={s.inner}>
-        <div className={`${s.pillsBlock} ${pillsStyle}`}>
-          <div className={s.pillsRow}>
-            <div className={`${s.pill} ${s.pillName}`}>
-              <span>{plan.name}</span>
-            </div>
-            {plan.badge ? (
-              <div className={`${s.pill} ${s.pillBadge}`}>
-                <span>{plan.badge}</span>
+        <div className={s.infoBlock}>
+          <div className={`${s.pillsBlock} ${highlighted ? s.pillsHighlighted : ""}`}>
+            <div className={s.pillsRow}>
+              <div className={`${s.pill} ${s.pillName}`}>
+                <span>{plan.name}</span>
               </div>
-            ) : null}
+              {plan.badge ? (
+                <div className={`${s.pill} ${s.pillBadge}`}>
+                  <span>{plan.badge}</span>
+                </div>
+              ) : null}
+            </div>
+            <div className={s.price}>
+              <span className={s.priceValue}>{plan.price_display}</span>
+              <span className={s.pricePeriod}>{plan.period_label}</span>
+            </div>
           </div>
-          <div className={s.price}>
-            <span className={s.priceValue}>{plan.price_display}</span>
-            <span className={s.pricePeriod}>{plan.period_label}</span>
-          </div>
+
+          <p className={s.description}>{plan.description}</p>
         </div>
 
-        <p className={s.description}>{plan.description}</p>
-
         <Button
-          variant={highlighted ? "rounded" : "roundedMuted"}
+          variant={buttonVariant}
           fullWidth
           isLoading={isLoading}
-          disabled={disabled}
-          onClick={() => onSelect?.(plan)}
+          disabled={disabled || isDisabled || isActive}
+          onClick={() => {
+            if (isDisabled || isActive) return;
+            onSelect?.(plan);
+          }}
         >
-          {plan.cta_label}
+          {buttonLabel}
         </Button>
       </div>
 
       <ul className={s.features}>
         {plan.features.map((feature) => (
           <li key={feature} className={s.feature}>
-            <CheckIcon />
+            <PricingFeatureIcon className={s.check} />
             <span>{feature}</span>
           </li>
         ))}

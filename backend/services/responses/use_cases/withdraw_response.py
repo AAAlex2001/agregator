@@ -7,6 +7,7 @@ from services.responses.broadcaster import ResponseBroadcaster
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
+from services.subscriptions import SubscriptionAccess
 
 
 WITHDRAWABLE_STATUSES = {
@@ -25,12 +26,14 @@ class WithdrawResponseUseCase:
         in_app: ResponseInAppNotifier,
         broadcaster: ResponseBroadcaster,
         send_rejected_email: SendExpertRejectedEmailUseCase | None = None,
+        subscription_access: SubscriptionAccess | None = None,
     ):
         self.repo = repo
         self.get_response = get_response
         self.in_app = in_app
         self.broadcaster = broadcaster
         self.send_rejected_email = send_rejected_email
+        self.subscription_access = subscription_access
 
     async def execute(self, response_id: int, expert_id: int) -> int:
         response = await self.get_response.execute(response_id)
@@ -49,6 +52,9 @@ class WithdrawResponseUseCase:
 
         await self.repo.delete(response)
         await self.repo.flush()
+
+        if self.subscription_access is not None:
+            await self.subscription_access.restore_response_slot(expert_id)
 
         if customer_id is not None:
             await self.in_app.response_withdrawn(order_id, customer_id, order)
