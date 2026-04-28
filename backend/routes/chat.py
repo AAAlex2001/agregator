@@ -27,7 +27,10 @@ from services.email import (
     EmailRepository,
     SendChatMessageEmailUseCase,
 )
-from services.notification import NotificationService
+from services.notifications import (
+    CreateChatMessageNotificationUseCase,
+    NotificationRepository,
+)
 from ws.manager import chat_manager
 
 router = APIRouter(prefix="/chats", tags=["chats"])
@@ -157,7 +160,9 @@ async def send_message(
     use_case = SendMessageUseCase(
         repo=repo,
         files=ChatFileStorage(),
-        in_app=ChatInAppNotifier(NotificationService(db)),
+        in_app=ChatInAppNotifier(
+            CreateChatMessageNotificationUseCase(NotificationRepository(db))
+        ),
         send_email=send_email,
     )
     message = await use_case.execute(

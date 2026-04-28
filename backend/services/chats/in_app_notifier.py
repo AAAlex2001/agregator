@@ -1,14 +1,13 @@
 from models.chat import Chat
-from models.user import UserRole
 from services.chats.formatters import ChatFormatter
-from services.notification import NotificationService
+from services.notifications import CreateChatMessageNotificationUseCase
 
 
 class ChatInAppNotifier:
     "In-app уведомления о новых сообщениях. Email-нотификация идёт отдельно от этого класса."
 
-    def __init__(self, notifications: NotificationService):
-        self.notifications = notifications
+    def __init__(self, create_notification: CreateChatMessageNotificationUseCase):
+        self.create_notification = create_notification
 
     async def new_message(
         self,
@@ -21,7 +20,7 @@ class ChatInAppNotifier:
         order_title = self.order_title(chat)
         preview = ChatFormatter.notification_preview(text, attachments_count)
         sender_role = ChatFormatter.sender_role(chat, sender_id)
-        await self.notifications.create_chat_message_notification(
+        await self.create_notification.execute(
             user_id=recipient_id,
             order_title=order_title,
             sender_role=sender_role,

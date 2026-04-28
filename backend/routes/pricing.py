@@ -12,7 +12,7 @@ from schemas.pricing import (
     UserSubscriptionResponse,
 )
 from services.pricing import PricingService
-from services.subscriptions import SubscriptionPurchaseService, SubscriptionRepository
+from services.subscriptions import PurchaseSubscriptionUseCase, SubscriptionRepository
 
 
 router = APIRouter(prefix="/pricing", tags=["pricing"])
@@ -61,8 +61,10 @@ async def subscribe(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SubscriptionPurchaseService(db)
-    result = await service.purchase(user_id=user_id, plan_id=data.plan_id, return_url=data.return_url)
+    use_case = PurchaseSubscriptionUseCase(SubscriptionRepository(db))
+    result = await use_case.execute(
+        user_id=user_id, plan_id=data.plan_id, return_url=data.return_url
+    )
     return SubscribeResponse(
         subscription_id=result.subscription.id,
         confirmation_url=result.confirmation_url,

@@ -2,18 +2,23 @@ from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 from schemas.notification import ResponseStatusChangeReason, ResponseUpdateKind
-from services.notification import NotificationService
+from services.notifications import (
+    CreateResponseStatusChangedNotificationUseCase,
+    CreateResponseUpdatedNotificationUseCase,
+    NotificationRepository,
+)
 from services.responses.repository import ResponseRepository
 
 RESPONSES_ACTION_URL = "/responses"
 
 
 class ResponseInAppNotifier:
-    "Внутренние (in-app) уведомления по откликам — обёртка над NotificationService."
+    "Внутренние (in-app) уведомления по откликам — обёртка над двумя use case'ами уведомлений."
 
-    def __init__(self, repo: ResponseRepository, notifications: NotificationService):
+    def __init__(self, repo: ResponseRepository, notifications: NotificationRepository):
         self.repo = repo
-        self.notifications = notifications
+        self.create_response_updated = CreateResponseUpdatedNotificationUseCase(notifications)
+        self.create_status_changed = CreateResponseStatusChangedNotificationUseCase(notifications)
 
     @staticmethod
     def order_title(order: Order | None, order_id: int) -> str:
@@ -40,15 +45,17 @@ class ResponseInAppNotifier:
         order = response.order
         if order is None:
             return
-        await self.notifications.create_response_updated_notification(
+        await self.create_response_updated.execute(
             user_id=order.customer_id,
             order_title=self.order_title(order, response.order_id),
             kind=kind,
             action_url=RESPONSES_ACTION_URL,
         )
 
-    async def response_withdrawn(self, order_id: int, customer_id: int, order: Order | None) -> None:
-        await self.notifications.create_response_updated_notification(
+    async def response_withdrawn(
+        self, order_id: int, customer_id: int, order: Order | None
+    ) -> None:
+        await self.create_response_updated.execute(
             user_id=customer_id,
             order_title=self.order_title(order, order_id),
             kind=ResponseUpdateKind.WITHDRAWN,
@@ -98,7 +105,7 @@ class ResponseInAppNotifier:
         chat_url: str,
     ) -> None:
         if new_status == ResponseStatus.ACCEPTED and old_status != ResponseStatus.ACCEPTED:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=response.expert_id,
                 order_title=title,
                 actor_role=actor.role,
@@ -109,7 +116,7 @@ class ResponseInAppNotifier:
             )
 
         if new_status == ResponseStatus.IN_PROGRESS and old_status != ResponseStatus.IN_PROGRESS:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=response.expert_id,
                 order_title=title,
                 actor_role=actor.role,
@@ -119,7 +126,7 @@ class ResponseInAppNotifier:
                 action_url=chat_url,
             )
             for rejected_expert_id in auto_rejected_expert_ids:
-                await self.notifications.create_response_status_changed_notification(
+                await self.create_status_changed.execute(
                     user_id=rejected_expert_id,
                     order_title=title,
                     actor_role=actor.role,
@@ -130,7 +137,7 @@ class ResponseInAppNotifier:
                 )
 
         if new_status == ResponseStatus.REJECTED and old_status != ResponseStatus.REJECTED:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=response.expert_id,
                 order_title=title,
                 actor_role=actor.role,
@@ -140,7 +147,7 @@ class ResponseInAppNotifier:
                 action_url=RESPONSES_ACTION_URL,
             )
             for reverted_expert_id in reverted_expert_ids:
-                await self.notifications.create_response_status_changed_notification(
+                await self.create_status_changed.execute(
                     user_id=reverted_expert_id,
                     order_title=title,
                     actor_role=actor.role,
@@ -151,7 +158,7 @@ class ResponseInAppNotifier:
                 )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=response.expert_id,
                 order_title=title,
                 actor_role=actor.role,
@@ -173,7 +180,7 @@ class ResponseInAppNotifier:
         chat_url: str,
     ) -> None:
         if new_status == ResponseStatus.IN_PROGRESS and not expert_was_confirmed:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=order.customer_id,
                 order_title=title,
                 actor_role=actor.role,
@@ -184,7 +191,7 @@ class ResponseInAppNotifier:
             )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
-            await self.notifications.create_response_status_changed_notification(
+            await self.create_status_changed.execute(
                 user_id=order.customer_id,
                 order_title=title,
                 actor_role=actor.role,

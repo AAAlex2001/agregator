@@ -22,8 +22,8 @@ from services.email import (
     SendResponseCreatedEmailUseCase,
     SendResponseUpdatedEmailUseCase,
 )
-from services.notification import NotificationService
-from services.subscriptions import SubscriptionAccess
+from services.notifications import NotificationRepository
+from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 from services.responses import (
     CreateResponseUseCase,
     GetResponseByIdUseCase,
@@ -53,7 +53,11 @@ def build_get_response(db: AsyncSession) -> GetResponseByIdUseCase:
 
 
 def build_in_app(db: AsyncSession, repo: ResponseRepository) -> ResponseInAppNotifier:
-    return ResponseInAppNotifier(repo, NotificationService(db))
+    return ResponseInAppNotifier(repo, NotificationRepository(db))
+
+
+def build_subscription_access(db: AsyncSession) -> SubscriptionAccess:
+    return SubscriptionAccess(SubscriptionRepository(db))
 
 
 def build_upload_files(db: AsyncSession, repo: ResponseRepository) -> UploadResponseFilesUseCase:
@@ -171,7 +175,7 @@ async def create_response_for_order(
         validator=ResponseValidator(repo),
         get_response=get_response,
         in_app=build_in_app(db, repo),
-        subscription_access=SubscriptionAccess(db),
+        subscription_access=build_subscription_access(db),
     )
     created = await create_use_case.execute(order_id=order_id, expert_id=user_id, data=data)
 
@@ -234,7 +238,7 @@ async def update_response_status(
         in_app=build_in_app(db, repo),
         broadcaster=ResponseBroadcaster(),
         send_bidding_email=send_bidding,
-        subscription_access=SubscriptionAccess(db),
+        subscription_access=build_subscription_access(db),
     )
     updated = await use_case.execute(
         response_id=response_id, actor_id=user_id, new_status=new_status
@@ -306,7 +310,7 @@ async def withdraw_response(
         in_app=build_in_app(db, repo),
         broadcaster=ResponseBroadcaster(),
         send_rejected_email=send_rejected,
-        subscription_access=SubscriptionAccess(db),
+        subscription_access=build_subscription_access(db),
     )
     await use_case.execute(response_id=response_id, expert_id=user_id)
     return {"detail": "Отклик отозван"}
