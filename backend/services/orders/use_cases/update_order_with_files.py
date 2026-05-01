@@ -35,11 +35,17 @@ class UpdateOrderWithFilesUseCase:
         order_id: int,
         data: OrderUpdate,
         uploads: list[UploadFile] | None,
+        current_user_id: int,
     ) -> Order:
         before = await self.get_order.execute(order_id)
         snapshot = self.snapshot(before)
 
-        order = await self.update_order.execute(order_id, data, notify=False)
+        order = await self.update_order.execute(
+            order_id,
+            data,
+            current_user_id=current_user_id,
+            notify=False,
+        )
 
         if uploads:
             order = await self.append_files(order_id, order, uploads)

@@ -24,7 +24,8 @@ class CreateOrderUseCase:
         self.broadcaster = broadcaster
         self.send_new_order_email = send_new_order_email
 
-    async def execute(self, data: OrderCreate) -> Order:
+    async def execute(self, data: OrderCreate, current_user_id: int) -> Order:
+        self.validator.ensure_user_can_create_order(data.customer_id, current_user_id)
         await self.validator.ensure_customer_exists(data.customer_id)
 
         order = self.build_entity(data)

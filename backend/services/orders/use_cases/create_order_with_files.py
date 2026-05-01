@@ -24,8 +24,9 @@ class CreateOrderWithFilesUseCase:
         self,
         data: OrderCreate,
         uploads: list[UploadFile] | None,
+        current_user_id: int,
     ) -> Order:
-        order = await self.create_order.execute(data)
+        order = await self.create_order.execute(data, current_user_id=current_user_id)
 
         if not uploads:
             return order

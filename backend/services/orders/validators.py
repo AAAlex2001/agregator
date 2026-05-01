@@ -17,6 +17,19 @@ class OrderValidator:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Заказчик не найден",
         )
+    
+    async def ensure_user_can_modify_order(self, order_id: int, user_id: int) -> None:
+        order = await self.repo.get_by_id(order_id)
+        if order is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказ не найден",
+            )
+        if order.customer_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нет прав на изменение этого заказа",
+            )
 
     @staticmethod
     def ensure_files_present(files: list | None) -> None:

@@ -104,6 +104,7 @@ async def create_order(
     data: OrderCreate,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
     repo = build_repo(db)
     use_case = CreateOrderUseCase(
@@ -112,7 +113,7 @@ async def create_order(
         broadcaster=OrderBroadcaster(),
         send_new_order_email=build_send_new_order_email(db, background_tasks),
     )
-    order = await use_case.execute(data)
+    order = await use_case.execute(data, current_user_id=user_id)
     return OrderResponse.from_order(order)
 
 
@@ -129,6 +130,7 @@ async def create_order_with_files(
     badge_codes_json: str = Form("[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
     data = build_order_create_data(
         title=title,
@@ -152,7 +154,11 @@ async def create_order_with_files(
         repo=repo,
         files=OrderFileStorage(),
     )
-    order = await use_case.execute(data, uploads=files if files else None)
+    order = await use_case.execute(
+        data,
+        uploads=files if files else None,
+        current_user_id=user_id,
+    )
     return OrderResponse.from_order(order)
 
 
@@ -162,16 +168,19 @@ async def update_order(
     data: OrderUpdate,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)
+    validator = OrderValidator(repo)
     use_case = UpdateOrderUseCase(
         repo=repo,
         get_order=get_order,
+        validator=validator,
         broadcaster=OrderBroadcaster(),
         send_updated_email=build_send_order_updated_email(db, background_tasks),
     )
-    order = await use_case.execute(order_id, data)
+    order = await use_case.execute(order_id, data, current_user_id=user_id)
     return OrderResponse.from_order(order)
 
 
@@ -204,9 +213,13 @@ async def update_order_with_files(
     repo = build_repo(db)
     broadcaster = OrderBroadcaster()
     get_order = GetOrderByIdUseCase(repo)
+    validator = OrderValidator(repo)
     send_updated = build_send_order_updated_email(db, background_tasks)
     update = UpdateOrderUseCase(
-        repo=repo, get_order=get_order, broadcaster=broadcaster
+        repo=repo,
+        get_order=get_order,
+        validator=validator,
+        broadcaster=broadcaster,
     )
     use_case = UpdateOrderWithFilesUseCase(
         update_order=update,
@@ -216,7 +229,12 @@ async def update_order_with_files(
         broadcaster=broadcaster,
         send_updated_email=send_updated,
     )
-    order = await use_case.execute(order_id, data, uploads=files if files else None)
+    order = await use_case.execute(
+        order_id,
+        data,
+        uploads=files if files else None,
+        current_user_id=user_id,
+    )
     return OrderResponse.from_order(order)
 
 
@@ -225,6 +243,7 @@ async def upload_order_files(
     order_id: int,
     files: list[UploadFile] = File(...),
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
     repo = build_repo(db)
     use_case = UploadOrderFilesUseCase(
@@ -233,7 +252,7 @@ async def upload_order_files(
         files=OrderFileStorage(),
         validator=OrderValidator(repo),
     )
-    order = await use_case.execute(order_id, files)
+    order = await use_case.execute(order_id, files, current_user_id=user_id)
     return OrderResponse.from_order(order)
 
 
@@ -241,12 +260,14 @@ async def upload_order_files(
 async def delete_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
     repo = build_repo(db)
     use_case = DeleteOrderUseCase(
         repo=repo,
         get_order=GetOrderByIdUseCase(repo),
+        validator=OrderValidator(repo),
         broadcaster=OrderBroadcaster(),
     )
-    await use_case.execute(order_id)
+    await use_case.execute(order_id, current_user_id=user_id)
     return {"ok": True}

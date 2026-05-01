@@ -20,8 +20,14 @@ class UploadOrderFilesUseCase:
         self.files = files
         self.validator = validator
 
-    async def execute(self, order_id: int, uploads: list[UploadFile]) -> Order:
+    async def execute(
+        self,
+        order_id: int,
+        uploads: list[UploadFile],
+        current_user_id: int,
+    ) -> Order:
         self.validator.ensure_files_present(uploads)
+        await self.validator.ensure_user_can_modify_order(order_id, current_user_id)
         order = await self.get_order.execute(order_id)
 
         new_paths = await self.files.save(order_id, uploads)
