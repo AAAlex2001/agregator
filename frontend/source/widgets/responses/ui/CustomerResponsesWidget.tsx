@@ -4,6 +4,7 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
 import { CompletionModal, useResponses } from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";
+import { SortPills } from "@/source/features/responses-sort";
 
 export function CustomerResponsesWidget() {
   const { showSuccess } = useNotifications();
@@ -30,6 +31,7 @@ export function CustomerResponsesWidget() {
         subtitle="Все отклики в одном месте — просмотр, управление и контроль статусов"
         model={model}
         actionHandlers={actionHandlers}
+        sortSlot={<SortPills sortBy={model.sortBy} sortDir={model.sortDir} isLoading={model.isLoading} onChange={model.setSort} />}
       />
 
       <CompletionModal

@@ -1,0 +1,119 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  color: #1A1A1A;
+
+  &:hover {
+    background: rgba(255, 248, 235, 0.6);
+  }
+}
+
+.pillActive {
+  background: #FFF8EB;
+
+  &:hover {
+    background: #FFF8EB;
+  }
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px;
+  width: 175px;
+  background: #FFF8EB;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 15px;
+  color: #1A1A1A;
+  text-align: left;
+}
+
+.radio {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 100px;
+  background: #FFFFFF;
+  box-shadow:
+    0 2px 5px rgba(103, 110, 118, 0.08),
+    0 0 0 1px rgba(103, 110, 118, 0.16),
+    0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+.radioChecked {
+  background: #FF8A00;
+  box-shadow: none;
+}
+
+.radioDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: #FFFFFF;
+}
+
+.optionText {
+  flex-grow: 1;
+}

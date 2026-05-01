@@ -1,13 +1,19 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
-import type { ResponseTabKey, ResponsesApiList } from "@/source/entities/response";
+import type { ResponseTabKey, ResponsesApiList, CustomerSortBy, SortDir } from "@/source/entities/response";
 
-export async function fetchResponses(tab: ResponseTabKey): Promise<ResponsesApiList> {
-  const res = await fetchWithSession(`${API_URL}/responses?tab=${tab}&skip=0&limit=50`);
+export async function fetchResponses(
+  tab: ResponseTabKey,
+  sortBy: CustomerSortBy = "created_at",
+  sortDir: SortDir = "desc",
+): Promise<ResponsesApiList> {
+  const url = `${API_URL}/responses?tab=${tab}&sort_by=${sortBy}&sort_dir=${sortDir}&skip=0&limit=50`;
+  const res = await fetchWithSession(url);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить отклики");
   return res.json();
 }
+
 
 export async function updateStatus(id: number, status: string): Promise<void> {
   const res = await fetchWithSession(`${API_URL}/responses/${id}/status?new_status=${status}`, { method: "PATCH" });

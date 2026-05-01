@@ -5,5 +5,5 @@ export type {
   ResponseStatus, ResponseTabKey, ResponseApiItem,
   ResponsesApiList, ResponseCounters,
   ResponseCardData, UserRole,
-  CardAction, ResponseBadge,
+  CardAction, ResponseBadge, SortDir, CustomerSortBy,
 } from "./model/types";

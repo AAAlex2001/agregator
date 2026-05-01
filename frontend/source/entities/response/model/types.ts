@@ -2,6 +2,8 @@ export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" 
 export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted" | "completed";
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 export type UserRole = "expert" | "customer";
+export type CustomerSortBy = "created_at" | "proposed_sum_amount" | "expert_rating";
+export type SortDir = "asc" | "desc";
 
 export interface ResponseBadge { text: string; variant: BadgeVariant }
 

@@ -17,7 +17,16 @@ class OrderValidator:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Заказчик не найден",
         )
-    
+
+    @staticmethod
+    def ensure_user_can_create_order(customer_id: int, current_user_id: int) -> None:
+        if customer_id == current_user_id:
+            return
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Нельзя создать заказ от имени другого пользователя",
+        )
+
     async def ensure_user_can_modify_order(self, order_id: int, user_id: int) -> None:
         order = await self.repo.get_by_id(order_id)
         if order is None:

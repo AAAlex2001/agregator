@@ -4,9 +4,10 @@ import s from "./ResponsesSkeleton.module.scss";
 
 interface ResponsesSkeletonProps {
   compact?: boolean;
+  hideTabs?: boolean;
 }
 
-export function ResponsesSkeleton({ compact = false }: ResponsesSkeletonProps) {
+export function ResponsesSkeleton({ compact = false, hideTabs = false }: ResponsesSkeletonProps) {
   const cardsSection = (
     <div className={s.cardsSection}>
       <div className={s.shadeLeft} />
@@ -37,11 +38,13 @@ export function ResponsesSkeleton({ compact = false }: ResponsesSkeletonProps) {
   if (compact) {
     return (
       <div className={s.compact} aria-hidden="true">
-        <div className={s.tabs}>
-          <Skeleton className={s.tabPrimary} rounded="pill" />
-          <Skeleton className={s.tabSecondary} rounded="pill" />
-          <Skeleton className={s.tabTertiary} rounded="pill" />
-        </div>
+        {!hideTabs && (
+          <div className={s.tabs}>
+            <Skeleton className={s.tabPrimary} rounded="pill" />
+            <Skeleton className={s.tabSecondary} rounded="pill" />
+            <Skeleton className={s.tabTertiary} rounded="pill" />
+          </div>
+        )}
         {cardsSection}
       </div>
     );

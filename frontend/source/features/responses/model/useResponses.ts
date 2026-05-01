@@ -3,7 +3,7 @@
 import { useEffect, useReducer } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { mapApiToCard } from "@/source/entities/response";
-import type { ResponseCardData, ResponseTabKey, UserRole } from "@/source/entities/response";
+import type { ResponseCardData, ResponseTabKey, UserRole, CustomerSortBy, SortDir } from "@/source/entities/response";
 import { fetchResponses, deleteResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
 import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
@@ -42,7 +42,7 @@ export function useResponses(role: UserRole | null) {
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
     try {
-      const data = await fetchResponses(s.activeTab);
+      const data = await fetchResponses(s.activeTab, s.sortBy ?? "created_at", s.sortDir ?? "desc");
       d({ type: "DATA", items: data.items.map((item) => mapApiToCard(item, role)), counters: data.counters });
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
@@ -54,7 +54,7 @@ export function useResponses(role: UserRole | null) {
   useEffect(() => {
     if (!role) return;
     void reload();
-  }, [role, s.activeTab]);
+  }, [role, s.activeTab, s.sortBy, s.sortDir]);
 
   const setTab = (tab: ResponseTabKey) => d({ type: "TAB", tab });
   const tabs = role
@@ -179,5 +179,6 @@ export function useResponses(role: UserRole | null) {
     openReviewFromCompletion: () => { d({ type: "COMPLETION_MODAL", value: false }); d({ type: "REVIEW_MODAL", value: true }); },
     closeReview: () => d({ type: "REVIEW_MODAL", value: false }),
     onSubmitReview,
+    setSort: (sortBy: CustomerSortBy | null, sortDir: SortDir | null) => { d({ type: "SORT_BY", value: sortBy }); d({ type: "SORT_DIR", value: sortDir }); },
   };
 }

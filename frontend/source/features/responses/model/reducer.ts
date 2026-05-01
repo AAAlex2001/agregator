@@ -1,4 +1,4 @@
-import type { ResponseCardData, ResponseCounters, ResponseTabKey } from "@/source/entities/response";
+import type { ResponseCardData, ResponseCounters, ResponseTabKey, SortDir, CustomerSortBy } from "@/source/entities/response";
 
 type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | null;
 
@@ -15,6 +15,8 @@ export interface State {
   completionModal: boolean;
   reviewModal: boolean;
   reviewTarget: ResponseCardData | null;
+  sortBy: CustomerSortBy | null;
+  sortDir: SortDir | null;
 }
 
 export type Action =
@@ -28,7 +30,9 @@ export type Action =
   | { type: "WITHDRAW_TARGET"; value: ResponseCardData | null }
   | { type: "COMPLETION_MODAL"; value: boolean }
   | { type: "REVIEW_MODAL"; value: boolean }
-  | { type: "REVIEW_TARGET"; value: ResponseCardData | null };
+  | { type: "REVIEW_TARGET"; value: ResponseCardData | null }
+  | { type: "SORT_BY"; value: CustomerSortBy | null }
+  | { type: "SORT_DIR"; value: SortDir | null };
 
 export const initial: State = {
   items: [],
@@ -43,6 +47,8 @@ export const initial: State = {
   completionModal: false,
   reviewModal: false,
   reviewTarget: null,
+  sortBy: null,
+  sortDir: null,
 };
 
 export function reducer(state: State, action: Action): State {
@@ -58,6 +64,8 @@ export function reducer(state: State, action: Action): State {
     case "COMPLETION_MODAL": return { ...state, completionModal: action.value };
     case "REVIEW_MODAL":     return { ...state, reviewModal: action.value };
     case "REVIEW_TARGET":    return { ...state, reviewTarget: action.value };
+    case "SORT_BY":           return { ...state, sortBy: action.value };
+    case "SORT_DIR":          return { ...state, sortDir: action.value };
     default:                 return state;
   }
 }

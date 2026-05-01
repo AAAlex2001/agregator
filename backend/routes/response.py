@@ -1,5 +1,6 @@
 import json as json_lib
 from datetime import date as date_type, timedelta
+from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -196,6 +197,8 @@ async def get_my_responses(
     tab: ResponseTab | None = Query(None),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
+    sort_by: Literal["created_at", "proposed_sum_amount", "expert_rating"] = Query("created_at"),
+    sort_dir: Literal["asc", "desc"] = Query("desc"),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
@@ -205,7 +208,9 @@ async def get_my_responses(
 
     if actor.role == UserRole.CUSTOMER:
         use_case = ListCustomerResponsesUseCase(repo, validator)
-        items, total, counters = await use_case.execute(user_id, tab, skip, limit)
+        items, total, counters = await use_case.execute(
+            user_id, tab, skip, limit, sort_by, sort_dir
+        )
     else:
         use_case = ListExpertResponsesUseCase(repo, validator)
         items, total, counters = await use_case.execute(user_id, tab, skip, limit)

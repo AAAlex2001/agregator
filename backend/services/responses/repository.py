@@ -121,12 +121,20 @@ class ResponseRepository:
         )
         return items, total
 
+    CUSTOMER_SORT_COLUMNS = {
+        "created_at": OrderResponse.created_at,
+        "proposed_sum_amount": OrderResponse.proposed_sum_amount,
+        "expert_rating": User.rating,
+    }
+
     async def list_customer_responses(
         self,
         customer_id: int,
         status_filters: list[ResponseStatus] | None,
         skip: int,
         limit: int,
+        sort_by: str = "created_at",
+        sort_dir: str = "desc",
     ) -> tuple[list[OrderResponse], int]:
         base = (
             select(OrderResponse)
@@ -144,14 +152,18 @@ class ResponseRepository:
 
         total = (await self.db.execute(total_query)).scalar_one()
 
+        column = self.CUSTOMER_SORT_COLUMNS.get(sort_by, OrderResponse.created_at)
+        list_query = base.options(
+            selectinload(OrderResponse.order).selectinload(Order.badges),
+            selectinload(OrderResponse.order).selectinload(Order.customer),
+            selectinload(OrderResponse.expert),
+            selectinload(OrderResponse.reviews),
+        )
+        if sort_by == "expert_rating":
+            list_query = list_query.join(User, User.id == OrderResponse.expert_id)
         list_query = (
-            base.options(
-                selectinload(OrderResponse.order).selectinload(Order.badges),
-                selectinload(OrderResponse.order).selectinload(Order.customer),
-                selectinload(OrderResponse.expert),
-                selectinload(OrderResponse.reviews),
-            )
-            .order_by(OrderResponse.created_at.desc())
+            list_query
+            .order_by(column.asc() if sort_dir == "asc" else column.desc())
             .offset(skip)
             .limit(limit)
         )
