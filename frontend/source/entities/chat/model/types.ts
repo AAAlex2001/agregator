@@ -53,5 +53,6 @@ export interface ChatDetailData {
   counterpart_name: string;
   counterpart_avatar_url: string | null;
   response_status: ChatResponseStatus | null;
+  is_blocked: boolean;
   messages: ChatMessageData[];
 }

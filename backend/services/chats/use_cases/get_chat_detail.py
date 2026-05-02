@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 
 from models.chat import Chat, ChatMessage
+from models.order import OrderStatus
 from models.user import User, UserRole
 from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatMessageResponse
 from services.chats.formatters import ChatFormatter
@@ -57,6 +58,7 @@ class GetChatDetailUseCase:
             counterpart_name=counterpart.display_name,
             counterpart_avatar_url=counterpart.avatar_url,
             response_status=response_status,
+            is_blocked=chat.order.status == OrderStatus.COMPLETED if chat.order else False,
             messages=[
                 GetChatDetailUseCase.message_to_response(chat, message)
                 for message in messages

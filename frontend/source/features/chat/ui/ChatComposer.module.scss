@@ -58,6 +58,14 @@
   &::placeholder {
     color: #a6acbf;
   }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:disabled::placeholder {
+    color: #131313;
+  }
 }
 
 .clip {
@@ -72,6 +80,11 @@
   padding: 0;
   flex-shrink: 0;
   color: #1e1e1e;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 }
 
 .send {

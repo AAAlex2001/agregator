@@ -10,14 +10,16 @@ import s from "./ChatComposer.module.scss";
 
 interface ChatComposerProps {
   chatUuid: string;
+  isBlocked?: boolean;
   onSent: (message: ChatMessageData) => void;
 }
 
 const ACCEPT = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_FILES = 6;
+const BLOCKED_TEXT = "Чат по этому заказу завершен";
 
-export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
+export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatComposerProps) {
   const [text, setText] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
@@ -26,7 +28,7 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const sendingFiles = sending && files.length > 0;
-  const canSend = !sending && (text.trim().length > 0 || files.length > 0);
+  const canSend = !isBlocked && !sending && (text.trim().length > 0 || files.length > 0);
 
   async function handleSend() {
     if (!canSend) {
@@ -51,6 +53,10 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (isBlocked) {
+      return;
+    }
+
     const nextFiles = Array.from(event.currentTarget.files ?? []);
     event.currentTarget.value = "";
 
@@ -85,8 +91,8 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
           <input
             className={s.input}
             type="text"
-            placeholder="Сообщение..."
-            value={text}
+            placeholder={isBlocked ? BLOCKED_TEXT : "Сообщение..."}
+            value={isBlocked ? "" : text}
             onChange={(event) => setText(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -94,7 +100,7 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
                 void handleSend();
               }
             }}
-            disabled={sending}
+            disabled={sending || isBlocked}
           />
 
           <button
@@ -102,6 +108,10 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
             className={s.clip}
             aria-label="Прикрепить файл"
             onClick={() => {
+              if (isBlocked) {
+                return;
+              }
+
               if (files.length >= MAX_FILES) {
                 setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
                 return;
@@ -109,7 +119,7 @@ export function ChatComposer({ chatUuid, onSent }: ChatComposerProps) {
 
               fileRef.current?.click();
             }}
-            disabled={sending}
+            disabled={sending || isBlocked}
           >
             <ChatClipIcon />
           </button>

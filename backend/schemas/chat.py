@@ -77,6 +77,7 @@ class ChatDetailResponse(BaseModel):
     counterpart_name: str
     counterpart_avatar_url: str | None = None
     response_status: str | None = None
+    is_blocked: bool = False
     messages: list[ChatMessageResponse]
 
 

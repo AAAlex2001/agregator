@@ -87,7 +87,7 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
         )}
       </div>
 
-      {chat ? <ChatComposer chatUuid={chat.uuid} onSent={appendMessage} /> : null}
+      {chat ? <ChatComposer chatUuid={chat.uuid} isBlocked={chat.is_blocked} onSent={appendMessage} /> : null}
     </div>
   );
 }

@@ -37,6 +37,7 @@ class SendMessageUseCase:
         self.ensure_not_empty(normalized_text, non_empty_uploads)
 
         chat = await self.require_chat(chat_id, sender_id)
+        await self.ensure_chat_not_blocked(chat_id)
         attachments = await self.save_attachments(chat_id, non_empty_uploads)
 
         mark_as_read = recipient_online
@@ -75,6 +76,14 @@ class SendMessageUseCase:
             return chat
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден"
+        )
+
+    async def ensure_chat_not_blocked(self, chat_id: int) -> None:
+        if not await self.repo.is_blocked_by_completed_order(chat_id):
+            return
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Чат по этому заказу завершен",
         )
 
     async def save_attachments(

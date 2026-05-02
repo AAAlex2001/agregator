@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.chat import Chat, ChatMessage
-from models.order import Order
+from models.order import Order, OrderStatus
 from models.response import OrderResponse
 from models.user import User
 
@@ -146,7 +146,7 @@ class ChatRepository:
             .where(
                 ChatMessage.chat_id.in_(chat_ids),
                 ChatMessage.sender_id != actor_id,
-                ChatMessage.is_read == False,  # noqa: E712
+                ChatMessage.is_read == False,
             )
             .group_by(ChatMessage.chat_id)
         )
@@ -175,7 +175,7 @@ class ChatRepository:
         query = select(ChatMessage.id).where(
             ChatMessage.chat_id == chat_id,
             ChatMessage.sender_id != reader_id,
-            ChatMessage.is_read == False,  # noqa: E712
+            ChatMessage.is_read == False,
         )
         return list((await self.db.execute(query)).scalars().all())
 
@@ -193,6 +193,15 @@ class ChatRepository:
         await self.db.execute(
             update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(timezone.utc))
         )
+
+    async def is_blocked_by_completed_order(self, chat_id: int) -> bool:
+        query = (
+            select(Order.status)
+            .join(Chat, Chat.order_id == Order.id)
+            .where(Chat.id == chat_id)
+        )
+        order_status = (await self.db.execute(query)).scalar_one_or_none()
+        return order_status == OrderStatus.COMPLETED
 
     async def add(self, entity) -> None:
         self.db.add(entity)
