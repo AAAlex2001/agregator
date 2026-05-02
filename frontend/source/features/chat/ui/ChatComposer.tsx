@@ -80,6 +80,16 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
     setFiles((currentFiles) => [...currentFiles, ...nextFiles]);
   }
 
+  if (isBlocked) {
+    return (
+      <div className={s.wrap}>
+        <div className={`${s.bar} ${s.barBlocked}`}>
+          <p className={s.blockedText}>{BLOCKED_TEXT}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={s.wrap}>
       {sendingFiles ? <UploadProgress percent={progress} /> : null}
@@ -91,8 +101,8 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
           <input
             className={s.input}
             type="text"
-            placeholder={isBlocked ? BLOCKED_TEXT : "Сообщение..."}
-            value={isBlocked ? "" : text}
+            placeholder="Сообщение..."
+            value={text}
             onChange={(event) => setText(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -100,7 +110,7 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
                 void handleSend();
               }
             }}
-            disabled={sending || isBlocked}
+            disabled={sending}
           />
 
           <button
@@ -108,10 +118,6 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
             className={s.clip}
             aria-label="Прикрепить файл"
             onClick={() => {
-              if (isBlocked) {
-                return;
-              }
-
               if (files.length >= MAX_FILES) {
                 setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
                 return;
@@ -119,7 +125,7 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
 
               fileRef.current?.click();
             }}
-            disabled={sending || isBlocked}
+            disabled={sending}
           >
             <ChatClipIcon />
           </button>

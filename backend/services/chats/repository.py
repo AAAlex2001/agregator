@@ -203,6 +203,10 @@ class ChatRepository:
         order_status = (await self.db.execute(query)).scalar_one_or_none()
         return order_status == OrderStatus.COMPLETED
 
+    async def block_chat(self, chat_id: int) -> None:
+        await self.db.execute(update(Chat).where(Chat.id == chat_id).values(is_blocked=True))
+        await self.db.flush()
+
     async def add(self, entity) -> None:
         self.db.add(entity)
 
