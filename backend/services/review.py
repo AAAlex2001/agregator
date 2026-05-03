@@ -1,6 +1,5 @@
-from decimal import Decimal, ROUND_HALF_UP
-
 from fastapi import HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -70,15 +69,6 @@ class ReviewService:
         )
         self.db.add(review)
 
-        current_count = expert.review_count or 0
-        current_rating = Decimal(str(expert.rating)) if expert.rating is not None else Decimal("0")
-        new_count = current_count + 1
-        new_rating = ((current_rating * current_count) + Decimal(rating)) / Decimal(new_count)
-        new_rating = new_rating.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
-
-        expert.review_count = new_count
-        expert.rating = new_rating
-
         try:
             await self.db.flush()
         except IntegrityError:
@@ -86,6 +76,15 @@ class ReviewService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Отзыв по этому отклику уже оставлен",
             )
+
+        count, avg = (
+            await self.db.execute(
+                select(func.count(Review.id), func.avg(Review.rating))
+                .where(Review.expert_id == expert.id)
+            )
+        ).one()
+        expert.review_count = int(count or 0)
+        expert.rating = round(float(avg), 1) if avg is not None else None
 
         return review
 
