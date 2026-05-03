@@ -11,7 +11,6 @@ class ResponseTab(str, PyEnum):
     IN_PROGRESS = "in_progress"
     REJECTED = "rejected"
     ACCEPTED = "accepted"
-    COMPLETED = "completed"
 
 
 class ResponseCreate(BaseModel):
@@ -25,7 +24,6 @@ class ResponseCounters(BaseModel):
     in_progress: int = 0
     rejected: int = 0
     accepted: int = 0
-    completed: int = 0
 
 
 class ExpertResponseItem(BaseModel):

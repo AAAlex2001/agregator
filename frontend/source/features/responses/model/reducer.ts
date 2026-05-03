@@ -36,7 +36,7 @@ export type Action =
 
 export const initial: State = {
   items: [],
-  counters: { review: 0, in_progress: 0, rejected: 0, accepted: 0, completed: 0 },
+  counters: { review: 0, in_progress: 0, rejected: 0, accepted: 0 },
   isLoading: true,
   error: null,
   activeTab: "review",

@@ -21,7 +21,6 @@ from models.base import Base
 
 class OrderStatus(str, PyEnum):
     ACTIVE = "ACTIVE"
-    COMPLETED = "COMPLETED"
     ARCHIVED = "ARCHIVED"
 
 

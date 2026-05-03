@@ -67,8 +67,12 @@ class OrderRepository:
             list_query = list_query.where(*expert_filter)
 
         if role == UserRole.CUSTOMER:
-            count_query = count_query.where(Order.customer_id == user_id)
-            list_query = list_query.where(Order.customer_id == user_id)
+            customer_filter = [
+                Order.customer_id == user_id,
+                Order.status != OrderStatus.ARCHIVED,
+            ]
+            count_query = count_query.where(*customer_filter)
+            list_query = list_query.where(*customer_filter)
 
         if status_filter is not None:
             count_query = count_query.where(Order.status == status_filter)
@@ -76,6 +80,32 @@ class OrderRepository:
 
         total = (await self.db.execute(count_query)).scalar_one()
         list_query = list_query.offset(skip).limit(limit)
+        rows = (await self.db.execute(list_query)).scalars().unique().all()
+        return list(rows), total
+
+    async def list_archived(
+        self,
+        skip: int,
+        limit: int,
+    ) -> tuple[list[Order], int]:
+        "Список архивных заказов — виден всем авторизованным."
+        count_query = (
+            select(func.count(Order.id))
+            .where(Order.status == OrderStatus.ARCHIVED)
+        )
+        list_query = (
+            select(Order)
+            .options(
+                selectinload(Order.badges),
+                selectinload(Order.customer),
+                selectinload(Order.assigned_expert),
+            )
+            .where(Order.status == OrderStatus.ARCHIVED)
+            .order_by(Order.updated_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        total = (await self.db.execute(count_query)).scalar_one()
         rows = (await self.db.execute(list_query)).scalars().unique().all()
         return list(rows), total
 

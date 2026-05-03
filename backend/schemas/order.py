@@ -87,6 +87,7 @@ class OrderResponse(BaseModel):
     comment: str
     customer_id: int
     assigned_expert_id: int | None
+    assigned_expert_name: str = ""
     customer_name: str
     sum: str
     sum_amount_raw: int
@@ -106,6 +107,16 @@ class OrderResponse(BaseModel):
             kopecks = amount_kopecks % 100
             return f"{formatted},{kopecks:02d} \u20bd"
         return f"{formatted} \u20bd"
+
+    @classmethod
+    def from_archived_order(cls, order) -> "OrderResponse":
+        "Архивная карточка — добавляет имя исполнителя. Требует selectinload(Order.assigned_expert)."
+        base = cls.from_order(order)
+        expert = order.assigned_expert
+        if expert is None:
+            return base
+        full_name = " ".join(part for part in [expert.first_name or "", expert.last_name or ""] if part)
+        return base.model_copy(update={"assigned_expert_name": full_name})
 
     @classmethod
     def from_order(cls, order) -> "OrderResponse":

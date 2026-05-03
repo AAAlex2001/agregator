@@ -13,6 +13,4 @@ def statuses_for_tab(tab: ResponseTab | None) -> list[ResponseStatus] | None:
         return [ResponseStatus.REJECTED]
     if tab == ResponseTab.ACCEPTED:
         return [ResponseStatus.ACCEPTED]
-    if tab == ResponseTab.COMPLETED:
-        return [ResponseStatus.COMPLETED]
     return None

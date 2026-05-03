@@ -103,7 +103,7 @@ class UpdateResponseStatusUseCase:
         if new_status == ResponseStatus.IN_PROGRESS:
             response.expert_confirmed = True
         if new_status == ResponseStatus.COMPLETED and response.order:
-            response.order.status = OrderStatus.COMPLETED
+            response.order.status = OrderStatus.ARCHIVED
 
     async def apply_customer_transition(
         self,
@@ -114,7 +114,7 @@ class UpdateResponseStatusUseCase:
         reverted_ids: list[int] = []
 
         if new_status == ResponseStatus.COMPLETED and response.order:
-            response.order.status = OrderStatus.COMPLETED
+            response.order.status = OrderStatus.ARCHIVED
 
         if new_status == ResponseStatus.IN_PROGRESS and response.order:
             response.order.assigned_expert_id = response.expert_id
@@ -145,7 +145,7 @@ class UpdateResponseStatusUseCase:
         if response.order.assigned_expert_id != response.expert_id:
             return []
         response.order.assigned_expert_id = None
-        if response.order.status != OrderStatus.COMPLETED:
+        if response.order.status != OrderStatus.ARCHIVED:
             response.order.status = OrderStatus.ACTIVE
         reverted = await self.revert_auto_rejections(response)
         response.auto_rejected = False

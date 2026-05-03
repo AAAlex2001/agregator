@@ -58,7 +58,7 @@ class GetChatDetailUseCase:
             counterpart_name=counterpart.display_name,
             counterpart_avatar_url=counterpart.avatar_url,
             response_status=response_status,
-            is_blocked=chat.is_blocked or (chat.order.status == OrderStatus.COMPLETED if chat.order else False),
+            is_blocked=chat.is_blocked or (chat.order.status == OrderStatus.ARCHIVED if chat.order else False),
             is_manually_blocked=chat.is_blocked,
             messages=[
                 GetChatDetailUseCase.message_to_response(chat, message)

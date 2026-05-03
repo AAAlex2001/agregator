@@ -7,10 +7,11 @@ import {
   TabResponsesIcon,
   TabChatIcon,
   TabProfileIcon,
+  TabArchiveIcon,
 } from "@/source/shared/ui/icons";
 import s from "./CabinetMenuTabs.module.scss";
 
-export type CabinetMenuKey = "orders" | "responses" | "reviews" | "chat" | "profile";
+export type CabinetMenuKey = "orders" | "responses" | "reviews" | "chat" | "profile" | "archive";
 
 interface CabinetMenuItem {
   key: CabinetMenuKey;
@@ -28,6 +29,7 @@ function renderIcon(key: CabinetMenuKey) {
   if (key === "responses") return <TabResponsesIcon />;
   if (key === "reviews") return <ReviewIcon />;
   if (key === "chat") return <TabChatIcon />;
+  if (key === "archive") return <TabArchiveIcon />;
   return <TabProfileIcon />;
 }
 

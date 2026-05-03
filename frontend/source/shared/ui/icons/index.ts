@@ -45,3 +45,4 @@ export { default as TabOrdersIcon } from "./TabOrdersIcon";
 export { default as TabResponsesIcon } from "./TabResponsesIcon";
 export { default as TabChatIcon } from "./TabChatIcon";
 export { default as TabProfileIcon } from "./TabProfileIcon";
+export { default as TabArchiveIcon } from "./TabArchiveIcon";

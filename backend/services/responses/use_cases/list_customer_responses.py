@@ -42,5 +42,4 @@ class ListCustomerResponsesUseCase:
             in_progress=counters_map.get(ResponseStatus.IN_PROGRESS, 0),
             rejected=counters_map.get(ResponseStatus.REJECTED, 0),
             accepted=counters_map.get(ResponseStatus.ACCEPTED, 0),
-            completed=counters_map.get(ResponseStatus.COMPLETED, 0),
         )

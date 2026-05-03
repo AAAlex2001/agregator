@@ -6,6 +6,7 @@ from services.orders.use_cases.create_order_with_files import CreateOrderWithFil
 from services.orders.use_cases.delete_order import DeleteOrderUseCase
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.use_cases.get_order_by_public_id import GetOrderByPublicIdUseCase
+from services.orders.use_cases.list_archived_orders import ListArchivedOrdersUseCase
 from services.orders.use_cases.list_orders import ListOrdersUseCase
 from services.orders.use_cases.update_order import UpdateOrderUseCase
 from services.orders.use_cases.update_order_with_files import UpdateOrderWithFilesUseCase
@@ -18,6 +19,7 @@ __all__ = [
     "DeleteOrderUseCase",
     "GetOrderByIdUseCase",
     "GetOrderByPublicIdUseCase",
+    "ListArchivedOrdersUseCase",
     "ListOrdersUseCase",
     "OrderBroadcaster",
     "OrderFileStorage",

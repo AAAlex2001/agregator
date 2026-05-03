@@ -205,7 +205,7 @@ class ChatRepository:
         if row is None:
             return False
         is_blocked, order_status = row
-        return is_blocked or order_status == OrderStatus.COMPLETED
+        return is_blocked or order_status == OrderStatus.ARCHIVED
 
     async def block_chat(self, chat_id: int) -> None:
         await self.db.execute(

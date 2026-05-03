@@ -89,5 +89,5 @@ class WithdrawResponseUseCase:
         if order is None or order.assigned_expert_id != expert_id:
             return
         order.assigned_expert_id = None
-        if order.status != OrderStatus.COMPLETED:
+        if order.status != OrderStatus.ARCHIVED:
             order.status = OrderStatus.ACTIVE

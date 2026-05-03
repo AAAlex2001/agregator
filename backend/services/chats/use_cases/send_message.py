@@ -86,7 +86,7 @@ class SendMessageUseCase:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Заказчик вас заблокировал.",
             )
-        if chat.order is None or chat.order.status != OrderStatus.COMPLETED:
+        if chat.order is None or chat.order.status != OrderStatus.ARCHIVED:
             return
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

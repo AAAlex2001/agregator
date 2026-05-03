@@ -39,5 +39,6 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     })),
     badgesRaw:           item.badges,
     status:              item.status,
+    assignedExpertName:  item.assigned_expert_name ?? "",
   };
 }

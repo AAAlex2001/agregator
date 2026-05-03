@@ -18,6 +18,7 @@ from services.orders import (
     DeleteOrderUseCase,
     GetOrderByIdUseCase,
     GetOrderByPublicIdUseCase,
+    ListArchivedOrdersUseCase,
     ListOrdersUseCase,
     OrderBroadcaster,
     OrderFileStorage,
@@ -76,6 +77,21 @@ async def get_orders(
     orders, total = await use_case.execute(skip, limit, status, user_id)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
+        total=total,
+    )
+
+
+@router.get("/archive", response_model=OrderListResponse)
+async def get_archived_orders(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: AsyncSession = Depends(get_db),
+    _: int = Depends(get_current_user),
+):
+    use_case = ListArchivedOrdersUseCase(build_repo(db))
+    orders, total = await use_case.execute(skip, limit)
+    return OrderListResponse(
+        items=[OrderResponse.from_archived_order(o) for o in orders],
         total=total,
     )
 

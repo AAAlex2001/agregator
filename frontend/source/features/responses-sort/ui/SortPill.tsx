@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import s from "./SortPill.module.scss";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import { SortPillCloseIcon } from "./SortPillCloseIcon";
@@ -24,6 +26,27 @@ interface Props {
 
 export function SortPill({ pill, sortBy, sortDir, isOpen, onToggle, onClose, onChange }: Props) {
   const isActive = sortBy === pill.key;
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCoords(null);
+      return;
+    }
+    const update = () => {
+      if (!buttonRef.current) return;
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({ top: rect.bottom + 4, left: rect.left });
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [isOpen]);
 
   const reset = () => onChange(null, null);
   const pickDefault = () => { reset(); onClose(); };
@@ -38,6 +61,7 @@ export function SortPill({ pill, sortBy, sortDir, isOpen, onToggle, onClose, onC
   return (
     <div className={s.wrap}>
       <button
+        ref={buttonRef}
         type="button"
         className={`${s.pill} ${showActiveStyle ? s.pillActive : ""}`}
         onClick={onToggle}
@@ -56,12 +80,17 @@ export function SortPill({ pill, sortBy, sortDir, isOpen, onToggle, onClose, onC
         )}
       </button>
 
-      {isOpen && (
-        <div className={s.menu}>
+      {isOpen && coords && typeof document !== "undefined" && createPortal(
+        <div
+          className={s.menu}
+          style={{ position: "fixed", top: coords.top, left: coords.left }}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
           <Option checked={checkedDefault} onClick={pickDefault} text="По умолчанию" />
           <Option checked={checkedDesc}    onClick={pickDesc}    text={pill.descLabel} />
           <Option checked={checkedAsc}     onClick={pickAsc}     text={pill.ascLabel} />
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

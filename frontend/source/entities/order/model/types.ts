@@ -25,6 +25,8 @@ export interface OrderApiItem {
   technical_files: string[];
   badges: OrderApiBadge[];
   status: string;
+  assigned_expert_id: number | null;
+  assigned_expert_name?: string;
 }
 
 export interface OrdersApiList {
@@ -48,4 +50,5 @@ export interface OrderCardData {
   badges: Badge[];
   badgesRaw: OrderApiBadge[];
   status: string;
+  assignedExpertName: string;
 }

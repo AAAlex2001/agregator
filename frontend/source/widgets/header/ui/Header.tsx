@@ -17,11 +17,13 @@ const NAV: Record<string, { href: string; label: string }[]> = {
   CUSTOMER: [
     { href: "/customer/orders", label: "Мои заказы" },
     { href: "/responses", label: "Отклики" },
+    { href: "/archive", label: "Архив" },
   ],
   EXPERT: [
     { href: "/expert/orders", label: "Все заказы" },
     { href: "/responses", label: "Мои отклики" },
     { href: "/expert/reviews", label: "Отзывы" },
+    { href: "/archive", label: "Архив" },
   ],
 };
 

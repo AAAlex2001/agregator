@@ -15,6 +15,7 @@ export function CabinetMenuTabs() {
   const activeKey: CabinetMenuKey | null =
     pathname === "/settings" ? "profile" :
     pathname.startsWith("/chat") ? "chat" :
+    pathname.startsWith("/archive") ? "archive" :
     pathname.startsWith("/expert/reviews") ? "reviews" :
     pathname === "/responses" ? "responses" :
     pathname.startsWith("/customer") || pathname.startsWith("/expert") ? "orders" :
@@ -27,6 +28,7 @@ export function CabinetMenuTabs() {
       href: role === "EXPERT" ? "/expert/orders" : "/customer/orders",
     },
     { key: "responses" as const, label: "Отклики", href: "/responses" },
+    { key: "archive" as const, label: "Архив", href: "/archive" },
     ...(role === "EXPERT"
       ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }]
       : []),

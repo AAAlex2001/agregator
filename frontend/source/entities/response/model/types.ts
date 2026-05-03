@@ -1,5 +1,5 @@
 export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
-export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted" | "completed";
+export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted";
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 export type UserRole = "expert" | "customer";
 export type CustomerSortBy = "created_at" | "proposed_sum_amount" | "expert_rating";
@@ -12,7 +12,6 @@ export interface ResponseCounters {
   in_progress: number;
   rejected: number;
   accepted: number;
-  completed: number;
 }
 
 export interface ResponseApiBadge { text: string; variant: string }

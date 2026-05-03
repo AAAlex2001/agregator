@@ -9,7 +9,7 @@ import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
 
-const VALID_TABS: ResponseTabKey[] = ["review", "in_progress", "rejected", "accepted", "completed"];
+const VALID_TABS: ResponseTabKey[] = ["review", "in_progress", "rejected", "accepted"];
 
 const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>> = {
   expert: [
@@ -17,14 +17,12 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
     { key: "in_progress", label: "В работе" },
     { key: "rejected", label: "Отклоненные" },
     { key: "accepted", label: "В переговорах" },
-    { key: "completed", label: "Завершены" },
   ],
   customer: [
     { key: "review", label: "Новые" },
     { key: "in_progress", label: "В работе" },
     { key: "rejected", label: "Отклоненные" },
     { key: "accepted", label: "В переговорах" },
-    { key: "completed", label: "Завершены" },
   ],
 };
 
