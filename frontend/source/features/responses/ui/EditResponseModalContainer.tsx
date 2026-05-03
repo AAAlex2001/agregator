@@ -31,6 +31,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
   return {
     id: response.orderId,
     publicId: response.orderPublicId,
+    customerId: 0,
     title: response.orderTitle,
     customer: response.customer,
     company: response.customer,
@@ -44,6 +45,18 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     badges: response.badges,
     badgesRaw: response.badges.map((badge) => ({ text: badge.text, variant: badge.variant })),
     status: response.rawStatus,
+    assignedExpertName: "",
+    executorName: "",
+    executorAvatarUrl: null,
+    executorRating: null,
+    executorReviewCount: 0,
+    executorPublicId: "",
+    executorProposedSum: "",
+    executorProposedDeadline: "",
+    executorComment: "",
+    executorFiles: [],
+    acceptedResponseId: null,
+    customerHasReview: false,
   };
 }
 
