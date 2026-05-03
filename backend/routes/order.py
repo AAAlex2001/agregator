@@ -86,7 +86,7 @@ async def get_archived_orders(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    _: int = Depends(get_current_user),
+    user_id: int = Depends(get_current_user),
 ):
     use_case = ListArchivedOrdersUseCase(build_repo(db))
     orders, total = await use_case.execute(skip, limit)
