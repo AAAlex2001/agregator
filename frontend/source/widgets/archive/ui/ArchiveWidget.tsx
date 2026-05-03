@@ -1,16 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useArchive } from "@/source/features/archive-orders";
-import { OrderCard } from "@/source/entities/order";
 import { ResponsesSwiper } from "@/widgets/responses-swiper";
 import { ResponsesSkeleton } from "@/source/widgets/responses/ui/ResponsesSkeleton";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { ArchivedCard } from "./ArchivedCard";
 import s from "./ArchiveWidget.module.scss";
 
 export function ArchiveWidget() {
-  const router = useRouter();
   const { items, isLoading, error } = useArchive();
 
   return (
@@ -39,19 +37,7 @@ export function ArchiveWidget() {
             <ResponsesSwiper
               items={items}
               getKey={(item) => item.id}
-              renderItem={(item) => (
-                <OrderCard
-                  archived
-                  executor={item.assignedExpertName}
-                  badges={item.badges}
-                  title={item.title}
-                  customer={item.customer}
-                  date={item.date}
-                  sum={item.sum}
-                  responsesDeadline={item.responsesDeadline}
-                  onClick={() => router.push(`/orders/${item.publicId}`)}
-                />
-              )}
+              renderItem={(item) => <ArchivedCard card={item} />}
             />
           )}
         </div>

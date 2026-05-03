@@ -10,8 +10,6 @@ interface Props {
   responsesDeadline?: string | null;
   onClick?: () => void;
   children?: React.ReactNode;
-  archived?: boolean;
-  executor?: string;
 }
 
 function formatResponsesDeadline(iso: string): string {
@@ -35,13 +33,9 @@ export function OrderCard({
   responsesDeadline,
   onClick,
   children,
-  archived,
-  executor,
 }: Props) {
   return (
     <article className={s.card} onClick={onClick}>
-      {archived && <span className={s.archivedBadge}>Архив</span>}
-
       <div className={s.badges}>
         {badges.map((badge, index) => (
           <span key={index} className={`${s.badge} ${s[badge.variant]}`}>
@@ -50,33 +44,28 @@ export function OrderCard({
         ))}
       </div>
 
-      <p className={s.title}>{title}</p>
+      <div className={s.titleBlock}>
+        <span className={s.label}>Название заказа:</span>
+        <p className={s.title}>{title}</p>
+      </div>
 
       <ul className={s.meta}>
         <li>
           <span className={s.label}>Компания:</span>
           <span className={s.value}>{customer || "—"}</span>
         </li>
-        {executor !== undefined && (
-          <li>
-            <span className={s.label}>Исполнитель:</span>
-            <span className={s.value}>{executor || "—"}</span>
-          </li>
-        )}
         <li>
-          <span className={s.label}>Срок выполнения:</span>
+          <span className={s.label}>Дедлайн:</span>
           <span className={s.value}>{date}</span>
         </li>
-        {!archived && (
-          <li>
-            <span className={s.label}>Срок истечения приёма откликов:</span>
-            <span className={s.value}>
-              {responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—"}
-            </span>
-          </li>
-        )}
         <li>
-          <span className={s.label}>Сумма:</span>
+          <span className={s.label}>Срок истечения приёма откликов:</span>
+          <span className={s.value}>
+            {responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—"}
+          </span>
+        </li>
+        <li>
+          <span className={s.label}>Начальная максимальная цена:</span>
           <span className={s.value}>{sum}</span>
         </li>
       </ul>

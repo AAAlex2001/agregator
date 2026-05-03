@@ -25,18 +25,10 @@
   }
 }
 
-.archivedBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 4px 10px;
-  border-radius: 8px;
-  background: #FFF8EB;
-  color: #FF8A00;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 0.02em;
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .badges {
