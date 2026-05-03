@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "@/shared/ui/icons";
+import { StarIcon } from "@/source/shared/ui/icons";
 import styles from "./reviewCard.module.scss";
 
 export interface ReviewCardProps {

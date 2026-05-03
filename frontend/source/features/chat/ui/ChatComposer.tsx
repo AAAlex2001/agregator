@@ -11,15 +11,16 @@ import s from "./ChatComposer.module.scss";
 interface ChatComposerProps {
   chatUuid: string;
   isBlocked?: boolean;
+  blockedText?: string;
   onSent: (message: ChatMessageData) => void;
 }
 
 const ACCEPT = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const MAX_FILES = 6;
-const BLOCKED_TEXT = "Чат по этому заказу завершен";
+const DEFAULT_BLOCKED_TEXT = "Чат по этому заказу завершен";
 
-export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatComposerProps) {
+export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAULT_BLOCKED_TEXT, onSent }: ChatComposerProps) {
   const [text, setText] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
@@ -84,7 +85,7 @@ export function ChatComposer({ chatUuid, isBlocked = false, onSent }: ChatCompos
     return (
       <div className={s.wrap}>
         <div className={`${s.bar} ${s.barBlocked}`}>
-          <p className={s.blockedText}>{BLOCKED_TEXT}</p>
+          <p className={s.blockedText}>{blockedText}</p>
         </div>
       </div>
     );

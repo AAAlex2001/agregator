@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./button.module.scss";
-import { ArrowIcon } from "@/shared/ui/icons";
+import { ArrowIcon } from "@/source/shared/ui/icons";
 import Loader from "../Loader";
 
 type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline" | "outlineOrange" | "green" | "transparent";

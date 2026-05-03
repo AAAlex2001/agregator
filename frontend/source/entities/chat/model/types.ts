@@ -54,5 +54,6 @@ export interface ChatDetailData {
   counterpart_avatar_url: string | null;
   response_status: ChatResponseStatus | null;
   is_blocked: boolean;
+  is_manually_blocked: boolean;
   messages: ChatMessageData[];
 }

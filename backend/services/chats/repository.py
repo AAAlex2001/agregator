@@ -215,6 +215,14 @@ class ChatRepository:
         )
         await self.db.flush()
 
+    async def unblock_chat(self, chat_id: int) -> None:
+        await self.db.execute(
+            update(Chat)
+            .where(Chat.id == chat_id)
+            .values(is_blocked=False)
+        )
+        await self.db.flush()
+
     async def add(self, entity) -> None:
         self.db.add(entity)
 

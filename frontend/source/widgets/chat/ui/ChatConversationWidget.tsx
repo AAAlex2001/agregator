@@ -39,7 +39,10 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
   const isCustomer = user?.role === "CUSTOMER";
   const { chat, messages, loading, error, threadRef, appendMessage, replaceChat } = useChatThread(chatUuid, currentUserId);
   const groups = groupMessages(messages);
-  const canBlockChat = isCustomer && chat ? chat.customer_id === currentUserId && !chat.is_blocked : false;
+  const canManageChatBlock = isCustomer && chat ? chat.customer_id === currentUserId : false;
+  const blockedText = !isCustomer && chat?.is_manually_blocked
+    ? "Заказчик вас заблокировал."
+    : undefined;
 
   if (loading) {
     return <ChatConversationSkeleton />;
@@ -65,8 +68,12 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
           />
         ) : null}
 
-        {canBlockChat && chat ? (
-          <ChatBlockButton chatUuid={chat.uuid} onBlocked={replaceChat} />
+        {canManageChatBlock && chat ? (
+          <ChatBlockButton
+            chatUuid={chat.uuid}
+            isBlocked={chat.is_manually_blocked}
+            onChanged={replaceChat}
+          />
         ) : null}
       </div>
 
@@ -93,7 +100,14 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
         )}
       </div>
 
-      {chat ? <ChatComposer chatUuid={chat.uuid} isBlocked={chat.is_blocked} onSent={appendMessage} /> : null}
+      {chat ? (
+        <ChatComposer
+          chatUuid={chat.uuid}
+          isBlocked={chat.is_blocked}
+          blockedText={blockedText}
+          onSent={appendMessage}
+        />
+      ) : null}
     </div>
   );
 }

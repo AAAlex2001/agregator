@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import Image from "next/image";
 import styles from "./card.module.scss";
-import { ChevronIcon } from "@/shared/ui/icons";
+import { ChevronIcon } from "@/source/shared/ui/icons";
 
 type CardVariant = "review" | "industry" | "advantage" | "order";
 

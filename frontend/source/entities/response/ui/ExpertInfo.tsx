@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { StarIcon } from "@/shared/ui/icons";
+import { StarIcon } from "@/source/shared/ui/icons";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import s from "./ExpertInfo.module.scss";
 

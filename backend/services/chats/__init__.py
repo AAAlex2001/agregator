@@ -7,6 +7,7 @@ from services.chats.use_cases.get_chat_detail import GetChatDetailUseCase
 from services.chats.use_cases.list_chats import ListChatsUseCase
 from services.chats.use_cases.mark_messages_read import MarkMessagesReadUseCase
 from services.chats.use_cases.block_chat import BlockChatUseCase
+from services.chats.use_cases.unblock_chat import UnblockChatUseCase
 from services.chats.use_cases.open_chat import OpenChatUseCase
 from services.chats.use_cases.send_message import SendMessageUseCase
 from services.chats.validators import ChatValidator
@@ -18,6 +19,7 @@ __all__ = [
     "ChatRepository",
     "ChatValidator",
     "BlockChatUseCase",
+    "UnblockChatUseCase",
     "GetChatByUuidUseCase",
     "GetChatDetailUseCase",
     "ListChatsUseCase",

@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./swiper-navigation.module.scss";
-import { ArrowIcon } from "@/shared/ui/icons";
+import { ArrowIcon } from "@/source/shared/ui/icons";
 
 interface SwiperNavigationProps {
   prevClassName: string;

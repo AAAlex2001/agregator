@@ -6,7 +6,7 @@ import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
-import { ArrowIcon } from "@/shared/ui/icons";
+import { ArrowIcon } from "@/source/shared/ui/icons";
 import styles from "./responses-swiper.module.scss";
 
 interface ResponsesSwiperProps<T> {

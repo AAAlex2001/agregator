@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatSearchIcon } from "@/shared/ui/icons";
+import { ChatSearchIcon } from "@/source/shared/ui/icons";
 import styles from "./chat-search-input.module.scss";
 
 interface ChatSearchInputProps {

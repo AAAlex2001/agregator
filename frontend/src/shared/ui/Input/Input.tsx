@@ -8,7 +8,7 @@ import {
   LockIcon,
   EyeOpenIcon,
   EyeClosedIcon,
-} from "@/shared/ui/icons";
+} from "@/source/shared/ui/icons";
 import styles from "./input.module.scss";
 
 export type InputVariant = "text" | "email" | "phone" | "emailOrPhone" | "password" | "code";

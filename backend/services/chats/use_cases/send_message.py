@@ -1,6 +1,7 @@
 from fastapi import HTTPException, UploadFile, status
 
 from models.chat import Chat, ChatMessage
+from models.order import OrderStatus
 from schemas.chat import ChatAttachmentData, ChatMessageResponse
 from services.chats.file_storage import ChatFileStorage
 from services.chats.formatters import ChatFormatter
@@ -37,7 +38,7 @@ class SendMessageUseCase:
         self.ensure_not_empty(normalized_text, non_empty_uploads)
 
         chat = await self.require_chat(chat_id, sender_id)
-        await self.ensure_chat_not_blocked(chat_id)
+        self.ensure_chat_not_blocked(chat)
         attachments = await self.save_attachments(chat_id, non_empty_uploads)
 
         mark_as_read = recipient_online
@@ -78,8 +79,14 @@ class SendMessageUseCase:
             status_code=status.HTTP_404_NOT_FOUND, detail="Чат не найден"
         )
 
-    async def ensure_chat_not_blocked(self, chat_id: int) -> None:
-        if not await self.repo.is_chat_blocked(chat_id):
+    @staticmethod
+    def ensure_chat_not_blocked(chat: Chat) -> None:
+        if chat.is_blocked:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Заказчик вас заблокировал.",
+            )
+        if chat.order is None or chat.order.status != OrderStatus.COMPLETED:
             return
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

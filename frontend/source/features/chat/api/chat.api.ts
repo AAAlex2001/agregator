@@ -75,6 +75,18 @@ export async function blockChat(chatUuid: string): Promise<ChatDetailData> {
   return (await response.json()) as ChatDetailData;
 }
 
+export async function unblockChat(chatUuid: string): Promise<ChatDetailData> {
+  const response = await fetchWithSession(`${API_URL}/chats/${chatUuid}/unblock`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось разблокировать чат");
+  }
+
+  return (await response.json()) as ChatDetailData;
+}
+
 export async function sendChatMessage(
   chatUuid: string,
   text: string,

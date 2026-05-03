@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "@/shared/ui/icons";
+import { PlusIcon } from "@/source/shared/ui/icons";
 import styles from "./accordion.module.scss";
 
 interface AccordionItem {

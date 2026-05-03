@@ -22,6 +22,7 @@ from services.chats import (
     OpenChatUseCase,
     SendMessageUseCase,
     BlockChatUseCase,
+    UnblockChatUseCase,
 )
 from services.email import (
     EmailDispatcher,
@@ -57,6 +58,10 @@ def build_mark_read(db: AsyncSession) -> MarkMessagesReadUseCase:
 
 def build_block_chat(db: AsyncSession) -> BlockChatUseCase:
     return BlockChatUseCase(build_repo(db))
+
+
+def build_unblock_chat(db: AsyncSession) -> UnblockChatUseCase:
+    return UnblockChatUseCase(build_repo(db))
 
 
 async def broadcast_read(chat_id: int, read_ids: list[int]) -> None:
@@ -118,6 +123,17 @@ async def block_chat(
 ):
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     await build_block_chat(db).execute(chat_id=chat.id, actor_id=user_id)
+    return await build_get_chat_detail(db).execute(chat_id=chat.id, actor_id=user_id, limit=200)
+
+
+@router.post("/{chat_uuid}/unblock", response_model=ChatDetailResponse)
+async def unblock_chat(
+    chat_uuid: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
+    await build_unblock_chat(db).execute(chat_id=chat.id, actor_id=user_id)
     return await build_get_chat_detail(db).execute(chat_id=chat.id, actor_id=user_id, limit=200)
 
 
