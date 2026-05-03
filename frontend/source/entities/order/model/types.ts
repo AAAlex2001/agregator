@@ -27,6 +27,17 @@ export interface OrderApiItem {
   status: string;
   assigned_expert_id: number | null;
   assigned_expert_name?: string;
+  executor_name?: string;
+  executor_avatar_url?: string | null;
+  executor_rating?: number | null;
+  executor_review_count?: number;
+  executor_public_id?: string;
+  executor_proposed_sum?: string;
+  executor_proposed_deadline?: string;
+  executor_comment?: string;
+  executor_files?: string[];
+  accepted_response_id?: number | null;
+  customer_has_review?: boolean;
 }
 
 export interface OrdersApiList {
@@ -37,6 +48,7 @@ export interface OrdersApiList {
 export interface OrderCardData {
   id: number;
   publicId: string;
+  customerId: number;
   title: string;
   customer: string;
   company: string;
@@ -51,4 +63,15 @@ export interface OrderCardData {
   badgesRaw: OrderApiBadge[];
   status: string;
   assignedExpertName: string;
+  executorName: string;
+  executorAvatarUrl: string | null;
+  executorRating: number | null;
+  executorReviewCount: number;
+  executorPublicId: string;
+  executorProposedSum: string;
+  executorProposedDeadline: string;
+  executorComment: string;
+  executorFiles: string[];
+  acceptedResponseId: number | null;
+  customerHasReview: boolean;
 }

@@ -88,7 +88,7 @@ class OrderRepository:
         skip: int,
         limit: int,
     ) -> tuple[list[Order], int]:
-        "Список архивных заказов — виден всем авторизованным."
+        "Список архивных заказов — виден всем авторизованным. Подгружает принятого исполнителя и его отклик."
         count_query = (
             select(func.count(Order.id))
             .where(Order.status == OrderStatus.ARCHIVED)
@@ -99,6 +99,7 @@ class OrderRepository:
                 selectinload(Order.badges),
                 selectinload(Order.customer),
                 selectinload(Order.assigned_expert),
+                selectinload(Order.responses).selectinload(OrderResponseModel.expert),
             )
             .where(Order.status == OrderStatus.ARCHIVED)
             .order_by(Order.updated_at.desc())
@@ -108,6 +109,23 @@ class OrderRepository:
         total = (await self.db.execute(count_query)).scalar_one()
         rows = (await self.db.execute(list_query)).scalars().unique().all()
         return list(rows), total
+
+    async def reviewed_response_ids(
+        self, customer_id: int, response_ids: list[int]
+    ) -> set[int]:
+        "Какие из указанных откликов уже получили отзыв от данного customer'а."
+        if not response_ids:
+            return set()
+        from models.review import Review
+        query = (
+            select(Review.response_id)
+            .where(
+                Review.customer_id == customer_id,
+                Review.response_id.in_(response_ids),
+            )
+            .group_by(Review.response_id)
+        )
+        return set((await self.db.execute(query)).scalars().all())
 
     async def get_user_role(self, user_id: int) -> UserRole | None:
         query = select(User.role).where(User.id == user_id)

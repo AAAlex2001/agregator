@@ -97,6 +97,18 @@ class OrderResponse(BaseModel):
     badges: list[BadgeResponse]
     status: OrderStatus
 
+    executor_name: str = ""
+    executor_avatar_url: str | None = None
+    executor_rating: float | None = None
+    executor_review_count: int = 0
+    executor_public_id: str = ""
+    executor_proposed_sum: str = ""
+    executor_proposed_deadline: str = ""
+    executor_comment: str = ""
+    executor_files: list[str] = []
+    accepted_response_id: int | None = None
+    customer_has_review: bool = False
+
     model_config = {"from_attributes": True}
 
     @staticmethod
@@ -109,14 +121,35 @@ class OrderResponse(BaseModel):
         return f"{formatted} \u20bd"
 
     @classmethod
-    def from_archived_order(cls, order) -> "OrderResponse":
-        "Архивная карточка — добавляет имя исполнителя. Требует selectinload(Order.assigned_expert)."
+    def from_archived_order(
+        cls,
+        order,
+        accepted_response=None,
+        has_review: bool = False,
+    ) -> "OrderResponse":
+        "Архивная карточка: данные заказа + исполнитель + его отклик + отметка об отзыве."
         base = cls.from_order(order)
+        update: dict = {}
+
         expert = order.assigned_expert
-        if expert is None:
-            return base
-        full_name = " ".join(part for part in [expert.first_name or "", expert.last_name or ""] if part)
-        return base.model_copy(update={"assigned_expert_name": full_name})
+        if expert is not None:
+            full_name = " ".join(part for part in [expert.first_name or "", expert.last_name or ""] if part)
+            update["assigned_expert_name"] = full_name
+            update["executor_name"] = full_name
+            update["executor_avatar_url"] = expert.avatar_url
+            update["executor_rating"] = float(expert.rating) if expert.rating is not None else None
+            update["executor_review_count"] = expert.review_count or 0
+            update["executor_public_id"] = expert.public_id or ""
+
+        if accepted_response is not None:
+            update["accepted_response_id"] = accepted_response.id
+            update["executor_proposed_sum"] = cls._format_sum(accepted_response.proposed_sum_amount)
+            update["executor_proposed_deadline"] = accepted_response.proposed_deadline.strftime("%d.%m.%Y")
+            update["executor_comment"] = accepted_response.comment or ""
+            update["executor_files"] = list(accepted_response.technical_files or [])
+
+        update["customer_has_review"] = has_review
+        return base.model_copy(update=update)
 
     @classmethod
     def from_order(cls, order) -> "OrderResponse":

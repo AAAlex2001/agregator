@@ -23,6 +23,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
   return {
     id:                  item.id,
     publicId:            item.public_id,
+    customerId:          item.customer_id,
     title:               item.title,
     customer:            item.company || item.customer_name,
     company:             item.company,
@@ -40,5 +41,16 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     badgesRaw:           item.badges,
     status:              item.status,
     assignedExpertName:  item.assigned_expert_name ?? "",
+    executorName:        item.executor_name ?? "",
+    executorAvatarUrl:   item.executor_avatar_url ?? null,
+    executorRating:      item.executor_rating ?? null,
+    executorReviewCount: item.executor_review_count ?? 0,
+    executorPublicId:    item.executor_public_id ?? "",
+    executorProposedSum: item.executor_proposed_sum ?? "",
+    executorProposedDeadline: item.executor_proposed_deadline ?? "",
+    executorComment:     item.executor_comment ?? "",
+    executorFiles:       resolveFileUrls(item.executor_files ?? []),
+    acceptedResponseId:  item.accepted_response_id ?? null,
+    customerHasReview:   item.customer_has_review ?? false,
   };
 }

@@ -89,9 +89,12 @@ async def get_archived_orders(
     user_id: int = Depends(get_current_user),
 ):
     use_case = ListArchivedOrdersUseCase(build_repo(db))
-    orders, total = await use_case.execute(skip, limit)
+    items, total = await use_case.execute(skip, limit, current_user_id=user_id)
     return OrderListResponse(
-        items=[OrderResponse.from_archived_order(o) for o in orders],
+        items=[
+            OrderResponse.from_archived_order(it.order, it.accepted_response, it.has_review)
+            for it in items
+        ],
         total=total,
     )
 

@@ -5,11 +5,18 @@ import { ResponsesSwiper } from "@/widgets/responses-swiper";
 import { ResponsesSkeleton } from "@/source/widgets/responses/ui/ResponsesSkeleton";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { useNotifications } from "@/source/shared/ui/Notifications";
+import { AddReviewModalContainer } from "@/source/features/reviews";
 import { ArchivedCard } from "./ArchivedCard";
 import s from "./ArchiveWidget.module.scss";
 
 export function ArchiveWidget() {
-  const { items, isLoading, error } = useArchive();
+  const { showSuccess, showError } = useNotifications();
+  const {
+    items, isLoading, error,
+    reviewTarget, canLeaveReviewFor,
+    openReview, closeReview, submitReview,
+  } = useArchive();
 
   return (
     <div className={s.wrapper}>
@@ -28,20 +35,39 @@ export function ArchiveWidget() {
             </div>
           ) : items.length === 0 ? (
             <div className={s.empty}>
-              <EmptyStateCard
-                title="Архив пуст"
-                subtitle="Здесь будут завершённые заказы"
-              />
+              <EmptyStateCard title="Архив пуст" subtitle="Здесь будут завершённые заказы" />
             </div>
           ) : (
             <ResponsesSwiper
               items={items}
               getKey={(item) => item.id}
-              renderItem={(item) => <ArchivedCard card={item} />}
+              renderItem={(item) => (
+                <ArchivedCard
+                  card={item}
+                  canLeaveReview={canLeaveReviewFor(item)}
+                  onLeaveReview={() => openReview(item)}
+                />
+              )}
             />
           )}
         </div>
       </div>
+
+      <AddReviewModalContainer
+        isOpen={reviewTarget !== null}
+        customerName={reviewTarget?.customer ?? ""}
+        orderTitle={reviewTarget?.title ?? ""}
+        expertName={reviewTarget?.executorName ?? ""}
+        onClose={closeReview}
+        onSubmit={async (payload) => {
+          try {
+            await submitReview(payload);
+            showSuccess("Отзыв успешно опубликован");
+          } catch (e) {
+            showError(e instanceof Error ? e.message : "Не удалось оставить отзыв");
+          }
+        }}
+      />
     </div>
   );
 }
