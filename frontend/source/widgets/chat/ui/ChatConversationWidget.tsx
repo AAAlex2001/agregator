@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { ArrowIcon } from "@/source/shared/ui/icons";
 import { MessageGroup, type ChatMessageData, type ChatMessageGroupData } from "@/source/entities/chat";
-import { ChatComposer, ChatOrderBanner, useChatThread } from "@/source/features/chat";
+import { ChatBlockButton, ChatComposer, ChatOrderBanner, useChatThread } from "@/source/features/chat";
 import { ChatConversationSkeleton } from "./ChatConversationSkeleton";
 import s from "./ChatConversationWidget.module.scss";
 
@@ -36,8 +36,10 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
   const router = useRouter();
   const { user } = useSession();
   const currentUserId = user?.id ?? 0;
-  const { chat, messages, loading, error, threadRef, appendMessage } = useChatThread(chatUuid, currentUserId);
+  const isCustomer = user?.role === "CUSTOMER";
+  const { chat, messages, loading, error, threadRef, appendMessage, replaceChat } = useChatThread(chatUuid, currentUserId);
   const groups = groupMessages(messages);
+  const canBlockChat = isCustomer && chat ? chat.customer_id === currentUserId && !chat.is_blocked : false;
 
   if (loading) {
     return <ChatConversationSkeleton />;
@@ -61,6 +63,10 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
             badges={chat.order_badges}
             responseStatus={chat.response_status}
           />
+        ) : null}
+
+        {canBlockChat && chat ? (
+          <ChatBlockButton chatUuid={chat.uuid} onBlocked={replaceChat} />
         ) : null}
       </div>
 

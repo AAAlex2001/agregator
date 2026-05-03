@@ -129,5 +129,10 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
     }
   }
 
-  return { chat, messages, loading, error, threadRef, appendMessage };
+  function replaceChat(nextChat: ChatDetailData) {
+    setChat(nextChat);
+    setMessages(nextChat.messages);
+  }
+
+  return { chat, messages, loading, error, threadRef, appendMessage, replaceChat };
 }

@@ -194,17 +194,25 @@ class ChatRepository:
             update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(timezone.utc))
         )
 
-    async def is_blocked_by_completed_order(self, chat_id: int) -> bool:
+    async def is_chat_blocked(self, chat_id: int) -> bool:
         query = (
-            select(Order.status)
-            .join(Chat, Chat.order_id == Order.id)
+            select(Chat.is_blocked, Order.status)
+            .select_from(Chat)
+            .join(Order, Order.id == Chat.order_id)
             .where(Chat.id == chat_id)
         )
-        order_status = (await self.db.execute(query)).scalar_one_or_none()
-        return order_status == OrderStatus.COMPLETED
+        row = (await self.db.execute(query)).first()
+        if row is None:
+            return False
+        is_blocked, order_status = row
+        return is_blocked or order_status == OrderStatus.COMPLETED
 
     async def block_chat(self, chat_id: int) -> None:
-        await self.db.execute(update(Chat).where(Chat.id == chat_id).values(is_blocked=True))
+        await self.db.execute(
+            update(Chat)
+            .where(Chat.id == chat_id)
+            .values(is_blocked=True)
+        )
         await self.db.flush()
 
     async def add(self, entity) -> None:

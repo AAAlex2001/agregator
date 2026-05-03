@@ -21,6 +21,7 @@ from services.chats import (
     MarkMessagesReadUseCase,
     OpenChatUseCase,
     SendMessageUseCase,
+    BlockChatUseCase,
 )
 from services.email import (
     EmailDispatcher,
@@ -52,6 +53,10 @@ def build_get_chat_detail(db: AsyncSession) -> GetChatDetailUseCase:
 
 def build_mark_read(db: AsyncSession) -> MarkMessagesReadUseCase:
     return MarkMessagesReadUseCase(build_repo(db))
+
+
+def build_block_chat(db: AsyncSession) -> BlockChatUseCase:
+    return BlockChatUseCase(build_repo(db))
 
 
 async def broadcast_read(chat_id: int, read_ids: list[int]) -> None:
@@ -104,6 +109,16 @@ async def get_chat(
     read_ids = await build_mark_read(db).execute(chat_id=chat.id, reader_id=user_id)
     await broadcast_read(chat.id, read_ids)
     return detail
+
+@router.post("/{chat_uuid}/block", response_model=ChatDetailResponse)
+async def block_chat(
+    chat_uuid: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
+    await build_block_chat(db).execute(chat_id=chat.id, actor_id=user_id)
+    return await build_get_chat_detail(db).execute(chat_id=chat.id, actor_id=user_id, limit=200)
 
 
 @router.get("/{chat_uuid}/presence", response_model=ChatPresenceResponse)

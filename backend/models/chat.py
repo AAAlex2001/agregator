@@ -26,6 +26,7 @@ class Chat(Base):
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
+    is_blocked = Column(Boolean, default=False, nullable=False, server_default="false")
 
     order = relationship("Order", back_populates="chats")
     customer = relationship("User", foreign_keys=[customer_id], back_populates="customer_chats")

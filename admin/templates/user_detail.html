@@ -48,6 +48,57 @@
         {{ model_view.render_company_data(model.company_data) }}
       </div>
 
+      <div class="mt-4">
+        <h3 class="card-title mb-3">Управление подпиской</h3>
+        {% set current_subscription = model_view.current_active_subscription(model.id) %}
+        {% set pricing_plans = model_view.active_pricing_plans() %}
+        <div class="card">
+          <div class="card-body">
+            {% if current_subscription %}
+              <div class="mb-3">
+                <span class="badge bg-green-lt">Активная подписка</span>
+                <div class="mt-2">
+                  <strong>{{ current_subscription.plan.name if current_subscription.plan else current_subscription.kind }}</strong>
+                  · {{ current_subscription.status }}
+                  {% if current_subscription.expires_at %}
+                    · до {{ current_subscription.expires_at.strftime("%d.%m.%Y %H:%M") }}
+                  {% endif %}
+                  {% if current_subscription.responses_remaining is not none %}
+                    · откликов: {{ current_subscription.responses_remaining }}
+                  {% endif %}
+                </div>
+              </div>
+            {% else %}
+              <div class="mb-3 text-muted">Активной подписки нет.</div>
+            {% endif %}
+
+            {% if pricing_plans %}
+              <form action="{{ url_for('grant_user_subscription', user_id=model.id) }}" method="POST" class="row g-2 align-items-end">
+                <div class="col-md-8">
+                  <label class="form-label" for="plan_id">Выдать тариф</label>
+                  <select id="plan_id" name="plan_id" class="form-select" required>
+                    {% for plan in pricing_plans %}
+                      <option value="{{ plan.id }}">
+                        {{ plan.name }} · {{ plan.kind }} · {{ "%.0f"|format(plan.price_kopecks / 100) }} ₽
+                        {% if plan.duration_days %} · {{ plan.duration_days }} дн.{% endif %}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary">Выдать подписку</button>
+                </div>
+              </form>
+              <div class="form-hint mt-2">
+                При выдаче новой подписки текущая активная подписка пользователя будет переведена в статус «Истекла».
+              </div>
+            {% else %}
+              <div class="alert alert-warning mb-0">Нет активных тарифов для выдачи.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
       <div class="card-footer container mt-4">
         <div class="row row-gap-2">
           <div class="col-auto">

@@ -1,11 +1,12 @@
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from markupsafe import Markup, escape
-from fastapi import FastAPI
+from fastapi import FastAPI, Form, HTTPException
 from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
+from starlette.responses import RedirectResponse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import selectinload, sessionmaker
 
@@ -14,6 +15,7 @@ from models import (
     Payment, PricingPlan, UserSubscription, Review, Session, PasswordResetCode,
     LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
     LandingAdvantage, LandingIndustry, LandingReview, LandingFaq, LandingPricingContent,
+    SubscriptionKind, SubscriptionStatus,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -62,6 +64,59 @@ admin = Admin(
 )
 
 
+@app.post("/admin/users/{user_id}/subscriptions/grant", name="grant_user_subscription")
+async def grant_user_subscription(
+    request: Request,
+    user_id: int,
+    plan_id: int = Form(...),
+):
+    if not request.session.get("authenticated", False):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    with SessionLocal() as db:
+        user = db.get(User, user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail="Пользователь не найден")
+
+        plan = db.get(PricingPlan, plan_id)
+        if plan is None or not plan.is_active:
+            raise HTTPException(status_code=404, detail="Активный тариф не найден")
+
+        now = datetime.now(timezone.utc)
+        (
+            db.query(UserSubscription)
+            .filter(
+                UserSubscription.user_id == user_id,
+                UserSubscription.status == SubscriptionStatus.ACTIVE,
+            )
+            .update(
+                {
+                    UserSubscription.status: SubscriptionStatus.EXPIRED,
+                    UserSubscription.updated_at: now,
+                },
+                synchronize_session=False,
+            )
+        )
+        db.add(
+            UserSubscription(
+                user_id=user_id,
+                plan_id=plan.id,
+                kind=plan.kind,
+                status=SubscriptionStatus.ACTIVE,
+                activated_at=now,
+                expires_at=compute_subscription_expires_at(plan, now),
+                responses_remaining=compute_subscription_responses_remaining(plan.kind),
+                payment_id=None,
+            )
+        )
+        db.commit()
+
+    return RedirectResponse(
+        request.headers.get("referer") or f"/admin/user/details/{user_id}",
+        status_code=303,
+    )
+
+
 # ========== УТИЛИТЫ ==========
 
 def format_technical_files(m, a):
@@ -97,6 +152,20 @@ def format_json_payload(value):
     return Markup(
         f'<pre style="white-space:pre-wrap;word-break:break-word;max-width:960px;font-size:12px;line-height:1.5">{escape(pretty)}</pre>'
     )
+
+
+def compute_subscription_expires_at(plan: PricingPlan, now: datetime) -> datetime | None:
+    if plan.kind == SubscriptionKind.SINGLE:
+        return None
+    if plan.duration_days is None or plan.duration_days <= 0:
+        return None
+    return now + timedelta(days=plan.duration_days)
+
+
+def compute_subscription_responses_remaining(kind: SubscriptionKind) -> int | None:
+    if kind == SubscriptionKind.SINGLE:
+        return 1
+    return None
 
 
 COMPANY_FIELD_LABELS = {
@@ -550,6 +619,28 @@ class UserAdmin(ModelView, model=User):
 
     def render_company_data(self, company_data):
         return format_company_data(company_data)
+
+    def active_pricing_plans(self):
+        with SessionLocal() as db:
+            return (
+                db.query(PricingPlan)
+                .filter(PricingPlan.is_active.is_(True))
+                .order_by(PricingPlan.sort_order.asc(), PricingPlan.id.asc())
+                .all()
+            )
+
+    def current_active_subscription(self, user_id: int):
+        with SessionLocal() as db:
+            return (
+                db.query(UserSubscription)
+                .options(selectinload(UserSubscription.plan))
+                .filter(
+                    UserSubscription.user_id == user_id,
+                    UserSubscription.status == SubscriptionStatus.ACTIVE,
+                )
+                .order_by(UserSubscription.activated_at.desc(), UserSubscription.id.desc())
+                .first()
+            )
 
 
 class OrderAdmin(ModelView, model=Order):

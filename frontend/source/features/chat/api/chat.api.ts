@@ -63,6 +63,18 @@ export async function openChatByOrder(orderId: number): Promise<ChatDetailData> 
   return (await response.json()) as ChatDetailData;
 }
 
+export async function blockChat(chatUuid: string): Promise<ChatDetailData> {
+  const response = await fetchWithSession(`${API_URL}/chats/${chatUuid}/block`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    return readError(response, "Не удалось заблокировать чат");
+  }
+
+  return (await response.json()) as ChatDetailData;
+}
+
 export async function sendChatMessage(
   chatUuid: string,
   text: string,

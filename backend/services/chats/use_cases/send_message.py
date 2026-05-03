@@ -79,7 +79,7 @@ class SendMessageUseCase:
         )
 
     async def ensure_chat_not_blocked(self, chat_id: int) -> None:
-        if not await self.repo.is_blocked_by_completed_order(chat_id):
+        if not await self.repo.is_chat_blocked(chat_id):
             return
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
