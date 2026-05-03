@@ -27,6 +27,7 @@ class SubscriptionKind(str, PyEnum):
 
 
 class SubscriptionStatus(str, PyEnum):
+    PENDING = "PENDING"
     ACTIVE = "ACTIVE"
     EXPIRED = "EXPIRED"
     USED = "USED"

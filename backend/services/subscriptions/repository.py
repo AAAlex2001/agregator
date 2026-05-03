@@ -56,7 +56,7 @@ class SubscriptionRepository:
         return None
 
     async def find_active_for_user(self, user_id: int) -> UserSubscription | None:
-        "Самая свежая ACTIVE-подписка пользователя с подтверждённым платежом."
+        "Самая свежая ACTIVE-подписка пользователя."
         query = (
             select(UserSubscription)
             .where(
@@ -66,11 +66,7 @@ class SubscriptionRepository:
             .options(selectinload(UserSubscription.plan), selectinload(UserSubscription.payment))
             .order_by(UserSubscription.activated_at.desc())
         )
-        rows = list((await self.db.execute(query)).scalars().all())
-        for row in rows:
-            if row.payment is None or row.payment.status == PaymentStatus.SUCCEEDED:
-                return row
-        return None
+        return (await self.db.execute(query)).scalars().first()
 
     async def find_by_payment_yookassa(self, yookassa_id: str) -> UserSubscription | None:
         query = (

@@ -1,5 +1,5 @@
 export type SubscriptionKind = "SINGLE" | "MONTHLY" | "YEARLY";
-export type SubscriptionStatus = "ACTIVE" | "EXPIRED" | "USED";
+export type SubscriptionStatus = "PENDING" | "ACTIVE" | "EXPIRED" | "USED";
 
 export interface PricingPlan {
   id: number;

@@ -5,6 +5,7 @@ from markupsafe import Markup, escape
 from fastapi import FastAPI, Form, HTTPException
 from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
+from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from sqlalchemy import create_engine
@@ -52,6 +53,7 @@ class AdminAuth(AuthenticationBackend):
 
 # --- FastAPI ---
 app = FastAPI(title="Ресурс-Плюс Админ-панель")
+app.add_middleware(SessionMiddleware, secret_key=ADMIN_SECRET)
 
 authentication_backend = AdminAuth(secret_key=ADMIN_SECRET)
 admin = Admin(
@@ -64,7 +66,7 @@ admin = Admin(
 )
 
 
-@app.post("/admin/users/{user_id}/subscriptions/grant", name="grant_user_subscription")
+@app.post("/admin-actions/users/{user_id}/grant-subscription", name="grant_user_subscription")
 async def grant_user_subscription(
     request: Request,
     user_id: int,
@@ -87,7 +89,9 @@ async def grant_user_subscription(
             db.query(UserSubscription)
             .filter(
                 UserSubscription.user_id == user_id,
-                UserSubscription.status == SubscriptionStatus.ACTIVE,
+                UserSubscription.status.in_(
+                    [SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING]
+                ),
             )
             .update(
                 {

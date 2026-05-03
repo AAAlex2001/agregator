@@ -93,7 +93,7 @@ class PurchaseSubscriptionUseCase:
             user_id=user.id,
             plan_id=plan.id,
             kind=plan.kind,
-            status=SubscriptionStatus.ACTIVE,
+            status=SubscriptionStatus.PENDING,
             activated_at=now,
             expires_at=cls.compute_expires_at(plan, now),
             responses_remaining=cls.compute_responses_remaining(plan.kind),

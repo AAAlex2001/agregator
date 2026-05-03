@@ -29,12 +29,18 @@ class SubscriptionKind(str, PyEnum):
 
 
 class SubscriptionStatus(str, PyEnum):
+    PENDING = "PENDING"
     ACTIVE = "ACTIVE"
     EXPIRED = "EXPIRED"
     USED = "USED"
 
     def __str__(self):
-        labels = {"ACTIVE": "Активна", "EXPIRED": "Истекла", "USED": "Использована"}
+        labels = {
+            "PENDING": "Ждёт оплату",
+            "ACTIVE": "Активна",
+            "EXPIRED": "Истекла",
+            "USED": "Использована",
+        }
         return labels.get(self.value, self.value)
 
 
