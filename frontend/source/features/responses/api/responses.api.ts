@@ -16,10 +16,14 @@ export async function fetchResponses(
 
 
 export async function updateStatus(id: number, status: string, rejectionReason?: string): Promise<void> {
-  const fd = new FormData();
-  if (rejectionReason) fd.append("rejection_reason", rejectionReason);
   const url = `${API_URL}/responses/${id}/status?new_status=${status}`;
-  const res = await fetchWithSession(url, { method: "PATCH", body: fd });
+  const init: RequestInit = { method: "PATCH" };
+  if (rejectionReason) {
+    const fd = new FormData();
+    fd.append("rejection_reason", rejectionReason);
+    init.body = fd;
+  }
+  const res = await fetchWithSession(url, init);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Ошибка обновления статуса");
 }
 
