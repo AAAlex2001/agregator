@@ -6,10 +6,15 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px 10px;
+  align-items: stretch;
+  padding: 10px;
   box-sizing: border-box;
   overflow: hidden;
+
+  @media (min-width: 1200px) {
+    padding: 20px 10px;
+    align-items: center;
+  }
 
   @media (min-width: 1440px) {
     height: calc(100dvh - 74px);
@@ -20,6 +25,7 @@
 .sidebarPane,
 .contentPane {
   width: 100%;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
@@ -43,7 +49,8 @@
 }
 
 @media (max-width: 1199px) {
-  .sidebarPaneHiddenMobile {
+  .sidebarPaneHiddenMobile,
+  .contentPaneHiddenMobile {
     display: none;
   }
 }

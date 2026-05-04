@@ -6,6 +6,7 @@ from sqlalchemy.orm import selectinload
 
 from models.chat import Chat, ChatMessage
 from models.order import Order
+from models.question import OrderQuestion
 from models.response import OrderResponse
 from models.review import Review
 from models.user import User, UserRole
@@ -76,6 +77,17 @@ class EmailRepository:
             )
         )
         return list((await self.db.execute(query)).scalars().all())
+
+    async def find_question(self, question_id: int) -> OrderQuestion | None:
+        query = (
+            select(OrderQuestion)
+            .where(OrderQuestion.id == question_id)
+            .options(
+                selectinload(OrderQuestion.order).selectinload(Order.customer),
+                selectinload(OrderQuestion.expert),
+            )
+        )
+        return (await self.db.execute(query)).scalars().first()
 
     async def get_expert_stats(self, expert_id: int) -> ExpertStats:
         query = select(func.count(Review.id), func.avg(Review.rating)).where(

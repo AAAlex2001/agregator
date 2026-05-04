@@ -12,6 +12,8 @@ export type {
   NotificationPayload,
   NotificationReason,
   NotificationResponseStatus,
+  QuestionAnsweredNotificationPayload,
+  QuestionAskedNotificationPayload,
   ResponseStatusChangedNotificationPayload,
   ResponseUpdateKind,
   ResponseUpdatedNotificationPayload,

@@ -3,6 +3,10 @@ from schemas.notification import (
     ChatMessageNotificationItemResponse,
     ChatMessageNotificationPayload,
     NotificationItemResponse,
+    QuestionAnsweredNotificationItemResponse,
+    QuestionAnsweredNotificationPayload,
+    QuestionAskedNotificationItemResponse,
+    QuestionAskedNotificationPayload,
     ResponseStatusChangedNotificationItemResponse,
     ResponseStatusChangedNotificationPayload,
     ResponseUpdatedNotificationItemResponse,
@@ -39,6 +43,20 @@ def to_response(notification: Notification) -> NotificationItemResponse:
         return ChatMessageNotificationItemResponse(
             type=NotificationType.CHAT_MESSAGE,
             payload=ChatMessageNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.QUESTION_ASKED:
+        return QuestionAskedNotificationItemResponse(
+            type=NotificationType.QUESTION_ASKED,
+            payload=QuestionAskedNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.QUESTION_ANSWERED:
+        return QuestionAnsweredNotificationItemResponse(
+            type=NotificationType.QUESTION_ANSWERED,
+            payload=QuestionAnsweredNotificationPayload.model_validate(payload),
             **common,
         )
 

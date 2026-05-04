@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,6 +11,14 @@ from schemas.question import (
     QuestionListResponse,
     QuestionResponse,
     QuestionUpdate,
+)
+from services.email import EmailDispatcher, EmailRepository
+from services.email.use_cases.send_question_answered_email import SendQuestionAnsweredEmailUseCase
+from services.email.use_cases.send_question_asked_email import SendQuestionAskedEmailUseCase
+from services.notifications import NotificationRepository
+from services.notifications.use_cases.create_question_notifications import (
+    CreateQuestionAnsweredNotificationUseCase,
+    CreateQuestionAskedNotificationUseCase,
 )
 from services.questions import (
     AnswerQuestionUseCase,
@@ -62,11 +70,20 @@ async def list_order_questions(
 async def ask_order_question(
     order_id: int,
     payload: QuestionAsk,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     role = await get_user_role(db, user_id)
-    question = await AskQuestionUseCase(build_repo(db)).execute(
+    use_case = AskQuestionUseCase(
+        repo=build_repo(db),
+        in_app_notify=CreateQuestionAskedNotificationUseCase(NotificationRepository(db)),
+        send_email=SendQuestionAskedEmailUseCase(
+            repo=EmailRepository(db),
+            dispatcher=EmailDispatcher(background_tasks),
+        ),
+    )
+    question = await use_case.execute(
         order_id=order_id, expert_id=user_id, expert_role=role, text=payload.question,
     )
     refreshed = await build_repo(db).get_by_id(question.id)
@@ -90,10 +107,19 @@ async def update_question(
 async def answer_question(
     question_id: int,
     payload: QuestionAnswer,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    question = await AnswerQuestionUseCase(build_repo(db)).execute(
+    use_case = AnswerQuestionUseCase(
+        repo=build_repo(db),
+        in_app_notify=CreateQuestionAnsweredNotificationUseCase(NotificationRepository(db)),
+        send_email=SendQuestionAnsweredEmailUseCase(
+            repo=EmailRepository(db),
+            dispatcher=EmailDispatcher(background_tasks),
+        ),
+    )
+    question = await use_case.execute(
         question_id=question_id, customer_id=user_id, text=payload.answer,
     )
     return to_response(question)

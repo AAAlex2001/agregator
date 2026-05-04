@@ -43,6 +43,17 @@ class ChatMessageNotificationPayload(NotificationPayloadModel):
     preview: str
 
 
+class QuestionAskedNotificationPayload(NotificationPayloadModel):
+    order_title: str
+    expert_name: str
+    preview: str
+
+
+class QuestionAnsweredNotificationPayload(NotificationPayloadModel):
+    order_title: str
+    preview: str
+
+
 class NotificationItemBaseResponse(BaseModel):
     id: int
     action_url: str | None = None
@@ -66,10 +77,22 @@ class ChatMessageNotificationItemResponse(NotificationItemBaseResponse):
     payload: ChatMessageNotificationPayload
 
 
+class QuestionAskedNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.QUESTION_ASKED]
+    payload: QuestionAskedNotificationPayload
+
+
+class QuestionAnsweredNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.QUESTION_ANSWERED]
+    payload: QuestionAnsweredNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
-    | ChatMessageNotificationItemResponse,
+    | ChatMessageNotificationItemResponse
+    | QuestionAskedNotificationItemResponse
+    | QuestionAnsweredNotificationItemResponse,
     Field(discriminator="type"),
 ]
 

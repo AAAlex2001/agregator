@@ -39,6 +39,8 @@ class User(Base):
     email_on_order_updated = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_bidding_finished = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_chat_message = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_question_asked = Column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_question_answered = Column(Boolean, default=True, nullable=False, server_default="true")
     phone = Column(String, index=True, unique=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)

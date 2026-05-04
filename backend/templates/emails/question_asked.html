@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block preheader %}{{ expert_name }} задал вопрос по заявке «{{ order_title }}»{% endblock %}
+
+{% block content %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Новый вопрос
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Здравствуйте, {{ customer_greeting }}
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  <span style="color: #0F172A; font-weight: 500;">{{ expert_name }}</span>
+  задал публичный вопрос по вашей заявке
+  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>.
+  Ваш ответ будет виден всем экспертам.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 16px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.8px;">Вопрос</p>
+      <p style="margin: 0; font-size: 15px; line-height: 23px; color: #0F172A; white-space: pre-wrap;">{{ question_text }}</p>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 40px; line-height: 40px; font-size: 0;" height="40">&nbsp;</td></tr>
+</table>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
+      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #0F172A; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Открыть заявку</a>
+    </td>
+  </tr>
+</table>
+{% endblock %}

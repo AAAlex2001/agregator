@@ -6,14 +6,27 @@ from sqlalchemy.exc import IntegrityError
 from models.order import OrderStatus
 from models.question import OrderQuestion
 from models.user import UserRole
+from services.email.use_cases.send_question_asked_email import SendQuestionAskedEmailUseCase
+from services.notifications.use_cases.create_question_notifications import (
+    CreateQuestionAskedNotificationUseCase,
+)
 from services.questions.repository import QuestionRepository
+
+CUSTOMER_QUESTION_URL = "/customer/orders"
 
 
 class AskQuestionUseCase:
     "Эксперт задаёт публичный вопрос по заказу. До отклика, один на заказ."
 
-    def __init__(self, repo: QuestionRepository):
+    def __init__(
+        self,
+        repo: QuestionRepository,
+        in_app_notify: CreateQuestionAskedNotificationUseCase | None = None,
+        send_email: SendQuestionAskedEmailUseCase | None = None,
+    ):
         self.repo = repo
+        self.in_app_notify = in_app_notify
+        self.send_email = send_email
 
     async def execute(self, order_id: int, expert_id: int, expert_role: UserRole, text: str) -> OrderQuestion:
         if expert_role != UserRole.EXPERT:
@@ -51,4 +64,22 @@ class AskQuestionUseCase:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Вы уже задали вопрос по этому заказу",
             )
+
+        if self.in_app_notify is not None:
+            full = await self.repo.get_by_id(question.id)
+            expert = full.expert if full else None
+            expert_name = (
+                " ".join(p for p in [expert.first_name or "", expert.last_name or ""] if p)
+                if expert else ""
+            )
+            await self.in_app_notify.execute(
+                customer_id=order.customer_id,
+                order_title=order.title or "",
+                expert_name=expert_name,
+                question_text=text,
+                action_url=CUSTOMER_QUESTION_URL,
+            )
+        if self.send_email is not None:
+            await self.send_email.execute(question.id)
+
         return question

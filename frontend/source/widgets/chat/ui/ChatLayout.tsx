@@ -17,7 +17,9 @@ export function ChatLayout({ children }: { children: React.ReactNode }) {
         <div className={`${s.sidebarPane} ${hasActiveChat ? s.sidebarPaneHiddenMobile : ""}`.trim()}>
           <ChatSidebar currentUserId={currentUserId} />
         </div>
-        <div className={s.contentPane}>{children}</div>
+        <div className={`${s.contentPane} ${!hasActiveChat ? s.contentPaneHiddenMobile : ""}`.trim()}>
+          {children}
+        </div>
       </main>
     </ChatListProvider>
   );

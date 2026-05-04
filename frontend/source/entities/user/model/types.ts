@@ -6,6 +6,8 @@ export interface EmailPreferences {
   email_on_order_updated: boolean;
   email_on_bidding_finished: boolean;
   email_on_chat_message: boolean;
+  email_on_question_asked: boolean;
+  email_on_question_answered: boolean;
 }
 
 export interface UserProfile {

@@ -12,6 +12,8 @@ class EmailPreferences(BaseModel):
     email_on_order_updated: bool = True
     email_on_bidding_finished: bool = True
     email_on_chat_message: bool = True
+    email_on_question_asked: bool = True
+    email_on_question_answered: bool = True
 
     class Config:
         from_attributes = True
@@ -48,6 +50,8 @@ class UpdateEmailPreferencesRequest(BaseModel):
     email_on_order_updated: Optional[bool] = None
     email_on_bidding_finished: Optional[bool] = None
     email_on_chat_message: Optional[bool] = None
+    email_on_question_asked: Optional[bool] = None
+    email_on_question_answered: Optional[bool] = None
 
 
 class ChangePasswordRequest(BaseModel):

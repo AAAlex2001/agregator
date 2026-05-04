@@ -2,6 +2,8 @@ import type {
   ChatMessageNotificationPayload,
   NotificationCardModel,
   NotificationItem,
+  QuestionAnsweredNotificationPayload,
+  QuestionAskedNotificationPayload,
   ResponseStatusChangedNotificationPayload,
   ResponseUpdatedNotificationPayload,
 } from "@/source/entities/notification";
@@ -181,6 +183,39 @@ function mapChatMessage(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapQuestionAsked(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as QuestionAskedNotificationPayload;
+  const orderTitle = getOrderTitle(payload.order_title);
+  const expertName = payload.expert_name || "Эксперт";
+  const preview = payload.preview || "Новый вопрос";
+
+  return {
+    id: item.id,
+    title: "Новый вопрос по заказу",
+    message: `${expertName} спрашивает по «${orderTitle}»: ${preview}`,
+    actionLabel: item.action_url ? "Перейти к заказу" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
+function mapQuestionAnswered(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as QuestionAnsweredNotificationPayload;
+  const orderTitle = getOrderTitle(payload.order_title);
+  const preview = payload.preview || "Ответ заказчика";
+
+  return {
+    id: item.id,
+    title: "Заказчик ответил на ваш вопрос",
+    message: `По заказу «${orderTitle}»: ${preview}`,
+    actionLabel: item.action_url ? "Перейти к заказу" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 export function mapNotificationCard(item: NotificationItem): NotificationCardModel {
   if (item.type === "RESPONSE_UPDATED") {
     return mapResponseUpdated(item);
@@ -192,6 +227,14 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "CHAT_MESSAGE") {
     return mapChatMessage(item);
+  }
+
+  if (item.type === "QUESTION_ASKED") {
+    return mapQuestionAsked(item);
+  }
+
+  if (item.type === "QUESTION_ANSWERED") {
+    return mapQuestionAnswered(item);
   }
 
   return {

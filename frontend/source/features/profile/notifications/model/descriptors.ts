@@ -44,4 +44,16 @@ export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescr
     description: "Приходит только если вы оффлайн и не видите сообщение в реалтайме.",
     roles: ["CUSTOMER", "EXPERT"],
   },
+  {
+    key: "email_on_question_asked",
+    label: "Новый вопрос по заказу",
+    description: "Эксперт задал публичный вопрос по вашей заявке — ответ увидят все эксперты.",
+    roles: ["CUSTOMER"],
+  },
+  {
+    key: "email_on_question_answered",
+    label: "Ответ на ваш вопрос",
+    description: "Заказчик ответил на ваш публичный вопрос по заявке.",
+    roles: ["EXPERT"],
+  },
 ];
