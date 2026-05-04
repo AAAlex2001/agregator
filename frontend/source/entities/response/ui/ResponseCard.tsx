@@ -79,7 +79,7 @@ export function ResponseCard({ card, actions, role }: Props) {
             <CommentSection title="Комментарий заказчика:" text={card.orderComment} />
           )}
           { role === "expert" && card.rawStatus === "REJECTED" && card.rejectionReason && (
-            <CommentSection title="Причина отказа:" text={card.rejectionReason} />
+            <CommentSection title="Причина отказа:" text={card.rejectionReason} variant="danger" />
           )}
           {card.techSpecFiles.length > 0 && (
             <TechSpecFiles title="Файлы отклика:" files={card.techSpecFiles} />

@@ -22,9 +22,17 @@ export function ExpertTerms({ deadlineLabel = "Ваши сроки:", deadline, 
   );
 }
 
-export function CommentSection({ title, text }: { title: string; text: string }) {
+export function CommentSection({
+  title,
+  text,
+  variant,
+}: {
+  title: string;
+  text: string;
+  variant?: "danger";
+}) {
   return (
-    <div className={s.commentRow}>
+    <div className={`${s.commentRow} ${variant === "danger" ? s.commentDanger : ""}`.trim()}>
       <span className={s.commentTitle}>{title}</span>
       <span className={s.commentText}>{text}</span>
     </div>

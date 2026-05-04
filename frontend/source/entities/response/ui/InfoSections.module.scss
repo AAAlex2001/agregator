@@ -48,6 +48,13 @@
   @media (min-width: 768px) { font-size: 16px; }
 }
 
+.commentDanger {
+  .commentTitle,
+  .commentText {
+    color: #d32f2f;
+  }
+}
+
 .reminderRow { display: flex; align-items: center; gap: 4px; width: 100%; }
 .reminderText {
   font-weight: 500;
