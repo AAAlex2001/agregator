@@ -23,6 +23,7 @@ class CreateResponseStatusChangedNotificationUseCase:
         status_to: ResponseStatus,
         reason: ResponseStatusChangeReason,
         action_url: str | None = None,
+        rejection_reason: str | None = None,
     ) -> Notification:
         payload = ResponseStatusChangedNotificationPayload(
             order_title=order_title,
@@ -30,6 +31,7 @@ class CreateResponseStatusChangedNotificationUseCase:
             status_from=status_from,
             status_to=status_to,
             reason=reason,
+            rejection_reason=rejection_reason,
         )
         notification = Notification(
             user_id=user_id,

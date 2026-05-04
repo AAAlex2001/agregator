@@ -104,6 +104,7 @@ def to_item(
     expert_rating: float | None = None
     expert_review_count = 0
     expert_public_id = ""
+    rejection_reason = entity.rejection_reason
     if expert:
         parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in parts if p)
@@ -146,6 +147,7 @@ def to_item(
         expert_public_id=expert_public_id,
         expert_confirmed=entity.expert_confirmed or False,
         has_review=has_review,
+        rejection_reason=rejection_reason,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
@@ -230,6 +232,7 @@ async def update_response_status(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    rejection_reason: str | None = Form(None, max_length=1000),
 ):
     repo = build_repo(db)
     send_bidding = SendBiddingFinishedEmailUseCase(
@@ -247,7 +250,7 @@ async def update_response_status(
         subscription_access=build_subscription_access(db),
     )
     updated = await use_case.execute(
-        response_id=response_id, actor_id=user_id, new_status=new_status
+        response_id=response_id, actor_id=user_id, new_status=new_status, reason=rejection_reason
     )
     return to_item(updated)
 

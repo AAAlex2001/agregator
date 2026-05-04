@@ -41,6 +41,7 @@ class UpdateResponseStatusUseCase:
         response_id: int,
         actor_id: int,
         new_status: ResponseStatus,
+        reason: str | None = None,
     ) -> OrderResponse:
         actor = await self.validator.get_actor(actor_id)
         response = await self.get_response.execute(response_id)
@@ -57,6 +58,11 @@ class UpdateResponseStatusUseCase:
                 response, new_status
             )
 
+        if new_status == ResponseStatus.REJECTED:
+            response.rejection_reason = reason
+        elif response.rejection_reason and new_status != ResponseStatus.REJECTED:
+            response.rejection_reason = None      
+
         old_status = response.status
         response.status = new_status
 
@@ -70,6 +76,7 @@ class UpdateResponseStatusUseCase:
             expert_was_confirmed=expert_was_confirmed,
             auto_rejected_expert_ids=auto_rejected_ids,
             reverted_expert_ids=reverted_ids,
+            rejection_reason=response.rejection_reason,
         )
 
         await self.send_bidding_emails_on_selection(

@@ -15,6 +15,7 @@ export interface ResponseStatusChangedNotificationPayload {
   status_from: NotificationResponseStatus;
   status_to: NotificationResponseStatus;
   reason: NotificationReason;
+  rejection_reason?: string | null;
 }
 
 export interface ChatMessageNotificationPayload {

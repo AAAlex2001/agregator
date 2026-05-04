@@ -56,6 +56,7 @@ class ExpertResponseItem(BaseModel):
     confirm_deadline: str = ""
     expert_confirmed: bool = False
     has_review: bool = False
+    rejection_reason: str | None = None
 
     model_config = {"from_attributes": True}
 

@@ -46,6 +46,7 @@ export interface ResponseApiItem {
   confirm_deadline: string;
   expert_confirmed: boolean;
   has_review: boolean;
+  rejection_reason?: string | null;
 }
 
 export interface ResponsesApiList {
@@ -90,6 +91,7 @@ export interface ResponseCardData {
   expertReviewCount: number;
   expertPublicId: string;
   hasReview: boolean;
+  rejectionReason?: string | null;
 }
 
 export interface CardAction {

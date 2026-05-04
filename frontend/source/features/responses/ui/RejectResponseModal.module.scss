@@ -1,0 +1,85 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border: 1px solid #ffdda9;
+  border-radius: 16px;
+}
+
+.title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+.desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #808080;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ffdda9;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1a1a1a;
+  background: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: #ff8a00;
+  }
+}
+
+.counter {
+  align-self: flex-end;
+  font-size: 12px;
+  color: #808080;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+  }
+}

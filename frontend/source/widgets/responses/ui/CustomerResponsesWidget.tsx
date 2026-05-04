@@ -2,7 +2,7 @@
 
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
-import { CompletionModal, useResponses } from "@/source/features/responses";
+import { CompletionModal, RejectResponseModalContainer, useResponses } from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";
 import { SortPills } from "@/source/features/responses-sort";
 
@@ -50,6 +50,13 @@ export function CustomerResponsesWidget() {
           await model.onSubmitReview(payload);
           showSuccess("Отзыв успешно опубликован");
         }}
+      />
+
+      <RejectResponseModalContainer
+        response={model.rejectTarget}
+        isLoading={model.rejectTarget ? model.actionLoading[model.rejectTarget.id] === "reject" : false}
+        onCancel={model.closeReject}
+        onConfirm={model.onRejectConfirm}
       />
     </>
   );

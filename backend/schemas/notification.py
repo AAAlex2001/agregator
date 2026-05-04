@@ -35,6 +35,7 @@ class ResponseStatusChangedNotificationPayload(NotificationPayloadModel):
     status_from: ResponseStatus
     status_to: ResponseStatus
     reason: ResponseStatusChangeReason
+    rejection_reason: str | None = None
 
 
 class ChatMessageNotificationPayload(NotificationPayloadModel):

@@ -15,10 +15,14 @@ export async function fetchResponses(
 }
 
 
-export async function updateStatus(id: number, status: string): Promise<void> {
-  const res = await fetchWithSession(`${API_URL}/responses/${id}/status?new_status=${status}`, { method: "PATCH" });
+export async function updateStatus(id: number, status: string, rejectionReason?: string): Promise<void> {
+  const fd = new FormData();
+  if (rejectionReason) fd.append("rejection_reason", rejectionReason);
+  const url = `${API_URL}/responses/${id}/status?new_status=${status}`;
+  const res = await fetchWithSession(url, { method: "PATCH", body: fd });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Ошибка обновления статуса");
 }
+
 
 export async function deleteResponse(id: number): Promise<void> {
   const res = await fetchWithSession(`${API_URL}/responses/${id}`, { method: "DELETE" });

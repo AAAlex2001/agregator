@@ -71,6 +71,7 @@ class ResponseInAppNotifier:
         expert_was_confirmed: bool,
         auto_rejected_expert_ids: list[int],
         reverted_expert_ids: list[int],
+        rejection_reason: str | None = None,
     ) -> None:
         order = response.order
         if order is None:
@@ -83,7 +84,7 @@ class ResponseInAppNotifier:
             await self.notify_customer_actions(
                 response, order, actor, old_status, new_status,
                 auto_rejected_expert_ids, reverted_expert_ids,
-                title, chat_url,
+                title, chat_url, rejection_reason,
             )
             return
         if actor.role == UserRole.EXPERT:
@@ -103,6 +104,7 @@ class ResponseInAppNotifier:
         reverted_expert_ids: list[int],
         title: str,
         chat_url: str,
+        rejection_reason: str | None = None,
     ) -> None:
         if new_status == ResponseStatus.ACCEPTED and old_status != ResponseStatus.ACCEPTED:
             await self.create_status_changed.execute(
@@ -145,6 +147,7 @@ class ResponseInAppNotifier:
                 status_to=new_status,
                 reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                 action_url=RESPONSES_ACTION_URL,
+                rejection_reason=rejection_reason,
             )
             for reverted_expert_id in reverted_expert_ids:
                 await self.create_status_changed.execute(

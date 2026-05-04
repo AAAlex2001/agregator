@@ -108,10 +108,12 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
   }
 
   if (actorRole === "CUSTOMER" && statusTo === "REJECTED") {
+    const rejectionReason = payload.rejection_reason?.trim();
+    const baseMessage = `Заказчик отклонил ваш отклик по заказу «${orderTitle}».`;
     return {
       id: item.id,
       title: "Отклик отклонён",
-      message: `Заказчик отклонил ваш отклик по заказу «${orderTitle}».`,
+      message: rejectionReason ? `${baseMessage} Причина: ${rejectionReason}` : baseMessage,
       actionLabel: item.action_url ? "Открыть отклики" : null,
       actionUrl: item.action_url,
       isRead: item.is_read,

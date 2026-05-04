@@ -40,6 +40,7 @@ class OrderResponse(Base):
     technical_files = Column(JSON, nullable=False, default=list)
     expert_confirmed = Column(Boolean, nullable=False, default=False, server_default="false")
     auto_rejected = Column(Boolean, nullable=False, default=False, server_default="false")
+    rejection_reason = Column(Text, nullable=True)
     status = Column(
         Enum(ResponseStatus, name="responsestatus"),
         nullable=False,

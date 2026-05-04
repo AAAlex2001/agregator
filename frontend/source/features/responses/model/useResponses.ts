@@ -160,6 +160,21 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
+  const onRejectConfirm = async (reason: string) => {
+    if (!s.rejectTarget) return;
+    const id = s.rejectTarget.id;
+    d({ type: "ACTION_LOADING", id, mode: "reject" });
+    try {
+      await updateStatus(id, "REJECTED", reason || undefined);
+      d({ type: "REJECT_TARGET", value: null });
+      void reload();
+    } catch (e) {
+      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+    } finally {
+      d({ type: "ACTION_LOADING", id, mode: null });
+    }
+  };
+
   return {
     ...s, role, tabs, setTab, reload, onChat, onComplete,
     onShare: (pid: string, cb: () => void) => copyOrderLink(pid, cb),
@@ -169,7 +184,9 @@ export function useResponses(role: UserRole | null) {
     closeWithdraw: () => d({ type: "WITHDRAW_TARGET", value: null }),
     onWithdrawConfirm, onEditSubmit,
     onStart: (id: number) => statusAction(id, "start", "IN_PROGRESS"),
-    onReject: (id: number) => statusAction(id, "reject", "REJECTED"),
+    onReject: (r: ResponseCardData) => d({ type: "REJECT_TARGET", value: r }),
+    closeReject: () => d({ type: "REJECT_TARGET", value: null }),
+    onRejectConfirm,
     onSelect: (id: number) => statusAction(id, "select", "IN_PROGRESS"),
     onAccept,
     onLeaveReview: (r: ResponseCardData) => { d({ type: "REVIEW_TARGET", value: r }); d({ type: "REVIEW_MODAL", value: true }); },
