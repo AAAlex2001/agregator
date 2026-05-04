@@ -30,7 +30,7 @@ export function UserAvatar({
   const showImage = Boolean(imageSrc) && !broken;
 
   return (
-    <div className={`${s.avatar} ${className}`.trim()} aria-label={alt}>
+    <div className={`${s.wrapper} ${className}`.trim()} aria-label={alt}>
       {showImage ? (
         <img
           src={imageSrc}
