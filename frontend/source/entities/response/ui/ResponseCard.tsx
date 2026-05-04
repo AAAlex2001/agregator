@@ -1,3 +1,5 @@
+import { useSession } from "@/source/features/session";
+import { OrderQuestionsBlock } from "@/source/features/order-questions";
 import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { StatusHeader } from "./StatusHeader";
 import { ExpertInfo } from "./ExpertInfo";
@@ -35,6 +37,7 @@ interface Props {
 }
 
 export function ResponseCard({ card, actions, role }: Props) {
+  const { user } = useSession();
   const f = getFlags(card, role);
   const termsLabels = role === "customer"
     ? { deadline: "Срок:", cost: "Цена:" }
@@ -84,6 +87,14 @@ export function ResponseCard({ card, actions, role }: Props) {
           {f.reminder && card.reminderText && (
             <ReminderSection text={card.reminderText} />
           )}
+          <OrderQuestionsBlock
+            orderId={card.orderId}
+            currentUserId={user?.id ?? null}
+            customerId={card.orderCustomerId}
+            isCustomer={role === "customer"}
+            isExpert={role === "expert"}
+            expertCanAsk={false}
+          />
         </div>
       </div>
       <ActionButtons actions={actions} />

@@ -104,16 +104,27 @@
 .grid {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 20px;
   width: 100%;
-  padding: 10px;
-  overflow-x: auto;
+  padding: 0;
+
+  > article {
+    width: 100%;
+    max-width: 100%;
+  }
 
   @media (min-width: 768px) {
-    display: grid;
-    grid-template-rows: repeat(2, auto);
-    grid-auto-flow: column;
-    grid-auto-columns: 350px;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 10px 0;
+
+    > article {
+      width: 660px;
+      max-width: none;
+    }
   }
 
   &::-webkit-scrollbar {

@@ -1,0 +1,39 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #ffdda9;
+  border-radius: 12px;
+}
+
+.title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: #808080;
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: #d32f2f;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

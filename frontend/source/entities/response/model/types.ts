@@ -20,6 +20,7 @@ export interface ResponseApiItem {
   id: number;
   order_id: number;
   order_public_id: string;
+  order_customer_id?: number;
   status: ResponseStatus;
   date: string;
   comment: string;
@@ -57,6 +58,7 @@ export interface ResponseCardData {
   id: number;
   orderId: number;
   orderPublicId: string;
+  orderCustomerId: number;
   rawStatus: ResponseStatus;
   dateLabel: string;
   date: string;

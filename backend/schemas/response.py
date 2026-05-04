@@ -30,6 +30,7 @@ class ExpertResponseItem(BaseModel):
     id: int
     order_id: int
     order_public_id: str = ""
+    order_customer_id: int = 0
     status: ResponseStatus
     date: str
     comment: str

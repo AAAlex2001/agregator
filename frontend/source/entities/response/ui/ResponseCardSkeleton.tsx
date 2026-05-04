@@ -50,6 +50,21 @@ export function ResponseCardSkeleton() {
           <Skeleton className={s.infoLine} />
           <Skeleton className={s.infoLineShort} />
         </div>
+
+        <div className={s.questions}>
+          <Skeleton className={s.qTitle} rounded="md" />
+          <div className={s.qCard}>
+            <div className={s.qHead}>
+              <Skeleton className={s.qAvatar} rounded="pill" />
+              <div className={s.qHeadText}>
+                <Skeleton className={s.qName} rounded="md" />
+                <Skeleton className={s.qDate} rounded="md" />
+              </div>
+            </div>
+            <Skeleton className={s.qLine} rounded="md" />
+            <Skeleton className={s.qLineShort} rounded="md" />
+          </div>
+        </div>
       </div>
 
       <div className={s.actions}>

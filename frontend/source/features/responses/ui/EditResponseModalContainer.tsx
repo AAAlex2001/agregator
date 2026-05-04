@@ -31,7 +31,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
   return {
     id: response.orderId,
     publicId: response.orderPublicId,
-    customerId: 0,
+    customerId: response.orderCustomerId,
     title: response.orderTitle,
     customer: response.customer,
     company: response.customer,

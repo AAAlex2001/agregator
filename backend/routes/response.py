@@ -118,6 +118,7 @@ def to_item(
         id=entity.id,
         order_id=entity.order_id,
         order_public_id=order.public_id if order else "",
+        order_customer_id=order.customer_id if order else 0,
         status=effective_status,
         date=date_source.strftime("%d.%m.%Y"),
         comment=entity.comment,

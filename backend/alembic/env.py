@@ -20,6 +20,7 @@ from models.session import Session
 from models.payment import Payment
 from models.pricing import PricingPlan, UserSubscription
 from models.review import Review
+from models.question import OrderQuestion
 from models.landing import (
     LandingHero,
     LandingSectionHeader,

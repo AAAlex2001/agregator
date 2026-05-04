@@ -1,0 +1,72 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #ffe9c8;
+  border-radius: 10px;
+  background: #fffdf8;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1a1a1a;
+}
+
+.date {
+  font-size: 12px;
+  line-height: 14px;
+  color: #808080;
+}
+
+.text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a1a1a;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.linkBtn {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 13px;
+  color: #ff8a00;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #ffe9c8;
+}
+
+.answerLabel {
+  font-weight: 600;
+  font-size: 13px;
+  color: #ff8a00;
+}

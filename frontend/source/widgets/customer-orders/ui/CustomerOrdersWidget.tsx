@@ -1,8 +1,8 @@
 ﻿"use client";
 
 import { useRef } from "react";
-import { OrderCard } from "@/source/entities/order";
 import { Button } from "@/shared/ui";
+import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import ToolTip from "@/source/shared/ui/Tooltip";
@@ -80,23 +80,13 @@ export function CustomerOrdersWidget() {
               <div className={s.shadeL} /><div className={s.shadeR} />
               <div className={s.grid} ref={ref}>
                 {h.items.map((o) => (
-                  <OrderCard
+                  <CustomerActiveCard
                     key={o.id}
-                    badges={o.badges}
-                    title={o.title}
-                    customer={o.customer}
-                    date={o.date}
-                    sum={o.sum}
-                    responsesDeadline={o.responsesDeadline}
-                  >
-                    <Button variant="outline" size="sm" className={s.btn} onClick={(e) => { e.stopPropagation(); h.openEdit(o); }}>
-                      Редактировать
-                    </Button>
-                    <Button variant="transparent" size="sm" className={s.btnDel}
-                      disabled={h.deletingId === o.id} isLoading={h.deletingId === o.id}
-                      onClick={(e) => { e.stopPropagation(); void h.onDelete(o.id); }}
-                    >Удалить</Button>
-                  </OrderCard>
+                    card={o}
+                    isDeleting={h.deletingId === o.id}
+                    onEdit={() => h.openEdit(o)}
+                    onDelete={() => void h.onDelete(o.id)}
+                  />
                 ))}
               </div>
             </div>

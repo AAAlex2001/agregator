@@ -40,6 +40,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     id: item.id,
     orderId: item.order_id,
     orderPublicId: item.order_public_id || "",
+    orderCustomerId: item.order_customer_id ?? 0,
     rawStatus: item.status,
     dateLabel: "Отклик от",
     date: item.date,
