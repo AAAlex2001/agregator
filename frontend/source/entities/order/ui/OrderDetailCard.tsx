@@ -44,7 +44,13 @@ export function OrderDetailCard({
   return (
     <article className={s.card}>
       <div className={s.content}>
-        <StatusHeader status={status.text} statusColor={status.color} statusBg={status.bg} />
+        <StatusHeader
+          dateLabel={card.createdAtDisplay ? "Заказ от" : undefined}
+          date={card.createdAtDisplay || undefined}
+          status={status.text}
+          statusColor={status.color}
+          statusBg={status.bg}
+        />
 
         <OrderSection
           title={card.title}

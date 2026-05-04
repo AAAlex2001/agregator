@@ -29,6 +29,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     company:             item.company,
     comment:             item.comment,
     date:                item.date,
+    createdAtDisplay:    item.created_at_display ?? "",
     deadlineRaw:         toIsoDate(item.date),
     sum:                 normalizeCurrency(item.sum),
     sumAmountRaw:        item.sum_amount_raw,

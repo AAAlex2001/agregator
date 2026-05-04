@@ -92,6 +92,7 @@ class OrderResponse(BaseModel):
     sum: str
     sum_amount_raw: int
     date: str
+    created_at_display: str = ""
     responses_deadline: str | None = None
     technical_files: list[str]
     badges: list[BadgeResponse]
@@ -159,6 +160,7 @@ class OrderResponse(BaseModel):
         customer_name = order.company or ""
 
         date_display = order.deadline.strftime("%d.%m.%Y")
+        created_at_display = order.created_at.strftime("%d.%m.%Y") if order.created_at else ""
 
         responses_deadline_display = None
         if order.responses_deadline:
@@ -181,6 +183,7 @@ class OrderResponse(BaseModel):
             sum=sum_display,
             sum_amount_raw=amount,
             date=date_display,
+            created_at_display=created_at_display,
             responses_deadline=responses_deadline_display,
             technical_files=order.technical_files or [],
             badges=badges,

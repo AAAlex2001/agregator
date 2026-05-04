@@ -37,6 +37,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     company: response.customer,
     comment: response.orderComment ?? "",
     date: response.orderDate,
+    createdAtDisplay: "",
     sum: response.orderSum || response.sum,
     sumAmountRaw: 0,
     deadlineRaw: response.orderDate,

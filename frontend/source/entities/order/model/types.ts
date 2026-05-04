@@ -21,6 +21,7 @@ export interface OrderApiItem {
   sum: string;
   sum_amount_raw: number;
   date: string;
+  created_at_display?: string;
   responses_deadline: string | null;
   technical_files: string[];
   badges: OrderApiBadge[];
@@ -54,6 +55,7 @@ export interface OrderCardData {
   company: string;
   comment: string;
   date: string;
+  createdAtDisplay: string;
   sum: string;
   sumAmountRaw: number;
   deadlineRaw: string;
