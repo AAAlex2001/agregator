@@ -41,3 +41,22 @@ async def get_current_user(
         )
 
     return session.user_id
+
+
+async def get_current_user_optional(
+    session_id: str | None = Cookie(None),
+    db: AsyncSession = Depends(get_db),
+) -> int | None:
+    "Возвращает user_id если есть валидная сессия, иначе None. Не падает на 401."
+    if not session_id:
+        return None
+    result = await db.execute(
+        select(Session).where(Session.session_id == session_id)
+    )
+    session = result.scalar_one_or_none()
+    if session is None:
+        return None
+    now = datetime.now(timezone.utc)
+    if now > session.max_expires_at or now > session.expires_at:
+        return None
+    return session.user_id

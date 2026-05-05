@@ -74,6 +74,14 @@ class OrderRepository:
             count_query = count_query.where(*customer_filter)
             list_query = list_query.where(*customer_filter)
 
+        if user_id is None:
+            guest_filter = [
+                Order.status == OrderStatus.ACTIVE,
+                Order.assigned_expert_id.is_(None),
+            ]
+            count_query = count_query.where(*guest_filter)
+            list_query = list_query.where(*guest_filter)
+
         if status_filter is not None:
             count_query = count_query.where(Order.status == status_filter)
             list_query = list_query.where(Order.status == status_filter)

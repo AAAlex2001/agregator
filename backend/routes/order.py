@@ -4,7 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, Uplo
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
-from dependencies.auth import get_current_user
+from dependencies.auth import get_current_user, get_current_user_optional
 from models.order import OrderStatus
 from services.email import (
     EmailDispatcher,
@@ -70,8 +70,9 @@ async def get_orders(
     limit: int = Query(20, ge=1, le=100),
     status: Optional[OrderStatus] = None,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
+    user_id: Optional[int] = Depends(get_current_user_optional),
 ):
+    "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
     use_case = ListOrdersUseCase(build_repo(db))
     orders, total = await use_case.execute(skip, limit, status, user_id)
     return OrderListResponse(
