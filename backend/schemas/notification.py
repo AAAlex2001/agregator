@@ -55,6 +55,12 @@ class QuestionAnsweredNotificationPayload(NotificationPayloadModel):
     preview: str
 
 
+class SupportReplyNotificationPayload(NotificationPayloadModel):
+    ticket_number: str
+    subject: str
+    preview: str
+
+
 class NotificationItemBaseResponse(BaseModel):
     id: int
     action_url: str | None = None
@@ -88,12 +94,18 @@ class QuestionAnsweredNotificationItemResponse(NotificationItemBaseResponse):
     payload: QuestionAnsweredNotificationPayload
 
 
+class SupportReplyNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.SUPPORT_REPLY]
+    payload: SupportReplyNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
     | ChatMessageNotificationItemResponse
     | QuestionAskedNotificationItemResponse
-    | QuestionAnsweredNotificationItemResponse,
+    | QuestionAnsweredNotificationItemResponse
+    | SupportReplyNotificationItemResponse,
     Field(discriminator="type"),
 ]
 

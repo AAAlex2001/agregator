@@ -6,6 +6,7 @@ import type {
   QuestionAskedNotificationPayload,
   ResponseStatusChangedNotificationPayload,
   ResponseUpdatedNotificationPayload,
+  SupportReplyNotificationPayload,
 } from "@/source/entities/notification";
 
 function getOrderTitle(orderTitle: string | undefined): string {
@@ -218,6 +219,23 @@ function mapQuestionAnswered(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapSupportReply(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as SupportReplyNotificationPayload;
+  const subject = payload.subject || "Обращение";
+  const preview = payload.preview || "Новое сообщение от поддержки";
+  const ticketNumber = payload.ticket_number ? `${payload.ticket_number} ` : "";
+
+  return {
+    id: item.id,
+    title: "Поддержка ответила на ваше обращение",
+    message: `${ticketNumber}«${subject}»: ${preview}`,
+    actionLabel: item.action_url ? "Открыть обращение" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 export function mapNotificationCard(item: NotificationItem): NotificationCardModel {
   if (item.type === "RESPONSE_UPDATED") {
     return mapResponseUpdated(item);
@@ -237,6 +255,10 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "QUESTION_ANSWERED") {
     return mapQuestionAnswered(item);
+  }
+
+  if (item.type === "SUPPORT_REPLY") {
+    return mapSupportReply(item);
   }
 
   return {

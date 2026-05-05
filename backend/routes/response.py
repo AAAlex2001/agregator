@@ -30,7 +30,6 @@ from services.responses import (
     GetResponseByIdUseCase,
     ListCustomerResponsesUseCase,
     ListExpertResponsesUseCase,
-    ResponseBroadcaster,
     ResponseFileStorage,
     ResponseInAppNotifier,
     ResponseRepository,
@@ -254,7 +253,6 @@ async def update_response_status(
         rules=ResponseStatusRules(),
         get_response=GetResponseByIdUseCase(repo),
         in_app=build_in_app(db, repo),
-        broadcaster=ResponseBroadcaster(),
         send_bidding_email=send_bidding,
         subscription_access=build_subscription_access(db),
     )
@@ -326,7 +324,6 @@ async def withdraw_response(
         repo=repo,
         get_response=GetResponseByIdUseCase(repo),
         in_app=build_in_app(db, repo),
-        broadcaster=ResponseBroadcaster(),
         send_rejected_email=send_rejected,
         subscription_access=build_subscription_access(db),
     )

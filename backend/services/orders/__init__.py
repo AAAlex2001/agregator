@@ -1,4 +1,3 @@
-from services.orders.broadcaster import OrderBroadcaster
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.create_order import CreateOrderUseCase
@@ -21,7 +20,6 @@ __all__ = [
     "GetOrderByPublicIdUseCase",
     "ListArchivedOrdersUseCase",
     "ListOrdersUseCase",
-    "OrderBroadcaster",
     "OrderFileStorage",
     "OrderRepository",
     "OrderValidator",

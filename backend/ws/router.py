@@ -7,21 +7,9 @@ from sqlalchemy import or_, select
 from database.database import AsyncSessionLocal
 from models.chat import Chat
 from models.session import Session
-from ws.manager import chat_manager, order_manager
+from ws.manager import chat_manager
 
 router = APIRouter(prefix="/ws")
-
-
-@router.websocket("/orders")
-async def orders_websocket(websocket: WebSocket) -> None:
-    await order_manager.connect(websocket)
-    try:
-        while True:
-            await websocket.receive_text()
-    except WebSocketDisconnect:
-        order_manager.disconnect(websocket)
-    except Exception:
-        order_manager.disconnect(websocket)
 
 
 @router.websocket("/chats/{chat_uuid}")

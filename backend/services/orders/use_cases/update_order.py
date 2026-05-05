@@ -1,7 +1,6 @@
 from models.order import Order, OrderBadge
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
-from services.orders.broadcaster import OrderBroadcaster
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.validators import OrderValidator
@@ -16,13 +15,11 @@ class UpdateOrderUseCase:
         repo: OrderRepository,
         get_order: GetOrderByIdUseCase,
         validator: OrderValidator,
-        broadcaster: OrderBroadcaster,
         send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
     ):
         self.repo = repo
         self.get_order = get_order
         self.validator = validator
-        self.broadcaster = broadcaster
         self.send_updated_email = send_updated_email
 
     async def execute(
@@ -44,13 +41,12 @@ class UpdateOrderUseCase:
 
         if badges_data is not None:
             await self.replace_badges(order_id, badges_data)
-              
+
 
         await self.repo.flush()
         updated = await self.get_order.execute(order_id)
 
         if notify:
-            await self.broadcaster.order_updated(updated)
             await self.send_email_if_changed(updated, snapshot)
         return updated
 

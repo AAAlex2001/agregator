@@ -3,7 +3,6 @@ from fastapi import HTTPException, status
 from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
 from services.email import SendExpertRejectedEmailUseCase
-from services.responses.broadcaster import ResponseBroadcaster
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
@@ -24,14 +23,12 @@ class WithdrawResponseUseCase:
         repo: ResponseRepository,
         get_response: GetResponseByIdUseCase,
         in_app: ResponseInAppNotifier,
-        broadcaster: ResponseBroadcaster,
         send_rejected_email: SendExpertRejectedEmailUseCase | None = None,
         subscription_access: SubscriptionAccess | None = None,
     ):
         self.repo = repo
         self.get_response = get_response
         self.in_app = in_app
-        self.broadcaster = broadcaster
         self.send_rejected_email = send_rejected_email
         self.subscription_access = subscription_access
 
@@ -58,10 +55,6 @@ class WithdrawResponseUseCase:
 
         if customer_id is not None:
             await self.in_app.response_withdrawn(order_id, customer_id, order)
-
-        refreshed = await self.repo.reload_order_with_relations(order_id)
-        if refreshed and refreshed.assigned_expert_id is None:
-            await self.broadcaster.order_reopened(refreshed)
 
         return order_id
 

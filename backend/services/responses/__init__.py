@@ -1,4 +1,3 @@
-from services.responses.broadcaster import ResponseBroadcaster
 from services.responses.file_storage import ResponseFileStorage
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
@@ -19,7 +18,6 @@ __all__ = [
     "GetResponseByIdUseCase",
     "ListCustomerResponsesUseCase",
     "ListExpertResponsesUseCase",
-    "ResponseBroadcaster",
     "ResponseFileStorage",
     "ResponseInAppNotifier",
     "ResponseRepository",

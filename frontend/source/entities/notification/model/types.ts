@@ -1,4 +1,4 @@
-export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED";
+export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY";
 export type NotificationActorRole = "CUSTOMER" | "EXPERT";
 export type NotificationResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type NotificationReason = "DIRECT_CHANGE" | "SELECTED_ANOTHER" | "SELECTED_ANOTHER_REVERTED";
@@ -35,12 +35,19 @@ export interface QuestionAnsweredNotificationPayload {
   preview: string;
 }
 
+export interface SupportReplyNotificationPayload {
+  ticket_number: string;
+  subject: string;
+  preview: string;
+}
+
 export type NotificationPayload =
   | ResponseUpdatedNotificationPayload
   | ResponseStatusChangedNotificationPayload
   | ChatMessageNotificationPayload
   | QuestionAskedNotificationPayload
   | QuestionAnsweredNotificationPayload
+  | SupportReplyNotificationPayload
   | Record<string, unknown>;
 
 export interface NotificationItem {

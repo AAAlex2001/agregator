@@ -3,7 +3,6 @@ from fastapi import UploadFile
 from models.order import Order
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
-from services.orders.broadcaster import OrderBroadcaster
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
@@ -20,14 +19,12 @@ class UpdateOrderWithFilesUseCase:
         get_order: GetOrderByIdUseCase,
         repo: OrderRepository,
         files: OrderFileStorage,
-        broadcaster: OrderBroadcaster,
         send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
     ):
         self.update_order = update_order
         self.get_order = get_order
         self.repo = repo
         self.files = files
-        self.broadcaster = broadcaster
         self.send_updated_email = send_updated_email
 
     async def execute(
@@ -50,7 +47,6 @@ class UpdateOrderWithFilesUseCase:
         if uploads:
             order = await self.append_files(order_id, order, uploads)
 
-        await self.broadcaster.order_updated(order)
         await self.send_email_if_changed(order, snapshot)
         return order
 

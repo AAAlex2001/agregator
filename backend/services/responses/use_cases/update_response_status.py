@@ -4,7 +4,6 @@ from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 from services.email import SendBiddingFinishedEmailUseCase
 from services.email.use_cases.send_bidding_finished_email import OUTCOME_LOST, OUTCOME_WON
-from services.responses.broadcaster import ResponseBroadcaster
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
 from services.responses.status_rules import ResponseStatusRules
@@ -23,7 +22,6 @@ class UpdateResponseStatusUseCase:
         rules: ResponseStatusRules,
         get_response: GetResponseByIdUseCase,
         in_app: ResponseInAppNotifier,
-        broadcaster: ResponseBroadcaster,
         send_bidding_email: SendBiddingFinishedEmailUseCase | None = None,
         subscription_access: SubscriptionAccess | None = None,
     ):
@@ -32,7 +30,6 @@ class UpdateResponseStatusUseCase:
         self.rules = rules
         self.get_response = get_response
         self.in_app = in_app
-        self.broadcaster = broadcaster
         self.send_bidding_email = send_bidding_email
         self.subscription_access = subscription_access
 
@@ -83,7 +80,6 @@ class UpdateResponseStatusUseCase:
             actor, response, new_status, auto_rejected_ids
         )
 
-        await self.broadcast_side_effects(response, new_status)
         return await self.get_response.execute(response_id)
 
     async def send_bidding_emails_on_selection(
@@ -184,20 +180,3 @@ class UpdateResponseStatusUseCase:
             )
         )
 
-    async def broadcast_side_effects(
-        self, response: OrderResponse, new_status: ResponseStatus
-    ) -> None:
-        if new_status == ResponseStatus.ACCEPTED:
-            await self.broadcaster.order_removed(response.order_id)
-            return
-
-        if new_status == ResponseStatus.REJECTED and response.order:
-            order = await self.repo.reload_order_with_relations(response.order_id)
-            if order and order.assigned_expert_id is None:
-                await self.broadcaster.order_reopened(order)
-            return
-
-        if new_status == ResponseStatus.COMPLETED and response.order:
-            order = await self.repo.reload_order_with_relations(response.order_id)
-            if order:
-                await self.broadcaster.order_completed(order)

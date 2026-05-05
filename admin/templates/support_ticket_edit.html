@@ -8,79 +8,94 @@
 
 {% block content %}
 <style>
-  .stp { max-width: 880px; margin: 0 auto; }
-  .stp-card { border: 1px solid #e6e8ec; border-radius: 14px; background: #fff; }
-  .stp-card + .stp-card { margin-top: 16px; }
-  .stp-head { padding: 18px 22px; border-bottom: 1px solid #f0f1f4; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .stp-head h2 { margin: 0; font-size: 18px; font-weight: 600; flex: 1; min-width: 0; }
-  .stp-body { padding: 18px 22px; }
-  .stp-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; font-size: 13px; }
+  .stp-page { display: flex; flex-direction: column; gap: 12px; height: calc(100dvh - 88px); min-height: 520px; }
+  .stp-meta-card { padding: 14px 18px; background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; flex-shrink: 0; }
+  .stp-title { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 240px; }
+  .stp-title h2 { margin: 0; font-size: 17px; font-weight: 600; }
+  .stp-meta-row { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; }
   .stp-meta-label { color: #8a8f99; }
-  .stp-meta-value { color: #1a1a1a; }
-  .stp-thread { padding: 18px 22px; background: #fafbfc; min-height: 220px; max-height: 540px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; border-bottom: 1px solid #f0f1f4; }
-  .stp-group { display: flex; flex-direction: column; gap: 4px; max-width: 78%; }
-  .stp-group-user { align-self: flex-start; }
+  .stp-meta-value { color: #1a1a1a; font-weight: 500; }
+
+  .stp-chat { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; overflow: hidden; }
+  .stp-chat-head { padding: 12px 18px; border-bottom: 1px solid #f0f1f4; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .stp-chat-count { color: #8a8f99; font-weight: 400; }
+
+  .stp-thread { flex: 1; min-height: 0; padding: 18px 22px; background: #fafbfc; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+  .stp-thread::-webkit-scrollbar { width: 6px; }
+  .stp-thread::-webkit-scrollbar-thumb { background: rgba(255, 138, 0, 0.25); border-radius: 4px; }
+
+  .stp-group { display: flex; flex-direction: column; gap: 4px; max-width: 70%; }
+  .stp-group-user { align-self: flex-start; align-items: flex-start; }
   .stp-group-admin { align-self: flex-end; align-items: flex-end; }
-  .stp-group-head { font-size: 12px; color: #8a8f99; padding: 0 4px; }
+  .stp-group-head { font-size: 12px; color: #8a8f99; padding: 0 6px; }
   .stp-group-head strong { color: #1a1a1a; font-weight: 600; }
-  .stp-bubbles { display: flex; flex-direction: column; gap: 6px; }
-  .stp-bubble { padding: 10px 14px; border-radius: 12px; border: 1px solid #e6e8ec; background: #fff; word-break: break-word; white-space: pre-wrap; font-size: 14px; line-height: 1.45; }
-  .stp-group-admin .stp-bubble { background: #fff3e0; border-color: #ffdda9; }
-  .stp-attachments { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .stp-attachment { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid #e6e8ec; border-radius: 8px; background: #fff; font-size: 12px; text-decoration: none; color: #1a1a1a; max-width: 240px; }
+  .stp-bubbles { display: flex; flex-direction: column; gap: 4px; max-width: 100%; }
+  .stp-group-admin .stp-bubbles { align-items: flex-end; }
+  .stp-bubble { padding: 9px 13px; border-radius: 14px; border: 1px solid; word-break: break-word; white-space: pre-wrap; font-size: 14px; line-height: 1.45; width: fit-content; max-width: 100%; }
+  .stp-group-user .stp-bubble { background: #ffffff; border-color: #e6e8ec; border-bottom-left-radius: 4px; }
+  .stp-group-user .stp-bubble:not(:first-child) { border-top-left-radius: 6px; }
+  .stp-group-user .stp-bubble:not(:last-child) { border-bottom-left-radius: 14px; }
+  .stp-group-user .stp-bubble:last-child { border-bottom-left-radius: 4px; }
+  .stp-group-admin .stp-bubble { background: #fff3e0; border-color: #ffdda9; border-bottom-right-radius: 4px; }
+  .stp-group-admin .stp-bubble:not(:first-child) { border-top-right-radius: 6px; }
+  .stp-group-admin .stp-bubble:not(:last-child) { border-bottom-right-radius: 14px; }
+  .stp-group-admin .stp-bubble:last-child { border-bottom-right-radius: 4px; }
+
+  .stp-attachments { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .stp-attachment { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid #e6e8ec; border-radius: 8px; background: #fff; font-size: 12px; text-decoration: none; color: #1a1a1a; max-width: 220px; }
   .stp-attachment:hover { border-color: #ff8a00; color: #ff8a00; }
-  .stp-attachment-icon { width: 16px; height: 16px; flex-shrink: 0; color: #ff8a00; }
+  .stp-attachment-icon { width: 14px; height: 14px; flex-shrink: 0; color: #ff8a00; }
   .stp-attachment-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .stp-empty { color: #8a8f99; text-align: center; padding: 20px; }
-  .stp-reply { padding: 18px 22px; }
-  .stp-reply textarea { width: 100%; min-height: 120px; padding: 12px 14px; border: 1px solid #d8dbe0; border-radius: 10px; font-size: 14px; resize: vertical; box-sizing: border-box; font-family: inherit; }
+  .stp-empty { color: #8a8f99; text-align: center; padding: 40px 20px; }
+
+  .stp-reply { padding: 14px 18px; border-top: 1px solid #f0f1f4; background: #fff; flex-shrink: 0; }
+  .stp-reply textarea { width: 100%; min-height: 70px; max-height: 220px; padding: 10px 14px; border: 1px solid #d8dbe0; border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical; box-sizing: border-box; }
   .stp-reply textarea:focus { border-color: #ff8a00; outline: none; box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.12); }
-  .stp-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .stp-btn-primary { background: linear-gradient(90deg, #ffb800 0%, #ff8a00 100%); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 500; cursor: pointer; }
-  .stp-btn-primary:hover { opacity: 0.9; }
-  .stp-btn-secondary { background: #fff; border: 1px solid #d8dbe0; color: #1a1a1a; padding: 10px 20px; border-radius: 10px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
-  .stp-btn-secondary:hover { border-color: #ff8a00; color: #ff8a00; }
-  .stp-closed-banner { padding: 14px 22px; text-align: center; color: #8a8f99; background: #f5f5f7; border-radius: 0 0 14px 14px; font-size: 13px; }
-  .stp-status { display: inline-flex; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .stp-reply-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+  .stp-closed-banner { padding: 16px 18px; text-align: center; color: #8a8f99; background: #f5f5f7; font-size: 13px; flex-shrink: 0; }
+
+  .stp-status-pill { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; flex-shrink: 0; }
   .stp-status-warning { background: #fff3e0; color: #cc6e00; }
   .stp-status-success { background: #e6f7ec; color: #118a3d; }
   .stp-status-secondary { background: #eef0f3; color: #6b6e76; }
-  .stp-advanced summary { cursor: pointer; padding: 16px 22px; font-weight: 500; color: #6b6e76; }
+
+  .stp-advanced { background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; flex-shrink: 0; }
+  .stp-advanced summary { cursor: pointer; padding: 12px 18px; font-weight: 500; color: #6b6e76; user-select: none; }
   .stp-advanced summary:hover { color: #ff8a00; }
   .stp-advanced[open] summary { border-bottom: 1px solid #f0f1f4; }
-  .stp-advanced-body { padding: 18px 22px; }
+  .stp-advanced-body { padding: 16px 18px; }
 </style>
 
-<div class="stp">
-  <div class="stp-card">
-    <div class="stp-head">
+<div class="stp-page">
+  <div class="stp-meta-card">
+    <div class="stp-title">
       <h2>{{ obj.number }} — {{ obj.subject }}</h2>
-      <span class="stp-status stp-status-{{ status_color }}">{{ obj.status }}</span>
+      <span class="stp-status-pill stp-status-{{ status_color }}">{{ obj.status }}</span>
     </div>
-    <div class="stp-body">
-      <div class="stp-meta">
-        <div><span class="stp-meta-label">Категория:</span> <span class="stp-meta-value">{{ obj.category }}</span></div>
-        <div><span class="stp-meta-label">Создан:</span> <span class="stp-meta-value">{{ obj.created_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
-        <div><span class="stp-meta-label">Обновлён:</span> <span class="stp-meta-value">{{ obj.updated_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
-        {% if obj.user %}
-        <div>
-          <span class="stp-meta-label">Пользователь:</span>
-          <a href="/admin/user/edit/{{ obj.user.id }}" class="stp-meta-value">
-            {% set full_name = ((obj.user.first_name or "") ~ " " ~ (obj.user.last_name or "")) | trim %}
-            {{ full_name or obj.user.email }} (id={{ obj.user.id }})
-          </a>
-        </div>
-        {% endif %}
+    <div class="stp-meta-row">
+      <div><span class="stp-meta-label">Категория:</span> <span class="stp-meta-value">{{ obj.category }}</span></div>
+      <div><span class="stp-meta-label">Создан:</span> <span class="stp-meta-value">{{ obj.created_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
+      <div><span class="stp-meta-label">Обновлён:</span> <span class="stp-meta-value">{{ obj.updated_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
+      {% if obj.user %}
+      <div>
+        <span class="stp-meta-label">Пользователь:</span>
+        <a href="/admin/user/edit/{{ obj.user.id }}" class="stp-meta-value">
+          {% set full_name = ((obj.user.first_name or "") ~ " " ~ (obj.user.last_name or "")) | trim %}
+          {{ full_name or obj.user.email }} (id={{ obj.user.id }})
+        </a>
       </div>
+      {% endif %}
     </div>
   </div>
 
-  <div class="stp-card">
-    <div class="stp-head">
-      <h2>Переписка ({{ obj.messages|length }})</h2>
+  <div class="stp-chat">
+    <div class="stp-chat-head">
+      <span>Переписка</span>
+      <span class="stp-chat-count">({{ obj.messages|length }})</span>
     </div>
 
-    <div class="stp-thread">
+    <div class="stp-thread" id="stp-thread">
       {% set ns = namespace(prev_kind=None, group_started=false) %}
       {% for msg in obj.messages %}
         {% set is_admin = msg.author_kind.value == "ADMIN" %}
@@ -123,12 +138,12 @@
         Тикет закрыт. Чтобы продолжить обсуждение, попросите пользователя создать новое обращение.
       </div>
     {% else %}
-      <form class="stp-reply" action="/admin-actions/support-tickets/{{ obj.id }}/reply" method="POST">
+      <form class="stp-reply" id="stp-reply" action="/admin-actions/support-tickets/{{ obj.id }}/reply" method="POST">
         <textarea name="text" maxlength="5000" required placeholder="Текст ответа пользователю..."></textarea>
-        <div class="stp-actions">
-          <button type="submit" class="stp-btn-primary">Отправить ответ</button>
+        <div class="stp-reply-actions">
+          <button type="submit" class="btn btn-primary">Отправить ответ</button>
           <a href="/admin-actions/support-tickets/{{ obj.id }}/close"
-             class="stp-btn-secondary"
+             class="btn btn-outline-secondary"
              onclick="return confirm('Закрыть тикет без ответа?')">
             Закрыть тикет
           </a>
@@ -137,7 +152,7 @@
     {% endif %}
   </div>
 
-  <details class="stp-card stp-advanced">
+  <details class="stp-advanced">
     <summary>Редактирование служебных полей</summary>
     <div class="stp-advanced-body">
       <form action="{{ model_view._build_url_for('admin:edit', request, obj) }}" method="POST" enctype="multipart/form-data">
@@ -147,12 +162,29 @@
         <fieldset class="form-fieldset">
           {{ render_form_fields(form, form_opts=form_opts, ajax_lookup_url=url_for('admin:ajax_lookup', identity=model_view.identity)) }}
         </fieldset>
-        <div class="stp-actions">
-          <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="stp-btn-secondary">Отмена</a>
-          <input type="submit" name="save" value="Save" class="stp-btn-primary">
+        <div class="stp-reply-actions">
+          <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn btn-outline-secondary">Отмена</a>
+          <input type="submit" name="save" value="Save" class="btn btn-primary">
         </div>
       </form>
     </div>
   </details>
 </div>
+
+<script>
+  (function () {
+    const thread = document.getElementById('stp-thread');
+    if (thread) {
+      thread.scrollTop = thread.scrollHeight;
+    }
+    if (window.location.hash === '#stp-reply') {
+      const form = document.getElementById('stp-reply');
+      if (form) {
+        form.scrollIntoView({ block: 'end', behavior: 'instant' });
+        const textarea = form.querySelector('textarea');
+        if (textarea) textarea.focus();
+      }
+    }
+  })();
+</script>
 {% endblock %}

@@ -17,4 +17,5 @@ export type {
   ResponseStatusChangedNotificationPayload,
   ResponseUpdateKind,
   ResponseUpdatedNotificationPayload,
+  SupportReplyNotificationPayload,
 } from "./model/types";

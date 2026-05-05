@@ -11,6 +11,8 @@ from schemas.notification import (
     ResponseStatusChangedNotificationPayload,
     ResponseUpdatedNotificationItemResponse,
     ResponseUpdatedNotificationPayload,
+    SupportReplyNotificationItemResponse,
+    SupportReplyNotificationPayload,
 )
 
 
@@ -57,6 +59,13 @@ def to_response(notification: Notification) -> NotificationItemResponse:
         return QuestionAnsweredNotificationItemResponse(
             type=NotificationType.QUESTION_ANSWERED,
             payload=QuestionAnsweredNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.SUPPORT_REPLY:
+        return SupportReplyNotificationItemResponse(
+            type=NotificationType.SUPPORT_REPLY,
+            payload=SupportReplyNotificationPayload.model_validate(payload),
             **common,
         )
 

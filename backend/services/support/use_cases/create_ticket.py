@@ -46,6 +46,15 @@ class CreateTicketUseCase:
                 detail="Пользователь не найден",
             )
 
+        message = SupportTicketMessage(
+            author_kind=TicketMessageAuthor.USER,
+            author_user_id=user.id,
+            author_name=author_name_from_user(user),
+            text=data.message.strip(),
+            attachments=[],
+            created_at=datetime.now(timezone.utc),
+        )
+
         ticket = SupportTicket(
             number="",
             user_id=user.id,
@@ -54,22 +63,13 @@ class CreateTicketUseCase:
             status=TicketStatus.REVIEW,
             has_unread_for_user=False,
             has_unread_for_admin=True,
+            messages=[message],
         )
         await self.repo.add(ticket)
         await self.repo.flush()
 
         ticket.number = build_ticket_number(ticket.id)
+        message.attachments = await self.files.save(ticket.id, uploads)
 
-        attachments = await self.files.save(ticket.id, uploads)
-
-        message = SupportTicketMessage(
-            author_kind=TicketMessageAuthor.USER,
-            author_user_id=user.id,
-            author_name=author_name_from_user(user),
-            text=data.message.strip(),
-            attachments=attachments,
-            created_at=datetime.now(timezone.utc),
-        )
-        ticket.messages.append(message)
         await self.repo.flush()
         return ticket

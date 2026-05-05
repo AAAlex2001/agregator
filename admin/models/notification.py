@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from enum import Enum as PyEnum
 
 from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 from models.base import Base
 
@@ -27,5 +26,3 @@ class Notification(Base):
     is_read = Column(Boolean, default=False, nullable=False, server_default="false", index=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
     read_at = Column(DateTime(timezone=True), nullable=True)
-
-    user = relationship("User", back_populates="notifications")

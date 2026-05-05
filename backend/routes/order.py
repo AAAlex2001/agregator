@@ -20,7 +20,6 @@ from services.orders import (
     GetOrderByPublicIdUseCase,
     ListArchivedOrdersUseCase,
     ListOrdersUseCase,
-    OrderBroadcaster,
     OrderFileStorage,
     OrderRepository,
     OrderValidator,
@@ -129,7 +128,6 @@ async def create_order(
     use_case = CreateOrderUseCase(
         repo=repo,
         validator=OrderValidator(repo),
-        broadcaster=OrderBroadcaster(),
         send_new_order_email=build_send_new_order_email(db, background_tasks),
     )
     order = await use_case.execute(data, current_user_id=user_id)
@@ -165,7 +163,6 @@ async def create_order_with_files(
     create = CreateOrderUseCase(
         repo=repo,
         validator=OrderValidator(repo),
-        broadcaster=OrderBroadcaster(),
         send_new_order_email=build_send_new_order_email(db, background_tasks),
     )
     use_case = CreateOrderWithFilesUseCase(
@@ -196,7 +193,6 @@ async def update_order(
         repo=repo,
         get_order=get_order,
         validator=validator,
-        broadcaster=OrderBroadcaster(),
         send_updated_email=build_send_order_updated_email(db, background_tasks),
     )
     order = await use_case.execute(order_id, data, current_user_id=user_id)
@@ -230,7 +226,6 @@ async def update_order_with_files(
         keep_files=keep_files,
     )
     repo = build_repo(db)
-    broadcaster = OrderBroadcaster()
     get_order = GetOrderByIdUseCase(repo)
     validator = OrderValidator(repo)
     send_updated = build_send_order_updated_email(db, background_tasks)
@@ -238,14 +233,12 @@ async def update_order_with_files(
         repo=repo,
         get_order=get_order,
         validator=validator,
-        broadcaster=broadcaster,
     )
     use_case = UpdateOrderWithFilesUseCase(
         update_order=update,
         get_order=get_order,
         repo=repo,
         files=OrderFileStorage(),
-        broadcaster=broadcaster,
         send_updated_email=send_updated,
     )
     order = await use_case.execute(
@@ -286,7 +279,6 @@ async def delete_order(
         repo=repo,
         get_order=GetOrderByIdUseCase(repo),
         validator=OrderValidator(repo),
-        broadcaster=OrderBroadcaster(),
     )
     await use_case.execute(order_id, current_user_id=user_id)
     return {"ok": True}

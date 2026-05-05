@@ -20,6 +20,7 @@ from models import (
     LandingAdvantage, LandingIndustry, LandingReview, LandingFaq, LandingPricingContent,
     SubscriptionKind, SubscriptionStatus,
     SupportTicket, SupportTicketMessage, TicketCategory, TicketMessageAuthor, TicketStatus,
+    Notification, NotificationType,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -159,9 +160,29 @@ async def support_ticket_reply(
         ticket.has_unread_for_user = True
         ticket.has_unread_for_admin = False
         ticket.updated_at = now
+
+        preview = (cleaned[:160] + "…") if len(cleaned) > 160 else cleaned
+        notification = Notification(
+            user_id=ticket.user_id,
+            type=NotificationType.SUPPORT_REPLY,
+            payload={
+                "ticket_number": ticket.number,
+                "subject": ticket.subject,
+                "preview": preview,
+            },
+            action_url=f"/support?ticket={ticket.id}",
+            is_read=False,
+            created_at=now,
+        )
+        db.add(notification)
+        db.query(User).filter(User.id == ticket.user_id).update(
+            {User.notification_unread_count: User.notification_unread_count + 1},
+            synchronize_session=False,
+        )
+
         db.commit()
 
-    return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
+    return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}#stp-reply", status_code=303)
 
 
 @app.get("/admin-actions/support-tickets/{ticket_id}/close", name="support_ticket_close")

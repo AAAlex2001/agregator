@@ -8,7 +8,6 @@ import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
-import { useOrdersWs } from "../lib/useOrdersWs";
 import type { ModalStep, RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
 
@@ -25,12 +24,6 @@ export function useExpertOrders() {
   const [returnOrderId] = useState(() =>
     typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("orderId") : null,
   );
-
-  useOrdersWs({
-    onCreated: (raw) => d({ type: "PREPEND", item: mapApiToOrderCard(raw) }),
-    onUpdated: (raw) => d({ type: "UPDATE", item: mapApiToOrderCard(raw) }),
-    onRemoved: (id) => d({ type: "REMOVE", id }),
-  });
 
   const reload = async () => {
     d({ type: "LOADING", value: true });

@@ -1,4 +1,4 @@
-import type { OrderCardData, OrderApiItem } from "@/source/entities/order";
+import type { OrderCardData } from "@/source/entities/order";
 
 export interface ExpertOrdersState {
   items: OrderCardData[];
@@ -9,8 +9,3 @@ export interface ExpertOrdersState {
   selectedOrder: OrderCardData | null;
   isResponding: boolean;
 }
-
-export type OrderWsEvent =
-  | { event: "order_created"; data: OrderApiItem }
-  | { event: "order_updated"; data: OrderApiItem }
-  | { event: "order_removed"; data: { id: number } };

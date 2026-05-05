@@ -5,7 +5,9 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { SupportTicket } from "@/source/entities/ticket";
 import {
   TicketList,
+  TicketListSkeleton,
   TicketDetail,
+  TicketDetailSkeleton,
   CreateTicketForm,
   fetchTickets,
   fetchTicket,
@@ -14,7 +16,6 @@ import {
   type CreateTicketPayload,
 } from "@/source/features/support-tickets";
 import { EmptyDetail } from "./EmptyDetail";
-import { SupportSkeleton } from "./SupportSkeleton";
 import s from "./SupportWidget.module.scss";
 
 type View = "list" | "detail" | "create";
@@ -24,11 +25,11 @@ export function SupportWidget() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [view, setView] = useState<View>("list");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isListLoading, setIsListLoading] = useState(true);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    setIsLoading(true);
     fetchTickets()
       .then((data) => {
         if (cancelled) return;
@@ -40,7 +41,7 @@ export function SupportWidget() {
       })
       .finally(() => {
         if (cancelled) return;
-        setIsLoading(false);
+        setIsListLoading(false);
       });
     return () => {
       cancelled = true;
@@ -59,15 +60,20 @@ export function SupportWidget() {
   };
 
   const selected = tickets.find((t) => t.id === selectedId) ?? null;
+  const isSelectedHydrated =
+    selected !== null && (selected.messages?.length ?? 0) > 0;
 
   const openTicket = async (id: number) => {
     setSelectedId(id);
     setView("detail");
+    setIsDetailLoading(true);
     try {
       const ticket = await fetchTicket(id);
       upsertTicket(ticket);
     } catch (error) {
       showError(error instanceof Error ? error.message : "Не удалось загрузить обращение");
+    } finally {
+      setIsDetailLoading(false);
     }
   };
 
@@ -102,21 +108,24 @@ export function SupportWidget() {
     }
   };
 
-  if (isLoading) {
-    return <SupportSkeleton />;
-  }
+  const showDetailSkeleton =
+    view === "detail" && (isDetailLoading || !isSelectedHydrated);
 
   return (
     <main className={s.body}>
       <div
         className={`${s.sidebarPane} ${view !== "list" ? s.paneHiddenMobile : ""}`.trim()}
       >
-        <TicketList
-          tickets={tickets}
-          selectedId={selectedId}
-          onSelect={openTicket}
-          onCreate={startCreate}
-        />
+        {isListLoading ? (
+          <TicketListSkeleton />
+        ) : (
+          <TicketList
+            tickets={tickets}
+            selectedId={selectedId}
+            onSelect={openTicket}
+            onCreate={startCreate}
+          />
+        )}
       </div>
 
       <div
@@ -125,12 +134,16 @@ export function SupportWidget() {
         {view === "create" && (
           <CreateTicketForm onCancel={backToList} onSubmit={handleCreate} />
         )}
-        {view === "detail" && selected && (
-          <TicketDetail
-            ticket={selected}
-            onBack={backToList}
-            onReply={handleReply}
-          />
+        {view === "detail" && (
+          showDetailSkeleton || !selected ? (
+            <TicketDetailSkeleton />
+          ) : (
+            <TicketDetail
+              ticket={selected}
+              onBack={backToList}
+              onReply={handleReply}
+            />
+          )
         )}
         {view === "list" && <EmptyDetail onCreate={startCreate} />}
       </div>
