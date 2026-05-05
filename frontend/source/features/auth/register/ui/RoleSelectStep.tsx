@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Button from "@/source/shared/ui/Button";
 import { ChevronIcon, BulletIcon } from "@/source/shared/ui/icons";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import type { Role } from "../model/types";
 import s from "./RoleSelectStep.module.scss";
 
@@ -31,12 +32,12 @@ export function RoleSelectStep({ roles, openedCardId, onToggleCard, onSelectRole
               <div className={s.roleContent}>
                 <div className={s.roleHeader}>
                   <div className={s.roleIcon}>{role.icon}</div>
-                  <h3 className={s.roleTitle}>{role.title}</h3>
+                  <Title as="h3" text={role.title} className={s.roleTitle} />
                   <ChevronIcon className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`} color="#FFB800" />
                 </div>
                 <div className={`${s.roleDescriptionWrapper} ${isOpen ? s.roleDescriptionOpen : ""}`}>
                   <div className={s.roleDescriptionInner}>
-                    <h4 className={s.expandedTitle}>{role.expandedTitle}</h4>
+                    <Subtitle text={role.expandedTitle} className={s.expandedTitle} />
                     <ul className={s.descriptionList}>
                       {role.description.map((item, i) => (
                         <li key={i} className={s.descriptionItem}>

@@ -39,7 +39,7 @@ const Orders = ({ orders, title, subtitle }: OrdersProps) => {
 
   <Swiper
     modules={[Navigation, Pagination]}
-    loop={true}
+    loop={false}
     centeredSlides={true}
     slidesPerView={"auto"}
     spaceBetween={5}
@@ -65,7 +65,7 @@ const Orders = ({ orders, title, subtitle }: OrdersProps) => {
   </Swiper>
       </div>
 
-      <Button href="/register" variant="secondary" className={s.checkButton}>
+      <Button href="/orders" variant="secondary" className={s.checkButton}>
         Смотреть все заказы
       </Button>
 

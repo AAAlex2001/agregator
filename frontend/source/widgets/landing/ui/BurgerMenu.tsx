@@ -14,6 +14,8 @@ const NAV_LINKS = [
   { href: "#faq", label: "FAQ" },
 ] as const;
 
+const NAV_PAGES = [{ href: "/orders", label: "Заявки" }] as const;
+
 const BurgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,6 +62,16 @@ const BurgerMenu = () => {
                 className={s.menuLink}
               >
                 {link.label}
+              </Link>
+            ))}
+            {NAV_PAGES.map((page) => (
+              <Link
+                key={page.href}
+                href={page.href}
+                onClick={closeMenu}
+                className={s.menuLink}
+              >
+                {page.label}
               </Link>
             ))}
             <div className={s.menuActions}>

@@ -53,7 +53,7 @@ const Reviews = ({ reviews, title, subtitle }: ReviewsProps) => {
         <Swiper
           className="reviews-swiper"
           modules={[Navigation, Pagination]}
-          loop={true}
+          loop={false}
           centeredSlides={true}
           slidesPerView={"auto"}
           spaceBetween={5}

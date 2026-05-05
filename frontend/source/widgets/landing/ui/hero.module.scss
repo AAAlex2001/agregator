@@ -284,6 +284,8 @@
   }
 
   .leftSection {
+    flex: 1 1 0;
+    min-width: 0;
 
   h1 {
     font-size: 30px;
@@ -301,6 +303,8 @@
 }
 
 .visual {
+  flex: 1 1 0;
+  min-width: 0;
   max-width: none;
   flex-direction: row;
   justify-content: center;
@@ -395,6 +399,8 @@
   }
 
   .leftSection {
+    flex: 1 1 0;
+    min-width: 0;
 
   h1 {
     font-size: 34px;

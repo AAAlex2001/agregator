@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { LogoIcon, CustomerIcon, ExpertIcon } from "@/source/shared/ui/icons";
+import { Title } from "@/source/shared/ui/Typography";
 import { useRegister, RoleSelectStep, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
 import type { Role } from "@/source/features/auth/register";
 import styles from "./RegisterWidget.module.scss";
@@ -58,7 +59,7 @@ export function RegisterWidget() {
           </div>
 
           <div className={styles.stepsHeader}>
-            <h2 className={styles.registrationTitle}>Регистрация</h2>
+            <Title as="h1" text="Регистрация" className={styles.registrationTitle} />
             <span className={styles.stepIndicator}>{stepLabels[reg.step]}</span>
           </div>
 

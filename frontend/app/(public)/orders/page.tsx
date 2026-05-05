@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
 
 export const metadata: Metadata = {
@@ -14,5 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default function PublicOrdersPage() {
-  return <PublicOrdersWidget />;
+  return (
+    <>
+      <LandingHeader />
+      <PublicOrdersWidget />
+      <LandingFooter variant="light" />
+    </>
+  );
 }
