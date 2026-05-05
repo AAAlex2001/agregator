@@ -5,6 +5,22 @@
   width: 100%;
 }
 
+.requirementsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.requirementsTitle {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;

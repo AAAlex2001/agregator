@@ -86,6 +86,20 @@ function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
             <Skeleton className={s.verifiedBadge} rounded="pill" />
           </div>
         </div>
+
+        {isCustomer && (
+          <div className={formStyles.companyBlock}>
+            <div className={formStyles.emailCell}>
+              <Skeleton className={s.input} rounded="lg" />
+              <Skeleton className={s.verifiedBadge} rounded="pill" />
+            </div>
+            <div className={formStyles.emailCell}>
+              <Skeleton className={s.input} rounded="lg" />
+              <Skeleton className={s.verifiedBadge} rounded="pill" />
+            </div>
+            <Skeleton className={s.companyHint} rounded="pill" />
+          </div>
+        )}
       </div>
 
       <div className={formStyles.section}>

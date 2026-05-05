@@ -128,6 +128,7 @@ class SettingsService:
         return UserSettingsResponse(
             id=user.id,
             inn=user.inn,
+            company_data=user.company_data if isinstance(user.company_data, dict) else None,
             email=user.email,
             email_verified=bool(user.email_verified),
             phone=user.phone,

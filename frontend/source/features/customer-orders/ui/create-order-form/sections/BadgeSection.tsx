@@ -56,58 +56,62 @@ export function BadgeSection({ form, onShowHelp }: Props) {
 
   return (
     <>
-      <section className={base.section}>
-        <span className={base.label}>
-          Выберите основной(-ые) объект(-ы) экспертизы
-          {HelpTrigger}
-        </span>
+      <div className={s.requirementsGroup}>
+        <h3 className={s.requirementsTitle}>Требования к эксперту:</h3>
 
-        <div className={s.row}>
-          {TYPES.map((type) => {
-            const active = activeType === type;
-            const hasSelections = (selections[type]?.length ?? 0) > 0;
-            return (
-              <button
-                key={type}
-                type="button"
-                className={`${s.mainBadge} ${s[TYPE_COLOR[type]]} ${active || hasSelections ? s.active : ""}`}
-                onClick={() => toggleType(type)}
-              >
-                {type}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+        <section className={base.section}>
+          <span className={base.label}>
+            Выберите основной(-ые) объект(-ы) экспертизы
+            {HelpTrigger}
+          </span>
 
-      <section className={base.section}>
-        <span className={base.label}>
-          Выберите тип(-ы) опасных производственных объектов
-          {HelpTrigger}
-        </span>
+          <div className={s.row}>
+            {TYPES.map((type) => {
+              const active = activeType === type;
+              const hasSelections = (selections[type]?.length ?? 0) > 0;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  className={`${s.mainBadge} ${s[TYPE_COLOR[type]]} ${active || hasSelections ? s.active : ""}`}
+                  onClick={() => toggleType(type)}
+                >
+                  {type}
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
-        <div className={s.opoRows}>
-          {OPO_ROWS.map((row, rowIdx) => (
-            <div key={rowIdx} className={s.row}>
-              {row.map((code) => {
-                const active = activeOpos.includes(code);
-                const enabled = activeType !== null && Boolean(TABLE[code]?.[activeType]);
-                return (
-                  <button
-                    key={code}
-                    type="button"
-                    className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
-                    onClick={() => toggleOpo(code)}
-                    disabled={!enabled}
-                  >
-                    {code}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      </section>
+        <section className={base.section}>
+          <span className={base.label}>
+            Выберите тип(-ы) опасных производственных объектов
+            {HelpTrigger}
+          </span>
+
+          <div className={s.opoRows}>
+            {OPO_ROWS.map((row, rowIdx) => (
+              <div key={rowIdx} className={s.row}>
+                {row.map((code) => {
+                  const active = activeOpos.includes(code);
+                  const enabled = activeType !== null && Boolean(TABLE[code]?.[activeType]);
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
+                      onClick={() => toggleOpo(code)}
+                      disabled={!enabled}
+                    >
+                      {code}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
 
       {resultCodes.length > 0 && (
         <section className={base.section}>

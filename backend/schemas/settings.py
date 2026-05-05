@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field, EmailStr, model_validator
 
 
@@ -70,6 +70,7 @@ class ChangePasswordRequest(BaseModel):
 class UserSettingsResponse(BaseModel):
     id: int
     inn: Optional[str] = None
+    company_data: Optional[dict[str, Any]] = None
     email: Optional[EmailStr] = None
     email_verified: bool = False
     phone: Optional[str] = None

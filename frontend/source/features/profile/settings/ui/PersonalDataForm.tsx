@@ -195,15 +195,26 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
 
           {profile.role === "CUSTOMER" && profile.inn && (
             <div className={s.companyBlock}>
-              <Input
-                id="company"
-                variant="text"
-                placeholder="Компания"
-                aria-label="Компания"
-                value={profile.company_data?.value ?? ""}
-                onChange={() => undefined}
-                disabled
-              />
+              <div className={s.emailCell}>
+                <Input
+                  id="company"
+                  variant="text"
+                  placeholder="Компания"
+                  aria-label="Компания"
+                  value={profile.company_data?.value ?? ""}
+                  onChange={() => undefined}
+                  disabled
+                />
+                <span className={s.verifiedBadge}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                    <path
+                      d="M11.2 4.2 5.833 9.567 2.8 6.533l.933-.933 2.1 2.1 4.434-4.433.933.933Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Компания подтверждена
+                </span>
+              </div>
               <div className={s.emailCell}>
                 <Input
                   id="inn"
@@ -225,7 +236,7 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
                 </span>
               </div>
               <p className={s.companyHint}>
-                Для смены ИНН обратитесь в службу поддержки.
+                Для смены компании обратитесь в службу поддержки.
               </p>
             </div>
           )}
