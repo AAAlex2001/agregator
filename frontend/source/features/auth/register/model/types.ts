@@ -18,6 +18,8 @@ export interface RegisterApiPayload {
   phone?: string;
   first_name?: string;
   last_name?: string;
+  inn?: string;
+  company_data?: Record<string, unknown> | null;
 }
 
 export interface RegisterResponse {

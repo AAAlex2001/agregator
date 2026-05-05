@@ -1,0 +1,146 @@
+.outer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  position: relative;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid #E6E6E6;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  line-height: 125%;
+  color: #1A1A1A;
+  background: #ffffff;
+  transition: border-color 0.3s ease;
+  outline: none;
+
+  &:hover {
+    border-color: #FFDDA9;
+  }
+
+  &:focus {
+    border-color: #FFB800;
+  }
+
+  &::placeholder {
+    color: #808080;
+  }
+
+  &:disabled {
+    background: #F5F5F5;
+    cursor: not-allowed;
+  }
+}
+
+.inputError {
+  border-color: #E64646;
+
+  &:hover,
+  &:focus {
+    border-color: #E64646;
+  }
+}
+
+.inputOpen {
+  border-color: #FFB800;
+  border-bottom-color: transparent;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 2px solid #FFB800;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  z-index: 1000;
+  overflow: hidden;
+  margin-top: -1px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 138, 0, 0.3);
+    border-radius: 4px;
+  }
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    background: #FFF8EB;
+  }
+}
+
+.name {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1A1A1A;
+  overflow-wrap: anywhere;
+}
+
+.inn {
+  font-size: 12px;
+  line-height: 14px;
+  color: #808080;
+}
+
+.empty {
+  padding: 12px;
+  font-size: 13px;
+  color: #808080;
+  text-align: center;
+}
+
+.loaderBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.errorText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 125%;
+  color: #E64646;
+}

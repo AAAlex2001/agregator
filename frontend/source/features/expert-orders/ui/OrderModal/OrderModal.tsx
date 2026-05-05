@@ -12,7 +12,13 @@ import { TenderStep } from "./TenderStep";
 import type { ModalStep, OrderModalProps } from "./types";
 import styles from "./OrderModal.module.scss";
 
-const emptyValues: RespondFormValues = { deadline: "", cost: "", comment: "" };
+const emptyValues: RespondFormValues = {
+  deadline: "",
+  cost: "",
+  comment: "",
+  companyName: "",
+  companyData: null,
+};
 
 function parseDeadline(value: string): Date | null {
   if (!value) return null;
@@ -79,11 +85,19 @@ export function OrderModal({
         return;
       }
 
+      const expertInn = values.companyData?.data?.inn ?? "";
+      if (!values.companyData || !expertInn) {
+        showError("Выберите вашу компанию из списка");
+        return;
+      }
+
       onRespond(order, {
         deadline: values.deadline,
         costAmount,
         comment: values.comment,
         files,
+        expertInn,
+        expertCompanyData: values.companyData as Record<string, unknown>,
       });
     },
     (errors) => {

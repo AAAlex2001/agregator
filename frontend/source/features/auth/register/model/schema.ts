@@ -22,6 +22,19 @@ export const registerFormSchema = z
     repeatPassword: z.string(),
     agreePrivacy: z.boolean(),
     agreeTerms: z.boolean(),
+    companyName: z.string().trim(),
+    companyData: z
+      .object({
+        value: z.string(),
+        unrestricted_value: z.string(),
+        data: z
+          .object({
+            inn: z.string().nullable().optional(),
+          })
+          .passthrough(),
+      })
+      .passthrough()
+      .nullable(),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -44,6 +57,17 @@ export const registerFormSchema = z
       }
       if (!data.lastName) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["lastName"], message: "Укажите фамилию" });
+      }
+    }
+
+    if (data.role === "CUSTOMER") {
+      const inn = data.companyData?.data?.inn ?? "";
+      if (!data.companyData || !inn || !/^\d{10}$|^\d{12}$/.test(inn)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companyName"],
+          message: "Выберите вашу компанию из списка",
+        });
       }
     }
 

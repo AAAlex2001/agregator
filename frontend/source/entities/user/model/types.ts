@@ -10,9 +10,21 @@ export interface EmailPreferences {
   email_on_question_answered: boolean;
 }
 
+export interface CompanyData {
+  value?: string;
+  unrestricted_value?: string;
+  data?: {
+    inn?: string | null;
+    name?: { full_with_opf?: string | null; short_with_opf?: string | null } | null;
+    [k: string]: unknown;
+  };
+  [k: string]: unknown;
+}
+
 export interface UserProfile {
   id: number;
   inn: string | null;
+  company_data: CompanyData | null;
   email: string | null;
   email_verified: boolean;
   phone: string | null;

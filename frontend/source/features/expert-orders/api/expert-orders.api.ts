@@ -13,6 +13,8 @@ interface RespondPayload {
   comment: string;
   proposed_sum_amount: number;
   proposed_deadline: string;
+  expert_inn: string;
+  expert_company_data: Record<string, unknown>;
   files?: File[];
 }
 
@@ -22,6 +24,8 @@ export async function respondToOrder(orderId: number, p: RespondPayload): Promis
     fd.append("comment", p.comment);
     fd.append("proposed_sum_amount", String(p.proposed_sum_amount));
     fd.append("proposed_deadline", p.proposed_deadline);
+    fd.append("expert_inn", p.expert_inn);
+    fd.append("expert_company_data", JSON.stringify(p.expert_company_data));
     for (const f of files) fd.append("files", f);
     return fd;
   };

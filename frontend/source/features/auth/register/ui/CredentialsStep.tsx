@@ -4,6 +4,7 @@ import Button from "@/source/shared/ui/Button";
 import Input from "@/source/shared/ui/Input";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import { Checkbox } from "@/source/shared/ui";
+import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import type { RegisterFormValues } from "../model/schema";
 import s from "./CredentialsStep.module.scss";
 
@@ -18,6 +19,7 @@ interface Props {
 export function CredentialsStep({ form, selectedRole, isLoading, onPhoneChange, onSubmit }: Props) {
   const { watch, setValue, formState } = form;
   const isExpert = selectedRole === 2;
+  const isCustomer = selectedRole === 1;
   const password = watch("password");
   const agreePrivacy = watch("agreePrivacy");
   const agreeTerms = watch("agreeTerms");
@@ -55,6 +57,18 @@ export function CredentialsStep({ form, selectedRole, isLoading, onPhoneChange, 
               error={formState.errors.firstName?.message}
             />
           </>
+        )}
+
+        {isCustomer && (
+          <PartySuggestInput
+            value={watch("companyName")}
+            onChange={(query: string, picked: PartySuggestion | null) => {
+              setValue("companyName", picked?.value ?? query, { shouldValidate });
+              setValue("companyData", picked, { shouldValidate });
+            }}
+            placeholder="ИНН или название компании"
+            error={formState.errors.companyName?.message as string | undefined}
+          />
         )}
 
         <Input

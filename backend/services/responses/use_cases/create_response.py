@@ -114,6 +114,8 @@ class CreateResponseUseCase:
             proposed_sum_amount=data.proposed_sum_amount,
             proposed_deadline=data.proposed_deadline,
             status=ResponseStatus.REVIEW,
+            expert_inn=data.expert_inn,
+            expert_company_data=data.expert_company_data,
         )
 
     async def flush_or_reject(self) -> None:

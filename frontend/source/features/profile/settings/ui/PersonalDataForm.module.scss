@@ -101,3 +101,22 @@
 .logoutIcon {
   flex-shrink: 0;
 }
+
+.companyBlock {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.companyHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #808080;
+  grid-column: 1 / -1;
+}

@@ -79,5 +79,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     expertPublicId: item.expert_public_id || "",
     hasReview: item.has_review ?? false,
     rejectionReason: item.rejection_reason ?? null,
+    expertCompanyName: item.expert_company_name ?? "",
+    expertInn: item.expert_inn ?? null,
   };
 }

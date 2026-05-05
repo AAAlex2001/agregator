@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Input } from "@/shared/ui";
 import { CalendarInput } from "@/source/shared/ui";
+import { useSession } from "@/source/features/session";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./detailsSection.module.scss";
@@ -11,6 +13,14 @@ interface Props {
 
 export function DetailsSection({ form }: Props) {
   const { watch, setValue } = form;
+  const { user } = useSession();
+  const companyFromProfile = user?.company_data?.value ?? "";
+
+  useEffect(() => {
+    if (companyFromProfile && watch("company") !== companyFromProfile) {
+      setValue("company", companyFromProfile, { shouldDirty: false });
+    }
+  }, [companyFromProfile, setValue, watch]);
 
   return (
     <section className={base.section}>
@@ -30,10 +40,10 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Компания</span>
           <Input
             variant="text"
-            active
             placeholder="Название компании"
             value={watch("company")}
             onChange={(event) => setValue("company", event.target.value, { shouldDirty: true })}
+            disabled
           />
         </div>
 

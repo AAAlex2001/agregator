@@ -1,6 +1,7 @@
 import type { UseFormReturn } from "react-hook-form";
 import { Button, CalendarInput, Input } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
+import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import type { RespondFormValues } from "../../model/respond.schema";
 import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
@@ -77,6 +78,19 @@ export function OfferStep({
       <span className={s.formHint}>
         Указанная вами сумма является ориентировочной. Точная стоимость будет согласована с заказчиком после изучения технического задания.
       </span>
+
+      <div className={base.fieldGroup}>
+        <span className={base.fieldLabel}>Организация, от которой подаёте заявку</span>
+        <PartySuggestInput
+          value={watch("companyName")}
+          onChange={(query: string, picked: PartySuggestion | null) => {
+            setValue("companyName", picked?.value ?? query, { shouldValidate });
+            setValue("companyData", picked, { shouldValidate });
+          }}
+          placeholder="ИНН или название компании"
+          error={formState.errors.companyName?.message as string | undefined}
+        />
+      </div>
 
       <div className={s.textareaGroup}>
         <span className={base.fieldLabel}>Комментарий для заказчика</span>

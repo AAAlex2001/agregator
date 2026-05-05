@@ -8,13 +8,18 @@ function getRoleType(roleId: number): UserRole {
 }
 
 export function toRegisterPayload(values: RegisterFormValues, roleId: number): RegisterApiPayload {
+  const role = getRoleType(roleId);
   return {
-    role: getRoleType(roleId),
+    role,
     email: values.email.trim(),
     password: values.password,
     phone: toRussianPhoneApiValue(values.phone) || undefined,
     first_name: values.firstName || undefined,
     last_name: values.lastName || undefined,
+    inn: role === "CUSTOMER" ? (values.companyData?.data?.inn ?? "") : undefined,
+    company_data: role === "CUSTOMER"
+      ? (values.companyData as Record<string, unknown> | null)
+      : null,
   };
 }
 
@@ -28,6 +33,8 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
       phone: payload.phone,
       first_name: payload.first_name,
       last_name: payload.last_name,
+      inn: payload.inn,
+      company_data: payload.company_data,
     },
   });
 }

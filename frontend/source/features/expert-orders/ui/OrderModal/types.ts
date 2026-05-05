@@ -7,6 +7,8 @@ export interface RespondFormData {
   costAmount: number;
   comment: string;
   files: File[];
+  expertInn: string;
+  expertCompanyData: Record<string, unknown>;
 }
 
 export interface OrderModalProps {

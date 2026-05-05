@@ -1,7 +1,9 @@
+import json
 from datetime import date, datetime
 from enum import Enum as PyEnum
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from models.response import ResponseStatus
 
@@ -17,6 +19,25 @@ class ResponseCreate(BaseModel):
     comment: str = Field(default="", max_length=5000)
     proposed_sum_amount: int = Field(..., gt=0)
     proposed_deadline: date
+    expert_inn: str | None = Field(default=None, min_length=10, max_length=12)
+    expert_company_data: dict[str, Any] | None = None
+
+    @field_validator("expert_company_data", mode="before")
+    @classmethod
+    def _parse_company_data(cls, value: Any) -> Any:
+        if value is None or isinstance(value, dict):
+            return value
+        if isinstance(value, str):
+            if not value:
+                return None
+            try:
+                parsed = json.loads(value)
+            except (ValueError, TypeError) as exc:
+                raise ValueError("Некорректные данные компании") from exc
+            if not isinstance(parsed, dict):
+                raise ValueError("Некорректные данные компании")
+            return parsed
+        raise ValueError("Некорректные данные компании")
 
 
 class ResponseCounters(BaseModel):
@@ -57,6 +78,8 @@ class ExpertResponseItem(BaseModel):
     expert_confirmed: bool = False
     has_review: bool = False
     rejection_reason: str | None = None
+    expert_company_name: str = ""
+    expert_inn: str | None = None
 
     model_config = {"from_attributes": True}
 

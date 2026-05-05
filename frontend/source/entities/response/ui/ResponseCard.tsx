@@ -66,6 +66,12 @@ export function ResponseCard({ card, actions, role }: Props) {
           sum={card.orderSum || card.sum}
         />
         <div className={s.info}>
+          {card.expertCompanyName && (
+            <CommentSection
+              title="Организация:"
+              text={card.expertInn ? `${card.expertCompanyName} (ИНН ${card.expertInn})` : card.expertCompanyName}
+            />
+          )}
           {(card.deadline || card.costEstimate) && (
             <ExpertTerms
               deadlineLabel={termsLabels.deadline} deadline={card.deadline}

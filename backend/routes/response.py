@@ -105,6 +105,9 @@ def to_item(
     expert_review_count = 0
     expert_public_id = ""
     rejection_reason = entity.rejection_reason
+    expert_company_name = ""
+    if isinstance(entity.expert_company_data, dict):
+        expert_company_name = (entity.expert_company_data.get("value") or "")
     if expert:
         parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in parts if p)
@@ -148,6 +151,8 @@ def to_item(
         expert_confirmed=entity.expert_confirmed or False,
         has_review=has_review,
         rejection_reason=rejection_reason,
+        expert_company_name=expert_company_name,
+        expert_inn=entity.expert_inn,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
@@ -163,6 +168,8 @@ async def create_response_for_order(
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
     proposed_deadline: str = Form(...),
+    expert_inn: str = Form(...),
+    expert_company_data: str = Form(...),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
@@ -171,6 +178,8 @@ async def create_response_for_order(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
+        expert_inn=expert_inn,
+        expert_company_data=expert_company_data,
     )
     repo = build_repo(db)
     get_response = GetResponseByIdUseCase(repo)

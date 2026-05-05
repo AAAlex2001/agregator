@@ -47,6 +47,8 @@ export interface ResponseApiItem {
   expert_confirmed: boolean;
   has_review: boolean;
   rejection_reason?: string | null;
+  expert_company_name?: string;
+  expert_inn?: string | null;
 }
 
 export interface ResponsesApiList {
@@ -92,6 +94,8 @@ export interface ResponseCardData {
   expertPublicId: string;
   hasReview: boolean;
   rejectionReason?: string | null;
+  expertCompanyName?: string;
+  expertInn?: string | null;
 }
 
 export interface CardAction {

@@ -28,6 +28,8 @@ const emptyFormValues: RegisterFormValues = {
   repeatPassword: "",
   agreePrivacy: false,
   agreeTerms: false,
+  companyName: "",
+  companyData: null,
 };
 
 export function useRegister() {

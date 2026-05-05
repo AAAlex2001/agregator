@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from models.user import User
-from schemas.registration import UserRegistration
+from schemas.registration import UserRegistration, UserRole
 from services.verification import VerificationService
 from utils.passwords import hash_password
 
@@ -85,6 +85,15 @@ class RegistrationService:
                 detail="Пользователь с таким ИНН уже зарегистрирован",
             )
 
+    def ensure_customer_has_company(self, data: UserRegistration) -> None:
+        if data.role != UserRole.CUSTOMER:
+            return
+        if not data.inn or not data.company_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Заказчик должен указать ИНН и компанию",
+            )
+
     def ensure_company_matches_inn(self, inn: str | None, company_data: dict | None) -> None:
         if not inn or not isinstance(company_data, dict):
             return
@@ -97,6 +106,7 @@ class RegistrationService:
 
     async def create_user(self, data: UserRegistration) -> User:
         self.validate_password(data.password)
+        self.ensure_customer_has_company(data)
         self.validate_inn_format(data.inn)
         self.ensure_company_matches_inn(data.inn, data.company_data)
 
