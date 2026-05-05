@@ -57,6 +57,7 @@ function mapTicketSummary(t: ApiTicketSummary): SupportTicket {
     createdAt: t.created_at,
     updatedAt: t.updated_at,
     hasUnread: t.has_unread,
+    lastMessagePreview: t.last_message_preview ?? "",
     messages: [],
   };
 }

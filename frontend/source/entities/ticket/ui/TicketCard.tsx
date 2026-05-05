@@ -29,8 +29,11 @@ function formatRelative(iso: string): string {
 }
 
 export function TicketCard({ ticket, isActive, onClick }: Props) {
-  const last = ticket.messages[ticket.messages.length - 1];
-  const preview = last?.text ?? "";
+  const preview =
+    ticket.lastMessagePreview ||
+    ticket.messages[ticket.messages.length - 1]?.text ||
+    "";
+  const previewClass = `${s.preview} ${ticket.hasUnread ? s.previewUnread : ""}`.trim();
 
   return (
     <button
@@ -45,7 +48,7 @@ export function TicketCard({ ticket, isActive, onClick }: Props) {
 
       <span className={s.subject}>{ticket.subject}</span>
 
-      <p className={s.preview}>{preview}</p>
+      {preview && <p className={previewClass}>{preview}</p>}
 
       <div className={s.bottomRow}>
         <span className={s.category}>{CATEGORY_LABEL[ticket.category]}</span>

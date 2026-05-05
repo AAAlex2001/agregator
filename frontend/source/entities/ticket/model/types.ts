@@ -33,6 +33,7 @@ export interface SupportTicket {
   createdAt: string;
   updatedAt: string;
   hasUnread: boolean;
+  lastMessagePreview: string;
   messages: TicketMessage[];
 }
 

@@ -51,7 +51,6 @@ class ReplyToTicketUseCase:
             )
 
         message = SupportTicketMessage(
-            ticket_id=ticket.id,
             author_kind=TicketMessageAuthor.USER,
             author_user_id=user.id,
             author_name=author_name_from_user(user),
@@ -59,7 +58,7 @@ class ReplyToTicketUseCase:
             attachments=attachments,
             created_at=datetime.now(timezone.utc),
         )
-        await self.repo.add_message(message)
+        ticket.messages.append(message)
 
         ticket.status = TicketStatus.REVIEW
         ticket.has_unread_for_admin = True
@@ -67,11 +66,4 @@ class ReplyToTicketUseCase:
         ticket.updated_at = datetime.now(timezone.utc)
 
         await self.repo.flush()
-
-        reloaded = await self.repo.get_by_id(ticket.id)
-        if reloaded is None:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Не удалось добавить сообщение",
-            )
-        return reloaded
+        return ticket

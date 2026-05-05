@@ -63,7 +63,6 @@ class CreateTicketUseCase:
         attachments = await self.files.save(ticket.id, uploads)
 
         message = SupportTicketMessage(
-            ticket_id=ticket.id,
             author_kind=TicketMessageAuthor.USER,
             author_user_id=user.id,
             author_name=author_name_from_user(user),
@@ -71,13 +70,6 @@ class CreateTicketUseCase:
             attachments=attachments,
             created_at=datetime.now(timezone.utc),
         )
-        await self.repo.add_message(message)
+        ticket.messages.append(message)
         await self.repo.flush()
-
-        reloaded = await self.repo.get_by_id(ticket.id)
-        if reloaded is None:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Не удалось создать обращение",
-            )
-        return reloaded
+        return ticket
