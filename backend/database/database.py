@@ -7,13 +7,16 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from sqlalchemy.orm import declarative_base
 from dotenv import load_dotenv
 
+# Загружаем переменные окружения
 load_dotenv()
 
+# URL подключения к базе данных из переменных окружения
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL must be set in .env file")
 
-
+# Создание движка базы данных
+# Логирование SQL запросов (только в режиме разработки)
 ECHO_SQL = os.getenv("ECHO_SQL", "False").lower() == "true"
 DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "20"))
 DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "20"))
@@ -34,6 +37,7 @@ engine = create_async_engine(
     connect_args={"command_timeout": DB_COMMAND_TIMEOUT},
 )
 
+# Создание фабрики сессий
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
