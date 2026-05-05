@@ -39,6 +39,7 @@ class User(Base):
     password = Column(String, nullable=False)
     rating = Column(Numeric(2, 1), nullable=True)
     review_count = Column(Integer, default=0, nullable=False)
+    notification_unread_count = Column(Integer, default=0, nullable=False, server_default="0")
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 

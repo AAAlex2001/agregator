@@ -1,10 +1,12 @@
 import json
 import os
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from uuid import uuid4
 
 import httpx
 from markupsafe import Markup, escape
-from fastapi import FastAPI, Form, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from sqladmin import Admin, ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.middleware.sessions import SessionMiddleware
@@ -125,17 +127,64 @@ async def grant_user_subscription(
     )
 
 
+SUPPORT_FILE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx"}
+SUPPORT_MAX_FILE_SIZE = 100 * 1024 * 1024
+SUPPORT_MAX_FILES = 6
+SUPPORT_UPLOADS_ROOT = Path("/app/uploads/support")
+
+
+def save_support_attachments_sync(ticket_id: int, files: list[UploadFile]) -> list[dict]:
+    "Синхронно сохраняет файлы тикета в общий с бэкендом том /app/uploads/support/{ticket_id}/."
+    saved: list[dict] = []
+    valid = [f for f in files if f and f.filename]
+    if not valid:
+        return saved
+    if len(valid) > SUPPORT_MAX_FILES:
+        valid = valid[:SUPPORT_MAX_FILES]
+
+    upload_dir = SUPPORT_UPLOADS_ROOT / str(ticket_id)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    for upload in valid:
+        original_name = upload.filename or "file"
+        extension = Path(original_name).suffix.lower()
+        if extension not in SUPPORT_FILE_EXTENSIONS:
+            continue
+        generated_name = f"{uuid4().hex}{extension}"
+        full_path = upload_dir / generated_name
+        with open(full_path, "wb") as out:
+            chunk = upload.file.read(1024 * 1024)
+            total = 0
+            while chunk:
+                total += len(chunk)
+                if total > SUPPORT_MAX_FILE_SIZE:
+                    out.close()
+                    full_path.unlink(missing_ok=True)
+                    break
+                out.write(chunk)
+                chunk = upload.file.read(1024 * 1024)
+            else:
+                saved.append({
+                    "name": original_name,
+                    "url": f"/uploads/support/{ticket_id}/{generated_name}",
+                })
+    return saved
+
+
 @app.post("/admin-actions/support-tickets/{ticket_id}/reply", name="support_ticket_reply")
 async def support_ticket_reply(
     request: Request,
     ticket_id: int,
-    text: str = Form(...),
+    text: str = Form(""),
+    files: list[UploadFile] = File(default=[]),
 ):
     if not request.session.get("authenticated", False):
         return RedirectResponse("/admin/login", status_code=303)
 
     cleaned = (text or "").strip()
-    if not cleaned:
+    attachments = save_support_attachments_sync(ticket_id, files)
+
+    if not cleaned and not attachments:
         return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
 
     with SessionLocal() as db:
@@ -152,7 +201,7 @@ async def support_ticket_reply(
             author_user_id=None,
             author_name="Поддержка",
             text=cleaned,
-            attachments=[],
+            attachments=attachments,
             created_at=now,
         )
         db.add(message)
@@ -161,7 +210,10 @@ async def support_ticket_reply(
         ticket.has_unread_for_admin = False
         ticket.updated_at = now
 
-        preview = (cleaned[:160] + "…") if len(cleaned) > 160 else cleaned
+        if cleaned:
+            preview = (cleaned[:160] + "…") if len(cleaned) > 160 else cleaned
+        else:
+            preview = f"Прикреплено файлов: {len(attachments)}"
         notification = Notification(
             user_id=ticket.user_id,
             type=NotificationType.SUPPORT_REPLY,

@@ -110,6 +110,8 @@ services:
       DADATA_SECRET_KEY: ${DADATA_SECRET_KEY}
     expose:
       - "8001"
+    volumes:
+      - backend_uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
