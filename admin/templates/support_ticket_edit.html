@@ -1,0 +1,158 @@
+{% extends "sqladmin/layout.html" %}
+{% from 'sqladmin/_macros.html' import render_form_fields %}
+
+{% set status_value = obj.status.value %}
+{% set is_closed = status_value == "CLOSED" %}
+{% set is_answered = status_value == "ANSWERED" %}
+{% set status_color = "secondary" if is_closed else ("success" if is_answered else "warning") %}
+
+{% block content %}
+<style>
+  .stp { max-width: 880px; margin: 0 auto; }
+  .stp-card { border: 1px solid #e6e8ec; border-radius: 14px; background: #fff; }
+  .stp-card + .stp-card { margin-top: 16px; }
+  .stp-head { padding: 18px 22px; border-bottom: 1px solid #f0f1f4; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .stp-head h2 { margin: 0; font-size: 18px; font-weight: 600; flex: 1; min-width: 0; }
+  .stp-body { padding: 18px 22px; }
+  .stp-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; font-size: 13px; }
+  .stp-meta-label { color: #8a8f99; }
+  .stp-meta-value { color: #1a1a1a; }
+  .stp-thread { padding: 18px 22px; background: #fafbfc; min-height: 220px; max-height: 540px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; border-bottom: 1px solid #f0f1f4; }
+  .stp-group { display: flex; flex-direction: column; gap: 4px; max-width: 78%; }
+  .stp-group-user { align-self: flex-start; }
+  .stp-group-admin { align-self: flex-end; align-items: flex-end; }
+  .stp-group-head { font-size: 12px; color: #8a8f99; padding: 0 4px; }
+  .stp-group-head strong { color: #1a1a1a; font-weight: 600; }
+  .stp-bubbles { display: flex; flex-direction: column; gap: 6px; }
+  .stp-bubble { padding: 10px 14px; border-radius: 12px; border: 1px solid #e6e8ec; background: #fff; word-break: break-word; white-space: pre-wrap; font-size: 14px; line-height: 1.45; }
+  .stp-group-admin .stp-bubble { background: #fff3e0; border-color: #ffdda9; }
+  .stp-attachments { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .stp-attachment { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid #e6e8ec; border-radius: 8px; background: #fff; font-size: 12px; text-decoration: none; color: #1a1a1a; max-width: 240px; }
+  .stp-attachment:hover { border-color: #ff8a00; color: #ff8a00; }
+  .stp-attachment-icon { width: 16px; height: 16px; flex-shrink: 0; color: #ff8a00; }
+  .stp-attachment-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stp-empty { color: #8a8f99; text-align: center; padding: 20px; }
+  .stp-reply { padding: 18px 22px; }
+  .stp-reply textarea { width: 100%; min-height: 120px; padding: 12px 14px; border: 1px solid #d8dbe0; border-radius: 10px; font-size: 14px; resize: vertical; box-sizing: border-box; font-family: inherit; }
+  .stp-reply textarea:focus { border-color: #ff8a00; outline: none; box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.12); }
+  .stp-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .stp-btn-primary { background: linear-gradient(90deg, #ffb800 0%, #ff8a00 100%); color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 500; cursor: pointer; }
+  .stp-btn-primary:hover { opacity: 0.9; }
+  .stp-btn-secondary { background: #fff; border: 1px solid #d8dbe0; color: #1a1a1a; padding: 10px 20px; border-radius: 10px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .stp-btn-secondary:hover { border-color: #ff8a00; color: #ff8a00; }
+  .stp-closed-banner { padding: 14px 22px; text-align: center; color: #8a8f99; background: #f5f5f7; border-radius: 0 0 14px 14px; font-size: 13px; }
+  .stp-status { display: inline-flex; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .stp-status-warning { background: #fff3e0; color: #cc6e00; }
+  .stp-status-success { background: #e6f7ec; color: #118a3d; }
+  .stp-status-secondary { background: #eef0f3; color: #6b6e76; }
+  .stp-advanced summary { cursor: pointer; padding: 16px 22px; font-weight: 500; color: #6b6e76; }
+  .stp-advanced summary:hover { color: #ff8a00; }
+  .stp-advanced[open] summary { border-bottom: 1px solid #f0f1f4; }
+  .stp-advanced-body { padding: 18px 22px; }
+</style>
+
+<div class="stp">
+  <div class="stp-card">
+    <div class="stp-head">
+      <h2>{{ obj.number }} — {{ obj.subject }}</h2>
+      <span class="stp-status stp-status-{{ status_color }}">{{ obj.status }}</span>
+    </div>
+    <div class="stp-body">
+      <div class="stp-meta">
+        <div><span class="stp-meta-label">Категория:</span> <span class="stp-meta-value">{{ obj.category }}</span></div>
+        <div><span class="stp-meta-label">Создан:</span> <span class="stp-meta-value">{{ obj.created_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
+        <div><span class="stp-meta-label">Обновлён:</span> <span class="stp-meta-value">{{ obj.updated_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
+        {% if obj.user %}
+        <div>
+          <span class="stp-meta-label">Пользователь:</span>
+          <a href="/admin/user/edit/{{ obj.user.id }}" class="stp-meta-value">
+            {% set full_name = ((obj.user.first_name or "") ~ " " ~ (obj.user.last_name or "")) | trim %}
+            {{ full_name or obj.user.email }} (id={{ obj.user.id }})
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="stp-card">
+    <div class="stp-head">
+      <h2>Переписка ({{ obj.messages|length }})</h2>
+    </div>
+
+    <div class="stp-thread">
+      {% set ns = namespace(prev_kind=None, group_started=false) %}
+      {% for msg in obj.messages %}
+        {% set is_admin = msg.author_kind.value == "ADMIN" %}
+        {% set kind = msg.author_kind.value %}
+        {% if kind != ns.prev_kind %}
+          {% if ns.group_started %}</div></div>{% endif %}
+          <div class="stp-group {% if is_admin %}stp-group-admin{% else %}stp-group-user{% endif %}">
+            <div class="stp-group-head">
+              <strong>{{ msg.author_name or (is_admin and 'Поддержка' or 'Пользователь') }}</strong>
+              · {{ msg.created_at.strftime("%d.%m.%Y %H:%M") }}
+            </div>
+            <div class="stp-bubbles">
+          {% set ns.group_started = true %}
+        {% endif %}
+        <div class="stp-bubble">
+          {% if msg.text %}{{ msg.text }}{% endif %}
+          {% if msg.attachments %}
+            <div class="stp-attachments">
+              {% for att in msg.attachments %}
+                <a class="stp-attachment" href="{{ att.url }}" target="_blank" rel="noopener">
+                  <svg class="stp-attachment-icon" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 2h6l4 4v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path d="M9 2v4h4" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  <span class="stp-attachment-name">{{ att.name or "Файл" }}</span>
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {% set ns.prev_kind = kind %}
+      {% else %}
+        <div class="stp-empty">Сообщений пока нет</div>
+      {% endfor %}
+      {% if ns.group_started %}</div></div>{% endif %}
+    </div>
+
+    {% if is_closed %}
+      <div class="stp-closed-banner">
+        Тикет закрыт. Чтобы продолжить обсуждение, попросите пользователя создать новое обращение.
+      </div>
+    {% else %}
+      <form class="stp-reply" action="/admin-actions/support-tickets/{{ obj.id }}/reply" method="POST">
+        <textarea name="text" maxlength="5000" required placeholder="Текст ответа пользователю..."></textarea>
+        <div class="stp-actions">
+          <button type="submit" class="stp-btn-primary">Отправить ответ</button>
+          <a href="/admin-actions/support-tickets/{{ obj.id }}/close"
+             class="stp-btn-secondary"
+             onclick="return confirm('Закрыть тикет без ответа?')">
+            Закрыть тикет
+          </a>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+
+  <details class="stp-card stp-advanced">
+    <summary>Редактирование служебных полей</summary>
+    <div class="stp-advanced-body">
+      <form action="{{ model_view._build_url_for('admin:edit', request, obj) }}" method="POST" enctype="multipart/form-data">
+        {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+        <fieldset class="form-fieldset">
+          {{ render_form_fields(form, form_opts=form_opts, ajax_lookup_url=url_for('admin:ajax_lookup', identity=model_view.identity)) }}
+        </fieldset>
+        <div class="stp-actions">
+          <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="stp-btn-secondary">Отмена</a>
+          <input type="submit" name="save" value="Save" class="stp-btn-primary">
+        </div>
+      </form>
+    </div>
+  </details>
+</div>
+{% endblock %}

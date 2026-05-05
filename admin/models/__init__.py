@@ -8,6 +8,13 @@ from models.pricing import PricingPlan, UserSubscription, SubscriptionKind, Subs
 from models.review import Review
 from models.session import Session
 from models.password_reset_code import PasswordResetCode
+from models.support_ticket import (
+    SupportTicket,
+    SupportTicketMessage,
+    TicketCategory,
+    TicketMessageAuthor,
+    TicketStatus,
+)
 from models.landing import (
     LandingHero,
     LandingSectionHeader,

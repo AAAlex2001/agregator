@@ -10,6 +10,7 @@ import {
   LogoIcon,
   LogoMarkIcon,
   ProfileHeaderIcon,
+  SupportHeaderIcon,
 } from "@/source/shared/ui/icons";
 import s from "./Header.module.scss";
 
@@ -18,12 +19,14 @@ const NAV: Record<string, { href: string; label: string }[]> = {
     { href: "/customer/orders", label: "Мои заказы" },
     { href: "/responses", label: "Отклики" },
     { href: "/archive", label: "Архив" },
+    { href: "/support", label: "Поддержка" },
   ],
   EXPERT: [
     { href: "/expert/orders", label: "Все заказы" },
     { href: "/responses", label: "Мои отклики" },
     { href: "/expert/reviews", label: "Отзывы" },
     { href: "/archive", label: "Архив" },
+    { href: "/support", label: "Поддержка" },
   ],
 };
 
@@ -33,6 +36,7 @@ export function AuthHeader() {
   const links = role ? NAV[role] : [];
   const isChatActive = pathname === "/chat" || pathname.startsWith("/chat/");
   const isProfileActive = pathname === "/settings";
+  const isSupportActive = pathname === "/support" || pathname.startsWith("/support/");
 
   return (
     <>
@@ -63,6 +67,13 @@ export function AuthHeader() {
               aria-label="Чат"
             >
               <ChatHeaderIcon />
+            </Link>
+            <Link
+              className={`${s.iconBtn} ${s.mobileOnly} ${isSupportActive ? s.iconBtnActive : ""}`.trim()}
+              href="/support"
+              aria-label="Поддержка"
+            >
+              <SupportHeaderIcon />
             </Link>
             <NotificationsPopover buttonClassName={s.iconBtn} activeClassName={s.iconBtnActive} />
             <Link

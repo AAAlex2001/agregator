@@ -19,6 +19,7 @@ from models import (
     LandingHero, LandingSectionHeader, LandingStep, LandingOrderExample,
     LandingAdvantage, LandingIndustry, LandingReview, LandingFaq, LandingPricingContent,
     SubscriptionKind, SubscriptionStatus,
+    SupportTicket, SupportTicketMessage, TicketCategory, TicketMessageAuthor, TicketStatus,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -121,6 +122,63 @@ async def grant_user_subscription(
         request.headers.get("referer") or f"/admin/user/details/{user_id}",
         status_code=303,
     )
+
+
+@app.post("/admin-actions/support-tickets/{ticket_id}/reply", name="support_ticket_reply")
+async def support_ticket_reply(
+    request: Request,
+    ticket_id: int,
+    text: str = Form(...),
+):
+    if not request.session.get("authenticated", False):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    cleaned = (text or "").strip()
+    if not cleaned:
+        return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
+
+    with SessionLocal() as db:
+        ticket = db.get(SupportTicket, ticket_id)
+        if ticket is None:
+            raise HTTPException(status_code=404, detail="Тикет не найден")
+        if ticket.status == TicketStatus.CLOSED:
+            return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
+
+        now = datetime.now(timezone.utc)
+        message = SupportTicketMessage(
+            ticket_id=ticket.id,
+            author_kind=TicketMessageAuthor.ADMIN,
+            author_user_id=None,
+            author_name="Поддержка",
+            text=cleaned,
+            attachments=[],
+            created_at=now,
+        )
+        db.add(message)
+        ticket.status = TicketStatus.ANSWERED
+        ticket.has_unread_for_user = True
+        ticket.has_unread_for_admin = False
+        ticket.updated_at = now
+        db.commit()
+
+    return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
+
+
+@app.get("/admin-actions/support-tickets/{ticket_id}/close", name="support_ticket_close")
+async def support_ticket_close(request: Request, ticket_id: int):
+    if not request.session.get("authenticated", False):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    with SessionLocal() as db:
+        ticket = db.get(SupportTicket, ticket_id)
+        if ticket is None:
+            raise HTTPException(status_code=404, detail="Тикет не найден")
+        ticket.status = TicketStatus.CLOSED
+        ticket.has_unread_for_admin = False
+        ticket.updated_at = datetime.now(timezone.utc)
+        db.commit()
+
+    return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
 
 
 # ========== УТИЛИТЫ ==========
@@ -1321,6 +1379,145 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
     }
 
 
+def format_ticket_attachments(value):
+    if not value:
+        return "—"
+    if isinstance(value, list):
+        parts = []
+        for item in value:
+            if isinstance(item, dict):
+                name = escape(item.get("name") or "Файл")
+                url = item.get("url") or "#"
+                parts.append(
+                    f'<div style="margin:4px 0"><a href="{url}" target="_blank">{name}</a></div>'
+                )
+        return Markup("".join(parts)) if parts else "—"
+    return str(value)
+
+
+class SupportTicketAdmin(ModelView, model=SupportTicket):
+    name = "Тикет"
+    name_plural = "Поддержка · Тикеты"
+    icon = "fa-solid fa-life-ring"
+    category = "Поддержка"
+    edit_template = "support_ticket_edit.html"
+
+    column_list = [
+        SupportTicket.id,
+        SupportTicket.number,
+        SupportTicket.subject,
+        SupportTicket.category,
+        SupportTicket.status,
+        SupportTicket.has_unread_for_admin,
+        SupportTicket.user_id,
+        SupportTicket.updated_at,
+    ]
+    column_searchable_list = [SupportTicket.number, SupportTicket.subject]
+    column_sortable_list = [
+        SupportTicket.id,
+        SupportTicket.status,
+        SupportTicket.category,
+        SupportTicket.updated_at,
+        SupportTicket.created_at,
+    ]
+    column_default_sort = (SupportTicket.updated_at, True)
+
+    column_details_list = [
+        SupportTicket.id,
+        SupportTicket.number,
+        SupportTicket.user,
+        SupportTicket.subject,
+        SupportTicket.category,
+        SupportTicket.status,
+        SupportTicket.has_unread_for_user,
+        SupportTicket.has_unread_for_admin,
+        SupportTicket.created_at,
+        SupportTicket.updated_at,
+        SupportTicket.messages,
+    ]
+
+    form_columns = [
+        SupportTicket.subject,
+        SupportTicket.category,
+        SupportTicket.status,
+        SupportTicket.has_unread_for_user,
+        SupportTicket.has_unread_for_admin,
+    ]
+
+    column_labels = {
+        SupportTicket.id: "ID",
+        SupportTicket.number: "Номер",
+        SupportTicket.user_id: "ID пользователя",
+        SupportTicket.user: "Пользователь",
+        SupportTicket.subject: "Тема",
+        SupportTicket.category: "Категория",
+        SupportTicket.status: "Статус",
+        SupportTicket.has_unread_for_user: "Не прочитано пользователем",
+        SupportTicket.has_unread_for_admin: "Требует ответа",
+        SupportTicket.created_at: "Создан",
+        SupportTicket.updated_at: "Обновлён",
+        SupportTicket.messages: "Сообщения",
+    }
+
+    column_formatters = {
+        SupportTicket.category: lambda m, a: str(m.category),
+        SupportTicket.status: lambda m, a: str(m.status),
+    }
+    column_formatters_detail = {
+        SupportTicket.category: lambda m, a: str(m.category),
+        SupportTicket.status: lambda m, a: str(m.status),
+    }
+
+
+class SupportTicketMessageAdmin(ModelView, model=SupportTicketMessage):
+    name = "Сообщение"
+    name_plural = "Поддержка · Сообщения"
+    icon = "fa-solid fa-comment"
+    category = "Поддержка"
+
+    can_create = False
+    can_edit = False
+
+    column_list = [
+        SupportTicketMessage.id,
+        SupportTicketMessage.ticket_id,
+        SupportTicketMessage.author_kind,
+        SupportTicketMessage.author_name,
+        SupportTicketMessage.created_at,
+    ]
+    column_default_sort = (SupportTicketMessage.created_at, True)
+
+    column_details_list = [
+        SupportTicketMessage.id,
+        SupportTicketMessage.ticket_id,
+        SupportTicketMessage.author_kind,
+        SupportTicketMessage.author_user_id,
+        SupportTicketMessage.author_name,
+        SupportTicketMessage.text,
+        SupportTicketMessage.attachments,
+        SupportTicketMessage.created_at,
+    ]
+
+    column_labels = {
+        SupportTicketMessage.id: "ID",
+        SupportTicketMessage.ticket_id: "ID тикета",
+        SupportTicketMessage.author_kind: "Источник",
+        SupportTicketMessage.author_user_id: "ID автора",
+        SupportTicketMessage.author_name: "Автор",
+        SupportTicketMessage.text: "Текст",
+        SupportTicketMessage.attachments: "Файлы",
+        SupportTicketMessage.created_at: "Создано",
+    }
+
+    column_formatters = {
+        SupportTicketMessage.author_kind: lambda m, a: str(m.author_kind),
+    }
+    column_formatters_detail = {
+        SupportTicketMessage.author_kind: lambda m, a: str(m.author_kind),
+        SupportTicketMessage.attachments: lambda m, a: format_ticket_attachments(m.attachments),
+    }
+
+
 # --- Регистрация вьюшек ---
 admin.add_view(UserAdmin)
 admin.add_view(OrderAdmin)
@@ -1342,3 +1539,6 @@ admin.add_view(LandingIndustryAdmin)
 admin.add_view(LandingReviewAdmin)
 admin.add_view(LandingFaqAdmin)
 admin.add_view(LandingPricingContentAdmin)
+
+admin.add_view(SupportTicketAdmin)
+admin.add_view(SupportTicketMessageAdmin)

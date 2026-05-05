@@ -1,0 +1,116 @@
+from datetime import datetime, timezone
+from enum import Enum as PyEnum
+
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    JSON,
+    String,
+    Text,
+)
+from sqlalchemy.orm import relationship
+
+from models.base import Base
+
+
+class TicketStatus(str, PyEnum):
+    REVIEW = "REVIEW"
+    ANSWERED = "ANSWERED"
+    CLOSED = "CLOSED"
+
+
+class TicketCategory(str, PyEnum):
+    ORDER = "ORDER"
+    RESPONSE = "RESPONSE"
+    TECHNICAL = "TECHNICAL"
+    BILLING = "BILLING"
+    ACCOUNT = "ACCOUNT"
+    COMPLAINT = "COMPLAINT"
+    SUGGESTION = "SUGGESTION"
+    OTHER = "OTHER"
+
+
+class TicketMessageAuthor(str, PyEnum):
+    USER = "USER"
+    ADMIN = "ADMIN"
+
+
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    number = Column(String(20), nullable=False, unique=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    subject = Column(String(200), nullable=False)
+    category = Column(
+        Enum(TicketCategory, name="ticketcategory"),
+        nullable=False,
+        index=True,
+    )
+    status = Column(
+        Enum(TicketStatus, name="ticketstatus"),
+        nullable=False,
+        default=TicketStatus.REVIEW,
+        index=True,
+    )
+    has_unread_for_user = Column(Boolean, nullable=False, default=False, server_default="false")
+    has_unread_for_admin = Column(Boolean, nullable=False, default=True, server_default="true")
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    user = relationship("User", backref="support_tickets")
+    messages = relationship(
+        "SupportTicketMessage",
+        back_populates="ticket",
+        cascade="all, delete-orphan",
+        order_by="SupportTicketMessage.created_at",
+    )
+
+
+class SupportTicketMessage(Base):
+    __tablename__ = "support_ticket_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ticket_id = Column(
+        Integer,
+        ForeignKey("support_tickets.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    author_kind = Column(
+        Enum(TicketMessageAuthor, name="ticketmessageauthor"),
+        nullable=False,
+    )
+    author_user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    author_name = Column(String(200), nullable=False, default="")
+    text = Column(Text, nullable=False, default="")
+    attachments = Column(JSON, nullable=False, default=list)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    ticket = relationship("SupportTicket", back_populates="messages")

@@ -1,6 +1,7 @@
 export { default as ArrowIcon } from "./ArrowIcon";
 export { default as ChevronIcon } from "./ChevronIcon";
 export { default as PlusIcon } from "./PlusIcon";
+export { default as PlusThinIcon } from "./PlusThinIcon";
 export { default as FileIcon } from "./FileIcon";
 export { default as BulletIcon } from "./BulletIcon";
 export { default as CheckIcon } from "./CheckIcon";
@@ -28,6 +29,7 @@ export { default as MenuOrdersIcon } from "./MenuOrdersIcon";
 export { default as MenuResponsesIcon } from "./MenuResponsesIcon";
 export { default as MenuInWorkIcon } from "./MenuInWorkIcon";
 export { default as ChatHeaderIcon } from "./ChatHeaderIcon";
+export { default as SupportHeaderIcon } from "./SupportHeaderIcon";
 export { default as NotificationsHeaderIcon } from "./NotificationsHeaderIcon";
 export { default as ProfileHeaderIcon } from "./ProfileHeaderIcon";
 export { default as BurgerHeaderIcon } from "./BurgerHeaderIcon";

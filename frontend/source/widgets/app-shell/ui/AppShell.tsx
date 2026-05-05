@@ -15,6 +15,7 @@ const HEADER_ROUTES = [
   /^\/settings$/,
   /^\/chat(?:\/.*)?$/,
   /^\/archive(?:\/.*)?$/,
+  /^\/support(?:\/.*)?$/,
 ];
 
 function shouldShowHeader(pathname: string): boolean {

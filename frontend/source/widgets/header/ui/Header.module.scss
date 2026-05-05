@@ -122,6 +122,14 @@
   }
 }
 
+.mobileOnly {
+  display: inline-flex !important;
+
+  @media (min-width: 1440px) {
+    display: none !important;
+  }
+}
+
 .iconBtn {
   display: inline-flex;
   align-items: center;
