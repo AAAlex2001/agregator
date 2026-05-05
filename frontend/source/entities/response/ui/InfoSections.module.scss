@@ -3,15 +3,12 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  @media (min-width: 768px) { flex-direction: row; }
 }
 .termItem { display: flex; align-items: center; gap: 4px; }
 .termCost {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
-  flex: 1;
-  @media (min-width: 768px) { flex-direction: row; justify-content: flex-end; align-items: center; }
 }
 .termLabel {
   font-weight: 500;

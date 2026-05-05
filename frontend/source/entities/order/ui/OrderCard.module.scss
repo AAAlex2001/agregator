@@ -31,6 +31,12 @@
   gap: 2px;
 }
 
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .badges {
   display: flex;
   flex-wrap: wrap;

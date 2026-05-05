@@ -36,17 +36,21 @@ export function CustomerBrief({ order }: Props) {
     <div className={s.block}>
       <div className={s.topRow}>
         <span className={s.date}>{order.date}</span>
-
-        <div className={s.badges}>
-          {order.badges.map((badge, index) => (
-            <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
-              {badge.text}
-            </span>
-          ))}
-        </div>
-
         <span className={s.sum}>{order.sum}</span>
       </div>
+
+      {order.badges.length > 0 && (
+        <div className={s.requirements}>
+          <span className={s.requirementsLabel}>Требования к эксперту:</span>
+          <div className={s.badges}>
+            {order.badges.map((badge, index) => (
+              <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
+                {badge.text}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {order.responsesDeadline && (
         <span className={isExpired ? s.responsesDeadlineExpired : s.responsesDeadlineActive}>

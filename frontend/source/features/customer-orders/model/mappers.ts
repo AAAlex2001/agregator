@@ -1,5 +1,8 @@
 import type { OrderCardData } from "@/source/entities/order";
-import { TABLE, type ExpertiseType } from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
+import {
+  cell,
+  type ExpertiseType,
+} from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
 import type { OrderFormValues } from "./schema";
 
 function parseBadges(badges: { text: string }[]): Record<string, string[]> {
@@ -8,9 +11,8 @@ function parseBadges(badges: { text: string }[]): Record<string, string[]> {
     const match = text.trim().match(/^Э([\d.]+)\s+(.+)$/);
     if (!match) continue;
     const [, opo, rawType] = match;
-    const type: ExpertiseType =
-      rawType === "КЛ" || rawType === "ТП" ? "КЛ/ТП" : (rawType as ExpertiseType);
-    if (!TABLE[opo]?.[type]) continue;
+    const type = rawType as ExpertiseType;
+    if (cell(opo, type).length === 0) continue;
     const list = result[type] ?? (result[type] = []);
     if (!list.includes(opo)) list.push(opo);
   }
@@ -42,9 +44,19 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
 }
 
 function flattenCodes(selections: Record<string, string[]>): string[] {
-  return Object.entries(selections).flatMap(([type, opos]) =>
-    opos.flatMap((opo) => TABLE[opo]?.[type as ExpertiseType] ?? []),
-  );
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const [type, opos] of Object.entries(selections)) {
+    for (const opo of opos) {
+      for (const code of cell(opo, type as ExpertiseType)) {
+        if (!seen.has(code)) {
+          seen.add(code);
+          result.push(code);
+        }
+      }
+    }
+  }
+  return result;
 }
 
 export function buildCreatePayload(values: OrderFormValues, files: File[], userId: number) {

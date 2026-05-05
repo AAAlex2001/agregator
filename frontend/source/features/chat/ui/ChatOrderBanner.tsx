@@ -44,15 +44,20 @@ export function ChatOrderBanner({ title, customer, date, sum, badges, responseSt
           <p className={s.customer}>{customer}</p>
           <div className={s.meta}>
             <span className={s.date}>{date}</span>
-            <div className={s.badges}>
-              {badges.map((badge, index) => (
-                <span key={`${badge.text}-${index}`} className={s.badge} data-variant={badge.variant}>
-                  {badge.text}
-                </span>
-              ))}
-            </div>
             <span className={s.sum}>{sum}</span>
           </div>
+          {badges.length > 0 ? (
+            <div className={s.requirements}>
+              <span className={s.requirementsLabel}>Требования к эксперту:</span>
+              <div className={s.badges}>
+                {badges.map((badge, index) => (
+                  <span key={`${badge.text}-${index}`} className={s.badge} data-variant={badge.variant}>
+                    {badge.text}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {responseStatus ? (
             <p className={s.orderLinkRow}>
               Ссылка на заказ:{" "}

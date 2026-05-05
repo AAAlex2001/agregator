@@ -65,7 +65,7 @@ export function ReviewCard({
 
               {badges.length > 0 && (
                 <div className={s.detailRow}>
-                  <span className={s.detailLabel}>Типовые наименования:</span>
+                  <span className={s.detailLabel}>Требования к эксперту:</span>
                   <div className={s.badgesWrap}>
                     <div className={s.badges}>
                       {badges.map((badge, index) => (

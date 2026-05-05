@@ -59,15 +59,20 @@ export function WithdrawResponseModal({
               <span className={s.customer}>{customer}</span>
               <div className={s.orderMeta}>
                 <span className={s.orderDate}>{orderDate}</span>
-                <div className={s.badges}>
-                  {badges.map((badge, index) => (
-                    <span key={`${badge.text}-${index}`} className={`${s.badge} ${s[badge.variant]}`}>
-                      {badge.text}
-                    </span>
-                  ))}
-                </div>
                 <span className={s.sum}>{sum}</span>
               </div>
+              {badges.length > 0 && (
+                <div className={s.requirements}>
+                  <span className={s.requirementsLabel}>Требования к эксперту:</span>
+                  <div className={s.badges}>
+                    {badges.map((badge, index) => (
+                      <span key={`${badge.text}-${index}`} className={`${s.badge} ${s[badge.variant]}`}>
+                        {badge.text}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className={s.infoBlock}>

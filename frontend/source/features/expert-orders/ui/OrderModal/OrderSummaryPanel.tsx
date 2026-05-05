@@ -38,13 +38,18 @@ export function OrderSummaryPanel({ order }: Props) {
               <span className={s.metaLabel}>Срок выполнения:</span> {order.date}
             </span>
 
-            <div className={s.badges}>
-              {order.badges.map((badge, index) => (
-                <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
-                  {badge.text}
-                </span>
-              ))}
-            </div>
+            {order.badges.length > 0 && (
+              <div className={s.requirements}>
+                <span className={s.metaLabel}>Требования к эксперту:</span>
+                <div className={s.badges}>
+                  {order.badges.map((badge, index) => (
+                    <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
+                      {badge.text}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <span className={s.metaText}>
               <span className={s.metaLabel}>Начальная максимальная цена:</span> {order.sum}

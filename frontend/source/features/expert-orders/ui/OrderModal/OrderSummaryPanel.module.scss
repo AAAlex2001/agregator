@@ -62,13 +62,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 24px;
-  }
 }
 
 .metaText {
@@ -84,6 +77,12 @@
 
 .metaLabel {
   font-weight: 500;
+}
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .badges {

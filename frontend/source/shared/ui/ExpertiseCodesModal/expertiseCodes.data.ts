@@ -1,8 +1,11 @@
-export type ExpertiseType = "КЛ/ТП" | "ТУ" | "ЗС" | "Д" | "ОБ";
+export type ExpertiseType = "КЛ" | "ТП" | "КЛ/ТП" | "ТУ" | "ЗС" | "Д" | "ОБ";
 
-export const TYPES: ExpertiseType[] = ["КЛ/ТП", "ТУ", "ЗС", "Д", "ОБ"];
+export const TYPES: ExpertiseType[] = ["КЛ", "ТП", "КЛ/ТП", "ТУ", "ЗС", "Д", "ОБ"];
 
-interface OpoEntry extends Partial<Record<ExpertiseType, string[]>> {
+type RawDocType = "КЛ/ТП";
+type RawType = RawDocType | "ТУ" | "ЗС" | "Д" | "ОБ";
+
+interface OpoEntry extends Partial<Record<RawType, string[]>> {
   name: string;
 }
 
@@ -28,10 +31,37 @@ export const TABLE: Record<string, OpoEntry> = {
   "15": { name: "Опасные производственные объекты хранения, переработки и использования растительного сырья", "КЛ/ТП": ["Э15 КЛ/ТП"], "ТУ": ["Э15 ТУ"], "ЗС": ["Э15 ЗС"], "ОБ": ["Э15 ОБ"] },
 };
 
-const cell = (opo: string, type: ExpertiseType) => TABLE[opo]?.[type] ?? [];
+export const cell = (opo: string, type: ExpertiseType): string[] => {
+  const row = TABLE[opo];
+  if (!row) return [];
+  const docs = row["КЛ/ТП"] ?? [];
+  if (type === "КЛ/ТП") {
+    return docs.length === 1 ? docs : [];
+  }
+  if (type === "КЛ") {
+    return docs.length === 2 ? [docs[0]] : [];
+  }
+  if (type === "ТП") {
+    return docs.length === 2 ? [docs[1]] : [];
+  }
+  return row[type] ?? [];
+};
 
-export const computeBadgeCodes = (types: ExpertiseType[], opos: string[]) =>
-  opos.flatMap((o) => types.flatMap((t) => cell(o, t)));
+export const computeBadgeCodes = (types: ExpertiseType[], opos: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const o of opos) {
+    for (const t of types) {
+      for (const code of cell(o, t)) {
+        if (!seen.has(code)) {
+          seen.add(code);
+          result.push(code);
+        }
+      }
+    }
+  }
+  return result;
+};
 
 export const isOpoEnabled = (opo: string, types: ExpertiseType[]) =>
   !types.length || types.some((t) => cell(opo, t).length > 0);

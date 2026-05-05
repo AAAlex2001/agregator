@@ -106,6 +106,8 @@ services:
       ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
       ADMIN_SECRET: ${ADMIN_SECRET:-supersecretkey-change-me}
+      DADATA_API_KEY: ${DADATA_API_KEY}
+      DADATA_SECRET_KEY: ${DADATA_SECRET_KEY}
     expose:
       - "8001"
     depends_on:

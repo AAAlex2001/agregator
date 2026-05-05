@@ -36,12 +36,15 @@ export function OrderCard({
 }: Props) {
   return (
     <article className={s.card} onClick={onClick}>
-      <div className={s.badges}>
-        {badges.map((badge, index) => (
-          <span key={index} className={`${s.badge} ${s[badge.variant]}`}>
-            {badge.text}
-          </span>
-        ))}
+      <div className={s.requirements}>
+        <span className={s.label}>Требования к эксперту:</span>
+        <div className={s.badges}>
+          {badges.map((badge, index) => (
+            <span key={index} className={`${s.badge} ${s[badge.variant]}`}>
+              {badge.text}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className={s.titleBlock}>

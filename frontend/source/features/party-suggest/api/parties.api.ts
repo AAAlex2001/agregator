@@ -16,6 +16,7 @@ export interface PartySuggestion {
     } | null;
     [key: string]: unknown;
   };
+  [key: string]: unknown;
 }
 
 export async function fetchPartySuggestions(query: string): Promise<PartySuggestion[]> {

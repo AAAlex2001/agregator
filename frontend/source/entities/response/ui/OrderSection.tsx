@@ -36,10 +36,13 @@ export function OrderSection({ title, customer, date, badges, sum }: Props) {
             <span className={s.value}>{date}</span>
           </div>
           {badges.length > 0 && (
-            <div className={s.badges}>
-              {badges.map((b, i) => (
-                <span key={i} className={`${s.badge} ${s[b.variant]}`}>{b.text}</span>
-              ))}
+            <div className={s.row}>
+              <span className={s.label}>Требования к эксперту:</span>
+              <div className={s.badges}>
+                {badges.map((b, i) => (
+                  <span key={i} className={`${s.badge} ${s[b.variant]}`}>{b.text}</span>
+                ))}
+              </div>
             </div>
           )}
           <div className={s.row}>

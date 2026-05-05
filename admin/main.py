@@ -1,6 +1,8 @@
 import json
 import os
 from datetime import datetime, timedelta, timezone
+
+import httpx
 from markupsafe import Markup, escape
 from fastapi import FastAPI, Form, HTTPException
 from sqladmin import Admin, ModelView
@@ -8,7 +10,7 @@ from sqladmin.authentication import AuthenticationBackend
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect as sa_inspect
 from sqlalchemy.orm import selectinload, sessionmaker
 
 from models import (
@@ -169,6 +171,36 @@ def compute_subscription_expires_at(plan: PricingPlan, now: datetime) -> datetim
 def compute_subscription_responses_remaining(kind: SubscriptionKind) -> int | None:
     if kind == SubscriptionKind.SINGLE:
         return 1
+    return None
+
+
+DADATA_PARTY_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party"
+
+
+async def fetch_dadata_party_by_inn(inn: str) -> dict | None:
+    token = os.getenv("DADATA_API_KEY", "")
+    if not token:
+        return None
+    headers = {"Authorization": f"Token {token}", "Content-Type": "application/json"}
+    secret = os.getenv("DADATA_SECRET_KEY", "")
+    if secret:
+        headers["X-Secret"] = secret
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                DADATA_PARTY_URL,
+                headers=headers,
+                json={"query": inn, "count": 10},
+            )
+    except httpx.HTTPError:
+        return None
+    if response.status_code >= 400:
+        return None
+    suggestions = response.json().get("suggestions", []) or []
+    for suggestion in suggestions:
+        data = suggestion.get("data") or {}
+        if data.get("inn") == inn:
+            return suggestion
     return None
 
 
@@ -623,6 +655,25 @@ class UserAdmin(ModelView, model=User):
 
     def render_company_data(self, company_data):
         return format_company_data(company_data)
+
+    async def on_model_change(self, data, model, is_created, request):
+        new_inn = (data.get("inn") or "").strip() or None
+        if not new_inn:
+            model.company_data = None
+            return
+
+        if is_created:
+            inn_changed = True
+        else:
+            history = sa_inspect(model).attrs.inn.history
+            inn_changed = history.has_changes()
+
+        if not inn_changed and model.company_data:
+            return
+
+        suggestion = await fetch_dadata_party_by_inn(new_inn)
+        if suggestion is not None:
+            model.company_data = suggestion
 
     def active_pricing_plans(self):
         with SessionLocal() as db:

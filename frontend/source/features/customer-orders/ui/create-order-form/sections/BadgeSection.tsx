@@ -1,6 +1,11 @@
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { TABLE, TYPES, type ExpertiseType } from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
+import {
+  TYPES,
+  cell,
+  computeBadgeCodes,
+  type ExpertiseType,
+} from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./badgeSection.module.scss";
@@ -17,6 +22,8 @@ const OPO_ROWS: string[][] = [
 ];
 
 const TYPE_COLOR: Record<ExpertiseType, string> = {
+  "КЛ": "blue",
+  "ТП": "blue",
   "КЛ/ТП": "blue",
   "ТУ": "orange",
   "ЗС": "green",
@@ -44,8 +51,12 @@ export function BadgeSection({ form, onShowHelp }: Props) {
 
   const activeOpos = activeType ? (selections[activeType] ?? []) : [];
 
-  const resultCodes = Object.entries(selections).flatMap(([type, opos]) =>
-    opos.flatMap((opo) => TABLE[opo]?.[type as ExpertiseType] ?? []),
+  const resultCodes = Array.from(
+    new Set(
+      Object.entries(selections).flatMap(([type, opos]) =>
+        computeBadgeCodes([type as ExpertiseType], opos),
+      ),
+    ),
   );
 
   const HelpTrigger = (
@@ -85,7 +96,7 @@ export function BadgeSection({ form, onShowHelp }: Props) {
 
         <section className={base.section}>
           <span className={base.label}>
-            Выберите тип(-ы) опасных производственных объектов
+            Выберите область(-и) аттестации эксперта(-ов)
             {HelpTrigger}
           </span>
 
@@ -94,7 +105,7 @@ export function BadgeSection({ form, onShowHelp }: Props) {
               <div key={rowIdx} className={s.row}>
                 {row.map((code) => {
                   const active = activeOpos.includes(code);
-                  const enabled = activeType !== null && Boolean(TABLE[code]?.[activeType]);
+                  const enabled = activeType !== null && cell(code, activeType).length > 0;
                   return (
                     <button
                       key={code}

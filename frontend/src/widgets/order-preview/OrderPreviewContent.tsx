@@ -143,7 +143,7 @@ export function OrderPreviewContent() {
 
               {order.badges.length > 0 && (
                 <div className={styles.infoBlock}>
-                  <span className={styles.infoLabel}>Типовые наименования</span>
+                  <span className={styles.infoLabel}>Требования к эксперту:</span>
                   <div className={styles.badges}>
                     {order.badges.map((badge) => (
                       <span key={badge.text} className={`${styles.badge} ${styles[variantClassMap[badge.variant] || "badgeGray"]}`}>

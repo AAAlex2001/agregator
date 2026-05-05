@@ -177,6 +177,24 @@
   }
 }
 
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.requirementsLabel {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 18px;
+  color: #808080;
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+  }
+}
+
 .badges {
   display: flex;
   flex-direction: row;
