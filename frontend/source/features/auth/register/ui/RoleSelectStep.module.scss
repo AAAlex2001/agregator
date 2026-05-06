@@ -135,9 +135,20 @@
 .expandedTitle {
   margin: 0 0 16px 0;
   text-align: center;
+  font-size: 13px !important;
+  line-height: 18px !important;
+  font-weight: 400 !important;
+  color: #808080 !important;
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
+}
+
+@media (min-width: 768px) {
+  .expandedTitle {
+    font-size: 14px !important;
+    line-height: 20px !important;
+  }
 }
 
 .roleDescriptionOpen .expandedTitle {
