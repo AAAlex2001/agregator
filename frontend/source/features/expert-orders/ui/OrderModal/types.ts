@@ -1,10 +1,12 @@
 import type { OrderCardData } from "@/source/entities/order";
+import type { VatKind } from "@/source/entities/response";
 
 export type ModalStep = "details" | "tender" | "offer";
 
 export interface RespondFormData {
   deadline: string;
   costAmount: number;
+  vatKind: VatKind;
   comment: string;
   files: File[];
   expertInn: string;

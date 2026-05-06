@@ -5,10 +5,11 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from models.response import ResponseStatus
+from models.response import ResponseStatus, VatKind
 
 
 class ResponseTab(str, PyEnum):
+    ALL = "all"
     REVIEW = "review"
     IN_PROGRESS = "in_progress"
     REJECTED = "rejected"
@@ -21,6 +22,7 @@ class ResponseCreate(BaseModel):
     proposed_deadline: date
     expert_inn: str | None = Field(default=None, min_length=10, max_length=12)
     expert_company_data: dict[str, Any] | None = None
+    vat_kind: VatKind = VatKind.NONE
 
     @field_validator("expert_company_data", mode="before")
     @classmethod
@@ -41,6 +43,7 @@ class ResponseCreate(BaseModel):
 
 
 class ResponseCounters(BaseModel):
+    all: int = 0
     review: int = 0
     in_progress: int = 0
     rejected: int = 0
@@ -80,6 +83,7 @@ class ExpertResponseItem(BaseModel):
     rejection_reason: str | None = None
     expert_company_name: str = ""
     expert_inn: str | None = None
+    vat_kind: VatKind = VatKind.NONE
 
     model_config = {"from_attributes": True}
 

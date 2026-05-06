@@ -1,8 +1,10 @@
 import type { UseFormReturn } from "react-hook-form";
 import { Button, CalendarInput, Input } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
+import type { VatKind } from "@/source/entities/response";
+import { VAT_LABEL } from "@/source/entities/response";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
-import type { RespondFormValues } from "../../model/respond.schema";
+import { VAT_KIND_VALUES, type RespondFormValues } from "../../model/respond.schema";
 import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
 import { ModalHeader } from "./ModalHeader";
@@ -34,6 +36,7 @@ export function OfferStep({
   const shouldValidate = formState.isSubmitted;
   const deadline = watch("deadline");
   const cost = watch("cost");
+  const vatKind = watch("vatKind");
   const comment = watch("comment");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,6 +75,27 @@ export function OfferStep({
             placeholder="Сумма в рублях"
             error={formState.errors.cost?.message}
           />
+        </div>
+      </div>
+
+      <div className={base.fieldGroup}>
+        <span className={base.fieldLabel}>НДС</span>
+        <div className={s.vatGroup} role="radiogroup" aria-label="НДС">
+          {VAT_KIND_VALUES.map((kind) => {
+            const active = vatKind === kind;
+            return (
+              <button
+                key={kind}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                className={`${s.vatChip} ${active ? s.vatChipActive : ""}`.trim()}
+                onClick={() => setValue("vatKind", kind as VatKind, { shouldValidate })}
+              >
+                {VAT_LABEL[kind as VatKind]}
+              </button>
+            );
+          })}
         </div>
       </div>
 

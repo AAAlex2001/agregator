@@ -91,6 +91,7 @@ export function useExpertOrders() {
         comment: form.comment,
         proposed_sum_amount: form.costAmount,
         proposed_deadline: form.deadline,
+        vat_kind: form.vatKind,
         expert_inn: form.expertInn,
         expert_company_data: form.expertCompanyData,
         files: form.files,

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from models.response import ResponseStatus
+from models.response import ResponseStatus, VatKind
 from models.user import UserRole
 from schemas.response import (
     ExpertResponseItem,
@@ -152,6 +152,7 @@ def to_item(
         rejection_reason=rejection_reason,
         expert_company_name=expert_company_name,
         expert_inn=entity.expert_inn,
+        vat_kind=entity.vat_kind or VatKind.NONE,
         confirm_deadline=(
             ((entity.updated_at or entity.created_at) + timedelta(days=3)).strftime("%d.%m.%Y")
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
@@ -169,6 +170,7 @@ async def create_response_for_order(
     proposed_deadline: str = Form(...),
     expert_inn: str = Form(...),
     expert_company_data: str = Form(...),
+    vat_kind: VatKind = Form(VatKind.NONE),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
@@ -179,6 +181,7 @@ async def create_response_for_order(
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
         expert_inn=expert_inn,
         expert_company_data=expert_company_data,
+        vat_kind=vat_kind,
     )
     repo = build_repo(db)
     get_response = GetResponseByIdUseCase(repo)
@@ -269,6 +272,7 @@ async def update_response(
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
     proposed_deadline: str = Form(...),
+    vat_kind: VatKind = Form(VatKind.NONE),
     keep_files: str = Form(default="[]"),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
@@ -283,6 +287,7 @@ async def update_response(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
+        vat_kind=vat_kind,
     )
 
     repo = build_repo(db)

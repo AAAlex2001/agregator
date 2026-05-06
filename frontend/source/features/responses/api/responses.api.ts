@@ -37,6 +37,7 @@ interface EditPayload {
   comment: string;
   sumAmount: number;
   deadline: string;
+  vatKind: string;
   files?: File[];
   keepFiles?: string[];
 }
@@ -47,6 +48,7 @@ export async function editResponse(id: number, p: EditPayload): Promise<void> {
     fd.append("comment", p.comment);
     fd.append("proposed_sum_amount", String(p.sumAmount));
     fd.append("proposed_deadline", p.deadline);
+    fd.append("vat_kind", p.vatKind);
     fd.append("keep_files", JSON.stringify(p.keepFiles ?? []));
     for (const f of files) fd.append("files", f);
     return fd;

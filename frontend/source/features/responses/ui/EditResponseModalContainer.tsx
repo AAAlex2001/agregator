@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { MAX_ATTACH_FILES_COUNT, mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { OrderCardData } from "@/source/entities/order";
-import type { ResponseCardData } from "@/source/entities/response";
+import type { ResponseCardData, VatKind } from "@/source/entities/response";
 import { EditResponseModal } from "./EditResponseModal";
 
 interface EditResponseSubmitData {
   comment: string;
   costEstimate: number;
   deadline: string;
+  vatKind: VatKind;
   files: File[];
   keepFiles: string[];
 }
@@ -71,6 +72,7 @@ export function EditResponseModalContainer({
   const [deadline, setDeadline] = useState("");
   const [cost, setCost] = useState("");
   const [comment, setComment] = useState("");
+  const [vatKind, setVatKind] = useState<VatKind>("NONE");
   const [files, setFiles] = useState<File[]>([]);
   const [existingFiles, setExistingFiles] = useState<ExistingResponseFile[]>([]);
 
@@ -78,6 +80,7 @@ export function EditResponseModalContainer({
     setDeadline(response?.rawDeadline ?? "");
     setCost(response && response.rawSumAmount > 0 ? String(response.rawSumAmount / 100) : "");
     setComment(response?.commentText ?? "");
+    setVatKind(response?.vatKind ?? "NONE");
     setFiles([]);
     setExistingFiles(
       response
@@ -121,6 +124,7 @@ export function EditResponseModalContainer({
       comment,
       costEstimate: Math.round(Number(cost) * 100),
       deadline,
+      vatKind,
       files,
       keepFiles: existingFiles.map((file) => file.key),
     });
@@ -136,6 +140,7 @@ export function EditResponseModalContainer({
       deadline={deadline}
       cost={cost}
       comment={comment}
+      vatKind={vatKind}
       files={files}
       existingFiles={existingFiles}
       canSubmit={deadline.trim() !== "" && Number(cost) > 0}
@@ -145,6 +150,7 @@ export function EditResponseModalContainer({
       onDeadlineChange={setDeadline}
       onCostChange={(value) => setCost(value.replace(/[^0-9]/g, ""))}
       onCommentChange={setComment}
+      onVatKindChange={setVatKind}
       onAddFiles={handleAddFiles}
       onRemoveFile={(index) => setFiles((prev) => prev.filter((_, currentIndex) => currentIndex !== index))}
       onRemoveExistingFile={(index) => setExistingFiles((prev) => prev.filter((_, currentIndex) => currentIndex !== index))}

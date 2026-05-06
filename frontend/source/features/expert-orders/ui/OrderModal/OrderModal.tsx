@@ -15,6 +15,7 @@ import styles from "./OrderModal.module.scss";
 const emptyValues: RespondFormValues = {
   deadline: "",
   cost: "",
+  vatKind: "NONE",
   comment: "",
   companyName: "",
   companyData: null,
@@ -94,6 +95,7 @@ export function OrderModal({
       onRespond(order, {
         deadline: values.deadline,
         costAmount,
+        vatKind: values.vatKind,
         comment: values.comment,
         files,
         expertInn,

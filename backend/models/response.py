@@ -15,6 +15,14 @@ class ResponseStatus(str, PyEnum):
     COMPLETED = "COMPLETED"
 
 
+class VatKind(str, PyEnum):
+    "Вид НДС в коммерческом предложении эксперта."
+    NONE = "NONE"
+    VAT_5 = "VAT_5"
+    VAT_7 = "VAT_7"
+    VAT_22 = "VAT_22"
+
+
 class OrderResponse(Base):
     __tablename__ = "order_responses"
     __table_args__ = (
@@ -43,6 +51,12 @@ class OrderResponse(Base):
     rejection_reason = Column(Text, nullable=True)
     expert_inn = Column(String(12), nullable=True, index=True)
     expert_company_data = Column(JSON, nullable=True)
+    vat_kind = Column(
+        Enum(VatKind, name="vatkind"),
+        nullable=False,
+        default=VatKind.NONE,
+        server_default=VatKind.NONE.value,
+    )
     status = Column(
         Enum(ResponseStatus, name="responsestatus"),
         nullable=False,

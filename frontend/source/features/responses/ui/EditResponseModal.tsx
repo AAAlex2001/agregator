@@ -2,7 +2,11 @@ import { Button, CalendarInput, Input } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import { BidFilesField } from "@/source/features/expert-orders/ui/OrderModal/BidFilesField";
 import { OrderSummaryPanel } from "@/source/features/expert-orders/ui/OrderModal/OrderSummaryPanel";
+import { VAT_LABEL } from "@/source/entities/response";
+import type { VatKind } from "@/source/entities/response";
 import s from "./EditResponseModal.module.scss";
+
+const VAT_OPTIONS: VatKind[] = ["NONE", "VAT_5", "VAT_7", "VAT_22"];
 
 interface EditResponseModalProps {
   dateText: string;
@@ -13,6 +17,7 @@ interface EditResponseModalProps {
   deadline: string;
   cost: string;
   comment: string;
+  vatKind: VatKind;
   files: File[];
   existingFiles: Array<{ key: string; url: string }>;
   canSubmit: boolean;
@@ -22,6 +27,7 @@ interface EditResponseModalProps {
   onDeadlineChange: (value: string) => void;
   onCostChange: (value: string) => void;
   onCommentChange: (value: string) => void;
+  onVatKindChange: (value: VatKind) => void;
   onAddFiles: (files: FileList | null) => void;
   onRemoveFile: (index: number) => void;
   onRemoveExistingFile: (index: number) => void;
@@ -36,6 +42,7 @@ export function EditResponseModal({
   deadline,
   cost,
   comment,
+  vatKind,
   files,
   existingFiles,
   canSubmit,
@@ -45,6 +52,7 @@ export function EditResponseModal({
   onDeadlineChange,
   onCostChange,
   onCommentChange,
+  onVatKindChange,
   onAddFiles,
   onRemoveFile,
   onRemoveExistingFile,
@@ -95,6 +103,27 @@ export function EditResponseModal({
               onChange={(event) => onCostChange(event.target.value)}
               placeholder="Сумма в рублях"
             />
+          </div>
+        </div>
+
+        <div className={s.fieldGroup}>
+          <span className={s.fieldLabel}>НДС</span>
+          <div className={s.vatGroup} role="radiogroup" aria-label="НДС">
+            {VAT_OPTIONS.map((kind) => {
+              const active = vatKind === kind;
+              return (
+                <button
+                  key={kind}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  className={`${s.vatChip} ${active ? s.vatChipActive : ""}`.trim()}
+                  onClick={() => onVatKindChange(kind)}
+                >
+                  {VAT_LABEL[kind]}
+                </button>
+              );
+            })}
           </div>
         </div>
 

@@ -125,6 +125,7 @@ class UpdateResponseUseCase:
         response.comment = data.comment
         response.proposed_sum_amount = data.proposed_sum_amount
         response.proposed_deadline = data.proposed_deadline
+        response.vat_kind = data.vat_kind
 
     @staticmethod
     def trim_files(response: OrderResponse, keep_files: list[str] | None) -> None:

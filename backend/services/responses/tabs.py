@@ -3,8 +3,8 @@ from schemas.response import ResponseTab
 
 
 def statuses_for_tab(tab: ResponseTab | None) -> list[ResponseStatus] | None:
-    if tab is None:
-        return [ResponseStatus.REVIEW]
+    if tab is None or tab == ResponseTab.ALL:
+        return None
     if tab == ResponseTab.REVIEW:
         return [ResponseStatus.REVIEW]
     if tab == ResponseTab.IN_PROGRESS:

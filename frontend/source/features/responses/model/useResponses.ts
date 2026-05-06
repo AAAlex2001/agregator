@@ -9,16 +9,18 @@ import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
 
-const VALID_TABS: ResponseTabKey[] = ["review", "in_progress", "rejected", "accepted"];
+const VALID_TABS: ResponseTabKey[] = ["all", "review", "in_progress", "rejected", "accepted"];
 
 const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>> = {
   expert: [
+    { key: "all", label: "Все" },
     { key: "review", label: "На рассмотрении" },
     { key: "in_progress", label: "В работе" },
     { key: "rejected", label: "Отклоненные" },
     { key: "accepted", label: "В переговорах" },
   ],
   customer: [
+    { key: "all", label: "Все" },
     { key: "review", label: "Новые" },
     { key: "in_progress", label: "В работе" },
     { key: "rejected", label: "Отклоненные" },
@@ -100,7 +102,7 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onEditSubmit = async (formData: { comment: string; costEstimate: number; deadline: string; files?: File[]; keepFiles?: string[] }) => {
+  const onEditSubmit = async (formData: { comment: string; costEstimate: number; deadline: string; vatKind: string; files?: File[]; keepFiles?: string[] }) => {
     if (!s.editing) return;
     d({ type: "EDIT_SUBMITTING", value: true });
     try {
@@ -108,6 +110,7 @@ export function useResponses(role: UserRole | null) {
         comment: formData.comment,
         sumAmount: formData.costEstimate,
         deadline: formData.deadline,
+        vatKind: formData.vatKind,
         files: formData.files,
         keepFiles: formData.keepFiles,
       });

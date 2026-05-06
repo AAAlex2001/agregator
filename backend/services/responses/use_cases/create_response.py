@@ -116,6 +116,7 @@ class CreateResponseUseCase:
             status=ResponseStatus.REVIEW,
             expert_inn=data.expert_inn,
             expert_company_data=data.expert_company_data,
+            vat_kind=data.vat_kind,
         )
 
     async def flush_or_reject(self) -> None:

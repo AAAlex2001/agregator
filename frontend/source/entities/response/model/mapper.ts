@@ -1,4 +1,5 @@
-import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant, UserRole } from "./types";
+import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant, UserRole, VatKind } from "./types";
+import { VAT_LABEL } from "./types";
 import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
 
 const BADGE_MAP: Record<string, BadgeVariant> = {
@@ -36,6 +37,12 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     }
   }
 
+  const vatKind = (item.vat_kind ?? "NONE") as VatKind;
+  const vatLabel = VAT_LABEL[vatKind];
+  const costEstimateWithVat = item.proposed_sum && item.proposed_sum.trim()
+    ? `${item.proposed_sum} · ${vatLabel}`
+    : item.proposed_sum;
+
   return {
     id: item.id,
     orderId: item.order_id,
@@ -58,7 +65,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     })),
     sum: item.proposed_sum,
     deadline: item.proposed_deadline,
-    costEstimate: item.proposed_sum,
+    costEstimate: costEstimateWithVat,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",
     orderComment: item.order_comment,
@@ -81,5 +88,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     rejectionReason: item.rejection_reason ?? null,
     expertCompanyName: item.expert_company_name ?? "",
     expertInn: item.expert_inn ?? null,
+    vatKind,
+    vatLabel,
   };
 }

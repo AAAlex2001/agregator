@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const VAT_KIND_VALUES = ["NONE", "VAT_5", "VAT_7", "VAT_22"] as const;
+
 export const respondFormSchema = z.object({
   deadline: z.string().trim().min(1, "Укажите срок"),
   cost: z
@@ -7,6 +9,7 @@ export const respondFormSchema = z.object({
     .trim()
     .regex(/^\d+$/, "Сумма должна быть числом")
     .refine((value) => Number(value) > 0, "Сумма должна быть больше 0"),
+  vatKind: z.enum(VAT_KIND_VALUES),
   comment: z.string().max(5000),
   companyName: z.string().trim(),
   companyData: z

@@ -1,5 +1,13 @@
 export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
-export type ResponseTabKey = "review" | "in_progress" | "rejected" | "accepted";
+export type ResponseTabKey = "all" | "review" | "in_progress" | "rejected" | "accepted";
+export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
+
+export const VAT_LABEL: Record<VatKind, string> = {
+  NONE: "Без НДС",
+  VAT_5: "С НДС 5%",
+  VAT_7: "С НДС 7%",
+  VAT_22: "С НДС 22%",
+};
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 export type UserRole = "expert" | "customer";
 export type CustomerSortBy = "created_at" | "proposed_sum_amount" | "expert_rating";
@@ -8,6 +16,7 @@ export type SortDir = "asc" | "desc";
 export interface ResponseBadge { text: string; variant: BadgeVariant }
 
 export interface ResponseCounters {
+  all: number;
   review: number;
   in_progress: number;
   rejected: number;
@@ -49,6 +58,7 @@ export interface ResponseApiItem {
   rejection_reason?: string | null;
   expert_company_name?: string;
   expert_inn?: string | null;
+  vat_kind?: VatKind;
 }
 
 export interface ResponsesApiList {
@@ -96,6 +106,8 @@ export interface ResponseCardData {
   rejectionReason?: string | null;
   expertCompanyName?: string;
   expertInn?: string | null;
+  vatKind: VatKind;
+  vatLabel: string;
 }
 
 export interface CardAction {
