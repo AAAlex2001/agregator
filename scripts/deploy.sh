@@ -11,6 +11,9 @@ docker compose run --rm backend alembic upgrade head
 echo "==> docker: rebuild + restart"
 docker compose up -d --build --remove-orphans
 
+echo "==> nginx: restart чтобы подхватить новые IP контейнеров"
+docker compose restart nginx
+
 echo "==> docker: prune dangling images"
 docker image prune -f
 
