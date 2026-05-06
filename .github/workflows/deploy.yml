@@ -1,0 +1,29 @@
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Pull & rebuild on server
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: SSH into server and run deploy script
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          command_timeout: 25m
+          script: |
+            set -euo pipefail
+            cd ${{ secrets.PROJECT_PATH }}
+            ./scripts/deploy.sh
