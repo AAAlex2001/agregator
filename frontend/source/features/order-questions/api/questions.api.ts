@@ -11,6 +11,7 @@ export interface QuestionApiItem {
   answer: string | null;
   asked_at: string;
   answered_at: string | null;
+  is_anonymous: boolean;
 }
 
 export interface QuestionsApiList {
@@ -29,21 +30,33 @@ export async function fetchQuestions(orderId: number): Promise<QuestionsApiList>
   return res.json();
 }
 
-export async function askQuestion(orderId: number, question: string): Promise<QuestionApiItem> {
+export async function askQuestion(
+  orderId: number,
+  question: string,
+  isAnonymous: boolean,
+): Promise<QuestionApiItem> {
   const res = await fetchWithSession(`${API_URL}/orders/${orderId}/questions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, is_anonymous: isAnonymous }),
   });
   if (!res.ok) await detail(res, "Не удалось отправить вопрос");
   return res.json();
 }
 
-export async function updateQuestion(questionId: number, question: string): Promise<QuestionApiItem> {
+export async function updateQuestion(
+  questionId: number,
+  question: string,
+  isAnonymous?: boolean,
+): Promise<QuestionApiItem> {
   const res = await fetchWithSession(`${API_URL}/questions/${questionId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify(
+      isAnonymous === undefined
+        ? { question }
+        : { question, is_anonymous: isAnonymous },
+    ),
   });
   if (!res.ok) await detail(res, "Не удалось обновить вопрос");
   return res.json();

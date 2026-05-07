@@ -7,11 +7,11 @@ const BADGE_MAP: Record<string, BadgeVariant> = {
 };
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  REVIEW:      { label: "На рассмотрении", color: "#CC6E00", bg: "#FFF5E6" },
-  REJECTED:    { label: "Отклонен",        color: "#C62828", bg: "#FFEBEE" },
-  ACCEPTED:    { label: "В переговорах",   color: "#FFFFFF", bg: "#FF8A00" },
-  IN_PROGRESS: { label: "Принято",         color: "#137333", bg: "#E6F4EA" },
-  COMPLETED:   { label: "Завершен",        color: "#555555", bg: "#F5F5F5" },
+  REVIEW:      { label: "На рассмотрении", color: "#8a4500", bg: "#ffe0b2" },
+  REJECTED:    { label: "Отклонен",        color: "#8b0000", bg: "#ffcdd2" },
+  ACCEPTED:    { label: "В переговорах",   color: "#ffffff", bg: "#ff8a00" },
+  IN_PROGRESS: { label: "Принято",         color: "#0b5723", bg: "#b2dfb6" },
+  COMPLETED:   { label: "Завершен",        color: "#2e2e2e", bg: "#dcdcdc" },
 };
 
 export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCardData {

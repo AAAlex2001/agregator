@@ -35,3 +35,17 @@
   font-size: 12px;
   color: #808080;
 }
+
+.anonRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.anonText {
+  font-size: 13px;
+  line-height: 18px;
+  color: #555555;
+}

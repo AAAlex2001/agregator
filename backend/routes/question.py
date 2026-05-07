@@ -49,6 +49,7 @@ def to_response(question) -> QuestionResponse:
         answer=question.answer,
         asked_at=question.asked_at,
         answered_at=question.answered_at,
+        is_anonymous=bool(question.is_anonymous),
     )
 
 
@@ -62,7 +63,10 @@ async def list_order_questions(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    items = await ListQuestionsUseCase(build_repo(db)).execute(order_id)
+    role = await get_user_role(db, user_id)
+    items = await ListQuestionsUseCase(build_repo(db)).execute(
+        order_id=order_id, viewer_id=user_id, viewer_role=role,
+    )
     return QuestionListResponse(items=[to_response(q) for q in items], total=len(items))
 
 
@@ -84,7 +88,11 @@ async def ask_order_question(
         ),
     )
     question = await use_case.execute(
-        order_id=order_id, expert_id=user_id, expert_role=role, text=payload.question,
+        order_id=order_id,
+        expert_id=user_id,
+        expert_role=role,
+        text=payload.question,
+        is_anonymous=payload.is_anonymous,
     )
     refreshed = await build_repo(db).get_by_id(question.id)
     return to_response(refreshed)
@@ -98,7 +106,10 @@ async def update_question(
     user_id: int = Depends(get_current_user),
 ):
     question = await UpdateQuestionUseCase(build_repo(db)).execute(
-        question_id=question_id, expert_id=user_id, text=payload.question,
+        question_id=question_id,
+        expert_id=user_id,
+        text=payload.question,
+        is_anonymous=payload.is_anonymous,
     )
     return to_response(question)
 

@@ -9,6 +9,7 @@ export const initialNotificationsState: NotificationsState = {
   pendingId: null,
   pendingMode: null,
   isMarkingAll: false,
+  isDismissingAll: false,
 };
 
 export function notificationsReducer(
@@ -31,6 +32,8 @@ export function notificationsReducer(
       return { ...state, pendingId: action.id, pendingMode: action.mode };
     case "SET_MARKING_ALL":
       return { ...state, isMarkingAll: action.payload };
+    case "SET_DISMISSING_ALL":
+      return { ...state, isDismissingAll: action.payload };
     case "UPSERT_ITEM": {
       const nextItems = state.items.map((item) => (
         item.id === action.payload.id ? action.payload : item

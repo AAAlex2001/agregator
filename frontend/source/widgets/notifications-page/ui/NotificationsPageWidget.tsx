@@ -80,6 +80,7 @@ export function NotificationsPageWidget() {
           <Button
             variant="transparent"
             size="sm"
+            isLoading={notifications.isDismissingAll}
             onClick={onDismissAll}
           >
             Удалить все

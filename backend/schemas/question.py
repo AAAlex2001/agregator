@@ -5,10 +5,12 @@ from pydantic import BaseModel, Field
 
 class QuestionAsk(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000)
+    is_anonymous: bool = True
 
 
 class QuestionUpdate(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000)
+    is_anonymous: bool | None = None
 
 
 class QuestionAnswer(BaseModel):
@@ -25,6 +27,7 @@ class QuestionResponse(BaseModel):
     answer: str | None = None
     asked_at: datetime
     answered_at: datetime | None = None
+    is_anonymous: bool = True
 
     model_config = {"from_attributes": True}
 

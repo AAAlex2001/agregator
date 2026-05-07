@@ -50,25 +50,31 @@ export function ReviewCard({
   return (
     <ListCard
       meta={`Отзыв от ${date}`}
-      titleLabel="Заказ"
+      titleLabel="Название заказа:"
       title={order || "—"}
-      bottomLeftLabel="Заказчик"
+      bottomLeftLabel="Организатор:"
       bottomLeftValue={customer || "—"}
       rightItems={rightItems}
       leftExtra={
         <>
-          <div className={s.ratingRow}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <StarIcon key={star} filled={star <= rating} width={20} height={20} />
-            ))}
-            <span className={s.ratingValue}>{rating} / 5</span>
+          <div className={s.ratingBlock}>
+            <span className={s.ratingLabel}>Оценка:</span>
+            <div className={s.ratingRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <StarIcon key={star} filled={star <= rating} width={20} height={20} />
+              ))}
+              <span className={s.ratingValue}>{rating} / 5</span>
+            </div>
           </div>
           {comment && (
-            <p className={s.quote}>
-              <span className={s.quoteMark}>&ldquo;</span>
-              {comment}
-              <span className={s.quoteMark}>&rdquo;</span>
-            </p>
+            <div className={s.commentBlock}>
+              <span className={s.commentLabel}>Отзыв:</span>
+              <p className={s.quote}>
+                <span className={s.quoteMark}>&ldquo;</span>
+                {comment}
+                <span className={s.quoteMark}>&rdquo;</span>
+              </p>
+            </div>
           )}
           <RequirementsBadges badges={badges} />
         </>

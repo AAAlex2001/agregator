@@ -59,8 +59,8 @@ export function OrderCard({
     <ListCard
       meta={id !== undefined && id !== "" ? `№ ${id}` : undefined}
       statusText="Приём заявок"
-      statusColor="#137333"
-      statusBg="#e6f4ea"
+      statusColor="#0b5723"
+      statusBg="#b2dfb6"
       titleLabel="Название заказа"
       title={title}
       bottomLeftLabel="Организатор"

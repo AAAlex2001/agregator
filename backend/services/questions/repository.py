@@ -30,6 +30,22 @@ class QuestionRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
+    async def list_visible_for_expert(
+        self, order_id: int, expert_id: int
+    ) -> list[OrderQuestion]:
+        "Эксперту видны только публичные вопросы и его собственные (включая анонимные)."
+        query = (
+            select(OrderQuestion)
+            .options(selectinload(OrderQuestion.expert))
+            .where(
+                OrderQuestion.order_id == order_id,
+                (OrderQuestion.is_anonymous.is_(False))
+                | (OrderQuestion.expert_id == expert_id),
+            )
+            .order_by(OrderQuestion.asked_at.asc())
+        )
+        return list((await self.db.execute(query)).scalars().all())
+
     async def get_order(self, order_id: int) -> Order | None:
         return (await self.db.execute(select(Order).where(Order.id == order_id))).scalars().first()
 

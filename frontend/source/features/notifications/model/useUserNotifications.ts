@@ -100,7 +100,7 @@ export function useUserNotifications(limit = 50) {
   };
 
   const dismissAll = async () => {
-    dispatch({ type: "SET_MARKING_ALL", payload: true });
+    dispatch({ type: "SET_DISMISSING_ALL", payload: true });
     dispatch({ type: "SET_ERROR", payload: null });
 
     try {
@@ -118,7 +118,7 @@ export function useUserNotifications(limit = 50) {
       });
       throw nextError;
     } finally {
-      dispatch({ type: "SET_MARKING_ALL", payload: false });
+      dispatch({ type: "SET_DISMISSING_ALL", payload: false });
     }
   };
 

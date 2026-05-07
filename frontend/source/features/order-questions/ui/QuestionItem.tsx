@@ -60,6 +60,11 @@ export function QuestionItem({
           <span className={s.name}>{item.expert_name || "Эксперт"}</span>
           <span className={s.date}>{formatDate(item.asked_at)}</span>
         </div>
+        {item.is_anonymous && (
+          <span className={s.anonBadge} title="Видят только вы и заказчик">
+            Анонимно
+          </span>
+        )}
       </header>
 
       {editingQuestion ? (
@@ -107,7 +112,7 @@ export function QuestionItem({
         <div className={f.form}>
           <textarea
             className={f.textarea}
-            placeholder="Ваш ответ (виден всем экспертам)…"
+            placeholder={item.is_anonymous ? "Ваш ответ (виден только этому эксперту)…" : "Ваш ответ (виден всем экспертам)…"}
             value={answerDraft}
             onChange={(e) => setAnswerDraft(e.target.value.slice(0, MAX))}
             rows={3}

@@ -1,3 +1,15 @@
+.ratingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingLabel {
+  font-size: 14px;
+  line-height: 18px;
+  color: #808080;
+}
+
 .ratingRow {
   display: flex;
   align-items: center;
@@ -12,8 +24,20 @@
   color: #1a1a1a;
 }
 
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.commentLabel {
+  font-size: 14px;
+  line-height: 18px;
+  color: #808080;
+}
+
 .quote {
-  margin: 8px 0;
+  margin: 0;
   padding: 0;
   font-style: italic;
   font-size: 16px;

@@ -20,9 +20,10 @@ interface Props {
   model: ResponsesModel;
   actionHandlers: Parameters<typeof getCardActions>[3];
   sortSlot?: ReactNode;
+  topSlot?: ReactNode;
 }
 
-export function ResponsesList({ role, title, subtitle, model, actionHandlers, sortSlot }: Props) {
+export function ResponsesList({ role, title, subtitle, model, actionHandlers, sortSlot, topSlot }: Props) {
   const activeLabel = model.tabs.find((tab) => tab.id === model.activeTab)?.label ?? "";
 
   return (
@@ -33,6 +34,7 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
       </div>
 
       <div className={s.contentArea}>
+        {topSlot}
         <Tabs
           variant="pill"
           tabs={model.tabs.map((tab) => ({ id: tab.id, label: tab.label, count: tab.count }))}

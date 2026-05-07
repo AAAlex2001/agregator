@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -33,6 +33,7 @@ class OrderQuestion(Base):
         nullable=False,
     )
     answered_at = Column(DateTime(timezone=True), nullable=True)
+    is_anonymous = Column(Boolean, nullable=False, default=True, server_default="true")
 
     order = relationship("Order", backref="questions")
     expert = relationship("User")

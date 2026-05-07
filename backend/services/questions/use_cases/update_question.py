@@ -10,7 +10,13 @@ class UpdateQuestionUseCase:
     def __init__(self, repo: QuestionRepository):
         self.repo = repo
 
-    async def execute(self, question_id: int, expert_id: int, text: str) -> OrderQuestion:
+    async def execute(
+        self,
+        question_id: int,
+        expert_id: int,
+        text: str,
+        is_anonymous: bool | None = None,
+    ) -> OrderQuestion:
         question = await self.repo.get_by_id(question_id)
         if question is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
@@ -26,5 +32,7 @@ class UpdateQuestionUseCase:
             )
 
         question.question = text
+        if is_anonymous is not None:
+            question.is_anonymous = is_anonymous
         await self.repo.flush()
         return question

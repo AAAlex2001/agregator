@@ -31,21 +31,21 @@ export function useOrderQuestions(orderId: number | null) {
 
   useEffect(() => { void reload(); }, [orderId]);
 
-  const ask = async (question: string) => {
+  const ask = async (question: string, isAnonymous: boolean) => {
     if (orderId === null) return;
     setSubmitting(true);
     try {
-      await askQuestion(orderId, question);
+      await askQuestion(orderId, question, isAnonymous);
       await reload();
     } finally {
       setSubmitting(false);
     }
   };
 
-  const edit = async (questionId: number, question: string) => {
+  const edit = async (questionId: number, question: string, isAnonymous?: boolean) => {
     setSubmitting(true);
     try {
-      await updateQuestion(questionId, question);
+      await updateQuestion(questionId, question, isAnonymous);
       await reload();
     } finally {
       setSubmitting(false);

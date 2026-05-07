@@ -45,8 +45,8 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
     <ListCard
       meta={`№ ${card.id}`}
       statusText="Архив"
-      statusColor="#cc6e00"
-      statusBg="#fff5e6"
+      statusColor="#8a4500"
+      statusBg="#ffe0b2"
       titleLabel="Название заказа:"
       title={card.title}
       bottomLeftCustom={bottomLeft}

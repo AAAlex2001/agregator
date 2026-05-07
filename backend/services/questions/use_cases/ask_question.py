@@ -28,7 +28,14 @@ class AskQuestionUseCase:
         self.in_app_notify = in_app_notify
         self.send_email = send_email
 
-    async def execute(self, order_id: int, expert_id: int, expert_role: UserRole, text: str) -> OrderQuestion:
+    async def execute(
+        self,
+        order_id: int,
+        expert_id: int,
+        expert_role: UserRole,
+        text: str,
+        is_anonymous: bool = True,
+    ) -> OrderQuestion:
         if expert_role != UserRole.EXPERT:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -55,6 +62,7 @@ class AskQuestionUseCase:
             expert_id=expert_id,
             question=text,
             asked_at=datetime.now(timezone.utc),
+            is_anonymous=is_anonymous,
         )
         await self.repo.add(question)
         try:

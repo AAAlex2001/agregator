@@ -10,6 +10,7 @@ import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
 import type { ModalStep, RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
+import { deleteDraft } from "./responseDraft";
 
 const PAGE = 50;
 
@@ -96,6 +97,7 @@ export function useExpertOrders() {
         expert_company_data: form.expertCompanyData,
         files: form.files,
       });
+      deleteDraft(order.id);
       d({ type: "REMOVE", id: order.id });
       closeModal();
       router.push("/responses");

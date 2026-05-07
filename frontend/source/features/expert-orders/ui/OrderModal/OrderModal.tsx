@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
 import { respondFormSchema, type RespondFormValues } from "../../model/respond.schema";
+import { loadDraft, saveDraft } from "../../model/responseDraft";
 import { DetailsStep } from "./DetailsStep";
 import { OfferStep } from "./OfferStep";
 import { TenderStep } from "./TenderStep";
@@ -47,9 +48,51 @@ export function OrderModal({
 
   useEffect(() => {
     setStep(initialStep);
-    form.reset(emptyValues);
+    if (order?.id) {
+      const draft = loadDraft(order.id);
+      if (draft) {
+        form.reset({
+          deadline: draft.deadline,
+          cost: draft.cost,
+          vatKind: draft.vatKind as RespondFormValues["vatKind"],
+          comment: draft.comment,
+          companyName: draft.companyName,
+          companyData: draft.companyData as RespondFormValues["companyData"],
+        });
+      } else {
+        form.reset(emptyValues);
+      }
+    } else {
+      form.reset(emptyValues);
+    }
     setFiles([]);
   }, [order?.id, initialStep, form]);
+
+  // Сохраняем черновик на каждое изменение формы (если открыта offer-стадия)
+  useEffect(() => {
+    if (!order?.id || step !== "offer") return;
+    const subscription = form.watch((values) => {
+      const hasContent =
+        Boolean(values.deadline) ||
+        Boolean(values.cost) ||
+        Boolean(values.comment) ||
+        Boolean(values.companyName);
+      if (!hasContent) return;
+      saveDraft({
+        orderId: order.id,
+        orderTitle: order.title,
+        customer: order.customer,
+        deadline: values.deadline ?? "",
+        cost: values.cost ?? "",
+        vatKind: values.vatKind ?? "NONE",
+        comment: values.comment ?? "",
+        companyName: values.companyName ?? "",
+        companyData: values.companyData ?? null,
+        updatedAt: Date.now(),
+      });
+    });
+    return () => subscription.unsubscribe();
+  }, [order?.id, order?.title, order?.customer, step, form]);
 
   if (!isOpen || !order) {
     return null;
