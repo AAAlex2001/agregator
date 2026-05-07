@@ -10,9 +10,11 @@ export function CustomerResponsesWidget() {
   const { showSuccess } = useNotifications();
   const model = useResponses("customer");
 
-  // Заказы, по которым уже выбран исполнитель (есть отклик в работе) — для них вернуть отклонённого нельзя
-  const ordersWithExecutor = new Set(
-    model.items.filter((r) => r.rawStatus === "IN_PROGRESS").map((r) => r.orderId),
+  // Заказы, по которым уже выбран исполнитель или заказ завершён — вернуть отклонённого нельзя
+  const lockedOrderIds = new Set(
+    model.items
+      .filter((r) => r.rawStatus === "IN_PROGRESS" || r.rawStatus === "COMPLETED")
+      .map((r) => r.orderId),
   );
 
   const actionHandlers = {
@@ -27,7 +29,7 @@ export function CustomerResponsesWidget() {
     onSelect: model.onSelect,
     onRestore: model.onRestore,
     onLeaveReview: model.onLeaveReview,
-    canRestore: (card: typeof model.items[number]) => !ordersWithExecutor.has(card.orderId),
+    canRestore: (card: typeof model.items[number]) => !lockedOrderIds.has(card.orderId),
   };
 
   return (

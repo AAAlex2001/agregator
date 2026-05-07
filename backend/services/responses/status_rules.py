@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status as http_status
 
+from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 
@@ -94,6 +95,17 @@ class ResponseStatusRules:
     def check_customer_review(self, response: OrderResponse) -> None:
         if response.status not in CUSTOMER_REVIEW_FROM:
             raise self.conflict("Вернуть на рассмотрение можно только отклонённый отклик")
+        order = response.order
+        if order is None:
+            return
+        if order.assigned_expert_id is not None:
+            raise self.conflict(
+                "Нельзя вернуть отклик: по заказу уже выбран исполнитель"
+            )
+        if order.status != OrderStatus.ACTIVE:
+            raise self.conflict(
+                "Нельзя вернуть отклик: заказ завершён или больше не активен"
+            )
 
     def check_customer_in_progress(self, response: OrderResponse) -> None:
         if response.status not in CUSTOMER_IN_PROGRESS_FROM:
