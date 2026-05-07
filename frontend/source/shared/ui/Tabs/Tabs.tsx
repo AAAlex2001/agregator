@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./tabs.module.scss";
+import styles from "./Tabs.module.scss";
 
 interface Tab {
   id: string;

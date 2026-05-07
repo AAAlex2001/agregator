@@ -167,3 +167,10 @@
   font-weight: 500;
   color: #666666;
 }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}

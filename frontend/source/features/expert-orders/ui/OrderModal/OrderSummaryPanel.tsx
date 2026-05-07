@@ -23,7 +23,10 @@ export function OrderSummaryPanel({ order }: Props) {
   return (
     <div className={s.card}>
       <button type="button" className={s.toggle} onClick={() => setIsOpen((prev) => !prev)}>
-        <span className={s.title}>{order.title}</span>
+        <div className={s.titleBlock}>
+          <span className={s.metaLabel}>Название заказа</span>
+          <span className={s.title}>{order.title}</span>
+        </div>
         <svg className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 9L12 15L18 9" stroke="#FFDDA9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -31,11 +34,14 @@ export function OrderSummaryPanel({ order }: Props) {
 
       {isOpen && (
         <>
-          <span className={s.customer}>{order.customer}</span>
+          <div className={s.customerBlock}>
+            <span className={s.metaLabel}>Организатор</span>
+            <span className={s.customer}>{order.customer}</span>
+          </div>
 
           <div className={s.meta}>
             <span className={s.metaText}>
-              <span className={s.metaLabel}>Срок выполнения:</span> {order.date}
+              <span className={s.metaLabel}>Срок выполнения до:</span> {order.date}
             </span>
 
             {order.badges.length > 0 && (

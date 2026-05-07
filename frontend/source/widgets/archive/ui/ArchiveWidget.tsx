@@ -1,7 +1,6 @@
 "use client";
 
 import { useArchive } from "@/source/features/archive-orders";
-import { ResponsesSwiper } from "@/widgets/responses-swiper";
 import { ResponsesSkeleton } from "@/source/widgets/responses/ui/ResponsesSkeleton";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -38,17 +37,16 @@ export function ArchiveWidget() {
               <EmptyStateCard title="Архив пуст" subtitle="Здесь будут завершённые заказы" />
             </div>
           ) : (
-            <ResponsesSwiper
-              items={items}
-              getKey={(item) => item.id}
-              renderItem={(item) => (
+            <div className={s.list}>
+              {items.map((item) => (
                 <ArchivedCard
+                  key={item.id}
                   card={item}
                   canLeaveReview={canLeaveReviewFor(item)}
                   onLeaveReview={() => openReview(item)}
                 />
-              )}
-            />
+              ))}
+            </div>
           )}
         </div>
       </div>

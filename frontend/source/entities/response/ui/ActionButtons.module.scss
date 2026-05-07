@@ -1,25 +1,28 @@
 .actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 
   @media (min-width: 768px) {
     flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
   }
 }
 
 .actionBtn {
-  flex: 1;
-  min-width: 0;
-  max-height: 44px;
+  width: 100%;
+  min-height: 40px !important;
+  padding: 8px 14px !important;
   font-size: 14px !important;
-  line-height: 17px !important;
+  line-height: 18px !important;
 
   @media (min-width: 768px) {
-    padding: 10px 14px !important;
-    font-size: 14px !important;
-    line-height: 18px !important;
+    width: auto;
+    min-height: 36px !important;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    line-height: 16px !important;
   }
 }

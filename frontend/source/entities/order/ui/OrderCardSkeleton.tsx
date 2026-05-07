@@ -8,31 +8,34 @@ interface OrderCardSkeletonProps {
 export function OrderCardSkeleton({ showActions = true }: OrderCardSkeletonProps) {
   return (
     <article className={s.card} aria-hidden="true">
-      <div className={s.badges}>
-        <Skeleton className={s.badge} rounded="pill" />
-        <Skeleton className={s.badgeShort} rounded="pill" />
-      </div>
-
-      <div className={s.titleWrap}>
-        <Skeleton className={s.title} />
-        <Skeleton className={s.titleShort} />
-      </div>
-
-      <div className={s.meta}>
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className={s.metaRow}>
-            <Skeleton className={s.label} rounded="pill" />
-            <Skeleton className={index % 2 === 0 ? s.valueWide : s.value} rounded="pill" />
+      <div className={s.body}>
+        <div className={s.left}>
+          <div className={s.headRow}>
+            <Skeleton className={s.meta} rounded="pill" />
+            <Skeleton className={s.statusBadge} rounded="pill" />
           </div>
-        ))}
-      </div>
-
-      {showActions ? (
-        <div className={s.actions}>
-          <Skeleton className={s.actionPrimary} rounded="pill" />
-          <Skeleton className={s.actionSecondary} rounded="pill" />
+          <Skeleton className={s.title} rounded="md" />
+          <Skeleton className={s.titleShort} rounded="md" />
+          <div className={s.bottomLeft}>
+            <Skeleton className={s.label} rounded="pill" />
+            <Skeleton className={s.value} rounded="pill" />
+          </div>
         </div>
-      ) : null}
+        <div className={s.right}>
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className={s.rightItem}>
+              <Skeleton className={s.label} rounded="pill" />
+              <Skeleton className={s.value} rounded="pill" />
+            </div>
+          ))}
+        </div>
+      </div>
+      {showActions && (
+        <div className={s.actions}>
+          <Skeleton className={s.actionBtn} rounded="md" />
+          <Skeleton className={s.actionBtn} rounded="md" />
+        </div>
+      )}
     </article>
   );
 }

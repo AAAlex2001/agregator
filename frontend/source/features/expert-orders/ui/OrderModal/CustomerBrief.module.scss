@@ -70,11 +70,40 @@
 .badgeBrown { background: #efebe9; color: #6d4c41; }
 .badgePurple { background: #f3e5f5; color: #7b1fa2; }
 
+.topItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topLabel {
+  font-size: 13px;
+  line-height: 16px;
+  color: #808080;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  line-height: 16px;
+  color: #808080;
+}
+
 .responsesDeadlineActive,
 .responsesDeadlineExpired {
   font-weight: 500;
-  font-size: 13px;
-  line-height: 20px;
+  font-size: 15px;
+  line-height: 22px;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .responsesDeadlineActive { color: #ff8a00; }

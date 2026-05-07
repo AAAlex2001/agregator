@@ -21,19 +21,25 @@ export function getCardActions(card: ResponseCardData, loading: Loading, role: U
 
 function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): CardAction[] {
   const share: CardAction = { text: "Поделиться", variant: "outline", onClick: () => h.onShare?.(card.orderPublicId) };
+  const withdraw = (text: string): CardAction => ({
+    text,
+    variant: "transparent",
+    onClick: () => h.onWithdraw?.(card),
+    isLoading: loading === "withdraw",
+  });
 
   switch (card.rawStatus) {
     case "REVIEW":
       return [
-        { text: "Отозвать", variant: "outline", onClick: () => h.onWithdraw?.(card), isLoading: loading === "withdraw" },
         { text: "Изменить предложение", variant: "secondary", onClick: () => h.onEdit?.(card) },
         share,
+        withdraw("Отозвать"),
       ];
     case "ACCEPTED":
       return [
-        { text: "Отказаться", variant: "outline", onClick: () => h.onWithdraw?.(card), isLoading: loading === "withdraw" },
         { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         share,
+        withdraw("Отказаться"),
       ];
     case "IN_PROGRESS":
       if (card.expertConfirmed) {
@@ -43,10 +49,10 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
         ];
       }
       return [
-        { text: "Отказаться", variant: "outline", onClick: () => h.onWithdraw?.(card), isLoading: loading === "withdraw" },
         { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         { text: "Принять проект", variant: "green", onClick: () => h.onStart?.(card.id), isLoading: loading === "start" },
         share,
+        withdraw("Отказаться"),
       ];
     default:
       return [share];
@@ -54,23 +60,30 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
 }
 
 function customerActions(card: ResponseCardData, loading: Loading, h: Handlers): CardAction[] {
+  const reject: CardAction = {
+    text: "Отклонить",
+    variant: "transparent",
+    onClick: () => h.onReject?.(card),
+    isLoading: loading === "reject",
+  };
+
   switch (card.rawStatus) {
     case "REVIEW":
       return [
-        { text: "Отклонить", variant: "transparent", onClick: () => h.onReject?.(card), isLoading: loading === "reject" },
         { text: "Пригласить в чат", variant: "secondary", onClick: () => h.onAccept?.(card.id, card.orderId), isLoading: loading === "accept" },
+        reject,
       ];
     case "ACCEPTED":
       return [
-        { text: "Отклонить", variant: "transparent", onClick: () => h.onReject?.(card), isLoading: loading === "reject" },
         { text: "Выбрать исполнителем", variant: "outline", onClick: () => h.onSelect?.(card.id), isLoading: loading === "select" },
         { text: "Перейти в чат", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        reject,
       ];
     case "IN_PROGRESS":
       return [
-        { text: "Отклонить", variant: "transparent", onClick: () => h.onReject?.(card), isLoading: loading === "reject" },
         { text: "Чат с экспертом", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
         { text: "Завершить проект", variant: "green", onClick: () => h.onComplete?.(card.id), isLoading: loading === "complete" },
+        reject,
       ];
     case "COMPLETED":
       return card.hasReview ? [] : [

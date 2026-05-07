@@ -7,7 +7,7 @@ export function ActionButtons({ actions }: { actions: CardAction[] }) {
   return (
     <div className={s.actions}>
       {actions.map((a, i) => (
-        <Button key={i} variant={a.variant} size="sm" fullWidth
+        <Button key={i} variant={a.variant} size="sm"
           onClick={a.onClick} isLoading={a.isLoading} className={s.actionBtn}>
           {a.text}
         </Button>

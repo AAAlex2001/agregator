@@ -1,13 +1,10 @@
-﻿"use client";
+"use client";
 
-import { useRef } from "react";
 import { Button } from "@/shared/ui";
 import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";
-import ToolTip from "@/source/shared/ui/Tooltip";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { useHorizontalScroll } from "@/source/shared/lib/useHorizontalScroll";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
 import { useCustomerOrders } from "@/source/features/customer-orders";
 import { CustomerOrdersSkeleton } from "./CustomerOrdersSkeleton";
@@ -15,8 +12,6 @@ import s from "./CustomerOrdersWidget.module.scss";
 
 export function CustomerOrdersWidget() {
   const h = useCustomerOrders();
-  const ref = useRef<HTMLDivElement>(null);
-  useHorizontalScroll(ref, { deps: [h.isLoading] });
   const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
 
   if (h.mode === "create" || h.mode === "edit") {
@@ -37,10 +32,7 @@ export function CustomerOrdersWidget() {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <div className={s.titleRow}>
-          <Title text="Мои заказы" as="h1" className={s.pageTitle} />
-          <ToolTip message="Используйте Shift + колесо мыши для прокрутки" hideOnMobile />
-        </div>
+        <Title text="Мои заказы" as="h1" className={s.pageTitle} />
         <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
       </div>
 
@@ -76,19 +68,16 @@ export function CustomerOrdersWidget() {
           {h.isLoading ? (
             <CustomerOrdersSkeleton />
           ) : (
-            <div className={s.container}>
-              <div className={s.shadeL} /><div className={s.shadeR} />
-              <div className={s.grid} ref={ref}>
-                {h.items.map((o) => (
-                  <CustomerActiveCard
-                    key={o.id}
-                    card={o}
-                    isDeleting={h.deletingId === o.id}
-                    onEdit={() => h.openEdit(o)}
-                    onDelete={() => void h.onDelete(o.id)}
-                  />
-                ))}
-              </div>
+            <div className={s.list}>
+              {h.items.map((o) => (
+                <CustomerActiveCard
+                  key={o.id}
+                  card={o}
+                  isDeleting={h.deletingId === o.id}
+                  onEdit={() => h.openEdit(o)}
+                  onDelete={() => void h.onDelete(o.id)}
+                />
+              ))}
             </div>
           )}
         </>

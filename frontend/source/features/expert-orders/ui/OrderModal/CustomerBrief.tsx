@@ -35,8 +35,14 @@ export function CustomerBrief({ order }: Props) {
   return (
     <div className={s.block}>
       <div className={s.topRow}>
-        <span className={s.date}>{order.date}</span>
-        <span className={s.sum}>{order.sum}</span>
+        <div className={s.topItem}>
+          <span className={s.topLabel}>Срок выполнения до</span>
+          <span className={s.date}>{order.date}</span>
+        </div>
+        <div className={s.topItem}>
+          <span className={s.topLabel}>Начальная максимальная цена</span>
+          <span className={s.sum}>{order.sum}</span>
+        </div>
       </div>
 
       {order.badges.length > 0 && (
@@ -59,8 +65,14 @@ export function CustomerBrief({ order }: Props) {
       )}
 
       <div className={s.textBlock}>
-        <p className={s.title}>{order.title}</p>
-        <p className={s.customer}>{order.customer}</p>
+        <div className={s.fieldGroup}>
+          <span className={s.fieldLabel}>Название заказа</span>
+          <p className={s.title}>{order.title}</p>
+        </div>
+        <div className={s.fieldGroup}>
+          <span className={s.fieldLabel}>Организатор</span>
+          <p className={s.customer}>{order.customer}</p>
+        </div>
       </div>
 
       <div className={s.commentBlock}>

@@ -8,7 +8,6 @@ import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { StarIcon } from "@/source/shared/ui/icons";
 import { ExpertReviewsSkeleton } from "./ExpertReviewsSkeleton";
-import { ReviewsCarousel } from "./ReviewsCarousel";
 import s from "./ExpertReviewsWidget.module.scss";
 
 function formatDateFull(value: string) {
@@ -100,11 +99,10 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
           />
         </div>
       ) : (
-        <ReviewsCarousel
-          items={model.reviews}
-          getKey={(review) => review.id}
-          renderItem={(review) => (
+        <div className={s.list}>
+          {model.reviews.map((review) => (
             <ReviewCard
+              key={review.id}
               customer={review.company_name}
               order={review.order_title}
               orderSum={review.order_sum}
@@ -117,8 +115,8 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
               date={formatDateFull(review.created_at)}
               comment={review.comment}
             />
-          )}
-        />
+          ))}
+        </div>
       )}
     </div>
   );

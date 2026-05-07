@@ -3,16 +3,10 @@ import layout from "./ExpertOrdersWidget.module.scss";
 
 export function ExpertOrdersSkeleton() {
   return (
-    <div className={layout.container} aria-hidden="true">
-      <div className={layout.shadeL} />
-      <div className={layout.shadeR} />
-      <div className={layout.grid}>
-        {Array.from({ length: 10 }, (_, index) => (
-          <div key={index} className={layout.item}>
-            <OrderCardSkeleton />
-          </div>
-        ))}
-      </div>
+    <div className={layout.list} aria-hidden="true">
+      {Array.from({ length: 6 }, (_, index) => (
+        <OrderCardSkeleton key={index} />
+      ))}
     </div>
   );
 }

@@ -1,20 +1,26 @@
+import { ListCard } from "@/source/shared/ui/ListCard";
 import type { Badge } from "../model/types";
-import s from "./OrderCard.module.scss";
+import { RequirementsBadges } from "./RequirementsBadges";
 
 interface Props {
+  id?: number | string;
   badges: Badge[];
   title: string;
   customer: string;
   date: string;
   sum: string;
   responsesDeadline?: string | null;
+  createdAtDisplay?: string;
+  comment?: string;
+  technicalFiles?: string[];
   onClick?: () => void;
   children?: React.ReactNode;
+  details?: React.ReactNode;
 }
 
 function formatResponsesDeadline(iso: string): string {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
+  if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleString("ru-RU", {
     day: "2-digit",
     month: "2-digit",
@@ -25,55 +31,45 @@ function formatResponsesDeadline(iso: string): string {
 }
 
 export function OrderCard({
+  id,
   badges,
   title,
   customer,
   date,
   sum,
   responsesDeadline,
+  createdAtDisplay,
   onClick,
   children,
+  details,
 }: Props) {
+  const rightItems = [
+    { label: "Начальная максимальная цена", value: sum || "Не установлена", valueAccent: true },
+    ...(createdAtDisplay
+      ? [{ label: "Дата публикации", value: createdAtDisplay }]
+      : []),
+    {
+      label: "Приём откликов до",
+      value: responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—",
+    },
+    { label: "Срок выполнения до", value: date || "—" },
+  ];
+
   return (
-    <article className={s.card} onClick={onClick}>
-      <div className={s.requirements}>
-        <span className={s.label}>Требования к эксперту:</span>
-        <div className={s.badges}>
-          {badges.map((badge, index) => (
-            <span key={index} className={`${s.badge} ${s[badge.variant]}`}>
-              {badge.text}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className={s.titleBlock}>
-        <span className={s.label}>Название заказа:</span>
-        <p className={s.title}>{title}</p>
-      </div>
-
-      <ul className={s.meta}>
-        <li>
-          <span className={s.label}>Компания:</span>
-          <span className={s.value}>{customer || "—"}</span>
-        </li>
-        <li>
-          <span className={s.label}>Дедлайн:</span>
-          <span className={s.value}>{date}</span>
-        </li>
-        <li>
-          <span className={s.label}>Срок истечения приёма откликов:</span>
-          <span className={s.value}>
-            {responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—"}
-          </span>
-        </li>
-        <li>
-          <span className={s.label}>Начальная максимальная цена:</span>
-          <span className={s.value}>{sum}</span>
-        </li>
-      </ul>
-
-      {children && <div className={s.actions}>{children}</div>}
-    </article>
+    <ListCard
+      meta={id !== undefined && id !== "" ? `№ ${id}` : undefined}
+      statusText="Приём заявок"
+      statusColor="#137333"
+      statusBg="#e6f4ea"
+      titleLabel="Название заказа"
+      title={title}
+      bottomLeftLabel="Организатор"
+      bottomLeftValue={customer || "—"}
+      rightItems={rightItems}
+      onClick={onClick}
+      actions={children}
+      details={details}
+      leftExtra={<RequirementsBadges badges={badges} />}
+    />
   );
 }

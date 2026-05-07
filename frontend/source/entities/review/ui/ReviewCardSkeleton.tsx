@@ -3,69 +3,31 @@ import s from "./ReviewCardSkeleton.module.scss";
 
 export function ReviewCardSkeleton() {
   return (
-    <article className={s.card}>
-      <div className={s.header}>
-        <Skeleton className={s.headerLabel} />
-        <Skeleton className={s.headerValue} />
-      </div>
-
-      <div className={s.dropdown}>
-        <div className={s.orderSection}>
-          <div className={s.detailRow}>
-            <Skeleton className={s.detailLabel} />
-            <Skeleton className={s.detailValue} />
+    <article className={s.card} aria-hidden="true">
+      <div className={s.body}>
+        <div className={s.left}>
+          <Skeleton className={s.meta} rounded="pill" />
+          <Skeleton className={s.title} rounded="md" />
+          <Skeleton className={s.titleShort} rounded="md" />
+          <div className={s.stars}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <Skeleton key={index} className={s.star} rounded="sm" />
+            ))}
           </div>
-
-          <div className={s.detailRow}>
-            <Skeleton className={s.detailLabel} />
-            <Skeleton className={s.badges} />
-          </div>
-
-          <div className={s.termsRow}>
-            <div className={s.termItem}>
-              <Skeleton className={s.termLabel} />
-              <Skeleton className={s.termValue} />
-            </div>
-
-            <div className={s.termCost}>
-              <Skeleton className={s.termWideLabel} />
-              <Skeleton className={s.termValue} />
-            </div>
+          <Skeleton className={s.commentLine} rounded="md" />
+          <Skeleton className={s.commentLineShort} rounded="md" />
+          <div className={s.bottomLeft}>
+            <Skeleton className={s.label} rounded="pill" />
+            <Skeleton className={s.value} rounded="pill" />
           </div>
         </div>
-
-        <div className={s.info}>
-          <div className={s.termsRow}>
-            <div className={s.termItem}>
-              <Skeleton className={s.termWideLabel} />
-              <Skeleton className={s.termValue} />
+        <div className={s.right}>
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className={s.rightItem}>
+              <Skeleton className={s.label} rounded="pill" />
+              <Skeleton className={s.value} rounded="pill" />
             </div>
-
-            <div className={s.termCost}>
-              <Skeleton className={s.termWideLabel} />
-              <Skeleton className={s.termValue} />
-            </div>
-          </div>
-
-          <Skeleton className={s.filesLabel} />
-        </div>
-      </div>
-
-      <div className={s.ratingDate}>
-        <div className={s.stars}>
-          {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton key={index} className={s.star} rounded="sm" />
           ))}
-        </div>
-
-        <Skeleton className={s.date} rounded="pill" />
-      </div>
-
-      <div className={s.commentBlock}>
-        <div className={s.commentText}>
-          <Skeleton className={s.line} />
-          <Skeleton className={s.lineWide} />
-          <Skeleton className={s.lineShort} />
         </div>
       </div>
     </article>

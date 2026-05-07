@@ -20,6 +20,8 @@ export { default as ToolTip } from "./Tooltip";
 export { default as ScrollHintTooltip } from "./Tooltip";
 export { FileGallery } from "./FileGallery";
 export { EmptyStateCard } from "./EmptyStateCard/EmptyStateCard";
+export { ListCard } from "./ListCard";
+export type { ListCardProps, ListCardItem } from "./ListCard";
 
 // Cross-layer convenience re-exports for ergonomic page imports.
 export { OrderCard } from "@/entities/order";

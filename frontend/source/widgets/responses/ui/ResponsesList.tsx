@@ -4,7 +4,6 @@ import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
 import { ResponsesState } from "@/widgets/responses-state";
-import { ResponsesSwiper } from "@/widgets/responses-swiper";
 import { ResponseCard } from "@/source/entities/response";
 import type { ResponseTabKey, UserRole } from "@/source/entities/response";
 import { getCardActions } from "@/source/features/responses";
@@ -62,18 +61,16 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
               />
             </div>
           ) : (
-            <ResponsesSwiper
-              items={model.items}
-              resetKey={model.activeTab}
-              getKey={(item) => item.id}
-              renderItem={(item) => (
+            <div className={s.list}>
+              {model.items.map((item) => (
                 <ResponseCard
+                  key={item.id}
                   card={item}
                   role={role}
                   actions={getCardActions(item, model.actionLoading[item.id] ?? null, role, actionHandlers)}
                 />
-              )}
-            />
+              ))}
+            </div>
           )}
         </div>
       </div>
