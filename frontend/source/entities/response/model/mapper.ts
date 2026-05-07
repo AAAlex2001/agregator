@@ -90,5 +90,6 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     expertInn: item.expert_inn ?? null,
     vatKind,
     vatLabel,
+    orderLocked: Boolean(item.order_locked),
   };
 }

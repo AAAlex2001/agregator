@@ -84,6 +84,7 @@ class ExpertResponseItem(BaseModel):
     expert_company_name: str = ""
     expert_inn: str | None = None
     vat_kind: VatKind = VatKind.NONE
+    order_locked: bool = False
 
     model_config = {"from_attributes": True}
 

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from models.order import OrderStatus
 from models.response import ResponseStatus, VatKind
 from models.user import UserRole
 from schemas.response import (
@@ -117,6 +118,13 @@ def to_item(
 
     has_review = bool(getattr(entity, "has_review_for_customer", False)) if actor_role == UserRole.CUSTOMER else False
 
+    order_locked = False
+    if order is not None:
+        order_locked = (
+            order.assigned_expert_id is not None
+            or order.status != OrderStatus.ACTIVE
+        )
+
     return ExpertResponseItem(
         id=entity.id,
         order_id=entity.order_id,
@@ -158,6 +166,7 @@ def to_item(
             if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
             else ""
         ),
+        order_locked=order_locked,
     )
 
 

@@ -59,6 +59,7 @@ export interface ResponseApiItem {
   expert_company_name?: string;
   expert_inn?: string | null;
   vat_kind?: VatKind;
+  order_locked?: boolean;
 }
 
 export interface ResponsesApiList {
@@ -108,6 +109,7 @@ export interface ResponseCardData {
   expertInn?: string | null;
   vatKind: VatKind;
   vatLabel: string;
+  orderLocked: boolean;
 }
 
 export interface CardAction {
