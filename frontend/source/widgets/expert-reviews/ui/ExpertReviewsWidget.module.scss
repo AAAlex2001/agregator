@@ -8,14 +8,14 @@
   padding: 20px 10px;
   gap: 24px;
   overflow-x: hidden;
-  min-height: calc(100dvh - 74px - 72px);
+  min-height: calc(100dvh - 72px);
 
   @media (min-width: 768px) {
     gap: 40px;
   }
 
-  @media (min-width: 1440px) {
-    min-height: calc(100dvh - 74px);
+  @media (min-width: 1024px) {
+    min-height: 100dvh;
   }
 }
 

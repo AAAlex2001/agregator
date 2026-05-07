@@ -7,7 +7,7 @@
   max-width: 1640px;
   margin: 0 auto;
   padding: 94px 10px 40px;
-  min-height: calc(100dvh - 74px);
+  min-height: 100dvh;
 
   @media (min-width: 768px) {
     gap: 32px;

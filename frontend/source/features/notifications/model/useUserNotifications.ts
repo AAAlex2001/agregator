@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useReducer } from "react";
 import {
+  deleteAllNotifications,
   deleteNotification,
   fetchNotifications,
   markAllNotificationsRead,
@@ -98,11 +99,35 @@ export function useUserNotifications(limit = 50) {
     }
   };
 
+  const dismissAll = async () => {
+    dispatch({ type: "SET_MARKING_ALL", payload: true });
+    dispatch({ type: "SET_ERROR", payload: null });
+
+    try {
+      const data = await deleteAllNotifications();
+      dispatch({
+        type: "SET_DATA",
+        items: [],
+        total: 0,
+        unreadCount: data.unread_count,
+      });
+    } catch (nextError) {
+      dispatch({
+        type: "SET_ERROR",
+        payload: nextError instanceof Error ? nextError.message : "Не удалось удалить уведомления",
+      });
+      throw nextError;
+    } finally {
+      dispatch({ type: "SET_MARKING_ALL", payload: false });
+    }
+  };
+
   return {
     ...state,
     reload,
     markRead,
     dismiss,
     markAllRead,
+    dismissAll,
   };
 }

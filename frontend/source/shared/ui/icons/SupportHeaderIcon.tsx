@@ -6,9 +6,9 @@ interface SupportHeaderIconProps extends SVGProps<SVGSVGElement> {
 
 const SupportHeaderIcon: FC<SupportHeaderIconProps> = ({ title, ...props }) => (
   <svg
-    width="44"
-    height="44"
-    viewBox="0 0 44 44"
+    width="24"
+    height="24"
+    viewBox="13 14 18 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
@@ -16,12 +16,6 @@ const SupportHeaderIcon: FC<SupportHeaderIconProps> = ({ title, ...props }) => (
     {...props}
   >
     {title && <title>{title}</title>}
-    <rect
-      width="44"
-      height="44"
-      rx="22"
-      fill="var(--header-icon-bg, rgba(26, 26, 26, 0.08))"
-    />
     <path
       d="M14 17.5C14 16.1193 15.1193 15 16.5 15H27.5C28.8807 15 30 16.1193 30 17.5V25.5C30 26.8807 28.8807 28 27.5 28H22.4142C22.149 28 21.8946 28.1054 21.7071 28.2929L18.7071 31.2929C18.0771 31.9229 17 31.4767 17 30.5858V28C15.3431 28 14 26.6569 14 25V17.5Z"
       fill="currentColor"

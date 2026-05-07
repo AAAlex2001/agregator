@@ -1,13 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AuthHeader } from "@/source/widgets/header";
+import { SidebarShell } from "@/source/widgets/sidebar";
 
 interface AppShellProps {
   children: React.ReactNode;
 }
 
-const HEADER_ROUTES = [
+const SIDEBAR_ROUTES = [
   /^\/customer\/orders(?:\/.*)?$/,
   /^\/expert\/orders(?:\/.*)?$/,
   /^\/expert\/reviews(?:\/.*)?$/,
@@ -16,19 +16,18 @@ const HEADER_ROUTES = [
   /^\/chat(?:\/.*)?$/,
   /^\/archive(?:\/.*)?$/,
   /^\/support(?:\/.*)?$/,
+  /^\/notifications(?:\/.*)?$/,
 ];
 
-function shouldShowHeader(pathname: string): boolean {
-  return HEADER_ROUTES.some((pattern) => pattern.test(pathname));
+function shouldShowSidebar(pathname: string): boolean {
+  return SIDEBAR_ROUTES.some((pattern) => pattern.test(pathname));
 }
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
 
-  return (
-    <>
-      {shouldShowHeader(pathname) ? <AuthHeader /> : null}
-      {children}
-    </>
-  );
+  if (shouldShowSidebar(pathname)) {
+    return <SidebarShell>{children}</SidebarShell>;
+  }
+  return <>{children}</>;
 }

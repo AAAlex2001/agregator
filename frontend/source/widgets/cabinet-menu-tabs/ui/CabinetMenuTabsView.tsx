@@ -2,21 +2,20 @@
 
 import Link from "next/link";
 import {
-  ReviewIcon,
+  BurgerHeaderIcon,
+  TabChatIcon,
   TabOrdersIcon,
   TabResponsesIcon,
-  TabChatIcon,
-  TabProfileIcon,
-  TabArchiveIcon,
 } from "@/source/shared/ui/icons";
 import s from "./CabinetMenuTabs.module.scss";
 
-export type CabinetMenuKey = "orders" | "responses" | "reviews" | "chat" | "profile" | "archive";
+export type CabinetMenuKey = "orders" | "responses" | "chat" | "menu";
 
-interface CabinetMenuItem {
+export interface CabinetMenuItem {
   key: CabinetMenuKey;
   label: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }
 
 interface CabinetMenuTabsViewProps {
@@ -27,10 +26,8 @@ interface CabinetMenuTabsViewProps {
 function renderIcon(key: CabinetMenuKey) {
   if (key === "orders") return <TabOrdersIcon />;
   if (key === "responses") return <TabResponsesIcon />;
-  if (key === "reviews") return <ReviewIcon />;
   if (key === "chat") return <TabChatIcon />;
-  if (key === "archive") return <TabArchiveIcon />;
-  return <TabProfileIcon />;
+  return <BurgerHeaderIcon />;
 }
 
 export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewProps) {
@@ -40,17 +37,35 @@ export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewPro
       <nav className={s.menuTabs} aria-label="Навигация кабинета">
         {items.map((item) => {
           const isActive = item.key === activeKey;
-
-          return (
-            <Link
-              key={item.key}
-              href={item.href}
-              className={`${s.tab} ${isActive ? s.tabActive : ""}`.trim()}
-              aria-current={isActive ? "page" : undefined}
-            >
+          const className = `${s.tab} ${isActive ? s.tabActive : ""}`.trim();
+          const content = (
+            <>
               <span className={s.icon}>{renderIcon(item.key)}</span>
               <span className={s.text}>{item.label}</span>
-            </Link>
+            </>
+          );
+
+          if (item.href) {
+            return (
+              <Link
+                key={item.key}
+                href={item.href}
+                className={className}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {content}
+              </Link>
+            );
+          }
+          return (
+            <button
+              key={item.key}
+              type="button"
+              className={className}
+              onClick={item.onClick}
+            >
+              {content}
+            </button>
           );
         })}
       </nav>

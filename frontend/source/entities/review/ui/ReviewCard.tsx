@@ -64,9 +64,11 @@ export function ReviewCard({
             <span className={s.ratingValue}>{rating} / 5</span>
           </div>
           {comment && (
-            <blockquote className={s.quote}>
-              <p className={s.quoteText}>{comment}</p>
-            </blockquote>
+            <p className={s.quote}>
+              <span className={s.quoteMark}>&ldquo;</span>
+              {comment}
+              <span className={s.quoteMark}>&rdquo;</span>
+            </p>
           )}
           <RequirementsBadges badges={badges} />
         </>

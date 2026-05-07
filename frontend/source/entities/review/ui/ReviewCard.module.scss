@@ -13,48 +13,35 @@
 }
 
 .quote {
-  position: relative;
-  margin: 4px 0;
-  padding: 4px 22px 8px 22px;
+  margin: 8px 0;
+  padding: 0;
   font-style: italic;
   font-size: 16px;
   line-height: 24px;
   color: #1a1a1a;
+  word-break: break-word;
 
   @media (min-width: 768px) {
-    padding: 4px 26px 10px 26px;
     font-size: 17px;
     line-height: 26px;
   }
 }
 
-.quote::before {
-  content: "\201C";
-  position: absolute;
-  top: -2px;
-  left: 0;
+.quoteMark {
+  display: inline-block;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 32px;
+  font-size: 22px;
   font-style: normal;
   font-weight: 700;
-  line-height: 1;
   color: #ff8a00;
+  line-height: 1;
+  vertical-align: -3px;
 }
 
-.quote::after {
-  content: "\201D";
-  position: absolute;
-  right: 0;
-  bottom: -14px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 1;
-  color: #ff8a00;
+.quoteMark:first-child {
+  margin-right: 4px;
 }
 
-.quoteText {
-  margin: 0;
-  word-break: break-word;
+.quoteMark:last-child {
+  margin-left: 4px;
 }

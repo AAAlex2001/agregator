@@ -27,7 +27,19 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="ru" className={montserrat.className}>
-      <head>
+      <body className="antialiased">
+        <noscript>
+          <div>
+            <img
+              src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
+              style={{ position: "absolute", left: "-9999px" }}
+              alt=""
+            />
+          </div>
+        </noscript>
+        <NotificationProvider>
+          {children}
+        </NotificationProvider>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
           strategy="afterInteractive"
@@ -40,7 +52,7 @@ export default async function RootLayout({
             gtag('config', '${GOOGLE_TAG_ID}');
           `}
         </Script>
-        <Script id="yandex-metrika" strategy="beforeInteractive">
+        <Script id="yandex-metrika" strategy="afterInteractive">
           {`
             (function(m,e,t,r,i,k,a){
               m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -66,20 +78,6 @@ export default async function RootLayout({
             });
           `}
         </Script>
-      </head>
-      <body className="antialiased">
-        <noscript>
-          <div>
-            <img
-              src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
-              style={{ position: "absolute", left: "-9999px" }}
-              alt=""
-            />
-          </div>
-        </noscript>
-        <NotificationProvider>
-          {children}
-        </NotificationProvider>
       </body>
     </html>
   );

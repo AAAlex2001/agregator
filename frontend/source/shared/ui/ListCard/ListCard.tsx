@@ -18,6 +18,8 @@ export interface ListCardProps {
   title: string;
   bottomLeftLabel?: string;
   bottomLeftValue?: ReactNode;
+  /** Произвольный JSX вместо стандартной пары label+value. Перебивает bottomLeftLabel/Value. */
+  bottomLeftCustom?: ReactNode;
   rightItems?: ListCardItem[];
   onClick?: () => void;
   actions?: ReactNode;
@@ -40,6 +42,7 @@ export function ListCard({
   title,
   bottomLeftLabel,
   bottomLeftValue,
+  bottomLeftCustom,
   rightItems,
   onClick,
   actions,
@@ -79,12 +82,14 @@ export function ListCard({
             <h3 className={s.title}>{title}</h3>
           </div>
           {leftExtra}
-          {bottomLeftLabel && (
+          {bottomLeftCustom ? (
+            <div className={s.bottomLeft}>{bottomLeftCustom}</div>
+          ) : bottomLeftLabel ? (
             <div className={s.bottomLeft}>
               <span className={s.label}>{bottomLeftLabel}</span>
               <span className={s.value}>{bottomLeftValue ?? "—"}</span>
             </div>
-          )}
+          ) : null}
         </div>
 
         {rightItems && rightItems.length > 0 && (

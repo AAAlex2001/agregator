@@ -98,6 +98,7 @@ export function useExpertOrders() {
       });
       d({ type: "REMOVE", id: order.id });
       closeModal();
+      router.push("/responses");
     } catch (e) {
       const message = e instanceof Error ? e.message : "Ошибка";
       showError(message);

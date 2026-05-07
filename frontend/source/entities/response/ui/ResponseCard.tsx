@@ -7,6 +7,7 @@ import { ExpertInfo } from "./ExpertInfo";
 import { CommentSection, ReminderSection } from "./InfoSections";
 import { TechSpecFiles } from "./TechSpecFiles";
 import { ActionButtons } from "./ActionButtons";
+import s from "./ResponseCardBottom.module.scss";
 
 interface Props {
   card: ResponseCardData;
@@ -79,15 +80,6 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
 
   const details = (
     <>
-      {showCustomerExpertInfo && (
-        <ExpertInfo
-          name={card.expertName}
-          avatarUrl={card.expertAvatarUrl}
-          rating={card.expertRating}
-          reviewCount={card.expertReviewCount}
-          expertPublicId={card.expertPublicId}
-        />
-      )}
       {card.expertCompanyName && (
         <CommentSection
           title="Организация эксперта:"
@@ -123,16 +115,38 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     </>
   );
 
+  const bottomLeft = isExpert ? (
+    <>
+      <span className={s.label}>Организатор:</span>
+      <span className={s.value}>{card.customer || "—"}</span>
+    </>
+  ) : showCustomerExpertInfo ? (
+    <div className={s.expertBlock}>
+      <span className={s.label}>Эксперт:</span>
+      <ExpertInfo
+        name={card.expertName}
+        avatarUrl={card.expertAvatarUrl}
+        rating={card.expertRating}
+        reviewCount={card.expertReviewCount}
+        expertPublicId={card.expertPublicId}
+      />
+    </div>
+  ) : (
+    <>
+      <span className={s.label}>Эксперт:</span>
+      <span className={s.value}>{card.expertName || "—"}</span>
+    </>
+  );
+
   return (
     <ListCard
       meta={`№ ${card.orderId}`}
       statusText={card.status}
       statusColor={card.statusColor}
       statusBg={card.statusBg}
-      titleLabel="Название заказа"
+      titleLabel="Название заказа:"
       title={card.orderTitle}
-      bottomLeftLabel={isExpert ? "Организатор" : "Эксперт"}
-      bottomLeftValue={isExpert ? card.customer || "—" : card.expertName || "—"}
+      bottomLeftCustom={bottomLeft}
       rightItems={rightItems}
       onClick={onClick}
       actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}

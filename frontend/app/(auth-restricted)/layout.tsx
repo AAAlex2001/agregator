@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { SessionProvider } from "@/source/features/session";
+import { AuthGuard, SessionProvider } from "@/source/features/session";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 import { AppShell } from "@/source/widgets/app-shell";
 import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
+import { SidebarMobileProvider } from "@/source/widgets/sidebar";
 
 export const metadata: Metadata = {
   robots: {
@@ -20,8 +21,12 @@ export default async function AppLayout({
 
   return (
     <SessionProvider initialRole={initialRole}>
-      <AppShell>{children}</AppShell>
-      <CabinetMenuTabs />
+      <AuthGuard>
+        <SidebarMobileProvider>
+          <AppShell>{children}</AppShell>
+          <CabinetMenuTabs />
+        </SidebarMobileProvider>
+      </AuthGuard>
     </SessionProvider>
   );
 }

@@ -94,6 +94,18 @@ class NotificationRepository:
         )
         return int(result.rowcount or 0)
 
+    async def delete_all(self, user_id: int) -> int:
+        "Удаляет все уведомления пользователя; возвращает число удалённых строк."
+        result = await self.db.execute(
+            sa_delete(Notification).where(Notification.user_id == user_id)
+        )
+        return int(result.rowcount or 0)
+
+    async def reset_unread(self, user_id: int) -> None:
+        await self.db.execute(
+            update(User).where(User.id == user_id).values(notification_unread_count=0)
+        )
+
     async def delete(self, notification_id: int, user_id: int) -> bool | None:
         "True/False = была ли строка непрочитанной до удаления; None = строки нет."
         result = await self.db.execute(

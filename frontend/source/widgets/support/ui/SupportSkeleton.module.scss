@@ -1,6 +1,6 @@
 .body {
-  height: calc(100dvh - 74px - 72px);
-  min-height: calc(100dvh - 74px - 72px);
+  height: calc(100dvh - 56px);
+  min-height: calc(100dvh - 72px);
   width: 100%;
   max-width: 1620px;
   margin: 0 auto;
@@ -16,8 +16,8 @@
     flex-direction: row;
     padding: 20px 10px;
     gap: 20px;
-    height: calc(100dvh - 74px);
-    min-height: calc(100dvh - 74px);
+    height: 100dvh;
+    min-height: 100dvh;
   }
 }
 

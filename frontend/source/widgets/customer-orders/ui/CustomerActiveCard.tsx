@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/shared/ui";
 import { ListCard } from "@/source/shared/ui/ListCard";
 import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
-import { CommentSection, TechSpecFiles } from "@/source/entities/response";
+import { ActionButtons, CommentSection, TechSpecFiles } from "@/source/entities/response";
+import type { CardAction } from "@/source/entities/response";
 import { RequirementsBadges } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 
@@ -28,6 +28,11 @@ function formatResponsesDeadline(iso: string | null): string {
 export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props) {
   const { user, role } = useSession();
 
+  const actions: CardAction[] = [
+    { text: "Редактировать", variant: "outline", onClick: onEdit },
+    { text: "Удалить", variant: "transparent", onClick: onDelete, isLoading: isDeleting },
+  ];
+
   return (
     <ListCard
       meta={`№ ${card.id}`}
@@ -44,14 +49,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
         { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline) },
         { label: "Срок выполнения до", value: card.date || "—" },
       ]}
-      actions={
-        <>
-          <Button variant="outline" size="sm" onClick={onEdit}>Редактировать</Button>
-          <Button variant="transparent" size="sm" onClick={onDelete} isLoading={isDeleting}>
-            Удалить
-          </Button>
-        </>
-      }
+      actions={<ActionButtons actions={actions} />}
       leftExtra={<RequirementsBadges badges={card.badges} />}
       details={
         <>

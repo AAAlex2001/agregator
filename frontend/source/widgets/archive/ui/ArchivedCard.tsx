@@ -11,6 +11,7 @@ import {
 } from "@/source/entities/response";
 import { RequirementsBadges } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
+import s from "./ArchivedCard.module.scss";
 
 interface Props {
   card: OrderCardData;
@@ -22,16 +23,33 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
   const { user, role } = useSession();
   const hasExecutor = Boolean(card.executorName);
 
+  const bottomLeft = hasExecutor ? (
+    <div className={s.executorBlock}>
+      <span className={s.label}>Исполнитель</span>
+      <ExpertInfo
+        name={card.executorName}
+        avatarUrl={card.executorAvatarUrl}
+        rating={card.executorRating}
+        reviewCount={card.executorReviewCount}
+        expertPublicId={card.executorPublicId}
+      />
+    </div>
+  ) : (
+    <>
+      <span className={s.label}>Организатор:</span>
+      <span className={s.value}>{card.customer || "—"}</span>
+    </>
+  );
+
   return (
     <ListCard
       meta={`№ ${card.id}`}
       statusText="Архив"
       statusColor="#cc6e00"
       statusBg="#fff5e6"
-      titleLabel="Название заказа"
+      titleLabel="Название заказа:"
       title={card.title}
-      bottomLeftLabel={hasExecutor ? "Исполнитель" : "Организатор"}
-      bottomLeftValue={hasExecutor ? card.executorName : card.customer || "—"}
+      bottomLeftCustom={bottomLeft}
       rightItems={[
         { label: "Начальная максимальная цена", value: card.sum || "—", valueAccent: true },
         ...(card.executorProposedSum
@@ -55,15 +73,6 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
       leftExtra={<RequirementsBadges badges={card.badges} />}
       details={
         <>
-          {hasExecutor && (
-            <ExpertInfo
-              name={card.executorName}
-              avatarUrl={card.executorAvatarUrl}
-              rating={card.executorRating}
-              reviewCount={card.executorReviewCount}
-              expertPublicId={card.executorPublicId}
-            />
-          )}
           {card.comment && (
             <CommentSection title="Комментарий заказчика:" text={card.comment} />
           )}

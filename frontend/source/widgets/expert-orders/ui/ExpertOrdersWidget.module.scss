@@ -7,14 +7,14 @@
   max-width: 1640px;
   margin: 0 auto;
   padding: 20px 10px;
-  min-height: calc(100dvh - 74px - 72px);
+  min-height: calc(100dvh - 72px);
 
   @media (min-width: 768px) {
     gap: 32px;
   }
 
-  @media (min-width: 1440px) {
-    min-height: calc(100dvh - 74px);
+  @media (min-width: 1024px) {
+    min-height: 100dvh;
   }
 }
 

@@ -5,6 +5,7 @@ from database.database import get_db
 from dependencies.auth import get_current_user
 from schemas.notification import NotificationListResponse, NotificationMutationResponse
 from services.notifications import (
+    DeleteAllNotificationsUseCase,
     DeleteNotificationUseCase,
     ListNotificationsUseCase,
     MarkAllNotificationsReadUseCase,
@@ -47,6 +48,15 @@ async def mark_notification_read(
 ):
     use_case = MarkNotificationReadUseCase(build_repo(db))
     return await use_case.execute(notification_id=notification_id, user_id=user_id)
+
+
+@router.delete("/", response_model=NotificationMutationResponse)
+async def delete_all_notifications(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    use_case = DeleteAllNotificationsUseCase(build_repo(db))
+    return await use_case.execute(user_id)
 
 
 @router.delete("/{notification_id}", response_model=NotificationMutationResponse)

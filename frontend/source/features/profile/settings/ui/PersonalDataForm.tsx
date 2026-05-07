@@ -274,23 +274,9 @@ export function PersonalDataForm({ profile, onProfileUpdate }: Props) {
             variant="chat"
             size="md"
             className={s.saveButton}
-            disabled={isLoggingOut}
             isLoading={form.isSaving}
           >
             Сохранить изменения
-          </Button>
-          <Button
-            type="button"
-            variant="transparent"
-            size="md"
-            className={s.logoutButton}
-            disabled={form.isSaving || isLoggingOut}
-            onClick={() => void handleLogout()}
-          >
-            <span className={s.logoutContent}>
-              <LogoutIcon className={s.logoutIcon} />
-              <span>Выйти из профиля</span>
-            </span>
           </Button>
         </div>
       </form>

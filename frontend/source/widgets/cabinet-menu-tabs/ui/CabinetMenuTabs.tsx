@@ -2,38 +2,33 @@
 
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
-import { CabinetMenuTabsView, type CabinetMenuKey } from "./CabinetMenuTabsView";
+import { useSidebarMobile } from "@/source/widgets/sidebar";
+import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";
 
 export function CabinetMenuTabs() {
   const pathname = usePathname();
   const { role } = useSession();
+  const { open } = useSidebarMobile();
 
   if (role === null) {
     return null;
   }
 
   const activeKey: CabinetMenuKey | null =
-    pathname === "/settings" ? "profile" :
     pathname.startsWith("/chat") ? "chat" :
-    pathname.startsWith("/archive") ? "archive" :
-    pathname.startsWith("/expert/reviews") ? "reviews" :
     pathname === "/responses" ? "responses" :
-    pathname.startsWith("/customer") || pathname.startsWith("/expert") ? "orders" :
+    pathname.startsWith("/customer") || pathname.startsWith("/expert/orders") ? "orders" :
     null;
 
-  const items = [
+  const items: CabinetMenuItem[] = [
+    { key: "menu", label: "Меню", onClick: open },
     {
-      key: "orders" as const,
+      key: "orders",
       label: "Заказы",
       href: role === "EXPERT" ? "/expert/orders" : "/customer/orders",
     },
-    { key: "responses" as const, label: "Отклики", href: "/responses" },
-    { key: "archive" as const, label: "Архив", href: "/archive" },
-    ...(role === "EXPERT"
-      ? [{ key: "reviews" as const, label: "Отзывы", href: "/expert/reviews" }]
-      : []),
-    { key: "chat" as const, label: "Чат", href: "/chat" },
-    { key: "profile" as const, label: "Профиль", href: "/settings" },
+    { key: "responses", label: "Отклики", href: "/responses" },
+    { key: "chat", label: "Чат", href: "/chat" },
   ];
 
   return <CabinetMenuTabsView items={items} activeKey={activeKey} />;

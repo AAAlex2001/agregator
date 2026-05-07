@@ -6,9 +6,9 @@ interface NotificationsHeaderIconProps extends SVGProps<SVGSVGElement> {
 
 const NotificationsHeaderIcon: FC<NotificationsHeaderIconProps> = ({ title, ...props }) => (
   <svg
-    width="44"
-    height="44"
-    viewBox="0 0 44 44"
+    width="24"
+    height="24"
+    viewBox="11 10 22 22"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
@@ -16,7 +16,6 @@ const NotificationsHeaderIcon: FC<NotificationsHeaderIconProps> = ({ title, ...p
     {...props}
   >
     {title && <title>{title}</title>}
-    <rect width="44" height="44" rx="22" fill="var(--header-icon-bg, rgba(26, 26, 26, 0.08))" />
     <path
       fillRule="evenodd"
       clipRule="evenodd"

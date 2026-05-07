@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 import { NotificationCard, NotificationCardSkeleton } from "@/source/entities/notification";
 import type { NotificationCardModel } from "@/source/entities/notification";
 import Button from "@/source/shared/ui/Button";
-import { NotificationsHeaderIcon } from "@/source/shared/ui/icons";
+import { TabNotificationIcon } from "@/source/shared/ui/icons";
 import s from "./NotificationsWidget.module.scss";
 
 interface NotificationsWidgetProps {
@@ -61,7 +61,7 @@ export function NotificationsWidget({
         aria-expanded={isOpen}
         onClick={onToggle}
       >
-        <NotificationsHeaderIcon />
+        <TabNotificationIcon />
         {unreadCount > 0 ? <span className={s.counterBadge}>{counterLabel}</span> : null}
       </button>
 

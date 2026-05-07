@@ -104,7 +104,9 @@ export function OfferStep({
       </span>
 
       <div className={base.fieldGroup}>
-        <span className={base.fieldLabel}>Организация, от которой подаёте заявку</span>
+        <span className={base.fieldLabel}>
+          Организация, от которой подаёте заявку для последующего заключения договора:
+        </span>
         <PartySuggestInput
           value={watch("companyName")}
           onChange={(query: string, picked: PartySuggestion | null) => {

@@ -48,3 +48,6 @@ export { default as TabResponsesIcon } from "./TabResponsesIcon";
 export { default as TabChatIcon } from "./TabChatIcon";
 export { default as TabProfileIcon } from "./TabProfileIcon";
 export { default as TabArchiveIcon } from "./TabArchiveIcon";
+export { default as TabSupportIcon } from "./TabSupportIcon";
+export { default as TabNotificationIcon } from "./TabNotificationIcon";
+export { default as CollapseSidebarIcon } from "./CollapseSidebarIcon";

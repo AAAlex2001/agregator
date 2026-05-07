@@ -48,3 +48,10 @@ export async function deleteNotification(notificationId: number): Promise<Notifi
   });
   return parseMutationResponse(response, "Не удалось удалить уведомление");
 }
+
+export async function deleteAllNotifications(): Promise<NotificationMutationResponse> {
+  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/`, {
+    method: "DELETE",
+  });
+  return parseMutationResponse(response, "Не удалось удалить уведомления");
+}
