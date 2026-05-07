@@ -20,4 +20,6 @@ export interface OrderModalProps {
   onRespond: (order: OrderCardData, formData: RespondFormData) => void;
   isResponding: boolean;
   initialStep?: ModalStep;
+  /** Подгружать сохранённый черновик при открытии (true — кнопка «Продолжить» в карточке черновика). */
+  useDraft?: boolean;
 }

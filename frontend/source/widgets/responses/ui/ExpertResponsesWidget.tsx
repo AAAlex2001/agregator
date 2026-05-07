@@ -2,7 +2,6 @@
 
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { EditResponseModalContainer, useResponses, WithdrawResponseModalContainer } from "@/source/features/responses";
-import { ResponseDrafts } from "./ResponseDrafts";
 import { ResponsesList } from "./ResponsesList";
 
 export function ExpertResponsesWidget() {
@@ -30,7 +29,6 @@ export function ExpertResponsesWidget() {
         subtitle="Все отклики в одном месте — просмотр, управление и контроль статусов"
         model={model}
         actionHandlers={actionHandlers}
-        topSlot={<ResponseDrafts />}
       />
 
       <EditResponseModalContainer

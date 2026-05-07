@@ -1,22 +1,10 @@
+import { createDraftStorage } from "@/source/entities/draft";
 import type { OrderFormValues } from "./schema";
 
-const KEY = "create-order-form-draft";
+const FIXED_ID = 0;
+const storage = createDraftStorage<OrderFormValues>("create-order-draft");
 
-const safeParse = (raw: string | null): OrderFormValues | null => {
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" && parsed.selectionsByType
-      ? (parsed as OrderFormValues)
-      : null;
-  } catch {
-    return null;
-  }
-};
-
-const storage = () => (typeof window === "undefined" ? null : window.localStorage);
-
-export const loadDraft = () => safeParse(storage()?.getItem(KEY) ?? null);
-export const hasDraft = () => loadDraft() !== null;
-export const saveDraft = (values: OrderFormValues) => storage()?.setItem(KEY, JSON.stringify(values));
-export const clearDraft = () => storage()?.removeItem(KEY);
+export const loadDraft = (): OrderFormValues | null => storage.load(FIXED_ID);
+export const hasDraft = (): boolean => storage.load(FIXED_ID) !== null;
+export const saveDraft = (values: OrderFormValues): void => storage.save(FIXED_ID, values);
+export const clearDraft = (): void => storage.remove(FIXED_ID);

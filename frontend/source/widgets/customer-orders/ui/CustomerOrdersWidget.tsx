@@ -5,6 +5,7 @@ import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { DraftCard, DraftSection } from "@/source/entities/draft";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
 import { useCustomerOrders } from "@/source/features/customer-orders";
 import { CustomerOrdersSkeleton } from "./CustomerOrdersSkeleton";
@@ -36,6 +37,26 @@ export function CustomerOrdersWidget() {
         <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
       </div>
 
+      {h.draft && (
+        <DraftSection title="Незавершённый заказ">
+          <DraftCard
+            meta="Новый заказ"
+            title={h.draft.title}
+            titleLabel="Название заказа:"
+            rightItems={[
+              ...(h.draft.budget
+                ? [{ label: "Начальная максимальная цена", value: h.draft.budget, accent: true }]
+                : []),
+              ...(h.draft.deadline
+                ? [{ label: "Срок выполнения до", value: h.draft.deadline }]
+                : []),
+            ]}
+            onContinue={h.openCreate}
+            onDelete={h.dismissDraft}
+          />
+        </DraftSection>
+      )}
+
       {h.error && (
         <div className={s.center}>
           <Title text="Ошибка загрузки" as="h2" />
@@ -44,7 +65,7 @@ export function CustomerOrdersWidget() {
         </div>
       )}
 
-      {!h.isLoading && !h.error && h.items.length === 0 && (
+      {!h.isLoading && !h.error && h.items.length === 0 && !h.draft && (
         <div className={s.emptyState}>
           <EmptyStateCard
             title="Вы ещё не создали ни одного заказа"

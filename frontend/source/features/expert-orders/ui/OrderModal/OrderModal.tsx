@@ -35,6 +35,7 @@ export function OrderModal({
   onRespond,
   isResponding,
   initialStep = "details",
+  useDraft = false,
 }: OrderModalProps) {
   const { showError } = useNotifications();
   const [step, setStep] = useState<ModalStep>(initialStep);
@@ -46,52 +47,61 @@ export function OrderModal({
     mode: "onBlur",
   });
 
+  // При смене заказа: подгружаем черновик только если открыто через "Продолжить"
   useEffect(() => {
-    setStep(initialStep);
-    if (order?.id) {
-      const draft = loadDraft(order.id);
-      if (draft) {
-        form.reset({
-          deadline: draft.deadline,
-          cost: draft.cost,
-          vatKind: draft.vatKind as RespondFormValues["vatKind"],
-          comment: draft.comment,
-          companyName: draft.companyName,
-          companyData: draft.companyData as RespondFormValues["companyData"],
-        });
-      } else {
-        form.reset(emptyValues);
-      }
+    if (!order?.id) {
+      form.reset(emptyValues);
+      setStep(initialStep);
+      setFiles([]);
+      return;
+    }
+    const draft = useDraft ? loadDraft(order.id) : null;
+    if (draft) {
+      form.reset({
+        deadline: draft.deadline,
+        cost: draft.cost,
+        vatKind: draft.vatKind as RespondFormValues["vatKind"],
+        comment: draft.comment,
+        companyName: draft.companyName,
+        companyData: draft.companyData as RespondFormValues["companyData"],
+      });
+      setStep(draft.step);
     } else {
       form.reset(emptyValues);
+      setStep(initialStep);
     }
     setFiles([]);
-  }, [order?.id, initialStep, form]);
+  }, [order?.id, initialStep, useDraft, form]);
 
-  // Сохраняем черновик на каждое изменение формы (если открыта offer-стадия)
+  // Сохраняем черновик при изменении формы или шага — только если эксперт реально что-то ввёл
   useEffect(() => {
-    if (!order?.id || step !== "offer") return;
-    const subscription = form.watch((values) => {
+    if (!order?.id) return;
+    const persist = () => {
+      const v = form.getValues();
       const hasContent =
-        Boolean(values.deadline) ||
-        Boolean(values.cost) ||
-        Boolean(values.comment) ||
-        Boolean(values.companyName);
+        Boolean(v.deadline) ||
+        Boolean(v.cost) ||
+        Boolean(v.comment) ||
+        Boolean(v.companyName) ||
+        step !== "details";
       if (!hasContent) return;
       saveDraft({
         orderId: order.id,
         orderTitle: order.title,
         customer: order.customer,
-        deadline: values.deadline ?? "",
-        cost: values.cost ?? "",
-        vatKind: values.vatKind ?? "NONE",
-        comment: values.comment ?? "",
-        companyName: values.companyName ?? "",
-        companyData: values.companyData ?? null,
+        step,
+        deadline: v.deadline,
+        cost: v.cost,
+        vatKind: v.vatKind,
+        comment: v.comment,
+        companyName: v.companyName,
+        companyData: v.companyData,
         updatedAt: Date.now(),
       });
-    });
-    return () => subscription.unsubscribe();
+    };
+    persist();
+    const sub = form.watch(() => persist());
+    return () => sub.unsubscribe();
   }, [order?.id, order?.title, order?.customer, step, form]);
 
   if (!isOpen || !order) {

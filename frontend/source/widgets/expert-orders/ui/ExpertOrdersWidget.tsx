@@ -9,6 +9,7 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { OrderModal, useExpertOrders } from "@/source/features/expert-orders";
 import { ExpertOrdersSkeleton } from "./ExpertOrdersSkeleton";
+import { ResponseDraftsList } from "./ResponseDraftsList";
 import s from "./ExpertOrdersWidget.module.scss";
 
 function isResponsesDeadlineExpired(responsesDeadline?: string | null): boolean {
@@ -31,6 +32,8 @@ export function ExpertOrdersWidget() {
         <Title text="Все заказы" as="h1" className={s.pageTitle} />
         <Subtitle text="Актуальные заказы по направлениям" className={s.pageSubtitle} />
       </div>
+
+      <ResponseDraftsList onContinue={h.continueDraft} orders={h.items} />
 
       {isEmpty && (
         <div className={s.emptyState}>
@@ -113,7 +116,7 @@ export function ExpertOrdersWidget() {
         onClose={h.closeModal}
         onRespond={h.onRespond}
         isResponding={h.isResponding}
-        initialStep={h.pendingStep}
+        useDraft={h.useDraft}
       />
     </div>
   );

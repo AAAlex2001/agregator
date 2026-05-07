@@ -57,7 +57,7 @@ export function DetailsSection({ form }: Props) {
         </div>
 
         <div className={s.field}>
-          <span className={base.label}>Бюджет проекта, ₽</span>
+          <span className={base.label}>Начальная максимальная цена, ₽</span>
           <Input
             variant="text"
             active

@@ -191,6 +191,7 @@ export function useResponses(role: UserRole | null) {
     closeReject: () => d({ type: "REJECT_TARGET", value: null }),
     onRejectConfirm,
     onSelect: (id: number) => statusAction(id, "select", "IN_PROGRESS"),
+    onRestore: (id: number) => statusAction(id, "restore", "REVIEW"),
     onAccept,
     onLeaveReview: (r: ResponseCardData) => { d({ type: "REVIEW_TARGET", value: r }); d({ type: "REVIEW_MODAL", value: true }); },
     closeCompletion: () => d({ type: "COMPLETION_MODAL", value: false }),

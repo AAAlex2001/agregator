@@ -8,7 +8,7 @@ import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { copyOrderLink } from "@/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
-import type { ModalStep, RespondFormData } from "../ui/OrderModal";
+import type { RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
 import { deleteDraft } from "./responseDraft";
 
@@ -20,7 +20,7 @@ export function useExpertOrders() {
   const router = useRouter();
   const { showError } = useNotifications();
   const loadingMoreRef = useRef(false);
-  const [pendingStep, setPendingStep] = useState<ModalStep>("details");
+  const [useDraft, setUseDraft] = useState(false);
 
   const [returnOrderId] = useState(() =>
     typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("orderId") : null,
@@ -45,10 +45,9 @@ export function useExpertOrders() {
   useEffect(() => {
     if (!returnOrderId || s.items.length === 0) return;
     const found = s.items.find((item) => String(item.id) === returnOrderId);
-    if (found) {
-      setPendingStep("details");
-      d({ type: "SELECT", order: found });
-    }
+    if (!found) return;
+    setUseDraft(false);
+    d({ type: "SELECT", order: found });
   }, [returnOrderId, s.items]);
 
   const hasMore = s.items.length < s.total;
@@ -69,17 +68,22 @@ export function useExpertOrders() {
   };
 
   const openDetails = (order: OrderCardData) => {
-    setPendingStep("details");
+    setUseDraft(false);
     d({ type: "SELECT", order });
   };
 
   const openRespond = (order: OrderCardData) => {
-    setPendingStep("details");
+    setUseDraft(false);
+    d({ type: "SELECT", order });
+  };
+
+  const continueDraft = (order: OrderCardData) => {
+    setUseDraft(true);
     d({ type: "SELECT", order });
   };
 
   const closeModal = () => {
-    setPendingStep("details");
+    setUseDraft(false);
     d({ type: "SELECT", order: null });
   };
 
@@ -116,11 +120,12 @@ export function useExpertOrders() {
     ...s,
     returnOrderId,
     hasMore,
-    pendingStep,
+    useDraft,
     reload,
     loadMore,
     openDetails,
     openRespond,
+    continueDraft,
     closeModal,
     onShare,
     onRespond,

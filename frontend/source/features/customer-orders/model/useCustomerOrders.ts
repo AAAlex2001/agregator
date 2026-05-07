@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
@@ -9,14 +9,16 @@ import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "../a
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
 import type { OrderFormValues } from "./schema";
-import { hasDraft } from "./orderDraft";
+import { clearDraft, loadDraft } from "./orderDraft";
 
 export function useCustomerOrders() {
   const [s, d] = useReducer(reducer, initial);
+  const [draft, setDraft] = useState<OrderFormValues | null>(null);
 
   useEffect(() => {
-    if (hasDraft()) d({ type: "MODE", mode: "create" });
+    setDraft(loadDraft());
   }, []);
+
   const { user } = useSession();
   const { showSuccess, showError } = useNotifications();
 
@@ -44,6 +46,7 @@ export function useCustomerOrders() {
     try {
       await createOrder(buildCreatePayload(values, files, user?.id ?? 0));
       showSuccess("Заказ создан");
+      setDraft(null);
       backToList();
       void reload();
     } catch (e) {
@@ -82,5 +85,21 @@ export function useCustomerOrders() {
     }
   };
 
-  return { ...s, reload, openCreate, openEdit, backToList, onCreate, onUpdate, onDelete };
+  const dismissDraft = () => {
+    clearDraft();
+    setDraft(null);
+  };
+
+  return {
+    ...s,
+    draft,
+    reload,
+    openCreate,
+    openEdit,
+    backToList,
+    onCreate,
+    onUpdate,
+    onDelete,
+    dismissDraft,
+  };
 }
