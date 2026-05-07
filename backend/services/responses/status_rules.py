@@ -5,6 +5,7 @@ from models.user import User, UserRole
 
 EXPERT_ALLOWED_TARGETS = {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}
 CUSTOMER_ALLOWED_TARGETS = {
+    ResponseStatus.REVIEW,
     ResponseStatus.REJECTED,
     ResponseStatus.ACCEPTED,
     ResponseStatus.IN_PROGRESS,
@@ -12,8 +13,9 @@ CUSTOMER_ALLOWED_TARGETS = {
 }
 EXPERT_IN_PROGRESS_FROM = {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
 EXPERT_COMPLETED_FROM = {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}
-CUSTOMER_IN_PROGRESS_FROM = {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
+CUSTOMER_IN_PROGRESS_FROM = {ResponseStatus.REVIEW, ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
 CUSTOMER_ACCEPTED_FROM = {ResponseStatus.REVIEW, ResponseStatus.IN_PROGRESS}
+CUSTOMER_REVIEW_FROM = {ResponseStatus.REJECTED}
 CUSTOMER_COMPLETED_FROM = {
     ResponseStatus.ACCEPTED,
     ResponseStatus.IN_PROGRESS,
@@ -80,12 +82,18 @@ class ResponseStatusRules:
             raise self.forbidden(
                 "Заказчик может только отклонять, принимать, переводить отклик в переговоры или завершать проект"
             )
+        if new_status == ResponseStatus.REVIEW:
+            self.check_customer_review(response)
         if new_status == ResponseStatus.IN_PROGRESS:
             self.check_customer_in_progress(response)
         if new_status == ResponseStatus.ACCEPTED:
             self.check_customer_accepted(response)
         if new_status == ResponseStatus.COMPLETED:
             self.check_customer_completed(response)
+
+    def check_customer_review(self, response: OrderResponse) -> None:
+        if response.status not in CUSTOMER_REVIEW_FROM:
+            raise self.conflict("Вернуть на рассмотрение можно только отклонённый отклик")
 
     def check_customer_in_progress(self, response: OrderResponse) -> None:
         if response.status not in CUSTOMER_IN_PROGRESS_FROM:

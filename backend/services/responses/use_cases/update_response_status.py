@@ -126,6 +126,9 @@ class UpdateResponseStatusUseCase:
         if new_status == ResponseStatus.REJECTED and response.order:
             reverted_ids = await self.release_if_assigned(response)
 
+        if new_status == ResponseStatus.REVIEW:
+            response.auto_rejected = False
+
         if new_status in {ResponseStatus.IN_PROGRESS, ResponseStatus.ACCEPTED}:
             await self.ensure_chat_exists(response)
 
