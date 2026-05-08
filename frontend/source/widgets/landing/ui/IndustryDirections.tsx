@@ -41,6 +41,7 @@ const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsP
           modules={[Navigation, Pagination]}
           loop={false}
           centeredSlides={true}
+          centeredSlidesBounds={true}
           slidesPerView={"auto"}
           spaceBetween={20}
           navigation={{

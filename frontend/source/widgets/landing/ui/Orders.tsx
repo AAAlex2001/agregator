@@ -41,6 +41,7 @@ const Orders = ({ orders, title, subtitle }: OrdersProps) => {
     modules={[Navigation, Pagination]}
     loop={false}
     centeredSlides={true}
+    centeredSlidesBounds={true}
     slidesPerView={"auto"}
     spaceBetween={5}
     navigation={{

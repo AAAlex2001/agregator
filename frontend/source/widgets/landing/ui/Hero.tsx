@@ -18,7 +18,7 @@ const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
           <Title text={title} />
           <Subtitle text={subtitle} />
         </header>
-        <Button href="/register" variant="primary" showArrow className={s.heroButton}>
+        <Button href="/register" variant="primary" fullWidth showArrow className={s.heroButton}>
           {buttonText}
         </Button>
       </div>

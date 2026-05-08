@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 
 import s from "./reviews.module.scss";
+import Button from "@/source/shared/ui/Button";
 import Card from "@/source/shared/ui/Card";
 import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -55,6 +56,7 @@ const Reviews = ({ reviews, title, subtitle }: ReviewsProps) => {
           modules={[Navigation, Pagination]}
           loop={false}
           centeredSlides={true}
+          centeredSlidesBounds={true}
           slidesPerView={"auto"}
           spaceBetween={5}
           navigation={{
@@ -77,6 +79,10 @@ const Reviews = ({ reviews, title, subtitle }: ReviewsProps) => {
           ))}
         </Swiper>
       </div>
+
+      <Button href="/register" variant="secondary" className={s.checkButton}>
+        Смотреть все отзывы
+      </Button>
 
       <div className={s.backgroundImage}>
         <Image

@@ -3,6 +3,7 @@
 import s from "./how-it-works.module.scss";
 import { useState } from "react";
 import Image from "next/image";
+import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
@@ -72,6 +73,9 @@ const HowItWorks = ({ clientSteps, expertSteps, title, subtitle }: HowItWorksPro
                   </div>
                 ))}
               </div>
+              <Button href="/register" variant="secondary" className={s.ctaButton}>
+                Зарегистрироваться
+              </Button>
                     </div>
             </div>
     </section>

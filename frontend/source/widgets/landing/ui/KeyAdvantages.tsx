@@ -3,6 +3,7 @@
 import s from "./key-advantages.module.scss";
 import { useState } from "react";
 import Image from "next/image";
+import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
@@ -51,6 +52,9 @@ const KeyAdvantages = ({ clientSteps, expertSteps, title, subtitle }: KeyAdvanta
                   </div>
                 ))}
               </div>
+              <Button href="/register" variant="secondary" className={s.ctaButton}>
+                Смотреть все преимущества
+              </Button>
                     </div>
             </div>
       <div className={s.backgroundImage}>

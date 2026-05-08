@@ -172,3 +172,27 @@
 }
 
 }
+
+.ctaButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: #FFDDA9;
+  width: 100%;
+  max-width: 320px;
+  border-radius: 10px;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+  margin: 30px auto 0 auto;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #4D4D4D;
+
+  &:hover,
+  &:focus-visible {
+    background-color: #FFAF38;
+  }
+}
