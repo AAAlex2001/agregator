@@ -29,7 +29,7 @@ INDEXES: list[tuple[str, str, list[str]]] = [
     # Отзывы об эксперте
     ("ix_reviews_expert_created", "reviews", ["expert_id", "created_at DESC"]),
     # Сообщения поддержки
-    ("ix_support_messages_ticket_created", "support_messages", ["ticket_id", "created_at"]),
+    ("ix_support_ticket_messages_ticket_created", "support_ticket_messages", ["ticket_id", "created_at"]),
     # Тикеты пользователя в поддержке
     ("ix_support_tickets_user_updated", "support_tickets", ["user_id", "updated_at DESC"]),
     # Заказы заказчика
