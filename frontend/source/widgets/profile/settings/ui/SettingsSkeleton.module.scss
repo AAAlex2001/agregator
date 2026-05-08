@@ -109,6 +109,23 @@
   grid-column: 1 / -1;
 }
 
+.emailCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.companyBlock {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+
+  @media (min-width: 720px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .notificationsRow {
   display: flex;
   align-items: flex-start;

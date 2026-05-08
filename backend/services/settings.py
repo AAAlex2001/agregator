@@ -6,8 +6,14 @@ from fastapi import HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from models.user import User
-from schemas.settings import EmailPreferences, UserSettingsResponse
+from models.user import User, UserRole
+from schemas.settings import (
+    EmailPreferences,
+    LicenseRentalKind,
+    UpdateLicenseHolderRequest,
+    UserSettingsResponse,
+)
+from services.license_storage import remove_license_file, save_license_file
 from utils.passwords import hash_password
 
 
@@ -123,8 +129,49 @@ class SettingsService:
         await self.db.flush()
         return user
 
+    async def update_license_holder(self, user_id: int, data: UpdateLicenseHolderRequest) -> User:
+        user = await self._require_license_holder(user_id)
+        user.license_number = data.license_number
+        user.license_areas = data.license_areas
+        user.license_rental_kind = data.license_rental_kind.value
+        user.license_rental_percent = (
+            data.license_rental_percent if data.license_rental_kind is LicenseRentalKind.PERCENT else None
+        )
+        user.license_rental_fixed_amount = (
+            data.license_rental_fixed_amount if data.license_rental_kind is LicenseRentalKind.FIXED else None
+        )
+        await self.db.flush()
+        return user
+
+    async def replace_license_file(self, user_id: int, file: UploadFile) -> User:
+        user = await self._require_license_holder(user_id)
+        owner_key = user.inn or user.public_id
+        new_url = await save_license_file(owner_key, file)
+
+        previous_url = user.license_file_url
+        user.license_file_url = new_url
+        try:
+            await self.db.flush()
+        except Exception:
+            remove_license_file(new_url)
+            raise
+
+        if previous_url and previous_url != new_url:
+            remove_license_file(previous_url)
+        return user
+
+    async def _require_license_holder(self, user_id: int) -> User:
+        user = await self.get_user_or_404(user_id)
+        if user.role != UserRole.LICENSE_HOLDER:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Доступно только держателю лицензии",
+            )
+        return user
+
     @staticmethod
     def to_response(user: User) -> UserSettingsResponse:
+        license_areas = user.license_areas if isinstance(user.license_areas, list) else None
         return UserSettingsResponse(
             id=user.id,
             inn=user.inn,
@@ -139,4 +186,12 @@ class SettingsService:
             review_count=user.review_count or 0,
             role=user.role.value,
             email_preferences=EmailPreferences.model_validate(user),
+            license_number=user.license_number,
+            license_file_url=user.license_file_url,
+            license_areas=license_areas,
+            license_rental_kind=user.license_rental_kind,
+            license_rental_percent=(
+                float(user.license_rental_percent) if user.license_rental_percent is not None else None
+            ),
+            license_rental_fixed_amount=user.license_rental_fixed_amount,
         )

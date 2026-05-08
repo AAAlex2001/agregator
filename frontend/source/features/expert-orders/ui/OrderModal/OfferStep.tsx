@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import { Button, CalendarInput, Input } from "@/source/shared/ui";
+import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import type { VatKind } from "@/source/entities/response";
 import { VAT_LABEL } from "@/source/entities/response";
@@ -63,9 +63,7 @@ export function OfferStep({
 
         <div className={base.fieldGroup}>
           <span className={base.fieldLabel}>Ваша оценка стоимости работ</span>
-          <Input
-            type="text"
-            variant="text"
+          <TextInput
             active
             inputMode="numeric"
             value={cost}

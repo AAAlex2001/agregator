@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { Input } from "@/shared/ui";
-import { CalendarInput } from "@/source/shared/ui";
+import { TextInput, CalendarInput } from "@/source/shared/ui";
 import { useSession } from "@/source/features/session";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
@@ -27,8 +26,7 @@ export function DetailsSection({ form }: Props) {
       <div className={s.grid}>
         <div className={s.field}>
           <span className={base.label}>Название заказа</span>
-          <Input
-            variant="text"
+          <TextInput
             active
             placeholder="Введите название"
             value={watch("title")}
@@ -38,8 +36,7 @@ export function DetailsSection({ form }: Props) {
 
         <div className={s.field}>
           <span className={base.label}>Компания</span>
-          <Input
-            variant="text"
+          <TextInput
             placeholder="Название компании"
             value={watch("company")}
             onChange={(event) => setValue("company", event.target.value, { shouldDirty: true })}
@@ -58,8 +55,7 @@ export function DetailsSection({ form }: Props) {
 
         <div className={s.field}>
           <span className={base.label}>Начальная максимальная цена, ₽</span>
-          <Input
-            variant="text"
+          <TextInput
             active
             placeholder="Сумма в рублях (0 — не определено)"
             value={watch("budget")}

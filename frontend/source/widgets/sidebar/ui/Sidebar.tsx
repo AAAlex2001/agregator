@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useUnreadNotificationCount } from "@/source/features/notifications";
-import { logout } from "@/source/features/profile/settings/api/settings.api";
+import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
   LogoIcon,

@@ -4,8 +4,13 @@ from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from models.user import User
-from schemas.registration import UserRegistration, UserRole
+from models.user import User, UserRole as ModelUserRole
+from schemas.registration import (
+    LicenseHolderRegistration,
+    LicenseRentalKind,
+    UserRegistration,
+    UserRole,
+)
 from services.verification import VerificationService
 from utils.passwords import hash_password
 
@@ -124,6 +129,44 @@ class RegistrationService:
             password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,
+        )
+        self.db.add(new_user)
+        await self.db.flush()
+        return new_user
+
+    async def create_license_holder(
+        self,
+        data: LicenseHolderRegistration,
+        license_file_url: str,
+    ) -> User:
+        "Создаёт держателя лицензии. Pydantic уже всё провалидировал — здесь только уникальность и запись."
+        self.validate_password(data.password)
+        await self.ensure_email_is_free(data.email)
+        await self.ensure_phone_is_free(data.phone)
+        await self.ensure_inn_is_free(data.inn)
+
+        new_user = User(
+            role=ModelUserRole.LICENSE_HOLDER,
+            email=data.email,
+            email_verified=False,
+            phone=data.phone,
+            inn=data.inn,
+            company_data=data.company_data,
+            password=await hash_password(data.password),
+            license_number=data.license_number,
+            license_file_url=license_file_url,
+            license_areas=data.license_areas,
+            license_rental_kind=data.license_rental_kind.value,
+            license_rental_percent=(
+                data.license_rental_percent
+                if data.license_rental_kind is LicenseRentalKind.PERCENT
+                else None
+            ),
+            license_rental_fixed_amount=(
+                data.license_rental_fixed_amount
+                if data.license_rental_kind is LicenseRentalKind.FIXED
+                else None
+            ),
         )
         self.db.add(new_user)
         await self.db.flush()

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isValidRussianPhone } from "@/source/shared/lib/phone";
+import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
 
 const passwordSchema = z
   .string()
@@ -8,9 +9,14 @@ const passwordSchema = z
   .regex(/[a-z]/, "Пароль должен содержать строчную латинскую букву")
   .regex(/^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/`~ ]+$/, "Только латинские буквы, цифры и спецсимволы");
 
+const expertiseTypeSchema = z.custom<ExpertiseType>(
+  (val) => typeof val === "string" && TYPES.includes(val as ExpertiseType),
+  "Недопустимый код области",
+);
+
 export const registerFormSchema = z
   .object({
-    role: z.enum(["CUSTOMER", "EXPERT"]),
+    role: z.enum(["CUSTOMER", "EXPERT", "LICENSE_HOLDER"]),
     email: z.string().trim().email("Укажите корректный email"),
     phone: z
       .string()
@@ -35,6 +41,12 @@ export const registerFormSchema = z
       })
       .passthrough()
       .nullable(),
+    licenseNumber: z.string().trim(),
+    licenseAreas: z.array(expertiseTypeSchema),
+    licenseFileName: z.string(),
+    rentalKind: z.enum(["PERCENT", "FIXED", "NEGOTIABLE"]),
+    rentalPercent: z.string().trim(),
+    rentalFixedAmount: z.string().trim(),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -60,14 +72,59 @@ export const registerFormSchema = z
       }
     }
 
-    if (data.role === "CUSTOMER") {
+    const needsCompany = data.role === "CUSTOMER" || data.role === "LICENSE_HOLDER";
+    if (needsCompany) {
       const inn = data.companyData?.data?.inn ?? "";
       if (!data.companyData || !inn || !/^\d{10}$|^\d{12}$/.test(inn)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["companyName"],
-          message: "Выберите вашу компанию из списка",
+          message: "Выберите вашу организацию из списка",
         });
+      }
+    }
+
+    if (data.role === "LICENSE_HOLDER") {
+      if (!data.licenseNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["licenseNumber"],
+          message: "Укажите номер лицензии",
+        });
+      }
+      if (!data.licenseAreas.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["licenseAreas"],
+          message: "Выберите хотя бы одну область экспертизы",
+        });
+      }
+      if (!data.licenseFileName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["licenseFileName"],
+          message: "Загрузите файл лицензии",
+        });
+      }
+      if (data.rentalKind === "PERCENT") {
+        const num = Number(data.rentalPercent.replace(",", "."));
+        if (!data.rentalPercent || !Number.isFinite(num) || num <= 0 || num > 100) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["rentalPercent"],
+            message: "Укажите процент от 0 до 100",
+          });
+        }
+      }
+      if (data.rentalKind === "FIXED") {
+        const num = Number(data.rentalFixedAmount.replace(/\s/g, ""));
+        if (!data.rentalFixedAmount || !Number.isFinite(num) || num <= 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["rentalFixedAmount"],
+            message: "Укажите минимальную фиксированную цену",
+          });
+        }
       }
     }
 
@@ -88,6 +145,26 @@ export const registerFormSchema = z
   });
 
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
+
+export const emptyRegisterFormValues: RegisterFormValues = {
+  role: "CUSTOMER",
+  email: "",
+  phone: "",
+  firstName: "",
+  lastName: "",
+  password: "",
+  repeatPassword: "",
+  agreePrivacy: false,
+  agreeTerms: false,
+  companyName: "",
+  companyData: null,
+  licenseNumber: "",
+  licenseAreas: [],
+  licenseFileName: "",
+  rentalKind: "PERCENT",
+  rentalPercent: "",
+  rentalFixedAmount: "",
+};
 
 export const registerConfirmSchema = z.object({
   code: z.string().regex(/^\d{6}$/u, "Введите 6-значный код"),

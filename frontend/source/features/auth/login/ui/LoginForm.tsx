@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import Button from "@/source/shared/ui/Button";
-import Input from "@/source/shared/ui/Input";
+import { EmailInput, PasswordInput } from "@/source/shared/ui/Inputs";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import type { LoginFormValues } from "../model/schema";
 import s from "./LoginForm.module.scss";
@@ -29,19 +29,16 @@ export function LoginForm({ form, isLoading, fromOrder, onSubmit }: Props) {
         <p className={s.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
       )}
 
-      <Input
+      <EmailInput
         id="email"
-        type="email"
-        variant="email"
         value={watch("email")}
         autoComplete="off"
         onChange={(e) => setValue("email", e.target.value, { shouldValidate })}
         placeholder="Электронная почта"
         error={formState.errors.email?.message}
       />
-      <Input
+      <PasswordInput
         id="password"
-        variant="password"
         value={watch("password")}
         autoComplete="new-password"
         onChange={(e) => setValue("password", e.target.value, { shouldValidate })}

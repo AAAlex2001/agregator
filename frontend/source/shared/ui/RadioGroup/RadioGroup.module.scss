@@ -1,0 +1,109 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  padding: 0 0 6px 0;
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 18px;
+  color: #1a1a1a;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #ffdda9;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    background: #fff8ed;
+  }
+}
+
+.optionChecked {
+  border-color: #ff8a00;
+  background: #fff8ed;
+  box-shadow: 0 4px 12px rgba(255, 138, 0, 0.08);
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.indicator {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c4994b;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.optionChecked .indicator {
+  border-color: #ff8a00;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.optionChecked .dot {
+  background: #ff8a00;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.label {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.description {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: #6b6b6b;
+}
+
+.trailing {
+  flex-shrink: 0;
+}

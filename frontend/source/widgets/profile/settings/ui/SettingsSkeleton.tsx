@@ -1,8 +1,8 @@
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { LogoutIcon } from "@/source/shared/ui/icons";
-import avatarStyles from "@/source/features/profile/settings/ui/ProfileAvatarUpload.module.scss";
-import formStyles from "@/source/features/profile/settings/ui/PersonalDataForm.module.scss";
+import avatarStyles from "@/source/entities/user/ui/ProfileAvatarUpload.module.scss";
+import formStyles from "@/source/entities/user/ui/ProfileForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
 type SettingsSection = "personal" | "notifications" | "subscription";
@@ -81,19 +81,19 @@ function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
           <Skeleton className={s.input} rounded="lg" />
           <Skeleton className={s.input} rounded="lg" />
           <Skeleton className={s.input} rounded="lg" />
-          <div className={formStyles.emailCell}>
+          <div className={s.emailCell}>
             <Skeleton className={s.input} rounded="lg" />
             <Skeleton className={s.verifiedBadge} rounded="pill" />
           </div>
         </div>
 
         {isCustomer && (
-          <div className={formStyles.companyBlock}>
-            <div className={formStyles.emailCell}>
+          <div className={s.companyBlock}>
+            <div className={s.emailCell}>
               <Skeleton className={s.input} rounded="lg" />
               <Skeleton className={s.verifiedBadge} rounded="pill" />
             </div>
-            <div className={formStyles.emailCell}>
+            <div className={s.emailCell}>
               <Skeleton className={s.input} rounded="lg" />
               <Skeleton className={s.verifiedBadge} rounded="pill" />
             </div>

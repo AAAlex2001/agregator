@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import Input from "@/source/shared/ui/Input";
+import { EmailInput } from "@/source/shared/ui/Inputs";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import type { ForgotEmailValues } from "../model/schema";
@@ -25,10 +25,8 @@ export function EmailStep({ form, isLoading, onSubmit }: Props) {
       <p className={s.stepText}>Шаг 1. Введите электронную почту</p>
       <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="forgot-password-email" />
-        <Input
+        <EmailInput
           id="email"
-          type="email"
-          variant="email"
           value={watch("email")}
           autoComplete="off"
           onChange={(e) => setValue("email", e.target.value, { shouldValidate })}

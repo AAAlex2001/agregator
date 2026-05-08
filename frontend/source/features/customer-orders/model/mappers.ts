@@ -2,7 +2,7 @@ import type { OrderCardData } from "@/source/entities/order";
 import {
   cell,
   type ExpertiseType,
-} from "@/source/shared/ui/ExpertiseCodesModal/expertiseCodes.data";
+} from "@/source/entities/expertise";
 import type { OrderFormValues } from "./schema";
 
 function parseBadges(badges: { text: string }[]): Record<string, string[]> {

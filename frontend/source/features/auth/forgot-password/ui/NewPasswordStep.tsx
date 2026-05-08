@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import Input from "@/source/shared/ui/Input";
+import { PasswordInput } from "@/source/shared/ui/Inputs";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import type { ForgotNewPasswordValues } from "../model/schema";
@@ -25,18 +25,16 @@ export function NewPasswordStep({ form, isLoading, onSubmit }: Props) {
       <p className={s.stepText}>Шаг 3. Создание нового пароля</p>
       <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="forgot-password-new-password" />
-        <Input
+        <PasswordInput
           id="password"
-          variant="password"
           value={watch("password")}
           autoComplete="new-password"
           onChange={(e) => setValue("password", e.target.value, { shouldValidate })}
           placeholder="Пароль"
           error={formState.errors.password?.message}
         />
-        <Input
+        <PasswordInput
           id="repeatPassword"
-          variant="password"
           value={watch("repeatPassword")}
           autoComplete="new-password"
           onChange={(e) => setValue("repeatPassword", e.target.value, { shouldValidate })}

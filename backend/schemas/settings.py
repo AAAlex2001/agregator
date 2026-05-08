@@ -1,6 +1,13 @@
 from datetime import datetime
+from enum import Enum
 from typing import Any, Optional
 from pydantic import BaseModel, Field, EmailStr, model_validator
+
+
+class LicenseRentalKind(str, Enum):
+    PERCENT = "PERCENT"
+    FIXED = "FIXED"
+    NEGOTIABLE = "NEGOTIABLE"
 
 
 class EmailPreferences(BaseModel):
@@ -67,6 +74,23 @@ class ChangePasswordRequest(BaseModel):
         return self
 
 
+class UpdateLicenseHolderRequest(BaseModel):
+    "Редактирование лицензии в личном кабинете. Файл лицензии меняется отдельным upload-ом."
+    license_number: str = Field(..., min_length=1, max_length=100)
+    license_areas: list[str] = Field(..., min_length=1)
+    license_rental_kind: LicenseRentalKind
+    license_rental_percent: Optional[float] = Field(None, gt=0, le=100)
+    license_rental_fixed_amount: Optional[int] = Field(None, gt=0)
+
+    @model_validator(mode="after")
+    def cross_field_checks(self) -> "UpdateLicenseHolderRequest":
+        if self.license_rental_kind is LicenseRentalKind.PERCENT and self.license_rental_percent is None:
+            raise ValueError("Укажите процент от суммы договора")
+        if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:
+            raise ValueError("Укажите минимальную фиксированную цену аренды")
+        return self
+
+
 class UserSettingsResponse(BaseModel):
     id: int
     inn: Optional[str] = None
@@ -81,6 +105,12 @@ class UserSettingsResponse(BaseModel):
     review_count: int = 0
     role: str
     email_preferences: EmailPreferences
+    license_number: Optional[str] = None
+    license_file_url: Optional[str] = None
+    license_areas: Optional[list[str]] = None
+    license_rental_kind: Optional[LicenseRentalKind] = None
+    license_rental_percent: Optional[float] = None
+    license_rental_fixed_amount: Optional[int] = None
 
     class Config:
         from_attributes = True

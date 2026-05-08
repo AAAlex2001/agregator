@@ -1,15 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { LogoIcon, CustomerIcon, ExpertIcon } from "@/source/shared/ui/icons";
+import { LogoIcon, CustomerIcon, ExpertIcon, DiplomaIcon } from "@/source/shared/ui/icons";
 import { Title } from "@/source/shared/ui/Typography";
-import { useRegister, RoleSelectStep, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
+import {
+  useRegister,
+  RoleSelectStep,
+  CredentialsStep,
+  EmailConfirmStep,
+  ROLE_ID_CUSTOMER,
+  ROLE_ID_EXPERT,
+  ROLE_ID_LICENSE_HOLDER,
+} from "@/source/features/auth/register";
 import type { Role } from "@/source/features/auth/register";
 import styles from "./RegisterWidget.module.scss";
 
 const roles: Role[] = [
   {
-    id: 1,
+    id: ROLE_ID_CUSTOMER,
     title: "Заказчик",
     icon: <CustomerIcon />,
     expandedTitle: "Найдите эксперта по промышленной безопасности",
@@ -21,7 +29,7 @@ const roles: Role[] = [
     photo: "/advantages__3.webp",
   },
   {
-    id: 2,
+    id: ROLE_ID_EXPERT,
     title: "Эксперт",
     icon: <ExpertIcon />,
     expandedTitle: "Находите проекты и укрепляйте репутацию, расширяя портфолио",
@@ -29,6 +37,18 @@ const roles: Role[] = [
       "Найдите свой проект и участвуйте в тендере",
       "Договаривайтесь напрямую",
       "Выполните заказ, получите отзыв и оценку",
+    ],
+    photo: "/advantages_1.webp",
+  },
+  {
+    id: ROLE_ID_LICENSE_HOLDER,
+    title: "Держатель лицензии",
+    icon: <DiplomaIcon size={24} />,
+    expandedTitle: "Сдавайте лицензию ЭПБ ОПО в аренду",
+    description: [
+      "Подтвердите номер лицензии и области экспертизы",
+      "Принимайте заявки на аренду",
+      "Договаривайтесь о цене напрямую",
     ],
     photo: "/advantages_1.webp",
   },
@@ -74,9 +94,10 @@ export function RegisterWidget() {
           {reg.step === 2 && (
             <CredentialsStep
               form={reg.form}
-              selectedRole={reg.selectedRole}
               isLoading={reg.isLoading}
+              licenseFile={reg.licenseFile}
               onPhoneChange={reg.setPhone}
+              onLicenseFileSelect={reg.selectLicenseFile}
               onSubmit={reg.submit}
             />
           )}

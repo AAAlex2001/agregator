@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from enum import Enum as PyEnum
 from uuid import uuid4
 
-from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint
+from sqlalchemy import BigInteger, Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -16,6 +16,14 @@ class UserRole(str, PyEnum):
     """Роли пользователей в системе"""
     CUSTOMER = "CUSTOMER"
     EXPERT = "EXPERT"
+    LICENSE_HOLDER = "LICENSE_HOLDER"
+
+
+class LicenseRentalKind(str, PyEnum):
+    """Способ расчёта стоимости аренды лицензии"""
+    PERCENT = "PERCENT"
+    FIXED = "FIXED"
+    NEGOTIABLE = "NEGOTIABLE"
 
 
 class User(Base):
@@ -47,6 +55,12 @@ class User(Base):
     notification_unread_count = Column(Integer, default=0, nullable=False, server_default="0")
     rating = Column(Numeric(2, 1), nullable=True)
     review_count = Column(Integer, default=0, nullable=False)
+    license_number = Column(String(100), nullable=True)
+    license_file_url = Column(String(500), nullable=True)
+    license_areas = Column(JSONB, nullable=True)
+    license_rental_kind = Column(String(20), nullable=True)
+    license_rental_percent = Column(Numeric(5, 2), nullable=True)
+    license_rental_fixed_amount = Column(BigInteger, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
@@ -54,6 +68,10 @@ class User(Base):
         CheckConstraint(
             "(email IS NOT NULL OR phone IS NOT NULL)",
             name="user_email_or_phone_required"
+        ),
+        CheckConstraint(
+            "license_rental_kind IS NULL OR license_rental_kind IN ('PERCENT', 'FIXED', 'NEGOTIABLE')",
+            name="user_license_rental_kind_valid",
         ),
     )
 

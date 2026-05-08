@@ -1,0 +1,159 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.iconLeft {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  color: #cccED5;
+}
+
+.iconSvg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.inputWrapper:hover .iconLeft {
+  color: #808080;
+}
+
+.inputWrapper.focused .iconLeft {
+  color: #ff8a00;
+}
+
+.inputWrapper.active .iconLeft {
+  color: #ff8a00;
+}
+
+.inputWrapper:hover .lockDot {
+  color: #ff8a00 !important;
+}
+
+.inputWrapper.active .lockDot {
+  color: #ff8a00 !important;
+}
+
+.iconRight {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1;
+  transition: all 0.3s ease;
+  color: #ff8a00;
+
+  &.closedEye {
+    color: #cccED5;
+
+    &:hover {
+      color: #ff8a00;
+    }
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.eyeIcon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.suffix {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #4d4d4d;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 125%;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid #e6e6e6;
+  border-radius: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  line-height: 125%;
+  color: #1a1a1a;
+  background: #ffffff;
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: #ffdda9;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #ffb800;
+  }
+
+  &::placeholder {
+    color: #808080;
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+  }
+}
+
+.inputWrapper.active .input {
+  border: 1px solid #ffb800;
+}
+
+.input.hasLeftIcon {
+  padding-left: 46px;
+}
+
+.input.hasRightIcon {
+  padding-right: 46px;
+}
+
+.error {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 125%;
+  color: #e64646;
+}
+
+.hasError {
+  .input {
+    border-color: #e64646;
+
+    &:hover,
+    &:focus {
+      border-color: #e64646;
+    }
+  }
+}

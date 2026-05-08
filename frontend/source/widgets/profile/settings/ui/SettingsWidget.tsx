@@ -4,43 +4,53 @@ import { useEffect, useState } from "react";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useSession } from "@/source/features/session";
-import { PersonalDataForm } from "@/source/features/profile/settings";
+import { CustomerSettingsForm } from "@/source/features/profile/customer-settings";
+import { ExpertSettingsForm } from "@/source/features/profile/expert-settings";
+import {
+  LicenseHolderProfileForm,
+  LicenseTermsForm,
+} from "@/source/features/profile/license-holder-settings";
 import { NotificationPreferencesForm } from "@/source/features/profile/notifications";
 import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
+import type { UserProfile } from "@/source/entities/user";
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import s from "./SettingsWidget.module.scss";
 
-type SettingsSection = "personal" | "notifications" | "subscription";
+type SettingsSection = "personal" | "notifications" | "subscription" | "license";
 
 interface SettingsWidgetProps {
   explicitSection: SettingsSection | null;
 }
 
-function buildTabs(isExpert: boolean): Array<{ id: SettingsSection; label: string }> {
+function buildTabs(role: string | null): Array<{ id: SettingsSection; label: string }> {
   const base: Array<{ id: SettingsSection; label: string }> = [];
-  if (isExpert) {
+  if (role === "EXPERT") {
     base.push({ id: "subscription", label: "Подписка" });
+  }
+  if (role === "LICENSE_HOLDER") {
+    base.push({ id: "license", label: "Лицензия" });
   }
   base.push({ id: "personal", label: "Личные данные" });
   base.push({ id: "notifications", label: "Уведомления" });
   return base;
 }
 
-function defaultSection(isExpert: boolean): SettingsSection {
-  return isExpert ? "subscription" : "personal";
+function defaultSection(role: string | null): SettingsSection {
+  if (role === "EXPERT") return "subscription";
+  if (role === "LICENSE_HOLDER") return "license";
+  return "personal";
 }
 
 export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
   const { user, role, isLoading, error, setUser } = useSession();
-  const isExpert = role === "EXPERT";
-  const initial = explicitSection ?? defaultSection(isExpert);
+  const initial = explicitSection ?? defaultSection(role);
   const [section, setSection] = useState<SettingsSection>(initial);
 
   useEffect(() => {
-    setSection(explicitSection ?? defaultSection(isExpert));
-  }, [explicitSection, isExpert]);
+    setSection(explicitSection ?? defaultSection(role));
+  }, [explicitSection, role]);
 
-  const tabs = buildTabs(isExpert);
+  const tabs = buildTabs(role);
 
   return (
     <div className={s.wrapper}>
@@ -62,13 +72,9 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
         {section === "subscription" ? (
           <SubscriptionPanel />
         ) : isLoading || !user ? (
-          <SettingsSkeleton section={section} isCustomer />
+          <SettingsSkeleton section={section === "license" ? "personal" : section} isCustomer />
         ) : (
-          <SettingsContent
-            section={section}
-            user={user}
-            onProfileUpdate={setUser}
-          />
+          <SettingsContent section={section} user={user} onProfileUpdate={setUser} />
         )}
       </div>
     </div>
@@ -85,8 +91,27 @@ function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProp
   if (section === "notifications") {
     return <NotificationPreferencesForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
+  if (section === "license" && user.role === "LICENSE_HOLDER") {
+    return <LicenseTermsForm profile={user} onProfileUpdate={onProfileUpdate} />;
+  }
   if (section === "subscription" && user.role === "EXPERT") {
     return <SubscriptionPanel />;
   }
-  return <PersonalDataForm profile={user} onProfileUpdate={onProfileUpdate} />;
+  return <PersonalProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
+}
+
+function PersonalProfileForm({
+  profile,
+  onProfileUpdate,
+}: {
+  profile: UserProfile;
+  onProfileUpdate: (p: UserProfile | null) => void;
+}) {
+  if (profile.role === "EXPERT") {
+    return <ExpertSettingsForm profile={profile} onProfileUpdate={onProfileUpdate} />;
+  }
+  if (profile.role === "LICENSE_HOLDER") {
+    return <LicenseHolderProfileForm profile={profile} onProfileUpdate={onProfileUpdate} />;
+  }
+  return <CustomerSettingsForm profile={profile} onProfileUpdate={onProfileUpdate} />;
 }

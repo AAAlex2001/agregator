@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@/source/shared/ui/Button";
-import Input from "@/source/shared/ui/Input";
+import { TextInput } from "@/source/shared/ui/Inputs";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import {
   getFileGalleryPreviewUrl,
@@ -164,13 +164,11 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
             control={control}
             name="subject"
             render={({ field }) => (
-              <Input
+              <TextInput
                 id="ticket-subject"
-                variant="text"
                 placeholder="Кратко опишите суть"
                 value={field.value}
                 onChange={(event) => field.onChange(event.target.value)}
-                onBlur={field.onBlur}
                 error={errors.subject?.message}
               />
             )}

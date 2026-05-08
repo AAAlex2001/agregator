@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/source/shared/ui/Button";
-import { TABLE } from "./expertiseCodes.data";
+import { TABLE } from "@/source/entities/expertise";
 import s from "./ExpertiseCodesModal.module.scss";
 
 interface Props {

@@ -6,6 +6,7 @@ from dependencies.auth import get_current_user
 from schemas.settings import (
     ChangePasswordRequest,
     UpdateEmailPreferencesRequest,
+    UpdateLicenseHolderRequest,
     UpdatePersonalDataRequest,
     UserSettingsResponse,
 )
@@ -110,4 +111,26 @@ async def upload_avatar(
         samesite="none",
         path="/",
     )
+    return service.to_response(user)
+
+
+@router.put("/settings/license", response_model=UserSettingsResponse)
+async def update_license(
+    data: UpdateLicenseHolderRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = SettingsService(db)
+    user = await service.update_license_holder(user_id, data)
+    return service.to_response(user)
+
+
+@router.post("/settings/license-file", response_model=UserSettingsResponse)
+async def upload_license_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = SettingsService(db)
+    user = await service.replace_license_file(user_id, file)
     return service.to_response(user)

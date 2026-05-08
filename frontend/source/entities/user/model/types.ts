@@ -21,6 +21,29 @@ export interface CompanyData {
   [k: string]: unknown;
 }
 
+export type LicenseRentalKind = "PERCENT" | "FIXED" | "NEGOTIABLE";
+
+export interface LicenseHolderRegisterPayload {
+  email: string;
+  password: string;
+  phone: string;
+  inn: string;
+  company_data: Record<string, unknown>;
+  license_number: string;
+  license_areas: string[];
+  license_rental_kind: LicenseRentalKind;
+  license_rental_percent?: number;
+  license_rental_fixed_amount?: number;
+}
+
+export interface LicenseHolderUpdatePayload {
+  license_number: string;
+  license_areas: string[];
+  license_rental_kind: LicenseRentalKind;
+  license_rental_percent?: number;
+  license_rental_fixed_amount?: number;
+}
+
 export interface UserProfile {
   id: number;
   inn: string | null;
@@ -35,4 +58,10 @@ export interface UserProfile {
   review_count: number;
   role: string;
   email_preferences: EmailPreferences;
+  license_number: string | null;
+  license_file_url: string | null;
+  license_areas: string[] | null;
+  license_rental_kind: LicenseRentalKind | null;
+  license_rental_percent: number | null;
+  license_rental_fixed_amount: number | null;
 }

@@ -1,4 +1,4 @@
-import { Button, CalendarInput, Input } from "@/source/shared/ui";
+import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import { BidFilesField } from "@/source/features/expert-orders/ui/OrderModal/BidFilesField";
 import { OrderSummaryPanel } from "@/source/features/expert-orders/ui/OrderModal/OrderSummaryPanel";
@@ -94,9 +94,7 @@ export function EditResponseModal({
 
           <div className={s.fieldGroup}>
             <span className={s.fieldLabel}>Ваша оценка стоимости работ</span>
-            <Input
-              type="text"
-              variant="text"
+            <TextInput
               active
               inputMode="numeric"
               value={cost}
