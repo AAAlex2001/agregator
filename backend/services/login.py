@@ -162,3 +162,74 @@ class LoginService:
     async def logout_session(self, session_id: str | None) -> None:
         if session_id:
             await self.db.execute(delete(Session).where(Session.session_id == session_id))
+
+    async def get_user_by_id(self, user_id: int) -> User:
+        user = (
+            await self.db.execute(select(User).where(User.id == user_id))
+        ).scalars().first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Сессия истекла",
+            )
+        return user
+
+    async def list_other_role_users_by_email(self, email: str, exclude_user_id: int) -> list[User]:
+        if not email:
+            return []
+        query = select(User).where(User.email == email, User.id != exclude_user_id)
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def switch_role(
+        self,
+        current_user_id: int,
+        target_role,
+        password: str,
+        current_session_id: str | None,
+    ) -> Session:
+        current_user = await self.get_user_by_id(current_user_id)
+        if not current_user.email:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Переключение ролей доступно только для аккаунтов с привязанным email",
+            )
+        if target_role == current_user.role:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Вы уже в этой роли",
+            )
+
+        target = (
+            await self.db.execute(
+                select(User).where(
+                    User.email == current_user.email,
+                    User.role == target_role,
+                )
+            )
+        ).scalars().first()
+        if target is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Аккаунт с такой ролью не найден на этом email",
+            )
+
+        if not await self.verify_password(password, target.password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Неверный пароль",
+            )
+
+        if not target.email_verified:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "code": "email_not_verified",
+                    "message": "Подтвердите почту для этой роли",
+                    "email": target.email,
+                    "role": target.role.value,
+                },
+            )
+
+        await self.logout_session(current_session_id)
+        return await self.create_session(target.id)

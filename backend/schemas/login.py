@@ -32,3 +32,17 @@ class RoleChoiceResponse(BaseModel):
     "Возвращается когда пользователь имеет несколько подходящих ролей и нужно выбрать."
     detail: str = "Выберите роль для входа"
     available_roles: list[UserRole]
+
+
+class AvailableRoleItem(BaseModel):
+    role: UserRole
+    email_verified: bool
+
+
+class AvailableRolesResponse(BaseModel):
+    roles: list[AvailableRoleItem]
+
+
+class SwitchRoleRequest(BaseModel):
+    role: UserRole
+    password: str = Field(..., min_length=1)
