@@ -1,4 +1,8 @@
-"""previous_* поля для отклика и заказа: трекинг изменений с подсветкой diff
+"""previous_* поля для отклика и заказа: трекинг изменений с подсветкой diff.
+
+Идемпотентна: использует ADD COLUMN IF NOT EXISTS, чтобы безопасно
+дополнить колонки на стейджах, где часть полей уже была накатана из ранней
+версии 063.
 
 Revision ID: 064
 Revises: 063
@@ -6,7 +10,6 @@ Revises: 063
 from typing import Sequence, Union
 
 from alembic import op
-import sqlalchemy as sa
 
 
 revision: str = "064"
@@ -16,48 +19,29 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "order_responses",
-        sa.Column("previous_comment", sa.Text(), nullable=True),
-    )
-    op.add_column(
-        "order_responses",
-        sa.Column("previous_proposed_sum_amount", sa.BigInteger(), nullable=True),
-    )
-    op.add_column(
-        "order_responses",
-        sa.Column("previous_proposed_deadline", sa.Date(), nullable=True),
-    )
-    op.add_column(
-        "order_responses",
-        sa.Column(
-            "previous_vat_kind",
-            sa.Enum("NONE", "VAT_5", "VAT_7", "VAT_22", name="vatkind", create_type=False),
-            nullable=True,
-        ),
-    )
-    op.add_column(
-        "order_responses",
-        sa.Column("previous_technical_files", sa.JSON(), nullable=True),
-    )
+    op.execute("ALTER TABLE order_responses ADD COLUMN IF NOT EXISTS previous_comment TEXT")
+    op.execute("ALTER TABLE order_responses ADD COLUMN IF NOT EXISTS previous_proposed_sum_amount BIGINT")
+    op.execute("ALTER TABLE order_responses ADD COLUMN IF NOT EXISTS previous_proposed_deadline DATE")
+    op.execute("ALTER TABLE order_responses ADD COLUMN IF NOT EXISTS previous_vat_kind vatkind")
+    op.execute("ALTER TABLE order_responses ADD COLUMN IF NOT EXISTS previous_technical_files JSON")
 
-    op.add_column("orders", sa.Column("previous_title", sa.String(length=500), nullable=True))
-    op.add_column("orders", sa.Column("previous_comment", sa.Text(), nullable=True))
-    op.add_column("orders", sa.Column("previous_sum_amount", sa.BigInteger(), nullable=True))
-    op.add_column("orders", sa.Column("previous_deadline", sa.Date(), nullable=True))
-    op.add_column("orders", sa.Column("previous_technical_files", sa.JSON(), nullable=True))
-    op.add_column("orders", sa.Column("previous_badges", sa.JSON(), nullable=True))
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_title VARCHAR(500)")
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_comment TEXT")
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_sum_amount BIGINT")
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_deadline DATE")
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_technical_files JSON")
+    op.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS previous_badges JSON")
 
 
 def downgrade() -> None:
-    op.drop_column("orders", "previous_badges")
-    op.drop_column("orders", "previous_technical_files")
-    op.drop_column("orders", "previous_deadline")
-    op.drop_column("orders", "previous_sum_amount")
-    op.drop_column("orders", "previous_comment")
-    op.drop_column("orders", "previous_title")
-    op.drop_column("order_responses", "previous_technical_files")
-    op.drop_column("order_responses", "previous_vat_kind")
-    op.drop_column("order_responses", "previous_proposed_deadline")
-    op.drop_column("order_responses", "previous_proposed_sum_amount")
-    op.drop_column("order_responses", "previous_comment")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_badges")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_technical_files")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_deadline")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_sum_amount")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_comment")
+    op.execute("ALTER TABLE orders DROP COLUMN IF EXISTS previous_title")
+    op.execute("ALTER TABLE order_responses DROP COLUMN IF EXISTS previous_technical_files")
+    op.execute("ALTER TABLE order_responses DROP COLUMN IF EXISTS previous_vat_kind")
+    op.execute("ALTER TABLE order_responses DROP COLUMN IF EXISTS previous_proposed_deadline")
+    op.execute("ALTER TABLE order_responses DROP COLUMN IF EXISTS previous_proposed_sum_amount")
+    op.execute("ALTER TABLE order_responses DROP COLUMN IF EXISTS previous_comment")
