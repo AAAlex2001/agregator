@@ -1,6 +1,6 @@
-export type ExpertiseType = "КЛ" | "ТП" | "КЛ/ТП" | "ТУ" | "ЗС" | "Д" | "ОБ";
+export type ExpertiseType = "КЛ" | "ТП" | "КЛ/ТП" | "ЗС" | "ТУ" | "Д" | "ОБ";
 
-export const TYPES: ExpertiseType[] = ["КЛ", "ТП", "КЛ/ТП", "ТУ", "ЗС", "Д", "ОБ"];
+export const TYPES: ExpertiseType[] = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"];
 
 type RawDocType = "КЛ/ТП";
 type RawType = RawDocType | "ТУ" | "ЗС" | "Д" | "ОБ";

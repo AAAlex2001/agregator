@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { TypeBadge, type ExpertiseType } from "@/source/entities/expertise";
+import { TypeBadge, TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import {
   getFileDisplayName,
@@ -123,13 +123,16 @@ export function LicenseHolderCard({ item }: Props) {
         <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
       </div>
 
-      {types.length > 0 && (
-        <div className={s.badges}>
-          {types.map((t) => (
-            <TypeBadge key={t} type={t} active />
-          ))}
-        </div>
-      )}
+      <div className={s.badges}>
+        {TYPES.map((t) => {
+          const has = types.includes(t);
+          return (
+            <div key={t} className={s.badgeSlot}>
+              {has ? <TypeBadge type={t} active /> : <span className={s.badgeMissing}>—</span>}
+            </div>
+          );
+        })}
+      </div>
 
       {open && (
         <div className={s.details}>

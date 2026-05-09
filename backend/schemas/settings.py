@@ -33,6 +33,18 @@ class UpdatePersonalDataRequest(BaseModel):
     phone: Optional[str] = Field(None, description="Номер телефона")
     inn: Optional[str] = Field(None, description="ИНН", min_length=10, max_length=12)
 
+    @model_validator(mode="after")
+    def validate_phone_format(self):
+        """Проверка формата телефона и ИНН."""
+        if self.phone:
+            phone_digits = "".join(symbol for symbol in self.phone if symbol.isdigit())
+            if len(phone_digits) < 10:
+                raise ValueError("Номер телефона должен содержать минимум 10 цифр")
+
+        if self.inn and (not self.inn.isdigit() or len(self.inn) not in {10, 12}):
+            raise ValueError("ИНН должен содержать 10 или 12 цифр")
+        return self
+
 
 class RequestEmailChangeRequest(BaseModel):
     "Шаг 1 смены email — юзер вводит новый адрес. Бэкенд шлёт код на этот адрес."
@@ -42,19 +54,6 @@ class RequestEmailChangeRequest(BaseModel):
 class ConfirmEmailChangeRequest(BaseModel):
     "Шаг 2 смены email — юзер вводит код, пришедший на новый адрес."
     code: str = Field(..., min_length=4, max_length=10)
-
-    @model_validator(mode="after")
-    def validate_phone_format(self):
-        """Проверка формата телефона"""
-        if self.phone:
-            phone_digits = "".join(symbol for symbol in self.phone if symbol.isdigit())
-
-            if len(phone_digits) < 10:
-                raise ValueError("Номер телефона должен содержать минимум 10 цифр")
-
-        if self.inn and (not self.inn.isdigit() or len(self.inn) not in {10, 12}):
-            raise ValueError("ИНН должен содержать 10 или 12 цифр")
-        return self
 
 
 class UpdateEmailPreferencesRequest(BaseModel):

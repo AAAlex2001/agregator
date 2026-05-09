@@ -111,7 +111,7 @@
   flex-wrap: wrap;
   gap: 4px;
 
-  & > * {
+  & > .badgeSlot > :not(.badgeMissing) {
     min-width: auto;
     height: 22px;
     padding: 0 8px;
@@ -119,6 +119,30 @@
     line-height: 14px;
     border-radius: 6px;
   }
+}
+
+.badgeSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 22px;
+}
+
+.badgeMissing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 22px;
+  border-radius: 6px;
+  background: transparent;
+  color: #b8b8b8;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 14px;
+  border: 1px dashed #d8d8d8;
 }
 
 .rental {

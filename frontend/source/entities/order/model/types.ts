@@ -82,10 +82,10 @@ export interface OrderCardData {
   executorFiles: string[];
   acceptedResponseId: number | null;
   customerHasReview: boolean;
-  previousTitle: string | null;
-  previousComment: string | null;
-  previousSum: string | null;
-  previousDeadline: string | null;
-  previousTechnicalFiles: string[] | null;
-  previousBadges: Badge[] | null;
+  previousTitle?: string | null;
+  previousComment?: string | null;
+  previousSum?: string | null;
+  previousDeadline?: string | null;
+  previousTechnicalFiles?: string[] | null;
+  previousBadges?: Badge[] | null;
 }

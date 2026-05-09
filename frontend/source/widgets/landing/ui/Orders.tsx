@@ -1,8 +1,9 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 import Image from "next/image";
 
 import s from "./orders.module.scss";
@@ -37,14 +38,16 @@ const Orders = ({ orders, title, subtitle }: OrdersProps) => {
   </div>
 
   <Swiper
-    modules={[Navigation]}
+    modules={[Navigation, Pagination]}
     loop={false}
     slidesPerView={"auto"}
-    spaceBetween={20}
+    centeredSlides
+    spaceBetween={10}
     navigation={{
       prevEl: ".orders-nav-btn--prev",
       nextEl: ".orders-nav-btn--next",
     }}
+    pagination={{ clickable: true }}
     className="orders-swiper"
   >
     {orders.map((order) => (

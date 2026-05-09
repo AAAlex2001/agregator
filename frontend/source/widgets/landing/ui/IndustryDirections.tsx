@@ -40,7 +40,7 @@ const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsP
           modules={[Navigation]}
           loop={false}
           slidesPerView={"auto"}
-          spaceBetween={20}
+          spaceBetween={10}
           navigation={{
             prevEl: ".industry-nav-btn--prev",
             nextEl: ".industry-nav-btn--next",
