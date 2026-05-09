@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from models.question import OrderQuestion
 from models.user import UserRole
 from services.questions.repository import QuestionRepository
@@ -15,8 +17,18 @@ class ListQuestionsUseCase:
         viewer_id: int,
         viewer_role: UserRole | None,
     ) -> list[OrderQuestion]:
-        if viewer_role == UserRole.CUSTOMER:
-            order = await self.repo.get_order(order_id)
-            if order is not None and order.customer_id == viewer_id:
-                return await self.repo.list_by_order(order_id)
-        return await self.repo.list_visible_for_expert(order_id, viewer_id)
+        order = await self.repo.get_order(order_id)
+        if order is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказ не найден",
+            )
+
+        if viewer_role == UserRole.CUSTOMER and order.customer_id == viewer_id:
+            return await self.repo.list_by_order(order_id)
+        if viewer_role == UserRole.EXPERT:
+            return await self.repo.list_visible_for_expert(order_id, viewer_id)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Нет прав на просмотр вопросов по этому заказу",
+        )

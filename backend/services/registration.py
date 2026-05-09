@@ -167,6 +167,16 @@ class RegistrationService:
                 if data.license_rental_kind is LicenseRentalKind.FIXED
                 else None
             ),
+            # Лицензиат пока не подписан ни на какие email-уведомления.
+            email_on_response_created=False,
+            email_on_response_updated=False,
+            email_on_expert_rejected=False,
+            email_on_new_order=False,
+            email_on_order_updated=False,
+            email_on_bidding_finished=False,
+            email_on_chat_message=False,
+            email_on_question_asked=False,
+            email_on_question_answered=False,
         )
         self.db.add(new_user)
         await self.db.flush()

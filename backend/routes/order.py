@@ -113,7 +113,10 @@ async def get_order_public(
 async def get_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
 ):
+    repo = build_repo(db)
+    await OrderValidator(repo).ensure_user_can_view_order(order_id, user_id)
     order = await build_get_order(db).execute(order_id)
     return OrderResponse.from_order(order)
 

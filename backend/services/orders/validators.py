@@ -1,6 +1,10 @@
 from fastapi import HTTPException, status
 
+from models.order import OrderStatus
+from models.response import OrderResponse as OrderResponseModel
+from models.user import UserRole
 from services.orders.repository import OrderRepository
+from sqlalchemy import select
 
 
 class OrderValidator:
@@ -18,14 +22,18 @@ class OrderValidator:
             detail="Заказчик не найден",
         )
 
-    @staticmethod
-    def ensure_user_can_create_order(customer_id: int, current_user_id: int) -> None:
-        if customer_id == current_user_id:
-            return
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нельзя создать заказ от имени другого пользователя",
-        )
+    async def ensure_user_can_create_order(self, customer_id: int, current_user_id: int) -> None:
+        if customer_id != current_user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нельзя создать заказ от имени другого пользователя",
+            )
+        role = await self.repo.get_user_role(current_user_id)
+        if role != UserRole.CUSTOMER:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Создавать заказы может только заказчик",
+            )
 
     async def ensure_user_can_modify_order(self, order_id: int, user_id: int) -> None:
         order = await self.repo.get_by_id(order_id)
@@ -39,6 +47,37 @@ class OrderValidator:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Нет прав на изменение этого заказа",
             )
+        if order.assigned_expert_id is not None or order.status != OrderStatus.ACTIVE:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Заказ нельзя изменить или удалить — уже выбран исполнитель",
+            )
+
+    async def ensure_user_can_view_order(self, order_id: int, user_id: int) -> None:
+        order = await self.repo.get_by_id(order_id)
+        if order is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Заказ не найден",
+            )
+        if order.customer_id == user_id or order.assigned_expert_id == user_id:
+            return
+        role = await self.repo.get_user_role(user_id)
+        if role == UserRole.EXPERT:
+            # эксперт видит активные открытые заказы или те, по которым уже отвечал
+            if order.status == OrderStatus.ACTIVE and order.assigned_expert_id is None:
+                return
+            has_response_q = select(OrderResponseModel.id).where(
+                OrderResponseModel.order_id == order.id,
+                OrderResponseModel.expert_id == user_id,
+            )
+            existing = (await self.repo.db.execute(has_response_q)).first()
+            if existing is not None:
+                return
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Нет прав на просмотр этого заказа",
+        )
 
     @staticmethod
     def ensure_files_present(files: list | None) -> None:
