@@ -77,11 +77,17 @@ class SupportTicket(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
-    user = relationship("User", backref="support_tickets", lazy="joined")
+    user = relationship(
+        "User",
+        back_populates="support_tickets",
+        passive_deletes=True,
+        lazy="joined",
+    )
     messages = relationship(
         "SupportTicketMessage",
         back_populates="ticket",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         order_by="SupportTicketMessage.created_at",
         lazy="selectin",
     )

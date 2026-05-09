@@ -73,6 +73,7 @@ class User(Base):
     subscriptions = relationship("UserSubscription", back_populates="user", passive_deletes=True)
     customer_reviews = relationship("Review", foreign_keys="Review.customer_id", back_populates="customer", passive_deletes=True)
     expert_reviews = relationship("Review", foreign_keys="Review.expert_id", back_populates="expert", passive_deletes=True)
+    support_tickets = relationship("SupportTicket", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
     def __str__(self):
         name = " ".join(filter(None, [self.first_name, self.last_name]))

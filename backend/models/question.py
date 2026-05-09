@@ -35,5 +35,5 @@ class OrderQuestion(Base):
     answered_at = Column(DateTime(timezone=True), nullable=True)
     is_anonymous = Column(Boolean, nullable=False, default=True, server_default="true")
 
-    order = relationship("Order", backref="questions")
+    order = relationship("Order", back_populates="questions")
     expert = relationship("User")

@@ -76,11 +76,16 @@ class SupportTicket(Base):
         nullable=False,
     )
 
-    user = relationship("User", backref="support_tickets")
+    user = relationship(
+        "User",
+        back_populates="support_tickets",
+        passive_deletes=True,
+    )
     messages = relationship(
         "SupportTicketMessage",
         back_populates="ticket",
         cascade="all, delete-orphan",
+        passive_deletes=True,
         order_by="SupportTicketMessage.created_at",
     )
 

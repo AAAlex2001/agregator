@@ -106,6 +106,12 @@ class Order(Base):
         passive_deletes=True,
         lazy="selectin",
     )
+    questions = relationship(
+        "OrderQuestion",
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class OrderBadge(Base):

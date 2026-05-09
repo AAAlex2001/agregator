@@ -167,3 +167,10 @@ class User(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+
+    support_tickets = relationship(
+        "SupportTicket",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
