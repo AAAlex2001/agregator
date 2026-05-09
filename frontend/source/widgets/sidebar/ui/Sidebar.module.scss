@@ -33,6 +33,8 @@
   width: 262px;
   background: #ffffff;
   border-right: 1px solid #ffdda9;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   transition: width 0.2s ease, transform 0.25s ease;
   transform: translateX(-100%);
 

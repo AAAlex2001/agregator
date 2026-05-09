@@ -96,7 +96,7 @@ export const registerFormSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["licenseAreas"],
-          message: "Выберите хотя бы одну область экспертизы",
+          message: "Выберите хотя бы один объект экспертизы",
         });
       }
       if (data.rentalKind === "PERCENT") {

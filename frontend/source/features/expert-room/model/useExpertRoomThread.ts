@@ -11,9 +11,11 @@ export function useExpertRoomThread(currentUserId: number) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [forbidden, setForbidden] = useState(false);
+  const [banReason, setBanReason] = useState<string | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
 
-  const enabled = currentUserId > 0 && !forbidden;
+  const enabled = currentUserId > 0;
+  const wsEnabled = enabled && !forbidden;
   const { typingEntries, handleTyping } = useTypingIndicator(currentUserId);
 
   useEffect(() => {
@@ -29,14 +31,15 @@ export function useExpertRoomThread(currentUserId: number) {
       .then((response) => {
         if (cancelled) return;
         setMessages(response.items);
+        if (response.banned) {
+          setForbidden(true);
+          setBanReason(response.ban_reason);
+        }
       })
       .catch((err) => {
         if (cancelled) return;
         const message = err instanceof Error ? err.message : "Не удалось загрузить чат";
         setError(message);
-        if (message.toLowerCase().includes("заблокированы")) {
-          setForbidden(true);
-        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -61,11 +64,11 @@ export function useExpertRoomThread(currentUserId: number) {
 
   const onForbidden = useCallback(() => {
     setForbidden(true);
-    setError("Вы заблокированы в чате экспертов");
-  }, []);
+    if (!banReason) setBanReason(null);
+  }, [banReason]);
 
   const { notifyTyping } = useExpertRoomWebSocket({
-    enabled,
+    enabled: wsEnabled,
     onMessage: handleIncomingMessage,
     onTyping: handleTyping,
     onForbidden,
@@ -82,6 +85,7 @@ export function useExpertRoomThread(currentUserId: number) {
     loading,
     error,
     forbidden,
+    banReason,
     threadRef,
     typingEntries,
     notifyTyping,

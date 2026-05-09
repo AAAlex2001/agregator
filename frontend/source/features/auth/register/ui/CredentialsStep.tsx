@@ -159,7 +159,7 @@ export function CredentialsStep({
             <TypesPicker
               value={watch("licenseAreas") as ExpertiseType[]}
               onChange={(next) => setValue("licenseAreas", next, { shouldValidate })}
-              label="Области экспертизы по лицензии"
+              label="Объекты экспертизы по лицензии"
               hint="Выберите все типы, по которым работает ваша лицензия — можно несколько"
               error={errors.licenseAreas?.message as string | undefined}
             />

@@ -18,4 +18,11 @@ class ListExpertRoomMessagesUseCase:
         has_more = len(rows) > limit
         items = [ExpertRoomMessageOut.from_db(m) for m in rows[:limit]]
         items.reverse()
-        return ExpertRoomHistoryResponse(items=items, has_more=has_more)
+
+        ban = await self.repo.find_ban(user_id) if before_id is None else None
+        return ExpertRoomHistoryResponse(
+            items=items,
+            has_more=has_more,
+            banned=ban is not None,
+            ban_reason=(ban.reason or None) if ban is not None else None,
+        )

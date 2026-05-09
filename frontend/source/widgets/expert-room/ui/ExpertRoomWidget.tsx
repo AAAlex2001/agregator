@@ -23,21 +23,21 @@ export function ExpertRoomWidget() {
     loading,
     error,
     forbidden,
+    banReason,
     threadRef,
     typingEntries,
     notifyTyping,
     appendMine,
   } = useExpertRoomThread(currentUserId);
 
+  const blockedText = banReason
+    ? `Вы заблокированы в чате экспертов. ${banReason}`
+    : "Вы заблокированы в чате экспертов";
+
   const groups = groupExpertRoomMessages(messages);
 
   if (loading) {
-    return (
-      <div className={s.card}>
-        <RulesBanner />
-        <ChatConversationSkeleton />
-      </div>
-    );
+    return <ChatConversationSkeleton />;
   }
 
   return (
@@ -69,7 +69,7 @@ export function ExpertRoomWidget() {
 
       <ExpertRoomComposer
         disabled={forbidden}
-        disabledText={forbidden ? error ?? "Вы заблокированы в чате экспертов" : undefined}
+        disabledText={forbidden ? blockedText : undefined}
         onSent={appendMine}
         onTyping={notifyTyping}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { TypeBadge, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import {
@@ -10,6 +10,7 @@ import {
   isImageFileName,
 } from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
+import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import type { LicenseHolderListItem } from "../model/types";
 import s from "./LicenseHolderCard.module.scss";
 
@@ -81,81 +82,111 @@ function Field({ label, children }: FieldProps) {
 }
 
 export function LicenseHolderCard({ item }: Props) {
+  const [open, setOpen] = useState(false);
   const types = (item.license_areas ?? [])
     .map(asExpertiseType)
     .filter((v): v is ExpertiseType => v !== null);
 
   const fileItems = buildFileItems(item.license_file_url, "license-file", "Лицензия");
   const cardItems = buildFileItems(item.company_card_url, "company-card", "Карточка предприятия");
+  const companyName = getCompanyName(item);
+
+  function toggle() {
+    setOpen((value) => !value);
+  }
+
+  function handleCardClick(event: React.MouseEvent<HTMLElement>) {
+    if ((event.target as HTMLElement).closest("a, button")) return;
+    toggle();
+  }
+
+  function handleCardKeyDown(event: React.KeyboardEvent<HTMLElement>) {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if ((event.target as HTMLElement).closest("a, button")) return;
+    event.preventDefault();
+    toggle();
+  }
 
   return (
-    <article className={s.card}>
-      <h3 className={s.company} title={getCompanyName(item)}>
-        {getCompanyName(item)}
-      </h3>
-
-      {item.inn && (
-        <Field label="ИНН:">
-          <span className={s.value}>{item.inn}</span>
-        </Field>
-      )}
-
-      {item.license_number && (
-        <Field label="Лицензия №:">
-          <span className={s.value}>{item.license_number}</span>
-        </Field>
-      )}
-
-      {item.phone && (
-        <Field label="Телефон:">
-          <a href={`tel:${item.phone}`} className={s.contact}>
-            {item.phone}
-          </a>
-        </Field>
-      )}
-
-      {item.email && (
-        <Field label="Почта:">
-          <a href={`mailto:${item.email}`} className={s.contact}>
-            {item.email}
-          </a>
-        </Field>
-      )}
+    <article
+      className={s.card}
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+    >
+      <div className={s.header}>
+        <h3 className={s.company} title={companyName}>
+          {companyName}
+        </h3>
+        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
+      </div>
 
       {types.length > 0 && (
-        <Field label="Области экспертизы:">
-          <div className={s.badges}>
-            {types.map((t) => (
-              <TypeBadge key={t} type={t} active />
-            ))}
-          </div>
-        </Field>
+        <div className={s.badges}>
+          {types.map((t) => (
+            <TypeBadge key={t} type={t} active />
+          ))}
+        </div>
       )}
 
-      <Field label="Стоимость предоставления лицензии:">
-        <span className={s.rental}>{formatRental(item)}</span>
-      </Field>
+      {open && (
+        <div className={s.details}>
+          {item.inn && (
+            <Field label="ИНН:">
+              <span className={s.value}>{item.inn}</span>
+            </Field>
+          )}
 
-      {fileItems.length > 0 && (
-        <FileGallery
-          items={fileItems}
-          label="Файл лицензии:"
-          labelClassName={s.label}
-          blockClassName={s.fileBlock}
-          gridProps={{ className: s.fileGrid }}
-          hideWhenEmpty
-        />
-      )}
+          {item.license_number && (
+            <Field label="Лицензия №:">
+              <span className={s.value}>{item.license_number}</span>
+            </Field>
+          )}
 
-      {cardItems.length > 0 && (
-        <FileGallery
-          items={cardItems}
-          label="Карточка предприятия:"
-          labelClassName={s.label}
-          blockClassName={s.fileBlock}
-          gridProps={{ className: s.fileGrid }}
-          hideWhenEmpty
-        />
+          {item.phone && (
+            <Field label="Телефон:">
+              <a href={`tel:${item.phone}`} className={s.contact}>
+                {item.phone}
+              </a>
+            </Field>
+          )}
+
+          {item.email && (
+            <Field label="Почта:">
+              <a href={`mailto:${item.email}`} className={s.contact}>
+                {item.email}
+              </a>
+            </Field>
+          )}
+
+          <Field label="Стоимость предоставления лицензии:">
+            <span className={s.rental}>{formatRental(item)}</span>
+          </Field>
+
+          {fileItems.length > 0 && (
+            <FileGallery
+              items={fileItems}
+              label="Файл лицензии:"
+              labelClassName={s.label}
+              blockClassName={s.fileBlock}
+              gridProps={{ className: s.fileGrid }}
+              hideWhenEmpty
+            />
+          )}
+
+          {cardItems.length > 0 && (
+            <FileGallery
+              items={cardItems}
+              label="Карточка предприятия:"
+              labelClassName={s.label}
+              blockClassName={s.fileBlock}
+              gridProps={{ className: s.fileGrid }}
+              hideWhenEmpty
+            />
+          )}
+        </div>
       )}
     </article>
   );

@@ -21,6 +21,7 @@ import {
   TabSupportIcon,
 } from "@/source/shared/ui/icons";
 import { useSidebarMobile } from "../model/SidebarMobileContext";
+import { RoleSwitcher } from "./RoleSwitcher";
 import s from "./Sidebar.module.scss";
 
 interface SidebarItem {
@@ -242,6 +243,8 @@ export function Sidebar() {
           </div>
 
           <div className={s.bottom}>
+            {!visualCollapsed && <RoleSwitcher />}
+
             {renderTab(
               "collapse",
               visualCollapsed ? "Развернуть" : "Скрыть панель",

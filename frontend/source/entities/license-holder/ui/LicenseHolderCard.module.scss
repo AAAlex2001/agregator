@@ -5,10 +5,33 @@
   padding: 10px;
   border-radius: 10px;
   background: #fff8ed;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #fff1d9;
+    outline: none;
+  }
+
+  &:hover .company,
+  &:focus-visible .company {
+    color: #ff8a00;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
 }
 
 .company {
   margin: 0;
+  flex: 1;
+  min-width: 0;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 13px;
@@ -19,6 +42,26 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  transition: color 0.15s ease;
+}
+
+.chevron {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: #808080;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .field {

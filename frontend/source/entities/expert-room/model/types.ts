@@ -10,6 +10,8 @@ export interface ExpertRoomMessageData {
 export interface ExpertRoomHistoryResponse {
   items: ExpertRoomMessageData[];
   has_more: boolean;
+  banned: boolean;
+  ban_reason: string | null;
 }
 
 export interface ExpertRoomTypingPayload {

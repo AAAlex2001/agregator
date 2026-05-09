@@ -94,7 +94,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
       <TypesPicker
         value={watch("licenseAreas") as ExpertiseType[]}
         onChange={(next) => setValue("licenseAreas", next, { shouldValidate })}
-        label="Области экспертизы по лицензии"
+        label="Объекты экспертизы по лицензии"
         error={errors.licenseAreas?.message as string | undefined}
       />
 

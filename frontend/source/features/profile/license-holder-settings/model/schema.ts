@@ -9,7 +9,7 @@ const expertiseTypeSchema = z.custom<ExpertiseType>(
 export const licenseTermsSchema = z
   .object({
     licenseNumber: z.string().trim().min(1, "Укажите номер лицензии"),
-    licenseAreas: z.array(expertiseTypeSchema).min(1, "Выберите хотя бы одну область экспертизы"),
+    licenseAreas: z.array(expertiseTypeSchema).min(1, "Выберите хотя бы один объект экспертизы"),
     rentalKind: z.enum(["PERCENT", "FIXED", "NEGOTIABLE"]),
     rentalPercent: z.string().trim(),
     rentalFixedAmount: z.string().trim(),

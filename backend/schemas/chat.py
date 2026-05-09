@@ -119,6 +119,8 @@ class ExpertRoomMessageOut(BaseModel):
 class ExpertRoomHistoryResponse(BaseModel):
     items: list[ExpertRoomMessageOut]
     has_more: bool
+    banned: bool = False
+    ban_reason: str | None = None
 
 
 class SendExpertRoomMessageRequest(BaseModel):
