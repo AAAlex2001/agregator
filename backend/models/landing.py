@@ -43,7 +43,7 @@ class LandingStep(Base):
         index=True,
     )
     role = Column(
-        SAEnum("client", "expert", name="landingsteprole"),
+        SAEnum("client", "expert", "license_holder", name="landingsteprole"),
         nullable=False,
         index=True,
     )
@@ -145,6 +145,13 @@ class LandingPricingContent(Base):
     customer_footnote = Column(Text, nullable=False, default="")
     customer_cta_label = Column(String(200), nullable=False, default="")
     customer_cta_href = Column(String(500), nullable=False, default="")
+    license_holder_title = Column(Text, nullable=False, default="")
+    license_holder_subtitle = Column(Text, nullable=False, default="")
+    license_holder_headline = Column(Text, nullable=False, default="")
+    license_holder_features = Column(JSONB, nullable=False, default=list)
+    license_holder_footnote = Column(Text, nullable=False, default="")
+    license_holder_cta_label = Column(String(200), nullable=False, default="")
+    license_holder_cta_href = Column(String(500), nullable=False, default="")
 
     def __str__(self):
         return "Pricing content"

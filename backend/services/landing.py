@@ -62,6 +62,13 @@ class LandingService:
                 customer_footnote="",
                 customer_cta_label="",
                 customer_cta_href="",
+                license_holder_title="",
+                license_holder_subtitle="",
+                license_holder_headline="",
+                license_holder_features=[],
+                license_holder_footnote="",
+                license_holder_cta_label="",
+                license_holder_cta_href="",
             )
         return LandingPricingContentDto(
             expert_title=row.expert_title,
@@ -74,6 +81,13 @@ class LandingService:
             customer_footnote=row.customer_footnote,
             customer_cta_label=row.customer_cta_label,
             customer_cta_href=row.customer_cta_href,
+            license_holder_title=row.license_holder_title,
+            license_holder_subtitle=row.license_holder_subtitle,
+            license_holder_headline=row.license_holder_headline,
+            license_holder_features=list(row.license_holder_features or []),
+            license_holder_footnote=row.license_holder_footnote,
+            license_holder_cta_label=row.license_holder_cta_label,
+            license_holder_cta_href=row.license_holder_cta_href,
         )
 
     async def get_hero(self) -> LandingHeroDto:
@@ -111,6 +125,7 @@ class LandingService:
 
         client: list[LandingStepDto] = []
         expert: list[LandingStepDto] = []
+        license_holder: list[LandingStepDto] = []
         for row in rows:
             dto = LandingStepDto(
                 id=row.id,
@@ -122,9 +137,11 @@ class LandingService:
             )
             if row.role == "client":
                 client.append(dto)
-            else:
+            elif row.role == "expert":
                 expert.append(dto)
-        return LandingTabSteps(client=client, expert=expert)
+            elif row.role == "license_holder":
+                license_holder.append(dto)
+        return LandingTabSteps(client=client, expert=expert, license_holder=license_holder)
 
     async def get_orders(self) -> list[LandingOrderExampleDto]:
         rows = (

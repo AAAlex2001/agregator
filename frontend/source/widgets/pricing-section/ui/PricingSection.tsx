@@ -11,14 +11,15 @@ import { PricingCard, type PricingPlan } from "@/source/entities/pricing";
 import { useSubscribeToPlan } from "@/source/features/pricing/subscribe";
 import s from "./PricingSection.module.scss";
 
-type Role = "customer" | "expert";
+type Role = "customer" | "expert" | "license_holder";
 
 const ROLE_TABS = [
   { id: "customer", label: "Я заказчик" },
   { id: "expert", label: "Я эксперт" },
+  { id: "license_holder", label: "Я держатель лицензии" },
 ];
 
-interface CustomerCta {
+interface CtaConfig {
   label: string;
   href: string;
 }
@@ -26,6 +27,15 @@ interface CustomerCta {
 interface RoleHeader {
   title: string;
   subtitle?: string;
+}
+
+interface RoleTextBlock {
+  title: string;
+  subtitle?: string;
+  headline: string;
+  features: string[];
+  footnote?: string;
+  cta?: CtaConfig;
 }
 
 interface Props {
@@ -37,7 +47,8 @@ interface Props {
   customerHeadline: string;
   customerFeatures: string[];
   customerFootnote?: string;
-  customerCta?: CustomerCta;
+  customerCta?: CtaConfig;
+  licenseHolder: RoleTextBlock;
   redirectOnSelect?: string;
 }
 
@@ -51,12 +62,15 @@ export function PricingSection({
   customerFeatures,
   customerFootnote,
   customerCta,
+  licenseHolder,
   redirectOnSelect,
 }: Props) {
   const router = useRouter();
   const { select, pendingPlanId } = useSubscribeToPlan();
   const [role, setRole] = useState<Role>(defaultRole);
-  const header = role === "expert" ? expert : customer;
+
+  const header: RoleHeader =
+    role === "expert" ? expert : role === "customer" ? customer : licenseHolder;
 
   const handleSelect = (plan: PricingPlan) => {
     if (redirectOnSelect) {
@@ -104,7 +118,7 @@ export function PricingSection({
                 </div>
                 {footnote ? <p className={s.footnote}>{footnote}</p> : null}
               </div>
-            ) : (
+            ) : role === "customer" ? (
               <div key="customer" className={`${s.roleContent} ${s.fadeIn}`}>
                 <p className={s.customerHeadline}>{customerHeadline}</p>
                 <ul className={s.customerFeatures}>
@@ -117,6 +131,19 @@ export function PricingSection({
                 </ul>
                 {customerFootnote ? <p className={s.footnote}>{customerFootnote}</p> : null}
               </div>
+            ) : (
+              <div key="license_holder" className={`${s.roleContent} ${s.fadeIn}`}>
+                <p className={s.customerHeadline}>{licenseHolder.headline}</p>
+                <ul className={s.customerFeatures}>
+                  {licenseHolder.features.map((feature) => (
+                    <li key={feature} className={s.customerFeature}>
+                      <PricingFeatureIcon className={s.customerCheck} />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                {licenseHolder.footnote ? <p className={s.footnote}>{licenseHolder.footnote}</p> : null}
+              </div>
             )}
           </div>
 
@@ -124,6 +151,14 @@ export function PricingSection({
             <Link key="customer-cta" href={customerCta.href} className={`${s.customerCtaWrap} ${s.fadeIn}`}>
               <Button variant="chat" className={s.customerCtaButton}>
                 {customerCta.label}
+              </Button>
+            </Link>
+          ) : null}
+
+          {role === "license_holder" && licenseHolder.cta ? (
+            <Link key="lh-cta" href={licenseHolder.cta.href} className={`${s.customerCtaWrap} ${s.fadeIn}`}>
+              <Button variant="chat" className={s.customerCtaButton}>
+                {licenseHolder.cta.label}
               </Button>
             </Link>
           ) : null}

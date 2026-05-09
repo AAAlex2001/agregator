@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { RequisitesWidget } from "@/source/widgets/requisites";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
   title: "Реквизиты компании — Ресурс Плюс",
@@ -14,5 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default function RequisitesPage() {
-  return <RequisitesWidget />;
+  return (
+    <>
+      <RedirectIfAuthed to="/landing/requisites" />
+      <LandingHeader />
+      <RequisitesWidget />
+      <LandingFooter variant="light" />
+    </>
+  );
 }

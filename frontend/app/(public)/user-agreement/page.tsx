@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { UserAgreementWidget } from "@/source/widgets/user-agreement";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
   title: "Пользовательское соглашение — Ресурс Плюс",
@@ -14,5 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default function UserAgreementPage() {
-  return <UserAgreementWidget />;
+  return (
+    <>
+      <RedirectIfAuthed to="/landing/user-agreement" />
+      <LandingHeader />
+      <UserAgreementWidget />
+      <LandingFooter variant="light" />
+    </>
+  );
 }

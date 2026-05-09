@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PrivacyPolicyWidget } from "@/source/widgets/privacy-policy";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
   title: "Политика конфиденциальности — Ресурс Плюс",
@@ -15,5 +17,12 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPolicyPage() {
-  return <PrivacyPolicyWidget />;
+  return (
+    <>
+      <RedirectIfAuthed to="/landing/privacy-policy" />
+      <LandingHeader />
+      <PrivacyPolicyWidget />
+      <LandingFooter variant="light" />
+    </>
+  );
 }

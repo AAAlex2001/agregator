@@ -37,6 +37,7 @@ class LandingStepDto(BaseModel):
 class LandingTabSteps(BaseModel):
     client: List[LandingStepDto]
     expert: List[LandingStepDto]
+    license_holder: List[LandingStepDto]
 
 
 class LandingOrderExampleDto(BaseModel):
@@ -86,6 +87,13 @@ class LandingPricingContentDto(BaseModel):
     customer_footnote: str
     customer_cta_label: str
     customer_cta_href: str
+    license_holder_title: str
+    license_holder_subtitle: str
+    license_holder_headline: str
+    license_holder_features: List[str]
+    license_holder_footnote: str
+    license_holder_cta_label: str
+    license_holder_cta_href: str
 
 
 class LandingSnapshot(BaseModel):

@@ -47,12 +47,14 @@ export default async function AuthRestrictedLandingPage() {
       <LandingHowItWorks
         clientSteps={howItWorks.client}
         expertSteps={howItWorks.expert}
+        licenseHolderSteps={howItWorks.licenseHolder}
         title={sectionHeaders.howItWorks.title}
         subtitle={sectionHeaders.howItWorks.subtitle}
       />
       <LandingKeyAdvantages
         clientSteps={keyAdvantages.client}
         expertSteps={keyAdvantages.expert}
+        licenseHolderSteps={keyAdvantages.licenseHolder}
         title={sectionHeaders.keyAdvantages.title}
         subtitle={sectionHeaders.keyAdvantages.subtitle}
       />
@@ -90,6 +92,17 @@ export default async function AuthRestrictedLandingPage() {
           customerCta={{
             label: pricingContent.customerCtaLabel,
             href: pricingContent.customerCtaHref,
+          }}
+          licenseHolder={{
+            title: pricingContent.licenseHolderTitle,
+            subtitle: pricingContent.licenseHolderSubtitle,
+            headline: pricingContent.licenseHolderHeadline,
+            features: pricingContent.licenseHolderFeatures,
+            footnote: pricingContent.licenseHolderFootnote,
+            cta: {
+              label: pricingContent.licenseHolderCtaLabel,
+              href: pricingContent.licenseHolderCtaHref,
+            },
           }}
           redirectOnSelect="/register"
         />

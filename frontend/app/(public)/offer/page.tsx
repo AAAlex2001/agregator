@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { OfferWidget } from "@/source/widgets/offer";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
   title: "Публичная оферта — Ресурс Плюс",
@@ -14,5 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default function OfferPage() {
-  return <OfferWidget />;
+  return (
+    <>
+      <RedirectIfAuthed to="/landing/offer" />
+      <LandingHeader />
+      <OfferWidget />
+      <LandingFooter variant="light" />
+    </>
+  );
 }

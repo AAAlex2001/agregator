@@ -78,13 +78,20 @@ export type LandingPricingContent = {
   customerFootnote: string;
   customerCtaLabel: string;
   customerCtaHref: string;
+  licenseHolderTitle: string;
+  licenseHolderSubtitle: string;
+  licenseHolderHeadline: string;
+  licenseHolderFeatures: string[];
+  licenseHolderFootnote: string;
+  licenseHolderCtaLabel: string;
+  licenseHolderCtaHref: string;
 };
 
 export type LandingSnapshot = {
   hero: LandingHeroContent;
   sectionHeaders: LandingSectionHeaders;
-  howItWorks: { client: LandingStep[]; expert: LandingStep[] };
-  keyAdvantages: { client: LandingStep[]; expert: LandingStep[] };
+  howItWorks: { client: LandingStep[]; expert: LandingStep[]; licenseHolder: LandingStep[] };
+  keyAdvantages: { client: LandingStep[]; expert: LandingStep[]; licenseHolder: LandingStep[] };
   orders: LandingOrder[];
   advantages: LandingAdvantage[];
   industries: LandingIndustry[];
@@ -125,13 +132,20 @@ type ApiPricingContent = {
   customer_footnote: string;
   customer_cta_label: string;
   customer_cta_href: string;
+  license_holder_title: string;
+  license_holder_subtitle: string;
+  license_holder_headline: string;
+  license_holder_features: string[];
+  license_holder_footnote: string;
+  license_holder_cta_label: string;
+  license_holder_cta_href: string;
 };
 
 type ApiSnapshot = {
   hero: { title: string; subtitle: string; button_text: string };
   section_headers: ApiSectionHeaders;
-  how_it_works: { client: ApiStep[]; expert: ApiStep[] };
-  key_advantages: { client: ApiStep[]; expert: ApiStep[] };
+  how_it_works: { client: ApiStep[]; expert: ApiStep[]; license_holder: ApiStep[] };
+  key_advantages: { client: ApiStep[]; expert: ApiStep[]; license_holder: ApiStep[] };
   orders: Array<{ id: number; title: string; price: string; description: string }>;
   advantages: Array<{ id: number; title: string; description: string; icon_key: string; photo: string }>;
   industries: Array<{ id: number; title: string; description: string[]; photo: string }>;
@@ -169,10 +183,12 @@ export class LandingApi {
       howItWorks: {
         client: api.how_it_works.client.map((step) => this.mapStep(step)),
         expert: api.how_it_works.expert.map((step) => this.mapStep(step)),
+        licenseHolder: (api.how_it_works.license_holder ?? []).map((step) => this.mapStep(step)),
       },
       keyAdvantages: {
         client: api.key_advantages.client.map((step) => this.mapStep(step)),
         expert: api.key_advantages.expert.map((step) => this.mapStep(step)),
+        licenseHolder: (api.key_advantages.license_holder ?? []).map((step) => this.mapStep(step)),
       },
       orders: api.orders.map((order) => ({
         title: order.title,
@@ -219,6 +235,13 @@ export class LandingApi {
       customerFootnote: api.customer_footnote,
       customerCtaLabel: api.customer_cta_label,
       customerCtaHref: api.customer_cta_href,
+      licenseHolderTitle: api.license_holder_title ?? "",
+      licenseHolderSubtitle: api.license_holder_subtitle ?? "",
+      licenseHolderHeadline: api.license_holder_headline ?? "",
+      licenseHolderFeatures: api.license_holder_features ?? [],
+      licenseHolderFootnote: api.license_holder_footnote ?? "",
+      licenseHolderCtaLabel: api.license_holder_cta_label ?? "",
+      licenseHolderCtaHref: api.license_holder_cta_href ?? "",
     };
   }
 

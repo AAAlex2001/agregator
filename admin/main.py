@@ -1472,6 +1472,13 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
         LandingPricingContent.customer_footnote,
         LandingPricingContent.customer_cta_label,
         LandingPricingContent.customer_cta_href,
+        LandingPricingContent.license_holder_title,
+        LandingPricingContent.license_holder_subtitle,
+        LandingPricingContent.license_holder_headline,
+        LandingPricingContent.license_holder_features,
+        LandingPricingContent.license_holder_footnote,
+        LandingPricingContent.license_holder_cta_label,
+        LandingPricingContent.license_holder_cta_href,
     ]
 
     column_labels = {
@@ -1486,6 +1493,13 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
         LandingPricingContent.customer_footnote: "Заказчик · Сноска",
         LandingPricingContent.customer_cta_label: "Заказчик · Текст кнопки",
         LandingPricingContent.customer_cta_href: "Заказчик · Ссылка кнопки",
+        LandingPricingContent.license_holder_title: "Лицензиат · Заголовок",
+        LandingPricingContent.license_holder_subtitle: "Лицензиат · Подзаголовок",
+        LandingPricingContent.license_holder_headline: "Лицензиат · Большой текст по центру",
+        LandingPricingContent.license_holder_features: "Лицензиат · Список преимуществ (JSON-массив строк)",
+        LandingPricingContent.license_holder_footnote: "Лицензиат · Сноска",
+        LandingPricingContent.license_holder_cta_label: "Лицензиат · Текст кнопки",
+        LandingPricingContent.license_holder_cta_href: "Лицензиат · Ссылка кнопки",
     }
 
 
