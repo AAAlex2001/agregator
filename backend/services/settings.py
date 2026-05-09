@@ -37,34 +37,32 @@ class SettingsService:
             )
         return user
 
-    async def ensure_unique_phone(self, phone: str, user_id: int) -> None:
-        existing = await self.db.execute(
-            select(User).where(User.phone == phone, User.id != user_id)
+    async def field_taken_in_same_role(self, column, value, user_id: int) -> bool:
+        own_role_q = select(User.role).where(User.id == user_id).scalar_subquery()
+        result = await self.db.execute(
+            select(User.id).where(column == value, User.id != user_id, User.role == own_role_q)
         )
-        if existing.scalars().first():
+        return result.first() is not None
+
+    async def ensure_unique_phone(self, phone: str, user_id: int) -> None:
+        if await self.field_taken_in_same_role(User.phone, phone, user_id):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Этот номер телефона уже используется",
+                detail="Этот номер уже используется для текущей роли",
             )
 
     async def ensure_unique_email(self, email: str, user_id: int) -> None:
-        existing = await self.db.execute(
-            select(User).where(User.email == email, User.id != user_id)
-        )
-        if existing.scalars().first():
+        if await self.field_taken_in_same_role(User.email, email, user_id):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Этот email уже используется",
+                detail="Этот email уже используется для текущей роли",
             )
 
     async def ensure_unique_inn(self, inn: str, user_id: int) -> None:
-        existing = await self.db.execute(
-            select(User).where(User.inn == inn, User.id != user_id)
-        )
-        if existing.scalars().first():
+        if await self.field_taken_in_same_role(User.inn, inn, user_id):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Этот ИНН уже используется",
+                detail="Этот ИНН уже используется для текущей роли",
             )
 
     async def update_password(self, user_id: int, new_password: str) -> None:

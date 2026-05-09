@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from enum import Enum as PyEnum
 from uuid import uuid4
 
-from sqlalchemy import BigInteger, Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint
+from sqlalchemy import BigInteger, Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -36,9 +36,9 @@ class User(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
-    inn = Column(String(12), index=True, unique=True, nullable=True)
+    inn = Column(String(12), index=True, nullable=True)
     company_data = Column(JSONB, nullable=True)
-    email = Column(String, index=True, unique=True, nullable=True)
+    email = Column(String, index=True, nullable=True)
     email_verified = Column(Boolean, default=False, nullable=False)
     email_on_response_created = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_response_updated = Column(Boolean, default=True, nullable=False, server_default="true")
@@ -49,7 +49,7 @@ class User(Base):
     email_on_chat_message = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_question_asked = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_question_answered = Column(Boolean, default=True, nullable=False, server_default="true")
-    phone = Column(String, index=True, unique=True, nullable=True)
+    phone = Column(String, index=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)
     notification_unread_count = Column(Integer, default=0, nullable=False, server_default="0")
@@ -73,6 +73,9 @@ class User(Base):
             "license_rental_kind IS NULL OR license_rental_kind IN ('PERCENT', 'FIXED', 'NEGOTIABLE')",
             name="user_license_rental_kind_valid",
         ),
+        UniqueConstraint("email", "role", name="uq_users_email_role"),
+        UniqueConstraint("phone", "role", name="uq_users_phone_role"),
+        UniqueConstraint("inn", "role", name="uq_users_inn_role"),
     )
 
     password_reset_codes = relationship(

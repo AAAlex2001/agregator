@@ -49,17 +49,19 @@ class LicenseHolderRegistration(BaseModel):
         if self.license_rental_kind is LicenseRentalKind.PERCENT and self.license_rental_percent is None:
             raise ValueError("Укажите процент от суммы договора")
         if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:
-            raise ValueError("Укажите минимальную фиксированную цену аренды")
+            raise ValueError("Укажите минимальную фиксированную цену предоставления лицензии")
         return self
 
 
 class EmailConfirmRequest(BaseModel):
     email: EmailStr = Field(..., description="Почта пользователя")
     code: str = Field(..., description="Код подтверждения")
+    role: Optional[UserRole] = Field(None, description="Если на email несколько ролей — какую подтверждаем")
 
 
-class EmailConfirmResponse(BaseModel):
-    message: str
+class ResendCodeRequest(BaseModel):
+    email: EmailStr = Field(..., description="Почта пользователя")
+    role: Optional[UserRole] = Field(None, description="Если на email несколько ролей — какую переотправить")
 
 
 class PartySuggestionRequest(BaseModel):

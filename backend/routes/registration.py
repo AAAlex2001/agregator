@@ -1,20 +1,22 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, UploadFile, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from schemas.registration import (
     EmailConfirmRequest,
-    EmailConfirmResponse,
     LicenseHolderRegistration,
     PartySuggestionRequest,
     PartySuggestionResponse,
+    ResendCodeRequest,
     UserRegistration,
     UserResponse,
 )
 from services.dadata import DaDataService
 from services.license_storage import remove_license_file, save_license_file
+from services.login import LoginService, SESSION_MAX_DAYS
 from services.registration import RegistrationService
 
 
@@ -41,14 +43,46 @@ async def register_user(
     return user
 
 
-@router.post("/confirm-email", response_model=EmailConfirmResponse)
+@router.post("/confirm-email", response_model=UserResponse)
 async def confirm_email(
     data: EmailConfirmRequest,
     db: AsyncSession = Depends(get_db),
 ):
-    service = RegistrationService(db)
-    await service.confirm_email(data.email, data.code)
-    return EmailConfirmResponse(message="Email подтверждён")
+    "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
+    user = await RegistrationService(db).confirm_email(data.email, data.code, data.role)
+    session = await LoginService(db).create_session(user.id)
+
+    response = JSONResponse(content=UserResponse.model_validate(user).model_dump(mode="json"))
+    cookie_max_age = 60 * 60 * 24 * SESSION_MAX_DAYS
+    response.set_cookie(
+        key="session_id",
+        value=session.session_id,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=cookie_max_age,
+        path="/",
+    )
+    response.set_cookie(
+        key="user_role",
+        value=user.role.value,
+        secure=True,
+        samesite="none",
+        max_age=cookie_max_age,
+        path="/",
+    )
+    return response
+
+
+@router.post("/resend-code", status_code=status.HTTP_202_ACCEPTED)
+async def resend_confirmation_code(
+    data: ResendCodeRequest,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+):
+    "Повторно отправляет код подтверждения почты — для случая, когда пользователь закрыл вкладку."
+    await RegistrationService(db).resend_confirmation(data.email, background_tasks, data.role)
+    return {"detail": "Код отправлен повторно"}
 
 
 @router.post(

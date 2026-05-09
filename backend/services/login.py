@@ -73,7 +73,6 @@ class LoginService:
             )
 
         matched_users: list[User] = []
-
         for candidate in candidates:
             if await self.verify_password(data.password, candidate.password):
                 matched_users.append(candidate)
@@ -84,17 +83,35 @@ class LoginService:
                 detail="Неверный пароль",
             )
 
+        if data.role is not None:
+            matched_users = [u for u in matched_users if u.role == data.role]
+            if not matched_users:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Под этими данными нет аккаунта с указанной ролью",
+                )
+
         if len(matched_users) > 1:
+            available = sorted({u.role.value for u in matched_users})
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Найдено несколько аккаунтов с одинаковыми данными входа. Обратитесь в поддержку",
+                detail={
+                    "code": "role_choice_required",
+                    "message": "Выберите роль для входа",
+                    "available_roles": available,
+                },
             )
 
         user = matched_users[0]
         if not user.email_verified:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Подтвердите почту — код был отправлен при регистрации",
+                detail={
+                    "code": "email_not_verified",
+                    "message": "Подтвердите почту — код был отправлен при регистрации",
+                    "email": user.email,
+                    "role": user.role.value,
+                },
             )
 
         return user

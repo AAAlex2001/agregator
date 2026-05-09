@@ -47,47 +47,34 @@ class RegistrationService:
                 detail="ИНН должен содержать 10 или 12 цифр",
             )
 
-    async def get_user_by_email(self, email: str) -> User | None:
-        query = select(User).where(User.email == email)
+    async def user_field_taken(self, column, value, role: UserRole) -> bool:
+        query = select(User.id).where(column == value, User.role == ModelUserRole(role.value))
         result = await self.db.execute(query)
-        return result.scalars().first()
+        return result.first() is not None
 
-    async def get_user_by_phone(self, phone: str) -> User | None:
-        query = select(User).where(User.phone == phone)
-        result = await self.db.execute(query)
-        return result.scalars().first()
-
-    async def get_user_by_inn(self, inn: str) -> User | None:
-        query = select(User).where(User.inn == inn)
-        result = await self.db.execute(query)
-        return result.scalars().first()
-
-    async def ensure_email_is_free(self, email: str) -> None:
-        existing = await self.get_user_by_email(email)
-        if existing:
+    async def ensure_email_is_free(self, email: str, role: UserRole) -> None:
+        if await self.user_field_taken(User.email, email, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким email уже зарегистрирован",
+                detail="Этот email уже используется для роли",
             )
 
-    async def ensure_phone_is_free(self, phone: str | None) -> None:
+    async def ensure_phone_is_free(self, phone: str | None, role: UserRole) -> None:
         if not phone:
             return
-        existing = await self.get_user_by_phone(phone)
-        if existing:
+        if await self.user_field_taken(User.phone, phone, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким номером уже зарегистрирован",
+                detail="Этот номер уже используется для роли",
             )
 
-    async def ensure_inn_is_free(self, inn: str | None) -> None:
+    async def ensure_inn_is_free(self, inn: str | None, role: UserRole) -> None:
         if not inn:
             return
-        existing = await self.get_user_by_inn(inn)
-        if existing:
+        if await self.user_field_taken(User.inn, inn, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пользователь с таким ИНН уже зарегистрирован",
+                detail="Этот ИНН уже используется для роли",
             )
 
     def ensure_customer_has_company(self, data: UserRegistration) -> None:
@@ -115,9 +102,9 @@ class RegistrationService:
         self.validate_inn_format(data.inn)
         self.ensure_company_matches_inn(data.inn, data.company_data)
 
-        await self.ensure_email_is_free(data.email)
-        await self.ensure_phone_is_free(data.phone)
-        await self.ensure_inn_is_free(data.inn)
+        await self.ensure_email_is_free(data.email, data.role)
+        await self.ensure_phone_is_free(data.phone, data.role)
+        await self.ensure_inn_is_free(data.inn, data.role)
 
         new_user = User(
             role=data.role,
@@ -141,9 +128,9 @@ class RegistrationService:
     ) -> User:
         "Создаёт держателя лицензии. Pydantic уже всё провалидировал — здесь только уникальность и запись."
         self.validate_password(data.password)
-        await self.ensure_email_is_free(data.email)
-        await self.ensure_phone_is_free(data.phone)
-        await self.ensure_inn_is_free(data.inn)
+        await self.ensure_email_is_free(data.email, UserRole.LICENSE_HOLDER)
+        await self.ensure_phone_is_free(data.phone, UserRole.LICENSE_HOLDER)
+        await self.ensure_inn_is_free(data.inn, UserRole.LICENSE_HOLDER)
 
         new_user = User(
             role=ModelUserRole.LICENSE_HOLDER,
@@ -202,11 +189,42 @@ class RegistrationService:
             background_tasks,
         )
 
-    async def confirm_email(self, email: str, code: str) -> User:
-        user = await self.get_user_by_email(email)
+    async def find_user_by_email(self, email: str, role: UserRole | None = None) -> User | None:
+        query = select(User).where(User.email == email)
+        if role is not None:
+            query = query.where(User.role == ModelUserRole(role.value))
+        result = await self.db.execute(query)
+        candidates = list(result.scalars().all())
+        if not candidates:
+            return None
+        # При нескольких ролях на одну почту — берём ту, что ещё не подтверждена
+        unverified = [u for u in candidates if not u.email_verified]
+        return unverified[0] if unverified else candidates[0]
+
+    async def confirm_email(self, email: str, code: str, role: UserRole | None = None) -> User:
+        user = await self.find_user_by_email(email, role)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Пользователь не найден",
             )
         return await self.verification.confirm_email(user, code)
+
+    async def resend_confirmation(
+        self,
+        email: str,
+        background_tasks: BackgroundTasks,
+        role: UserRole | None = None,
+    ) -> None:
+        user = await self.find_user_by_email(email, role)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь не найден",
+            )
+        if user.email_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Почта уже подтверждена",
+            )
+        await self.schedule_email_confirmation(user, background_tasks)

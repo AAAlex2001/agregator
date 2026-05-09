@@ -87,7 +87,7 @@ class UpdateLicenseHolderRequest(BaseModel):
         if self.license_rental_kind is LicenseRentalKind.PERCENT and self.license_rental_percent is None:
             raise ValueError("Укажите процент от суммы договора")
         if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:
-            raise ValueError("Укажите минимальную фиксированную цену аренды")
+            raise ValueError("Укажите минимальную фиксированную цену предоставления лицензии")
         return self
 
 
