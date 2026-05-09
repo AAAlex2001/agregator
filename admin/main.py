@@ -255,6 +255,42 @@ async def support_ticket_close(request: Request, ticket_id: int):
     return RedirectResponse(f"/admin/support-ticket/edit/{ticket_id}", status_code=303)
 
 
+@app.post("/admin-actions/expert-room/messages/{message_id}/delete", name="expert_room_message_delete")
+async def expert_room_message_delete(request: Request, message_id: int):
+    if not request.session.get("authenticated", False):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    with SessionLocal() as db:
+        message = db.get(ExpertRoomMessage, message_id)
+        if message is not None:
+            db.delete(message)
+            db.commit()
+
+    return RedirectResponse("/admin/expert-room-chat", status_code=303)
+
+
+@app.post("/admin-actions/expert-room/users/{user_id}/ban", name="expert_room_user_ban")
+async def expert_room_user_ban(
+    request: Request,
+    user_id: int,
+    reason: str = Form(""),
+):
+    if not request.session.get("authenticated", False):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    cleaned_reason = (reason or "").strip()[:500]
+
+    with SessionLocal() as db:
+        existing = db.query(ExpertRoomBan).filter(ExpertRoomBan.user_id == user_id).first()
+        if existing is not None:
+            existing.reason = cleaned_reason
+        else:
+            db.add(ExpertRoomBan(user_id=user_id, reason=cleaned_reason))
+        db.commit()
+
+    return RedirectResponse("/admin/expert-room-chat", status_code=303)
+
+
 # ========== УТИЛИТЫ ==========
 
 def format_technical_files(m, a):

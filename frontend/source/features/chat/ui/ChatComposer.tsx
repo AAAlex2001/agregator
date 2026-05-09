@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Loader from "@/source/shared/ui/Loader";
-import { ChatClipIcon, ChatSendIcon } from "@/source/shared/ui/icons";
+import { MessageComposer } from "@/source/shared/ui/MessageComposer";
+import { ChatClipIcon } from "@/source/shared/ui/icons";
 import type { ChatMessageData } from "@/source/entities/chat";
 import { sendChatMessage } from "../api/chat.api";
 import { FilePending, UploadProgress } from "./FilePending";
@@ -29,12 +29,10 @@ export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAUL
   const fileRef = useRef<HTMLInputElement>(null);
 
   const sendingFiles = sending && files.length > 0;
-  const canSend = !isBlocked && !sending && (text.trim().length > 0 || files.length > 0);
+  const canSend = !sending && (text.trim().length > 0 || files.length > 0);
 
   async function handleSend() {
-    if (!canSend) {
-      return;
-    }
+    if (!canSend) return;
 
     setError(null);
     setSending(true);
@@ -54,16 +52,12 @@ export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAUL
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (isBlocked) {
-      return;
-    }
+    if (isBlocked) return;
 
     const nextFiles = Array.from(event.currentTarget.files ?? []);
     event.currentTarget.value = "";
 
-    if (!nextFiles.length) {
-      return;
-    }
+    if (!nextFiles.length) return;
 
     if (files.length + nextFiles.length > MAX_FILES) {
       setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
@@ -81,39 +75,31 @@ export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAUL
     setFiles((currentFiles) => [...currentFiles, ...nextFiles]);
   }
 
-  if (isBlocked) {
-    return (
-      <div className={s.wrap}>
-        <div className={`${s.bar} ${s.barBlocked}`}>
-          <p className={s.blockedText}>{blockedText}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={s.wrap}>
-      {sendingFiles ? <UploadProgress percent={progress} /> : null}
-      {files.length && !sending ? <FilePending files={files} onRemove={(index) => setFiles((currentFiles) => currentFiles.filter((_, fileIndex) => fileIndex !== index))} /> : null}
-      {error ? <p className={s.error}>{error}</p> : null}
-
-      <div className={s.bar}>
-        <div className={s.inputWrap}>
-          <input
-            className={s.input}
-            type="text"
-            placeholder="Сообщение..."
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                void handleSend();
+    <MessageComposer
+      value={text}
+      onChange={setText}
+      onSend={handleSend}
+      disabled={isBlocked}
+      disabledText={blockedText}
+      sending={sending}
+      canSend={canSend}
+      extras={
+        <>
+          {sendingFiles ? <UploadProgress percent={progress} /> : null}
+          {files.length && !sending ? (
+            <FilePending
+              files={files}
+              onRemove={(index) =>
+                setFiles((currentFiles) => currentFiles.filter((_, fileIndex) => fileIndex !== index))
               }
-            }}
-            disabled={sending}
-          />
-
+            />
+          ) : null}
+          {error ? <p className={s.error}>{error}</p> : null}
+        </>
+      }
+      affix={
+        <>
           <button
             type="button"
             className={s.clip}
@@ -123,7 +109,6 @@ export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAUL
                 setError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
                 return;
               }
-
               fileRef.current?.click();
             }}
             disabled={sending}
@@ -139,18 +124,8 @@ export function ChatComposer({ chatUuid, isBlocked = false, blockedText = DEFAUL
             hidden
             onChange={handleFileChange}
           />
-        </div>
-
-        <button
-          type="button"
-          className={s.send}
-          onClick={() => void handleSend()}
-          disabled={!canSend}
-          aria-label="Отправить"
-        >
-          {sending ? <Loader size="sm" label="" /> : <ChatSendIcon />}
-        </button>
-      </div>
-    </div>
+        </>
+      }
+    />
   );
 }

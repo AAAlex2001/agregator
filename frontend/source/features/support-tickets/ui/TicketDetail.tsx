@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowIcon, ChatClipIcon, ChatSendIcon } from "@/source/shared/ui/icons";
+import { ArrowIcon, ChatClipIcon } from "@/source/shared/ui/icons";
 import {
   getFileGalleryPreviewUrl,
   getFileGalleryThumbUrl,
@@ -9,6 +9,7 @@ import {
 } from "@/source/shared/lib/filePreview";
 import { FileGallery } from "@/source/shared/ui/FileGallery";
 import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import { MessageComposer } from "@/source/shared/ui/MessageComposer";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
   MessageGroup,
@@ -155,39 +156,27 @@ export function TicketDetail({ ticket, onBack, onReply }: Props) {
         ))}
       </div>
 
-      <div className={s.composerWrap}>
-        {!isClosed && pendingItems.length > 0 && (
-          <FileGallery
-            items={pendingItems}
-            hideWhenEmpty
-            variant="editable"
-            blockClassName={s.pendingFiles}
-          />
-        )}
-
-        {isClosed ? (
-          <div className={`${s.bar} ${s.barBlocked}`}>
-            <p className={s.blockedText}>
-              Обращение закрыто. Если вопрос остался — создайте новое.
-            </p>
-          </div>
-        ) : (
-          <div className={s.bar}>
-            <div className={s.inputWrap}>
-              <textarea
-                className={s.input}
-                placeholder="Сообщение..."
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    handleSend();
-                  }
-                }}
-                rows={1}
-              />
-
+      <MessageComposer
+        value={draft}
+        onChange={setDraft}
+        onSend={handleSend}
+        multiline
+        disabled={isClosed}
+        disabledText="Обращение закрыто. Если вопрос остался — создайте новое."
+        canSend={draft.trim().length > 0 || files.length > 0}
+        extras={
+          !isClosed && pendingItems.length > 0 ? (
+            <FileGallery
+              items={pendingItems}
+              hideWhenEmpty
+              variant="editable"
+              blockClassName={s.pendingFiles}
+            />
+          ) : null
+        }
+        affix={
+          !isClosed ? (
+            <>
               <button
                 type="button"
                 className={s.clip}
@@ -214,20 +203,10 @@ export function TicketDetail({ ticket, onBack, onReply }: Props) {
                   event.currentTarget.value = "";
                 }}
               />
-            </div>
-
-            <button
-              type="button"
-              className={s.send}
-              onClick={handleSend}
-              disabled={draft.trim().length === 0 && files.length === 0}
-              aria-label="Отправить"
-            >
-              <ChatSendIcon />
-            </button>
-          </div>
-        )}
-      </div>
+            </>
+          ) : null
+        }
+      />
     </div>
   );
 }

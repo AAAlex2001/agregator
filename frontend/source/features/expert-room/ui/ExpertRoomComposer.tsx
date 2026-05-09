@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Loader from "@/source/shared/ui/Loader";
-import { ChatSendIcon } from "@/source/shared/ui/icons";
+import { MessageComposer } from "@/source/shared/ui/MessageComposer";
 import type { ExpertRoomMessageData } from "@/source/entities/expert-room";
 import { sendExpertRoomMessage } from "../api/expert-room.api";
 import s from "./ExpertRoomComposer.module.scss";
@@ -19,10 +18,8 @@ export function ExpertRoomComposer({ disabled = false, disabledText, onSent, onT
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canSend = !disabled && !sending && text.trim().length > 0;
-
   async function handleSend() {
-    if (!canSend) return;
+    if (sending || text.trim().length === 0) return;
 
     setError(null);
     setSending(true);
@@ -37,53 +34,23 @@ export function ExpertRoomComposer({ disabled = false, disabledText, onSent, onT
     }
   }
 
-  if (disabled) {
-    return (
-      <div className={s.wrap}>
-        <div className={`${s.bar} ${s.barBlocked}`}>
-          <p className={s.blockedText}>{disabledText ?? "Отправка недоступна"}</p>
-        </div>
-      </div>
-    );
+  function handleChange(next: string) {
+    setText(next);
+    if (next.length > 0) {
+      onTyping();
+    }
   }
 
   return (
-    <div className={s.wrap}>
-      {error ? <p className={s.error}>{error}</p> : null}
-
-      <div className={s.bar}>
-        <div className={s.inputWrap}>
-          <input
-            className={s.input}
-            type="text"
-            placeholder="Сообщение всем экспертам..."
-            value={text}
-            onChange={(event) => {
-              setText(event.target.value);
-              if (event.target.value.length > 0) {
-                onTyping();
-              }
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                void handleSend();
-              }
-            }}
-            disabled={sending}
-          />
-        </div>
-
-        <button
-          type="button"
-          className={s.send}
-          onClick={() => void handleSend()}
-          disabled={!canSend}
-          aria-label="Отправить"
-        >
-          {sending ? <Loader size="sm" label="" /> : <ChatSendIcon />}
-        </button>
-      </div>
-    </div>
+    <MessageComposer
+      value={text}
+      onChange={handleChange}
+      onSend={handleSend}
+      placeholder="Сообщение всем экспертам..."
+      disabled={disabled}
+      disabledText={disabledText ?? "Отправка недоступна"}
+      sending={sending}
+      extras={error ? <p className={s.error}>{error}</p> : null}
+    />
   );
 }

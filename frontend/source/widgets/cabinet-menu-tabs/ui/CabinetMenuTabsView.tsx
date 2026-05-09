@@ -22,6 +22,7 @@ export interface CabinetMenuItem {
 interface CabinetMenuTabsViewProps {
   items: CabinetMenuItem[];
   activeKey: CabinetMenuKey | null;
+  withSpacer?: boolean;
 }
 
 function renderIcon(key: CabinetMenuKey) {
@@ -32,10 +33,10 @@ function renderIcon(key: CabinetMenuKey) {
   return <BurgerHeaderIcon />;
 }
 
-export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewProps) {
+export function CabinetMenuTabsView({ items, activeKey, withSpacer = true }: CabinetMenuTabsViewProps) {
   return (
     <>
-      <div className={s.spacer} aria-hidden="true" />
+      {withSpacer ? <div className={s.spacer} aria-hidden="true" /> : null}
       <nav className={s.menuTabs} aria-label="Навигация кабинета">
         {items.map((item) => {
           const isActive = item.key === activeKey;

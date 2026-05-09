@@ -27,11 +27,29 @@
             <div style="max-width:70%;padding:10px 14px;border-radius:12px;border-bottom-left-radius:4px;background:#fff;color:#1a1a1a;font-size:14px;line-height:1.5;word-wrap:break-word;border:1px solid #e1e4e8;">
               {{ msg.text }}
             </div>
-            <div style="display:flex;gap:10px;align-items:center;font-size:11px;color:#999;margin-top:3px;padding:0 4px;">
+            <div style="display:flex;gap:10px;align-items:center;font-size:11px;color:#999;margin-top:4px;padding:0 4px;">
               <span>{{ msg.created_at.strftime('%H:%M') }}</span>
-              <a href="{{ url_for('admin:delete', identity='expert-room-message') }}?pks={{ msg.id }}"
-                 onclick="return confirm('Удалить это сообщение?');"
-                 style="color:#d32f2f;text-decoration:none;">удалить</a>
+
+              <form method="post"
+                    action="/admin-actions/expert-room/messages/{{ msg.id }}/delete"
+                    onsubmit="return confirm('Удалить это сообщение?');"
+                    style="display:inline;margin:0;">
+                <button type="submit"
+                        style="background:none;border:none;padding:0;color:#d32f2f;cursor:pointer;font-size:11px;">
+                  удалить
+                </button>
+              </form>
+
+              <form method="post"
+                    action="/admin-actions/expert-room/users/{{ msg.sender_id }}/ban"
+                    onsubmit="var r = prompt('Причина бана (видна юзеру):', ''); if (r === null) return false; this.reason.value = r; return confirm('Забанить {{ sender_name|e }}?');"
+                    style="display:inline;margin:0;">
+                <input type="hidden" name="reason" value="" />
+                <button type="submit"
+                        style="background:none;border:none;padding:0;color:#b03a00;cursor:pointer;font-size:11px;">
+                  забанить автора
+                </button>
+              </form>
             </div>
           </div>
         {% endfor %}
