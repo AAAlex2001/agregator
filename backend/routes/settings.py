@@ -134,3 +134,24 @@ async def upload_license_file(
     service = SettingsService(db)
     user = await service.replace_license_file(user_id, file)
     return service.to_response(user)
+
+
+@router.post("/settings/company-card", response_model=UserSettingsResponse)
+async def upload_company_card(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = SettingsService(db)
+    user = await service.replace_company_card(user_id, file)
+    return service.to_response(user)
+
+
+@router.delete("/settings/company-card", response_model=UserSettingsResponse)
+async def delete_company_card(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    service = SettingsService(db)
+    user = await service.clear_company_card(user_id)
+    return service.to_response(user)

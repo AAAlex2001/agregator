@@ -61,6 +61,7 @@ class User(Base):
     license_rental_kind = Column(String(20), nullable=True)
     license_rental_percent = Column(Numeric(5, 2), nullable=True)
     license_rental_fixed_amount = Column(BigInteger, nullable=True)
+    company_card_url = Column(String(500), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 

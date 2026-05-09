@@ -13,6 +13,7 @@ from schemas.settings import (
     UpdateLicenseHolderRequest,
     UserSettingsResponse,
 )
+from services.company_card_storage import remove_company_card, save_company_card
 from services.license_storage import remove_license_file, save_license_file
 from utils.passwords import hash_password
 
@@ -128,7 +129,7 @@ class SettingsService:
         return user
 
     async def update_license_holder(self, user_id: int, data: UpdateLicenseHolderRequest) -> User:
-        user = await self._require_license_holder(user_id)
+        user = await self.require_license_holder(user_id)
         user.license_number = data.license_number
         user.license_areas = data.license_areas
         user.license_rental_kind = data.license_rental_kind.value
@@ -142,7 +143,7 @@ class SettingsService:
         return user
 
     async def replace_license_file(self, user_id: int, file: UploadFile) -> User:
-        user = await self._require_license_holder(user_id)
+        user = await self.require_license_holder(user_id)
         owner_key = user.inn or user.public_id
         new_url = await save_license_file(owner_key, file)
 
@@ -158,7 +159,33 @@ class SettingsService:
             remove_license_file(previous_url)
         return user
 
-    async def _require_license_holder(self, user_id: int) -> User:
+    async def replace_company_card(self, user_id: int, file: UploadFile) -> User:
+        user = await self.require_license_holder(user_id)
+        owner_key = user.inn or user.public_id
+        new_url = await save_company_card(owner_key, file)
+
+        previous_url = user.company_card_url
+        user.company_card_url = new_url
+        try:
+            await self.db.flush()
+        except Exception:
+            remove_company_card(new_url)
+            raise
+
+        if previous_url and previous_url != new_url:
+            remove_company_card(previous_url)
+        return user
+
+    async def clear_company_card(self, user_id: int) -> User:
+        user = await self.require_license_holder(user_id)
+        previous_url = user.company_card_url
+        user.company_card_url = None
+        await self.db.flush()
+        if previous_url:
+            remove_company_card(previous_url)
+        return user
+
+    async def require_license_holder(self, user_id: int) -> User:
         user = await self.get_user_or_404(user_id)
         if user.role != UserRole.LICENSE_HOLDER:
             raise HTTPException(
@@ -192,4 +219,5 @@ class SettingsService:
                 float(user.license_rental_percent) if user.license_rental_percent is not None else None
             ),
             license_rental_fixed_amount=user.license_rental_fixed_amount,
+            company_card_url=user.company_card_url,
         )

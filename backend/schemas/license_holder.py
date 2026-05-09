@@ -15,6 +15,7 @@ class LicenseHolderListItem(BaseModel):
     license_rental_kind: Optional[str] = None
     license_rental_percent: Optional[float] = None
     license_rental_fixed_amount: Optional[int] = None
+    company_card_url: Optional[str] = None
 
     class Config:
         from_attributes = True
