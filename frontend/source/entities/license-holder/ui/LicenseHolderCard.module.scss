@@ -145,6 +145,23 @@
   border: 1px dashed #d8d8d8;
 }
 
+.badgeCombo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #e3f2fd;
+  color: #1565c0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
 .rental {
   align-self: flex-start;
   padding: 3px 8px;

@@ -81,6 +81,12 @@
   min-width: 0;
 }
 
+.headerExtra {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+}
+
 .meta {
   font-weight: 500;
   color: #555555;

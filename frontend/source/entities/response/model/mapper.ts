@@ -81,6 +81,19 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     previousTechSpecFiles: item.previous_response_files
       ? resolveFileUrls(item.previous_response_files)
       : null,
+    previousOrderTitle: item.order_previous_title ?? null,
+    previousOrderComment: item.order_previous_comment ?? null,
+    previousOrderSum: item.order_previous_sum ?? null,
+    previousOrderDate: item.order_previous_date ?? null,
+    previousOrderTechSpecFiles: item.order_previous_technical_files
+      ? resolveFileUrls(item.order_previous_technical_files)
+      : null,
+    previousOrderBadges: item.order_previous_badges
+      ? item.order_previous_badges.map((b): ResponseBadge => ({
+          text: b.text,
+          variant: BADGE_MAP[b.variant.toLowerCase()] ?? "blue",
+        }))
+      : null,
     costEstimate: costEstimateWithVat,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",

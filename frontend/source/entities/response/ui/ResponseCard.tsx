@@ -62,7 +62,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
   const rightItems = [
     {
       label: "Начальная максимальная цена",
-      value: card.orderSum || "Не установлена",
+      value: <DiffValue previous={card.previousOrderSum} current={card.orderSum || "Не установлена"} />,
       valueAccent: true,
     },
     {
@@ -91,7 +91,11 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
         <CommentSection title={card.commentTitle} text={card.commentText} previous={card.previousComment} />
       )}
       {showOrderComment && card.orderComment && (
-        <CommentSection title="Комментарий заказчика:" text={card.orderComment} />
+        <CommentSection
+          title="Комментарий заказчика:"
+          text={card.orderComment}
+          previous={card.previousOrderComment}
+        />
       )}
       {card.rawStatus === "REJECTED" && card.rejectionReason && (
         <CommentSection title="Причина отказа:" text={card.rejectionReason} variant="danger" />
@@ -100,7 +104,11 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
         <TechSpecFiles title="Файлы отклика:" files={card.techSpecFiles} previousFiles={card.previousTechSpecFiles} />
       )}
       {card.orderTechSpecFiles.length > 0 && (
-        <TechSpecFiles title="Техническое задание:" files={card.orderTechSpecFiles} />
+        <TechSpecFiles
+          title="Техническое задание:"
+          files={card.orderTechSpecFiles}
+          previousFiles={card.previousOrderTechSpecFiles}
+        />
       )}
       {showReminder && card.reminderText && (
         <ReminderSection text={card.reminderText} />
@@ -140,26 +148,26 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
   );
 
   return (
-    <div className={s.cardWrap}>
-      <ListCard
-        meta={`№ ${card.orderId}`}
-        statusText={card.status}
-        statusColor={card.statusColor}
-        statusBg={card.statusBg}
-        titleLabel="Название заказа:"
-        title={card.orderTitle}
-        bottomLeftCustom={bottomLeft}
-        rightItems={rightItems}
-        onClick={onClick}
-        actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}
-        details={details}
-        leftExtra={<RequirementsBadges badges={card.badges} />}
-      />
-      {card.statusMessage && (
-        <span className={s.selectionBlinkCorner} role="status" aria-live="polite">
-          {card.statusMessage}
-        </span>
-      )}
-    </div>
+    <ListCard
+      meta={`№ ${card.orderId}`}
+      statusText={card.status}
+      statusColor={card.statusColor}
+      statusBg={card.statusBg}
+      titleLabel="Название заказа:"
+      title={<DiffValue previous={card.previousOrderTitle} current={card.orderTitle} />}
+      bottomLeftCustom={bottomLeft}
+      rightItems={rightItems}
+      onClick={onClick}
+      actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}
+      details={details}
+      leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousOrderBadges} />}
+      headerExtra={
+        card.statusMessage ? (
+          <span className={s.selectionBlinkInline} role="status" aria-live="polite">
+            {card.statusMessage}
+          </span>
+        ) : undefined
+      }
+    />
   );
 }

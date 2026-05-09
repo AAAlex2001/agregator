@@ -171,6 +171,32 @@ def to_item(
             if isinstance(entity.previous_technical_files, list)
             else None
         ),
+        order_previous_title=(
+            None if is_finalized or order is None else order.previous_title
+        ),
+        order_previous_comment=(
+            None if is_finalized or order is None else order.previous_comment
+        ),
+        order_previous_sum=(
+            None if is_finalized or order is None or order.previous_sum_amount is None
+            else format_sum(order.previous_sum_amount)
+        ),
+        order_previous_date=(
+            None if is_finalized or order is None or order.previous_deadline is None
+            else order.previous_deadline.strftime("%d.%m.%Y")
+        ),
+        order_previous_technical_files=(
+            None if is_finalized or order is None
+            else list(order.previous_technical_files)
+            if isinstance(order.previous_technical_files, list)
+            else None
+        ),
+        order_previous_badges=(
+            None if is_finalized or order is None
+            else list(order.previous_badges)
+            if isinstance(order.previous_badges, list)
+            else None
+        ),
         expert_name=expert_name,
         expert_avatar_url=expert_avatar_url,
         expert_rating=expert_rating,

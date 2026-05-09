@@ -25,6 +25,8 @@ export interface ListCardProps {
   actions?: ReactNode;
   /** Контент в левой колонке между заголовком и bottomLeft (бейджи, статус-сообщение). */
   leftExtra?: ReactNode;
+  /** Контент в правом конце шапки (рядом с meta + statusBadge). */
+  headerExtra?: ReactNode;
   /** Раскрывающаяся зона деталей под двумя колонками (комментарии, файлы, вопросы). */
   details?: ReactNode;
   /** Метка кнопки раскрытия деталей. */
@@ -47,6 +49,7 @@ export function ListCard({
   onClick,
   actions,
   leftExtra,
+  headerExtra,
   details,
   detailsLabel = "Подробнее",
   detailsOpenByDefault = false,
@@ -63,7 +66,7 @@ export function ListCard({
     >
       <div className={s.body}>
         <div className={s.left}>
-          {(meta || statusText) && (
+          {(meta || statusText || headerExtra) && (
             <div className={s.headRow}>
               {meta && <span className={s.meta}>{meta}</span>}
               {meta && statusText && <span className={s.divider} aria-hidden="true">|</span>}
@@ -75,6 +78,7 @@ export function ListCard({
                   {statusText}
                 </span>
               )}
+              {headerExtra && <span className={s.headerExtra}>{headerExtra}</span>}
             </div>
           )}
           <div className={s.titleBlock}>

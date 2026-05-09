@@ -77,6 +77,12 @@ class ExpertResponseItem(BaseModel):
     previous_proposed_deadline: str | None = None
     previous_vat_kind: VatKind | None = None
     previous_response_files: list[str] | None = None
+    order_previous_title: str | None = None
+    order_previous_comment: str | None = None
+    order_previous_sum: str | None = None
+    order_previous_date: str | None = None
+    order_previous_technical_files: list[str] | None = None
+    order_previous_badges: list[dict[str, str]] | None = None
     expert_name: str = ""
     expert_avatar_url: str | None = None
     expert_rating: float | None = None

@@ -52,6 +52,12 @@ export interface ResponseApiItem {
   previous_proposed_deadline?: string | null;
   previous_vat_kind?: VatKind | null;
   previous_response_files?: string[] | null;
+  order_previous_title?: string | null;
+  order_previous_comment?: string | null;
+  order_previous_sum?: string | null;
+  order_previous_date?: string | null;
+  order_previous_technical_files?: string[] | null;
+  order_previous_badges?: ResponseApiBadge[] | null;
   expert_name: string;
   expert_avatar_url: string | null;
   expert_rating: number | null;
@@ -97,6 +103,12 @@ export interface ResponseCardData {
   previousCostEstimate: string | null;
   previousComment: string | null;
   previousTechSpecFiles: string[] | null;
+  previousOrderTitle: string | null;
+  previousOrderComment: string | null;
+  previousOrderSum: string | null;
+  previousOrderDate: string | null;
+  previousOrderTechSpecFiles: string[] | null;
+  previousOrderBadges: ResponseBadge[] | null;
   costEstimate: string;
   commentTitle: string;
   commentText: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { TypeBadge, TYPES, type ExpertiseType } from "@/source/entities/expertise";
+import { TypeBadge, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import {
   getFileDisplayName,
@@ -67,6 +67,34 @@ function buildFileItems(
   ];
 }
 
+function KlTpSlot({ types }: { types: ExpertiseType[] }) {
+  if (types.includes("КЛ/ТП")) {
+    return (
+      <div className={s.badgeSlot}>
+        <TypeBadge type="КЛ/ТП" active />
+      </div>
+    );
+  }
+  const hasKl = types.includes("КЛ");
+  const hasTp = types.includes("ТП");
+  if (!hasKl && !hasTp) {
+    return (
+      <div className={s.badgeSlot}>
+        <span className={s.badgeMissing}>—/—</span>
+      </div>
+    );
+  }
+  return (
+    <div className={s.badgeSlot}>
+      <span className={s.badgeCombo}>
+        {hasKl ? "КЛ" : "—"}
+        {"/"}
+        {hasTp ? "ТП" : "—"}
+      </span>
+    </div>
+  );
+}
+
 interface FieldProps {
   label: string;
   children: ReactNode;
@@ -124,14 +152,16 @@ export function LicenseHolderCard({ item }: Props) {
       </div>
 
       <div className={s.badges}>
-        {TYPES.map((t) => {
-          const has = types.includes(t);
-          return (
-            <div key={t} className={s.badgeSlot}>
-              {has ? <TypeBadge type={t} active /> : <span className={s.badgeMissing}>—</span>}
-            </div>
-          );
-        })}
+        <KlTpSlot types={types} />
+        {(["ЗС", "ТУ", "Д", "ОБ"] as const).map((t) => (
+          <div key={t} className={s.badgeSlot}>
+            {types.includes(t) ? (
+              <TypeBadge type={t} active />
+            ) : (
+              <span className={s.badgeMissing}>—</span>
+            )}
+          </div>
+        ))}
       </div>
 
       {open && (
