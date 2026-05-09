@@ -6,7 +6,7 @@ import s from "./TechSpecFiles.module.scss";
 interface Props {
   title: string;
   files: string[];
-  /** Если передано и отличается от files — выводим пометку «Файлы изменены». */
+  /** Если передано и отличается от files — выводим пометку «Файлы изменены» 123. */
   previousFiles?: string[] | null;
 }
 
