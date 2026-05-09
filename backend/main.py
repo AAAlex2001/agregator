@@ -47,6 +47,7 @@ app.include_router(landing.router, prefix="/api")
 app.include_router(question.router, prefix="/api")
 app.include_router(support.router, prefix="/api")
 app.include_router(license_holder.router, prefix="/api")
+app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
 os.makedirs("uploads", exist_ok=True)

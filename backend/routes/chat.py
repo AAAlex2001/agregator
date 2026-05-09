@@ -9,20 +9,28 @@ from schemas.chat import (
     ChatMessageResponse,
     ChatOpenRequest,
     ChatPresenceResponse,
+    ExpertRoomHistoryResponse,
+    ExpertRoomMessageOut,
+    SendExpertRoomMessageRequest,
 )
 from services.chats import (
     ChatFileStorage,
     ChatInAppNotifier,
     ChatRepository,
     ChatValidator,
+    ExpertRoomRepository,
+    ExpertRoomValidator,
     GetChatByUuidUseCase,
     GetChatDetailUseCase,
     ListChatsUseCase,
+    ListExpertRoomMessagesUseCase,
     MarkMessagesReadUseCase,
     OpenChatUseCase,
+    SendExpertRoomMessageUseCase,
     SendMessageUseCase,
     BlockChatUseCase,
     UnblockChatUseCase,
+    expert_room_rate_limiter,
 )
 from services.email import (
     EmailDispatcher,
@@ -36,6 +44,23 @@ from services.notifications import (
 from ws.manager import chat_manager
 
 router = APIRouter(prefix="/chats", tags=["chats"])
+expert_room_router = APIRouter(prefix="/expert-room", tags=["expert-room"])
+
+
+def build_list_expert_room_messages(
+    db: AsyncSession = Depends(get_db),
+) -> ListExpertRoomMessagesUseCase:
+    repo = ExpertRoomRepository(db)
+    return ListExpertRoomMessagesUseCase(repo, ExpertRoomValidator(repo))
+
+
+def build_send_expert_room_message(
+    db: AsyncSession = Depends(get_db),
+) -> SendExpertRoomMessageUseCase:
+    repo = ExpertRoomRepository(db)
+    return SendExpertRoomMessageUseCase(
+        repo, ExpertRoomValidator(repo), expert_room_rate_limiter
+    )
 
 
 def build_repo(db: AsyncSession) -> ChatRepository:
@@ -208,3 +233,22 @@ async def send_message(
         {"event": "chat_message", "data": message.model_dump(mode="json")},
     )
     return message
+
+
+@expert_room_router.get("/messages", response_model=ExpertRoomHistoryResponse)
+async def list_expert_room_messages(
+    before_id: int | None = Query(None, ge=1),
+    limit: int = Query(50, ge=1, le=100),
+    user_id: int = Depends(get_current_user),
+    use_case: ListExpertRoomMessagesUseCase = Depends(build_list_expert_room_messages),
+):
+    return await use_case.execute(user_id, before_id, limit)
+
+
+@expert_room_router.post("/messages", response_model=ExpertRoomMessageOut)
+async def send_expert_room_message(
+    payload: SendExpertRoomMessageRequest,
+    user_id: int = Depends(get_current_user),
+    use_case: SendExpertRoomMessageUseCase = Depends(build_send_expert_room_message),
+):
+    return await use_case.execute(user_id, payload.text)

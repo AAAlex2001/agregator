@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -7,6 +8,13 @@ from sqlalchemy import or_, select
 from database.database import AsyncSessionLocal
 from models.chat import Chat
 from models.session import Session
+from schemas.chat import ExpertRoomTypingPayload, WsExpertRoomTyping
+from services.chats import (
+    AuthenticateExpertRoomWsUseCase,
+    ExpertRoomRepository,
+    WsCloseError,
+)
+from ws.expert_room_manager import expert_room_manager
 from ws.manager import chat_manager
 
 router = APIRouter(prefix="/ws")
@@ -73,3 +81,34 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
             "event": "chat_presence",
             "data": {"online_user_ids": chat_manager.get_online_user_ids(chat_id)},
         })
+
+
+@router.websocket("/expert-room")
+async def expert_room_websocket(websocket: WebSocket) -> None:
+    async with AsyncSessionLocal() as db:
+        try:
+            info = await AuthenticateExpertRoomWsUseCase(
+                ExpertRoomRepository(db)
+            ).execute(websocket.cookies.get("session_id"))
+        except WsCloseError as exc:
+            await websocket.close(code=exc.code)
+            return
+
+    typing_event = WsExpertRoomTyping(
+        data=ExpertRoomTypingPayload(user_id=info.user_id, user_name=info.display_name)
+    )
+
+    await expert_room_manager.connect(websocket, info.user_id, info.display_name)
+    try:
+        while True:
+            raw = await websocket.receive_text()
+            try:
+                payload = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict) and payload.get("type") == "typing":
+                await expert_room_manager.broadcast(typing_event, except_ws=websocket)
+    except WebSocketDisconnect:
+        pass
+    finally:
+        expert_room_manager.disconnect(websocket)

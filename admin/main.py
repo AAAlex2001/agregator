@@ -23,6 +23,7 @@ from models import (
     SubscriptionKind, SubscriptionStatus,
     SupportTicket, SupportTicketMessage, TicketCategory, TicketMessageAuthor, TicketStatus,
     Notification, NotificationType,
+    ExpertRoomMessage, ExpertRoomBan,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -1591,6 +1592,77 @@ class SupportTicketMessageAdmin(ModelView, model=SupportTicketMessage):
     }
 
 
+class ExpertRoomMessageAdmin(ModelView, model=ExpertRoomMessage):
+    name = "Сообщение чата экспертов"
+    name_plural = "Чат экспертов: сообщения"
+    icon = "fa-solid fa-comments"
+    category = "Чат экспертов"
+
+    can_create = False
+    can_edit = False
+    can_delete = True
+
+    column_list = [
+        ExpertRoomMessage.id,
+        ExpertRoomMessage.sender,
+        ExpertRoomMessage.text,
+        ExpertRoomMessage.created_at,
+    ]
+    column_default_sort = (ExpertRoomMessage.id, True)
+    column_sortable_list = [ExpertRoomMessage.id, ExpertRoomMessage.created_at]
+    column_searchable_list = [ExpertRoomMessage.text]
+
+    column_details_list = [
+        ExpertRoomMessage.id,
+        ExpertRoomMessage.sender,
+        ExpertRoomMessage.text,
+        ExpertRoomMessage.created_at,
+    ]
+
+    column_labels = {
+        ExpertRoomMessage.id: "ID",
+        ExpertRoomMessage.sender: "Автор",
+        ExpertRoomMessage.text: "Текст",
+        ExpertRoomMessage.created_at: "Отправлено",
+    }
+
+
+class ExpertRoomBanAdmin(ModelView, model=ExpertRoomBan):
+    name = "Бан в чате экспертов"
+    name_plural = "Чат экспертов: баны"
+    icon = "fa-solid fa-ban"
+    category = "Чат экспертов"
+
+    can_create = True
+    can_edit = True
+    can_delete = True
+
+    column_list = [
+        ExpertRoomBan.id,
+        ExpertRoomBan.user,
+        ExpertRoomBan.reason,
+        ExpertRoomBan.created_at,
+    ]
+    column_default_sort = (ExpertRoomBan.id, True)
+    column_sortable_list = [ExpertRoomBan.id, ExpertRoomBan.created_at]
+
+    form_columns = [ExpertRoomBan.user, ExpertRoomBan.reason]
+
+    column_details_list = [
+        ExpertRoomBan.id,
+        ExpertRoomBan.user,
+        ExpertRoomBan.reason,
+        ExpertRoomBan.created_at,
+    ]
+
+    column_labels = {
+        ExpertRoomBan.id: "ID",
+        ExpertRoomBan.user: "Эксперт",
+        ExpertRoomBan.reason: "Причина (видна юзеру)",
+        ExpertRoomBan.created_at: "Создан",
+    }
+
+
 # --- Регистрация вьюшек ---
 admin.add_view(UserAdmin)
 admin.add_view(OrderAdmin)
@@ -1615,3 +1687,5 @@ admin.add_view(LandingPricingContentAdmin)
 
 admin.add_view(SupportTicketAdmin)
 admin.add_view(SupportTicketMessageAdmin)
+admin.add_view(ExpertRoomMessageAdmin)
+admin.add_view(ExpertRoomBanAdmin)

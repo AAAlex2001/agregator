@@ -1,6 +1,10 @@
 from datetime import datetime
+from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from models.chat import ExpertRoomMessage
+from services.email.formatting import full_name
 
 
 class ChatAttachmentResponse(BaseModel):
@@ -86,3 +90,51 @@ class ChatPresenceResponse(BaseModel):
     chat_id: int
     online_user_ids: list[int]
     both_online: bool
+
+
+class ExpertRoomMessageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    sender_id: int
+    sender_name: str
+    sender_avatar_url: str | None
+    text: str
+    created_at: datetime
+
+    @classmethod
+    def from_db(cls, message: ExpertRoomMessage) -> "ExpertRoomMessageOut":
+        sender = message.sender
+        name = full_name(sender) or (sender.email if sender else None) or f"id:{message.sender_id}"
+        return cls(
+            id=message.id,
+            sender_id=message.sender_id,
+            sender_name=name,
+            sender_avatar_url=sender.avatar_url if sender else None,
+            text=message.text,
+            created_at=message.created_at,
+        )
+
+
+class ExpertRoomHistoryResponse(BaseModel):
+    items: list[ExpertRoomMessageOut]
+    has_more: bool
+
+
+class SendExpertRoomMessageRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=2000)
+
+
+class ExpertRoomTypingPayload(BaseModel):
+    user_id: int
+    user_name: str
+
+
+class WsExpertRoomMessage(BaseModel):
+    event: Literal["expert_room_message"] = "expert_room_message"
+    data: ExpertRoomMessageOut
+
+
+class WsExpertRoomTyping(BaseModel):
+    event: Literal["expert_room_typing"] = "expert_room_typing"
+    data: ExpertRoomTypingPayload

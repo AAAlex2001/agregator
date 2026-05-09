@@ -56,3 +56,45 @@ class ChatMessage(Base):
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User", back_populates="chat_messages")
+
+
+class ExpertRoomMessage(Base):
+    __tablename__ = "expert_room_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    text = Column(String(2000), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+        index=True,
+    )
+
+    sender = relationship("User")
+
+
+class ExpertRoomBan(Base):
+    __tablename__ = "expert_room_bans"
+    __table_args__ = (UniqueConstraint("user_id", name="uq_expert_room_bans_user"),)
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    reason = Column(String(500), nullable=False, default="", server_default="")
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    user = relationship("User")
