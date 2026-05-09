@@ -187,6 +187,7 @@ class LandingService:
                 reviewer=row.reviewer,
                 position=row.reviewer_position,
                 text=row.text,
+                created_at=row.created_at,
             )
             for row in rows
         ]

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { OrderCard, mapApiToOrderCard } from "@/source/entities/order";
+import { OrderCard, OrderCardSkeleton, mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { CommentSection, TechSpecFiles } from "@/source/entities/response";
 import { Loader } from "@/shared/ui";
@@ -100,8 +100,10 @@ export function PublicOrdersWidget() {
       </div>
 
       {isLoading && (
-        <div className={s.center}>
-          <Loader label="" size="md" />
+        <div className={s.list}>
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <OrderCardSkeleton key={idx} showActions={false} />
+          ))}
         </div>
       )}
 

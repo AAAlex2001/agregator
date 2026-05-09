@@ -227,7 +227,7 @@ export function Sidebar() {
         className={`${s.sidebar} ${visualCollapsed ? s.collapsed : ""} ${mobile.isOpen ? s.mobileOpen : ""}`.trim()}
         aria-label="Главное меню"
       >
-        <Link href="/settings" className={s.logo} aria-label="На главную" onClick={mobile.close}>
+        <Link href="/landing" className={s.logo} aria-label="На главную" onClick={mobile.close}>
           {visualCollapsed ? <LogoMarkIcon /> : <LogoIcon />}
         </Link>
 

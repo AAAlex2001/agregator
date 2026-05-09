@@ -74,7 +74,7 @@ const Reviews = ({ reviews, title, subtitle }: ReviewsProps) => {
         </Swiper>
       </div>
 
-      <Button href="/register" variant="secondary" className={s.checkButton}>
+      <Button href="/reviews" variant="secondary" className={s.checkButton}>
         Смотреть все отзывы
       </Button>
 

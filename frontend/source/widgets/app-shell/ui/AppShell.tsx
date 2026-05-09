@@ -8,6 +8,7 @@ interface AppShellProps {
 }
 
 const SIDEBAR_ROUTES = [
+  /^\/landing(?:\/.*)?$/,
   /^\/customer\/orders(?:\/.*)?$/,
   /^\/expert\/orders(?:\/.*)?$/,
   /^\/expert\/reviews(?:\/.*)?$/,

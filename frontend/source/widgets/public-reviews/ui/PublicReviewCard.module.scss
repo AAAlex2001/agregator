@@ -1,0 +1,66 @@
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: #808080;
+}
+
+.ratingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ratingValue {
+  margin-left: 4px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quote {
+  margin: 0;
+  padding: 0;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1a1a1a;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  @media (min-width: 768px) {
+    font-size: 17px;
+    line-height: 26px;
+  }
+}
+
+.quoteMark {
+  display: inline-block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 700;
+  color: #ff8a00;
+  line-height: 1;
+  vertical-align: -3px;
+}
+
+.quoteMark:first-child {
+  margin-right: 4px;
+}
+
+.quoteMark:last-child {
+  margin-left: 4px;
+}

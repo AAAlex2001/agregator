@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
   title: "Актуальные заявки | Ресурс Плюс",
@@ -17,6 +18,10 @@ export const metadata: Metadata = {
 export default function PublicOrdersPage() {
   return (
     <>
+      <RedirectIfAuthed
+        to={{ EXPERT: "/expert/orders", CUSTOMER: "/customer/orders" }}
+        fallback="/landing"
+      />
       <LandingHeader />
       <PublicOrdersWidget />
       <LandingFooter variant="light" />

@@ -10,11 +10,13 @@ import s from "./burgerMenu.module.scss";
 const NAV_LINKS = [
   { href: "#how-it-works", label: "Как это работает" },
   { href: "#advantages", label: "Преимущества" },
-  { href: "#reviews", label: "Отзывы" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
-const NAV_PAGES = [{ href: "/orders", label: "Заявки" }] as const;
+const NAV_PAGES = [
+  { href: "/orders", label: "Заявки" },
+  { href: "/reviews", label: "Отзывы" },
+] as const;
 
 const BurgerMenu = () => {
   const [isOpen, setIsOpen] = useState(false);

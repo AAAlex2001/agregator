@@ -63,7 +63,6 @@ export function ReviewCard({
               {[1, 2, 3, 4, 5].map((star) => (
                 <StarIcon key={star} filled={star <= rating} width={20} height={20} />
               ))}
-              <span className={s.ratingValue}>{rating} / 5</span>
             </div>
           </div>
           {comment && (

@@ -1,0 +1,72 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { fetchPublicReviews, type LandingReview } from "@/source/entities/landing-review";
+import { EmptyStateCard } from "@/source/shared/ui";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { useNotifications } from "@/source/shared/ui/Notifications";
+import { PublicReviewCard } from "./PublicReviewCard";
+import { PublicReviewsSkeleton } from "./PublicReviewsSkeleton";
+import s from "./PublicReviewsWidget.module.scss";
+
+export function PublicReviewsWidget() {
+  const { showError } = useNotifications();
+  const [items, setItems] = useState<LandingReview[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    fetchPublicReviews()
+      .then((data) => {
+        if (cancelled) return;
+        setItems(data);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        showError(error instanceof Error ? error.message : "Не удалось загрузить отзывы");
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className={s.wrapper}>
+      <div className={s.pageHead}>
+        <Title text="Отзывы" as="h1" className={s.pageTitle} />
+        <Subtitle
+          text="Что говорят о нас компании, которые уже работали на платформе"
+          className={s.pageSubtitle}
+        />
+      </div>
+
+      {isLoading ? (
+        <PublicReviewsSkeleton />
+      ) : items.length === 0 ? (
+        <div className={s.emptyState}>
+          <EmptyStateCard
+            title="Отзывов пока нет"
+            subtitle="Совсем скоро здесь появятся первые отзывы от наших клиентов"
+          />
+        </div>
+      ) : (
+        <div className={s.list}>
+          {items.map((review) => (
+            <PublicReviewCard
+              key={review.id}
+              text={review.text}
+              reviewer={review.reviewer}
+              position={review.position}
+              createdAt={review.created_at}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

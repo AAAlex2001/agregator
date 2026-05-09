@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
@@ -65,6 +66,7 @@ class LandingReviewDto(BaseModel):
     reviewer: str
     position: str
     text: str
+    created_at: datetime
 
 
 class LandingFaqItemDto(BaseModel):

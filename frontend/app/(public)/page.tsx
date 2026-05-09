@@ -17,6 +17,7 @@ import {
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
 import { fetchPricingPlans } from "@/source/features/pricing/subscribe";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
 	title: "Промышленная безопасность — платформа экспертов и заказов",
@@ -48,6 +49,7 @@ export default async function LandingPage() {
 
 	return (
 		<>
+			<RedirectIfAuthed to="/landing" />
 			<LandingHeader />
 			<div className={styles.page}>
 				<main>

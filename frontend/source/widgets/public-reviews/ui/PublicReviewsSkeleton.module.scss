@@ -1,0 +1,55 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px;
+  width: 100%;
+  max-width: 1340px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+}
+
+.meta {
+  width: 200px;
+  height: 16px;
+}
+
+.title {
+  width: 60%;
+  height: 22px;
+}
+
+.stars {
+  display: flex;
+  gap: 6px;
+}
+
+.star {
+  width: 20px;
+  height: 20px;
+}
+
+.commentLine {
+  width: 100%;
+  height: 16px;
+}
+
+.commentLineShort {
+  width: 80%;
+  height: 16px;
+}
+
+.bottomLine {
+  width: 40%;
+  height: 14px;
+}

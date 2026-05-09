@@ -11,11 +11,13 @@ import s from "./header.module.scss";
 const NAV_LINKS = [
   { anchor: "#how-it-works", label: "Как это работает" },
   { anchor: "#advantages", label: "Преимущества" },
-  { anchor: "#reviews", label: "Отзывы" },
   { anchor: "#faq", label: "FAQ" },
 ] as const;
 
-const NAV_PAGES = [{ href: "/orders", label: "Заявки" }] as const;
+const NAV_PAGES = [
+  { href: "/orders", label: "Заявки" },
+  { href: "/reviews", label: "Отзывы" },
+] as const;
 
 const Header = () => {
   const pathname = usePathname();
