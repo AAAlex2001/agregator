@@ -43,6 +43,15 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     ? `${item.proposed_sum} · ${vatLabel}`
     : item.proposed_sum;
 
+  const previousVatKind = (item.previous_vat_kind ?? null) as VatKind | null;
+  const previousSumStr = item.previous_proposed_sum ?? null;
+  const previousVatLabel = previousVatKind ? VAT_LABEL[previousVatKind] : vatLabel;
+  const previousCostEstimate = previousSumStr
+    ? `${previousSumStr} · ${previousVatLabel}`
+    : previousVatKind && previousVatKind !== vatKind
+      ? `${item.proposed_sum} · ${previousVatLabel}`
+      : null;
+
   return {
     id: item.id,
     orderId: item.order_id,
@@ -67,6 +76,11 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     deadline: item.proposed_deadline,
     previousSum: item.previous_proposed_sum ?? null,
     previousDeadline: item.previous_proposed_deadline ?? null,
+    previousCostEstimate,
+    previousComment: item.previous_comment ?? null,
+    previousTechSpecFiles: item.previous_response_files
+      ? resolveFileUrls(item.previous_response_files)
+      : null,
     costEstimate: costEstimateWithVat,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",

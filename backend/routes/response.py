@@ -90,6 +90,7 @@ def to_item(
     date_source = entity.created_at
     if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
         date_source = entity.updated_at or entity.created_at
+    is_finalized = effective_status == ResponseStatus.COMPLETED
     customer_name = ""
     customer_company = ""
     order_sum = ""
@@ -150,14 +151,24 @@ def to_item(
         created_at=entity.created_at,
         proposed_sum_amount_raw=entity.proposed_sum_amount,
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
+        previous_comment=None if is_finalized else entity.previous_comment,
         previous_proposed_sum=(
-            format_sum(entity.previous_proposed_sum_amount)
+            None if is_finalized
+            else format_sum(entity.previous_proposed_sum_amount)
             if entity.previous_proposed_sum_amount is not None
             else None
         ),
         previous_proposed_deadline=(
-            entity.previous_proposed_deadline.strftime("%d.%m.%Y")
+            None if is_finalized
+            else entity.previous_proposed_deadline.strftime("%d.%m.%Y")
             if entity.previous_proposed_deadline is not None
+            else None
+        ),
+        previous_vat_kind=None if is_finalized else entity.previous_vat_kind,
+        previous_response_files=(
+            None if is_finalized
+            else list(entity.previous_technical_files)
+            if isinstance(entity.previous_technical_files, list)
             else None
         ),
         expert_name=expert_name,

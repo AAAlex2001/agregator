@@ -32,6 +32,7 @@ export { CalendarInput } from "./CalendarInput";
 export { default as CardInput } from "./CardInput";
 export { default as Loader } from "./Loader";
 export { default as Skeleton } from "./Skeleton";
+export { DiffValue } from "./DiffValue";
 export { default as ToolTip } from "./Tooltip";
 export { default as ScrollHintTooltip } from "./Tooltip";
 export { FileGallery } from "./FileGallery";

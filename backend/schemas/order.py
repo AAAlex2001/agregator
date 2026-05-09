@@ -98,6 +98,13 @@ class OrderResponse(BaseModel):
     badges: list[BadgeResponse]
     status: OrderStatus
 
+    previous_title: str | None = None
+    previous_comment: str | None = None
+    previous_sum: str | None = None
+    previous_date: str | None = None
+    previous_technical_files: list[str] | None = None
+    previous_badges: list[BadgeResponse] | None = None
+
     executor_name: str = ""
     executor_avatar_url: str | None = None
     executor_rating: float | None = None
@@ -130,7 +137,14 @@ class OrderResponse(BaseModel):
     ) -> "OrderResponse":
         "Архивная карточка: данные заказа + исполнитель + его отклик + отметка об отзыве."
         base = cls.from_order(order)
-        update: dict = {}
+        update: dict = {
+            "previous_title": None,
+            "previous_comment": None,
+            "previous_sum": None,
+            "previous_date": None,
+            "previous_technical_files": None,
+            "previous_badges": None,
+        }
 
         expert = order.assigned_expert
         if expert is not None:
@@ -171,6 +185,27 @@ class OrderResponse(BaseModel):
             for b in order.badges
         ]
 
+        previous_sum = (
+            cls._format_sum(order.previous_sum_amount)
+            if getattr(order, "previous_sum_amount", None) is not None
+            else None
+        )
+        previous_date = (
+            order.previous_deadline.strftime("%d.%m.%Y")
+            if getattr(order, "previous_deadline", None) is not None
+            else None
+        )
+        previous_files_raw = getattr(order, "previous_technical_files", None)
+        previous_files = list(previous_files_raw) if isinstance(previous_files_raw, list) else None
+
+        previous_badges_raw = getattr(order, "previous_badges", None)
+        previous_badges = (
+            [BadgeResponse(text=b.get("text", ""), variant=b.get("variant", ""))
+             for b in previous_badges_raw]
+            if isinstance(previous_badges_raw, list)
+            else None
+        )
+
         return cls(
             id=order.id,
             public_id=order.public_id,
@@ -188,6 +223,12 @@ class OrderResponse(BaseModel):
             technical_files=order.technical_files or [],
             badges=badges,
             status=order.status,
+            previous_title=getattr(order, "previous_title", None),
+            previous_comment=getattr(order, "previous_comment", None),
+            previous_sum=previous_sum,
+            previous_date=previous_date,
+            previous_technical_files=previous_files,
+            previous_badges=previous_badges,
         )
 
 

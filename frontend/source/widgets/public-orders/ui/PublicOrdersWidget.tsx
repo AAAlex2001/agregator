@@ -130,14 +130,26 @@ export function PublicOrdersWidget() {
                   sum={order.sum}
                   responsesDeadline={order.responsesDeadline}
                   createdAtDisplay={order.createdAtDisplay}
+                  previousTitle={order.previousTitle}
+                  previousSum={order.previousSum}
+                  previousDate={order.previousDeadline}
+                  previousBadges={order.previousBadges}
                   onClick={() => onCardClick(order)}
                   details={hasDetails ? (
                     <>
                       {order.comment && (
-                        <CommentSection title="Комментарий заказчика:" text={order.comment} />
+                        <CommentSection
+                          title="Комментарий заказчика:"
+                          text={order.comment}
+                          previous={order.previousComment}
+                        />
                       )}
                       {order.technicalFiles.length > 0 && (
-                        <TechSpecFiles title="Техническое задание:" files={order.technicalFiles} />
+                        <TechSpecFiles
+                          title="Техническое задание:"
+                          files={order.technicalFiles}
+                          previousFiles={order.previousTechnicalFiles}
+                        />
                       )}
                     </>
                   ) : undefined}

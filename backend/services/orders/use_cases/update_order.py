@@ -36,6 +36,20 @@ class UpdateOrderUseCase:
 
         update_data = data.model_dump(exclude_unset=True)
         badges_data = update_data.pop("badges", None)
+        files_data = update_data.get("technical_files", None)
+
+        if files_data is not None:
+            current_files = list(order.technical_files or [])
+            if list(files_data) != current_files:
+                order.previous_technical_files = current_files
+
+        if badges_data is not None:
+            current_badges = [
+                {"text": b.text, "variant": b.variant.value if hasattr(b.variant, "value") else b.variant}
+                for b in (order.badges or [])
+            ]
+            if [{"text": x["text"], "variant": x["variant"]} for x in badges_data] != current_badges:
+                order.previous_badges = current_badges
 
         self.apply_scalar_updates(order, update_data)
 
@@ -76,9 +90,21 @@ class UpdateOrderUseCase:
             return
         await self.send_updated_email.execute(updated.id, summary)
 
-    @staticmethod
-    def apply_scalar_updates(order: Order, update_data: dict) -> None:
+    PREVIOUS_TRACKED = {
+        "title": "previous_title",
+        "comment": "previous_comment",
+        "sum_amount": "previous_sum_amount",
+        "deadline": "previous_deadline",
+    }
+
+    @classmethod
+    def apply_scalar_updates(cls, order: Order, update_data: dict) -> None:
         for field, value in update_data.items():
+            previous_field = cls.PREVIOUS_TRACKED.get(field)
+            if previous_field is not None:
+                current = getattr(order, field, None)
+                if current != value:
+                    setattr(order, previous_field, current)
             setattr(order, field, value)
 
     async def replace_badges(self, order_id: int, badges_data: list[dict]) -> None:

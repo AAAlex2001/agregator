@@ -48,6 +48,7 @@ class UpdateResponseUseCase:
         snapshot = self.snapshot(response)
 
         self.apply_fields(response, data)
+        self.track_files_change_before(response, keep_files, new_files)
         self.trim_files(response, keep_files)
         await self.repo.flush()
 
@@ -122,13 +123,14 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def apply_fields(response: OrderResponse, data: ResponseCreate) -> None:
-        sum_changed = data.proposed_sum_amount != response.proposed_sum_amount
-        deadline_changed = data.proposed_deadline != response.proposed_deadline
-
-        if sum_changed:
+        if data.proposed_sum_amount != response.proposed_sum_amount:
             response.previous_proposed_sum_amount = response.proposed_sum_amount
-        if deadline_changed:
+        if data.proposed_deadline != response.proposed_deadline:
             response.previous_proposed_deadline = response.proposed_deadline
+        if (data.comment or "") != (response.comment or ""):
+            response.previous_comment = response.comment or ""
+        if data.vat_kind != response.vat_kind:
+            response.previous_vat_kind = response.vat_kind
 
         response.comment = data.comment
         response.proposed_sum_amount = data.proposed_sum_amount
@@ -141,3 +143,15 @@ class UpdateResponseUseCase:
             return
         existing = list(response.technical_files or [])
         response.technical_files = [f for f in existing if f in keep_files]
+
+    @staticmethod
+    def track_files_change_before(
+        response: OrderResponse,
+        keep_files: list[str] | None,
+        new_files: list[UploadFile] | None,
+    ) -> None:
+        existing = list(response.technical_files or [])
+        kept = existing if keep_files is None else [f for f in existing if f in keep_files]
+        will_change = (kept != existing) or bool(new_files)
+        if will_change:
+            response.previous_technical_files = existing

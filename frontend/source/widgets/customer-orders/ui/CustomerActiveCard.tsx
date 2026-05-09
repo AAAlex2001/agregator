@@ -1,6 +1,7 @@
 "use client";
 
 import { ListCard } from "@/source/shared/ui/ListCard";
+import { DiffValue } from "@/source/shared/ui/DiffValue";
 import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
 import { ActionButtons, CommentSection, TechSpecFiles } from "@/source/entities/response";
@@ -40,24 +41,39 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
       statusColor="#0b5723"
       statusBg="#b2dfb6"
       titleLabel="Название заказа"
-      title={card.title}
+      title={<DiffValue previous={card.previousTitle} current={card.title} />}
       bottomLeftLabel="Организатор"
       bottomLeftValue={card.customer || card.company || "—"}
       rightItems={[
-        { label: "Начальная максимальная цена", value: card.sum || "Не установлена", valueAccent: true },
+        {
+          label: "Начальная максимальная цена",
+          value: <DiffValue previous={card.previousSum} current={card.sum || "Не установлена"} />,
+          valueAccent: true,
+        },
         ...(card.createdAtDisplay ? [{ label: "Дата публикации", value: card.createdAtDisplay }] : []),
         { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline) },
-        { label: "Срок выполнения до", value: card.date || "—" },
+        {
+          label: "Срок выполнения до",
+          value: <DiffValue previous={card.previousDeadline} current={card.date || "—"} />,
+        },
       ]}
       actions={<ActionButtons actions={actions} />}
-      leftExtra={<RequirementsBadges badges={card.badges} />}
+      leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousBadges} />}
       details={
         <>
           {card.comment && (
-            <CommentSection title="Комментарий заказчика:" text={card.comment} />
+            <CommentSection
+              title="Комментарий заказчика:"
+              text={card.comment}
+              previous={card.previousComment}
+            />
           )}
           {card.technicalFiles.length > 0 && (
-            <TechSpecFiles title="Техническое задание:" files={card.technicalFiles} />
+            <TechSpecFiles
+              title="Техническое задание:"
+              files={card.technicalFiles}
+              previousFiles={card.previousTechnicalFiles}
+            />
           )}
           <OrderQuestionsBlock
             orderId={card.id}

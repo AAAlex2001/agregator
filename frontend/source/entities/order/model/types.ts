@@ -39,6 +39,12 @@ export interface OrderApiItem {
   executor_files?: string[];
   accepted_response_id?: number | null;
   customer_has_review?: boolean;
+  previous_title?: string | null;
+  previous_comment?: string | null;
+  previous_sum?: string | null;
+  previous_date?: string | null;
+  previous_technical_files?: string[] | null;
+  previous_badges?: OrderApiBadge[] | null;
 }
 
 export interface OrdersApiList {
@@ -76,4 +82,10 @@ export interface OrderCardData {
   executorFiles: string[];
   acceptedResponseId: number | null;
   customerHasReview: boolean;
+  previousTitle: string | null;
+  previousComment: string | null;
+  previousSum: string | null;
+  previousDeadline: string | null;
+  previousTechnicalFiles: string[] | null;
+  previousBadges: Badge[] | null;
 }

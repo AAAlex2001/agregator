@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Modal } from "@/source/shared/ui/Modal";
 import { EmailInput } from "@/source/shared/ui/Inputs";
+import { OtpCodeInput } from "@/source/shared/ui";
 import Button from "@/source/shared/ui/Button";
 import {
   confirmEmailChange,
@@ -19,8 +20,6 @@ interface Props {
   onClose: () => void;
   onChanged: (profile: UserProfile) => void;
 }
-
-const CODE_LENGTH = 6;
 
 export function ChangeEmailModal({ open, currentEmail, onClose, onChanged }: Props) {
   const [step, setStep] = useState<Step>("request");
@@ -106,16 +105,11 @@ export function ChangeEmailModal({ open, currentEmail, onClose, onChanged }: Pro
       ) : (
         <>
           <p className={s.hint}>Код отправлен на {newEmail}</p>
-          <input
-            id="change-email-code"
-            className={s.codeInput}
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={CODE_LENGTH}
+          <OtpCodeInput
             value={code}
-            onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
-            placeholder="Код из письма"
+            onChange={setCode}
+            error={Boolean(error)}
+            autoFocus
           />
           {error ? <p className={s.error}>{error}</p> : null}
 

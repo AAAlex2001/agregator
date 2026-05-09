@@ -63,14 +63,26 @@ export function ExpertOrdersWidget() {
                   sum={o.sum}
                   responsesDeadline={o.responsesDeadline}
                   createdAtDisplay={o.createdAtDisplay}
+                  previousTitle={o.previousTitle}
+                  previousSum={o.previousSum}
+                  previousDate={o.previousDeadline}
+                  previousBadges={o.previousBadges}
                   onClick={() => h.openDetails(o)}
                   details={hasDetails ? (
                     <>
                       {o.comment && (
-                        <CommentSection title="Комментарий заказчика:" text={o.comment} />
+                        <CommentSection
+                          title="Комментарий заказчика:"
+                          text={o.comment}
+                          previous={o.previousComment}
+                        />
                       )}
                       {o.technicalFiles.length > 0 && (
-                        <TechSpecFiles title="Техническое задание:" files={o.technicalFiles} />
+                        <TechSpecFiles
+                          title="Техническое задание:"
+                          files={o.technicalFiles}
+                          previousFiles={o.previousTechnicalFiles}
+                        />
                       )}
                     </>
                   ) : undefined}

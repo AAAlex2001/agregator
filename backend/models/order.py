@@ -56,6 +56,12 @@ class Order(Base):
     technical_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
+    previous_title = Column(String(500), nullable=True)
+    previous_comment = Column(Text, nullable=True)
+    previous_sum_amount = Column(BigInteger, nullable=True)
+    previous_deadline = Column(Date, nullable=True)
+    previous_technical_files = Column(JSON, nullable=True)
+    previous_badges = Column(JSON, nullable=True)
     responses_deadline = Column(DateTime(timezone=True), nullable=True)
     status = Column(
         Enum(OrderStatus),

@@ -1,3 +1,4 @@
+import { DiffValue } from "@/source/shared/ui/DiffValue";
 import s from "./InfoSections.module.scss";
 
 interface TermsProps {
@@ -25,16 +26,20 @@ export function ExpertTerms({ deadlineLabel = "Ваши сроки:", deadline, 
 export function CommentSection({
   title,
   text,
+  previous,
   variant,
 }: {
   title: string;
   text: string;
+  previous?: string | null;
   variant?: "danger";
 }) {
   return (
     <div className={`${s.commentRow} ${variant === "danger" ? s.commentDanger : ""}`.trim()}>
       <span className={s.commentTitle}>{title}</span>
-      <span className={s.commentText}>{text}</span>
+      <span className={s.commentText}>
+        <DiffValue previous={previous ?? null} current={text} />
+      </span>
     </div>
   );
 }

@@ -47,8 +47,11 @@ export interface ResponseApiItem {
   created_at: string;
   proposed_sum_amount_raw: number;
   proposed_deadline_raw: string;
+  previous_comment?: string | null;
   previous_proposed_sum?: string | null;
   previous_proposed_deadline?: string | null;
+  previous_vat_kind?: VatKind | null;
+  previous_response_files?: string[] | null;
   expert_name: string;
   expert_avatar_url: string | null;
   expert_rating: number | null;
@@ -91,6 +94,9 @@ export interface ResponseCardData {
   deadline: string;
   previousSum: string | null;
   previousDeadline: string | null;
+  previousCostEstimate: string | null;
+  previousComment: string | null;
+  previousTechSpecFiles: string[] | null;
   costEstimate: string;
   commentTitle: string;
   commentText: string;

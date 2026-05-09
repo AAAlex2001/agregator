@@ -37,6 +37,7 @@ export { default as LogoMarkIcon } from "./LogoMarkIcon";
 export { default as InfoHintIcon } from "./InfoHintIcon";
 export { default as ChatSearchIcon } from "./ChatSearchIcon";
 export { default as ChatPersonIcon } from "./ChatPersonIcon";
+export { default as ExpertRoomIcon } from "./ExpertRoomIcon";
 export { default as ChatClipIcon } from "./ChatClipIcon";
 export { default as ChatSendIcon } from "./ChatSendIcon";
 export { default as ChatChevronDownIcon } from "./ChatChevronDownIcon";

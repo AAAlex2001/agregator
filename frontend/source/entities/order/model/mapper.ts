@@ -53,5 +53,18 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     executorFiles:       resolveFileUrls(item.executor_files ?? []),
     acceptedResponseId:  item.accepted_response_id ?? null,
     customerHasReview:   item.customer_has_review ?? false,
+    previousTitle:       item.previous_title ?? null,
+    previousComment:     item.previous_comment ?? null,
+    previousSum:         item.previous_sum ? normalizeCurrency(item.previous_sum) : null,
+    previousDeadline:    item.previous_date ?? null,
+    previousTechnicalFiles: item.previous_technical_files
+      ? resolveFileUrls(item.previous_technical_files)
+      : null,
+    previousBadges: item.previous_badges
+      ? item.previous_badges.map((b) => ({
+          text: b.text,
+          variant: VARIANT_MAP[b.variant] ?? "blue",
+        }))
+      : null,
   };
 }

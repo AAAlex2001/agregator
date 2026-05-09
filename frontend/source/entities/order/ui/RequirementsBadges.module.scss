@@ -16,6 +16,18 @@
   gap: 8px;
 }
 
+.previousBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.previousBadge {
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .badge {
   padding: 4px 10px;
   border-radius: 8px;

@@ -82,7 +82,10 @@ class UpdateOrderWithFilesUseCase:
         order: Order,
         uploads: list[UploadFile],
     ) -> Order:
+        existing = list(order.technical_files or [])
         new_paths = await self.files.save(order_id, uploads)
-        order.technical_files = list(order.technical_files or []) + new_paths
+        if new_paths and order.previous_technical_files is None:
+            order.previous_technical_files = existing
+        order.technical_files = existing + new_paths
         await self.repo.flush()
         return await self.get_order.execute(order_id)

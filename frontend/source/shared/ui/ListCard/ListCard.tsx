@@ -15,7 +15,7 @@ export interface ListCardProps {
   statusColor?: string;
   statusBg?: string;
   titleLabel?: string;
-  title: string;
+  title: ReactNode;
   bottomLeftLabel?: string;
   bottomLeftValue?: ReactNode;
   /** Произвольный JSX вместо стандартной пары label+value. Перебивает bottomLeftLabel/Value. */

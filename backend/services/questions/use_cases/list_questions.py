@@ -6,7 +6,7 @@ from services.questions.repository import QuestionRepository
 
 
 class ListQuestionsUseCase:
-    "Список вопросов по заказу. Заказчик видит все, эксперт — только публичные и свои."
+    "Заказчик-владелец видит всё; эксперт — публичные и свои; остальные — только публичные."
 
     def __init__(self, repo: QuestionRepository):
         self.repo = repo
@@ -28,7 +28,4 @@ class ListQuestionsUseCase:
             return await self.repo.list_by_order(order_id)
         if viewer_role == UserRole.EXPERT:
             return await self.repo.list_visible_for_expert(order_id, viewer_id)
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Нет прав на просмотр вопросов по этому заказу",
-        )
+        return await self.repo.list_public_by_order(order_id)

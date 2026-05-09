@@ -5,9 +5,9 @@ import { RequirementsBadges } from "@/source/entities/order";
 import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { ExpertInfo } from "./ExpertInfo";
 import { CommentSection, ReminderSection } from "./InfoSections";
-import { OfferDiff } from "./OfferDiff";
 import { TechSpecFiles } from "./TechSpecFiles";
 import { ActionButtons } from "./ActionButtons";
+import { DiffValue } from "@/source/shared/ui/DiffValue";
 import s from "./ResponseCardBottom.module.scss";
 
 interface Props {
@@ -67,11 +67,11 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     },
     {
       label: isExpert ? "Ваша цена" : "Цена эксперта",
-      value: <OfferDiff previous={card.previousSum} current={card.costEstimate || "—"} />,
+      value: <DiffValue previous={card.previousCostEstimate} current={card.costEstimate || "—"} />,
     },
     {
       label: "Срок выполнения до",
-      value: <OfferDiff previous={card.previousDeadline} current={card.deadline || "—"} />,
+      value: <DiffValue previous={card.previousDeadline} current={card.deadline || "—"} />,
     },
     {
       label: "Дата отклика",
@@ -88,7 +88,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
         />
       )}
       {showComment && card.commentText && (
-        <CommentSection title={card.commentTitle} text={card.commentText} />
+        <CommentSection title={card.commentTitle} text={card.commentText} previous={card.previousComment} />
       )}
       {showOrderComment && card.orderComment && (
         <CommentSection title="Комментарий заказчика:" text={card.orderComment} />
@@ -97,7 +97,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
         <CommentSection title="Причина отказа:" text={card.rejectionReason} variant="danger" />
       )}
       {card.techSpecFiles.length > 0 && (
-        <TechSpecFiles title="Файлы отклика:" files={card.techSpecFiles} />
+        <TechSpecFiles title="Файлы отклика:" files={card.techSpecFiles} previousFiles={card.previousTechSpecFiles} />
       )}
       {card.orderTechSpecFiles.length > 0 && (
         <TechSpecFiles title="Техническое задание:" files={card.orderTechSpecFiles} />
@@ -140,19 +140,26 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
   );
 
   return (
-    <ListCard
-      meta={`№ ${card.orderId}`}
-      statusText={card.status}
-      statusColor={card.statusColor}
-      statusBg={card.statusBg}
-      titleLabel="Название заказа:"
-      title={card.orderTitle}
-      bottomLeftCustom={bottomLeft}
-      rightItems={rightItems}
-      onClick={onClick}
-      actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}
-      details={details}
-      leftExtra={<RequirementsBadges badges={card.badges} />}
-    />
+    <div className={s.cardWrap}>
+      <ListCard
+        meta={`№ ${card.orderId}`}
+        statusText={card.status}
+        statusColor={card.statusColor}
+        statusBg={card.statusBg}
+        titleLabel="Название заказа:"
+        title={card.orderTitle}
+        bottomLeftCustom={bottomLeft}
+        rightItems={rightItems}
+        onClick={onClick}
+        actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}
+        details={details}
+        leftExtra={<RequirementsBadges badges={card.badges} />}
+      />
+      {card.statusMessage && (
+        <span className={s.selectionBlinkCorner} role="status" aria-live="polite">
+          {card.statusMessage}
+        </span>
+      )}
+    </div>
   );
 }

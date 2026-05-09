@@ -8,6 +8,7 @@ import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
+  ExpertRoomIcon,
   LogoIcon,
   LogoMarkIcon,
   LogoutIcon,
@@ -49,7 +50,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат", icon: TabChatIcon },
-        { href: "/expert/room", label: "Чат экспертов", icon: TabChatIcon },
+        { href: "/expert/room", label: "Чат экспертов", icon: ExpertRoomIcon },
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],
