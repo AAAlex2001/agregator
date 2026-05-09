@@ -9,9 +9,9 @@ interface Props {
 }
 
 const PRESETS: Record<Role, { label: string; tone: string; Icon: React.ComponentType<{ size?: number; className?: string }> }> = {
-  CUSTOMER: { label: "Заказчик", tone: "blue", Icon: CustomerIcon },
-  EXPERT: { label: "Эксперт", tone: "orange", Icon: ExpertIcon },
-  LICENSE_HOLDER: { label: "Держатель лицензии", tone: "green", Icon: DiplomaIcon },
+  CUSTOMER: { label: "Вы — заказчик", tone: "blue", Icon: CustomerIcon },
+  EXPERT: { label: "Вы — эксперт", tone: "orange", Icon: ExpertIcon },
+  LICENSE_HOLDER: { label: "Вы — лицензиат", tone: "green", Icon: DiplomaIcon },
 };
 
 function getPreset(role: Props["role"]) {

@@ -90,8 +90,18 @@
   line-height: 14px;
 }
 
-.fileBlock {
+.card .fileBlock {
   gap: 3px;
+}
+
+.card .label {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 14px;
+  color: #808080;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .fileGrid {
