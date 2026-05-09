@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint, UniqueConstraint
+from sqlalchemy import BigInteger, Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -10,9 +10,14 @@ from models.base import Base
 class UserRole(str, PyEnum):
     CUSTOMER = "CUSTOMER"
     EXPERT = "EXPERT"
+    LICENSE_HOLDER = "LICENSE_HOLDER"
 
     def __str__(self):
-        labels = {"CUSTOMER": "Заказчик", "EXPERT": "Эксперт"}
+        labels = {
+            "CUSTOMER": "Заказчик",
+            "EXPERT": "Эксперт",
+            "LICENSE_HOLDER": "Держатель лицензии",
+        }
         return labels.get(self.value, self.value)
 
 
@@ -40,6 +45,12 @@ class User(Base):
     rating = Column(Numeric(2, 1), nullable=True)
     review_count = Column(Integer, default=0, nullable=False)
     notification_unread_count = Column(Integer, default=0, nullable=False, server_default="0")
+    license_number = Column(String(100), nullable=True)
+    license_file_url = Column(String(500), nullable=True)
+    license_areas = Column(JSONB, nullable=True)
+    license_rental_kind = Column(String(20), nullable=True)
+    license_rental_percent = Column(Numeric(5, 2), nullable=True)
+    license_rental_fixed_amount = Column(BigInteger, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
