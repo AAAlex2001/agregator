@@ -44,7 +44,6 @@ export function useProfileForm(profile: UserProfile) {
         first_name: state.firstName,
         last_name: state.lastName,
         phone: toRussianPhoneApiValue(state.phone) || undefined,
-        email: state.email || undefined,
       });
 
       if (avatarFile) {

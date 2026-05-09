@@ -150,6 +150,16 @@ def to_item(
         created_at=entity.created_at,
         proposed_sum_amount_raw=entity.proposed_sum_amount,
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
+        previous_proposed_sum=(
+            format_sum(entity.previous_proposed_sum_amount)
+            if entity.previous_proposed_sum_amount is not None
+            else None
+        ),
+        previous_proposed_deadline=(
+            entity.previous_proposed_deadline.strftime("%d.%m.%Y")
+            if entity.previous_proposed_deadline is not None
+            else None
+        ),
         expert_name=expert_name,
         expert_avatar_url=expert_avatar_url,
         expert_rating=expert_rating,

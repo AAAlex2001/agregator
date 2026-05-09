@@ -21,13 +21,16 @@ export function ExpertRoomWidget() {
   const {
     messages,
     loading,
+    loadingMore,
     error,
     forbidden,
     banReason,
     threadRef,
+    topSentinelRef,
     typingEntries,
     notifyTyping,
     appendMine,
+    handleScroll,
   } = useExpertRoomThread(currentUserId);
 
   const blockedText = banReason
@@ -44,7 +47,9 @@ export function ExpertRoomWidget() {
     <div className={s.card}>
       <RulesBanner />
 
-      <div className={s.thread} ref={threadRef}>
+      <div className={s.thread} ref={threadRef} onScroll={handleScroll}>
+        <div ref={topSentinelRef} aria-hidden="true" />
+        {loadingMore && <div className={s.loadingMore}>Загружаем старые сообщения…</div>}
         {error && messages.length === 0 ? (
           <div className={s.threadLoader}>
             <p className={s.error}>{error}</p>

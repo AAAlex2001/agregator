@@ -122,6 +122,14 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def apply_fields(response: OrderResponse, data: ResponseCreate) -> None:
+        sum_changed = data.proposed_sum_amount != response.proposed_sum_amount
+        deadline_changed = data.proposed_deadline != response.proposed_deadline
+
+        if sum_changed:
+            response.previous_proposed_sum_amount = response.proposed_sum_amount
+        if deadline_changed:
+            response.previous_proposed_deadline = response.proposed_deadline
+
         response.comment = data.comment
         response.proposed_sum_amount = data.proposed_sum_amount
         response.proposed_deadline = data.proposed_deadline

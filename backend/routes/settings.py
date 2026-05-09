@@ -1,18 +1,43 @@
-from fastapi import APIRouter, Depends, File, Response, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Response, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from schemas.settings import (
     ChangePasswordRequest,
+    ConfirmEmailChangeRequest,
+    RequestEmailChangeRequest,
     UpdateEmailPreferencesRequest,
     UpdateLicenseHolderRequest,
     UpdatePersonalDataRequest,
     UserSettingsResponse,
 )
-from services.settings import SettingsService
+from services.settings import (
+    ClearCompanyCardUseCase,
+    ConfirmEmailChangeUseCase,
+    GetProfileUseCase,
+    ReplaceCompanyCardUseCase,
+    ReplaceLicenseFileUseCase,
+    RequestEmailChangeUseCase,
+    SettingsRepository,
+    SettingsValidator,
+    UpdateEmailPreferencesUseCase,
+    UpdateLicenseTermsUseCase,
+    UpdatePasswordUseCase,
+    UpdatePersonalDataUseCase,
+    UploadAvatarUseCase,
+    to_response,
+)
 
 router = APIRouter(tags=["settings"])
+
+
+def build_repo(db: AsyncSession) -> SettingsRepository:
+    return SettingsRepository(db)
+
+
+def build_validator(repo: SettingsRepository) -> SettingsValidator:
+    return SettingsValidator(repo)
 
 
 @router.get("/settings/profile", response_model=UserSettingsResponse)
@@ -21,8 +46,8 @@ async def get_profile(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.get_user_or_404(user_id)
+    repo = build_repo(db)
+    user = await GetProfileUseCase(build_validator(repo)).execute(user_id)
     response.set_cookie(
         key="user_role",
         value=user.role.value,
@@ -30,7 +55,7 @@ async def get_profile(
         samesite="none",
         path="/",
     )
-    return service.to_response(user)
+    return to_response(user)
 
 
 @router.put("/settings/profile", response_model=UserSettingsResponse)
@@ -40,24 +65,8 @@ async def update_profile(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.get_user_or_404(user_id)
-
-    if data.first_name is not None:
-        user.first_name = data.first_name
-    if data.last_name is not None:
-        user.last_name = data.last_name
-    if data.phone is not None:
-        await service.ensure_unique_phone(data.phone, user_id)
-        user.phone = data.phone
-    if data.email is not None:
-        await service.ensure_unique_email(data.email, user_id)
-        user.email = data.email
-    if data.inn is not None:
-        await service.ensure_unique_inn(data.inn, user_id)
-        user.inn = data.inn
-
-    await db.flush()
+    repo = build_repo(db)
+    user = await UpdatePersonalDataUseCase(repo, build_validator(repo)).execute(user_id, data)
     response.set_cookie(
         key="user_role",
         value=user.role.value,
@@ -65,7 +74,7 @@ async def update_profile(
         samesite="none",
         path="/",
     )
-    return service.to_response(user)
+    return to_response(user)
 
 
 @router.put("/settings/email-preferences", response_model=UserSettingsResponse)
@@ -74,13 +83,14 @@ async def update_email_preferences(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
+    repo = build_repo(db)
+    validator = build_validator(repo)
     patch = data.model_dump(exclude_unset=True)
-    service = SettingsService(db)
     if not patch:
-        user = await service.get_user_or_404(user_id)
+        user = await GetProfileUseCase(validator).execute(user_id)
     else:
-        user = await service.update_email_preferences(user_id, patch)
-    return service.to_response(user)
+        user = await UpdateEmailPreferencesUseCase(repo, validator).execute(user_id, patch)
+    return to_response(user)
 
 
 @router.post("/settings/password")
@@ -89,10 +99,34 @@ async def change_password(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    await service.update_password(user_id, data.new_password)
-
+    repo = build_repo(db)
+    await UpdatePasswordUseCase(repo, build_validator(repo)).execute(user_id, data.new_password)
     return {"detail": "Пароль успешно изменён"}
+
+
+@router.post("/settings/email/request-change")
+async def request_email_change(
+    data: RequestEmailChangeRequest,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    repo = build_repo(db)
+    await RequestEmailChangeUseCase(repo, build_validator(repo)).execute(
+        user_id, data.new_email, background_tasks
+    )
+    return {"detail": "Код отправлен на новый адрес"}
+
+
+@router.post("/settings/email/confirm-change", response_model=UserSettingsResponse)
+async def confirm_email_change(
+    data: ConfirmEmailChangeRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    repo = build_repo(db)
+    user = await ConfirmEmailChangeUseCase(repo, build_validator(repo)).execute(user_id, data.code)
+    return to_response(user)
 
 
 @router.post("/settings/avatar", response_model=UserSettingsResponse)
@@ -102,8 +136,8 @@ async def upload_avatar(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.upload_avatar(user_id, file)
+    repo = build_repo(db)
+    user = await UploadAvatarUseCase(repo, build_validator(repo)).execute(user_id, file)
     response.set_cookie(
         key="user_role",
         value=user.role.value,
@@ -111,7 +145,7 @@ async def upload_avatar(
         samesite="none",
         path="/",
     )
-    return service.to_response(user)
+    return to_response(user)
 
 
 @router.put("/settings/license", response_model=UserSettingsResponse)
@@ -120,9 +154,9 @@ async def update_license(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.update_license_holder(user_id, data)
-    return service.to_response(user)
+    repo = build_repo(db)
+    user = await UpdateLicenseTermsUseCase(repo, build_validator(repo)).execute(user_id, data)
+    return to_response(user)
 
 
 @router.post("/settings/license-file", response_model=UserSettingsResponse)
@@ -131,9 +165,9 @@ async def upload_license_file(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.replace_license_file(user_id, file)
-    return service.to_response(user)
+    repo = build_repo(db)
+    user = await ReplaceLicenseFileUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
 
 
 @router.post("/settings/company-card", response_model=UserSettingsResponse)
@@ -142,9 +176,9 @@ async def upload_company_card(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.replace_company_card(user_id, file)
-    return service.to_response(user)
+    repo = build_repo(db)
+    user = await ReplaceCompanyCardUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
 
 
 @router.delete("/settings/company-card", response_model=UserSettingsResponse)
@@ -152,6 +186,6 @@ async def delete_company_card(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = SettingsService(db)
-    user = await service.clear_company_card(user_id)
-    return service.to_response(user)
+    repo = build_repo(db)
+    user = await ClearCompanyCardUseCase(repo, build_validator(repo)).execute(user_id)
+    return to_response(user)

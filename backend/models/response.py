@@ -45,6 +45,8 @@ class OrderResponse(Base):
     comment = Column(Text, nullable=False, default="")
     proposed_sum_amount = Column(BigInteger, nullable=False)
     proposed_deadline = Column(Date, nullable=False)
+    previous_proposed_sum_amount = Column(BigInteger, nullable=True)
+    previous_proposed_deadline = Column(Date, nullable=True)
     technical_files = Column(JSON, nullable=False, default=list)
     expert_confirmed = Column(Boolean, nullable=False, default=False, server_default="false")
     auto_rejected = Column(Boolean, nullable=False, default=False, server_default="false")

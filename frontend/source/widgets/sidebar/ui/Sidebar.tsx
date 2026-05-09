@@ -121,7 +121,13 @@ export function Sidebar() {
     setHoveredKey(null);
   }, [pathname]);
 
-  const toggleCollapsed = () => setCollapsed((prev) => !prev);
+  const toggleCollapsed = () => {
+    if (mobile.isOpen) {
+      mobile.close();
+      return;
+    }
+    setCollapsed((prev) => !prev);
+  };
 
   const handleLogout = async () => {
     try {

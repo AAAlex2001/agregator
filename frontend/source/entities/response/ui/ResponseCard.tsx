@@ -5,6 +5,7 @@ import { RequirementsBadges } from "@/source/entities/order";
 import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { ExpertInfo } from "./ExpertInfo";
 import { CommentSection, ReminderSection } from "./InfoSections";
+import { OfferDiff } from "./OfferDiff";
 import { TechSpecFiles } from "./TechSpecFiles";
 import { ActionButtons } from "./ActionButtons";
 import s from "./ResponseCardBottom.module.scss";
@@ -66,11 +67,11 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     },
     {
       label: isExpert ? "Ваша цена" : "Цена эксперта",
-      value: card.costEstimate || "—",
+      value: <OfferDiff previous={card.previousSum} current={card.costEstimate || "—"} />,
     },
     {
       label: "Срок выполнения до",
-      value: card.deadline || "—",
+      value: <OfferDiff previous={card.previousDeadline} current={card.deadline || "—"} />,
     },
     {
       label: "Дата отклика",

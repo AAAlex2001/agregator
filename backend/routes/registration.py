@@ -16,8 +16,17 @@ from schemas.registration import (
 )
 from services.dadata import DaDataService
 from services.license_storage import remove_license_file, save_license_file
-from services.login import LoginService, SESSION_MAX_DAYS
-from services.registration import RegistrationService
+from services.login import CreateSessionUseCase, LoginRepository, SESSION_MAX_DAYS
+from services.registration import (
+    ConfirmEmailUseCase,
+    RegisterLicenseHolderUseCase,
+    RegisterUserUseCase,
+    RegistrationNotifier,
+    RegistrationRepository,
+    RegistrationValidator,
+    ResendConfirmationUseCase,
+)
+from services.verification import VerificationService
 
 
 router = APIRouter(prefix="/register", tags=["auth"])
@@ -31,15 +40,27 @@ def parse_license_holder_payload(payload: str = Form(...)) -> LicenseHolderRegis
         raise RequestValidationError(exc.errors()) from exc
 
 
+def build_repo(db: AsyncSession) -> RegistrationRepository:
+    return RegistrationRepository(db)
+
+
+def build_validator(repo: RegistrationRepository) -> RegistrationValidator:
+    return RegistrationValidator(repo)
+
+
+def build_notifier(db: AsyncSession) -> RegistrationNotifier:
+    return RegistrationNotifier(VerificationService(db))
+
+
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register_user(
     data: UserRegistration,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
-    service = RegistrationService(db)
-    user = await service.create_user(data)
-    await service.schedule_email_confirmation(user, background_tasks)
+    repo = build_repo(db)
+    user = await RegisterUserUseCase(repo, build_validator(repo)).execute(data)
+    await build_notifier(db).schedule_confirmation_email(user, background_tasks)
     return user
 
 
@@ -49,8 +70,10 @@ async def confirm_email(
     db: AsyncSession = Depends(get_db),
 ):
     "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
-    user = await RegistrationService(db).confirm_email(data.email, data.code, data.role)
-    session = await LoginService(db).create_session(user.id)
+    user = await ConfirmEmailUseCase(build_repo(db), VerificationService(db)).execute(
+        data.email, data.code, data.role
+    )
+    session = await CreateSessionUseCase(LoginRepository(db)).execute(user.id)
 
     response = JSONResponse(content=UserResponse.model_validate(user).model_dump(mode="json"))
     cookie_max_age = 60 * 60 * 24 * SESSION_MAX_DAYS
@@ -81,7 +104,9 @@ async def resend_confirmation_code(
     db: AsyncSession = Depends(get_db),
 ):
     "Повторно отправляет код подтверждения почты — для случая, когда пользователь закрыл вкладку."
-    await RegistrationService(db).resend_confirmation(data.email, background_tasks, data.role)
+    await ResendConfirmationUseCase(build_repo(db), build_notifier(db)).execute(
+        data.email, background_tasks, data.role
+    )
     return {"detail": "Код отправлен повторно"}
 
 
@@ -97,14 +122,16 @@ async def register_license_holder(
     db: AsyncSession = Depends(get_db),
 ):
     file_url = await save_license_file(data.inn, license_file) if license_file else None
+    repo = build_repo(db)
     try:
-        service = RegistrationService(db)
-        user = await service.create_license_holder(data, file_url)
+        user = await RegisterLicenseHolderUseCase(repo, build_validator(repo)).execute(
+            data, file_url
+        )
     except Exception:
         remove_license_file(file_url)
         raise
 
-    await service.schedule_email_confirmation(user, background_tasks)
+    await build_notifier(db).schedule_confirmation_email(user, background_tasks)
     return user
 
 

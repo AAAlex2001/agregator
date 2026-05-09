@@ -4,8 +4,14 @@
   gap: 6px;
 }
 
+.emailMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .verifiedBadge {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -17,4 +23,24 @@
   font-weight: 500;
   font-size: 12px;
   line-height: 14px;
+}
+
+.changeEmailBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff3e0;
+  color: #e65100;
+  border: none;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+
+  &:hover,
+  &:focus-visible {
+    background: #ffe0b2;
+  }
 }

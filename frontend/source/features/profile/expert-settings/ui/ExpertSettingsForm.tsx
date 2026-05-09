@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import {
   ContactFields,
@@ -10,6 +11,7 @@ import {
   useProfileShell,
   type UserProfile,
 } from "@/source/entities/user";
+import { ChangeEmailModal } from "@/source/features/profile/change-email";
 import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
@@ -20,6 +22,7 @@ interface Props {
 export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
   const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit } =
     useProfileShell({ profile, onProfileUpdate });
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
     <>
@@ -48,6 +51,7 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
               emailVerified={profile.email_verified}
               onChangePhone={form.setPhone}
               onChangeEmail={form.setEmail}
+              onRequestEmailChange={() => setEmailModalOpen(true)}
             />
           </div>
         </section>
@@ -66,6 +70,16 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
 
         <SaveBar isSaving={isSaving} />
       </form>
+
+      <ChangeEmailModal
+        open={emailModalOpen}
+        currentEmail={profile.email}
+        onClose={() => setEmailModalOpen(false)}
+        onChanged={(next) => {
+          onProfileUpdate(next);
+          setEmailModalOpen(false);
+        }}
+      />
     </>
   );
 }

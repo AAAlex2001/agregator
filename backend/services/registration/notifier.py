@@ -1,0 +1,32 @@
+from fastapi import BackgroundTasks
+
+from models.user import User
+from services.verification import VerificationService
+
+EMAIL_CONFIRMATION_SUBJECT = "Подтверждение почты на Ресурс-Плюс"
+
+
+class RegistrationNotifier:
+    "Тонкая обёртка над VerificationService для отправки кода подтверждения email."
+
+    def __init__(self, verification: VerificationService):
+        self.verification = verification
+
+    async def schedule_confirmation_email(self, user: User, background_tasks: BackgroundTasks) -> None:
+        if not user.email:
+            return
+        await self.verification.schedule_code_email(
+            user.id,
+            user.email,
+            EMAIL_CONFIRMATION_SUBJECT,
+            background_tasks,
+        )
+
+    async def send_confirmation_email(self, user: User) -> None:
+        if not user.email:
+            return
+        await self.verification.send_code_to_email(
+            user.id,
+            user.email,
+            EMAIL_CONFIRMATION_SUBJECT,
+        )

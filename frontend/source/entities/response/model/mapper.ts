@@ -65,6 +65,8 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     })),
     sum: item.proposed_sum,
     deadline: item.proposed_deadline,
+    previousSum: item.previous_proposed_sum ?? null,
+    previousDeadline: item.previous_proposed_deadline ?? null,
     costEstimate: costEstimateWithVat,
     commentTitle: "Комментарий:",
     commentText: item.comment || "",

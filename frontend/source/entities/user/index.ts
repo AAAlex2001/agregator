@@ -12,6 +12,8 @@ export {
   updateProfile,
   changePassword,
   uploadAvatar,
+  requestEmailChange,
+  confirmEmailChange,
   logout,
 } from "./api/profile.api";
 export { useProfileForm } from "./model/useProfileForm";

@@ -6,24 +6,37 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from schemas.login import (
-    AvailableRoleItem,
-    AvailableRolesResponse,
     SwitchRoleRequest,
     UserLogin,
     UserResponse,
 )
-from services.login import LoginService, SESSION_MAX_DAYS
+from services.login import (
+    AuthenticateUserUseCase,
+    CreateSessionUseCase,
+    ListAvailableRolesUseCase,
+    LoginRepository,
+    LoginValidator,
+    LogoutSessionUseCase,
+    RefreshSessionUseCase,
+    SESSION_MAX_DAYS,
+    SwitchRoleUseCase,
+)
 
 router = APIRouter(prefix="/login", tags=["auth"])
+
+
+def build_repo(db: AsyncSession) -> LoginRepository:
+    return LoginRepository(db)
+
 
 @router.post("/", response_model=UserResponse)
 async def login_user(
     data: UserLogin,
     db: AsyncSession = Depends(get_db),
 ):
-    service = LoginService(db)
-    user = await service.authenticate_user(data)
-    new_session = await service.create_session(user.id)
+    repo = build_repo(db)
+    user = await AuthenticateUserUseCase(repo, LoginValidator()).execute(data)
+    new_session = await CreateSessionUseCase(repo).execute(user.id)
 
     response = JSONResponse(content=UserResponse.model_validate(user).model_dump(mode="json"))
     response.set_cookie(
@@ -51,8 +64,7 @@ async def refresh_session(
     session_id: str = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ):
-    service = LoginService(db)
-    session = await service.refresh_session(session_id)
+    session = await RefreshSessionUseCase(build_repo(db)).execute(session_id)
 
     now = datetime.now(timezone.utc)
     response = JSONResponse(content={"detail": "ok"})
@@ -83,8 +95,7 @@ async def logout_user(
     session_id: str = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ):
-    service = LoginService(db)
-    await service.logout_session(session_id)
+    await LogoutSessionUseCase(build_repo(db)).execute(session_id)
 
     response = JSONResponse(content={"detail": "ok"})
     response.delete_cookie(key="session_id", path="/", secure=True, samesite="none")
@@ -92,19 +103,12 @@ async def logout_user(
     return response
 
 
-@router.get("/available-roles", response_model=AvailableRolesResponse)
+@router.get("/available-roles")
 async def list_available_roles(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = LoginService(db)
-    user = await service.get_user_by_id(user_id)
-    if not user.email:
-        return AvailableRolesResponse(roles=[])
-    others = await service.list_other_role_users_by_email(user.email, exclude_user_id=user.id)
-    return AvailableRolesResponse(
-        roles=[AvailableRoleItem(role=u.role, email_verified=bool(u.email_verified)) for u in others]
-    )
+    return await ListAvailableRolesUseCase(build_repo(db)).execute(user_id)
 
 
 @router.post("/switch-role", response_model=UserResponse)
@@ -114,14 +118,14 @@ async def switch_role(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
-    service = LoginService(db)
-    new_session = await service.switch_role(
+    repo = build_repo(db)
+    new_session = await SwitchRoleUseCase(repo, LoginValidator()).execute(
         current_user_id=user_id,
         target_role=payload.role,
         password=payload.password,
         current_session_id=session_id,
     )
-    target_user = await service.get_user_by_id(new_session.user_id)
+    target_user = await repo.find_user_by_id(new_session.user_id)
 
     response = JSONResponse(content=UserResponse.model_validate(target_user).model_dump(mode="json"))
     response.set_cookie(

@@ -72,6 +72,8 @@ class ExpertResponseItem(BaseModel):
     created_at: datetime
     proposed_sum_amount_raw: int = 0
     proposed_deadline_raw: str = ""
+    previous_proposed_sum: str | None = None
+    previous_proposed_deadline: str | None = None
     expert_name: str = ""
     expert_avatar_url: str | None = None
     expert_rating: float | None = None

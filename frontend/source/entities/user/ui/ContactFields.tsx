@@ -7,6 +7,7 @@ interface Props {
   emailVerified: boolean;
   onChangePhone: (v: string) => void;
   onChangeEmail: (v: string) => void;
+  onRequestEmailChange?: () => void;
 }
 
 const VerifiedBadge = ({ children }: { children: React.ReactNode }) => (
@@ -27,6 +28,7 @@ export function ContactFields({
   emailVerified,
   onChangePhone,
   onChangeEmail,
+  onRequestEmailChange,
 }: Props) {
   return (
     <>
@@ -48,8 +50,20 @@ export function ContactFields({
           autoComplete="off"
           value={email}
           onChange={(e) => onChangeEmail(e.target.value)}
+          disabled
         />
-        {emailVerified && <VerifiedBadge>Почта подтверждена</VerifiedBadge>}
+        <div className={s.emailMeta}>
+          {emailVerified && <VerifiedBadge>Почта подтверждена</VerifiedBadge>}
+          {onRequestEmailChange ? (
+            <button
+              type="button"
+              className={s.changeEmailBtn}
+              onClick={onRequestEmailChange}
+            >
+              Изменить почту
+            </button>
+          ) : null}
+        </div>
       </div>
     </>
   );

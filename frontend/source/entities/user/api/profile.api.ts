@@ -52,6 +52,31 @@ export async function changePassword(
   }
 }
 
+export async function requestEmailChange(newEmail: string): Promise<void> {
+  const res = await fetchWithSession(`${API_URL}/settings/email/request-change`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ new_email: newEmail }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось отправить код");
+  }
+}
+
+export async function confirmEmailChange(code: string): Promise<UserProfile> {
+  const res = await fetchWithSession(`${API_URL}/settings/email/confirm-change`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось подтвердить код");
+  }
+  return res.json();
+}
+
 export async function uploadAvatar(file: File): Promise<UserProfile> {
   const res = await stableMultipartFetch({
     input: `${API_URL}/settings/avatar`,

@@ -27,12 +27,21 @@ class EmailPreferences(BaseModel):
 
 
 class UpdatePersonalDataRequest(BaseModel):
-    """Обновление персональных данных пользователя"""
+    """Обновление персональных данных пользователя (без email — он меняется отдельным эндпоинтом с подтверждением кода)."""
     last_name: Optional[str] = Field(None, description="Фамилия", max_length=100)
     first_name: Optional[str] = Field(None, description="Имя", max_length=100)
     phone: Optional[str] = Field(None, description="Номер телефона")
-    email: Optional[EmailStr] = Field(None, description="Электронная почта")
     inn: Optional[str] = Field(None, description="ИНН", min_length=10, max_length=12)
+
+
+class RequestEmailChangeRequest(BaseModel):
+    "Шаг 1 смены email — юзер вводит новый адрес. Бэкенд шлёт код на этот адрес."
+    new_email: EmailStr
+
+
+class ConfirmEmailChangeRequest(BaseModel):
+    "Шаг 2 смены email — юзер вводит код, пришедший на новый адрес."
+    code: str = Field(..., min_length=4, max_length=10)
 
     @model_validator(mode="after")
     def validate_phone_format(self):
