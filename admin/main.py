@@ -7,7 +7,7 @@ from uuid import uuid4
 import httpx
 from markupsafe import Markup, escape
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from sqladmin import Admin, ModelView
+from sqladmin import Admin, BaseView, ModelView, expose
 from sqladmin.authentication import AuthenticationBackend
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
@@ -1627,6 +1627,25 @@ class ExpertRoomMessageAdmin(ModelView, model=ExpertRoomMessage):
     }
 
 
+class ExpertRoomChatView(BaseView):
+    name = "Чат экспертов · лента"
+    icon = "fa-solid fa-message"
+    category = "Чат экспертов"
+
+    @expose("/expert-room-chat", methods=["GET"])
+    async def chat_view(self, request: Request):
+        with SessionLocal() as db:
+            messages = (
+                db.query(ExpertRoomMessage)
+                .options(selectinload(ExpertRoomMessage.sender))
+                .order_by(ExpertRoomMessage.created_at.asc())
+                .all()
+            )
+        return await self.templates.TemplateResponse(
+            request, "expert_room_chat.html", {"messages": messages}
+        )
+
+
 class ExpertRoomBanAdmin(ModelView, model=ExpertRoomBan):
     name = "Бан в чате экспертов"
     name_plural = "Чат экспертов: баны"
@@ -1687,5 +1706,6 @@ admin.add_view(LandingPricingContentAdmin)
 
 admin.add_view(SupportTicketAdmin)
 admin.add_view(SupportTicketMessageAdmin)
+admin.add_view(ExpertRoomChatView)
 admin.add_view(ExpertRoomMessageAdmin)
 admin.add_view(ExpertRoomBanAdmin)

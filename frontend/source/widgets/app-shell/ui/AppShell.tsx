@@ -11,6 +11,7 @@ const SIDEBAR_ROUTES = [
   /^\/customer\/orders(?:\/.*)?$/,
   /^\/expert\/orders(?:\/.*)?$/,
   /^\/expert\/reviews(?:\/.*)?$/,
+  /^\/expert\/room$/,
   /^\/responses$/,
   /^\/settings$/,
   /^\/chat(?:\/.*)?$/,

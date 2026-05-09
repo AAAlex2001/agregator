@@ -1,0 +1,42 @@
+{% extends "sqladmin/layout.html" %}
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h3 class="card-title">Чат экспертов · лента</h3>
+      <span class="text-muted">{{ messages|length }} сообщ.</span>
+    </div>
+    <div class="card-body">
+      <div style="background:#f0f2f5;border-radius:12px;padding:20px;height:calc(100vh - 220px);overflow-y:auto;">
+        {% if not messages %}
+          <div style="text-align:center;color:#999;padding:40px;font-size:16px;">Сообщений пока нет</div>
+        {% endif %}
+        {% set prev_date = namespace(value='') %}
+        {% for msg in messages %}
+          {% set msg_date = msg.created_at.strftime('%d.%m.%Y') %}
+          {% if msg_date != prev_date.value %}
+            <div style="text-align:center;margin:12px 0 6px;font-size:12px;color:#999;">{{ msg_date }}</div>
+            {% set prev_date.value = msg_date %}
+          {% endif %}
+          {% set sender_name = (msg.sender.first_name or '') + ' ' + (msg.sender.last_name or '') if msg.sender else '' %}
+          {% if not sender_name.strip() %}
+            {% set sender_name = msg.sender.email if msg.sender and msg.sender.email else 'id:' ~ msg.sender_id %}
+          {% endif %}
+          <div style="display:flex;flex-direction:column;align-items:flex-start;margin-bottom:14px;">
+            <div style="font-size:12px;color:#555;margin-bottom:3px;font-weight:500;">{{ sender_name }}</div>
+            <div style="max-width:70%;padding:10px 14px;border-radius:12px;border-bottom-left-radius:4px;background:#fff;color:#1a1a1a;font-size:14px;line-height:1.5;word-wrap:break-word;border:1px solid #e1e4e8;">
+              {{ msg.text }}
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;font-size:11px;color:#999;margin-top:3px;padding:0 4px;">
+              <span>{{ msg.created_at.strftime('%H:%M') }}</span>
+              <a href="{{ url_for('admin:delete', identity='expert-room-message') }}?pks={{ msg.id }}"
+                 onclick="return confirm('Удалить это сообщение?');"
+                 style="color:#d32f2f;text-decoration:none;">удалить</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

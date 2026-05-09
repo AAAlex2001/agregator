@@ -48,6 +48,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат", icon: TabChatIcon },
+        { href: "/expert/room", label: "Чат экспертов", icon: TabChatIcon },
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],
