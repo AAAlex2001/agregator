@@ -42,8 +42,10 @@ export function SubscriptionPanel() {
           </>
         ) : (
           <>
-            <span className={s.statusTitle}>У вас нет активной подписки</span>
-            <span className={s.statusSubtitle}>Выберите тариф, чтобы откликаться на заказы.</span>
+            <span className={s.statusTitle}>Сейчас платформа работает бесплатно</span>
+            <span className={s.statusSubtitle}>
+              Но вы можете оформить подписку — поддержать развитие сервиса и зафиксировать текущий тариф до перехода в платный режим.
+            </span>
           </>
         )}
       </div>
