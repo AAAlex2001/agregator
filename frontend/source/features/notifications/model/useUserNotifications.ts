@@ -9,9 +9,11 @@ import {
   markNotificationRead,
 } from "../api/notifications.api";
 import { initialNotificationsState, notificationsReducer } from "./reducer";
+import { useUnreadCountContext } from "./UnreadCountContext";
 
 export function useUserNotifications(limit = 50) {
   const [state, dispatch] = useReducer(notificationsReducer, initialNotificationsState);
+  const { setCount: syncBadge } = useUnreadCountContext();
 
   const reload = useCallback(async () => {
     dispatch({ type: "SET_LOADING", payload: true });
@@ -49,6 +51,7 @@ export function useUserNotifications(limit = 50) {
         dispatch({ type: "UPSERT_ITEM", payload: data.item });
       }
       dispatch({ type: "SET_UNREAD_COUNT", payload: data.unread_count });
+      syncBadge(data.unread_count);
       return data.item;
     } catch (nextError) {
       dispatch({
@@ -69,6 +72,7 @@ export function useUserNotifications(limit = 50) {
       const data = await deleteNotification(notificationId);
       dispatch({ type: "REMOVE_ITEM", payload: notificationId });
       dispatch({ type: "SET_UNREAD_COUNT", payload: data.unread_count });
+      syncBadge(data.unread_count);
     } catch (nextError) {
       dispatch({
         type: "SET_ERROR",
@@ -88,6 +92,7 @@ export function useUserNotifications(limit = 50) {
       const data = await markAllNotificationsRead();
       dispatch({ type: "MARK_ALL_READ" });
       dispatch({ type: "SET_UNREAD_COUNT", payload: data.unread_count });
+      syncBadge(data.unread_count);
     } catch (nextError) {
       dispatch({
         type: "SET_ERROR",
@@ -111,6 +116,7 @@ export function useUserNotifications(limit = 50) {
         total: 0,
         unreadCount: data.unread_count,
       });
+      syncBadge(data.unread_count);
     } catch (nextError) {
       dispatch({
         type: "SET_ERROR",

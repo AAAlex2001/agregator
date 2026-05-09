@@ -34,7 +34,7 @@ interface SidebarSection {
   items: SidebarItem[];
 }
 
-const NAV: Record<"EXPERT" | "CUSTOMER", SidebarSection[]> = {
+const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = {
   EXPERT: [
     {
       label: "Работа",
@@ -73,6 +73,21 @@ const NAV: Record<"EXPERT" | "CUSTOMER", SidebarSection[]> = {
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат", icon: TabChatIcon },
+        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
+        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
+      ],
+    },
+    {
+      label: "Аккаунт",
+      items: [
+        { href: "/settings", label: "Профиль", icon: TabProfileIcon },
+      ],
+    },
+  ],
+  LICENSE_HOLDER: [
+    {
+      label: "Общение",
+      items: [
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],

@@ -4,6 +4,7 @@ export { Switch } from "./Switch";
 export { RadioGroup } from "./RadioGroup";
 export type { RadioOption } from "./RadioGroup";
 export { RentalPriceField } from "./RentalPriceField";
+export { RoleBadge } from "./RoleBadge";
 export { OtpCodeInput } from "./OtpCodeInput";
 export { DocContent } from "./DocContent";
 export type { DocContentProps, DocBlock, DocSection, DocTableBlock } from "./DocContent";

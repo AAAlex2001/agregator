@@ -8,7 +8,7 @@
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
-  transition: padding-left 0.2s ease;
+  transition: padding-left 0.2s ease, padding-right 0.2s ease;
 
   @media (min-width: 1440px) {
     padding-left: 262px;
@@ -18,5 +18,11 @@
 :global(html[data-sidebar-collapsed="true"]) .content {
   @media (min-width: 1440px) {
     padding-left: 80px;
+  }
+}
+
+.contentWithRightPanel {
+  @media (min-width: 1440px) {
+    padding-right: 262px;
   }
 }

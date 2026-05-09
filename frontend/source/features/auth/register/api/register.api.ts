@@ -57,12 +57,12 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
 
 export async function registerLicenseHolder(
   payload: LicenseHolderRegisterPayload,
-  licenseFile: File,
+  licenseFile: File | null,
 ): Promise<RegisterResponse> {
   const res = await stableMultipartFetch({
     input: `${API_URL}/register/license-holder`,
     method: "POST",
-    files: [licenseFile],
+    files: licenseFile ? [licenseFile] : [],
     buildBody: (files) => {
       const formData = new FormData();
       formData.append("payload", JSON.stringify(payload));

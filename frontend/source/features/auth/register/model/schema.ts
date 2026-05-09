@@ -99,13 +99,6 @@ export const registerFormSchema = z
           message: "Выберите хотя бы одну область экспертизы",
         });
       }
-      if (!data.licenseFileName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["licenseFileName"],
-          message: "Загрузите файл лицензии",
-        });
-      }
       if (data.rentalKind === "PERCENT") {
         const num = Number(data.rentalPercent.replace(",", "."));
         if (!data.rentalPercent || !Number.isFinite(num) || num <= 0 || num > 100) {

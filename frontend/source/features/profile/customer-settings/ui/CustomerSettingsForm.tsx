@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function CustomerSettingsForm({ profile, onProfileUpdate }: Props) {
-  const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit, logout } =
+  const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit } =
     useProfileShell({ profile, onProfileUpdate });
 
   return (
@@ -68,7 +68,7 @@ export function CustomerSettingsForm({ profile, onProfileUpdate }: Props) {
           </div>
         </section>
 
-        <SaveBar isSaving={isSaving} isLoggingOut={isLoggingOut} onLogout={logout} />
+        <SaveBar isSaving={isSaving} />
       </form>
     </>
   );

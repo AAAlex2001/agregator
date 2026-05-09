@@ -59,10 +59,10 @@ async def confirm_email(
 async def register_license_holder(
     background_tasks: BackgroundTasks,
     data: LicenseHolderRegistration = Depends(parse_license_holder_payload),
-    license_file: UploadFile = File(...),
+    license_file: UploadFile | None = File(None),
     db: AsyncSession = Depends(get_db),
 ):
-    file_url = await save_license_file(data.inn, license_file)
+    file_url = await save_license_file(data.inn, license_file) if license_file else None
     try:
         service = RegistrationService(db)
         user = await service.create_license_holder(data, file_url)

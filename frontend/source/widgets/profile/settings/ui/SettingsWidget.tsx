@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { RoleBadge } from "@/source/shared/ui";
 import { useSession } from "@/source/features/session";
 import { CustomerSettingsForm } from "@/source/features/profile/customer-settings";
 import { ExpertSettingsForm } from "@/source/features/profile/expert-settings";
@@ -31,7 +32,9 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
     base.push({ id: "license", label: "Лицензия" });
   }
   base.push({ id: "personal", label: "Личные данные" });
-  base.push({ id: "notifications", label: "Уведомления" });
+  if (role !== "LICENSE_HOLDER") {
+    base.push({ id: "notifications", label: "Уведомления" });
+  }
   return base;
 }
 
@@ -58,6 +61,11 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
         <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
         <Subtitle text="Управляйте личными данными" className={s.pageSubtitle} />
       </div>
+      {role && (
+        <div className={s.roleBadgeRow}>
+          <RoleBadge role={role} />
+        </div>
+      )}
       <div className={`${s.content} ${section === "subscription" ? s.contentWide : ""}`}>
         <Tabs
           variant="pill"
@@ -72,7 +80,7 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
         {section === "subscription" ? (
           <SubscriptionPanel />
         ) : isLoading || !user ? (
-          <SettingsSkeleton section={section === "license" ? "personal" : section} isCustomer />
+          <SettingsSkeleton section={section} isCustomer />
         ) : (
           <SettingsContent section={section} user={user} onProfileUpdate={setUser} />
         )}

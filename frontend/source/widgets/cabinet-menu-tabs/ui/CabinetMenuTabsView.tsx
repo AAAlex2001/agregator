@@ -3,13 +3,14 @@
 import Link from "next/link";
 import {
   BurgerHeaderIcon,
+  DiplomaIcon,
   TabChatIcon,
   TabOrdersIcon,
   TabResponsesIcon,
 } from "@/source/shared/ui/icons";
 import s from "./CabinetMenuTabs.module.scss";
 
-export type CabinetMenuKey = "orders" | "responses" | "chat" | "menu";
+export type CabinetMenuKey = "orders" | "responses" | "chat" | "menu" | "license-holders";
 
 export interface CabinetMenuItem {
   key: CabinetMenuKey;
@@ -27,6 +28,7 @@ function renderIcon(key: CabinetMenuKey) {
   if (key === "orders") return <TabOrdersIcon />;
   if (key === "responses") return <TabResponsesIcon />;
   if (key === "chat") return <TabChatIcon />;
+  if (key === "license-holders") return <DiplomaIcon size={22} />;
   return <BurgerHeaderIcon />;
 }
 

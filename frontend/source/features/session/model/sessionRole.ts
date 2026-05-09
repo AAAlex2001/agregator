@@ -1,7 +1,7 @@
 import type { SessionRole } from "./types";
 
 export function normalizeSessionRole(role: string | null | undefined): SessionRole | null {
-  return role === "CUSTOMER" || role === "EXPERT" ? role : null;
+  return role === "CUSTOMER" || role === "EXPERT" || role === "LICENSE_HOLDER" ? role : null;
 }
 
 export function readSessionRoleFromCookie(): SessionRole | null {

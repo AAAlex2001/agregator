@@ -1,0 +1,48 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff8ed;
+}
+
+.company {
+  width: 80%;
+  height: 14px;
+}
+
+.metaRow {
+  display: flex;
+  gap: 8px;
+}
+
+.metaShort {
+  width: 60px;
+  height: 11px;
+}
+
+.metaLong {
+  width: 110px;
+  height: 11px;
+}
+
+.contact {
+  width: 70%;
+  height: 12px;
+}
+
+.badges {
+  display: flex;
+  gap: 4px;
+}
+
+.badge {
+  width: 36px;
+  height: 22px;
+}
+
+.rental {
+  width: 90px;
+  height: 18px;
+}

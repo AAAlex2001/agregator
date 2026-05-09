@@ -1,0 +1,105 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff8ed;
+}
+
+.company {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  color: #1a1a1a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.label {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 14px;
+  color: #808080;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.value {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  line-height: 14px;
+  color: #1a1a1a;
+}
+
+.contact {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #fff3e0;
+  color: #ff8a00;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14px;
+  text-decoration: none;
+  word-break: break-all;
+
+  &:hover,
+  &:focus-visible {
+    background: #ffe0b2;
+  }
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  & > * {
+    min-width: auto;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 11px;
+    line-height: 14px;
+    border-radius: 6px;
+  }
+}
+
+.rental {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #fff8ed;
+  color: #e65100;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.fileBlock {
+  gap: 3px;
+}
+
+.fileGrid {
+  gap: 6px;
+
+  & > * > * {
+    width: 64px !important;
+    height: 64px !important;
+    padding: 6px !important;
+  }
+}

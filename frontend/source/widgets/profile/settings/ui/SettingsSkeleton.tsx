@@ -5,7 +5,7 @@ import avatarStyles from "@/source/entities/user/ui/ProfileAvatarUpload.module.s
 import formStyles from "@/source/entities/user/ui/ProfileForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
-type SettingsSection = "personal" | "notifications" | "subscription";
+type SettingsSection = "personal" | "notifications" | "subscription" | "license";
 
 interface SettingsSkeletonProps {
   section: SettingsSection;
@@ -18,6 +18,9 @@ export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkelet
   }
   if (section === "notifications") {
     return <NotificationsSkeleton />;
+  }
+  if (section === "license") {
+    return <LicenseSkeleton />;
   }
   return <PersonalSkeleton isCustomer={isCustomer} />;
 }
@@ -56,6 +59,37 @@ function NotificationsSkeleton() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LicenseSkeleton() {
+  return (
+    <div className={s.license} aria-hidden="true">
+      <div className={s.licenseHeader}>
+        <Skeleton className={s.licenseTitle} rounded="pill" />
+        <Skeleton className={s.licenseSubtitle} rounded="pill" />
+      </div>
+      <Skeleton className={s.input} rounded="lg" />
+      <div className={s.licenseFile}>
+        <Skeleton className={s.licenseLabel} rounded="pill" />
+        <Skeleton className={s.licenseFileTile} rounded="md" />
+      </div>
+      <div className={s.licenseField}>
+        <Skeleton className={s.licenseLabel} rounded="pill" />
+        <div className={s.licenseBadges}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <Skeleton key={i} className={s.licenseBadge} rounded="md" />
+          ))}
+        </div>
+      </div>
+      <div className={s.licenseField}>
+        <Skeleton className={s.licenseLabel} rounded="pill" />
+        <Skeleton className={s.licenseRadio} rounded="lg" />
+        <Skeleton className={s.licenseRadio} rounded="lg" />
+        <Skeleton className={s.licenseRadio} rounded="lg" />
+      </div>
+      <Skeleton className={s.licenseSave} rounded="lg" />
     </div>
   );
 }

@@ -81,10 +81,6 @@ export function useRegister() {
     async (values) => {
       try {
         if (values.role === "LICENSE_HOLDER") {
-          if (!licenseFile) {
-            showError("Загрузите файл лицензии");
-            return;
-          }
           await registerLicenseHolder(toLicenseHolderPayload(values), licenseFile);
         } else {
           await registerUser(toRegisterPayload(values));

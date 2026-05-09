@@ -137,7 +137,7 @@ class RegistrationService:
     async def create_license_holder(
         self,
         data: LicenseHolderRegistration,
-        license_file_url: str,
+        license_file_url: str | None,
     ) -> User:
         "Создаёт держателя лицензии. Pydantic уже всё провалидировал — здесь только уникальность и запись."
         self.validate_password(data.password)
