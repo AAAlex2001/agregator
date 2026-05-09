@@ -33,6 +33,7 @@ from models.landing import (
     LandingFaq,
     LandingPricingContent,
 )
+from models.platform_settings import PlatformSettings
 
 config = context.config
 

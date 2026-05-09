@@ -3,16 +3,22 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, status
 
 from models.pricing import SubscriptionKind, SubscriptionStatus, UserSubscription
+from services.platform_settings import PlatformSettingsService
 from services.subscriptions.repository import SubscriptionRepository
 
 
 class SubscriptionAccess:
     "Гейт подписки эксперта на отклики: проверки доступа + списание/восстановление слотов SINGLE-тарифа."
 
-    def __init__(self, repo: SubscriptionRepository):
+    def __init__(self, repo: SubscriptionRepository, settings: PlatformSettingsService):
         self.repo = repo
+        self.settings = settings
 
-    async def require_for_response(self, user_id: int) -> UserSubscription:
+    async def require_for_response(self, user_id: int) -> UserSubscription | None:
+        "В бесплатном режиме отклик разрешён без подписки — возвращает None."
+        if not await self.settings.is_paid_responses_enabled():
+            return None
+
         now = datetime.now(timezone.utc)
         await self.repo.expire_stale(user_id, now)
         await self.repo.flush()
@@ -46,6 +52,8 @@ class SubscriptionAccess:
 
     async def restore_response_slot(self, user_id: int) -> None:
         "Возвращает разовый отклик: при отзыве экспертом или авто-отклонении (не ручном)."
+        if not await self.settings.is_paid_responses_enabled():
+            return
         subscription = await self.repo.find_latest_consumed_single(user_id)
         if subscription is None:
             return

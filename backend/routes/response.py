@@ -25,6 +25,7 @@ from services.email import (
     SendResponseUpdatedEmailUseCase,
 )
 from services.notifications import NotificationRepository
+from services.platform_settings import PlatformSettingsService
 from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 from services.responses import (
     CreateResponseUseCase,
@@ -58,7 +59,7 @@ def build_in_app(db: AsyncSession, repo: ResponseRepository) -> ResponseInAppNot
 
 
 def build_subscription_access(db: AsyncSession) -> SubscriptionAccess:
-    return SubscriptionAccess(SubscriptionRepository(db))
+    return SubscriptionAccess(SubscriptionRepository(db), PlatformSettingsService(db))
 
 
 def build_upload_files(db: AsyncSession, repo: ResponseRepository) -> UploadResponseFilesUseCase:

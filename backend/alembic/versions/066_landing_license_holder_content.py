@@ -27,7 +27,7 @@ HOW_IT_WORKS_LH = [
             "Загрузите номер лицензии Ростехнадзора и отметьте объекты экспертизы — "
             "КЛ, ТП, ЗС, ТУ, Д, ОБ"
         ),
-        "icon": "/icons/diploma.svg",
+        "icon": "/number_1.svg",
     },
     {
         "position": 2,
@@ -36,7 +36,7 @@ HOW_IT_WORKS_LH = [
             "Укажите условия предоставления лицензии: процент от суммы заказа, "
             "фиксированная сумма или договорная цена"
         ),
-        "icon": "/icons/quick.svg",
+        "icon": "/number_2.svg",
     },
     {
         "position": 3,
@@ -45,7 +45,7 @@ HOW_IT_WORKS_LH = [
             "Эксперты увидят вашу карточку в каталоге и обратятся с предложением "
             "о сотрудничестве по конкретному заказу"
         ),
-        "icon": "/icons/search.svg",
+        "icon": "/number_3.svg",
     },
     {
         "position": 4,
@@ -54,7 +54,7 @@ HOW_IT_WORKS_LH = [
             "Обсудите детали в чате, согласуйте условия и подпишите договор о "
             "предоставлении лицензии"
         ),
-        "icon": "/icons/comment.svg",
+        "icon": "/number_4.svg",
     },
 ]
 
@@ -67,7 +67,7 @@ KEY_ADVANTAGES_LH = [
             "получайте процент с заказов, в которых эксперты используют вашу аттестацию"
         ),
         "sub_description": "",
-        "icon": "/icons/diploma.svg",
+        "icon": "/number_1.svg",
     },
     {
         "position": 2,
@@ -77,7 +77,7 @@ KEY_ADVANTAGES_LH = [
             "напрямую с конкретными заказами"
         ),
         "sub_description": "",
-        "icon": "/icons/comment.svg",
+        "icon": "/number_2.svg",
     },
     {
         "position": 3,
@@ -87,7 +87,7 @@ KEY_ADVANTAGES_LH = [
             "оплата за объект или договорная цена под каждый случай"
         ),
         "sub_description": "",
-        "icon": "/icons/quick.svg",
+        "icon": "/number_3.svg",
     },
     {
         "position": 4,
@@ -97,7 +97,7 @@ KEY_ADVANTAGES_LH = [
             "а вся переписка по сделке хранится в чате"
         ),
         "sub_description": "",
-        "icon": "/icons/search.svg",
+        "icon": "/number_4.svg",
     },
 ]
 

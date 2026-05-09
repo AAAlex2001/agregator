@@ -14,6 +14,10 @@ const DISALLOWED_PATHS = [
   "/order",
   "/responses",
   "/settings",
+  "/landing",
+  "/archive",
+  "/notifications",
+  "/support",
 ];
 
 export default function robots(): MetadataRoute.Robots {

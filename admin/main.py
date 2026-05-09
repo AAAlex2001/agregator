@@ -24,6 +24,7 @@ from models import (
     SupportTicket, SupportTicketMessage, TicketCategory, TicketMessageAuthor, TicketStatus,
     Notification, NotificationType,
     ExpertRoomMessage, ExpertRoomBan,
+    PlatformSettings,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -1503,6 +1504,25 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
     }
 
 
+class PlatformSettingsAdmin(ModelView, model=PlatformSettings):
+    name = "Настройки платформы"
+    name_plural = "Настройки платформы"
+    icon = "fa-solid fa-toggle-on"
+    category = "Настройки"
+
+    can_create = False
+    can_delete = False
+
+    column_list = [PlatformSettings.id, PlatformSettings.paid_responses_enabled]
+    form_columns = [PlatformSettings.paid_responses_enabled]
+    column_labels = {
+        PlatformSettings.id: "ID",
+        PlatformSettings.paid_responses_enabled: (
+            "Платный режим откликов (выкл = эксперты откликаются бесплатно)"
+        ),
+    }
+
+
 def format_ticket_attachments(value):
     if not value:
         return "—"
@@ -1753,6 +1773,7 @@ admin.add_view(LandingIndustryAdmin)
 admin.add_view(LandingReviewAdmin)
 admin.add_view(LandingFaqAdmin)
 admin.add_view(LandingPricingContentAdmin)
+admin.add_view(PlatformSettingsAdmin)
 
 admin.add_view(SupportTicketAdmin)
 admin.add_view(SupportTicketMessageAdmin)
