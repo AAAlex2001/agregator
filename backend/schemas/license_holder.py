@@ -7,6 +7,8 @@ class LicenseHolderListItem(BaseModel):
     inn: Optional[str] = None
     company_data: Optional[dict[str, Any]] = None
     avatar_url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
     license_number: Optional[str] = None
     license_file_url: Optional[str] = None
     license_areas: Optional[list[str]] = None
