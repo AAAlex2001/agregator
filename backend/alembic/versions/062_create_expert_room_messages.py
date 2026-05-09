@@ -1,7 +1,7 @@
 """create expert_room_messages and expert_room_bans
 
 Revision ID: 062
-Revises: 061
+Revises: 060
 """
 from typing import Sequence, Union
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 revision: str = "062"
-down_revision: Union[str, None] = "061"
+down_revision: Union[str, None] = "060"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
