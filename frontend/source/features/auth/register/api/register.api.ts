@@ -83,9 +83,4 @@ export async function registerLicenseHolder(
   return res.json();
 }
 
-export async function confirmRegistrationEmail(email: string, code: string): Promise<void> {
-  await fetchBase<{ message: string }>("/register/confirm-email", {
-    method: "POST",
-    body: { email, code },
-  });
-}
+export { confirmEmailCode as confirmRegistrationEmail } from "@/source/shared/api/emailVerification";

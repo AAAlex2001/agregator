@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { LogoIcon } from "@/source/shared/ui/icons";
-import { useLogin, LoginForm } from "@/source/features/auth/login";
+import { useLogin, LoginForm, RoleChoiceModal, EmailConfirmModal } from "@/source/features/auth/login";
 import styles from "./LoginWidget.module.scss";
 
 export function LoginWidget() {
   const auth = useLogin();
+  const showRoleModal = auth.availableRoles !== null && auth.availableRoles.length > 1;
 
   return (
     <div className={styles.container}>
@@ -37,6 +38,24 @@ export function LoginWidget() {
           </div>
         </div>
       </div>
+
+      {showRoleModal && auth.availableRoles && (
+        <RoleChoiceModal
+          roles={auth.availableRoles}
+          isFinalizing={auth.isFinalizing}
+          onChoose={auth.chooseRole}
+          onClose={auth.cancelRoleChoice}
+        />
+      )}
+
+      {auth.pendingConfirm && (
+        <EmailConfirmModal
+          email={auth.pendingConfirm.email}
+          role={auth.pendingConfirm.role}
+          onClose={auth.closeConfirm}
+          onConfirmed={auth.handleConfirmed}
+        />
+      )}
     </div>
   );
 }

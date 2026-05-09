@@ -24,7 +24,7 @@ const OPTIONS: RadioOption<LicenseRentalKind>[] = [
   {
     value: "FIXED",
     label: "Фиксированная цена",
-    description: "Минимальная стоимость аренды за один договор",
+    description: "Минимальная стоимость предоставления лицензии за один договор",
   },
   {
     value: "NEGOTIABLE",
@@ -49,7 +49,7 @@ export function RentalPriceField({
         value={kind}
         options={OPTIONS}
         onChange={onChangeKind}
-        legend="Стоимость аренды лицензии"
+        legend="Стоимость предоставления лицензии"
       />
 
       {kind === "PERCENT" && (

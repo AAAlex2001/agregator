@@ -24,17 +24,30 @@ interface Props {
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 const LICENSE_FILE_HINT = "PDF / JPG / PNG, до 5 МБ";
 
+const COMPANY_CARD_ACCEPT = ".pdf,application/pdf";
+const COMPANY_CARD_HINT = "Только PDF, до 5 МБ";
+
 export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
-  const { form, isSaving, isUploading, submit, replaceFile } = useLicenseTerms({
-    profile,
-    onProfileUpdate,
-  });
+  const {
+    form,
+    isSaving,
+    isUploading,
+    isCardUploading,
+    submit,
+    replaceFile,
+    replaceCompanyCard,
+    removeCompanyCardFile,
+  } = useLicenseTerms({ profile, onProfileUpdate });
   const { watch, setValue, formState } = form;
   const errors = formState.errors;
   const shouldValidate = formState.isSubmitted;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cardInputRef = useRef<HTMLInputElement>(null);
 
   const fileItems = profile.license_file_url ? [remoteFileItem(profile.license_file_url)] : [];
+  const cardItems = profile.company_card_url
+    ? [remoteFileItem(profile.company_card_url, "card-remote", "Карточка предприятия", removeCompanyCardFile)]
+    : [];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +57,8 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
   return (
     <form className={s.form} onSubmit={handleSubmit}>
       <header className={s.header}>
-        <h2 className={s.title}>Лицензия и условия аренды</h2>
-        <p className={s.subtitle}>Номер, файл лицензии и стоимость аренды для входящих заявок.</p>
+        <h2 className={s.title}>Лицензия и условия её предоставления</h2>
+        <p className={s.subtitle}>Номер, файл лицензии и стоимость предоставления лицензии для входящих заявок.</p>
       </header>
 
       <TextInput
@@ -85,6 +98,27 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         error={errors.licenseAreas?.message as string | undefined}
       />
 
+      <FileGallery
+        label={isCardUploading ? "Загрузка карточки…" : "Карточка предприятия (необязательно)"}
+        hint={COMPANY_CARD_HINT}
+        items={cardItems}
+        variant="editable"
+        onAdd={() => cardInputRef.current?.click()}
+        input={
+          <input
+            ref={cardInputRef}
+            type="file"
+            accept={COMPANY_CARD_ACCEPT}
+            hidden
+            onChange={(event) => {
+              const next = event.target.files?.[0] ?? null;
+              event.target.value = "";
+              if (next) replaceCompanyCard(next);
+            }}
+          />
+        }
+      />
+
       <RentalPriceField
         kind={watch("rentalKind")}
         percent={watch("rentalPercent")}
@@ -105,16 +139,22 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
   );
 }
 
-function remoteFileItem(url: string) {
+function remoteFileItem(
+  url: string,
+  id: string = "license-remote",
+  fallbackName: string = "Лицензия",
+  onRemove?: () => void,
+) {
   const resolved = resolveFileUrl(url);
-  const name = getFileDisplayName(url, "Лицензия");
+  const name = getFileDisplayName(url, fallbackName);
   const isImage = isImageFileName(name);
   return {
-    id: "license-remote",
+    id,
     name,
     url: resolved,
     previewUrl: isImage ? resolved : getFileGalleryPreviewUrl(resolved, name),
     thumbnailUrl: getFileGalleryThumbUrl(resolved, name),
     isImage,
+    onRemove,
   };
 }

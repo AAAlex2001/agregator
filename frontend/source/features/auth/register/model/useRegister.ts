@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
+import { useSession } from "@/source/features/session";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
 import {
   confirmRegistrationEmail,
@@ -40,6 +41,7 @@ const ROLE_BY_ID: Record<number, UserRole> = {
 export function useRegister() {
   const router = useRouter();
   const { showError, showSuccess } = useNotifications();
+  const { reload } = useSession();
   const [wizard, dispatch] = useReducer(registerWizardReducer, initialRegisterWizardState);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
 
@@ -101,9 +103,10 @@ export function useRegister() {
   const confirmSubmit = confirmForm.handleSubmit(
     async (values) => {
       try {
-        await confirmRegistrationEmail(wizard.pendingEmail, values.code);
-        showSuccess("Почта подтверждена. Войдите в аккаунт");
-        router.push("/login");
+        await confirmRegistrationEmail(wizard.pendingEmail, values.code, form.getValues("role"));
+        await reload();
+        showSuccess("Почта подтверждена");
+        router.push("/settings");
       } catch (err) {
         showError(err instanceof Error ? err.message : "Произошла ошибка");
       }

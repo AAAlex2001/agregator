@@ -45,14 +45,18 @@ function getCompanyName(item: LicenseHolderListItem): string {
   );
 }
 
-function buildLicenseFileItems(url: string | null): FileGalleryItem[] {
+function buildFileItems(
+  url: string | null,
+  id: string,
+  fallbackName: string,
+): FileGalleryItem[] {
   if (!url) return [];
   const resolved = resolveFileUrl(url);
-  const name = getFileDisplayName(url, "Лицензия");
+  const name = getFileDisplayName(url, fallbackName);
   const isImage = isImageFileName(name);
   return [
     {
-      id: "license-file",
+      id,
       name,
       url: resolved,
       previewUrl: isImage ? resolved : getFileGalleryPreviewUrl(resolved, name),
@@ -81,7 +85,8 @@ export function LicenseHolderCard({ item }: Props) {
     .map(asExpertiseType)
     .filter((v): v is ExpertiseType => v !== null);
 
-  const fileItems = buildLicenseFileItems(item.license_file_url);
+  const fileItems = buildFileItems(item.license_file_url, "license-file", "Лицензия");
+  const cardItems = buildFileItems(item.company_card_url, "company-card", "Карточка предприятия");
 
   return (
     <article className={s.card}>
@@ -127,7 +132,7 @@ export function LicenseHolderCard({ item }: Props) {
         </Field>
       )}
 
-      <Field label="Стоимость аренды:">
+      <Field label="Стоимость предоставления лицензии:">
         <span className={s.rental}>{formatRental(item)}</span>
       </Field>
 
@@ -135,6 +140,17 @@ export function LicenseHolderCard({ item }: Props) {
         <FileGallery
           items={fileItems}
           label="Файл лицензии:"
+          labelClassName={s.label}
+          blockClassName={s.fileBlock}
+          gridProps={{ className: s.fileGrid }}
+          hideWhenEmpty
+        />
+      )}
+
+      {cardItems.length > 0 && (
+        <FileGallery
+          items={cardItems}
+          label="Карточка предприятия:"
           labelClassName={s.label}
           blockClassName={s.fileBlock}
           gridProps={{ className: s.fileGrid }}

@@ -9,7 +9,12 @@ import type {
   LicenseHolderUpdatePayload,
   UserProfile,
 } from "@/source/entities/user";
-import { updateLicenseHolderProfile, uploadLicenseFile } from "../api/license.api";
+import {
+  deleteCompanyCard,
+  updateLicenseHolderProfile,
+  uploadCompanyCard,
+  uploadLicenseFile,
+} from "../api/license.api";
 import { licenseTermsSchema, type LicenseTermsValues } from "./schema";
 
 interface Options {
@@ -51,6 +56,7 @@ function valuesToPayload(values: LicenseTermsValues): LicenseHolderUpdatePayload
 export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
   const { showError, showSuccess } = useNotifications();
   const [isUploading, setIsUploading] = useState(false);
+  const [isCardUploading, setIsCardUploading] = useState(false);
 
   const form = useForm<LicenseTermsValues>({
     resolver: zodResolver(licenseTermsSchema),
@@ -91,11 +97,41 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     }
   };
 
+  const replaceCompanyCard = async (file: File | null) => {
+    if (!file) return;
+    setIsCardUploading(true);
+    try {
+      const updated = await uploadCompanyCard(file);
+      onProfileUpdate(updated);
+      showSuccess("Карточка предприятия обновлена");
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Не удалось загрузить файл");
+    } finally {
+      setIsCardUploading(false);
+    }
+  };
+
+  const removeCompanyCardFile = async () => {
+    setIsCardUploading(true);
+    try {
+      const updated = await deleteCompanyCard();
+      onProfileUpdate(updated);
+      showSuccess("Карточка предприятия удалена");
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Не удалось удалить файл");
+    } finally {
+      setIsCardUploading(false);
+    }
+  };
+
   return {
     form,
     isSaving: form.formState.isSubmitting,
     isUploading,
+    isCardUploading,
     submit,
     replaceFile,
+    replaceCompanyCard,
+    removeCompanyCardFile,
   };
 }

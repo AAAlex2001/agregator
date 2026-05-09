@@ -1,0 +1,51 @@
+.title {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  color: #4d4d4d;
+}
+
+.email {
+  margin: -6px 0 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #ff8a00;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.resendLink {
+  align-self: center;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #ff8a00;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: #ffb800;
+  }
+
+  &:disabled {
+    color: #999999;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+}

@@ -64,4 +64,5 @@ export interface UserProfile {
   license_rental_kind: LicenseRentalKind | null;
   license_rental_percent: number | null;
   license_rental_fixed_amount: number | null;
+  company_card_url: string | null;
 }

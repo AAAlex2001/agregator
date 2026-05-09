@@ -1,4 +1,5 @@
 import { Button } from "@/shared/ui";
+import { Modal } from "@/source/shared/ui";
 import type { ResponseBadge } from "@/source/entities/response";
 import s from "./WithdrawResponseModal.module.scss";
 
@@ -36,9 +37,8 @@ export function WithdrawResponseModal({
   onConfirm,
 }: WithdrawResponseModalProps) {
   return (
-    <div className={s.overlay} onClick={onCancel}>
-      <div className={s.modal} onClick={(event) => event.stopPropagation()}>
-        <div className={s.content}>
+    <Modal open onClose={onCancel} size="md" isBusy={isLoading}>
+      <div className={s.content}>
           <div className={s.statusDateRow}>
             <div className={s.dateRow}>
               <span className={s.dateLabel}>{dateLabel}</span>
@@ -89,15 +89,14 @@ export function WithdrawResponseModal({
           </div>
         </div>
 
-        <div className={s.buttons}>
-          <Button variant="chat" fullWidth onClick={onCancel}>
-            Отменить
-          </Button>
-          <Button variant="outline" fullWidth onClick={onConfirm} isLoading={isLoading}>
-            Отозвать отклик
-          </Button>
-        </div>
+      <div className={s.buttons}>
+        <Button variant="chat" fullWidth onClick={onCancel}>
+          Отменить
+        </Button>
+        <Button variant="outline" fullWidth onClick={onConfirm} isLoading={isLoading}>
+          Отозвать отклик
+        </Button>
       </div>
-    </div>
+    </Modal>
   );
 }

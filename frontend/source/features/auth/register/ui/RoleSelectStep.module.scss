@@ -12,16 +12,18 @@
   flex-direction: column;
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
 
   @media (min-width: 1440px) {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: stretch;
   }
 }
 
-.rolesContainer > .roleCard {
+.rolesContainer > .roleCard:nth-child(3) {
   @media (min-width: 1440px) {
-    flex: 1 1 0;
+    grid-column: 1 / -1;
   }
 }
 
@@ -98,7 +100,7 @@
   flex-shrink: 0;
 }
 
-.roleTitle {
+.roleCard .roleTitle {
   font-size: 18px;
   line-height: 22px;
   font-weight: 600;
@@ -132,22 +134,22 @@
   flex-direction: column;
 }
 
-.expandedTitle {
+.roleCard .expandedTitle {
   margin: 0 0 16px 0;
   text-align: center;
-  font-size: 14px !important;
-  line-height: 20px !important;
-  font-weight: 400 !important;
-  color: #1A1A1A !important;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #1A1A1A;
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
 }
 
 @media (min-width: 768px) {
-  .expandedTitle {
-    font-size: 16px !important;
-    line-height: 22px !important;
+  .roleCard .expandedTitle {
+    font-size: 16px;
+    line-height: 22px;
   }
 }
 
@@ -248,8 +250,8 @@
     margin-top: auto;
   }
 
-  .expandedTitle,
-  .roleDescriptionOpen .expandedTitle,
+  .roleCard .expandedTitle,
+  .roleCard.roleCardOpen .expandedTitle,
   .descriptionItem,
   .roleDescriptionOpen .descriptionItem,
   .selectButton,

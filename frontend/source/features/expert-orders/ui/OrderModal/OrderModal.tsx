@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
+import { Modal } from "@/source/shared/ui";
 import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
 import { respondFormSchema, type RespondFormValues } from "../../model/respond.schema";
 import { loadDraft, saveDraft } from "../../model/responseDraft";
@@ -104,7 +105,7 @@ export function OrderModal({
     return () => sub.unsubscribe();
   }, [order?.id, order?.title, order?.customer, step, form]);
 
-  if (!isOpen || !order) {
+  if (!order) {
     return null;
   }
 
@@ -164,47 +165,31 @@ export function OrderModal({
   );
 
   return (
-    <div className={styles.overlay} onClick={onClose} role="presentation">
-      <div
-        className={styles.modal}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-      >
-        <button
-          type="button"
-          className={styles.closeButton}
-          onClick={onClose}
-          aria-label="Закрыть"
-        >
-          ×
-        </button>
+    <Modal open={isOpen} onClose={onClose} size="lg" isBusy={isResponding} dialogClassName={styles.dialog}>
+      {step === "details" && (
+        <DetailsStep order={order} onRespond={() => setStep("tender")} />
+      )}
 
-        {step === "details" && (
-          <DetailsStep order={order} onRespond={() => setStep("tender")} />
-        )}
+      {step === "tender" && (
+        <TenderStep
+          order={order}
+          onBack={() => setStep("details")}
+          onContinue={() => setStep("offer")}
+        />
+      )}
 
-        {step === "tender" && (
-          <TenderStep
-            order={order}
-            onBack={() => setStep("details")}
-            onContinue={() => setStep("offer")}
-          />
-        )}
-
-        {step === "offer" && (
-          <OfferStep
-            order={order}
-            form={form}
-            files={files}
-            isSubmitting={isResponding}
-            onAddFiles={handleAddFiles}
-            onRemoveFile={handleRemoveFile}
-            onBack={() => setStep("tender")}
-            onSubmit={submit}
-          />
-        )}
-      </div>
-    </div>
+      {step === "offer" && (
+        <OfferStep
+          order={order}
+          form={form}
+          files={files}
+          isSubmitting={isResponding}
+          onAddFiles={handleAddFiles}
+          onRemoveFile={handleRemoveFile}
+          onBack={() => setStep("tender")}
+          onSubmit={submit}
+        />
+      )}
+    </Modal>
   );
 }

@@ -39,3 +39,24 @@ export async function uploadLicenseFile(file: File): Promise<UserProfile> {
   if (!res.ok) throw new Error(await readError(res, "Не удалось загрузить файл лицензии"));
   return res.json();
 }
+
+export async function uploadCompanyCard(file: File): Promise<UserProfile> {
+  const res = await stableMultipartFetch({
+    input: `${API_URL}/settings/company-card`,
+    method: "POST",
+    files: [file],
+    buildBody: (files) => {
+      const formData = new FormData();
+      if (files[0]) formData.append("file", files[0]);
+      return formData;
+    },
+  });
+  if (!res.ok) throw new Error(await readError(res, "Не удалось загрузить карточку предприятия"));
+  return res.json();
+}
+
+export async function deleteCompanyCard(): Promise<UserProfile> {
+  const res = await fetchWithSession(`${API_URL}/settings/company-card`, { method: "DELETE" });
+  if (!res.ok) throw new Error(await readError(res, "Не удалось удалить карточку предприятия"));
+  return res.json();
+}

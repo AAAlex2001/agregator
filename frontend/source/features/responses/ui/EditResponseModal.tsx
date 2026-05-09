@@ -1,4 +1,4 @@
-import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
+import { Button, CalendarInput, Modal, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import { BidFilesField } from "@/source/features/expert-orders/ui/OrderModal/BidFilesField";
 import { OrderSummaryPanel } from "@/source/features/expert-orders/ui/OrderModal/OrderSummaryPanel";
@@ -58,23 +58,8 @@ export function EditResponseModal({
   onRemoveExistingFile,
 }: EditResponseModalProps) {
   return (
-    <div className={s.overlay} onClick={onClose} role="presentation">
-      <div
-        className={s.modal}
-        onClick={(event) => event.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-      >
-        <button
-          type="button"
-          className={s.closeButton}
-          onClick={onClose}
-          aria-label="Закрыть"
-        >
-          ×
-        </button>
-
-        <div className={s.headerRow}>
+    <Modal open onClose={onClose} size="lg" isBusy={isSubmitting} dialogClassName={s.dialog}>
+      <div className={s.headerRow}>
           <span className={s.headerTitle}>Изменение предложения</span>
           <div className={s.statusRow}>
             <span className={s.dateText}>{dateText}</span>
@@ -156,7 +141,6 @@ export function EditResponseModal({
             Сохранить
           </Button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
