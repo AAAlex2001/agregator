@@ -22,7 +22,16 @@
 }
 
 .heroButton {
-  margin-bottom: 143px;
+  margin-bottom: 20px;
+}
+
+.searchBar {
+  width: 100%;
+  margin-bottom: 60px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 80px;
+  }
 }
 
 .visual {

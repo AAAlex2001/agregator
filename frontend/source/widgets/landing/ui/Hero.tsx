@@ -3,6 +3,7 @@ import s from "./hero.module.scss";
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { CheckIcon } from "@/source/shared/ui/icons";
+import { OrderSearchBar } from "@/source/features/order-search";
 
 type HeroProps = {
   title: string;
@@ -21,6 +22,9 @@ const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
         <Button href="/register" variant="primary" fullWidth showArrow className={s.heroButton}>
           {buttonText}
         </Button>
+        <div className={s.searchBar}>
+          <OrderSearchBar />
+        </div>
       </div>
       <div className={s.visual} aria-hidden="true" data-nosnippet>
         <Image
