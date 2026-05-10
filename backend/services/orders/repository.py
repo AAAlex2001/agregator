@@ -73,12 +73,8 @@ class OrderRepository:
             count_query = count_query.where(*customer_filter)
             list_query = list_query.where(*customer_filter)
         elif user_id is None:
-            guest_filter = [
-                Order.status == OrderStatus.ACTIVE,
-                Order.assigned_expert_id.is_(None),
-            ]
-            count_query = count_query.where(*guest_filter)
-            list_query = list_query.where(*guest_filter)
+            # Гость видит все заказы платформы (ACTIVE + ARCHIVED) для публичного просмотра.
+            pass
         else:
             # Любая другая авторизованная роль (например LICENSE_HOLDER) к списку заказов не допускается.
             return [], 0
