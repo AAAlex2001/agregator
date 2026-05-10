@@ -17,21 +17,32 @@ interface Options {
   debounceMs?: number;
 }
 
+export interface OrderSearchState {
+  items: OrderSuggestion[];
+  isLoading: boolean;
+  hasQuery: boolean;
+}
+
 export function useOrderSearchSuggestions({
   query,
   minChars = 2,
   limit = 6,
   debounceMs = 220,
-}: Options): OrderSuggestion[] {
+}: Options): OrderSearchState {
+  const trimmed = query.trim();
+  const hasQuery = trimmed.length >= minChars;
+
   const [items, setItems] = useState<OrderSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const requestIdRef = useRef(0);
 
   useEffect(() => {
-    const trimmed = query.trim();
-    if (trimmed.length < minChars) {
+    if (!hasQuery) {
       setItems([]);
+      setIsLoading(false);
       return;
     }
+    setIsLoading(true);
     const id = ++requestIdRef.current;
     const timer = window.setTimeout(() => {
       void searchOrdersPublic(trimmed, 0, limit)
@@ -49,10 +60,13 @@ export function useOrderSearchSuggestions({
         .catch(() => {
           if (id !== requestIdRef.current) return;
           setItems([]);
+        })
+        .finally(() => {
+          if (id === requestIdRef.current) setIsLoading(false);
         });
     }, debounceMs);
     return () => window.clearTimeout(timer);
-  }, [query, minChars, limit, debounceMs]);
+  }, [trimmed, hasQuery, limit, debounceMs]);
 
-  return items;
+  return { items, isLoading, hasQuery };
 }

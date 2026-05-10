@@ -14,7 +14,6 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { useSession } from "@/source/features/session";
-import { OrderSearchBar } from "@/source/features/order-search";
 import s from "./PublicOrdersWidget.module.scss";
 
 export function PublicOrdersWidget() {
@@ -49,10 +48,6 @@ export function PublicOrdersWidget() {
         />
       </div>
 
-      <div className={s.searchBar}>
-        <OrderSearchBar />
-      </div>
-
       {isLoading && (
         <div className={s.list}>
           {Array.from({ length: 6 }).map((_, idx) => (
@@ -79,6 +74,7 @@ export function PublicOrdersWidget() {
                 <OrderCard
                   key={order.id}
                   id={order.id}
+                  status={order.status}
                   badges={order.badges}
                   title={order.title}
                   customer={order.customer}

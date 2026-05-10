@@ -14,6 +14,7 @@ interface Props {
   createdAtDisplay?: string;
   comment?: string;
   technicalFiles?: string[];
+  status?: string;
   previousTitle?: string | null;
   previousSum?: string | null;
   previousDate?: string | null;
@@ -21,6 +22,13 @@ interface Props {
   onClick?: () => void;
   children?: React.ReactNode;
   details?: React.ReactNode;
+}
+
+function resolveStatusBadge(status?: string): { text: string; color: string; bg: string } {
+  if (status === "ARCHIVED") {
+    return { text: "Архив", color: "#4d4d4d", bg: "#e6e6e6" };
+  }
+  return { text: "Приём заявок", color: "#0b5723", bg: "#b2dfb6" };
 }
 
 function formatResponsesDeadline(iso: string): string {
@@ -44,6 +52,7 @@ export function OrderCard({
   sum,
   responsesDeadline,
   createdAtDisplay,
+  status,
   previousTitle,
   previousSum,
   previousDate,
@@ -52,6 +61,7 @@ export function OrderCard({
   children,
   details,
 }: Props) {
+  const statusBadge = resolveStatusBadge(status);
   const rightItems = [
     {
       label: "Начальная максимальная цена",
@@ -78,9 +88,9 @@ export function OrderCard({
   return (
     <ListCard
       meta={id !== undefined && id !== "" ? `№ ${id}` : undefined}
-      statusText="Приём заявок"
-      statusColor="#0b5723"
-      statusBg="#b2dfb6"
+      statusText={statusBadge.text}
+      statusColor={statusBadge.color}
+      statusBg={statusBadge.bg}
       titleLabel="Название заказа"
       title={titleNode}
       bottomLeftLabel="Организатор"

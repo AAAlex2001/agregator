@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
-from dependencies.auth import get_current_user
+from dependencies.auth import get_current_user, get_current_user_optional
 from models.user import User, UserRole
 from schemas.question import (
     QuestionAnswer,
@@ -61,9 +61,10 @@ async def get_user_role(db: AsyncSession, user_id: int) -> UserRole | None:
 async def list_order_questions(
     order_id: int,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
+    user_id: int | None = Depends(get_current_user_optional),
 ):
-    role = await get_user_role(db, user_id)
+    "Публичный список вопросов: гость и сторонние видят только не-анонимные; владелец и автор — всё."
+    role = await get_user_role(db, user_id) if user_id is not None else None
     items = await ListQuestionsUseCase(build_repo(db)).execute(
         order_id=order_id, viewer_id=user_id, viewer_role=role,
     )

@@ -14,7 +14,7 @@ class ListQuestionsUseCase:
     async def execute(
         self,
         order_id: int,
-        viewer_id: int,
+        viewer_id: int | None,
         viewer_role: UserRole | None,
     ) -> list[OrderQuestion]:
         order = await self.repo.get_order(order_id)

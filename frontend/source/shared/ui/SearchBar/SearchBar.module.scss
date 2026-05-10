@@ -1,19 +1,33 @@
 .bar {
   position: relative;
+  display: block;
+  background: #ffffff;
+  border: 2px solid #ffb800;
+  border-radius: 32px;
+  box-shadow: 0 4px 24px rgba(255, 184, 0, 0.12);
+  transition:
+    box-shadow 0.2s ease,
+    border-bottom-color 0.18s ease,
+    border-bottom-left-radius 0.18s ease,
+    border-bottom-right-radius 0.18s ease;
+
+  &:focus-within {
+    box-shadow: 0 6px 28px rgba(255, 138, 0, 0.18);
+  }
+
+  &.barOpen {
+    border-bottom-color: transparent;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+  }
+}
+
+.row {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 8px 8px 8px 18px;
-  background: #ffffff;
-  border: 2px solid #ffb800;
-  border-radius: 999px;
-  box-shadow: 0 4px 24px rgba(255, 184, 0, 0.12);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:focus-within {
-    border-color: #ff8a00;
-    box-shadow: 0 6px 28px rgba(255, 138, 0, 0.18);
-  }
 }
 
 .logo {
@@ -61,19 +75,55 @@
 
 .dropdown {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 8px;
-  list-style: none;
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
-  border-radius: 20px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  top: calc(100% - 2px);
+  left: -2px;
+  right: -2px;
   z-index: 50;
+  padding: 8px;
+  background: #ffffff;
+  border: 2px solid #ffb800;
+  border-top: none;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 12px 24px rgba(255, 184, 0, 0.12);
   max-height: 360px;
   overflow-y: auto;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0.18s;
+}
+
+.dropdownOpen {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0s linear 0s;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #808080;
 }
 
 .item {
@@ -89,8 +139,6 @@
     background: #fff5e6;
   }
 }
-
-.itemActive {}
 
 .itemTitle {
   font-size: 14px;
