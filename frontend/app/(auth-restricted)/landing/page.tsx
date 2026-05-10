@@ -10,6 +10,7 @@ import {
   LandingKeyAdvantages,
   LandingOrders,
   LandingReviews,
+  LandingSearchBlock,
   loadLandingSnapshot,
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
@@ -39,6 +40,7 @@ export default async function AuthRestrictedLandingPage() {
 
   return (
     <div className={s.page}>
+      <LandingSearchBlock />
       <LandingHero
         title={hero.title}
         subtitle={hero.subtitle}

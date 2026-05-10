@@ -13,6 +13,7 @@ import {
 	LandingKeyAdvantages,
 	LandingOrders,
 	LandingReviews,
+	LandingSearchBlock,
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
@@ -53,6 +54,7 @@ export default async function LandingPage() {
 			<LandingHeader />
 			<div className={styles.page}>
 				<main>
+					<LandingSearchBlock />
 					<LandingHero
 						title={hero.title}
 						subtitle={hero.subtitle}

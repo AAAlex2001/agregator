@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 78px auto 120px auto;
+  margin: 0 auto 120px auto;
   padding: 0 10px;
   max-width: 1600px;
 }
@@ -22,16 +22,7 @@
 }
 
 .heroButton {
-  margin-bottom: 20px;
-}
-
-.searchBar {
-  width: 100%;
   margin-bottom: 60px;
-
-  @media (min-width: 768px) {
-    margin-bottom: 80px;
-  }
 }
 
 .visual {
@@ -177,7 +168,7 @@
 
 @media (min-width: 768px) {
   .hero {
-  margin: 78px auto 200px auto;
+  margin: 0 auto 200px auto;
 }
 
   .leftSection {
@@ -286,7 +277,7 @@
 
 @media (min-width: 1440px) {
   .hero {
-    margin: 112px auto 200px auto;
+    margin: 0 auto 200px auto;
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
@@ -401,7 +392,7 @@
 
 @media (min-width: 1920px) {
   .hero {
-    margin: 140px auto 200px auto;
+    margin: 0 auto 200px auto;
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
