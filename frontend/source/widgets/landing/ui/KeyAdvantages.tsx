@@ -39,6 +39,30 @@ const KeyAdvantages = ({
     <section className={s.section} id="key-advantages">
       <div className={s.content}>
         <div className={s.header}>
+          <div className={s.truckImage}>
+            <Image src="/belaz.webp" alt="" aria-hidden="true" fill sizes="630px" style={{ objectFit: "contain" }} />
+          </div>
+
+          <div className={s.truckCoal}>
+            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+          </div>
+
+          <div className={s.truckCoal}>
+            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+          </div>
+
+          <div className={s.truckCoal}>
+            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+          </div>
+
+          <div className={s.truckCoal}>
+            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+          </div>
+
+          <div className={s.truckCoal}>
+            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
+          </div>
+
           <Title text={title} />
           <Subtitle text={subtitle} />
         </div>

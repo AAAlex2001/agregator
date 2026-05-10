@@ -59,6 +59,7 @@ export default async function LandingPage() {
 						subtitle={hero.subtitle}
 						buttonText={hero.buttonText}
 					/>
+					<LandingSearchBlock />
 					<LandingHowItWorks
 						clientSteps={howItWorks.client}
 						expertSteps={howItWorks.expert}
@@ -66,7 +67,6 @@ export default async function LandingPage() {
 						title={sectionHeaders.howItWorks.title}
 						subtitle={sectionHeaders.howItWorks.subtitle}
 					/>
-					<LandingSearchBlock />
 					<LandingKeyAdvantages
 						clientSteps={keyAdvantages.client}
 						expertSteps={keyAdvantages.expert}

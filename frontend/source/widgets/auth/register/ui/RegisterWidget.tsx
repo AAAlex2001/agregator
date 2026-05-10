@@ -50,7 +50,7 @@ const roles: Role[] = [
       "Принимайте заявки на предоставление лицензии",
       "Договаривайтесь о цене напрямую",
     ],
-    photo: "/advantages_1.webp",
+    photo: "/license_holder.webp",
   },
 ];
 

@@ -2,7 +2,6 @@
 
 import s from "./how-it-works.module.scss";
 import { useState } from "react";
-import Image from "next/image";
 import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -39,30 +38,6 @@ const HowItWorks = ({
     <section className={s.section} id="how-it-works">
       <div className={s.content}>
         <div className={s.header}>
-          <div className={s.backgroundImage}>
-            <Image src="/belaz.webp" alt="" aria-hidden="true" fill sizes="630px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.backgroundImageCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.backgroundImageCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.backgroundImageCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.backgroundImageCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.backgroundImageCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
           <Title text={title} />
           <Subtitle text={subtitle} />
         </div>
