@@ -40,7 +40,6 @@ export default async function AuthRestrictedLandingPage() {
 
   return (
     <div className={s.page}>
-      <LandingSearchBlock />
       <LandingHero
         title={hero.title}
         subtitle={hero.subtitle}
@@ -53,6 +52,7 @@ export default async function AuthRestrictedLandingPage() {
         title={sectionHeaders.howItWorks.title}
         subtitle={sectionHeaders.howItWorks.subtitle}
       />
+      <LandingSearchBlock />
       <LandingKeyAdvantages
         clientSteps={keyAdvantages.client}
         expertSteps={keyAdvantages.expert}

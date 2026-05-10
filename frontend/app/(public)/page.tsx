@@ -54,7 +54,6 @@ export default async function LandingPage() {
 			<LandingHeader />
 			<div className={styles.page}>
 				<main>
-					<LandingSearchBlock />
 					<LandingHero
 						title={hero.title}
 						subtitle={hero.subtitle}
@@ -67,6 +66,7 @@ export default async function LandingPage() {
 						title={sectionHeaders.howItWorks.title}
 						subtitle={sectionHeaders.howItWorks.subtitle}
 					/>
+					<LandingSearchBlock />
 					<LandingKeyAdvantages
 						clientSteps={keyAdvantages.client}
 						expertSteps={keyAdvantages.expert}
