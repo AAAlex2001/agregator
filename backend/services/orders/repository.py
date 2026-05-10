@@ -92,6 +92,29 @@ class OrderRepository:
         rows = (await self.db.execute(list_query)).scalars().unique().all()
         return list(rows), total
 
+    async def search_public(
+        self,
+        query: str,
+        skip: int,
+        limit: int,
+    ) -> tuple[list[Order], int]:
+        "Поиск по всем заказам платформы (любой статус) для публичного отображения. Ищет по title и company (ILIKE)."
+        pattern = f"%{query.strip()}%"
+        where = (Order.title.ilike(pattern)) | (Order.company.ilike(pattern))
+
+        count_query = select(func.count(Order.id)).where(where)
+        list_query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(where)
+            .order_by(Order.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+        )
+        total = (await self.db.execute(count_query)).scalar_one()
+        rows = (await self.db.execute(list_query)).scalars().unique().all()
+        return list(rows), total
+
     async def list_archived(
         self,
         skip: int,

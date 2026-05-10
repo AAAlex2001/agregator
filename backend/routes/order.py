@@ -23,6 +23,7 @@ from services.orders import (
     OrderFileStorage,
     OrderRepository,
     OrderValidator,
+    SearchOrdersUseCase,
     UpdateOrderUseCase,
     UpdateOrderWithFilesUseCase,
     UploadOrderFilesUseCase,
@@ -61,6 +62,22 @@ def build_send_order_updated_email(
     return SendOrderUpdatedEmailUseCase(
         repo=EmailRepository(db),
         dispatcher=EmailDispatcher(background_tasks),
+    )
+
+
+@router.get("/search", response_model=OrderListResponse)
+async def search_orders_public(
+    q: str = Query(..., min_length=1, max_length=200),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50),
+    db: AsyncSession = Depends(get_db),
+):
+    "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
+    use_case = SearchOrdersUseCase(build_repo(db))
+    orders, total = await use_case.execute(q, skip, limit)
+    return OrderListResponse(
+        items=[OrderResponse.from_order(o) for o in orders],
+        total=total,
     )
 
 
