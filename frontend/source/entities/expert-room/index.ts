@@ -1,4 +1,5 @@
 export type {
+  ExpertRoomAttachment,
   ExpertRoomMessageData,
   ExpertRoomMessageGroup,
   ExpertRoomTypingPayload,

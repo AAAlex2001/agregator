@@ -8,6 +8,7 @@ import {
 } from "@/source/shared/lib/filePreview";
 import { FileGallery } from "@/source/shared/ui/FileGallery";
 import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import { ProgressBar } from "@/source/shared/ui/ProgressBar";
 import s from "./FilePending.module.scss";
 
 interface FilePendingProps {
@@ -61,10 +62,5 @@ export function FilePending({ files, onRemove }: FilePendingProps) {
 }
 
 export function UploadProgress({ percent }: { percent: number }) {
-  return (
-    <div className={s.progress}>
-      <div className={s.progressBar} style={{ width: `${percent}%` }} />
-      <span className={s.progressText}>{percent}%</span>
-    </div>
-  );
+  return <ProgressBar percent={percent} />;
 }

@@ -1,9 +1,15 @@
+export interface ExpertRoomAttachment {
+  url: string;
+  name: string;
+}
+
 export interface ExpertRoomMessageData {
   id: number;
   sender_id: number;
   sender_name: string;
   sender_avatar_url: string | null;
   text: string;
+  attachments: ExpertRoomAttachment[];
   created_at: string;
 }
 

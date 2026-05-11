@@ -100,18 +100,25 @@ class ExpertRoomMessageOut(BaseModel):
     sender_name: str
     sender_avatar_url: str | None
     text: str
+    attachments: list[ChatAttachmentData] = Field(default_factory=list)
     created_at: datetime
 
     @classmethod
     def from_db(cls, message: ExpertRoomMessage) -> "ExpertRoomMessageOut":
         sender = message.sender
         name = full_name(sender) or (sender.email if sender else None) or f"id:{message.sender_id}"
+        raw_attachments = list(message.attachments or [])
+        attachments = [
+            ChatAttachmentData.model_validate(item) if not isinstance(item, ChatAttachmentData) else item
+            for item in raw_attachments
+        ]
         return cls(
             id=message.id,
             sender_id=message.sender_id,
             sender_name=name,
             sender_avatar_url=sender.avatar_url if sender else None,
             text=message.text,
+            attachments=attachments,
             created_at=message.created_at,
         )
 

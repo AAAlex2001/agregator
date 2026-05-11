@@ -18,7 +18,7 @@ function toBubbleMessage(message: ExpertRoomMessageData, isMine: boolean): ChatM
     text: message.text,
     file_url: null,
     file_name: null,
-    attachments: [],
+    attachments: message.attachments ?? [],
     is_read: true,
     created_at: message.created_at,
   };

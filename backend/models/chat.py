@@ -68,7 +68,8 @@ class ExpertRoomMessage(Base):
         nullable=False,
         index=True,
     )
-    text = Column(String(2000), nullable=False)
+    text = Column(String(2000), nullable=False, default="", server_default="")
+    attachments = Column(JSON, nullable=False, default=list, server_default="[]")
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

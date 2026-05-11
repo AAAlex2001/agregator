@@ -11,13 +11,13 @@ from schemas.chat import (
     ChatPresenceResponse,
     ExpertRoomHistoryResponse,
     ExpertRoomMessageOut,
-    SendExpertRoomMessageRequest,
 )
 from services.chats import (
     ChatFileStorage,
     ChatInAppNotifier,
     ChatRepository,
     ChatValidator,
+    ExpertRoomFileStorage,
     ExpertRoomRepository,
     ExpertRoomValidator,
     GetChatByUuidUseCase,
@@ -59,7 +59,10 @@ def build_send_expert_room_message(
 ) -> SendExpertRoomMessageUseCase:
     repo = ExpertRoomRepository(db)
     return SendExpertRoomMessageUseCase(
-        repo, ExpertRoomValidator(repo), expert_room_rate_limiter
+        repo,
+        ExpertRoomValidator(repo),
+        expert_room_rate_limiter,
+        ExpertRoomFileStorage(),
     )
 
 
@@ -247,8 +250,9 @@ async def list_expert_room_messages(
 
 @expert_room_router.post("/messages", response_model=ExpertRoomMessageOut)
 async def send_expert_room_message(
-    payload: SendExpertRoomMessageRequest,
+    text: str = Form(""),
+    files: list[UploadFile] = File(default=[]),
     user_id: int = Depends(get_current_user),
     use_case: SendExpertRoomMessageUseCase = Depends(build_send_expert_room_message),
 ):
-    return await use_case.execute(user_id, payload.text)
+    return await use_case.execute(user_id, text, uploads=files)

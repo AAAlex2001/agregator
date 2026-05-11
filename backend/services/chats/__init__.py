@@ -1,3 +1,4 @@
+from services.chats.expert_room_file_storage import ExpertRoomFileStorage
 from services.chats.expert_room_rate_limiter import (
     ExpertRoomRateLimiter,
     expert_room_rate_limiter,
@@ -45,6 +46,7 @@ __all__ = [
     "SendMessageUseCase",
     "AuthenticateExpertRoomWsUseCase",
     "ExpertRoomConnectInfo",
+    "ExpertRoomFileStorage",
     "ExpertRoomRateLimiter",
     "ExpertRoomRepository",
     "ExpertRoomValidator",

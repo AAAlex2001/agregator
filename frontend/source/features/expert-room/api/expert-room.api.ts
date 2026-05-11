@@ -42,11 +42,54 @@ export async function fetchExpertRoomHistory(
   return (await response.json()) as ExpertRoomHistoryResponse;
 }
 
-export async function sendExpertRoomMessage(text: string): Promise<ExpertRoomMessageData> {
-  const response = await fetchWithSession(`${API_URL}/expert-room/messages`, {
+export async function sendExpertRoomMessage(
+  text: string,
+  files: File[] = [],
+  onProgress?: (percent: number) => void,
+): Promise<ExpertRoomMessageData> {
+  const formData = new FormData();
+  formData.append("text", text);
+  for (const file of files) {
+    formData.append("files", file);
+  }
+
+  const url = `${API_URL}/expert-room/messages`;
+
+  if (files.length > 0 && onProgress) {
+    return new Promise<ExpertRoomMessageData>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url);
+      xhr.withCredentials = true;
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          onProgress(Math.round((event.loaded / event.total) * 100));
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(JSON.parse(xhr.responseText) as ExpertRoomMessageData);
+          return;
+        }
+        let message = "Не удалось отправить сообщение";
+        try {
+          const body = JSON.parse(xhr.responseText) as { detail?: string };
+          if (body?.detail) message = body.detail;
+        } catch {
+          // ignore
+        }
+        reject(new Error(message));
+      };
+
+      xhr.onerror = () => reject(new Error("Ошибка сети"));
+      xhr.send(formData);
+    });
+  }
+
+  const response = await fetchWithSession(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
+    body: formData,
   });
 
   if (!response.ok) {
