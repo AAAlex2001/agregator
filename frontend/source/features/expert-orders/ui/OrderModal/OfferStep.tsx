@@ -2,7 +2,7 @@ import type { UseFormReturn } from "react-hook-form";
 import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import type { VatKind } from "@/source/entities/response";
-import { VAT_LABEL, calcVat } from "@/source/entities/response";
+import { VAT_LABEL, VatBreakdown } from "@/source/entities/response";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import { VAT_KIND_VALUES, type RespondFormValues } from "../../model/respond.schema";
 import base from "./sectionBase.module.scss";
@@ -95,38 +95,7 @@ export function OfferStep({
             );
           })}
         </div>
-        {(() => {
-          const baseSum = Number(cost) || 0;
-          if (baseSum <= 0) return null;
-          const breakdown = calcVat(baseSum, vatKind as VatKind);
-          const fmt = (v: number) => v.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
-          if (breakdown.vatRate === 0) {
-            return (
-              <div className={s.vatBreakdown}>
-                <div className={`${s.vatBreakdownRow} ${s.vatBreakdownTotal}`.trim()}>
-                  <span>Итого без НДС:</span>
-                  <span>{fmt(breakdown.total)} ₽</span>
-                </div>
-              </div>
-            );
-          }
-          return (
-            <div className={s.vatBreakdown}>
-              <div className={s.vatBreakdownRow}>
-                <span>Сумма без НДС:</span>
-                <span>{fmt(breakdown.base)} ₽</span>
-              </div>
-              <div className={s.vatBreakdownRow}>
-                <span>НДС {breakdown.vatRate}%:</span>
-                <span>{fmt(breakdown.vatAmount)} ₽</span>
-              </div>
-              <div className={`${s.vatBreakdownRow} ${s.vatBreakdownTotal}`.trim()}>
-                <span>Итого с НДС:</span>
-                <span>{fmt(breakdown.total)} ₽</span>
-              </div>
-            </div>
-          );
-        })()}
+        <VatBreakdown baseAmount={Number(cost) || 0} vatKind={vatKind as VatKind} />
       </div>
 
       <span className={s.formHint}>
