@@ -42,6 +42,21 @@
     .summary__row:last-child { margin-bottom: 0; }
     .summary__label { color: #5a5a5a; font-size: 9.5pt; }
     .summary__value { font-weight: 600; }
+    .summary__comment {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #ffdda9;
+    }
+    .summary__comment-label {
+      font-size: 9.5pt;
+      color: #5a5a5a;
+      margin-bottom: 4px;
+    }
+    .summary__comment-text {
+      font-size: 10.5pt;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
 
     .badges-row { line-height: 24px; }
     .badge {
@@ -339,14 +354,13 @@
       <span class="summary__label">Участников</span>
       <span class="summary__value">{{ participants_count }}</span>
     </div>
+    {% if customer_comment %}
+      <div class="summary__comment">
+        <div class="summary__comment-label">Комментарий заказчика</div>
+        <div class="summary__comment-text">{{ customer_comment }}</div>
+      </div>
+    {% endif %}
   </section>
-
-  {% if customer_comment %}
-    <div class="info-block">
-      <div class="info-block__title">Комментарий заказчика:</div>
-      <p class="info-block__text">{{ customer_comment }}</p>
-    </div>
-  {% endif %}
 
   {% if customer_documents %}
     <div class="info-block">

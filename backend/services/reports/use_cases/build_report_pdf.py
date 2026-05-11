@@ -32,7 +32,6 @@ BADGE_PALETTE = {
 }
 
 TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
-BACKEND_ROOT = Path(__file__).resolve().parents[3]
 
 
 def format_sum(amount_kopecks: int | None) -> str:
@@ -122,9 +121,6 @@ def build_file_tiles(paths: list[str]) -> list[dict]:
         name = Path(clean).name
         extension = Path(clean).suffix.lower().lstrip(".") or "file"
         relative = clean.lstrip("/")
-        full = BACKEND_ROOT / relative
-        if not full.is_file():
-            continue
         result.append({
             "name": name,
             "extension": extension.upper(),
