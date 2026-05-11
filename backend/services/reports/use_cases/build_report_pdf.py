@@ -1,3 +1,4 @@
+import os
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -9,6 +10,9 @@ from models.order import Order
 from models.question import OrderQuestion
 from models.response import OrderResponse, ResponseStatus, VatKind
 from services.reports.repository import ReportRepository
+
+
+PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "https://plus-resurs.com").rstrip("/")
 
 
 VAT_LABELS = {
@@ -111,19 +115,20 @@ def build_badges(order: Order) -> list[dict]:
 
 
 def build_file_tiles(paths: list[str]) -> list[dict]:
-    "Плитки файлов с локальной file:// ссылкой для PDF-аннотации `rel=attachment`."
+    "Плитки файлов с публичным URL для клика-скачивания из PDF."
     result = []
     for path in paths or []:
         clean = path.split("?")[0]
         name = Path(clean).name
         extension = Path(clean).suffix.lower().lstrip(".") or "file"
-        full = BACKEND_ROOT / clean.lstrip("/")
+        relative = clean.lstrip("/")
+        full = BACKEND_ROOT / relative
         if not full.is_file():
             continue
         result.append({
             "name": name,
             "extension": extension.upper(),
-            "url": full.as_uri(),
+            "url": f"{PUBLIC_BASE_URL}/{relative}",
         })
     return result
 

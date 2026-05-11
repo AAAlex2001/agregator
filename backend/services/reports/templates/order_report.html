@@ -120,12 +120,18 @@
     }
 
     .doc-groups { display: block; margin-top: 4px; }
-    .doc-group { display: inline-block; vertical-align: top; margin: 0 18px 12px 0; }
+    .doc-group {
+      display: inline-block;
+      vertical-align: top;
+      margin: 0 18px 12px 0;
+      text-align: center;
+    }
     .doc-group__label {
       font-size: 9pt;
       color: #5a5a5a;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       font-weight: 600;
+      text-align: center;
     }
 
     .files-tiles { line-height: 0; }
@@ -213,7 +219,7 @@
 {% macro render_files(files) %}
   {% if files %}
     <div class="files-tiles">
-      {% for f in files %}<a class="file-tile" rel="attachment" href="{{ f.url }}" title="Скачать {{ f.name }}">
+      {% for f in files %}<a class="file-tile" href="{{ f.url }}" target="_blank" title="Открыть {{ f.name }}">
         <span class="file-tile__box"><span class="file-tile__inner">{{ f.extension }}</span></span>
         <span class="file-tile__name">{{ f.name }}</span>
       </a>{% endfor %}
@@ -293,7 +299,7 @@
         {% endif %}
         {% if item.files %}
           <div class="info-block">
-            <div class="info-block__title">Файлы отклика (клик по плитке — скачать):</div>
+            <div class="info-block__title">Файлы отклика (клик по плитке — открыть):</div>
             {{ render_files(item.files) }}
           </div>
         {% endif %}
@@ -346,7 +352,7 @@
 
   {% if customer_documents %}
     <div class="info-block">
-      <div class="info-block__title">Документы заказчика (клик по плитке — скачать):</div>
+      <div class="info-block__title">Документы заказчика (клик по плитке — открыть):</div>
       <div class="doc-groups">
         {% for group in customer_documents %}
           <div class="doc-group">
