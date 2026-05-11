@@ -17,6 +17,15 @@ VAT_LABELS = {
     VatKind.VAT_22: "С НДС 22%",
 }
 
+BADGE_PALETTE = {
+    "BLUE":   {"bg": "#e3f0ff", "color": "#1d4f9a"},
+    "GREEN":  {"bg": "#e2f6df", "color": "#2e7a2a"},
+    "GRAY":   {"bg": "#efefef", "color": "#4d4d4d"},
+    "ORANGE": {"bg": "#fff1d6", "color": "#b35a00"},
+    "BROWN":  {"bg": "#f3e7da", "color": "#6e4a26"},
+    "PURPLE": {"bg": "#efe4ff", "color": "#5b349b"},
+}
+
 TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 
@@ -45,6 +54,36 @@ def expert_full_name(response: OrderResponse) -> str:
     return name or "Эксперт"
 
 
+def expert_company(response: OrderResponse) -> str:
+    data = response.expert_company_data or {}
+    if not isinstance(data, dict):
+        return ""
+    name = (data.get("value") or data.get("name") or "").strip()
+    inn = (response.expert_inn or "").strip()
+    if name and inn:
+        return f"{name} (ИНН {inn})"
+    return name or (f"ИНН {inn}" if inn else "")
+
+
+def expert_rating(response: OrderResponse) -> dict | None:
+    expert = response.expert
+    if expert is None or expert.rating is None:
+        return None
+    return {
+        "rating": float(expert.rating),
+        "review_count": expert.review_count or 0,
+    }
+
+
+def build_badges(order: Order) -> list[dict]:
+    result = []
+    for badge in order.badges or []:
+        variant = badge.variant.value if hasattr(badge.variant, "value") else str(badge.variant)
+        palette = BADGE_PALETTE.get(variant.upper(), BADGE_PALETTE["GRAY"])
+        result.append({"text": badge.text, "bg": palette["bg"], "color": palette["color"]})
+    return result
+
+
 class BuildReportPdfUseCase:
     "Собирает HTML по шаблону и рендерит в PDF через WeasyPrint."
 
@@ -70,6 +109,7 @@ class BuildReportPdfUseCase:
         responses = list(order.responses or [])
         winner_response = self.find_winner(order, responses)
         other_responses = [r for r in responses if r is not winner_response]
+        badges = build_badges(order)
 
         template = self.env.get_template("order_report.html")
         return template.render(
@@ -77,9 +117,10 @@ class BuildReportPdfUseCase:
             customer_name=order.company or "—",
             order_sum=format_sum(order.sum_amount),
             order_deadline=format_date(order.deadline),
+            badges=badges,
             participants_count=len(responses),
-            winner=self.build_card(winner_response) if winner_response else None,
-            others=[self.build_card(r) for r in other_responses],
+            winner=self.build_card(winner_response, order) if winner_response else None,
+            others=[self.build_card(r, order) for r in other_responses],
             generated_at=datetime.now(timezone.utc).strftime("%d.%m.%Y"),
         )
 
@@ -96,14 +137,18 @@ class BuildReportPdfUseCase:
         return None
 
     @staticmethod
-    def build_card(response: OrderResponse) -> dict:
+    def build_card(response: OrderResponse, order: Order) -> dict:
         files = [Path(path.split("?")[0]).name for path in (response.technical_files or [])]
         return {
             "expert_name": expert_full_name(response),
+            "expert_rating": expert_rating(response),
+            "expert_company": expert_company(response),
             "proposed_sum": format_sum(response.proposed_sum_amount),
             "proposed_deadline": format_date(response.proposed_deadline),
             "response_date": response.created_at.strftime("%d.%m.%Y") if response.created_at else "—",
             "vat_label": VAT_LABELS.get(response.vat_kind, "Без НДС"),
             "comment": response.comment or "",
             "files": files,
+            "order_sum": format_sum(order.sum_amount),
+            "order_deadline": format_date(order.deadline),
         }

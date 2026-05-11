@@ -4,53 +4,64 @@
   <meta charset="utf-8" />
   <title>Отчёт по тендеру №{{ order.id }}</title>
   <style>
-    @page { size: A4; margin: 18mm 14mm; }
+    @page { size: A4; margin: 16mm 12mm; }
     body {
       font-family: "DejaVu Sans", "Helvetica", sans-serif;
       color: #1a1a1a;
-      font-size: 11pt;
+      font-size: 10.5pt;
       line-height: 1.4;
     }
-    .header {
+
+    .report-header {
       border-bottom: 2px solid #ff8a00;
       padding-bottom: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
-    .header__title { font-size: 18pt; font-weight: 700; margin: 0 0 6px 0; }
-    .header__meta { font-size: 10pt; color: #5a5a5a; }
-    .order-summary {
+    .report-header__title { font-size: 18pt; font-weight: 700; margin: 0 0 4px 0; }
+    .report-header__meta { font-size: 9.5pt; color: #5a5a5a; }
+
+    .summary {
       background: #fff8ee;
       border: 1px solid #ffdda9;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 12px 16px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
-    .order-summary__row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 6px;
+    .summary__row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 5px; }
+    .summary__row:last-child { margin-bottom: 0; }
+    .summary__label { color: #5a5a5a; font-size: 9.5pt; }
+    .summary__value { font-weight: 600; }
+
+    .badges-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 9pt;
+      font-weight: 500;
     }
-    .order-summary__row:last-child { margin-bottom: 0; }
-    .order-summary__label { color: #5a5a5a; font-size: 10pt; }
-    .order-summary__value { font-weight: 600; }
+
     .section-title { font-size: 13pt; font-weight: 700; margin: 14px 0 10px 0; }
+
     .card {
       border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      padding: 14px 16px;
+      border-radius: 12px;
+      padding: 12px 14px;
       margin-bottom: 12px;
       page-break-inside: avoid;
     }
     .card--winner { border: 2px solid #2e7a2a; }
+
     .card__head {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
       margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f0f0f0;
     }
-    .card__expert { font-size: 12pt; font-weight: 700; }
+    .card__meta { color: #5a5a5a; font-size: 9.5pt; }
     .status {
       display: inline-block;
       padding: 3px 10px;
@@ -60,18 +71,58 @@
     }
     .status--winner { background: #e2f6df; color: #2e7a2a; }
     .status--skipped { background: #efefef; color: #6a6a6a; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px 18px;
-      margin-bottom: 6px;
+
+    .card__body {
+      display: flex;
+      gap: 14px;
     }
-    .field { display: flex; flex-direction: column; gap: 2px; }
-    .field__label { font-size: 9pt; color: #5a5a5a; }
-    .field__value { font-size: 11pt; font-weight: 500; }
-    .field__value--accent { color: #ff8a00; }
-    .comment {
-      margin-top: 6px;
+    .card__body-left { flex: 1 1 60%; }
+    .card__body-right { flex: 0 0 38%; }
+
+    .field { margin-bottom: 8px; }
+    .field:last-child { margin-bottom: 0; }
+    .field__label { font-size: 9pt; color: #5a5a5a; margin-bottom: 2px; }
+    .field__value { font-size: 11pt; font-weight: 500; word-wrap: break-word; }
+    .field__value--accent { color: #ff8a00; font-weight: 700; font-size: 13pt; }
+
+    .expert {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .expert__avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ff8a00;
+      font-weight: 700;
+      font-size: 13pt;
+    }
+    .expert__info { display: flex; flex-direction: column; }
+    .expert__name { font-size: 12pt; font-weight: 700; }
+    .expert__rating { font-size: 9.5pt; color: #5a5a5a; }
+
+    .right-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .details {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #e0e0e0;
+    }
+    .info-block { margin-bottom: 8px; }
+    .info-block:last-child { margin-bottom: 0; }
+    .info-block__title { font-size: 10pt; font-weight: 600; color: #5a5a5a; margin-bottom: 4px; }
+    .info-block__text {
+      margin: 0;
       padding: 8px 10px;
       background: #fafafa;
       border-radius: 6px;
@@ -79,12 +130,12 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
-    .files { margin-top: 6px; font-size: 9pt; color: #5a5a5a; }
-    .files__title { font-weight: 600; margin-bottom: 2px; }
-    .files ul { margin: 0; padding-left: 16px; }
+    .files-list { margin: 0; padding-left: 18px; font-size: 9.5pt; }
+    .files-list li { margin-bottom: 2px; }
+
     .footer {
-      margin-top: 20px;
-      padding-top: 10px;
+      margin-top: 18px;
+      padding-top: 8px;
       border-top: 1px solid #e0e0e0;
       font-size: 9pt;
       color: #808080;
@@ -94,85 +145,139 @@
 </head>
 <body>
 
-{% macro render_card(item, is_winner) %}
+{% macro render_badges(items) %}
+  {% if items %}
+    <div class="badges-row">
+      {% for b in items %}
+        <span class="badge" style="background: {{ b.bg }}; color: {{ b.color }};">{{ b.text }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_card(item, is_winner, requirement_badges) %}
   <div class="card {% if is_winner %}card--winner{% endif %}">
     <div class="card__head">
-      <span class="card__expert">{{ item.expert_name }}</span>
+      <span class="card__meta">№ {{ order.id }}</span>
       <span class="status {% if is_winner %}status--winner{% else %}status--skipped{% endif %}">
         {% if is_winner %}Победитель{% else %}Не выбран{% endif %}
       </span>
     </div>
-    <div class="grid">
-      <div class="field">
-        <span class="field__label">Предложенная цена</span>
-        <span class="field__value field__value--accent">{{ item.proposed_sum }}</span>
+
+    <div class="card__body">
+      <div class="card__body-left">
+        <div class="expert">
+          <span class="expert__avatar">{{ item.expert_name[0] }}</span>
+          <span class="expert__info">
+            <span class="expert__name">{{ item.expert_name }}</span>
+            {% if item.expert_rating %}
+              <span class="expert__rating">
+                ★ {{ "%.1f"|format(item.expert_rating.rating) }} ·
+                отзывов: {{ item.expert_rating.review_count }}
+              </span>
+            {% else %}
+              <span class="expert__rating">Отзывов пока нет</span>
+            {% endif %}
+          </span>
+        </div>
+
+        {% if requirement_badges %}
+          <div class="field">
+            <div class="field__label">Требования к эксперту</div>
+            {{ render_badges(requirement_badges) }}
+          </div>
+        {% endif %}
+
+        {% if item.expert_company %}
+          <div class="field">
+            <div class="field__label">Организация эксперта</div>
+            <div class="field__value">{{ item.expert_company }}</div>
+          </div>
+        {% endif %}
       </div>
-      <div class="field">
-        <span class="field__label">Предложенный срок</span>
-        <span class="field__value">{{ item.proposed_deadline }}</span>
-      </div>
-      <div class="field">
-        <span class="field__label">Дата отклика</span>
-        <span class="field__value">{{ item.response_date }}</span>
-      </div>
-      <div class="field">
-        <span class="field__label">НДС</span>
-        <span class="field__value">{{ item.vat_label }}</span>
+
+      <div class="card__body-right">
+        <div class="right-items">
+          <div class="field">
+            <div class="field__label">Начальная максимальная цена</div>
+            <div class="field__value field__value--accent">{{ item.order_sum }}</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Цена эксперта</div>
+            <div class="field__value">{{ item.proposed_sum }} · {{ item.vat_label }}</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Срок выполнения до</div>
+            <div class="field__value">{{ item.proposed_deadline }}</div>
+          </div>
+          <div class="field">
+            <div class="field__label">Дата отклика</div>
+            <div class="field__value">{{ item.response_date }}</div>
+          </div>
+        </div>
       </div>
     </div>
-    {% if item.comment %}
-      <div class="comment">{{ item.comment }}</div>
-    {% endif %}
-    {% if item.files %}
-      <div class="files">
-        <div class="files__title">Файлы отклика:</div>
-        <ul>
-          {% for file in item.files %}
-            <li>{{ file }}</li>
-          {% endfor %}
-        </ul>
+
+    {% if item.comment or item.files %}
+      <div class="details">
+        {% if item.comment %}
+          <div class="info-block">
+            <div class="info-block__title">Комментарий:</div>
+            <p class="info-block__text">{{ item.comment }}</p>
+          </div>
+        {% endif %}
+        {% if item.files %}
+          <div class="info-block">
+            <div class="info-block__title">Файлы отклика:</div>
+            <ul class="files-list">
+              {% for file in item.files %}
+                <li>{{ file }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
       </div>
     {% endif %}
   </div>
 {% endmacro %}
 
-  <header class="header">
-    <h1 class="header__title">Отчёт по тендеру №{{ order.id }}</h1>
-    <div class="header__meta">Сформирован {{ generated_at }}</div>
+  <header class="report-header">
+    <h1 class="report-header__title">Отчёт по тендеру №{{ order.id }}</h1>
+    <div class="report-header__meta">Сформирован {{ generated_at }}</div>
   </header>
 
-  <section class="order-summary">
-    <div class="order-summary__row">
-      <span class="order-summary__label">Название заказа</span>
-      <span class="order-summary__value">{{ order.title }}</span>
+  <section class="summary">
+    <div class="summary__row">
+      <span class="summary__label">Название заказа</span>
+      <span class="summary__value">{{ order.title }}</span>
     </div>
-    <div class="order-summary__row">
-      <span class="order-summary__label">Заказчик</span>
-      <span class="order-summary__value">{{ customer_name }}</span>
+    <div class="summary__row">
+      <span class="summary__label">Заказчик</span>
+      <span class="summary__value">{{ customer_name }}</span>
     </div>
-    <div class="order-summary__row">
-      <span class="order-summary__label">Начальная максимальная цена</span>
-      <span class="order-summary__value">{{ order_sum }}</span>
+    <div class="summary__row">
+      <span class="summary__label">Начальная максимальная цена</span>
+      <span class="summary__value">{{ order_sum }}</span>
     </div>
-    <div class="order-summary__row">
-      <span class="order-summary__label">Срок выполнения до</span>
-      <span class="order-summary__value">{{ order_deadline }}</span>
+    <div class="summary__row">
+      <span class="summary__label">Срок выполнения до</span>
+      <span class="summary__value">{{ order_deadline }}</span>
     </div>
-    <div class="order-summary__row">
-      <span class="order-summary__label">Участников</span>
-      <span class="order-summary__value">{{ participants_count }}</span>
+    <div class="summary__row">
+      <span class="summary__label">Участников</span>
+      <span class="summary__value">{{ participants_count }}</span>
     </div>
   </section>
 
   {% if winner %}
     <h2 class="section-title">Победитель</h2>
-    {{ render_card(winner, True) }}
+    {{ render_card(winner, True, badges) }}
   {% endif %}
 
   {% if others %}
     <h2 class="section-title">Остальные участники</h2>
     {% for item in others %}
-      {{ render_card(item, False) }}
+      {{ render_card(item, False, badges) }}
     {% endfor %}
   {% endif %}
 
