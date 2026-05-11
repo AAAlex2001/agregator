@@ -65,7 +65,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
       ]}
       actions={
         canLeaveReview && onLeaveReview ? (
-          <Button variant="primary" size="sm" onClick={onLeaveReview}>
+          <Button variant="secondary" size="sm" onClick={onLeaveReview}>
             Оставить отзыв
           </Button>
         ) : undefined

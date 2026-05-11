@@ -46,7 +46,7 @@
     .card {
       border: 1px solid #e0e0e0;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 14px 16px;
       margin-bottom: 12px;
       page-break-inside: avoid;
     }
@@ -57,9 +57,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 10px;
     }
     .card__meta { color: #5a5a5a; font-size: 9.5pt; }
     .status {
@@ -72,24 +70,18 @@
     .status--winner { background: #e2f6df; color: #2e7a2a; }
     .status--skipped { background: #efefef; color: #6a6a6a; }
 
-    .card__body {
-      display: flex;
-      gap: 14px;
-    }
-    .card__body-left { flex: 1 1 60%; }
-    .card__body-right { flex: 0 0 38%; }
+    .card__body { display: flex; gap: 16px; }
+    .card__left { flex: 1 1 60%; display: flex; flex-direction: column; gap: 10px; }
+    .card__right { flex: 0 0 38%; display: flex; flex-direction: column; gap: 10px; }
 
-    .field { margin-bottom: 8px; }
-    .field:last-child { margin-bottom: 0; }
-    .field__label { font-size: 9pt; color: #5a5a5a; margin-bottom: 2px; }
-    .field__value { font-size: 11pt; font-weight: 500; word-wrap: break-word; }
-    .field__value--accent { color: #ff8a00; font-weight: 700; font-size: 13pt; }
+    .title-block { }
+    .title-block__label { font-size: 9pt; color: #5a5a5a; margin-bottom: 2px; }
+    .title-block__value { font-size: 13pt; font-weight: 700; word-wrap: break-word; }
 
     .expert {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
     }
     .expert__avatar {
       width: 36px;
@@ -99,26 +91,24 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #ff8a00;
-      font-weight: 700;
-      font-size: 13pt;
     }
+    .expert__avatar svg { width: 22px; height: 22px; fill: #b0b0b0; }
     .expert__info { display: flex; flex-direction: column; }
+    .expert__label { font-size: 9pt; color: #5a5a5a; }
     .expert__name { font-size: 12pt; font-weight: 700; }
     .expert__rating { font-size: 9.5pt; color: #5a5a5a; }
 
-    .right-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .field { }
+    .field__label { font-size: 9pt; color: #5a5a5a; margin-bottom: 2px; }
+    .field__value { font-size: 11pt; font-weight: 500; word-wrap: break-word; }
+    .field__value--accent { color: #1a1a1a; font-weight: 700; font-size: 13pt; }
 
     .details {
-      margin-top: 10px;
+      margin-top: 12px;
       padding-top: 10px;
       border-top: 1px dashed #e0e0e0;
     }
-    .info-block { margin-bottom: 8px; }
+    .info-block { margin-bottom: 10px; }
     .info-block:last-child { margin-bottom: 0; }
     .info-block__title { font-size: 10pt; font-weight: 600; color: #5a5a5a; margin-bottom: 4px; }
     .info-block__text {
@@ -155,6 +145,12 @@
   {% endif %}
 {% endmacro %}
 
+{% macro expert_avatar_svg() %}
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+{% endmacro %}
+
 {% macro render_card(item, is_winner, requirement_badges) %}
   <div class="card {% if is_winner %}card--winner{% endif %}">
     <div class="card__head">
@@ -165,10 +161,23 @@
     </div>
 
     <div class="card__body">
-      <div class="card__body-left">
+      <div class="card__left">
+        <div class="title-block">
+          <div class="title-block__label">Название заказа</div>
+          <div class="title-block__value">{{ order.title }}</div>
+        </div>
+
+        {% if requirement_badges %}
+          <div class="field">
+            <div class="field__label">Требования к эксперту</div>
+            {{ render_badges(requirement_badges) }}
+          </div>
+        {% endif %}
+
         <div class="expert">
-          <span class="expert__avatar">{{ item.expert_name[0] }}</span>
+          <span class="expert__avatar">{{ expert_avatar_svg() }}</span>
           <span class="expert__info">
+            <span class="expert__label">Эксперт</span>
             <span class="expert__name">{{ item.expert_name }}</span>
             {% if item.expert_rating %}
               <span class="expert__rating">
@@ -180,46 +189,36 @@
             {% endif %}
           </span>
         </div>
-
-        {% if requirement_badges %}
-          <div class="field">
-            <div class="field__label">Требования к эксперту</div>
-            {{ render_badges(requirement_badges) }}
-          </div>
-        {% endif %}
-
-        {% if item.expert_company %}
-          <div class="field">
-            <div class="field__label">Организация эксперта</div>
-            <div class="field__value">{{ item.expert_company }}</div>
-          </div>
-        {% endif %}
       </div>
 
-      <div class="card__body-right">
-        <div class="right-items">
-          <div class="field">
-            <div class="field__label">Начальная максимальная цена</div>
-            <div class="field__value field__value--accent">{{ item.order_sum }}</div>
-          </div>
-          <div class="field">
-            <div class="field__label">Цена эксперта</div>
-            <div class="field__value">{{ item.proposed_sum }} · {{ item.vat_label }}</div>
-          </div>
-          <div class="field">
-            <div class="field__label">Срок выполнения до</div>
-            <div class="field__value">{{ item.proposed_deadline }}</div>
-          </div>
-          <div class="field">
-            <div class="field__label">Дата отклика</div>
-            <div class="field__value">{{ item.response_date }}</div>
-          </div>
+      <div class="card__right">
+        <div class="field">
+          <div class="field__label">Начальная максимальная цена</div>
+          <div class="field__value field__value--accent">{{ item.order_sum }}</div>
+        </div>
+        <div class="field">
+          <div class="field__label">Цена эксперта</div>
+          <div class="field__value">{{ item.proposed_sum }} · {{ item.vat_label }}</div>
+        </div>
+        <div class="field">
+          <div class="field__label">Срок выполнения до</div>
+          <div class="field__value">{{ item.proposed_deadline }}</div>
+        </div>
+        <div class="field">
+          <div class="field__label">Дата отклика</div>
+          <div class="field__value">{{ item.response_date }}</div>
         </div>
       </div>
     </div>
 
-    {% if item.comment or item.files %}
+    {% if item.expert_company or item.comment or item.files %}
       <div class="details">
+        {% if item.expert_company %}
+          <div class="info-block">
+            <div class="info-block__title">Организация эксперта:</div>
+            <p class="info-block__text">{{ item.expert_company }}</p>
+          </div>
+        {% endif %}
         {% if item.comment %}
           <div class="info-block">
             <div class="info-block__title">Комментарий:</div>
