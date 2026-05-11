@@ -128,6 +128,31 @@ def build_file_tiles(paths: list[str]) -> list[dict]:
     return result
 
 
+CUSTOMER_DOCUMENT_GROUPS = [
+    ("technical_files", "Техническое задание"),
+    ("contract_files", "Проект договора"),
+    ("company_files", "Карточка предприятия"),
+    ("other_files", "Иное"),
+]
+
+
+def build_customer_documents(order: Order) -> list[dict]:
+    "4 категории документов заказчика в порядке UI."
+    groups = []
+    for attr, label in CUSTOMER_DOCUMENT_GROUPS:
+        paths = list(getattr(order, attr, None) or [])
+        tiles = build_file_tiles(paths)
+        if tiles:
+            groups.append({"label": label, "files": tiles})
+    return groups
+
+
+def format_responses_deadline(value: datetime | None) -> str:
+    if value is None:
+        return "—"
+    return value.strftime("%d.%m.%Y, %H:%M")
+
+
 def visible_questions(order: Order) -> list[dict]:
     items = []
     for q in order.questions or []:
@@ -175,8 +200,11 @@ class BuildReportPdfUseCase:
         return template.render(
             order=order,
             customer_name=customer_with_inn(order),
+            customer_comment=(order.comment or "").strip(),
+            customer_documents=build_customer_documents(order),
             order_sum=format_sum(order.sum_amount),
             order_deadline=format_date(order.deadline),
+            responses_deadline=format_responses_deadline(order.responses_deadline),
             badges=badges,
             participants_count=len(responses),
             winner=self.build_card(winner_response, order) if winner_response else None,

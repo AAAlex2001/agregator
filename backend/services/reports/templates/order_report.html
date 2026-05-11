@@ -119,6 +119,15 @@
       word-wrap: break-word;
     }
 
+    .doc-groups { display: block; margin-top: 4px; }
+    .doc-group { display: inline-block; vertical-align: top; margin: 0 18px 12px 0; }
+    .doc-group__label {
+      font-size: 9pt;
+      color: #5a5a5a;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
     .files-tiles { line-height: 0; }
     .file-tile {
       display: inline-block;
@@ -319,10 +328,35 @@
       <span class="summary__value">{{ order_deadline }}</span>
     </div>
     <div class="summary__row">
+      <span class="summary__label">Приём откликов до</span>
+      <span class="summary__value">{{ responses_deadline }}</span>
+    </div>
+    <div class="summary__row">
       <span class="summary__label">Участников</span>
       <span class="summary__value">{{ participants_count }}</span>
     </div>
   </section>
+
+  {% if customer_comment %}
+    <div class="info-block">
+      <div class="info-block__title">Комментарий заказчика:</div>
+      <p class="info-block__text">{{ customer_comment }}</p>
+    </div>
+  {% endif %}
+
+  {% if customer_documents %}
+    <div class="info-block">
+      <div class="info-block__title">Документы заказчика (клик по плитке — скачать):</div>
+      <div class="doc-groups">
+        {% for group in customer_documents %}
+          <div class="doc-group">
+            <div class="doc-group__label">{{ group.label }}</div>
+            {{ render_files(group.files) }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
 
   {% if winner %}
     <h2 class="section-title">Победитель</h2>
