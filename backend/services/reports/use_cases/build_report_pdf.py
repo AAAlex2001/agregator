@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import HTTPException, status
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from weasyprint import Attachment, HTML
+from weasyprint import HTML
 
 from models.order import Order
 from models.question import OrderQuestion
@@ -111,28 +111,21 @@ def build_badges(order: Order) -> list[dict]:
 
 
 def build_file_tiles(paths: list[str]) -> list[dict]:
-    "Делает данные для плиток файлов: имя + расширение крупно."
+    "Плитки файлов с локальной file:// ссылкой для PDF-аннотации `rel=attachment`."
     result = []
     for path in paths or []:
         clean = path.split("?")[0]
         name = Path(clean).name
         extension = Path(clean).suffix.lower().lstrip(".") or "file"
-        result.append({"name": name, "extension": extension.upper()})
-    return result
-
-
-def build_attachments(paths: list[str]) -> list[Attachment]:
-    attachments: list[Attachment] = []
-    for path in paths or []:
-        clean = path.split("?")[0].lstrip("/")
-        full = BACKEND_ROOT / clean
+        full = BACKEND_ROOT / clean.lstrip("/")
         if not full.is_file():
             continue
-        attachments.append(Attachment(
-            url=str(full),
-            description=full.name,
-        ))
-    return attachments
+        result.append({
+            "name": name,
+            "extension": extension.upper(),
+            "url": full.as_uri(),
+        })
+    return result
 
 
 def visible_questions(order: Order) -> list[dict]:
@@ -169,8 +162,7 @@ class BuildReportPdfUseCase:
             )
 
         html = self.render_html(order)
-        attachments = self.collect_attachments(order)
-        return HTML(string=html).write_pdf(attachments=attachments or None)
+        return HTML(string=html).write_pdf()
 
     def render_html(self, order: Order) -> str:
         responses = list(order.responses or [])
@@ -192,13 +184,6 @@ class BuildReportPdfUseCase:
             questions=questions,
             generated_at=datetime.now(timezone.utc).strftime("%d.%m.%Y"),
         )
-
-    @staticmethod
-    def collect_attachments(order: Order) -> list[Attachment]:
-        attachments: list[Attachment] = []
-        for response in order.responses or []:
-            attachments.extend(build_attachments(list(response.technical_files or [])))
-        return attachments
 
     @staticmethod
     def find_winner(order: Order, responses: list[OrderResponse]) -> OrderResponse | None:

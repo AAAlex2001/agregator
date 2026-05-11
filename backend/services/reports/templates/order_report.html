@@ -127,6 +127,8 @@
       margin: 0 8px 10px 0;
       line-height: 1.2;
       page-break-inside: avoid;
+      text-decoration: none;
+      color: inherit;
     }
     .file-tile__box {
       width: 64px;
@@ -202,10 +204,10 @@
 {% macro render_files(files) %}
   {% if files %}
     <div class="files-tiles">
-      {% for f in files %}<span class="file-tile">
+      {% for f in files %}<a class="file-tile" rel="attachment" href="{{ f.url }}" title="Скачать {{ f.name }}">
         <span class="file-tile__box"><span class="file-tile__inner">{{ f.extension }}</span></span>
         <span class="file-tile__name">{{ f.name }}</span>
-      </span>{% endfor %}
+      </a>{% endfor %}
     </div>
   {% endif %}
 {% endmacro %}
@@ -282,7 +284,7 @@
         {% endif %}
         {% if item.files %}
           <div class="info-block">
-            <div class="info-block__title">Файлы отклика (приложены к PDF):</div>
+            <div class="info-block__title">Файлы отклика (клик по плитке — скачать):</div>
             {{ render_files(item.files) }}
           </div>
         {% endif %}
