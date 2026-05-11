@@ -53,7 +53,7 @@ export function CustomerOrdersWidget() {
                 ? [{ label: "Начальная максимальная цена", value: h.draft.budget, accent: true }]
                 : []),
               ...(h.draft.deadline
-                ? [{ label: "Срок выполнения до", value: h.draft.deadline }]
+                ? [{ label: "Срок выполнения до", value: h.draft.deadline, orange: true }]
                 : []),
             ]}
             onContinue={h.openCreate}

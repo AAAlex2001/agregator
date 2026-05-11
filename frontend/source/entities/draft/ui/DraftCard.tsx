@@ -8,6 +8,7 @@ export interface DraftCardField {
   label: string;
   value: string;
   accent?: boolean;
+  orange?: boolean;
 }
 
 interface Props {
@@ -50,6 +51,7 @@ export function DraftCard({
         label: item.label,
         value: item.value,
         valueAccent: item.accent,
+        valueOrange: item.orange,
       }))}
       actions={<ActionButtons actions={actions} />}
     />

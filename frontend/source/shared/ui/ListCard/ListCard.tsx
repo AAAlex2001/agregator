@@ -7,6 +7,7 @@ export interface ListCardItem {
   label: ReactNode;
   value: ReactNode;
   valueAccent?: boolean;
+  valueOrange?: boolean;
 }
 
 export interface ListCardProps {
@@ -101,7 +102,7 @@ export function ListCard({
             {rightItems.map((item, index) => (
               <div key={index} className={s.rightItem}>
                 <span className={s.label}>{item.label}</span>
-                <span className={`${s.value} ${item.valueAccent ? s.valueAccent : ""}`.trim()}>
+                <span className={[s.value, item.valueAccent ? s.valueAccent : "", item.valueOrange ? s.valueOrange : ""].filter(Boolean).join(" ")}>
                   {item.value}
                 </span>
               </div>

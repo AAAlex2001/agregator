@@ -77,6 +77,7 @@ export function OrderCard({
     {
       label: "Срок выполнения до",
       value: <DiffValue previous={previousDate ?? null} current={date || "—"} />,
+      valueOrange: true,
     },
   ];
 

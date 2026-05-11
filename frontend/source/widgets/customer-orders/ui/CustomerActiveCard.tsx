@@ -55,6 +55,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
         {
           label: "Срок выполнения до",
           value: <DiffValue previous={card.previousDeadline} current={card.date || "—"} />,
+          valueOrange: true,
         },
       ]}
       actions={<ActionButtons actions={actions} />}

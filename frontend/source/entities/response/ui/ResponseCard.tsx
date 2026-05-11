@@ -72,6 +72,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     {
       label: "Срок выполнения до",
       value: <DiffValue previous={card.previousDeadline} current={card.deadline || "—"} />,
+      valueOrange: true,
     },
     {
       label: "Дата отклика",
