@@ -2,13 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.order import Order, OrderStatus
+from models.order import Order
 from models.response import OrderResponse
 from utils.pagination import paginate_with_has_more
 
 
 class ReportRepository:
-    "Доступ к данным для отчётов: завершённые заказы заказчика с принятым исполнителем."
+    "Доступ к данным для отчётов: заказы заказчика, в которых выбран исполнитель."
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -29,7 +29,6 @@ class ReportRepository:
             )
             .where(
                 Order.customer_id == customer_id,
-                Order.status == OrderStatus.ARCHIVED,
                 Order.assigned_expert_id.isnot(None),
             )
             .order_by(Order.updated_at.desc())
