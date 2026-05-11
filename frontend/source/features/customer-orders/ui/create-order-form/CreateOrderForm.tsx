@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
+import type { DocumentsFormState } from "../../model/formFiles";
 import type { OrderFormValues } from "../../model/schema";
 import { BadgeSection } from "./sections/BadgeSection";
 import { CommentSection } from "./sections/CommentSection";
@@ -15,7 +16,7 @@ import s from "./CreateOrderForm.module.scss";
 
 interface Props {
   onCancel: () => void;
-  onSubmit: (values: OrderFormValues, files: File[], keepFiles?: string[]) => void;
+  onSubmit: (values: OrderFormValues, documents: DocumentsFormState) => void;
   isSubmitting: boolean;
   editTarget?: OrderCardData;
 }
@@ -53,11 +54,12 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
             <CommentSection form={formState.form} />
 
             <FilesSection
-              existingFiles={formState.keepFiles}
-              files={formState.files}
-              dropzoneOptions={formState.dropzoneOptions}
-              onRemoveFile={formState.removeFile}
-              onRemoveExistingFile={formState.removeExistingFile}
+              documents={formState.documents}
+              onSetSingle={formState.setSingle}
+              onRemoveSingleExisting={formState.removeSingleExisting}
+              onAddOther={formState.addOther}
+              onRemoveOtherNew={formState.removeOtherNew}
+              onRemoveOtherExisting={formState.removeOtherExisting}
             />
 
             <FormActions

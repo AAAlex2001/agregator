@@ -3,6 +3,7 @@ import {
   cell,
   type ExpertiseType,
 } from "@/source/entities/expertise";
+import type { DocumentsFormState } from "./formFiles";
 import type { OrderFormValues } from "./schema";
 
 function parseBadges(badges: { text: string }[]): Record<string, string[]> {
@@ -59,7 +60,7 @@ function flattenCodes(selections: Record<string, string[]>): string[] {
   return result;
 }
 
-export function buildCreatePayload(values: OrderFormValues, files: File[], userId: number) {
+export function buildCreatePayload(values: OrderFormValues, documents: DocumentsFormState, userId: number) {
   return {
     title: values.title.trim(),
     company: values.company.trim(),
@@ -69,11 +70,11 @@ export function buildCreatePayload(values: OrderFormValues, files: File[], userI
     badge_codes: flattenCodes(values.selectionsByType),
     comment: values.comment.trim(),
     customer_id: userId,
-    files,
+    documents,
   };
 }
 
-export function buildUpdatePayload(values: OrderFormValues, files: File[], keepFiles: string[]) {
+export function buildUpdatePayload(values: OrderFormValues, documents: DocumentsFormState) {
   return {
     title: values.title.trim(),
     company: values.company.trim(),
@@ -82,7 +83,6 @@ export function buildUpdatePayload(values: OrderFormValues, files: File[], keepF
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
     badge_codes: flattenCodes(values.selectionsByType),
     comment: values.comment.trim(),
-    files,
-    keepFiles,
+    documents,
   };
 }

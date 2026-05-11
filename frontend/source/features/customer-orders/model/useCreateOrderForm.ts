@@ -3,26 +3,29 @@
 import { useEffect, useReducer } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { DropzoneOptions } from "react-dropzone";
 import type { OrderCardData } from "@/source/entities/order";
-import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { clearDraft, loadDraft, saveDraft } from "./orderDraft";
-import { createInitialFormFilesState, formFilesReducer } from "./formReducer";
+import {
+  documentsFormReducer,
+  initialDocumentsFormState,
+  canAddMoreOther,
+  type DocumentsFormState,
+} from "./formFiles";
 import { getDefaultValues } from "./mappers";
 import { orderFormSchema, type OrderFormValues } from "./schema";
 
 interface Props {
   editTarget?: OrderCardData;
-  onSubmit: (values: OrderFormValues, files: File[], keepFiles?: string[]) => void;
+  onSubmit: (values: OrderFormValues, documents: DocumentsFormState) => void;
 }
 
 export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
   const isEdit = Boolean(editTarget);
   const { showError } = useNotifications();
-  const [fileState, dispatch] = useReducer(
-    formFilesReducer,
-    createInitialFormFilesState(editTarget?.technicalFiles),
+  const [documents, dispatch] = useReducer(
+    documentsFormReducer,
+    initialDocumentsFormState(editTarget?.documents),
   );
 
   const form = useForm<OrderFormValues>({
@@ -36,32 +39,29 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     return () => subscription.unsubscribe();
   }, [form, isEdit]);
 
-  const dropzoneOptions: DropzoneOptions = {
-    noKeyboard: true,
-    multiple: true,
-    maxFiles: 6,
-    accept: {
-      "application/pdf": [".pdf"],
-      "image/jpeg": [".jpeg", ".jpg"],
-      "image/png": [".png"],
-      "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-      "application/vnd.ms-excel": [".xls"],
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-    },
-    onDrop: (acceptedFiles) => {
-      const result = mergeFilesWithLimits(fileState.files, acceptedFiles);
-      if (result.errorMessage) {
-        showError(result.errorMessage);
-        return;
-      }
-      dispatch({ type: "ADD_FILES", files: result.nextFiles });
-    },
+  const setSingle = (category: "technical" | "contract" | "company", file: File | null) => {
+    dispatch({ type: "SET_SINGLE", category, file });
   };
+
+  const removeSingleExisting = (category: "technical" | "contract" | "company") => {
+    dispatch({ type: "REMOVE_SINGLE_EXISTING", category });
+  };
+
+  const addOther = (incoming: File[]) => {
+    const free = canAddMoreOther(documents);
+    if (!free) {
+      showError("Достигнут общий лимит файлов");
+      return;
+    }
+    dispatch({ type: "ADD_OTHER", files: incoming });
+  };
+
+  const removeOtherNew = (index: number) => dispatch({ type: "REMOVE_OTHER_NEW", index });
+  const removeOtherExisting = (index: number) => dispatch({ type: "REMOVE_OTHER_EXISTING", index });
 
   const submit = form.handleSubmit(
     (values) => {
-      onSubmit(values, fileState.files, isEdit ? fileState.keepFiles : undefined);
+      onSubmit(values, documents);
       if (!isEdit) clearDraft();
     },
     (errors) => {
@@ -77,10 +77,11 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     isEdit,
     form,
     submit,
-    files: fileState.files,
-    keepFiles: fileState.keepFiles,
-    removeFile: (index: number) => dispatch({ type: "REMOVE_FILE", index }),
-    removeExistingFile: (index: number) => dispatch({ type: "REMOVE_EXISTING_FILE", index }),
-    dropzoneOptions,
+    documents,
+    setSingle,
+    removeSingleExisting,
+    addOther,
+    removeOtherNew,
+    removeOtherExisting,
   };
 }

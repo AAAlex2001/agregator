@@ -4,9 +4,9 @@ import { ListCard } from "@/source/shared/ui/ListCard";
 import { DiffValue } from "@/source/shared/ui/DiffValue";
 import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
-import { ActionButtons, CommentSection, TechSpecFiles } from "@/source/entities/response";
+import { ActionButtons, CommentSection } from "@/source/entities/response";
 import type { CardAction } from "@/source/entities/response";
-import { RequirementsBadges } from "@/source/entities/order";
+import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 
 interface Props {
@@ -68,12 +68,8 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
               previous={card.previousComment}
             />
           )}
-          {card.technicalFiles.length > 0 && (
-            <TechSpecFiles
-              title="Техническое задание:"
-              files={card.technicalFiles}
-              previousFiles={card.previousTechnicalFiles}
-            />
+          {countDocuments(card.documents) > 0 && (
+            <DocumentsGallery documents={card.documents} />
           )}
           <OrderQuestionsBlock
             orderId={card.id}

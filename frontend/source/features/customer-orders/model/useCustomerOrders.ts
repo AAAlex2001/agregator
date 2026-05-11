@@ -9,6 +9,7 @@ import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "../a
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
 import type { OrderFormValues } from "./schema";
+import type { DocumentsFormState } from "./formFiles";
 import { clearDraft, loadDraft } from "./orderDraft";
 
 export function useCustomerOrders() {
@@ -54,10 +55,10 @@ export function useCustomerOrders() {
   const openEdit = (order: OrderCardData) => d({ type: "MODE", mode: "edit", editTarget: order });
   const backToList = () => d({ type: "MODE", mode: "list" });
 
-  const onCreate = async (values: OrderFormValues, files: File[]) => {
+  const onCreate = async (values: OrderFormValues, documents: DocumentsFormState) => {
     d({ type: "SUBMITTING", value: true });
     try {
-      await createOrder(buildCreatePayload(values, files, user?.id ?? 0));
+      await createOrder(buildCreatePayload(values, documents, user?.id ?? 0));
       showSuccess("Заказ создан");
       setDraft(null);
       backToList();
@@ -69,11 +70,11 @@ export function useCustomerOrders() {
     }
   };
 
-  const onUpdate = async (values: OrderFormValues, files: File[], keepFiles: string[]) => {
+  const onUpdate = async (values: OrderFormValues, documents: DocumentsFormState) => {
     if (!s.editTarget) return;
     d({ type: "SUBMITTING", value: true });
     try {
-      await updateOrder(s.editTarget.id, buildUpdatePayload(values, files, keepFiles));
+      await updateOrder(s.editTarget.id, buildUpdatePayload(values, documents));
       showSuccess("Заказ обновлён");
       backToList();
       void reload();

@@ -4,33 +4,35 @@ from uuid import uuid4
 import aiofiles
 from fastapi import HTTPException, UploadFile, status
 
-ALLOWED_EXTENSIONS = {
-    ".pdf",
-    ".jpeg",
-    ".jpg",
-    ".png",
-    ".doc",
-    ".docx",
-    ".xls",
-    ".xlsx",
-}
-UPLOAD_CHUNK_SIZE = 1024 * 1024
+from schemas.order import ALLOWED_DOCUMENT_EXTENSIONS, OrderDocuments
 
+UPLOAD_CHUNK_SIZE = 1024 * 1024
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
 
 class OrderFileStorage:
-    "Хранение файлов заказов на диске. Отделено, чтобы не смешивать IO и БД."
+    "Хранение файлов заказов на диске. IO отделено от БД."
 
-    async def save(self, order_id: int, files: list[UploadFile]) -> list[str]:
-        upload_dir = BACKEND_ROOT / "uploads" / "orders" / str(order_id)
+    async def save_documents(
+        self,
+        order_id: int,
+        *,
+        technical: list[UploadFile],
+        contract: list[UploadFile],
+        company: list[UploadFile],
+        other: list[UploadFile],
+    ) -> OrderDocuments:
+        upload_dir = self.dir_for(order_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
+        return OrderDocuments(
+            technical=[await self.save_one(upload_dir, f, order_id) for f in technical],
+            contract=[await self.save_one(upload_dir, f, order_id) for f in contract],
+            company=[await self.save_one(upload_dir, f, order_id) for f in company],
+            other=[await self.save_one(upload_dir, f, order_id) for f in other],
+        )
 
-        saved: list[str] = []
-        for file in files:
-            path = await self.save_one(upload_dir, file, order_id)
-            saved.append(path)
-        return saved
+    def dir_for(self, order_id: int) -> Path:
+        return BACKEND_ROOT / "uploads" / "orders" / str(order_id)
 
     async def save_one(self, upload_dir: Path, file: UploadFile, order_id: int) -> str:
         extension = Path(file.filename or "").suffix.lower()
@@ -46,7 +48,7 @@ class OrderFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
-        if extension in ALLOWED_EXTENSIONS:
+        if extension in ALLOWED_DOCUMENT_EXTENSIONS:
             return
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

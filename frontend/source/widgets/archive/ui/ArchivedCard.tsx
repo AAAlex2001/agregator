@@ -9,7 +9,7 @@ import {
   CommentSection,
   TechSpecFiles,
 } from "@/source/entities/response";
-import { RequirementsBadges } from "@/source/entities/order";
+import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import s from "./ArchivedCard.module.scss";
 
@@ -82,8 +82,8 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
           {hasExecutor && card.executorFiles.length > 0 && (
             <TechSpecFiles title="Файлы отклика:" files={card.executorFiles} />
           )}
-          {card.technicalFiles.length > 0 && (
-            <TechSpecFiles title="Техническое задание:" files={card.technicalFiles} />
+          {countDocuments(card.documents) > 0 && (
+            <DocumentsGallery documents={card.documents} />
           )}
           <OrderQuestionsBlock
             orderId={card.id}

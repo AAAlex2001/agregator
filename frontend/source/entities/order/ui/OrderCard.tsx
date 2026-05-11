@@ -13,7 +13,6 @@ interface Props {
   responsesDeadline?: string | null;
   createdAtDisplay?: string;
   comment?: string;
-  technicalFiles?: string[];
   status?: string;
   previousTitle?: string | null;
   previousSum?: string | null;

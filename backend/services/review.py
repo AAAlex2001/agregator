@@ -9,6 +9,8 @@ from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
 from models.user import User, UserRole
+from schemas.order import OrderDocuments
+from services.orders.documents import OrderDocumentsService
 
 
 def format_sum(sum_amount: int | None) -> str:
@@ -127,7 +129,9 @@ class ReviewService:
                 "order_deadline": order.deadline.strftime("%d.%m.%Y") if order and order.deadline else "",
                 "expert_deadline": response.proposed_deadline.strftime("%d.%m.%Y") if response and response.proposed_deadline else "",
                 "expert_sum": format_sum(response.proposed_sum_amount if response else None),
-                "technical_files": order.technical_files if order and order.technical_files else [],
+                "order_documents": (
+                    OrderDocumentsService.from_order(order) if order else OrderDocuments()
+                ),
                 "badges": [
                     {"text": badge.text, "variant": badge.variant.value.lower()}
                     for badge in (order.badges if order and order.badges else [])

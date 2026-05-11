@@ -1,9 +1,14 @@
 "use client";
 
 import { ListCard } from "@/source/shared/ui/ListCard";
-import { FileGallery } from "@/source/shared/ui/FileGallery";
 import { StarIcon } from "@/source/shared/ui/icons";
-import { RequirementsBadges } from "@/source/entities/order";
+import {
+  DocumentsGallery,
+  RequirementsBadges,
+  countDocuments,
+  emptyDocuments,
+  type OrderDocuments,
+} from "@/source/entities/order";
 import s from "./ReviewCard.module.scss";
 
 export interface ReviewCardProps {
@@ -13,7 +18,7 @@ export interface ReviewCardProps {
   orderDeadline: string;
   expertDeadline: string;
   expertSum: string;
-  technicalFiles?: string[];
+  documents?: OrderDocuments;
   badges?: Array<{
     text: string;
     variant: "blue" | "green" | "gray" | "orange" | "brown" | "purple";
@@ -30,7 +35,7 @@ export function ReviewCard({
   orderDeadline,
   expertDeadline,
   expertSum,
-  technicalFiles = [],
+  documents = emptyDocuments(),
   badges = [],
   rating,
   date,
@@ -45,7 +50,7 @@ export function ReviewCard({
     ...(orderDeadline ? [{ label: "Срок выполнения до", value: orderDeadline }] : []),
   ];
 
-  const hasDetails = technicalFiles.length > 0;
+  const hasDetails = countDocuments(documents) > 0;
 
   return (
     <ListCard
@@ -78,11 +83,7 @@ export function ReviewCard({
           <RequirementsBadges badges={badges} />
         </>
       }
-      details={
-        hasDetails ? (
-          <FileGallery files={technicalFiles} label="Техническое задание:" hideWhenEmpty />
-        ) : undefined
-      }
+      details={hasDetails ? <DocumentsGallery documents={documents} /> : undefined}
     />
   );
 }

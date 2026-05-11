@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from models.order import Order, OrderBadge
 from services.email import SendNewOrderEmailUseCase
+from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.validators import OrderValidator
 from schemas.order import OrderCreate
@@ -38,17 +39,18 @@ class CreateOrderUseCase:
         return created
 
     def build_entity(self, data: OrderCreate) -> Order:
-        return Order(
+        order = Order(
             title=data.title,
             company=data.company,
             comment=data.comment,
             customer_id=data.customer_id,
-            technical_files=data.technical_files,
             sum_amount=data.sum_amount,
             deadline=data.deadline,
             responses_deadline=data.responses_deadline,
             status=data.status,
         )
+        OrderDocumentsService.write(order, data.documents)
+        return order
 
     def build_badges(self, order_id: int, data: OrderCreate) -> list[OrderBadge]:
         return [

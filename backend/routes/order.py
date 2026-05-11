@@ -26,7 +26,6 @@ from services.orders import (
     SearchOrdersUseCase,
     UpdateOrderUseCase,
     UpdateOrderWithFilesUseCase,
-    UploadOrderFilesUseCase,
 )
 from schemas.order import (
     OrderCreate,
@@ -166,7 +165,10 @@ async def create_order_with_files(
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
     badge_codes_json: str = Form("[]"),
-    files: list[UploadFile] = File(default=[]),
+    technical_files: list[UploadFile] = File(default=[]),
+    contract_files: list[UploadFile] = File(default=[]),
+    company_files: list[UploadFile] = File(default=[]),
+    other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
@@ -193,7 +195,10 @@ async def create_order_with_files(
     )
     order = await use_case.execute(
         data,
-        uploads=files if files else None,
+        technical=technical_files,
+        contract=contract_files,
+        company=company_files,
+        other=other_files,
         current_user_id=user_id,
     )
     return OrderResponse.from_order(order)
@@ -231,8 +236,11 @@ async def update_order_with_files(
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
     badge_codes_json: str = Form("[]"),
-    keep_files: str = Form("[]"),
-    files: list[UploadFile] = File(default=[]),
+    keep_documents_json: str = Form("{}"),
+    technical_files: list[UploadFile] = File(default=[]),
+    contract_files: list[UploadFile] = File(default=[]),
+    company_files: list[UploadFile] = File(default=[]),
+    other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
@@ -244,7 +252,7 @@ async def update_order_with_files(
         deadline=deadline,
         responses_deadline=responses_deadline,
         badge_codes_json=badge_codes_json,
-        keep_files=keep_files,
+        keep_documents_json=keep_documents_json,
     )
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)
@@ -265,27 +273,12 @@ async def update_order_with_files(
     order = await use_case.execute(
         order_id,
         data,
-        uploads=files if files else None,
+        technical=technical_files,
+        contract=contract_files,
+        company=company_files,
+        other=other_files,
         current_user_id=user_id,
     )
-    return OrderResponse.from_order(order)
-
-
-@router.post("/{order_id}/files", response_model=OrderResponse)
-async def upload_order_files(
-    order_id: int,
-    files: list[UploadFile] = File(...),
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
-):
-    repo = build_repo(db)
-    use_case = UploadOrderFilesUseCase(
-        repo=repo,
-        get_order=GetOrderByIdUseCase(repo),
-        files=OrderFileStorage(),
-        validator=OrderValidator(repo),
-    )
-    order = await use_case.execute(order_id, files, current_user_id=user_id)
     return OrderResponse.from_order(order)
 
 

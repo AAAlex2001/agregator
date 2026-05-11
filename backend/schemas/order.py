@@ -2,30 +2,38 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, model_validator
 
 from models.order import OrderStatus, BadgeVariant
 
-ALLOWED_TECHNICAL_FILE_EXTENSIONS = {
-    ".pdf",
-    ".jpeg",
-    ".jpg",
-    ".png",
-    ".doc",
-    ".docx",
-    ".xls",
-    ".xlsx",
+ALLOWED_DOCUMENT_EXTENSIONS = {
+    ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
 }
 
 
-def _validate_technical_file_extensions(files: list[str]) -> list[str]:
-    for file_name in files:
-        extension = Path(file_name.split("?")[0]).suffix.lower()
-        if extension not in ALLOWED_TECHNICAL_FILE_EXTENSIONS:
-            raise ValueError(
-                "Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
-            )
-    return files
+MAX_ORDER_DOCUMENTS = 6
+
+
+class OrderDocuments(BaseModel):
+    "Документы заказа по 4 категориям. ТЗ/договор/карточка компании — по одному файлу, иное — до общего лимита."
+
+    technical: list[str] = Field(default_factory=list, max_length=1)
+    contract: list[str] = Field(default_factory=list, max_length=1)
+    company: list[str] = Field(default_factory=list, max_length=1)
+    other: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def check_limits_and_extensions(self) -> "OrderDocuments":
+        total = len(self.technical) + len(self.contract) + len(self.company) + len(self.other)
+        if total > MAX_ORDER_DOCUMENTS:
+            raise ValueError(f"Не более {MAX_ORDER_DOCUMENTS} файлов на заказ")
+        for path in (*self.technical, *self.contract, *self.company, *self.other):
+            extension = Path(path.split("?")[0]).suffix.lower()
+            if extension not in ALLOWED_DOCUMENT_EXTENSIONS:
+                raise ValueError(
+                    "Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
+                )
+        return self
 
 
 class BadgeSchema(BaseModel):
@@ -48,14 +56,9 @@ class OrderCreate(BaseModel):
     sum_amount: int = Field(..., ge=0)
     deadline: date
     responses_deadline: datetime | None = None
-    technical_files: list[str] = Field(default_factory=list)
+    documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
-
-    @field_validator("technical_files")
-    @classmethod
-    def validate_technical_files(cls, value: list[str]) -> list[str]:
-        return _validate_technical_file_extensions(value)
 
 
 class OrderUpdate(BaseModel):
@@ -65,18 +68,9 @@ class OrderUpdate(BaseModel):
     sum_amount: Optional[int] = Field(None, ge=0)
     deadline: Optional[date] = None
     responses_deadline: Optional[datetime] = None
-    technical_files: Optional[list[str]] = None
+    documents: Optional[OrderDocuments] = None
     badges: Optional[list[BadgeSchema]] = None
     status: Optional[OrderStatus] = None
-
-    @field_validator("technical_files")
-    @classmethod
-    def validate_technical_files(
-        cls, value: Optional[list[str]]
-    ) -> Optional[list[str]]:
-        if value is None:
-            return value
-        return _validate_technical_file_extensions(value)
 
 
 class OrderResponse(BaseModel):
@@ -94,7 +88,7 @@ class OrderResponse(BaseModel):
     date: str
     created_at_display: str = ""
     responses_deadline: str | None = None
-    technical_files: list[str]
+    documents: OrderDocuments
     badges: list[BadgeResponse]
     status: OrderStatus
 
@@ -102,7 +96,7 @@ class OrderResponse(BaseModel):
     previous_comment: str | None = None
     previous_sum: str | None = None
     previous_date: str | None = None
-    previous_technical_files: list[str] | None = None
+    previous_documents: OrderDocuments | None = None
     previous_badges: list[BadgeResponse] | None = None
 
     executor_name: str = ""
@@ -125,8 +119,8 @@ class OrderResponse(BaseModel):
         formatted = f"{roubles:,}".replace(",", " ")
         if amount_kopecks % 100:
             kopecks = amount_kopecks % 100
-            return f"{formatted},{kopecks:02d} \u20bd"
-        return f"{formatted} \u20bd"
+            return f"{formatted},{kopecks:02d} ₽"
+        return f"{formatted} ₽"
 
     @classmethod
     def from_archived_order(
@@ -142,7 +136,7 @@ class OrderResponse(BaseModel):
             "previous_comment": None,
             "previous_sum": None,
             "previous_date": None,
-            "previous_technical_files": None,
+            "previous_documents": None,
             "previous_badges": None,
         }
 
@@ -168,17 +162,18 @@ class OrderResponse(BaseModel):
 
     @classmethod
     def from_order(cls, order) -> "OrderResponse":
+        from services.orders.documents import OrderDocumentsService
+
         amount = order.sum_amount
         sum_display = "Не определено" if amount == 0 else cls._format_sum(amount)
 
         customer_name = order.company or ""
-
         date_display = order.deadline.strftime("%d.%m.%Y")
         created_at_display = order.created_at.strftime("%d.%m.%Y") if order.created_at else ""
 
-        responses_deadline_display = None
-        if order.responses_deadline:
-            responses_deadline_display = order.responses_deadline.isoformat()
+        responses_deadline_display = (
+            order.responses_deadline.isoformat() if order.responses_deadline else None
+        )
 
         badges = [
             BadgeResponse(text=b.text, variant=b.variant.value)
@@ -187,18 +182,16 @@ class OrderResponse(BaseModel):
 
         previous_sum = (
             cls._format_sum(order.previous_sum_amount)
-            if getattr(order, "previous_sum_amount", None) is not None
+            if order.previous_sum_amount is not None
             else None
         )
         previous_date = (
             order.previous_deadline.strftime("%d.%m.%Y")
-            if getattr(order, "previous_deadline", None) is not None
+            if order.previous_deadline is not None
             else None
         )
-        previous_files_raw = getattr(order, "previous_technical_files", None)
-        previous_files = list(previous_files_raw) if isinstance(previous_files_raw, list) else None
 
-        previous_badges_raw = getattr(order, "previous_badges", None)
+        previous_badges_raw = order.previous_badges
         previous_badges = (
             [BadgeResponse(text=b.get("text", ""), variant=b.get("variant", ""))
              for b in previous_badges_raw]
@@ -220,14 +213,14 @@ class OrderResponse(BaseModel):
             date=date_display,
             created_at_display=created_at_display,
             responses_deadline=responses_deadline_display,
-            technical_files=order.technical_files or [],
+            documents=OrderDocumentsService.from_order(order),
             badges=badges,
             status=order.status,
-            previous_title=getattr(order, "previous_title", None),
-            previous_comment=getattr(order, "previous_comment", None),
+            previous_title=order.previous_title,
+            previous_comment=order.previous_comment,
             previous_sum=previous_sum,
             previous_date=previous_date,
-            previous_technical_files=previous_files,
+            previous_documents=OrderDocumentsService.from_order_previous(order),
             previous_badges=previous_badges,
         )
 

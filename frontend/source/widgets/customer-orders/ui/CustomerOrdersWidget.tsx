@@ -27,9 +27,7 @@ export function CustomerOrdersWidget() {
       <div className={s.wrapper}>
         <CreateOrderForm
           onCancel={h.backToList}
-          onSubmit={h.mode === "edit"
-            ? (values, files, keepFiles) => h.onUpdate(values, files, keepFiles ?? [])
-            : (values, files) => h.onCreate(values, files)}
+          onSubmit={h.mode === "edit" ? h.onUpdate : h.onCreate}
           isSubmitting={h.submitting}
           editTarget={h.editTarget ?? undefined}
         />

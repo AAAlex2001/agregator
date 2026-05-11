@@ -3,15 +3,16 @@ from fastapi import UploadFile
 from models.order import Order
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
+from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.use_cases.update_order import UpdateOrderUseCase
-from schemas.order import OrderUpdate
+from schemas.order import OrderDocuments, OrderUpdate
 
 
 class UpdateOrderWithFilesUseCase:
-    "Обновляет заказ и дозагружает файлы. Считает общий diff и шлёт письмо один раз в конце."
+    "Обновляет заказ и дозагружает файлы. Diff и письмо считаются один раз в конце."
 
     def __init__(
         self,
@@ -31,11 +32,16 @@ class UpdateOrderWithFilesUseCase:
         self,
         order_id: int,
         data: OrderUpdate,
-        uploads: list[UploadFile] | None,
+        *,
+        technical: list[UploadFile],
+        contract: list[UploadFile],
+        company: list[UploadFile],
+        other: list[UploadFile],
         current_user_id: int,
     ) -> Order:
         before = await self.get_order.execute(order_id)
         snapshot = self.snapshot(before)
+        before_documents = OrderDocumentsService.from_order(before)
 
         order = await self.update_order.execute(
             order_id,
@@ -44,8 +50,12 @@ class UpdateOrderWithFilesUseCase:
             notify=False,
         )
 
-        if uploads:
-            order = await self.append_files(order_id, order, uploads)
+        if technical or contract or company or other:
+            order = await self.append_files(
+                order_id, order,
+                technical=technical, contract=contract, company=company, other=other,
+                before_documents=before_documents,
+            )
 
         await self.send_email_if_changed(order, snapshot)
         return order
@@ -56,7 +66,7 @@ class UpdateOrderWithFilesUseCase:
             "sum_amount": order.sum_amount,
             "deadline": order.deadline,
             "comment": order.comment or "",
-            "files_count": len(order.technical_files or []),
+            "files_count": OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
         }
 
     async def send_email_if_changed(self, order: Order, before: dict) -> None:
@@ -70,7 +80,7 @@ class UpdateOrderWithFilesUseCase:
             before["comment"],
             order.comment or "",
             before["files_count"],
-            len(order.technical_files or []),
+            OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
         )
         if not summary:
             return
@@ -80,12 +90,30 @@ class UpdateOrderWithFilesUseCase:
         self,
         order_id: int,
         order: Order,
-        uploads: list[UploadFile],
+        *,
+        technical: list[UploadFile],
+        contract: list[UploadFile],
+        company: list[UploadFile],
+        other: list[UploadFile],
+        before_documents: OrderDocuments,
     ) -> Order:
-        existing = list(order.technical_files or [])
-        new_paths = await self.files.save(order_id, uploads)
-        if new_paths and order.previous_technical_files is None:
-            order.previous_technical_files = existing
-        order.technical_files = existing + new_paths
+        existing = OrderDocumentsService.from_order(order)
+        saved = await self.files.save_documents(
+            order_id,
+            technical=technical,
+            contract=contract,
+            company=company,
+            other=other,
+        )
+        combined = OrderDocumentsService.merge(existing, saved)
+        no_previous = (
+            order.previous_technical_files is None
+            and order.previous_contract_files is None
+            and order.previous_company_files is None
+            and order.previous_other_files is None
+        )
+        if before_documents != combined and no_previous:
+            OrderDocumentsService.write_previous(order, before_documents)
+        OrderDocumentsService.write(order, combined)
         await self.repo.flush()
         return await self.get_order.execute(order_id)

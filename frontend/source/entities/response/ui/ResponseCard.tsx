@@ -1,7 +1,7 @@
 import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
 import { ListCard } from "@/source/shared/ui/ListCard";
-import { RequirementsBadges } from "@/source/entities/order";
+import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { ResponseCardData, CardAction, UserRole } from "../model/types";
 import { ExpertInfo } from "./ExpertInfo";
 import { CommentSection, ReminderSection } from "./InfoSections";
@@ -103,12 +103,8 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       {card.techSpecFiles.length > 0 && (
         <TechSpecFiles title="Файлы отклика:" files={card.techSpecFiles} previousFiles={card.previousTechSpecFiles} />
       )}
-      {card.orderTechSpecFiles.length > 0 && (
-        <TechSpecFiles
-          title="Техническое задание:"
-          files={card.orderTechSpecFiles}
-          previousFiles={card.previousOrderTechSpecFiles}
-        />
+      {countDocuments(card.orderDocuments) > 0 && (
+        <DocumentsGallery documents={card.orderDocuments} />
       )}
       {showReminder && card.reminderText && (
         <ReminderSection text={card.reminderText} />

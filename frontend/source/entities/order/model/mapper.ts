@@ -1,4 +1,5 @@
-import type { OrderApiItem, OrderCardData, BadgeVariant } from "./types";
+import type { OrderApiItem, OrderCardData, OrderDocuments, BadgeVariant } from "./types";
+import { emptyDocuments } from "./types";
 import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
 
 const VARIANT_MAP: Record<string, BadgeVariant> = {
@@ -9,7 +10,7 @@ const VARIANT_MAP: Record<string, BadgeVariant> = {
 };
 
 function normalizeCurrency(value: string): string {
-  return value.replace(/\s*₽$/, "\u00A0₽");
+  return value.replace(/\s*₽$/, " ₽");
 }
 
 function toIsoDate(displayDate: string): string {
@@ -17,6 +18,16 @@ function toIsoDate(displayDate: string): string {
   if (!match) return displayDate;
   const [, day, month, year] = match;
   return `${year}-${month}-${day}`;
+}
+
+function resolveDocuments(documents: OrderDocuments | undefined | null): OrderDocuments {
+  if (!documents) return emptyDocuments();
+  return {
+    technical: resolveFileUrls(documents.technical),
+    contract: resolveFileUrls(documents.contract),
+    company: resolveFileUrls(documents.company),
+    other: resolveFileUrls(documents.other),
+  };
 }
 
 export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
@@ -34,7 +45,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     sum:                 normalizeCurrency(item.sum),
     sumAmountRaw:        item.sum_amount_raw,
     responsesDeadline:   item.responses_deadline ?? null,
-    technicalFiles:      resolveFileUrls(item.technical_files ?? []),
+    documents:           resolveDocuments(item.documents),
     badges:              item.badges.map((b) => ({
       text: b.text,
       variant: VARIANT_MAP[b.variant] ?? "blue",
@@ -57,9 +68,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     previousComment:     item.previous_comment ?? null,
     previousSum:         item.previous_sum ? normalizeCurrency(item.previous_sum) : null,
     previousDeadline:    item.previous_date ?? null,
-    previousTechnicalFiles: item.previous_technical_files
-      ? resolveFileUrls(item.previous_technical_files)
-      : null,
+    previousDocuments:   item.previous_documents ? resolveDocuments(item.previous_documents) : null,
     previousBadges: item.previous_badges
       ? item.previous_badges.map((b) => ({
           text: b.text,

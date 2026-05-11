@@ -1,7 +1,7 @@
 "use client";
 
-import { OrderCard } from "@/source/entities/order";
-import { CommentSection, TechSpecFiles } from "@/source/entities/response";
+import { DocumentsGallery, OrderCard, countDocuments } from "@/source/entities/order";
+import { CommentSection } from "@/source/entities/response";
 import { Button, Loader } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -51,7 +51,7 @@ export function ExpertOrdersWidget() {
           <>
             <div className={s.list}>
               {h.items.map((o) => {
-                const hasDetails = Boolean(o.comment) || o.technicalFiles.length > 0;
+                const hasDetails = Boolean(o.comment) || countDocuments(o.documents) > 0;
                 return (
                 <OrderCard
                   key={o.id}
@@ -77,12 +77,8 @@ export function ExpertOrdersWidget() {
                           previous={o.previousComment}
                         />
                       )}
-                      {o.technicalFiles.length > 0 && (
-                        <TechSpecFiles
-                          title="Техническое задание:"
-                          files={o.technicalFiles}
-                          previousFiles={o.previousTechnicalFiles}
-                        />
+                      {countDocuments(o.documents) > 0 && (
+                        <DocumentsGallery documents={o.documents} />
                       )}
                     </>
                   ) : undefined}

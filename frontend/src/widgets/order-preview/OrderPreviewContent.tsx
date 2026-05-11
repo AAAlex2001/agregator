@@ -7,6 +7,7 @@ import { Button, Loader } from "@/shared/ui";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { API_URL } from "@/source/shared/api/config";
+import { documentPaths, type OrderDocuments } from "@/source/entities/order";
 import styles from "./order-preview.module.scss";
 
 interface PreviewBadge { text: string; variant: string; }
@@ -19,7 +20,7 @@ interface PreviewOrder {
   responses_deadline: string | null;
   badges: PreviewBadge[];
   comment: string;
-  technical_files: string[];
+  documents: OrderDocuments;
 }
 
 function useOrderPreviewState() {
@@ -161,11 +162,11 @@ export function OrderPreviewContent() {
                 </div>
               )}
 
-              {order.technical_files.length > 0 && (
+              {documentPaths(order.documents).length > 0 && (
                 <div className={styles.infoBlock}>
                   <span className={styles.infoLabel}>Прикреплённые файлы</span>
                   <div className={styles.filesGrid}>
-                    {order.technical_files.map((file) => (
+                    {documentPaths(order.documents).map((file) => (
                       <div key={file} className={styles.fileItem}>
                         <span className={styles.fileIcon}>📎</span>
                         <span className={styles.fileName}>{getFileName(file)}</span>

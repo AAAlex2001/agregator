@@ -10,6 +10,40 @@ export interface OrderApiBadge {
   variant: string;
 }
 
+export interface OrderDocuments {
+  technical: string[];
+  contract: string[];
+  company: string[];
+  other: string[];
+}
+
+export const MAX_ORDER_DOCUMENTS = 6;
+
+export const DOCUMENT_LABELS = {
+  technical: "Техническое задание",
+  contract: "Проект договора",
+  company: "Карточка предприятия",
+  other: "Иное",
+} as const;
+
+export type DocumentCategory = keyof OrderDocuments;
+export type SingleDocumentCategory = "technical" | "contract" | "company";
+
+export const DOCUMENT_CATEGORIES: readonly DocumentCategory[] = ["technical", "contract", "company", "other"];
+export const SINGLE_DOCUMENT_CATEGORIES: readonly SingleDocumentCategory[] = ["technical", "contract", "company"];
+
+export function emptyDocuments(): OrderDocuments {
+  return { technical: [], contract: [], company: [], other: [] };
+}
+
+export function documentPaths(documents: OrderDocuments): string[] {
+  return [...documents.technical, ...documents.contract, ...documents.company, ...documents.other];
+}
+
+export function countDocuments(documents: OrderDocuments): number {
+  return documents.technical.length + documents.contract.length + documents.company.length + documents.other.length;
+}
+
 export interface OrderApiItem {
   id: number;
   public_id: string;
@@ -23,7 +57,7 @@ export interface OrderApiItem {
   date: string;
   created_at_display?: string;
   responses_deadline: string | null;
-  technical_files: string[];
+  documents: OrderDocuments;
   badges: OrderApiBadge[];
   status: string;
   assigned_expert_id: number | null;
@@ -43,7 +77,7 @@ export interface OrderApiItem {
   previous_comment?: string | null;
   previous_sum?: string | null;
   previous_date?: string | null;
-  previous_technical_files?: string[] | null;
+  previous_documents?: OrderDocuments | null;
   previous_badges?: OrderApiBadge[] | null;
 }
 
@@ -66,7 +100,7 @@ export interface OrderCardData {
   sumAmountRaw: number;
   deadlineRaw: string;
   responsesDeadline: string | null;
-  technicalFiles: string[];
+  documents: OrderDocuments;
   badges: Badge[];
   badgesRaw: OrderApiBadge[];
   status: string;
@@ -86,6 +120,6 @@ export interface OrderCardData {
   previousComment?: string | null;
   previousSum?: string | null;
   previousDeadline?: string | null;
-  previousTechnicalFiles?: string[] | null;
+  previousDocuments?: OrderDocuments | null;
   previousBadges?: Badge[] | null;
 }

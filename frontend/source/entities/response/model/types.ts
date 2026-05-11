@@ -1,3 +1,5 @@
+import type { OrderDocuments } from "@/source/entities/order";
+
 export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type ResponseTabKey = "all" | "review" | "in_progress" | "rejected" | "accepted";
 export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
@@ -41,7 +43,7 @@ export interface ResponseApiItem {
   order_comment?: string;
   customer_name: string;
   customer_company: string;
-  technical_files: string[];
+  order_documents: OrderDocuments;
   response_files: string[];
   badges: ResponseApiBadge[];
   created_at: string;
@@ -56,7 +58,7 @@ export interface ResponseApiItem {
   order_previous_comment?: string | null;
   order_previous_sum?: string | null;
   order_previous_date?: string | null;
-  order_previous_technical_files?: string[] | null;
+  order_previous_documents?: OrderDocuments | null;
   order_previous_badges?: ResponseApiBadge[] | null;
   expert_name: string;
   expert_avatar_url: string | null;
@@ -107,7 +109,7 @@ export interface ResponseCardData {
   previousOrderComment: string | null;
   previousOrderSum: string | null;
   previousOrderDate: string | null;
-  previousOrderTechSpecFiles: string[] | null;
+  previousOrderDocuments: OrderDocuments | null;
   previousOrderBadges: ResponseBadge[] | null;
   costEstimate: string;
   commentTitle: string;
@@ -115,7 +117,7 @@ export interface ResponseCardData {
   orderComment?: string;
   rawTechSpecFiles: string[];
   techSpecFiles: string[];
-  orderTechSpecFiles: string[];
+  orderDocuments: OrderDocuments;
   rawSumAmount: number;
   rawDeadline: string;
   expertConfirmed: boolean;

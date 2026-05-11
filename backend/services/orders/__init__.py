@@ -1,3 +1,4 @@
+from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.create_order import CreateOrderUseCase
@@ -10,7 +11,6 @@ from services.orders.use_cases.list_orders import ListOrdersUseCase
 from services.orders.use_cases.search_orders import SearchOrdersUseCase
 from services.orders.use_cases.update_order import UpdateOrderUseCase
 from services.orders.use_cases.update_order_with_files import UpdateOrderWithFilesUseCase
-from services.orders.use_cases.upload_order_files import UploadOrderFilesUseCase
 from services.orders.validators import OrderValidator
 
 __all__ = [
@@ -22,10 +22,10 @@ __all__ = [
     "ListArchivedOrdersUseCase",
     "ListOrdersUseCase",
     "SearchOrdersUseCase",
+    "OrderDocumentsService",
     "OrderFileStorage",
     "OrderRepository",
     "OrderValidator",
     "UpdateOrderUseCase",
     "UpdateOrderWithFilesUseCase",
-    "UploadOrderFilesUseCase",
 ]

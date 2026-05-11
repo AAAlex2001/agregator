@@ -1,10 +1,9 @@
 import { Button } from "@/shared/ui";
-import type { OrderCardData } from "@/source/entities/order";
+import { DocumentsGallery, type OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
 import base from "./sectionBase.module.scss";
 import { CustomerBrief } from "./CustomerBrief";
-import { TechnicalGallery } from "./TechnicalGallery";
 import s from "./DetailsStep.module.scss";
 
 interface Props {
@@ -19,7 +18,7 @@ export function DetailsStep({ order, onRespond }: Props) {
   return (
     <div className={base.section}>
       <CustomerBrief order={order} />
-      <TechnicalGallery files={order.technicalFiles} />
+      <DocumentsGallery documents={order.documents} />
 
       <OrderQuestionsBlock
         orderId={order.id}

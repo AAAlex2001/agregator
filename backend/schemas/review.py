@@ -3,6 +3,8 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
+from schemas.order import OrderDocuments
+
 
 class CreateReviewRequest(BaseModel):
     response_id: int = Field(..., gt=0)
@@ -27,7 +29,7 @@ class ReviewItem(BaseModel):
     order_deadline: str = ""
     expert_deadline: str = ""
     expert_sum: str = ""
-    technical_files: List[str] = Field(default_factory=list)
+    order_documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: List[ReviewBadgeItem] = Field(default_factory=list)
     rating: int
     comment: str

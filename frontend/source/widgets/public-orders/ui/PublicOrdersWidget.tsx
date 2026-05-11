@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import {
+  DocumentsGallery,
   OrderCard,
   OrderCardSkeleton,
+  countDocuments,
   usePublicOrdersList,
   type OrderCardData,
 } from "@/source/entities/order";
-import { CommentSection, TechSpecFiles } from "@/source/entities/response";
+import { CommentSection } from "@/source/entities/response";
 import { Loader } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -69,7 +71,7 @@ export function PublicOrdersWidget() {
         <>
           <div className={s.list}>
             {items.map((order) => {
-              const hasDetails = Boolean(order.comment) || order.technicalFiles.length > 0;
+              const hasDetails = Boolean(order.comment) || countDocuments(order.documents) > 0;
               return (
                 <OrderCard
                   key={order.id}
@@ -96,12 +98,8 @@ export function PublicOrdersWidget() {
                           previous={order.previousComment}
                         />
                       )}
-                      {order.technicalFiles.length > 0 && (
-                        <TechSpecFiles
-                          title="Техническое задание:"
-                          files={order.technicalFiles}
-                          previousFiles={order.previousTechnicalFiles}
-                        />
+                      {countDocuments(order.documents) > 0 && (
+                        <DocumentsGallery documents={order.documents} />
                       )}
                     </>
                   ) : undefined}

@@ -10,12 +10,14 @@ from dependencies.auth import get_current_user
 from models.order import OrderStatus
 from models.response import ResponseStatus, VatKind
 from models.user import UserRole
+from schemas.order import OrderDocuments
 from schemas.response import (
     ExpertResponseItem,
     ExpertResponseList,
     ResponseCreate,
     ResponseTab,
 )
+from services.orders.documents import OrderDocumentsService
 from services.email import (
     EmailDispatcher,
     EmailRepository,
@@ -143,7 +145,7 @@ def to_item(
         order_comment=order.comment if order else "",
         customer_name=customer_name,
         customer_company=customer_company,
-        technical_files=order.technical_files if order and order.technical_files else [],
+        order_documents=OrderDocumentsService.from_order(order) if order else OrderDocuments(),
         response_files=entity.technical_files if entity.technical_files else [],
         badges=[
             {"text": badge.text, "variant": badge.variant.value}
@@ -186,11 +188,9 @@ def to_item(
             None if is_finalized or order is None or order.previous_deadline is None
             else order.previous_deadline.strftime("%d.%m.%Y")
         ),
-        order_previous_technical_files=(
+        order_previous_documents=(
             None if is_finalized or order is None
-            else list(order.previous_technical_files)
-            if isinstance(order.previous_technical_files, list)
-            else None
+            else OrderDocumentsService.from_order_previous(order)
         ),
         order_previous_badges=(
             None if is_finalized or order is None

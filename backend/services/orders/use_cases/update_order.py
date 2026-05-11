@@ -1,6 +1,7 @@
 from models.order import Order, OrderBadge
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
+from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.validators import OrderValidator
@@ -9,6 +10,13 @@ from schemas.order import OrderUpdate
 
 class UpdateOrderUseCase:
     "Обновление заказа без работы с файлами. Файлы — в UpdateOrderWithFilesUseCase."
+
+    PREVIOUS_TRACKED = {
+        "title": "previous_title",
+        "comment": "previous_comment",
+        "sum_amount": "previous_sum_amount",
+        "deadline": "previous_deadline",
+    }
 
     def __init__(
         self,
@@ -36,12 +44,14 @@ class UpdateOrderUseCase:
 
         update_data = data.model_dump(exclude_unset=True)
         badges_data = update_data.pop("badges", None)
-        files_data = update_data.get("technical_files", None)
+        documents = data.documents if "documents" in update_data else None
+        update_data.pop("documents", None)
 
-        if files_data is not None:
-            current_files = list(order.technical_files or [])
-            if list(files_data) != current_files:
-                order.previous_technical_files = current_files
+        if documents is not None:
+            current_documents = OrderDocumentsService.from_order(order)
+            if current_documents != documents:
+                OrderDocumentsService.write_previous(order, current_documents)
+            OrderDocumentsService.write(order, documents)
 
         if badges_data is not None:
             current_badges = [
@@ -56,7 +66,6 @@ class UpdateOrderUseCase:
         if badges_data is not None:
             await self.replace_badges(order_id, badges_data)
 
-
         await self.repo.flush()
         updated = await self.get_order.execute(order_id)
 
@@ -70,7 +79,7 @@ class UpdateOrderUseCase:
             "sum_amount": order.sum_amount,
             "deadline": order.deadline,
             "comment": order.comment or "",
-            "files_count": len(order.technical_files or []),
+            "files_count": OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
         }
 
     async def send_email_if_changed(self, updated: Order, before: dict) -> None:
@@ -84,18 +93,11 @@ class UpdateOrderUseCase:
             before["comment"],
             updated.comment or "",
             before["files_count"],
-            len(updated.technical_files or []),
+            OrderDocumentsService.count(OrderDocumentsService.from_order(updated)),
         )
         if not summary:
             return
         await self.send_updated_email.execute(updated.id, summary)
-
-    PREVIOUS_TRACKED = {
-        "title": "previous_title",
-        "comment": "previous_comment",
-        "sum_amount": "previous_sum_amount",
-        "deadline": "previous_deadline",
-    }
 
     @classmethod
     def apply_scalar_updates(cls, order: Order, update_data: dict) -> None:

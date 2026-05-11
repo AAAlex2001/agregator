@@ -1,3 +1,21 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.heading {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -13,14 +31,10 @@
   min-width: 96px;
 }
 
-.tilesRow {
+.tiles {
   display: flex;
   flex-wrap: nowrap;
   gap: 6px;
-}
-
-.tileWrap {
-  position: relative;
 }
 
 .tile {
@@ -32,20 +46,24 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid #ffb800;
+  background: #f5f5f5;
+  border: 1px solid #ffdda9;
   border-radius: 8px;
   color: #1a1a1a;
-}
-
-.tileImage {
-  padding: 0;
-}
-
-.tileAdd {
   cursor: pointer;
-  background: #ffffff;
-  border: 1px dashed #ffb800;
+}
+
+.tileEmpty {
+  cursor: default;
+}
+
+.dash {
+  font-size: 18px;
+  color: #b0b0b0;
+}
+
+.imageTile {
+  padding: 0;
 }
 
 .image {
@@ -75,41 +93,10 @@
   text-transform: uppercase;
 }
 
-.removeButton {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 18px;
-  height: 18px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
-  color: #ffffff;
-  font-size: 12px;
-  line-height: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
 .caption {
   width: 100%;
   text-align: center;
-  font-family: "Montserrat", sans-serif;
   font-size: 12px;
   line-height: 14px;
   color: #5a5a5a;
-}
-
-.hint {
-  font-family: "Montserrat", sans-serif;
-  font-size: 12px;
-  line-height: 15px;
-  color: #7d7d7d;
-}
-
-.fileInput {
-  display: none;
 }

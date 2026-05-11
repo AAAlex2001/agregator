@@ -1,7 +1,7 @@
 import json
 from datetime import date as date_type, datetime as datetime_type
 
-from schemas.order import BadgeSchema, OrderCreate, OrderUpdate
+from schemas.order import BadgeSchema, OrderCreate, OrderDocuments, OrderUpdate
 
 
 TYPE_VARIANT = {
@@ -45,6 +45,22 @@ def parse_badge_codes(raw: str) -> list[BadgeSchema]:
     ]
 
 
+def parse_keep_documents(raw: str) -> OrderDocuments:
+    "Парсит JSON формата {technical, contract, company, other} -> OrderDocuments."
+    try:
+        value = json.loads(raw or "{}")
+    except json.JSONDecodeError:
+        value = {}
+    if not isinstance(value, dict):
+        value = {}
+    return OrderDocuments(
+        technical=list(value.get("technical") or []),
+        contract=list(value.get("contract") or []),
+        company=list(value.get("company") or []),
+        other=list(value.get("other") or []),
+    )
+
+
 def build_order_create_data(
     title: str,
     company: str,
@@ -75,7 +91,7 @@ def build_order_update_data(
     deadline: str,
     responses_deadline: str,
     badge_codes_json: str,
-    keep_files: str,
+    keep_documents_json: str,
 ) -> OrderUpdate:
     return OrderUpdate(
         title=title,
@@ -85,5 +101,5 @@ def build_order_update_data(
         deadline=date_type.fromisoformat(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
         badges=parse_badge_codes(badge_codes_json),
-        technical_files=parse_json_list(keep_files),
+        documents=parse_keep_documents(keep_documents_json),
     )

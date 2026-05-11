@@ -1,110 +1,246 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import type { DropzoneOptions } from "react-dropzone";
+import { useEffect, useRef, useState } from "react";
+import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import {
   getFileDisplayName,
-  getFileGalleryPreviewUrl,
-  getFileGalleryThumbUrl,
+  getFileExtension,
   isImageFileName,
 } from "@/source/shared/lib/filePreview";
-import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
-import { FileGallery } from "@/source/shared/ui/FileGallery";
-import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import { FileIcon } from "@/source/shared/ui/icons";
+import {
+  DOCUMENT_LABELS,
+  MAX_ORDER_DOCUMENTS,
+  SINGLE_DOCUMENT_CATEGORIES,
+} from "@/source/entities/order";
+import {
+  canAddMoreOther,
+  singleSlotIsFilled,
+  totalDocumentsCount,
+  type DocumentsFormState,
+  type OtherFilesSlot,
+  type SingleFileSlot,
+} from "../../../model/formFiles";
 import base from "./sectionBase.module.scss";
 import s from "./filesSection.module.scss";
 
+const ACCEPT_ATTR = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";
+
 interface Props {
-  existingFiles: string[];
-  files: File[];
-  dropzoneOptions: DropzoneOptions;
-  onRemoveFile: (index: number) => void;
-  onRemoveExistingFile: (index: number) => void;
-}
-
-interface NewFilePreview {
-  file: File;
-  url: string;
-}
-
-function isImageName(name: string) {
-  return isImageFileName(name);
+  documents: DocumentsFormState;
+  onSetSingle: (category: "technical" | "contract" | "company", file: File | null) => void;
+  onRemoveSingleExisting: (category: "technical" | "contract" | "company") => void;
+  onAddOther: (files: File[]) => void;
+  onRemoveOtherNew: (index: number) => void;
+  onRemoveOtherExisting: (index: number) => void;
 }
 
 export function FilesSection({
-  existingFiles,
-  files,
-  dropzoneOptions,
-  onRemoveFile,
-  onRemoveExistingFile,
+  documents,
+  onSetSingle,
+  onRemoveSingleExisting,
+  onAddOther,
+  onRemoveOtherNew,
+  onRemoveOtherExisting,
 }: Props) {
-  const [previews, setPreviews] = useState<NewFilePreview[]>([]);
-  const dropzone = useDropzone({
-    ...dropzoneOptions,
-    noClick: true,
-  });
-
-  useEffect(() => {
-    const nextPreviews = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
-
-    setPreviews(nextPreviews);
-
-    return () => {
-      nextPreviews.forEach((item) => URL.revokeObjectURL(item.url));
-    };
-  }, [files]);
-
-  const items: FileGalleryItem[] = [
-    ...existingFiles.map((file, index) => {
-      const fileUrl = resolveFileUrl(file);
-      const name = getFileDisplayName(file);
-      const isImage = isImageName(name);
-
-      return {
-        id: `existing-${file}-${index}`,
-        name,
-        url: fileUrl,
-        previewUrl: isImage ? fileUrl : getFileGalleryPreviewUrl(fileUrl, name),
-        thumbnailUrl: getFileGalleryThumbUrl(fileUrl, name),
-        isImage,
-        onRemove: () => onRemoveExistingFile(index),
-      };
-    }),
-    ...files.map((file, index) => {
-      const preview = previews.find((item) => item.file === file);
-      const previewUrl = preview?.url ?? "";
-      const isImage = isImageName(file.name);
-
-      return {
-        id: `local-${file.name}-${index}`,
-        name: file.name,
-        url: previewUrl,
-        previewUrl: isImage ? previewUrl : getFileGalleryPreviewUrl(previewUrl, file.name),
-        thumbnailUrl: getFileGalleryThumbUrl(previewUrl, file.name),
-        isImage,
-        onRemove: () => onRemoveFile(index),
-      };
-    }),
-  ].filter((item) => item.url);
-
-  const gridProps = dropzone.getRootProps({
-    className: dropzone.isDragActive ? s.gridActive : undefined,
-  });
-
   return (
     <section className={base.section}>
-      <FileGallery
-        items={items}
-        label="Файлы"
-        labelClassName={base.label}
-        hint="PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX"
-        hintClassName={s.hint}
-        variant="editable"
-        onAdd={() => dropzone.open()}
-        input={<input {...dropzone.getInputProps()} />}
-        gridProps={gridProps}
-      />
+      <span className={base.label}>Документы заказа</span>
+      <div className={s.row}>
+        {SINGLE_DOCUMENT_CATEGORIES.map((category) => (
+          <SingleSlotField
+            key={category}
+            label={DOCUMENT_LABELS[category]}
+            slot={documents[category]}
+            onSelect={(file) => onSetSingle(category, file)}
+            onRemoveNew={() => onSetSingle(category, null)}
+            onRemoveExisting={() => onRemoveSingleExisting(category)}
+          />
+        ))}
+        <OtherSlotField
+          slot={documents.other}
+          canAddMore={canAddMoreOther(documents)}
+          onAdd={onAddOther}
+          onRemoveNew={onRemoveOtherNew}
+          onRemoveExisting={onRemoveOtherExisting}
+        />
+      </div>
+      <span className={s.hint}>
+        PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX. Всего не более {MAX_ORDER_DOCUMENTS} файлов
+        (загружено {totalDocumentsCount(documents)}).
+      </span>
     </section>
+  );
+}
+
+interface SingleSlotProps {
+  label: string;
+  slot: SingleFileSlot;
+  onSelect: (file: File) => void;
+  onRemoveNew: () => void;
+  onRemoveExisting: () => void;
+}
+
+function SingleSlotField({ label, slot, onSelect, onRemoveNew, onRemoveExisting }: SingleSlotProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const filled = singleSlotIsFilled(slot);
+
+  const onPick = () => inputRef.current?.click();
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) onSelect(file);
+    event.target.value = "";
+  };
+
+  return (
+    <div className={s.column}>
+      <div className={s.tilesRow}>
+        {filled ? (
+          slot.newFile ? (
+            <NewFileTile file={slot.newFile} onRemove={onRemoveNew} />
+          ) : (
+            <ExistingFileTile path={slot.existing!} onRemove={onRemoveExisting} />
+          )
+        ) : (
+          <AddTile onClick={onPick} />
+        )}
+      </div>
+      <span className={s.caption}>{label}</span>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={ACCEPT_ATTR}
+        className={s.fileInput}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+
+interface OtherSlotProps {
+  slot: OtherFilesSlot;
+  canAddMore: boolean;
+  onAdd: (files: File[]) => void;
+  onRemoveNew: (index: number) => void;
+  onRemoveExisting: (index: number) => void;
+}
+
+function OtherSlotField({ slot, canAddMore, onAdd, onRemoveNew, onRemoveExisting }: OtherSlotProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onPick = () => inputRef.current?.click();
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const list = event.target.files;
+    if (list && list.length > 0) onAdd(Array.from(list));
+    event.target.value = "";
+  };
+
+  return (
+    <div className={s.column}>
+      <div className={s.tilesRow}>
+        {slot.existing.map((path, index) => (
+          <ExistingFileTile
+            key={`existing-${path}-${index}`}
+            path={path}
+            onRemove={() => onRemoveExisting(index)}
+          />
+        ))}
+        {slot.newFiles.map((file, index) => (
+          <NewFileTile
+            key={`new-${file.name}-${index}`}
+            file={file}
+            onRemove={() => onRemoveNew(index)}
+          />
+        ))}
+        {canAddMore ? <AddTile onClick={onPick} /> : null}
+      </div>
+      <span className={s.caption}>{DOCUMENT_LABELS.other}</span>
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept={ACCEPT_ATTR}
+        className={s.fileInput}
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+
+function AddTile({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" className={`${s.tile} ${s.tileAdd}`} onClick={onClick} aria-label="Добавить файл">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5V19M5 12H19" stroke="#FF8A00" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    </button>
+  );
+}
+
+function NewFileTile({ file, onRemove }: { file: File; onRemove: () => void }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const isImage = isImageFileName(file.name);
+
+  useEffect(() => {
+    if (!isImage) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file, isImage]);
+
+  return (
+    <FileTile
+      name={file.name}
+      previewUrl={previewUrl}
+      isImage={isImage}
+      onRemove={onRemove}
+    />
+  );
+}
+
+function ExistingFileTile({ path, onRemove }: { path: string; onRemove: () => void }) {
+  const name = getFileDisplayName(path);
+  const isImage = isImageFileName(name);
+  return (
+    <FileTile
+      name={name}
+      previewUrl={isImage ? resolveFileUrl(path) : null}
+      isImage={isImage}
+      onRemove={onRemove}
+    />
+  );
+}
+
+interface FileTileProps {
+  name: string;
+  previewUrl: string | null;
+  isImage: boolean;
+  onRemove: () => void;
+}
+
+function FileTile({ name, previewUrl, isImage, onRemove }: FileTileProps) {
+  return (
+    <div className={s.tileWrap}>
+      <div className={`${s.tile} ${isImage ? s.tileImage : ""}`.trim()} title={name}>
+        {isImage && previewUrl ? (
+          <img src={previewUrl} alt={name} className={s.image} />
+        ) : (
+          <span className={s.fileMeta}>
+            <FileIcon className={s.fileIcon} />
+            <span className={s.fileExtension}>{getFileExtension(name)}</span>
+          </span>
+        )}
+      </div>
+      <button
+        type="button"
+        className={s.removeButton}
+        onClick={onRemove}
+        aria-label={`Удалить файл ${name}`}
+      >
+        ×
+      </button>
+    </div>
   );
 }

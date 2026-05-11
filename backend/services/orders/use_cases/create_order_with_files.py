@@ -1,6 +1,7 @@
 from fastapi import UploadFile
 
 from models.order import Order
+from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.create_order import CreateOrderUseCase
@@ -8,7 +9,7 @@ from schemas.order import OrderCreate
 
 
 class CreateOrderWithFilesUseCase:
-    "Создаёт заказ и сразу прикрепляет файлы. Логика создания делегирована CreateOrderUseCase."
+    "Создаёт заказ и сразу прикрепляет файлы по 4 категориям."
 
     def __init__(
         self,
@@ -23,14 +24,25 @@ class CreateOrderWithFilesUseCase:
     async def execute(
         self,
         data: OrderCreate,
-        uploads: list[UploadFile] | None,
+        *,
+        technical: list[UploadFile],
+        contract: list[UploadFile],
+        company: list[UploadFile],
+        other: list[UploadFile],
         current_user_id: int,
     ) -> Order:
         order = await self.create_order.execute(data, current_user_id=current_user_id)
 
-        if not uploads:
+        if not (technical or contract or company or other):
             return order
 
-        order.technical_files = await self.files.save(order.id, uploads)
+        saved = await self.files.save_documents(
+            order.id,
+            technical=technical,
+            contract=contract,
+            company=company,
+            other=other,
+        )
+        OrderDocumentsService.write(order, saved)
         await self.repo.flush()
         return await self.repo.get_by_id(order.id)

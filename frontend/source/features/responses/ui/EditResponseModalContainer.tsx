@@ -43,7 +43,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     sumAmountRaw: 0,
     deadlineRaw: response.orderDate,
     responsesDeadline: null,
-    technicalFiles: response.orderTechSpecFiles,
+    documents: response.orderDocuments,
     badges: response.badges,
     badgesRaw: response.badges.map((badge) => ({ text: badge.text, variant: badge.variant })),
     status: response.rawStatus,

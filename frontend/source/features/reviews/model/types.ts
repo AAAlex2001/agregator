@@ -1,3 +1,5 @@
+import type { OrderDocuments } from "@/source/entities/order";
+
 export interface ReviewItem {
   id: number;
   order_title: string;
@@ -6,7 +8,7 @@ export interface ReviewItem {
   order_deadline: string;
   expert_deadline: string;
   expert_sum: string;
-  technical_files: string[];
+  order_documents: OrderDocuments;
   badges: Array<{
     text: string;
     variant: "blue" | "green" | "gray" | "orange" | "brown" | "purple";

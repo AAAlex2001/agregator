@@ -54,6 +54,9 @@ class Order(Base):
         index=True,
     )
     technical_files = Column(JSON, nullable=False, default=list)
+    contract_files = Column(JSON, nullable=False, default=list)
+    company_files = Column(JSON, nullable=False, default=list)
+    other_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
     previous_title = Column(String(500), nullable=True)
@@ -61,6 +64,9 @@ class Order(Base):
     previous_sum_amount = Column(BigInteger, nullable=True)
     previous_deadline = Column(Date, nullable=True)
     previous_technical_files = Column(JSON, nullable=True)
+    previous_contract_files = Column(JSON, nullable=True)
+    previous_company_files = Column(JSON, nullable=True)
+    previous_other_files = Column(JSON, nullable=True)
     previous_badges = Column(JSON, nullable=True)
     responses_deadline = Column(DateTime(timezone=True), nullable=True)
     status = Column(

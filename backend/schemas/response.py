@@ -6,6 +6,7 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 from models.response import ResponseStatus, VatKind
+from schemas.order import OrderDocuments
 
 
 class ResponseTab(str, PyEnum):
@@ -66,7 +67,7 @@ class ExpertResponseItem(BaseModel):
     order_comment: str = ""
     customer_name: str
     customer_company: str
-    technical_files: list[str]
+    order_documents: OrderDocuments = Field(default_factory=OrderDocuments)
     response_files: list[str] = []
     badges: list[dict[str, str]]
     created_at: datetime
@@ -81,7 +82,7 @@ class ExpertResponseItem(BaseModel):
     order_previous_comment: str | None = None
     order_previous_sum: str | None = None
     order_previous_date: str | None = None
-    order_previous_technical_files: list[str] | None = None
+    order_previous_documents: OrderDocuments | None = None
     order_previous_badges: list[dict[str, str]] | None = None
     expert_name: str = ""
     expert_avatar_url: str | None = None

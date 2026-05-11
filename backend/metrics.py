@@ -51,7 +51,6 @@ ENDPOINT_NAMES_RU = {
     "/api/orders/{order_id}": "Детали заказа",
     "/api/orders/create-with-files": "Создание заказа с файлами",
     "/api/orders/{order_id}/update-with-files": "Обновление заказа с файлами",
-    "/api/orders/{order_id}/files": "Добавление файлов к заказу",
     "/api/orders/{order_id}/responses": "Добавление отклика к заказу",
     "/api/responses": "Список откликов",
     "/api/responses/{response_id}/status": "Изменение статуса отклика",
@@ -86,7 +85,6 @@ def normalize_endpoint_path(path: str) -> str:
 
     path_mapping = {
         "/api/orders/{id}": "/api/orders/{order_id}",
-        "/api/orders/{order_id}/files": "/api/orders/{order_id}/files",
         "/api/orders/{order_id}/responses": "/api/orders/{order_id}/responses",
         "/api/orders/{order_id}/update-with-files": "/api/orders/{order_id}/update-with-files",
         "/api/responses/{id}": "/api/responses/{response_id}",

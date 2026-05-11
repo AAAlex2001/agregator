@@ -1,6 +1,17 @@
 import type { ResponseApiItem, ResponseCardData, ResponseBadge, BadgeVariant, UserRole, VatKind } from "./types";
 import { VAT_LABEL } from "./types";
 import { resolveFileUrls } from "@/source/shared/lib/fileUrl";
+import { emptyDocuments, type OrderDocuments } from "@/source/entities/order";
+
+function resolveDocuments(documents: OrderDocuments | undefined | null): OrderDocuments {
+  if (!documents) return emptyDocuments();
+  return {
+    technical: resolveFileUrls(documents.technical),
+    contract: resolveFileUrls(documents.contract),
+    company: resolveFileUrls(documents.company),
+    other: resolveFileUrls(documents.other),
+  };
+}
 
 const BADGE_MAP: Record<string, BadgeVariant> = {
   green: "green", gray: "gray", orange: "orange", brown: "brown", purple: "purple",
@@ -85,8 +96,8 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     previousOrderComment: item.order_previous_comment ?? null,
     previousOrderSum: item.order_previous_sum ?? null,
     previousOrderDate: item.order_previous_date ?? null,
-    previousOrderTechSpecFiles: item.order_previous_technical_files
-      ? resolveFileUrls(item.order_previous_technical_files)
+    previousOrderDocuments: item.order_previous_documents
+      ? resolveDocuments(item.order_previous_documents)
       : null,
     previousOrderBadges: item.order_previous_badges
       ? item.order_previous_badges.map((b): ResponseBadge => ({
@@ -100,7 +111,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     orderComment: item.order_comment,
     rawTechSpecFiles: item.response_files ?? [],
     techSpecFiles: resolveFileUrls(item.response_files),
-    orderTechSpecFiles: resolveFileUrls(item.technical_files),
+    orderDocuments: resolveDocuments(item.order_documents),
     rawSumAmount: item.proposed_sum_amount_raw ?? 0,
     rawDeadline: item.proposed_deadline_raw ?? "",
     expertConfirmed: confirmed,
