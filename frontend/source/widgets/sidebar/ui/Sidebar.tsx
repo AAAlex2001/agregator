@@ -9,6 +9,7 @@ import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
   ExpertRoomIcon,
+  FileIcon,
   LogoIcon,
   LogoMarkIcon,
   LogoutIcon,
@@ -69,7 +70,13 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       items: [
         { href: "/customer/orders", label: "Мои заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
+      ],
+    },
+    {
+      label: "Результаты тендеров",
+      items: [
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
+        { href: "/customer/reports", label: "Отчёты", icon: FileIcon },
       ],
     },
     {
