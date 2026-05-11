@@ -2,21 +2,20 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 16px;
+  gap: 8px;
 }
 
 .column {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  min-width: 96px;
+  gap: 6px;
 }
 
 .tilesRow {
   display: flex;
   flex-wrap: nowrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .tileWrap {
@@ -46,6 +45,16 @@
   cursor: pointer;
   background: #ffffff;
   border: 1px dashed #ffb800;
+  transition: background 0.15s ease, border-style 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background: #fff8ee;
+    border-style: solid;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .image {
@@ -95,7 +104,7 @@
 }
 
 .caption {
-  width: 100%;
+  max-width: 80px;
   text-align: center;
   font-family: "Montserrat", sans-serif;
   font-size: 12px;
