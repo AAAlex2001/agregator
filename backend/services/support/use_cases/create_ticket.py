@@ -63,6 +63,8 @@ class CreateTicketUseCase:
             status=TicketStatus.REVIEW,
             has_unread_for_user=False,
             has_unread_for_admin=True,
+            last_message_text=message.text,
+            last_message_at=message.created_at,
             messages=[message],
         )
         await self.repo.add(ticket)

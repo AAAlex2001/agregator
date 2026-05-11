@@ -59,6 +59,8 @@ class AdminReplyUseCase:
         ticket.status = TicketStatus.ANSWERED
         ticket.has_unread_for_user = True
         ticket.has_unread_for_admin = False
+        ticket.last_message_text = message.text
+        ticket.last_message_at = message.created_at
         ticket.updated_at = datetime.now(timezone.utc)
 
         await self.repo.flush()

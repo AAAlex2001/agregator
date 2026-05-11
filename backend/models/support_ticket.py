@@ -64,6 +64,8 @@ class SupportTicket(Base):
     )
     has_unread_for_user = Column(Boolean, nullable=False, default=False, server_default="false")
     has_unread_for_admin = Column(Boolean, nullable=False, default=True, server_default="true")
+    last_message_text = Column(Text, nullable=False, default="", server_default="")
+    last_message_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

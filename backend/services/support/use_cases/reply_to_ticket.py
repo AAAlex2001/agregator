@@ -63,6 +63,8 @@ class ReplyToTicketUseCase:
         ticket.status = TicketStatus.REVIEW
         ticket.has_unread_for_admin = True
         ticket.has_unread_for_user = False
+        ticket.last_message_text = message.text
+        ticket.last_message_at = message.created_at
         ticket.updated_at = datetime.now(timezone.utc)
 
         await self.repo.flush()

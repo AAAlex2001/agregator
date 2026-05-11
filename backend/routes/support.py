@@ -46,8 +46,7 @@ def message_to_item(message: SupportTicketMessage) -> SupportTicketMessageItem:
 
 
 def ticket_to_summary(ticket: SupportTicket) -> SupportTicketSummary:
-    last = ticket.messages[-1] if ticket.messages else None
-    preview = (last.text or "")[:160] if last else ""
+    preview = (ticket.last_message_text or "")[:160]
     return SupportTicketSummary(
         id=ticket.id,
         number=ticket.number,

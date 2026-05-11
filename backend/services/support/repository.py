@@ -33,7 +33,6 @@ class SupportRepository:
     ) -> tuple[list[SupportTicket], bool]:
         list_query = (
             select(SupportTicket)
-            .options(selectinload(SupportTicket.messages))
             .where(SupportTicket.user_id == user_id)
             .order_by(SupportTicket.updated_at.desc())
         )
