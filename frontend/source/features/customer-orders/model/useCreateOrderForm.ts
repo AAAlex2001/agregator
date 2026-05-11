@@ -9,9 +9,11 @@ import { clearDraft, loadDraft, saveDraft } from "./orderDraft";
 import {
   documentsFormReducer,
   initialDocumentsFormState,
-  canAddMoreOther,
+  freeSlots,
+  singleSlotIsFilled,
   type DocumentsFormState,
 } from "./formFiles";
+import { MAX_ORDER_DOCUMENTS } from "@/source/entities/order";
 import { getDefaultValues } from "./mappers";
 import { orderFormSchema, type OrderFormValues } from "./schema";
 
@@ -40,6 +42,11 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
   }, [form, isEdit]);
 
   const setSingle = (category: "technical" | "contract" | "company", file: File | null) => {
+    const slotWasEmpty = !singleSlotIsFilled(documents[category]);
+    if (file !== null && slotWasEmpty && freeSlots(documents) <= 0) {
+      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
+      return;
+    }
     dispatch({ type: "SET_SINGLE", category, file });
   };
 
@@ -48,12 +55,16 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
   };
 
   const addOther = (incoming: File[]) => {
-    const free = canAddMoreOther(documents);
-    if (!free) {
-      showError("Достигнут общий лимит файлов");
+    const free = freeSlots(documents);
+    if (free <= 0) {
+      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
       return;
     }
-    dispatch({ type: "ADD_OTHER", files: incoming });
+    const trimmed = incoming.slice(0, free);
+    if (trimmed.length < incoming.length) {
+      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
+    }
+    dispatch({ type: "ADD_OTHER", files: trimmed });
   };
 
   const removeOtherNew = (index: number) => dispatch({ type: "REMOVE_OTHER_NEW", index });

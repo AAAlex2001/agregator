@@ -81,10 +81,10 @@ function usePreviewDocuments(state: DocumentsFormState): OrderDocuments {
 
     const next = new Map<File, string>();
     for (const file of newFiles) {
-      next.set(file, URL.createObjectURL(file));
+      next.set(file, `${URL.createObjectURL(file)}#name=${encodeURIComponent(file.name)}`);
     }
     setBlobUrls(next);
-    return () => { next.forEach((url) => URL.revokeObjectURL(url)); };
+    return () => { next.forEach((url) => URL.revokeObjectURL(url.split("#")[0])); };
   }, [
     state.technical.newFile,
     state.contract.newFile,

@@ -15,6 +15,7 @@ import {
 } from "@/source/entities/order";
 import {
   canAddMoreOther,
+  freeSlots,
   singleSlotIsFilled,
   totalDocumentsCount,
   type DocumentsFormState,
@@ -43,6 +44,8 @@ export function FilesSection({
   onRemoveOtherNew,
   onRemoveOtherExisting,
 }: Props) {
+  const canAddSingle = freeSlots(documents) > 0;
+
   return (
     <section className={base.section}>
       <span className={base.label}>Документы заказа</span>
@@ -52,6 +55,7 @@ export function FilesSection({
             key={category}
             label={DOCUMENT_LABELS[category]}
             slot={documents[category]}
+            canAdd={canAddSingle}
             onSelect={(file) => onSetSingle(category, file)}
             onRemoveNew={() => onSetSingle(category, null)}
             onRemoveExisting={() => onRemoveSingleExisting(category)}
@@ -76,12 +80,13 @@ export function FilesSection({
 interface SingleSlotProps {
   label: string;
   slot: SingleFileSlot;
+  canAdd: boolean;
   onSelect: (file: File) => void;
   onRemoveNew: () => void;
   onRemoveExisting: () => void;
 }
 
-function SingleSlotField({ label, slot, onSelect, onRemoveNew, onRemoveExisting }: SingleSlotProps) {
+function SingleSlotField({ label, slot, canAdd, onSelect, onRemoveNew, onRemoveExisting }: SingleSlotProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const filled = singleSlotIsFilled(slot);
 
@@ -101,8 +106,10 @@ function SingleSlotField({ label, slot, onSelect, onRemoveNew, onRemoveExisting 
           ) : (
             <ExistingFileTile path={slot.existing!} onRemove={onRemoveExisting} />
           )
-        ) : (
+        ) : canAdd ? (
           <AddTile onClick={onPick} />
+        ) : (
+          <DisabledTile />
         )}
       </div>
       <span className={s.caption}>{label}</span>
@@ -113,6 +120,14 @@ function SingleSlotField({ label, slot, onSelect, onRemoveNew, onRemoveExisting 
         className={s.fileInput}
         onChange={onChange}
       />
+    </div>
+  );
+}
+
+function DisabledTile() {
+  return (
+    <div className={`${s.tile} ${s.tileDisabled}`} aria-hidden="true">
+      <span className={s.dash}>—</span>
     </div>
   );
 }

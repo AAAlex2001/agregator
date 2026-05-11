@@ -63,6 +63,10 @@ export function totalDocumentsCount(state: DocumentsFormState): number {
     + state.other.newFiles.length + state.other.existing.length;
 }
 
+export function freeSlots(state: DocumentsFormState): number {
+  return Math.max(0, MAX_ORDER_DOCUMENTS - totalDocumentsCount(state));
+}
+
 export function canAddMoreOther(state: DocumentsFormState): boolean {
-  return totalDocumentsCount(state) < MAX_ORDER_DOCUMENTS;
+  return freeSlots(state) > 0;
 }

@@ -15,6 +15,8 @@ function canUseOfficeViewer(fileUrl: string): boolean {
 }
 
 export function getFileDisplayName(path: string, fallback = "Файл"): string {
+  const fragmentMatch = path.match(/#name=(.+)$/);
+  if (fragmentMatch) return decodeURIComponent(fragmentMatch[1]);
   return path.split("/").pop() ?? fallback;
 }
 
