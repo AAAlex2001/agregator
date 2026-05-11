@@ -141,7 +141,7 @@
 
 .content {
   display: flex;
-  padding: 0 10px;
+  padding: 0 var(--page-px);
   flex-direction: column;
   max-width: 1600px;
   margin: 0 auto 20px auto;
@@ -185,7 +185,7 @@
   gap: 40px;
   width: 100%;
   justify-content: center;
-  padding: 0 10px;
+  padding: 0 var(--page-px);
   flex-wrap: wrap;
 }
 
@@ -527,7 +527,7 @@
   gap: 40px;
   width: 100%;
   justify-content: center;
-  padding: 0 10px;
+  padding: 0 var(--page-px);
   flex-wrap: nowrap;
   margin-bottom: 0;
   align-items: flex-start;

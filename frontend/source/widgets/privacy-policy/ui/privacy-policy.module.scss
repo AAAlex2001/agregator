@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  padding: 60px 10px 80px;
+  padding: 60px var(--page-px) 80px;
   background: #FFFFFF;
 
   @media (min-width: 768px) {

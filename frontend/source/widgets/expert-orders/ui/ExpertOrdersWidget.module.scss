@@ -6,7 +6,7 @@
   gap: 24px;
   max-width: 1640px;
   margin: 0 auto;
-  padding: 20px 10px;
+  padding: 20px var(--page-px);
   min-height: calc(100dvh - 72px);
 
   @media (min-width: 768px) {

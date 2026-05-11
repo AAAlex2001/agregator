@@ -7,6 +7,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --page-px: 16px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-px: 24px;
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --page-px: 32px;
+  }
 }
 
 @theme inline {

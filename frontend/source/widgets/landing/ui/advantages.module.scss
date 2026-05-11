@@ -1,7 +1,7 @@
 .section {
   display: flex;
   margin-bottom: 120px;
-  padding: 0 10px;
+  padding: 0 var(--page-px);
 }
 
 .card {

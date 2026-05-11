@@ -10,7 +10,7 @@
 
 .content {
   display: flex;
-  padding: 0 10px;
+  padding: 0 var(--page-px);
   flex-direction: column;
   max-width: 1600px;
   margin: 0 auto;
