@@ -279,16 +279,16 @@ async def get_my_responses(
 
     if actor.role == UserRole.CUSTOMER:
         use_case = ListCustomerResponsesUseCase(repo, validator)
-        items, total, counters = await use_case.execute(
+        items, has_more, counters = await use_case.execute(
             user_id, tab, skip, limit, sort_by, sort_dir
         )
     else:
         use_case = ListExpertResponsesUseCase(repo, validator)
-        items, total, counters = await use_case.execute(user_id, tab, skip, limit)
+        items, has_more, counters = await use_case.execute(user_id, tab, skip, limit)
 
     return ExpertResponseList(
         items=[to_item(item, actor.role) for item in items],
-        total=total,
+        has_more=has_more,
         counters=counters,
     )
 

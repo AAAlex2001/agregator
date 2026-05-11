@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { fetchExpertReviews, fetchMyReviews } from "../api/reviews.api";
 import type { ReviewItem } from "./types";
 
-async function getReviews(publicId?: string) {
-  return publicId ? fetchExpertReviews(publicId) : fetchMyReviews();
+const PAGE_SIZE = 50;
+
+async function getReviews(publicId: string | undefined, skip: number, limit: number) {
+  return publicId ? fetchExpertReviews(publicId, skip, limit) : fetchMyReviews(skip, limit);
 }
 
 function getErrorMessage(error: unknown) {
@@ -17,7 +19,9 @@ export function useExpertReviews(publicId?: string) {
   const [totalReviews, setTotalReviews] = useState(0);
   const [avgRating, setAvgRating] = useState(0);
   const [expertName, setExpertName] = useState("");
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
@@ -25,11 +29,12 @@ export function useExpertReviews(publicId?: string) {
     setError(null);
 
     try {
-      const data = await getReviews(publicId);
+      const data = await getReviews(publicId, 0, PAGE_SIZE);
       setReviews(data.reviews);
-      setTotalReviews(data.total);
+      setTotalReviews(data.total_reviews);
       setAvgRating(data.avg_rating);
       setExpertName(data.expert_name ?? "");
+      setHasMore(data.has_more);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -37,23 +42,23 @@ export function useExpertReviews(publicId?: string) {
     }
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+  const loadMore = async () => {
+    if (isLoading || isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    try {
+      const data = await getReviews(publicId, reviews.length, PAGE_SIZE);
+      setReviews((prev) => [...prev, ...data.reviews]);
+      setHasMore(data.has_more);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
-    void getReviews(publicId)
-      .then((data) => {
-        setReviews(data.reviews);
-        setTotalReviews(data.total);
-        setAvgRating(data.avg_rating);
-        setExpertName(data.expert_name ?? "");
-      })
-      .catch((err) => {
-        setError(getErrorMessage(err));
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  useEffect(() => {
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicId]);
 
   return {
@@ -61,8 +66,11 @@ export function useExpertReviews(publicId?: string) {
     totalReviews,
     avgRating,
     expertName,
+    hasMore,
     isLoading,
+    isLoadingMore,
     error,
     reload: load,
+    loadMore,
   };
 }

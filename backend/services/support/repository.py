@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.support_ticket import SupportTicket, SupportTicketMessage
+from utils.pagination import paginate_with_has_more
 
 
 class SupportRepository:
@@ -29,22 +30,14 @@ class SupportRepository:
 
     async def list_for_user(
         self, user_id: int, skip: int, limit: int
-    ) -> tuple[list[SupportTicket], int]:
-        total_query = select(func.count(SupportTicket.id)).where(
-            SupportTicket.user_id == user_id
-        )
-        total = (await self.db.execute(total_query)).scalar_one()
-
+    ) -> tuple[list[SupportTicket], bool]:
         list_query = (
             select(SupportTicket)
             .options(selectinload(SupportTicket.messages))
             .where(SupportTicket.user_id == user_id)
             .order_by(SupportTicket.updated_at.desc())
-            .offset(skip)
-            .limit(limit)
         )
-        items = list((await self.db.execute(list_query)).scalars().unique().all())
-        return items, total
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def latest_number_int(self) -> int:
         query = select(func.max(SupportTicket.id))

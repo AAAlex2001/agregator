@@ -23,8 +23,8 @@ class ListArchivedOrdersUseCase:
         skip: int,
         limit: int,
         current_user_id: int,
-    ) -> tuple[list[ArchivedOrderItem], int]:
-        orders, total = await self.repo.list_archived(skip, limit)
+    ) -> tuple[list[ArchivedOrderItem], bool]:
+        orders, has_more = await self.repo.list_archived(skip, limit)
 
         accepted_by_order: dict[int, OrderResponse] = {}
         for order in orders:
@@ -62,4 +62,4 @@ class ListArchivedOrdersUseCase:
                 accepted_response=accepted,
                 has_review=has_review,
             ))
-        return items, total
+        return items, has_more

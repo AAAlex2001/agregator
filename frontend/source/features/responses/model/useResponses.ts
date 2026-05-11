@@ -42,12 +42,40 @@ export function useResponses(role: UserRole | null) {
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
     try {
-      const data = await fetchResponses(s.activeTab, s.sortBy ?? "created_at", s.sortDir ?? "desc");
-      d({ type: "DATA", items: data.items.map((item) => mapApiToCard(item, role)), counters: data.counters });
+      const data = await fetchResponses(s.activeTab, s.sortBy ?? "created_at", s.sortDir ?? "desc", 0, 50);
+      d({
+        type: "DATA",
+        items: data.items.map((item) => mapApiToCard(item, role)),
+        counters: data.counters,
+        hasMore: data.has_more,
+      });
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
     } finally {
       d({ type: "LOADING", value: false });
+    }
+  };
+
+  const loadMore = async () => {
+    if (!role || s.isLoading || s.isLoadingMore || !s.hasMore) return;
+    d({ type: "LOADING_MORE", value: true });
+    try {
+      const data = await fetchResponses(
+        s.activeTab,
+        s.sortBy ?? "created_at",
+        s.sortDir ?? "desc",
+        s.items.length,
+        50,
+      );
+      d({
+        type: "APPEND",
+        items: data.items.map((item) => mapApiToCard(item, role)),
+        hasMore: data.has_more,
+      });
+    } catch (e) {
+      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
+    } finally {
+      d({ type: "LOADING_MORE", value: false });
     }
   };
 
@@ -179,7 +207,7 @@ export function useResponses(role: UserRole | null) {
   };
 
   return {
-    ...s, role, tabs, setTab, reload, onChat, onComplete,
+    ...s, role, tabs, setTab, reload, loadMore, onChat, onComplete,
     onShare: (pid: string, cb: () => void) => copyOrderLink(pid, cb),
     onWithdraw: (r: ResponseCardData) => d({ type: "WITHDRAW_TARGET", value: r }),
     onEdit: (r: ResponseCardData) => d({ type: "EDITING", value: r }),

@@ -13,8 +13,8 @@ async function parseMutationResponse(response: Response, fallbackMessage: string
   return response.json();
 }
 
-export async function fetchNotifications(limit = 50): Promise<NotificationListResponse | null> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/?limit=${limit}&offset=0`);
+export async function fetchNotifications(limit = 50, offset = 0): Promise<NotificationListResponse | null> {
+  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/?limit=${limit}&offset=${offset}`);
 
   if (response.status === 401) {
     return null;

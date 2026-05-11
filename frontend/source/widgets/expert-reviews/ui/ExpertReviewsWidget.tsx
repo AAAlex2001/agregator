@@ -7,6 +7,8 @@ import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { StarIcon } from "@/source/shared/ui/icons";
+import Loader from "@/source/shared/ui/Loader";
+import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { ExpertReviewsSkeleton } from "./ExpertReviewsSkeleton";
 import s from "./ExpertReviewsWidget.module.scss";
 
@@ -23,6 +25,11 @@ function formatDateFull(value: string) {
 export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
   const model = useExpertReviews(publicId);
   const isEmpty = !model.isLoading && !model.error && model.reviews.length === 0;
+  const sentinelRef = useInfiniteScroll({
+    hasMore: model.hasMore,
+    isLoading: model.isLoading || model.isLoadingMore,
+    onLoadMore: () => void model.loadMore(),
+  });
   const showRatingInfo = model.isLoading || (!model.error && model.totalReviews > 0);
   const showPublicExpertTitle = Boolean(publicId);
   const title = publicId ? "Отзывы об эксперте" : "Отзывы наших клиентов";
@@ -99,24 +106,32 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
           />
         </div>
       ) : (
-        <div className={s.list}>
-          {model.reviews.map((review) => (
-            <ReviewCard
-              key={review.id}
-              customer={review.company_name}
-              order={review.order_title}
-              orderSum={review.order_sum}
-              orderDeadline={review.order_deadline}
-              expertDeadline={review.expert_deadline}
-              expertSum={review.expert_sum}
-              technicalFiles={review.technical_files}
-              badges={review.badges}
-              rating={review.rating}
-              date={formatDateFull(review.created_at)}
-              comment={review.comment}
-            />
-          ))}
-        </div>
+        <>
+          <div className={s.list}>
+            {model.reviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                customer={review.company_name}
+                order={review.order_title}
+                orderSum={review.order_sum}
+                orderDeadline={review.order_deadline}
+                expertDeadline={review.expert_deadline}
+                expertSum={review.expert_sum}
+                technicalFiles={review.technical_files}
+                badges={review.badges}
+                rating={review.rating}
+                date={formatDateFull(review.created_at)}
+                comment={review.comment}
+              />
+            ))}
+            {model.isLoadingMore && (
+              <div className={s.loadMore}>
+                <Loader label="" size="md" />
+              </div>
+            )}
+          </div>
+          <div ref={sentinelRef} aria-hidden="true" />
+        </>
       )}
     </div>
   );

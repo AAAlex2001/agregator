@@ -42,7 +42,7 @@ class SupportTicketDetail(SupportTicketSummary):
 
 class SupportTicketList(BaseModel):
     items: list[SupportTicketSummary]
-    total: int
+    has_more: bool
 
 
 class CreateTicketRequest(BaseModel):

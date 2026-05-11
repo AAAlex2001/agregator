@@ -8,6 +8,8 @@ export { ExpertInfo } from "./ui/ExpertInfo";
 export { ActionButtons } from "./ui/ActionButtons";
 export { mapApiToCard } from "./model/mapper";
 export { VAT_LABEL } from "./model/types";
+export { calcVat, getVatRate } from "./lib/calcVat";
+export type { VatBreakdown } from "./lib/calcVat";
 export type {
   ResponseStatus, ResponseTabKey, ResponseApiItem,
   ResponsesApiList, ResponseCounters,

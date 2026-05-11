@@ -7,6 +7,7 @@ from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
 from models.user import User
+from utils.pagination import paginate_with_has_more
 
 
 class ResponseRepository:
@@ -95,31 +96,21 @@ class ResponseRepository:
         status_filters: list[ResponseStatus] | None,
         skip: int,
         limit: int,
-    ) -> tuple[list[OrderResponse], int]:
-        base = select(OrderResponse).where(OrderResponse.expert_id == expert_id)
-        total_query = select(func.count(OrderResponse.id)).where(
-            OrderResponse.expert_id == expert_id
-        )
-        if status_filters:
-            base = base.where(OrderResponse.status.in_(status_filters))
-            total_query = total_query.where(OrderResponse.status.in_(status_filters))
-
-        total = (await self.db.execute(total_query)).scalar_one()
-
+    ) -> tuple[list[OrderResponse], bool]:
         list_query = (
-            base.options(
+            select(OrderResponse)
+            .where(OrderResponse.expert_id == expert_id)
+            .options(
                 selectinload(OrderResponse.order).selectinload(Order.badges),
                 selectinload(OrderResponse.order).selectinload(Order.customer),
                 selectinload(OrderResponse.expert),
             )
             .order_by(OrderResponse.created_at.desc())
-            .offset(skip)
-            .limit(limit)
         )
-        items = list(
-            (await self.db.execute(list_query)).scalars().unique().all()
-        )
-        return items, total
+        if status_filters:
+            list_query = list_query.where(OrderResponse.status.in_(status_filters))
+
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     CUSTOMER_SORT_COLUMNS = {
         "created_at": OrderResponse.created_at,
@@ -135,42 +126,26 @@ class ResponseRepository:
         limit: int,
         sort_by: str = "created_at",
         sort_dir: str = "desc",
-    ) -> tuple[list[OrderResponse], int]:
-        base = (
+    ) -> tuple[list[OrderResponse], bool]:
+        column = self.CUSTOMER_SORT_COLUMNS.get(sort_by, OrderResponse.created_at)
+        list_query = (
             select(OrderResponse)
             .join(Order, Order.id == OrderResponse.order_id)
             .where(Order.customer_id == customer_id)
-        )
-        total_query = (
-            select(func.count(OrderResponse.id))
-            .join(Order, Order.id == OrderResponse.order_id)
-            .where(Order.customer_id == customer_id)
+            .options(
+                selectinload(OrderResponse.order).selectinload(Order.badges),
+                selectinload(OrderResponse.order).selectinload(Order.customer),
+                selectinload(OrderResponse.expert),
+                selectinload(OrderResponse.reviews),
+            )
         )
         if status_filters:
-            base = base.where(OrderResponse.status.in_(status_filters))
-            total_query = total_query.where(OrderResponse.status.in_(status_filters))
-
-        total = (await self.db.execute(total_query)).scalar_one()
-
-        column = self.CUSTOMER_SORT_COLUMNS.get(sort_by, OrderResponse.created_at)
-        list_query = base.options(
-            selectinload(OrderResponse.order).selectinload(Order.badges),
-            selectinload(OrderResponse.order).selectinload(Order.customer),
-            selectinload(OrderResponse.expert),
-            selectinload(OrderResponse.reviews),
-        )
+            list_query = list_query.where(OrderResponse.status.in_(status_filters))
         if sort_by == "expert_rating":
             list_query = list_query.join(User, User.id == OrderResponse.expert_id)
-        list_query = (
-            list_query
-            .order_by(column.asc() if sort_dir == "asc" else column.desc())
-            .offset(skip)
-            .limit(limit)
-        )
-        items = list(
-            (await self.db.execute(list_query)).scalars().unique().all()
-        )
-        return items, total
+        list_query = list_query.order_by(column.asc() if sort_dir == "asc" else column.desc())
+
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def expert_counters(self, expert_id: int) -> dict[ResponseStatus, int]:
         query = (

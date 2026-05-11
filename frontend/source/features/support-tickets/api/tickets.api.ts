@@ -40,7 +40,7 @@ interface ApiTicketDetail extends ApiTicketSummary {
 
 interface ApiTicketList {
   items: ApiTicketSummary[];
-  total: number;
+  has_more: boolean;
 }
 
 function mapAttachment(a: ApiAttachment): TicketAttachment {
@@ -78,7 +78,7 @@ function mapTicketDetail(t: ApiTicketDetail): SupportTicket {
 
 export async function fetchTickets(skip = 0, limit = 50): Promise<{
   items: SupportTicket[];
-  total: number;
+  hasMore: boolean;
 }> {
   const res = await fetchWithSession(
     `${API_URL}/support/tickets?skip=${skip}&limit=${limit}`,
@@ -88,7 +88,7 @@ export async function fetchTickets(skip = 0, limit = 50): Promise<{
     throw new Error(detail || "Не удалось загрузить обращения");
   }
   const data = (await res.json()) as ApiTicketList;
-  return { items: data.items.map(mapTicketSummary), total: data.total };
+  return { items: data.items.map(mapTicketSummary), hasMore: data.has_more };
 }
 
 export async function fetchTicket(ticketId: number): Promise<SupportTicket> {

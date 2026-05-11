@@ -6,6 +6,8 @@ import { mapNotificationCard, useUserNotifications } from "@/source/features/not
 import Button from "@/source/shared/ui/Button";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import Loader from "@/source/shared/ui/Loader";
+import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import s from "./NotificationsPageWidget.module.scss";
 
 export function NotificationsPageWidget() {
@@ -13,6 +15,12 @@ export function NotificationsPageWidget() {
   const notifications = useUserNotifications(50);
 
   const items = notifications.items.map((item) => mapNotificationCard(item));
+
+  const sentinelRef = useInfiniteScroll({
+    hasMore: notifications.hasMore,
+    isLoading: notifications.isLoading || notifications.isLoadingMore,
+    onLoadMore: () => void notifications.loadMore(),
+  });
 
   const onOpen = async (id: number) => {
     const raw = notifications.items.find((item) => item.id === id);
@@ -107,18 +115,26 @@ export function NotificationsPageWidget() {
             />
           </div>
         ) : (
-          <div className={s.list}>
-            {items.map((item) => (
-              <NotificationCard
-                key={item.id}
-                item={item}
-                isActionPending={notifications.pendingId === item.id && notifications.pendingMode === "read"}
-                isDismissPending={notifications.pendingId === item.id && notifications.pendingMode === "dismiss"}
-                onOpen={onOpen}
-                onDismiss={onDismiss}
-              />
-            ))}
-          </div>
+          <>
+            <div className={s.list}>
+              {items.map((item) => (
+                <NotificationCard
+                  key={item.id}
+                  item={item}
+                  isActionPending={notifications.pendingId === item.id && notifications.pendingMode === "read"}
+                  isDismissPending={notifications.pendingId === item.id && notifications.pendingMode === "dismiss"}
+                  onOpen={onOpen}
+                  onDismiss={onDismiss}
+                />
+              ))}
+              {notifications.isLoadingMore && (
+                <div className={s.loadMore}>
+                  <Loader label="" size="md" />
+                </div>
+              )}
+            </div>
+            <div ref={sentinelRef} aria-hidden="true" />
+          </>
         )}
       </div>
     </div>

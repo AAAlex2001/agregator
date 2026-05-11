@@ -18,7 +18,8 @@ export interface ReviewItem {
 
 export interface ReviewListResponse {
   reviews: ReviewItem[];
-  total: number;
+  has_more: boolean;
+  total_reviews: number;
   avg_rating: number;
   expert_name?: string;
 }

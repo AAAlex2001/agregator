@@ -5,7 +5,9 @@ type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accep
 export interface State {
   items: ResponseCardData[];
   counters: ResponseCounters;
+  hasMore: boolean;
   isLoading: boolean;
+  isLoadingMore: boolean;
   error: string | null;
   activeTab: ResponseTabKey;
   actionLoading: Record<number, ActionMode>;
@@ -22,8 +24,10 @@ export interface State {
 
 export type Action =
   | { type: "LOADING"; value: boolean }
+  | { type: "LOADING_MORE"; value: boolean }
   | { type: "ERROR"; value: string | null }
-  | { type: "DATA"; items: ResponseCardData[]; counters: ResponseCounters }
+  | { type: "DATA"; items: ResponseCardData[]; counters: ResponseCounters; hasMore: boolean }
+  | { type: "APPEND"; items: ResponseCardData[]; hasMore: boolean }
   | { type: "TAB"; tab: ResponseTabKey }
   | { type: "ACTION_LOADING"; id: number; mode: ActionMode }
   | { type: "EDITING"; value: ResponseCardData | null }
@@ -39,7 +43,9 @@ export type Action =
 export const initial: State = {
   items: [],
   counters: { all: 0, review: 0, in_progress: 0, rejected: 0, accepted: 0 },
+  hasMore: false,
   isLoading: true,
+  isLoadingMore: false,
   error: null,
   activeTab: "all",
   actionLoading: {},
@@ -57,8 +63,10 @@ export const initial: State = {
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "LOADING":          return { ...state, isLoading: action.value };
+    case "LOADING_MORE":     return { ...state, isLoadingMore: action.value };
     case "ERROR":            return { ...state, error: action.value };
-    case "DATA":             return { ...state, items: action.items, counters: action.counters };
+    case "DATA":             return { ...state, items: action.items, counters: action.counters, hasMore: action.hasMore };
+    case "APPEND":           return { ...state, items: [...state.items, ...action.items], hasMore: action.hasMore };
     case "TAB":              return { ...state, activeTab: action.tab };
     case "ACTION_LOADING":   return { ...state, actionLoading: { ...state.actionLoading, [action.id]: action.mode } };
     case "EDITING":          return { ...state, editing: action.value };

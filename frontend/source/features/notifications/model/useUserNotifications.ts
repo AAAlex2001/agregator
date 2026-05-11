@@ -24,7 +24,7 @@ export function useUserNotifications(limit = 50) {
       dispatch({
         type: "SET_DATA",
         items: data?.items ?? [],
-        total: data?.total ?? 0,
+        hasMore: data?.has_more ?? false,
         unreadCount: data?.unread_count ?? 0,
       });
     } catch (nextError) {
@@ -40,6 +40,26 @@ export function useUserNotifications(limit = 50) {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  const loadMore = useCallback(async () => {
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+    dispatch({ type: "SET_LOADING_MORE", payload: true });
+    try {
+      const data = await fetchNotifications(limit, state.items.length);
+      dispatch({
+        type: "APPEND_ITEMS",
+        items: data?.items ?? [],
+        hasMore: data?.has_more ?? false,
+      });
+    } catch (nextError) {
+      dispatch({
+        type: "SET_ERROR",
+        payload: nextError instanceof Error ? nextError.message : "Не удалось загрузить уведомления",
+      });
+    } finally {
+      dispatch({ type: "SET_LOADING_MORE", payload: false });
+    }
+  }, [limit, state.isLoading, state.isLoadingMore, state.hasMore, state.items.length]);
 
   const markRead = async (notificationId: number) => {
     dispatch({ type: "SET_PENDING", id: notificationId, mode: "read" });
@@ -113,7 +133,7 @@ export function useUserNotifications(limit = 50) {
       dispatch({
         type: "SET_DATA",
         items: [],
-        total: 0,
+        hasMore: false,
         unreadCount: data.unread_count,
       });
       syncBadge(data.unread_count);
@@ -131,6 +151,7 @@ export function useUserNotifications(limit = 50) {
   return {
     ...state,
     reload,
+    loadMore,
     markRead,
     dismiss,
     markAllRead,

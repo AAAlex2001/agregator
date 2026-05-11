@@ -74,10 +74,10 @@ async def search_orders_public(
 ):
     "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
     use_case = SearchOrdersUseCase(build_repo(db))
-    orders, total = await use_case.execute(q, skip, limit)
+    orders, has_more = await use_case.execute(q, skip, limit)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
-        total=total,
+        has_more=has_more,
     )
 
 
@@ -91,10 +91,10 @@ async def get_orders(
 ):
     "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
     use_case = ListOrdersUseCase(build_repo(db))
-    orders, total = await use_case.execute(skip, limit, status, user_id)
+    orders, has_more = await use_case.execute(skip, limit, status, user_id)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
-        total=total,
+        has_more=has_more,
     )
 
 
@@ -106,13 +106,13 @@ async def get_archived_orders(
     user_id: int = Depends(get_current_user),
 ):
     use_case = ListArchivedOrdersUseCase(build_repo(db))
-    items, total = await use_case.execute(skip, limit, current_user_id=user_id)
+    items, has_more = await use_case.execute(skip, limit, current_user_id=user_id)
     return OrderListResponse(
         items=[
             OrderResponse.from_archived_order(it.order, it.accepted_response, it.has_review)
             for it in items
         ],
-        total=total,
+        has_more=has_more,
     )
 
 

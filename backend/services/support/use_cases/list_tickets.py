@@ -9,5 +9,5 @@ class ListUserTicketsUseCase:
 
     async def execute(
         self, user_id: int, skip: int, limit: int
-    ) -> tuple[list[SupportTicket], int]:
+    ) -> tuple[list[SupportTicket], bool]:
         return await self.repo.list_for_user(user_id, skip, limit)

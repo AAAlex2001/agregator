@@ -18,16 +18,16 @@ class ListCustomerResponsesUseCase:
         limit: int,
         sort_by: str = "created_at",
         sort_dir: str = "desc",
-    ) -> tuple[list[OrderResponse], int, ResponseCounters]:
+    ) -> tuple[list[OrderResponse], bool, ResponseCounters]:
         await self.validator.ensure_customer(customer_id)
         status_filters = statuses_for_tab(tab)
-        items, total = await self.repo.list_customer_responses(
+        items, has_more = await self.repo.list_customer_responses(
             customer_id, status_filters, skip, limit, sort_by, sort_dir
         )
         if items:
             await self.mark_reviewed(customer_id, items)
         counters_map = await self.repo.customer_counters(customer_id)
-        return items, total, self.build_counters(counters_map)
+        return items, has_more, self.build_counters(counters_map)
 
     async def mark_reviewed(self, customer_id: int, items: list[OrderResponse]) -> None:
         response_ids = [item.id for item in items]

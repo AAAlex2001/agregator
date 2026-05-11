@@ -102,5 +102,5 @@ class ExpertResponseItem(BaseModel):
 
 class ExpertResponseList(BaseModel):
     items: list[ExpertResponseItem]
-    total: int
+    has_more: bool
     counters: ResponseCounters

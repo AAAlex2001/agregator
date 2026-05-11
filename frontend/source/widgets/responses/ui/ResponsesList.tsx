@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "@/shared/ui";
+import Loader from "@/source/shared/ui/Loader";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
@@ -8,6 +9,7 @@ import { ResponseCard } from "@/source/entities/response";
 import type { ResponseTabKey, UserRole } from "@/source/entities/response";
 import { getCardActions } from "@/source/features/responses";
 import type { useResponses } from "@/source/features/responses";
+import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { ResponsesSkeleton } from "./ResponsesSkeleton";
 import s from "./ResponsesWidget.module.scss";
 
@@ -25,6 +27,12 @@ interface Props {
 
 export function ResponsesList({ role, title, subtitle, model, actionHandlers, sortSlot, topSlot }: Props) {
   const activeLabel = model.tabs.find((tab) => tab.id === model.activeTab)?.label ?? "";
+
+  const sentinelRef = useInfiniteScroll({
+    hasMore: model.hasMore,
+    isLoading: model.isLoading || model.isLoadingMore,
+    onLoadMore: () => void model.loadMore(),
+  });
 
   return (
     <div className={s.wrapper}>
@@ -63,16 +71,24 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
               />
             </div>
           ) : (
-            <div className={s.list}>
-              {model.items.map((item) => (
-                <ResponseCard
-                  key={item.id}
-                  card={item}
-                  role={role}
-                  actions={getCardActions(item, model.actionLoading[item.id] ?? null, role, actionHandlers)}
-                />
-              ))}
-            </div>
+            <>
+              <div className={s.list}>
+                {model.items.map((item) => (
+                  <ResponseCard
+                    key={item.id}
+                    card={item}
+                    role={role}
+                    actions={getCardActions(item, model.actionLoading[item.id] ?? null, role, actionHandlers)}
+                  />
+                ))}
+                {model.isLoadingMore && (
+                  <div className={s.loadMore}>
+                    <Loader label="" size="md" />
+                  </div>
+                )}
+              </div>
+              <div ref={sentinelRef} aria-hidden="true" />
+            </>
           )}
         </div>
       </div>

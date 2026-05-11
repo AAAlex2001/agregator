@@ -2,7 +2,7 @@ import type { OrderCardData } from "@/source/entities/order";
 
 export interface ExpertOrdersState {
   items: OrderCardData[];
-  total: number;
+  hasMore: boolean;
   isLoading: boolean;
   isLoadingMore: boolean;
   error: string | null;

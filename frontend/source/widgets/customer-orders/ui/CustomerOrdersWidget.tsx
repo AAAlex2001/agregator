@@ -4,16 +4,23 @@ import { Button } from "@/shared/ui";
 import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";
+import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { DraftCard, DraftSection } from "@/source/entities/draft";
 import { CreateOrderForm } from "@/source/features/customer-orders/ui/create-order-form";
 import { useCustomerOrders } from "@/source/features/customer-orders";
+import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { CustomerOrdersSkeleton } from "./CustomerOrdersSkeleton";
 import s from "./CustomerOrdersWidget.module.scss";
 
 export function CustomerOrdersWidget() {
   const h = useCustomerOrders();
   const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
+  const sentinelRef = useInfiniteScroll({
+    hasMore: h.hasMore,
+    isLoading: h.isLoading || h.isLoadingMore,
+    onLoadMore: () => void h.loadMore(),
+  });
 
   if (h.mode === "create" || h.mode === "edit") {
     return (
@@ -89,17 +96,25 @@ export function CustomerOrdersWidget() {
           {h.isLoading ? (
             <CustomerOrdersSkeleton />
           ) : (
-            <div className={s.list}>
-              {h.items.map((o) => (
-                <CustomerActiveCard
-                  key={o.id}
-                  card={o}
-                  isDeleting={h.deletingId === o.id}
-                  onEdit={() => h.openEdit(o)}
-                  onDelete={() => void h.onDelete(o.id)}
-                />
-              ))}
-            </div>
+            <>
+              <div className={s.list}>
+                {h.items.map((o) => (
+                  <CustomerActiveCard
+                    key={o.id}
+                    card={o}
+                    isDeleting={h.deletingId === o.id}
+                    onEdit={() => h.openEdit(o)}
+                    onDelete={() => void h.onDelete(o.id)}
+                  />
+                ))}
+                {h.isLoadingMore && (
+                  <div className={s.loadMore}>
+                    <Loader label="" size="md" />
+                  </div>
+                )}
+              </div>
+              <div ref={sentinelRef} aria-hidden="true" />
+            </>
           )}
         </>
       )}

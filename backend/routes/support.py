@@ -84,10 +84,10 @@ async def list_my_tickets(
     user_id: int = Depends(get_current_user),
 ):
     use_case = ListUserTicketsUseCase(SupportRepository(db))
-    items, total = await use_case.execute(user_id, skip, limit)
+    items, has_more = await use_case.execute(user_id, skip, limit)
     return SupportTicketList(
         items=[ticket_to_summary(t) for t in items],
-        total=total,
+        has_more=has_more,
     )
 
 

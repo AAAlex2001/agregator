@@ -39,7 +39,8 @@ class ReviewItem(BaseModel):
 
 class ReviewListResponse(BaseModel):
     reviews: List[ReviewItem]
-    total: int
+    has_more: bool
+    total_reviews: int
     avg_rating: float
 
 
@@ -48,5 +49,6 @@ class PublicExpertReviewsResponse(BaseModel):
     expert_name: str
     expert_avatar_url: str | None = None
     reviews: List[ReviewItem]
-    total: int
+    has_more: bool
+    total_reviews: int
     avg_rating: float

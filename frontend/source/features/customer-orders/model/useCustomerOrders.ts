@@ -26,12 +26,25 @@ export function useCustomerOrders() {
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
     try {
-      const data = await fetchCustomerOrders();
-      d({ type: "DATA", items: data.items.map(mapApiToOrderCard), total: data.total });
+      const data = await fetchCustomerOrders(0, 50);
+      d({ type: "DATA", items: data.items.map(mapApiToOrderCard), hasMore: data.has_more });
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
     } finally {
       d({ type: "LOADING", value: false });
+    }
+  };
+
+  const loadMore = async () => {
+    if (s.isLoading || s.isLoadingMore || !s.hasMore) return;
+    d({ type: "LOADING_MORE", value: true });
+    try {
+      const data = await fetchCustomerOrders(s.items.length, 50);
+      d({ type: "APPEND", items: data.items.map(mapApiToOrderCard), hasMore: data.has_more });
+    } catch (e) {
+      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
+    } finally {
+      d({ type: "LOADING_MORE", value: false });
     }
   };
 
@@ -94,6 +107,7 @@ export function useCustomerOrders() {
     ...s,
     draft,
     reload,
+    loadMore,
     openCreate,
     openEdit,
     backToList,

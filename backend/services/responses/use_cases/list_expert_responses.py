@@ -16,14 +16,14 @@ class ListExpertResponsesUseCase:
         tab: ResponseTab | None,
         skip: int,
         limit: int,
-    ) -> tuple[list[OrderResponse], int, ResponseCounters]:
+    ) -> tuple[list[OrderResponse], bool, ResponseCounters]:
         await self.validator.ensure_expert(expert_id)
         status_filters = statuses_for_tab(tab)
-        items, total = await self.repo.list_expert_responses(
+        items, has_more = await self.repo.list_expert_responses(
             expert_id, status_filters, skip, limit
         )
         counters_map = await self.repo.expert_counters(expert_id)
-        return items, total, self.build_counters(counters_map)
+        return items, has_more, self.build_counters(counters_map)
 
     @staticmethod
     def build_counters(counters_map: dict[ResponseStatus, int]) -> ResponseCounters:

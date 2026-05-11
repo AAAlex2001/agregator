@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.notification import Notification
 from models.user import User
+from utils.pagination import paginate_with_has_more
 
 
 class NotificationRepository:
@@ -28,19 +29,13 @@ class NotificationRepository:
 
     async def list_for_user(
         self, user_id: int, limit: int, offset: int
-    ) -> list[Notification]:
+    ) -> tuple[list[Notification], bool]:
         query = (
             select(Notification)
             .where(Notification.user_id == user_id)
             .order_by(Notification.created_at.desc(), Notification.id.desc())
-            .offset(offset)
-            .limit(limit)
         )
-        return list((await self.db.execute(query)).scalars().all())
-
-    async def count_for_user(self, user_id: int) -> int:
-        query = select(func.count(Notification.id)).where(Notification.user_id == user_id)
-        return int((await self.db.execute(query)).scalar_one() or 0)
+        return await paginate_with_has_more(self.db, query, offset, limit)
 
     async def get_unread_count(self, user_id: int) -> int:
         query = select(User.notification_unread_count).where(User.id == user_id)

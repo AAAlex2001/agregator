@@ -1,22 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 interface Options {
   hasMore: boolean;
   isLoading: boolean;
   onLoadMore: () => void;
   rootMargin?: string;
+  root?: RefObject<HTMLElement | null>;
 }
 
 /**
  * Возвращает ref, который надо повесить на sentinel-элемент в конце списка.
  * Когда sentinel попадает в область видимости — вызывается onLoadMore.
- *
- * Использует IntersectionObserver. Колбэк onLoadMore читается через ref,
- * поэтому не обязан быть стабильным — лишних эффектов не вызовет.
+ * Если список скроллится внутри контейнера — передай root (ref на контейнер).
  */
-export function useInfiniteScroll({ hasMore, isLoading, onLoadMore, rootMargin = "200px" }: Options) {
+export function useInfiniteScroll({ hasMore, isLoading, onLoadMore, rootMargin = "200px", root }: Options) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const callbackRef = useRef(onLoadMore);
 
@@ -30,11 +29,11 @@ export function useInfiniteScroll({ hasMore, isLoading, onLoadMore, rootMargin =
       if (entries.some((e) => e.isIntersecting)) {
         callbackRef.current();
       }
-    }, { rootMargin });
+    }, { rootMargin, root: root?.current ?? null });
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasMore, isLoading, rootMargin]);
+  }, [hasMore, isLoading, rootMargin, root]);
 
   return sentinelRef;
 }

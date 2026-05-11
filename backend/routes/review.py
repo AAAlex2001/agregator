@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -33,14 +33,17 @@ async def create_review(
 
 @router.get("/reviews/my", response_model=ReviewListResponse)
 async def get_my_reviews(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
     service = ReviewService(db)
-    items, total, avg_rating = await service.get_expert_reviews(user_id)
+    items, has_more, total_reviews, avg_rating = await service.get_expert_reviews(user_id, skip, limit)
     return ReviewListResponse(
         reviews=[ReviewItem(**i) for i in items],
-        total=total,
+        has_more=has_more,
+        total_reviews=total_reviews,
         avg_rating=avg_rating,
     )
 
@@ -48,16 +51,18 @@ async def get_my_reviews(
 @router.get("/experts/{public_id}/reviews", response_model=PublicExpertReviewsResponse)
 async def get_expert_public_reviews(
     public_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-    _user_id: int = Depends(get_current_user),
 ):
     service = ReviewService(db)
-    data = await service.get_expert_reviews_by_public_id(public_id)
+    data = await service.get_expert_reviews_by_public_id(public_id, skip, limit)
     return PublicExpertReviewsResponse(
         expert_public_id=data["expert_public_id"],
         expert_name=data["expert_name"],
         expert_avatar_url=data["expert_avatar_url"],
         reviews=[ReviewItem(**i) for i in data["reviews"]],
-        total=data["total"],
+        has_more=data["has_more"],
+        total_reviews=data["total_reviews"],
         avg_rating=data["avg_rating"],
     )

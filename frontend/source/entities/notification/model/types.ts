@@ -72,7 +72,7 @@ export interface NotificationCardModel {
 
 export interface NotificationListResponse {
   items: NotificationItem[];
-  total: number;
+  has_more: boolean;
   unread_count: number;
 }
 

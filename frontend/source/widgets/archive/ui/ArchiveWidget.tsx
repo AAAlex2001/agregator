@@ -6,16 +6,24 @@ import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
+import Loader from "@/source/shared/ui/Loader";
+import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { ArchivedCard } from "./ArchivedCard";
 import s from "./ArchiveWidget.module.scss";
 
 export function ArchiveWidget() {
   const { showSuccess, showError } = useNotifications();
   const {
-    items, isLoading, error,
+    items, hasMore, isLoading, isLoadingMore, error,
     reviewTarget, canLeaveReviewFor,
-    openReview, closeReview, submitReview,
+    openReview, closeReview, submitReview, loadMore,
   } = useArchive();
+
+  const sentinelRef = useInfiniteScroll({
+    hasMore,
+    isLoading: isLoading || isLoadingMore,
+    onLoadMore: () => void loadMore(),
+  });
 
   return (
     <div className={s.wrapper}>
@@ -37,16 +45,24 @@ export function ArchiveWidget() {
               <EmptyStateCard title="Архив пуст" subtitle="Здесь будут завершённые заказы" />
             </div>
           ) : (
-            <div className={s.list}>
-              {items.map((item) => (
-                <ArchivedCard
-                  key={item.id}
-                  card={item}
-                  canLeaveReview={canLeaveReviewFor(item)}
-                  onLeaveReview={() => openReview(item)}
-                />
-              ))}
-            </div>
+            <>
+              <div className={s.list}>
+                {items.map((item) => (
+                  <ArchivedCard
+                    key={item.id}
+                    card={item}
+                    canLeaveReview={canLeaveReviewFor(item)}
+                    onLeaveReview={() => openReview(item)}
+                  />
+                ))}
+                {isLoadingMore && (
+                  <div className={s.loadMore}>
+                    <Loader label="" size="md" />
+                  </div>
+                )}
+              </div>
+              <div ref={sentinelRef} aria-hidden="true" />
+            </>
           )}
         </div>
       </div>

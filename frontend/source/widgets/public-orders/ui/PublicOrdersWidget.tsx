@@ -21,12 +21,12 @@ export function PublicOrdersWidget() {
   const { showError } = useNotifications();
   const { user, role, isLoading: isSessionLoading } = useSession();
 
-  const { items, total, isLoading, isLoadingMore, loadMore } = usePublicOrdersList({
+  const { items, hasMore, isLoading, isLoadingMore, loadMore } = usePublicOrdersList({
     onError: showError,
   });
 
   const sentinelRef = useInfiniteScroll({
-    hasMore: items.length < total,
+    hasMore,
     isLoading: isLoading || isLoadingMore,
     onLoadMore: () => void loadMore(),
   });

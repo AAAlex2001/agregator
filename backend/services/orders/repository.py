@@ -1,12 +1,13 @@
 from typing import Optional
 
-from sqlalchemy import delete, func, not_, select
+from sqlalchemy import delete, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
 from models.response import OrderResponse as OrderResponseModel
 from models.user import User, UserRole
+from utils.pagination import paginate_with_has_more
 
 
 class OrderRepository:
@@ -39,8 +40,7 @@ class OrderRepository:
         limit: int,
         status_filter: Optional[OrderStatus],
         user_id: Optional[int],
-    ) -> tuple[list[Order], int]:
-        count_query = select(func.count(Order.id))
+    ) -> tuple[list[Order], bool]:
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -58,69 +58,50 @@ class OrderRepository:
                 )
                 .exists()
             )
-            expert_filter = [
+            list_query = list_query.where(
                 Order.status == OrderStatus.ACTIVE,
                 Order.assigned_expert_id.is_(None),
                 not_(responded),
-            ]
-            count_query = count_query.where(*expert_filter)
-            list_query = list_query.where(*expert_filter)
+            )
         elif role == UserRole.CUSTOMER:
-            customer_filter = [
+            list_query = list_query.where(
                 Order.customer_id == user_id,
                 Order.status != OrderStatus.ARCHIVED,
-            ]
-            count_query = count_query.where(*customer_filter)
-            list_query = list_query.where(*customer_filter)
+            )
         elif user_id is None:
             # Гость видит все заказы платформы (ACTIVE + ARCHIVED) для публичного просмотра.
             pass
         else:
             # Любая другая авторизованная роль (например LICENSE_HOLDER) к списку заказов не допускается.
-            return [], 0
+            return [], False
 
         if status_filter is not None:
-            count_query = count_query.where(Order.status == status_filter)
             list_query = list_query.where(Order.status == status_filter)
 
-        total = (await self.db.execute(count_query)).scalar_one()
-        list_query = list_query.offset(skip).limit(limit)
-        rows = (await self.db.execute(list_query)).scalars().unique().all()
-        return list(rows), total
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def search_public(
         self,
         query: str,
         skip: int,
         limit: int,
-    ) -> tuple[list[Order], int]:
+    ) -> tuple[list[Order], bool]:
         "Поиск по всем заказам платформы (любой статус) для публичного отображения. Ищет по title и company (ILIKE)."
         pattern = f"%{query.strip()}%"
-        where = (Order.title.ilike(pattern)) | (Order.company.ilike(pattern))
-
-        count_query = select(func.count(Order.id)).where(where)
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
-            .where(where)
+            .where((Order.title.ilike(pattern)) | (Order.company.ilike(pattern)))
             .order_by(Order.created_at.desc())
-            .offset(skip)
-            .limit(limit)
         )
-        total = (await self.db.execute(count_query)).scalar_one()
-        rows = (await self.db.execute(list_query)).scalars().unique().all()
-        return list(rows), total
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def list_archived(
         self,
         skip: int,
         limit: int,
-    ) -> tuple[list[Order], int]:
+    ) -> tuple[list[Order], bool]:
         "Список архивных заказов — виден всем авторизованным. Подгружает принятого исполнителя и его отклик."
-        count_query = (
-            select(func.count(Order.id))
-            .where(Order.status == OrderStatus.ARCHIVED)
-        )
         list_query = (
             select(Order)
             .options(
@@ -131,12 +112,8 @@ class OrderRepository:
             )
             .where(Order.status == OrderStatus.ARCHIVED)
             .order_by(Order.updated_at.desc())
-            .offset(skip)
-            .limit(limit)
         )
-        total = (await self.db.execute(count_query)).scalar_one()
-        rows = (await self.db.execute(list_query)).scalars().unique().all()
-        return list(rows), total
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def reviewed_response_ids(
         self, customer_id: int, response_ids: list[int]

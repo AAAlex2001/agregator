@@ -234,4 +234,4 @@ class OrderResponse(BaseModel):
 
 class OrderListResponse(BaseModel):
     items: list[OrderResponse]
-    total: int
+    has_more: bool

@@ -8,7 +8,7 @@ class SearchOrdersUseCase:
     def __init__(self, repo: OrderRepository):
         self.repo = repo
 
-    async def execute(self, query: str, skip: int, limit: int) -> tuple[list[Order], int]:
+    async def execute(self, query: str, skip: int, limit: int) -> tuple[list[Order], bool]:
         if not query.strip():
-            return [], 0
+            return [], False
         return await self.repo.search_public(query, skip, limit)

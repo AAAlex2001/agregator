@@ -7,8 +7,10 @@ export async function fetchResponses(
   tab: ResponseTabKey,
   sortBy: CustomerSortBy = "created_at",
   sortDir: SortDir = "desc",
+  skip = 0,
+  limit = 50,
 ): Promise<ResponsesApiList> {
-  const url = `${API_URL}/responses?tab=${tab}&sort_by=${sortBy}&sort_dir=${sortDir}&skip=0&limit=50`;
+  const url = `${API_URL}/responses?tab=${tab}&sort_by=${sortBy}&sort_dir=${sortDir}&skip=${skip}&limit=${limit}`;
   const res = await fetchWithSession(url);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить отклики");
   return res.json();

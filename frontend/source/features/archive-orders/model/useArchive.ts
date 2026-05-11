@@ -7,11 +7,14 @@ import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import { createReview } from "@/source/features/responses/api/responses.api";
 
+const PAGE_SIZE = 50;
+
 export function useArchive() {
   const { user, role } = useSession();
   const [items, setItems] = useState<OrderCardData[]>([]);
-  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [isLoadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reviewTarget, setReviewTarget] = useState<OrderCardData | null>(null);
 
@@ -19,13 +22,27 @@ export function useArchive() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchArchivedOrders();
+      const data = await fetchArchivedOrders(0, PAGE_SIZE);
       setItems(data.items.map(mapApiToOrderCard));
-      setTotal(data.total);
+      setHasMore(data.has_more);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (isLoading || isLoadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await fetchArchivedOrders(items.length, PAGE_SIZE);
+      setItems((prev) => [...prev, ...data.items.map(mapApiToOrderCard)]);
+      setHasMore(data.has_more);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка загрузки");
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -53,8 +70,8 @@ export function useArchive() {
   };
 
   return {
-    items, total, isLoading, error,
+    items, hasMore, isLoading, isLoadingMore, error,
     reviewTarget, canLeaveReviewFor,
-    openReview, closeReview, submitReview,
+    openReview, closeReview, submitReview, loadMore,
   };
 }

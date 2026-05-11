@@ -88,14 +88,19 @@ class ReviewService:
 
         return review
 
-    async def get_expert_reviews(self, expert_id: int):
-        """Возвращает все отзывы, оставленные для данного эксперта."""
-        result = await self.db.execute(
+    async def get_expert_reviews(self, expert_id: int, skip: int, limit: int):
+        "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей User."
+        list_query = (
             select(Review)
             .where(Review.expert_id == expert_id)
             .order_by(Review.created_at.desc())
+            .offset(skip)
+            .limit(limit + 1)
         )
-        reviews = result.scalars().all()
+        rows = list((await self.db.execute(list_query)).scalars().all())
+        has_more = len(rows) > limit
+        reviews = rows[:limit]
+
         response_ids = list({r.response_id for r in reviews})
         responses_map = {}
         if response_ids:
@@ -132,15 +137,14 @@ class ReviewService:
                 "created_at": r.created_at,
             })
 
-        total = len(items)
-        avg_rating = 0.0
-        if total > 0:
-            avg_rating = round(sum(i["rating"] for i in items) / total, 1)
+        expert = (await self.db.execute(select(User).where(User.id == expert_id))).scalars().first()
+        total_reviews = int(expert.review_count or 0) if expert else 0
+        avg_rating = float(expert.rating or 0) if expert else 0.0
 
-        return items, total, avg_rating
+        return items, has_more, total_reviews, avg_rating
 
-    async def get_expert_reviews_by_public_id(self, public_id: str):
-        """Публичный доступ к отзывам исполнителя по UUID."""
+    async def get_expert_reviews_by_public_id(self, public_id: str, skip: int, limit: int):
+        "Публичный доступ к отзывам исполнителя по UUID."
         result = await self.db.execute(
             select(User).where(User.public_id == public_id, User.role == UserRole.EXPERT)
         )
@@ -148,7 +152,7 @@ class ReviewService:
         if not expert:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Исполнитель не найден")
 
-        items, total, avg_rating = await self.get_expert_reviews(expert.id)
+        items, has_more, total_reviews, avg_rating = await self.get_expert_reviews(expert.id, skip, limit)
 
         expert_name_parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in expert_name_parts if p).strip()
@@ -158,6 +162,7 @@ class ReviewService:
             "expert_name": expert_name,
             "expert_avatar_url": expert.avatar_url,
             "reviews": items,
-            "total": total,
+            "has_more": has_more,
+            "total_reviews": total_reviews,
             "avg_rating": avg_rating,
         }

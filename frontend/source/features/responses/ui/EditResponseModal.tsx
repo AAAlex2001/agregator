@@ -2,7 +2,7 @@ import { Button, CalendarInput, Modal, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import { BidFilesField } from "@/source/features/expert-orders/ui/OrderModal/BidFilesField";
 import { OrderSummaryPanel } from "@/source/features/expert-orders/ui/OrderModal/OrderSummaryPanel";
-import { VAT_LABEL } from "@/source/entities/response";
+import { VAT_LABEL, calcVat } from "@/source/entities/response";
 import type { VatKind } from "@/source/entities/response";
 import s from "./EditResponseModal.module.scss";
 
@@ -108,6 +108,38 @@ export function EditResponseModal({
               );
             })}
           </div>
+          {(() => {
+            const baseSum = Number(cost.replace(/[^0-9.]/g, "")) || 0;
+            if (baseSum <= 0) return null;
+            const breakdown = calcVat(baseSum, vatKind);
+            const fmt = (v: number) => v.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
+            if (breakdown.vatRate === 0) {
+              return (
+                <div className={s.vatBreakdown}>
+                  <div className={`${s.vatBreakdownRow} ${s.vatBreakdownTotal}`.trim()}>
+                    <span>Итого без НДС:</span>
+                    <span>{fmt(breakdown.total)} ₽</span>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div className={s.vatBreakdown}>
+                <div className={s.vatBreakdownRow}>
+                  <span>Сумма без НДС:</span>
+                  <span>{fmt(breakdown.base)} ₽</span>
+                </div>
+                <div className={s.vatBreakdownRow}>
+                  <span>НДС {breakdown.vatRate}%:</span>
+                  <span>{fmt(breakdown.vatAmount)} ₽</span>
+                </div>
+                <div className={`${s.vatBreakdownRow} ${s.vatBreakdownTotal}`.trim()}>
+                  <span>Итого с НДС:</span>
+                  <span>{fmt(breakdown.total)} ₽</span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         <span className={s.formHint}>

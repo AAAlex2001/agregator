@@ -49,7 +49,7 @@ export interface OrderApiItem {
 
 export interface OrdersApiList {
   items: OrderApiItem[];
-  total: number;
+  has_more: boolean;
 }
 
 export interface OrderCardData {

@@ -14,5 +14,5 @@ class ListOrdersUseCase:
         limit: int,
         status_filter: Optional[OrderStatus],
         user_id: Optional[int],
-    ) -> tuple[list[Order], int]:
+    ) -> tuple[list[Order], bool]:
         return await self.repo.list_for_user(skip, limit, status_filter, user_id)

@@ -2,7 +2,7 @@ import type { NotificationsAction, NotificationsState } from "./types";
 
 export const initialNotificationsState: NotificationsState = {
   items: [],
-  total: 0,
+  hasMore: false,
   unreadCount: 0,
   isLoading: true,
   error: null,
@@ -10,6 +10,7 @@ export const initialNotificationsState: NotificationsState = {
   pendingMode: null,
   isMarkingAll: false,
   isDismissingAll: false,
+  isLoadingMore: false,
 };
 
 export function notificationsReducer(
@@ -25,7 +26,7 @@ export function notificationsReducer(
       return {
         ...state,
         items: action.items,
-        total: action.total,
+        hasMore: action.hasMore,
         unreadCount: action.unreadCount,
       };
     case "SET_PENDING":
@@ -44,7 +45,6 @@ export function notificationsReducer(
       return {
         ...state,
         items: state.items.filter((item) => item.id !== action.payload),
-        total: Math.max(state.total - 1, 0),
       };
     case "SET_UNREAD_COUNT":
       return { ...state, unreadCount: action.payload };
@@ -54,6 +54,14 @@ export function notificationsReducer(
         items: state.items.map((item) => (
           item.is_read ? item : { ...item, is_read: true }
         )),
+      };
+    case "SET_LOADING_MORE":
+      return { ...state, isLoadingMore: action.payload };
+    case "APPEND_ITEMS":
+      return {
+        ...state,
+        items: [...state.items, ...action.items],
+        hasMore: action.hasMore,
       };
     default:
       return state;

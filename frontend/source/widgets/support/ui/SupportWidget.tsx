@@ -19,10 +19,13 @@ import { EmptyDetail } from "./EmptyDetail";
 import s from "./SupportWidget.module.scss";
 
 type View = "list" | "detail" | "create";
+const PAGE_SIZE = 50;
 
 export function SupportWidget() {
   const { showError } = useNotifications();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [view, setView] = useState<View>("list");
   const [isListLoading, setIsListLoading] = useState(true);
@@ -34,6 +37,7 @@ export function SupportWidget() {
       .then((data) => {
         if (cancelled) return;
         setTickets(data.items);
+        setHasMore(data.hasMore);
       })
       .catch((error) => {
         if (cancelled) return;
@@ -48,6 +52,20 @@ export function SupportWidget() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadMore = async () => {
+    if (isListLoading || isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    try {
+      const data = await fetchTickets(tickets.length, PAGE_SIZE);
+      setTickets((prev) => [...prev, ...data.items]);
+      setHasMore(data.hasMore);
+    } catch (error) {
+      showError(error instanceof Error ? error.message : "Ошибка загрузки");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const upsertTicket = (ticket: SupportTicket) => {
     setTickets((prev) => {
@@ -124,6 +142,9 @@ export function SupportWidget() {
             selectedId={selectedId}
             onSelect={openTicket}
             onCreate={startCreate}
+            hasMore={hasMore}
+            isLoadingMore={isLoadingMore}
+            onLoadMore={loadMore}
           />
         )}
       </div>

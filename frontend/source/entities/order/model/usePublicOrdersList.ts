@@ -12,7 +12,7 @@ interface Args {
 
 interface Result {
   items: OrderCardData[];
-  total: number;
+  hasMore: boolean;
   isLoading: boolean;
   isLoadingMore: boolean;
   loadMore: () => Promise<void>;
@@ -20,7 +20,7 @@ interface Result {
 
 export function usePublicOrdersList({ pageSize = 50, onError }: Args = {}): Result {
   const [items, setItems] = useState<OrderCardData[]>([]);
-  const [total, setTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const inflightRef = useRef(false);
@@ -32,7 +32,7 @@ export function usePublicOrdersList({ pageSize = 50, onError }: Args = {}): Resu
       .then((data) => {
         if (cancelled) return;
         setItems(data.items.map(mapApiToOrderCard));
-        setTotal(data.total);
+        setHasMore(data.has_more);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -49,13 +49,13 @@ export function usePublicOrdersList({ pageSize = 50, onError }: Args = {}): Resu
 
   const loadMore = async () => {
     if (isLoading || isLoadingMore || inflightRef.current) return;
-    if (items.length >= total) return;
+    if (!hasMore) return;
     inflightRef.current = true;
     setIsLoadingMore(true);
     try {
       const data = await fetchOrders(items.length, pageSize);
       setItems((prev) => [...prev, ...data.items.map(mapApiToOrderCard)]);
-      setTotal(data.total);
+      setHasMore(data.has_more);
     } catch (err) {
       onError?.(err instanceof Error ? err.message : "Не удалось загрузить заказы");
     } finally {
@@ -64,5 +64,5 @@ export function usePublicOrdersList({ pageSize = 50, onError }: Args = {}): Resu
     }
   };
 
-  return { items, total, isLoading, isLoadingMore, loadMore };
+  return { items, hasMore, isLoading, isLoadingMore, loadMore };
 }

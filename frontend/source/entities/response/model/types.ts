@@ -75,7 +75,7 @@ export interface ResponseApiItem {
 
 export interface ResponsesApiList {
   items: ResponseApiItem[];
-  total: number;
+  has_more: boolean;
   counters: ResponseCounters;
 }
 

@@ -112,7 +112,7 @@ NotificationItemResponse = Annotated[
 
 class NotificationListResponse(BaseModel):
     items: list[NotificationItemResponse]
-    total: int
+    has_more: bool
     unread_count: int
 
 

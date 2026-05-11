@@ -30,7 +30,7 @@ export function useExpertOrders() {
     d({ type: "LOADING", value: true });
     try {
       const data = await fetchOrders(0, PAGE);
-      d({ type: "DATA", items: data.items.map(mapApiToOrderCard), total: data.total });
+      d({ type: "DATA", items: data.items.map(mapApiToOrderCard), hasMore: data.has_more });
     } catch (e) {
       showError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
@@ -50,7 +50,7 @@ export function useExpertOrders() {
     d({ type: "SELECT", order: found });
   }, [returnOrderId, s.items]);
 
-  const hasMore = s.items.length < s.total;
+  const hasMore = s.hasMore;
 
   const loadMore = async () => {
     if (s.isLoading || s.isLoadingMore || loadingMoreRef.current || !hasMore) return;
@@ -58,7 +58,7 @@ export function useExpertOrders() {
     d({ type: "LOADING_MORE", value: true });
     try {
       const data = await fetchOrders(s.items.length, PAGE);
-      d({ type: "APPEND", items: data.items.map(mapApiToOrderCard), total: data.total });
+      d({ type: "APPEND", items: data.items.map(mapApiToOrderCard), hasMore: data.has_more });
     } catch (e) {
       showError(e instanceof Error ? e.message : "Ошибка загрузки");
     } finally {
