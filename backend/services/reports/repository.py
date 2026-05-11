@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.order import Order
+from models.question import OrderQuestion
 from models.response import OrderResponse
 from utils.pagination import paginate_with_has_more
 
@@ -43,6 +44,7 @@ class ReportRepository:
                 selectinload(Order.customer),
                 selectinload(Order.assigned_expert),
                 selectinload(Order.responses).selectinload(OrderResponse.expert),
+                selectinload(Order.questions).selectinload(OrderQuestion.expert),
             )
             .where(
                 Order.id == order_id,

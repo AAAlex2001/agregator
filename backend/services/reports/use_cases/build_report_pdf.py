@@ -3,9 +3,10 @@ from pathlib import Path
 
 from fastapi import HTTPException, status
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from weasyprint import HTML
+from weasyprint import Attachment, HTML
 
 from models.order import Order
+from models.question import OrderQuestion
 from models.response import OrderResponse, ResponseStatus, VatKind
 from services.reports.repository import ReportRepository
 
@@ -27,6 +28,7 @@ BADGE_PALETTE = {
 }
 
 TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
+BACKEND_ROOT = Path(__file__).resolve().parents[3]
 
 
 def format_sum(amount_kopecks: int | None) -> str:
@@ -45,10 +47,25 @@ def format_date(value: date | None) -> str:
     return value.strftime("%d.%m.%Y")
 
 
+def format_datetime(value: datetime | None) -> str:
+    if value is None:
+        return "—"
+    return value.strftime("%d.%m.%Y %H:%M")
+
+
 def expert_full_name(response: OrderResponse) -> str:
     expert = response.expert
     if expert is None:
         return "Неизвестный эксперт"
+    parts = [expert.first_name or "", expert.last_name or ""]
+    name = " ".join(part for part in parts if part).strip()
+    return name or "Эксперт"
+
+
+def question_expert_name(question: OrderQuestion) -> str:
+    expert = question.expert
+    if expert is None:
+        return "Эксперт"
     parts = [expert.first_name or "", expert.last_name or ""]
     name = " ".join(part for part in parts if part).strip()
     return name or "Эксперт"
@@ -63,6 +80,15 @@ def expert_company(response: OrderResponse) -> str:
     if name and inn:
         return f"{name} (ИНН {inn})"
     return name or (f"ИНН {inn}" if inn else "")
+
+
+def customer_with_inn(order: Order) -> str:
+    name = (order.company or "").strip()
+    customer = order.customer
+    inn = (customer.inn or "").strip() if customer else ""
+    if name and inn:
+        return f"{name} (ИНН {inn})"
+    return name or (f"ИНН {inn}" if inn else "—")
 
 
 def expert_rating(response: OrderResponse) -> dict | None:
@@ -84,6 +110,46 @@ def build_badges(order: Order) -> list[dict]:
     return result
 
 
+def build_file_tiles(paths: list[str]) -> list[dict]:
+    "Делает данные для плиток файлов: имя + расширение крупно."
+    result = []
+    for path in paths or []:
+        clean = path.split("?")[0]
+        name = Path(clean).name
+        extension = Path(clean).suffix.lower().lstrip(".") or "file"
+        result.append({"name": name, "extension": extension.upper()})
+    return result
+
+
+def build_attachments(paths: list[str]) -> list[Attachment]:
+    attachments: list[Attachment] = []
+    for path in paths or []:
+        clean = path.split("?")[0].lstrip("/")
+        full = BACKEND_ROOT / clean
+        if not full.is_file():
+            continue
+        attachments.append(Attachment(
+            url=str(full),
+            description=full.name,
+        ))
+    return attachments
+
+
+def visible_questions(order: Order) -> list[dict]:
+    items = []
+    for q in order.questions or []:
+        if q.is_anonymous:
+            continue
+        items.append({
+            "expert_name": question_expert_name(q),
+            "question": q.question,
+            "answer": q.answer or "",
+            "asked_at": format_datetime(q.asked_at),
+            "answered_at": format_datetime(q.answered_at),
+        })
+    return items
+
+
 class BuildReportPdfUseCase:
     "Собирает HTML по шаблону и рендерит в PDF через WeasyPrint."
 
@@ -103,26 +169,36 @@ class BuildReportPdfUseCase:
             )
 
         html = self.render_html(order)
-        return HTML(string=html).write_pdf()
+        attachments = self.collect_attachments(order)
+        return HTML(string=html).write_pdf(attachments=attachments or None)
 
     def render_html(self, order: Order) -> str:
         responses = list(order.responses or [])
         winner_response = self.find_winner(order, responses)
         other_responses = [r for r in responses if r is not winner_response]
         badges = build_badges(order)
+        questions = visible_questions(order)
 
         template = self.env.get_template("order_report.html")
         return template.render(
             order=order,
-            customer_name=order.company or "—",
+            customer_name=customer_with_inn(order),
             order_sum=format_sum(order.sum_amount),
             order_deadline=format_date(order.deadline),
             badges=badges,
             participants_count=len(responses),
             winner=self.build_card(winner_response, order) if winner_response else None,
             others=[self.build_card(r, order) for r in other_responses],
+            questions=questions,
             generated_at=datetime.now(timezone.utc).strftime("%d.%m.%Y"),
         )
+
+    @staticmethod
+    def collect_attachments(order: Order) -> list[Attachment]:
+        attachments: list[Attachment] = []
+        for response in order.responses or []:
+            attachments.extend(build_attachments(list(response.technical_files or [])))
+        return attachments
 
     @staticmethod
     def find_winner(order: Order, responses: list[OrderResponse]) -> OrderResponse | None:
@@ -138,7 +214,6 @@ class BuildReportPdfUseCase:
 
     @staticmethod
     def build_card(response: OrderResponse, order: Order) -> dict:
-        files = [Path(path.split("?")[0]).name for path in (response.technical_files or [])]
         return {
             "expert_name": expert_full_name(response),
             "expert_rating": expert_rating(response),
@@ -148,7 +223,7 @@ class BuildReportPdfUseCase:
             "response_date": response.created_at.strftime("%d.%m.%Y") if response.created_at else "—",
             "vat_label": VAT_LABELS.get(response.vat_kind, "Без НДС"),
             "comment": response.comment or "",
-            "files": files,
+            "files": build_file_tiles(list(response.technical_files or [])),
             "order_sum": format_sum(order.sum_amount),
             "order_deadline": format_date(order.deadline),
         }
