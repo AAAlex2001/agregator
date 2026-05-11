@@ -2,6 +2,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.rate_limit import rate_limit
 from schemas.forgot_password import (
     ForgotPasswordRequest,
     ForgotPasswordResponse,
@@ -28,7 +29,11 @@ def build_validator(repo: ForgotPasswordRepository) -> ForgotPasswordValidator:
     return ForgotPasswordValidator(repo)
 
 
-@router.post("/send-code", response_model=ForgotPasswordResponse)
+@router.post(
+    "/send-code",
+    response_model=ForgotPasswordResponse,
+    dependencies=[Depends(rate_limit("forgot_send", max_calls=2, window_seconds=60))],
+)
 async def send_reset_code(
     data: SendResetCodeRequest,
     background_tasks: BackgroundTasks,
@@ -40,7 +45,11 @@ async def send_reset_code(
     return ForgotPasswordResponse(message="Код отправлен на указанный адрес")
 
 
-@router.post("/verify-code", response_model=ForgotPasswordResponse)
+@router.post(
+    "/verify-code",
+    response_model=ForgotPasswordResponse,
+    dependencies=[Depends(rate_limit("forgot_verify", max_calls=5, window_seconds=60))],
+)
 async def verify_reset_code(
     data: VerifyCodeRequest,
     db: AsyncSession = Depends(get_db),
@@ -51,7 +60,11 @@ async def verify_reset_code(
     return ForgotPasswordResponse(message="Код подтверждён")
 
 
-@router.post("/reset-password", response_model=ForgotPasswordResponse)
+@router.post(
+    "/reset-password",
+    response_model=ForgotPasswordResponse,
+    dependencies=[Depends(rate_limit("forgot_reset", max_calls=5, window_seconds=60))],
+)
 async def reset_password(
     data: ForgotPasswordRequest,
     db: AsyncSession = Depends(get_db),

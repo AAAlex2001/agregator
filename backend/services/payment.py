@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from yookassa import Configuration
+from yookassa import Configuration, Payment as YooPayment
 
 from models.payment import Payment, PaymentStatus
 from models.pricing import SubscriptionStatus, UserSubscription
@@ -14,6 +14,13 @@ Configuration.account_id = os.getenv("YOOKASSA_SHOP_ID", "")
 Configuration.secret_key = os.getenv("YOOKASSA_SECRET_KEY", "")
 
 
+YOOKASSA_TO_PAYMENT_STATUS = {
+    "succeeded": PaymentStatus.SUCCEEDED,
+    "waiting_for_capture": PaymentStatus.WAITING_FOR_CAPTURE,
+    "canceled": PaymentStatus.CANCELED,
+}
+
+
 class PaymentWebhookService:
     "Приводит запись платежа в соответствие с событием YooKassa и активирует подписку."
 
@@ -21,6 +28,10 @@ class PaymentWebhookService:
         self.db = db
 
     async def handle_webhook(self, event_type: str, yookassa_id: str) -> None:
+        verified_status = self.verify_with_yookassa(yookassa_id)
+        if verified_status is None:
+            return
+
         result = await self.db.execute(
             select(Payment).where(Payment.yookassa_id == yookassa_id)
         )
@@ -28,14 +39,23 @@ class PaymentWebhookService:
         if payment is None:
             return
 
-        if event_type == "payment.succeeded":
+        if verified_status == PaymentStatus.SUCCEEDED:
             await self.mark(payment, PaymentStatus.SUCCEEDED)
             await self.activate_subscription_for(payment)
-        elif event_type == "payment.waiting_for_capture":
+        elif verified_status == PaymentStatus.WAITING_FOR_CAPTURE:
             await self.mark(payment, PaymentStatus.WAITING_FOR_CAPTURE)
-        elif event_type == "payment.canceled":
+        elif verified_status == PaymentStatus.CANCELED:
             await self.mark(payment, PaymentStatus.CANCELED)
             await self.expire_pending_subscription_for(payment)
+
+    @staticmethod
+    def verify_with_yookassa(yookassa_id: str) -> PaymentStatus | None:
+        "Подтягивает статус платежа из YooKassa API. Возвращает None, если не нашли/ошибка."
+        try:
+            remote = YooPayment.find_one(yookassa_id)
+        except Exception:
+            return None
+        return YOOKASSA_TO_PAYMENT_STATUS.get(remote.status)
 
     async def mark(self, payment: Payment, new_status: PaymentStatus) -> None:
         if payment.status == new_status:

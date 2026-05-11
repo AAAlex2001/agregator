@@ -5,6 +5,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.rate_limit import rate_limit
 from schemas.registration import (
     EmailConfirmRequest,
     LicenseHolderRegistration,
@@ -52,7 +53,12 @@ def build_notifier(db: AsyncSession) -> RegistrationNotifier:
     return RegistrationNotifier(VerificationService(db))
 
 
-@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("register", max_calls=3, window_seconds=60))],
+)
 async def register_user(
     data: UserRegistration,
     background_tasks: BackgroundTasks,
@@ -64,7 +70,11 @@ async def register_user(
     return user
 
 
-@router.post("/confirm-email", response_model=UserResponse)
+@router.post(
+    "/confirm-email",
+    response_model=UserResponse,
+    dependencies=[Depends(rate_limit("confirm_email", max_calls=5, window_seconds=60))],
+)
 async def confirm_email(
     data: EmailConfirmRequest,
     db: AsyncSession = Depends(get_db),
@@ -97,7 +107,11 @@ async def confirm_email(
     return response
 
 
-@router.post("/resend-code", status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/resend-code",
+    status_code=status.HTTP_202_ACCEPTED,
+    dependencies=[Depends(rate_limit("resend_code", max_calls=2, window_seconds=60))],
+)
 async def resend_confirmation_code(
     data: ResendCodeRequest,
     background_tasks: BackgroundTasks,
@@ -114,6 +128,7 @@ async def resend_confirmation_code(
     "/license-holder",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("register_lh", max_calls=3, window_seconds=60))],
 )
 async def register_license_holder(
     background_tasks: BackgroundTasks,

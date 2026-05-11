@@ -5,6 +5,7 @@ import aiofiles
 from fastapi import HTTPException, UploadFile, status
 
 from schemas.chat import ChatAttachmentData
+from utils.filenames import sanitize_filename
 
 ALLOWED_EXTENSIONS = {
     ".pdf",
@@ -51,7 +52,7 @@ class ChatFileStorage:
 
         return ChatAttachmentData(
             url=f"/uploads/chats/{chat_id}/{generated_name}",
-            name=upload.filename or generated_name,
+            name=sanitize_filename(upload.filename, fallback=generated_name),
         )
 
     @staticmethod

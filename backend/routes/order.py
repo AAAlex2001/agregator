@@ -145,6 +145,7 @@ async def create_order(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ):
+    data.customer_id = user_id
     repo = build_repo(db)
     use_case = CreateOrderUseCase(
         repo=repo,
@@ -161,7 +162,6 @@ async def create_order_with_files(
     title: str = Form(...),
     company: str = Form(""),
     comment: str = Form(""),
-    customer_id: int = Form(...),
     sum_amount: int = Form(...),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
@@ -174,7 +174,7 @@ async def create_order_with_files(
         title=title,
         company=company,
         comment=comment,
-        customer_id=customer_id,
+        customer_id=user_id,
         sum_amount=sum_amount,
         deadline=deadline,
         responses_deadline=responses_deadline,

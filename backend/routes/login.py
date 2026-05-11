@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.rate_limit import rate_limit
 from schemas.login import (
     SwitchRoleRequest,
     UserLogin,
@@ -29,7 +30,11 @@ def build_repo(db: AsyncSession) -> LoginRepository:
     return LoginRepository(db)
 
 
-@router.post("/", response_model=UserResponse)
+@router.post(
+    "/",
+    response_model=UserResponse,
+    dependencies=[Depends(rate_limit("login", max_calls=5, window_seconds=60))],
+)
 async def login_user(
     data: UserLogin,
     db: AsyncSession = Depends(get_db),
@@ -111,7 +116,11 @@ async def list_available_roles(
     return await ListAvailableRolesUseCase(build_repo(db)).execute(user_id)
 
 
-@router.post("/switch-role", response_model=UserResponse)
+@router.post(
+    "/switch-role",
+    response_model=UserResponse,
+    dependencies=[Depends(rate_limit("switch_role", max_calls=5, window_seconds=60))],
+)
 async def switch_role(
     payload: SwitchRoleRequest,
     session_id: str = Cookie(None),

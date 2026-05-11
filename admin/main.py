@@ -36,9 +36,14 @@ engine = create_engine(SYNC_DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine)
 
 # --- Авторизация в админке ---
-ADMIN_LOGIN = os.getenv("ADMIN_LOGIN", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin")
-ADMIN_SECRET = os.getenv("ADMIN_SECRET", "supersecretkey-change-me")
+ADMIN_LOGIN = os.environ["ADMIN_LOGIN"]
+ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
+ADMIN_SECRET = os.environ["ADMIN_SECRET"]
+
+if len(ADMIN_PASSWORD) < 12:
+    raise RuntimeError("ADMIN_PASSWORD должен быть не короче 12 символов")
+if len(ADMIN_SECRET) < 32:
+    raise RuntimeError("ADMIN_SECRET должен быть не короче 32 символов (используется для подписи cookie)")
 
 
 class AdminAuth(AuthenticationBackend):

@@ -4,6 +4,8 @@ from uuid import uuid4
 import aiofiles
 from fastapi import HTTPException, UploadFile, status
 
+from utils.filenames import sanitize_filename
+
 ALLOWED_EXTENSIONS = {
     ".pdf",
     ".jpeg",
@@ -65,7 +67,7 @@ class SupportFileStorage:
                 await handle.write(chunk)
 
         return {
-            "name": original_name,
+            "name": sanitize_filename(original_name, fallback=generated_name),
             "url": f"/uploads/support/{ticket_id}/{generated_name}",
         }
 
