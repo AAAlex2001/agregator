@@ -73,11 +73,11 @@ export function OrderCard({
     {
       label: "Приём откликов до",
       value: responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—",
+      valueOrange: true,
     },
     {
       label: "Срок выполнения до",
       value: <DiffValue previous={previousDate ?? null} current={date || "—"} />,
-      valueOrange: true,
     },
   ];
 

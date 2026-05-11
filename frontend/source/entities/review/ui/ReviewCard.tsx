@@ -47,7 +47,7 @@ export function ReviewCard({
       : []),
     ...(expertSum ? [{ label: "Цена эксперта", value: expertSum }] : []),
     ...(expertDeadline ? [{ label: "Срок эксперта", value: expertDeadline }] : []),
-    ...(orderDeadline ? [{ label: "Срок выполнения до", value: orderDeadline, valueOrange: true }] : []),
+    ...(orderDeadline ? [{ label: "Срок выполнения до", value: orderDeadline }] : []),
   ];
 
   const hasDetails = countDocuments(documents) > 0;

@@ -30,7 +30,7 @@ export function ResponseDraftsList({ orders, onContinue }: Props) {
           bottomLeftValue={draft.customer}
           rightItems={[
             ...(draft.cost ? [{ label: "Ваша цена", value: `${draft.cost} ₽`, accent: true }] : []),
-            ...(draft.deadline ? [{ label: "Срок выполнения до", value: draft.deadline, orange: true }] : []),
+            ...(draft.deadline ? [{ label: "Срок выполнения до", value: draft.deadline }] : []),
           ]}
           onContinue={() => {
             const order = orders.find((o) => o.id === draft.orderId);

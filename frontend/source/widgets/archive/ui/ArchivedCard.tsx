@@ -58,7 +58,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
         ...(card.executorProposedDeadline
           ? [{ label: "Срок исполнителя", value: card.executorProposedDeadline }]
           : []),
-        { label: "Срок выполнения до", value: card.date || "—", valueOrange: true },
+        { label: "Срок выполнения до", value: card.date || "—" },
         ...(card.createdAtDisplay
           ? [{ label: "Создан", value: card.createdAtDisplay }]
           : []),

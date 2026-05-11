@@ -51,11 +51,10 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
           valueAccent: true,
         },
         ...(card.createdAtDisplay ? [{ label: "Дата публикации", value: card.createdAtDisplay }] : []),
-        { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline) },
+        { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline), valueOrange: true },
         {
           label: "Срок выполнения до",
           value: <DiffValue previous={card.previousDeadline} current={card.date || "—"} />,
-          valueOrange: true,
         },
       ]}
       actions={<ActionButtons actions={actions} />}
