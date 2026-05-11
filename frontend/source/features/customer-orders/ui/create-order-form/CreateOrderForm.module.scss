@@ -10,6 +10,41 @@
   max-width: 1200px;
 }
 
+.shellWithPreview {
+  max-width: 1600px;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (min-width: 1600px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 720px;
+    align-items: start;
+  }
+}
+
+.previewInline {
+  width: 100%;
+
+  @media (min-width: 1600px) {
+    display: none;
+  }
+}
+
+.previewSide {
+  width: 100%;
+  display: none;
+
+  @media (min-width: 1600px) {
+    display: block;
+    position: sticky;
+    top: 16px;
+  }
+}
+
 .form {
   width: 100%;
   display: flex;

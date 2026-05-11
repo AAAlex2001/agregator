@@ -12,6 +12,7 @@ import { CommentSection } from "./sections/CommentSection";
 import { DetailsSection } from "./sections/DetailsSection";
 import { FilesSection } from "./sections/FilesSection";
 import { FormActions } from "./sections/FormActions";
+import { OrderLivePreview } from "./OrderLivePreview";
 import s from "./CreateOrderForm.module.scss";
 
 interface Props {
@@ -29,45 +30,59 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
   const formState = useCreateOrderForm({ editTarget, onSubmit });
   const [view, setView] = useState<View>("form");
 
+  const shellClassName = [
+    s.shell,
+    view === "help" ? s.shellWide : "",
+    view === "form" ? s.shellWithPreview : "",
+  ].filter(Boolean).join(" ");
+
   return (
-    <div className={`${s.shell} ${view === "help" ? s.shellWide : ""}`}>
+    <div className={shellClassName}>
       <AnimatePresence mode="wait" initial={false}>
         {view === "form" ? (
-          <motion.form
+          <motion.div
             key="form"
-            className={s.form}
-            onSubmit={formState.submit}
+            className={s.layout}
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -16 }}
             transition={transition}
           >
-            <h2 className={s.title}>{formState.isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
+            <form className={s.form} onSubmit={formState.submit}>
+              <h2 className={s.title}>{formState.isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
 
-            <DetailsSection form={formState.form} />
+              <DetailsSection form={formState.form} />
 
-            <BadgeSection
-              form={formState.form}
-              onShowHelp={() => setView("help")}
-            />
+              <BadgeSection
+                form={formState.form}
+                onShowHelp={() => setView("help")}
+              />
 
-            <CommentSection form={formState.form} />
+              <CommentSection form={formState.form} />
 
-            <FilesSection
-              documents={formState.documents}
-              onSetSingle={formState.setSingle}
-              onRemoveSingleExisting={formState.removeSingleExisting}
-              onAddOther={formState.addOther}
-              onRemoveOtherNew={formState.removeOtherNew}
-              onRemoveOtherExisting={formState.removeOtherExisting}
-            />
+              <FilesSection
+                documents={formState.documents}
+                onSetSingle={formState.setSingle}
+                onRemoveSingleExisting={formState.removeSingleExisting}
+                onAddOther={formState.addOther}
+                onRemoveOtherNew={formState.removeOtherNew}
+                onRemoveOtherExisting={formState.removeOtherExisting}
+              />
 
-            <FormActions
-              isEdit={formState.isEdit}
-              isSubmitting={isSubmitting}
-              onCancel={onCancel}
-            />
-          </motion.form>
+              <div className={s.previewInline}>
+                <OrderLivePreview form={formState.form} documents={formState.documents} />
+              </div>
+
+              <FormActions
+                isEdit={formState.isEdit}
+                isSubmitting={isSubmitting}
+                onCancel={onCancel}
+              />
+            </form>
+            <div className={s.previewSide}>
+              <OrderLivePreview form={formState.form} documents={formState.documents} />
+            </div>
+          </motion.div>
         ) : (
           <motion.div
             key="help"
