@@ -4,15 +4,25 @@ import { PublicOrdersWidget } from "@/source/widgets/public-orders";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
-  title: "Актуальные заявки | Ресурс Плюс",
-  description: "Открытые заявки на платформе. Войдите или зарегистрируйтесь, чтобы откликаться.",
-  alternates: {
-    canonical: "/orders",
+  title: "Тендеры на экспертизу промышленной безопасности — открытые заявки",
+  description:
+    "Актуальные тендеры на экспертизу промышленной безопасности ОПО: зданий, сооружений, технических устройств и документации. Откликайтесь как аттестованный эксперт Ростехнадзора.",
+  keywords: [
+    "тендеры на экспертизу промышленной безопасности",
+    "заказы экспертизы ОПО",
+    "ЭПБ заявки",
+    "найти работу эксперт промышленной безопасности",
+    "тендер Ростехнадзор",
+  ],
+  alternates: { canonical: "/orders" },
+  openGraph: {
+    title: "Тендеры на экспертизу промышленной безопасности",
+    description:
+      "Открытые тендеры на ЭПБ зданий, сооружений, технических устройств и документации опасных производственных объектов.",
+    url: "/orders",
+    type: "website",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function PublicOrdersPage() {

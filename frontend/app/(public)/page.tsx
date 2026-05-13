@@ -14,6 +14,7 @@ import {
 	LandingOrders,
 	LandingReviews,
 	LandingSearchBlock,
+	LandingStructuredData,
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
@@ -21,23 +22,33 @@ import { fetchPricingPlans } from "@/source/features/pricing/subscribe";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
-	title: "Промышленная безопасность — платформа экспертов и заказов",
+	title: "Экспертиза промышленной безопасности ОПО — тендерная платформа Ресурс-Плюс",
 	description:
-		"Единая площадка для поиска аттестованных экспертов промышленной безопасности. Размещайте заказы, находите проекты, общайтесь и работайте напрямую.",
-	alternates: {
-		canonical: "/",
-	},
+		"Платформа для заказа и поиска работ по экспертизе промышленной безопасности (ЭПБ) опасных производственных объектов. Аттестованные эксперты Ростехнадзора, тендеры с прозрачным выбором исполнителя, отчёты в PDF.",
+	keywords: [
+		"экспертиза промышленной безопасности",
+		"ЭПБ",
+		"экспертиза промышленной безопасности ОПО",
+		"экспертиза опасных производственных объектов",
+		"тендер на экспертизу промышленной безопасности",
+		"найти эксперта Ростехнадзора",
+		"аттестация эксперта по промышленной безопасности",
+		"экспертиза зданий и сооружений",
+		"экспертиза технических устройств",
+		"экспертиза документации ОПО",
+		"диагностика опасных производственных объектов",
+		"Ростехнадзор экспертиза",
+	],
+	alternates: { canonical: "/" },
 	openGraph: {
-		title: "Платформа экспертов промышленной безопасности",
+		title: "Экспертиза промышленной безопасности — платформа Ресурс-Плюс",
 		description:
-			"Размещайте заказы и находите проекты среди специалистов по всей России. Аттестации Ростехнадзора, рейтинг и отзывы.",
+			"Найдите аттестованного эксперта Ростехнадзора или разместите заказ на экспертизу промышленной безопасности (ЭПБ). Тендеры, отзывы, отчёты в PDF.",
 		type: "website",
 		url: "/",
+		images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Платформа экспертизы промышленной безопасности" }],
 	},
-	robots: {
-		index: true,
-		follow: true,
-	},
+	robots: { index: true, follow: true },
 };
 
 export const dynamic = "force-dynamic";
@@ -51,6 +62,7 @@ export default async function LandingPage() {
 	return (
 		<>
 			<RedirectIfAuthed to="/landing" />
+			<LandingStructuredData faq={faq} />
 			<LandingHeader />
 			<div className={styles.page}>
 				<main>

@@ -25,7 +25,7 @@ const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
       <div className={s.visual} aria-hidden="true" data-nosnippet>
         <Image
           src="/hero_svg.webp"
-          alt="Карьер"
+          alt="Экспертиза промышленной безопасности опасных производственных объектов — платформа Ресурс-Плюс"
           width={787}
           height={412}
           priority

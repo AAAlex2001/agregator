@@ -10,6 +10,7 @@ export { default as LandingFaq } from "./ui/FAQ";
 export { default as LandingCtaFooter } from "./ui/CtaFooter";
 export { default as LandingFooter } from "./ui/Footer";
 export { default as LandingSearchBlock } from "./ui/SearchBlock";
+export { default as LandingStructuredData } from "./ui/StructuredData";
 
 export { loadLandingSnapshot } from "./model/landing.data";
 
