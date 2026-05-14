@@ -43,7 +43,7 @@ export function PublicOrdersWidget() {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Актуальные заявки" as="h1" className={s.pageTitle} />
+        <Title text="Актуальные и архивные заявки" as="h1" className={s.pageTitle} />
         <Subtitle
           text="Просматривайте задачи на платформе. Чтобы откликнуться, войдите или зарегистрируйтесь."
           className={s.pageSubtitle}
