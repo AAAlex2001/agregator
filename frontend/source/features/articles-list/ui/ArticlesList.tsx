@@ -9,6 +9,8 @@ import {
   type ArticleList,
   type ArticleListItem,
 } from "@/source/entities/article";
+import Tabs from "@/source/shared/ui/Tabs";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import styles from "./ArticlesList.module.scss";
 
@@ -32,16 +34,21 @@ export function ArticlesList({ kind, title, subtitle, initial }: Props) {
   const { showError } = useNotifications();
   const [items, setItems] = useState<ArticleListItem[]>(initial.items);
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [activeTag, setActiveTag] = useState<string>("");
   const [isReloading, setIsReloading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const availableTags = collectTags(initial.items);
 
-  async function reload(tag: string | null) {
+  const tabItems = [
+    { id: "", label: "Все" },
+    ...availableTags.map((tag) => ({ id: tag, label: tag })),
+  ];
+
+  async function reload(tag: string) {
     setIsReloading(true);
     try {
-      const page = await fetchArticleList({ kind, limit: PAGE_SIZE, offset: 0, tag: tag ?? undefined });
+      const page = await fetchArticleList({ kind, limit: PAGE_SIZE, offset: 0, tag: tag || undefined });
       setItems(page.items);
       setHasMore(page.has_more);
     } catch (error) {
@@ -59,7 +66,7 @@ export function ArticlesList({ kind, title, subtitle, initial }: Props) {
         kind,
         limit: PAGE_SIZE,
         offset: items.length,
-        tag: activeTag ?? undefined,
+        tag: activeTag || undefined,
       });
       setItems((prev) => [...prev, ...page.items]);
       setHasMore(page.has_more);
@@ -70,41 +77,26 @@ export function ArticlesList({ kind, title, subtitle, initial }: Props) {
     }
   }
 
-  function selectTag(tag: string | null) {
-    if (tag === activeTag) return;
-    setActiveTag(tag);
-    void reload(tag);
+  function selectTab(tabId: string) {
+    if (tabId === activeTag) return;
+    setActiveTag(tabId);
+    void reload(tabId);
   }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.head}>
-        <h1 className={styles.title}>{title}</h1>
-        <p className={styles.subtitle}>{subtitle}</p>
+        <Title text={title} as="h1" className={styles.title} />
+        <Subtitle text={subtitle} className={styles.subtitle} />
       </div>
 
       {availableTags.length > 0 && (
-        <div className={styles.tags}>
-          <button
-            type="button"
-            className={`${styles.tag} ${activeTag === null ? styles.tagActive : ""}`}
-            onClick={() => selectTag(null)}
-            disabled={isReloading}
-          >
-            Все
-          </button>
-          {availableTags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              className={`${styles.tag} ${activeTag === tag ? styles.tagActive : ""}`}
-              onClick={() => selectTag(tag)}
-              disabled={isReloading}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={tabItems}
+          activeTab={activeTag}
+          onTabChange={selectTab}
+          variant="pill"
+        />
       )}
 
       {isReloading ? (

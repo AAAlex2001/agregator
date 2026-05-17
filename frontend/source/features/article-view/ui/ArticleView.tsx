@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DocToc } from "@/source/shared/ui/DocToc";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import {
   ArticleCard,
   formatArticleDate,
@@ -32,8 +33,8 @@ export function ArticleView({ article, related }: Props) {
       </nav>
 
       <header className={styles.head}>
-        <h1 className={styles.title}>{article.title}</h1>
-        {article.excerpt ? <p className={styles.subtitle}>{article.excerpt}</p> : null}
+        <Title text={article.title} as="h1" className={styles.title} />
+        {article.excerpt ? <Subtitle text={article.excerpt} className={styles.subtitle} /> : null}
         <div className={styles.meta}>
           {article.tags.slice(0, 3).map((tag) => (
             <span key={tag} className={styles.tag}>{tag}</span>

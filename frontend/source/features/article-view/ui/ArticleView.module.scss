@@ -1,14 +1,20 @@
 .wrapper {
+  position: relative;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1640px;
   margin: 0 auto;
-  padding: 32px 16px 80px;
+  padding: 94px var(--page-px) 40px;
   display: flex;
   flex-direction: column;
   gap: 32px;
 
   @media (min-width: 768px) {
-    padding: 48px 24px 96px;
+    padding: 110px var(--page-px) 60px;
+    gap: 48px;
+  }
+
+  @media (min-width: 1440px) {
+    gap: 56px;
   }
 }
 
@@ -37,44 +43,30 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px;
-}
-
-.title {
-  margin: 0;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 28px;
-  color: #000;
+  gap: 16px;
 
   @media (min-width: 768px) {
-    font-size: 28px;
-    line-height: 32px;
+    gap: 20px;
+  }
+
+  @media (min-width: 1440px) {
+    gap: 24px;
   }
 }
 
-.subtitle {
-  margin: 0;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 22px;
-  color: #000;
-
-  @media (min-width: 768px) {
-    font-size: 18px;
-    line-height: 24px;
-  }
-}
+.title { text-align: center; max-width: 960px; }
+.subtitle { text-align: center; max-width: 820px; color: #1a1a1a; }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px 12px;
   justify-content: center;
   align-items: center;
   color: #a6acbf;
   font-size: 13px;
   line-height: 18px;
+  margin-top: 4px;
 }
 
 .tag {
@@ -92,7 +84,7 @@
   gap: 24px;
   grid-template-columns: 1fr;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     grid-template-columns: minmax(0, 1fr) 300px;
     gap: 32px;
     align-items: start;
@@ -113,7 +105,7 @@
     line-height: 28px;
     font-weight: 600;
     margin: 0 0 16px;
-    scroll-margin-top: 96px;
+    scroll-margin-top: 120px;
 
     @media (min-width: 768px) {
       font-size: 28px;
@@ -127,7 +119,7 @@
     line-height: 24px;
     font-weight: 600;
     margin: 28px 0 12px;
-    scroll-margin-top: 96px;
+    scroll-margin-top: 120px;
   }
 
   & h3 {
