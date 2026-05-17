@@ -224,7 +224,7 @@
   });
 
   if (initialHtml) {
-    quill.root.innerHTML = initialHtml;
+    quill.clipboard.dangerouslyPasteHTML(0, initialHtml, "silent");
   }
 
   quill.getModule("toolbar").addHandler("image", () => {

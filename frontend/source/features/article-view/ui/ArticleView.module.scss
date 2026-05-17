@@ -111,20 +111,30 @@
 
   & p { margin: 0 0 12px; }
   & a { color: #ff8a00; text-decoration: underline; }
-  & ul {
-    margin: 0 0 12px;
-    padding-left: 24px;
-    list-style: disc outside;
-  }
+
+  & ul,
   & ol {
     margin: 0 0 12px;
     padding-left: 24px;
-    list-style: decimal outside;
   }
+  & ul { list-style: disc outside; }
+  & ol { list-style: decimal outside; }
+
   & li {
     margin: 4px 0;
     display: list-item;
+
     &::marker { color: #ff8a00; }
+  }
+
+  & ol li[data-list="bullet"] {
+    list-style-type: disc;
+  }
+  & ol li[data-list="ordered"] {
+    list-style-type: decimal;
+  }
+  & li > span.ql-ui {
+    display: none;
   }
 
   & img, & video {
