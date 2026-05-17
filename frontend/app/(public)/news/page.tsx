@@ -6,7 +6,7 @@ import { ArticlesList } from "@/source/features/articles-list";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Новости промышленной безопасности — Ресурс-Плюс",
+  title: "Новости промышленной безопасности",
   description:
     "Актуальные новости горной, нефтегазовой, химической и других отраслей промышленности. Изменения в законодательстве, требования Ростехнадзора, обзоры аварий и инцидентов на ОПО.",
   keywords: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/news" },
   openGraph: {
-    title: "Новости промышленной безопасности — Ресурс-Плюс",
+    title: "Новости промышленной безопасности | Ресурс-Плюс",
     description:
       "Актуальные новости горной, нефтегазовой и других отраслей промышленности.",
     type: "website",
@@ -36,7 +36,10 @@ export const metadata: Metadata = {
 };
 
 export default async function NewsListPage() {
-  const initial = await fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true });
+  const [initial, crossBlog] = await Promise.all([
+    fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
+  ]);
   return (
     <>
       <LandingHeader />
@@ -45,6 +48,12 @@ export default async function NewsListPage() {
         title="Новости отрасли"
         subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
         initial={initial}
+        cross={{
+          title: "Читайте также из блога",
+          href: "/blog",
+          hrefLabel: "Все статьи",
+          items: crossBlog.items,
+        }}
       />
       <LandingFooter variant="light" />
     </>

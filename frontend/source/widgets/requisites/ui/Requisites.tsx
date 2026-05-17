@@ -1,4 +1,5 @@
 import { DocContent, DocToc } from "@/source/shared/ui";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Title from "@/source/shared/ui/Typography/Title";
 import { requisitesIntro, requisitesSections } from "../model/requisites.data";
 import { requisitesToc } from "../model/requisites.toc";
@@ -8,6 +9,7 @@ const Requisites = () => {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
+        <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Реквизиты компании" }]} />
         <header className={styles.header}>
           <Title as="h1" text="Реквизиты компании" className={styles.title} />
           <p className={styles.intro}>{requisitesIntro}</p>

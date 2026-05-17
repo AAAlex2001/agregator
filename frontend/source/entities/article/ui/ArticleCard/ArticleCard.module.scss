@@ -14,11 +14,15 @@
   text-decoration: none;
   color: inherit;
   min-height: 322px;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.2s ease;
 
   &:hover,
   &:focus-visible {
     border-color: #ff8a00;
+
+    .coverImage {
+      transform: scale(1.06);
+    }
   }
 }
 
@@ -38,7 +42,10 @@
   background: linear-gradient(135deg, #fff6e6 0%, #ffe4c2 100%);
 }
 
-.coverImage { object-fit: cover; }
+.coverImage {
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
 
 .badge {
   position: absolute;

@@ -1,4 +1,5 @@
 import { DocContent, DocToc } from "@/source/shared/ui";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Title from "@/source/shared/ui/Typography/Title";
 import { userAgreementIntro, userAgreementSections } from "../model/user-agreement.data";
 import { userAgreementToc } from "../model/user-agreement.toc";
@@ -8,6 +9,7 @@ const UserAgreement = () => {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
+        <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Пользовательское соглашение" }]} />
         <header className={styles.header}>
           <Title as="h1" text="Пользовательское соглашение" className={styles.title} />
           <p className={styles.intro}>{userAgreementIntro}</p>

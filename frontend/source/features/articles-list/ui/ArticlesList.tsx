@@ -18,11 +18,19 @@ import styles from "./ArticlesList.module.scss";
 const PAGE_SIZE = 12;
 const SKELETON_COUNT = 6;
 
+interface CrossPromotion {
+  title: string;
+  href: string;
+  hrefLabel: string;
+  items: ArticleListItem[];
+}
+
 interface Props {
   kind: ArticleKind;
   title: string;
   subtitle: string;
   initial: ArticleList;
+  cross?: CrossPromotion;
 }
 
 function collectTags(items: ArticleListItem[]): string[] {
@@ -31,7 +39,7 @@ function collectTags(items: ArticleListItem[]): string[] {
   return Array.from(set);
 }
 
-export function ArticlesList({ kind, title, subtitle, initial }: Props) {
+export function ArticlesList({ kind, title, subtitle, initial, cross }: Props) {
   const { showError } = useNotifications();
   const [items, setItems] = useState<ArticleListItem[]>(initial.items);
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
@@ -142,6 +150,29 @@ export function ArticlesList({ kind, title, subtitle, initial }: Props) {
             {isLoadingMore ? "Загружаем..." : "Показать ещё"}
           </button>
         </div>
+      )}
+
+      {cross && cross.items.length > 0 && (
+        <section className={styles.cross}>
+          <div className={styles.crossHead}>
+            <h2 className={styles.crossTitle}>{cross.title}</h2>
+            <a href={cross.href} className={styles.crossLink}>{cross.hrefLabel} →</a>
+          </div>
+          <div className={styles.grid}>
+            {cross.items.map((item) => (
+              <ArticleCard
+                key={item.id}
+                kind={item.kind}
+                slug={item.slug}
+                title={item.title}
+                excerpt={item.excerpt}
+                cover_image={item.cover_image}
+                tags={item.tags}
+                published_at={item.published_at}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

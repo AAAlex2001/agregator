@@ -6,7 +6,7 @@ import { ArticlesList } from "@/source/features/articles-list";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Блог Ресурс-Плюс — обновления платформы и советы по экспертизе ОПО",
+  title: "Блог платформы — обновления и советы по экспертизе ОПО",
   description:
     "Развитие тендерной платформы Ресурс-Плюс: новые функции, кейсы заказчиков и экспертов, инструкции по работе с заказами на экспертизу промышленной безопасности.",
   keywords: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "Блог Ресурс-Плюс",
+    title: "Блог платформы | Ресурс-Плюс",
     description: "Обновления платформы и советы по работе с экспертизой промышленной безопасности.",
     type: "website",
     url: "/blog",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Блог Ресурс-Плюс",
+    title: "Блог платформы | Ресурс-Плюс",
     description: "Обновления платформы и советы по работе с экспертизой.",
     images: ["/hero_svg.webp"],
   },
@@ -34,7 +34,10 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogListPage() {
-  const initial = await fetchArticleList({ kind: "blog", limit: 12, offset: 0 }, { server: true });
+  const [initial, crossNews] = await Promise.all([
+    fetchArticleList({ kind: "blog", limit: 12, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "news", limit: 3, offset: 0 }, { server: true }),
+  ]);
   return (
     <>
       <LandingHeader />
@@ -43,6 +46,12 @@ export default async function BlogListPage() {
         title="Блог платформы"
         subtitle="Развитие Ресурс-Плюс, кейсы и инструкции по работе с экспертизой промышленной безопасности"
         initial={initial}
+        cross={{
+          title: "Свежие новости отрасли",
+          href: "/news",
+          hrefLabel: "Все новости",
+          items: crossNews.items,
+        }}
       />
       <LandingFooter variant="light" />
     </>
