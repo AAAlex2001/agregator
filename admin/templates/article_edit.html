@@ -23,8 +23,7 @@
 {% endblock %}
 
 {% block content %}
-<form action="{{ model_view._build_url_for('admin:edit', request, obj) if obj else model_view._build_url_for('admin:create', request) }}"
-      method="POST" enctype="multipart/form-data" id="article-form" novalidate>
+<form method="POST" enctype="multipart/form-data" id="article-form" novalidate>
 
   {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
 
