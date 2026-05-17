@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchPublicReviews, type LandingReview } from "@/source/entities/landing-review";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -37,6 +38,7 @@ export function PublicReviewsWidget() {
 
   return (
     <div className={s.wrapper}>
+      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Отзывы" }]} />
       <div className={s.pageHead}>
         <Title text="Отзывы" as="h1" className={s.pageTitle} />
         <Subtitle

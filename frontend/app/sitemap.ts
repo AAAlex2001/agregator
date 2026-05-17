@@ -29,7 +29,7 @@ async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/${kind}/${item.slug}`,
       lastModified: item.published_at ? new Date(item.published_at) : new Date(),
       changeFrequency: kind === "news" ? "weekly" : "monthly",
-      priority: kind === "news" ? 0.7 : 0.6,
+      priority: kind === "news" ? 0.8 : 0.6,
     }));
   } catch {
     return [];

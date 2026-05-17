@@ -12,6 +12,7 @@ import {
 import { CommentSection } from "@/source/entities/response";
 import { Loader } from "@/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
@@ -42,6 +43,7 @@ export function PublicOrdersWidget() {
 
   return (
     <div className={s.wrapper}>
+      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Заявки" }]} />
       <div className={s.pageHead}>
         <Title text="Актуальные и архивные заявки" as="h1" className={s.pageTitle} />
         <Subtitle

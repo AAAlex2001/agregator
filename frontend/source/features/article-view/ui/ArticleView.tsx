@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { DocToc } from "@/source/shared/ui/DocToc";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import {
@@ -24,13 +24,13 @@ export function ArticleView({ article, related }: Props) {
 
   return (
     <article className={styles.wrapper}>
-      <nav className={styles.breadcrumbs} aria-label="Хлебные крошки">
-        <Link href="/">Главная</Link>
-        <span className={styles.sep}>·</span>
-        <Link href={sectionHref}>{sectionTitle}</Link>
-        <span className={styles.sep}>·</span>
-        <span aria-current="page">{article.title}</span>
-      </nav>
+      <Breadcrumbs
+        items={[
+          { label: "Главная", href: "/" },
+          { label: sectionTitle, href: sectionHref },
+          { label: article.title },
+        ]}
+      />
 
       <header className={styles.head}>
         <Title text={article.title} as="h1" className={styles.title} />

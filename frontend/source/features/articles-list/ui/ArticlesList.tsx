@@ -9,6 +9,7 @@ import {
   type ArticleList,
   type ArticleListItem,
 } from "@/source/entities/article";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -85,6 +86,12 @@ export function ArticlesList({ kind, title, subtitle, initial }: Props) {
 
   return (
     <div className={styles.wrapper}>
+      <Breadcrumbs
+        items={[
+          { label: "Главная", href: "/" },
+          { label: kind === "news" ? "Новости" : "Блог" },
+        ]}
+      />
       <div className={styles.head}>
         <Title text={title} as="h1" className={styles.title} />
         <Subtitle text={subtitle} className={styles.subtitle} />
