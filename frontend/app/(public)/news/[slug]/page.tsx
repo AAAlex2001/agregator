@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
-import { ArticleJsonLd, ArticleView } from "@/source/features/article-view";
+import { ArticleJsonLd, ArticleView, ScrollToTopOnSlug } from "@/source/features/article-view";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +47,7 @@ export default async function NewsArticlePage({ params }: Props) {
   return (
     <>
       <LandingHeader />
+      <ScrollToTopOnSlug slug={article.slug} />
       <ArticleJsonLd article={article} />
       <ArticleView article={article} related={related} />
       <LandingFooter variant="light" />
