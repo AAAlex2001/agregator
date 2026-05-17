@@ -3,6 +3,7 @@ import styles from "./page.module.scss";
 import type { Metadata } from "next";
 import {
 	LandingAdvantages,
+	LandingArticlesPreview,
 	LandingCtaFooter,
 	LandingFaq,
 	LandingFooter,
@@ -19,6 +20,7 @@ import {
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
 import { fetchPricingPlans } from "@/source/features/pricing/subscribe";
+import { fetchArticleList } from "@/source/entities/article";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
@@ -56,8 +58,17 @@ export const dynamic = "force-dynamic";
 export default async function LandingPage() {
 	ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
 
-	const [{ hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq, pricingContent }, pricingPlans] =
-		await Promise.all([loadLandingSnapshot(), fetchPricingPlans()]);
+	const [
+		{ hero, sectionHeaders, howItWorks, keyAdvantages, orders, advantages, industries, reviews, faq, pricingContent },
+		pricingPlans,
+		newsPage,
+		blogPage,
+	] = await Promise.all([
+		loadLandingSnapshot(),
+		fetchPricingPlans(),
+		fetchArticleList({ kind: "news", limit: 3, offset: 0 }, { server: true }),
+		fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
+	]);
 
 	return (
 		<>
@@ -101,6 +112,20 @@ export default async function LandingPage() {
 						reviews={reviews}
 						title={sectionHeaders.reviews.title}
 						subtitle={sectionHeaders.reviews.subtitle}
+					/>
+					<LandingArticlesPreview
+						title="Новости отрасли"
+						subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
+						ctaHref="/news"
+						ctaLabel="Все новости"
+						items={newsPage.items}
+					/>
+					<LandingArticlesPreview
+						title="Блог платформы"
+						subtitle="Развитие Ресурс-Плюс, кейсы и инструкции по работе с экспертизой"
+						ctaHref="/blog"
+						ctaLabel="Все статьи"
+						items={blogPage.items}
 					/>
 					{pricingPlans.length > 0 ? (
 						<PricingSection

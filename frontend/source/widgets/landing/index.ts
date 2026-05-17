@@ -11,6 +11,7 @@ export { default as LandingCtaFooter } from "./ui/CtaFooter";
 export { default as LandingFooter } from "./ui/Footer";
 export { default as LandingSearchBlock } from "./ui/SearchBlock";
 export { default as LandingStructuredData } from "./ui/StructuredData";
+export { default as LandingArticlesPreview } from "./ui/ArticlesPreview";
 
 export { loadLandingSnapshot } from "./model/landing.data";
 

@@ -7,16 +7,16 @@
   gap: 24px;
   background: #ffffff;
   box-shadow: 0px 2px 12px rgba(1, 42, 249, 0.05);
+  border: 1px solid transparent;
   border-radius: 22px;
   text-decoration: none;
   color: inherit;
   min-height: 322px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 
   &:hover,
   &:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0px 8px 24px rgba(1, 42, 249, 0.08);
+    border-color: #ff8a00;
   }
 }
 

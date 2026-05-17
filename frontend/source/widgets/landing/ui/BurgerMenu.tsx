@@ -15,6 +15,8 @@ const NAV_LINKS = [
 
 const NAV_PAGES = [
   { href: "/orders", label: "Заявки" },
+  { href: "/news", label: "Новости" },
+  { href: "/blog", label: "Блог" },
   { href: "/reviews", label: "Отзывы" },
 ] as const;
 
