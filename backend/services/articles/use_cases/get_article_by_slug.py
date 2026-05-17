@@ -1,0 +1,34 @@
+from fastapi import HTTPException, status
+
+from schemas.article import ArticleDetailDto
+from services.articles.repository import ArticleRepository
+from services.articles.use_cases.list_articles import KIND_TO_DTO
+
+
+class GetArticleBySlugUseCase:
+    def __init__(self, repo: ArticleRepository):
+        self.repo = repo
+
+    async def execute(self, slug: str) -> ArticleDetailDto:
+        row = await self.repo.get_published_by_slug(slug)
+        if row is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Статья не найдена",
+            )
+        return ArticleDetailDto(
+            id=row.id,
+            kind=KIND_TO_DTO[row.kind],
+            slug=row.slug,
+            title=row.title,
+            excerpt=row.excerpt,
+            cover_image=row.cover_image,
+            content_html=row.content_html,
+            tags=list(row.tags or []),
+            meta_title=row.meta_title,
+            meta_description=row.meta_description,
+            meta_keywords=row.meta_keywords,
+            og_image=row.og_image,
+            published_at=row.published_at,
+            updated_at=row.updated_at,
+        )

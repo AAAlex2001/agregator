@@ -25,6 +25,7 @@ from models import (
     Notification, NotificationType,
     ExpertRoomMessage, ExpertRoomBan,
     PlatformSettings,
+    Article, ArticleKind, ArticleStatus,
 )
 
 # --- БД (sync для SQLAdmin) ---
@@ -132,6 +133,40 @@ async def grant_user_subscription(
         request.headers.get("referer") or f"/admin/user/details/{user_id}",
         status_code=303,
     )
+
+
+ARTICLE_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"}
+ARTICLE_MAX_IMAGE_SIZE = 20 * 1024 * 1024
+ARTICLE_UPLOADS_ROOT = Path("/app/uploads/articles")
+
+
+@app.post("/admin-actions/articles/upload-image", name="article_upload_image")
+async def article_upload_image(request: Request, file: UploadFile = File(...)):
+    if not request.session.get("authenticated", False):
+        raise HTTPException(status_code=401, detail="Не авторизован")
+
+    extension = Path(file.filename or "").suffix.lower()
+    if extension not in ARTICLE_IMAGE_EXTENSIONS:
+        raise HTTPException(status_code=400, detail="Недопустимое расширение")
+
+    ARTICLE_UPLOADS_ROOT.mkdir(parents=True, exist_ok=True)
+    generated_name = f"{uuid4().hex}{extension}"
+    full_path = ARTICLE_UPLOADS_ROOT / generated_name
+
+    total = 0
+    with open(full_path, "wb") as out:
+        while True:
+            chunk = await file.read(1024 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > ARTICLE_MAX_IMAGE_SIZE:
+                out.close()
+                full_path.unlink(missing_ok=True)
+                raise HTTPException(status_code=413, detail="Файл слишком большой")
+            out.write(chunk)
+
+    return {"url": f"/uploads/articles/{generated_name}"}
 
 
 SUPPORT_FILE_EXTENSIONS = {".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx"}
@@ -1528,6 +1563,94 @@ class PlatformSettingsAdmin(ModelView, model=PlatformSettings):
     }
 
 
+class ArticleAdmin(ModelView, model=Article):
+    name = "Статья"
+    name_plural = "Контент · Новости и блог"
+    icon = "fa-solid fa-newspaper"
+    category = "Контент"
+
+    create_template = "article_edit.html"
+    edit_template = "article_edit.html"
+
+    column_list = [
+        Article.id,
+        Article.kind,
+        Article.status,
+        Article.title,
+        Article.slug,
+        Article.published_at,
+        Article.updated_at,
+    ]
+    column_searchable_list = [Article.title, Article.slug]
+    column_sortable_list = [Article.id, Article.kind, Article.status, Article.published_at, Article.updated_at]
+    column_default_sort = [(Article.published_at, True), (Article.id, True)]
+
+    column_details_list = [
+        Article.id, Article.kind, Article.status,
+        Article.slug, Article.title, Article.excerpt, Article.cover_image,
+        Article.tags, Article.content_html,
+        Article.meta_title, Article.meta_description, Article.meta_keywords, Article.og_image,
+        Article.published_at, Article.created_at, Article.updated_at,
+    ]
+
+    form_columns = [
+        Article.kind, Article.status,
+        Article.slug, Article.title, Article.excerpt,
+        Article.cover_image, Article.tags, Article.content_html,
+        Article.meta_title, Article.meta_description, Article.meta_keywords, Article.og_image,
+        Article.published_at,
+    ]
+
+    column_labels = {
+        Article.id: "ID",
+        Article.kind: "Тип (новость/блог)",
+        Article.status: "Статус",
+        Article.slug: "Slug (URL)",
+        Article.title: "Заголовок",
+        Article.excerpt: "Краткое описание",
+        Article.cover_image: "Обложка (URL)",
+        Article.tags: "Теги",
+        Article.content_html: "HTML-контент",
+        Article.meta_title: "SEO · meta title",
+        Article.meta_description: "SEO · meta description",
+        Article.meta_keywords: "SEO · meta keywords",
+        Article.og_image: "SEO · OpenGraph image (URL)",
+        Article.published_at: "Опубликовать с (UTC)",
+        Article.created_at: "Создана",
+        Article.updated_at: "Обновлена",
+    }
+
+    column_formatters = {
+        Article.kind: lambda m, a: str(m.kind),
+        Article.status: lambda m, a: str(m.status),
+    }
+    column_formatters_detail = {
+        Article.kind: lambda m, a: str(m.kind),
+        Article.status: lambda m, a: str(m.status),
+    }
+
+    async def on_model_change(self, data, model, is_created, request):
+        raw_tags = data.get("tags")
+        if isinstance(raw_tags, str):
+            cleaned = raw_tags.strip()
+            try:
+                data["tags"] = json.loads(cleaned) if cleaned else []
+            except json.JSONDecodeError:
+                data["tags"] = []
+        elif raw_tags is None:
+            data["tags"] = []
+        elif not isinstance(raw_tags, list):
+            data["tags"] = list(raw_tags)
+
+        slug = (data.get("slug") or "").strip().lower().replace(" ", "-")
+        if slug:
+            data["slug"] = slug
+
+        status = data.get("status")
+        if status and str(status).upper().endswith("PUBLISHED") and not data.get("published_at"):
+            data["published_at"] = datetime.now(timezone.utc)
+
+
 def format_ticket_attachments(value):
     if not value:
         return "—"
@@ -1780,6 +1903,7 @@ admin.add_view(LandingFaqAdmin)
 admin.add_view(LandingPricingContentAdmin)
 admin.add_view(PlatformSettingsAdmin)
 
+admin.add_view(ArticleAdmin)
 admin.add_view(SupportTicketAdmin)
 admin.add_view(SupportTicketMessageAdmin)
 admin.add_view(ExpertRoomChatView)

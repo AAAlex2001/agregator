@@ -3,7 +3,20 @@ import { SITE_URL } from "@/source/shared/api/config";
 
 export const dynamic = "force-static";
 
-const INDEXABLE_PATHS: string[] = ["/", "/orders", "/reviews", "/login", "/register", "/forgot-password", "/requisites", "/offer", "/user-agreement", "/privacy-policy"];
+const INDEXABLE_PATHS: string[] = [
+  "/",
+  "/orders",
+  "/reviews",
+  "/news",
+  "/blog",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/requisites",
+  "/offer",
+  "/user-agreement",
+  "/privacy-policy",
+];
 
 const DISALLOWED_PATHS = [
   "/admin",

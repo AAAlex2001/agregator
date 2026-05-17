@@ -1,0 +1,52 @@
+import type { Metadata } from "next";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
+import { fetchArticleList } from "@/source/entities/article";
+import { ArticlesList } from "@/source/features/articles-list";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Новости промышленной безопасности — Ресурс-Плюс",
+  description:
+    "Актуальные новости горной, нефтегазовой, химической и других отраслей промышленности. Изменения в законодательстве, требования Ростехнадзора, обзоры аварий и инцидентов на ОПО.",
+  keywords: [
+    "новости промышленной безопасности",
+    "новости Ростехнадзора",
+    "новости горной отрасли",
+    "новости нефтегазовой отрасли",
+    "новости ОПО",
+    "новости экспертизы промышленной безопасности",
+  ],
+  alternates: { canonical: "/news" },
+  openGraph: {
+    title: "Новости промышленной безопасности — Ресурс-Плюс",
+    description:
+      "Актуальные новости горной, нефтегазовой и других отраслей промышленности.",
+    type: "website",
+    url: "/news",
+    images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Новости промышленной безопасности" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Новости промышленной безопасности",
+    description: "Актуальные новости отрасли и требований Ростехнадзора.",
+    images: ["/hero_svg.webp"],
+  },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+};
+
+export default async function NewsListPage() {
+  const initial = await fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true });
+  return (
+    <>
+      <LandingHeader />
+      <ArticlesList
+        kind="news"
+        title="Новости отрасли"
+        subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
+        initial={initial}
+      />
+      <LandingFooter variant="light" />
+    </>
+  );
+}

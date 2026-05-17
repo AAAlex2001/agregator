@@ -1,0 +1,260 @@
+{% extends "sqladmin/layout.html" %}
+{% from 'sqladmin/_macros.html' import render_form_fields %}
+
+{% block head %}
+{{ super() }}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<style>
+  .article-quill { background: #fff; border-radius: 8px; }
+  .article-quill .ql-toolbar.ql-snow { border: 1px solid #dbe4ee; border-radius: 8px 8px 0 0; background: #f9fbfd; }
+  .article-quill .ql-container.ql-snow { border: 1px solid #dbe4ee; border-top: none; border-radius: 0 0 8px 8px; min-height: 480px; }
+  .article-quill .ql-editor { min-height: 480px; font-size: 16px; line-height: 1.55; font-family: "Montserrat", system-ui, sans-serif; }
+  .article-quill .ql-editor h1 { color: #FF8A00; font-size: 28px; font-weight: 700; margin: 0 0 16px; }
+  .article-quill .ql-editor h2 { color: #FF8A00; font-size: 22px; font-weight: 600; margin: 24px 0 12px; }
+  .article-quill .ql-editor h3 { color: #1A1A1A; font-size: 18px; font-weight: 600; margin: 20px 0 8px; }
+  .article-quill .ql-editor img { max-width: 100%; border-radius: 12px; }
+  .article-quill .ql-editor iframe { width: 100%; border-radius: 12px; }
+
+  .article-tags label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; margin: 0 6px 6px 0; border: 1px solid #dbe4ee; border-radius: 20px; background: #fff; cursor: pointer; font-size: 13px; }
+  .article-tags label:has(input:checked) { background: #FFF8EB; border-color: #FF8A00; color: #FF8A00; }
+  .article-cover-preview img { max-width: 320px; max-height: 200px; border-radius: 12px; border: 1px solid #dbe4ee; }
+  .article-help { color: #8a94a6; font-size: 12px; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<form action="{{ model_view._build_url_for('admin:edit', request, obj) if obj else model_view._build_url_for('admin:create', request) }}"
+      method="POST" enctype="multipart/form-data" id="article-form" novalidate>
+
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-8">
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Основные поля</h3></div>
+        <div class="card-body">
+          <fieldset class="form-fieldset">
+            {{ render_form_fields(form, form_opts=form_opts, ajax_lookup_url=url_for('admin:ajax_lookup', identity=model_view.identity)) }}
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-header"><h3 class="card-title">Контент</h3></div>
+        <div class="card-body">
+          <div id="article-editor" class="article-quill"></div>
+          <p class="article-help">H1 (оранжевый) для секций оглавления, H2 для подзаголовков, обычный текст — для абзацев. Контент сохранится как HTML.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Теги</h3></div>
+        <div class="card-body article-tags">
+          <p class="article-help mb-2">Первый отмеченный — бейдж на карточке.</p>
+          <div id="article-tag-list"></div>
+          <div class="mt-2">
+            <input type="text" id="article-new-tag" class="form-control form-control-sm" placeholder="Добавить свой тег и Enter">
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-header"><h3 class="card-title">Обложка</h3></div>
+        <div class="card-body">
+          <div class="article-cover-preview mb-2" id="cover-preview"></div>
+          <input type="file" id="cover-upload" class="form-control" accept="image/*">
+          <p class="article-help">Рекомендуем 1200×630. Используется и в шеринге (OG).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a href="{{ url_for('admin:list', identity=model_view.identity) }}" class="btn btn-outline-secondary">Отмена</a>
+    <input type="submit" name="save" value="Save" class="btn btn-primary">
+  </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+(function () {
+  const form = document.getElementById("article-form");
+  if (!form) return;
+
+  const PRESET_TAGS = [
+    "Горнодобывающая",
+    "Нефтегазовая",
+    "Химическая",
+    "Энергетика",
+    "Металлургия",
+    "Строительство",
+    "Транспорт",
+    "Для заказчиков",
+    "Работа с экспертом",
+    "Обновления платформы",
+    "Статья",
+    "Новость",
+  ];
+
+  const tagsField = form.querySelector('[name="tags"]');
+  const tagListEl = document.getElementById("article-tag-list");
+  const newTagInput = document.getElementById("article-new-tag");
+
+  let tags = [];
+  if (tagsField && tagsField.value) {
+    try {
+      const parsed = JSON.parse(tagsField.value);
+      if (Array.isArray(parsed)) tags = parsed.map(String);
+    } catch (_) { tags = []; }
+  }
+  if (tagsField) {
+    const wrap = tagsField.closest(".mb-3") || tagsField.parentElement;
+    if (wrap) wrap.style.display = "none";
+  }
+
+  function renderTags() {
+    const all = Array.from(new Set([...PRESET_TAGS, ...tags]));
+    tagListEl.innerHTML = "";
+    all.forEach((tag) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = tag;
+      input.checked = tags.includes(tag);
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          if (!tags.includes(tag)) tags.push(tag);
+        } else {
+          tags = tags.filter((t) => t !== tag);
+        }
+        syncTags();
+      });
+      const span = document.createElement("span");
+      span.textContent = tag;
+      label.appendChild(input);
+      label.appendChild(span);
+      tagListEl.appendChild(label);
+    });
+  }
+
+  function syncTags() {
+    if (tagsField) tagsField.value = JSON.stringify(tags);
+  }
+
+  if (newTagInput) {
+    newTagInput.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      const value = newTagInput.value.trim();
+      if (value && !tags.includes(value)) {
+        tags.push(value);
+        renderTags();
+        syncTags();
+      }
+      newTagInput.value = "";
+    });
+  }
+
+  renderTags();
+  syncTags();
+
+  const coverField = form.querySelector('[name="cover_image"]');
+  const coverPreview = document.getElementById("cover-preview");
+  const coverUpload = document.getElementById("cover-upload");
+
+  function renderCover() {
+    if (!coverField || !coverPreview) return;
+    coverPreview.innerHTML = "";
+    if (coverField.value) {
+      const img = document.createElement("img");
+      img.src = coverField.value;
+      img.alt = "Обложка";
+      coverPreview.appendChild(img);
+    }
+  }
+
+  if (coverUpload) {
+    coverUpload.addEventListener("change", async () => {
+      const file = coverUpload.files && coverUpload.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const res = await fetch("/admin-actions/articles/upload-image", { method: "POST", body: fd });
+        if (!res.ok) throw new Error("Ошибка загрузки");
+        const data = await res.json();
+        if (coverField && data.url) {
+          coverField.value = data.url;
+          renderCover();
+        }
+      } catch (e) {
+        alert("Не удалось загрузить обложку: " + e.message);
+      }
+    });
+  }
+
+  renderCover();
+
+  const contentField = form.querySelector('[name="content_html"]');
+  let initialHtml = "";
+  if (contentField) {
+    initialHtml = contentField.value || "";
+    const wrap = contentField.closest(".mb-3") || contentField.parentElement;
+    if (wrap) wrap.style.display = "none";
+  }
+
+  const quill = new Quill(document.getElementById("article-editor"), {
+    theme: "snow",
+    placeholder: "Текст статьи...",
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: ["#1A1A1A", "#FF8A00", "#3084D4", "#A6ACBF", "#000000"] }, { background: [] }],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ align: [] }],
+          ["link", "image", "video"],
+          ["blockquote", "code-block"],
+          ["clean"],
+        ],
+      },
+    },
+  });
+
+  if (initialHtml) {
+    quill.root.innerHTML = initialHtml;
+  }
+
+  quill.getModule("toolbar").addHandler("image", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const res = await fetch("/admin-actions/articles/upload-image", { method: "POST", body: fd });
+        if (!res.ok) throw new Error("Ошибка загрузки");
+        const data = await res.json();
+        const range = quill.getSelection(true);
+        quill.insertEmbed(range.index, "image", data.url, "user");
+        quill.setSelection(range.index + 1);
+      } catch (e) {
+        alert("Не удалось загрузить картинку: " + e.message);
+      }
+    };
+    input.click();
+  });
+
+  form.addEventListener("submit", () => {
+    if (contentField) contentField.value = quill.root.innerHTML;
+    syncTags();
+  });
+})();
+</script>
+{% endblock %}
