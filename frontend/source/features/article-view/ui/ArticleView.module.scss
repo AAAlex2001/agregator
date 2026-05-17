@@ -132,8 +132,21 @@
 
   & p { margin: 0 0 12px; }
   & a { color: #ff8a00; text-decoration: underline; }
-  & ul, & ol { margin: 0 0 12px; padding-left: 24px; }
-  & li { margin: 4px 0; }
+  & ul {
+    margin: 0 0 12px;
+    padding-left: 24px;
+    list-style: disc outside;
+  }
+  & ol {
+    margin: 0 0 12px;
+    padding-left: 24px;
+    list-style: decimal outside;
+  }
+  & li {
+    margin: 4px 0;
+    display: list-item;
+    &::marker { color: #ff8a00; }
+  }
 
   & img, & video {
     display: block;

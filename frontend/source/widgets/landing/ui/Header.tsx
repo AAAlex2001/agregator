@@ -1,18 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { MouseEvent } from "react";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import BurgerMenu from "./BurgerMenu";
-import { scrollToAnchor } from "../lib/scrollToAnchor";
 import s from "./header.module.scss";
-
-const NAV_LINKS = [
-  { anchor: "#how-it-works", label: "Как это работает" },
-  { anchor: "#advantages", label: "Преимущества" },
-  { anchor: "#faq", label: "FAQ" },
-] as const;
 
 const NAV_PAGES = [
   { href: "/orders", label: "Заявки" },
@@ -22,16 +13,6 @@ const NAV_PAGES = [
 ] as const;
 
 const Header = () => {
-  const pathname = usePathname();
-  const isLanding = pathname === "/";
-
-  const handleAnchorClick = (e: MouseEvent<HTMLAnchorElement>, anchor: string) => {
-    if (isLanding) {
-      e.preventDefault();
-      scrollToAnchor(anchor);
-    }
-  };
-
   return (
     <header className={s.header}>
       <div className={s.container}>
@@ -41,15 +22,6 @@ const Header = () => {
           </span>
         </Link>
         <nav className={s.nav}>
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.anchor}
-              href={`/${link.anchor}`}
-              onClick={(e) => handleAnchorClick(e, link.anchor)}
-            >
-              {link.label}
-            </Link>
-          ))}
           {NAV_PAGES.map((page) => (
             <Link key={page.href} href={page.href}>
               {page.label}
