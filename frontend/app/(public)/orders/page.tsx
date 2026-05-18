@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
-import { fetchPublicOrdersServer, mapApiToOrderCard } from "@/source/entities/order";
+import { mapApiToOrderCard } from "@/source/entities/order";
+import { fetchPublicOrdersServer } from "@/source/entities/order/api/public-orders.server";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 
 export const dynamic = "force-dynamic";
