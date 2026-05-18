@@ -1,4 +1,5 @@
 export { default as LandingHeader } from "./ui/Header";
+export { default as LandingHeaderAuthed } from "./ui/HeaderAuthed";
 export { default as LandingHero } from "./ui/Hero";
 export { default as LandingHowItWorks } from "./ui/HowItWorks";
 export { default as LandingKeyAdvantages } from "./ui/KeyAdvantages";

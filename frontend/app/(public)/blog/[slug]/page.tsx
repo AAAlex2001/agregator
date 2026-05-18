@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
 import { ArticleJsonLd, ArticleView, ScrollToTopOnSlug } from "@/source/features/article-view";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,7 @@ export default async function BlogArticlePage({ params }: Props) {
 
   return (
     <>
+      <RedirectIfAuthed to={`/landing/blog/${article.slug}`} />
       <LandingHeader />
       <ScrollToTopOnSlug slug={article.slug} />
       <ArticleJsonLd article={article} />

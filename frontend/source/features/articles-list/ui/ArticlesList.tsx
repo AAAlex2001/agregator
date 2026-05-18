@@ -13,7 +13,7 @@ import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
-import styles from "./ArticlesList.module.scss";
+import s from "./ArticlesList.module.scss";
 
 const PAGE_SIZE = 12;
 const SKELETON_COUNT = 6;
@@ -31,6 +31,7 @@ interface Props {
   subtitle: string;
   initial: ArticleList;
   cross?: CrossPromotion;
+  homeHref?: string;
 }
 
 function collectTags(items: ArticleListItem[]): string[] {
@@ -39,7 +40,7 @@ function collectTags(items: ArticleListItem[]): string[] {
   return Array.from(set);
 }
 
-export function ArticlesList({ kind, title, subtitle, initial, cross }: Props) {
+export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref = "/" }: Props) {
   const { showError } = useNotifications();
   const [items, setItems] = useState<ArticleListItem[]>(initial.items);
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
@@ -93,16 +94,16 @@ export function ArticlesList({ kind, title, subtitle, initial, cross }: Props) {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={s.wrapper}>
       <Breadcrumbs
         items={[
-          { label: "Главная", href: "/" },
+          { label: "Главная", href: homeHref },
           { label: kind === "news" ? "Новости" : "Блог" },
         ]}
       />
-      <div className={styles.head}>
-        <Title text={title} as="h1" className={styles.title} />
-        <Subtitle text={subtitle} className={styles.subtitle} />
+      <div className={s.head}>
+        <Title text={title} as="h1" className={s.title} />
+        <Subtitle text={subtitle} className={s.subtitle} />
       </div>
 
       {availableTags.length > 0 && (
@@ -115,17 +116,17 @@ export function ArticlesList({ kind, title, subtitle, initial, cross }: Props) {
       )}
 
       {isReloading ? (
-        <div className={styles.grid}>
+        <div className={s.grid}>
           {Array.from({ length: SKELETON_COUNT }).map((_, idx) => (
             <ArticleCardSkeleton key={idx} />
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className={styles.empty}>
+        <div className={s.empty}>
           {kind === "news" ? "Новостей пока нет — заходите позже." : "Статей пока нет — заходите позже."}
         </div>
       ) : (
-        <div className={styles.grid}>
+        <div className={s.grid}>
           {items.map((item) => (
             <ArticleCard
               key={item.id}
@@ -145,20 +146,20 @@ export function ArticlesList({ kind, title, subtitle, initial, cross }: Props) {
       )}
 
       {hasMore && !isReloading && (
-        <div className={styles.loadMoreWrap}>
-          <button type="button" className={styles.loadMore} onClick={loadMore} disabled={isLoadingMore}>
+        <div className={s.loadMoreWrap}>
+          <button type="button" className={s.loadMore} onClick={loadMore} disabled={isLoadingMore}>
             {isLoadingMore ? "Загружаем..." : "Показать ещё"}
           </button>
         </div>
       )}
 
       {cross && cross.items.length > 0 && (
-        <section className={styles.cross}>
-          <div className={styles.crossHead}>
-            <h2 className={styles.crossTitle}>{cross.title}</h2>
-            <a href={cross.href} className={styles.crossLink}>{cross.hrefLabel} →</a>
+        <section className={s.cross}>
+          <div className={s.crossHead}>
+            <h2 className={s.crossTitle}>{cross.title}</h2>
+            <a href={cross.href} className={s.crossLink}>{cross.hrefLabel} →</a>
           </div>
-          <div className={styles.grid}>
+          <div className={s.grid}>
             {cross.items.map((item) => (
               <ArticleCard
                 key={item.id}

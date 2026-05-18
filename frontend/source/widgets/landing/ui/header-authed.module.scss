@@ -1,0 +1,118 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid #E6E6E6;
+  padding: 12px var(--page-px);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: var(--page-maxw);
+  margin: 0 auto;
+}
+
+.logo {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 155px;
+  height: 28px;
+  text-decoration: none;
+
+  svg { width: 100%; height: 100%; display: block; }
+
+  @media (min-width: 768px) {
+    width: 188px;
+    height: 32px;
+  }
+}
+
+.nav {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+  }
+}
+
+.navLink {
+  text-decoration: none;
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #1A1A1A;
+  padding: 10px 16px;
+  border-radius: 12px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #FFF8EB;
+    color: #FF8A00;
+  }
+}
+
+.burger {
+  appearance: none;
+  background: none;
+  border: 0;
+  margin-left: auto;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  padding: 6px;
+
+  span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #1A1A1A;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.15s ease;
+  }
+
+  &.burgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  &.burgerOpen span:nth-child(2) { opacity: 0; }
+  &.burgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (min-width: 768px) { display: none; }
+}
+
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  padding: 8px var(--page-px) 16px;
+  background: #ffffff;
+  border-top: 1px solid #F0F0F0;
+
+  @media (min-width: 768px) { display: none; }
+}
+
+.mobileLink {
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #1A1A1A;
+  padding: 12px 8px;
+  border-radius: 8px;
+
+  &:hover,
+  &:focus-visible {
+    background: #FFF8EB;
+    color: #FF8A00;
+  }
+}
