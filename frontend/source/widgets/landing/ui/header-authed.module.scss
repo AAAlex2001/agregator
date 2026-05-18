@@ -5,6 +5,10 @@
   background: #ffffff;
   border-bottom: 1px solid #E6E6E6;
   padding: 12px var(--page-px);
+  min-height: 65px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 .container {
@@ -15,6 +19,7 @@
   max-width: var(--page-maxw);
   margin: 0 auto;
   position: relative;
+  width: 100%;
 }
 
 .nav {
