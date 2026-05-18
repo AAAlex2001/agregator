@@ -19,13 +19,18 @@ import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { useSession } from "@/source/features/session";
 import s from "./PublicOrdersWidget.module.scss";
 
-export function PublicOrdersWidget() {
+interface Props {
+  initial?: { items: OrderCardData[]; hasMore: boolean };
+}
+
+export function PublicOrdersWidget({ initial }: Props = {}) {
   const router = useRouter();
   const { showError } = useNotifications();
   const { user, role, isLoading: isSessionLoading } = useSession();
 
   const { items, hasMore, isLoading, isLoadingMore, loadMore } = usePublicOrdersList({
     onError: showError,
+    initial,
   });
 
   const sentinelRef = useInfiniteScroll({

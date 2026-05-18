@@ -6,6 +6,7 @@ import {
   LicenseHoldersPanel,
   useLicenseHoldersDrawer,
 } from "@/source/widgets/license-holders-drawer";
+import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
 import { Sidebar } from "./Sidebar";
 import s from "./SidebarShell.module.scss";
 
@@ -34,7 +35,10 @@ export function SidebarShell({ children }: SidebarShellProps) {
   return (
     <div className={layoutClass}>
       <Sidebar />
-      <main className={contentClass}>{children}</main>
+      <main className={contentClass}>
+        {!fullScreen && <LandingHeaderAuthed />}
+        {children}
+      </main>
       <LicenseHoldersPanel />
     </div>
   );

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { fetchPublicOrdersServer, mapApiToOrderCard } from "@/source/entities/order";
+import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Тендеры на экспертизу промышленной безопасности — открытые заявки",
@@ -25,15 +29,19 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function PublicOrdersPage() {
+export default async function PublicOrdersPage() {
+  const role = await getInitialSessionRole();
+  if (role === "EXPERT") redirect("/expert/orders");
+  if (role === "CUSTOMER") redirect("/customer/orders");
+  if (role) redirect("/landing");
+
+  const data = await fetchPublicOrdersServer(0, 50);
+  const initial = { items: data.items.map(mapApiToOrderCard), hasMore: data.has_more };
+
   return (
     <>
-      <RedirectIfAuthed
-        to={{ EXPERT: "/expert/orders", CUSTOMER: "/customer/orders" }}
-        fallback="/landing"
-      />
       <LandingHeader />
-      <PublicOrdersWidget />
+      <PublicOrdersWidget initial={initial} />
       <LandingFooter variant="light" />
     </>
   );

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicReviewsWidget } from "@/source/widgets/public-reviews";
+import { fetchPublicReviews } from "@/source/entities/landing-review";
 import { RedirectIfAuthed } from "@/source/features/session";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Отзывы об экспертах промышленной безопасности",
@@ -23,12 +26,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function PublicReviewsPage() {
+export default async function PublicReviewsPage() {
+  const initial = await fetchPublicReviews({ server: true });
+
   return (
     <>
       <RedirectIfAuthed to="/landing/reviews" />
       <LandingHeader />
-      <PublicReviewsWidget />
+      <PublicReviewsWidget initial={initial} />
       <LandingFooter variant="light" />
     </>
   );

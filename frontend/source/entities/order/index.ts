@@ -5,6 +5,7 @@ export { RequirementsBadges } from "./ui/RequirementsBadges";
 export { DocumentsGallery } from "./ui/DocumentsGallery";
 export { mapApiToOrderCard } from "./model/mapper";
 export { searchOrdersPublic } from "./api/order-search.api";
+export { fetchPublicOrdersServer } from "./api/public-orders.server";
 export { usePublicOrdersList } from "./model/usePublicOrdersList";
 export type {
   Badge, BadgeVariant, OrderApiBadge,

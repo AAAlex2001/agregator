@@ -2,9 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 90;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #ffffff;
   border-bottom: 1px solid #E6E6E6;
   padding: 12px var(--page-px);
 }
@@ -12,24 +10,11 @@
 .container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   max-width: var(--page-maxw);
   margin: 0 auto;
-}
-
-.logo {
-  display: inline-flex;
-  flex-shrink: 0;
-  width: 155px;
-  height: 28px;
-  text-decoration: none;
-
-  svg { width: 100%; height: 100%; display: block; }
-
-  @media (min-width: 768px) {
-    width: 188px;
-    height: 32px;
-  }
+  position: relative;
 }
 
 .nav {
@@ -39,7 +24,6 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-left: auto;
   }
 }
 
@@ -64,7 +48,8 @@
   appearance: none;
   background: none;
   border: 0;
-  margin-left: auto;
+  position: absolute;
+  right: 0;
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
@@ -74,6 +59,7 @@
   height: 32px;
   cursor: pointer;
   padding: 6px;
+  z-index: 95;
 
   span {
     display: block;
@@ -92,23 +78,27 @@
 }
 
 .mobileMenu {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: #ffffff;
+  padding: 80px var(--page-px) 32px;
   display: flex;
   flex-direction: column;
-  padding: 8px var(--page-px) 16px;
-  background: #ffffff;
-  border-top: 1px solid #F0F0F0;
+  gap: 4px;
+  overflow-y: auto;
 
   @media (min-width: 768px) { display: none; }
 }
 
 .mobileLink {
   text-decoration: none;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 20px;
+  line-height: 24px;
   font-weight: 500;
   color: #1A1A1A;
-  padding: 12px 8px;
-  border-radius: 8px;
+  padding: 16px 12px;
+  border-radius: 12px;
 
   &:hover,
   &:focus-visible {

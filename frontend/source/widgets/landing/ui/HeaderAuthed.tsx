@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { LogoIcon } from "@/source/shared/ui/icons";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
-  { href: "/orders", label: "Заявки" },
   { href: "/landing/news", label: "Новости" },
   { href: "/landing/blog", label: "Блог" },
   { href: "/landing/reviews", label: "Отзывы" },
@@ -19,10 +17,6 @@ const HeaderAuthed = () => {
   return (
     <header className={s.header}>
       <div className={s.container}>
-        <Link href="/landing" className={s.logo} aria-label="На главную">
-          <LogoIcon />
-        </Link>
-
         <nav className={s.nav} aria-label="Основная навигация">
           {NAV_PAGES.map((page) => (
             <Link key={page.href} href={page.href} className={s.navLink}>

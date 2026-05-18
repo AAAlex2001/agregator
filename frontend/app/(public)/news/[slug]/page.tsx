@@ -47,7 +47,7 @@ export default async function NewsArticlePage({ params }: Props) {
 
   return (
     <>
-      <RedirectIfAuthed to={`/landing/news/${article.slug}`} />
+      <RedirectIfAuthed to={`/landing/news/${slug}`} />
       <LandingHeader />
       <ScrollToTopOnSlug slug={article.slug} />
       <ArticleJsonLd article={article} />

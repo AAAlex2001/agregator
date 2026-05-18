@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom";
 import {
   LandingAdvantages,
+  LandingArticlesPreview,
   LandingCtaFooter,
   LandingFaq,
   LandingFooter,
@@ -15,6 +16,7 @@ import {
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
 import { fetchPricingPlans } from "@/source/features/pricing/subscribe";
+import { fetchArticleList } from "@/source/entities/article";
 import s from "./landing.module.scss";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +38,14 @@ export default async function AuthRestrictedLandingPage() {
       pricingContent,
     },
     pricingPlans,
-  ] = await Promise.all([loadLandingSnapshot(), fetchPricingPlans()]);
+    newsPage,
+    blogPage,
+  ] = await Promise.all([
+    loadLandingSnapshot(),
+    fetchPricingPlans(),
+    fetchArticleList({ kind: "news", limit: 3, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
+  ]);
 
   return (
     <div className={s.page}>
@@ -75,6 +84,20 @@ export default async function AuthRestrictedLandingPage() {
         reviews={reviews}
         title={sectionHeaders.reviews.title}
         subtitle={sectionHeaders.reviews.subtitle}
+      />
+      <LandingArticlesPreview
+        title="Новости отрасли"
+        subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
+        ctaHref="/landing/news"
+        ctaLabel="Все новости"
+        items={newsPage.items}
+      />
+      <LandingArticlesPreview
+        title="Блог платформы"
+        subtitle="Развитие Ресурс-Плюс, кейсы и инструкции по работе с экспертизой"
+        ctaHref="/landing/blog"
+        ctaLabel="Все статьи"
+        items={blogPage.items}
       />
       {pricingPlans.length > 0 ? (
         <PricingSection
