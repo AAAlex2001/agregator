@@ -11,16 +11,13 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 8px;
+  display: block;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .item {
-  display: inline-flex;
-  align-items: center;
-  min-width: 0;
+  display: inline;
 }
 
 .link {
@@ -35,18 +32,11 @@
 
 .current {
   color: #1a1a1a;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 60vw;
-
-  @media (min-width: 768px) {
-    max-width: 100%;
-    white-space: normal;
-  }
 }
 
 .sep {
+  display: inline;
+  margin: 0 6px;
   color: #a6acbf;
   user-select: none;
 }

@@ -59,18 +59,33 @@
 }
 
 .layout {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  grid-template-columns: 1fr;
 
   @media (min-width: 1440px) {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) 300px;
     gap: 32px;
     align-items: start;
   }
 }
 
-.body { min-width: 0; }
+.toc {
+  @media (min-width: 1440px) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+.body {
+  min-width: 0;
+
+  @media (min-width: 1440px) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
 
 .content {
   font-family: "Montserrat", system-ui, sans-serif;

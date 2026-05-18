@@ -44,10 +44,10 @@ export function ArticleView({ article, related }: Props) {
       </header>
 
       <div className={styles.layout}>
+        {toc.length > 0 ? <DocToc items={toc} className={styles.toc} /> : null}
         <div className={styles.body}>
           <div className={styles.content} dangerouslySetInnerHTML={{ __html: html }} />
         </div>
-        {toc.length > 0 ? <DocToc items={toc} /> : null}
       </div>
 
       {related.length > 0 && (
