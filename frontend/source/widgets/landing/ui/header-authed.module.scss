@@ -9,37 +9,28 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-}
-
-.container {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 16px;
-  max-width: var(--page-maxw);
-  margin: 0 auto;
-  position: relative;
-  width: 100%;
 }
 
 .nav {
-  display: none;
-
-  @media (min-width: 768px) {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: var(--page-maxw);
+  margin: 0 auto;
+  width: 100%;
 }
 
 .navLink {
   text-decoration: none;
-  font-size: 15px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 16px;
   font-weight: 500;
   color: #1A1A1A;
-  padding: 10px 16px;
-  border-radius: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
   transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover,
@@ -47,67 +38,11 @@
     background: #FFF8EB;
     color: #FF8A00;
   }
-}
 
-.burger {
-  appearance: none;
-  background: none;
-  border: 0;
-  position: absolute;
-  right: 0;
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  padding: 6px;
-  z-index: 95;
-
-  span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: #1A1A1A;
-    border-radius: 2px;
-    transition: transform 0.2s ease, opacity 0.15s ease;
-  }
-
-  &.burgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  &.burgerOpen span:nth-child(2) { opacity: 0; }
-  &.burgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  @media (min-width: 768px) { display: none; }
-}
-
-.mobileMenu {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  background: #ffffff;
-  padding: 80px var(--page-px) 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-y: auto;
-
-  @media (min-width: 768px) { display: none; }
-}
-
-.mobileLink {
-  text-decoration: none;
-  font-size: 20px;
-  line-height: 24px;
-  font-weight: 500;
-  color: #1A1A1A;
-  padding: 16px 12px;
-  border-radius: 12px;
-
-  &:hover,
-  &:focus-visible {
-    background: #FFF8EB;
-    color: #FF8A00;
+  @media (min-width: 768px) {
+    font-size: 15px;
+    line-height: 18px;
+    padding: 10px 16px;
+    border-radius: 12px;
   }
 }
