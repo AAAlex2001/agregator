@@ -4,6 +4,8 @@ import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import { StarIcon } from "@/source/shared/ui/icons";
+import { DocumentsGallery, countDocuments } from "@/source/entities/order";
+import { TechSpecFiles } from "@/source/entities/response";
 import type { OrderCardData } from "@/source/entities/order";
 import s from "./ExpertCard.module.scss";
 
@@ -47,7 +49,7 @@ function Stars({ rating }: { rating: number | null }) {
   return (
     <span className={s.stars} aria-hidden="true">
       {Array.from({ length: 5 }, (_, index) => (
-        <StarIcon key={index} filled={index < filledCount} width={16} height={16} />
+        <StarIcon key={index} filled={index < filledCount} width={18} height={18} />
       ))}
     </span>
   );
@@ -68,6 +70,8 @@ export function ExpertCard({
       ? rating.toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
       : "—";
   const joinedDisplay = formatJoinedDate(joinedAt);
+  const hasDocuments = lastOrder ? countDocuments(lastOrder.documents) > 0 : false;
+  const hasExecutorFiles = lastOrder ? lastOrder.executorFiles.length > 0 : false;
 
   return (
     <article className={s.card}>
@@ -129,21 +133,59 @@ export function ExpertCard({
           {lastOrder ? (
             <div className={s.lastOrder}>
               <span className={s.lastOrderMeta}>№ {lastOrder.id}</span>
-              <h4 className={s.lastOrderTitle}>{lastOrder.title || "—"}</h4>
-              <div className={s.lastOrderGrid}>
-                <div className={s.lastOrderItem}>
-                  <span className={s.lastOrderItemLabel}>Заказчик</span>
-                  <span className={s.lastOrderItemValue}>{lastOrder.customer || "—"}</span>
+
+              <div className={s.lastOrderMain}>
+                <div className={s.lastOrderInfo}>
+                  <div className={s.field}>
+                    <span className={s.fieldLabel}>Название заказа:</span>
+                    <h4 className={s.lastOrderTitle}>{lastOrder.title || "—"}</h4>
+                  </div>
+                  <div className={s.field}>
+                    <span className={s.fieldLabel}>Заказчик</span>
+                    <span className={s.fieldValue}>{lastOrder.customer || "—"}</span>
+                  </div>
+                  {lastOrder.executorComment && (
+                    <div className={s.field}>
+                      <span className={s.fieldLabel}>Комментарий исполнителя:</span>
+                      <span className={s.fieldValue}>{lastOrder.executorComment}</span>
+                    </div>
+                  )}
                 </div>
-                <div className={s.lastOrderItem}>
-                  <span className={s.lastOrderItemLabel}>Сумма</span>
-                  <span className={s.lastOrderItemValue}>{lastOrder.sum || "—"}</span>
-                </div>
-                <div className={s.lastOrderItem}>
-                  <span className={s.lastOrderItemLabel}>Срок выполнения до</span>
-                  <span className={s.lastOrderItemValue}>{lastOrder.date || "—"}</span>
+
+                <div className={s.lastOrderSide}>
+                  <div className={s.field}>
+                    <span className={s.fieldLabel}>Начальная максимальная цена</span>
+                    <span className={s.fieldAccent}>{lastOrder.sum || "Не определено"}</span>
+                  </div>
+                  {lastOrder.executorProposedSum && (
+                    <div className={s.field}>
+                      <span className={s.fieldLabel}>Цена эксперта</span>
+                      <span className={s.fieldValue}>{lastOrder.executorProposedSum}</span>
+                    </div>
+                  )}
+                  {lastOrder.executorProposedDeadline && (
+                    <div className={s.field}>
+                      <span className={s.fieldLabel}>Срок эксперта</span>
+                      <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
+                    </div>
+                  )}
+                  <div className={s.field}>
+                    <span className={s.fieldLabel}>Срок выполнения до</span>
+                    <span className={s.fieldValue}>{lastOrder.date || "—"}</span>
+                  </div>
                 </div>
               </div>
+
+              {(hasDocuments || hasExecutorFiles) && (
+                <div className={s.filesArea}>
+                  {hasDocuments && (
+                    <DocumentsGallery documents={lastOrder.documents} heading="Документы заказчика" />
+                  )}
+                  {hasExecutorFiles && (
+                    <TechSpecFiles title="Файлы исполнителя:" files={lastOrder.executorFiles} />
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <span className={s.lastOrderEmpty}>Заказы ещё не выполнены</span>
