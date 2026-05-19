@@ -34,6 +34,8 @@ export interface ListCardProps {
   detailsLabel?: string;
   /** Раскрывать ли блок деталей по умолчанию. */
   detailsOpenByDefault?: boolean;
+  /** Всегда показывать детали и скрыть кнопку «Подробнее». */
+  detailsAlwaysOpen?: boolean;
 }
 
 export function ListCard({
@@ -54,6 +56,7 @@ export function ListCard({
   details,
   detailsLabel = "Подробнее",
   detailsOpenByDefault = false,
+  detailsAlwaysOpen = false,
 }: ListCardProps) {
   const [open, setOpen] = useState(detailsOpenByDefault);
   const clickable = Boolean(onClick);
@@ -113,7 +116,9 @@ export function ListCard({
 
       {actions && <div className={s.actions}>{actions}</div>}
 
-      {details && (
+      {details && detailsAlwaysOpen && <div className={s.details}>{details}</div>}
+
+      {details && !detailsAlwaysOpen && (
         <>
           {open && <div className={s.details}>{details}</div>}
           <button

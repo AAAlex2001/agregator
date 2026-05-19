@@ -9,6 +9,7 @@ export { useExpertsList } from "./model/useExpertsList";
 export { useExpertOrdersHistory } from "./model/useExpertOrdersHistory";
 
 export { ExpertCard } from "./ui/ExpertCard";
+export { ExpertCardSkeleton } from "./ui/ExpertCardSkeleton";
 
 export type {
   ExpertList,

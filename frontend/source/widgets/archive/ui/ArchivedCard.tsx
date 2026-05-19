@@ -17,9 +17,11 @@ interface Props {
   card: OrderCardData;
   canLeaveReview?: boolean;
   onLeaveReview?: () => void;
+  hideExpertHistoryLink?: boolean;
+  detailsAlwaysOpen?: boolean;
 }
 
-export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
+export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHistoryLink, detailsAlwaysOpen }: Props) {
   const { user, role } = useSession();
   const hasExecutor = Boolean(card.executorName);
 
@@ -32,6 +34,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
         rating={card.executorRating}
         reviewCount={card.executorReviewCount}
         expertPublicId={card.executorPublicId}
+        hideHistoryLink={hideExpertHistoryLink}
       />
     </div>
   ) : (
@@ -71,6 +74,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview }: Props) {
         ) : undefined
       }
       leftExtra={<RequirementsBadges badges={card.badges} />}
+      detailsAlwaysOpen={detailsAlwaysOpen}
       details={
         <>
           {card.comment && (

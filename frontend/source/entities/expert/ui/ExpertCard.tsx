@@ -128,54 +128,25 @@ export function ExpertCard({
           </div>
         </div>
 
-        <div className={s.right}>
-          <span className={s.rightLabel}>Последний выполненный заказ</span>
-          {lastOrder ? (
-            <div className={s.lastOrder}>
-              <span className={s.lastOrderMeta}>№ {lastOrder.id}</span>
-
-              <div className={s.lastOrderMain}>
-                <div className={s.lastOrderInfo}>
-                  <div className={s.field}>
-                    <span className={s.fieldLabel}>Название заказа:</span>
-                    <h4 className={s.lastOrderTitle}>{lastOrder.title || "—"}</h4>
-                  </div>
-                  <div className={s.field}>
-                    <span className={s.fieldLabel}>Заказчик</span>
-                    <span className={s.fieldValue}>{lastOrder.customer || "—"}</span>
-                  </div>
-                  {lastOrder.executorComment && (
-                    <div className={s.field}>
-                      <span className={s.fieldLabel}>Комментарий исполнителя:</span>
-                      <span className={s.fieldValue}>{lastOrder.executorComment}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className={s.lastOrderSide}>
-                  <div className={s.field}>
-                    <span className={s.fieldLabel}>Начальная максимальная цена</span>
-                    <span className={s.fieldAccent}>{lastOrder.sum || "Не определено"}</span>
-                  </div>
-                  {lastOrder.executorProposedSum && (
-                    <div className={s.field}>
-                      <span className={s.fieldLabel}>Цена эксперта</span>
-                      <span className={s.fieldValue}>{lastOrder.executorProposedSum}</span>
-                    </div>
-                  )}
-                  {lastOrder.executorProposedDeadline && (
-                    <div className={s.field}>
-                      <span className={s.fieldLabel}>Срок эксперта</span>
-                      <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
-                    </div>
-                  )}
-                  <div className={s.field}>
-                    <span className={s.fieldLabel}>Срок выполнения до</span>
-                    <span className={s.fieldValue}>{lastOrder.date || "—"}</span>
-                  </div>
-                </div>
+        {lastOrder ? (
+          <>
+            <div className={s.center}>
+              <span className={s.centerLabel}>Последний выполненный заказ</span>
+              <span className={s.centerMeta}>№ {lastOrder.id}</span>
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Название заказа:</span>
+                <h4 className={s.fieldTitle}>{lastOrder.title || "—"}</h4>
               </div>
-
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Заказчик</span>
+                <span className={s.fieldValue}>{lastOrder.customer || "—"}</span>
+              </div>
+              {lastOrder.executorComment && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Комментарий исполнителя:</span>
+                  <span className={s.fieldValue}>{lastOrder.executorComment}</span>
+                </div>
+              )}
               {(hasDocuments || hasExecutorFiles) && (
                 <div className={s.filesArea}>
                   {hasDocuments && (
@@ -187,10 +158,36 @@ export function ExpertCard({
                 </div>
               )}
             </div>
-          ) : (
+
+            <div className={s.side}>
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Начальная максимальная цена</span>
+                <span className={s.fieldAccent}>{lastOrder.sum || "Не определено"}</span>
+              </div>
+              {lastOrder.executorProposedSum && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Цена эксперта</span>
+                  <span className={s.fieldValue}>{lastOrder.executorProposedSum}</span>
+                </div>
+              )}
+              {lastOrder.executorProposedDeadline && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Срок эксперта</span>
+                  <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
+                </div>
+              )}
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Срок выполнения до</span>
+                <span className={s.fieldValue}>{lastOrder.date || "—"}</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className={s.center}>
+            <span className={s.centerLabel}>Последний выполненный заказ</span>
             <span className={s.lastOrderEmpty}>Заказы ещё не выполнены</span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </article>
   );

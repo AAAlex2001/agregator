@@ -3,10 +3,9 @@
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
-import Skeleton from "@/source/shared/ui/Skeleton";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
-import { ExpertCard, useExpertsList } from "@/source/entities/expert";
+import { ExpertCard, ExpertCardSkeleton, useExpertsList } from "@/source/entities/expert";
 import type { ExpertSortBy } from "@/source/entities/expert";
 import s from "./ExpertsListWidget.module.scss";
 
@@ -68,7 +67,7 @@ export function ExpertsListWidget() {
       {isLoading ? (
         <div className={s.list}>
           {Array.from({ length: SKELETON_COUNT }, (_, index) => (
-            <Skeleton key={index} className={s.cardSkeleton} rounded="lg" />
+            <ExpertCardSkeleton key={index} />
           ))}
         </div>
       ) : error ? (

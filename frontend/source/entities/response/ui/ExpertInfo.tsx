@@ -18,9 +18,10 @@ interface Props {
   rating: number | null;
   reviewCount: number;
   expertPublicId?: string;
+  hideHistoryLink?: boolean;
 }
 
-export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicId }: Props) {
+export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicId, hideHistoryLink }: Props) {
   const reviewsText = pluralReviews(reviewCount);
 
   return (
@@ -46,7 +47,7 @@ export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicI
         ) : (
           <span className={s.noReviews}>Отзывов пока нет</span>
         )}
-        {expertPublicId && (
+        {expertPublicId && !hideHistoryLink && (
           <Link href={`/experts/${expertPublicId}/orders`} className={s.historyLink}>
             История заказов эксперта
           </Link>

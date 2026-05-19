@@ -6,6 +6,7 @@ import Loader from "@/source/shared/ui/Loader";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { ArchivedCard } from "@/source/widgets/archive/ui/ArchivedCard";
+import { OrderCardSkeleton } from "@/source/entities/order";
 import { useExpertOrdersHistory } from "@/source/entities/expert";
 import s from "./ExpertOrdersHistoryWidget.module.scss";
 
@@ -42,7 +43,7 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
       {isLoading ? (
         <div className={s.list}>
           {Array.from({ length: SKELETON_COUNT }, (_, index) => (
-            <Skeleton key={index} className={s.cardSkeleton} rounded="lg" />
+            <OrderCardSkeleton key={index} showActions={false} />
           ))}
         </div>
       ) : error ? (
@@ -65,7 +66,12 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
         <>
           <div className={s.list}>
             {items.map((order) => (
-              <ArchivedCard key={order.id} card={order} />
+              <ArchivedCard
+                key={order.id}
+                card={order}
+                hideExpertHistoryLink
+                detailsAlwaysOpen
+              />
             ))}
             {isLoadingMore && (
               <div className={s.loadMore}>
