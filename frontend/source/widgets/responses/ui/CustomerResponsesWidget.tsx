@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/source/shared/ui/Button";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
 import { CompletionModal, RejectResponseModalContainer, useResponses } from "@/source/features/responses";
@@ -21,9 +22,23 @@ export function CustomerResponsesWidget() {
     onAccept: model.onAccept,
     onSelect: model.onSelect,
     onRestore: model.onRestore,
+    onDeleteRejected: model.onDeleteRejected,
     onLeaveReview: model.onLeaveReview,
     canRestore: (card: typeof model.items[number]) => !card.orderLocked,
   };
+
+  const handleDeleteAllRejected = async () => {
+    if (!window.confirm("Удалить все отклонённые отклики? Действие нельзя отменить.")) return;
+    await model.onDeleteAllRejected();
+    showSuccess("Отклонённые отклики удалены");
+  };
+
+  const topSlot =
+    model.activeTab === "rejected" && model.items.length > 0 ? (
+      <Button variant="transparent" size="sm" onClick={() => void handleDeleteAllRejected()}>
+        Удалить все отклонённые
+      </Button>
+    ) : undefined;
 
   return (
     <>
@@ -34,6 +49,7 @@ export function CustomerResponsesWidget() {
         model={model}
         actionHandlers={actionHandlers}
         sortSlot={<SortPills sortBy={model.sortBy} sortDir={model.sortDir} isLoading={model.isLoading} onChange={model.setSort} />}
+        topSlot={topSlot}
       />
 
       <CompletionModal

@@ -46,6 +46,7 @@ export interface ResponseApiItem {
   order_comment?: string;
   customer_name: string;
   customer_company: string;
+  customer_inn?: string;
   order_documents: OrderDocuments;
   response_files: string[];
   badges: ResponseApiBadge[];
@@ -101,6 +102,7 @@ export interface ResponseCardData {
   orderTitle: string;
   orderSum: string;
   customer: string;
+  customerInn: string;
   orderStartDate: string;
   orderDate: string;
   badges: ResponseBadge[];

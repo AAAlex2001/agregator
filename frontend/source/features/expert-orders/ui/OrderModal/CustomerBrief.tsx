@@ -73,6 +73,12 @@ export function CustomerBrief({ order }: Props) {
           <span className={s.fieldLabel}>Организатор</span>
           <p className={s.customer}>{order.customer}</p>
         </div>
+        {order.customerInn && (
+          <div className={s.fieldGroup}>
+            <span className={s.fieldLabel}>ИНН</span>
+            <p className={s.customer}>{order.customerInn}</p>
+          </div>
+        )}
       </div>
 
       <div className={s.commentBlock}>

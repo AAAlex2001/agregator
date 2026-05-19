@@ -31,6 +31,8 @@ from services.platform_settings import PlatformSettingsService
 from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 from services.responses import (
     CreateResponseUseCase,
+    DeleteAllRejectedResponsesUseCase,
+    DeleteRejectedResponseUseCase,
     GetResponseByIdUseCase,
     ListCustomerResponsesUseCase,
     ListExpertResponsesUseCase,
@@ -97,10 +99,12 @@ def to_item(
     is_finalized = effective_status == ResponseStatus.COMPLETED
     customer_name = ""
     customer_company = ""
+    customer_inn = ""
     order_sum = ""
     if order:
         customer_name = order.company or ""
         customer_company = order.company or ""
+        customer_inn = (order.customer.inn or "") if order.customer is not None else ""
         order_sum = "Не определено" if order.sum_amount == 0 else format_sum(order.sum_amount)
 
     expert = entity.expert
@@ -152,6 +156,7 @@ def to_item(
         order_comment=order.comment if order else "",
         customer_name=customer_name,
         customer_company=customer_company,
+        customer_inn=customer_inn,
         order_documents=OrderDocumentsService.from_order(order) if order else OrderDocuments(),
         response_files=entity.technical_files if entity.technical_files else [],
         badges=[
@@ -426,3 +431,31 @@ async def restore_withdrawn_response(
     )
     restored = await use_case.execute(response_id=response_id, expert_id=user_id)
     return to_item(restored)
+
+
+@router.delete("/responses/rejected/all")
+async def delete_all_rejected_responses(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    "Заказчик массово удаляет все свои отклонённые отклики."
+    repo = build_repo(db)
+    use_case = DeleteAllRejectedResponsesUseCase(repo=repo)
+    deleted = await use_case.execute(customer_id=user_id)
+    return {"deleted": deleted}
+
+
+@router.delete("/responses/{response_id}/rejected")
+async def delete_rejected_response(
+    response_id: int,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    "Заказчик удаляет один отклонённый отклик."
+    repo = build_repo(db)
+    use_case = DeleteRejectedResponseUseCase(
+        repo=repo,
+        get_response=GetResponseByIdUseCase(repo),
+    )
+    await use_case.execute(response_id=response_id, customer_id=user_id)
+    return {"detail": "Отклик удалён"}

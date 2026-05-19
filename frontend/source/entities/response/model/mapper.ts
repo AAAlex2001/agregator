@@ -79,6 +79,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     orderTitle: item.order_title,
     orderSum: item.order_sum,
     customer: item.customer_company || item.customer_name,
+    customerInn: item.customer_inn ?? "",
     orderStartDate: item.order_start_date ?? "",
     orderDate: item.order_date,
     badges: item.badges.map((b): ResponseBadge => ({

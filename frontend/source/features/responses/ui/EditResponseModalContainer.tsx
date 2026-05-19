@@ -36,7 +36,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     customerId: response.orderCustomerId,
     title: response.orderTitle,
     customer: response.customer,
-    customerInn: "",
+    customerInn: response.customerInn,
     company: response.customer,
     comment: response.orderComment ?? "",
     startDate: response.orderStartDate,

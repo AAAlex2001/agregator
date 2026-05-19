@@ -37,6 +37,9 @@ export function OrderSummaryPanel({ order }: Props) {
           <div className={s.customerBlock}>
             <span className={s.metaLabel}>Организатор</span>
             <span className={s.customer}>{order.customer}</span>
+            {order.customerInn && (
+              <span className={s.customerInn}>ИНН {order.customerInn}</span>
+            )}
           </div>
 
           <div className={s.meta}>

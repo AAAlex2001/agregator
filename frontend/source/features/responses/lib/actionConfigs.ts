@@ -1,6 +1,6 @@
 import type { ResponseCardData, CardAction, UserRole } from "@/source/entities/response";
 
-type Loading = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore" | null;
+type Loading = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore" | "delete" | null;
 
 interface Handlers {
   onWithdraw?: (r: ResponseCardData) => void;
@@ -14,6 +14,7 @@ interface Handlers {
   onSelect?: (id: number) => void;
   onRestore?: (id: number) => void;
   onRestoreWithdrawn?: (id: number) => void;
+  onDeleteRejected?: (id: number) => void;
   onLeaveReview?: (r: ResponseCardData) => void;
   /** Можно ли вернуть отклонённый отклик в рассмотрение (false если у заказа уже выбран исполнитель). */
   canRestore?: (r: ResponseCardData) => boolean;
@@ -95,11 +96,20 @@ function customerActions(card: ResponseCardData, loading: Loading, h: Handlers):
         { text: "Завершить проект", variant: "green", onClick: () => h.onComplete?.(card.id), isLoading: loading === "complete" },
         reject,
       ];
-    case "REJECTED":
-      if (h.canRestore && !h.canRestore(card)) return [];
+    case "REJECTED": {
+      const canRestore = !h.canRestore || h.canRestore(card);
+      const deleteAction: CardAction = {
+        text: "Удалить",
+        variant: "transparent",
+        onClick: () => h.onDeleteRejected?.(card.id),
+        isLoading: loading === "delete",
+      };
+      if (!canRestore) return [deleteAction];
       return [
         { text: "Вернуть на рассмотрение", variant: "outline", onClick: () => h.onRestore?.(card.id), isLoading: loading === "restore" },
+        deleteAction,
       ];
+    }
     case "COMPLETED":
       return card.hasReview ? [] : [
         { text: "Оставить отзыв", variant: "secondary", onClick: () => h.onLeaveReview?.(card) },

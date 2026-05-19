@@ -40,6 +40,18 @@ export async function restoreWithdrawnResponse(id: number): Promise<void> {
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось восстановить отклик");
 }
 
+export async function deleteRejectedResponse(id: number): Promise<void> {
+  const res = await fetchWithSession(`${API_URL}/responses/${id}/rejected`, { method: "DELETE" });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось удалить отклик");
+}
+
+export async function deleteAllRejectedResponses(): Promise<number> {
+  const res = await fetchWithSession(`${API_URL}/responses/rejected/all`, { method: "DELETE" });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось удалить отклики");
+  const body = await res.json().catch(() => ({ deleted: 0 }));
+  return Number(body.deleted ?? 0);
+}
+
 interface EditPayload {
   comment: string;
   sumAmount: number;

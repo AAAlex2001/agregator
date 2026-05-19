@@ -12,10 +12,16 @@ from services.responses.use_cases.update_response_status import UpdateResponseSt
 from services.responses.use_cases.upload_response_files import UploadResponseFilesUseCase
 from services.responses.use_cases.withdraw_response import WithdrawResponseUseCase
 from services.responses.use_cases.restore_withdrawn_response import RestoreWithdrawnResponseUseCase
+from services.responses.use_cases.delete_rejected_response import (
+    DeleteAllRejectedResponsesUseCase,
+    DeleteRejectedResponseUseCase,
+)
 from services.responses.validators import ResponseValidator
 
 __all__ = [
     "CreateResponseUseCase",
+    "DeleteAllRejectedResponsesUseCase",
+    "DeleteRejectedResponseUseCase",
     "GetResponseByIdUseCase",
     "ListCustomerResponsesUseCase",
     "ListExpertResponsesUseCase",

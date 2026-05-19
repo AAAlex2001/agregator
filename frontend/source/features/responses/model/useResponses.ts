@@ -5,7 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { mapApiToCard } from "@/source/entities/response";
 import type { ResponseCardData, ResponseTabKey, UserRole, CustomerSortBy, SortDir } from "@/source/entities/response";
-import { fetchResponses, deleteResponse, restoreWithdrawnResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
+import {
+  fetchResponses,
+  deleteResponse,
+  restoreWithdrawnResponse,
+  updateStatus,
+  editResponse,
+  createReview,
+  deleteRejectedResponse,
+  deleteAllRejectedResponses,
+} from "../api/responses.api";
 import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
@@ -235,6 +244,25 @@ export function useResponses(role: UserRole | null) {
         toast(e);
       } finally {
         d({ type: "ACTION_LOADING", id, mode: null });
+      }
+    },
+    onDeleteRejected: async (id: number) => {
+      d({ type: "ACTION_LOADING", id, mode: "delete" });
+      try {
+        await deleteRejectedResponse(id);
+        void reload();
+      } catch (e) {
+        toast(e);
+      } finally {
+        d({ type: "ACTION_LOADING", id, mode: null });
+      }
+    },
+    onDeleteAllRejected: async () => {
+      try {
+        await deleteAllRejectedResponses();
+        void reload();
+      } catch (e) {
+        toast(e);
       }
     },
     onAccept,

@@ -193,3 +193,14 @@ class ResponseRepository:
 
     async def flush(self) -> None:
         await self.db.flush()
+
+    async def list_customer_rejected(self, customer_id: int) -> list[OrderResponse]:
+        query = (
+            select(OrderResponse)
+            .join(Order, Order.id == OrderResponse.order_id)
+            .where(
+                Order.customer_id == customer_id,
+                OrderResponse.status == ResponseStatus.REJECTED,
+            )
+        )
+        return list((await self.db.execute(query)).scalars().all())

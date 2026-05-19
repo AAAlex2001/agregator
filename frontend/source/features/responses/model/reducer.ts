@@ -1,6 +1,6 @@
 import type { ResponseCardData, ResponseCounters, ResponseTabKey, SortDir, CustomerSortBy } from "@/source/entities/response";
 
-type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore" | null;
+type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore" | "delete" | null;
 
 export interface State {
   items: ResponseCardData[];

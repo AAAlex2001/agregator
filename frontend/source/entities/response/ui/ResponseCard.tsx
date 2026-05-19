@@ -137,6 +137,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     <>
       <span className={s.label}>Организатор:</span>
       <span className={s.value}>{card.customer || "—"}</span>
+      {card.customerInn && <span className={s.label}>ИНН: {card.customerInn}</span>}
     </>
   ) : showCustomerExpertInfo ? (
     <div className={s.expertBlock}>

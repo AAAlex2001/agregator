@@ -72,6 +72,7 @@ class ExpertResponseItem(BaseModel):
     order_comment: str = ""
     customer_name: str
     customer_company: str
+    customer_inn: str = ""
     order_documents: OrderDocuments = Field(default_factory=OrderDocuments)
     response_files: list[str] = []
     badges: list[dict[str, str]]
