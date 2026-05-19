@@ -42,7 +42,6 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
       </div>
 
       <div className={s.contentArea}>
-        {topSlot}
         <Tabs
           variant="pill"
           tabs={model.tabs.map((tab) => ({ id: tab.id, label: tab.label, count: tab.count }))}
@@ -72,6 +71,7 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
             </div>
           ) : (
             <>
+              {topSlot && <div className={s.topSlot}>{topSlot}</div>}
               <div className={s.list}>
                 {model.items.map((item) => (
                   <ResponseCard
