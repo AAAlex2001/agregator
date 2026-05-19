@@ -34,6 +34,7 @@ export function OfferStep({
 }: Props) {
   const { watch, setValue, formState } = form;
   const shouldValidate = formState.isSubmitted;
+  const startDate = watch("startDate");
   const deadline = watch("deadline");
   const cost = watch("cost");
   const vatKind = watch("vatKind");
@@ -51,7 +52,18 @@ export function OfferStep({
 
       <div className={s.formRow}>
         <div className={base.fieldGroup}>
-          <span className={base.fieldLabel}>Укажите ваши сроки</span>
+          <span className={base.fieldLabel}>Срок начала работ</span>
+          <CalendarInput
+            active
+            value={startDate}
+            onChange={(value) => setValue("startDate", value, { shouldValidate })}
+            placeholder="Выберите дату"
+            error={formState.errors.startDate?.message}
+          />
+        </div>
+
+        <div className={base.fieldGroup}>
+          <span className={base.fieldLabel}>Срок окончания работ</span>
           <CalendarInput
             active
             value={deadline}

@@ -5,7 +5,9 @@ export interface ReviewItem {
   order_title: string;
   company_name: string;
   order_sum: string;
+  order_start_date?: string;
   order_deadline: string;
+  expert_start_date?: string;
   expert_deadline: string;
   expert_sum: string;
   order_documents: OrderDocuments;

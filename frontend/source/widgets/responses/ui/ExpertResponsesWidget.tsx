@@ -18,6 +18,7 @@ export function ExpertResponsesWidget() {
     onReject: model.onReject,
     onAccept: model.onAccept,
     onSelect: model.onSelect,
+    onRestoreWithdrawn: model.onRestoreWithdrawn,
     onLeaveReview: model.onLeaveReview,
   };
 

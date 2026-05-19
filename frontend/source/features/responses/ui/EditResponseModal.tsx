@@ -14,6 +14,7 @@ interface EditResponseModalProps {
   statusColor: string;
   statusBg: string;
   order: OrderCardData;
+  startDate: string;
   deadline: string;
   cost: string;
   comment: string;
@@ -24,6 +25,7 @@ interface EditResponseModalProps {
   isSubmitting: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  onStartDateChange: (value: string) => void;
   onDeadlineChange: (value: string) => void;
   onCostChange: (value: string) => void;
   onCommentChange: (value: string) => void;
@@ -39,6 +41,7 @@ export function EditResponseModal({
   statusColor,
   statusBg,
   order,
+  startDate,
   deadline,
   cost,
   comment,
@@ -49,6 +52,7 @@ export function EditResponseModal({
   isSubmitting,
   onClose,
   onSubmit,
+  onStartDateChange,
   onDeadlineChange,
   onCostChange,
   onCommentChange,
@@ -73,7 +77,12 @@ export function EditResponseModal({
 
         <div className={s.formRow}>
           <div className={s.fieldGroup}>
-            <span className={s.fieldLabel}>Укажите ваши сроки</span>
+            <span className={s.fieldLabel}>Срок начала работ</span>
+            <CalendarInput active value={startDate} onChange={onStartDateChange} placeholder="Выберите дату" />
+          </div>
+
+          <div className={s.fieldGroup}>
+            <span className={s.fieldLabel}>Срок окончания работ</span>
             <CalendarInput active value={deadline} onChange={onDeadlineChange} placeholder="Выберите дату" />
           </div>
 

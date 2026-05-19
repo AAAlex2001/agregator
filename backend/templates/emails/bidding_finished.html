@@ -1,21 +1,68 @@
 {% extends "base.html" %}
 
 {% block preheader %}
-{% if outcome == "won" %}Вас выбрали исполнителем по заявке «{{ order_title }}»{% else %}Заказчик выбрал другого исполнителя по заявке «{{ order_title }}»{% endif %}
+{% if outcome == "won" %}Уведомление о победе №{{ order_number }} «{{ order_title }}»{% else %}Заказчик выбрал другого исполнителя по заявке «{{ order_title }}»{% endif %}
 {% endblock %}
 
 {% block content %}
 {% if outcome == "won" %}
 <p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #047857; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
-  Вас выбрали исполнителем
+  Уведомление о победе
 </p>
 <h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
-  Поздравляем, {{ expert_greeting }}
+  Добрый день, {{ expert_greeting }}!
 </h1>
-<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
-  Заказчик выбрал вас исполнителем по заявке
-  <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>.
-  Свяжитесь с ним в чате, чтобы согласовать детали и начать работу.
+<p style="margin: 0 0 20px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Вы признаны Победителем в процедуре
+  <span style="color: #0F172A; font-weight: 600;">№{{ order_number }} «{{ order_title }}»</span>{% if customer_name %} (заказчик
+  <span style="color: #0F172A; font-weight: 500;">«{{ customer_name }}»</span>){% endif %}{% if winning_price %} с ценой
+  <span style="color: #0F172A; font-weight: 600;">{{ winning_price }}</span>{% endif %}.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 18px 22px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 18px; color: #0F172A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
+        Реквизиты заказчика
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px; line-height: 22px; color: #334155;">
+        {% if customer_name %}<tr><td style="padding: 2px 0;">Организация: <span style="color: #0F172A;">{{ customer_name }}</span></td></tr>{% endif %}
+        {% if customer_inn %}<tr><td style="padding: 2px 0;">ИНН: <span style="color: #0F172A;">{{ customer_inn }}</span></td></tr>{% endif %}
+        {% if customer_contact_name %}<tr><td style="padding: 2px 0;">Контактное лицо: <span style="color: #0F172A;">{{ customer_contact_name }}</span></td></tr>{% endif %}
+        {% if customer_email %}<tr><td style="padding: 2px 0;">Email: <a href="mailto:{{ customer_email }}" style="color: #0F172A;">{{ customer_email }}</a></td></tr>{% endif %}
+        {% if customer_phone %}<tr><td style="padding: 2px 0;">Телефон: <a href="tel:{{ customer_phone }}" style="color: #0F172A;">{{ customer_phone }}</a></td></tr>{% endif %}
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 18px; line-height: 18px; font-size: 0;" height="18">&nbsp;</td></tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 18px 22px; background: #FFF8EB; border-radius: 12px;">
+      <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 18px; color: #8a4500; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
+        Что отправить заказчику
+      </p>
+      <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 22px; color: #334155;">
+        <li>Карточку вашей организации (реквизиты, ИНН/КПП).</li>
+        <li>Скан-копию лицензии и приложений к ней.</li>
+        <li>Свидетельства об аттестации экспертов.</li>
+        <li>Подписанный со своей стороны проект договора.</li>
+        <li>Контактные данные ответственного специалиста.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 24px; line-height: 24px; font-size: 0;" height="24">&nbsp;</td></tr>
+</table>
+
+<p style="margin: 0 0 24px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Свяжитесь с заказчиком в чате, чтобы согласовать детали и направить документы.
 </p>
 {% else %}
 <p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">

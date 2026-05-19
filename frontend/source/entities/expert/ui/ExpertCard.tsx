@@ -138,8 +138,12 @@ export function ExpertCard({
                 <h4 className={s.fieldTitle}>{lastOrder.title || "—"}</h4>
               </div>
               <div className={s.field}>
-                <span className={s.fieldLabel}>Заказчик</span>
+                <span className={s.fieldLabel}>Организатор:</span>
                 <span className={s.fieldValue}>{lastOrder.customer || "—"}</span>
+              </div>
+              <div className={s.field}>
+                <span className={s.fieldLabel}>ИНН:</span>
+                <span className={s.fieldValue}>{lastOrder.customerInn || "—"}</span>
               </div>
               {lastOrder.executorComment && (
                 <div className={s.field}>
@@ -170,10 +174,22 @@ export function ExpertCard({
                   <span className={s.fieldValue}>{lastOrder.executorProposedSum}</span>
                 </div>
               )}
+              {lastOrder.executorProposedStartDate && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Срок начала эксперта</span>
+                  <span className={s.fieldValue}>{lastOrder.executorProposedStartDate}</span>
+                </div>
+              )}
               {lastOrder.executorProposedDeadline && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок эксперта</span>
+                  <span className={s.fieldLabel}>Срок окончания эксперта</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
+                </div>
+              )}
+              {lastOrder.startDate && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Срок начала работ</span>
+                  <span className={s.fieldValue}>{lastOrder.startDate}</span>
                 </div>
               )}
               <div className={s.field}>

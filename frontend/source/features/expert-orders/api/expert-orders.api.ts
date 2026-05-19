@@ -12,6 +12,7 @@ export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersApiList> 
 interface RespondPayload {
   comment: string;
   proposed_sum_amount: number;
+  proposed_start_date?: string;
   proposed_deadline: string;
   vat_kind: string;
   expert_inn: string;
@@ -24,6 +25,7 @@ export async function respondToOrder(orderId: number, p: RespondPayload): Promis
     const fd = new FormData();
     fd.append("comment", p.comment);
     fd.append("proposed_sum_amount", String(p.proposed_sum_amount));
+    if (p.proposed_start_date) fd.append("proposed_start_date", p.proposed_start_date);
     fd.append("proposed_deadline", p.proposed_deadline);
     fd.append("vat_kind", p.vat_kind);
     fd.append("expert_inn", p.expert_inn);

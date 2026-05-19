@@ -12,14 +12,16 @@ export async function fetchCustomerOrders(skip = 0, limit = 50): Promise<OrdersA
 
 interface CreatePayload {
   title: string; company: string; comment: string;
-  customer_id: number; sum_amount: number; deadline: string;
+  customer_id: number; sum_amount: number;
+  start_date?: string; deadline: string;
   responses_deadline?: string; badge_codes: string[];
   documents: DocumentsFormState;
 }
 
 interface UpdatePayload {
   title: string; company: string; comment: string;
-  sum_amount: number; deadline: string; responses_deadline?: string;
+  sum_amount: number; start_date?: string; deadline: string;
+  responses_deadline?: string;
   badge_codes: string[]; documents: DocumentsFormState;
 }
 
@@ -67,6 +69,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     fd.append("comment", p.comment);
     fd.append("customer_id", String(p.customer_id));
     fd.append("sum_amount", String(p.sum_amount));
+    if (p.start_date) fd.append("start_date", p.start_date);
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
@@ -91,6 +94,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     fd.append("company", p.company);
     fd.append("comment", p.comment);
     fd.append("sum_amount", String(p.sum_amount));
+    if (p.start_date) fd.append("start_date", p.start_date);
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));

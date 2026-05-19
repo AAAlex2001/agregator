@@ -13,6 +13,7 @@ class ResponseStatus(str, PyEnum):
     ACCEPTED = "ACCEPTED"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
+    WITHDRAWN_BY_EXPERT = "WITHDRAWN_BY_EXPERT"
 
 
 class VatKind(str, PyEnum):
@@ -44,9 +45,11 @@ class OrderResponse(Base):
     )
     comment = Column(Text, nullable=False, default="")
     proposed_sum_amount = Column(BigInteger, nullable=False)
+    proposed_start_date = Column(Date, nullable=True)
     proposed_deadline = Column(Date, nullable=False)
     previous_comment = Column(Text, nullable=True)
     previous_proposed_sum_amount = Column(BigInteger, nullable=True)
+    previous_proposed_start_date = Column(Date, nullable=True)
     previous_proposed_deadline = Column(Date, nullable=True)
     technical_files = Column(JSON, nullable=False, default=list)
     previous_technical_files = Column(JSON, nullable=True)

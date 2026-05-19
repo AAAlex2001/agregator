@@ -45,7 +45,16 @@ export function DetailsSection({ form }: Props) {
         </div>
 
         <div className={s.field}>
-          <span className={base.label}>Срок выполнения</span>
+          <span className={base.label}>Срок начала выполнения работ</span>
+          <CalendarInput
+            active
+            value={watch("startDate")}
+            onChange={(value) => setValue("startDate", value, { shouldDirty: true })}
+          />
+        </div>
+
+        <div className={s.field}>
+          <span className={base.label}>Срок окончания выполнения работ</span>
           <CalendarInput
             active
             value={watch("deadline")}

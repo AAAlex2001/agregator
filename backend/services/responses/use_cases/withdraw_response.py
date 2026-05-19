@@ -43,12 +43,12 @@ class WithdrawResponseUseCase:
         was_assigned = response.status in ASSIGNED_STATUSES
 
         self.release_assignment(response, expert_id)
+        response.status = ResponseStatus.WITHDRAWN_BY_EXPERT
+        response.auto_rejected = False
+        await self.repo.flush()
 
         if was_assigned and self.send_rejected_email is not None:
             await self.send_rejected_email.execute(response_id)
-
-        await self.repo.delete(response)
-        await self.repo.flush()
 
         if self.subscription_access is not None:
             await self.subscription_access.restore_response_slot(expert_id)

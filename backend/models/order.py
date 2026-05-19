@@ -58,6 +58,7 @@ class Order(Base):
     company_files = Column(JSON, nullable=False, default=list)
     other_files = Column(JSON, nullable=False, default=list)
     sum_amount = Column(BigInteger, nullable=False)
+    start_date = Column(Date, nullable=True)
     deadline = Column(Date, nullable=False)
     previous_title = Column(String(500), nullable=True)
     previous_comment = Column(Text, nullable=True)

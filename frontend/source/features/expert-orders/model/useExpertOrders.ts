@@ -95,6 +95,7 @@ export function useExpertOrders() {
       await respondToOrder(order.id, {
         comment: form.comment,
         proposed_sum_amount: form.costAmount,
+        proposed_start_date: form.startDate || undefined,
         proposed_deadline: form.deadline,
         vat_kind: form.vatKind,
         expert_inn: form.expertInn,

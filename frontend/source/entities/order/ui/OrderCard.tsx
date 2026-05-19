@@ -8,6 +8,7 @@ interface Props {
   badges: Badge[];
   title: string;
   customer: string;
+  startDate?: string;
   date: string;
   sum: string;
   responsesDeadline?: string | null;
@@ -47,6 +48,7 @@ export function OrderCard({
   badges,
   title,
   customer,
+  startDate,
   date,
   sum,
   responsesDeadline,
@@ -75,6 +77,9 @@ export function OrderCard({
       value: responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—",
       valueOrange: true,
     },
+    ...(startDate
+      ? [{ label: "Срок начала работ", value: startDate }]
+      : []),
     {
       label: "Срок выполнения до",
       value: <DiffValue previous={previousDate ?? null} current={date || "—"} />,

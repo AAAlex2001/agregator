@@ -15,7 +15,9 @@ export interface ReviewCardProps {
   customer: string;
   order: string;
   orderSum: string;
+  orderStartDate?: string;
   orderDeadline: string;
+  expertStartDate?: string;
   expertDeadline: string;
   expertSum: string;
   documents?: OrderDocuments;
@@ -32,7 +34,9 @@ export function ReviewCard({
   customer,
   order,
   orderSum,
+  orderStartDate,
   orderDeadline,
+  expertStartDate,
   expertDeadline,
   expertSum,
   documents = emptyDocuments(),
@@ -46,7 +50,9 @@ export function ReviewCard({
       ? [{ label: "Начальная максимальная цена", value: orderSum, valueAccent: true }]
       : []),
     ...(expertSum ? [{ label: "Цена эксперта", value: expertSum }] : []),
-    ...(expertDeadline ? [{ label: "Срок эксперта", value: expertDeadline }] : []),
+    ...(expertStartDate ? [{ label: "Срок начала эксперта", value: expertStartDate }] : []),
+    ...(expertDeadline ? [{ label: "Срок окончания эксперта", value: expertDeadline }] : []),
+    ...(orderStartDate ? [{ label: "Срок начала работ", value: orderStartDate }] : []),
     ...(orderDeadline ? [{ label: "Срок выполнения до", value: orderDeadline }] : []),
   ];
 

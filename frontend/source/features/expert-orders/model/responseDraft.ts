@@ -7,6 +7,7 @@ export interface ResponseDraft {
   orderTitle: string;
   customer: string;
   step: "details" | "tender" | "offer";
+  startDate?: string;
   deadline: string;
   cost: string;
   vatKind: string;

@@ -35,9 +35,15 @@ export async function deleteResponse(id: number): Promise<void> {
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось отозвать отклик");
 }
 
+export async function restoreWithdrawnResponse(id: number): Promise<void> {
+  const res = await fetchWithSession(`${API_URL}/responses/${id}/restore`, { method: "POST" });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось восстановить отклик");
+}
+
 interface EditPayload {
   comment: string;
   sumAmount: number;
+  startDate?: string;
   deadline: string;
   vatKind: string;
   files?: File[];
@@ -49,6 +55,7 @@ export async function editResponse(id: number, p: EditPayload): Promise<void> {
     const fd = new FormData();
     fd.append("comment", p.comment);
     fd.append("proposed_sum_amount", String(p.sumAmount));
+    if (p.startDate) fd.append("proposed_start_date", p.startDate);
     fd.append("proposed_deadline", p.deadline);
     fd.append("vat_kind", p.vatKind);
     fd.append("keep_files", JSON.stringify(p.keepFiles ?? []));

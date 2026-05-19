@@ -125,6 +125,8 @@ class UpdateResponseUseCase:
     def apply_fields(response: OrderResponse, data: ResponseCreate) -> None:
         if data.proposed_sum_amount != response.proposed_sum_amount:
             response.previous_proposed_sum_amount = response.proposed_sum_amount
+        if data.proposed_start_date != response.proposed_start_date:
+            response.previous_proposed_start_date = response.proposed_start_date
         if data.proposed_deadline != response.proposed_deadline:
             response.previous_proposed_deadline = response.proposed_deadline
         if (data.comment or "") != (response.comment or ""):
@@ -134,6 +136,7 @@ class UpdateResponseUseCase:
 
         response.comment = data.comment
         response.proposed_sum_amount = data.proposed_sum_amount
+        response.proposed_start_date = data.proposed_start_date
         response.proposed_deadline = data.proposed_deadline
         response.vat_kind = data.vat_kind
 

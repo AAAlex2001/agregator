@@ -45,6 +45,7 @@ class CreateOrderUseCase:
             comment=data.comment,
             customer_id=data.customer_id,
             sum_amount=data.sum_amount,
+            start_date=data.start_date,
             deadline=data.deadline,
             responses_deadline=data.responses_deadline,
             status=data.status,

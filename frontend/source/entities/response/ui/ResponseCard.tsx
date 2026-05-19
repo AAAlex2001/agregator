@@ -69,8 +69,21 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       label: isExpert ? "Ваша цена" : "Цена эксперта",
       value: <DiffValue previous={card.previousCostEstimate} current={card.costEstimate || "—"} />,
     },
+    ...(card.orderStartDate
+      ? [{ label: "Срок начала работ (заказчик)", value: card.orderStartDate }]
+      : []),
     {
       label: "Срок выполнения до",
+      value: card.orderDate || "—",
+    },
+    ...(card.startDate
+      ? [{
+          label: isExpert ? "Ваш срок начала" : "Срок начала эксперта",
+          value: <DiffValue previous={card.previousStartDate} current={card.startDate} />,
+        }]
+      : []),
+    {
+      label: isExpert ? "Ваш срок окончания" : "Срок окончания эксперта",
       value: <DiffValue previous={card.previousDeadline} current={card.deadline || "—"} />,
     },
     {

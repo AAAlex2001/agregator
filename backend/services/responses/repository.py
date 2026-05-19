@@ -139,6 +139,9 @@ class ResponseRepository:
                 selectinload(OrderResponse.reviews),
             )
         )
+        list_query = list_query.where(
+            OrderResponse.status != ResponseStatus.WITHDRAWN_BY_EXPERT
+        )
         if status_filters:
             list_query = list_query.where(OrderResponse.status.in_(status_filters))
         if sort_by == "expert_rating":
@@ -159,7 +162,10 @@ class ResponseRepository:
         query = (
             select(OrderResponse.status, func.count(OrderResponse.id))
             .join(Order, Order.id == OrderResponse.order_id)
-            .where(Order.customer_id == customer_id)
+            .where(
+                Order.customer_id == customer_id,
+                OrderResponse.status != ResponseStatus.WITHDRAWN_BY_EXPERT,
+            )
             .group_by(OrderResponse.status)
         )
         return {status: count for status, count in (await self.db.execute(query)).all()}

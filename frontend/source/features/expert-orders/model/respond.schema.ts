@@ -3,7 +3,8 @@ import { z } from "zod";
 export const VAT_KIND_VALUES = ["NONE", "VAT_5", "VAT_7", "VAT_22"] as const;
 
 export const respondFormSchema = z.object({
-  deadline: z.string().trim().min(1, "Укажите срок"),
+  startDate: z.string().trim().min(1, "Укажите срок начала"),
+  deadline: z.string().trim().min(1, "Укажите срок окончания"),
   cost: z
     .string()
     .trim()

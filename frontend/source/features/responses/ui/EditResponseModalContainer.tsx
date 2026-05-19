@@ -10,6 +10,7 @@ import { EditResponseModal } from "./EditResponseModal";
 interface EditResponseSubmitData {
   comment: string;
   costEstimate: number;
+  startDate: string;
   deadline: string;
   vatKind: VatKind;
   files: File[];
@@ -35,12 +36,15 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     customerId: response.orderCustomerId,
     title: response.orderTitle,
     customer: response.customer,
+    customerInn: "",
     company: response.customer,
     comment: response.orderComment ?? "",
+    startDate: response.orderStartDate,
     date: response.orderDate,
     createdAtDisplay: "",
     sum: response.orderSum || response.sum,
     sumAmountRaw: 0,
+    startDateRaw: "",
     deadlineRaw: response.orderDate,
     responsesDeadline: null,
     documents: response.orderDocuments,
@@ -54,6 +58,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     executorReviewCount: 0,
     executorPublicId: "",
     executorProposedSum: "",
+    executorProposedStartDate: "",
     executorProposedDeadline: "",
     executorComment: "",
     executorFiles: [],
@@ -69,6 +74,7 @@ export function EditResponseModalContainer({
   onSubmit,
 }: EditResponseModalContainerProps) {
   const { showError } = useNotifications();
+  const [startDate, setStartDate] = useState("");
   const [deadline, setDeadline] = useState("");
   const [cost, setCost] = useState("");
   const [comment, setComment] = useState("");
@@ -77,6 +83,7 @@ export function EditResponseModalContainer({
   const [existingFiles, setExistingFiles] = useState<ExistingResponseFile[]>([]);
 
   useEffect(() => {
+    setStartDate(response?.rawStartDate ?? "");
     setDeadline(response?.rawDeadline ?? "");
     setCost(response && response.rawSumAmount > 0 ? String(response.rawSumAmount / 100) : "");
     setComment(response?.commentText ?? "");
@@ -123,6 +130,7 @@ export function EditResponseModalContainer({
     onSubmit({
       comment,
       costEstimate: Math.round(Number(cost) * 100),
+      startDate,
       deadline,
       vatKind,
       files,
@@ -137,6 +145,7 @@ export function EditResponseModalContainer({
       statusColor={response.statusColor}
       statusBg={response.statusBg}
       order={buildOrder(response)}
+      startDate={startDate}
       deadline={deadline}
       cost={cost}
       comment={comment}
@@ -147,6 +156,7 @@ export function EditResponseModalContainer({
       isSubmitting={isSubmitting}
       onClose={onClose}
       onSubmit={handleSubmit}
+      onStartDateChange={setStartDate}
       onDeadlineChange={setDeadline}
       onCostChange={(value) => setCost(value.replace(/[^0-9]/g, ""))}
       onCommentChange={setComment}

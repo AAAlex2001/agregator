@@ -49,6 +49,7 @@ export function OrderLivePreview({ form, documents }: Props) {
         badges={badges}
         title={values.title?.trim() || "Название заказа"}
         customer={values.company?.trim() || "—"}
+        startDate={values.startDate ? formatDeadline(values.startDate) : undefined}
         date={formatDeadline(values.deadline ?? "")}
         sum={formatBudget(values.budget ?? "")}
         responsesDeadline={values.responsesDeadline || null}

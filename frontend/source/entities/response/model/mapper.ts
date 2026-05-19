@@ -23,6 +23,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   ACCEPTED:    { label: "В переговорах",   color: "#ffffff", bg: "#ff8a00" },
   IN_PROGRESS: { label: "Принято",         color: "#0b5723", bg: "#b2dfb6" },
   COMPLETED:   { label: "Завершен",        color: "#2e2e2e", bg: "#dcdcdc" },
+  WITHDRAWN_BY_EXPERT: { label: "Отозван экспертом", color: "#4d4d4d", bg: "#e6e6e6" },
 };
 
 export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCardData {
@@ -78,14 +79,17 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     orderTitle: item.order_title,
     orderSum: item.order_sum,
     customer: item.customer_company || item.customer_name,
+    orderStartDate: item.order_start_date ?? "",
     orderDate: item.order_date,
     badges: item.badges.map((b): ResponseBadge => ({
       text: b.text,
       variant: BADGE_MAP[b.variant.toLowerCase()] ?? "blue",
     })),
     sum: item.proposed_sum,
+    startDate: item.proposed_start_date ?? "",
     deadline: item.proposed_deadline,
     previousSum: item.previous_proposed_sum ?? null,
+    previousStartDate: item.previous_proposed_start_date ?? null,
     previousDeadline: item.previous_proposed_deadline ?? null,
     previousCostEstimate,
     previousComment: item.previous_comment ?? null,
@@ -113,6 +117,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
     techSpecFiles: resolveFileUrls(item.response_files),
     orderDocuments: resolveDocuments(item.order_documents),
     rawSumAmount: item.proposed_sum_amount_raw ?? 0,
+    rawStartDate: item.proposed_start_date_raw ?? "",
     rawDeadline: item.proposed_deadline_raw ?? "",
     expertConfirmed: confirmed,
     reminderText:

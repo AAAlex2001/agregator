@@ -58,8 +58,14 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
         ...(card.executorProposedSum
           ? [{ label: "Цена исполнителя", value: card.executorProposedSum }]
           : []),
+        ...(card.executorProposedStartDate
+          ? [{ label: "Срок начала исполнителя", value: card.executorProposedStartDate }]
+          : []),
         ...(card.executorProposedDeadline
-          ? [{ label: "Срок исполнителя", value: card.executorProposedDeadline }]
+          ? [{ label: "Срок окончания исполнителя", value: card.executorProposedDeadline }]
+          : []),
+        ...(card.startDate
+          ? [{ label: "Срок начала работ", value: card.startDate }]
           : []),
         { label: "Срок выполнения до", value: card.date || "—" },
         ...(card.createdAtDisplay

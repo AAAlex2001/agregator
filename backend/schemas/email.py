@@ -81,6 +81,13 @@ class BiddingFinishedContext(BaseContext):
     order_title: str
     outcome: str  # "won" либо "lost"
     cta_url: str
+    order_number: str = ""
+    customer_name: str = ""
+    winning_price: str = ""
+    customer_inn: str = ""
+    customer_email: str = ""
+    customer_phone: str = ""
+    customer_contact_name: str = ""
 
 
 class QuestionAskedContext(BaseContext):

@@ -15,6 +15,7 @@ import type { ModalStep, OrderModalProps } from "./types";
 import styles from "./OrderModal.module.scss";
 
 const emptyValues: RespondFormValues = {
+  startDate: "",
   deadline: "",
   cost: "",
   vatKind: "NONE",
@@ -59,6 +60,7 @@ export function OrderModal({
     const draft = useDraft ? loadDraft(order.id) : null;
     if (draft) {
       form.reset({
+        startDate: draft.startDate ?? "",
         deadline: draft.deadline,
         cost: draft.cost,
         vatKind: draft.vatKind as RespondFormValues["vatKind"],
@@ -91,6 +93,7 @@ export function OrderModal({
         orderTitle: order.title,
         customer: order.customer,
         step,
+        startDate: v.startDate,
         deadline: v.deadline,
         cost: v.cost,
         vatKind: v.vatKind,
@@ -147,6 +150,7 @@ export function OrderModal({
       }
 
       onRespond(order, {
+        startDate: values.startDate,
         deadline: values.deadline,
         costAmount,
         vatKind: values.vatKind,

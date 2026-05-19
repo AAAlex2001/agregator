@@ -87,6 +87,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
                   badges={order.badges}
                   title={order.title}
                   customer={order.customer}
+                  startDate={order.startDate}
                   date={order.date}
                   sum={order.sum}
                   responsesDeadline={order.responsesDeadline}

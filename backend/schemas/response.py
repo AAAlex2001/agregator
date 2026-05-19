@@ -15,11 +15,13 @@ class ResponseTab(str, PyEnum):
     IN_PROGRESS = "in_progress"
     REJECTED = "rejected"
     ACCEPTED = "accepted"
+    WITHDRAWN_BY_EXPERT = "withdrawn_by_expert"
 
 
 class ResponseCreate(BaseModel):
     comment: str = Field(default="", max_length=5000)
     proposed_sum_amount: int = Field(..., gt=0)
+    proposed_start_date: date | None = None
     proposed_deadline: date
     expert_inn: str | None = Field(default=None, min_length=10, max_length=12)
     expert_company_data: dict[str, Any] | None = None
@@ -49,6 +51,7 @@ class ResponseCounters(BaseModel):
     in_progress: int = 0
     rejected: int = 0
     accepted: int = 0
+    withdrawn_by_expert: int = 0
 
 
 class ExpertResponseItem(BaseModel):
@@ -60,9 +63,11 @@ class ExpertResponseItem(BaseModel):
     date: str
     comment: str
     proposed_sum: str
+    proposed_start_date: str = ""
     proposed_deadline: str
     order_title: str
     order_sum: str
+    order_start_date: str = ""
     order_date: str
     order_comment: str = ""
     customer_name: str
@@ -72,9 +77,11 @@ class ExpertResponseItem(BaseModel):
     badges: list[dict[str, str]]
     created_at: datetime
     proposed_sum_amount_raw: int = 0
+    proposed_start_date_raw: str = ""
     proposed_deadline_raw: str = ""
     previous_comment: str | None = None
     previous_proposed_sum: str | None = None
+    previous_proposed_start_date: str | None = None
     previous_proposed_deadline: str | None = None
     previous_vat_kind: VatKind | None = None
     previous_response_files: list[str] | None = None

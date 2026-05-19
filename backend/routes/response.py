@@ -39,6 +39,7 @@ from services.responses import (
     ResponseRepository,
     ResponseStatusRules,
     ResponseValidator,
+    RestoreWithdrawnResponseUseCase,
     UpdateResponseStatusUseCase,
     UpdateResponseUseCase,
     UploadResponseFilesUseCase,
@@ -138,9 +139,15 @@ def to_item(
         date=date_source.strftime("%d.%m.%Y"),
         comment=entity.comment,
         proposed_sum=format_sum(entity.proposed_sum_amount),
+        proposed_start_date=(
+            entity.proposed_start_date.strftime("%d.%m.%Y") if entity.proposed_start_date else ""
+        ),
         proposed_deadline=entity.proposed_deadline.strftime("%d.%m.%Y"),
         order_title=order.title if order else "",
         order_sum=order_sum,
+        order_start_date=(
+            order.start_date.strftime("%d.%m.%Y") if order and order.start_date else ""
+        ),
         order_date=order.deadline.strftime("%d.%m.%Y") if order else "",
         order_comment=order.comment if order else "",
         customer_name=customer_name,
@@ -153,12 +160,21 @@ def to_item(
         ],
         created_at=entity.created_at,
         proposed_sum_amount_raw=entity.proposed_sum_amount,
+        proposed_start_date_raw=(
+            entity.proposed_start_date.isoformat() if entity.proposed_start_date else ""
+        ),
         proposed_deadline_raw=entity.proposed_deadline.isoformat(),
         previous_comment=None if is_finalized else entity.previous_comment,
         previous_proposed_sum=(
             None if is_finalized
             else format_sum(entity.previous_proposed_sum_amount)
             if entity.previous_proposed_sum_amount is not None
+            else None
+        ),
+        previous_proposed_start_date=(
+            None if is_finalized
+            else entity.previous_proposed_start_date.strftime("%d.%m.%Y")
+            if entity.previous_proposed_start_date is not None
             else None
         ),
         previous_proposed_deadline=(
@@ -224,6 +240,7 @@ async def create_response_for_order(
     background_tasks: BackgroundTasks,
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
+    proposed_start_date: str = Form(""),
     proposed_deadline: str = Form(...),
     expert_inn: str = Form(...),
     expert_company_data: str = Form(...),
@@ -235,6 +252,7 @@ async def create_response_for_order(
     data = ResponseCreate(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
+        proposed_start_date=date_type.fromisoformat(proposed_start_date) if proposed_start_date else None,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
         expert_inn=expert_inn,
         expert_company_data=expert_company_data,
@@ -328,6 +346,7 @@ async def update_response(
     background_tasks: BackgroundTasks,
     comment: str = Form(""),
     proposed_sum_amount: int = Form(...),
+    proposed_start_date: str = Form(""),
     proposed_deadline: str = Form(...),
     vat_kind: VatKind = Form(VatKind.NONE),
     keep_files: str = Form(default="[]"),
@@ -343,6 +362,7 @@ async def update_response(
     data = ResponseCreate(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
+        proposed_start_date=date_type.fromisoformat(proposed_start_date) if proposed_start_date else None,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
         vat_kind=vat_kind,
     )
@@ -391,3 +411,18 @@ async def withdraw_response(
     )
     await use_case.execute(response_id=response_id, expert_id=user_id)
     return {"detail": "Отклик отозван"}
+
+
+@router.post("/responses/{response_id}/restore", response_model=ExpertResponseItem)
+async def restore_withdrawn_response(
+    response_id: int,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    repo = build_repo(db)
+    use_case = RestoreWithdrawnResponseUseCase(
+        repo=repo,
+        get_response=GetResponseByIdUseCase(repo),
+    )
+    restored = await use_case.execute(response_id=response_id, expert_id=user_id)
+    return to_item(restored)

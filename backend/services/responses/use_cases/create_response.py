@@ -112,6 +112,7 @@ class CreateResponseUseCase:
             expert_id=expert_id,
             comment=data.comment,
             proposed_sum_amount=data.proposed_sum_amount,
+            proposed_start_date=data.proposed_start_date,
             proposed_deadline=data.proposed_deadline,
             status=ResponseStatus.REVIEW,
             expert_inn=data.expert_inn,

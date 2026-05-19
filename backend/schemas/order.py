@@ -54,6 +54,7 @@ class OrderCreate(BaseModel):
     comment: str = Field(default="", max_length=5000)
     customer_id: int = Field(..., ge=1)
     sum_amount: int = Field(..., ge=0)
+    start_date: date | None = None
     deadline: date
     responses_deadline: datetime | None = None
     documents: OrderDocuments = Field(default_factory=OrderDocuments)
@@ -66,6 +67,7 @@ class OrderUpdate(BaseModel):
     company: Optional[str] = Field(None, max_length=500)
     comment: Optional[str] = Field(None, max_length=5000)
     sum_amount: Optional[int] = Field(None, ge=0)
+    start_date: Optional[date] = None
     deadline: Optional[date] = None
     responses_deadline: Optional[datetime] = None
     documents: Optional[OrderDocuments] = None
@@ -83,8 +85,10 @@ class OrderResponse(BaseModel):
     assigned_expert_id: int | None
     assigned_expert_name: str = ""
     customer_name: str
+    customer_inn: str = ""
     sum: str
     sum_amount_raw: int
+    start_date: str = ""
     date: str
     created_at_display: str = ""
     responses_deadline: str | None = None
@@ -105,6 +109,7 @@ class OrderResponse(BaseModel):
     executor_review_count: int = 0
     executor_public_id: str = ""
     executor_proposed_sum: str = ""
+    executor_proposed_start_date: str = ""
     executor_proposed_deadline: str = ""
     executor_comment: str = ""
     executor_files: list[str] = []
@@ -153,6 +158,11 @@ class OrderResponse(BaseModel):
         if accepted_response is not None:
             update["accepted_response_id"] = accepted_response.id
             update["executor_proposed_sum"] = cls._format_sum(accepted_response.proposed_sum_amount)
+            update["executor_proposed_start_date"] = (
+                accepted_response.proposed_start_date.strftime("%d.%m.%Y")
+                if accepted_response.proposed_start_date
+                else ""
+            )
             update["executor_proposed_deadline"] = accepted_response.proposed_deadline.strftime("%d.%m.%Y")
             update["executor_comment"] = accepted_response.comment or ""
             update["executor_files"] = list(accepted_response.technical_files or [])
@@ -168,6 +178,8 @@ class OrderResponse(BaseModel):
         sum_display = "Не определено" if amount == 0 else cls._format_sum(amount)
 
         customer_name = order.company or ""
+        customer_inn = (order.customer.inn or "") if order.customer is not None else ""
+        start_date_display = order.start_date.strftime("%d.%m.%Y") if order.start_date else ""
         date_display = order.deadline.strftime("%d.%m.%Y")
         created_at_display = order.created_at.strftime("%d.%m.%Y") if order.created_at else ""
 
@@ -208,8 +220,10 @@ class OrderResponse(BaseModel):
             customer_id=order.customer_id,
             assigned_expert_id=order.assigned_expert_id,
             customer_name=customer_name,
+            customer_inn=customer_inn,
             sum=sum_display,
             sum_amount_raw=amount,
+            start_date=start_date_display,
             date=date_display,
             created_at_display=created_at_display,
             responses_deadline=responses_deadline_display,

@@ -51,9 +51,11 @@ export interface OrderApiItem {
   comment: string;
   customer_id: number;
   customer_name: string;
+  customer_inn?: string;
   company: string;
   sum: string;
   sum_amount_raw: number;
+  start_date?: string;
   date: string;
   created_at_display?: string;
   responses_deadline: string | null;
@@ -68,6 +70,7 @@ export interface OrderApiItem {
   executor_review_count?: number;
   executor_public_id?: string;
   executor_proposed_sum?: string;
+  executor_proposed_start_date?: string;
   executor_proposed_deadline?: string;
   executor_comment?: string;
   executor_files?: string[];
@@ -92,12 +95,15 @@ export interface OrderCardData {
   customerId: number;
   title: string;
   customer: string;
+  customerInn: string;
   company: string;
   comment: string;
+  startDate: string;
   date: string;
   createdAtDisplay: string;
   sum: string;
   sumAmountRaw: number;
+  startDateRaw: string;
   deadlineRaw: string;
   responsesDeadline: string | null;
   documents: OrderDocuments;
@@ -111,6 +117,7 @@ export interface OrderCardData {
   executorReviewCount: number;
   executorPublicId: string;
   executorProposedSum: string;
+  executorProposedStartDate: string;
   executorProposedDeadline: string;
   executorComment: string;
   executorFiles: string[];

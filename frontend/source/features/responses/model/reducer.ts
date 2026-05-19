@@ -1,6 +1,6 @@
 import type { ResponseCardData, ResponseCounters, ResponseTabKey, SortDir, CustomerSortBy } from "@/source/entities/response";
 
-type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | null;
+type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore" | null;
 
 export interface State {
   items: ResponseCardData[];
@@ -42,7 +42,7 @@ export type Action =
 
 export const initial: State = {
   items: [],
-  counters: { all: 0, review: 0, in_progress: 0, rejected: 0, accepted: 0 },
+  counters: { all: 0, review: 0, in_progress: 0, rejected: 0, accepted: 0, withdrawn_by_expert: 0 },
   hasMore: false,
   isLoading: true,
   isLoadingMore: false,

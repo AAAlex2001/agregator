@@ -97,7 +97,9 @@ class UpdateResponseStatusUseCase:
         if new_status != ResponseStatus.IN_PROGRESS:
             return
 
-        await self.send_bidding_email.execute(response.expert_id, response.order_id, OUTCOME_WON)
+        await self.send_bidding_email.execute(
+            response.expert_id, response.order_id, OUTCOME_WON, response_id=response.id
+        )
         for loser_id in auto_rejected_ids:
             await self.send_bidding_email.execute(loser_id, response.order_id, OUTCOME_LOST)
 

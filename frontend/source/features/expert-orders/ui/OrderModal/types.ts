@@ -4,6 +4,7 @@ import type { VatKind } from "@/source/entities/response";
 export type ModalStep = "details" | "tender" | "offer";
 
 export interface RespondFormData {
+  startDate: string;
   deadline: string;
   costAmount: number;
   vatKind: VatKind;

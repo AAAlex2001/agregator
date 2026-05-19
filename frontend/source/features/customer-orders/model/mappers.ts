@@ -57,6 +57,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     return {
       title: "",
       company: "",
+      startDate: "",
       deadline: "",
       responsesDeadline: "",
       budget: "",
@@ -68,6 +69,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
   return {
     title: editTarget.title,
     company: editTarget.company,
+    startDate: editTarget.startDateRaw,
     deadline: editTarget.deadlineRaw,
     responsesDeadline: editTarget.responsesDeadline ?? "",
     budget: editTarget.sumAmountRaw > 0 ? String(editTarget.sumAmountRaw / 100) : "",
@@ -96,6 +98,7 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
   return {
     title: values.title.trim(),
     company: values.company.trim(),
+    start_date: values.startDate || undefined,
     deadline: values.deadline,
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
@@ -110,6 +113,7 @@ export function buildUpdatePayload(values: OrderFormValues, documents: Documents
   return {
     title: values.title.trim(),
     company: values.company.trim(),
+    start_date: values.startDate || undefined,
     deadline: values.deadline,
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,

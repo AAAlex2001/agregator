@@ -4,12 +4,12 @@ import { useEffect, useReducer } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { mapApiToCard } from "@/source/entities/response";
 import type { ResponseCardData, ResponseTabKey, UserRole, CustomerSortBy, SortDir } from "@/source/entities/response";
-import { fetchResponses, deleteResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
+import { fetchResponses, deleteResponse, restoreWithdrawnResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
 import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";
 
-const VALID_TABS: ResponseTabKey[] = ["all", "review", "in_progress", "rejected", "accepted"];
+const VALID_TABS: ResponseTabKey[] = ["all", "review", "in_progress", "rejected", "accepted", "withdrawn_by_expert"];
 
 const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>> = {
   expert: [
@@ -18,6 +18,7 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
     { key: "in_progress", label: "В работе" },
     { key: "rejected", label: "Отклоненные" },
     { key: "accepted", label: "В переговорах" },
+    { key: "withdrawn_by_expert", label: "Отозванные мной" },
   ],
   customer: [
     { key: "all", label: "Все" },
@@ -130,13 +131,14 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onEditSubmit = async (formData: { comment: string; costEstimate: number; deadline: string; vatKind: string; files?: File[]; keepFiles?: string[] }) => {
+  const onEditSubmit = async (formData: { comment: string; costEstimate: number; startDate: string; deadline: string; vatKind: string; files?: File[]; keepFiles?: string[] }) => {
     if (!s.editing) return;
     d({ type: "EDIT_SUBMITTING", value: true });
     try {
       await editResponse(s.editing.id, {
         comment: formData.comment,
         sumAmount: formData.costEstimate,
+        startDate: formData.startDate,
         deadline: formData.deadline,
         vatKind: formData.vatKind,
         files: formData.files,
@@ -220,6 +222,17 @@ export function useResponses(role: UserRole | null) {
     onRejectConfirm,
     onSelect: (id: number) => statusAction(id, "select", "IN_PROGRESS"),
     onRestore: (id: number) => statusAction(id, "restore", "REVIEW"),
+    onRestoreWithdrawn: async (id: number) => {
+      d({ type: "ACTION_LOADING", id, mode: "restore" });
+      try {
+        await restoreWithdrawnResponse(id);
+        void reload();
+      } catch (e) {
+        d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      } finally {
+        d({ type: "ACTION_LOADING", id, mode: null });
+      }
+    },
     onAccept,
     onLeaveReview: (r: ResponseCardData) => { d({ type: "REVIEW_TARGET", value: r }); d({ type: "REVIEW_MODAL", value: true }); },
     closeCompletion: () => d({ type: "COMPLETION_MODAL", value: false }),

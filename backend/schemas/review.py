@@ -26,7 +26,9 @@ class ReviewItem(BaseModel):
     order_title: str
     company_name: str
     order_sum: str = ""
+    order_start_date: str = ""
     order_deadline: str = ""
+    expert_start_date: str = ""
     expert_deadline: str = ""
     expert_sum: str = ""
     order_documents: OrderDocuments = Field(default_factory=OrderDocuments)

@@ -17,6 +17,9 @@ SORT_BY_REVIEW_COUNT = "review_count"
 SORT_DIR_DESC = "desc"
 SORT_DIR_ASC = "asc"
 
+RATING_PRIOR_WEIGHT = 5.0
+RATING_PRIOR_MEAN = 4.5
+
 
 @dataclass(frozen=True)
 class ExpertSummaryRow:
@@ -85,7 +88,10 @@ class ExpertsRepository:
         sort_column = self.resolve_sort_column(sort_by, completed_orders_expr)
         is_desc = sort_dir != SORT_DIR_ASC
         primary = sort_column.desc().nullslast() if is_desc else sort_column.asc().nullsfirst()
-        base_query = base_query.order_by(primary, User.created_at.desc())
+        review_secondary = (
+            User.review_count.desc() if is_desc else User.review_count.asc()
+        )
+        base_query = base_query.order_by(primary, review_secondary, User.created_at.desc())
 
         rows = (await self.db.execute(base_query.offset(skip).limit(limit + 1))).all()
         has_more = len(rows) > limit
@@ -208,7 +214,10 @@ class ExpertsRepository:
             return completed_orders_expr
         if sort_by == SORT_BY_REVIEW_COUNT:
             return User.review_count
-        return User.rating
+        return (
+            (User.review_count * func.coalesce(User.rating, 0) + RATING_PRIOR_WEIGHT * RATING_PRIOR_MEAN)
+            / (User.review_count + RATING_PRIOR_WEIGHT)
+        )
 
     def build_summary_row(
         self,

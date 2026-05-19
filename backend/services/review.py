@@ -126,7 +126,9 @@ class ReviewService:
                 "order_title": order.title if order else "",
                 "company_name": company_name,
                 "order_sum": format_sum(order.sum_amount if order else None),
+                "order_start_date": order.start_date.strftime("%d.%m.%Y") if order and order.start_date else "",
                 "order_deadline": order.deadline.strftime("%d.%m.%Y") if order and order.deadline else "",
+                "expert_start_date": response.proposed_start_date.strftime("%d.%m.%Y") if response and response.proposed_start_date else "",
                 "expert_deadline": response.proposed_deadline.strftime("%d.%m.%Y") if response and response.proposed_deadline else "",
                 "expert_sum": format_sum(response.proposed_sum_amount if response else None),
                 "order_documents": (

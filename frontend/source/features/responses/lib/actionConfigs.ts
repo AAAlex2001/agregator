@@ -13,6 +13,7 @@ interface Handlers {
   onAccept?: (id: number, orderId: number) => void;
   onSelect?: (id: number) => void;
   onRestore?: (id: number) => void;
+  onRestoreWithdrawn?: (id: number) => void;
   onLeaveReview?: (r: ResponseCardData) => void;
   /** Можно ли вернуть отклонённый отклик в рассмотрение (false если у заказа уже выбран исполнитель). */
   canRestore?: (r: ResponseCardData) => boolean;
@@ -56,6 +57,11 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
         { text: "Принять проект", variant: "green", onClick: () => h.onStart?.(card.id), isLoading: loading === "start" },
         share,
         withdraw("Отказаться"),
+      ];
+    case "WITHDRAWN_BY_EXPERT":
+      return [
+        { text: "Восстановить отклик", variant: "outline", onClick: () => h.onRestoreWithdrawn?.(card.id), isLoading: loading === "restore" },
+        share,
       ];
     default:
       return [share];

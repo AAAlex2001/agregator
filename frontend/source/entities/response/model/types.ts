@@ -1,7 +1,7 @@
 import type { OrderDocuments } from "@/source/entities/order";
 
-export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
-export type ResponseTabKey = "all" | "review" | "in_progress" | "rejected" | "accepted";
+export type ResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED" | "WITHDRAWN_BY_EXPERT";
+export type ResponseTabKey = "all" | "review" | "in_progress" | "rejected" | "accepted" | "withdrawn_by_expert";
 export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
 
 export const VAT_LABEL: Record<VatKind, string> = {
@@ -23,6 +23,7 @@ export interface ResponseCounters {
   in_progress: number;
   rejected: number;
   accepted: number;
+  withdrawn_by_expert: number;
 }
 
 export interface ResponseApiBadge { text: string; variant: string }
@@ -36,9 +37,11 @@ export interface ResponseApiItem {
   date: string;
   comment: string;
   proposed_sum: string;
+  proposed_start_date?: string;
   proposed_deadline: string;
   order_title: string;
   order_sum: string;
+  order_start_date?: string;
   order_date: string;
   order_comment?: string;
   customer_name: string;
@@ -48,9 +51,11 @@ export interface ResponseApiItem {
   badges: ResponseApiBadge[];
   created_at: string;
   proposed_sum_amount_raw: number;
+  proposed_start_date_raw?: string;
   proposed_deadline_raw: string;
   previous_comment?: string | null;
   previous_proposed_sum?: string | null;
+  previous_proposed_start_date?: string | null;
   previous_proposed_deadline?: string | null;
   previous_vat_kind?: VatKind | null;
   previous_response_files?: string[] | null;
@@ -96,11 +101,14 @@ export interface ResponseCardData {
   orderTitle: string;
   orderSum: string;
   customer: string;
+  orderStartDate: string;
   orderDate: string;
   badges: ResponseBadge[];
   sum: string;
+  startDate: string;
   deadline: string;
   previousSum: string | null;
+  previousStartDate: string | null;
   previousDeadline: string | null;
   previousCostEstimate: string | null;
   previousComment: string | null;
@@ -119,6 +127,7 @@ export interface ResponseCardData {
   techSpecFiles: string[];
   orderDocuments: OrderDocuments;
   rawSumAmount: number;
+  rawStartDate: string;
   rawDeadline: string;
   expertConfirmed: boolean;
   reminderText?: string;

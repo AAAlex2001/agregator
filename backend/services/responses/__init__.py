@@ -11,6 +11,7 @@ from services.responses.use_cases.update_response import UpdateResponseUseCase
 from services.responses.use_cases.update_response_status import UpdateResponseStatusUseCase
 from services.responses.use_cases.upload_response_files import UploadResponseFilesUseCase
 from services.responses.use_cases.withdraw_response import WithdrawResponseUseCase
+from services.responses.use_cases.restore_withdrawn_response import RestoreWithdrawnResponseUseCase
 from services.responses.validators import ResponseValidator
 
 __all__ = [
@@ -23,6 +24,7 @@ __all__ = [
     "ResponseRepository",
     "ResponseStatusRules",
     "ResponseValidator",
+    "RestoreWithdrawnResponseUseCase",
     "UpdateResponseStatusUseCase",
     "UpdateResponseUseCase",
     "UploadResponseFilesUseCase",

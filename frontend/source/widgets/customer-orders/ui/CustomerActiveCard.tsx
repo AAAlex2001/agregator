@@ -52,6 +52,9 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
         },
         ...(card.createdAtDisplay ? [{ label: "Дата публикации", value: card.createdAtDisplay }] : []),
         { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline), valueOrange: true },
+        ...(card.startDate
+          ? [{ label: "Срок начала работ", value: card.startDate }]
+          : []),
         {
           label: "Срок выполнения до",
           value: <DiffValue previous={card.previousDeadline} current={card.date || "—"} />,
