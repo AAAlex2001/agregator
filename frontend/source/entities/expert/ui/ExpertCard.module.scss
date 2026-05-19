@@ -1,7 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   padding: 24px;
   border-radius: 16px;
   background: #ffffff;
@@ -53,39 +53,28 @@
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
   border-top: 1px solid #f3f3f3;
   border-bottom: 1px solid #f3f3f3;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1a1a1a;
 }
 
-.statItem {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
-.statLabel {
-  font-size: 12px;
-  line-height: 14px;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.statValue {
-  display: flex;
+.statRating {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 0;
-  font-size: 15px;
-  line-height: 18px;
-  font-weight: 500;
-  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.statText {
+  display: inline-flex;
+  align-items: center;
 }
 
 .statLink {
@@ -102,7 +91,23 @@
 
 .statMuted {
   color: #999;
-  font-weight: 400;
+}
+
+.dot {
+  color: #ccc;
+  user-select: none;
+}
+
+.lastOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lastOrderLabel {
+  font-size: 13px;
+  line-height: 16px;
+  color: #888;
 }
 
 .actions {

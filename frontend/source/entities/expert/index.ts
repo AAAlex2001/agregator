@@ -13,6 +13,7 @@ export { ExpertCard } from "./ui/ExpertCard";
 export type {
   ExpertList,
   ExpertListApi,
+  ExpertSortBy,
   ExpertSummary,
   ExpertSummaryApi,
 } from "./model/types";

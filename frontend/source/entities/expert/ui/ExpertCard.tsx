@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
+import { OrderCard } from "@/source/entities/order";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import { StarIcon } from "@/source/shared/ui/icons";
+import type { OrderCardData } from "@/source/entities/order";
 import s from "./ExpertCard.module.scss";
 
 interface ExpertCardProps {
@@ -14,6 +16,7 @@ interface ExpertCardProps {
   reviewCount: number;
   completedOrdersCount: number;
   joinedAt: string;
+  lastOrder: OrderCardData | null;
 }
 
 function pluralReviews(count: number): string {
@@ -34,10 +37,10 @@ function pluralOrders(count: number): string {
   return "заказов";
 }
 
-function formatJoinedYear(joinedAt: string): string {
+function formatJoinedDate(joinedAt: string): string {
   const date = new Date(joinedAt);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("ru-RU", { year: "numeric", month: "long" });
+  return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
 export function ExpertCard({
@@ -48,12 +51,13 @@ export function ExpertCard({
   reviewCount,
   completedOrdersCount,
   joinedAt,
+  lastOrder,
 }: ExpertCardProps) {
   const ratingFormatted =
     rating !== null
       ? rating.toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
       : "—";
-  const joinedDisplay = formatJoinedYear(joinedAt);
+  const joinedDisplay = formatJoinedDate(joinedAt);
 
   return (
     <article className={s.card}>
@@ -67,39 +71,47 @@ export function ExpertCard({
         </div>
       </div>
 
-      <dl className={s.stats}>
-        <div className={s.statItem}>
-          <dt className={s.statLabel}>Рейтинг</dt>
-          <dd className={s.statValue}>
-            <StarIcon filled width={18} height={18} />
-            <span>{ratingFormatted}</span>
-          </dd>
+      <div className={s.stats}>
+        <span className={s.statRating}>
+          <StarIcon filled width={16} height={16} />
+          <span>{ratingFormatted}</span>
+        </span>
+        <span className={s.dot} aria-hidden="true">·</span>
+        <span className={s.statText}>
+          {reviewCount > 0 ? (
+            <Link href={`/expert/reviews/${publicId}`} className={s.statLink}>
+              {reviewCount} {pluralReviews(reviewCount)}
+            </Link>
+          ) : (
+            <span className={s.statMuted}>0 отзывов</span>
+          )}
+        </span>
+        <span className={s.dot} aria-hidden="true">·</span>
+        <span className={s.statText}>
+          {completedOrdersCount > 0 ? (
+            <>
+              {completedOrdersCount} {pluralOrders(completedOrdersCount)}
+            </>
+          ) : (
+            <span className={s.statMuted}>0 заказов</span>
+          )}
+        </span>
+      </div>
+
+      {lastOrder && (
+        <div className={s.lastOrder}>
+          <span className={s.lastOrderLabel}>Последний выполненный заказ</span>
+          <OrderCard
+            id={lastOrder.id}
+            badges={lastOrder.badges}
+            title={lastOrder.title}
+            customer={lastOrder.customer}
+            date={lastOrder.date}
+            sum={lastOrder.sum}
+            status="ARCHIVED"
+          />
         </div>
-        <div className={s.statItem}>
-          <dt className={s.statLabel}>Отзывы</dt>
-          <dd className={s.statValue}>
-            {reviewCount > 0 ? (
-              <Link href={`/expert/reviews/${publicId}`} className={s.statLink}>
-                {reviewCount} {pluralReviews(reviewCount)}
-              </Link>
-            ) : (
-              <span className={s.statMuted}>Пока нет</span>
-            )}
-          </dd>
-        </div>
-        <div className={s.statItem}>
-          <dt className={s.statLabel}>Выполнено</dt>
-          <dd className={s.statValue}>
-            {completedOrdersCount > 0 ? (
-              <span>
-                {completedOrdersCount} {pluralOrders(completedOrdersCount)}
-              </span>
-            ) : (
-              <span className={s.statMuted}>Пока нет</span>
-            )}
-          </dd>
-        </div>
-      </dl>
+      )}
 
       <div className={s.actions}>
         <Button

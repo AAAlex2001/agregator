@@ -11,12 +11,42 @@ from services.experts import (
     ListExpertOrdersHistoryUseCase,
     ListExpertsUseCase,
 )
+from services.experts.repository import (
+    SORT_BY_COMPLETED_ORDERS,
+    SORT_BY_RATING,
+    SORT_BY_REVIEW_COUNT,
+    SORT_DIR_ASC,
+    SORT_DIR_DESC,
+)
+
 
 router = APIRouter(tags=["experts"])
 
 
+ALLOWED_SORT_BY = {SORT_BY_RATING, SORT_BY_COMPLETED_ORDERS, SORT_BY_REVIEW_COUNT}
+ALLOWED_SORT_DIR = {SORT_DIR_ASC, SORT_DIR_DESC}
+
+
 def build_repo(db: AsyncSession) -> ExpertsRepository:
     return ExpertsRepository(db)
+
+
+def build_expert_summary(item) -> ExpertSummary:
+    last_order_payload = None
+    if item.last_order is not None:
+        last_order_payload = OrderResponse.from_archived_order(
+            item.last_order, item.last_order_response, has_review=False
+        )
+    return ExpertSummary(
+        public_id=item.public_id,
+        full_name=item.full_name,
+        avatar_url=item.avatar_url,
+        rating=item.rating,
+        review_count=item.review_count,
+        completed_orders_count=item.completed_orders_count,
+        joined_at=item.joined_at,
+        last_order=last_order_payload,
+    )
 
 
 @router.get("/experts", response_model=ExpertListResponse)
@@ -24,14 +54,18 @@ async def list_experts(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     q: str | None = Query(None, max_length=200),
+    sort_by: str = Query(SORT_BY_RATING),
+    sort_dir: str = Query(SORT_DIR_DESC),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ExpertListResponse:
-    "Список карточек экспертов с агрегированной статистикой. Только для авторизованных."
+    "Список карточек экспертов с агрегированной статистикой. Только эксперты с отзывами."
+    safe_sort_by = sort_by if sort_by in ALLOWED_SORT_BY else SORT_BY_RATING
+    safe_sort_dir = sort_dir if sort_dir in ALLOWED_SORT_DIR else SORT_DIR_DESC
     use_case = ListExpertsUseCase(build_repo(db))
-    items, has_more = await use_case.execute(skip, limit, q)
+    items, has_more = await use_case.execute(skip, limit, q, safe_sort_by, safe_sort_dir)
     return ExpertListResponse(
-        items=[ExpertSummary(**vars(item)) for item in items],
+        items=[build_expert_summary(item) for item in items],
         has_more=has_more,
     )
 
@@ -42,10 +76,10 @@ async def get_expert_summary(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ExpertSummary:
-    "Карточка одного эксперта по public_id (имя, аватар, рейтинг, отзывы, выполненные заказы)."
+    "Карточка одного эксперта по public_id."
     use_case = GetExpertSummaryUseCase(build_repo(db))
     summary = await use_case.execute(public_id)
-    return ExpertSummary(**vars(summary))
+    return build_expert_summary(summary)
 
 
 @router.get("/experts/{public_id}/orders", response_model=OrderListResponse)

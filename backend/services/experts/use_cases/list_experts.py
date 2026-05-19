@@ -2,7 +2,7 @@ from services.experts.repository import ExpertsRepository, ExpertSummaryRow
 
 
 class ListExpertsUseCase:
-    "Постраничный список карточек экспертов с опциональным поиском по имени."
+    "Карточки экспертов с агрегатами и последним заказом. Только эксперты с отзывами."
 
     def __init__(self, repo: ExpertsRepository):
         self.repo = repo
@@ -12,5 +12,7 @@ class ListExpertsUseCase:
         skip: int,
         limit: int,
         query: str | None,
+        sort_by: str,
+        sort_dir: str,
     ) -> tuple[list[ExpertSummaryRow], bool]:
-        return await self.repo.list_summaries(skip, limit, query)
+        return await self.repo.list_summaries(skip, limit, query, sort_by, sort_dir)

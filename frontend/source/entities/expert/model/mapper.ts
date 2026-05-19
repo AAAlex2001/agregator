@@ -1,3 +1,4 @@
+import { mapApiToOrderCard } from "@/source/entities/order";
 import type { ExpertListApi, ExpertList, ExpertSummary, ExpertSummaryApi } from "./types";
 
 export function mapExpertSummary(api: ExpertSummaryApi): ExpertSummary {
@@ -9,6 +10,7 @@ export function mapExpertSummary(api: ExpertSummaryApi): ExpertSummary {
     reviewCount: api.review_count,
     completedOrdersCount: api.completed_orders_count,
     joinedAt: api.joined_at,
+    lastOrder: api.last_order ? mapApiToOrderCard(api.last_order) : null,
   };
 }
 

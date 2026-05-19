@@ -1,11 +1,13 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
+from schemas.order import OrderResponse
+
 
 class ExpertSummary(BaseModel):
-    "Карточка эксперта без контактов: данные публичного профиля + агрегированная статистика."
+    "Карточка эксперта без контактов: данные публичного профиля + агрегаты + последний выполненный заказ."
 
     public_id: str
     full_name: str
@@ -14,6 +16,7 @@ class ExpertSummary(BaseModel):
     review_count: int = 0
     completed_orders_count: int = 0
     joined_at: datetime
+    last_order: Optional[OrderResponse] = None
 
 
 class ExpertListResponse(BaseModel):

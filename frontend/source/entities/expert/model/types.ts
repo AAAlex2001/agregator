@@ -1,3 +1,7 @@
+import type { OrderApiItem, OrderCardData } from "@/source/entities/order";
+
+export type ExpertSortBy = "rating" | "completed_orders" | "review_count";
+
 export interface ExpertSummaryApi {
   public_id: string;
   full_name: string;
@@ -6,6 +10,7 @@ export interface ExpertSummaryApi {
   review_count: number;
   completed_orders_count: number;
   joined_at: string;
+  last_order: OrderApiItem | null;
 }
 
 export interface ExpertListApi {
@@ -21,6 +26,7 @@ export interface ExpertSummary {
   reviewCount: number;
   completedOrdersCount: number;
   joinedAt: string;
+  lastOrder: OrderCardData | null;
 }
 
 export interface ExpertList {

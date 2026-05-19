@@ -11,6 +11,13 @@ from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 
+SORT_BY_RATING = "rating"
+SORT_BY_COMPLETED_ORDERS = "completed_orders"
+SORT_BY_REVIEW_COUNT = "review_count"
+SORT_DIR_DESC = "desc"
+SORT_DIR_ASC = "asc"
+
+
 @dataclass(frozen=True)
 class ExpertSummaryRow:
     "Денормализованные данные эксперта для карточки. Никаких контактов."
@@ -22,6 +29,8 @@ class ExpertSummaryRow:
     review_count: int
     completed_orders_count: int
     joined_at: datetime
+    last_order: Order | None
+    last_order_response: OrderResponseModel | None
 
 
 @dataclass(frozen=True)
@@ -43,9 +52,11 @@ class ExpertsRepository:
         skip: int,
         limit: int,
         query: str | None,
+        sort_by: str = SORT_BY_RATING,
+        sort_dir: str = SORT_DIR_DESC,
     ) -> tuple[list[ExpertSummaryRow], bool]:
-        "Постраничная выдача карточек экспертов. Сортировка: rating desc, review_count desc, дата регистрации desc."
-        completed_orders_subq = (
+        "Карточки экспертов с агрегатами. Только эксперты с отзывами (review_count > 0)."
+        completed_orders_expr = (
             select(func.count(Order.id))
             .where(
                 Order.assigned_expert_id == User.id,
@@ -53,18 +64,15 @@ class ExpertsRepository:
             )
             .correlate(User)
             .scalar_subquery()
+            .label("completed_orders_count")
         )
 
         base_query: Select = (
-            select(User, completed_orders_subq.label("completed_orders_count"))
+            select(User, completed_orders_expr)
             .where(
                 User.role == UserRole.EXPERT,
                 User.is_active.is_(True),
-            )
-            .order_by(
-                User.rating.desc().nullslast(),
-                User.review_count.desc(),
-                User.created_at.desc(),
+                User.review_count > 0,
             )
         )
 
@@ -74,20 +82,31 @@ class ExpertsRepository:
                 User.first_name.ilike(pattern) | User.last_name.ilike(pattern)
             )
 
-        rows = (
-            await self.db.execute(base_query.offset(skip).limit(limit + 1))
-        ).all()
+        sort_column = self.resolve_sort_column(sort_by, completed_orders_expr)
+        is_desc = sort_dir != SORT_DIR_ASC
+        primary = sort_column.desc().nullslast() if is_desc else sort_column.asc().nullsfirst()
+        base_query = base_query.order_by(primary, User.created_at.desc())
+
+        rows = (await self.db.execute(base_query.offset(skip).limit(limit + 1))).all()
         has_more = len(rows) > limit
         rows = rows[:limit]
 
+        expert_ids = [user.id for user, _ in rows]
+        last_orders_by_expert = await self.fetch_last_orders(expert_ids)
+
         summaries: list[ExpertSummaryRow] = []
         for user, completed_orders_count in rows:
-            summaries.append(self.build_summary_row(user, completed_orders_count))
+            last_order = last_orders_by_expert.get(user.id)
+            last_response = (
+                self.find_accepted_response(last_order, user.id) if last_order is not None else None
+            )
+            summaries.append(
+                self.build_summary_row(user, completed_orders_count, last_order, last_response)
+            )
         return summaries, has_more
 
     async def get_summary(self, public_id: str) -> ExpertSummaryRow | None:
-        "Карточка одного эксперта по public_id. None, если эксперта нет или он не EXPERT."
-        completed_orders_subq = (
+        completed_orders_expr = (
             select(func.count(Order.id))
             .where(
                 Order.assigned_expert_id == User.id,
@@ -95,11 +114,12 @@ class ExpertsRepository:
             )
             .correlate(User)
             .scalar_subquery()
+            .label("completed_orders_count")
         )
 
         row = (
             await self.db.execute(
-                select(User, completed_orders_subq.label("completed_orders_count")).where(
+                select(User, completed_orders_expr).where(
                     User.public_id == public_id,
                     User.role == UserRole.EXPERT,
                 )
@@ -109,10 +129,14 @@ class ExpertsRepository:
         if row is None:
             return None
         user, completed_orders_count = row
-        return self.build_summary_row(user, completed_orders_count)
+        last_orders_by_expert = await self.fetch_last_orders([user.id])
+        last_order = last_orders_by_expert.get(user.id)
+        last_response = (
+            self.find_accepted_response(last_order, user.id) if last_order is not None else None
+        )
+        return self.build_summary_row(user, completed_orders_count, last_order, last_response)
 
     async def get_expert_id_by_public_id(self, public_id: str) -> int | None:
-        "Локальный id эксперта по public_id. None, если не найден."
         return (
             await self.db.execute(
                 select(User.id).where(
@@ -128,7 +152,6 @@ class ExpertsRepository:
         skip: int,
         limit: int,
     ) -> tuple[list[ExpertOrderHistoryItem], bool]:
-        "Архивные заказы, где эксперт был назначенным исполнителем. С принятым откликом."
         list_query: Select = (
             select(Order)
             .options(
@@ -154,7 +177,46 @@ class ExpertsRepository:
         ]
         return items, has_more
 
-    def build_summary_row(self, user: User, completed_orders_count: int | None) -> ExpertSummaryRow:
+    async def fetch_last_orders(self, expert_ids: list[int]) -> dict[int, Order]:
+        "Для каждого эксперта вернуть его последний ARCHIVED заказ. Один запрос на всех."
+        if not expert_ids:
+            return {}
+        query: Select = (
+            select(Order)
+            .options(
+                selectinload(Order.badges),
+                selectinload(Order.customer),
+                selectinload(Order.assigned_expert),
+                selectinload(Order.responses).selectinload(OrderResponseModel.expert),
+            )
+            .where(
+                Order.assigned_expert_id.in_(expert_ids),
+                Order.status == OrderStatus.ARCHIVED,
+            )
+            .distinct(Order.assigned_expert_id)
+            .order_by(Order.assigned_expert_id, Order.updated_at.desc())
+        )
+        orders = list((await self.db.execute(query)).scalars().all())
+        return {
+            order.assigned_expert_id: order
+            for order in orders
+            if order.assigned_expert_id is not None
+        }
+
+    def resolve_sort_column(self, sort_by: str, completed_orders_expr):
+        if sort_by == SORT_BY_COMPLETED_ORDERS:
+            return completed_orders_expr
+        if sort_by == SORT_BY_REVIEW_COUNT:
+            return User.review_count
+        return User.rating
+
+    def build_summary_row(
+        self,
+        user: User,
+        completed_orders_count: int | None,
+        last_order: Order | None,
+        last_response: OrderResponseModel | None,
+    ) -> ExpertSummaryRow:
         first = user.first_name or ""
         last = user.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
@@ -166,6 +228,8 @@ class ExpertsRepository:
             review_count=int(user.review_count or 0),
             completed_orders_count=int(completed_orders_count or 0),
             joined_at=user.created_at,
+            last_order=last_order,
+            last_order_response=last_response,
         )
 
     def find_accepted_response(

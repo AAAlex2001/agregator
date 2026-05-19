@@ -2,29 +2,38 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import s from "./SortPill.module.scss";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import { SortPillCloseIcon } from "./SortPillCloseIcon";
-import type { CustomerSortBy, SortDir } from "@/source/entities/response";
+import s from "./SortPill.module.scss";
 
-export interface PillSpec {
-  key: CustomerSortBy;
+export type SortDir = "asc" | "desc";
+
+export interface SortPillSpec<K extends string> {
+  key: K;
   label: string;
   ascLabel: string;
   descLabel: string;
 }
 
-interface Props {
-  pill: PillSpec;
-  sortBy: CustomerSortBy | null;
+interface Props<K extends string> {
+  pill: SortPillSpec<K>;
+  sortBy: K | null;
   sortDir: SortDir | null;
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
-  onChange: (sortBy: CustomerSortBy | null, sortDir: SortDir | null) => void;
+  onChange: (sortBy: K | null, sortDir: SortDir | null) => void;
 }
 
-export function SortPill({ pill, sortBy, sortDir, isOpen, onToggle, onClose, onChange }: Props) {
+export function SortPill<K extends string>({
+  pill,
+  sortBy,
+  sortDir,
+  isOpen,
+  onToggle,
+  onClose,
+  onChange,
+}: Props<K>) {
   const isActive = sortBy === pill.key;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
