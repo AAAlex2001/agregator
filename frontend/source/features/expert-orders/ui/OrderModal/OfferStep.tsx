@@ -72,20 +72,20 @@ export function OfferStep({
             error={formState.errors.deadline?.message}
           />
         </div>
+      </div>
 
-        <div className={base.fieldGroup}>
-          <span className={base.fieldLabel}>Ваша оценка стоимости работ</span>
-          <TextInput
-            active
-            inputMode="numeric"
-            value={cost}
-            onChange={(event) =>
-              setValue("cost", event.target.value.replace(/[^0-9]/g, ""), { shouldValidate })
-            }
-            placeholder="Сумма в рублях"
-            error={formState.errors.cost?.message}
-          />
-        </div>
+      <div className={base.fieldGroup}>
+        <span className={base.fieldLabel}>Ваша оценка стоимости работ</span>
+        <TextInput
+          active
+          inputMode="numeric"
+          value={cost}
+          onChange={(event) =>
+            setValue("cost", event.target.value.replace(/[^0-9]/g, ""), { shouldValidate })
+          }
+          placeholder="Сумма в рублях"
+          error={formState.errors.cost?.message}
+        />
       </div>
 
       <div className={base.fieldGroup}>

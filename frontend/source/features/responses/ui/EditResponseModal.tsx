@@ -85,17 +85,17 @@ export function EditResponseModal({
             <span className={s.fieldLabel}>Срок окончания работ</span>
             <CalendarInput active value={deadline} onChange={onDeadlineChange} placeholder="Выберите дату" />
           </div>
+        </div>
 
-          <div className={s.fieldGroup}>
-            <span className={s.fieldLabel}>Ваша оценка стоимости работ</span>
-            <TextInput
-              active
-              inputMode="numeric"
-              value={cost}
-              onChange={(event) => onCostChange(event.target.value)}
-              placeholder="Сумма в рублях"
-            />
-          </div>
+        <div className={s.fieldGroup}>
+          <span className={s.fieldLabel}>Ваша оценка стоимости работ</span>
+          <TextInput
+            active
+            inputMode="numeric"
+            value={cost}
+            onChange={(event) => onCostChange(event.target.value)}
+            placeholder="Сумма в рублях"
+          />
         </div>
 
         <div className={s.fieldGroup}>

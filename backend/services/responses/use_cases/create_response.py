@@ -39,7 +39,7 @@ class CreateResponseUseCase:
         order = await self.ensure_order_open(order_id)
 
         self.check_budget(order, data.proposed_sum_amount)
-        self.check_deadline(order, data.proposed_deadline)
+        self.check_dates(order, data.proposed_start_date, data.proposed_deadline)
         self.check_responses_deadline(order)
         await self.check_not_duplicated(order_id, expert_id)
 
@@ -81,11 +81,22 @@ class CreateResponseUseCase:
             )
 
     @staticmethod
-    def check_deadline(order: Order, proposed_deadline) -> None:
+    def check_dates(order: Order, proposed_start_date, proposed_deadline) -> None:
         if proposed_deadline > order.deadline:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Срок не может быть позже дедлайна заказчика",
+                detail="Срок окончания работ не может быть позже срока заказчика",
+            )
+        if proposed_start_date is not None and order.start_date is not None:
+            if proposed_start_date < order.start_date:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Срок начала работ не может быть раньше срока заказчика",
+                )
+        if proposed_start_date is not None and proposed_start_date > proposed_deadline:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Срок начала работ не может быть позже срока окончания",
             )
 
     @staticmethod

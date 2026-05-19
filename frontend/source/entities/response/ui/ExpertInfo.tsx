@@ -19,16 +19,35 @@ interface Props {
   reviewCount: number;
   expertPublicId?: string;
   hideHistoryLink?: boolean;
+  companyName?: string;
+  inn?: string | null;
 }
 
-export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicId, hideHistoryLink }: Props) {
+export function ExpertInfo({
+  name,
+  avatarUrl,
+  rating,
+  reviewCount,
+  expertPublicId,
+  hideHistoryLink,
+  companyName,
+  inn,
+}: Props) {
   const reviewsText = pluralReviews(reviewCount);
+  const hasHistory = reviewCount > 0;
 
   return (
     <div className={s.row}>
       <UserAvatar src={avatarUrl} alt={`Фото ${name || "эксперта"}`} className={s.avatar} />
       <div className={s.details}>
         <span className={s.name}>{name}</span>
+        {(companyName || inn) && (
+          <span className={s.company}>
+            {companyName}
+            {companyName && inn ? " · " : ""}
+            {inn ? `ИНН ${inn}` : ""}
+          </span>
+        )}
         {rating !== null && reviewCount > 0 ? (
           <div className={s.ratingRow}>
             <StarIcon filled width={16} height={16} />
@@ -47,7 +66,7 @@ export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicI
         ) : (
           <span className={s.noReviews}>Отзывов пока нет</span>
         )}
-        {expertPublicId && !hideHistoryLink && (
+        {expertPublicId && !hideHistoryLink && hasHistory && (
           <Link href={`/experts/${expertPublicId}/orders`} className={s.historyLink}>
             История заказов эксперта
           </Link>

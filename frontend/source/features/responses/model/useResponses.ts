@@ -2,6 +2,7 @@
 
 import { useEffect, useReducer } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { mapApiToCard } from "@/source/entities/response";
 import type { ResponseCardData, ResponseTabKey, UserRole, CustomerSortBy, SortDir } from "@/source/entities/response";
 import { fetchResponses, deleteResponse, restoreWithdrawnResponse, updateStatus, editResponse, createReview } from "../api/responses.api";
@@ -37,6 +38,9 @@ export function useResponses(role: UserRole | null) {
     initialTab && VALID_TABS.includes(initialTab) ? { ...initial, activeTab: initialTab } : initial,
   );
   const router = useRouter();
+  const { showError } = useNotifications();
+  const toast = (e: unknown, fallback = "Ошибка") =>
+    showError(e instanceof Error ? e.message : fallback);
 
   const reload = async () => {
     if (!role) return;
@@ -74,7 +78,7 @@ export function useResponses(role: UserRole | null) {
         hasMore: data.has_more,
       });
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
+      toast(e, "Ошибка загрузки");
     } finally {
       d({ type: "LOADING_MORE", value: false });
     }
@@ -97,7 +101,7 @@ export function useResponses(role: UserRole | null) {
       after?.();
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "ACTION_LOADING", id, mode: null });
     }
@@ -110,7 +114,7 @@ export function useResponses(role: UserRole | null) {
       const detail = await openChatByOrder(oid);
       router.push(`/chat/${detail.uuid}`);
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Не удалось открыть чат" });
+      toast(e, "Не удалось открыть чат");
     } finally {
       d({ type: "ACTION_LOADING", id: rid, mode: null });
     }
@@ -125,7 +129,7 @@ export function useResponses(role: UserRole | null) {
       d({ type: "WITHDRAW_TARGET", value: null });
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "ACTION_LOADING", id, mode: null });
     }
@@ -147,7 +151,7 @@ export function useResponses(role: UserRole | null) {
       d({ type: "EDITING", value: null });
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "EDIT_SUBMITTING", value: false });
     }
@@ -159,7 +163,7 @@ export function useResponses(role: UserRole | null) {
       await updateStatus(id, "ACCEPTED");
       void onChat(id, oid);
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "ACTION_LOADING", id, mode: null });
     }
@@ -175,7 +179,7 @@ export function useResponses(role: UserRole | null) {
       }
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "ACTION_LOADING", id, mode: null });
     }
@@ -189,7 +193,7 @@ export function useResponses(role: UserRole | null) {
       d({ type: "COMPLETION_MODAL", value: false });
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     }
   };
 
@@ -202,7 +206,7 @@ export function useResponses(role: UserRole | null) {
       d({ type: "REJECT_TARGET", value: null });
       void reload();
     } catch (e) {
-      d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+      toast(e);
     } finally {
       d({ type: "ACTION_LOADING", id, mode: null });
     }
@@ -228,7 +232,7 @@ export function useResponses(role: UserRole | null) {
         await restoreWithdrawnResponse(id);
         void reload();
       } catch (e) {
-        d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка" });
+        toast(e);
       } finally {
         d({ type: "ACTION_LOADING", id, mode: null });
       }

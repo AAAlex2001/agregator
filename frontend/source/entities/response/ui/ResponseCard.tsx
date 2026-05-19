@@ -147,6 +147,8 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
         rating={card.expertRating}
         reviewCount={card.expertReviewCount}
         expertPublicId={card.expertPublicId}
+        companyName={card.expertCompanyName}
+        inn={card.expertInn}
       />
     </div>
   ) : (
