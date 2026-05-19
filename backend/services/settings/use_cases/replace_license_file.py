@@ -1,7 +1,7 @@
 from fastapi import UploadFile
 
 from models.user import User
-from services.license_storage import remove_license_file, save_license_file
+from services.license_holders import remove_license_file, save_license_file
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
 

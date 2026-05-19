@@ -16,7 +16,7 @@ from schemas.registration import (
     UserResponse,
 )
 from services.dadata import DaDataService
-from services.license_storage import remove_license_file, save_license_file
+from services.license_holders import remove_license_file, save_license_file
 from services.login import CreateSessionUseCase, LoginRepository, SESSION_MAX_DAYS
 from services.registration import (
     ConfirmEmailUseCase,

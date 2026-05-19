@@ -39,3 +39,20 @@
 }
 
 .noReviews { font-size: 14px; color: #999; }
+
+.historyLink {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(26, 26, 26, 0.4);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.historyLink:hover,
+.historyLink:focus-visible {
+  color: #ff8a00;
+  text-decoration-color: currentColor;
+}

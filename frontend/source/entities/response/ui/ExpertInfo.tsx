@@ -3,7 +3,7 @@ import { StarIcon } from "@/source/shared/ui/icons";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import s from "./ExpertInfo.module.scss";
 
-function pluralReviews(n: number) {
+function pluralReviews(n: number): string {
   const r = n % 100;
   const d = n % 10;
   if (r >= 11 && r <= 19) return `${n} отзывов`;
@@ -45,6 +45,11 @@ export function ExpertInfo({ name, avatarUrl, rating, reviewCount, expertPublicI
           </div>
         ) : (
           <span className={s.noReviews}>Отзывов пока нет</span>
+        )}
+        {expertPublicId && (
+          <Link href={`/experts/${expertPublicId}/orders`} className={s.historyLink}>
+            История заказов эксперта
+          </Link>
         )}
       </div>
     </div>

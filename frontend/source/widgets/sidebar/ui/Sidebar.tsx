@@ -80,6 +80,12 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       ],
     },
     {
+      label: "Эксперты",
+      items: [
+        { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
+      ],
+    },
+    {
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат", icon: TabChatIcon },
@@ -95,6 +101,12 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
     },
   ],
   LICENSE_HOLDER: [
+    {
+      label: "Эксперты",
+      items: [
+        { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
+      ],
+    },
     {
       label: "Общение",
       items: [
