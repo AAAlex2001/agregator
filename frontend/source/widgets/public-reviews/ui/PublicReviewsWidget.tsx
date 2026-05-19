@@ -10,12 +10,17 @@ import { PublicReviewCard } from "./PublicReviewCard";
 import { PublicReviewsSkeleton } from "./PublicReviewsSkeleton";
 import s from "./PublicReviewsWidget.module.scss";
 
-export function PublicReviewsWidget() {
+interface Props {
+  initial?: LandingReview[];
+}
+
+export function PublicReviewsWidget({ initial }: Props = {}) {
   const { showError } = useNotifications();
-  const [items, setItems] = useState<LandingReview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [items, setItems] = useState<LandingReview[]>(initial ?? []);
+  const [isLoading, setIsLoading] = useState(!initial);
 
   useEffect(() => {
+    if (initial) return;
     let cancelled = false;
     setIsLoading(true);
     fetchPublicReviews()

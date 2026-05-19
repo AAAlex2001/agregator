@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleList } from "@/source/entities/article";
 import { ArticlesList } from "@/source/features/articles-list";
+import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export default async function BlogListPage() {
   ]);
   return (
     <>
+      <RedirectIfAuthed to="/landing/blog" />
       <LandingHeader />
       <ArticlesList
         kind="blog"

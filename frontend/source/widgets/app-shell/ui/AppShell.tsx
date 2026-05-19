@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { SidebarShell } from "@/source/widgets/sidebar";
+import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -32,5 +33,10 @@ export function AppShell({ children }: AppShellProps) {
   if (shouldShowSidebar(pathname)) {
     return <SidebarShell>{children}</SidebarShell>;
   }
-  return <>{children}</>;
+  return (
+    <>
+      <LandingHeaderAuthed />
+      {children}
+    </>
+  );
 }

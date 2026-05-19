@@ -1,4 +1,4 @@
-import { API_URL } from "@/source/shared/api/config";
+import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
 
 export interface LandingReview {
   id: number;
@@ -8,8 +8,9 @@ export interface LandingReview {
   created_at: string;
 }
 
-export async function fetchPublicReviews(): Promise<LandingReview[]> {
-  const res = await fetch(`${API_URL}/public/reviews`, { cache: "no-store" });
+export async function fetchPublicReviews(opts: { server?: boolean } = {}): Promise<LandingReview[]> {
+  const base = opts.server ? SERVER_API_URL : API_URL;
+  const res = await fetch(`${base}/public/reviews`, { cache: "no-store" });
   if (!res.ok) {
     throw new Error("Не удалось загрузить отзывы");
   }

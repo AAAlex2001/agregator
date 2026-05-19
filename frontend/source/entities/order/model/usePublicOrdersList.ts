@@ -8,6 +8,7 @@ import type { OrderCardData } from "./types";
 interface Args {
   pageSize?: number;
   onError?: (message: string) => void;
+  initial?: { items: OrderCardData[]; hasMore: boolean };
 }
 
 interface Result {
@@ -18,14 +19,15 @@ interface Result {
   loadMore: () => Promise<void>;
 }
 
-export function usePublicOrdersList({ pageSize = 50, onError }: Args = {}): Result {
-  const [items, setItems] = useState<OrderCardData[]>([]);
-  const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+export function usePublicOrdersList({ pageSize = 50, onError, initial }: Args = {}): Result {
+  const [items, setItems] = useState<OrderCardData[]>(initial?.items ?? []);
+  const [hasMore, setHasMore] = useState<boolean>(initial?.hasMore ?? false);
+  const [isLoading, setIsLoading] = useState(!initial);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const inflightRef = useRef(false);
 
   useEffect(() => {
+    if (initial) return;
     let cancelled = false;
     setIsLoading(true);
     fetchOrders(0, pageSize)

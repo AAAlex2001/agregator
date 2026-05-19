@@ -8,52 +8,54 @@ import {
   type ArticleListItem,
 } from "@/source/entities/article";
 import { extractToc } from "../lib/extractToc";
-import styles from "./ArticleView.module.scss";
+import s from "./ArticleView.module.scss";
 
 interface Props {
   article: ArticleDetail;
   related: ArticleListItem[];
+  homeHref?: string;
+  sectionHrefPrefix?: string;
 }
 
-export function ArticleView({ article, related }: Props) {
+export function ArticleView({ article, related, homeHref = "/", sectionHrefPrefix = "" }: Props) {
   const isNews = article.kind === "news";
   const sectionTitle = isNews ? "Новости" : "Блог";
-  const sectionHref = isNews ? "/news" : "/blog";
+  const sectionHref = `${sectionHrefPrefix}${isNews ? "/news" : "/blog"}`;
   const { html, toc } = extractToc(article.content_html || "");
   const dateLabel = formatArticleDate(article.published_at);
 
   return (
-    <article className={styles.wrapper}>
+    <article className={s.wrapper}>
       <Breadcrumbs
         items={[
-          { label: "Главная", href: "/" },
+          { label: "Главная", href: homeHref },
           { label: sectionTitle, href: sectionHref },
           { label: article.title },
         ]}
       />
 
-      <header className={styles.head}>
-        <Title text={article.title} as="h1" className={styles.title} />
-        {article.excerpt ? <Subtitle text={article.excerpt} className={styles.subtitle} /> : null}
-        <div className={styles.meta}>
+      <header className={s.head}>
+        <Title text={article.title} as="h1" className={s.title} />
+        {article.excerpt ? <Subtitle text={article.excerpt} className={s.subtitle} /> : null}
+        <div className={s.meta}>
           {article.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className={styles.tag}>{tag}</span>
+            <span key={tag} className={s.tag}>{tag}</span>
           ))}
           {dateLabel ? <time dateTime={article.published_at || undefined}>{dateLabel}</time> : null}
         </div>
       </header>
 
-      <div className={styles.layout}>
-        {toc.length > 0 ? <DocToc items={toc} className={styles.toc} /> : null}
-        <div className={styles.body}>
-          <div className={styles.content} dangerouslySetInnerHTML={{ __html: html }} />
+      <div className={s.layout}>
+        {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
+        <div className={s.body}>
+          <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className={styles.related}>
-          <h2 className={styles.relatedTitle}>Смотрите также</h2>
-          <div className={styles.relatedGrid}>
+        <section className={s.related}>
+          <h2 className={s.relatedTitle}>Смотрите также</h2>
+          <div className={s.relatedGrid}>
             {related.map((item) => (
               <ArticleCard
                 key={item.id}

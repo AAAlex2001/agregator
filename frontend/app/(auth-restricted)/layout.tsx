@@ -6,6 +6,7 @@ import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
 import { SidebarMobileProvider } from "@/source/widgets/sidebar";
 import { LicenseHoldersDrawerProvider } from "@/source/widgets/license-holders-drawer";
 import { UnreadCountProvider } from "@/source/features/notifications";
+import s from "./layout.module.scss";
 
 export const metadata: Metadata = {
   robots: {
@@ -27,7 +28,9 @@ export default async function AppLayout({
         <UnreadCountProvider>
           <SidebarMobileProvider>
             <LicenseHoldersDrawerProvider>
-              <AppShell>{children}</AppShell>
+              <div className={s.root}>
+                <AppShell>{children}</AppShell>
+              </div>
               <CabinetMenuTabs />
             </LicenseHoldersDrawerProvider>
           </SidebarMobileProvider>

@@ -1,0 +1,11 @@
+.root {
+  --page-pt: 24px;
+
+  @media (min-width: 768px) {
+    --page-pt: 32px;
+  }
+
+  @media (min-width: 1440px) {
+    --page-pt: 40px;
+  }
+}

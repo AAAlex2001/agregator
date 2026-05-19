@@ -1,0 +1,22 @@
+import Link from "next/link";
+import s from "./header-authed.module.scss";
+
+const NAV_PAGES = [
+  { href: "/landing/news", label: "Новости" },
+  { href: "/landing/blog", label: "Блог" },
+  { href: "/landing/reviews", label: "Отзывы" },
+] as const;
+
+const HeaderAuthed = () => (
+  <header className={s.header}>
+    <nav className={s.nav} aria-label="Основная навигация">
+      {NAV_PAGES.map((page) => (
+        <Link key={page.href} href={page.href} className={s.navLink}>
+          {page.label}
+        </Link>
+      ))}
+    </nav>
+  </header>
+);
+
+export default HeaderAuthed;
