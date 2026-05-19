@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Float, Select, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -214,10 +214,10 @@ class ExpertsRepository:
             return completed_orders_expr
         if sort_by == SORT_BY_REVIEW_COUNT:
             return User.review_count
-        return (
-            (User.review_count * func.coalesce(User.rating, 0) + RATING_PRIOR_WEIGHT * RATING_PRIOR_MEAN)
-            / (User.review_count + RATING_PRIOR_WEIGHT)
-        )
+        rating_f = func.coalesce(cast(User.rating, Float), cast(0.0, Float))
+        prior = cast(RATING_PRIOR_WEIGHT * RATING_PRIOR_MEAN, Float)
+        weight = cast(RATING_PRIOR_WEIGHT, Float)
+        return (User.review_count * rating_f + prior) / (User.review_count + weight)
 
     def build_summary_row(
         self,
