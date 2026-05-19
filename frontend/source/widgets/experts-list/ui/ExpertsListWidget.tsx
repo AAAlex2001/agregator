@@ -10,7 +10,7 @@ import { ExpertCard, useExpertsList } from "@/source/entities/expert";
 import type { ExpertSortBy } from "@/source/entities/expert";
 import s from "./ExpertsListWidget.module.scss";
 
-const SKELETON_COUNT = 6;
+const SKELETON_COUNT = 3;
 
 const SORT_OPTIONS: SortPillSpec<ExpertSortBy>[] = [
   {
@@ -66,7 +66,7 @@ export function ExpertsListWidget() {
       </div>
 
       {isLoading ? (
-        <div className={s.grid}>
+        <div className={s.list}>
           {Array.from({ length: SKELETON_COUNT }, (_, index) => (
             <Skeleton key={index} className={s.cardSkeleton} rounded="lg" />
           ))}
@@ -89,7 +89,7 @@ export function ExpertsListWidget() {
         </div>
       ) : (
         <>
-          <div className={s.grid}>
+          <div className={s.list}>
             {items.map((expert) => (
               <ExpertCard
                 key={expert.publicId}

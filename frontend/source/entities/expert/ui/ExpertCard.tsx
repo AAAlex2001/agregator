@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
-import { OrderCard } from "@/source/entities/order";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import { StarIcon } from "@/source/shared/ui/icons";
 import type { OrderCardData } from "@/source/entities/order";
@@ -43,6 +42,17 @@ function formatJoinedDate(joinedAt: string): string {
   return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function Stars({ rating }: { rating: number | null }) {
+  const filledCount = rating !== null ? Math.round(rating) : 0;
+  return (
+    <span className={s.stars} aria-hidden="true">
+      {Array.from({ length: 5 }, (_, index) => (
+        <StarIcon key={index} filled={index < filledCount} width={16} height={16} />
+      ))}
+    </span>
+  );
+}
+
 export function ExpertCard({
   publicId,
   fullName,
@@ -61,66 +71,84 @@ export function ExpertCard({
 
   return (
     <article className={s.card}>
-      <div className={s.header}>
-        <UserAvatar src={avatarUrl} alt={`Фото ${fullName}`} className={s.avatar} />
-        <div className={s.headerText}>
-          <h3 className={s.name}>{fullName}</h3>
-          {joinedDisplay && (
-            <span className={s.joined}>На платформе с {joinedDisplay}</span>
+      <div className={s.body}>
+        <div className={s.left}>
+          <div className={s.header}>
+            <UserAvatar src={avatarUrl} alt={`Фото ${fullName}`} className={s.avatar} />
+            <div className={s.headerText}>
+              <h3 className={s.name}>{fullName}</h3>
+              {joinedDisplay && (
+                <span className={s.joined}>На платформе с {joinedDisplay}</span>
+              )}
+            </div>
+          </div>
+
+          <dl className={s.stats}>
+            <div className={s.statRow}>
+              <dt className={s.statLabel}>Рейтинг:</dt>
+              <dd className={s.statValue}>
+                <Stars rating={rating} />
+                <span className={s.statNumber}>{ratingFormatted}</span>
+              </dd>
+            </div>
+            <div className={s.statRow}>
+              <dt className={s.statLabel}>Количество заказов:</dt>
+              <dd className={s.statValue}>
+                <span className={s.statNumber}>
+                  {completedOrdersCount} {pluralOrders(completedOrdersCount)}
+                </span>
+              </dd>
+            </div>
+            <div className={s.statRow}>
+              <dt className={s.statLabel}>Количество отзывов:</dt>
+              <dd className={s.statValue}>
+                {reviewCount > 0 ? (
+                  <Link href={`/expert/reviews/${publicId}`} className={s.statLink}>
+                    {reviewCount} {pluralReviews(reviewCount)}
+                  </Link>
+                ) : (
+                  <span className={s.statNumber}>0 отзывов</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+
+          <div className={s.actions}>
+            <Button
+              variant="secondary"
+              size="sm"
+              href={`/experts/${publicId}/orders`}
+            >
+              История заказов
+            </Button>
+          </div>
+        </div>
+
+        <div className={s.right}>
+          <span className={s.rightLabel}>Последний выполненный заказ</span>
+          {lastOrder ? (
+            <div className={s.lastOrder}>
+              <span className={s.lastOrderMeta}>№ {lastOrder.id}</span>
+              <h4 className={s.lastOrderTitle}>{lastOrder.title || "—"}</h4>
+              <div className={s.lastOrderGrid}>
+                <div className={s.lastOrderItem}>
+                  <span className={s.lastOrderItemLabel}>Заказчик</span>
+                  <span className={s.lastOrderItemValue}>{lastOrder.customer || "—"}</span>
+                </div>
+                <div className={s.lastOrderItem}>
+                  <span className={s.lastOrderItemLabel}>Сумма</span>
+                  <span className={s.lastOrderItemValue}>{lastOrder.sum || "—"}</span>
+                </div>
+                <div className={s.lastOrderItem}>
+                  <span className={s.lastOrderItemLabel}>Срок выполнения до</span>
+                  <span className={s.lastOrderItemValue}>{lastOrder.date || "—"}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <span className={s.lastOrderEmpty}>Заказы ещё не выполнены</span>
           )}
         </div>
-      </div>
-
-      <div className={s.stats}>
-        <span className={s.statRating}>
-          <StarIcon filled width={16} height={16} />
-          <span>{ratingFormatted}</span>
-        </span>
-        <span className={s.dot} aria-hidden="true">·</span>
-        <span className={s.statText}>
-          {reviewCount > 0 ? (
-            <Link href={`/expert/reviews/${publicId}`} className={s.statLink}>
-              {reviewCount} {pluralReviews(reviewCount)}
-            </Link>
-          ) : (
-            <span className={s.statMuted}>0 отзывов</span>
-          )}
-        </span>
-        <span className={s.dot} aria-hidden="true">·</span>
-        <span className={s.statText}>
-          {completedOrdersCount > 0 ? (
-            <>
-              {completedOrdersCount} {pluralOrders(completedOrdersCount)}
-            </>
-          ) : (
-            <span className={s.statMuted}>0 заказов</span>
-          )}
-        </span>
-      </div>
-
-      {lastOrder && (
-        <div className={s.lastOrder}>
-          <span className={s.lastOrderLabel}>Последний выполненный заказ</span>
-          <OrderCard
-            id={lastOrder.id}
-            badges={lastOrder.badges}
-            title={lastOrder.title}
-            customer={lastOrder.customer}
-            date={lastOrder.date}
-            sum={lastOrder.sum}
-            status="ARCHIVED"
-          />
-        </div>
-      )}
-
-      <div className={s.actions}>
-        <Button
-          variant="secondary"
-          size="sm"
-          href={`/experts/${publicId}/orders`}
-        >
-          История заказов
-        </Button>
       </div>
     </article>
   );

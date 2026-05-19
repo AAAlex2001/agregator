@@ -31,23 +31,23 @@
 
 .sortRow {
   width: 100%;
+  max-width: 1340px;
+  margin: 0 auto;
   display: flex;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+.list {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   width: 100%;
-
-  @media (min-width: 1440px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 .cardSkeleton {
   display: block;
   width: 100%;
+  max-width: 1340px;
+  margin: 0 auto;
   height: 220px;
 }
 
