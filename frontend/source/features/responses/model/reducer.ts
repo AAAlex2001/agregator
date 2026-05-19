@@ -15,6 +15,8 @@ export interface State {
   editSubmitting: boolean;
   withdrawTarget: ResponseCardData | null;
   rejectTarget: ResponseCardData | null;
+  deleteRejectedTarget: ResponseCardData | "all" | null;
+  isDeletingRejected: boolean;
   completionModal: boolean;
   reviewModal: boolean;
   reviewTarget: ResponseCardData | null;
@@ -34,6 +36,8 @@ export type Action =
   | { type: "EDIT_SUBMITTING"; value: boolean }
   | { type: "WITHDRAW_TARGET"; value: ResponseCardData | null }
   | { type: "REJECT_TARGET"; value: ResponseCardData | null }
+  | { type: "DELETE_REJECTED_TARGET"; value: ResponseCardData | "all" | null }
+  | { type: "DELETE_REJECTED_LOADING"; value: boolean }
   | { type: "COMPLETION_MODAL"; value: boolean }
   | { type: "REVIEW_MODAL"; value: boolean }
   | { type: "REVIEW_TARGET"; value: ResponseCardData | null }
@@ -53,6 +57,8 @@ export const initial: State = {
   editSubmitting: false,
   withdrawTarget: null,
   rejectTarget: null,
+  deleteRejectedTarget: null,
+  isDeletingRejected: false,
   completionModal: false,
   reviewModal: false,
   reviewTarget: null,
@@ -73,6 +79,8 @@ export function reducer(state: State, action: Action): State {
     case "EDIT_SUBMITTING":  return { ...state, editSubmitting: action.value };
     case "WITHDRAW_TARGET":  return { ...state, withdrawTarget: action.value };
     case "REJECT_TARGET":    return { ...state, rejectTarget: action.value };
+    case "DELETE_REJECTED_TARGET":  return { ...state, deleteRejectedTarget: action.value };
+    case "DELETE_REJECTED_LOADING": return { ...state, isDeletingRejected: action.value };
     case "COMPLETION_MODAL": return { ...state, completionModal: action.value };
     case "REVIEW_MODAL":     return { ...state, reviewModal: action.value };
     case "REVIEW_TARGET":    return { ...state, reviewTarget: action.value };

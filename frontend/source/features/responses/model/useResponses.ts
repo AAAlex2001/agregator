@@ -246,23 +246,30 @@ export function useResponses(role: UserRole | null) {
         d({ type: "ACTION_LOADING", id, mode: null });
       }
     },
-    onDeleteRejected: async (id: number) => {
-      d({ type: "ACTION_LOADING", id, mode: "delete" });
+    onDeleteRejected: (id: number) => {
+      const card = s.items.find((item) => item.id === id) ?? null;
+      d({ type: "DELETE_REJECTED_TARGET", value: card });
+    },
+    onDeleteAllRejected: () => {
+      d({ type: "DELETE_REJECTED_TARGET", value: "all" });
+    },
+    closeDeleteRejected: () => d({ type: "DELETE_REJECTED_TARGET", value: null }),
+    onDeleteRejectedConfirm: async () => {
+      const target = s.deleteRejectedTarget;
+      if (target === null) return;
+      d({ type: "DELETE_REJECTED_LOADING", value: true });
       try {
-        await deleteRejectedResponse(id);
+        if (target === "all") {
+          await deleteAllRejectedResponses();
+        } else {
+          await deleteRejectedResponse(target.id);
+        }
+        d({ type: "DELETE_REJECTED_TARGET", value: null });
         void reload();
       } catch (e) {
         toast(e);
       } finally {
-        d({ type: "ACTION_LOADING", id, mode: null });
-      }
-    },
-    onDeleteAllRejected: async () => {
-      try {
-        await deleteAllRejectedResponses();
-        void reload();
-      } catch (e) {
-        toast(e);
+        d({ type: "DELETE_REJECTED_LOADING", value: false });
       }
     },
     onAccept,

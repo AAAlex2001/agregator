@@ -3,7 +3,12 @@
 import Button from "@/source/shared/ui/Button";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
-import { CompletionModal, RejectResponseModalContainer, useResponses } from "@/source/features/responses";
+import {
+  CompletionModal,
+  DeleteRejectedModal,
+  RejectResponseModalContainer,
+  useResponses,
+} from "@/source/features/responses";
 import { ResponsesList } from "./ResponsesList";
 import { SortPills } from "@/source/features/responses-sort";
 
@@ -27,18 +32,18 @@ export function CustomerResponsesWidget() {
     canRestore: (card: typeof model.items[number]) => !card.orderLocked,
   };
 
-  const handleDeleteAllRejected = async () => {
-    if (!window.confirm("Удалить все отклонённые отклики? Действие нельзя отменить.")) return;
-    await model.onDeleteAllRejected();
-    showSuccess("Отклонённые отклики удалены");
-  };
-
   const topSlot =
     model.activeTab === "rejected" && model.items.length > 0 ? (
-      <Button variant="transparent" size="sm" onClick={() => void handleDeleteAllRejected()}>
+      <Button variant="transparent" size="sm" onClick={() => model.onDeleteAllRejected()}>
         Удалить все отклонённые
       </Button>
     ) : undefined;
+
+  const deleteTarget = model.deleteRejectedTarget;
+  const deleteMode: "single" | "all" = deleteTarget === "all" ? "all" : "single";
+  const deleteCount = deleteMode === "all" ? model.items.length : undefined;
+  const deleteOrderTitle =
+    deleteTarget && deleteTarget !== "all" ? deleteTarget.orderTitle : undefined;
 
   return (
     <>
@@ -75,6 +80,16 @@ export function CustomerResponsesWidget() {
         isLoading={model.rejectTarget ? model.actionLoading[model.rejectTarget.id] === "reject" : false}
         onCancel={model.closeReject}
         onConfirm={model.onRejectConfirm}
+      />
+
+      <DeleteRejectedModal
+        open={deleteTarget !== null}
+        mode={deleteMode}
+        count={deleteCount}
+        orderTitle={deleteOrderTitle}
+        isLoading={model.isDeletingRejected}
+        onCancel={model.closeDeleteRejected}
+        onConfirm={model.onDeleteRejectedConfirm}
       />
     </>
   );

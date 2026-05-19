@@ -1,0 +1,26 @@
+.title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+.desc {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+  }
+}
