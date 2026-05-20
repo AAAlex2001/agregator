@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.rate_limit import rate_limit
 from schemas.settings import (
     ChangePasswordRequest,
     ConfirmEmailChangeRequest,
@@ -93,7 +94,10 @@ async def update_email_preferences(
     return to_response(user)
 
 
-@router.post("/settings/password")
+@router.post(
+    "/settings/password",
+    dependencies=[Depends(rate_limit("settings_password", max_calls=5, window_seconds=60))],
+)
 async def change_password(
     data: ChangePasswordRequest,
     db: AsyncSession = Depends(get_db),
@@ -104,7 +108,10 @@ async def change_password(
     return {"detail": "Пароль успешно изменён"}
 
 
-@router.post("/settings/email/request-change")
+@router.post(
+    "/settings/email/request-change",
+    dependencies=[Depends(rate_limit("settings_email_request", max_calls=2, window_seconds=60))],
+)
 async def request_email_change(
     data: RequestEmailChangeRequest,
     background_tasks: BackgroundTasks,
@@ -118,7 +125,11 @@ async def request_email_change(
     return {"detail": "Код отправлен на новый адрес"}
 
 
-@router.post("/settings/email/confirm-change", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/email/confirm-change",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_email_confirm", max_calls=5, window_seconds=60))],
+)
 async def confirm_email_change(
     data: ConfirmEmailChangeRequest,
     db: AsyncSession = Depends(get_db),

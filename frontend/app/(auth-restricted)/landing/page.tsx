@@ -54,6 +54,7 @@ export default async function AuthRestrictedLandingPage() {
         subtitle={hero.subtitle}
         buttonText={hero.buttonText}
         bullets={hero.bullets}
+        compact
       />
       <LandingSearchBlock />
       <LandingHowItWorks

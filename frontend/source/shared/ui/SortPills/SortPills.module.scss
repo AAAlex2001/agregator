@@ -11,7 +11,14 @@
     display: none;
   }
 
-  @media (min-width: 470px) {
+  @media (min-width: 625px) {
+    justify-content: center;
+    overflow-x: visible;
+  }
+}
+
+.rowCompact {
+  @media (min-width: 425px) {
     justify-content: center;
     overflow-x: visible;
   }

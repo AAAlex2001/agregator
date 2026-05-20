@@ -8,10 +8,36 @@
   max-width: 1620px;
 }
 
+.heroCompact {
+  margin: 16px auto 32px auto;
+}
+
+.heroTitle {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto 40px auto;
+}
+
+.heroTitleText {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heroBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 .leftSection {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
 }
 
 .heroHeader {
@@ -19,6 +45,11 @@
   flex-direction: column;
   gap: 15px;
   margin-bottom: 40px;
+}
+
+.heroSubtitle {
+  text-align: justify;
+  text-align-last: left;
 }
 
 .bullets {
@@ -50,6 +81,8 @@
 .bulletText {
   flex: 1 1 auto;
   min-width: 0;
+  text-align: justify;
+  text-align-last: left;
 }
 
 @media (min-width: 768px) {
@@ -225,23 +258,26 @@
   margin: 78px auto 200px auto;
 }
 
+  .heroCompact {
+    margin: 24px auto 56px auto;
+  }
+
+  .heroTitle h1 {
+    font-size: 30px;
+    line-height: 37px;
+    font-weight: 600;
+  }
+
   .leftSection {
     justify-content: flex-start;
     align-items: flex-start;
     margin-right: auto;
 
-  h1 {
-    font-size: 30px;
-    line-height: 37px;
-    font-weight: 600;
-    max-width: 1000px;
-    }
-
   p {
     font-size: 16px;
     line-height: 24px;
     font-weight: 500;
-    max-width: 700px;
+    max-width: none;
   }
 }
 .visual {
@@ -332,21 +368,27 @@
 @media (min-width: 1440px) {
   .hero {
     margin: 112px auto 200px auto;
+  }
+
+  .heroCompact {
+    margin: 32px auto 64px auto;
+  }
+
+  .heroBody {
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
   }
 
-  .leftSection {
-    flex: 1 1 0;
-    min-width: 0;
-
-  h1 {
+  .heroTitle h1 {
     font-size: 30px;
     line-height: 42px;
     font-weight: 600;
-    max-width: none;
-    }
+  }
+
+  .leftSection {
+    flex: 1 1 0;
+    min-width: 0;
 
   p {
     font-size: 16px;
@@ -447,20 +489,26 @@
 @media (min-width: 1920px) {
   .hero {
     margin: 140px auto 200px auto;
+  }
+
+  .heroCompact {
+    margin: 40px auto 72px auto;
+  }
+
+  .heroBody {
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
   }
 
+  .heroTitle h1 {
+    font-size: 34px;
+    line-height: 41px;
+  }
+
   .leftSection {
     flex: 1 1 0;
     min-width: 0;
-
-  h1 {
-    font-size: 34px;
-    line-height: 41px;
-    max-width: none;
-    }
 
   p {
     font-size: 18px;
