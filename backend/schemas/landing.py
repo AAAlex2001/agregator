@@ -8,6 +8,7 @@ class LandingHeroDto(BaseModel):
     title: str
     subtitle: str
     button_text: str
+    bullets: List[str]
 
 
 class LandingSectionHeaderDto(BaseModel):

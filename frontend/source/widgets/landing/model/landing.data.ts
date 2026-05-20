@@ -65,6 +65,7 @@ export type LandingHeroContent = {
   title: string;
   subtitle: string;
   buttonText: string;
+  bullets: string[];
 };
 
 export type LandingPricingContent = {
@@ -142,7 +143,7 @@ type ApiPricingContent = {
 };
 
 type ApiSnapshot = {
-  hero: { title: string; subtitle: string; button_text: string };
+  hero: { title: string; subtitle: string; button_text: string; bullets: string[] };
   section_headers: ApiSectionHeaders;
   how_it_works: { client: ApiStep[]; expert: ApiStep[]; license_holder: ApiStep[] };
   key_advantages: { client: ApiStep[]; expert: ApiStep[]; license_holder: ApiStep[] };
@@ -178,6 +179,7 @@ export class LandingApi {
         title: api.hero.title,
         subtitle: api.hero.subtitle,
         buttonText: api.hero.button_text,
+        bullets: api.hero.bullets ?? [],
       },
       sectionHeaders: this.mapSectionHeaders(api.section_headers),
       howItWorks: {

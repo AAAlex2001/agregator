@@ -81,6 +81,7 @@ export default async function LandingPage() {
 						title={hero.title}
 						subtitle={hero.subtitle}
 						buttonText={hero.buttonText}
+						bullets={hero.bullets}
 					/>
 					<LandingSearchBlock />
 					<LandingHowItWorks

@@ -8,14 +8,29 @@ type HeroProps = {
   title: string;
   subtitle: string;
   buttonText: string;
+  bullets: string[];
 };
 
-const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
+const Hero = ({ title, subtitle, buttonText, bullets }: HeroProps) => {
+  const hasBullets = bullets.length > 0;
+
   return (
     <section className={s.hero} id="about">
       <div className={s.leftSection}>
         <header className={s.heroHeader}>
           <Title text={title} />
+          {hasBullets && (
+            <ul className={s.bullets}>
+              {bullets.map((bullet) => (
+                <li key={bullet} className={s.bulletItem}>
+                  <span className={s.bulletIcon} aria-hidden="true">
+                    <CheckIcon />
+                  </span>
+                  <span className={s.bulletText}>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <Subtitle text={subtitle} />
         </header>
         <Button href="/register" variant="primary" fullWidth showArrow className={s.heroButton}>

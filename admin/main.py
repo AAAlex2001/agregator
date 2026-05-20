@@ -28,6 +28,8 @@ from models import (
     Article, ArticleKind, ArticleStatus,
 )
 
+from forms import BulletListField
+
 # --- БД (sync для SQLAdmin) ---
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 # SQLAdmin работает с sync движком
@@ -1331,10 +1333,17 @@ class LandingHeroAdmin(ModelView, model=LandingHero):
     can_delete = False
 
     column_list = [LandingHero.id, LandingHero.title, LandingHero.button_text]
-    form_columns = [LandingHero.title, LandingHero.subtitle, LandingHero.button_text]
+    form_columns = [
+        LandingHero.title,
+        LandingHero.bullets,
+        LandingHero.subtitle,
+        LandingHero.button_text,
+    ]
+    form_overrides = {"bullets": BulletListField}
     column_labels = {
         LandingHero.id: "ID",
         LandingHero.title: "Заголовок",
+        LandingHero.bullets: "Список под заголовком",
         LandingHero.subtitle: "Подзаголовок",
         LandingHero.button_text: "Текст кнопки",
     }

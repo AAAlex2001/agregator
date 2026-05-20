@@ -96,6 +96,7 @@ class LandingService:
             title=row.title,
             subtitle=row.subtitle,
             button_text=row.button_text,
+            bullets=list(row.bullets or []),
         )
 
     async def get_section_headers(self) -> LandingSectionHeadersDto:
