@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 
 from models.user import User
 from schemas.registration import UserRegistration, UserRole
+from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.registration.repository import RegistrationRepository
 
 
@@ -12,6 +13,8 @@ class RegistrationValidator:
 
     def __init__(self, repo: RegistrationRepository):
         self.repo = repo
+
+    ensure_email_not_disposable = staticmethod(ensure_email_not_disposable)
 
     @staticmethod
     def ensure_password_strong(password: str) -> None:

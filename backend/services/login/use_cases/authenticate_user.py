@@ -4,6 +4,7 @@ from models.user import User
 from schemas.login import UserLogin
 from services.login.repository import LoginRepository
 from services.login.validators import LoginValidator
+from services.registration.disposable_email_domains import ensure_email_not_disposable
 
 
 class AuthenticateUserUseCase:
@@ -16,6 +17,7 @@ class AuthenticateUserUseCase:
     async def execute(self, data: UserLogin) -> User:
         self.validator.ensure_contact_provided(data.email, data.phone, data.inn)
         self.validator.ensure_inn_format(data.inn)
+        ensure_email_not_disposable(data.email)
 
         candidates = await self.find_candidates(data)
         if not candidates:

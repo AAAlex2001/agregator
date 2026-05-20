@@ -18,6 +18,7 @@ class RegisterLicenseHolderUseCase:
         license_file_url: str | None,
     ) -> User:
         self.validator.ensure_password_strong(data.password)
+        self.validator.ensure_email_not_disposable(data.email)
         await self.validator.ensure_email_is_free(data.email, UserRole.LICENSE_HOLDER)
         await self.validator.ensure_phone_is_free(data.phone, UserRole.LICENSE_HOLDER)
         await self.validator.ensure_inn_is_free(data.inn, UserRole.LICENSE_HOLDER)

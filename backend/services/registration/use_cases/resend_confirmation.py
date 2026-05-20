@@ -1,6 +1,7 @@
 from fastapi import BackgroundTasks, HTTPException, status
 
 from schemas.registration import UserRole
+from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.registration.notifier import RegistrationNotifier
 from services.registration.repository import RegistrationRepository
 
@@ -18,6 +19,7 @@ class ResendConfirmationUseCase:
         background_tasks: BackgroundTasks,
         role: UserRole | None = None,
     ) -> None:
+        ensure_email_not_disposable(email)
         candidates = await self.repo.find_users_by_email(email, role)
         if not candidates:
             raise HTTPException(

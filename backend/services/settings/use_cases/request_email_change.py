@@ -2,6 +2,7 @@ from fastapi import BackgroundTasks, HTTPException, status
 
 from models.email_change import EmailChangeRequest
 from models.user import User
+from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
 from services.verification import deliver_code_email
@@ -30,6 +31,7 @@ class RequestEmailChangeUseCase:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Укажите новый email",
             )
+        ensure_email_not_disposable(normalized)
         if user.email and user.email.lower() == normalized:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

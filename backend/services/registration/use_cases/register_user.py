@@ -14,6 +14,7 @@ class RegisterUserUseCase:
 
     async def execute(self, data: UserRegistration) -> User:
         self.validator.ensure_password_strong(data.password)
+        self.validator.ensure_email_not_disposable(data.email)
         self.validator.ensure_customer_has_company(data)
         self.validator.ensure_inn_format(data.inn)
         self.validator.ensure_company_matches_inn(data.inn, data.company_data)

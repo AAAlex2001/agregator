@@ -2,6 +2,7 @@ from fastapi import BackgroundTasks
 
 from models.user import User
 from services.forgot_password.validators import ForgotPasswordValidator
+from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.verification import VerificationService
 
 RESET_CODE_SUBJECT = "Сброс пароля на Ресурс-Плюс"
@@ -20,6 +21,7 @@ class SendResetCodeUseCase:
         phone: str | None,
         background_tasks: BackgroundTasks,
     ) -> User:
+        ensure_email_not_disposable(email)
         user = await self.validator.find_user(email, phone)
         if email:
             await self.verification.schedule_code_email(
