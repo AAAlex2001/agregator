@@ -23,9 +23,7 @@ const Hero = ({ title, subtitle, buttonText, bullets }: HeroProps) => {
             <ul className={s.bullets}>
               {bullets.map((bullet) => (
                 <li key={bullet} className={s.bulletItem}>
-                  <span className={s.bulletIcon} aria-hidden="true">
-                    <CheckIcon />
-                  </span>
+                  <CheckIcon className={s.bulletIcon} />
                   <span className={s.bulletText}>{bullet}</span>
                 </li>
               ))}

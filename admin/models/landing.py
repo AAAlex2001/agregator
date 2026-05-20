@@ -14,6 +14,7 @@ class LandingHero(Base):
     title = Column(Text, nullable=False, default="")
     subtitle = Column(Text, nullable=False, default="")
     button_text = Column(String(200), nullable=False, default="")
+    bullets = Column(JSONB, nullable=False, default=list)
 
     def __str__(self):
         return "Hero"

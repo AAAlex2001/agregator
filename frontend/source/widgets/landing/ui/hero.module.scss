@@ -33,7 +33,7 @@
 .bulletItem {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   font-size: 15px;
   line-height: 22px;
   color: #1a1a1a;
@@ -41,21 +41,10 @@
 
 .bulletIcon {
   flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #FFB800 0%, #FF8A00 100%);
-  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  display: block;
   margin-top: 1px;
-
-  svg {
-    width: 12px;
-    height: 12px;
-    display: block;
-  }
 }
 
 .bulletText {
@@ -70,19 +59,19 @@
   }
 
   .bulletIcon {
-    width: 24px;
-    height: 24px;
-
-    svg {
-      width: 13px;
-      height: 13px;
-    }
+    width: 22px;
+    height: 22px;
   }
 }
 
 @media (min-width: 1440px) {
   .bullets {
     gap: 12px;
+  }
+
+  .bulletIcon {
+    width: 24px;
+    height: 24px;
   }
 }
 
