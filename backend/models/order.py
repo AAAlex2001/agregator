@@ -6,6 +6,7 @@ from sqlalchemy import (
     Column,
     Integer,
     BigInteger,
+    Boolean,
     String,
     Text,
     Date,
@@ -57,6 +58,8 @@ class Order(Base):
     contract_files = Column(JSON, nullable=False, default=list)
     company_files = Column(JSON, nullable=False, default=list)
     other_files = Column(JSON, nullable=False, default=list)
+    requires_expert = Column(Boolean, nullable=False, default=True, server_default="true")
+    requires_license = Column(Boolean, nullable=False, default=True, server_default="true")
     sum_amount = Column(BigInteger, nullable=False)
     start_date = Column(Date, nullable=True)
     deadline = Column(Date, nullable=False)

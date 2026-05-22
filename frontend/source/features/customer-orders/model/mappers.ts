@@ -63,6 +63,8 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
       budget: "",
       selectionsByType: {},
       comment: "",
+      requiresExpert: false,
+      requiresLicense: false,
     };
   }
 
@@ -75,6 +77,8 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     budget: editTarget.sumAmountRaw > 0 ? String(editTarget.sumAmountRaw / 100) : "",
     selectionsByType: parseBadges(editTarget.badgesRaw),
     comment: editTarget.comment,
+    requiresExpert: editTarget.requiresExpert,
+    requiresLicense: editTarget.requiresLicense,
   };
 }
 
@@ -103,6 +107,8 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
     badge_codes: flattenCodes(values.selectionsByType),
+    requires_expert: values.requiresExpert,
+    requires_license: values.requiresLicense,
     comment: values.comment.trim(),
     customer_id: userId,
     documents,
@@ -118,6 +124,8 @@ export function buildUpdatePayload(values: OrderFormValues, documents: Documents
     responses_deadline: values.responsesDeadline || undefined,
     sum_amount: values.budget ? Number.parseInt(values.budget, 10) * 100 : 0,
     badge_codes: flattenCodes(values.selectionsByType),
+    requires_expert: values.requiresExpert,
+    requires_license: values.requiresLicense,
     comment: values.comment.trim(),
     documents,
   };

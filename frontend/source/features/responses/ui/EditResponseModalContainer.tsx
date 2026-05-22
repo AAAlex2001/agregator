@@ -47,6 +47,8 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     startDateRaw: "",
     deadlineRaw: response.orderDate,
     responsesDeadline: null,
+    requiresExpert: true,
+    requiresLicense: true,
     documents: response.orderDocuments,
     badges: response.badges,
     badgesRaw: response.badges.map((badge) => ({ text: badge.text, variant: badge.variant })),

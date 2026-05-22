@@ -46,6 +46,10 @@ class UpdateOrderUseCase:
         badges_data = update_data.pop("badges", None)
         documents = data.documents if "documents" in update_data else None
         update_data.pop("documents", None)
+        if update_data.get("requires_expert") is None:
+            update_data.pop("requires_expert", None)
+        if update_data.get("requires_license") is None:
+            update_data.pop("requires_license", None)
 
         if documents is not None:
             current_documents = OrderDocumentsService.from_order(order)
@@ -61,6 +65,10 @@ class UpdateOrderUseCase:
             if [{"text": x["text"], "variant": x["variant"]} for x in badges_data] != current_badges:
                 order.previous_badges = current_badges
 
+        self.validator.ensure_requirements_selected(
+            data.requires_expert if data.requires_expert is not None else order.requires_expert,
+            data.requires_license if data.requires_license is not None else order.requires_license,
+        )
         self.apply_scalar_updates(order, update_data)
 
         if badges_data is not None:

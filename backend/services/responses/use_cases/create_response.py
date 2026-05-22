@@ -12,6 +12,7 @@ from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
 from services.responses.validators import ResponseValidator
 from services.subscriptions import SubscriptionAccess
+from utils.inn import is_valid_inn
 
 
 class CreateResponseUseCase:
@@ -40,6 +41,7 @@ class CreateResponseUseCase:
 
         self.check_budget(order, data.proposed_sum_amount)
         self.check_dates(order, data.proposed_start_date, data.proposed_deadline)
+        expert_inn, expert_company_data = self.resolve_contract_company(order, data)
         self.check_responses_deadline(order)
         await self.check_not_duplicated(order_id, expert_id)
 
@@ -47,7 +49,13 @@ class CreateResponseUseCase:
         if self.subscription_access is not None:
             subscription = await self.subscription_access.require_for_response(expert_id)
 
-        entity = self.build_entity(order_id, expert_id, data)
+        entity = self.build_entity(
+            order_id,
+            expert_id,
+            data,
+            expert_inn=expert_inn,
+            expert_company_data=expert_company_data,
+        )
         await self.repo.add(entity)
         await self.flush_or_reject()
 
@@ -107,6 +115,26 @@ class CreateResponseUseCase:
                 detail="Срок приёма откликов истёк",
             )
 
+    @staticmethod
+    def resolve_contract_company(
+        order: Order,
+        data: ResponseCreate,
+    ) -> tuple[str | None, dict[str, object] | None]:
+        if not order.requires_license:
+            return None, None
+
+        if not is_valid_inn(data.expert_inn):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Выберите вашу компанию из списка",
+            )
+        if not isinstance(data.expert_company_data, dict):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Выберите вашу компанию из списка",
+            )
+        return data.expert_inn, data.expert_company_data
+
     async def check_not_duplicated(self, order_id: int, expert_id: int) -> None:
         existing = await self.repo.find_existing_response(order_id, expert_id)
         if existing is None:
@@ -117,7 +145,13 @@ class CreateResponseUseCase:
         )
 
     @staticmethod
-    def build_entity(order_id: int, expert_id: int, data: ResponseCreate) -> OrderResponse:
+    def build_entity(
+        order_id: int,
+        expert_id: int,
+        data: ResponseCreate,
+        expert_inn: str | None,
+        expert_company_data: dict[str, object] | None,
+    ) -> OrderResponse:
         return OrderResponse(
             order_id=order_id,
             expert_id=expert_id,
@@ -126,8 +160,8 @@ class CreateResponseUseCase:
             proposed_start_date=data.proposed_start_date,
             proposed_deadline=data.proposed_deadline,
             status=ResponseStatus.REVIEW,
-            expert_inn=data.expert_inn,
-            expert_company_data=data.expert_company_data,
+            expert_inn=expert_inn,
+            expert_company_data=expert_company_data,
             vat_kind=data.vat_kind,
         )
 

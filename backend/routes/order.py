@@ -165,6 +165,8 @@ async def create_order_with_files(
     start_date: str = Form(""),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
+    requires_expert: bool = Form(True),
+    requires_license: bool = Form(True),
     badge_codes_json: str = Form("[]"),
     technical_files: list[UploadFile] = File(default=[]),
     contract_files: list[UploadFile] = File(default=[]),
@@ -183,6 +185,8 @@ async def create_order_with_files(
         deadline=deadline,
         responses_deadline=responses_deadline,
         badge_codes_json=badge_codes_json,
+        requires_expert=requires_expert,
+        requires_license=requires_license,
     )
     repo = build_repo(db)
     create = CreateOrderUseCase(
@@ -238,6 +242,8 @@ async def update_order_with_files(
     start_date: str = Form(""),
     deadline: str = Form(...),
     responses_deadline: str = Form(""),
+    requires_expert: bool | None = Form(None),
+    requires_license: bool | None = Form(None),
     badge_codes_json: str = Form("[]"),
     keep_documents_json: str = Form("{}"),
     technical_files: list[UploadFile] = File(default=[]),
@@ -257,6 +263,8 @@ async def update_order_with_files(
         responses_deadline=responses_deadline,
         badge_codes_json=badge_codes_json,
         keep_documents_json=keep_documents_json,
+        requires_expert=requires_expert,
+        requires_license=requires_license,
     )
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)

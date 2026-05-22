@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, BigInteger, String, Text, Date, DateTime, ForeignKey, Enum, JSON
+from sqlalchemy import Boolean, Column, Integer, BigInteger, String, Text, Date, DateTime, ForeignKey, Enum, JSON
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -38,6 +38,8 @@ class Order(Base):
     customer_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     assigned_expert_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     technical_files = Column(JSON, nullable=False, default=list)
+    requires_expert = Column(Boolean, nullable=False, default=True, server_default="true")
+    requires_license = Column(Boolean, nullable=False, default=True, server_default="true")
     sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
     status = Column(Enum(OrderStatus), nullable=False, index=True, default=OrderStatus.ACTIVE)

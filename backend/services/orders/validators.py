@@ -35,6 +35,15 @@ class OrderValidator:
                 detail="Создавать заказы может только заказчик",
             )
 
+    @staticmethod
+    def ensure_requirements_selected(requires_expert: bool, requires_license: bool) -> None:
+        if requires_expert or requires_license:
+            return
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Выберите, что требуется: эксперт и/или лицензия",
+        )
+
     async def ensure_user_can_modify_order(self, order_id: int, user_id: int) -> None:
         order = await self.repo.get_by_id(order_id)
         if order is None:

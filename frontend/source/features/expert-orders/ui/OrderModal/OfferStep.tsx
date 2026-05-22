@@ -14,6 +14,7 @@ import s from "./OfferStep.module.scss";
 interface Props {
   order: OrderCardData;
   form: UseFormReturn<RespondFormValues>;
+  showCompanyField: boolean;
   files: File[];
   isSubmitting: boolean;
   onAddFiles: (files: FileList | null) => void;
@@ -25,6 +26,7 @@ interface Props {
 export function OfferStep({
   order,
   form,
+  showCompanyField,
   files,
   isSubmitting,
   onAddFiles,
@@ -114,20 +116,22 @@ export function OfferStep({
         Указанная вами сумма является ориентировочной. Точная стоимость будет согласована с заказчиком после изучения технического задания.
       </span>
 
-      <div className={base.fieldGroup}>
-        <span className={base.fieldLabel}>
-          Организация, от которой подаёте заявку для последующего заключения договора:
-        </span>
-        <PartySuggestInput
-          value={watch("companyName")}
-          onChange={(query: string, picked: PartySuggestion | null) => {
-            setValue("companyName", picked?.value ?? query, { shouldValidate });
-            setValue("companyData", picked, { shouldValidate });
-          }}
-          placeholder="ИНН или название компании"
-          error={formState.errors.companyName?.message as string | undefined}
-        />
-      </div>
+      {showCompanyField && (
+        <div className={base.fieldGroup}>
+          <span className={base.fieldLabel}>
+            Организация, от которой подаёте заявку для последующего заключения договора:
+          </span>
+          <PartySuggestInput
+            value={watch("companyName")}
+            onChange={(query: string, picked: PartySuggestion | null) => {
+              setValue("companyName", picked?.value ?? query, { shouldValidate });
+              setValue("companyData", picked, { shouldValidate });
+            }}
+            placeholder="ИНН или название компании"
+            error={formState.errors.companyName?.message as string | undefined}
+          />
+        </div>
+      )}
 
       <div className={s.textareaGroup}>
         <span className={base.fieldLabel}>Комментарий для заказчика</span>

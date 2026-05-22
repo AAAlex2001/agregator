@@ -15,6 +15,7 @@ interface CreatePayload {
   customer_id: number; sum_amount: number;
   start_date?: string; deadline: string;
   responses_deadline?: string; badge_codes: string[];
+  requires_expert: boolean; requires_license: boolean;
   documents: DocumentsFormState;
 }
 
@@ -23,6 +24,7 @@ interface UpdatePayload {
   sum_amount: number; start_date?: string; deadline: string;
   responses_deadline?: string;
   badge_codes: string[]; documents: DocumentsFormState;
+  requires_expert: boolean; requires_license: boolean;
 }
 
 function appendFiles(fd: FormData, documents: DocumentsFormState, files: File[]): void {
@@ -72,6 +74,8 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     if (p.start_date) fd.append("start_date", p.start_date);
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
+    fd.append("requires_expert", String(p.requires_expert));
+    fd.append("requires_license", String(p.requires_license));
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     appendFiles(fd, p.documents, files);
     return fd;
@@ -97,6 +101,8 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     if (p.start_date) fd.append("start_date", p.start_date);
     fd.append("deadline", p.deadline);
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
+    fd.append("requires_expert", String(p.requires_expert));
+    fd.append("requires_license", String(p.requires_license));
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     fd.append("keep_documents_json", buildKeepDocuments(p.documents));
     appendFiles(fd, p.documents, files);

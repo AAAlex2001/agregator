@@ -247,8 +247,8 @@ async def create_response_for_order(
     proposed_sum_amount: int = Form(...),
     proposed_start_date: str = Form(""),
     proposed_deadline: str = Form(...),
-    expert_inn: str = Form(...),
-    expert_company_data: str = Form(...),
+    expert_inn: str = Form(""),
+    expert_company_data: str = Form(""),
     vat_kind: VatKind = Form(VatKind.NONE),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
@@ -259,8 +259,8 @@ async def create_response_for_order(
         proposed_sum_amount=proposed_sum_amount,
         proposed_start_date=date_type.fromisoformat(proposed_start_date) if proposed_start_date else None,
         proposed_deadline=date_type.fromisoformat(proposed_deadline),
-        expert_inn=expert_inn,
-        expert_company_data=expert_company_data,
+        expert_inn=expert_inn or None,
+        expert_company_data=expert_company_data or None,
         vat_kind=vat_kind,
     )
     repo = build_repo(db)

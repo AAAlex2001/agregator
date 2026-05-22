@@ -48,6 +48,8 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     sum:                 normalizeCurrency(item.sum),
     sumAmountRaw:        item.sum_amount_raw,
     responsesDeadline:   item.responses_deadline ?? null,
+    requiresExpert:      item.requires_expert ?? true,
+    requiresLicense:     item.requires_license ?? true,
     documents:           resolveDocuments(item.documents),
     badges:              item.badges.map((b) => ({
       text: b.text,

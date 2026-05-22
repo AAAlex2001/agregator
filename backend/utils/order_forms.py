@@ -77,6 +77,8 @@ def build_order_create_data(
     deadline: str,
     responses_deadline: str,
     badge_codes_json: str,
+    requires_expert: bool = True,
+    requires_license: bool = True,
 ) -> OrderCreate:
     return OrderCreate(
         title=title,
@@ -87,6 +89,8 @@ def build_order_create_data(
         start_date=parse_optional_date(start_date),
         deadline=date_type.fromisoformat(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
+        requires_expert=requires_expert,
+        requires_license=requires_license,
         badges=parse_badge_codes(badge_codes_json),
     )
 
@@ -101,6 +105,8 @@ def build_order_update_data(
     responses_deadline: str,
     badge_codes_json: str,
     keep_documents_json: str,
+    requires_expert: bool | None = None,
+    requires_license: bool | None = None,
 ) -> OrderUpdate:
     return OrderUpdate(
         title=title,
@@ -110,6 +116,8 @@ def build_order_update_data(
         start_date=parse_optional_date(start_date),
         deadline=date_type.fromisoformat(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
+        requires_expert=requires_expert,
+        requires_license=requires_license,
         badges=parse_badge_codes(badge_codes_json),
         documents=parse_keep_documents(keep_documents_json),
     )

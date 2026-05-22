@@ -24,6 +24,7 @@ class CreateOrderUseCase:
 
     async def execute(self, data: OrderCreate, current_user_id: int) -> Order:
         await self.validator.ensure_user_can_create_order(data.customer_id, current_user_id)
+        self.validator.ensure_requirements_selected(data.requires_expert, data.requires_license)
         await self.validator.ensure_customer_exists(data.customer_id)
 
         order = self.build_entity(data)
@@ -48,6 +49,8 @@ class CreateOrderUseCase:
             start_date=data.start_date,
             deadline=data.deadline,
             responses_deadline=data.responses_deadline,
+            requires_expert=data.requires_expert,
+            requires_license=data.requires_license,
             status=data.status,
         )
         OrderDocumentsService.write(order, data.documents)

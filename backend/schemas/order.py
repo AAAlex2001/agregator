@@ -57,6 +57,8 @@ class OrderCreate(BaseModel):
     start_date: date | None = None
     deadline: date
     responses_deadline: datetime | None = None
+    requires_expert: bool = True
+    requires_license: bool = True
     documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
@@ -70,6 +72,8 @@ class OrderUpdate(BaseModel):
     start_date: Optional[date] = None
     deadline: Optional[date] = None
     responses_deadline: Optional[datetime] = None
+    requires_expert: Optional[bool] = None
+    requires_license: Optional[bool] = None
     documents: Optional[OrderDocuments] = None
     badges: Optional[list[BadgeSchema]] = None
     status: Optional[OrderStatus] = None
@@ -92,6 +96,8 @@ class OrderResponse(BaseModel):
     date: str
     created_at_display: str = ""
     responses_deadline: str | None = None
+    requires_expert: bool
+    requires_license: bool
     documents: OrderDocuments
     badges: list[BadgeResponse]
     status: OrderStatus
@@ -227,6 +233,8 @@ class OrderResponse(BaseModel):
             date=date_display,
             created_at_display=created_at_display,
             responses_deadline=responses_deadline_display,
+            requires_expert=order.requires_expert,
+            requires_license=order.requires_license,
             documents=OrderDocumentsService.from_order(order),
             badges=badges,
             status=order.status,

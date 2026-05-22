@@ -59,6 +59,8 @@ export interface OrderApiItem {
   date: string;
   created_at_display?: string;
   responses_deadline: string | null;
+  requires_expert: boolean;
+  requires_license: boolean;
   documents: OrderDocuments;
   badges: OrderApiBadge[];
   status: string;
@@ -106,6 +108,8 @@ export interface OrderCardData {
   startDateRaw: string;
   deadlineRaw: string;
   responsesDeadline: string | null;
+  requiresExpert: boolean;
+  requiresLicense: boolean;
   documents: OrderDocuments;
   badges: Badge[];
   badgesRaw: OrderApiBadge[];

@@ -20,6 +20,7 @@ const emptyValues: RespondFormValues = {
   cost: "",
   vatKind: "NONE",
   comment: "",
+  requiresCompany: true,
   companyName: "",
   companyData: null,
 };
@@ -42,10 +43,11 @@ export function OrderModal({
   const { showError } = useNotifications();
   const [step, setStep] = useState<ModalStep>(initialStep);
   const [files, setFiles] = useState<File[]>([]);
+  const requiresCompany = order?.requiresLicense ?? true;
 
   const form = useForm<RespondFormValues>({
     resolver: zodResolver(respondFormSchema),
-    defaultValues: emptyValues,
+    defaultValues: { ...emptyValues, requiresCompany },
     mode: "onBlur",
   });
 
@@ -65,16 +67,17 @@ export function OrderModal({
         cost: draft.cost,
         vatKind: draft.vatKind as RespondFormValues["vatKind"],
         comment: draft.comment,
+        requiresCompany,
         companyName: draft.companyName,
         companyData: draft.companyData as RespondFormValues["companyData"],
       });
       setStep(draft.step);
     } else {
-      form.reset(emptyValues);
+      form.reset({ ...emptyValues, requiresCompany });
       setStep(initialStep);
     }
     setFiles([]);
-  }, [order?.id, initialStep, useDraft, form]);
+  }, [order?.id, initialStep, requiresCompany, useDraft, form]);
 
   // Сохраняем черновик при изменении формы или шага — только если эксперт реально что-то ввёл
   useEffect(() => {
@@ -155,7 +158,7 @@ export function OrderModal({
       }
 
       const expertInn = values.companyData?.data?.inn ?? "";
-      if (!values.companyData || !expertInn) {
+      if (requiresCompany && (!values.companyData || !expertInn)) {
         showError("Выберите вашу компанию из списка");
         return;
       }
@@ -167,8 +170,8 @@ export function OrderModal({
         vatKind: values.vatKind,
         comment: values.comment,
         files,
-        expertInn,
-        expertCompanyData: values.companyData as Record<string, unknown>,
+        expertInn: requiresCompany ? expertInn : "",
+        expertCompanyData: requiresCompany && values.companyData ? values.companyData as Record<string, unknown> : {},
       });
     },
     (errors) => {
@@ -197,6 +200,7 @@ export function OrderModal({
         <OfferStep
           order={order}
           form={form}
+          showCompanyField={requiresCompany}
           files={files}
           isSubmitting={isResponding}
           onAddFiles={handleAddFiles}

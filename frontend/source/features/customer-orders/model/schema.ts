@@ -10,6 +10,14 @@ export const orderFormSchema = z.object({
   /** Per-type OPO selections: { "ТУ": ["1", "2"], "Д": ["3.1", "10"] }. */
   selectionsByType: z.record(z.string(), z.array(z.string())),
   comment: z.string(),
-});
+  requiresExpert: z.boolean(),
+  requiresLicense: z.boolean(),
+}).refine(
+  (values) => values.requiresExpert || values.requiresLicense,
+  {
+    path: ["requiresExpert"],
+    message: "Выберите, что требуется: эксперт и/или лицензия",
+  },
+);
 
 export type OrderFormValues = z.infer<typeof orderFormSchema>;

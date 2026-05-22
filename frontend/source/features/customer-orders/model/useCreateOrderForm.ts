@@ -32,7 +32,7 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: isEdit ? getDefaultValues(editTarget) : (loadDraft() ?? getDefaultValues()),
+    defaultValues: isEdit ? getDefaultValues(editTarget) : { ...getDefaultValues(), ...(loadDraft() ?? {}) },
   });
 
   useEffect(() => {

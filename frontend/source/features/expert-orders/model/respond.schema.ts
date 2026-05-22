@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidInn } from "@/source/shared/lib/inn";
 
 export const VAT_KIND_VALUES = ["NONE", "VAT_5", "VAT_7", "VAT_22"] as const;
 
@@ -12,6 +13,7 @@ export const respondFormSchema = z.object({
     .refine((value) => Number(value) > 0, "Сумма должна быть больше 0"),
   vatKind: z.enum(VAT_KIND_VALUES),
   comment: z.string().max(5000),
+  requiresCompany: z.boolean(),
   companyName: z.string().trim(),
   companyData: z
     .object({
@@ -26,8 +28,10 @@ export const respondFormSchema = z.object({
     .passthrough()
     .nullable(),
 }).superRefine((data, ctx) => {
+  if (!data.requiresCompany) return;
+
   const inn = data.companyData?.data?.inn ?? "";
-  if (!data.companyData || !inn || !/^\d{10}$|^\d{12}$/.test(inn)) {
+  if (!data.companyData || !isValidInn(inn)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["companyName"],

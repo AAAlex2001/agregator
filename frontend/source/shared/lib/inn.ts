@@ -1,9 +1,4 @@
-export const INN_MAX_LENGTH = 12;
-
-export function normalizeInn(value: string): string {
-  return value.replace(/\D/g, "").slice(0, INN_MAX_LENGTH);
-}
-
-export function isValidInn(value: string): boolean {
-  return value.length === 10 || value.length === 12;
+export function isValidInn(value: string | null | undefined): boolean {
+  if (!value) return false;
+  return (value.length === 10 || value.length === 12) && Array.from(value).every((char) => char >= "0" && char <= "9");
 }

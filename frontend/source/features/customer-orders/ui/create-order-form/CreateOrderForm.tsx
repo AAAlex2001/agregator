@@ -12,6 +12,7 @@ import { CommentSection } from "./sections/CommentSection";
 import { DetailsSection } from "./sections/DetailsSection";
 import { FilesSection } from "./sections/FilesSection";
 import { FormActions } from "./sections/FormActions";
+import { RequirementsSection } from "./sections/RequirementsSection";
 import { OrderLivePreview } from "./OrderLivePreview";
 import s from "./CreateOrderForm.module.scss";
 
@@ -68,6 +69,8 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
                 onRemoveOtherNew={formState.removeOtherNew}
                 onRemoveOtherExisting={formState.removeOtherExisting}
               />
+
+              <RequirementsSection form={formState.form} />
 
               <div className={s.previewInline}>
                 <OrderLivePreview form={formState.form} documents={formState.documents} />

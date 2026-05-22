@@ -1,7 +1,6 @@
 import json
 from datetime import date, datetime
 from enum import Enum as PyEnum
-from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -24,12 +23,12 @@ class ResponseCreate(BaseModel):
     proposed_start_date: date | None = None
     proposed_deadline: date
     expert_inn: str | None = Field(default=None, min_length=10, max_length=12)
-    expert_company_data: dict[str, Any] | None = None
+    expert_company_data: dict[str, object] | None = None
     vat_kind: VatKind = VatKind.NONE
 
     @field_validator("expert_company_data", mode="before")
     @classmethod
-    def _parse_company_data(cls, value: Any) -> Any:
+    def _parse_company_data(cls, value: object) -> object:
         if value is None or isinstance(value, dict):
             return value
         if isinstance(value, str):
