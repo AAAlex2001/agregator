@@ -70,20 +70,20 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       value: <DiffValue previous={card.previousCostEstimate} current={card.costEstimate || "—"} />,
     },
     ...(card.orderStartDate
-      ? [{ label: "Срок начала работ (заказчик)", value: card.orderStartDate }]
+      ? [{ label: "Срок начала выполнения работ (заказчик)", value: card.orderStartDate }]
       : []),
     {
-      label: "Срок выполнения до",
+      label: "Срок окончания выполнения работ (заказчик)",
       value: card.orderDate || "—",
     },
     ...(card.startDate
       ? [{
-          label: isExpert ? "Ваш срок начала" : "Срок начала эксперта",
+          label: isExpert ? "Ваш срок начала выполнения работ" : "Срок начала выполнения работ эксперта",
           value: <DiffValue previous={card.previousStartDate} current={card.startDate} />,
         }]
       : []),
     {
-      label: isExpert ? "Ваш срок окончания" : "Срок окончания эксперта",
+      label: isExpert ? "Ваш срок окончания выполнения работ" : "Срок окончания выполнения работ эксперта",
       value: <DiffValue previous={card.previousDeadline} current={card.deadline || "—"} />,
     },
     {

@@ -77,11 +77,12 @@ export function OrderCard({
       value: responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—",
       valueOrange: true,
     },
-    ...(startDate
-      ? [{ label: "Срок начала работ", value: startDate }]
-      : []),
     {
-      label: "Срок выполнения до",
+      label: "Срок начала выполнения работ",
+      value: startDate || "—",
+    },
+    {
+      label: "Срок окончания выполнения работ",
       value: <DiffValue previous={previousDate ?? null} current={date || "—"} />,
     },
   ];

@@ -59,15 +59,13 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
           ? [{ label: "Цена исполнителя", value: card.executorProposedSum }]
           : []),
         ...(card.executorProposedStartDate
-          ? [{ label: "Срок начала исполнителя", value: card.executorProposedStartDate }]
+          ? [{ label: "Срок начала выполнения работ исполнителя", value: card.executorProposedStartDate }]
           : []),
         ...(card.executorProposedDeadline
-          ? [{ label: "Срок окончания исполнителя", value: card.executorProposedDeadline }]
+          ? [{ label: "Срок окончания выполнения работ исполнителя", value: card.executorProposedDeadline }]
           : []),
-        ...(card.startDate
-          ? [{ label: "Срок начала работ", value: card.startDate }]
-          : []),
-        { label: "Срок выполнения до", value: card.date || "—" },
+        { label: "Срок начала выполнения работ", value: card.startDate || "—" },
+        { label: "Срок окончания выполнения работ", value: card.date || "—" },
         ...(card.createdAtDisplay
           ? [{ label: "Создан", value: card.createdAtDisplay }]
           : []),

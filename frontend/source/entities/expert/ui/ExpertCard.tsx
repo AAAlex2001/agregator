@@ -176,24 +176,22 @@ export function ExpertCard({
               )}
               {lastOrder.executorProposedStartDate && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок начала эксперта</span>
+                  <span className={s.fieldLabel}>Срок начала выполнения работ эксперта</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedStartDate}</span>
                 </div>
               )}
               {lastOrder.executorProposedDeadline && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок окончания эксперта</span>
+                  <span className={s.fieldLabel}>Срок окончания выполнения работ эксперта</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
                 </div>
               )}
-              {lastOrder.startDate && (
-                <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок начала работ</span>
-                  <span className={s.fieldValue}>{lastOrder.startDate}</span>
-                </div>
-              )}
               <div className={s.field}>
-                <span className={s.fieldLabel}>Срок выполнения до</span>
+                <span className={s.fieldLabel}>Срок начала выполнения работ</span>
+                <span className={s.fieldValue}>{lastOrder.startDate || "—"}</span>
+              </div>
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Срок окончания выполнения работ</span>
                 <span className={s.fieldValue}>{lastOrder.date || "—"}</span>
               </div>
             </div>

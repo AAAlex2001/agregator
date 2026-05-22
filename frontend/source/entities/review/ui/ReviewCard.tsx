@@ -50,10 +50,10 @@ export function ReviewCard({
       ? [{ label: "Начальная максимальная цена", value: orderSum, valueAccent: true }]
       : []),
     ...(expertSum ? [{ label: "Цена эксперта", value: expertSum }] : []),
-    ...(expertStartDate ? [{ label: "Срок начала эксперта", value: expertStartDate }] : []),
-    ...(expertDeadline ? [{ label: "Срок окончания эксперта", value: expertDeadline }] : []),
-    ...(orderStartDate ? [{ label: "Срок начала работ", value: orderStartDate }] : []),
-    ...(orderDeadline ? [{ label: "Срок выполнения до", value: orderDeadline }] : []),
+    ...(expertStartDate ? [{ label: "Срок начала выполнения работ эксперта", value: expertStartDate }] : []),
+    ...(expertDeadline ? [{ label: "Срок окончания выполнения работ эксперта", value: expertDeadline }] : []),
+    ...(orderStartDate ? [{ label: "Срок начала выполнения работ", value: orderStartDate }] : []),
+    ...(orderDeadline ? [{ label: "Срок окончания выполнения работ", value: orderDeadline }] : []),
   ];
 
   const hasDetails = countDocuments(documents) > 0;

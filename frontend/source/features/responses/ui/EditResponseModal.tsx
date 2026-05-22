@@ -77,12 +77,12 @@ export function EditResponseModal({
 
         <div className={s.formRow}>
           <div className={s.fieldGroup}>
-            <span className={s.fieldLabel}>Срок начала работ</span>
+            <span className={s.fieldLabel}>Срок начала выполнения работ</span>
             <CalendarInput active value={startDate} onChange={onStartDateChange} placeholder="Выберите дату" />
           </div>
 
           <div className={s.fieldGroup}>
-            <span className={s.fieldLabel}>Срок окончания работ</span>
+            <span className={s.fieldLabel}>Срок окончания выполнения работ</span>
             <CalendarInput active value={deadline} onChange={onDeadlineChange} placeholder="Выберите дату" />
           </div>
         </div>

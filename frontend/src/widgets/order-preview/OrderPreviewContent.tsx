@@ -15,6 +15,7 @@ interface PreviewOrder {
   id: number;
   title: string;
   company: string | null;
+  start_date?: string;
   date: string;
   sum: string;
   responses_deadline: string | null;
@@ -127,7 +128,11 @@ export function OrderPreviewContent() {
 
               <div className={styles.meta}>
                 <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Срок выполнения</span>
+                  <span className={styles.metaLabel}>Срок начала выполнения работ</span>
+                  <span className={styles.metaValue}>{order.start_date || "—"}</span>
+                </div>
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>Срок окончания выполнения работ</span>
                   <span className={styles.metaValue}>{order.date}</span>
                 </div>
                 <div className={styles.metaItem}>

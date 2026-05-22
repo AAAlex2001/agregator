@@ -36,7 +36,11 @@ export function CustomerBrief({ order }: Props) {
     <div className={s.block}>
       <div className={s.topRow}>
         <div className={s.topItem}>
-          <span className={s.topLabel}>Срок выполнения до</span>
+          <span className={s.topLabel}>Срок начала выполнения работ</span>
+          <span className={s.date}>{order.startDate || "—"}</span>
+        </div>
+        <div className={s.topItem}>
+          <span className={s.topLabel}>Срок окончания выполнения работ</span>
           <span className={s.date}>{order.date}</span>
         </div>
         <div className={s.topItem}>

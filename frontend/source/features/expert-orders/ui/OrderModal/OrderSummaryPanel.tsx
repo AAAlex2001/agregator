@@ -47,7 +47,10 @@ export function OrderSummaryPanel({ order }: Props) {
 
           <div className={s.meta}>
             <span className={s.metaText}>
-              <span className={s.metaLabel}>Срок выполнения до:</span> {order.date}
+              <span className={s.metaLabel}>Срок начала выполнения работ:</span> {order.startDate || "—"}
+            </span>
+            <span className={s.metaText}>
+              <span className={s.metaLabel}>Срок окончания выполнения работ:</span> {order.date}
             </span>
 
             {order.badges.length > 0 && (

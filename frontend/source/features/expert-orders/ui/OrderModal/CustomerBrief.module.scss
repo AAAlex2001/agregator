@@ -71,6 +71,8 @@
 .badgePurple { background: #f3e5f5; color: #7b1fa2; }
 
 .topItem {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;

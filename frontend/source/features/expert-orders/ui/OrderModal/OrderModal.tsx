@@ -145,15 +145,15 @@ export function OrderModal({
       const offerDeadline = parseDeadline(values.deadline);
 
       if (customerStartDate && offerStartDate && offerStartDate < customerStartDate) {
-        showError("Срок начала работ не может быть раньше срока заказчика");
+        showError("Срок начала выполнения работ не может быть раньше срока заказчика");
         return;
       }
       if (customerDeadline && offerDeadline && offerDeadline > customerDeadline) {
-        showError("Срок окончания работ не может быть позже срока заказчика");
+        showError("Срок окончания выполнения работ не может быть позже срока заказчика");
         return;
       }
       if (offerStartDate && offerDeadline && offerStartDate > offerDeadline) {
-        showError("Срок начала работ не может быть позже срока окончания");
+        showError("Срок начала выполнения работ не может быть позже срока окончания");
         return;
       }
 

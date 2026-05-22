@@ -54,7 +54,7 @@ export function OfferStep({
 
       <div className={s.formRow}>
         <div className={base.fieldGroup}>
-          <span className={base.fieldLabel}>Срок начала работ</span>
+          <span className={base.fieldLabel}>Срок начала выполнения работ</span>
           <CalendarInput
             active
             value={startDate}
@@ -65,7 +65,7 @@ export function OfferStep({
         </div>
 
         <div className={base.fieldGroup}>
-          <span className={base.fieldLabel}>Срок окончания работ</span>
+          <span className={base.fieldLabel}>Срок окончания выполнения работ</span>
           <CalendarInput
             active
             value={deadline}

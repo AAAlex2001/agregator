@@ -58,8 +58,10 @@ export function ReportCard({ card, onView, onDownload }: Props) {
       rightItems={[
         { label: "Начальная максимальная цена", value: card.sum || "—", valueAccent: true },
         ...(card.executorProposedSum ? [{ label: "Цена исполнителя", value: card.executorProposedSum }] : []),
-        ...(card.executorProposedDeadline ? [{ label: "Срок исполнителя", value: card.executorProposedDeadline }] : []),
-        { label: "Срок выполнения до", value: card.date || "—" },
+        ...(card.executorProposedStartDate ? [{ label: "Срок начала выполнения работ исполнителя", value: card.executorProposedStartDate }] : []),
+        ...(card.executorProposedDeadline ? [{ label: "Срок окончания выполнения работ исполнителя", value: card.executorProposedDeadline }] : []),
+        { label: "Срок начала выполнения работ", value: card.startDate || "—" },
+        { label: "Срок окончания выполнения работ", value: card.date || "—" },
       ]}
       actions={<ActionButtons actions={actions} />}
       leftExtra={<RequirementsBadges badges={card.badges} />}
