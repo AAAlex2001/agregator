@@ -1,6 +1,7 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { fetchArticleList } from "@/source/entities/article";
-import { ArticlesList } from "@/source/features/articles-list";
+import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AuthedNewsListPage() {
+async function AuthedNewsListContent() {
   const [initial, crossBlog] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
@@ -28,5 +29,13 @@ export default async function AuthedNewsListPage() {
         items: crossBlog.items,
       }}
     />
+  );
+}
+
+export default function AuthedNewsListPage() {
+  return (
+    <Suspense fallback={<ArticlesListSkeleton />}>
+      <AuthedNewsListContent />
+    </Suspense>
   );
 }

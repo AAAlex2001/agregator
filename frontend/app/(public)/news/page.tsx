@@ -1,7 +1,8 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleList } from "@/source/entities/article";
-import { ArticlesList } from "@/source/features/articles-list";
+import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
@@ -36,27 +37,35 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
-export default async function NewsListPage() {
+async function NewsListContent() {
   const [initial, crossBlog] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
   ]);
   return (
+    <ArticlesList
+      kind="news"
+      title="Новости отрасли"
+      subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
+      initial={initial}
+      cross={{
+        title: "Читайте также из блога",
+        href: "/blog",
+        hrefLabel: "Все статьи",
+        items: crossBlog.items,
+      }}
+    />
+  );
+}
+
+export default function NewsListPage() {
+  return (
     <>
       <RedirectIfAuthed to="/landing/news" />
       <LandingHeader />
-      <ArticlesList
-        kind="news"
-        title="Новости отрасли"
-        subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
-        initial={initial}
-        cross={{
-          title: "Читайте также из блога",
-          href: "/blog",
-          hrefLabel: "Все статьи",
-          items: crossBlog.items,
-        }}
-      />
+      <Suspense fallback={<ArticlesListSkeleton />}>
+        <NewsListContent />
+      </Suspense>
       <LandingFooter variant="light" />
     </>
   );
