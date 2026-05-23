@@ -7,14 +7,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routes import login, registration, forgot_password, order, response, settings, chat, payment, pricing, review, notification, landing, question, support, license_holder, report, article, expert
 from ws.router import router as ws_router
+from ws.manager import CHAT_CHANNEL, chat_manager
+from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
+from ws.pubsub import ws_pubsub
 from tasks.auto_reject import run_auto_reject_loop
 
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    task = asyncio.create_task(run_auto_reject_loop())
+    ws_pubsub.register(CHAT_CHANNEL, chat_manager.handle_event)
+    ws_pubsub.register(EXPERT_ROOM_CHANNEL, expert_room_manager.handle_event)
+    await ws_pubsub.start()
+    auto_reject_task = asyncio.create_task(run_auto_reject_loop())
     yield
-    task.cancel()
+    auto_reject_task.cancel()
+    await ws_pubsub.stop()
 
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)

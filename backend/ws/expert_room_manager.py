@@ -1,25 +1,35 @@
 from dataclasses import dataclass
+from typing import Any
+from uuid import uuid4
 
 from fastapi import WebSocket
 from pydantic import BaseModel
 from starlette.websockets import WebSocketState
+
+from ws.pubsub import ws_pubsub
+
+
+EXPERT_ROOM_CHANNEL = "ws:expert_room:events"
 
 
 @dataclass(frozen=True)
 class ExpertRoomConnection:
     user_id: int
     user_name: str
+    connection_id: str
 
 
 class ExpertRoomConnectionManager:
-    """Один общий канал — все подключённые эксперты получают broadcast."""
-
     def __init__(self) -> None:
         self.connections: dict[WebSocket, ExpertRoomConnection] = {}
 
     async def connect(self, ws: WebSocket, user_id: int, user_name: str) -> None:
         await ws.accept()
-        self.connections[ws] = ExpertRoomConnection(user_id=user_id, user_name=user_name)
+        self.connections[ws] = ExpertRoomConnection(
+            user_id=user_id,
+            user_name=user_name,
+            connection_id=uuid4().hex,
+        )
 
     def disconnect(self, ws: WebSocket) -> None:
         self.connections.pop(ws, None)
@@ -29,19 +39,41 @@ class ExpertRoomConnectionManager:
 
     async def broadcast(self, event: BaseModel, except_ws: WebSocket | None = None) -> None:
         payload = event.model_dump(mode="json")
+        except_connection_id: str | None = None
+        if except_ws is not None:
+            conn = self.connections.get(except_ws)
+            if conn is not None:
+                except_connection_id = conn.connection_id
+        await ws_pubsub.publish(
+            EXPERT_ROOM_CHANNEL,
+            {"data": payload, "except_connection_id": except_connection_id},
+        )
+
+    async def handle_event(self, payload: dict[str, Any]) -> None:
+        data = payload.get("data")
+        if not isinstance(data, dict):
+            return
+        except_connection_id = payload.get("except_connection_id")
+        await self._local_broadcast(data, except_connection_id=except_connection_id)
+
+    async def _local_broadcast(
+        self,
+        data: dict[str, Any],
+        except_connection_id: str | None = None,
+    ) -> None:
         stale: list[WebSocket] = []
-        for conn, _ in list(self.connections.items()):
-            if conn is except_ws:
+        for ws, conn in list(self.connections.items()):
+            if except_connection_id is not None and conn.connection_id == except_connection_id:
                 continue
-            if conn.client_state != WebSocketState.CONNECTED:
-                stale.append(conn)
+            if ws.client_state != WebSocketState.CONNECTED:
+                stale.append(ws)
                 continue
             try:
-                await conn.send_json(payload)
+                await ws.send_json(data)
             except Exception:
-                stale.append(conn)
-        for conn in stale:
-            self.disconnect(conn)
+                stale.append(ws)
+        for ws in stale:
+            self.disconnect(ws)
 
 
 expert_room_manager = ExpertRoomConnectionManager()

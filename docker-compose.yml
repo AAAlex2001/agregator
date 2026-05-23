@@ -40,12 +40,38 @@ services:
       retries: 5
       start_period: 30s
 
+  redis:
+    image: redis:7-alpine
+    container_name: agregator-redis
+    command:
+      - "redis-server"
+      - "--maxmemory"
+      - "256mb"
+      - "--maxmemory-policy"
+      - "allkeys-lru"
+      - "--save"
+      - ""
+      - "--appendonly"
+      - "no"
+    expose:
+      - "6379"
+    restart: unless-stopped
+    networks:
+      - agregator-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
+      REDIS_URL: redis://redis:6379/0
       ECHO_SQL: ${ECHO_SQL:-false}
       WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
       UVICORN_TIMEOUT_KEEP_ALIVE: ${UVICORN_TIMEOUT_KEEP_ALIVE:-10}
@@ -69,6 +95,8 @@ services:
       - backend_uploads:/app/uploads
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
     networks:
