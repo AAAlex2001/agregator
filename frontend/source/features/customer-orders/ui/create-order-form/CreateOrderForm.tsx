@@ -54,11 +54,6 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
 
               <DetailsSection form={formState.form} />
 
-              <BadgeSection
-                form={formState.form}
-                onShowHelp={() => setView("help")}
-              />
-
               <CommentSection form={formState.form} />
 
               <FilesSection
@@ -71,6 +66,11 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
               />
 
               <RequirementsSection form={formState.form} />
+
+              <BadgeSection
+                form={formState.form}
+                onShowHelp={() => setView("help")}
+              />
 
               <div className={s.previewInline}>
                 <OrderLivePreview form={formState.form} documents={formState.documents} />
