@@ -54,6 +54,8 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
 
               <DetailsSection form={formState.form} />
 
+              <RequirementsSection form={formState.form} />
+
               <CommentSection form={formState.form} />
 
               <FilesSection
@@ -64,8 +66,6 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
                 onRemoveOtherNew={formState.removeOtherNew}
                 onRemoveOtherExisting={formState.removeOtherExisting}
               />
-
-              <RequirementsSection form={formState.form} />
 
               <BadgeSection
                 form={formState.form}

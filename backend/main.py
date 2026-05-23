@@ -8,7 +8,6 @@ from fastapi.staticfiles import StaticFiles
 from routes import login, registration, forgot_password, order, response, settings, chat, payment, pricing, review, notification, landing, question, support, license_holder, report, article, expert
 from ws.router import router as ws_router
 from tasks.auto_reject import run_auto_reject_loop
-from metrics import setup_metrics
 
 
 @asynccontextmanager
@@ -19,7 +18,6 @@ async def lifespan(application: FastAPI):
 
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
-setup_metrics(app)
 
 app.add_middleware(
     CORSMiddleware,
