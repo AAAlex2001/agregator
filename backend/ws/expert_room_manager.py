@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 from uuid import uuid4
 
 from fastapi import WebSocket
@@ -20,6 +19,8 @@ class ExpertRoomConnection:
 
 
 class ExpertRoomConnectionManager:
+    "WebSocket-менеджер общего чата экспертов. Broadcast через Redis pub/sub с фильтрацией по connection_id."
+
     def __init__(self) -> None:
         self.connections: dict[WebSocket, ExpertRoomConnection] = {}
 
@@ -38,6 +39,7 @@ class ExpertRoomConnectionManager:
         return self.connections.get(ws)
 
     async def broadcast(self, event: BaseModel, except_ws: WebSocket | None = None) -> None:
+        "Публикует событие в Redis. except_ws исключается локально на всех репликах по connection_id."
         payload = event.model_dump(mode="json")
         except_connection_id: str | None = None
         if except_ws is not None:
@@ -49,18 +51,20 @@ class ExpertRoomConnectionManager:
             {"data": payload, "except_connection_id": except_connection_id},
         )
 
-    async def handle_event(self, payload: dict[str, Any]) -> None:
+    async def handle_event(self, payload: dict) -> None:
+        "Хендлер pubsub-канала: рассылает событие по локальным сокетам, пропуская connection_id отправителя."
         data = payload.get("data")
         if not isinstance(data, dict):
             return
         except_connection_id = payload.get("except_connection_id")
-        await self._local_broadcast(data, except_connection_id=except_connection_id)
+        await self.local_broadcast(data, except_connection_id=except_connection_id)
 
-    async def _local_broadcast(
+    async def local_broadcast(
         self,
-        data: dict[str, Any],
+        data: dict,
         except_connection_id: str | None = None,
     ) -> None:
+        "Прямая рассылка по сокетам, которые в памяти этой реплики."
         stale: list[WebSocket] = []
         for ws, conn in list(self.connections.items()):
             if except_connection_id is not None and conn.connection_id == except_connection_id:

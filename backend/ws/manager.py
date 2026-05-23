@@ -1,5 +1,4 @@
 from collections import defaultdict
-from typing import Any
 
 from fastapi import WebSocket
 from starlette.websockets import WebSocketState
@@ -11,6 +10,8 @@ CHAT_CHANNEL = "ws:chat:events"
 
 
 class ChatConnectionManager:
+    "Room-based WebSocket-менеджер: chat_id → user_id → сокеты. Broadcast через Redis pub/sub."
+
     def __init__(self) -> None:
         self.rooms: dict[int, dict[int, set[WebSocket]]] = defaultdict(lambda: defaultdict(set))
 
@@ -36,17 +37,20 @@ class ChatConnectionManager:
             return []
         return sorted(uid for uid, socks in room.items() if socks)
 
-    async def broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
+    async def broadcast(self, chat_id: int, data: dict) -> None:
+        "Публикует событие в Redis. На всех репликах сработает handle_event."
         await ws_pubsub.publish(CHAT_CHANNEL, {"chat_id": chat_id, "data": data})
 
-    async def handle_event(self, payload: dict[str, Any]) -> None:
+    async def handle_event(self, payload: dict) -> None:
+        "Хендлер pubsub-канала: рассылает событие по локальным сокетам этой реплики."
         chat_id = payload.get("chat_id")
         data = payload.get("data")
         if not isinstance(chat_id, int) or not isinstance(data, dict):
             return
-        await self._local_broadcast(chat_id, data)
+        await self.local_broadcast(chat_id, data)
 
-    async def _local_broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
+    async def local_broadcast(self, chat_id: int, data: dict) -> None:
+        "Прямая рассылка по сокетам, которые в памяти этой реплики."
         room = self.rooms.get(chat_id)
         if not room:
             return

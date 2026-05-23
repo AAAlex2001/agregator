@@ -3,7 +3,7 @@ import contextlib
 import json
 import logging
 import os
-from typing import Any, Awaitable, Callable
+from typing import Awaitable, Callable
 
 import redis.asyncio as redis
 
@@ -11,10 +11,12 @@ log = logging.getLogger(__name__)
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
-Handler = Callable[[dict[str, Any]], Awaitable[None]]
+Handler = Callable[[dict], Awaitable[None]]
 
 
 class WsPubSub:
+    "Redis pub/sub слой для cross-replica WebSocket broadcast. Singleton на процесс."
+
     def __init__(self) -> None:
         self.publisher: redis.Redis | None = None
         self.subscriber: redis.Redis | None = None
@@ -23,9 +25,11 @@ class WsPubSub:
         self.handlers: dict[str, Handler] = {}
 
     def register(self, channel: str, handler: Handler) -> None:
+        "Подключает обработчик к каналу. Должно вызываться до start()."
         self.handlers[channel] = handler
 
     async def start(self) -> None:
+        "Поднимает publisher/subscriber клиенты и запускает listener-таск."
         try:
             self.publisher = redis.from_url(
                 REDIS_URL,
@@ -46,12 +50,13 @@ class WsPubSub:
             self.pubsub_conn = self.subscriber.pubsub(ignore_subscribe_messages=True)
             if self.handlers:
                 await self.pubsub_conn.subscribe(*self.handlers.keys())
-            self.listener_task = asyncio.create_task(self._run(), name="ws_pubsub_listener")
+            self.listener_task = asyncio.create_task(self.listen(), name="ws_pubsub_listener")
             log.info("ws_pubsub: started, channels=%s", list(self.handlers.keys()))
         except Exception:
             log.exception("ws_pubsub: failed to start, broadcast will be local-only")
 
     async def stop(self) -> None:
+        "Останавливает listener и закрывает Redis-коннекты. Идемпотентна."
         if self.listener_task is not None:
             self.listener_task.cancel()
             with contextlib.suppress(asyncio.CancelledError, Exception):
@@ -77,7 +82,8 @@ class WsPubSub:
 
         log.info("ws_pubsub: stopped")
 
-    async def publish(self, channel: str, payload: dict[str, Any]) -> None:
+    async def publish(self, channel: str, payload: dict) -> None:
+        "Шлёт payload в канал. Если Redis не поднялся — тихо игнорируем."
         if self.publisher is None:
             return
         try:
@@ -85,7 +91,8 @@ class WsPubSub:
         except Exception:
             log.exception("ws_pubsub: publish failed channel=%s", channel)
 
-    async def _run(self) -> None:
+    async def listen(self) -> None:
+        "Цикл чтения сообщений из подписки. С авто-переподпиской при разрыве коннекта."
         backoff = 1.0
         while True:
             if self.pubsub_conn is None:
