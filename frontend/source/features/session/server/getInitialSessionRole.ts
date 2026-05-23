@@ -6,12 +6,10 @@ import type { SessionRole } from "../model/types";
 
 export async function getInitialSessionRole(): Promise<SessionRole | null> {
   const cookieStore = await cookies();
-  const cookieRole = normalizeSessionRole(cookieStore.get("user_role")?.value);
-
   const sessionId = cookieStore.get("session_id")?.value;
 
   if (!sessionId) {
-    return cookieRole;
+    return null;
   }
 
   const envApiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -40,12 +38,12 @@ export async function getInitialSessionRole(): Promise<SessionRole | null> {
     });
 
     if (!response.ok) {
-      return cookieRole;
+      return null;
     }
 
     const body = (await response.json()) as { role?: string };
-    return normalizeSessionRole(body.role) ?? cookieRole;
+    return normalizeSessionRole(body.role);
   } catch {
-    return cookieRole;
+    return null;
   }
 }
