@@ -32,7 +32,7 @@ class SendExpertRoomMessageUseCase:
     ) -> ExpertRoomMessageOut:
         sender = await self.validator.require_expert(user_id)
         await self.validator.ensure_not_banned(user_id)
-        self.rate_limiter.check(user_id)
+        await self.rate_limiter.check(user_id)
 
         cleaned = text.strip()
         non_empty_uploads = [f for f in (uploads or []) if f and f.filename]

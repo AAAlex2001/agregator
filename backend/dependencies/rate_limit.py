@@ -1,15 +1,6 @@
-"""
-HTTP rate-limiter под single-worker (WEB_CONCURRENCY=1).
-
-Ключ = endpoint + IP клиента (x-forwarded-for уважается).
-При исчерпании лимита отдаёт 429 Too Many Requests с заголовком Retry-After.
-"""
 from fastapi import HTTPException, Request, status
 
-from utils.sliding_window import SlidingWindow
-
-
-http_window = SlidingWindow()
+from utils.redis_sliding_window import redis_sliding_window
 
 
 def client_ip(request: Request) -> str:
@@ -23,13 +14,14 @@ def rate_limit(scope: str, max_calls: int, window_seconds: float):
     "Фабрика FastAPI-зависимости: ограничивает scope до N вызовов за окно для одного IP."
 
     async def dependency(request: Request) -> None:
-        key = f"{scope}:{client_ip(request)}"
-        if http_window.is_allowed(key, max_calls, window_seconds):
+        key = f"rl:http:{scope}:{client_ip(request)}"
+        if await redis_sliding_window.is_allowed(key, max_calls, window_seconds):
             return
+        retry_after = await redis_sliding_window.seconds_until_free(key, window_seconds)
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Слишком много запросов. Попробуйте позже.",
-            headers={"Retry-After": str(http_window.seconds_until_free(key, window_seconds))},
+            headers={"Retry-After": str(retry_after)},
         )
 
     return dependency

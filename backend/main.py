@@ -11,6 +11,7 @@ from ws.manager import CHAT_CHANNEL, chat_manager
 from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
 from ws.pubsub import ws_pubsub
 from tasks.auto_reject import run_auto_reject_loop
+from utils.redis_sliding_window import redis_sliding_window
 
 
 @asynccontextmanager
@@ -18,9 +19,11 @@ async def lifespan(application: FastAPI):
     ws_pubsub.register(CHAT_CHANNEL, chat_manager.handle_event)
     ws_pubsub.register(EXPERT_ROOM_CHANNEL, expert_room_manager.handle_event)
     await ws_pubsub.start()
+    await redis_sliding_window.start()
     auto_reject_task = asyncio.create_task(run_auto_reject_loop())
     yield
     auto_reject_task.cancel()
+    await redis_sliding_window.stop()
     await ws_pubsub.stop()
 
 
