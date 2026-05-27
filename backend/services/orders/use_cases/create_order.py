@@ -28,11 +28,9 @@ class CreateOrderUseCase:
         await self.validator.ensure_customer_exists(data.customer_id)
 
         order = self.build_entity(data)
+        order.badges = self.build_badges(data)
         await self.repo.add(order)
         await self.flush_or_reject()
-
-        if data.badges:
-            await self.repo.add_badges(self.build_badges(order.id, data))
 
         created = await self.repo.get_by_id(order.id)
         if self.send_new_order_email is not None:
@@ -56,9 +54,9 @@ class CreateOrderUseCase:
         OrderDocumentsService.write(order, data.documents)
         return order
 
-    def build_badges(self, order_id: int, data: OrderCreate) -> list[OrderBadge]:
+    def build_badges(self, data: OrderCreate) -> list[OrderBadge]:
         return [
-            OrderBadge(order_id=order_id, text=badge.text, variant=badge.variant)
+            OrderBadge(text=badge.text, variant=badge.variant)
             for badge in data.badges
         ]
 
