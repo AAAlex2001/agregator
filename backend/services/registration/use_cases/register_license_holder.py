@@ -48,7 +48,6 @@ class RegisterLicenseHolderUseCase:
             email_on_response_created=False,
             email_on_response_updated=False,
             email_on_expert_rejected=False,
-            email_on_new_order=False,
             email_on_order_updated=False,
             email_on_bidding_finished=False,
             email_on_chat_message=False,

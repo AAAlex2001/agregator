@@ -24,22 +24,27 @@ interface SettingsWidgetProps {
 }
 
 function buildTabs(role: string | null): Array<{ id: SettingsSection; label: string }> {
-  const base: Array<{ id: SettingsSection; label: string }> = [];
   if (role === "EXPERT") {
-    base.push({ id: "subscription", label: "Подписка" });
+    return [
+      { id: "notifications", label: "Уведомления" },
+      { id: "subscription", label: "Подписка" },
+      { id: "personal", label: "Личные данные" },
+    ];
   }
   if (role === "LICENSE_HOLDER") {
-    base.push({ id: "license", label: "Лицензия" });
+    return [
+      { id: "license", label: "Лицензия" },
+      { id: "personal", label: "Личные данные" },
+    ];
   }
-  base.push({ id: "personal", label: "Личные данные" });
-  if (role !== "LICENSE_HOLDER") {
-    base.push({ id: "notifications", label: "Уведомления" });
-  }
-  return base;
+  return [
+    { id: "personal", label: "Личные данные" },
+    { id: "notifications", label: "Уведомления" },
+  ];
 }
 
 function defaultSection(role: string | null): SettingsSection {
-  if (role === "EXPERT") return "subscription";
+  if (role === "EXPERT") return "notifications";
   if (role === "LICENSE_HOLDER") return "license";
   return "personal";
 }

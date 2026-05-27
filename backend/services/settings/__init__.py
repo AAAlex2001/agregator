@@ -7,6 +7,7 @@ from services.settings.use_cases.replace_company_card import ReplaceCompanyCardU
 from services.settings.use_cases.replace_license_file import ReplaceLicenseFileUseCase
 from services.settings.use_cases.request_email_change import RequestEmailChangeUseCase
 from services.settings.use_cases.update_email_preferences import UpdateEmailPreferencesUseCase
+from services.settings.use_cases.update_order_notifications import UpdateOrderNotificationsUseCase
 from services.settings.use_cases.update_license_terms import UpdateLicenseTermsUseCase
 from services.settings.use_cases.update_password import UpdatePasswordUseCase
 from services.settings.use_cases.update_personal_data import UpdatePersonalDataUseCase
@@ -23,6 +24,7 @@ __all__ = [
     "SettingsRepository",
     "SettingsValidator",
     "UpdateEmailPreferencesUseCase",
+    "UpdateOrderNotificationsUseCase",
     "UpdateLicenseTermsUseCase",
     "UpdatePasswordUseCase",
     "UpdatePersonalDataUseCase",

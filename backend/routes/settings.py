@@ -10,6 +10,7 @@ from schemas.settings import (
     RequestEmailChangeRequest,
     UpdateEmailPreferencesRequest,
     UpdateLicenseHolderRequest,
+    UpdateOrderNotificationsRequest,
     UpdatePersonalDataRequest,
     UserSettingsResponse,
 )
@@ -24,6 +25,7 @@ from services.settings import (
     SettingsValidator,
     UpdateEmailPreferencesUseCase,
     UpdateLicenseTermsUseCase,
+    UpdateOrderNotificationsUseCase,
     UpdatePasswordUseCase,
     UpdatePersonalDataUseCase,
     UploadAvatarUseCase,
@@ -91,6 +93,19 @@ async def update_email_preferences(
         user = await GetProfileUseCase(validator).execute(user_id)
     else:
         user = await UpdateEmailPreferencesUseCase(repo, validator).execute(user_id, patch)
+    return to_response(user)
+
+
+@router.put("/settings/order-notifications", response_model=UserSettingsResponse)
+async def update_order_notifications(
+    data: UpdateOrderNotificationsRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    repo = build_repo(db)
+    user = await UpdateOrderNotificationsUseCase(repo, build_validator(repo)).execute(
+        user_id, data.order_types
+    )
     return to_response(user)
 
 

@@ -21,12 +21,6 @@ export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescr
     roles: ["CUSTOMER"],
   },
   {
-    key: "email_on_new_order",
-    label: "Новые заявки",
-    description: "Письмо о каждой новой заявке на платформе.",
-    roles: ["EXPERT"],
-  },
-  {
     key: "email_on_order_updated",
     label: "Изменения заявок",
     description: "Заказчик меняет условия заявки, на которую вы откликнулись.",

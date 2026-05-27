@@ -64,6 +64,15 @@ class EmailRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
+    async def list_experts_subscribed_to_order_types(self) -> list[User]:
+        "Эксперты с email и непустым фильтром типов заказов. Пересечение проверяем в use case."
+        query = select(User).where(
+            User.role == UserRole.EXPERT,
+            User.email.isnot(None),
+            User.notify_order_types.isnot(None),
+        )
+        return list((await self.db.execute(query)).scalars().all())
+
     async def list_responders_with_preference(
         self, order_id: int, preference_field: str
     ) -> list[User]:

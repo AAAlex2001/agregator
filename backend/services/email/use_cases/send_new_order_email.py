@@ -8,11 +8,16 @@ from services.email.repository import EmailRepository
 TEMPLATE = "new_order"
 SUBJECT = "Новая заявка на Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/expert/orders"
-PREFERENCE_FIELD = "email_on_new_order"
+
+
+def badge_type(text: str) -> str:
+    "Тип экспертизы из текста badge: 'Э4 КЛ' → 'КЛ', 'Э1 КЛ/ТП' → 'КЛ/ТП'."
+    parts = text.split(" ", 1)
+    return parts[1] if len(parts) == 2 else text
 
 
 class SendNewOrderEmailUseCase:
-    "Каждому эксперту с включённым флагом шлём письмо о новой заявке."
+    "Письмо о новой заявке только экспертам, чей фильтр типов пересекается с типами заказа."
 
     def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
         self.repo = repo
@@ -23,11 +28,15 @@ class SendNewOrderEmailUseCase:
         if order is None:
             return
 
-        experts = await self.repo.list_experts_with_preference(PREFERENCE_FIELD)
-        if not experts:
+        order_types = {badge_type(badge.text) for badge in order.badges}
+        if not order_types:
             return
 
+        experts = await self.repo.list_experts_subscribed_to_order_types()
         for expert in experts:
+            wanted = set(expert.notify_order_types or [])
+            if not wanted & order_types:
+                continue
             context = self.build_context(order, expert)
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
 

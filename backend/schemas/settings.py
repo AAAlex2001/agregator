@@ -10,12 +10,14 @@ class LicenseRentalKind(str, Enum):
     NEGOTIABLE = "NEGOTIABLE"
 
 
+ALLOWED_ORDER_TYPES = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"]
+
+
 class EmailPreferences(BaseModel):
     "Гранулярные флаги уведомлений на email. Дефолтно всё включено."
     email_on_response_created: bool = True
     email_on_response_updated: bool = True
     email_on_expert_rejected: bool = True
-    email_on_new_order: bool = True
     email_on_order_updated: bool = True
     email_on_bidding_finished: bool = True
     email_on_chat_message: bool = True
@@ -61,12 +63,24 @@ class UpdateEmailPreferencesRequest(BaseModel):
     email_on_response_created: Optional[bool] = None
     email_on_response_updated: Optional[bool] = None
     email_on_expert_rejected: Optional[bool] = None
-    email_on_new_order: Optional[bool] = None
     email_on_order_updated: Optional[bool] = None
     email_on_bidding_finished: Optional[bool] = None
     email_on_chat_message: Optional[bool] = None
     email_on_question_asked: Optional[bool] = None
     email_on_question_answered: Optional[bool] = None
+
+
+class UpdateOrderNotificationsRequest(BaseModel):
+    "Типы экспертизы, по которым эксперт хочет письма о новых заказах. Пустой список — рассылка выключена."
+    order_types: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_types(self) -> "UpdateOrderNotificationsRequest":
+        unknown = [t for t in self.order_types if t not in ALLOWED_ORDER_TYPES]
+        if unknown:
+            raise ValueError(f"Недопустимые типы: {', '.join(unknown)}")
+        self.order_types = list(dict.fromkeys(self.order_types))
+        return self
 
 
 class ChangePasswordRequest(BaseModel):
@@ -113,6 +127,7 @@ class UserSettingsResponse(BaseModel):
     review_count: int = 0
     role: str
     email_preferences: EmailPreferences
+    notify_order_types: list[str] = Field(default_factory=list)
     license_number: Optional[str] = None
     license_file_url: Optional[str] = None
     license_areas: Optional[list[str]] = None

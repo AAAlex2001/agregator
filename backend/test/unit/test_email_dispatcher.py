@@ -26,16 +26,16 @@ class TestCanSend:
         assert EmailDispatcher.can_send(user, "email_on_chat_message") is True
 
     def test_missing_field_defaults_to_false(self):
-        "Если у юзера нет такого флага (старая миграция) — шлём НЕ шлём. getattr с default=False."
+        "Если у юзера нет такого флага (старая миграция) — НЕ шлём. getattr с default=False."
         user = SimpleNamespace(email="a@b.ru")
-        assert EmailDispatcher.can_send(user, "email_on_new_order") is False
+        assert EmailDispatcher.can_send(user, "email_on_order_updated") is False
 
     def test_each_field_isolated(self):
-        "Флаги независимы: включённый email_on_new_order не влияет на email_on_chat_message."
+        "Флаги независимы: включённый email_on_order_updated не влияет на email_on_chat_message."
         user = SimpleNamespace(
             email="a@b.ru",
-            email_on_new_order=True,
+            email_on_order_updated=True,
             email_on_chat_message=False,
         )
-        assert EmailDispatcher.can_send(user, "email_on_new_order") is True
+        assert EmailDispatcher.can_send(user, "email_on_order_updated") is True
         assert EmailDispatcher.can_send(user, "email_on_chat_message") is False

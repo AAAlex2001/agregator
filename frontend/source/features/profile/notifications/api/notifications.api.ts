@@ -18,3 +18,16 @@ export async function updateEmailPreferences(
   }
   return res.json();
 }
+
+export async function updateOrderNotifications(orderTypes: string[]): Promise<UserProfile> {
+  const res = await fetchWithSession(`${API_URL}/settings/order-notifications`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ order_types: orderTypes }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось сохранить фильтр уведомлений");
+  }
+  return res.json();
+}

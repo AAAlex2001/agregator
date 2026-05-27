@@ -43,7 +43,7 @@ class User(Base):
     email_on_response_created = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_response_updated = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_expert_rejected = Column(Boolean, default=True, nullable=False, server_default="true")
-    email_on_new_order = Column(Boolean, default=True, nullable=False, server_default="true")
+    notify_order_types = Column(JSONB, nullable=True)
     email_on_order_updated = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_bidding_finished = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_chat_message = Column(Boolean, default=True, nullable=False, server_default="true")

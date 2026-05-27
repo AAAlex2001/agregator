@@ -56,6 +56,11 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
 
               <RequirementsSection form={formState.form} />
 
+              <BadgeSection
+                form={formState.form}
+                onShowHelp={() => setView("help")}
+              />
+
               <CommentSection form={formState.form} />
 
               <FilesSection
@@ -65,11 +70,6 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
                 onAddOther={formState.addOther}
                 onRemoveOtherNew={formState.removeOtherNew}
                 onRemoveOtherExisting={formState.removeOtherExisting}
-              />
-
-              <BadgeSection
-                form={formState.form}
-                onShowHelp={() => setView("help")}
               />
 
               <div className={s.previewInline}>
