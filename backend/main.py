@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -12,6 +13,11 @@ from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
 from ws.pubsub import ws_pubsub
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
 
 
 @asynccontextmanager
