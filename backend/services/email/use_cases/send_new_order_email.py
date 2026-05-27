@@ -1,9 +1,13 @@
+import logging
+
 from models.order import Order
 from models.user import User
 from schemas.email import NewOrderContext, OrderBrief
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import greeting_for
 from services.email.repository import EmailRepository
+
+log = logging.getLogger(__name__)
 
 TEMPLATE = "new_order"
 SUBJECT = "Новая заявка на Ресурс-Плюс"
@@ -30,15 +34,23 @@ class SendNewOrderEmailUseCase:
 
         order_types = {badge_type(badge.text) for badge in order.badges}
         if not order_types:
+            log.info("new_order email: order=%s без бейджей, рассылка пропущена", order_id)
             return
 
         experts = await self.repo.list_experts_subscribed_to_order_types()
+        recipients: list[str] = []
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
             if not wanted & order_types:
                 continue
+            recipients.append(expert.email)
             context = self.build_context(order, expert)
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
+
+        log.info(
+            "new_order email: order=%s types=%s подписчиков=%s получателей=%s %s",
+            order_id, sorted(order_types), len(experts), len(recipients), recipients,
+        )
 
     def build_context(self, order: Order, expert: User) -> NewOrderContext:
         return NewOrderContext(
