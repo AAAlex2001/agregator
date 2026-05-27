@@ -55,6 +55,7 @@ class SendResponseCreatedEmailUseCase:
                 sum_amount=order.sum_amount if order else None,
                 deadline=order.deadline if order else None,
                 comment=(order.comment if order else "") or "",
+                badges=[badge.text for badge in order.badges] if order else [],
             ),
             expert=ExpertBrief(
                 name=full_name(expert) or "Эксперт",

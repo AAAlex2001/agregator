@@ -9,7 +9,8 @@
 {% if order.company %}Компания: {{ order.company }}
 {% endif %}Бюджет: {{ order.sum_amount | rubles }}
 Срок: {{ order.deadline | date_ru }}
-{% if order.comment %}
+{% if order.badges %}Обозначения: {{ order.badges | join(", ") }}
+{% endif %}{% if order.comment %}
 Комментарий:
 {{ order.comment }}
 {% endif %}

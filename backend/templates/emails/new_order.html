@@ -35,6 +35,14 @@
           <td class="kv-value" style="padding: 10px 0; font-size: 14px; line-height: 22px; color: #0F172A; text-align: right;">{{ order.deadline | date_ru }}</td>
         </tr>
       </table>
+      {% if order.badges %}
+      <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #E2E8F0;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">Обозначения</p>
+        <div>
+          {% for code in order.badges %}<span style="display: inline-block; padding: 4px 10px; margin: 0 6px 6px 0; background: #EEF2F6; color: #0F172A; border-radius: 6px; font-size: 13px; line-height: 18px; font-weight: 600;">{{ code }}</span>{% endfor %}
+        </div>
+      </div>
+      {% endif %}
       {% if order.comment %}
       <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #E2E8F0;">
         <p style="margin: 0 0 4px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">Комментарий</p>

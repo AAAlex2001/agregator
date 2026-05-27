@@ -49,6 +49,7 @@ class SendOrderUpdatedEmailUseCase:
                 sum_amount=order.sum_amount,
                 deadline=order.deadline,
                 comment=order.comment or "",
+                badges=[badge.text for badge in order.badges],
             ),
             changes_summary=changes_summary,
         )

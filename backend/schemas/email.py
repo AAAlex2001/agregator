@@ -12,6 +12,7 @@ class OrderBrief(BaseContext):
     sum_amount: int | None = None
     deadline: date | None = None
     comment: str = ""
+    badges: list[str] = []
 
 
 class ExpertBrief(BaseContext):
@@ -81,6 +82,7 @@ class BiddingFinishedContext(BaseContext):
     order_title: str
     outcome: str  # "won" либо "lost"
     cta_url: str
+    badges: list[str] = []
     order_number: str = ""
     customer_name: str = ""
     winning_price: str = ""

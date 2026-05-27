@@ -100,6 +100,7 @@ class SendBiddingFinishedEmailUseCase:
             order_title=order.title or f"Заказ #{order.id}",
             outcome=outcome,
             cta_url=CTA_URL,
+            badges=[badge.text for badge in order.badges],
             order_number=str(order.id),
             customer_name=order.company or "",
             winning_price=winning_price,
