@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Switch } from "@/source/shared/ui/Switch";
 import { useNotifications } from "@/source/shared/ui/Notifications";
-import { TypesPicker, type ExpertiseType } from "@/source/entities/expertise";
+import { BadgeCodesPicker } from "@/source/entities/expertise";
 import type { UserProfile } from "@/source/entities/user";
 import { updateOrderNotifications } from "../api/notifications.api";
 import { NOTIFICATION_DESCRIPTORS } from "../model/descriptors";
@@ -15,6 +15,8 @@ interface Props {
   profile: UserProfile;
   onProfileUpdate: (profile: UserProfile | null) => void;
 }
+
+const SAVE_DEBOUNCE_MS = 400;
 
 function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
   if (role !== "CUSTOMER" && role !== "EXPERT") {
@@ -29,10 +31,9 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
   const descriptors = relevantDescriptors(profile.role);
   const isExpert = profile.role === "EXPERT";
 
-  const [orderTypes, setOrderTypes] = useState<ExpertiseType[]>(
-    (profile.notify_order_types ?? []) as ExpertiseType[],
-  );
+  const [orderCodes, setOrderCodes] = useState<string[]>(profile.notify_order_types ?? []);
   const [savingTypes, setSavingTypes] = useState(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleToggle = async (key: NotificationPreferenceKey, next: boolean) => {
     const result = await toggle(key, next);
@@ -48,25 +49,32 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
     }
   };
 
-  const handleTypesChange = async (next: ExpertiseType[]) => {
-    const previous = orderTypes;
-    setOrderTypes(next);
+  const persistCodes = async (next: string[], previous: string[]) => {
     setSavingTypes(true);
     try {
       const updated = await updateOrderNotifications(next);
       onProfileUpdate(updated);
-      setOrderTypes((updated.notify_order_types ?? []) as ExpertiseType[]);
+      setOrderCodes(updated.notify_order_types ?? []);
       showSuccess(
         next.length
           ? "Фильтр уведомлений сохранён"
           : "Уведомления о новых заказах отключены",
       );
     } catch (error) {
-      setOrderTypes(previous);
+      setOrderCodes(previous);
       showError(error instanceof Error ? error.message : "Не удалось сохранить");
     } finally {
       setSavingTypes(false);
     }
+  };
+
+  const handleCodesChange = (next: string[]) => {
+    const previous = orderCodes;
+    setOrderCodes(next);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      void persistCodes(next, previous);
+    }, SAVE_DEBOUNCE_MS);
   };
 
   return (
@@ -82,11 +90,11 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
         <section className={s.orderTypes}>
           <h3 className={s.title}>Новые заказы</h3>
           <p className={s.subtitle}>
-            Отметьте типы экспертизы — письмо придёт, когда появится заказ с такими обозначениями.
+            Выберите типы и области экспертизы — письмо придёт только по заказам, попадающим под ваши требования.
             Пока ничего не выбрано, письма о новых заказах не приходят.
           </p>
           <div className={savingTypes ? s.pickerSaving : ""}>
-            <TypesPicker value={orderTypes} onChange={(next) => void handleTypesChange(next)} />
+            <BadgeCodesPicker value={orderCodes} onChange={handleCodesChange} />
           </div>
         </section>
       )}

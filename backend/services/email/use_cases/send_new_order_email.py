@@ -10,14 +10,8 @@ SUBJECT = "Новая заявка на Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/expert/orders"
 
 
-def badge_type(text: str) -> str:
-    "Тип экспертизы из текста badge: 'Э4 КЛ' → 'КЛ', 'Э1 КЛ/ТП' → 'КЛ/ТП'."
-    parts = text.split(" ", 1)
-    return parts[1] if len(parts) == 2 else text
-
-
 class SendNewOrderEmailUseCase:
-    "Письмо о новой заявке только экспертам, чей фильтр типов пересекается с типами заказа."
+    "Письмо о новой заявке только экспертам, чей фильтр кодов пересекается с бейджами заказа."
 
     def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
         self.repo = repo
@@ -28,14 +22,14 @@ class SendNewOrderEmailUseCase:
         if order is None:
             return
 
-        order_types = {badge_type(badge.text) for badge in order.badges}
-        if not order_types:
+        order_codes = {badge.text for badge in order.badges}
+        if not order_codes:
             return
 
         experts = await self.repo.list_experts_subscribed_to_order_types()
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
-            if not wanted & order_types:
+            if not wanted & order_codes:
                 continue
             context = self.build_context(order, expert)
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)

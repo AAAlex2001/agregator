@@ -11,3 +11,4 @@ export {
 export type { ExpertiseType } from "./model/data";
 export { TypesPicker } from "./ui/TypesPicker";
 export { TypeBadge } from "./ui/TypeBadge";
+export { BadgeCodesPicker } from "./ui/BadgeCodesPicker";

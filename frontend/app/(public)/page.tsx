@@ -12,6 +12,7 @@ import {
 	LandingHowItWorks,
 	LandingIndustryDirections,
 	LandingKeyAdvantages,
+	LandingNotificationsCta,
 	LandingOrders,
 	LandingReviews,
 	LandingSearchBlock,
@@ -84,6 +85,7 @@ export default async function LandingPage() {
 						bullets={hero.bullets}
 					/>
 					<LandingSearchBlock />
+					<LandingNotificationsCta />
 					<LandingHowItWorks
 						clientSteps={howItWorks.client}
 						expertSteps={howItWorks.expert}

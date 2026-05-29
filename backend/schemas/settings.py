@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
@@ -10,7 +11,7 @@ class LicenseRentalKind(str, Enum):
     NEGOTIABLE = "NEGOTIABLE"
 
 
-ALLOWED_ORDER_TYPES = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"]
+BADGE_CODE_PATTERN = re.compile(r"^Э\d{1,2}(?:\.\d{1,2})?\s+(?:КЛ/ТП|КЛ|ТП|ТУ|ЗС|Д|ОБ)$")
 
 
 class EmailPreferences(BaseModel):
@@ -71,14 +72,14 @@ class UpdateEmailPreferencesRequest(BaseModel):
 
 
 class UpdateOrderNotificationsRequest(BaseModel):
-    "Типы экспертизы, по которым эксперт хочет письма о новых заказах. Пустой список — рассылка выключена."
+    "Коды бейджей заказа, по которым эксперт хочет уведомления. Формат: 'Э<номер> <тип>' (например 'Э4 КЛ'). Пустой список — рассылка выключена."
     order_types: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_types(self) -> "UpdateOrderNotificationsRequest":
-        unknown = [t for t in self.order_types if t not in ALLOWED_ORDER_TYPES]
+        unknown = [t for t in self.order_types if not BADGE_CODE_PATTERN.match(t)]
         if unknown:
-            raise ValueError(f"Недопустимые типы: {', '.join(unknown)}")
+            raise ValueError(f"Недопустимые коды: {', '.join(unknown)}")
         self.order_types = list(dict.fromkeys(self.order_types))
         return self
 

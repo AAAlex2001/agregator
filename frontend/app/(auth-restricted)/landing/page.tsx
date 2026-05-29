@@ -9,6 +9,7 @@ import {
   LandingHowItWorks,
   LandingIndustryDirections,
   LandingKeyAdvantages,
+  LandingNotificationsCta,
   LandingOrders,
   LandingReviews,
   LandingSearchBlock,
@@ -57,6 +58,7 @@ export default async function AuthRestrictedLandingPage() {
         compact
       />
       <LandingSearchBlock />
+      <LandingNotificationsCta />
       <LandingHowItWorks
         clientSteps={howItWorks.client}
         expertSteps={howItWorks.expert}
