@@ -14,7 +14,7 @@ export function RequirementsSection({ form }: Props) {
 
   return (
     <section className={base.section}>
-      <span className={base.label}>Требования к исполнителю</span>
+      <span className={`${base.label} ${s.title}`}>Требования к исполнителю</span>
       <div className={s.options}>
         <Checkbox
           id="order-requires-expert"

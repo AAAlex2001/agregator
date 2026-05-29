@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useSession } from "@/source/features/session";
+import Button from "@/source/shared/ui/Button";
 import { TabNotificationIcon } from "@/source/shared/ui/icons";
 import s from "./notifications-cta.module.scss";
 
@@ -19,23 +19,21 @@ const NotificationsCta = () => {
   return (
     <section className={s.section} id="notifications-cta">
       <div className={s.content}>
-        <Link href={href} className={s.card}>
+        <div className={s.card}>
           <div className={s.iconWrap} aria-hidden="true">
+            <span className={s.pulseOuter} />
+            <span className={s.pulseInner} />
             <TabNotificationIcon className={s.icon} />
-            <span className={s.pulse} />
             <span className={s.dot} />
           </div>
           <div className={s.textCol}>
             <h2 className={s.title}>Настроить уведомления о новых заказах</h2>
             <p className={s.subtitle}>{subtitle}</p>
           </div>
-          <span className={s.cta}>
+          <Button href={href} variant="primary" showArrow className={s.ctaButton}>
             {ctaLabel}
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
