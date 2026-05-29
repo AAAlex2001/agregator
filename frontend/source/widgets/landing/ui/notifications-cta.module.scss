@@ -27,14 +27,8 @@
   padding: 24px;
   border-radius: 24px;
   background: linear-gradient(90deg, #ffffff 0%, #fff4e0 60%, #ffdda9 100%);
-  border: 1px solid transparent;
+  border: 2px solid #ff7300;
   color: #1a1a1a;
-  transition: border-color 0.2s ease;
-
-  &:hover,
-  &:focus-within {
-    border-color: #ff8a00;
-  }
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -82,22 +76,17 @@
   }
 }
 
-.pulseOuter,
-.pulseInner {
+.pulseOuter {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 138, 0, 0.55);
   pointer-events: none;
-}
-
-.pulseOuter {
-  animation: pulse-ring 2.4s ease-out infinite;
+  animation: pulse-ring 6s ease-out infinite;
 }
 
 .pulseInner {
-  animation: pulse-ring 2.4s ease-out infinite;
-  animation-delay: 1.2s;
+  display: none;
 }
 
 .dot {
@@ -173,6 +162,11 @@
   0% {
     transform: scale(0.85);
     opacity: 0.9;
+  }
+
+  45% {
+    transform: scale(1.55);
+    opacity: 0;
   }
 
   100% {
