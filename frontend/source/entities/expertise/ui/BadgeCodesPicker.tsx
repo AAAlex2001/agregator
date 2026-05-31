@@ -120,7 +120,7 @@ export function BadgeCodesPicker({ value, onChange }: Props) {
                     onClick={() => toggleOpo(code)}
                     disabled={!enabled}
                   >
-                    {code}
+                    Э{code}
                   </button>
                 );
               })}
