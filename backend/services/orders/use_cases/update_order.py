@@ -43,6 +43,7 @@ class UpdateOrderUseCase:
         snapshot = self.snapshot(order)
 
         update_data = data.model_dump(exclude_unset=True)
+        update_data.pop("notify_responders", None)
         badges_data = update_data.pop("badges", None)
         documents = data.documents if "documents" in update_data else None
         update_data.pop("documents", None)
@@ -77,7 +78,7 @@ class UpdateOrderUseCase:
         await self.repo.flush()
         updated = await self.get_order.execute(order_id)
 
-        if notify:
+        if notify and data.notify_responders:
             await self.send_email_if_changed(updated, snapshot)
         return updated
 

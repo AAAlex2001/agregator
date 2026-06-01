@@ -70,11 +70,18 @@ export function useCustomerOrders() {
     }
   };
 
-  const onUpdate = async (values: OrderFormValues, documents: DocumentsFormState) => {
+  const onUpdate = async (
+    values: OrderFormValues,
+    documents: DocumentsFormState,
+    options: { notifyResponders: boolean },
+  ) => {
     if (!s.editTarget) return;
     d({ type: "SUBMITTING", value: true });
     try {
-      await updateOrder(s.editTarget.id, buildUpdatePayload(values, documents));
+      await updateOrder(
+        s.editTarget.id,
+        buildUpdatePayload(values, documents, options.notifyResponders),
+      );
       showSuccess("Заказ обновлён");
       backToList();
       void reload();

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
+import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { DocumentsFormState } from "../../model/formFiles";
 import type { OrderFormValues } from "../../model/schema";
@@ -16,9 +17,17 @@ import { RequirementsSection } from "./sections/RequirementsSection";
 import { OrderLivePreview } from "./OrderLivePreview";
 import s from "./CreateOrderForm.module.scss";
 
+export interface CreateOrderSubmitOptions {
+  notifyResponders: boolean;
+}
+
 interface Props {
   onCancel: () => void;
-  onSubmit: (values: OrderFormValues, documents: DocumentsFormState) => void;
+  onSubmit: (
+    values: OrderFormValues,
+    documents: DocumentsFormState,
+    options: CreateOrderSubmitOptions,
+  ) => void;
   isSubmitting: boolean;
   editTarget?: OrderCardData;
 }
@@ -75,6 +84,18 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
               <div className={s.previewInline}>
                 <OrderLivePreview form={formState.form} documents={formState.documents} />
               </div>
+
+              {formState.isEdit && (
+                <div className={s.notifyRow}>
+                  <Checkbox
+                    id="order-notify-responders"
+                    checked={formState.notifyResponders}
+                    onChange={formState.setNotifyResponders}
+                  >
+                    Оповестить участников тендера об изменениях
+                  </Checkbox>
+                </div>
+              )}
 
               <FormActions
                 isEdit={formState.isEdit}

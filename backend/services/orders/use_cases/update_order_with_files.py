@@ -57,7 +57,8 @@ class UpdateOrderWithFilesUseCase:
                 before_documents=before_documents,
             )
 
-        await self.send_email_if_changed(order, snapshot)
+        if data.notify_responders:
+            await self.send_email_if_changed(order, snapshot)
         return order
 
     @staticmethod

@@ -25,6 +25,7 @@ interface UpdatePayload {
   responses_deadline?: string;
   badge_codes: string[]; documents: DocumentsFormState;
   requires_expert: boolean; requires_license: boolean;
+  notify_responders: boolean;
 }
 
 function appendFiles(fd: FormData, documents: DocumentsFormState, files: File[]): void {
@@ -105,6 +106,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     fd.append("requires_license", String(p.requires_license));
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     fd.append("keep_documents_json", buildKeepDocuments(p.documents));
+    fd.append("notify_responders", String(p.notify_responders));
     appendFiles(fd, p.documents, files);
     return fd;
   };

@@ -115,7 +115,11 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
   };
 }
 
-export function buildUpdatePayload(values: OrderFormValues, documents: DocumentsFormState) {
+export function buildUpdatePayload(
+  values: OrderFormValues,
+  documents: DocumentsFormState,
+  notifyResponders: boolean,
+) {
   return {
     title: values.title.trim(),
     company: values.company.trim(),
@@ -128,5 +132,6 @@ export function buildUpdatePayload(values: OrderFormValues, documents: Documents
     requires_license: values.requiresLicense,
     comment: values.comment.trim(),
     documents,
+    notify_responders: notifyResponders,
   };
 }

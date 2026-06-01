@@ -13,5 +13,6 @@ export type {
 } from "./model/types";
 export {
   DOCUMENT_CATEGORIES, DOCUMENT_LABELS, SINGLE_DOCUMENT_CATEGORIES,
-  MAX_ORDER_DOCUMENTS, emptyDocuments, documentPaths, countDocuments,
+  MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES,
+  emptyDocuments, documentPaths, countDocuments,
 } from "./model/types";

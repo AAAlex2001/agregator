@@ -70,3 +70,11 @@ export function freeSlots(state: DocumentsFormState): number {
 export function canAddMoreOther(state: DocumentsFormState): boolean {
   return freeSlots(state) > 0;
 }
+
+export function totalNewFilesBytes(state: DocumentsFormState): number {
+  const singles = [state.technical, state.contract, state.company]
+    .map((slot) => slot.newFile?.size ?? 0)
+    .reduce((acc, size) => acc + size, 0);
+  const others = state.other.newFiles.reduce((acc, file) => acc + file.size, 0);
+  return singles + others;
+}

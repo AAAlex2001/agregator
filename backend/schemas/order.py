@@ -8,10 +8,17 @@ from models.order import OrderStatus, BadgeVariant
 
 ALLOWED_DOCUMENT_EXTENSIONS = {
     ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
+    ".zip", ".rar", ".7z",
 }
 
 
+ALLOWED_DOCUMENT_EXTENSIONS_LABEL = (
+    "PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX, ZIP, RAR, 7Z"
+)
+
+
 MAX_ORDER_DOCUMENTS = 6
+MAX_ORDER_FILES_TOTAL_BYTES = 100 * 1024 * 1024
 
 
 class OrderDocuments(BaseModel):
@@ -31,7 +38,7 @@ class OrderDocuments(BaseModel):
             extension = Path(path.split("?")[0]).suffix.lower()
             if extension not in ALLOWED_DOCUMENT_EXTENSIONS:
                 raise ValueError(
-                    "Допустимые форматы файлов: PDF, JPEG, JPG, PNG, DOC, DOCX, XLS, XLSX"
+                    f"Допустимые форматы файлов: {ALLOWED_DOCUMENT_EXTENSIONS_LABEL}"
                 )
         return self
 
@@ -77,6 +84,7 @@ class OrderUpdate(BaseModel):
     documents: Optional[OrderDocuments] = None
     badges: Optional[list[BadgeSchema]] = None
     status: Optional[OrderStatus] = None
+    notify_responders: bool = True
 
 
 class OrderResponse(BaseModel):

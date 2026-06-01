@@ -246,6 +246,7 @@ async def update_order_with_files(
     requires_license: bool | None = Form(None),
     badge_codes_json: str = Form("[]"),
     keep_documents_json: str = Form("{}"),
+    notify_responders: bool = Form(True),
     technical_files: list[UploadFile] = File(default=[]),
     contract_files: list[UploadFile] = File(default=[]),
     company_files: list[UploadFile] = File(default=[]),
@@ -265,6 +266,7 @@ async def update_order_with_files(
         keep_documents_json=keep_documents_json,
         requires_expert=requires_expert,
         requires_license=requires_license,
+        notify_responders=notify_responders,
     )
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)

@@ -18,6 +18,7 @@ export interface OrderDocuments {
 }
 
 export const MAX_ORDER_DOCUMENTS = 6;
+export const MAX_ORDER_FILES_TOTAL_BYTES = 100 * 1024 * 1024;
 
 export const DOCUMENT_LABELS = {
   technical: "Техническое задание",

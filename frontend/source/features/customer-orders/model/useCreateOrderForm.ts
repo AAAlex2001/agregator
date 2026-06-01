@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { OrderCardData } from "@/source/entities/order";
@@ -11,15 +11,22 @@ import {
   initialDocumentsFormState,
   freeSlots,
   singleSlotIsFilled,
+  totalNewFilesBytes,
   type DocumentsFormState,
 } from "./formFiles";
-import { MAX_ORDER_DOCUMENTS } from "@/source/entities/order";
+import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES } from "@/source/entities/order";
 import { getDefaultValues } from "./mappers";
 import { orderFormSchema, type OrderFormValues } from "./schema";
 
+const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
+
 interface Props {
   editTarget?: OrderCardData;
-  onSubmit: (values: OrderFormValues, documents: DocumentsFormState) => void;
+  onSubmit: (values: OrderFormValues, documents: DocumentsFormState, options: { notifyResponders: boolean }) => void;
+}
+
+function wouldExceedTotalSize(state: DocumentsFormState, incomingBytes: number): boolean {
+  return totalNewFilesBytes(state) + incomingBytes > MAX_ORDER_FILES_TOTAL_BYTES;
 }
 
 export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
@@ -29,6 +36,7 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     documentsFormReducer,
     initialDocumentsFormState(editTarget?.documents),
   );
+  const [notifyResponders, setNotifyResponders] = useState(true);
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
@@ -45,6 +53,10 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     const slotWasEmpty = !singleSlotIsFilled(documents[category]);
     if (file !== null && slotWasEmpty && freeSlots(documents) <= 0) {
       showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
+      return;
+    }
+    if (file !== null && wouldExceedTotalSize(documents, file.size)) {
+      showError(`Суммарный размер новых файлов не должен превышать ${MAX_TOTAL_MB} МБ`);
       return;
     }
     dispatch({ type: "SET_SINGLE", category, file });
@@ -64,7 +76,23 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     if (trimmed.length < incoming.length) {
       showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
     }
-    dispatch({ type: "ADD_OTHER", files: trimmed });
+    const accepted: File[] = [];
+    let runningBytes = totalNewFilesBytes(documents);
+    let rejectedBySize = false;
+    for (const file of trimmed) {
+      if (runningBytes + file.size > MAX_ORDER_FILES_TOTAL_BYTES) {
+        rejectedBySize = true;
+        continue;
+      }
+      runningBytes += file.size;
+      accepted.push(file);
+    }
+    if (rejectedBySize) {
+      showError(`Суммарный размер новых файлов не должен превышать ${MAX_TOTAL_MB} МБ`);
+    }
+    if (accepted.length > 0) {
+      dispatch({ type: "ADD_OTHER", files: accepted });
+    }
   };
 
   const removeOtherNew = (index: number) => dispatch({ type: "REMOVE_OTHER_NEW", index });
@@ -72,7 +100,7 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
 
   const submit = form.handleSubmit(
     (values) => {
-      onSubmit(values, documents);
+      onSubmit(values, documents, { notifyResponders });
       if (!isEdit) clearDraft();
     },
     (errors) => {
@@ -94,5 +122,7 @@ export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
     addOther,
     removeOtherNew,
     removeOtherExisting,
+    notifyResponders,
+    setNotifyResponders,
   };
 }

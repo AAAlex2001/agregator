@@ -107,6 +107,7 @@ def build_order_update_data(
     keep_documents_json: str,
     requires_expert: bool | None = None,
     requires_license: bool | None = None,
+    notify_responders: bool = True,
 ) -> OrderUpdate:
     return OrderUpdate(
         title=title,
@@ -120,4 +121,5 @@ def build_order_update_data(
         requires_license=requires_license,
         badges=parse_badge_codes(badge_codes_json),
         documents=parse_keep_documents(keep_documents_json),
+        notify_responders=notify_responders,
     )

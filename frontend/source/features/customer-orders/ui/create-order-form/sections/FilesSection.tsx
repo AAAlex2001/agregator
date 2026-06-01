@@ -11,6 +11,7 @@ import { FileIcon } from "@/source/shared/ui/icons";
 import {
   DOCUMENT_LABELS,
   MAX_ORDER_DOCUMENTS,
+  MAX_ORDER_FILES_TOTAL_BYTES,
   SINGLE_DOCUMENT_CATEGORIES,
 } from "@/source/entities/order";
 import {
@@ -18,6 +19,7 @@ import {
   freeSlots,
   singleSlotIsFilled,
   totalDocumentsCount,
+  totalNewFilesBytes,
   type DocumentsFormState,
   type OtherFilesSlot,
   type SingleFileSlot,
@@ -25,7 +27,14 @@ import {
 import base from "./sectionBase.module.scss";
 import s from "./filesSection.module.scss";
 
-const ACCEPT_ATTR = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";
+const ACCEPT_ATTR = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx,.zip,.rar,.7z";
+const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
+
+function formatBytes(bytes: number): string {
+  if (bytes <= 0) return "0 КБ";
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} КБ`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`;
+}
 
 interface Props {
   documents: DocumentsFormState;
@@ -70,8 +79,9 @@ export function FilesSection({
         />
       </div>
       <span className={s.hint}>
-        PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX. Всего не более {MAX_ORDER_DOCUMENTS} файлов
-        (загружено {totalDocumentsCount(documents)}).
+        PDF, JPEG, PNG, DOC, DOCX, XLS, XLSX, ZIP, RAR, 7Z. Всего не более {MAX_ORDER_DOCUMENTS} файлов
+        (загружено {totalDocumentsCount(documents)}). Суммарный размер новых файлов до {MAX_TOTAL_MB} МБ
+        (сейчас {formatBytes(totalNewFilesBytes(documents))}).
       </span>
     </section>
   );
