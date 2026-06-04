@@ -827,6 +827,7 @@ class UserAdmin(ModelView, model=User):
         User.email_on_bidding_finished, User.email_on_chat_message,
         User.email_on_question_asked, User.email_on_question_answered,
         User.notify_order_types,
+        User.notifications_introduced,
         User.created_at, User.updated_at,
         User.orders, User.assigned_orders, User.responses,
         User.payments, User.subscriptions, User.customer_reviews, User.expert_reviews,
@@ -841,6 +842,7 @@ class UserAdmin(ModelView, model=User):
         User.email_on_bidding_finished, User.email_on_chat_message,
         User.email_on_question_asked, User.email_on_question_answered,
         User.notify_order_types,
+        User.notifications_introduced,
     ]
 
     column_formatters = {
@@ -873,6 +875,7 @@ class UserAdmin(ModelView, model=User):
         User.email_on_question_asked: "Письмо: новый вопрос по заказу",
         User.email_on_question_answered: "Письмо: ответ на вопрос",
         User.notify_order_types: "Коды бейджей для рассылки о новых заказах",
+        User.notifications_introduced: "Прочитал модалку про уведомления",
         User.created_at: "Создан",
         User.updated_at: "Обновлён",
         User.orders: "Заказы (заказчик)",

@@ -38,14 +38,14 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
     ];
   }
   return [
-    { id: "personal", label: "Личные данные" },
     { id: "notifications", label: "Уведомления" },
+    { id: "personal", label: "Личные данные" },
   ];
 }
 
 function defaultSection(role: string | null): SettingsSection {
-  if (role === "EXPERT") return "notifications";
   if (role === "LICENSE_HOLDER") return "license";
+  if (role === "EXPERT" || role === "CUSTOMER") return "notifications";
   return "personal";
 }
 
