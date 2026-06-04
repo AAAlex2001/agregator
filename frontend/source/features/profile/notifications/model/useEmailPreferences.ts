@@ -47,5 +47,6 @@ export function useEmailPreferences(profile: UserProfile) {
     preferences,
     savingKey,
     toggle,
+    setPreferences,
   };
 }

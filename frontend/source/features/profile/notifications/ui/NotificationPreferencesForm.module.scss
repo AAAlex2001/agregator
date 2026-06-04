@@ -8,7 +8,22 @@
 .header {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .title {
@@ -24,6 +39,16 @@
   font-size: 13px;
   line-height: 20px;
   color: #64748B;
+}
+
+.clearButton {
+  flex-shrink: 0;
+  align-self: flex-start;
+  white-space: nowrap;
+
+  @media (min-width: 600px) {
+    align-self: center;
+  }
 }
 
 .list {

@@ -3,12 +3,20 @@
 import { useRef, useState } from "react";
 import { Switch } from "@/source/shared/ui/Switch";
 import { useNotifications } from "@/source/shared/ui/Notifications";
+import Button from "@/source/shared/ui/Button";
 import { BadgeCodesPicker } from "@/source/entities/expertise";
 import type { UserProfile } from "@/source/entities/user";
-import { updateOrderNotifications } from "../api/notifications.api";
+import {
+  updateEmailPreferences,
+  updateOrderNotifications,
+} from "../api/notifications.api";
 import { NOTIFICATION_DESCRIPTORS } from "../model/descriptors";
 import { useEmailPreferences } from "../model/useEmailPreferences";
-import type { NotificationPreferenceDescriptor, NotificationPreferenceKey } from "../model/types";
+import type {
+  NotificationPreferenceDescriptor,
+  NotificationPreferenceKey,
+  UpdateEmailPreferencesPayload,
+} from "../model/types";
 import s from "./NotificationPreferencesForm.module.scss";
 
 interface Props {
@@ -18,6 +26,17 @@ interface Props {
 
 const SAVE_DEBOUNCE_MS = 400;
 
+const ALL_PREFERENCE_KEYS: NotificationPreferenceKey[] = [
+  "email_on_response_created",
+  "email_on_response_updated",
+  "email_on_expert_rejected",
+  "email_on_order_updated",
+  "email_on_bidding_finished",
+  "email_on_chat_message",
+  "email_on_question_asked",
+  "email_on_question_answered",
+];
+
 function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
   if (role !== "CUSTOMER" && role !== "EXPERT") {
     return [];
@@ -26,13 +45,14 @@ function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
 }
 
 export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props) {
-  const { preferences, savingKey, toggle } = useEmailPreferences(profile);
+  const { preferences, savingKey, toggle, setPreferences } = useEmailPreferences(profile);
   const { showError, showSuccess } = useNotifications();
   const descriptors = relevantDescriptors(profile.role);
   const isExpert = profile.role === "EXPERT";
 
   const [orderCodes, setOrderCodes] = useState<string[]>(profile.notify_order_types ?? []);
   const [savingTypes, setSavingTypes] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleToggle = async (key: NotificationPreferenceKey, next: boolean) => {
@@ -77,13 +97,51 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
     }, SAVE_DEBOUNCE_MS);
   };
 
+  const handleClearAll = async () => {
+    if (resetting) return;
+    setResetting(true);
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+
+    const allOff: UpdateEmailPreferencesPayload = ALL_PREFERENCE_KEYS.reduce(
+      (acc, key) => ({ ...acc, [key]: false }),
+      {} as UpdateEmailPreferencesPayload,
+    );
+
+    try {
+      const [prefsResult, codesResult] = await Promise.all([
+        updateEmailPreferences(allOff),
+        isExpert ? updateOrderNotifications([]) : Promise.resolve(null),
+      ]);
+      const latest = codesResult ?? prefsResult;
+      setPreferences(latest.email_preferences);
+      setOrderCodes(latest.notify_order_types ?? []);
+      onProfileUpdate(latest);
+      showSuccess("Все почтовые уведомления отключены");
+    } catch (error) {
+      showError(error instanceof Error ? error.message : "Не удалось отключить уведомления");
+    } finally {
+      setResetting(false);
+    }
+  };
+
   return (
     <div className={s.form}>
       <header className={s.header}>
-        <h2 className={s.title}>Почтовые уведомления</h2>
-        <p className={s.subtitle}>
-          Выберите события, о которых хотите получать письма. Настройки сохраняются автоматически.
-        </p>
+        <div className={s.headerText}>
+          <h2 className={s.title}>Почтовые уведомления</h2>
+          <p className={s.subtitle}>
+            Выберите события, о которых хотите получать письма. Настройки сохраняются автоматически.
+          </p>
+        </div>
+        <Button
+          variant="transparent"
+          size="sm"
+          className={s.clearButton}
+          onClick={() => void handleClearAll()}
+          isLoading={resetting}
+        >
+          Отключить все
+        </Button>
       </header>
 
       {isExpert && (
@@ -108,7 +166,7 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
               onChange={(next) => void handleToggle(item.key, next)}
               label={item.label}
               description={item.description}
-              disabled={savingKey === item.key}
+              disabled={savingKey === item.key || resetting}
             />
           </li>
         ))}
