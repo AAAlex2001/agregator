@@ -19,6 +19,7 @@ def to_response(user: User) -> UserSettingsResponse:
         role=user.role.value,
         email_preferences=EmailPreferences.model_validate(user),
         notify_order_types=user.notify_order_types if isinstance(user.notify_order_types, list) else [],
+        notifications_introduced=bool(user.notifications_introduced),
         license_number=user.license_number,
         license_file_url=user.license_file_url,
         license_areas=license_areas,
