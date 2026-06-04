@@ -45,10 +45,6 @@
   flex-shrink: 0;
   align-self: flex-start;
   white-space: nowrap;
-
-  @media (min-width: 600px) {
-    align-self: center;
-  }
 }
 
 .list {
