@@ -149,7 +149,7 @@ export interface ResponseCardData {
 
 export interface CardAction {
   text: string;
-  variant: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat" | "transparent";
+  variant: "outline" | "outlineOrange" | "secondary" | "primary" | "green" | "chat" | "transparent" | "danger";
   onClick: () => void;
   isLoading?: boolean;
 }

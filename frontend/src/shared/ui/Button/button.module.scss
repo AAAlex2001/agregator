@@ -83,6 +83,20 @@
   }
 }
 
+.danger {
+  background: #ffffff;
+  color: #DC3545;
+  border: 2px solid #DC3545;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #DC3545;
+    border-color: #DC3545;
+    color: #ffffff;
+  }
+}
+
 .green {
   background: #E6F4EA;
   color: #137333;

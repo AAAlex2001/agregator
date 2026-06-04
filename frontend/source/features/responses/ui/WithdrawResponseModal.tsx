@@ -93,7 +93,7 @@ export function WithdrawResponseModal({
         <Button variant="chat" fullWidth onClick={onCancel}>
           Отменить отказ
         </Button>
-        <Button variant="outline" fullWidth onClick={onConfirm} isLoading={isLoading}>
+        <Button variant="danger" fullWidth onClick={onConfirm} isLoading={isLoading}>
           Отозвать отклик
         </Button>
       </div>

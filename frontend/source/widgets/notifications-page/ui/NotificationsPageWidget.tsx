@@ -86,7 +86,7 @@ export function NotificationsPageWidget() {
             Прочитать все
           </Button>
           <Button
-            variant="transparent"
+            variant="danger"
             size="sm"
             isLoading={notifications.isDismissingAll}
             onClick={onDismissAll}

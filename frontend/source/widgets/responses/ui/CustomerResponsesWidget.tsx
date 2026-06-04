@@ -34,7 +34,7 @@ export function CustomerResponsesWidget() {
 
   const topSlot =
     model.activeTab === "rejected" && model.items.length > 0 ? (
-      <Button variant="transparent" size="sm" onClick={() => model.onDeleteAllRejected()}>
+      <Button variant="danger" size="sm" onClick={() => model.onDeleteAllRejected()}>
         Удалить все отклонённые
       </Button>
     ) : undefined;

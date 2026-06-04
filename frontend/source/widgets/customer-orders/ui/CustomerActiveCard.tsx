@@ -31,7 +31,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
 
   const actions: CardAction[] = [
     { text: "Редактировать", variant: "outline", onClick: onEdit },
-    { text: "Удалить", variant: "transparent", onClick: onDelete, isLoading: isDeleting },
+    { text: "Удалить", variant: "danger", onClick: onDelete, isLoading: isDeleting },
   ];
 
   return (

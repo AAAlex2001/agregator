@@ -50,7 +50,7 @@ export function DeleteRejectedModal({
       <p className={s.desc}>{desc}</p>
       <div className={s.buttons}>
         <Button variant="chat" fullWidth onClick={onCancel}>Отменить</Button>
-        <Button variant="outline" fullWidth onClick={onConfirm} isLoading={isLoading}>
+        <Button variant="danger" fullWidth onClick={onConfirm} isLoading={isLoading}>
           Удалить
         </Button>
       </div>

@@ -34,7 +34,7 @@ export function DraftCard({
 }: Props) {
   const actions: CardAction[] = [
     { text: "Продолжить", variant: "secondary", onClick: onContinue },
-    { text: "Удалить", variant: "transparent", onClick: onDelete },
+    { text: "Удалить", variant: "danger", onClick: onDelete },
   ];
 
   return (

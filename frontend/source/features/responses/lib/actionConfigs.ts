@@ -28,7 +28,7 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
   const share: CardAction = { text: "Поделиться", variant: "outline", onClick: () => h.onShare?.(card.orderPublicId) };
   const withdraw = (text: string): CardAction => ({
     text,
-    variant: "transparent",
+    variant: "danger",
     onClick: () => h.onWithdraw?.(card),
     isLoading: loading === "withdraw",
   });
@@ -72,7 +72,7 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
 function customerActions(card: ResponseCardData, loading: Loading, h: Handlers): CardAction[] {
   const reject: CardAction = {
     text: "Отклонить",
-    variant: "transparent",
+    variant: "danger",
     onClick: () => h.onReject?.(card),
     isLoading: loading === "reject",
   };
@@ -100,7 +100,7 @@ function customerActions(card: ResponseCardData, loading: Loading, h: Handlers):
       const canRestore = !h.canRestore || h.canRestore(card);
       const deleteAction: CardAction = {
         text: "Удалить",
-        variant: "transparent",
+        variant: "danger",
         onClick: () => h.onDeleteRejected?.(card.id),
         isLoading: loading === "delete",
       };

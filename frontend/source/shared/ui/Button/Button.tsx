@@ -12,6 +12,7 @@ type ButtonVariant =
   | "settings"
   | "outline"
   | "outlineOrange"
+  | "danger"
   | "green"
   | "transparent"
   | "pill"

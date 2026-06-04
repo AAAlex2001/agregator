@@ -5,7 +5,7 @@ import { Switch } from "@/source/shared/ui/Switch";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import Button from "@/source/shared/ui/Button";
 import { BadgeCodesPicker } from "@/source/entities/expertise";
-import type { UserProfile } from "@/source/entities/user";
+import type { EmailPreferences, UserProfile } from "@/source/entities/user";
 import {
   updateEmailPreferences,
   updateOrderNotifications,
@@ -53,6 +53,7 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
   const [orderCodes, setOrderCodes] = useState<string[]>(profile.notify_order_types ?? []);
   const [savingTypes, setSavingTypes] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [pickerResetSeq, setPickerResetSeq] = useState(0);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleToggle = async (key: NotificationPreferenceKey, next: boolean) => {
@@ -99,13 +100,19 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
 
   const handleClearAll = async () => {
     if (resetting) return;
-    setResetting(true);
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
 
-    const allOff: UpdateEmailPreferencesPayload = ALL_PREFERENCE_KEYS.reduce(
+    const previousPreferences = preferences;
+    const previousCodes = orderCodes;
+    const allOff = ALL_PREFERENCE_KEYS.reduce(
       (acc, key) => ({ ...acc, [key]: false }),
-      {} as UpdateEmailPreferencesPayload,
+      {} as EmailPreferences,
     );
+
+    setResetting(true);
+    setPreferences(allOff);
+    setOrderCodes([]);
+    setPickerResetSeq((seq) => seq + 1);
 
     try {
       const [prefsResult, codesResult] = await Promise.all([
@@ -113,11 +120,12 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
         isExpert ? updateOrderNotifications([]) : Promise.resolve(null),
       ]);
       const latest = codesResult ?? prefsResult;
-      setPreferences(latest.email_preferences);
-      setOrderCodes(latest.notify_order_types ?? []);
       onProfileUpdate(latest);
       showSuccess("Все почтовые уведомления отключены");
     } catch (error) {
+      setPreferences(previousPreferences);
+      setOrderCodes(previousCodes);
+      setPickerResetSeq((seq) => seq + 1);
       showError(error instanceof Error ? error.message : "Не удалось отключить уведомления");
     } finally {
       setResetting(false);
@@ -134,7 +142,7 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
           </p>
         </div>
         <Button
-          variant="transparent"
+          variant="danger"
           size="sm"
           className={s.clearButton}
           onClick={() => void handleClearAll()}
@@ -152,7 +160,11 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
             Пока ничего не выбрано, письма о новых заказах не приходят.
           </p>
           <div className={savingTypes ? s.pickerSaving : ""}>
-            <BadgeCodesPicker value={orderCodes} onChange={handleCodesChange} />
+            <BadgeCodesPicker
+              key={pickerResetSeq}
+              value={orderCodes}
+              onChange={handleCodesChange}
+            />
           </div>
         </section>
       )}

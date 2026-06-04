@@ -49,7 +49,7 @@ export function RejectResponseModal({
       <div className={s.buttons}>
         <Button variant="chat" fullWidth onClick={onCancel}>Отменить</Button>
         <Button
-          variant="outline"
+          variant="danger"
           fullWidth
           onClick={() => onConfirm(reason.trim())}
           isLoading={isLoading}

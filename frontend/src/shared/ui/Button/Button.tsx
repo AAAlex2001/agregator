@@ -4,7 +4,7 @@ import styles from "./button.module.scss";
 import { ArrowIcon } from "@/source/shared/ui/icons";
 import Loader from "../Loader";
 
-type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline" | "outlineOrange" | "green" | "transparent";
+type ButtonVariant = "primary" | "secondary" | "chat" | "settings" | "outline" | "outlineOrange" | "danger" | "green" | "transparent";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
