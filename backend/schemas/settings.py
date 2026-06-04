@@ -1,17 +1,15 @@
-import re
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 from pydantic import BaseModel, Field, EmailStr, model_validator
+
+from services.experts.badge_codes import ALL_BADGE_CODES_SET
 
 
 class LicenseRentalKind(str, Enum):
     PERCENT = "PERCENT"
     FIXED = "FIXED"
     NEGOTIABLE = "NEGOTIABLE"
-
-
-BADGE_CODE_PATTERN = re.compile(r"^Э\d{1,2}(?:\.\d{1,2})?\s+(?:КЛ/ТП|КЛ|ТП|ТУ|ЗС|Д|ОБ)$")
 
 
 class EmailPreferences(BaseModel):
@@ -77,7 +75,7 @@ class UpdateOrderNotificationsRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_types(self) -> "UpdateOrderNotificationsRequest":
-        unknown = [t for t in self.order_types if not BADGE_CODE_PATTERN.match(t)]
+        unknown = [t for t in self.order_types if t not in ALL_BADGE_CODES_SET]
         if unknown:
             raise ValueError(f"Недопустимые коды: {', '.join(unknown)}")
         self.order_types = list(dict.fromkeys(self.order_types))
@@ -129,6 +127,7 @@ class UserSettingsResponse(BaseModel):
     role: str
     email_preferences: EmailPreferences
     notify_order_types: list[str] = Field(default_factory=list)
+    notifications_introduced: bool = False
     license_number: Optional[str] = None
     license_file_url: Optional[str] = None
     license_areas: Optional[list[str]] = None

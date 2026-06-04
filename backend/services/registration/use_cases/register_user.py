@@ -1,5 +1,6 @@
-from models.user import User
+from models.user import User, UserRole
 from schemas.registration import UserRegistration
+from services.experts.badge_codes import ALL_BADGE_CODES
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
 from utils.passwords import hash_password
@@ -34,5 +35,7 @@ class RegisterUserUseCase:
             first_name=data.first_name,
             last_name=data.last_name,
         )
+        if data.role == UserRole.EXPERT:
+            user.notify_order_types = list(ALL_BADGE_CODES)
         await self.repo.add(user)
         return user

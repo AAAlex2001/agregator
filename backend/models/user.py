@@ -49,6 +49,7 @@ class User(Base):
     email_on_chat_message = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_question_asked = Column(Boolean, default=True, nullable=False, server_default="true")
     email_on_question_answered = Column(Boolean, default=True, nullable=False, server_default="true")
+    notifications_introduced = Column(Boolean, default=False, nullable=False, server_default="false")
     phone = Column(String, index=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     password = Column(String, nullable=False)

@@ -18,6 +18,7 @@ from services.settings import (
     ClearCompanyCardUseCase,
     ConfirmEmailChangeUseCase,
     GetProfileUseCase,
+    MarkNotificationsIntroducedUseCase,
     ReplaceCompanyCardUseCase,
     ReplaceLicenseFileUseCase,
     RequestEmailChangeUseCase,
@@ -106,6 +107,16 @@ async def update_order_notifications(
     user = await UpdateOrderNotificationsUseCase(repo, build_validator(repo)).execute(
         user_id, data.order_types
     )
+    return to_response(user)
+
+
+@router.post("/settings/notifications-introduced", response_model=UserSettingsResponse)
+async def mark_notifications_introduced(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+):
+    repo = build_repo(db)
+    user = await MarkNotificationsIntroducedUseCase(repo, build_validator(repo)).execute(user_id)
     return to_response(user)
 
 

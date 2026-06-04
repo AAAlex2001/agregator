@@ -58,6 +58,7 @@ export interface UserProfile {
   role: string;
   email_preferences: EmailPreferences;
   notify_order_types: string[];
+  notifications_introduced: boolean;
   license_number: string | null;
   license_file_url: string | null;
   license_areas: string[] | null;

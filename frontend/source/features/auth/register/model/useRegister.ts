@@ -103,10 +103,15 @@ export function useRegister() {
   const confirmSubmit = confirmForm.handleSubmit(
     async (values) => {
       try {
-        await confirmRegistrationEmail(wizard.pendingEmail, values.code, form.getValues("role"));
+        const role = form.getValues("role");
+        await confirmRegistrationEmail(wizard.pendingEmail, values.code, role);
         await reload();
         showSuccess("Почта подтверждена");
-        router.push("/settings");
+        if (role === "CUSTOMER" || role === "EXPERT") {
+          router.push("/landing");
+        } else {
+          router.push("/settings");
+        }
       } catch (err) {
         showError(err instanceof Error ? err.message : "Произошла ошибка");
       }

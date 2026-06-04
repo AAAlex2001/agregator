@@ -3,6 +3,9 @@ from services.settings.repository import SettingsRepository
 from services.settings.use_cases.clear_company_card import ClearCompanyCardUseCase
 from services.settings.use_cases.confirm_email_change import ConfirmEmailChangeUseCase
 from services.settings.use_cases.get_profile import GetProfileUseCase
+from services.settings.use_cases.mark_notifications_introduced import (
+    MarkNotificationsIntroducedUseCase,
+)
 from services.settings.use_cases.replace_company_card import ReplaceCompanyCardUseCase
 from services.settings.use_cases.replace_license_file import ReplaceLicenseFileUseCase
 from services.settings.use_cases.request_email_change import RequestEmailChangeUseCase
@@ -18,6 +21,7 @@ __all__ = [
     "ClearCompanyCardUseCase",
     "ConfirmEmailChangeUseCase",
     "GetProfileUseCase",
+    "MarkNotificationsIntroducedUseCase",
     "ReplaceCompanyCardUseCase",
     "ReplaceLicenseFileUseCase",
     "RequestEmailChangeUseCase",

@@ -6,6 +6,7 @@ import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
 import { SidebarMobileProvider } from "@/source/widgets/sidebar";
 import { LicenseHoldersDrawerProvider } from "@/source/widgets/license-holders-drawer";
 import { UnreadCountProvider } from "@/source/features/notifications";
+import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function AppLayout({
                 <AppShell>{children}</AppShell>
               </div>
               <CabinetMenuTabs />
+              <NotificationsWelcomeModal />
             </LicenseHoldersDrawerProvider>
           </SidebarMobileProvider>
         </UnreadCountProvider>
