@@ -50,6 +50,22 @@ class MetrikaDashboard:
 
 EMPTY_SUMMARY = MetrikaSummary(visits=0, users=0, pageviews=0, bounce_rate=0.0)
 
+# Фоллбэк-перевод имён каналов трафика на случай если API при lang=ru всё равно отдаст английское.
+# Перечень — стандартные категории Я.Метрики (ym:s:trafficSource).
+TRAFFIC_SOURCE_RU = {
+    "Direct traffic": "Прямые заходы",
+    "Search engine traffic": "Поисковые системы",
+    "Internal traffic": "Внутренние переходы",
+    "Link traffic": "Переходы по ссылкам",
+    "Cached page traffic": "Сохранённые копии",
+    "Social network traffic": "Соцсети",
+    "Mail traffic": "Почтовые рассылки",
+    "Ad traffic": "Реклама",
+    "Recommendation systems": "Рекомендательные системы",
+    "Messenger traffic": "Мессенджеры",
+    "QR code traffic": "QR-коды",
+}
+
 
 def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limit: int = 10, sort: str = "") -> dict[str, Any]:
     "Низкоуровневый GET к Reporting API. Бросает httpx.HTTPError или RuntimeError если токена нет."
@@ -62,6 +78,7 @@ def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limi
         "date2": until.isoformat(),
         "accuracy": "full",
         "limit": limit,
+        "lang": "ru",
     }
     if dimensions:
         params["dimensions"] = dimensions
@@ -112,9 +129,10 @@ def traffic_sources(days: int = 30, limit: int = 8) -> list[MetrikaTrafficSource
     )
     result: list[MetrikaTrafficSource] = []
     for row in data.get("data", []):
-        name = (row["dimensions"][0] or {}).get("name") or "Прочее"
+        raw_name = (row["dimensions"][0] or {}).get("name") or "Прочее"
+        name = TRAFFIC_SOURCE_RU.get(str(raw_name), str(raw_name))
         visits = int((row["metrics"] or [0])[0] or 0)
-        result.append(MetrikaTrafficSource(source=str(name), visits=visits))
+        result.append(MetrikaTrafficSource(source=name, visits=visits))
     return result
 
 
