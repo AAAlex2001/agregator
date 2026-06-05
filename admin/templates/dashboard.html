@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div style="padding: 24px;">
+<h1 style="margin: 0 0 16px; font-size: 22px;">Дашборд</h1>
+
+<div style="margin-bottom: 24px;">
+  <a href="https://metrika.yandex.ru/dashboard?id={{ counter_id }}" target="_blank" rel="noopener" style="color: #2962ff; text-decoration: none;">Открыть Я.Метрику ↗</a>
+</div>
+
+<div class="r-cards">
+  <div class="r-card"><div class="r-card-title">Регистрации</div>
+    <div class="r-row"><span>Сутки</span><b>{{ db.users.day }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ db.users.week }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ db.users.month }}</b></div>
+  </div>
+  <div class="r-card"><div class="r-card-title">Заказы</div>
+    <div class="r-row"><span>Сутки</span><b>{{ db.orders.day }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ db.orders.week }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ db.orders.month }}</b></div>
+  </div>
+  <div class="r-card"><div class="r-card-title">Отклики</div>
+    <div class="r-row"><span>Сутки</span><b>{{ db.responses.day }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ db.responses.week }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ db.responses.month }}</b></div>
+  </div>
+</div>
+
+<div class="r-grid">
+  <div class="r-chart-wrap"><h3>Регистрации по дням (30 дней)</h3><canvas id="users-ts"></canvas></div>
+  <div class="r-chart-wrap"><h3>Пользователи по ролям</h3><canvas id="users-role"></canvas></div>
+  <div class="r-chart-wrap"><h3>Заказы по дням (30 дней)</h3><canvas id="orders-ts"></canvas></div>
+  <div class="r-chart-wrap"><h3>Заказы по статусу</h3><canvas id="orders-status"></canvas></div>
+  <div class="r-chart-wrap"><h3>Отклики по дням (30 дней)</h3><canvas id="responses-ts"></canvas></div>
+  <div class="r-chart-wrap"><h3>Отклики по статусу</h3><canvas id="responses-status"></canvas></div>
+</div>
+
+<h1 style="margin: 32px 0 16px; font-size: 22px;">Источники трафика</h1>
+
+{% if not ya.enabled %}
+<div class="r-warning">
+  Я.Метрика не подключена: {{ ya.error or "" }}.
+  Задай <code>YANDEX_METRIKA_OAUTH_TOKEN</code> в .env
+  (получить: <a href="https://oauth.yandex.ru/" target="_blank" rel="noopener">oauth.yandex.ru</a>, scope <code>metrika.read</code>).
+</div>
+{% elif ya.error %}
+<div class="r-warning">{{ ya.error }}</div>
+{% else %}
+<div class="r-cards">
+  <div class="r-card"><div class="r-card-title">Я.Метрика — визиты</div>
+    <div class="r-row"><span>Сутки</span><b>{{ ya.day.visits if ya.day else 0 }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ ya.week.visits if ya.week else 0 }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ ya.month.visits if ya.month else 0 }}</b></div>
+  </div>
+  <div class="r-card"><div class="r-card-title">Я.Метрика — посетители</div>
+    <div class="r-row"><span>Сутки</span><b>{{ ya.day.users if ya.day else 0 }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ ya.week.users if ya.week else 0 }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ ya.month.users if ya.month else 0 }}</b></div>
+  </div>
+  <div class="r-card"><div class="r-card-title">Я.Метрика — отказы (%)</div>
+    <div class="r-row"><span>Сутки</span><b>{{ "%.1f"|format(ya.day.bounce_rate if ya.day else 0) }}</b></div>
+    <div class="r-row"><span>Неделя</span><b>{{ "%.1f"|format(ya.week.bounce_rate if ya.week else 0) }}</b></div>
+    <div class="r-row"><span>Месяц</span><b>{{ "%.1f"|format(ya.month.bounce_rate if ya.month else 0) }}</b></div>
+  </div>
+</div>
+<div class="r-grid">
+  <div class="r-chart-wrap"><h3>Я.Метрика — визиты по дням</h3><canvas id="ya-daily"></canvas></div>
+  <div class="r-chart-wrap"><h3>Я.Метрика — источники трафика</h3><canvas id="ya-sources"></canvas></div>
+</div>
+{% endif %}
+</div>
+
+<style>
+  .r-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .r-card { background: #fff; padding: 16px 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .r-card-title { font-weight: 600; font-size: 13px; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .r-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .r-row:last-child { border-bottom: none; }
+  .r-row b { font-weight: 600; color: #111; }
+  .r-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .r-chart-wrap { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .r-chart-wrap h3 { margin: 0 0 12px; font-size: 14px; color: #555; }
+  .r-chart-wrap canvas { max-height: 280px; }
+  .r-warning { background: #fff3cd; color: #856404; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #ffeeba; }
+  .r-warning a, .r-warning code { color: #856404; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const D = {{ chart_data | safe }};
+const PALETTE = ['#2962ff', '#00bfa5', '#ffab00', '#d50000', '#aa00ff', '#00b8d4', '#6d4c41', '#5d4037'];
+
+function lineChart(ctx, points, label, color) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: points.map(p => p.label),
+      datasets: [{
+        label, data: points.map(p => p.value),
+        borderColor: color, backgroundColor: color + '22',
+        fill: true, tension: 0.25, pointRadius: 2,
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+}
+
+function pieChart(ctx, points) {
+  return new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: points.map(p => p.label),
+      datasets: [{ data: points.map(p => p.value), backgroundColor: PALETTE.slice(0, points.length) }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+function barChart(ctx, points, label, color) {
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: points.map(p => p.label),
+      datasets: [{ label, data: points.map(p => p.value), backgroundColor: color }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+}
+
+lineChart(document.getElementById('users-ts'), D.users_timeseries, 'Регистрации', '#2962ff');
+lineChart(document.getElementById('orders-ts'), D.orders_timeseries, 'Заказы', '#00bfa5');
+lineChart(document.getElementById('responses-ts'), D.responses_timeseries, 'Отклики', '#ffab00');
+pieChart(document.getElementById('users-role'), D.users_by_role);
+pieChart(document.getElementById('orders-status'), D.orders_by_status);
+pieChart(document.getElementById('responses-status'), D.responses_by_status);
+
+const yaDaily = document.getElementById('ya-daily');
+if (yaDaily && D.metrika_daily && D.metrika_daily.length) lineChart(yaDaily, D.metrika_daily, 'Визиты', '#d50000');
+const yaSources = document.getElementById('ya-sources');
+if (yaSources && D.metrika_sources && D.metrika_sources.length) barChart(yaSources, D.metrika_sources, 'Визиты', '#aa00ff');
+</script>
+{% endblock %}

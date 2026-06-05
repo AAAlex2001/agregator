@@ -8,7 +8,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from admin import setup_admin
 from routes import (
     article,
     chat,
@@ -88,8 +87,6 @@ app.include_router(article.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
-
-setup_admin(app)
 
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
