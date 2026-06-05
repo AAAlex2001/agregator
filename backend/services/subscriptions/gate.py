@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
@@ -19,7 +19,7 @@ class SubscriptionAccess:
         if not await self.settings.is_paid_responses_enabled():
             return None
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         await self.repo.expire_stale(user_id, now)
         await self.repo.flush()
 

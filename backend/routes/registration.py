@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.rate_limit import rate_limit
+from schemas.common import DetailResponse
 from schemas.registration import (
     EmailConfirmRequest,
     LicenseHolderRegistration,
@@ -17,7 +18,7 @@ from schemas.registration import (
 )
 from services.dadata import DaDataService
 from services.license_holders import remove_license_file, save_license_file
-from services.login import CreateSessionUseCase, LoginRepository, SESSION_MAX_DAYS
+from services.login import SESSION_MAX_DAYS, CreateSessionUseCase, LoginRepository
 from services.registration import (
     ConfirmEmailUseCase,
     RegisterLicenseHolderUseCase,
@@ -28,7 +29,6 @@ from services.registration import (
     ResendConfirmationUseCase,
 )
 from services.verification import VerificationService
-
 
 router = APIRouter(prefix="/register", tags=["auth"])
 
@@ -109,6 +109,7 @@ async def confirm_email(
 
 @router.post(
     "/resend-code",
+    response_model=DetailResponse,
     status_code=status.HTTP_202_ACCEPTED,
     dependencies=[Depends(rate_limit("resend_code", max_calls=2, window_seconds=60))],
 )
@@ -116,12 +117,12 @@ async def resend_confirmation_code(
     data: ResendCodeRequest,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
-):
+) -> DetailResponse:
     "Повторно отправляет код подтверждения почты — для случая, когда пользователь закрыл вкладку."
     await ResendConfirmationUseCase(build_repo(db), build_notifier(db)).execute(
         data.email, background_tasks, data.role
     )
-    return {"detail": "Код отправлен повторно"}
+    return DetailResponse(detail="Код отправлен повторно")
 
 
 @router.post(

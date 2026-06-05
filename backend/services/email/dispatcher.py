@@ -19,8 +19,8 @@ async def deliver_email_task(
     "BackgroundTasks-обёртка: отправка письма, ошибка SMTP только в лог."
     try:
         await send_email(recipient_email, subject, text, html)
-    except Exception as exc:
-        logger.exception("Не удалось отправить письмо на %s: %s", recipient_email, exc)
+    except Exception:
+        logger.exception("Не удалось отправить письмо на %s", recipient_email)
 
 
 class EmailDispatcher:

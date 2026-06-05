@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from uuid import uuid4
 
@@ -6,18 +7,18 @@ from fastapi import HTTPException, UploadFile, status
 
 from models.user import User
 
-
 AVATAR_ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 AVATAR_ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/jpg", "image/png"}
 AVATAR_MAX_SIZE = 5 * 1024 * 1024
 UPLOAD_CHUNK_SIZE = 1024 * 1024
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
 
 class AvatarStorage:
     "Сохраняет аватар на диск, чистит предыдущий, валидирует тип и размер."
 
     @staticmethod
-    def _validate(filename: str, content_type: str) -> str:
+    def validate_upload(filename: str, content_type: str) -> str:
         extension = Path(filename).suffix.lower()
         if extension not in AVATAR_ALLOWED_EXTENSIONS:
             raise HTTPException(
@@ -34,17 +35,17 @@ class AvatarStorage:
 
     @classmethod
     async def save(cls, user: User, file: UploadFile) -> str:
-        extension = cls._validate(file.filename or "", file.content_type or "")
+        extension = cls.validate_upload(file.filename or "", file.content_type or "")
 
-        upload_dir = Path(__file__).resolve().parents[2] / "uploads" / "avatars" / str(user.id)
-        upload_dir.mkdir(parents=True, exist_ok=True)
+        upload_dir = BACKEND_ROOT / "uploads" / "avatars" / str(user.id)
+        await asyncio.to_thread(upload_dir.mkdir, parents=True, exist_ok=True)
 
         generated_name = f"{uuid4().hex}{extension}"
         file_path = upload_dir / generated_name
         previous_path: Path | None = None
 
         if user.avatar_url and user.avatar_url.startswith(f"/uploads/avatars/{user.id}/"):
-            previous_path = Path(__file__).resolve().parents[2] / user.avatar_url.lstrip("/")
+            previous_path = BACKEND_ROOT / user.avatar_url.lstrip("/")
 
         total = 0
         try:

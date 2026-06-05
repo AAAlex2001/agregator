@@ -3,7 +3,6 @@ import os
 import httpx
 from fastapi import HTTPException, status
 
-
 DADATA_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party"
 
 

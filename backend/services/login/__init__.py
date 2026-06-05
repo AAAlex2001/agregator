@@ -1,4 +1,4 @@
-from services.login.repository import LoginRepository, SESSION_MAX_DAYS, SESSION_TTL_DAYS
+from services.login.repository import SESSION_MAX_DAYS, SESSION_TTL_DAYS, LoginRepository
 from services.login.use_cases.authenticate_user import AuthenticateUserUseCase
 from services.login.use_cases.create_session import CreateSessionUseCase
 from services.login.use_cases.list_available_roles import ListAvailableRolesUseCase

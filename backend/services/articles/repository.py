@@ -1,4 +1,3 @@
-from typing import Optional
 
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +16,7 @@ class ArticleRepository:
         kind: ArticleKind,
         skip: int,
         limit: int,
-        tag: Optional[str],
+        tag: str | None,
     ) -> tuple[list[Article], bool]:
         query = select(Article).where(
             and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED)

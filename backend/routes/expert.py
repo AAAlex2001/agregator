@@ -19,7 +19,6 @@ from services.experts.repository import (
     SORT_DIR_DESC,
 )
 
-
 router = APIRouter(tags=["experts"])
 
 

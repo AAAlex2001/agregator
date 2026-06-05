@@ -1,5 +1,5 @@
 import os
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from fastapi import HTTPException, status
@@ -10,7 +10,6 @@ from models.order import Order
 from models.question import OrderQuestion
 from models.response import OrderResponse, ResponseStatus, VatKind
 from services.reports.repository import ReportRepository
-
 
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "https://plus-resurs.com").rstrip("/")
 
@@ -211,7 +210,7 @@ class BuildReportPdfUseCase:
             winner=self.build_card(winner_response, order) if winner_response else None,
             others=[self.build_card(r, order) for r in other_responses],
             questions=questions,
-            generated_at=datetime.now(timezone.utc).strftime("%d.%m.%Y"),
+            generated_at=datetime.now(UTC).strftime("%d.%m.%Y"),
         )
 
     @staticmethod

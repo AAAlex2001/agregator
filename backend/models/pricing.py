@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
@@ -50,11 +50,11 @@ class PricingPlan(Base):
     highlighted = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
     sort_order = Column(Integer, nullable=False, default=0)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 
@@ -86,7 +86,7 @@ class UserSubscription(Base):
         default=SubscriptionStatus.ACTIVE,
         index=True,
     )
-    activated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    activated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=True)
     responses_remaining = Column(Integer, nullable=True)
     payment_id = Column(
@@ -94,11 +94,11 @@ class UserSubscription(Base):
         ForeignKey("payments.id", ondelete="SET NULL"),
         nullable=True,
     )
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 

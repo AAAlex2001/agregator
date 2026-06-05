@@ -1,7 +1,6 @@
 from fastapi import BackgroundTasks, HTTPException, status
 
 from models.email_change import EmailChangeRequest
-from models.user import User
 from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator

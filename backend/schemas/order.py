@@ -1,10 +1,9 @@
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 
-from models.order import OrderStatus, BadgeVariant
+from models.order import BadgeVariant, OrderStatus
 
 ALLOWED_DOCUMENT_EXTENSIONS = {
     ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
@@ -72,18 +71,18 @@ class OrderCreate(BaseModel):
 
 
 class OrderUpdate(BaseModel):
-    title: Optional[str] = Field(None, max_length=500)
-    company: Optional[str] = Field(None, max_length=500)
-    comment: Optional[str] = Field(None, max_length=5000)
-    sum_amount: Optional[int] = Field(None, ge=0)
-    start_date: Optional[date] = None
-    deadline: Optional[date] = None
-    responses_deadline: Optional[datetime] = None
-    requires_expert: Optional[bool] = None
-    requires_license: Optional[bool] = None
-    documents: Optional[OrderDocuments] = None
-    badges: Optional[list[BadgeSchema]] = None
-    status: Optional[OrderStatus] = None
+    title: str | None = Field(None, max_length=500)
+    company: str | None = Field(None, max_length=500)
+    comment: str | None = Field(None, max_length=5000)
+    sum_amount: int | None = Field(None, ge=0)
+    start_date: date | None = None
+    deadline: date | None = None
+    responses_deadline: datetime | None = None
+    requires_expert: bool | None = None
+    requires_license: bool | None = None
+    documents: OrderDocuments | None = None
+    badges: list[BadgeSchema] | None = None
+    status: OrderStatus | None = None
     notify_responders: bool = True
 
 
@@ -133,7 +132,7 @@ class OrderResponse(BaseModel):
     model_config = {"from_attributes": True}
 
     @staticmethod
-    def _format_sum(amount_kopecks: int) -> str:
+    def format_sum(amount_kopecks: int) -> str:
         roubles = amount_kopecks // 100
         formatted = f"{roubles:,}".replace(",", " ")
         if amount_kopecks % 100:
@@ -171,7 +170,7 @@ class OrderResponse(BaseModel):
 
         if accepted_response is not None:
             update["accepted_response_id"] = accepted_response.id
-            update["executor_proposed_sum"] = cls._format_sum(accepted_response.proposed_sum_amount)
+            update["executor_proposed_sum"] = cls.format_sum(accepted_response.proposed_sum_amount)
             update["executor_proposed_start_date"] = (
                 accepted_response.proposed_start_date.strftime("%d.%m.%Y")
                 if accepted_response.proposed_start_date
@@ -189,7 +188,7 @@ class OrderResponse(BaseModel):
         from services.orders.documents import OrderDocumentsService
 
         amount = order.sum_amount
-        sum_display = "Не определено" if amount == 0 else cls._format_sum(amount)
+        sum_display = "Не определено" if amount == 0 else cls.format_sum(amount)
 
         customer_name = order.company or ""
         customer_inn = (order.customer.inn or "") if order.customer is not None else ""
@@ -207,7 +206,7 @@ class OrderResponse(BaseModel):
         ]
 
         previous_sum = (
-            cls._format_sum(order.previous_sum_amount)
+            cls.format_sum(order.previous_sum_amount)
             if order.previous_sum_amount is not None
             else None
         )

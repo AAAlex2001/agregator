@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from schemas.common import DetailResponse
 from schemas.settings import (
     ChangePasswordRequest,
     ConfirmEmailChangeRequest,
@@ -122,20 +123,22 @@ async def mark_notifications_introduced(
 
 @router.post(
     "/settings/password",
+    response_model=DetailResponse,
     dependencies=[Depends(rate_limit("settings_password", max_calls=5, window_seconds=60))],
 )
 async def change_password(
     data: ChangePasswordRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> DetailResponse:
     repo = build_repo(db)
     await UpdatePasswordUseCase(repo, build_validator(repo)).execute(user_id, data.new_password)
-    return {"detail": "Пароль успешно изменён"}
+    return DetailResponse(detail="Пароль успешно изменён")
 
 
 @router.post(
     "/settings/email/request-change",
+    response_model=DetailResponse,
     dependencies=[Depends(rate_limit("settings_email_request", max_calls=2, window_seconds=60))],
 )
 async def request_email_change(
@@ -143,12 +146,12 @@ async def request_email_change(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> DetailResponse:
     repo = build_repo(db)
     await RequestEmailChangeUseCase(repo, build_validator(repo)).execute(
         user_id, data.new_email, background_tasks
     )
-    return {"detail": "Код отправлен на новый адрес"}
+    return DetailResponse(detail="Код отправлен на новый адрес")
 
 
 @router.post(

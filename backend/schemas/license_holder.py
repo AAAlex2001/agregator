@@ -1,21 +1,22 @@
-from typing import Any, Optional
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
 class LicenseHolderListItem(BaseModel):
     id: int
-    inn: Optional[str] = None
-    company_data: Optional[dict[str, Any]] = None
-    avatar_url: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    license_number: Optional[str] = None
-    license_file_url: Optional[str] = None
-    license_areas: Optional[list[str]] = None
-    license_rental_kind: Optional[str] = None
-    license_rental_percent: Optional[float] = None
-    license_rental_fixed_amount: Optional[int] = None
-    company_card_url: Optional[str] = None
+    inn: str | None = None
+    company_data: dict[str, Any] | None = None
+    avatar_url: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    license_number: str | None = None
+    license_file_url: str | None = None
+    license_areas: list[str] | None = None
+    license_rental_kind: str | None = None
+    license_rental_percent: float | None = None
+    license_rental_fixed_amount: int | None = None
+    company_card_url: str | None = None
 
     class Config:
         from_attributes = True

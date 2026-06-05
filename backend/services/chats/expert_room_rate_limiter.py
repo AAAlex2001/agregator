@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 
 from utils.redis_sliding_window import redis_sliding_window
 
-
 RATE_LIMIT_WINDOW_SECONDS = 10.0
 RATE_LIMIT_MAX_PER_WINDOW = 5
 

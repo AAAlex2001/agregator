@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
 
@@ -56,7 +56,7 @@ class ReplyToTicketUseCase:
             author_name=author_name_from_user(user),
             text=cleaned,
             attachments=attachments,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         ticket.messages.append(message)
 
@@ -65,7 +65,7 @@ class ReplyToTicketUseCase:
         ticket.has_unread_for_user = False
         ticket.last_message_text = message.text
         ticket.last_message_at = message.created_at
-        ticket.updated_at = datetime.now(timezone.utc)
+        ticket.updated_at = datetime.now(UTC)
 
         await self.repo.flush()
         return ticket

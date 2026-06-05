@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from models.order import OrderStatus
+from schemas.common import OkResponse
+from schemas.order import (
+    OrderCreate,
+    OrderListResponse,
+    OrderResponse,
+    OrderUpdate,
+)
 from services.email import (
     EmailDispatcher,
     EmailRepository,
@@ -26,12 +32,6 @@ from services.orders import (
     SearchOrdersUseCase,
     UpdateOrderUseCase,
     UpdateOrderWithFilesUseCase,
-)
-from schemas.order import (
-    OrderCreate,
-    OrderUpdate,
-    OrderResponse,
-    OrderListResponse,
 )
 from utils.order_forms import build_order_create_data, build_order_update_data
 
@@ -84,9 +84,9 @@ async def search_orders_public(
 async def get_orders(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
-    status: Optional[OrderStatus] = None,
+    status: OrderStatus | None = None,
     db: AsyncSession = Depends(get_db),
-    user_id: Optional[int] = Depends(get_current_user_optional),
+    user_id: int | None = Depends(get_current_user_optional),
 ):
     "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
     use_case = ListOrdersUseCase(build_repo(db))
@@ -296,12 +296,12 @@ async def update_order_with_files(
     return OrderResponse.from_order(order)
 
 
-@router.delete("/{order_id}")
+@router.delete("/{order_id}", response_model=OkResponse)
 async def delete_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OkResponse:
     repo = build_repo(db)
     use_case = DeleteOrderUseCase(
         repo=repo,
@@ -309,4 +309,4 @@ async def delete_order(
         validator=OrderValidator(repo),
     )
     await use_case.execute(order_id, current_user_id=user_id)
-    return {"ok": True}
+    return OkResponse()

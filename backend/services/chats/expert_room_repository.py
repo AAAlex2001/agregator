@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +23,7 @@ class ExpertRoomRepository:
         ).scalars().first()
         if session is None:
             return None
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if now > session.max_expires_at or now > session.expires_at:
             return None
         return session

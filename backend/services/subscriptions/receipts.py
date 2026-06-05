@@ -6,7 +6,6 @@ from fastapi import HTTPException, status
 from models.pricing import PricingPlan
 from models.user import User
 
-
 # Код НДС из env: 1 — без НДС, 2 — 0%, 3 — 10%, 4 — 20%, 5 — 10/110, 6 — 20/120.
 DEFAULT_VAT_CODE = int(os.getenv("YOOKASSA_VAT_CODE", "1"))
 

@@ -10,7 +10,6 @@ from services.reports import (
     ReportRepository,
 )
 
-
 router = APIRouter(prefix="/reports", tags=["reports"])
 
 
@@ -36,12 +35,13 @@ async def list_reports(
     )
 
 
-@router.get("/{order_id}/pdf")
+@router.get("/{order_id}/pdf", response_class=Response)
 async def download_report_pdf(
     order_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> Response:
+    "Скачать PDF-отчёт по архивному заказу. Возвращает бинарь, не JSON."
     use_case = BuildReportPdfUseCase(build_repo(db))
     pdf_bytes = await use_case.execute(order_id, user_id)
     filename = f"report-{order_id}.pdf"

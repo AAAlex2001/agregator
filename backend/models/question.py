@@ -1,6 +1,6 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import Boolean, Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -29,7 +29,7 @@ class OrderQuestion(Base):
     answer = Column(Text, nullable=True)
     asked_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
     answered_at = Column(DateTime(timezone=True), nullable=True)

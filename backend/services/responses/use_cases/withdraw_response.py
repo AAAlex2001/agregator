@@ -8,7 +8,6 @@ from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
 from services.subscriptions import SubscriptionAccess
 
-
 WITHDRAWABLE_STATUSES = {
     ResponseStatus.REVIEW,
     ResponseStatus.ACCEPTED,

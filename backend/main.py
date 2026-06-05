@@ -6,13 +6,33 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routes import login, registration, forgot_password, order, response, settings, chat, payment, pricing, review, notification, landing, question, support, license_holder, report, article, expert
-from ws.router import router as ws_router
-from ws.manager import CHAT_CHANNEL, chat_manager
-from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
-from ws.pubsub import ws_pubsub
+
+from routes import (
+    article,
+    chat,
+    expert,
+    forgot_password,
+    landing,
+    license_holder,
+    login,
+    notification,
+    order,
+    payment,
+    pricing,
+    question,
+    registration,
+    report,
+    response,
+    review,
+    settings,
+    support,
+)
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
+from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
+from ws.manager import CHAT_CHANNEL, chat_manager
+from ws.pubsub import ws_pubsub
+from ws.router import router as ws_router
 
 logging.basicConfig(
     level=logging.INFO,

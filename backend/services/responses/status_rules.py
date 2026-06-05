@@ -1,4 +1,5 @@
-from fastapi import HTTPException, status as http_status
+from fastapi import HTTPException
+from fastapi import status as http_status
 
 from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus

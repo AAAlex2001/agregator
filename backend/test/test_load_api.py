@@ -1,10 +1,16 @@
 from __future__ import annotations
 
-from load_api import LoadApi
-from load_models import LoadSettings, PreparedOrder, PreparedResponseWorld, RegisteredUser, RoleName, UserSession
-from load_runner import ScenarioReport, run_load_scenario
-
 import pytest
+from load_api import LoadApi
+from load_models import (
+    LoadSettings,
+    PreparedOrder,
+    PreparedResponseWorld,
+    RegisteredUser,
+    RoleName,
+    UserSession,
+)
+from load_runner import ScenarioReport, run_load_scenario
 
 
 async def close_registered_sessions(sessions: list[UserSession]) -> None:
@@ -48,10 +54,7 @@ async def prepare_authenticated_users(
 
 
 async def prepare_orders(api: LoadApi, scenario: str, total: int) -> list[PreparedOrder]:
-    prepared_orders = []
-    for iteration in range(total):
-        prepared_orders.append(await api.prepare_order(scenario, iteration))
-    return prepared_orders
+    return [await api.prepare_order(scenario, iteration) for iteration in range(total)]
 
 
 async def prepare_response_worlds(

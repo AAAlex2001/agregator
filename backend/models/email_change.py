@@ -1,16 +1,15 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from models.base import Base
 
-
 CODE_TTL_MINUTES = 15
 
 
 def default_expires_at() -> datetime:
-    return datetime.now(timezone.utc) + timedelta(minutes=CODE_TTL_MINUTES)
+    return datetime.now(UTC) + timedelta(minutes=CODE_TTL_MINUTES)
 
 
 class EmailChangeRequest(Base):
@@ -33,7 +32,7 @@ class EmailChangeRequest(Base):
     is_used = Column(Boolean, nullable=False, default=False, server_default="false")
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
     expires_at = Column(

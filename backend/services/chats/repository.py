@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import and_, func, or_, select, update
@@ -146,7 +146,7 @@ class ChatRepository:
             .where(
                 ChatMessage.chat_id.in_(chat_ids),
                 ChatMessage.sender_id != actor_id,
-                ChatMessage.is_read == False,
+                ChatMessage.is_read.is_(False),
             )
             .group_by(ChatMessage.chat_id)
         )
@@ -175,7 +175,7 @@ class ChatRepository:
         query = select(ChatMessage.id).where(
             ChatMessage.chat_id == chat_id,
             ChatMessage.sender_id != reader_id,
-            ChatMessage.is_read == False,
+            ChatMessage.is_read.is_(False),
         )
         return list((await self.db.execute(query)).scalars().all())
 
@@ -191,7 +191,7 @@ class ChatRepository:
 
     async def touch_chat(self, chat_id: int) -> None:
         await self.db.execute(
-            update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(timezone.utc))
+            update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(UTC))
         )
 
     async def is_chat_blocked(self, chat_id: int) -> bool:

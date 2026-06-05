@@ -1,9 +1,10 @@
 """
 Модели контента лендинга — редактируются из админки.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, Text, Enum as SAEnum
+from sqlalchemy import Column, DateTime, Integer, String, Text
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import JSONB
 
 from models.base import Base
@@ -111,7 +112,7 @@ class LandingReview(Base):
     text = Column(Text, nullable=False, default="")
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

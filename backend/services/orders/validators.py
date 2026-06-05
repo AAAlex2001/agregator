@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
+from sqlalchemy import select
 
 from models.order import OrderStatus
 from models.response import OrderResponse as OrderResponseModel
 from models.user import UserRole
 from services.orders.repository import OrderRepository
-from sqlalchemy import select
 
 
 class OrderValidator:

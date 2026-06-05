@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderStatus
-from models.response import OrderResponse as OrderResponseModel, ResponseStatus
+from models.response import OrderResponse as OrderResponseModel
+from models.response import ResponseStatus
 from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
-
 
 SORT_BY_RATING = "rating"
 SORT_BY_COMPLETED_ORDERS = "completed_orders"

@@ -1,15 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from services.payment import PaymentWebhookService
 
-
 router = APIRouter(prefix="/payments", tags=["payments"])
 
 
-@router.post("/webhook")
-async def payment_webhook(request: Request, db: AsyncSession = Depends(get_db)):
+class WebhookAck(BaseModel):
+    "Ответ-подтверждение YooKassa-вебхука."
+
+    status: str
+
+
+@router.post("/webhook", response_model=WebhookAck)
+async def payment_webhook(
+    request: Request, db: AsyncSession = Depends(get_db)
+) -> WebhookAck:
     "Вебхук YooKassa: обновляет статус платежа. Активация подписки идёт через SubscriptionAccess."
     body = await request.json()
 
@@ -25,4 +33,4 @@ async def payment_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
     service = PaymentWebhookService(db)
     await service.handle_webhook(event_type, yookassa_id)
-    return {"status": "ok"}
+    return WebhookAck(status="ok")

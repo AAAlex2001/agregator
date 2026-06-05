@@ -8,7 +8,7 @@ from services.notifications.repository import NotificationRepository
 PREVIEW_MAX_LENGTH = 240
 
 
-def _truncate(text: str) -> str:
+def truncate(text: str) -> str:
     text = (text or "").strip()
     if len(text) > PREVIEW_MAX_LENGTH:
         return text[:PREVIEW_MAX_LENGTH] + "…"
@@ -32,7 +32,7 @@ class CreateQuestionAskedNotificationUseCase:
         payload = QuestionAskedNotificationPayload(
             order_title=order_title,
             expert_name=expert_name or "Эксперт",
-            preview=_truncate(question_text),
+            preview=truncate(question_text),
         )
         notification = Notification(
             user_id=customer_id,
@@ -62,7 +62,7 @@ class CreateQuestionAnsweredNotificationUseCase:
     ) -> Notification:
         payload = QuestionAnsweredNotificationPayload(
             order_title=order_title,
-            preview=_truncate(answer_text),
+            preview=truncate(answer_text),
         )
         notification = Notification(
             user_id=expert_id,

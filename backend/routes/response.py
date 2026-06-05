@@ -1,5 +1,6 @@
 import json as json_lib
-from datetime import date as date_type, timedelta
+from datetime import date as date_type
+from datetime import timedelta
 from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
@@ -10,6 +11,7 @@ from dependencies.auth import get_current_user
 from models.order import OrderStatus
 from models.response import ResponseStatus, VatKind
 from models.user import UserRole
+from schemas.common import DeletedCountResponse, DetailResponse
 from schemas.order import OrderDocuments
 from schemas.response import (
     ExpertResponseItem,
@@ -17,7 +19,6 @@ from schemas.response import (
     ResponseCreate,
     ResponseTab,
 )
-from services.orders.documents import OrderDocumentsService
 from services.email import (
     EmailDispatcher,
     EmailRepository,
@@ -27,8 +28,8 @@ from services.email import (
     SendResponseUpdatedEmailUseCase,
 )
 from services.notifications import NotificationRepository
+from services.orders.documents import OrderDocumentsService
 from services.platform_settings import PlatformSettingsService
-from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 from services.responses import (
     CreateResponseUseCase,
     DeleteAllRejectedResponsesUseCase,
@@ -47,6 +48,7 @@ from services.responses import (
     UploadResponseFilesUseCase,
     WithdrawResponseUseCase,
 )
+from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 
 router = APIRouter(tags=["responses"])
 
@@ -395,13 +397,13 @@ async def update_response(
     return to_item(updated)
 
 
-@router.delete("/responses/{response_id}")
+@router.delete("/responses/{response_id}", response_model=DetailResponse)
 async def withdraw_response(
     response_id: int,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> DetailResponse:
     repo = build_repo(db)
     send_rejected = SendExpertRejectedEmailUseCase(
         repo=build_email_repo(db),
@@ -415,7 +417,7 @@ async def withdraw_response(
         subscription_access=build_subscription_access(db),
     )
     await use_case.execute(response_id=response_id, expert_id=user_id)
-    return {"detail": "Отклик отозван"}
+    return DetailResponse(detail="Отклик отозван")
 
 
 @router.post("/responses/{response_id}/restore", response_model=ExpertResponseItem)
@@ -433,24 +435,24 @@ async def restore_withdrawn_response(
     return to_item(restored)
 
 
-@router.delete("/responses/rejected/all")
+@router.delete("/responses/rejected/all", response_model=DeletedCountResponse)
 async def delete_all_rejected_responses(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> DeletedCountResponse:
     "Заказчик массово удаляет все свои отклонённые отклики."
     repo = build_repo(db)
     use_case = DeleteAllRejectedResponsesUseCase(repo=repo)
     deleted = await use_case.execute(customer_id=user_id)
-    return {"deleted": deleted}
+    return DeletedCountResponse(deleted=deleted)
 
 
-@router.delete("/responses/{response_id}/rejected")
+@router.delete("/responses/{response_id}/rejected", response_model=DetailResponse)
 async def delete_rejected_response(
     response_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> DetailResponse:
     "Заказчик удаляет один отклонённый отклик."
     repo = build_repo(db)
     use_case = DeleteRejectedResponseUseCase(
@@ -458,4 +460,4 @@ async def delete_rejected_response(
         get_response=GetResponseByIdUseCase(repo),
     )
     await use_case.execute(response_id=response_id, customer_id=user_id)
-    return {"detail": "Отклик удалён"}
+    return DetailResponse(detail="Отклик удалён")

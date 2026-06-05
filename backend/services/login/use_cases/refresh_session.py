@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
 
 from models.session import Session
-from services.login.repository import LoginRepository, SESSION_TTL_DAYS
+from services.login.repository import SESSION_TTL_DAYS, LoginRepository
 
 
 class RefreshSessionUseCase:
@@ -26,7 +26,7 @@ class RefreshSessionUseCase:
                 detail="Сессия не найдена",
             )
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if now > session.max_expires_at:
             await self.repo.delete_session_by_id(session.id)
             raise HTTPException(

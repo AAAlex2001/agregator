@@ -1,7 +1,20 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Column, Integer, BigInteger, String, Text, Date, DateTime, ForeignKey, Enum, JSON, Boolean, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -76,13 +89,13 @@ class OrderResponse(Base):
     )
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 

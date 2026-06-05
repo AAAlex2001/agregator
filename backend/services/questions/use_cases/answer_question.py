@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
@@ -37,7 +37,7 @@ class AnswerQuestionUseCase:
 
         is_first_answer = question.answer is None
         question.answer = text
-        question.answered_at = datetime.now(timezone.utc)
+        question.answered_at = datetime.now(UTC)
         await self.repo.flush()
 
         if is_first_answer:

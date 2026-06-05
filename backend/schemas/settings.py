@@ -1,7 +1,7 @@
-from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
+from typing import Any
+
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 from services.experts.badge_codes import ALL_BADGE_CODES_SET
 
@@ -29,10 +29,10 @@ class EmailPreferences(BaseModel):
 
 class UpdatePersonalDataRequest(BaseModel):
     """Обновление персональных данных пользователя (без email — он меняется отдельным эндпоинтом с подтверждением кода)."""
-    last_name: Optional[str] = Field(None, description="Фамилия", max_length=100)
-    first_name: Optional[str] = Field(None, description="Имя", max_length=100)
-    phone: Optional[str] = Field(None, description="Номер телефона")
-    inn: Optional[str] = Field(None, description="ИНН", min_length=10, max_length=12)
+    last_name: str | None = Field(None, description="Фамилия", max_length=100)
+    first_name: str | None = Field(None, description="Имя", max_length=100)
+    phone: str | None = Field(None, description="Номер телефона")
+    inn: str | None = Field(None, description="ИНН", min_length=10, max_length=12)
 
     @model_validator(mode="after")
     def validate_phone_format(self):
@@ -59,14 +59,14 @@ class ConfirmEmailChangeRequest(BaseModel):
 
 class UpdateEmailPreferencesRequest(BaseModel):
     "Частичный патч флагов уведомлений. Любое поле опционально."
-    email_on_response_created: Optional[bool] = None
-    email_on_response_updated: Optional[bool] = None
-    email_on_expert_rejected: Optional[bool] = None
-    email_on_order_updated: Optional[bool] = None
-    email_on_bidding_finished: Optional[bool] = None
-    email_on_chat_message: Optional[bool] = None
-    email_on_question_asked: Optional[bool] = None
-    email_on_question_answered: Optional[bool] = None
+    email_on_response_created: bool | None = None
+    email_on_response_updated: bool | None = None
+    email_on_expert_rejected: bool | None = None
+    email_on_order_updated: bool | None = None
+    email_on_bidding_finished: bool | None = None
+    email_on_chat_message: bool | None = None
+    email_on_question_asked: bool | None = None
+    email_on_question_answered: bool | None = None
 
 
 class UpdateOrderNotificationsRequest(BaseModel):
@@ -100,8 +100,8 @@ class UpdateLicenseHolderRequest(BaseModel):
     license_number: str = Field(..., min_length=1, max_length=100)
     license_areas: list[str] = Field(..., min_length=1)
     license_rental_kind: LicenseRentalKind
-    license_rental_percent: Optional[float] = Field(None, gt=0, le=100)
-    license_rental_fixed_amount: Optional[int] = Field(None, gt=0)
+    license_rental_percent: float | None = Field(None, gt=0, le=100)
+    license_rental_fixed_amount: int | None = Field(None, gt=0)
 
     @model_validator(mode="after")
     def cross_field_checks(self) -> "UpdateLicenseHolderRequest":
@@ -114,27 +114,27 @@ class UpdateLicenseHolderRequest(BaseModel):
 
 class UserSettingsResponse(BaseModel):
     id: int
-    inn: Optional[str] = None
-    company_data: Optional[dict[str, Any]] = None
-    email: Optional[EmailStr] = None
+    inn: str | None = None
+    company_data: dict[str, Any] | None = None
+    email: EmailStr | None = None
     email_verified: bool = False
-    phone: Optional[str] = None
-    avatar_url: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    rating: Optional[float] = None
+    phone: str | None = None
+    avatar_url: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    rating: float | None = None
     review_count: int = 0
     role: str
     email_preferences: EmailPreferences
     notify_order_types: list[str] = Field(default_factory=list)
     notifications_introduced: bool = False
-    license_number: Optional[str] = None
-    license_file_url: Optional[str] = None
-    license_areas: Optional[list[str]] = None
-    license_rental_kind: Optional[LicenseRentalKind] = None
-    license_rental_percent: Optional[float] = None
-    license_rental_fixed_amount: Optional[int] = None
-    company_card_url: Optional[str] = None
+    license_number: str | None = None
+    license_file_url: str | None = None
+    license_areas: list[str] | None = None
+    license_rental_kind: LicenseRentalKind | None = None
+    license_rental_percent: float | None = None
+    license_rental_fixed_amount: int | None = None
+    company_card_url: str | None = None
 
     class Config:
         from_attributes = True

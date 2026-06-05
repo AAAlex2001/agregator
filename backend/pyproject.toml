@@ -1,0 +1,130 @@
+[project]
+name = "resurs-plus-backend"
+version = "1.0.0"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["alembic/versions"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear (security/anti-patterns)
+    "UP",  # pyupgrade
+    "SIM", # simplify
+    "RET", # return statements
+    "PIE", # misc useful rules
+    "PT",  # pytest
+    "TRY", # try/except antipatterns
+    "C4",  # comprehensions
+    "ASYNC", # async antipatterns
+    "PERF", # perf antipatterns
+]
+ignore = [
+    "E501",   # line-too-long — длинные строки в docstrings/messages OK
+    "B008",   # function-call-default — FastAPI Depends() в дефолтах легитимно
+    "B904",   # raise-without-from-inside-except — иногда не нужен chaining
+    "TRY003", # long messages in raise — кириллические сообщения у HTTPException
+    "TRY300", # try-consider-else — лишний шум для async-сервисов
+    "TRY301", # raise-within-try — нормально для бизнес-валидации
+    "RET504", # unnecessary-assign-before-return — иногда читаемее
+    "SIM108", # ternary — не всегда читаемее
+    "PERF203", # try-except-in-loop — иногда нужен
+    "UP042",  # str+Enum mixin → StrEnum — рискованно для существующих SQLAdmin/миграций (меняет __str__)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/env.py" = ["E402"]
+"scripts/*.py" = ["TRY"]
+"test/**/*.py" = ["B", "TRY"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["models", "schemas", "services", "routes", "utils", "dependencies", "database", "tasks", "ws"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["alembic/versions", "test/"]
+explicit_package_bases = true
+namespace_packages = true
+
+# strict-режим включает всё, но кое-что нужно ослабить под FastAPI/SQLAlchemy 2.x async
+# из-за частично кривых stubs и невозможности типизировать ORM-инстансы строго
+warn_return_any = false           # SQLAlchemy execute().scalars() возвращает Any
+disallow_subclassing_any = false  # SQLAlchemy Base
+disallow_any_decorated = false    # @router.get декораторы возвращают Any
+
+# Глобальные disable для известных SQLAlchemy 1.x-style limitations.
+# Все они — про один и тот же паттерн: `Column[X]` не assignable к concrete X
+# при передаче в use cases или Pydantic-схемы. Runtime — работает; mypy — нет.
+# Реальный фикс — миграция на SQLAlchemy 2.x mapped_column (отдельная задача недели).
+disable_error_code = [
+    "arg-type",      # передача Column[int] туда где нужен int
+    "assignment",    # current_documents = list[X] куда Column[Any]
+    "index",         # Column[X][i]
+    "return-value",  # return user.id где id Column[int], а нужен int
+    "var-annotated", # status = Column(Enum(StatusEnum)) — нужен Mapped[StatusEnum]
+    "comparison-overlap",  # SQLAlchemy filter expr Column[X] != value vs different types
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "asyncpg.*",
+    "argon2.*",
+    "passlib.*",
+    "aiosmtplib.*",
+    "aiofiles.*",
+    "yookassa.*",
+    "weasyprint.*",
+    "redis.*",
+    "sqladmin.*",
+    "starlette.*",
+    "jinja2.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Роуты FastAPI: Depends()/Query()/Form() возвращают Any.
+# TODO: проставить return type annotations всем хендлерам пакетно.
+# Большинство уже имеют response_model и легко чинятся, просто 80+ ручных правок.
+module = "routes.*"
+disallow_any_explicit = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# ORM-модели на SQLAlchemy 1.x-стиле (Column(X), не Mapped[X] = mapped_column(X)).
+# Strict-режим даёт сотни ложных срабатываний из-за Column[Any] vs concrete type.
+# Переход на mapped_column — отдельная большая задача с миграциями.
+module = "models.*"
+disallow_untyped_defs = false
+disallow_any_explicit = false
+disallow_any_generics = false
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+# Слой ORM↔DTO маппинга — много Column[X] → concrete X конверсий.
+# В runtime это работает корректно (Pydantic делает int(column) и т.п.),
+# но mypy не доверяет SQLAlchemy 1.x stubs.
+module = [
+    "services.orders.documents",
+    "services.orders.repository",
+    "services.settings.formatters",
+    "services.platform_settings",
+    "tasks.auto_reject",
+    "init_db",
+    "alembic.env",
+]
+disallow_untyped_defs = false
+warn_return_any = false
+disable_error_code = ["assignment", "arg-type", "return-value", "attr-defined"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true

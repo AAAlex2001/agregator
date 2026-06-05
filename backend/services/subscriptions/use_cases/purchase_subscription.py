@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
 from yookassa import Payment as YooPayment
@@ -15,7 +15,6 @@ from models.pricing import (
 from models.user import User
 from services.subscriptions.receipts import build_receipt
 from services.subscriptions.repository import SubscriptionRepository
-
 
 SINGLE_RESPONSES = 1
 
@@ -88,7 +87,7 @@ class PurchaseSubscriptionUseCase:
     def build_subscription(
         cls, user: User, plan: PricingPlan, payment: Payment
     ) -> UserSubscription:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return UserSubscription(
             user_id=user.id,
             plan_id=plan.id,

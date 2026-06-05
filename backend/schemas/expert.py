@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +15,9 @@ class ExpertSummary(BaseModel):
     review_count: int = 0
     completed_orders_count: int = 0
     joined_at: datetime
-    last_order: Optional[OrderResponse] = None
+    last_order: OrderResponse | None = None
 
 
 class ExpertListResponse(BaseModel):
-    items: List[ExpertSummary]
+    items: list[ExpertSummary]
     has_more: bool

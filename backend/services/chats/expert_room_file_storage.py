@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -8,9 +8,9 @@ from fastapi import HTTPException, UploadFile, status
 from schemas.chat import ChatAttachmentData
 from services.chats.file_storage import (
     ALLOWED_EXTENSIONS,
+    BACKEND_ROOT,
     MAX_ATTACHMENTS,
     UPLOAD_CHUNK_SIZE,
-    BACKEND_ROOT,
 )
 from utils.filenames import sanitize_filename
 
@@ -23,10 +23,7 @@ class ExpertRoomFileStorage:
         upload_dir = BACKEND_ROOT / "uploads" / "expert-room" / self.current_month_dir()
         upload_dir.mkdir(parents=True, exist_ok=True)
 
-        attachments: list[ChatAttachmentData] = []
-        for upload in uploads:
-            attachments.append(await self.save_one(upload_dir, upload))
-        return attachments
+        return [await self.save_one(upload_dir, upload) for upload in uploads]
 
     async def save_one(
         self, upload_dir: Path, upload: UploadFile
@@ -47,7 +44,7 @@ class ExpertRoomFileStorage:
 
     @staticmethod
     def current_month_dir() -> str:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         return f"{now.year:04d}-{now.month:02d}"
 
     @staticmethod

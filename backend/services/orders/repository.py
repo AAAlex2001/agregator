@@ -1,4 +1,3 @@
-from typing import Optional
 
 from sqlalchemy import delete, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,8 +37,8 @@ class OrderRepository:
         self,
         skip: int,
         limit: int,
-        status_filter: Optional[OrderStatus],
-        user_id: Optional[int],
+        status_filter: OrderStatus | None,
+        user_id: int | None,
     ) -> tuple[list[Order], bool]:
         list_query = (
             select(Order)

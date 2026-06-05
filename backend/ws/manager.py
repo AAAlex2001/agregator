@@ -5,7 +5,6 @@ from starlette.websockets import WebSocketState
 
 from ws.pubsub import ws_pubsub
 
-
 CHAT_CHANNEL = "ws:chat:events"
 
 

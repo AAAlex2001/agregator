@@ -4,7 +4,6 @@ from models.user import UserRole
 from services.chats.expert_room_repository import ExpertRoomRepository
 from services.email.formatting import full_name
 
-
 WS_CLOSE_UNAUTHORIZED = 4001
 WS_CLOSE_FORBIDDEN = 4003
 

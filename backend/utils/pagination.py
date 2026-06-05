@@ -7,7 +7,6 @@ from typing import TypeVar
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 T = TypeVar("T")
 
 

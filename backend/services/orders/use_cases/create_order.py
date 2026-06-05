@@ -2,11 +2,11 @@ from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from models.order import Order, OrderBadge
+from schemas.order import OrderCreate
 from services.email import SendNewOrderEmailUseCase
 from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.validators import OrderValidator
-from schemas.order import OrderCreate
 
 
 class CreateOrderUseCase:

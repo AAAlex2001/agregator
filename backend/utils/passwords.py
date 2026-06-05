@@ -1,7 +1,6 @@
 from passlib.context import CryptContext
 from starlette.concurrency import run_in_threadpool
 
-
 password_context = CryptContext(
     schemes=["argon2"],
     argon2__time_cost=2,

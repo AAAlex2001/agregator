@@ -12,7 +12,9 @@ from schemas.chat import (
     ExpertRoomHistoryResponse,
     ExpertRoomMessageOut,
 )
+from schemas.common import UpdatedCountResponse
 from services.chats import (
+    BlockChatUseCase,
     ChatFileStorage,
     ChatInAppNotifier,
     ChatRepository,
@@ -28,7 +30,6 @@ from services.chats import (
     OpenChatUseCase,
     SendExpertRoomMessageUseCase,
     SendMessageUseCase,
-    BlockChatUseCase,
     UnblockChatUseCase,
     expert_room_rate_limiter,
 )
@@ -180,16 +181,16 @@ async def get_chat_presence(
     )
 
 
-@router.post("/{chat_uuid}/read")
+@router.post("/{chat_uuid}/read", response_model=UpdatedCountResponse)
 async def mark_chat_read(
     chat_uuid: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UpdatedCountResponse:
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     read_ids = await build_mark_read(db).execute(chat_id=chat.id, reader_id=user_id)
     await broadcast_read(chat.id, read_ids)
-    return {"updated": len(read_ids)}
+    return UpdatedCountResponse(updated=len(read_ids))
 
 
 @router.post("/{chat_uuid}/messages", response_model=ChatMessageResponse)

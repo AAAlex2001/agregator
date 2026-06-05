@@ -9,7 +9,6 @@ import os
 import re
 import unicodedata
 
-
 _MAX_LEN = 200
 _UNSAFE_CHARS = re.compile(r"[\x00-\x1f\x7f<>\"\\]")
 

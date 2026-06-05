@@ -1,11 +1,11 @@
 from models.order import Order, OrderBadge
+from schemas.order import OrderUpdate
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
 from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.validators import OrderValidator
-from schemas.order import OrderUpdate
 
 
 class UpdateOrderUseCase:

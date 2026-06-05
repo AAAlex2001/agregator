@@ -1,7 +1,7 @@
 from services.experts.repository import (
     ExpertOrderHistoryItem,
-    ExpertSummaryRow,
     ExpertsRepository,
+    ExpertSummaryRow,
 )
 from services.experts.use_cases import (
     GetExpertSummaryUseCase,

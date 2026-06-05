@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,7 +27,7 @@ async def get_current_user(
             detail="Сессия не найдена или истекла",
         )
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if now > session.max_expires_at:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -56,7 +56,7 @@ async def get_current_user_optional(
     session = result.scalar_one_or_none()
     if session is None:
         return None
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if now > session.max_expires_at or now > session.expires_at:
         return None
     return session.user_id

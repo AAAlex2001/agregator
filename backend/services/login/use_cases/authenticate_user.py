@@ -26,10 +26,11 @@ class AuthenticateUserUseCase:
                 detail="Пользователь не найден",
             )
 
-        matched = []
-        for candidate in candidates:
-            if await self.validator.verify_password(data.password, candidate.password):
-                matched.append(candidate)
+        matched = [
+            candidate
+            for candidate in candidates
+            if await self.validator.verify_password(data.password, candidate.password)
+        ]
 
         if not matched:
             raise HTTPException(

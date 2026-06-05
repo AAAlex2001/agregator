@@ -1,6 +1,7 @@
 from fastapi import UploadFile
 
 from models.order import Order
+from schemas.order import OrderDocuments, OrderUpdate
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
 from services.orders.documents import OrderDocumentsService
@@ -8,7 +9,6 @@ from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
 from services.orders.use_cases.update_order import UpdateOrderUseCase
-from schemas.order import OrderDocuments, OrderUpdate
 
 
 class UpdateOrderWithFilesUseCase:

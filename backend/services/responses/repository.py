@@ -156,7 +156,7 @@ class ResponseRepository:
             .where(OrderResponse.expert_id == expert_id)
             .group_by(OrderResponse.status)
         )
-        return {status: count for status, count in (await self.db.execute(query)).all()}
+        return dict((await self.db.execute(query)).all())
 
     async def customer_counters(self, customer_id: int) -> dict[ResponseStatus, int]:
         query = (
@@ -168,7 +168,7 @@ class ResponseRepository:
             )
             .group_by(OrderResponse.status)
         )
-        return {status: count for status, count in (await self.db.execute(query)).all()}
+        return dict((await self.db.execute(query)).all())
 
     async def reviewed_response_ids(
         self, customer_id: int, response_ids: list[int]

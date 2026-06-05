@@ -3,7 +3,7 @@ import contextlib
 import json
 import logging
 import os
-from typing import Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 import redis.asyncio as redis
 

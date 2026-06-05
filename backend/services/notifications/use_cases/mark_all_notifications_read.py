@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from schemas.notification import NotificationMutationResponse
 from services.notifications.repository import NotificationRepository
@@ -11,7 +11,7 @@ class MarkAllNotificationsReadUseCase:
         self.repo = repo
 
     async def execute(self, user_id: int) -> NotificationMutationResponse:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         updated = await self.repo.mark_all_read(user_id, now)
         if updated:
             await self.repo.decrement_unread(user_id, amount=updated)

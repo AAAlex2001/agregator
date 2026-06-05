@@ -1,11 +1,11 @@
 from fastapi import UploadFile
 
 from models.order import Order
+from schemas.order import OrderCreate
 from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.create_order import CreateOrderUseCase
-from schemas.order import OrderCreate
 
 
 class CreateOrderWithFilesUseCase:

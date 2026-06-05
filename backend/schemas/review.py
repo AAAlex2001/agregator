@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -32,7 +31,7 @@ class ReviewItem(BaseModel):
     expert_deadline: str = ""
     expert_sum: str = ""
     order_documents: OrderDocuments = Field(default_factory=OrderDocuments)
-    badges: List[ReviewBadgeItem] = Field(default_factory=list)
+    badges: list[ReviewBadgeItem] = Field(default_factory=list)
     rating: int
     comment: str
     created_at: datetime
@@ -42,7 +41,7 @@ class ReviewItem(BaseModel):
 
 
 class ReviewListResponse(BaseModel):
-    reviews: List[ReviewItem]
+    reviews: list[ReviewItem]
     has_more: bool
     total_reviews: int
     avg_rating: float
@@ -52,7 +51,7 @@ class PublicExpertReviewsResponse(BaseModel):
     expert_public_id: str
     expert_name: str
     expert_avatar_url: str | None = None
-    reviews: List[ReviewItem]
+    reviews: list[ReviewItem]
     has_more: bool
     total_reviews: int
     avg_rating: float

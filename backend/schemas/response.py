@@ -28,7 +28,7 @@ class ResponseCreate(BaseModel):
 
     @field_validator("expert_company_data", mode="before")
     @classmethod
-    def _parse_company_data(cls, value: object) -> object:
+    def parse_company_data(cls, value: object) -> object:
         if value is None or isinstance(value, dict):
             return value
         if isinstance(value, str):
@@ -39,7 +39,7 @@ class ResponseCreate(BaseModel):
             except (ValueError, TypeError) as exc:
                 raise ValueError("Некорректные данные компании") from exc
             if not isinstance(parsed, dict):
-                raise ValueError("Некорректные данные компании")
+                raise ValueError("Некорректные данные компании")  # noqa: TRY004 — Pydantic ловит только ValueError
             return parsed
         raise ValueError("Некорректные данные компании")
 

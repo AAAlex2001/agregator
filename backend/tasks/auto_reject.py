@@ -1,13 +1,13 @@
 """Background task: auto-reject IN_PROGRESS responses not confirmed within 3 days."""
 import asyncio
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from database.database import AsyncSessionLocal
-from models.order import Order, OrderStatus
+from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ CHECK_INTERVAL_SECONDS = 3600  # hourly
 
 
 async def reject_expired_responses() -> None:
-    cutoff = datetime.now(timezone.utc) - timedelta(days=AUTO_REJECT_DAYS)
+    cutoff = datetime.now(UTC) - timedelta(days=AUTO_REJECT_DAYS)
 
     async with AsyncSessionLocal() as db:
         result = await db.execute(

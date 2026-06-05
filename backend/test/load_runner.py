@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from math import ceil
 from statistics import fmean
 from time import perf_counter
-from typing import Awaitable, Callable
 
 
 @dataclass(slots=True)
@@ -41,7 +41,7 @@ class ScenarioReport:
         results: list[ScenarioRequestResult],
         started_at: float,
         finished_at: float,
-    ) -> "ScenarioReport":
+    ) -> ScenarioReport:
         latencies = [result.latency_ms for result in results]
         errors = [result.error for result in results if result.error]
         duration = max(finished_at - started_at, 0.001)

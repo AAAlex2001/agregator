@@ -1,4 +1,5 @@
-from models.user import User, UserRole as ModelUserRole
+from models.user import User
+from models.user import UserRole as ModelUserRole
 from schemas.registration import LicenseHolderRegistration, LicenseRentalKind, UserRole
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator

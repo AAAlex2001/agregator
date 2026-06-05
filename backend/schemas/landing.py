@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel
 
@@ -8,7 +7,7 @@ class LandingHeroDto(BaseModel):
     title: str
     subtitle: str
     button_text: str
-    bullets: List[str]
+    bullets: list[str]
 
 
 class LandingSectionHeaderDto(BaseModel):
@@ -36,9 +35,9 @@ class LandingStepDto(BaseModel):
 
 
 class LandingTabSteps(BaseModel):
-    client: List[LandingStepDto]
-    expert: List[LandingStepDto]
-    license_holder: List[LandingStepDto]
+    client: list[LandingStepDto]
+    expert: list[LandingStepDto]
+    license_holder: list[LandingStepDto]
 
 
 class LandingOrderExampleDto(BaseModel):
@@ -59,7 +58,7 @@ class LandingAdvantageDto(BaseModel):
 class LandingIndustryDto(BaseModel):
     id: int
     title: str
-    description: List[str]
+    description: list[str]
     photo: str
 
 
@@ -84,14 +83,14 @@ class LandingPricingContentDto(BaseModel):
     customer_title: str
     customer_subtitle: str
     customer_headline: str
-    customer_features: List[str]
+    customer_features: list[str]
     customer_footnote: str
     customer_cta_label: str
     customer_cta_href: str
     license_holder_title: str
     license_holder_subtitle: str
     license_holder_headline: str
-    license_holder_features: List[str]
+    license_holder_features: list[str]
     license_holder_footnote: str
     license_holder_cta_label: str
     license_holder_cta_href: str
@@ -102,9 +101,9 @@ class LandingSnapshot(BaseModel):
     section_headers: LandingSectionHeadersDto
     how_it_works: LandingTabSteps
     key_advantages: LandingTabSteps
-    orders: List[LandingOrderExampleDto]
-    advantages: List[LandingAdvantageDto]
-    industries: List[LandingIndustryDto]
-    reviews: List[LandingReviewDto]
-    faq: List[LandingFaqItemDto]
+    orders: list[LandingOrderExampleDto]
+    advantages: list[LandingAdvantageDto]
+    industries: list[LandingIndustryDto]
+    reviews: list[LandingReviewDto]
+    faq: list[LandingFaqItemDto]
     pricing_content: LandingPricingContentDto

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,8 +20,8 @@ async def deliver_code_email(email: str, subject: str, text: str, html: str) -> 
     "Обёртка для BackgroundTasks: отправляет письмо, ошибки SMTP пишет в лог, но не роняет запрос."
     try:
         await send_email(email, subject, text, html)
-    except Exception as exc:
-        logger.exception("Не удалось отправить код на %s: %s", email, exc)
+    except Exception:
+        logger.exception("Не удалось отправить код на %s", email)
 
 
 class VerificationService:
@@ -77,8 +77,8 @@ class VerificationService:
         query = select(PasswordResetCode).where(
             PasswordResetCode.user_id == user_id,
             PasswordResetCode.code == code,
-            PasswordResetCode.is_used == False,
-            PasswordResetCode.expires_at > datetime.now(timezone.utc),
+            PasswordResetCode.is_used.is_(False),
+            PasswordResetCode.expires_at > datetime.now(UTC),
         )
         result = await self.db.execute(query)
         return result.scalars().first()

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from uuid import uuid4
 
 import httpx
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
-
 from load_models import (
     ChatDetailResponse,
     ChatOpenPayload,
@@ -27,6 +24,7 @@ from load_models import (
     UserSession,
     UserSettingsResponse,
 )
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 
 class ApiCallError(RuntimeError):
@@ -46,7 +44,7 @@ class LoadApi:
         self.settings = settings
         self.database = DatabaseController(settings.db_url) if settings.db_url else None
 
-    async def __aenter__(self) -> "LoadApi":
+    async def __aenter__(self) -> LoadApi:
         return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:
@@ -134,7 +132,7 @@ class LoadApi:
             customer_id=session.user.id,
             sum_amount=self.settings.order_budget_kopecks,
             deadline=(date.today() + timedelta(days=14)).isoformat(),
-            responses_deadline=(datetime.now(timezone.utc) + timedelta(days=5)).isoformat(),
+            responses_deadline=(datetime.now(UTC) + timedelta(days=5)).isoformat(),
         )
         response = await session.client.post("/orders/create-with-files", data=payload.model_dump(mode="json"))
         return self.parse_response(response, "Создание заявки", OrderApiResponse)
@@ -154,7 +152,7 @@ class LoadApi:
             comment=f"Updated order {scenario} {iteration}",
             sum_amount=self.settings.order_budget_kopecks,
             deadline=(date.today() + timedelta(days=21)).isoformat(),
-            responses_deadline=(datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
+            responses_deadline=(datetime.now(UTC) + timedelta(days=7)).isoformat(),
         )
         response = await session.client.patch(
             f"/orders/{order.id}/update-with-files",

@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -43,7 +43,7 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
             await websocket.close(code=4001)
             return
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if now > session.max_expires_at or now > session.expires_at:
             await websocket.close(code=4001)
             return

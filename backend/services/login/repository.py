@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,6 @@ from sqlalchemy.orm import selectinload
 
 from models.session import Session
 from models.user import User
-
 
 SESSION_TTL_DAYS = 7
 SESSION_MAX_DAYS = 14
@@ -53,7 +52,7 @@ class LoginRepository:
         return list(result.scalars().all())
 
     async def add_session(self, user_id: int) -> Session:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         session = Session(
             session_id=str(uuid.uuid4()),
             user_id=user_id,

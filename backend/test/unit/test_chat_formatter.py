@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 from models.user import UserRole
-from services.chats.formatters import ChatFormatter, NOTIFICATION_PREVIEW_MAX
+from services.chats.formatters import NOTIFICATION_PREVIEW_MAX, ChatFormatter
 
 
 class TestNotificationPreview:

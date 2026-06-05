@@ -1,11 +1,22 @@
 """
 Модели пользователя
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 from uuid import uuid4
 
-from sqlalchemy import BigInteger, Column, Integer, Numeric, String, Boolean, DateTime, Enum, CheckConstraint, UniqueConstraint
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    CheckConstraint,
+    Column,
+    DateTime,
+    Enum,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -63,8 +74,8 @@ class User(Base):
     license_rental_percent = Column(Numeric(5, 2), nullable=True)
     license_rental_fixed_amount = Column(BigInteger, nullable=True)
     company_card_url = Column(String(500), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     __table_args__ = (
         CheckConstraint(

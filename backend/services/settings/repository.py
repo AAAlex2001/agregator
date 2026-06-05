@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -47,4 +47,4 @@ class SettingsRepository:
 
     @staticmethod
     def now() -> datetime:
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)

@@ -1,14 +1,14 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
     Enum,
     ForeignKey,
     Integer,
-    JSON,
     String,
     Text,
 )
@@ -68,13 +68,13 @@ class SupportTicket(Base):
     last_message_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 
@@ -116,7 +116,7 @@ class SupportTicketMessage(Base):
     attachments = Column(JSON, nullable=False, default=list)
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

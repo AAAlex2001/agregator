@@ -38,10 +38,7 @@ class SupportFileStorage:
         upload_dir = BACKEND_ROOT / "uploads" / "support" / str(ticket_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
 
-        saved: list[dict] = []
-        for file in files:
-            saved.append(await self.save_one(upload_dir, file, ticket_id))
-        return saved
+        return [await self.save_one(upload_dir, file, ticket_id) for file in files]
 
     async def save_one(
         self, upload_dir: Path, file: UploadFile, ticket_id: int

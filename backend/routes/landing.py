@@ -5,7 +5,6 @@ from database.database import get_db
 from schemas.landing import LandingReviewDto, LandingSnapshot
 from services.landing import LandingService
 
-
 router = APIRouter(tags=["landing"])
 
 

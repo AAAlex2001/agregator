@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
@@ -61,7 +61,7 @@ class AskQuestionUseCase:
             order_id=order_id,
             expert_id=expert_id,
             question=text,
-            asked_at=datetime.now(timezone.utc),
+            asked_at=datetime.now(UTC),
             is_anonymous=is_anonymous,
         )
         await self.repo.add(question)

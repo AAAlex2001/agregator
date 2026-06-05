@@ -1,40 +1,17 @@
 import os
 import sys
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
+
 from dotenv import load_dotenv
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 load_dotenv()
 
 from models.base import Base
-from models.user import User
-from models.password_reset_code import PasswordResetCode
-from models.order import Order, OrderBadge
-from models.response import OrderResponse
-from models.chat import Chat, ChatMessage
-from models.notification import Notification
-from models.session import Session
-from models.payment import Payment
-from models.pricing import PricingPlan, UserSubscription
-from models.review import Review
-from models.question import OrderQuestion
-from models.support_ticket import SupportTicket, SupportTicketMessage
-from models.landing import (
-    LandingHero,
-    LandingSectionHeader,
-    LandingStep,
-    LandingOrderExample,
-    LandingAdvantage,
-    LandingIndustry,
-    LandingReview,
-    LandingFaq,
-    LandingPricingContent,
-)
-from models.platform_settings import PlatformSettings
-from models.article import Article
 
 config = context.config
 

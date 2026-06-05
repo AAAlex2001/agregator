@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from yookassa import Configuration, Payment as YooPayment
+from yookassa import Configuration
+from yookassa import Payment as YooPayment
 
 from models.payment import Payment, PaymentStatus
 from models.pricing import SubscriptionStatus, UserSubscription

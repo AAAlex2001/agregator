@@ -26,10 +26,7 @@ class ResponseFileStorage:
         upload_dir = BACKEND_ROOT / "uploads" / "responses" / str(response_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
 
-        saved: list[str] = []
-        for file in files:
-            saved.append(await self.save_one(upload_dir, file, response_id))
-        return saved
+        return [await self.save_one(upload_dir, file, response_id) for file in files]
 
     async def save_one(
         self, upload_dir: Path, file: UploadFile, response_id: int

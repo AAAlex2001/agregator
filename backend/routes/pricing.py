@@ -14,7 +14,6 @@ from schemas.pricing import (
 from services.pricing import PricingService
 from services.subscriptions import PurchaseSubscriptionUseCase, SubscriptionRepository
 
-
 router = APIRouter(prefix="/pricing", tags=["pricing"])
 
 

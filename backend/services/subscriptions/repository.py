@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.payment import Payment, PaymentStatus
+from models.payment import Payment
 from models.pricing import (
     PricingPlan,
     SubscriptionKind,

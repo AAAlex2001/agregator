@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import List, Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel
-
 
 ArticleKindDto = Literal["news", "blog"]
 
@@ -14,12 +13,12 @@ class ArticleListItemDto(BaseModel):
     title: str
     excerpt: str
     cover_image: str
-    tags: List[str]
-    published_at: Optional[datetime]
+    tags: list[str]
+    published_at: datetime | None
 
 
 class ArticleListDto(BaseModel):
-    items: List[ArticleListItemDto]
+    items: list[ArticleListItemDto]
     has_more: bool
 
 
@@ -31,10 +30,10 @@ class ArticleDetailDto(BaseModel):
     excerpt: str
     cover_image: str
     content_html: str
-    tags: List[str]
+    tags: list[str]
     meta_title: str
     meta_description: str
     meta_keywords: str
     og_image: str
-    published_at: Optional[datetime]
+    published_at: datetime | None
     updated_at: datetime

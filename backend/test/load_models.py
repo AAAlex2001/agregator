@@ -8,7 +8,6 @@ from urllib.parse import urlsplit, urlunsplit
 import httpx
 from pydantic import BaseModel, EmailStr, Field
 
-
 RoleName = Literal["CUSTOMER", "EXPERT"]
 
 

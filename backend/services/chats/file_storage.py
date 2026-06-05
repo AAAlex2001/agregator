@@ -33,10 +33,7 @@ class ChatFileStorage:
         upload_dir = BACKEND_ROOT / "uploads" / "chats" / str(chat_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
 
-        attachments: list[ChatAttachmentData] = []
-        for upload in uploads:
-            attachments.append(await self.save_one(upload_dir, upload, chat_id))
-        return attachments
+        return [await self.save_one(upload_dir, upload, chat_id) for upload in uploads]
 
     async def save_one(
         self, upload_dir: Path, upload: UploadFile, chat_id: int

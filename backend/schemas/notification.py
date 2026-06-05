@@ -3,6 +3,7 @@ from enum import Enum as PyEnum
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
+
 from models.notification import NotificationType
 from models.response import ResponseStatus
 from models.user import UserRole

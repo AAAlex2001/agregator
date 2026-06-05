@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Any, Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
 from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 
 class UserRole(str, Enum):
@@ -21,11 +22,11 @@ class UserRegistration(BaseModel):
     role: UserRole = Field(..., description="Роль пользователя")
     email: EmailStr = Field(..., description="Почта пользователя")
     password: str = Field(..., description="Пароль пользователя")
-    phone: Optional[str] = Field(None, description="Номер телефона пользователя")
-    inn: Optional[str] = Field(None, description="ИНН")
+    phone: str | None = Field(None, description="Номер телефона пользователя")
+    inn: str | None = Field(None, description="ИНН")
     company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
-    first_name: Optional[str] = Field(None, description="Имя", max_length=100)
-    last_name: Optional[str] = Field(None, description="Фамилия", max_length=100)
+    first_name: str | None = Field(None, description="Имя", max_length=100)
+    last_name: str | None = Field(None, description="Фамилия", max_length=100)
 
 
 class LicenseHolderRegistration(BaseModel):
@@ -38,8 +39,8 @@ class LicenseHolderRegistration(BaseModel):
     license_number: str = Field(..., min_length=1, max_length=100)
     license_areas: list[str] = Field(..., min_length=1)
     license_rental_kind: LicenseRentalKind
-    license_rental_percent: Optional[float] = Field(None, gt=0, le=100)
-    license_rental_fixed_amount: Optional[int] = Field(None, gt=0)
+    license_rental_percent: float | None = Field(None, gt=0, le=100)
+    license_rental_fixed_amount: int | None = Field(None, gt=0)
 
     @model_validator(mode="after")
     def cross_field_checks(self) -> "LicenseHolderRegistration":
@@ -56,12 +57,12 @@ class LicenseHolderRegistration(BaseModel):
 class EmailConfirmRequest(BaseModel):
     email: EmailStr = Field(..., description="Почта пользователя")
     code: str = Field(..., description="Код подтверждения")
-    role: Optional[UserRole] = Field(None, description="Если на email несколько ролей — какую подтверждаем")
+    role: UserRole | None = Field(None, description="Если на email несколько ролей — какую подтверждаем")
 
 
 class ResendCodeRequest(BaseModel):
     email: EmailStr = Field(..., description="Почта пользователя")
-    role: Optional[UserRole] = Field(None, description="Если на email несколько ролей — какую переотправить")
+    role: UserRole | None = Field(None, description="Если на email несколько ролей — какую переотправить")
 
 
 class PartySuggestionRequest(BaseModel):
@@ -81,15 +82,15 @@ class UserResponse(BaseModel):
     role: UserRole
     inn: str | None = None
     company_data: dict[str, Any] | None = None
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = None
+    email: EmailStr | None = None
+    phone: str | None = None
     created_at: datetime
-    license_number: Optional[str] = None
-    license_file_url: Optional[str] = None
-    license_areas: Optional[list[str]] = None
-    license_rental_kind: Optional[LicenseRentalKind] = None
-    license_rental_percent: Optional[float] = None
-    license_rental_fixed_amount: Optional[int] = None
+    license_number: str | None = None
+    license_file_url: str | None = None
+    license_areas: list[str] | None = None
+    license_rental_kind: LicenseRentalKind | None = None
+    license_rental_percent: float | None = None
+    license_rental_fixed_amount: int | None = None
 
     class Config:
         from_attributes = True

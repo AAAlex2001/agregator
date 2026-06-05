@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
@@ -16,7 +16,7 @@ class MarkNotificationReadUseCase:
     async def execute(
         self, notification_id: int, user_id: int
     ) -> NotificationMutationResponse:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         was_unread = await self.repo.mark_one_read(notification_id, user_id, now)
         if was_unread:
             await self.repo.decrement_unread(user_id)

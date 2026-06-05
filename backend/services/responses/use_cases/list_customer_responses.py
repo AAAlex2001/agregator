@@ -33,7 +33,7 @@ class ListCustomerResponsesUseCase:
         response_ids = [item.id for item in items]
         reviewed_ids = await self.repo.reviewed_response_ids(customer_id, response_ids)
         for item in items:
-            setattr(item, "has_review_for_customer", item.id in reviewed_ids)
+            item.has_review_for_customer = item.id in reviewed_ids
 
     @staticmethod
     def build_counters(counters_map: dict[ResponseStatus, int]) -> ResponseCounters:

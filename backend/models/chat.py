@@ -1,5 +1,5 @@
 import uuid as uuid_mod
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -19,11 +19,11 @@ class Chat(Base):
     order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False, index=True)
     customer_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     expert_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
     is_blocked = Column(Boolean, default=False, nullable=False, server_default="false")
@@ -52,7 +52,7 @@ class ChatMessage(Base):
     file_name = Column(String(500), nullable=True)
     attachments = Column(JSON, nullable=False, default=list, server_default="[]")
     is_read = Column(Boolean, default=False, nullable=False, server_default="false")
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User", back_populates="chat_messages")
@@ -72,7 +72,7 @@ class ExpertRoomMessage(Base):
     attachments = Column(JSON, nullable=False, default=list, server_default="[]")
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
         index=True,
     )
@@ -94,7 +94,7 @@ class ExpertRoomBan(Base):
     reason = Column(String(500), nullable=False, default="", server_default="")
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

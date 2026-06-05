@@ -1,16 +1,16 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, EmailStr
+
+from pydantic import BaseModel, EmailStr, Field
 
 from models.user import UserRole
 
 
 class UserLogin(BaseModel):
-    email: Optional[EmailStr] = Field(None, description="Почта пользователя")
-    phone: Optional[str] = Field(None, description="Номер телефона пользователя")
-    inn: Optional[str] = Field(None, description="ИНН пользователя")
+    email: EmailStr | None = Field(None, description="Почта пользователя")
+    phone: str | None = Field(None, description="Номер телефона пользователя")
+    inn: str | None = Field(None, description="ИНН пользователя")
     password: str = Field(..., description="Пароль пользователя")
-    role: Optional[UserRole] = Field(
+    role: UserRole | None = Field(
         None,
         description="Если на одни данные зарегистрировано несколько ролей — указать какую использовать",
     )
@@ -19,9 +19,9 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: int
     role: str
-    inn: Optional[str] = None
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = None
+    inn: str | None = None
+    email: EmailStr | None = None
+    phone: str | None = None
     created_at: datetime
 
     class Config:

@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +16,6 @@ from services.articles import (
     ListRelatedArticlesUseCase,
 )
 
-
 router = APIRouter(tags=["articles"])
 
 
@@ -30,7 +28,7 @@ async def list_articles(
     kind: ArticleKindDto = Query(...),
     limit: int = Query(12, ge=1, le=48),
     offset: int = Query(0, ge=0),
-    tag: Optional[str] = Query(None),
+    tag: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
 ) -> ArticleListDto:
     return await ListArticlesUseCase(build_repo(db)).execute(

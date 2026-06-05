@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
@@ -52,7 +52,7 @@ class AdminReplyUseCase:
             author_name=admin_name or "Поддержка",
             text=cleaned,
             attachments=attachments_list,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         await self.repo.add_message(message)
 
@@ -61,7 +61,7 @@ class AdminReplyUseCase:
         ticket.has_unread_for_admin = False
         ticket.last_message_text = message.text
         ticket.last_message_at = message.created_at
-        ticket.updated_at = datetime.now(timezone.utc)
+        ticket.updated_at = datetime.now(UTC)
 
         await self.repo.flush()
         return ticket
@@ -80,6 +80,6 @@ class CloseTicketUseCase:
             )
         ticket.status = TicketStatus.CLOSED
         ticket.has_unread_for_admin = False
-        ticket.updated_at = datetime.now(timezone.utc)
+        ticket.updated_at = datetime.now(UTC)
         await self.repo.flush()
         return ticket

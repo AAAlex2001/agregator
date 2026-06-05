@@ -7,7 +7,6 @@ from starlette.websockets import WebSocketState
 
 from ws.pubsub import ws_pubsub
 
-
 EXPERT_ROOM_CHANNEL = "ws:expert_room:events"
 
 

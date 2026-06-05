@@ -58,7 +58,7 @@ class UpdateResponseStatusUseCase:
         if new_status == ResponseStatus.REJECTED:
             response.rejection_reason = reason
         elif response.rejection_reason and new_status != ResponseStatus.REJECTED:
-            response.rejection_reason = None      
+            response.rejection_reason = None
 
         old_status = response.status
         response.status = new_status

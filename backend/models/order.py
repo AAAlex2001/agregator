@@ -1,19 +1,19 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 from uuid import uuid4
 
 from sqlalchemy import (
-    Column,
-    Integer,
+    JSON,
     BigInteger,
     Boolean,
-    String,
-    Text,
+    Column,
     Date,
     DateTime,
-    ForeignKey,
     Enum,
-    JSON,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
 )
 from sqlalchemy.orm import relationship
 
@@ -81,13 +81,13 @@ class Order(Base):
     )
     created_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
     updated_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
 
@@ -14,7 +14,6 @@ from schemas.support import CreateTicketRequest
 
 from ..file_storage import SupportFileStorage
 from ..repository import SupportRepository
-
 
 TICKET_NUMBER_OFFSET = 1000
 
@@ -52,7 +51,7 @@ class CreateTicketUseCase:
             author_name=author_name_from_user(user),
             text=data.message.strip(),
             attachments=[],
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
 
         ticket = SupportTicket(

@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from models.user import User, UserRole as ModelUserRole
+from models.user import User
+from models.user import UserRole as ModelUserRole
 from schemas.registration import UserRole
 
 
