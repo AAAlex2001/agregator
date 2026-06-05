@@ -75,20 +75,29 @@ def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limi
 
 
 def summary_for_period(days: int) -> MetrikaSummary:
-    "Суммарные показатели за последние N дней (визиты/посетители/просмотры/% отказов). Защищён от пустых totals."
+    "Суммарные показатели за последние N дней (визиты/посетители/просмотры/% отказов). Принимает и вложенные totals=[[..]], и плоские totals=[..]."
     data = fetch_raw(
         metrics="ym:s:visits,ym:s:users,ym:s:pageviews,ym:s:bounceRate",
         since=date.today() - timedelta(days=days - 1),
         until=date.today(),
     )
-    totals_list = data.get("totals") or []
-    totals = totals_list[0] if totals_list else [0, 0, 0, 0.0]
+    totals = flatten_totals(data.get("totals"))
     return MetrikaSummary(
         visits=int(totals[0] if len(totals) > 0 and totals[0] is not None else 0),
         users=int(totals[1] if len(totals) > 1 and totals[1] is not None else 0),
         pageviews=int(totals[2] if len(totals) > 2 and totals[2] is not None else 0),
         bounce_rate=float(totals[3] if len(totals) > 3 and totals[3] is not None else 0.0),
     )
+
+
+def flatten_totals(raw: object) -> list[float]:
+    "Нормализует totals Я.Метрики к плоскому списку чисел. API иногда отдаёт [[...]], иногда [...], иногда [] — все три варианта закрываем."
+    if not isinstance(raw, list) or not raw:
+        return []
+    first = raw[0]
+    if isinstance(first, list):
+        return [float(x) if isinstance(x, int | float) else 0.0 for x in first]
+    return [float(x) if isinstance(x, int | float) else 0.0 for x in raw]
 
 
 def traffic_sources(days: int = 30, limit: int = 8) -> list[MetrikaTrafficSource]:
