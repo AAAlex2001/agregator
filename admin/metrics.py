@@ -1,7 +1,7 @@
 "Агрегаты из БД для дашборда: счётчики и timeseries по регистрациям, заказам, откликам. Sync — потому что админка sync."
 
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from typing import Literal
 
 from sqlalchemy import Column, func, select
@@ -56,9 +56,9 @@ class DashboardMetrics:
     responses_by_status: list[StatusBreakdown]
 
 
-def counter_for_column(db: DbSession, created_at_column: Column) -> CounterCard:
+def counter_for_column(db: DbSession, created_at_column: Column[datetime]) -> CounterCard:
     "Считает counts за последние сутки / 7 / 30 дней по datetime-колонке. Используется для регистраций, заказов, откликов."
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     values: dict[Period, int] = {}
     for key, days in PERIOD_DAYS.items():
         since = now - timedelta(days=days)
@@ -67,9 +67,9 @@ def counter_for_column(db: DbSession, created_at_column: Column) -> CounterCard:
     return CounterCard(day=values["day"], week=values["week"], month=values["month"])
 
 
-def timeseries_for_column(db: DbSession, created_at_column: Column, days: int) -> list[TimeSeriesPoint]:
+def timeseries_for_column(db: DbSession, created_at_column: Column[datetime], days: int) -> list[TimeSeriesPoint]:
     "Группирует события по дням за последние N дней. Пустые дни заполняет нулями, чтобы график был непрерывным."
-    since = datetime.now(timezone.utc) - timedelta(days=days)
+    since = datetime.now(UTC) - timedelta(days=days)
     day_expr = func.date_trunc("day", created_at_column).label("bucket")
     stmt = (
         select(day_expr, func.count().label("cnt"))
@@ -79,7 +79,7 @@ def timeseries_for_column(db: DbSession, created_at_column: Column, days: int) -
     )
     rows = db.execute(stmt).all()
     by_date: dict[date, int] = {row.bucket.date(): int(row.cnt) for row in rows}
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     return [
         TimeSeriesPoint(bucket=today - timedelta(days=offset), count=by_date.get(today - timedelta(days=offset), 0))
         for offset in range(days - 1, -1, -1)

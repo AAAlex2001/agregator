@@ -3,6 +3,7 @@
 import os
 from dataclasses import dataclass
 from datetime import date, timedelta
+from typing import Any
 
 import httpx
 
@@ -50,7 +51,7 @@ class MetrikaDashboard:
 EMPTY_SUMMARY = MetrikaSummary(visits=0, users=0, pageviews=0, bounce_rate=0.0)
 
 
-def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limit: int = 10, sort: str = "") -> dict:
+def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limit: int = 10, sort: str = "") -> dict[str, Any]:
     "Низкоуровневый GET к Reporting API. Бросает httpx.HTTPError или RuntimeError если токена нет."
     if not OAUTH_TOKEN:
         raise RuntimeError("YANDEX_METRIKA_OAUTH_TOKEN не задан в .env")

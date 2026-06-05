@@ -1,6 +1,19 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
-from sqlalchemy import Boolean, Column, Integer, BigInteger, String, Text, Date, DateTime, ForeignKey, Enum, JSON
+
+from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
 
 from models.base import Base
@@ -43,8 +56,8 @@ class Order(Base):
     sum_amount = Column(BigInteger, nullable=False)
     deadline = Column(Date, nullable=False)
     status = Column(Enum(OrderStatus), nullable=False, index=True, default=OrderStatus.ACTIVE)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     customer = relationship("User", foreign_keys=[customer_id], back_populates="orders")
     assigned_expert = relationship("User", foreign_keys=[assigned_expert_id], back_populates="assigned_orders")

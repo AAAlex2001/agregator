@@ -1,14 +1,14 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum as PyEnum
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
     Enum,
     ForeignKey,
     Integer,
-    JSON,
     String,
     Text,
 )
@@ -74,8 +74,8 @@ class SupportTicket(Base):
     status = Column(Enum(TicketStatus, name="ticketstatus"), nullable=False, default=TicketStatus.REVIEW, index=True)
     has_unread_for_user = Column(Boolean, nullable=False, default=False, server_default="false")
     has_unread_for_admin = Column(Boolean, nullable=False, default=True, server_default="true")
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     user = relationship(
         "User",
@@ -106,7 +106,7 @@ class SupportTicketMessage(Base):
     author_name = Column(String(200), nullable=False, default="")
     text = Column(Text, nullable=False, default="")
     attachments = Column(JSON, nullable=False, default=list)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
     ticket = relationship("SupportTicket", back_populates="messages")
 

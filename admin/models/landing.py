@@ -1,7 +1,8 @@
 """
 Модели контента лендинга — редактируются из админки (sqladmin).
 """
-from sqlalchemy import Column, Integer, String, Text, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import JSONB
 
 from models.base import Base
