@@ -123,5 +123,5 @@ def collect_dashboard(db: DbSession, timeseries_days: int = 30) -> DashboardMetr
 
 
 def enum_to_str(value: object) -> str:
-    "Унифицирует представление enum-а в строку для labels на графиках. SQLAlchemy может вернуть либо член enum, либо raw-строку — обрабатываем оба случая."
-    return value.value if hasattr(value, "value") else str(value)
+    "Возвращает читаемую русскую подпись для enum (использует переопределённый __str__ модели), либо raw-строку если SQLAlchemy вернула строку."
+    return str(value)
