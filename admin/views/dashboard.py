@@ -16,7 +16,7 @@ class DashboardView(BaseView):
     icon = "fa-solid fa-chart-line"
 
     @expose("/dashboard", methods=["GET"])
-    def index(self, request: Request) -> Any:
+    async def dashboard_view(self, request: Request) -> Any:
         "Эндпоинт GET /admin/dashboard. Собирает метрики из БД и Я.Метрики, отдаёт страницу с Chart.js."
         from metrics import collect_dashboard as collect_db_metrics
         from yandex_metrika import COUNTER_ID
@@ -37,7 +37,7 @@ class DashboardView(BaseView):
             "metrika_sources": [{"label": s.source, "value": s.visits} for s in ya.traffic_sources],
         }
 
-        return self.templates.TemplateResponse(
+        return await self.templates.TemplateResponse(
             request,
             "dashboard.html",
             {

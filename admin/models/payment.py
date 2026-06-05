@@ -1,10 +1,14 @@
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Column, DateTime, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+
+if TYPE_CHECKING:
+    from models.user import User
 
 
 class PaymentStatus(str, PyEnum):
@@ -14,7 +18,7 @@ class PaymentStatus(str, PyEnum):
     CANCELED = "CANCELED"
     REFUNDED = "REFUNDED"
 
-    def __str__(self):
+    def __str__(self) -> str:
         labels = {
             "PENDING": "Ожидает",
             "WAITING_FOR_CAPTURE": "Ожидает подтверждения",
@@ -29,25 +33,26 @@ class PaymentType(str, PyEnum):
     DEPOSIT = "DEPOSIT"
     WITHDRAWAL = "WITHDRAWAL"
 
-    def __str__(self):
+    def __str__(self) -> str:
         labels = {"DEPOSIT": "Пополнение", "WITHDRAWAL": "Вывод"}
         return labels.get(self.value, self.value)
 
 
 class Payment(Base):
+    "Платёж пользователя."
     __tablename__ = "payments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    yookassa_id = Column(String(100), unique=True, nullable=True, index=True)
-    amount = Column(BigInteger, nullable=False)
-    payment_type = Column(Enum(PaymentType), nullable=False)
-    status = Column(Enum(PaymentStatus, name="paymentstatus"), nullable=False, index=True, default=PaymentStatus.PENDING)
-    description = Column(String(500), nullable=False, default="")
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    yookassa_id: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True)
+    amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    payment_type: Mapped[PaymentType] = mapped_column(Enum(PaymentType), nullable=False)
+    status: Mapped[PaymentStatus] = mapped_column(Enum(PaymentStatus, name="paymentstatus"), nullable=False, index=True, default=PaymentStatus.PENDING)
+    description: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
-    user = relationship("User", back_populates="payments")
+    user: Mapped["User"] = relationship(back_populates="payments")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Платёж #{self.id} {self.amount / 100:.2f} ₽ [{str(self.status)}]"

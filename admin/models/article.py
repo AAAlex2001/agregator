@@ -1,8 +1,10 @@
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
+from typing import Any
 
-from sqlalchemy import Column, DateTime, Enum, Index, Integer, String, Text
+from sqlalchemy import DateTime, Enum, Index, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
 
@@ -18,36 +20,37 @@ class ArticleStatus(str, PyEnum):
 
 
 class Article(Base):
+    "Статья (новость или блог)."
     __tablename__ = "articles"
 
-    id = Column(Integer, primary_key=True)
-    kind = Column(Enum(ArticleKind, name="articlekind"), nullable=False, index=True)
-    status = Column(
+    id: Mapped[int] = mapped_column(primary_key=True)
+    kind: Mapped[ArticleKind] = mapped_column(Enum(ArticleKind, name="articlekind"), nullable=False, index=True)
+    status: Mapped[ArticleStatus] = mapped_column(
         Enum(ArticleStatus, name="articlestatus"),
         nullable=False,
         default=ArticleStatus.DRAFT,
         index=True,
     )
 
-    slug = Column(String(220), nullable=False, unique=True, index=True)
-    title = Column(String(300), nullable=False, default="")
-    excerpt = Column(Text, nullable=False, default="")
-    cover_image = Column(String(500), nullable=False, default="")
-    content_html = Column(Text, nullable=False, default="")
-    tags = Column(JSONB, nullable=False, default=list)
+    slug: Mapped[str] = mapped_column(String(220), nullable=False, unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    cover_image: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    content_html: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    tags: Mapped[list[Any]] = mapped_column(JSONB, nullable=False, default=list)
 
-    meta_title = Column(String(300), nullable=False, default="")
-    meta_description = Column(Text, nullable=False, default="")
-    meta_keywords = Column(Text, nullable=False, default="")
-    og_image = Column(String(500), nullable=False, default="")
+    meta_title: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    meta_description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    meta_keywords: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    og_image: Mapped[str] = mapped_column(String(500), nullable=False, default="")
 
-    published_at = Column(DateTime(timezone=True), nullable=True, index=True)
-    created_at = Column(
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    updated_at = Column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
@@ -58,5 +61,5 @@ class Article(Base):
         Index("ix_articles_kind_status_published", "kind", "status", "published_at"),
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or f"Article #{self.id}"

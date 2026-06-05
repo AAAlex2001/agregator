@@ -39,24 +39,13 @@ warn_return_any = false           # SQLAlchemy execute().scalars() возвра�
 disallow_subclassing_any = false  # SQLAdmin BaseView/ModelView
 disallow_any_decorated = false    # @expose декораторы возвращают Any
 
-# Модели старого Column-style, не Mapped[X] — Column[X] vs concrete X.
-# Это копия, не источник правды (источник — backend/models с Mapped[X]).
-disable_error_code = [
-    "arg-type", "assignment", "index", "return-value", "var-annotated", "comparison-overlap",
-    # SQLAdmin column_list/column_labels ожидает str|InstrumentedAttribute, а у нас Column[X]
-    # потому что admin/models/ — старый Column-style. Решится миграцией на Mapped[X] (как в backend/models/).
-    "list-item", "dict-item",
-]
+# После миграции на Mapped[X] почти все Column-style проблемы ушли.
+# Оставшиеся коды — SQLAlchemy stubs и dict(rows) issues.
+disable_error_code = ["arg-type", "assignment"]
 
 [[tool.mypy.overrides]]
 module = ["sqladmin.*", "starlette.*", "wtforms.*", "markupsafe.*", "httpx.*", "psycopg2.*", "forms"]
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "models.*"
-disallow_untyped_defs = false
-disallow_any_explicit = false
-warn_unused_ignores = false
 
 [[tool.mypy.overrides]]
 # В views/* используется паттерн SQLAdmin column_formatters: словарь {Column: lambda m, a: ...}.
