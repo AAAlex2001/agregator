@@ -9,6 +9,7 @@ from schemas.order import OrderDocuments
 
 
 class ResponseTab(str, PyEnum):
+    "Вкладка в списке откликов эксперта (фильтр по статусу)."
     ALL = "all"
     REVIEW = "review"
     IN_PROGRESS = "in_progress"
@@ -18,6 +19,7 @@ class ResponseTab(str, PyEnum):
 
 
 class ResponseCreate(BaseModel):
+    "Payload отклика эксперта на заказ."
     comment: str = Field(default="", max_length=5000)
     proposed_sum_amount: int = Field(..., gt=0)
     proposed_start_date: date | None = None
@@ -45,6 +47,7 @@ class ResponseCreate(BaseModel):
 
 
 class ResponseCounters(BaseModel):
+    "Счётчики откликов по вкладкам для бейджей в UI."
     all: int = 0
     review: int = 0
     in_progress: int = 0
@@ -54,6 +57,7 @@ class ResponseCounters(BaseModel):
 
 
 class ExpertResponseItem(BaseModel):
+    "Карточка отклика эксперта в списке: данные отклика, заказа и исполнителя."
     id: int
     order_id: int
     order_public_id: str = ""
@@ -109,6 +113,7 @@ class ExpertResponseItem(BaseModel):
 
 
 class ExpertResponseList(BaseModel):
+    "Постраничный список откликов эксперта со счётчиками по вкладкам."
     items: list[ExpertResponseItem]
     has_more: bool
     counters: ResponseCounters

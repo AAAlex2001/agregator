@@ -1,3 +1,4 @@
+"Use case: create ticket."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
@@ -19,17 +20,20 @@ TICKET_NUMBER_OFFSET = 1000
 
 
 def build_ticket_number(ticket_id: int) -> str:
+    "Строит объект из входных данных."
     return f"T-{ticket_id + TICKET_NUMBER_OFFSET}"
 
 
 def author_name_from_user(user: User) -> str:
+    "Публичный метод сервисного слоя."
     parts = [user.first_name or "", user.last_name or ""]
     name = " ".join(part for part in parts if part).strip()
     return name or user.email or f"User #{user.id}"
 
 
 class CreateTicketUseCase:
-    def __init__(self, repo: SupportRepository, files: SupportFileStorage):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: SupportRepository, files: SupportFileStorage) -> None:
         self.repo = repo
         self.files = files
 
@@ -39,6 +43,7 @@ class CreateTicketUseCase:
         data: CreateTicketRequest,
         uploads: list[UploadFile],
     ) -> SupportTicket:
+        "Запускает основной сценарий use case."
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,

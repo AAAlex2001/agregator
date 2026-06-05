@@ -1,3 +1,4 @@
+"Use case: register user."
 from models.user import User, UserRole
 from schemas.registration import UserRegistration
 from services.experts.badge_codes import ALL_BADGE_CODES
@@ -9,11 +10,12 @@ from utils.passwords import hash_password
 class RegisterUserUseCase:
     "Создаёт обычного юзера (CUSTOMER/EXPERT) с email_verified=False."
 
-    def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator):
+    def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, data: UserRegistration) -> User:
+        "Запускает основной сценарий use case."
         self.validator.ensure_password_strong(data.password)
         self.validator.ensure_email_not_disposable(data.email)
         self.validator.ensure_customer_has_company(data)
@@ -35,7 +37,7 @@ class RegisterUserUseCase:
             first_name=data.first_name,
             last_name=data.last_name,
         )
-        if data.role == UserRole.EXPERT:
+        if data.role.value == UserRole.EXPERT.value:
             user.notify_order_types = list(ALL_BADGE_CODES)
         await self.repo.add(user)
         return user

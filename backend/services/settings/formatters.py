@@ -1,8 +1,10 @@
+"Форматирование сущностей в API-структуры."
 from models.user import User
 from schemas.settings import EmailPreferences, UserSettingsResponse
 
 
 def to_response(user: User) -> UserSettingsResponse:
+    "Публичный метод сервисного слоя."
     license_areas = user.license_areas if isinstance(user.license_areas, list) else None
     return UserSettingsResponse(
         id=user.id,

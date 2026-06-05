@@ -1,3 +1,4 @@
+"Диспетчер: маршрутизирует задачи между обработчиками."
 import logging
 
 from fastapi import BackgroundTasks
@@ -26,7 +27,7 @@ async def deliver_email_task(
 class EmailDispatcher:
     "Рендерит шаблон и ставит отправку в BackgroundTasks. Сам письма не шлёт."
 
-    def __init__(self, background_tasks: BackgroundTasks):
+    def __init__(self, background_tasks: BackgroundTasks) -> None:
         self.background_tasks = background_tasks
 
     def dispatch(
@@ -36,6 +37,7 @@ class EmailDispatcher:
         subject: str,
         context: BaseModel,
     ) -> None:
+        "Публичный метод сервисного слоя."
         rendered = render_email(template_name, subject, context.model_dump())
         self.background_tasks.add_task(
             deliver_email_task,

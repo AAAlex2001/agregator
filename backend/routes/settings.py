@@ -50,7 +50,8 @@ async def get_profile(
     response: Response,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Возвращает профиль текущего пользователя и синхронизирует cookie роли."
     repo = build_repo(db)
     user = await GetProfileUseCase(build_validator(repo)).execute(user_id)
     response.set_cookie(
@@ -69,7 +70,8 @@ async def update_profile(
     response: Response,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Обновляет личные данные пользователя и обновляет cookie роли."
     repo = build_repo(db)
     user = await UpdatePersonalDataUseCase(repo, build_validator(repo)).execute(user_id, data)
     response.set_cookie(
@@ -87,7 +89,8 @@ async def update_email_preferences(
     data: UpdateEmailPreferencesRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Обновляет настройки email-уведомлений; пустой patch возвращает профиль без изменений."
     repo = build_repo(db)
     validator = build_validator(repo)
     patch = data.model_dump(exclude_unset=True)
@@ -103,7 +106,8 @@ async def update_order_notifications(
     data: UpdateOrderNotificationsRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Обновляет подписку эксперта на типы новых заказов."
     repo = build_repo(db)
     user = await UpdateOrderNotificationsUseCase(repo, build_validator(repo)).execute(
         user_id, data.order_types
@@ -115,7 +119,8 @@ async def update_order_notifications(
 async def mark_notifications_introduced(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Помечает пользователя как ознакомленного с системой уведомлений."
     repo = build_repo(db)
     user = await MarkNotificationsIntroducedUseCase(repo, build_validator(repo)).execute(user_id)
     return to_response(user)
@@ -131,6 +136,7 @@ async def change_password(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> DetailResponse:
+    "Меняет пароль текущего пользователя."
     repo = build_repo(db)
     await UpdatePasswordUseCase(repo, build_validator(repo)).execute(user_id, data.new_password)
     return DetailResponse(detail="Пароль успешно изменён")
@@ -147,6 +153,7 @@ async def request_email_change(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> DetailResponse:
+    "Запрашивает смену email; отправляет код подтверждения на новый адрес."
     repo = build_repo(db)
     await RequestEmailChangeUseCase(repo, build_validator(repo)).execute(
         user_id, data.new_email, background_tasks
@@ -163,7 +170,8 @@ async def confirm_email_change(
     data: ConfirmEmailChangeRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Подтверждает смену email по коду."
     repo = build_repo(db)
     user = await ConfirmEmailChangeUseCase(repo, build_validator(repo)).execute(user_id, data.code)
     return to_response(user)
@@ -175,7 +183,8 @@ async def upload_avatar(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Загружает аватар пользователя и обновляет cookie роли."
     repo = build_repo(db)
     user = await UploadAvatarUseCase(repo, build_validator(repo)).execute(user_id, file)
     response.set_cookie(
@@ -193,7 +202,8 @@ async def update_license(
     data: UpdateLicenseHolderRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Обновляет реквизиты и условия лицензиата."
     repo = build_repo(db)
     user = await UpdateLicenseTermsUseCase(repo, build_validator(repo)).execute(user_id, data)
     return to_response(user)
@@ -204,7 +214,8 @@ async def upload_license_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Заменяет загруженный файл лицензии."
     repo = build_repo(db)
     user = await ReplaceLicenseFileUseCase(repo, build_validator(repo)).execute(user_id, file)
     return to_response(user)
@@ -215,7 +226,8 @@ async def upload_company_card(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Загружает или заменяет карточку компании пользователя."
     repo = build_repo(db)
     user = await ReplaceCompanyCardUseCase(repo, build_validator(repo)).execute(user_id, file)
     return to_response(user)
@@ -225,7 +237,8 @@ async def upload_company_card(
 async def delete_company_card(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSettingsResponse:
+    "Удаляет загруженную карточку компании пользователя."
     repo = build_repo(db)
     user = await ClearCompanyCardUseCase(repo, build_validator(repo)).execute(user_id)
     return to_response(user)

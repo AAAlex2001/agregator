@@ -1,3 +1,4 @@
+"Use case: refresh session."
 from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
@@ -9,10 +10,11 @@ from services.login.repository import SESSION_TTL_DAYS, LoginRepository
 class RefreshSessionUseCase:
     "Продлевает сессию (если не истёк max_expires_at)."
 
-    def __init__(self, repo: LoginRepository):
+    def __init__(self, repo: LoginRepository) -> None:
         self.repo = repo
 
     async def execute(self, session_id: str | None) -> Session:
+        "Запускает основной сценарий use case."
         if not session_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

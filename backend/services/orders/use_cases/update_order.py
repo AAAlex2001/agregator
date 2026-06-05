@@ -1,3 +1,6 @@
+"Use case: update order."
+from typing import Any
+
 from models.order import Order, OrderBadge
 from schemas.order import OrderUpdate
 from services.email import SendOrderUpdatedEmailUseCase
@@ -24,7 +27,7 @@ class UpdateOrderUseCase:
         get_order: GetOrderByIdUseCase,
         validator: OrderValidator,
         send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.get_order = get_order
         self.validator = validator
@@ -37,6 +40,7 @@ class UpdateOrderUseCase:
         current_user_id: int,
         notify: bool = True,
     ) -> Order:
+        "Запускает основной сценарий use case."
         await self.validator.ensure_user_can_modify_order(order_id, current_user_id)
 
         order = await self.get_order.execute(order_id)
@@ -83,7 +87,8 @@ class UpdateOrderUseCase:
         return updated
 
     @staticmethod
-    def snapshot(order: Order) -> dict:
+    def snapshot(order: Order) -> dict[str, Any]:
+        "Публичный метод сервисного слоя."
         return {
             "sum_amount": order.sum_amount,
             "deadline": order.deadline,
@@ -91,7 +96,8 @@ class UpdateOrderUseCase:
             "files_count": OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
         }
 
-    async def send_email_if_changed(self, updated: Order, before: dict) -> None:
+    async def send_email_if_changed(self, updated: Order, before: dict[str, Any]) -> None:
+        "Отправляет уведомление получателю."
         if self.send_updated_email is None:
             return
         summary = summarize_order_changes(
@@ -109,7 +115,8 @@ class UpdateOrderUseCase:
         await self.send_updated_email.execute(updated.id, summary)
 
     @classmethod
-    def apply_scalar_updates(cls, order: Order, update_data: dict) -> None:
+    def apply_scalar_updates(cls, order: Order, update_data: dict[str, Any]) -> None:
+        "Публичный метод сервисного слоя."
         for field, value in update_data.items():
             previous_field = cls.PREVIOUS_TRACKED.get(field)
             if previous_field is not None:
@@ -118,7 +125,8 @@ class UpdateOrderUseCase:
                     setattr(order, previous_field, current)
             setattr(order, field, value)
 
-    async def replace_badges(self, order_id: int, badges_data: list[dict]) -> None:
+    async def replace_badges(self, order_id: int, badges_data: list[dict[str, Any]]) -> None:
+        "Заменяет существующее значение новым."
         await self.repo.delete_badges_by_order(order_id)
         badges = [
             OrderBadge(order_id=order_id, text=item["text"], variant=item["variant"])

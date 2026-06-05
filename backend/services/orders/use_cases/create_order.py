@@ -1,3 +1,4 @@
+"Use case: create order."
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
@@ -17,12 +18,13 @@ class CreateOrderUseCase:
         repo: OrderRepository,
         validator: OrderValidator,
         send_new_order_email: SendNewOrderEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.send_new_order_email = send_new_order_email
 
     async def execute(self, data: OrderCreate, current_user_id: int) -> Order:
+        "Запускает основной сценарий use case."
         await self.validator.ensure_user_can_create_order(data.customer_id, current_user_id)
         self.validator.ensure_requirements_selected(data.requires_expert, data.requires_license)
         await self.validator.ensure_customer_exists(data.customer_id)
@@ -33,11 +35,14 @@ class CreateOrderUseCase:
         await self.flush_or_reject()
 
         created = await self.repo.get_by_id(order.id)
+        if created is None:
+            raise RuntimeError("Order disappeared after insert")
         if self.send_new_order_email is not None:
             await self.send_new_order_email.execute(created.id)
         return created
 
     def build_entity(self, data: OrderCreate) -> Order:
+        "Строит объект из входных данных."
         order = Order(
             title=data.title,
             company=data.company,
@@ -55,12 +60,14 @@ class CreateOrderUseCase:
         return order
 
     def build_badges(self, data: OrderCreate) -> list[OrderBadge]:
+        "Строит объект из входных данных."
         return [
             OrderBadge(text=badge.text, variant=badge.variant)
             for badge in data.badges
         ]
 
     async def flush_or_reject(self) -> None:
+        "Сбрасывает изменения в БД или бросает 400 при конфликте."
         try:
             await self.repo.flush()
         except IntegrityError:

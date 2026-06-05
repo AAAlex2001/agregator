@@ -48,7 +48,8 @@ def serialize_subscription(subscription: UserSubscription) -> UserSubscriptionRe
 
 
 @router.get("/", response_model=PricingPlansResponse)
-async def list_pricing_plans(db: AsyncSession = Depends(get_db)):
+async def list_pricing_plans(db: AsyncSession = Depends(get_db)) -> PricingPlansResponse:
+    "Возвращает публичный список активных тарифных планов."
     service = PricingService(db)
     plans = await service.list_active()
     return PricingPlansResponse(plans=plans)
@@ -59,7 +60,8 @@ async def subscribe(
     data: SubscribeRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> SubscribeResponse:
+    "Инициирует покупку подписки и возвращает confirmation_url YooKassa."
     use_case = PurchaseSubscriptionUseCase(SubscriptionRepository(db))
     result = await use_case.execute(
         user_id=user_id, plan_id=data.plan_id, return_url=data.return_url
@@ -74,7 +76,8 @@ async def subscribe(
 async def get_my_subscription(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> UserSubscriptionResponse | None:
+    "Возвращает активную подписку текущего пользователя или None."
     repo = SubscriptionRepository(db)
     subscription = await repo.find_active_for_user(user_id)
     if subscription is None:

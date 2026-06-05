@@ -1,3 +1,4 @@
+"Сервисный модуль: notifier."
 from fastapi import BackgroundTasks
 
 from models.user import User
@@ -9,10 +10,11 @@ EMAIL_CONFIRMATION_SUBJECT = "Подтверждение почты на Рес�
 class RegistrationNotifier:
     "Тонкая обёртка над VerificationService для отправки кода подтверждения email."
 
-    def __init__(self, verification: VerificationService):
+    def __init__(self, verification: VerificationService) -> None:
         self.verification = verification
 
     async def schedule_confirmation_email(self, user: User, background_tasks: BackgroundTasks) -> None:
+        "Публичный метод сервисного слоя."
         if not user.email:
             return
         await self.verification.schedule_code_email(
@@ -23,6 +25,7 @@ class RegistrationNotifier:
         )
 
     async def send_confirmation_email(self, user: User) -> None:
+        "Отправляет уведомление получателю."
         if not user.email:
             return
         await self.verification.send_code_to_email(

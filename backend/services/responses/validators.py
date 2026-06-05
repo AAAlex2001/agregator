@@ -1,3 +1,4 @@
+"Бизнес-валидации для responses."
 from fastapi import HTTPException, status
 
 from models.user import User, UserRole
@@ -7,10 +8,11 @@ from services.responses.repository import ResponseRepository
 class ResponseValidator:
     "Проверяет участников (эксперт/заказчик/актёр). Работает только с репозиторием."
 
-    def __init__(self, repo: ResponseRepository):
+    def __init__(self, repo: ResponseRepository) -> None:
         self.repo = repo
 
     async def ensure_expert(self, expert_id: int) -> User:
+        "Бросает HTTPException, если условие не выполнено."
         user = await self.require_user(expert_id)
         if user.is_active and user.role == UserRole.EXPERT:
             return user
@@ -20,6 +22,7 @@ class ResponseValidator:
         )
 
     async def ensure_customer(self, customer_id: int) -> User:
+        "Бросает HTTPException, если условие не выполнено."
         user = await self.require_user(customer_id)
         if user.is_active and user.role == UserRole.CUSTOMER:
             return user
@@ -29,6 +32,7 @@ class ResponseValidator:
         )
 
     async def get_actor(self, user_id: int) -> User:
+        "Возвращает запрошенную сущность."
         user = await self.require_user(user_id)
         if user.is_active:
             return user
@@ -38,6 +42,7 @@ class ResponseValidator:
         )
 
     async def require_user(self, user_id: int) -> User:
+        "Возвращает требуемую сущность или бросает 404."
         user = await self.repo.find_user(user_id)
         if user is not None:
             return user

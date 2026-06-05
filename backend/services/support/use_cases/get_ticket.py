@@ -1,3 +1,4 @@
+"Use case: get ticket."
 from fastapi import HTTPException, status
 
 from models.support_ticket import SupportTicket
@@ -6,10 +7,12 @@ from ..repository import SupportRepository
 
 
 class GetTicketForUserUseCase:
-    def __init__(self, repo: SupportRepository):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: SupportRepository) -> None:
         self.repo = repo
 
     async def execute(self, ticket_id: int, user_id: int) -> SupportTicket:
+        "Запускает основной сценарий use case."
         ticket = await self.repo.get_for_user(ticket_id, user_id)
         if ticket is None:
             raise HTTPException(

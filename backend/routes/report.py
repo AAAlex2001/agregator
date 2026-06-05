@@ -23,7 +23,8 @@ async def list_reports(
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderListResponse:
+    "Список архивных заказов пользователя для отчётов."
     use_case = ListReportsUseCase(build_repo(db))
     items, has_more = await use_case.execute(user_id, skip, limit)
     return OrderListResponse(

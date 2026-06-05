@@ -26,7 +26,8 @@ async def list_notifications(
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> NotificationListResponse:
+    "Возвращает уведомления текущего пользователя с пагинацией."
     use_case = ListNotificationsUseCase(build_repo(db))
     return await use_case.execute(user_id=user_id, limit=limit, offset=offset)
 
@@ -35,7 +36,8 @@ async def list_notifications(
 async def mark_all_notifications_read(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> NotificationMutationResponse:
+    "Помечает все уведомления текущего пользователя прочитанными."
     use_case = MarkAllNotificationsReadUseCase(build_repo(db))
     return await use_case.execute(user_id)
 
@@ -45,7 +47,8 @@ async def mark_notification_read(
     notification_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> NotificationMutationResponse:
+    "Помечает одно уведомление прочитанным."
     use_case = MarkNotificationReadUseCase(build_repo(db))
     return await use_case.execute(notification_id=notification_id, user_id=user_id)
 
@@ -54,7 +57,8 @@ async def mark_notification_read(
 async def delete_all_notifications(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> NotificationMutationResponse:
+    "Удаляет все уведомления текущего пользователя."
     use_case = DeleteAllNotificationsUseCase(build_repo(db))
     return await use_case.execute(user_id)
 
@@ -64,6 +68,7 @@ async def delete_notification(
     notification_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> NotificationMutationResponse:
+    "Удаляет одно уведомление текущего пользователя."
     use_case = DeleteNotificationUseCase(build_repo(db))
     return await use_case.execute(notification_id=notification_id, user_id=user_id)

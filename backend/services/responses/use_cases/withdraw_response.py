@@ -1,3 +1,4 @@
+"Use case: withdraw response."
 from fastapi import HTTPException, status
 
 from models.order import Order, OrderStatus
@@ -17,6 +18,7 @@ ASSIGNED_STATUSES = {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS}
 
 
 class WithdrawResponseUseCase:
+    "Сценарий приложения: координирует репозитории и сервисы."
     def __init__(
         self,
         repo: ResponseRepository,
@@ -24,7 +26,7 @@ class WithdrawResponseUseCase:
         in_app: ResponseInAppNotifier,
         send_rejected_email: SendExpertRejectedEmailUseCase | None = None,
         subscription_access: SubscriptionAccess | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.get_response = get_response
         self.in_app = in_app
@@ -32,6 +34,7 @@ class WithdrawResponseUseCase:
         self.subscription_access = subscription_access
 
     async def execute(self, response_id: int, expert_id: int) -> int:
+        "Запускает основной сценарий use case."
         response = await self.get_response.execute(response_id)
         self.ensure_owner(response, expert_id)
         self.ensure_withdrawable(response)
@@ -59,6 +62,7 @@ class WithdrawResponseUseCase:
 
     @staticmethod
     def ensure_owner(response: OrderResponse, expert_id: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.expert_id == expert_id:
             return
         raise HTTPException(
@@ -68,6 +72,7 @@ class WithdrawResponseUseCase:
 
     @staticmethod
     def ensure_withdrawable(response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.status in WITHDRAWABLE_STATUSES:
             return
         raise HTTPException(
@@ -77,6 +82,7 @@ class WithdrawResponseUseCase:
 
     @staticmethod
     def release_assignment(response: OrderResponse, expert_id: int) -> None:
+        "Публичный метод сервисного слоя."
         order: Order | None = response.order
         if order is None or order.assigned_expert_id != expert_id:
             return

@@ -1,3 +1,4 @@
+"Use case: answer question."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
@@ -20,12 +21,13 @@ class AnswerQuestionUseCase:
         repo: QuestionRepository,
         in_app_notify: CreateQuestionAnsweredNotificationUseCase | None = None,
         send_email: SendQuestionAnsweredEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.in_app_notify = in_app_notify
         self.send_email = send_email
 
     async def execute(self, question_id: int, customer_id: int, text: str) -> OrderQuestion:
+        "Запускает основной сценарий use case."
         question = await self.repo.get_by_id(question_id)
         if question is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")

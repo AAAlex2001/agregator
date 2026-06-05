@@ -31,6 +31,7 @@ async def list_articles(
     tag: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
 ) -> ArticleListDto:
+    "Возвращает публичный список статей выбранного типа с пагинацией и фильтром по тегу."
     return await ListArticlesUseCase(build_repo(db)).execute(
         kind=kind, skip=offset, limit=limit, tag=tag
     )
@@ -38,6 +39,7 @@ async def list_articles(
 
 @router.get("/public/articles/{slug}", response_model=ArticleDetailDto)
 async def get_article(slug: str, db: AsyncSession = Depends(get_db)) -> ArticleDetailDto:
+    "Возвращает публичную статью по slug; 404 если не найдена."
     return await GetArticleBySlugUseCase(build_repo(db)).execute(slug=slug)
 
 
@@ -47,4 +49,5 @@ async def list_related_articles(
     limit: int = Query(3, ge=1, le=12),
     db: AsyncSession = Depends(get_db),
 ) -> list[ArticleListItemDto]:
+    "Возвращает похожие статьи к указанной по slug."
     return await ListRelatedArticlesUseCase(build_repo(db)).execute(slug=slug, limit=limit)

@@ -1,3 +1,4 @@
+"Use case: send order updated email."
 from models.order import Order
 from models.user import User
 from schemas.email import OrderBrief, OrderUpdatedContext
@@ -14,11 +15,12 @@ PREFERENCE_FIELD = "email_on_order_updated"
 class SendOrderUpdatedEmailUseCase:
     "Эксперты, уже откликнувшиеся на заявку, получают письмо об изменениях."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, order_id: int, changes_summary: str) -> None:
+        "Запускает основной сценарий use case."
         if not changes_summary:
             return
 
@@ -40,6 +42,7 @@ class SendOrderUpdatedEmailUseCase:
         expert: User,
         changes_summary: str,
     ) -> OrderUpdatedContext:
+        "Строит объект из входных данных."
         return OrderUpdatedContext(
             expert_greeting=greeting_for(expert),
             order_title=order.title or f"Заказ #{order.id}",

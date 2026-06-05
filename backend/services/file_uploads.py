@@ -15,13 +15,13 @@ async def save_uploaded_file(
     subdir: str,
     owner_key: str,
     file: UploadFile,
-    *,
     allowed_extensions: set[str],
     allowed_content_types: set[str],
     max_size: int = DEFAULT_MAX_SIZE,
     bad_format_message: str = "Недопустимый формат файла",
     too_large_message: str = "Файл слишком большой",
 ) -> str:
+    "Публичный метод сервисного слоя."
     extension = Path(file.filename or "").suffix.lower()
     content_type = (file.content_type or "").lower()
 
@@ -58,6 +58,7 @@ async def save_uploaded_file(
 
 
 def remove_uploaded_file(file_url: str | None) -> None:
+    "Удаляет ресурс."
     if not file_url:
         return
     (BACKEND_ROOT / file_url.lstrip("/")).unlink(missing_ok=True)

@@ -1,3 +1,4 @@
+"Use case: restore withdrawn response."
 from fastapi import HTTPException, status
 
 from models.order import OrderStatus
@@ -13,11 +14,12 @@ class RestoreWithdrawnResponseUseCase:
         self,
         repo: ResponseRepository,
         get_response: GetResponseByIdUseCase,
-    ):
+    ) -> None:
         self.repo = repo
         self.get_response = get_response
 
     async def execute(self, response_id: int, expert_id: int) -> OrderResponse:
+        "Запускает основной сценарий use case."
         response = await self.get_response.execute(response_id)
         self.ensure_owner(response, expert_id)
         self.ensure_withdrawn(response)
@@ -30,6 +32,7 @@ class RestoreWithdrawnResponseUseCase:
 
     @staticmethod
     def ensure_owner(response: OrderResponse, expert_id: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.expert_id == expert_id:
             return
         raise HTTPException(
@@ -39,6 +42,7 @@ class RestoreWithdrawnResponseUseCase:
 
     @staticmethod
     def ensure_withdrawn(response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.status == ResponseStatus.WITHDRAWN_BY_EXPERT:
             return
         raise HTTPException(
@@ -48,6 +52,7 @@ class RestoreWithdrawnResponseUseCase:
 
     @staticmethod
     def ensure_order_open(response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         order = response.order
         if order is None:
             raise HTTPException(

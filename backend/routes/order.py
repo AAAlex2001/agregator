@@ -70,7 +70,7 @@ async def search_orders_public(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
-):
+) -> OrderListResponse:
     "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
     use_case = SearchOrdersUseCase(build_repo(db))
     orders, has_more = await use_case.execute(q, skip, limit)
@@ -87,7 +87,7 @@ async def get_orders(
     status: OrderStatus | None = None,
     db: AsyncSession = Depends(get_db),
     user_id: int | None = Depends(get_current_user_optional),
-):
+) -> OrderListResponse:
     "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
     use_case = ListOrdersUseCase(build_repo(db))
     orders, has_more = await use_case.execute(skip, limit, status, user_id)
@@ -103,7 +103,8 @@ async def get_archived_orders(
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderListResponse:
+    "Возвращает архив заказов текущего пользователя с пагинацией."
     use_case = ListArchivedOrdersUseCase(build_repo(db))
     items, has_more = await use_case.execute(skip, limit, current_user_id=user_id)
     return OrderListResponse(
@@ -119,7 +120,8 @@ async def get_archived_orders(
 async def get_order_public(
     public_id: str,
     db: AsyncSession = Depends(get_db),
-):
+) -> OrderResponse:
+    "Возвращает публичный заказ по public_id без авторизации."
     use_case = GetOrderByPublicIdUseCase(build_repo(db))
     order = await use_case.execute(public_id)
     return OrderResponse.from_order(order)
@@ -130,7 +132,8 @@ async def get_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderResponse:
+    "Возвращает заказ по id; 403 если у пользователя нет доступа."
     repo = build_repo(db)
     await OrderValidator(repo).ensure_user_can_view_order(order_id, user_id)
     order = await build_get_order(db).execute(order_id)
@@ -143,7 +146,8 @@ async def create_order(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderResponse:
+    "Создаёт заказ от имени текущего пользователя и рассылает уведомления."
     data.customer_id = user_id
     repo = build_repo(db)
     use_case = CreateOrderUseCase(
@@ -174,7 +178,8 @@ async def create_order_with_files(
     other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderResponse:
+    "Создаёт заказ с прикреплёнными файлами через multipart/form-data."
     data = build_order_create_data(
         title=title,
         company=company,
@@ -217,7 +222,8 @@ async def update_order(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderResponse:
+    "Частично обновляет заказ; уведомляет откликнувшихся об изменениях."
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)
     validator = OrderValidator(repo)
@@ -253,7 +259,8 @@ async def update_order_with_files(
     other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> OrderResponse:
+    "Обновляет заказ с заменой/добавлением файлов через multipart/form-data."
     data = build_order_update_data(
         title=title,
         company=company,
@@ -302,6 +309,7 @@ async def delete_order(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> OkResponse:
+    "Удаляет заказ; доступно только владельцу при допустимом статусе."
     repo = build_repo(db)
     use_case = DeleteOrderUseCase(
         repo=repo,

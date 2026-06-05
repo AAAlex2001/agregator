@@ -1,3 +1,4 @@
+"Use case: get article by slug."
 from fastapi import HTTPException, status
 
 from schemas.article import ArticleDetailDto
@@ -6,10 +7,12 @@ from services.articles.use_cases.list_articles import KIND_TO_DTO
 
 
 class GetArticleBySlugUseCase:
-    def __init__(self, repo: ArticleRepository):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: ArticleRepository) -> None:
         self.repo = repo
 
     async def execute(self, slug: str) -> ArticleDetailDto:
+        "Запускает основной сценарий use case."
         row = await self.repo.get_published_by_slug(slug)
         if row is None:
             raise HTTPException(

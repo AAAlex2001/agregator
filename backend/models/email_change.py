@@ -1,9 +1,13 @@
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+
+if TYPE_CHECKING:
+    from models.user import User
 
 CODE_TTL_MINUTES = 15
 
@@ -20,25 +24,24 @@ class EmailChangeRequest(Base):
         UniqueConstraint("user_id", name="uq_email_change_requests_user"),
     )
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    new_email = Column(String, nullable=False)
-    code = Column(String(10), nullable=False)
-    is_used = Column(Boolean, nullable=False, default=False, server_default="false")
-    created_at = Column(
+    new_email: Mapped[str] = mapped_column(String, nullable=False)
+    code: Mapped[str] = mapped_column(String(10), nullable=False)
+    is_used: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    expires_at = Column(
+    expires_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=default_expires_at,
         nullable=False,
     )
 
-    user = relationship("User")
+    user: Mapped["User"] = relationship()

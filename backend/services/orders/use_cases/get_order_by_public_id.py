@@ -1,3 +1,4 @@
+"Use case: get order by public id."
 from fastapi import HTTPException, status
 
 from models.order import Order
@@ -5,10 +6,12 @@ from services.orders.repository import OrderRepository
 
 
 class GetOrderByPublicIdUseCase:
-    def __init__(self, repo: OrderRepository):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: OrderRepository) -> None:
         self.repo = repo
 
     async def execute(self, public_id: str) -> Order:
+        "Запускает основной сценарий use case."
         order = await self.repo.get_by_public_id(public_id)
         if order is not None:
             return order

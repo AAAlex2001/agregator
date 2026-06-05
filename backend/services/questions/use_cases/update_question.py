@@ -1,3 +1,4 @@
+"Use case: update question."
 from fastapi import HTTPException, status
 
 from models.question import OrderQuestion
@@ -7,7 +8,7 @@ from services.questions.repository import QuestionRepository
 class UpdateQuestionUseCase:
     "Эксперт правит свой вопрос — пока заказчик не ответил."
 
-    def __init__(self, repo: QuestionRepository):
+    def __init__(self, repo: QuestionRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -17,6 +18,7 @@ class UpdateQuestionUseCase:
         text: str,
         is_anonymous: bool | None = None,
     ) -> OrderQuestion:
+        "Запускает основной сценарий use case."
         question = await self.repo.get_by_id(question_id)
         if question is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")

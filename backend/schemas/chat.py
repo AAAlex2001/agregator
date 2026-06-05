@@ -8,6 +8,7 @@ from services.email.formatting import full_name
 
 
 class ChatAttachmentResponse(BaseModel):
+    "Вложение чата для возврата клиенту (имя + url)."
     url: str
     name: str
 
@@ -19,14 +20,17 @@ class ChatAttachmentData(BaseModel):
 
 
 class ChatOpenRequest(BaseModel):
+    "Запрос на открытие/получение чата по заказу."
     order_id: int = Field(..., ge=1)
 
 
 class ChatSendMessageRequest(BaseModel):
+    "Payload отправки текстового сообщения в чат заказа."
     text: str = Field(..., min_length=1, max_length=5000)
 
 
 class ChatMessageResponse(BaseModel):
+    "Сообщение чата заказа в ответе API."
     id: int
     chat_id: int
     sender_id: int
@@ -42,11 +46,13 @@ class ChatMessageResponse(BaseModel):
 
 
 class ChatBadgeResponse(BaseModel):
+    "Бейдж заказа в карточке чата."
     text: str
     variant: str
 
 
 class ChatListItemResponse(BaseModel):
+    "Карточка чата в списке для бокового меню."
     id: int
     uuid: str
     order_id: int
@@ -61,11 +67,13 @@ class ChatListItemResponse(BaseModel):
 
 
 class ChatListResponse(BaseModel):
+    "Список чатов пользователя с общим счётчиком."
     items: list[ChatListItemResponse]
     total: int
 
 
 class ChatDetailResponse(BaseModel):
+    "Полная карточка чата: данные заказа, контрагент и история сообщений."
     id: int
     uuid: str
     order_id: int
@@ -87,12 +95,14 @@ class ChatDetailResponse(BaseModel):
 
 
 class ChatPresenceResponse(BaseModel):
+    "Статус присутствия участников чата (кто онлайн сейчас)."
     chat_id: int
     online_user_ids: list[int]
     both_online: bool
 
 
 class ExpertRoomMessageOut(BaseModel):
+    "Сообщение общего чата экспертов в ответе API."
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -124,6 +134,7 @@ class ExpertRoomMessageOut(BaseModel):
 
 
 class ExpertRoomHistoryResponse(BaseModel):
+    "Постраничная история сообщений общего чата экспертов."
     items: list[ExpertRoomMessageOut]
     has_more: bool
     banned: bool = False
@@ -131,19 +142,23 @@ class ExpertRoomHistoryResponse(BaseModel):
 
 
 class SendExpertRoomMessageRequest(BaseModel):
+    "Payload отправки сообщения в общий чат экспертов."
     text: str = Field(..., min_length=1, max_length=2000)
 
 
 class ExpertRoomTypingPayload(BaseModel):
+    "Сигнал «печатает» для общего чата экспертов."
     user_id: int
     user_name: str
 
 
 class WsExpertRoomMessage(BaseModel):
+    "WebSocket-событие нового сообщения в общем чате экспертов."
     event: Literal["expert_room_message"] = "expert_room_message"
     data: ExpertRoomMessageOut
 
 
 class WsExpertRoomTyping(BaseModel):
+    "WebSocket-событие «печатает» в общем чате экспертов."
     event: Literal["expert_room_typing"] = "expert_room_typing"
     data: ExpertRoomTypingPayload

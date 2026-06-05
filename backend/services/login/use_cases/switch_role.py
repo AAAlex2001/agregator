@@ -1,3 +1,4 @@
+"Use case: switch role."
 from fastapi import HTTPException, status
 
 from models.session import Session
@@ -9,7 +10,7 @@ from services.login.validators import LoginValidator
 class SwitchRoleUseCase:
     "Переключает сессию на тот же email с другой ролью — после проверки пароля."
 
-    def __init__(self, repo: LoginRepository, validator: LoginValidator):
+    def __init__(self, repo: LoginRepository, validator: LoginValidator) -> None:
         self.repo = repo
         self.validator = validator
 
@@ -20,6 +21,7 @@ class SwitchRoleUseCase:
         password: str,
         current_session_id: str | None,
     ) -> Session:
+        "Запускает основной сценарий use case."
         current = await self.repo.find_user_by_id(current_user_id)
         if current is None:
             raise HTTPException(

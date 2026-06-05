@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
+from models.question import OrderQuestion
 from models.user import User, UserRole
 from schemas.question import (
     QuestionAnswer,
@@ -35,7 +36,7 @@ def build_repo(db: AsyncSession) -> QuestionRepository:
     return QuestionRepository(db)
 
 
-def to_response(question) -> QuestionResponse:
+def to_response(question: OrderQuestion) -> QuestionResponse:
     expert = question.expert
     parts = [expert.first_name or "", expert.last_name or ""] if expert else []
     expert_name = " ".join(p for p in parts if p) if expert else ""
@@ -62,7 +63,7 @@ async def list_order_questions(
     order_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int | None = Depends(get_current_user_optional),
-):
+) -> QuestionListResponse:
     "Публичный список вопросов: гость и сторонние видят только не-анонимные; владелец и автор — всё."
     role = await get_user_role(db, user_id) if user_id is not None else None
     items = await ListQuestionsUseCase(build_repo(db)).execute(
@@ -78,7 +79,8 @@ async def ask_order_question(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> QuestionResponse:
+    "Задаёт вопрос по заказу от лица эксперта, опционально анонимно."
     role = await get_user_role(db, user_id)
     use_case = AskQuestionUseCase(
         repo=build_repo(db),
@@ -105,7 +107,8 @@ async def update_question(
     payload: QuestionUpdate,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> QuestionResponse:
+    "Редактирует текст или флаг анонимности вопроса; только автор."
     question = await UpdateQuestionUseCase(build_repo(db)).execute(
         question_id=question_id,
         expert_id=user_id,
@@ -122,7 +125,8 @@ async def answer_question(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> QuestionResponse:
+    "Ответ владельца заказа на вопрос эксперта."
     use_case = AnswerQuestionUseCase(
         repo=build_repo(db),
         in_app_notify=CreateQuestionAnsweredNotificationUseCase(NotificationRepository(db)),

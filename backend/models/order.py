@@ -1,23 +1,28 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from sqlalchemy import (
     JSON,
     BigInteger,
     Boolean,
-    Column,
     Date,
     DateTime,
     Enum,
     ForeignKey,
-    Integer,
     String,
     Text,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+
+if TYPE_CHECKING:
+    from models.chat import Chat
+    from models.question import OrderQuestion
+    from models.response import OrderResponse
+    from models.user import User
 
 
 class OrderStatus(str, PyEnum):
@@ -35,95 +40,88 @@ class BadgeVariant(str, PyEnum):
 
 
 class Order(Base):
+    """Заказ заказчика."""
     __tablename__ = "orders"
 
-    id = Column(Integer, primary_key=True, index=True)
-    public_id = Column(String(36), unique=True, nullable=False, default=lambda: str(uuid4()), index=True)
-    title = Column(String(500), nullable=False)
-    company = Column(String(500), nullable=False, default="")
-    comment = Column(Text, nullable=False, default="")
-    customer_id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    public_id: Mapped[str] = mapped_column(String(36), unique=True, nullable=False, default=lambda: str(uuid4()), index=True)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    company: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    comment: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    customer_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    assigned_expert_id = Column(
-        Integer,
+    assigned_expert_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
     )
-    technical_files = Column(JSON, nullable=False, default=list)
-    contract_files = Column(JSON, nullable=False, default=list)
-    company_files = Column(JSON, nullable=False, default=list)
-    other_files = Column(JSON, nullable=False, default=list)
-    requires_expert = Column(Boolean, nullable=False, default=True, server_default="true")
-    requires_license = Column(Boolean, nullable=False, default=True, server_default="true")
-    sum_amount = Column(BigInteger, nullable=False)
-    start_date = Column(Date, nullable=True)
-    deadline = Column(Date, nullable=False)
-    previous_title = Column(String(500), nullable=True)
-    previous_comment = Column(Text, nullable=True)
-    previous_sum_amount = Column(BigInteger, nullable=True)
-    previous_deadline = Column(Date, nullable=True)
-    previous_technical_files = Column(JSON, nullable=True)
-    previous_contract_files = Column(JSON, nullable=True)
-    previous_company_files = Column(JSON, nullable=True)
-    previous_other_files = Column(JSON, nullable=True)
-    previous_badges = Column(JSON, nullable=True)
-    responses_deadline = Column(DateTime(timezone=True), nullable=True)
-    status = Column(
+    technical_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    contract_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    company_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    other_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    requires_expert: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
+    requires_license: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
+    sum_amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    deadline: Mapped[date] = mapped_column(Date, nullable=False)
+    previous_title: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    previous_comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    previous_sum_amount: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    previous_deadline: Mapped[date | None] = mapped_column(Date, nullable=True)
+    previous_technical_files: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    previous_contract_files: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    previous_company_files: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    previous_other_files: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    previous_badges: Mapped[list[Any] | None] = mapped_column(JSON, nullable=True)
+    responses_deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[OrderStatus] = mapped_column(
         Enum(OrderStatus),
         nullable=False,
         index=True,
         default=OrderStatus.ACTIVE,
     )
-    created_at = Column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    updated_at = Column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 
-    customer = relationship(
-        "User",
+    customer: Mapped["User"] = relationship(
         foreign_keys=[customer_id],
         back_populates="orders",
     )
-    assigned_expert = relationship(
-        "User",
+    assigned_expert: Mapped["User | None"] = relationship(
         foreign_keys=[assigned_expert_id],
         back_populates="assigned_orders",
     )
-    badges = relationship(
-        "OrderBadge",
+    badges: Mapped[list["OrderBadge"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,
         lazy="selectin",
     )
-    responses = relationship(
-        "OrderResponse",
+    responses: Mapped[list["OrderResponse"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,
         lazy="selectin",
     )
-    chats = relationship(
-        "Chat",
+    chats: Mapped[list["Chat"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,
         lazy="selectin",
     )
-    questions = relationship(
-        "OrderQuestion",
+    questions: Mapped[list["OrderQuestion"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,
@@ -131,16 +129,16 @@ class Order(Base):
 
 
 class OrderBadge(Base):
+    """Бейдж/метка на карточке заказа."""
     __tablename__ = "order_badges"
 
-    id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    order_id: Mapped[int] = mapped_column(
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    text = Column(String(50), nullable=False)
-    variant = Column(Enum(BadgeVariant), nullable=False)
+    text: Mapped[str] = mapped_column(String(50), nullable=False)
+    variant: Mapped[BadgeVariant] = mapped_column(Enum(BadgeVariant), nullable=False)
 
-    order = relationship("Order", back_populates="badges")
+    order: Mapped["Order"] = relationship(back_populates="badges")

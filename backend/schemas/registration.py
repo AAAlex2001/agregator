@@ -6,12 +6,14 @@ from pydantic import BaseModel, EmailStr, Field, model_validator
 
 
 class UserRole(str, Enum):
+    "Роль пользователя в системе."
     CUSTOMER = "CUSTOMER"
     EXPERT = "EXPERT"
     LICENSE_HOLDER = "LICENSE_HOLDER"
 
 
 class LicenseRentalKind(str, Enum):
+    "Способ расчёта стоимости предоставления лицензии."
     PERCENT = "PERCENT"
     FIXED = "FIXED"
     NEGOTIABLE = "NEGOTIABLE"
@@ -55,22 +57,26 @@ class LicenseHolderRegistration(BaseModel):
 
 
 class EmailConfirmRequest(BaseModel):
+    "Подтверждение email по коду после регистрации."
     email: EmailStr = Field(..., description="Почта пользователя")
     code: str = Field(..., description="Код подтверждения")
     role: UserRole | None = Field(None, description="Если на email несколько ролей — какую подтверждаем")
 
 
 class ResendCodeRequest(BaseModel):
+    "Повторная отправка кода подтверждения email."
     email: EmailStr = Field(..., description="Почта пользователя")
     role: UserRole | None = Field(None, description="Если на email несколько ролей — какую переотправить")
 
 
 class PartySuggestionRequest(BaseModel):
+    "Запрос подсказок компании по строке поиска (DaData)."
     query: str = Field(..., min_length=2, max_length=200)
     count: int = Field(default=10, ge=1, le=10)
 
 
 class PartySuggestionResponse(BaseModel):
+    "Одна подсказка компании от DaData."
     value: str
     unrestricted_value: str
     data: dict[str, Any] = Field(default_factory=dict)

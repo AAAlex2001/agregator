@@ -1,3 +1,4 @@
+"Use case: send bidding finished email."
 from models.order import Order
 from models.response import OrderResponse
 from models.user import User
@@ -15,6 +16,7 @@ OUTCOME_LOST = "lost"
 
 
 def format_price(amount_kopecks: int) -> str:
+    "Форматирует значение для отображения."
     if amount_kopecks <= 0:
         return "не определена"
     roubles = amount_kopecks // 100
@@ -26,11 +28,13 @@ def format_price(amount_kopecks: int) -> str:
 
 
 def full_name(user: User) -> str:
+    "Публичный метод сервисного слоя."
     parts = [user.first_name or "", user.last_name or ""]
     return " ".join(p for p in parts if p).strip()
 
 
 def won_subject(order: Order) -> str:
+    "Публичный метод сервисного слоя."
     return f"Уведомление о победе №{order.id} «{order.title or 'Заказ'}»"
 
 
@@ -43,7 +47,7 @@ class SendBiddingFinishedEmailUseCase:
     либо он выбран исполнителем, либо заказчик выбрал другого.
     """
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
@@ -54,6 +58,7 @@ class SendBiddingFinishedEmailUseCase:
         outcome: str,
         response_id: int | None = None,
     ) -> None:
+        "Запускает основной сценарий use case."
         if outcome not in {OUTCOME_WON, OUTCOME_LOST}:
             return
 
@@ -87,6 +92,7 @@ class SendBiddingFinishedEmailUseCase:
         response: OrderResponse | None,
         customer: User | None,
     ) -> BiddingFinishedContext:
+        "Строит объект из входных данных."
         winning_price = (
             format_price(response.proposed_sum_amount) if response is not None else ""
         )

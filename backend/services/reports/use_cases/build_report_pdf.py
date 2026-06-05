@@ -1,6 +1,8 @@
+"Use case: build report pdf."
 import os
 from datetime import UTC, date, datetime
 from pathlib import Path
+from typing import Any
 
 from fastapi import HTTPException, status
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -34,6 +36,7 @@ TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 
 def format_sum(amount_kopecks: int | None) -> str:
+    "Форматирует значение для отображения."
     if not amount_kopecks:
         return "Не определено"
     roubles = amount_kopecks // 100
@@ -44,18 +47,21 @@ def format_sum(amount_kopecks: int | None) -> str:
 
 
 def format_date(value: date | None) -> str:
+    "Форматирует значение для отображения."
     if value is None:
         return "—"
     return value.strftime("%d.%m.%Y")
 
 
 def format_datetime(value: datetime | None) -> str:
+    "Форматирует значение для отображения."
     if value is None:
         return "—"
     return value.strftime("%d.%m.%Y %H:%M")
 
 
 def expert_full_name(response: OrderResponse) -> str:
+    "Публичный метод сервисного слоя."
     expert = response.expert
     if expert is None:
         return "Неизвестный эксперт"
@@ -65,6 +71,7 @@ def expert_full_name(response: OrderResponse) -> str:
 
 
 def question_expert_name(question: OrderQuestion) -> str:
+    "Публичный метод сервисного слоя."
     expert = question.expert
     if expert is None:
         return "Эксперт"
@@ -74,6 +81,7 @@ def question_expert_name(question: OrderQuestion) -> str:
 
 
 def expert_company(response: OrderResponse) -> str:
+    "Публичный метод сервисного слоя."
     data = response.expert_company_data or {}
     if not isinstance(data, dict):
         return ""
@@ -85,6 +93,7 @@ def expert_company(response: OrderResponse) -> str:
 
 
 def customer_with_inn(order: Order) -> str:
+    "Публичный метод сервисного слоя."
     name = (order.company or "").strip()
     customer = order.customer
     inn = (customer.inn or "").strip() if customer else ""
@@ -93,7 +102,8 @@ def customer_with_inn(order: Order) -> str:
     return name or (f"ИНН {inn}" if inn else "—")
 
 
-def expert_rating(response: OrderResponse) -> dict | None:
+def expert_rating(response: OrderResponse) -> dict[str, Any] | None:
+    "Публичный метод сервисного слоя."
     expert = response.expert
     if expert is None or expert.rating is None:
         return None
@@ -103,7 +113,8 @@ def expert_rating(response: OrderResponse) -> dict | None:
     }
 
 
-def build_badges(order: Order) -> list[dict]:
+def build_badges(order: Order) -> list[dict[str, Any]]:
+    "Строит объект из входных данных."
     result = []
     for badge in order.badges or []:
         variant = badge.variant.value if hasattr(badge.variant, "value") else str(badge.variant)
@@ -112,7 +123,7 @@ def build_badges(order: Order) -> list[dict]:
     return result
 
 
-def build_file_tiles(paths: list[str]) -> list[dict]:
+def build_file_tiles(paths: list[str]) -> list[dict[str, Any]]:
     "Плитки файлов с публичным URL для клика-скачивания из PDF."
     result = []
     for path in paths or []:
@@ -136,7 +147,7 @@ CUSTOMER_DOCUMENT_GROUPS = [
 ]
 
 
-def build_customer_documents(order: Order) -> list[dict]:
+def build_customer_documents(order: Order) -> list[dict[str, Any]]:
     "4 категории документов заказчика в порядке UI."
     groups = []
     for attr, label in CUSTOMER_DOCUMENT_GROUPS:
@@ -148,12 +159,14 @@ def build_customer_documents(order: Order) -> list[dict]:
 
 
 def format_responses_deadline(value: datetime | None) -> str:
+    "Форматирует значение для отображения."
     if value is None:
         return "—"
     return value.strftime("%d.%m.%Y, %H:%M")
 
 
-def visible_questions(order: Order) -> list[dict]:
+def visible_questions(order: Order) -> list[dict[str, Any]]:
+    "Публичный метод сервисного слоя."
     items = []
     for q in order.questions or []:
         if q.is_anonymous:
@@ -171,7 +184,7 @@ def visible_questions(order: Order) -> list[dict]:
 class BuildReportPdfUseCase:
     "Собирает HTML по шаблону и рендерит в PDF через WeasyPrint."
 
-    def __init__(self, repo: ReportRepository):
+    def __init__(self, repo: ReportRepository) -> None:
         self.repo = repo
         self.env = Environment(
             loader=FileSystemLoader(str(TEMPLATE_DIR)),
@@ -179,6 +192,7 @@ class BuildReportPdfUseCase:
         )
 
     async def execute(self, order_id: int, customer_id: int) -> bytes:
+        "Запускает основной сценарий use case."
         order = await self.repo.get_for_customer(order_id, customer_id)
         if order is None:
             raise HTTPException(
@@ -190,6 +204,7 @@ class BuildReportPdfUseCase:
         return HTML(string=html).write_pdf()
 
     def render_html(self, order: Order) -> str:
+        "Рендерит шаблон/представление."
         responses = list(order.responses or [])
         winner_response = self.find_winner(order, responses)
         other_responses = [r for r in responses if r is not winner_response]
@@ -215,6 +230,7 @@ class BuildReportPdfUseCase:
 
     @staticmethod
     def find_winner(order: Order, responses: list[OrderResponse]) -> OrderResponse | None:
+        "Ищет сущность по заданным параметрам."
         if order.assigned_expert_id is None:
             return None
         for response in responses:
@@ -226,7 +242,8 @@ class BuildReportPdfUseCase:
         return None
 
     @staticmethod
-    def build_card(response: OrderResponse, order: Order) -> dict:
+    def build_card(response: OrderResponse, order: Order) -> dict[str, Any]:
+        "Строит объект из входных данных."
         return {
             "expert_name": expert_full_name(response),
             "expert_rating": expert_rating(response),

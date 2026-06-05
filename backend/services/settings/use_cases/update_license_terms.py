@@ -1,3 +1,4 @@
+"Use case: update license terms."
 from models.user import User
 from schemas.settings import LicenseRentalKind, UpdateLicenseHolderRequest
 from services.settings.repository import SettingsRepository
@@ -7,11 +8,12 @@ from services.settings.validators import SettingsValidator
 class UpdateLicenseTermsUseCase:
     "Меняет условия предоставления лицензии (для роли LICENSE_HOLDER)."
 
-    def __init__(self, repo: SettingsRepository, validator: SettingsValidator):
+    def __init__(self, repo: SettingsRepository, validator: SettingsValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, user_id: int, data: UpdateLicenseHolderRequest) -> User:
+        "Запускает основной сценарий use case."
         user = await self.validator.require_license_holder(user_id)
         user.license_number = data.license_number
         user.license_areas = data.license_areas

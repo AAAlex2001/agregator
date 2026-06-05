@@ -1,3 +1,6 @@
+"Use case: update response."
+from typing import Any
+
 from fastapi import HTTPException, UploadFile, status
 
 from models.order import Order
@@ -14,6 +17,7 @@ from services.responses.validators import ResponseValidator
 
 
 class UpdateResponseUseCase:
+    "Сценарий приложения: координирует репозитории и сервисы."
     def __init__(
         self,
         repo: ResponseRepository,
@@ -22,7 +26,7 @@ class UpdateResponseUseCase:
         upload_files: UploadResponseFilesUseCase,
         in_app: ResponseInAppNotifier,
         send_updated_email: SendResponseUpdatedEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.get_response = get_response
@@ -38,6 +42,7 @@ class UpdateResponseUseCase:
         keep_files: list[str] | None = None,
         new_files: list[UploadFile] | None = None,
     ) -> OrderResponse:
+        "Запускает основной сценарий use case."
         await self.validator.ensure_expert(expert_id)
         response = await self.get_response.execute(response_id)
 
@@ -61,7 +66,8 @@ class UpdateResponseUseCase:
         return updated
 
     @staticmethod
-    def snapshot(response: OrderResponse) -> dict:
+    def snapshot(response: OrderResponse) -> dict[str, Any]:
+        "Публичный метод сервисного слоя."
         return {
             "sum_amount": response.proposed_sum_amount,
             "deadline": response.proposed_deadline,
@@ -70,8 +76,9 @@ class UpdateResponseUseCase:
         }
 
     async def send_email_if_changed(
-        self, updated: OrderResponse, before: dict
+        self, updated: OrderResponse, before: dict[str, Any]
     ) -> None:
+        "Отправляет уведомление получателю."
         if self.send_updated_email is None:
             return
         summary = summarize_response_changes(
@@ -90,6 +97,7 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def ensure_owner(response: OrderResponse, expert_id: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.expert_id == expert_id:
             return
         raise HTTPException(
@@ -99,6 +107,7 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def ensure_editable(response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.status == ResponseStatus.REVIEW:
             return
         raise HTTPException(
@@ -108,6 +117,7 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def check_constraints(order: Order | None, data: ResponseCreate) -> None:
+        "Проверяет условие и возвращает результат."
         if order is None:
             return
         if order.sum_amount > 0 and data.proposed_sum_amount > order.sum_amount:
@@ -137,6 +147,7 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def apply_fields(response: OrderResponse, data: ResponseCreate) -> None:
+        "Публичный метод сервисного слоя."
         if data.proposed_sum_amount != response.proposed_sum_amount:
             response.previous_proposed_sum_amount = response.proposed_sum_amount
         if data.proposed_start_date != response.proposed_start_date:
@@ -156,6 +167,7 @@ class UpdateResponseUseCase:
 
     @staticmethod
     def trim_files(response: OrderResponse, keep_files: list[str] | None) -> None:
+        "Публичный метод сервисного слоя."
         if keep_files is None:
             return
         existing = list(response.technical_files or [])
@@ -167,6 +179,7 @@ class UpdateResponseUseCase:
         keep_files: list[str] | None,
         new_files: list[UploadFile] | None,
     ) -> None:
+        "Публичный метод сервисного слоя."
         existing = list(response.technical_files or [])
         kept = existing if keep_files is None else [f for f in existing if f in keep_files]
         will_change = (kept != existing) or bool(new_files)

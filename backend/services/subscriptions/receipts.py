@@ -1,5 +1,7 @@
+"Сервисный модуль: receipts."
 import os
 import re
+from typing import Any
 
 from fastapi import HTTPException, status
 
@@ -10,7 +12,7 @@ from models.user import User
 DEFAULT_VAT_CODE = int(os.getenv("YOOKASSA_VAT_CODE", "1"))
 
 
-def build_receipt(user: User, plan: PricingPlan) -> dict:
+def build_receipt(user: User, plan: PricingPlan) -> dict[str, Any]:
     "Чек 54-ФЗ для YooKassa: один товар-услуга на сумму тарифа."
     return {
         "customer": build_customer(user),
@@ -30,7 +32,8 @@ def build_receipt(user: User, plan: PricingPlan) -> dict:
     }
 
 
-def build_customer(user: User) -> dict:
+def build_customer(user: User) -> dict[str, Any]:
+    "Строит объект из входных данных."
     if user.email:
         return {"email": user.email}
     if user.phone:

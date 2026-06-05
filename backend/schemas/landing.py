@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class LandingHeroDto(BaseModel):
+    "Hero-блок лендинга (заголовок, подзаголовок, CTA и буллеты)."
     title: str
     subtitle: str
     button_text: str
@@ -11,11 +12,13 @@ class LandingHeroDto(BaseModel):
 
 
 class LandingSectionHeaderDto(BaseModel):
+    "Заголовок секции лендинга (title + subtitle)."
     title: str
     subtitle: str
 
 
 class LandingSectionHeadersDto(BaseModel):
+    "Набор заголовков всех секций лендинга."
     how_it_works: LandingSectionHeaderDto
     key_advantages: LandingSectionHeaderDto
     orders: LandingSectionHeaderDto
@@ -26,6 +29,7 @@ class LandingSectionHeadersDto(BaseModel):
 
 
 class LandingStepDto(BaseModel):
+    "Шаг в блоке «как это работает» / «преимущества» лендинга."
     id: int
     position: int
     title: str
@@ -35,12 +39,14 @@ class LandingStepDto(BaseModel):
 
 
 class LandingTabSteps(BaseModel):
+    "Шаги, разбитые по ролям-вкладкам (клиент / эксперт / держатель лицензии)."
     client: list[LandingStepDto]
     expert: list[LandingStepDto]
     license_holder: list[LandingStepDto]
 
 
 class LandingOrderExampleDto(BaseModel):
+    "Пример заказа в витрине лендинга."
     id: int
     title: str
     price: str
@@ -48,6 +54,7 @@ class LandingOrderExampleDto(BaseModel):
 
 
 class LandingAdvantageDto(BaseModel):
+    "Карточка преимущества платформы на лендинге."
     id: int
     title: str
     description: str
@@ -56,6 +63,7 @@ class LandingAdvantageDto(BaseModel):
 
 
 class LandingIndustryDto(BaseModel):
+    "Карточка отрасли в блоке «индустрии» лендинга."
     id: int
     title: str
     description: list[str]
@@ -63,6 +71,7 @@ class LandingIndustryDto(BaseModel):
 
 
 class LandingReviewDto(BaseModel):
+    "Отзыв пользователя для блока reviews на лендинге."
     id: int
     reviewer: str
     position: str
@@ -71,12 +80,14 @@ class LandingReviewDto(BaseModel):
 
 
 class LandingFaqItemDto(BaseModel):
+    "Пара вопрос-ответ в блоке FAQ лендинга."
     id: str
     question: str
     answer: str
 
 
 class LandingPricingContentDto(BaseModel):
+    "Тексты блока тарифов на лендинге для всех ролей."
     expert_title: str
     expert_subtitle: str
     expert_footnote: str
@@ -97,6 +108,7 @@ class LandingPricingContentDto(BaseModel):
 
 
 class LandingSnapshot(BaseModel):
+    "Полный снимок данных лендинга, отдаваемый одним запросом."
     hero: LandingHeroDto
     section_headers: LandingSectionHeadersDto
     how_it_works: LandingTabSteps

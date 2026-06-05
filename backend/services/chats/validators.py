@@ -1,3 +1,4 @@
+"Бизнес-валидации для chats."
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -10,10 +11,11 @@ from services.chats.repository import ChatRepository
 class ChatValidator:
     "Проверка прав доступа и валидация входных данных чата."
 
-    def __init__(self, repo: ChatRepository):
+    def __init__(self, repo: ChatRepository) -> None:
         self.repo = repo
 
     async def ensure_active_user(self, user_id: int) -> User:
+        "Бросает HTTPException, если условие не выполнено."
         user = await self.repo.find_user(user_id)
         if user is None:
             raise HTTPException(
@@ -27,6 +29,7 @@ class ChatValidator:
 
     @staticmethod
     def parse_uuid(chat_uuid: str) -> UUID:
+        "Публичный метод сервисного слоя."
         try:
             return UUID(chat_uuid)
         except (ValueError, TypeError):
@@ -36,6 +39,7 @@ class ChatValidator:
 
     @staticmethod
     def ensure_order_assigned(order: Order) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if order.assigned_expert_id is None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -44,6 +48,7 @@ class ChatValidator:
 
     @staticmethod
     def ensure_actor_belongs_to_order(actor: User, order: Order) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if actor.id in {order.customer_id, order.assigned_expert_id}:
             return
         raise HTTPException(

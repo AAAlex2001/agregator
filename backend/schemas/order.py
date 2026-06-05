@@ -1,9 +1,14 @@
 from datetime import date, datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, model_validator
 
 from models.order import BadgeVariant, OrderStatus
+
+if TYPE_CHECKING:
+    from models.order import Order as OrderModel
+    from models.response import OrderResponse as OrderResponseModel
 
 ALLOWED_DOCUMENT_EXTENSIONS = {
     ".pdf", ".jpeg", ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx",
@@ -43,11 +48,13 @@ class OrderDocuments(BaseModel):
 
 
 class BadgeSchema(BaseModel):
+    "Бейдж заказа во входящем payload (с типизированным variant)."
     text: str = Field(..., max_length=50)
     variant: BadgeVariant
 
 
 class BadgeResponse(BaseModel):
+    "Бейдж заказа в ответе API (variant сериализован в строку)."
     text: str
     variant: str
 
@@ -55,6 +62,7 @@ class BadgeResponse(BaseModel):
 
 
 class OrderCreate(BaseModel):
+    "Payload создания заказа клиентом."
     title: str = Field(..., max_length=500)
     company: str = Field(default="", max_length=500)
     comment: str = Field(default="", max_length=5000)
@@ -71,6 +79,7 @@ class OrderCreate(BaseModel):
 
 
 class OrderUpdate(BaseModel):
+    "Частичный патч заказа клиентом (все поля опциональны)."
     title: str | None = Field(None, max_length=500)
     company: str | None = Field(None, max_length=500)
     comment: str | None = Field(None, max_length=5000)
@@ -87,6 +96,7 @@ class OrderUpdate(BaseModel):
 
 
 class OrderResponse(BaseModel):
+    "Полная карточка заказа для UI: данные заказа, исполнитель, диффы предыдущих значений."
     id: int
     public_id: str
     title: str
@@ -143,13 +153,13 @@ class OrderResponse(BaseModel):
     @classmethod
     def from_archived_order(
         cls,
-        order,
-        accepted_response=None,
+        order: "OrderModel",
+        accepted_response: "OrderResponseModel | None" = None,
         has_review: bool = False,
     ) -> "OrderResponse":
         "Архивная карточка: данные заказа + исполнитель + его отклик + отметка об отзыве."
         base = cls.from_order(order)
-        update: dict = {
+        update: dict[str, object] = {
             "previous_title": None,
             "previous_comment": None,
             "previous_sum": None,
@@ -184,7 +194,7 @@ class OrderResponse(BaseModel):
         return base.model_copy(update=update)
 
     @classmethod
-    def from_order(cls, order) -> "OrderResponse":
+    def from_order(cls, order: "OrderModel") -> "OrderResponse":
         from services.orders.documents import OrderDocumentsService
 
         amount = order.sum_amount
@@ -255,5 +265,6 @@ class OrderResponse(BaseModel):
 
 
 class OrderListResponse(BaseModel):
+    "Постраничный ответ со списком заказов."
     items: list[OrderResponse]
     has_more: bool

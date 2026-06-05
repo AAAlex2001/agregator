@@ -1,3 +1,4 @@
+"Use case: send question asked email."
 from schemas.email import QuestionAskedContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import full_name, greeting_for
@@ -12,11 +13,12 @@ PREFERENCE_FIELD = "email_on_question_asked"
 class SendQuestionAskedEmailUseCase:
     "Письмо заказчику: эксперт задал публичный вопрос по его заказу."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, question_id: int) -> None:
+        "Запускает основной сценарий use case."
         question = await self.repo.find_question(question_id)
         if question is None or question.order is None:
             return

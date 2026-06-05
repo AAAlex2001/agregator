@@ -1,3 +1,4 @@
+"Use case: send chat message email."
 from models.chat import ChatMessage
 from models.user import User
 from schemas.email import ChatMessageContext
@@ -15,11 +16,12 @@ PREVIEW_MAX_LENGTH = 240
 class SendChatMessageEmailUseCase:
     "Письмо о новом сообщении — только если получатель оффлайн (проверяется снаружи, до вызова)."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, message_id: int, recipient_online: bool) -> None:
+        "Запускает основной сценарий use case."
         if recipient_online:
             return
 
@@ -28,7 +30,7 @@ class SendChatMessageEmailUseCase:
             return
 
         recipient = self.resolve_recipient(message)
-        if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
+        if recipient is None or not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return
 
         context = self.build_context(message, recipient)
@@ -36,6 +38,7 @@ class SendChatMessageEmailUseCase:
 
     @staticmethod
     def resolve_recipient(message: ChatMessage) -> User | None:
+        "Публичный метод сервисного слоя."
         chat = message.chat
         if chat is None:
             return None
@@ -46,6 +49,7 @@ class SendChatMessageEmailUseCase:
         return None
 
     def build_context(self, message: ChatMessage, recipient: User) -> ChatMessageContext:
+        "Строит объект из входных данных."
         chat = message.chat
         order = chat.order if chat else None
         order_title = (order.title if order else None) or "Заявка"

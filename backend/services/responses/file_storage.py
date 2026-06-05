@@ -1,3 +1,4 @@
+"Файловое хранилище: сохранение/удаление файлов на диске."
 from pathlib import Path
 from uuid import uuid4
 
@@ -23,6 +24,7 @@ class ResponseFileStorage:
     "Сохраняет файлы откликов на диск. Никакой работы с БД."
 
     async def save(self, response_id: int, files: list[UploadFile]) -> list[str]:
+        "Сохраняет файл/сущность."
         upload_dir = BACKEND_ROOT / "uploads" / "responses" / str(response_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
 
@@ -31,6 +33,7 @@ class ResponseFileStorage:
     async def save_one(
         self, upload_dir: Path, file: UploadFile, response_id: int
     ) -> str:
+        "Публичный метод сервисного слоя."
         extension = Path(file.filename or "").suffix.lower()
         self.ensure_extension_allowed(extension)
 
@@ -44,6 +47,7 @@ class ResponseFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if extension in ALLOWED_EXTENSIONS:
             return
         raise HTTPException(

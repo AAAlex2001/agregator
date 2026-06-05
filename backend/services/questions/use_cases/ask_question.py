@@ -1,3 +1,4 @@
+"Use case: ask question."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
@@ -23,7 +24,7 @@ class AskQuestionUseCase:
         repo: QuestionRepository,
         in_app_notify: CreateQuestionAskedNotificationUseCase | None = None,
         send_email: SendQuestionAskedEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.in_app_notify = in_app_notify
         self.send_email = send_email
@@ -36,6 +37,7 @@ class AskQuestionUseCase:
         text: str,
         is_anonymous: bool = True,
     ) -> OrderQuestion:
+        "Запускает основной сценарий use case."
         if expert_role != UserRole.EXPERT:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

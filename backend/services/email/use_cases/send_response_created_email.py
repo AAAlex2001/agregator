@@ -1,3 +1,4 @@
+"Use case: send response created email."
 from models.response import OrderResponse
 from models.user import User
 from schemas.email import (
@@ -19,11 +20,12 @@ PREFERENCE_FIELD = "email_on_response_created"
 class SendResponseCreatedEmailUseCase:
     "Заказчик получает письмо, когда эксперт создал отклик на его заявку."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, response_id: int) -> None:
+        "Запускает основной сценарий use case."
         response = await self.repo.find_response(response_id)
         if response is None or response.order is None:
             return
@@ -42,6 +44,7 @@ class SendResponseCreatedEmailUseCase:
         customer: User,
         stats: ExpertStats,
     ) -> ResponseCreatedContext:
+        "Строит объект из входных данных."
         order = response.order
         expert = response.expert
         order_title = (order.title if order else None) or f"Заказ #{response.order_id}"

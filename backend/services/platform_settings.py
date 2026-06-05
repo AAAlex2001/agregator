@@ -10,10 +10,11 @@ from models.platform_settings import PlatformSettings
 class PlatformSettingsService:
     "Читает singleton-строку настроек. Если её нет, считаем что платный режим включён (бэк-совместимо)."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def get(self) -> PlatformSettings:
+        "Публичный метод сервисного слоя."
         row = (
             await self.db.execute(select(PlatformSettings).limit(1))
         ).scalar_one_or_none()
@@ -22,4 +23,5 @@ class PlatformSettingsService:
         return row
 
     async def is_paid_responses_enabled(self) -> bool:
+        "Признак: соответствует ли сущность условию."
         return (await self.get()).paid_responses_enabled

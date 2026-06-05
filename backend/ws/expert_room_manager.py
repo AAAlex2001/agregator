@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 from uuid import uuid4
 
 from fastapi import WebSocket
@@ -50,7 +51,7 @@ class ExpertRoomConnectionManager:
             {"data": payload, "except_connection_id": except_connection_id},
         )
 
-    async def handle_event(self, payload: dict) -> None:
+    async def handle_event(self, payload: dict[str, Any]) -> None:
         "Хендлер pubsub-канала: рассылает событие по локальным сокетам, пропуская connection_id отправителя."
         data = payload.get("data")
         if not isinstance(data, dict):
@@ -60,7 +61,7 @@ class ExpertRoomConnectionManager:
 
     async def local_broadcast(
         self,
-        data: dict,
+        data: dict[str, Any],
         except_connection_id: str | None = None,
     ) -> None:
         "Прямая рассылка по сокетам, которые в памяти этой реплики."

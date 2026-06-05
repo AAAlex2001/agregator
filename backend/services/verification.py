@@ -1,3 +1,4 @@
+"Сервисный модуль: verification."
 import logging
 from datetime import UTC, datetime
 
@@ -9,7 +10,7 @@ from models.password_reset_code import PasswordResetCode
 from models.user import User
 from utils.code import generate_numeric_code
 from utils.email import send_email
-from utils.email_templates import render_email
+from utils.email_templates import RenderedEmail, render_email
 
 logger = logging.getLogger(__name__)
 
@@ -27,16 +28,18 @@ async def deliver_code_email(email: str, subject: str, text: str, html: str) -> 
 class VerificationService:
     "Единый сервис для одноразовых кодов (email-подтверждение, сброс пароля)."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def issue_code(self, user_id: int) -> str:
+        "Выпускает одноразовый код/токен."
         code = generate_numeric_code()
         self.db.add(PasswordResetCode(user_id=user_id, code=code))
         await self.db.flush()
         return code
 
     async def send_code_to_email(self, user_id: int, email: str, subject: str) -> str:
+        "Отправляет уведомление получателю."
         code = await self.issue_code(user_id)
         rendered = self.render_code_email(subject, code)
         await send_email(email, rendered.subject, rendered.text, rendered.html)
@@ -61,7 +64,8 @@ class VerificationService:
         )
 
     @staticmethod
-    def render_code_email(subject: str, code: str):
+    def render_code_email(subject: str, code: str) -> RenderedEmail:
+        "Рендерит шаблон/представление."
         return render_email(
             name="verification_code",
             subject=subject,
@@ -74,6 +78,7 @@ class VerificationService:
         )
 
     async def find_active_code(self, user_id: int, code: str) -> PasswordResetCode | None:
+        "Ищет сущность по заданным параметрам."
         query = select(PasswordResetCode).where(
             PasswordResetCode.user_id == user_id,
             PasswordResetCode.code == code,
@@ -84,6 +89,7 @@ class VerificationService:
         return result.scalars().first()
 
     async def consume_code(self, user_id: int, code: str) -> PasswordResetCode:
+        "Поглощает (помечает использованным) код."
         active = await self.find_active_code(user_id, code)
         if not active:
             raise HTTPException(
@@ -94,6 +100,7 @@ class VerificationService:
         return active
 
     async def ensure_code_valid(self, user_id: int, code: str) -> PasswordResetCode:
+        "Бросает HTTPException, если условие не выполнено."
         active = await self.find_active_code(user_id, code)
         if not active:
             raise HTTPException(
@@ -103,6 +110,7 @@ class VerificationService:
         return active
 
     async def confirm_email(self, user: User, code: str) -> User:
+        "Подтверждает действие пользователя."
         await self.consume_code(user.id, code)
         user.email_verified = True
         return user

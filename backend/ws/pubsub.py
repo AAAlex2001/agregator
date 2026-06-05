@@ -4,6 +4,7 @@ import json
 import logging
 import os
 from collections.abc import Awaitable, Callable
+from typing import Any
 
 import redis.asyncio as redis
 
@@ -11,7 +12,7 @@ log = logging.getLogger(__name__)
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
-Handler = Callable[[dict], Awaitable[None]]
+Handler = Callable[[dict[str, Any]], Awaitable[None]]
 
 
 class WsPubSub:
@@ -21,7 +22,7 @@ class WsPubSub:
         self.publisher: redis.Redis | None = None
         self.subscriber: redis.Redis | None = None
         self.pubsub_conn = None
-        self.listener_task: asyncio.Task | None = None
+        self.listener_task: asyncio.Task[None] | None = None
         self.handlers: dict[str, Handler] = {}
 
     def register(self, channel: str, handler: Handler) -> None:
@@ -47,9 +48,10 @@ class WsPubSub:
                 socket_keepalive=True,
                 retry_on_timeout=True,
             )
-            self.pubsub_conn = self.subscriber.pubsub(ignore_subscribe_messages=True)
+            pubsub = self.subscriber.pubsub(ignore_subscribe_messages=True)
+            self.pubsub_conn = pubsub
             if self.handlers:
-                await self.pubsub_conn.subscribe(*self.handlers.keys())
+                await pubsub.subscribe(*self.handlers.keys())
             self.listener_task = asyncio.create_task(self.listen(), name="ws_pubsub_listener")
             log.info("ws_pubsub: started, channels=%s", list(self.handlers.keys()))
         except Exception:
@@ -82,7 +84,7 @@ class WsPubSub:
 
         log.info("ws_pubsub: stopped")
 
-    async def publish(self, channel: str, payload: dict) -> None:
+    async def publish(self, channel: str, payload: dict[str, Any]) -> None:
         "Шлёт payload в канал. Если Redis не поднялся — тихо игнорируем."
         if self.publisher is None:
             return

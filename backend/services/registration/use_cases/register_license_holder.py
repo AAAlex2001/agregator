@@ -1,3 +1,4 @@
+"Use case: register license holder."
 from models.user import User
 from models.user import UserRole as ModelUserRole
 from schemas.registration import LicenseHolderRegistration, LicenseRentalKind, UserRole
@@ -9,7 +10,7 @@ from utils.passwords import hash_password
 class RegisterLicenseHolderUseCase:
     "Создаёт держателя лицензии."
 
-    def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator):
+    def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator) -> None:
         self.repo = repo
         self.validator = validator
 
@@ -18,6 +19,7 @@ class RegisterLicenseHolderUseCase:
         data: LicenseHolderRegistration,
         license_file_url: str | None,
     ) -> User:
+        "Запускает основной сценарий use case."
         self.validator.ensure_password_strong(data.password)
         self.validator.ensure_email_not_disposable(data.email)
         await self.validator.ensure_email_is_free(data.email, UserRole.LICENSE_HOLDER)

@@ -1,4 +1,5 @@
 
+"Repository: доступ к БД для articles."
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +9,7 @@ from models.article import Article, ArticleKind, ArticleStatus
 class ArticleRepository:
     "Все SQL-запросы по статьям. Никакой бизнес-логики."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def list_published(
@@ -18,6 +19,7 @@ class ArticleRepository:
         limit: int,
         tag: str | None,
     ) -> tuple[list[Article], bool]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = select(Article).where(
             and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED)
         )
@@ -30,6 +32,7 @@ class ArticleRepository:
         return rows[:limit], has_more
 
     async def get_published_by_slug(self, slug: str) -> Article | None:
+        "Возвращает запрошенную сущность."
         query = select(Article).where(
             and_(Article.slug == slug, Article.status == ArticleStatus.PUBLISHED)
         )
@@ -41,6 +44,7 @@ class ArticleRepository:
         exclude_id: int,
         limit: int,
     ) -> list[Article]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = (
             select(Article)
             .where(

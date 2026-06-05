@@ -1,3 +1,6 @@
+"Сервисный модуль: review."
+from typing import Any
+
 from fastapi import HTTPException, status
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
@@ -14,6 +17,7 @@ from services.orders.documents import OrderDocumentsService
 
 
 def format_sum(sum_amount: int | None) -> str:
+    "Форматирует значение для отображения."
     if not sum_amount:
         return "Не определено"
 
@@ -25,10 +29,12 @@ def format_sum(sum_amount: int | None) -> str:
 
 
 class ReviewService:
-    def __init__(self, db: AsyncSession):
+    "Сервис домена: инкапсулирует операции и зависимости."
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def create_review(self, actor_id: int, response_id: int, rating: int, comment: str) -> Review:
+        "Создаёт новую сущность."
         actor_result = await self.db.execute(select(User).where(User.id == actor_id))
         actor = actor_result.scalars().first()
         if not actor:
@@ -90,7 +96,7 @@ class ReviewService:
 
         return review
 
-    async def get_expert_reviews(self, expert_id: int, skip: int, limit: int):
+    async def get_expert_reviews(self, expert_id: int, skip: int, limit: int) -> tuple[list[dict[str, Any]], bool, int, float]:
         "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей User."
         list_query = (
             select(Review)
@@ -149,7 +155,7 @@ class ReviewService:
 
         return items, has_more, total_reviews, avg_rating
 
-    async def get_expert_reviews_by_public_id(self, public_id: str, skip: int, limit: int):
+    async def get_expert_reviews_by_public_id(self, public_id: str, skip: int, limit: int) -> dict[str, Any]:
         "Публичный доступ к отзывам исполнителя по UUID."
         result = await self.db.execute(
             select(User).where(User.public_id == public_id, User.role == UserRole.EXPERT)

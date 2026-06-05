@@ -1,3 +1,6 @@
+"Use case: list chats."
+from models.chat import Chat, ChatMessage
+from models.user import User
 from schemas.chat import ChatListItemResponse
 from services.chats.formatters import ChatFormatter
 from services.chats.repository import ChatRepository
@@ -5,11 +8,13 @@ from services.chats.validators import ChatValidator
 
 
 class ListChatsUseCase:
-    def __init__(self, repo: ChatRepository, validator: ChatValidator):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: ChatRepository, validator: ChatValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, actor_id: int) -> list[ChatListItemResponse]:
+        "Запускает основной сценарий use case."
         actor = await self.validator.ensure_active_user(actor_id)
         chats = await self.repo.list_actor_chats(actor_id)
         if not chats:
@@ -25,7 +30,13 @@ class ListChatsUseCase:
         ]
 
     @staticmethod
-    def build_item(chat, actor, last_messages, unread_counts) -> ChatListItemResponse:
+    def build_item(
+        chat: Chat,
+        actor: User,
+        last_messages: dict[int, ChatMessage],
+        unread_counts: dict[int, int],
+    ) -> ChatListItemResponse:
+        "Строит объект из входных данных."
         counterpart = ChatFormatter.counterpart(actor.role, chat)
         last_message = last_messages.get(chat.id)
         return ChatListItemResponse(

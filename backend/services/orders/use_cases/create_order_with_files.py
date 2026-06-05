@@ -1,3 +1,4 @@
+"Use case: create order with files."
 from fastapi import UploadFile
 
 from models.order import Order
@@ -16,7 +17,7 @@ class CreateOrderWithFilesUseCase:
         create_order: CreateOrderUseCase,
         repo: OrderRepository,
         files: OrderFileStorage,
-    ):
+    ) -> None:
         self.create_order = create_order
         self.repo = repo
         self.files = files
@@ -24,13 +25,13 @@ class CreateOrderWithFilesUseCase:
     async def execute(
         self,
         data: OrderCreate,
-        *,
         technical: list[UploadFile],
         contract: list[UploadFile],
         company: list[UploadFile],
         other: list[UploadFile],
         current_user_id: int,
     ) -> Order:
+        "Запускает основной сценарий use case."
         order = await self.create_order.execute(data, current_user_id=current_user_id)
 
         if not (technical or contract or company or other):
@@ -45,4 +46,7 @@ class CreateOrderWithFilesUseCase:
         )
         OrderDocumentsService.write(order, saved)
         await self.repo.flush()
-        return await self.repo.get_by_id(order.id)
+        reloaded = await self.repo.get_by_id(order.id)
+        if reloaded is None:
+            raise RuntimeError("Order disappeared after insert")
+        return reloaded

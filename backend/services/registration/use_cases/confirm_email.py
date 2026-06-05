@@ -1,3 +1,4 @@
+"Use case: confirm email."
 from fastapi import HTTPException, status
 
 from models.user import User
@@ -9,11 +10,12 @@ from services.verification import VerificationService
 class ConfirmEmailUseCase:
     "Подтверждает email пользователя по коду из письма."
 
-    def __init__(self, repo: RegistrationRepository, verification: VerificationService):
+    def __init__(self, repo: RegistrationRepository, verification: VerificationService) -> None:
         self.repo = repo
         self.verification = verification
 
     async def execute(self, email: str, code: str, role: UserRole | None = None) -> User:
+        "Запускает основной сценарий use case."
         candidates = await self.repo.find_users_by_email(email, role)
         if not candidates:
             raise HTTPException(

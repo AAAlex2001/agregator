@@ -1,3 +1,4 @@
+"Use case: send message."
 from fastapi import HTTPException, UploadFile, status
 
 from models.chat import Chat, ChatMessage
@@ -19,7 +20,7 @@ class SendMessageUseCase:
         files: ChatFileStorage,
         in_app: ChatInAppNotifier,
         send_email: SendChatMessageEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.files = files
         self.in_app = in_app
@@ -33,6 +34,7 @@ class SendMessageUseCase:
         uploads: list[UploadFile],
         recipient_online: bool,
     ) -> ChatMessageResponse:
+        "Запускает основной сценарий use case."
         normalized_text = text.strip()
         non_empty_uploads = [file for file in uploads if file and file.filename]
         self.ensure_not_empty(normalized_text, non_empty_uploads)
@@ -64,6 +66,7 @@ class SendMessageUseCase:
 
     @staticmethod
     def ensure_not_empty(text: str, uploads: list[UploadFile]) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if text or uploads:
             return
         raise HTTPException(
@@ -72,6 +75,7 @@ class SendMessageUseCase:
         )
 
     async def require_chat(self, chat_id: int, sender_id: int) -> Chat:
+        "Возвращает требуемую сущность или бросает 404."
         chat = await self.repo.find_chat_by_id_with_order(chat_id, sender_id)
         if chat is not None:
             return chat
@@ -81,6 +85,7 @@ class SendMessageUseCase:
 
     @staticmethod
     def ensure_chat_not_blocked(chat: Chat) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if chat.is_blocked:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -96,6 +101,7 @@ class SendMessageUseCase:
     async def save_attachments(
         self, chat_id: int, uploads: list[UploadFile]
     ) -> list[ChatAttachmentData]:
+        "Публичный метод сервисного слоя."
         if not uploads:
             return []
         return await self.files.save(chat_id, uploads)
@@ -108,6 +114,7 @@ class SendMessageUseCase:
         attachments: list[ChatAttachmentData],
         mark_as_read: bool,
     ) -> ChatMessage:
+        "Строит объект из входных данных."
         first_url = attachments[0].url if attachments else None
         first_name = attachments[0].name if attachments else None
         return ChatMessage(
@@ -124,6 +131,7 @@ class SendMessageUseCase:
     def build_response(
         chat: Chat, message: ChatMessage, mark_as_read: bool
     ) -> ChatMessageResponse:
+        "Строит объект из входных данных."
         sender_role = ChatFormatter.sender_role(chat, message.sender_id)
         return ChatMessageResponse(
             id=message.id,

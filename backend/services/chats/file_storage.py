@@ -1,3 +1,4 @@
+"Файловое хранилище: сохранение/удаление файлов на диске."
 from pathlib import Path
 from uuid import uuid4
 
@@ -29,6 +30,7 @@ class ChatFileStorage:
     async def save(
         self, chat_id: int, uploads: list[UploadFile]
     ) -> list[ChatAttachmentData]:
+        "Сохраняет файл/сущность."
         self.ensure_limit(uploads)
         upload_dir = BACKEND_ROOT / "uploads" / "chats" / str(chat_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -38,6 +40,7 @@ class ChatFileStorage:
     async def save_one(
         self, upload_dir: Path, upload: UploadFile, chat_id: int
     ) -> ChatAttachmentData:
+        "Публичный метод сервисного слоя."
         extension = Path(upload.filename or "").suffix.lower()
         self.ensure_extension_allowed(extension)
 
@@ -54,6 +57,7 @@ class ChatFileStorage:
 
     @staticmethod
     def ensure_limit(uploads: list[UploadFile]) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if len(uploads) <= MAX_ATTACHMENTS:
             return
         raise HTTPException(
@@ -63,6 +67,7 @@ class ChatFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if extension in ALLOWED_EXTENSIONS:
             return
         raise HTTPException(

@@ -1,3 +1,4 @@
+"Сервисный модуль: payment."
 import os
 
 from dotenv import load_dotenv
@@ -25,10 +26,11 @@ YOOKASSA_TO_PAYMENT_STATUS = {
 class PaymentWebhookService:
     "Приводит запись платежа в соответствие с событием YooKassa и активирует подписку."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def handle_webhook(self, event_type: str, yookassa_id: str) -> None:
+        "Публичный метод сервисного слоя."
         verified_status = self.verify_with_yookassa(yookassa_id)
         if verified_status is None:
             return
@@ -59,12 +61,14 @@ class PaymentWebhookService:
         return YOOKASSA_TO_PAYMENT_STATUS.get(remote.status)
 
     async def mark(self, payment: Payment, new_status: PaymentStatus) -> None:
+        "Публичный метод сервисного слоя."
         if payment.status == new_status:
             return
         payment.status = new_status
         await self.db.flush()
 
     async def activate_subscription_for(self, payment: Payment) -> None:
+        "Публичный метод сервисного слоя."
         subscription = await self.find_subscription_for(payment)
         if subscription is None or subscription.status != SubscriptionStatus.PENDING:
             return
@@ -72,6 +76,7 @@ class PaymentWebhookService:
         await self.db.flush()
 
     async def expire_pending_subscription_for(self, payment: Payment) -> None:
+        "Публичный метод сервисного слоя."
         subscription = await self.find_subscription_for(payment)
         if subscription is None or subscription.status != SubscriptionStatus.PENDING:
             return
@@ -79,6 +84,7 @@ class PaymentWebhookService:
         await self.db.flush()
 
     async def find_subscription_for(self, payment: Payment) -> UserSubscription | None:
+        "Ищет сущность по заданным параметрам."
         result = await self.db.execute(
             select(UserSubscription).where(UserSubscription.payment_id == payment.id)
         )

@@ -1,3 +1,4 @@
+"Use case: list expert orders history."
 from fastapi import HTTPException, status
 
 from services.experts.repository import ExpertOrderHistoryItem, ExpertsRepository
@@ -6,7 +7,7 @@ from services.experts.repository import ExpertOrderHistoryItem, ExpertsRepositor
 class ListExpertOrdersHistoryUseCase:
     "Архивные заказы конкретного эксперта (по его public_id). 404, если эксперта нет."
 
-    def __init__(self, repo: ExpertsRepository):
+    def __init__(self, repo: ExpertsRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -15,6 +16,7 @@ class ListExpertOrdersHistoryUseCase:
         skip: int,
         limit: int,
     ) -> tuple[list[ExpertOrderHistoryItem], bool]:
+        "Запускает основной сценарий use case."
         expert_id = await self.repo.get_expert_id_by_public_id(public_id)
         if expert_id is None:
             raise HTTPException(

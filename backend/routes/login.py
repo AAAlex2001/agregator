@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Cookie, Depends
+from fastapi import APIRouter, Cookie, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,6 +42,7 @@ async def login_user(
     data: UserLogin,
     db: AsyncSession = Depends(get_db),
 ) -> JSONResponse:
+    "Аутентифицирует пользователя и выставляет cookie сессии и роли."
     repo = build_repo(db)
     user = await AuthenticateUserUseCase(repo, LoginValidator()).execute(data)
     new_session = await CreateSessionUseCase(repo).execute(user.id)
@@ -72,6 +73,7 @@ async def refresh_session(
     session_id: str = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ) -> JSONResponse:
+    "Продлевает текущую сессию и обновляет cookie."
     session = await RefreshSessionUseCase(build_repo(db)).execute(session_id)
 
     now = datetime.now(UTC)
@@ -103,6 +105,7 @@ async def logout_user(
     session_id: str = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ) -> JSONResponse:
+    "Завершает сессию и стирает cookie."
     await LogoutSessionUseCase(build_repo(db)).execute(session_id)
 
     response = JSONResponse(content={"detail": "ok"})
@@ -116,6 +119,7 @@ async def list_available_roles(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> AvailableRolesResponse:
+    "Возвращает список ролей, на которые может переключиться текущий пользователь."
     return await ListAvailableRolesUseCase(build_repo(db)).execute(user_id)
 
 
@@ -130,6 +134,7 @@ async def switch_role(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> JSONResponse:
+    "Переключает текущую сессию на другую роль пользователя с проверкой пароля."
     repo = build_repo(db)
     new_session = await SwitchRoleUseCase(repo, LoginValidator()).execute(
         current_user_id=user_id,
@@ -138,6 +143,8 @@ async def switch_role(
         current_session_id=session_id,
     )
     target_user = await repo.find_user_by_id(new_session.user_id)
+    if target_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
     response = JSONResponse(content=UserResponse.model_validate(target_user).model_dump(mode="json"))
     response.set_cookie(

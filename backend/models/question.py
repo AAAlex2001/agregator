@@ -1,39 +1,43 @@
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, DateTime, ForeignKey, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
 
+if TYPE_CHECKING:
+    from models.order import Order
+    from models.user import User
+
 
 class OrderQuestion(Base):
+    """Вопрос эксперта по заказу."""
     __tablename__ = "order_questions"
     __table_args__ = (
         UniqueConstraint("order_id", "expert_id", name="uq_order_questions_order_expert"),
     )
 
-    id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    order_id: Mapped[int] = mapped_column(
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    expert_id = Column(
-        Integer,
+    expert_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    question = Column(Text, nullable=False)
-    answer = Column(Text, nullable=True)
-    asked_at = Column(
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    asked_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    answered_at = Column(DateTime(timezone=True), nullable=True)
-    is_anonymous = Column(Boolean, nullable=False, default=True, server_default="true")
+    answered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_anonymous: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
 
-    order = relationship("Order", back_populates="questions")
-    expert = relationship("User")
+    order: Mapped["Order"] = relationship(back_populates="questions")
+    expert: Mapped["User"] = relationship()

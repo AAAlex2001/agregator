@@ -1,4 +1,6 @@
+"Use case: admin reply."
 from datetime import UTC, datetime
+from typing import Any
 
 from fastapi import HTTPException, status
 
@@ -15,7 +17,7 @@ from ..repository import SupportRepository
 class AdminReplyUseCase:
     "Ответ администратора в тикет (используется из админки)."
 
-    def __init__(self, repo: SupportRepository):
+    def __init__(self, repo: SupportRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -23,8 +25,9 @@ class AdminReplyUseCase:
         ticket_id: int,
         admin_name: str,
         text: str,
-        attachments: list[dict] | None = None,
+        attachments: list[dict[str, Any]] | None = None,
     ) -> SupportTicket:
+        "Запускает основной сценарий use case."
         ticket = await self.repo.get_by_id(ticket_id)
         if ticket is None:
             raise HTTPException(
@@ -68,10 +71,12 @@ class AdminReplyUseCase:
 
 
 class CloseTicketUseCase:
-    def __init__(self, repo: SupportRepository):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: SupportRepository) -> None:
         self.repo = repo
 
     async def execute(self, ticket_id: int) -> SupportTicket:
+        "Запускает основной сценарий use case."
         ticket = await self.repo.get_by_id(ticket_id)
         if ticket is None:
             raise HTTPException(

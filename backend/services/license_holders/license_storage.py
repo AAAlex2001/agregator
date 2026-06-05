@@ -9,6 +9,7 @@ MAX_SIZE = 5 * 1024 * 1024
 
 
 async def save_license_file(owner_key: str, file: UploadFile) -> str:
+    "Публичный метод сервисного слоя."
     return await save_uploaded_file(
         subdir="licenses",
         owner_key=owner_key,
@@ -22,4 +23,5 @@ async def save_license_file(owner_key: str, file: UploadFile) -> str:
 
 
 def remove_license_file(file_url: str | None) -> None:
+    "Удаляет ресурс."
     remove_uploaded_file(file_url)

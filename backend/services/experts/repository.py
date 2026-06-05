@@ -1,5 +1,7 @@
+"Repository: доступ к БД для experts."
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import Float, Select, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -47,7 +49,7 @@ class ExpertOrderHistoryItem:
 class ExpertsRepository:
     "Все обращения к БД по сущности эксперт. Никакой бизнес-логики, только запросы."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def list_summaries(
@@ -70,7 +72,7 @@ class ExpertsRepository:
             .label("completed_orders_count")
         )
 
-        base_query: Select = (
+        base_query: Select[tuple[User, int]] = (
             select(User, completed_orders_expr)
             .where(
                 User.role == UserRole.EXPERT,
@@ -112,6 +114,7 @@ class ExpertsRepository:
         return summaries, has_more
 
     async def get_summary(self, public_id: str) -> ExpertSummaryRow | None:
+        "Возвращает запрошенную сущность."
         completed_orders_expr = (
             select(func.count(Order.id))
             .where(
@@ -143,6 +146,7 @@ class ExpertsRepository:
         return self.build_summary_row(user, completed_orders_count, last_order, last_response)
 
     async def get_expert_id_by_public_id(self, public_id: str) -> int | None:
+        "Возвращает запрошенную сущность."
         return (
             await self.db.execute(
                 select(User.id).where(
@@ -158,7 +162,8 @@ class ExpertsRepository:
         skip: int,
         limit: int,
     ) -> tuple[list[ExpertOrderHistoryItem], bool]:
-        list_query: Select = (
+        "Возвращает список сущностей с пагинацией/фильтрами."
+        list_query: Select[tuple[Order]] = (
             select(Order)
             .options(
                 selectinload(Order.badges),
@@ -187,7 +192,7 @@ class ExpertsRepository:
         "Для каждого эксперта вернуть его последний ARCHIVED заказ. Один запрос на всех."
         if not expert_ids:
             return {}
-        query: Select = (
+        query: Select[tuple[Order]] = (
             select(Order)
             .options(
                 selectinload(Order.badges),
@@ -209,7 +214,8 @@ class ExpertsRepository:
             if order.assigned_expert_id is not None
         }
 
-    def resolve_sort_column(self, sort_by: str, completed_orders_expr):
+    def resolve_sort_column(self, sort_by: str, completed_orders_expr: Any) -> Any:
+        "Возвращает SQL-выражение для сортировки экспертов по заданному критерию."
         if sort_by == SORT_BY_COMPLETED_ORDERS:
             return completed_orders_expr
         if sort_by == SORT_BY_REVIEW_COUNT:
@@ -226,6 +232,7 @@ class ExpertsRepository:
         last_order: Order | None,
         last_response: OrderResponseModel | None,
     ) -> ExpertSummaryRow:
+        "Строит объект из входных данных."
         first = user.first_name or ""
         last = user.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"

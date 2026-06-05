@@ -1,3 +1,4 @@
+"Use case: reply to ticket."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
@@ -18,7 +19,7 @@ from .create_ticket import author_name_from_user
 class ReplyToTicketUseCase:
     "Ответ пользователя в существующий тикет."
 
-    def __init__(self, repo: SupportRepository, files: SupportFileStorage):
+    def __init__(self, repo: SupportRepository, files: SupportFileStorage) -> None:
         self.repo = repo
         self.files = files
 
@@ -29,6 +30,7 @@ class ReplyToTicketUseCase:
         text: str,
         uploads: list[UploadFile],
     ) -> SupportTicket:
+        "Запускает основной сценарий use case."
         ticket = await self.repo.get_for_user(ticket_id, user.id)
         if ticket is None:
             raise HTTPException(

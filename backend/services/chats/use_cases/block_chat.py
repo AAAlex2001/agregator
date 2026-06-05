@@ -1,3 +1,4 @@
+"Use case: block chat."
 from fastapi import HTTPException, status
 
 from models.chat import Chat
@@ -10,10 +11,11 @@ class BlockChatUseCase:
     def __init__(
         self,
         repo: ChatRepository,
-    ):
+    ) -> None:
         self.repo = repo
 
     async def execute(self, chat_id: int, actor_id: int) -> Chat:
+        "Запускает основной сценарий use case."
         chat = await self.repo.find_chat_by_id_for_actor(chat_id, actor_id)
         if chat is None:
             raise HTTPException(

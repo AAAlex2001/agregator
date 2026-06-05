@@ -1,3 +1,4 @@
+"Use case: replace company card."
 from fastapi import UploadFile
 
 from models.user import User
@@ -9,11 +10,12 @@ from services.settings.validators import SettingsValidator
 class ReplaceCompanyCardUseCase:
     "Загружает новую карточку предприятия для лицензиата."
 
-    def __init__(self, repo: SettingsRepository, validator: SettingsValidator):
+    def __init__(self, repo: SettingsRepository, validator: SettingsValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, user_id: int, file: UploadFile) -> User:
+        "Запускает основной сценарий use case."
         user = await self.validator.require_license_holder(user_id)
         owner_key = user.inn or user.public_id
         new_url = await save_company_card(owner_key, file)

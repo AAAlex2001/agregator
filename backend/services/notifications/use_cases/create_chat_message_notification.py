@@ -1,3 +1,4 @@
+"Use case: create chat message notification."
 from models.notification import Notification, NotificationType
 from models.user import UserRole
 from schemas.notification import ChatMessageNotificationPayload
@@ -7,7 +8,7 @@ from services.notifications.repository import NotificationRepository
 class CreateChatMessageNotificationUseCase:
     "In-app уведомление о новом сообщении в чате (получателю)."
 
-    def __init__(self, repo: NotificationRepository):
+    def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -18,6 +19,7 @@ class CreateChatMessageNotificationUseCase:
         preview: str,
         action_url: str | None = None,
     ) -> Notification:
+        "Запускает основной сценарий use case."
         payload = ChatMessageNotificationPayload(
             order_title=order_title,
             sender_role=sender_role,

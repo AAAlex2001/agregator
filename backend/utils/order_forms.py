@@ -15,7 +15,7 @@ TYPE_VARIANT = {
 }
 
 
-def parse_json_list(raw: str) -> list:
+def parse_json_list(raw: str) -> list[object]:
     try:
         value = json.loads(raw)
     except json.JSONDecodeError:

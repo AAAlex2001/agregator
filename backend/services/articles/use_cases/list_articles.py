@@ -1,4 +1,5 @@
 
+"Use case: list articles."
 from models.article import ArticleKind
 from schemas.article import ArticleKindDto, ArticleListDto, ArticleListItemDto
 from services.articles.repository import ArticleRepository
@@ -11,7 +12,8 @@ KIND_TO_DTO: dict[ArticleKind, ArticleKindDto] = {
 
 
 class ListArticlesUseCase:
-    def __init__(self, repo: ArticleRepository):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: ArticleRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -21,6 +23,7 @@ class ListArticlesUseCase:
         limit: int,
         tag: str | None,
     ) -> ArticleListDto:
+        "Запускает основной сценарий use case."
         rows, has_more = await self.repo.list_published(
             kind=KIND_FROM_DTO[kind], skip=skip, limit=limit, tag=tag
         )

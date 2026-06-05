@@ -19,5 +19,6 @@ class ExpertSummary(BaseModel):
 
 
 class ExpertListResponse(BaseModel):
+    "Постраничный ответ со списком публичных карточек экспертов."
     items: list[ExpertSummary]
     has_more: bool

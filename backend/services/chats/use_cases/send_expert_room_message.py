@@ -1,3 +1,4 @@
+"Use case: send expert room message."
 from fastapi import HTTPException, UploadFile, status
 
 from models.chat import ExpertRoomMessage
@@ -18,7 +19,7 @@ class SendExpertRoomMessageUseCase:
         validator: ExpertRoomValidator,
         rate_limiter: ExpertRoomRateLimiter,
         file_storage: ExpertRoomFileStorage,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.rate_limiter = rate_limiter
@@ -30,6 +31,7 @@ class SendExpertRoomMessageUseCase:
         text: str,
         uploads: list[UploadFile] | None = None,
     ) -> ExpertRoomMessageOut:
+        "Запускает основной сценарий use case."
         sender = await self.validator.require_expert(user_id)
         await self.validator.ensure_not_banned(user_id)
         await self.rate_limiter.check(user_id)

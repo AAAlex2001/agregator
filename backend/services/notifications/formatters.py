@@ -1,3 +1,4 @@
+"Форматирование сущностей в API-структуры."
 from models.notification import Notification, NotificationType
 from schemas.notification import (
     ChatMessageNotificationItemResponse,

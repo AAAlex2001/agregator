@@ -1,3 +1,4 @@
+"Use case: request email change."
 from fastapi import BackgroundTasks, HTTPException, status
 
 from models.email_change import EmailChangeRequest
@@ -12,7 +13,7 @@ from utils.email_templates import render_email
 class RequestEmailChangeUseCase:
     "Создаёт заявку на смену email и шлёт код на новый адрес в фоне."
 
-    def __init__(self, repo: SettingsRepository, validator: SettingsValidator):
+    def __init__(self, repo: SettingsRepository, validator: SettingsValidator) -> None:
         self.repo = repo
         self.validator = validator
 
@@ -22,6 +23,7 @@ class RequestEmailChangeUseCase:
         new_email: str,
         background_tasks: BackgroundTasks,
     ) -> None:
+        "Запускает основной сценарий use case."
         user = await self.validator.get_user_or_404(user_id)
         normalized = new_email.strip().lower()
 

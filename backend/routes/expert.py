@@ -17,6 +17,7 @@ from services.experts.repository import (
     SORT_BY_REVIEW_COUNT,
     SORT_DIR_ASC,
     SORT_DIR_DESC,
+    ExpertSummaryRow,
 )
 
 router = APIRouter(tags=["experts"])
@@ -30,7 +31,7 @@ def build_repo(db: AsyncSession) -> ExpertsRepository:
     return ExpertsRepository(db)
 
 
-def build_expert_summary(item) -> ExpertSummary:
+def build_expert_summary(item: ExpertSummaryRow) -> ExpertSummary:
     last_order_payload = None
     if item.last_order is not None:
         last_order_payload = OrderResponse.from_archived_order(

@@ -1,3 +1,4 @@
+"Use case: mark notification read."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
@@ -10,12 +11,13 @@ from services.notifications.repository import NotificationRepository
 class MarkNotificationReadUseCase:
     "Помечает одно уведомление как прочитанное и пересчитывает unread-счётчик."
 
-    def __init__(self, repo: NotificationRepository):
+    def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(
         self, notification_id: int, user_id: int
     ) -> NotificationMutationResponse:
+        "Запускает основной сценарий use case."
         now = datetime.now(UTC)
         was_unread = await self.repo.mark_one_read(notification_id, user_id, now)
         if was_unread:

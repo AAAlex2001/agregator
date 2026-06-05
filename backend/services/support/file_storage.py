@@ -1,4 +1,6 @@
+"Файловое хранилище: сохранение/удаление файлов на диске."
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 import aiofiles
@@ -26,7 +28,8 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 class SupportFileStorage:
     "Сохраняет файлы тикетов поддержки на диск."
 
-    async def save(self, ticket_id: int, files: list[UploadFile]) -> list[dict]:
+    async def save(self, ticket_id: int, files: list[UploadFile]) -> list[dict[str, Any]]:
+        "Сохраняет файл/сущность."
         if not files:
             return []
         if len(files) > MAX_FILES:
@@ -42,7 +45,8 @@ class SupportFileStorage:
 
     async def save_one(
         self, upload_dir: Path, file: UploadFile, ticket_id: int
-    ) -> dict:
+    ) -> dict[str, Any]:
+        "Публичный метод сервисного слоя."
         original_name = file.filename or "file"
         extension = Path(original_name).suffix.lower()
         self.ensure_extension_allowed(extension)
@@ -70,6 +74,7 @@ class SupportFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if extension in ALLOWED_EXTENSIONS:
             return
         raise HTTPException(

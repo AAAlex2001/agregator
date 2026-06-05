@@ -1,3 +1,4 @@
+"Use case: delete rejected response."
 from fastapi import HTTPException, status
 
 from models.response import OrderResponse, ResponseStatus
@@ -8,11 +9,12 @@ from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCa
 class DeleteRejectedResponseUseCase:
     "Заказчик навсегда удаляет один отклонённый отклик из своих списков."
 
-    def __init__(self, repo: ResponseRepository, get_response: GetResponseByIdUseCase):
+    def __init__(self, repo: ResponseRepository, get_response: GetResponseByIdUseCase) -> None:
         self.repo = repo
         self.get_response = get_response
 
     async def execute(self, response_id: int, customer_id: int) -> None:
+        "Запускает основной сценарий use case."
         response = await self.get_response.execute(response_id)
         self.ensure_owner(response, customer_id)
         self.ensure_rejected(response)
@@ -21,6 +23,7 @@ class DeleteRejectedResponseUseCase:
 
     @staticmethod
     def ensure_owner(response: OrderResponse, customer_id: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         order = response.order
         if order is not None and order.customer_id == customer_id:
             return
@@ -31,6 +34,7 @@ class DeleteRejectedResponseUseCase:
 
     @staticmethod
     def ensure_rejected(response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.status == ResponseStatus.REJECTED:
             return
         raise HTTPException(
@@ -42,10 +46,11 @@ class DeleteRejectedResponseUseCase:
 class DeleteAllRejectedResponsesUseCase:
     "Заказчик массово удаляет все свои отклонённые отклики."
 
-    def __init__(self, repo: ResponseRepository):
+    def __init__(self, repo: ResponseRepository) -> None:
         self.repo = repo
 
     async def execute(self, customer_id: int) -> int:
+        "Запускает основной сценарий use case."
         responses = await self.repo.list_customer_rejected(customer_id)
         if not responses:
             return 0

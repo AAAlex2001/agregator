@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Any
 
 from fastapi import WebSocket
 from starlette.websockets import WebSocketState
@@ -36,11 +37,11 @@ class ChatConnectionManager:
             return []
         return sorted(uid for uid, socks in room.items() if socks)
 
-    async def broadcast(self, chat_id: int, data: dict) -> None:
+    async def broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
         "Публикует событие в Redis. На всех репликах сработает handle_event."
         await ws_pubsub.publish(CHAT_CHANNEL, {"chat_id": chat_id, "data": data})
 
-    async def handle_event(self, payload: dict) -> None:
+    async def handle_event(self, payload: dict[str, Any]) -> None:
         "Хендлер pubsub-канала: рассылает событие по локальным сокетам этой реплики."
         chat_id = payload.get("chat_id")
         data = payload.get("data")
@@ -48,7 +49,7 @@ class ChatConnectionManager:
             return
         await self.local_broadcast(chat_id, data)
 
-    async def local_broadcast(self, chat_id: int, data: dict) -> None:
+    async def local_broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
         "Прямая рассылка по сокетам, которые в памяти этой реплики."
         room = self.rooms.get(chat_id)
         if not room:

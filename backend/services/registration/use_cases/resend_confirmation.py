@@ -1,3 +1,4 @@
+"Use case: resend confirmation."
 from fastapi import BackgroundTasks, HTTPException, status
 
 from schemas.registration import UserRole
@@ -9,7 +10,7 @@ from services.registration.repository import RegistrationRepository
 class ResendConfirmationUseCase:
     "Повторно отправляет код подтверждения email юзеру с неподтверждённой почтой."
 
-    def __init__(self, repo: RegistrationRepository, notifier: RegistrationNotifier):
+    def __init__(self, repo: RegistrationRepository, notifier: RegistrationNotifier) -> None:
         self.repo = repo
         self.notifier = notifier
 
@@ -19,6 +20,7 @@ class ResendConfirmationUseCase:
         background_tasks: BackgroundTasks,
         role: UserRole | None = None,
     ) -> None:
+        "Запускает основной сценарий use case."
         ensure_email_not_disposable(email)
         candidates = await self.repo.find_users_by_email(email, role)
         if not candidates:

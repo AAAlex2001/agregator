@@ -1,3 +1,4 @@
+"Repository: доступ к БД для reports."
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -11,7 +12,7 @@ from utils.pagination import paginate_with_has_more
 class ReportRepository:
     "Доступ к данным для отчётов: заказы заказчика, в которых выбран исполнитель."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def list_for_customer(
@@ -20,6 +21,7 @@ class ReportRepository:
         skip: int,
         limit: int,
     ) -> tuple[list[Order], bool]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = (
             select(Order)
             .options(
@@ -37,6 +39,7 @@ class ReportRepository:
         return await paginate_with_has_more(self.db, query, skip, limit)
 
     async def get_for_customer(self, order_id: int, customer_id: int) -> Order | None:
+        "Возвращает запрошенную сущность."
         query = (
             select(Order)
             .options(

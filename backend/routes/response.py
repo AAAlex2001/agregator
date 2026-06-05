@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from models.order import OrderStatus
+from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus, VatKind
 from models.user import UserRole
 from schemas.common import DeletedCountResponse, DetailResponse
@@ -90,7 +91,7 @@ def format_sum(sum_amount: int) -> str:
 
 
 def to_item(
-    entity,
+    entity: OrderResponseModel,
     actor_role: UserRole | None = None,
 ) -> ExpertResponseItem:
     order = entity.order
@@ -255,7 +256,8 @@ async def create_response_for_order(
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ExpertResponseItem:
+    "Создаёт отклик эксперта на заказ с файлами и отправляет email-уведомление."
     data = ResponseCreate(
         comment=comment,
         proposed_sum_amount=proposed_sum_amount,
@@ -297,7 +299,8 @@ async def get_my_responses(
     sort_dir: Literal["asc", "desc"] = Query("desc"),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ExpertResponseList:
+    "Возвращает отклики текущего пользователя: для заказчика — по заказам, для эксперта — свои."
     repo = build_repo(db)
     validator = ResponseValidator(repo)
     actor = await validator.get_actor(user_id)
@@ -326,7 +329,8 @@ async def update_response_status(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
     rejection_reason: str | None = Form(None, max_length=1000),
-):
+) -> ExpertResponseItem:
+    "Меняет статус отклика по правилам перехода с уведомлениями и проверкой подписки."
     repo = build_repo(db)
     send_bidding = SendBiddingFinishedEmailUseCase(
         repo=build_email_repo(db),
@@ -360,7 +364,8 @@ async def update_response(
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ExpertResponseItem:
+    "Обновляет отклик эксперта: текст, цену, даты, файлы; уведомляет заказчика."
     try:
         keep_files_list: list[str] = json_lib.loads(keep_files)
     except (ValueError, TypeError):
@@ -404,6 +409,7 @@ async def withdraw_response(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> DetailResponse:
+    "Эксперт отзывает свой отклик; заказчик получает уведомление."
     repo = build_repo(db)
     send_rejected = SendExpertRejectedEmailUseCase(
         repo=build_email_repo(db),
@@ -425,7 +431,8 @@ async def restore_withdrawn_response(
     response_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ExpertResponseItem:
+    "Эксперт восстанавливает ранее отозванный отклик."
     repo = build_repo(db)
     use_case = RestoreWithdrawnResponseUseCase(
         repo=repo,

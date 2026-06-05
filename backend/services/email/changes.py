@@ -1,3 +1,4 @@
+"Сервисный модуль: changes."
 from datetime import date
 
 
@@ -42,6 +43,7 @@ def summarize_response_changes(
     before_files_count: int,
     after_files_count: int,
 ) -> str:
+    "Публичный метод сервисного слоя."
     return summarize_order_changes(
         before_sum_amount,
         after_sum_amount,
@@ -55,6 +57,7 @@ def summarize_response_changes(
 
 
 def format_rubles(sum_amount: int) -> str:
+    "Форматирует значение для отображения."
     roubles = sum_amount // 100
     kopeks = sum_amount % 100
     formatted = f"{roubles:,}".replace(",", " ")
@@ -64,6 +67,7 @@ def format_rubles(sum_amount: int) -> str:
 
 
 def format_date(value: date | None) -> str:
+    "Форматирует значение для отображения."
     if value is None:
         return "—"
     return value.strftime("%d.%m.%Y")

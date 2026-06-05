@@ -1,4 +1,6 @@
+"Сервисный модуль: dadata."
 import os
+from typing import Any
 
 import httpx
 from fastapi import HTTPException, status
@@ -7,11 +9,13 @@ DADATA_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party
 
 
 class DaDataService:
+    "Сервис домена: инкапсулирует операции и зависимости."
     def __init__(self) -> None:
         self.token = os.getenv("DADATA_API_KEY", "")
         self.secret = os.getenv("DADATA_SECRET_KEY", "")
 
-    async def suggest_parties(self, query: str, count: int = 10) -> list[dict]:
+    async def suggest_parties(self, query: str, count: int = 10) -> list[dict[str, Any]]:
+        "Публичный метод сервисного слоя."
         if not self.token:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

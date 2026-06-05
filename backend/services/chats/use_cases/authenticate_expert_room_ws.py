@@ -1,3 +1,4 @@
+"Use case: authenticate expert room ws."
 from dataclasses import dataclass
 
 from models.user import UserRole
@@ -11,12 +12,13 @@ WS_CLOSE_FORBIDDEN = 4003
 class WsCloseError(Exception):
     "Поднимается из use case'а аутентификации WS — роут закрывает сокет с этим кодом."
 
-    def __init__(self, code: int):
+    def __init__(self, code: int) -> None:
         self.code = code
 
 
 @dataclass(frozen=True)
 class ExpertRoomConnectInfo:
+    "DTO с данными для передачи между слоями."
     user_id: int
     display_name: str
 
@@ -24,10 +26,11 @@ class ExpertRoomConnectInfo:
 class AuthenticateExpertRoomWsUseCase:
     "Проверяет cookie-сессию, роль EXPERT, отсутствие бана. Возвращает ConnectInfo."
 
-    def __init__(self, repo: ExpertRoomRepository):
+    def __init__(self, repo: ExpertRoomRepository) -> None:
         self.repo = repo
 
     async def execute(self, session_id: str | None) -> ExpertRoomConnectInfo:
+        "Запускает основной сценарий use case."
         if not session_id:
             raise WsCloseError(WS_CLOSE_UNAUTHORIZED)
 

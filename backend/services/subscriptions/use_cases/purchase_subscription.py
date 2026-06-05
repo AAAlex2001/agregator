@@ -1,6 +1,8 @@
+"Use case: purchase subscription."
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from fastapi import HTTPException, status
 from yookassa import Payment as YooPayment
@@ -21,6 +23,7 @@ SINGLE_RESPONSES = 1
 
 @dataclass(frozen=True)
 class PurchaseResult:
+    "DTO с данными для передачи между слоями."
     subscription: UserSubscription
     confirmation_url: str
 
@@ -28,10 +31,11 @@ class PurchaseResult:
 class PurchaseSubscriptionUseCase:
     "Создаёт платёж YooKassa + pending-запись подписки. Активирует подписку на вебхуке SUCCEEDED."
 
-    def __init__(self, repo: SubscriptionRepository):
+    def __init__(self, repo: SubscriptionRepository) -> None:
         self.repo = repo
 
     async def execute(self, user_id: int, plan_id: int, return_url: str) -> PurchaseResult:
+        "Запускает основной сценарий use case."
         return_url = (return_url or "").strip()
         if not return_url:
             raise HTTPException(
@@ -75,6 +79,7 @@ class PurchaseSubscriptionUseCase:
 
     @staticmethod
     def build_payment(user: User, plan: PricingPlan) -> Payment:
+        "Строит объект из входных данных."
         return Payment(
             user_id=user.id,
             amount=plan.price_kopecks,
@@ -87,6 +92,7 @@ class PurchaseSubscriptionUseCase:
     def build_subscription(
         cls, user: User, plan: PricingPlan, payment: Payment
     ) -> UserSubscription:
+        "Строит объект из входных данных."
         now = datetime.now(UTC)
         return UserSubscription(
             user_id=user.id,
@@ -106,7 +112,8 @@ class PurchaseSubscriptionUseCase:
         payment: Payment,
         subscription: UserSubscription,
         return_url: str,
-    ) -> dict:
+    ) -> dict[str, Any]:
+        "Строит объект из входных данных."
         return {
             "amount": {"value": f"{plan.price_kopecks / 100:.2f}", "currency": "RUB"},
             "confirmation": {"type": "redirect", "return_url": return_url},
@@ -132,6 +139,7 @@ class PurchaseSubscriptionUseCase:
 
     @staticmethod
     def compute_responses_remaining(kind: SubscriptionKind) -> int | None:
+        "Публичный метод сервисного слоя."
         if kind == SubscriptionKind.SINGLE:
             return SINGLE_RESPONSES
         return None

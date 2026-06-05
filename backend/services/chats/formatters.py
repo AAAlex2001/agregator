@@ -1,3 +1,4 @@
+"Форматирование сущностей в API-структуры."
 from dataclasses import dataclass
 
 from models.chat import Chat, ChatMessage
@@ -9,6 +10,7 @@ NOTIFICATION_PREVIEW_MAX = 140
 
 @dataclass(frozen=True)
 class CounterpartInfo:
+    "DTO с данными для передачи между слоями."
     id: int
     display_name: str
     avatar_url: str | None
@@ -19,6 +21,7 @@ class ChatFormatter:
 
     @staticmethod
     def format_sum(amount_kopecks: int) -> str:
+        "Форматирует значение для отображения."
         roubles = amount_kopecks // 100
         formatted = f"{roubles:,}".replace(",", " ")
         if amount_kopecks % 100:
@@ -27,6 +30,7 @@ class ChatFormatter:
 
     @staticmethod
     def build_attachments(message: ChatMessage) -> list[ChatAttachmentResponse]:
+        "Строит объект из входных данных."
         raw = list(message.attachments or [])
         if not raw and message.file_url and message.file_name:
             raw = [{"url": message.file_url, "name": message.file_name}]
@@ -38,6 +42,7 @@ class ChatFormatter:
 
     @classmethod
     def last_message_text(cls, message: ChatMessage | None) -> str:
+        "Текст последнего сообщения для превью."
         if message is None:
             return ""
         text = (message.text or "").strip()
@@ -52,6 +57,7 @@ class ChatFormatter:
 
     @staticmethod
     def notification_preview(text: str, attachments_count: int) -> str:
+        "Подготавливает превью для уведомления."
         normalized = text.strip()
         if normalized:
             if len(normalized) <= NOTIFICATION_PREVIEW_MAX:
@@ -63,12 +69,14 @@ class ChatFormatter:
 
     @classmethod
     def counterpart(cls, actor_role: UserRole, chat: Chat) -> CounterpartInfo:
+        "Возвращает данные противоположной стороны чата."
         if actor_role == UserRole.CUSTOMER:
             return cls.counterpart_for_customer(chat)
         return cls.counterpart_for_expert(chat)
 
     @staticmethod
     def counterpart_for_customer(chat: Chat) -> CounterpartInfo:
+        "Возвращает данные противоположной стороны чата."
         expert = chat.expert
         if expert is None:
             return CounterpartInfo(
@@ -85,6 +93,7 @@ class ChatFormatter:
 
     @staticmethod
     def counterpart_for_expert(chat: Chat) -> CounterpartInfo:
+        "Возвращает данные противоположной стороны чата."
         customer = chat.customer
         if customer is None:
             return CounterpartInfo(
@@ -104,6 +113,7 @@ class ChatFormatter:
 
     @staticmethod
     def sender_role(chat: Chat, sender_id: int) -> UserRole:
+        "Определяет роль отправителя в чате."
         if sender_id == chat.customer_id:
             return UserRole.CUSTOMER
         return UserRole.EXPERT

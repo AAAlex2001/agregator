@@ -1,3 +1,4 @@
+"Use case: list questions."
 from fastapi import HTTPException, status
 
 from models.question import OrderQuestion
@@ -8,7 +9,7 @@ from services.questions.repository import QuestionRepository
 class ListQuestionsUseCase:
     "Заказчик-владелец видит всё; эксперт — публичные и свои; остальные — только публичные."
 
-    def __init__(self, repo: QuestionRepository):
+    def __init__(self, repo: QuestionRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -17,6 +18,7 @@ class ListQuestionsUseCase:
         viewer_id: int | None,
         viewer_role: UserRole | None,
     ) -> list[OrderQuestion]:
+        "Запускает основной сценарий use case."
         order = await self.repo.get_order(order_id)
         if order is None:
             raise HTTPException(

@@ -107,7 +107,8 @@ async def open_chat(
     payload: ChatOpenRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatDetailResponse:
+    "Открывает чат по заказу для текущего пользователя и возвращает его детали."
     repo = build_repo(db)
     validator = ChatValidator(repo)
     open_use_case = OpenChatUseCase(repo, validator)
@@ -121,7 +122,8 @@ async def open_chat(
 async def list_chats(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatListResponse:
+    "Возвращает список чатов текущего пользователя."
     repo = build_repo(db)
     use_case = ListChatsUseCase(repo, ChatValidator(repo))
     items = await use_case.execute(actor_id=user_id)
@@ -134,7 +136,8 @@ async def get_chat(
     limit: int = Query(200, ge=1, le=500),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatDetailResponse:
+    "Возвращает детали чата по uuid, попутно отмечая сообщения прочитанными."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     detail = await build_get_chat_detail(db).execute(
         chat_id=chat.id, actor_id=user_id, limit=limit
@@ -149,7 +152,8 @@ async def block_chat(
     chat_uuid: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatDetailResponse:
+    "Блокирует чат текущим пользователем и возвращает обновлённые детали."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     await build_block_chat(db).execute(chat_id=chat.id, actor_id=user_id)
     return await build_get_chat_detail(db).execute(chat_id=chat.id, actor_id=user_id, limit=200)
@@ -160,7 +164,8 @@ async def unblock_chat(
     chat_uuid: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatDetailResponse:
+    "Снимает блокировку с чата и возвращает обновлённые детали."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     await build_unblock_chat(db).execute(chat_id=chat.id, actor_id=user_id)
     return await build_get_chat_detail(db).execute(chat_id=chat.id, actor_id=user_id, limit=200)
@@ -171,7 +176,8 @@ async def get_chat_presence(
     chat_uuid: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatPresenceResponse:
+    "Возвращает онлайн-присутствие участников чата."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     online_ids = chat_manager.get_online_user_ids(chat.id)
     return ChatPresenceResponse(
@@ -187,6 +193,7 @@ async def mark_chat_read(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> UpdatedCountResponse:
+    "Отмечает все сообщения чата прочитанными и сообщает количество обновлённых."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
     read_ids = await build_mark_read(db).execute(chat_id=chat.id, reader_id=user_id)
     await broadcast_read(chat.id, read_ids)
@@ -202,7 +209,8 @@ async def send_message(
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ChatMessageResponse:
+    "Отправляет сообщение с вложениями в чат и рассылает событие участникам."
     chat = await build_get_chat_by_uuid(db).execute(chat_uuid, actor_id=user_id)
 
     uploads = [current_file for current_file in files if current_file.filename]
@@ -245,7 +253,8 @@ async def list_expert_room_messages(
     limit: int = Query(50, ge=1, le=100),
     user_id: int = Depends(get_current_user),
     use_case: ListExpertRoomMessagesUseCase = Depends(build_list_expert_room_messages),
-):
+) -> ExpertRoomHistoryResponse:
+    "Возвращает историю сообщений общей экспертной комнаты с курсорной пагинацией."
     return await use_case.execute(user_id, before_id, limit)
 
 
@@ -255,5 +264,6 @@ async def send_expert_room_message(
     files: list[UploadFile] = File(default=[]),
     user_id: int = Depends(get_current_user),
     use_case: SendExpertRoomMessageUseCase = Depends(build_send_expert_room_message),
-):
+) -> ExpertRoomMessageOut:
+    "Отправляет сообщение в общую экспертную комнату; ограничено rate-limiter."
     return await use_case.execute(user_id, text, uploads=files)

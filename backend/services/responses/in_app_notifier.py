@@ -1,3 +1,4 @@
+"In-app уведомления: рассылка событий потребителям."
 from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
@@ -15,18 +16,20 @@ RESPONSES_ACTION_URL = "/responses"
 class ResponseInAppNotifier:
     "Внутренние (in-app) уведомления по откликам — обёртка над двумя use case'ами уведомлений."
 
-    def __init__(self, repo: ResponseRepository, notifications: NotificationRepository):
+    def __init__(self, repo: ResponseRepository, notifications: NotificationRepository) -> None:
         self.repo = repo
         self.create_response_updated = CreateResponseUpdatedNotificationUseCase(notifications)
         self.create_status_changed = CreateResponseStatusChangedNotificationUseCase(notifications)
 
     @staticmethod
     def order_title(order: Order | None, order_id: int) -> str:
+        "Публичный метод сервисного слоя."
         if order and order.title:
             return order.title
         return f"Заказ #{order_id}"
 
     async def chat_action_url(self, response: OrderResponse) -> str:
+        "Публичный метод сервисного слоя."
         order = response.order
         if order is None:
             return RESPONSES_ACTION_URL
@@ -42,6 +45,7 @@ class ResponseInAppNotifier:
         response: OrderResponse,
         kind: ResponseUpdateKind = ResponseUpdateKind.UPDATED,
     ) -> None:
+        "Публичный метод сервисного слоя."
         order = response.order
         if order is None:
             return
@@ -55,6 +59,7 @@ class ResponseInAppNotifier:
     async def response_withdrawn(
         self, order_id: int, customer_id: int, order: Order | None
     ) -> None:
+        "Публичный метод сервисного слоя."
         await self.create_response_updated.execute(
             user_id=customer_id,
             order_title=self.order_title(order, order_id),
@@ -73,6 +78,7 @@ class ResponseInAppNotifier:
         reverted_expert_ids: list[int],
         rejection_reason: str | None = None,
     ) -> None:
+        "Публичный метод сервисного слоя."
         order = response.order
         if order is None:
             return
@@ -106,6 +112,7 @@ class ResponseInAppNotifier:
         chat_url: str,
         rejection_reason: str | None = None,
     ) -> None:
+        "Отправляет уведомление участникам."
         if new_status == ResponseStatus.ACCEPTED and old_status != ResponseStatus.ACCEPTED:
             await self.create_status_changed.execute(
                 user_id=response.expert_id,
@@ -182,6 +189,7 @@ class ResponseInAppNotifier:
         title: str,
         chat_url: str,
     ) -> None:
+        "Отправляет уведомление участникам."
         if new_status == ResponseStatus.IN_PROGRESS and not expert_was_confirmed:
             await self.create_status_changed.execute(
                 user_id=order.customer_id,

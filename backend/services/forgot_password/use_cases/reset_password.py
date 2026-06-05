@@ -1,3 +1,4 @@
+"Use case: reset password."
 from models.user import User
 from services.forgot_password.repository import ForgotPasswordRepository
 from services.forgot_password.validators import ForgotPasswordValidator
@@ -13,7 +14,7 @@ class ResetPasswordUseCase:
         repo: ForgotPasswordRepository,
         validator: ForgotPasswordValidator,
         verification: VerificationService,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.verification = verification
@@ -25,6 +26,7 @@ class ResetPasswordUseCase:
         code: str,
         new_password: str,
     ) -> User:
+        "Запускает основной сценарий use case."
         self.validator.ensure_password_strong(new_password)
         user = await self.validator.find_user(email, phone)
         await self.verification.consume_code(user.id, code)

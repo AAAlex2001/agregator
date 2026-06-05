@@ -7,6 +7,7 @@ from services.experts.badge_codes import ALL_BADGE_CODES_SET
 
 
 class LicenseRentalKind(str, Enum):
+    "Способ расчёта стоимости предоставления лицензии."
     PERCENT = "PERCENT"
     FIXED = "FIXED"
     NEGOTIABLE = "NEGOTIABLE"
@@ -35,7 +36,7 @@ class UpdatePersonalDataRequest(BaseModel):
     inn: str | None = Field(None, description="ИНН", min_length=10, max_length=12)
 
     @model_validator(mode="after")
-    def validate_phone_format(self):
+    def validate_phone_format(self) -> "UpdatePersonalDataRequest":
         """Проверка формата телефона и ИНН."""
         if self.phone:
             phone_digits = "".join(symbol for symbol in self.phone if symbol.isdigit())
@@ -88,7 +89,7 @@ class ChangePasswordRequest(BaseModel):
     new_password_confirm: str = Field(..., description="Подтверждение нового пароля")
 
     @model_validator(mode="after")
-    def check_passwords_match(self):
+    def check_passwords_match(self) -> "ChangePasswordRequest":
         """Проверка совпадения паролей"""
         if self.new_password != self.new_password_confirm:
             raise ValueError("Пароли не совпадают")
@@ -113,6 +114,7 @@ class UpdateLicenseHolderRequest(BaseModel):
 
 
 class UserSettingsResponse(BaseModel):
+    "Полные настройки личного кабинета пользователя: профиль, нотификации, лицензия."
     id: int
     inn: str | None = None
     company_data: dict[str, Any] | None = None

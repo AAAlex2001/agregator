@@ -1,16 +1,21 @@
+from collections.abc import Awaitable, Callable
+
 from fastapi import HTTPException, Request, status
 
 from utils.redis_sliding_window import redis_sliding_window
 
 
 def client_ip(request: Request) -> str:
+    "Извлекает IP клиента из X-Forwarded-For или request.client."
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
         return forwarded.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
 
 
-def rate_limit(scope: str, max_calls: int, window_seconds: float):
+def rate_limit(
+    scope: str, max_calls: int, window_seconds: float
+) -> Callable[[Request], Awaitable[None]]:
     "Фабрика FastAPI-зависимости: ограничивает scope до N вызовов за окно для одного IP."
 
     async def dependency(request: Request) -> None:

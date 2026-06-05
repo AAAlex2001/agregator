@@ -1,10 +1,14 @@
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Column, DateTime, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+
+if TYPE_CHECKING:
+    from models.user import User
 
 
 class PaymentStatus(str, PyEnum):
@@ -24,33 +28,32 @@ class Payment(Base):
     """Платёж через YooKassa."""
     __tablename__ = "payments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-    yookassa_id = Column(String(100), unique=True, nullable=True, index=True)
-    amount = Column(BigInteger, nullable=False)
-    payment_type = Column(Enum(PaymentType), nullable=False)
-    status = Column(
+    yookassa_id: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True)
+    amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    payment_type: Mapped[PaymentType] = mapped_column(Enum(PaymentType), nullable=False)
+    status: Mapped[PaymentStatus] = mapped_column(
         Enum(PaymentStatus, name="paymentstatus"),
         nullable=False,
         index=True,
         default=PaymentStatus.PENDING,
     )
-    description = Column(String(500), nullable=False, default="")
-    created_at = Column(
+    description: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-    updated_at = Column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
 
-    user = relationship("User", back_populates="payments")
+    user: Mapped["User"] = relationship(back_populates="payments")

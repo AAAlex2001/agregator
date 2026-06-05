@@ -1,3 +1,4 @@
+"Бизнес-валидации для login."
 from fastapi import HTTPException, status
 
 from utils.passwords import verify_password
@@ -8,6 +9,7 @@ class LoginValidator:
 
     @staticmethod
     def ensure_contact_provided(email: str | None, phone: str | None, inn: str | None) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if email or phone or inn:
             return
         raise HTTPException(
@@ -17,6 +19,7 @@ class LoginValidator:
 
     @staticmethod
     def ensure_inn_format(inn: str | None) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if not inn:
             return
         if not inn.isdigit() or len(inn) not in {10, 12}:
@@ -27,4 +30,5 @@ class LoginValidator:
 
     @staticmethod
     async def verify_password(plain: str, hashed: str) -> bool:
+        "Публичный метод сервисного слоя."
         return await verify_password(plain, hashed)

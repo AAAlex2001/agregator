@@ -1,3 +1,4 @@
+"Use case: update response status."
 from models.chat import Chat
 from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
@@ -24,7 +25,7 @@ class UpdateResponseStatusUseCase:
         in_app: ResponseInAppNotifier,
         send_bidding_email: SendBiddingFinishedEmailUseCase | None = None,
         subscription_access: SubscriptionAccess | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.rules = rules
@@ -40,6 +41,7 @@ class UpdateResponseStatusUseCase:
         new_status: ResponseStatus,
         reason: str | None = None,
     ) -> OrderResponse:
+        "Запускает основной сценарий use case."
         actor = await self.validator.get_actor(actor_id)
         response = await self.get_response.execute(response_id)
         self.rules.check(actor, response, new_status)
@@ -57,7 +59,7 @@ class UpdateResponseStatusUseCase:
 
         if new_status == ResponseStatus.REJECTED:
             response.rejection_reason = reason
-        elif response.rejection_reason and new_status != ResponseStatus.REJECTED:
+        elif response.rejection_reason:
             response.rejection_reason = None
 
         old_status = response.status
@@ -105,6 +107,7 @@ class UpdateResponseStatusUseCase:
 
     @staticmethod
     def apply_expert_transition(response: OrderResponse, new_status: ResponseStatus) -> None:
+        "Публичный метод сервисного слоя."
         if new_status == ResponseStatus.IN_PROGRESS:
             response.expert_confirmed = True
         if new_status == ResponseStatus.COMPLETED and response.order:
@@ -115,6 +118,7 @@ class UpdateResponseStatusUseCase:
         response: OrderResponse,
         new_status: ResponseStatus,
     ) -> tuple[list[int], list[int]]:
+        "Публичный метод сервисного слоя."
         auto_rejected_ids: list[int] = []
         reverted_ids: list[int] = []
 
@@ -137,6 +141,7 @@ class UpdateResponseStatusUseCase:
         return auto_rejected_ids, reverted_ids
 
     async def auto_reject_siblings(self, response: OrderResponse) -> list[int]:
+        "Публичный метод сервисного слоя."
         siblings = await self.repo.list_active_siblings(response.order_id, response.id)
         if not siblings:
             return []
@@ -150,6 +155,7 @@ class UpdateResponseStatusUseCase:
         return rejected_ids
 
     async def release_if_assigned(self, response: OrderResponse) -> list[int]:
+        "Публичный метод сервисного слоя."
         if response.order.assigned_expert_id != response.expert_id:
             return []
         response.order.assigned_expert_id = None
@@ -160,6 +166,7 @@ class UpdateResponseStatusUseCase:
         return reverted
 
     async def revert_auto_rejections(self, response: OrderResponse) -> list[int]:
+        "Публичный метод сервисного слоя."
         reverted = await self.repo.list_auto_rejected(response.order_id, response.id)
         if not reverted:
             return []
@@ -171,6 +178,7 @@ class UpdateResponseStatusUseCase:
         return expert_ids
 
     async def ensure_chat_exists(self, response: OrderResponse) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         order = response.order
         if order is None:
             return

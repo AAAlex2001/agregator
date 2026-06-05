@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class LicenseHolderListItem(BaseModel):
+    "Карточка держателя лицензии в публичном списке."
     id: int
     inn: str | None = None
     company_data: dict[str, Any] | None = None
@@ -23,5 +24,6 @@ class LicenseHolderListItem(BaseModel):
 
 
 class LicenseHolderListResponse(BaseModel):
+    "Постраничный ответ со списком держателей лицензий."
     items: list[LicenseHolderListItem] = Field(default_factory=list)
     total: int = 0

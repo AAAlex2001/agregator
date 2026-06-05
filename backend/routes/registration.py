@@ -63,11 +63,12 @@ async def register_user(
     data: UserRegistration,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
-):
+) -> UserResponse:
+    "Регистрирует обычного пользователя и отправляет письмо подтверждения почты."
     repo = build_repo(db)
     user = await RegisterUserUseCase(repo, build_validator(repo)).execute(data)
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
-    return user
+    return UserResponse.model_validate(user)
 
 
 @router.post(
@@ -78,7 +79,7 @@ async def register_user(
 async def confirm_email(
     data: EmailConfirmRequest,
     db: AsyncSession = Depends(get_db),
-):
+) -> JSONResponse:
     "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
     user = await ConfirmEmailUseCase(build_repo(db), VerificationService(db)).execute(
         data.email, data.code, data.role
@@ -136,7 +137,8 @@ async def register_license_holder(
     data: LicenseHolderRegistration = Depends(parse_license_holder_payload),
     license_file: UploadFile | None = File(None),
     db: AsyncSession = Depends(get_db),
-):
+) -> UserResponse:
+    "Регистрирует лицензиата: сохраняет файл лицензии и отправляет письмо подтверждения."
     file_url = await save_license_file(data.inn, license_file) if license_file else None
     repo = build_repo(db)
     try:
@@ -148,10 +150,12 @@ async def register_license_holder(
         raise
 
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
-    return user
+    return UserResponse.model_validate(user)
 
 
 @router.post("/party-suggestions", response_model=list[PartySuggestionResponse])
-async def get_party_suggestions(payload: PartySuggestionRequest):
+async def get_party_suggestions(payload: PartySuggestionRequest) -> list[PartySuggestionResponse]:
+    "Возвращает подсказки организаций из DaData по поисковой строке."
     service = DaDataService()
-    return await service.suggest_parties(payload.query, payload.count)
+    raw = await service.suggest_parties(payload.query, payload.count)
+    return [PartySuggestionResponse.model_validate(item) for item in raw]

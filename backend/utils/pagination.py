@@ -2,17 +2,13 @@
 Утилиты пагинации без COUNT(*): запрашиваем `limit + 1` записей, режем последнюю
 и по факту наличия отрезанной записи отдаём `has_more`.
 """
-from typing import TypeVar
-
 from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-T = TypeVar("T")
 
-
-async def paginate_with_has_more(
+async def paginate_with_has_more[T](
     db: AsyncSession,
-    query: Select,
+    query: Select[tuple[T]],
     skip: int,
     limit: int,
 ) -> tuple[list[T], bool]:

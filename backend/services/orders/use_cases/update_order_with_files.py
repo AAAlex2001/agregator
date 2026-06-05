@@ -1,3 +1,6 @@
+"Use case: update order with files."
+from typing import Any
+
 from fastapi import UploadFile
 
 from models.order import Order
@@ -21,7 +24,7 @@ class UpdateOrderWithFilesUseCase:
         repo: OrderRepository,
         files: OrderFileStorage,
         send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
-    ):
+    ) -> None:
         self.update_order = update_order
         self.get_order = get_order
         self.repo = repo
@@ -32,13 +35,13 @@ class UpdateOrderWithFilesUseCase:
         self,
         order_id: int,
         data: OrderUpdate,
-        *,
         technical: list[UploadFile],
         contract: list[UploadFile],
         company: list[UploadFile],
         other: list[UploadFile],
         current_user_id: int,
     ) -> Order:
+        "Запускает основной сценарий use case."
         before = await self.get_order.execute(order_id)
         snapshot = self.snapshot(before)
         before_documents = OrderDocumentsService.from_order(before)
@@ -62,7 +65,8 @@ class UpdateOrderWithFilesUseCase:
         return order
 
     @staticmethod
-    def snapshot(order: Order) -> dict:
+    def snapshot(order: Order) -> dict[str, Any]:
+        "Публичный метод сервисного слоя."
         return {
             "sum_amount": order.sum_amount,
             "deadline": order.deadline,
@@ -70,7 +74,8 @@ class UpdateOrderWithFilesUseCase:
             "files_count": OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
         }
 
-    async def send_email_if_changed(self, order: Order, before: dict) -> None:
+    async def send_email_if_changed(self, order: Order, before: dict[str, Any]) -> None:
+        "Отправляет уведомление получателю."
         if self.send_updated_email is None:
             return
         summary = summarize_order_changes(
@@ -91,13 +96,13 @@ class UpdateOrderWithFilesUseCase:
         self,
         order_id: int,
         order: Order,
-        *,
         technical: list[UploadFile],
         contract: list[UploadFile],
         company: list[UploadFile],
         other: list[UploadFile],
         before_documents: OrderDocuments,
     ) -> Order:
+        "Публичный метод сервисного слоя."
         existing = OrderDocumentsService.from_order(order)
         saved = await self.files.save_documents(
             order_id,

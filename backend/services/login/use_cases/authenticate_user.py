@@ -1,3 +1,4 @@
+"Use case: authenticate user."
 from fastapi import HTTPException, status
 
 from models.user import User
@@ -10,11 +11,12 @@ from services.registration.disposable_email_domains import ensure_email_not_disp
 class AuthenticateUserUseCase:
     "Подбирает юзера по email/phone/inn, проверяет пароль и роль."
 
-    def __init__(self, repo: LoginRepository, validator: LoginValidator):
+    def __init__(self, repo: LoginRepository, validator: LoginValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, data: UserLogin) -> User:
+        "Запускает основной сценарий use case."
         self.validator.ensure_contact_provided(data.email, data.phone, data.inn)
         self.validator.ensure_inn_format(data.inn)
         ensure_email_not_disposable(data.email)
@@ -72,6 +74,7 @@ class AuthenticateUserUseCase:
         return user
 
     async def find_candidates(self, data: UserLogin) -> list[User]:
+        "Ищет сущность по заданным параметрам."
         if data.email:
             return await self.repo.find_users_by_email(data.email)
         if data.inn:

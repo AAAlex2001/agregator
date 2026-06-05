@@ -1,7 +1,9 @@
+"Сервисный модуль: formatting."
 from models.user import User
 
 
 def greeting_for(user: User | None) -> str:
+    "Публичный метод сервисного слоя."
     if user is None:
         return "клиент Ресурс-Плюс"
     if user.first_name:
@@ -12,6 +14,7 @@ def greeting_for(user: User | None) -> str:
 
 
 def full_name(user: User | None) -> str:
+    "Публичный метод сервисного слоя."
     if user is None:
         return ""
     parts = [part for part in (user.last_name, user.first_name) if part]
@@ -19,6 +22,7 @@ def full_name(user: User | None) -> str:
 
 
 def contact_line(user: User | None) -> str:
+    "Публичный метод сервисного слоя."
     if user is None:
         return ""
     parts = [part for part in (user.email, user.phone) if part]

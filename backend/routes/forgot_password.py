@@ -38,7 +38,8 @@ async def send_reset_code(
     data: SendResetCodeRequest,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
-):
+) -> ForgotPasswordResponse:
+    "Отправляет код восстановления пароля на email или телефон; ограничено rate-limiter."
     repo = build_repo(db)
     use_case = SendResetCodeUseCase(build_validator(repo), VerificationService(db))
     await use_case.execute(data.email, data.phone, background_tasks)
@@ -53,7 +54,8 @@ async def send_reset_code(
 async def verify_reset_code(
     data: VerifyCodeRequest,
     db: AsyncSession = Depends(get_db),
-):
+) -> ForgotPasswordResponse:
+    "Проверяет ранее отправленный код восстановления пароля."
     repo = build_repo(db)
     use_case = VerifyResetCodeUseCase(build_validator(repo), VerificationService(db))
     await use_case.execute(data.email, data.phone, data.code)
@@ -68,7 +70,8 @@ async def verify_reset_code(
 async def reset_password(
     data: ForgotPasswordRequest,
     db: AsyncSession = Depends(get_db),
-):
+) -> ForgotPasswordResponse:
+    "Сбрасывает пароль пользователя по подтверждённому коду восстановления."
     repo = build_repo(db)
     use_case = ResetPasswordUseCase(repo, build_validator(repo), VerificationService(db))
     await use_case.execute(data.email, data.phone, data.code, data.new_password)

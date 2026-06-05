@@ -1,12 +1,14 @@
 import asyncio
 import logging
 import os
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from admin import setup_admin
 from routes import (
     article,
     chat,
@@ -41,7 +43,7 @@ logging.basicConfig(
 
 
 @asynccontextmanager
-async def lifespan(application: FastAPI):
+async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     ws_pubsub.register(CHAT_CHANNEL, chat_manager.handle_event)
     ws_pubsub.register(EXPERT_ROOM_CHANNEL, expert_room_manager.handle_event)
     await ws_pubsub.start()
@@ -87,13 +89,18 @@ app.include_router(expert.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
+setup_admin(app)
+
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
+    "Корень: лёгкий ответ-маркер, что бэк жив."
     return {"message": "Resurs Plus API"}
 
+
 @app.get("/health")
-async def health():
+async def health() -> dict[str, str]:
+    "Health-check для оркестратора/балансировщика."
     return {"status": "ok"}

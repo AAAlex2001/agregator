@@ -60,18 +60,14 @@ warn_return_any = false           # SQLAlchemy execute().scalars() возвра�
 disallow_subclassing_any = false  # SQLAlchemy Base
 disallow_any_decorated = false    # @router.get декораторы возвращают Any
 
-# Глобальные disable для известных SQLAlchemy 1.x-style limitations.
-# Все они — про один и тот же паттерн: `Column[X]` не assignable к concrete X
-# при передаче в use cases или Pydantic-схемы. Runtime — работает; mypy — нет.
-# Реальный фикс — миграция на SQLAlchemy 2.x mapped_column (отдельная задача недели).
-disable_error_code = [
-    "arg-type",      # передача Column[int] туда где нужен int
-    "assignment",    # current_documents = list[X] куда Column[Any]
-    "index",         # Column[X][i]
-    "return-value",  # return user.id где id Column[int], а нужен int
-    "var-annotated", # status = Column(Enum(StatusEnum)) — нужен Mapped[StatusEnum]
-    "comparison-overlap",  # SQLAlchemy filter expr Column[X] != value vs different types
-]
+# После миграции моделей на Mapped[X] большинство SQLAlchemy ошибок ушло.
+# Оставшиеся два кода — про несовершенство stubs:
+#   arg-type — `InstrumentedAttribute[X]` vs `ColumnElement[X]` (типы родственники, mypy не видит),
+#              dict(rows) из Sequence[Row] mypy считает не-Iterable,
+#              ORM-инстанс → Pydantic DTO mismatch в edge-кейсах,
+#   assignment — переменные изначально None, потом получают конкретный тип (старый паттерн).
+# Сужать дальше — точечными type:ignore по месту.
+disable_error_code = ["arg-type", "assignment"]
 
 [[tool.mypy.overrides]]
 module = [
@@ -90,22 +86,8 @@ module = [
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-# Роуты FastAPI: Depends()/Query()/Form() возвращают Any.
-# TODO: проставить return type annotations всем хендлерам пакетно.
-# Большинство уже имеют response_model и легко чинятся, просто 80+ ручных правок.
-module = "routes.*"
-disallow_any_explicit = false
-disallow_untyped_defs = false
-
-[[tool.mypy.overrides]]
-# ORM-модели на SQLAlchemy 1.x-стиле (Column(X), не Mapped[X] = mapped_column(X)).
-# Strict-режим даёт сотни ложных срабатываний из-за Column[Any] vs concrete type.
-# Переход на mapped_column — отдельная большая задача с миграциями.
 module = "models.*"
-disallow_untyped_defs = false
-disallow_any_explicit = false
-disallow_any_generics = false
-warn_unused_ignores = false
+# After Mapped[X] migration, models are now fully typed.
 
 [[tool.mypy.overrides]]
 # Слой ORM↔DTO маппинга — много Column[X] → concrete X конверсий.
@@ -122,7 +104,7 @@ module = [
 ]
 disallow_untyped_defs = false
 warn_return_any = false
-disable_error_code = ["assignment", "arg-type", "return-value", "attr-defined"]
+disable_error_code = ["assignment", "arg-type", "return-value", "attr-defined", "no-untyped-call"]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

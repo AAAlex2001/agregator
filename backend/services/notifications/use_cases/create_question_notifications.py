@@ -1,3 +1,4 @@
+"Use case: create question notifications."
 from models.notification import Notification, NotificationType
 from schemas.notification import (
     QuestionAnsweredNotificationPayload,
@@ -9,6 +10,7 @@ PREVIEW_MAX_LENGTH = 240
 
 
 def truncate(text: str) -> str:
+    "Публичный метод сервисного слоя."
     text = (text or "").strip()
     if len(text) > PREVIEW_MAX_LENGTH:
         return text[:PREVIEW_MAX_LENGTH] + "…"
@@ -18,7 +20,7 @@ def truncate(text: str) -> str:
 class CreateQuestionAskedNotificationUseCase:
     "Заказчику — эксперт задал публичный вопрос по заказу."
 
-    def __init__(self, repo: NotificationRepository):
+    def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -29,6 +31,7 @@ class CreateQuestionAskedNotificationUseCase:
         question_text: str,
         action_url: str | None = None,
     ) -> Notification:
+        "Запускает основной сценарий use case."
         payload = QuestionAskedNotificationPayload(
             order_title=order_title,
             expert_name=expert_name or "Эксперт",
@@ -50,7 +53,7 @@ class CreateQuestionAskedNotificationUseCase:
 class CreateQuestionAnsweredNotificationUseCase:
     "Эксперту — заказчик ответил на вопрос."
 
-    def __init__(self, repo: NotificationRepository):
+    def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -60,6 +63,7 @@ class CreateQuestionAnsweredNotificationUseCase:
         answer_text: str,
         action_url: str | None = None,
     ) -> Notification:
+        "Запускает основной сценарий use case."
         payload = QuestionAnsweredNotificationPayload(
             order_title=order_title,
             preview=truncate(answer_text),

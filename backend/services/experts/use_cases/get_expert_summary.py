@@ -1,3 +1,4 @@
+"Use case: get expert summary."
 from fastapi import HTTPException, status
 
 from services.experts.repository import ExpertsRepository, ExpertSummaryRow
@@ -6,10 +7,11 @@ from services.experts.repository import ExpertsRepository, ExpertSummaryRow
 class GetExpertSummaryUseCase:
     "Карточка одного эксперта по public_id. 404, если не найден."
 
-    def __init__(self, repo: ExpertsRepository):
+    def __init__(self, repo: ExpertsRepository) -> None:
         self.repo = repo
 
     async def execute(self, public_id: str) -> ExpertSummaryRow:
+        "Запускает основной сценарий use case."
         summary = await self.repo.get_summary(public_id)
         if summary is None:
             raise HTTPException(

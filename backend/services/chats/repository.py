@@ -1,3 +1,4 @@
+"Repository: доступ к БД для chats."
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -14,15 +15,17 @@ from models.user import User
 class ChatRepository:
     "Все обращения к БД по чатам и сообщениям."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def find_user(self, user_id: int) -> User | None:
+        "Ищет сущность по заданным параметрам."
         return (
             await self.db.execute(select(User).where(User.id == user_id))
         ).scalars().first()
 
     async def find_order(self, order_id: int) -> Order | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Order)
             .options(selectinload(Order.customer), selectinload(Order.assigned_expert))
@@ -33,6 +36,7 @@ class ChatRepository:
     async def find_chat_by_uuid_for_actor(
         self, chat_uuid: UUID, actor_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
             .options(
@@ -50,6 +54,7 @@ class ChatRepository:
     async def find_chat_by_id_for_actor(
         self, chat_id: int, actor_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
             .options(
@@ -67,6 +72,7 @@ class ChatRepository:
     async def find_chat_by_id_with_order(
         self, chat_id: int, actor_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
             .options(selectinload(Chat.order))
@@ -80,6 +86,7 @@ class ChatRepository:
     async def find_latest_chat_for_customer(
         self, order_id: int, customer_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
             .where(Chat.order_id == order_id, Chat.customer_id == customer_id)
@@ -90,6 +97,7 @@ class ChatRepository:
     async def find_latest_chat_for_expert(
         self, order_id: int, expert_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
             .where(Chat.order_id == order_id, Chat.expert_id == expert_id)
@@ -100,6 +108,7 @@ class ChatRepository:
     async def find_pair_chat(
         self, order_id: int, customer_id: int, expert_id: int
     ) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         query = select(Chat).where(
             Chat.order_id == order_id,
             Chat.customer_id == customer_id,
@@ -108,6 +117,7 @@ class ChatRepository:
         return (await self.db.execute(query)).scalars().first()
 
     async def list_actor_chats(self, actor_id: int) -> list[Chat]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = (
             select(Chat)
             .options(
@@ -121,6 +131,7 @@ class ChatRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def last_messages_for(self, chat_ids: list[int]) -> dict[int, ChatMessage]:
+        "Публичный метод сервисного слоя."
         if not chat_ids:
             return {}
         sub = (
@@ -139,6 +150,7 @@ class ChatRepository:
     async def unread_counts_for(
         self, chat_ids: list[int], actor_id: int
     ) -> dict[int, int]:
+        "Публичный метод сервисного слоя."
         if not chat_ids:
             return {}
         query = (
@@ -154,6 +166,7 @@ class ChatRepository:
         return {row.chat_id: row.cnt for row in rows}
 
     async def chat_messages_tail(self, chat_id: int, limit: int) -> list[ChatMessage]:
+        "Публичный метод сервисного слоя."
         query = (
             select(ChatMessage)
             .where(ChatMessage.chat_id == chat_id)
@@ -164,6 +177,7 @@ class ChatRepository:
         return list(reversed(rows))
 
     async def response_status_for(self, order_id: int, expert_id: int) -> str | None:
+        "Публичный метод сервисного слоя."
         query = select(OrderResponse.status).where(
             OrderResponse.order_id == order_id,
             OrderResponse.expert_id == expert_id,
@@ -172,6 +186,7 @@ class ChatRepository:
         return value.value if value is not None else None
 
     async def unread_message_ids(self, chat_id: int, reader_id: int) -> list[int]:
+        "Публичный метод сервисного слоя."
         query = select(ChatMessage.id).where(
             ChatMessage.chat_id == chat_id,
             ChatMessage.sender_id != reader_id,
@@ -180,6 +195,7 @@ class ChatRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def mark_as_read(self, message_ids: list[int]) -> None:
+        "Отмечает сущность соответствующим состоянием."
         if not message_ids:
             return
         await self.db.execute(
@@ -190,11 +206,13 @@ class ChatRepository:
         await self.db.flush()
 
     async def touch_chat(self, chat_id: int) -> None:
+        "Обновляет служебные поля сущности."
         await self.db.execute(
             update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(UTC))
         )
 
     async def is_chat_blocked(self, chat_id: int) -> bool:
+        "Признак: соответствует ли сущность условию."
         query = (
             select(Chat.is_blocked, Order.status)
             .select_from(Chat)
@@ -208,6 +226,7 @@ class ChatRepository:
         return is_blocked or order_status == OrderStatus.ARCHIVED
 
     async def block_chat(self, chat_id: int) -> None:
+        "Блокирует сущность."
         await self.db.execute(
             update(Chat)
             .where(Chat.id == chat_id)
@@ -216,6 +235,7 @@ class ChatRepository:
         await self.db.flush()
 
     async def unblock_chat(self, chat_id: int) -> None:
+        "Разблокирует сущность."
         await self.db.execute(
             update(Chat)
             .where(Chat.id == chat_id)
@@ -223,8 +243,10 @@ class ChatRepository:
         )
         await self.db.flush()
 
-    async def add(self, entity) -> None:
+    async def add(self, entity: Chat | ChatMessage) -> None:
+        "Добавляет сущность в сессию."
         self.db.add(entity)
 
     async def flush(self) -> None:
+        "Сбрасывает накопленные изменения в БД."
         await self.db.flush()

@@ -1,3 +1,4 @@
+"Сервисный модуль: landing."
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,10 +30,12 @@ from schemas.landing import (
 
 
 class LandingService:
-    def __init__(self, db: AsyncSession):
+    "Сервис домена: инкапсулирует операции и зависимости."
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def get_snapshot(self) -> LandingSnapshot:
+        "Возвращает запрошенную сущность."
         return LandingSnapshot(
             hero=await self.get_hero(),
             section_headers=await self.get_section_headers(),
@@ -47,6 +50,7 @@ class LandingService:
         )
 
     async def get_pricing_content(self) -> LandingPricingContentDto:
+        "Возвращает запрошенную сущность."
         row = (
             await self.db.execute(select(LandingPricingContent).limit(1))
         ).scalar_one_or_none()
@@ -91,6 +95,7 @@ class LandingService:
         )
 
     async def get_hero(self) -> LandingHeroDto:
+        "Возвращает запрошенную сущность."
         row = (await self.db.execute(select(LandingHero).where(LandingHero.id == 1))).scalar_one()
         return LandingHeroDto(
             title=row.title,
@@ -100,6 +105,7 @@ class LandingService:
         )
 
     async def get_section_headers(self) -> LandingSectionHeadersDto:
+        "Возвращает запрошенную сущность."
         rows = (await self.db.execute(select(LandingSectionHeader))).scalars().all()
         by_key = {
             row.block_key: LandingSectionHeaderDto(title=row.title, subtitle=row.subtitle)
@@ -116,6 +122,7 @@ class LandingService:
         )
 
     async def get_steps(self, block: str) -> LandingTabSteps:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingStep)
@@ -145,6 +152,7 @@ class LandingService:
         return LandingTabSteps(client=client, expert=expert, license_holder=license_holder)
 
     async def get_orders(self) -> list[LandingOrderExampleDto]:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingOrderExample).order_by(LandingOrderExample.position.asc())
@@ -161,6 +169,7 @@ class LandingService:
         ]
 
     async def get_advantages(self) -> list[LandingAdvantageDto]:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingAdvantage).order_by(LandingAdvantage.position.asc())
@@ -178,6 +187,7 @@ class LandingService:
         ]
 
     async def get_industries(self) -> list[LandingIndustryDto]:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingIndustry).order_by(LandingIndustry.position.asc())
@@ -194,6 +204,7 @@ class LandingService:
         ]
 
     async def get_reviews(self) -> list[LandingReviewDto]:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingReview).order_by(LandingReview.position.asc())
@@ -211,6 +222,7 @@ class LandingService:
         ]
 
     async def get_faq(self) -> list[LandingFaqItemDto]:
+        "Возвращает запрошенную сущность."
         rows = (
             await self.db.execute(
                 select(LandingFaq).order_by(LandingFaq.position.asc())

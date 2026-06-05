@@ -1,3 +1,4 @@
+"Use case: list archived orders."
 from dataclasses import dataclass
 
 from models.order import Order
@@ -7,6 +8,7 @@ from services.orders.repository import OrderRepository
 
 @dataclass
 class ArchivedOrderItem:
+    "Компонент сервисного слоя."
     order: Order
     accepted_response: OrderResponse | None
     has_review: bool
@@ -15,7 +17,7 @@ class ArchivedOrderItem:
 class ListArchivedOrdersUseCase:
     "Список архивных заказов с принятым откликом и отметкой об отзыве для текущего юзера."
 
-    def __init__(self, repo: OrderRepository):
+    def __init__(self, repo: OrderRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -24,6 +26,7 @@ class ListArchivedOrdersUseCase:
         limit: int,
         current_user_id: int,
     ) -> tuple[list[ArchivedOrderItem], bool]:
+        "Запускает основной сценарий use case."
         orders, has_more = await self.repo.list_archived(skip, limit)
 
         accepted_by_order: dict[int, OrderResponse] = {}

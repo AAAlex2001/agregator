@@ -1,3 +1,4 @@
+"Сервисный модуль: files."
 from pathlib import Path
 from uuid import uuid4
 
@@ -16,10 +17,12 @@ BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
 
 def total_files_size(files: list[UploadFile]) -> int:
+    "Публичный метод сервисного слоя."
     return sum(int(file.size or 0) for file in files)
 
 
 def ensure_total_size_within_limit(*lists: list[UploadFile]) -> None:
+    "Бросает HTTPException, если условие не выполнено."
     total = sum(total_files_size(items) for items in lists)
     if total <= MAX_ORDER_FILES_TOTAL_BYTES:
         return
@@ -36,12 +39,12 @@ class OrderFileStorage:
     async def save_documents(
         self,
         order_id: int,
-        *,
         technical: list[UploadFile],
         contract: list[UploadFile],
         company: list[UploadFile],
         other: list[UploadFile],
     ) -> OrderDocuments:
+        "Публичный метод сервисного слоя."
         ensure_total_size_within_limit(technical, contract, company, other)
         upload_dir = self.dir_for(order_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -53,9 +56,11 @@ class OrderFileStorage:
         )
 
     def dir_for(self, order_id: int) -> Path:
+        "Публичный метод сервисного слоя."
         return BACKEND_ROOT / "uploads" / "orders" / str(order_id)
 
     async def save_one(self, upload_dir: Path, file: UploadFile, order_id: int) -> str:
+        "Публичный метод сервисного слоя."
         extension = Path(file.filename or "").suffix.lower()
         self.ensure_extension_allowed(extension)
 
@@ -69,6 +74,7 @@ class OrderFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if extension in ALLOWED_DOCUMENT_EXTENSIONS:
             return
         raise HTTPException(

@@ -1,3 +1,4 @@
+"Сервисный модуль: pricing."
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,6 +7,7 @@ from schemas.pricing import PricingPlanResponse
 
 
 def format_price_display(price_kopecks: int) -> str:
+    "Форматирует значение для отображения."
     rubles = price_kopecks // 100
     formatted = f"{rubles:,}".replace(",", " ")
     if price_kopecks % 100 == 0:
@@ -17,10 +19,11 @@ def format_price_display(price_kopecks: int) -> str:
 class PricingService:
     "Чтение витрины тарифов. Показываем только is_active=true, сортируем по sort_order."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def list_active(self) -> list[PricingPlanResponse]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = (
             select(PricingPlan)
             .where(PricingPlan.is_active.is_(True))
@@ -31,6 +34,7 @@ class PricingService:
 
     @staticmethod
     def to_response(plan: PricingPlan) -> PricingPlanResponse:
+        "Публичный метод сервисного слоя."
         return PricingPlanResponse(
             id=plan.id,
             kind=plan.kind,

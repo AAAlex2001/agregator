@@ -1,3 +1,4 @@
+"Сервисный модуль: gate."
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
@@ -10,7 +11,7 @@ from services.subscriptions.repository import SubscriptionRepository
 class SubscriptionAccess:
     "Гейт подписки эксперта на отклики: проверки доступа + списание/восстановление слотов SINGLE-тарифа."
 
-    def __init__(self, repo: SubscriptionRepository, settings: PlatformSettingsService):
+    def __init__(self, repo: SubscriptionRepository, settings: PlatformSettingsService) -> None:
         self.repo = repo
         self.settings = settings
 
@@ -42,6 +43,7 @@ class SubscriptionAccess:
         return subscription
 
     async def consume_for_response(self, subscription: UserSubscription) -> None:
+        "Поглощает (помечает использованным) код."
         if subscription.kind != SubscriptionKind.SINGLE:
             return
         remaining = (subscription.responses_remaining or 0) - 1

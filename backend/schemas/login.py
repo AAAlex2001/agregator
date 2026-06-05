@@ -6,6 +6,7 @@ from models.user import UserRole
 
 
 class UserLogin(BaseModel):
+    "Payload входа: один из идентификаторов (email/phone/inn) + пароль и опциональная роль."
     email: EmailStr | None = Field(None, description="Почта пользователя")
     phone: str | None = Field(None, description="Номер телефона пользователя")
     inn: str | None = Field(None, description="ИНН пользователя")
@@ -17,6 +18,7 @@ class UserLogin(BaseModel):
 
 
 class UserResponse(BaseModel):
+    "Минимальная карточка пользователя после входа."
     id: int
     role: str
     inn: str | None = None
@@ -35,14 +37,17 @@ class RoleChoiceResponse(BaseModel):
 
 
 class AvailableRoleItem(BaseModel):
+    "Одна из доступных ролей пользователя с признаком подтверждения email."
     role: UserRole
     email_verified: bool
 
 
 class AvailableRolesResponse(BaseModel):
+    "Список ролей, доступных пользователю для входа."
     roles: list[AvailableRoleItem]
 
 
 class SwitchRoleRequest(BaseModel):
+    "Payload смены активной роли с подтверждением паролем."
     role: UserRole
     password: str = Field(..., min_length=1)

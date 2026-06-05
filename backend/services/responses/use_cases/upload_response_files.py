@@ -1,3 +1,4 @@
+"Use case: upload response files."
 from fastapi import HTTPException, UploadFile, status
 
 from models.response import OrderResponse
@@ -9,12 +10,13 @@ MAX_RESPONSE_FILES = 6
 
 
 class UploadResponseFilesUseCase:
+    "Сценарий приложения: координирует репозитории и сервисы."
     def __init__(
         self,
         repo: ResponseRepository,
         get_response: GetResponseByIdUseCase,
         files: ResponseFileStorage,
-    ):
+    ) -> None:
         self.repo = repo
         self.get_response = get_response
         self.files = files
@@ -25,6 +27,7 @@ class UploadResponseFilesUseCase:
         expert_id: int,
         uploads: list[UploadFile],
     ) -> OrderResponse:
+        "Запускает основной сценарий use case."
         response = await self.get_response.execute(response_id)
         self.ensure_owner(response, expert_id)
         self.ensure_not_empty(uploads)
@@ -40,6 +43,7 @@ class UploadResponseFilesUseCase:
 
     @staticmethod
     def ensure_owner(response: OrderResponse, expert_id: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if response.expert_id == expert_id:
             return
         raise HTTPException(
@@ -49,6 +53,7 @@ class UploadResponseFilesUseCase:
 
     @staticmethod
     def ensure_not_empty(uploads: list[UploadFile]) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if uploads:
             return
         raise HTTPException(
@@ -58,6 +63,7 @@ class UploadResponseFilesUseCase:
 
     @staticmethod
     def ensure_total_limit(existing_count: int, new_count: int) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if existing_count + new_count <= MAX_RESPONSE_FILES:
             return
         raise HTTPException(

@@ -1,3 +1,4 @@
+"Файловое хранилище: сохранение/удаление файлов на диске."
 import asyncio
 from pathlib import Path
 from uuid import uuid4
@@ -19,6 +20,7 @@ class AvatarStorage:
 
     @staticmethod
     def validate_upload(filename: str, content_type: str) -> str:
+        "Валидирует переданные данные."
         extension = Path(filename).suffix.lower()
         if extension not in AVATAR_ALLOWED_EXTENSIONS:
             raise HTTPException(
@@ -35,6 +37,7 @@ class AvatarStorage:
 
     @classmethod
     async def save(cls, user: User, file: UploadFile) -> str:
+        "Сохраняет файл/сущность."
         extension = cls.validate_upload(file.filename or "", file.content_type or "")
 
         upload_dir = BACKEND_ROOT / "uploads" / "avatars" / str(user.id)

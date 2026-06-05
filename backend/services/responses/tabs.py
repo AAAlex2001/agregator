@@ -1,8 +1,10 @@
+"Сервисный модуль: tabs."
 from models.response import ResponseStatus
 from schemas.response import ResponseTab
 
 
 def statuses_for_tab(tab: ResponseTab | None) -> list[ResponseStatus] | None:
+    "Публичный метод сервисного слоя."
     if tab is None or tab == ResponseTab.ALL:
         return [
             ResponseStatus.REVIEW,

@@ -1,3 +1,4 @@
+"Use case: create response status changed notification."
 from models.notification import Notification, NotificationType
 from models.response import ResponseStatus
 from models.user import UserRole
@@ -11,7 +12,7 @@ from services.notifications.repository import NotificationRepository
 class CreateResponseStatusChangedNotificationUseCase:
     "In-app уведомление о смене статуса отклика (заказчику или эксперту)."
 
-    def __init__(self, repo: NotificationRepository):
+    def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(
@@ -25,6 +26,7 @@ class CreateResponseStatusChangedNotificationUseCase:
         action_url: str | None = None,
         rejection_reason: str | None = None,
     ) -> Notification:
+        "Запускает основной сценарий use case."
         payload = ResponseStatusChangedNotificationPayload(
             order_title=order_title,
             actor_role=actor_role,

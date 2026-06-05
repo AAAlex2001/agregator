@@ -1,3 +1,4 @@
+"Файловое хранилище: сохранение/удаление файлов на диске."
 from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
@@ -19,6 +20,7 @@ class ExpertRoomFileStorage:
     "Сохраняет вложения для сообщений чата экспертов. Те же ограничения, что и в обычном чате."
 
     async def save(self, uploads: list[UploadFile]) -> list[ChatAttachmentData]:
+        "Сохраняет файл/сущность."
         self.ensure_limit(uploads)
         upload_dir = BACKEND_ROOT / "uploads" / "expert-room" / self.current_month_dir()
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -28,6 +30,7 @@ class ExpertRoomFileStorage:
     async def save_one(
         self, upload_dir: Path, upload: UploadFile
     ) -> ChatAttachmentData:
+        "Публичный метод сервисного слоя."
         extension = Path(upload.filename or "").suffix.lower()
         self.ensure_extension_allowed(extension)
 
@@ -44,11 +47,13 @@ class ExpertRoomFileStorage:
 
     @staticmethod
     def current_month_dir() -> str:
+        "Публичный метод сервисного слоя."
         now = datetime.now(UTC)
         return f"{now.year:04d}-{now.month:02d}"
 
     @staticmethod
     def ensure_limit(uploads: list[UploadFile]) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if len(uploads) <= MAX_ATTACHMENTS:
             return
         raise HTTPException(
@@ -58,6 +63,7 @@ class ExpertRoomFileStorage:
 
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if extension in ALLOWED_EXTENSIONS:
             return
         raise HTTPException(

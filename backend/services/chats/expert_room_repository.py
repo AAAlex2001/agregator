@@ -1,3 +1,4 @@
+"Сервисный модуль: expert room repository."
 from datetime import UTC, datetime
 
 from sqlalchemy import select
@@ -12,10 +13,11 @@ from models.user import User
 class ExpertRoomRepository:
     "Все обращения к БД по общему чату экспертов."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def find_active_session(self, session_id: str) -> Session | None:
+        "Ищет сущность по заданным параметрам."
         session = (
             await self.db.execute(
                 select(Session).where(Session.session_id == session_id)
@@ -29,11 +31,13 @@ class ExpertRoomRepository:
         return session
 
     async def find_user(self, user_id: int) -> User | None:
+        "Ищет сущность по заданным параметрам."
         return (
             await self.db.execute(select(User).where(User.id == user_id))
         ).scalars().first()
 
     async def is_banned(self, user_id: int) -> bool:
+        "Признак: соответствует ли сущность условию."
         ban_id = (
             await self.db.execute(
                 select(ExpertRoomBan.id).where(ExpertRoomBan.user_id == user_id)
@@ -42,6 +46,7 @@ class ExpertRoomRepository:
         return ban_id is not None
 
     async def find_ban(self, user_id: int) -> ExpertRoomBan | None:
+        "Ищет сущность по заданным параметрам."
         return (
             await self.db.execute(
                 select(ExpertRoomBan).where(ExpertRoomBan.user_id == user_id)
@@ -51,6 +56,7 @@ class ExpertRoomRepository:
     async def list_messages(
         self, before_id: int | None, limit: int
     ) -> list[ExpertRoomMessage]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         query = (
             select(ExpertRoomMessage)
             .options(selectinload(ExpertRoomMessage.sender))
@@ -62,5 +68,6 @@ class ExpertRoomRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def add_message(self, message: ExpertRoomMessage) -> None:
+        "Добавляет связанные данные."
         self.db.add(message)
         await self.db.flush()

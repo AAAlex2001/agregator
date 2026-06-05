@@ -9,6 +9,7 @@ MAX_SIZE = 5 * 1024 * 1024
 
 
 async def save_company_card(owner_key: str, file: UploadFile) -> str:
+    "Публичный метод сервисного слоя."
     return await save_uploaded_file(
         subdir="company-cards",
         owner_key=owner_key,
@@ -22,4 +23,5 @@ async def save_company_card(owner_key: str, file: UploadFile) -> str:
 
 
 def remove_company_card(file_url: str | None) -> None:
+    "Удаляет ресурс."
     remove_uploaded_file(file_url)

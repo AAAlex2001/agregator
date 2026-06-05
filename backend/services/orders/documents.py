@@ -1,3 +1,4 @@
+"Сервисный модуль: documents."
 from models.order import Order
 from schemas.order import OrderDocuments
 
@@ -7,6 +8,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def from_order(order: Order) -> OrderDocuments:
+        "Публичный метод сервисного слоя."
         return OrderDocuments(
             technical=list(order.technical_files or []),
             contract=list(order.contract_files or []),
@@ -16,6 +18,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def from_order_previous(order: Order) -> OrderDocuments | None:
+        "Публичный метод сервисного слоя."
         snapshots = (
             order.previous_technical_files,
             order.previous_contract_files,
@@ -33,6 +36,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def write(order: Order, documents: OrderDocuments) -> None:
+        "Публичный метод сервисного слоя."
         order.technical_files = list(documents.technical)
         order.contract_files = list(documents.contract)
         order.company_files = list(documents.company)
@@ -40,6 +44,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def write_previous(order: Order, documents: OrderDocuments) -> None:
+        "Публичный метод сервисного слоя."
         order.previous_technical_files = list(documents.technical)
         order.previous_contract_files = list(documents.contract)
         order.previous_company_files = list(documents.company)
@@ -47,6 +52,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def merge(left: OrderDocuments, right: OrderDocuments) -> OrderDocuments:
+        "Публичный метод сервисного слоя."
         return OrderDocuments(
             technical=[*left.technical, *right.technical],
             contract=[*left.contract, *right.contract],
@@ -56,6 +62,7 @@ class OrderDocumentsService:
 
     @staticmethod
     def count(documents: OrderDocuments) -> int:
+        "Возвращает количество подходящих записей."
         return (
             len(documents.technical) + len(documents.contract)
             + len(documents.company) + len(documents.other)

@@ -1,3 +1,4 @@
+"Use case: send new order email."
 from models.order import Order
 from models.user import User
 from schemas.email import NewOrderContext, OrderBrief
@@ -13,11 +14,12 @@ CTA_URL = "https://plus-resurs.com/expert/orders"
 class SendNewOrderEmailUseCase:
     "Письмо о новой заявке только экспертам, чей фильтр кодов пересекается с бейджами заказа."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, order_id: int) -> None:
+        "Запускает основной сценарий use case."
         order = await self.repo.find_order(order_id)
         if order is None:
             return
@@ -35,6 +37,7 @@ class SendNewOrderEmailUseCase:
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
 
     def build_context(self, order: Order, expert: User) -> NewOrderContext:
+        "Строит объект из входных данных."
         return NewOrderContext(
             expert_greeting=greeting_for(expert),
             order_title=order.title or f"Заказ #{order.id}",

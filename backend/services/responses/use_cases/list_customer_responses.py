@@ -1,3 +1,4 @@
+"Use case: list customer responses."
 from models.response import OrderResponse, ResponseStatus
 from schemas.response import ResponseCounters, ResponseTab
 from services.responses.repository import ResponseRepository
@@ -6,7 +7,8 @@ from services.responses.validators import ResponseValidator
 
 
 class ListCustomerResponsesUseCase:
-    def __init__(self, repo: ResponseRepository, validator: ResponseValidator):
+    "Сценарий приложения: координирует репозитории и сервисы."
+    def __init__(self, repo: ResponseRepository, validator: ResponseValidator) -> None:
         self.repo = repo
         self.validator = validator
 
@@ -19,6 +21,7 @@ class ListCustomerResponsesUseCase:
         sort_by: str = "created_at",
         sort_dir: str = "desc",
     ) -> tuple[list[OrderResponse], bool, ResponseCounters]:
+        "Запускает основной сценарий use case."
         await self.validator.ensure_customer(customer_id)
         status_filters = statuses_for_tab(tab)
         items, has_more = await self.repo.list_customer_responses(
@@ -30,13 +33,15 @@ class ListCustomerResponsesUseCase:
         return items, has_more, self.build_counters(counters_map)
 
     async def mark_reviewed(self, customer_id: int, items: list[OrderResponse]) -> None:
+        "Отмечает сущность соответствующим состоянием."
         response_ids = [item.id for item in items]
         reviewed_ids = await self.repo.reviewed_response_ids(customer_id, response_ids)
         for item in items:
-            item.has_review_for_customer = item.id in reviewed_ids
+            item.has_review_for_customer = item.id in reviewed_ids  # type: ignore[attr-defined]
 
     @staticmethod
     def build_counters(counters_map: dict[ResponseStatus, int]) -> ResponseCounters:
+        "Строит объект из входных данных."
         return ResponseCounters(
             all=(
                 counters_map.get(ResponseStatus.REVIEW, 0)

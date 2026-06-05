@@ -20,7 +20,8 @@ async def create_review(
     payload: CreateReviewRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> CreateReviewResponse:
+    "Заказчик создаёт отзыв об эксперте по завершённому отклику."
     service = ReviewService(db)
     await service.create_review(
         actor_id=user_id,
@@ -37,7 +38,8 @@ async def get_my_reviews(
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> ReviewListResponse:
+    "Возвращает отзывы, полученные текущим экспертом, с агрегатами."
     service = ReviewService(db)
     items, has_more, total_reviews, avg_rating = await service.get_expert_reviews(user_id, skip, limit)
     return ReviewListResponse(
@@ -54,7 +56,8 @@ async def get_expert_public_reviews(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
-):
+) -> PublicExpertReviewsResponse:
+    "Публичные отзывы эксперта по public_id с пагинацией."
     service = ReviewService(db)
     data = await service.get_expert_reviews_by_public_id(public_id, skip, limit)
     return PublicExpertReviewsResponse(

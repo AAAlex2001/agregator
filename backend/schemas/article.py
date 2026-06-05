@@ -7,6 +7,7 @@ ArticleKindDto = Literal["news", "blog"]
 
 
 class ArticleListItemDto(BaseModel):
+    "Карточка статьи в списке новостей/блога."
     id: int
     kind: ArticleKindDto
     slug: str
@@ -18,11 +19,13 @@ class ArticleListItemDto(BaseModel):
 
 
 class ArticleListDto(BaseModel):
+    "Постраничный ответ со списком статей."
     items: list[ArticleListItemDto]
     has_more: bool
 
 
 class ArticleDetailDto(BaseModel):
+    "Полная карточка статьи для страницы публикации (с SEO-метаданными и HTML-контентом)."
     id: int
     kind: ArticleKindDto
     slug: str

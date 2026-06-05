@@ -1,3 +1,4 @@
+"Use case: confirm email change."
 from fastapi import HTTPException, status
 
 from models.user import User
@@ -8,11 +9,12 @@ from services.settings.validators import SettingsValidator
 class ConfirmEmailChangeUseCase:
     "Применяет смену email после ввода кода с нового адреса."
 
-    def __init__(self, repo: SettingsRepository, validator: SettingsValidator):
+    def __init__(self, repo: SettingsRepository, validator: SettingsValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, user_id: int, code: str) -> User:
+        "Запускает основной сценарий use case."
         user = await self.validator.get_user_or_404(user_id)
         request = await self.repo.find_email_change(user_id)
 

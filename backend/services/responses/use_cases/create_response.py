@@ -1,4 +1,5 @@
-from datetime import UTC, datetime
+"Use case: create response."
+from datetime import UTC, date, datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
@@ -16,6 +17,7 @@ from utils.inn import is_valid_inn
 
 
 class CreateResponseUseCase:
+    "Сценарий приложения: координирует репозитории и сервисы."
     def __init__(
         self,
         repo: ResponseRepository,
@@ -23,7 +25,7 @@ class CreateResponseUseCase:
         get_response: GetResponseByIdUseCase,
         in_app: ResponseInAppNotifier,
         subscription_access: SubscriptionAccess | None = None,
-    ):
+    ) -> None:
         self.repo = repo
         self.validator = validator
         self.get_response = get_response
@@ -36,6 +38,7 @@ class CreateResponseUseCase:
         expert_id: int,
         data: ResponseCreate,
     ) -> OrderResponse:
+        "Запускает основной сценарий use case."
         await self.validator.ensure_expert(expert_id)
         order = await self.ensure_order_open(order_id)
 
@@ -67,6 +70,7 @@ class CreateResponseUseCase:
         return created
 
     async def ensure_order_open(self, order_id: int) -> Order:
+        "Бросает HTTPException, если условие не выполнено."
         order = await self.repo.get_order_by_id(order_id)
         if order is None:
             raise HTTPException(
@@ -82,6 +86,7 @@ class CreateResponseUseCase:
 
     @staticmethod
     def check_budget(order: Order, proposed: int) -> None:
+        "Проверяет условие и возвращает результат."
         if order.sum_amount > 0 and proposed > order.sum_amount:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -89,7 +94,10 @@ class CreateResponseUseCase:
             )
 
     @staticmethod
-    def check_dates(order: Order, proposed_start_date, proposed_deadline) -> None:
+    def check_dates(
+        order: Order, proposed_start_date: date | None, proposed_deadline: date
+    ) -> None:
+        "Проверяет условие и возвращает результат."
         if proposed_deadline > order.deadline:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -112,6 +120,7 @@ class CreateResponseUseCase:
 
     @staticmethod
     def check_responses_deadline(order: Order) -> None:
+        "Проверяет условие и возвращает результат."
         if order.responses_deadline and datetime.now(UTC) > order.responses_deadline:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -123,6 +132,7 @@ class CreateResponseUseCase:
         order: Order,
         data: ResponseCreate,
     ) -> tuple[str | None, dict[str, object] | None]:
+        "Публичный метод сервисного слоя."
         if not order.requires_license:
             return None, None
 
@@ -139,6 +149,7 @@ class CreateResponseUseCase:
         return data.expert_inn, data.expert_company_data
 
     async def check_not_duplicated(self, order_id: int, expert_id: int) -> None:
+        "Проверяет условие и возвращает результат."
         existing = await self.repo.find_existing_response(order_id, expert_id)
         if existing is None:
             return
@@ -155,6 +166,7 @@ class CreateResponseUseCase:
         expert_inn: str | None,
         expert_company_data: dict[str, object] | None,
     ) -> OrderResponse:
+        "Строит объект из входных данных."
         return OrderResponse(
             order_id=order_id,
             expert_id=expert_id,
@@ -169,6 +181,7 @@ class CreateResponseUseCase:
         )
 
     async def flush_or_reject(self) -> None:
+        "Сбрасывает изменения в БД или бросает 400 при конфликте."
         try:
             await self.repo.flush()
         except IntegrityError:

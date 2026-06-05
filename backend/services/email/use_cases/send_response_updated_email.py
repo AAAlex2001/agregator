@@ -1,3 +1,4 @@
+"Use case: send response updated email."
 from models.response import OrderResponse
 from models.user import User
 from schemas.email import ExpertBrief, ResponseBrief, ResponseUpdatedContext
@@ -14,11 +15,12 @@ PREFERENCE_FIELD = "email_on_response_updated"
 class SendResponseUpdatedEmailUseCase:
     "Заказчик получает письмо, когда эксперт меняет стоимость/срок/комментарий/файлы отклика."
 
-    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher):
+    def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
         self.dispatcher = dispatcher
 
     async def execute(self, response_id: int, changes_summary: str) -> None:
+        "Запускает основной сценарий use case."
         if not changes_summary:
             return
 
@@ -39,6 +41,7 @@ class SendResponseUpdatedEmailUseCase:
         customer: User,
         changes_summary: str,
     ) -> ResponseUpdatedContext:
+        "Строит объект из входных данных."
         order = response.order
         expert = response.expert
         order_title = (order.title if order else None) or f"Заказ #{response.order_id}"

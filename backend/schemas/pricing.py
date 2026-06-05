@@ -25,10 +25,12 @@ class PricingPlanResponse(BaseModel):
 
 
 class PricingPlansResponse(BaseModel):
+    "Список всех тарифов для витрины."
     plans: list[PricingPlanResponse]
 
 
 class UserSubscriptionResponse(BaseModel):
+    "Карточка активной подписки пользователя в личном кабинете."
     id: int
     plan_id: int
     plan_name: str
@@ -42,10 +44,12 @@ class UserSubscriptionResponse(BaseModel):
 
 
 class SubscribeRequest(BaseModel):
+    "Payload оформления подписки: id тарифа и URL возврата после оплаты."
     plan_id: int = Field(..., ge=1)
     return_url: str = Field(..., min_length=1)
 
 
 class SubscribeResponse(BaseModel):
+    "Ответ на оформление подписки: id записи и URL подтверждения платежа."
     subscription_id: int
     confirmation_url: str

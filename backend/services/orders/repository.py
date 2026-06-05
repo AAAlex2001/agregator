@@ -1,4 +1,5 @@
 
+"Repository: доступ к БД для orders."
 from sqlalchemy import delete, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -12,10 +13,11 @@ from utils.pagination import paginate_with_has_more
 class OrderRepository:
     "Все обращения к БД по сущности Order. Никакой бизнес-логики — только данные."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     async def get_by_id(self, order_id: int) -> Order | None:
+        "Возвращает сущность по идентификатору."
         query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -25,6 +27,7 @@ class OrderRepository:
         return result.scalars().first()
 
     async def get_by_public_id(self, public_id: str) -> Order | None:
+        "Возвращает сущность по публичному идентификатору."
         query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -40,6 +43,7 @@ class OrderRepository:
         status_filter: OrderStatus | None,
         user_id: int | None,
     ) -> tuple[list[Order], bool]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -132,24 +136,31 @@ class OrderRepository:
         return set((await self.db.execute(query)).scalars().all())
 
     async def get_user_role(self, user_id: int) -> UserRole | None:
+        "Возвращает запрошенную сущность."
         query = select(User.role).where(User.id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none()
 
     async def user_exists(self, user_id: int) -> bool:
+        "Публичный метод сервисного слоя."
         query = select(User.id).where(User.id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none() is not None
 
     async def add(self, order: Order) -> None:
+        "Добавляет сущность в сессию."
         self.db.add(order)
 
     async def add_badges(self, badges: list[OrderBadge]) -> None:
+        "Добавляет связанные данные."
         self.db.add_all(badges)
 
     async def delete_badges_by_order(self, order_id: int) -> None:
+        "Удаляет сущность."
         await self.db.execute(delete(OrderBadge).where(OrderBadge.order_id == order_id))
 
     async def delete(self, order: Order) -> None:
+        "Удаляет переданную сущность."
         await self.db.delete(order)
 
     async def flush(self) -> None:
+        "Сбрасывает накопленные изменения в БД."
         await self.db.flush()

@@ -81,7 +81,8 @@ async def list_my_tickets(
     limit: int = Query(50, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> SupportTicketList:
+    "Возвращает тикеты текущего пользователя с пагинацией."
     use_case = ListUserTicketsUseCase(SupportRepository(db))
     items, has_more = await use_case.execute(user_id, skip, limit)
     return SupportTicketList(
@@ -98,7 +99,8 @@ async def create_my_ticket(
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> SupportTicketDetail:
+    "Создаёт новый тикет поддержки с темой, категорией и первым сообщением/вложениями."
     user = await get_user_or_404(db, user_id)
     repo = SupportRepository(db)
     storage = SupportFileStorage()
@@ -116,7 +118,8 @@ async def get_my_ticket(
     ticket_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> SupportTicketDetail:
+    "Возвращает детали тикета с историей сообщений; 404 если тикет чужой."
     use_case = GetTicketForUserUseCase(SupportRepository(db))
     ticket = await use_case.execute(ticket_id=ticket_id, user_id=user_id)
     return ticket_to_detail(ticket)
@@ -129,7 +132,8 @@ async def reply_to_my_ticket(
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-):
+) -> SupportTicketDetail:
+    "Добавляет ответ пользователя в тикет поддержки с опциональными вложениями."
     user = await get_user_or_404(db, user_id)
     repo = SupportRepository(db)
     storage = SupportFileStorage()

@@ -1,3 +1,4 @@
+"Use case: open chat."
 from fastapi import HTTPException, status
 
 from models.chat import Chat
@@ -10,11 +11,12 @@ from services.chats.validators import ChatValidator
 class OpenChatUseCase:
     "Открывает (или возвращает) чат по заказу для актёра. Идемпотентно."
 
-    def __init__(self, repo: ChatRepository, validator: ChatValidator):
+    def __init__(self, repo: ChatRepository, validator: ChatValidator) -> None:
         self.repo = repo
         self.validator = validator
 
     async def execute(self, actor_id: int, order_id: int) -> Chat:
+        "Запускает основной сценарий use case."
         actor = await self.validator.ensure_active_user(actor_id)
         order = await self.require_order(order_id)
 
@@ -41,6 +43,7 @@ class OpenChatUseCase:
         return chat
 
     async def require_order(self, order_id: int) -> Order:
+        "Возвращает требуемую сущность или бросает 404."
         order = await self.repo.find_order(order_id)
         if order is not None:
             return order
@@ -49,6 +52,7 @@ class OpenChatUseCase:
         )
 
     async def find_existing_for_actor(self, actor: User, order: Order) -> Chat | None:
+        "Ищет сущность по заданным параметрам."
         if actor.role == UserRole.CUSTOMER:
             return await self.repo.find_latest_chat_for_customer(order.id, actor.id)
         return await self.repo.find_latest_chat_for_expert(order.id, actor.id)

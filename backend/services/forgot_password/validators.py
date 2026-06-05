@@ -1,3 +1,4 @@
+"Бизнес-валидации для forgot_password."
 import re
 
 from fastapi import HTTPException, status
@@ -9,11 +10,12 @@ from services.forgot_password.repository import ForgotPasswordRepository
 class ForgotPasswordValidator:
     "Валидация контакта (email/phone), пароля и поиск пользователя."
 
-    def __init__(self, repo: ForgotPasswordRepository):
+    def __init__(self, repo: ForgotPasswordRepository) -> None:
         self.repo = repo
 
     @staticmethod
     def ensure_contact_provided(email: str | None, phone: str | None) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         if email or phone:
             return
         raise HTTPException(
@@ -23,6 +25,7 @@ class ForgotPasswordValidator:
 
     @staticmethod
     def ensure_password_strong(password: str) -> None:
+        "Бросает HTTPException, если условие не выполнено."
         errors = []
         if len(password) < 6:
             errors.append("Не менее 6 символов")
@@ -39,6 +42,7 @@ class ForgotPasswordValidator:
             )
 
     async def find_user(self, email: str | None, phone: str | None) -> User:
+        "Ищет сущность по заданным параметрам."
         self.ensure_contact_provided(email, phone)
         user: User | None = None
         if email:

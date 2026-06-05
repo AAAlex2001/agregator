@@ -6,21 +6,25 @@ from schemas.order import OrderDocuments
 
 
 class CreateReviewRequest(BaseModel):
+    "Payload создания отзыва клиента на исполнителя по принятому отклику."
     response_id: int = Field(..., gt=0)
     rating: int = Field(..., ge=1, le=5)
     comment: str = Field(default="", max_length=5000)
 
 
 class CreateReviewResponse(BaseModel):
+    "Ответ на создание отзыва (сообщение о результате)."
     detail: str
 
 
 class ReviewBadgeItem(BaseModel):
+    "Бейдж заказа, отображаемый в карточке отзыва."
     text: str
     variant: str
 
 
 class ReviewItem(BaseModel):
+    "Карточка отзыва в списке: данные заказа + рейтинг + комментарий."
     id: int
     order_title: str
     company_name: str
@@ -41,6 +45,7 @@ class ReviewItem(BaseModel):
 
 
 class ReviewListResponse(BaseModel):
+    "Постраничный список отзывов с агрегатами (средний рейтинг, всего отзывов)."
     reviews: list[ReviewItem]
     has_more: bool
     total_reviews: int
@@ -48,6 +53,7 @@ class ReviewListResponse(BaseModel):
 
 
 class PublicExpertReviewsResponse(BaseModel):
+    "Публичная страница отзывов эксперта: его карточка + отзывы + агрегаты."
     expert_public_id: str
     expert_name: str
     expert_avatar_url: str | None = None

@@ -1,3 +1,4 @@
+"Repository: доступ к БД для subscriptions."
 from datetime import datetime
 
 from sqlalchemy import select, update
@@ -17,21 +18,25 @@ from models.user import User
 class SubscriptionRepository:
     "SQL-операции, нужные для подписок и связанных платежей."
 
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def add(self, entity) -> None:
+    async def add(self, entity: Payment | UserSubscription) -> None:
+        "Добавляет сущность в сессию."
         self.db.add(entity)
 
     async def flush(self) -> None:
+        "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
 
     async def find_user(self, user_id: int) -> User | None:
+        "Ищет сущность по заданным параметрам."
         return (
             await self.db.execute(select(User).where(User.id == user_id))
         ).scalars().first()
 
     async def find_plan(self, plan_id: int) -> PricingPlan | None:
+        "Ищет сущность по заданным параметрам."
         query = select(PricingPlan).where(
             PricingPlan.id == plan_id,
             PricingPlan.is_active.is_(True),
@@ -69,6 +74,7 @@ class SubscriptionRepository:
         return (await self.db.execute(query)).scalars().first()
 
     async def find_by_payment_yookassa(self, yookassa_id: str) -> UserSubscription | None:
+        "Ищет сущность по заданным параметрам."
         query = (
             select(UserSubscription)
             .join(Payment, Payment.id == UserSubscription.payment_id)
