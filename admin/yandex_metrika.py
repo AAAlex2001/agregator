@@ -75,18 +75,19 @@ def fetch_raw(metrics: str, since: date, until: date, dimensions: str = "", limi
 
 
 def summary_for_period(days: int) -> MetrikaSummary:
-    "Суммарные показатели за последние N дней (визиты/посетители/просмотры/% отказов)."
+    "Суммарные показатели за последние N дней (визиты/посетители/просмотры/% отказов). Защищён от пустых totals."
     data = fetch_raw(
         metrics="ym:s:visits,ym:s:users,ym:s:pageviews,ym:s:bounceRate",
         since=date.today() - timedelta(days=days - 1),
         until=date.today(),
     )
-    totals = data.get("totals", [[0, 0, 0, 0.0]])[0]
+    totals_list = data.get("totals") or []
+    totals = totals_list[0] if totals_list else [0, 0, 0, 0.0]
     return MetrikaSummary(
-        visits=int(totals[0] or 0),
-        users=int(totals[1] or 0),
-        pageviews=int(totals[2] or 0),
-        bounce_rate=float(totals[3] or 0.0),
+        visits=int(totals[0] if len(totals) > 0 and totals[0] is not None else 0),
+        users=int(totals[1] if len(totals) > 1 and totals[1] is not None else 0),
+        pageviews=int(totals[2] if len(totals) > 2 and totals[2] is not None else 0),
+        bounce_rate=float(totals[3] if len(totals) > 3 and totals[3] is not None else 0.0),
     )
 
 
@@ -149,10 +150,10 @@ def collect_dashboard() -> MetrikaDashboard:
             traffic_sources=traffic_sources(30),
             daily=daily_visits(30),
         )
-    except httpx.HTTPError as exc:
+    except (httpx.HTTPError, KeyError, IndexError, ValueError, TypeError) as exc:
         return MetrikaDashboard(
             enabled=True,
-            error=f"Ошибка Я.Метрики: {exc}",
+            error=f"Ошибка Я.Метрики: {type(exc).__name__}: {exc}",
             day=None, week=None, month=None,
             traffic_sources=[], daily=[],
         )
