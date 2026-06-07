@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { cookies } from "next/headers";
 import Script from "next/script";
 import { SITE_URL } from "@/source/shared/api/config";
 import { NotificationProvider } from "@/source/shared/ui/Notifications";
+import { CookiesBanner } from "@/source/widgets/cookies-banner";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108708847;
@@ -64,6 +66,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const cookiesAccepted = cookieStore.get("cookies_accepted")?.value === "true";
+
   return (
     <html lang="ru" className={montserrat.className}>
       <body className="antialiased">
@@ -79,6 +84,7 @@ export default async function RootLayout({
         <NotificationProvider>
           {children}
         </NotificationProvider>
+        {!cookiesAccepted && <CookiesBanner />}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
           strategy="afterInteractive"
