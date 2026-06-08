@@ -3,6 +3,7 @@ import { AuthGuard, SessionProvider } from "@/source/features/session";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 import { AppShell } from "@/source/widgets/app-shell";
 import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
+import { LayoutFooter } from "@/source/widgets/layout-footer";
 import { SidebarMobileProvider } from "@/source/widgets/sidebar";
 import { LicenseHoldersDrawerProvider } from "@/source/widgets/license-holders-drawer";
 import { UnreadCountProvider } from "@/source/features/notifications";
@@ -31,6 +32,7 @@ export default async function AppLayout({
             <LicenseHoldersDrawerProvider>
               <div className={s.root}>
                 <AppShell>{children}</AppShell>
+                <LayoutFooter />
               </div>
               <CabinetMenuTabs />
               <NotificationsWelcomeModal />
