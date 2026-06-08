@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { LandingFooter } from "@/source/widgets/landing";
+import LandingFooter from "@/source/widgets/landing/ui/Footer";
 
 const SKIP_ROUTES = [/^\/$/, /^\/landing(?:\/.*)?$/];
 
