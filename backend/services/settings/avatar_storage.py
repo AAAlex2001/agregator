@@ -1,6 +1,7 @@
 "Файловое хранилище: сохранение/удаление файлов на диске."
 import asyncio
-from pathlib import Path
+import logging
+from pathlib import Path, PurePosixPath
 from uuid import uuid4
 
 import aiofiles
@@ -13,6 +14,8 @@ AVATAR_ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/jpg", "image/png"}
 AVATAR_MAX_SIZE = 5 * 1024 * 1024
 UPLOAD_CHUNK_SIZE = 1024 * 1024
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
+
+logger = logging.getLogger(__name__)
 
 
 class AvatarStorage:
@@ -48,7 +51,13 @@ class AvatarStorage:
         previous_path: Path | None = None
 
         if user.avatar_url and user.avatar_url.startswith(f"/uploads/avatars/{user.id}/"):
-            previous_path = BACKEND_ROOT / user.avatar_url.lstrip("/")
+            relative_subpath = PurePosixPath(user.avatar_url).relative_to("/")
+            candidate = Path(BACKEND_ROOT, *relative_subpath.parts).resolve()
+            uploads_root = Path(BACKEND_ROOT, "uploads").resolve()
+            if uploads_root in candidate.parents:
+                previous_path = candidate
+            else:
+                logger.warning("Отклонён путь предыдущего аватара вне uploads: %s", user.avatar_url)
 
         total = 0
         try:

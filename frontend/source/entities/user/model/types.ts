@@ -28,7 +28,7 @@ export interface LicenseHolderRegisterPayload {
   password: string;
   phone: string;
   inn: string;
-  company_data: Record<string, unknown>;
+  company_data: CompanyData;
   license_number: string;
   license_areas: string[];
   license_rental_kind: LicenseRentalKind;

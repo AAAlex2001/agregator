@@ -9,6 +9,14 @@ interface RequestOptions {
   credentials?: RequestCredentials;
 }
 
+/**
+ * UNSAFE: when the server returns an empty body, this function returns `undefined`
+ * cast as `T`. Callers that declare a non-nullable `T` must only invoke this for
+ * endpoints that are guaranteed to return a JSON body. For endpoints that may
+ * return empty bodies, either `await` and discard the result or call with a
+ * nullable type argument (e.g. `fetchBase<T | null>`).
+ * TODO: change the signature to `Promise<T | null>` and update callers.
+ */
 export async function fetchBase<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, token, credentials } = options;
 

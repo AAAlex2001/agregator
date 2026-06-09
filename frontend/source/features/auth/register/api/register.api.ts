@@ -1,8 +1,8 @@
-import { fetchBase } from "@/source/shared/api/base";
+﻿import { fetchBase } from "@/source/shared/api/base";
 import { API_URL } from "@/source/shared/api/config";
-import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
+import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import { toRussianPhoneApiValue } from "@/source/shared/lib/phone";
-import type { LicenseHolderRegisterPayload } from "@/source/entities/user";
+import type { CompanyData, LicenseHolderRegisterPayload } from "@/source/entities/user";
 import type { RegisterApiPayload, RegisterResponse } from "../model/types";
 import type { RegisterFormValues } from "../model/schema";
 
@@ -17,7 +17,7 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayloa
     last_name: values.lastName || undefined,
     inn: role === "CUSTOMER" ? (values.companyData?.data?.inn ?? "") : undefined,
     company_data: role === "CUSTOMER"
-      ? (values.companyData as Record<string, unknown> | null)
+      ? (values.companyData as CompanyData | null)
       : null,
   };
 }
@@ -28,7 +28,7 @@ export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolde
     password: values.password,
     phone: toRussianPhoneApiValue(values.phone),
     inn: values.companyData?.data?.inn ?? "",
-    company_data: values.companyData as Record<string, unknown>,
+    company_data: values.companyData as CompanyData,
     license_number: values.licenseNumber.trim(),
     license_areas: values.licenseAreas,
     license_rental_kind: values.rentalKind,

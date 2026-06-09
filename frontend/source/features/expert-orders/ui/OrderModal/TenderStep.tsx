@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Button } from "@/shared/ui";
+import { Button } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import base from "./sectionBase.module.scss";
 import { ModalHeader } from "./ModalHeader";

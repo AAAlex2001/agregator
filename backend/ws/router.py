@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -19,9 +20,23 @@ from ws.manager import chat_manager
 
 router = APIRouter(prefix="/ws")
 
+ALLOWED_WS_ORIGINS = {
+    o.strip()
+    for o in os.getenv(
+        "CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000"
+    ).split(",")
+    if o.strip()
+}
+MAX_WS_PAYLOAD_BYTES = 100 * 1024
+
 
 @router.websocket("/chats/{chat_uuid}")
 async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
+    origin = websocket.headers.get("origin", "")
+    if origin and origin not in ALLOWED_WS_ORIGINS:
+        await websocket.close(code=4001)
+        return
+
     session_id = websocket.cookies.get("session_id")
     if not session_id:
         await websocket.close(code=4001)
@@ -72,7 +87,10 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
 
     try:
         while True:
-            await websocket.receive_text()
+            raw = await websocket.receive_text()
+            if len(raw.encode("utf-8")) > MAX_WS_PAYLOAD_BYTES:
+                await websocket.close(code=1009)
+                break
     except (WebSocketDisconnect, Exception):
         pass
     finally:
@@ -85,6 +103,11 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
 
 @router.websocket("/expert-room")
 async def expert_room_websocket(websocket: WebSocket) -> None:
+    origin = websocket.headers.get("origin", "")
+    if origin and origin not in ALLOWED_WS_ORIGINS:
+        await websocket.close(code=4001)
+        return
+
     async with AsyncSessionLocal() as db:
         try:
             info = await AuthenticateExpertRoomWsUseCase(
@@ -99,13 +122,22 @@ async def expert_room_websocket(websocket: WebSocket) -> None:
     )
 
     await expert_room_manager.connect(websocket, info.user_id, info.display_name)
+    parse_failures = 0
     try:
         while True:
             raw = await websocket.receive_text()
+            if len(raw.encode("utf-8")) > MAX_WS_PAYLOAD_BYTES:
+                await websocket.close(code=1009)
+                break
             try:
                 payload = json.loads(raw)
             except json.JSONDecodeError:
+                parse_failures += 1
+                if parse_failures > 5:
+                    await websocket.close(code=1002)
+                    break
                 continue
+            parse_failures = 0
             if isinstance(payload, dict) and payload.get("type") == "typing":
                 await expert_room_manager.broadcast(typing_event, except_ws=websocket)
     except WebSocketDisconnect:

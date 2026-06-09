@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.rate_limit import rate_limit
 from schemas.chat import (
     ChatDetailResponse,
     ChatListResponse,
@@ -200,7 +201,11 @@ async def mark_chat_read(
     return UpdatedCountResponse(updated=len(read_ids))
 
 
-@router.post("/{chat_uuid}/messages", response_model=ChatMessageResponse)
+@router.post(
+    "/{chat_uuid}/messages",
+    response_model=ChatMessageResponse,
+    dependencies=[Depends(rate_limit("chat_send", max_calls=10, window_seconds=60))],
+)
 async def send_message(
     chat_uuid: str,
     background_tasks: BackgroundTasks,

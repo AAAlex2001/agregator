@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { Button } from "@/shared/ui";
+import { Button } from "@/source/shared/ui";
 import { Modal } from "@/source/shared/ui";
 import s from "./DeleteRejectedModal.module.scss";
 

@@ -12,6 +12,9 @@ class PaymentAdmin(ModelView, model=Payment):
     name_plural = "Платежи"
     icon = "fa-solid fa-credit-card"
 
+    can_delete = False
+    can_edit = False
+
     column_list = [
         Payment.id, Payment.user, Payment.amount,
         Payment.payment_type, Payment.status,
@@ -63,6 +66,9 @@ class PricingPlanAdmin(ModelView, model=PricingPlan):
     name_plural = "Тарифы"
     icon = "fa-solid fa-tags"
     category = "Тарифы"
+
+    can_delete = False
+    can_edit = False
 
     column_list = [
         PricingPlan.id, PricingPlan.kind, PricingPlan.name,
@@ -124,6 +130,9 @@ class UserSubscriptionAdmin(ModelView, model=UserSubscription):
     name_plural = "Подписки пользователей"
     icon = "fa-solid fa-id-card"
     category = "Тарифы"
+
+    can_delete = False
+    can_edit = False
 
     column_list = [
         UserSubscription.id, UserSubscription.user, UserSubscription.plan,

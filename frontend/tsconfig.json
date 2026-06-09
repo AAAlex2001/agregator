@@ -20,10 +20,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/shared/*": ["./src/shared/*"],
-      "@/entities/*": ["./src/entities/*"],
-      "@/features/*": ["./src/features/*"],
-      "@/widgets/*": ["./src/widgets/*"]
+      "@/shared/*": ["./source/shared/*"],
+      "@/entities/*": ["./source/entities/*"],
+      "@/features/*": ["./source/features/*"],
+      "@/widgets/*": ["./source/widgets/*"]
     }
   },
   "include": [

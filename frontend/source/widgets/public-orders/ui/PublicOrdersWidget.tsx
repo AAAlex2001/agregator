@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +10,7 @@ import {
   type OrderCardData,
 } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
-import { Loader } from "@/shared/ui";
+import { Loader } from "@/source/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";

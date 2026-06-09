@@ -57,12 +57,14 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
 
+# CORS_ORIGINS: comma-separated list of allowed origins (e.g. "https://a.com,https://b.com").
+# Falls back to production + local dev defaults when the env var is not set.
+cors_origins_env = os.getenv("CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000")
+cors_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://plus-resurs.com",
-        "http://localhost:3000",
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

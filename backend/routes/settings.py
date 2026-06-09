@@ -60,6 +60,7 @@ async def get_profile(
     response.set_cookie(
         key="user_role",
         value=user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         path="/",
@@ -80,6 +81,7 @@ async def update_profile(
     response.set_cookie(
         key="user_role",
         value=user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         path="/",
@@ -180,7 +182,11 @@ async def confirm_email_change(
     return to_response(user)
 
 
-@router.post("/settings/avatar", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/avatar",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_avatar(
     response: Response,
     file: UploadFile = File(...),
@@ -193,6 +199,7 @@ async def upload_avatar(
     response.set_cookie(
         key="user_role",
         value=user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         path="/",
@@ -212,7 +219,11 @@ async def update_license(
     return to_response(user)
 
 
-@router.post("/settings/license-file", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/license-file",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_license_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -224,7 +235,11 @@ async def upload_license_file(
     return to_response(user)
 
 
-@router.post("/settings/mining-license-file", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/mining-license-file",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_mining_license_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -236,7 +251,11 @@ async def upload_mining_license_file(
     return to_response(user)
 
 
-@router.post("/settings/sro-design-file", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/sro-design-file",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_sro_design_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -248,7 +267,11 @@ async def upload_sro_design_file(
     return to_response(user)
 
 
-@router.post("/settings/lab-accreditation-file", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/lab-accreditation-file",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_lab_accreditation_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
@@ -260,7 +283,11 @@ async def upload_lab_accreditation_file(
     return to_response(user)
 
 
-@router.post("/settings/company-card", response_model=UserSettingsResponse)
+@router.post(
+    "/settings/company-card",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
 async def upload_company_card(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),

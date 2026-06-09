@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.rate_limit import rate_limit
 from models.support_ticket import (
     SupportTicket,
     SupportTicketMessage,
@@ -91,7 +92,11 @@ async def list_my_tickets(
     )
 
 
-@router.post("/support/tickets", response_model=SupportTicketDetail)
+@router.post(
+    "/support/tickets",
+    response_model=SupportTicketDetail,
+    dependencies=[Depends(rate_limit("support_ticket_create", max_calls=3, window_seconds=3600))],
+)
 async def create_my_ticket(
     subject: str = Form(..., min_length=1, max_length=200),
     category: TicketCategory = Form(...),
@@ -125,7 +130,11 @@ async def get_my_ticket(
     return ticket_to_detail(ticket)
 
 
-@router.post("/support/tickets/{ticket_id}/messages", response_model=SupportTicketDetail)
+@router.post(
+    "/support/tickets/{ticket_id}/messages",
+    response_model=SupportTicketDetail,
+    dependencies=[Depends(rate_limit("support_reply", max_calls=10, window_seconds=60))],
+)
 async def reply_to_my_ticket(
     ticket_id: int,
     text: str = Form(default="", max_length=5000),

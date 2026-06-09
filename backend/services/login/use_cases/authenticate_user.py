@@ -24,8 +24,8 @@ class AuthenticateUserUseCase:
         candidates = await self.find_candidates(data)
         if not candidates:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь не найден",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Неверный email/телефон или пароль",
             )
 
         matched = [
@@ -37,7 +37,7 @@ class AuthenticateUserUseCase:
         if not matched:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Неверный пароль",
+                detail="Неверный email/телефон или пароль",
             )
 
         if data.role is not None:

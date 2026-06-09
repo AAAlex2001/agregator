@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
-import { Button } from "@/shared/ui";
+﻿import type { ReactNode } from "react";
+import { Button } from "@/source/shared/ui";
 import Loader from "@/source/shared/ui/Loader";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
-import { ResponsesState } from "@/widgets/responses-state";
+import { ResponsesState } from "@/source/widgets/responses-state";
 import { ResponseCard } from "@/source/entities/response";
 import type { ResponseTabKey, UserRole } from "@/source/entities/response";
 import { getCardActions } from "@/source/features/responses";

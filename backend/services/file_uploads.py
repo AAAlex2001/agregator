@@ -1,5 +1,6 @@
 "Универсальное сохранение файлов на диск под uploads/<subdir>/<owner_key>/."
-from pathlib import Path
+import logging
+from pathlib import Path, PurePosixPath
 from uuid import uuid4
 
 import aiofiles
@@ -9,6 +10,8 @@ CHUNK_SIZE = 1024 * 1024
 DEFAULT_MAX_SIZE = 5 * 1024 * 1024
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
+
+logger = logging.getLogger(__name__)
 
 
 async def save_uploaded_file(
@@ -61,4 +64,10 @@ def remove_uploaded_file(file_url: str | None) -> None:
     "Удаляет ресурс."
     if not file_url:
         return
-    (BACKEND_ROOT / file_url.lstrip("/")).unlink(missing_ok=True)
+    relative_subpath = PurePosixPath(file_url).relative_to("/") if file_url.startswith("/") else PurePosixPath(file_url)
+    resolved_path = Path(BACKEND_ROOT, *relative_subpath.parts).resolve()
+    uploads_root = Path(BACKEND_ROOT, "uploads").resolve()
+    if uploads_root not in resolved_path.parents and resolved_path != uploads_root:
+        logger.warning("Отклонено удаление вне uploads: %s", file_url)
+        return
+    resolved_path.unlink(missing_ok=True)

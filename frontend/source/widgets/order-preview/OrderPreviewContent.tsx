@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Loader } from "@/shared/ui";
+import { Button, Loader } from "@/source/shared/ui";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { API_URL } from "@/source/shared/api/config";

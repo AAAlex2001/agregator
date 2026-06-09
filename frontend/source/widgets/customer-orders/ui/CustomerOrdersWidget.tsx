@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { Button } from "@/shared/ui";
+import { Button } from "@/source/shared/ui";
 import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";

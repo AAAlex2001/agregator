@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Button } from "@/shared/ui";
+import { Button } from "@/source/shared/ui";
 import { Modal } from "@/source/shared/ui";
 import s from "./RejectResponseModal.module.scss";
 

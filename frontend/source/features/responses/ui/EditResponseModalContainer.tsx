@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
-import { MAX_ATTACH_FILES_COUNT, mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
+import { MAX_ATTACH_FILES_COUNT, mergeFilesWithLimits } from "@/source/shared/lib/fileUploadValidation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { OrderCardData } from "@/source/entities/order";
 import type { ResponseCardData, VatKind } from "@/source/entities/response";

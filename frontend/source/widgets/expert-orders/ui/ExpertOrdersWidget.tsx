@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { DocumentsGallery, OrderCard, countDocuments } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
-import { Button, Loader } from "@/shared/ui";
+import { Button, Loader } from "@/source/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";

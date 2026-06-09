@@ -1,6 +1,6 @@
-import { API_URL } from "@/source/shared/api/config";
+﻿import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
-import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
+import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { OrdersApiList } from "@/source/entities/order";
 import type { DocumentsFormState } from "../model/formFiles";
 

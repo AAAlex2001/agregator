@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.rate_limit import rate_limit
 from models.order import OrderStatus
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus, VatKind
@@ -242,7 +243,11 @@ def to_item(
     )
 
 
-@router.post("/orders/{order_id}/responses", response_model=ExpertResponseItem)
+@router.post(
+    "/orders/{order_id}/responses",
+    response_model=ExpertResponseItem,
+    dependencies=[Depends(rate_limit("response_create", max_calls=5, window_seconds=60))],
+)
 async def create_response_for_order(
     order_id: int,
     background_tasks: BackgroundTasks,

@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { Modal } from "@/source/shared/ui";
-import { mergeFilesWithLimits } from "@/shared/lib/fileUploadValidation";
+import { mergeFilesWithLimits } from "@/source/shared/lib/fileUploadValidation";
 import { respondFormSchema, type RespondFormValues } from "../../model/respond.schema";
 import { loadDraft, saveDraft } from "../../model/responseDraft";
 import { DetailsStep } from "./DetailsStep";

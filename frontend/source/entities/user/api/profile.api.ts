@@ -1,6 +1,6 @@
-import { fetchWithSession } from "@/source/shared/api/session";
+﻿import { fetchWithSession } from "@/source/shared/api/session";
 import type { UserProfile } from "@/source/entities/user";
-import { stableMultipartFetch } from "@/shared/lib/stableMultipartFetch";
+import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { UpdateProfilePayload } from "../model/profilePayload";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";

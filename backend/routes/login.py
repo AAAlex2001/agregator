@@ -60,6 +60,7 @@ async def login_user(
     response.set_cookie(
         key="user_role",
         value=user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
@@ -92,6 +93,7 @@ async def refresh_session(
         response.set_cookie(
             key="user_role",
             value=session.user.role.value,
+            httponly=True,
             secure=True,
             samesite="none",
             max_age=remaining_seconds,
@@ -159,6 +161,7 @@ async def switch_role(
     response.set_cookie(
         key="user_role",
         value=target_user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         max_age=60 * 60 * 24 * SESSION_MAX_DAYS,

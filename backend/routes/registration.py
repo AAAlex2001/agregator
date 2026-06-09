@@ -107,6 +107,7 @@ async def confirm_email(
     response.set_cookie(
         key="user_role",
         value=user.role.value,
+        httponly=True,
         secure=True,
         samesite="none",
         max_age=cookie_max_age,
@@ -174,7 +175,11 @@ async def register_license_holder(
     return UserResponse.model_validate(user)
 
 
-@router.post("/party-suggestions", response_model=list[PartySuggestionResponse])
+@router.post(
+    "/party-suggestions",
+    response_model=list[PartySuggestionResponse],
+    dependencies=[Depends(rate_limit("party_suggestions", max_calls=10, window_seconds=60))],
+)
 async def get_party_suggestions(payload: PartySuggestionRequest) -> list[PartySuggestionResponse]:
     "Возвращает подсказки организаций из DaData по поисковой строке."
     service = DaDataService()

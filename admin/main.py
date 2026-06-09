@@ -12,7 +12,12 @@ from db import engine
 from views import ALL_VIEWS
 
 app = FastAPI(title="Ресурс-Плюс Админ-панель")
-app.add_middleware(SessionMiddleware, secret_key=ADMIN_SECRET)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=ADMIN_SECRET,
+    https_only=True,
+    same_site="strict",
+)
 setup_action_routes(app)
 
 admin = Admin(

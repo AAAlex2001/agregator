@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
+from dependencies.rate_limit import rate_limit
 from models.order import OrderStatus
 from schemas.common import OkResponse
 from schemas.order import (
@@ -64,7 +65,11 @@ def build_send_order_updated_email(
     )
 
 
-@router.get("/search", response_model=OrderListResponse)
+@router.get(
+    "/search",
+    response_model=OrderListResponse,
+    dependencies=[Depends(rate_limit("order_search", max_calls=30, window_seconds=60))],
+)
 async def search_orders_public(
     q: str = Query(..., min_length=1, max_length=200),
     skip: int = Query(0, ge=0),
@@ -140,7 +145,11 @@ async def get_order(
     return OrderResponse.from_order(order)
 
 
-@router.post("/", response_model=OrderResponse)
+@router.post(
+    "/",
+    response_model=OrderResponse,
+    dependencies=[Depends(rate_limit("order_create", max_calls=10, window_seconds=60))],
+)
 async def create_order(
     data: OrderCreate,
     background_tasks: BackgroundTasks,
@@ -159,7 +168,11 @@ async def create_order(
     return OrderResponse.from_order(order)
 
 
-@router.post("/create-with-files", response_model=OrderResponse)
+@router.post(
+    "/create-with-files",
+    response_model=OrderResponse,
+    dependencies=[Depends(rate_limit("order_create", max_calls=10, window_seconds=60))],
+)
 async def create_order_with_files(
     background_tasks: BackgroundTasks,
     title: str = Form(...),

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { CompanyData } from "@/source/entities/user";
 
 export type UserRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
 
@@ -23,7 +24,7 @@ export interface RegisterApiPayload {
   first_name?: string;
   last_name?: string;
   inn?: string;
-  company_data?: Record<string, unknown> | null;
+  company_data?: CompanyData | null;
 }
 
 export interface RegisterResponse {

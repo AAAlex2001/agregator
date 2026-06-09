@@ -1,4 +1,4 @@
-import { Title, Subtitle } from "@/shared/ui/Typography";
+﻿import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
 interface ResponsesStateProps {
   title: string;

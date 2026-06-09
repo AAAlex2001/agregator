@@ -1,4 +1,4 @@
-import { Button } from "@/shared/ui";
+﻿import { Button } from "@/source/shared/ui";
 import { Modal } from "@/source/shared/ui";
 import type { ResponseBadge } from "@/source/entities/response";
 import s from "./WithdrawResponseModal.module.scss";

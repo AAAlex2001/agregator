@@ -1,4 +1,4 @@
-import { createStableUploadFiles } from "@/shared/lib/stableUploadFiles";
+﻿import { createStableUploadFiles } from "@/source/shared/lib/stableUploadFiles";
 
 function isRetryableUploadError(error: unknown): boolean {
   if (!(error instanceof TypeError)) {
