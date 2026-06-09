@@ -12,6 +12,7 @@ from models.user import User, UserRole
 
 SESSION_TTL_DAYS = 7
 SESSION_MAX_DAYS = 14
+SESSION_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * SESSION_MAX_DAYS
 
 
 class LoginRepository:

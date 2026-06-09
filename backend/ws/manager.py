@@ -1,10 +1,15 @@
+import logging
 from collections import defaultdict
 from typing import Any
 
 from fastapi import WebSocket
+from pydantic import ValidationError
 from starlette.websockets import WebSocketState
 
 from ws.pubsub import ws_pubsub
+from ws.schemas import ChatBroadcastPayload
+
+log = logging.getLogger(__name__)
 
 CHAT_CHANNEL = "ws:chat:events"
 
@@ -43,11 +48,12 @@ class ChatConnectionManager:
 
     async def handle_event(self, payload: dict[str, Any]) -> None:
         "Хендлер pubsub-канала: рассылает событие по локальным сокетам этой реплики."
-        chat_id = payload.get("chat_id")
-        data = payload.get("data")
-        if not isinstance(chat_id, int) or not isinstance(data, dict):
+        try:
+            event = ChatBroadcastPayload.model_validate(payload)
+        except ValidationError as exc:
+            log.warning("ws chat: invalid broadcast payload rejected: %s", exc)
             return
-        await self.local_broadcast(chat_id, data)
+        await self.local_broadcast(event.chat_id, event.data)
 
     async def local_broadcast(self, chat_id: int, data: dict[str, Any]) -> None:
         "Прямая рассылка по сокетам, которые в памяти этой реплики."

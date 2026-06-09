@@ -9,6 +9,7 @@ from services.chats.formatters import ChatFormatter
 from services.chats.in_app_notifier import ChatInAppNotifier
 from services.chats.repository import ChatRepository
 from services.email import SendChatMessageEmailUseCase
+from services.file_uploads import remove_uploaded_file
 
 
 class SendMessageUseCase:
@@ -44,13 +45,18 @@ class SendMessageUseCase:
         attachments = await self.save_attachments(chat_id, non_empty_uploads)
 
         mark_as_read = recipient_online
-        message = self.build_message(
-            chat_id, sender_id, normalized_text, attachments, mark_as_read
-        )
-        await self.repo.add(message)
-        await self.repo.flush()
-        await self.repo.touch_chat(chat_id)
-        await self.repo.flush()
+        try:
+            message = self.build_message(
+                chat_id, sender_id, normalized_text, attachments, mark_as_read
+            )
+            await self.repo.add(message)
+            await self.repo.flush()
+            await self.repo.touch_chat(chat_id)
+            await self.repo.flush()
+        except Exception:
+            for attachment in attachments:
+                remove_uploaded_file(attachment.url)
+            raise
 
         await self.in_app.new_message(
             chat=chat,

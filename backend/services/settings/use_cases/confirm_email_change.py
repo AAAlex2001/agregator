@@ -15,7 +15,7 @@ class ConfirmEmailChangeUseCase:
 
     async def execute(self, user_id: int, code: str) -> User:
         "Запускает основной сценарий use case."
-        user = await self.validator.get_user_or_404(user_id)
+        user = await self.validator.require_user(user_id)
         request = await self.repo.find_email_change(user_id)
 
         if request is None or request.is_used:

@@ -1,11 +1,18 @@
 "Сервисный модуль: dadata."
 import os
-from typing import Any
+from typing import Any, TypedDict
 
 import httpx
 from fastapi import HTTPException, status
 
 DADATA_URL = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party"
+
+
+class PartySuggestion(TypedDict):
+    "Одна подсказка организации из DaData. Поле data — произвольный JSON от провайдера."
+    value: str
+    unrestricted_value: str
+    data: dict[str, Any]
 
 
 class DaDataService:
@@ -14,7 +21,7 @@ class DaDataService:
         self.token = os.getenv("DADATA_API_KEY", "")
         self.secret = os.getenv("DADATA_SECRET_KEY", "")
 
-    async def suggest_parties(self, query: str, count: int = 10) -> list[dict[str, Any]]:
+    async def suggest_parties(self, query: str, count: int = 10) -> list[PartySuggestion]:
         "Публичный метод сервисного слоя."
         if not self.token:
             raise HTTPException(

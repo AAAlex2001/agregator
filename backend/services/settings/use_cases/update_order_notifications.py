@@ -13,7 +13,7 @@ class UpdateOrderNotificationsUseCase:
 
     async def execute(self, user_id: int, order_types: list[str]) -> User:
         "Запускает основной сценарий use case."
-        user = await self.validator.get_user_or_404(user_id)
+        user = await self.validator.require_user(user_id)
         user.notify_order_types = order_types or None
         await self.repo.flush()
         return user

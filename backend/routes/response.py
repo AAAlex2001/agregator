@@ -322,7 +322,7 @@ async def get_my_responses(
     "Возвращает отклики текущего пользователя: для заказчика — по заказам, для эксперта — свои."
     repo = build_repo(db)
     validator = ResponseValidator(repo)
-    actor = await validator.get_actor(user_id)
+    actor = await validator.require_active_user(user_id)
 
     if actor.role == UserRole.CUSTOMER:
         use_case = ListCustomerResponsesUseCase(repo, validator)
@@ -352,7 +352,7 @@ async def update_response_status(
     "Меняет статус отклика по правилам перехода с уведомлениями и проверкой подписки."
     repo = build_repo(db)
     validator = ResponseValidator(repo)
-    actor = await validator.get_actor(user_id)
+    actor = await validator.require_active_user(user_id)
     send_bidding = SendBiddingFinishedEmailUseCase(
         repo=build_email_repo(db),
         dispatcher=EmailDispatcher(background_tasks),

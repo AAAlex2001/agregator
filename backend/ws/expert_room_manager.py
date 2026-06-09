@@ -1,12 +1,16 @@
+import logging
 from dataclasses import dataclass
 from typing import Any
 from uuid import uuid4
 
 from fastapi import WebSocket
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from starlette.websockets import WebSocketState
 
 from ws.pubsub import ws_pubsub
+from ws.schemas import ExpertRoomBroadcastPayload
+
+log = logging.getLogger(__name__)
 
 EXPERT_ROOM_CHANNEL = "ws:expert_room:events"
 
@@ -53,11 +57,12 @@ class ExpertRoomConnectionManager:
 
     async def handle_event(self, payload: dict[str, Any]) -> None:
         "Хендлер pubsub-канала: рассылает событие по локальным сокетам, пропуская connection_id отправителя."
-        data = payload.get("data")
-        if not isinstance(data, dict):
+        try:
+            event = ExpertRoomBroadcastPayload.model_validate(payload)
+        except ValidationError as exc:
+            log.warning("ws expert_room: invalid broadcast payload rejected: %s", exc)
             return
-        except_connection_id = payload.get("except_connection_id")
-        await self.local_broadcast(data, except_connection_id=except_connection_id)
+        await self.local_broadcast(event.data, except_connection_id=event.except_connection_id)
 
     async def local_broadcast(
         self,

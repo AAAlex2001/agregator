@@ -9,6 +9,7 @@ from sqlalchemy.orm import selectinload
 from database.database import AsyncSessionLocal
 from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
+from utils.request_context import request_id_var
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +75,7 @@ async def run_auto_reject_loop() -> None:
             backoff_seconds = BACKOFF_INITIAL_SECONDS
             sleep_for = CHECK_INTERVAL_SECONDS
         except Exception:
-            logger.exception("Error in auto-reject task")
+            logger.exception("Error in auto-reject task [request_id=%s]", request_id_var.get())
             sleep_for = backoff_seconds
             backoff_seconds = min(backoff_seconds * 2, BACKOFF_MAX_SECONDS)
         await asyncio.sleep(sleep_for)

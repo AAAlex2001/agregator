@@ -12,6 +12,7 @@ from models.support_ticket import (
 )
 from models.user import User
 from schemas.support import CreateTicketRequest
+from services.file_uploads import remove_uploaded_file
 
 from ..file_storage import SupportFileStorage
 from ..repository import SupportRepository
@@ -75,7 +76,12 @@ class CreateTicketUseCase:
         await self.repo.flush()
 
         ticket.number = build_ticket_number(ticket.id)
-        message.attachments = await self.files.save(ticket.id, uploads)
-
-        await self.repo.flush()
+        saved_attachments = await self.files.save(ticket.id, uploads)
+        try:
+            message.attachments = saved_attachments
+            await self.repo.flush()
+        except Exception:
+            for attachment in saved_attachments:
+                remove_uploaded_file(attachment.get("url"))
+            raise
         return ticket

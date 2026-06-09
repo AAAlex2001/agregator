@@ -36,51 +36,71 @@ class OrderRepository:
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def list_for_user(
+    async def list_active_unassigned_unresponded_by_expert(
+        self,
+        expert_id: int,
+        skip: int,
+        limit: int,
+        status_filter: OrderStatus | None,
+    ) -> tuple[list[Order], bool]:
+        "ACTIVE заказы без назначенного эксперта, на которые данный эксперт ещё не откликался."
+        responded = (
+            select(OrderResponseModel.id)
+            .where(
+                OrderResponseModel.order_id == Order.id,
+                OrderResponseModel.expert_id == expert_id,
+            )
+            .exists()
+        )
+        list_query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(
+                Order.status == OrderStatus.ACTIVE,
+                Order.assigned_expert_id.is_(None),
+                not_(responded),
+            )
+            .order_by(Order.created_at.desc())
+        )
+        if status_filter is not None:
+            list_query = list_query.where(Order.status == status_filter)
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
+
+    async def list_for_customer(
+        self,
+        customer_id: int,
+        skip: int,
+        limit: int,
+        status_filter: OrderStatus | None,
+    ) -> tuple[list[Order], bool]:
+        "Заказы, принадлежащие customer'у (кроме архивных)."
+        list_query = (
+            select(Order)
+            .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(
+                Order.customer_id == customer_id,
+                Order.status != OrderStatus.ARCHIVED,
+            )
+            .order_by(Order.created_at.desc())
+        )
+        if status_filter is not None:
+            list_query = list_query.where(Order.status == status_filter)
+        return await paginate_with_has_more(self.db, list_query, skip, limit)
+
+    async def list_public_all(
         self,
         skip: int,
         limit: int,
         status_filter: OrderStatus | None,
-        user_id: int | None,
     ) -> tuple[list[Order], bool]:
-        "Возвращает список сущностей с пагинацией/фильтрами."
+        "Публичный список всех заказов платформы (для неавторизованных гостей)."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
             .order_by(Order.created_at.desc())
         )
-
-        role = await self.get_user_role(user_id) if user_id is not None else None
-
-        if role == UserRole.EXPERT:
-            responded = (
-                select(OrderResponseModel.id)
-                .where(
-                    OrderResponseModel.order_id == Order.id,
-                    OrderResponseModel.expert_id == user_id,
-                )
-                .exists()
-            )
-            list_query = list_query.where(
-                Order.status == OrderStatus.ACTIVE,
-                Order.assigned_expert_id.is_(None),
-                not_(responded),
-            )
-        elif role == UserRole.CUSTOMER:
-            list_query = list_query.where(
-                Order.customer_id == user_id,
-                Order.status != OrderStatus.ARCHIVED,
-            )
-        elif user_id is None:
-            # Гость видит все заказы платформы (ACTIVE + ARCHIVED) для публичного просмотра.
-            pass
-        else:
-            # Любая другая авторизованная роль (например LICENSE_HOLDER) к списку заказов не допускается.
-            return [], False
-
         if status_filter is not None:
             list_query = list_query.where(Order.status == status_filter)
-
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def search_public(

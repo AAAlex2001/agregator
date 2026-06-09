@@ -2,7 +2,7 @@
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, TypedDict
 
 from fastapi import HTTPException, status
 from yookassa import Payment as YooPayment
@@ -15,10 +15,44 @@ from models.pricing import (
     UserSubscription,
 )
 from models.user import User
+from services.subscriptions.constants import (
+    KOPECKS_PER_RUBLE,
+    SINGLE_RESPONSES,
+    YOOKASSA_CONFIRMATION_REDIRECT,
+    YOOKASSA_CURRENCY,
+)
 from services.subscriptions.receipts import build_receipt
 from services.subscriptions.repository import SubscriptionRepository
 
-SINGLE_RESPONSES = 1
+
+class YooAmount(TypedDict):
+    "Сумма платежа в формате YooKassa."
+    value: str
+    currency: str
+
+
+class YooConfirmation(TypedDict):
+    "Параметры подтверждения платежа YooKassa."
+    type: str
+    return_url: str
+
+
+class YooMetadata(TypedDict):
+    "Метаданные платежа: связи с внутренними сущностями."
+    payment_id: int
+    user_id: int
+    subscription_id: int
+    plan_id: int
+
+
+class YooPayload(TypedDict):
+    "Полезная нагрузка для YooPayment.create."
+    amount: YooAmount
+    confirmation: YooConfirmation
+    capture: bool
+    description: str
+    receipt: dict[str, Any]
+    metadata: YooMetadata
 
 
 @dataclass(frozen=True)
@@ -85,7 +119,7 @@ class PurchaseSubscriptionUseCase:
             amount=plan.price_kopecks,
             payment_type=PaymentType.DEPOSIT,
             status=PaymentStatus.PENDING,
-            description=f"{plan.name} — {plan.price_kopecks / 100:.0f} ₽",
+            description=f"{plan.name} — {plan.price_kopecks / KOPECKS_PER_RUBLE:.0f} ₽",
         )
 
     @classmethod
@@ -112,21 +146,26 @@ class PurchaseSubscriptionUseCase:
         payment: Payment,
         subscription: UserSubscription,
         return_url: str,
-    ) -> dict[str, Any]:
+    ) -> YooPayload:
         "Строит объект из входных данных."
-        return {
-            "amount": {"value": f"{plan.price_kopecks / 100:.2f}", "currency": "RUB"},
-            "confirmation": {"type": "redirect", "return_url": return_url},
-            "capture": True,
-            "description": payment.description,
-            "receipt": build_receipt(user, plan),
-            "metadata": {
-                "payment_id": payment.id,
-                "user_id": user.id,
-                "subscription_id": subscription.id,
-                "plan_id": plan.id,
-            },
-        }
+        return YooPayload(
+            amount=YooAmount(
+                value=f"{plan.price_kopecks / KOPECKS_PER_RUBLE:.2f}",
+                currency=YOOKASSA_CURRENCY,
+            ),
+            confirmation=YooConfirmation(
+                type=YOOKASSA_CONFIRMATION_REDIRECT, return_url=return_url
+            ),
+            capture=True,
+            description=payment.description,
+            receipt=build_receipt(user, plan),
+            metadata=YooMetadata(
+                payment_id=payment.id,
+                user_id=user.id,
+                subscription_id=subscription.id,
+                plan_id=plan.id,
+            ),
+        )
 
     @staticmethod
     def compute_expires_at(plan: PricingPlan, now: datetime) -> datetime | None:

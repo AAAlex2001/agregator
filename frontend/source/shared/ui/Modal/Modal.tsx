@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import s from "./Modal.module.scss";
+
+const FOCUSABLE_SELECTOR =
+  'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+function getFocusable(root: HTMLElement): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+    (el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true",
+  );
+}
 
 interface ModalProps {
   open: boolean;
@@ -40,6 +49,7 @@ export function Modal({
   children,
 }: ModalProps) {
   const [mounted, setMounted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -54,6 +64,45 @@ export function Modal({
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open, isBusy, onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const dialog = dialogRef.current;
+    if (dialog) {
+      const focusables = getFocusable(dialog);
+      const target = focusables[0] ?? dialog;
+      target.focus();
+    }
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !dialogRef.current) return;
+      const focusables = getFocusable(dialogRef.current);
+      if (focusables.length === 0) {
+        e.preventDefault();
+        dialogRef.current.focus();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey) {
+        if (active === first || !dialogRef.current.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !dialogRef.current.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", trap);
+    return () => {
+      window.removeEventListener("keydown", trap);
+      if (previouslyFocused && typeof previouslyFocused.focus === "function") {
+        previouslyFocused.focus();
+      }
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -75,11 +124,13 @@ export function Modal({
   return createPortal(
     <div className={s.backdrop} onClick={handleBackdropClick} role="presentation">
       <div
+        ref={dialogRef}
         className={dialogClass}
         role="dialog"
         aria-modal="true"
         aria-labelledby={ariaLabelledBy}
         aria-label={ariaLabel}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
         {!hideCloseButton && (

@@ -24,7 +24,7 @@ class RequestEmailChangeUseCase:
         background_tasks: BackgroundTasks,
     ) -> None:
         "Запускает основной сценарий use case."
-        user = await self.validator.get_user_or_404(user_id)
+        user = await self.validator.require_user(user_id)
         normalized = new_email.strip().lower()
 
         if not normalized:

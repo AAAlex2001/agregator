@@ -15,7 +15,7 @@ class ListChatsUseCase:
 
     async def execute(self, actor_id: int) -> list[ChatListItemResponse]:
         "Запускает основной сценарий use case."
-        actor = await self.validator.ensure_active_user(actor_id)
+        actor = await self.validator.require_active_user(actor_id)
         chats = await self.repo.list_actor_chats(actor_id)
         if not chats:
             return []

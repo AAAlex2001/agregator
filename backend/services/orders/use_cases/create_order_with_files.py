@@ -2,7 +2,8 @@
 from fastapi import UploadFile
 
 from models.order import Order
-from schemas.order import OrderCreate
+from schemas.order import OrderCreate, OrderDocuments
+from services.file_uploads import remove_uploaded_file
 from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
@@ -44,9 +45,19 @@ class CreateOrderWithFilesUseCase:
             company=company,
             other=other,
         )
-        OrderDocumentsService.write(order, saved)
-        await self.repo.flush()
-        reloaded = await self.repo.get_by_id(order.id)
+        try:
+            OrderDocumentsService.write(order, saved)
+            await self.repo.flush()
+            reloaded = await self.repo.get_by_id(order.id)
+        except Exception:
+            self.remove_saved_documents(saved)
+            raise
         if reloaded is None:
             raise RuntimeError("Order disappeared after insert")
         return reloaded
+
+    @staticmethod
+    def remove_saved_documents(saved: OrderDocuments) -> None:
+        "Удаляет ресурс."
+        for path in (*saved.technical, *saved.contract, *saved.company, *saved.other):
+            remove_uploaded_file(path)

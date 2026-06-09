@@ -2,7 +2,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+
+from schemas.company import validate_company_data
 
 
 class UserRole(str, Enum):
@@ -30,6 +32,11 @@ class UserRegistration(BaseModel):
     first_name: str | None = Field(None, description="Имя", max_length=100)
     last_name: str | None = Field(None, description="Фамилия", max_length=100)
 
+    @field_validator("company_data", mode="before")
+    @classmethod
+    def _validate_company_data(cls, value: Any) -> Any:
+        return validate_company_data(value)
+
 
 class LicenseHolderRegistration(BaseModel):
     "Регистрация держателя лицензии. Файл лицензии передаётся отдельным multipart-полем."
@@ -46,6 +53,11 @@ class LicenseHolderRegistration(BaseModel):
     mining_license_number: str | None = Field(None, max_length=100)
     sro_design_number: str | None = Field(None, max_length=100)
     lab_accreditation_number: str | None = Field(None, max_length=100)
+
+    @field_validator("company_data", mode="before")
+    @classmethod
+    def _validate_company_data(cls, value: Any) -> Any:
+        return validate_company_data(value)
 
     @model_validator(mode="after")
     def cross_field_checks(self) -> "LicenseHolderRegistration":

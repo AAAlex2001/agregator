@@ -17,7 +17,7 @@ class OpenChatUseCase:
 
     async def execute(self, actor_id: int, order_id: int) -> Chat:
         "Запускает основной сценарий use case."
-        actor = await self.validator.ensure_active_user(actor_id)
+        actor = await self.validator.require_active_user(actor_id)
         order = await self.require_order(order_id)
 
         existing = await self.find_existing_for_actor(actor, order)

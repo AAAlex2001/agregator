@@ -28,7 +28,7 @@ class ResetPasswordUseCase:
     ) -> User:
         "Запускает основной сценарий use case."
         self.validator.ensure_password_strong(new_password)
-        user = await self.validator.find_user(email, phone)
+        user = await self.validator.require_user(email, phone)
         await self.verification.consume_code(user.id, code)
 
         hashed = await hash_password(new_password)

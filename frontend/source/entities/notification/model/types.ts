@@ -53,8 +53,7 @@ export type NotificationPayload =
   | QuestionAskedNotificationPayload
   | QuestionAnsweredNotificationPayload
   | SupportReplyNotificationPayload
-  | NewBlogPostNotificationPayload
-  | Record<string, unknown>;
+  | NewBlogPostNotificationPayload;
 
 export interface NotificationItem {
   id: number;

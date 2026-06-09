@@ -74,7 +74,7 @@ class ResponseRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def list_active_siblings(
-        self, order_id: int, exclude_response_id: int
+        self, order_id: int, exclude_response_id: int, for_update: bool = False
     ) -> list[OrderResponse]:
         "Возвращает список сущностей с пагинацией/фильтрами."
         query = select(OrderResponse).where(
@@ -82,6 +82,8 @@ class ResponseRepository:
             OrderResponse.id != exclude_response_id,
             OrderResponse.status != ResponseStatus.REJECTED,
         )
+        if for_update:
+            query = query.with_for_update()
         return list((await self.db.execute(query)).scalars().all())
 
     async def find_chat(

@@ -5,6 +5,7 @@ from enum import Enum as PyEnum
 from pydantic import BaseModel, Field, field_validator
 
 from models.response import ResponseStatus, VatKind
+from schemas.company import validate_company_data
 from schemas.order import OrderDocuments
 
 
@@ -31,8 +32,10 @@ class ResponseCreate(BaseModel):
     @field_validator("expert_company_data", mode="before")
     @classmethod
     def parse_company_data(cls, value: object) -> object:
-        if value is None or isinstance(value, dict):
-            return value
+        if value is None:
+            return None
+        if isinstance(value, dict):
+            return validate_company_data(value)
         if isinstance(value, str):
             if not value:
                 return None
@@ -42,7 +45,7 @@ class ResponseCreate(BaseModel):
                 raise ValueError("Некорректные данные компании") from exc
             if not isinstance(parsed, dict):
                 raise ValueError("Некорректные данные компании")  # noqa: TRY004 — Pydantic ловит только ValueError
-            return parsed
+            return validate_company_data(parsed)
         raise ValueError("Некорректные данные компании")
 
 

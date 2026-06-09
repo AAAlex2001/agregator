@@ -1,5 +1,6 @@
 "Repository: доступ к БД для email."
 from dataclasses import dataclass
+from typing import Literal
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +12,18 @@ from models.question import OrderQuestion
 from models.response import OrderResponse
 from models.review import Review
 from models.user import User, UserRole
+
+EmailPreferenceField = Literal[
+    "email_on_response_created",
+    "email_on_response_updated",
+    "email_on_expert_rejected",
+    "email_on_order_updated",
+    "email_on_bidding_finished",
+    "email_on_chat_message",
+    "email_on_question_asked",
+    "email_on_question_answered",
+    "email_on_new_blog_post",
+]
 
 
 @dataclass(frozen=True)
@@ -62,12 +75,19 @@ class EmailRepository:
         )
         return (await self.db.execute(query)).scalars().first()
 
-    async def list_experts_with_preference(self, preference_field: str) -> list[User]:
-        "Возвращает список сущностей с пагинацией/фильтрами."
-        query = select(User).where(
-            User.role == UserRole.EXPERT,
+    @staticmethod
+    def _filter_preference(query, preference_field: EmailPreferenceField):
+        "Применяет общий фильтр: email задан и тоггл preference_field включен."
+        return query.where(
             User.email.isnot(None),
             getattr(User, preference_field).is_(True),
+        )
+
+    async def list_experts_with_preference(self, preference_field: EmailPreferenceField) -> list[User]:
+        "Возвращает список сущностей с пагинацией/фильтрами."
+        query = self._filter_preference(
+            select(User).where(User.role == UserRole.EXPERT),
+            preference_field,
         )
         return list((await self.db.execute(query)).scalars().all())
 
@@ -90,17 +110,14 @@ class EmailRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def list_responders_with_preference(
-        self, order_id: int, preference_field: str
+        self, order_id: int, preference_field: EmailPreferenceField
     ) -> list[User]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        query = (
+        query = self._filter_preference(
             select(User)
             .join(OrderResponse, OrderResponse.expert_id == User.id)
-            .where(
-                OrderResponse.order_id == order_id,
-                User.email.isnot(None),
-                getattr(User, preference_field).is_(True),
-            )
+            .where(OrderResponse.order_id == order_id),
+            preference_field,
         )
         return list((await self.db.execute(query)).scalars().all())
 

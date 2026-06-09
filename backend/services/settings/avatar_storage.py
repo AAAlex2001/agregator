@@ -8,6 +8,7 @@ import aiofiles
 from fastapi import HTTPException, UploadFile, status
 
 from models.user import User
+from utils.image_validation import extension_matches_image_bytes
 
 AVATAR_ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 AVATAR_ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/jpg", "image/png"}
@@ -60,9 +61,17 @@ class AvatarStorage:
                 logger.warning("Отклонён путь предыдущего аватара вне uploads: %s", user.avatar_url)
 
         total = 0
+        header_checked = False
         try:
             async with aiofiles.open(file_path, "wb") as out:
                 while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                    if not header_checked:
+                        if not extension_matches_image_bytes(extension, chunk[:12]):
+                            raise HTTPException(
+                                status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="Содержимое файла не соответствует изображению",
+                            )
+                        header_checked = True
                     total += len(chunk)
                     if total > AVATAR_MAX_SIZE:
                         raise HTTPException(

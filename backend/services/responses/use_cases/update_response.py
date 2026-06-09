@@ -1,16 +1,14 @@
 "Use case: update response."
-from typing import Any
-
 from fastapi import HTTPException, UploadFile, status
 
 from models.order import Order
 from models.response import OrderResponse, ResponseStatus
-from schemas.notification import ResponseUpdateKind
 from schemas.response import ResponseCreate
 from services.email import SendResponseUpdatedEmailUseCase
-from services.email.changes import summarize_response_changes
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
+from services.responses.response_field_mutator import ResponseFieldMutator
+from services.responses.response_update_notifier import ResponseUpdateNotifier
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
 from services.responses.use_cases.upload_response_files import UploadResponseFilesUseCase
 from services.responses.validators import ResponseValidator
@@ -31,8 +29,8 @@ class UpdateResponseUseCase:
         self.validator = validator
         self.get_response = get_response
         self.upload_files = upload_files
-        self.in_app = in_app
-        self.send_updated_email = send_updated_email
+        self.mutator = ResponseFieldMutator()
+        self.notifier = ResponseUpdateNotifier(in_app=in_app, send_updated_email=send_updated_email)
 
     async def execute(
         self,
@@ -50,50 +48,19 @@ class UpdateResponseUseCase:
         self.ensure_editable(response)
         self.check_constraints(response.order, data)
 
-        snapshot = self.snapshot(response)
+        before = self.notifier.snapshot(response)
 
-        self.apply_fields(response, data)
-        self.track_files_change_before(response, keep_files, new_files)
-        self.trim_files(response, keep_files)
+        self.mutator.apply_fields(response, data)
+        self.mutator.track_files_change_before(response, keep_files, new_files)
+        self.mutator.trim_files(response, keep_files)
         await self.repo.flush()
 
         if new_files:
             await self.upload_files.execute(response_id, expert_id, new_files)
 
         updated = await self.get_response.execute(response_id)
-        await self.in_app.response_updated(updated, kind=ResponseUpdateKind.UPDATED)
-        await self.send_email_if_changed(updated, snapshot)
+        await self.notifier.notify(updated, before)
         return updated
-
-    @staticmethod
-    def snapshot(response: OrderResponse) -> dict[str, Any]:
-        "Публичный метод сервисного слоя."
-        return {
-            "sum_amount": response.proposed_sum_amount,
-            "deadline": response.proposed_deadline,
-            "comment": response.comment or "",
-            "files_count": len(response.technical_files or []),
-        }
-
-    async def send_email_if_changed(
-        self, updated: OrderResponse, before: dict[str, Any]
-    ) -> None:
-        "Отправляет уведомление получателю."
-        if self.send_updated_email is None:
-            return
-        summary = summarize_response_changes(
-            before["sum_amount"],
-            updated.proposed_sum_amount,
-            before["deadline"],
-            updated.proposed_deadline,
-            before["comment"],
-            updated.comment or "",
-            before["files_count"],
-            len(updated.technical_files or []),
-        )
-        if not summary:
-            return
-        await self.send_updated_email.execute(updated.id, summary)
 
     @staticmethod
     def ensure_owner(response: OrderResponse, expert_id: int) -> None:
@@ -144,44 +111,3 @@ class UpdateResponseUseCase:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Срок начала работ не может быть позже срока окончания",
             )
-
-    @staticmethod
-    def apply_fields(response: OrderResponse, data: ResponseCreate) -> None:
-        "Публичный метод сервисного слоя."
-        if data.proposed_sum_amount != response.proposed_sum_amount:
-            response.previous_proposed_sum_amount = response.proposed_sum_amount
-        if data.proposed_start_date != response.proposed_start_date:
-            response.previous_proposed_start_date = response.proposed_start_date
-        if data.proposed_deadline != response.proposed_deadline:
-            response.previous_proposed_deadline = response.proposed_deadline
-        if (data.comment or "") != (response.comment or ""):
-            response.previous_comment = response.comment or ""
-        if data.vat_kind != response.vat_kind:
-            response.previous_vat_kind = response.vat_kind
-
-        response.comment = data.comment
-        response.proposed_sum_amount = data.proposed_sum_amount
-        response.proposed_start_date = data.proposed_start_date
-        response.proposed_deadline = data.proposed_deadline
-        response.vat_kind = data.vat_kind
-
-    @staticmethod
-    def trim_files(response: OrderResponse, keep_files: list[str] | None) -> None:
-        "Публичный метод сервисного слоя."
-        if keep_files is None:
-            return
-        existing = list(response.technical_files or [])
-        response.technical_files = [f for f in existing if f in keep_files]
-
-    @staticmethod
-    def track_files_change_before(
-        response: OrderResponse,
-        keep_files: list[str] | None,
-        new_files: list[UploadFile] | None,
-    ) -> None:
-        "Публичный метод сервисного слоя."
-        existing = list(response.technical_files or [])
-        kept = existing if keep_files is None else [f for f in existing if f in keep_files]
-        will_change = (kept != existing) or bool(new_files)
-        if will_change:
-            response.previous_technical_files = existing

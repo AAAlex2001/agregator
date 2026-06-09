@@ -7,6 +7,10 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates" / "emails"
 
+# Autoescape включён только для .html: .txt-шаблоны рендерятся как plain-text,
+# и экранирование пользовательских данных (комментарии, имена, названия компаний)
+# в них привело бы к видимым артефактам вроде &amp; / &#39; в почтовых клиентах.
+# Решение задокументировано и проверено: user-input в .txt подставляется как есть.
 jinja_env = Environment(
     loader=FileSystemLoader(str(TEMPLATES_DIR)),
     autoescape=select_autoescape(enabled_extensions=("html",), default_for_string=False),

@@ -1,12 +1,14 @@
 import asyncio
 import logging
 import os
+import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from starlette.responses import Response
 
 from routes import (
     article,
@@ -31,6 +33,7 @@ from routes import (
 )
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
+from utils.request_context import request_id_var
 from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
 from ws.manager import CHAT_CHANNEL, chat_manager
 from ws.pubsub import ws_pubsub
@@ -69,6 +72,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next) -> Response:
+    "Прокидывает X-Request-ID: из заголовка или генерит UUID4; кладёт в state и contextvar."
+    incoming = request.headers.get("X-Request-ID")
+    request_id = incoming if incoming else uuid.uuid4().hex
+    request.state.request_id = request_id
+    request_id_var.set(request_id)
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = request_id
+    return response
 
 app.include_router(login.router, prefix="/api")
 app.include_router(registration.router, prefix="/api")

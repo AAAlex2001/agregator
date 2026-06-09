@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from models.user import User
 from utils.email import send_email
 from utils.email_templates import render_email
+from utils.request_context import request_id_var
 
 logger = logging.getLogger(__name__)
 
@@ -18,10 +19,15 @@ async def deliver_email_task(
     html: str,
 ) -> None:
     "BackgroundTasks-обёртка: отправка письма, ошибка SMTP только в лог."
+    request_id = request_id_var.get()
     try:
         await send_email(recipient_email, subject, text, html)
     except Exception:
-        logger.exception("Не удалось отправить письмо на %s", recipient_email)
+        logger.exception(
+            "Не удалось отправить письмо на %s [request_id=%s]",
+            recipient_email,
+            request_id,
+        )
 
 
 class EmailDispatcher:

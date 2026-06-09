@@ -28,6 +28,7 @@ ALLOWED_WS_ORIGINS = {
     if o.strip()
 }
 MAX_WS_PAYLOAD_BYTES = 100 * 1024
+SESSION_RECHECK_INTERVAL = 50
 
 
 @router.websocket("/chats/{chat_uuid}")
@@ -85,12 +86,28 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
         "data": {"online_user_ids": chat_manager.get_online_user_ids(chat_id)},
     })
 
+    message_count = 0
     try:
         while True:
             raw = await websocket.receive_text()
             if len(raw.encode("utf-8")) > MAX_WS_PAYLOAD_BYTES:
                 await websocket.close(code=1009)
                 break
+            message_count += 1
+            if message_count % SESSION_RECHECK_INTERVAL == 0:
+                async with AsyncSessionLocal() as db:
+                    sess = await db.execute(
+                        select(Session).where(Session.session_id == session_id)
+                    )
+                    session = sess.scalars().first()
+                    now = datetime.now(UTC)
+                    if (
+                        session is None
+                        or now > session.max_expires_at
+                        or now > session.expires_at
+                    ):
+                        await websocket.close(code=4001)
+                        break
     except (WebSocketDisconnect, Exception):
         pass
     finally:
@@ -123,12 +140,24 @@ async def expert_room_websocket(websocket: WebSocket) -> None:
 
     await expert_room_manager.connect(websocket, info.user_id, info.display_name)
     parse_failures = 0
+    message_count = 0
+    session_id = websocket.cookies.get("session_id")
     try:
         while True:
             raw = await websocket.receive_text()
             if len(raw.encode("utf-8")) > MAX_WS_PAYLOAD_BYTES:
                 await websocket.close(code=1009)
                 break
+            message_count += 1
+            if message_count % SESSION_RECHECK_INTERVAL == 0:
+                async with AsyncSessionLocal() as db:
+                    try:
+                        await AuthenticateExpertRoomWsUseCase(
+                            ExpertRoomRepository(db)
+                        ).execute(session_id)
+                    except WsCloseError:
+                        await websocket.close(code=4001)
+                        break
             try:
                 payload = json.loads(raw)
             except json.JSONDecodeError:

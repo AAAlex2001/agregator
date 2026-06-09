@@ -2,6 +2,7 @@
 from fastapi import HTTPException, UploadFile, status
 
 from models.response import OrderResponse
+from services.file_uploads import remove_uploaded_file
 from services.responses.file_storage import ResponseFileStorage
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
@@ -36,8 +37,13 @@ class UploadResponseFilesUseCase:
         self.ensure_total_limit(len(existing), len(uploads))
 
         new_paths = await self.files.save(response_id, uploads)
-        response.technical_files = existing + new_paths
-        await self.repo.flush()
+        try:
+            response.technical_files = existing + new_paths
+            await self.repo.flush()
+        except Exception:
+            for path in new_paths:
+                remove_uploaded_file(path)
+            raise
 
         return await self.get_response.execute(response_id)
 

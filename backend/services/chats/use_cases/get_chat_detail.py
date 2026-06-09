@@ -20,7 +20,7 @@ class GetChatDetailUseCase:
         self, chat_id: int, actor_id: int, limit: int
     ) -> ChatDetailResponse:
         "Запускает основной сценарий use case."
-        actor = await self.validator.ensure_active_user(actor_id)
+        actor = await self.validator.require_active_user(actor_id)
         chat = await self.require_chat(chat_id, actor_id)
         messages = await self.repo.chat_messages_tail(chat_id, limit)
         response_status = await self.repo.response_status_for(chat.order_id, chat.expert_id)

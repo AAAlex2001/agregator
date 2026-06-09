@@ -11,4 +11,4 @@ class GetProfileUseCase:
 
     async def execute(self, user_id: int) -> User:
         "Запускает основной сценарий use case."
-        return await self.validator.get_user_or_404(user_id)
+        return await self.validator.require_user(user_id)

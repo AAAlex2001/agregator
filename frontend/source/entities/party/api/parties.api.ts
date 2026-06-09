@@ -20,8 +20,9 @@ export interface PartySuggestion {
 }
 
 export async function fetchPartySuggestions(query: string): Promise<PartySuggestion[]> {
-  return fetchBase<PartySuggestion[]>("/register/party-suggestions", {
+  const result = await fetchBase<PartySuggestion[]>("/register/party-suggestions", {
     method: "POST",
     body: { query, count: 10 },
   });
+  return result ?? [];
 }

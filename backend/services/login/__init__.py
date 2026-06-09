@@ -1,4 +1,9 @@
-from services.login.repository import SESSION_MAX_DAYS, SESSION_TTL_DAYS, LoginRepository
+from services.login.repository import (
+    SESSION_COOKIE_MAX_AGE_SECONDS,
+    SESSION_MAX_DAYS,
+    SESSION_TTL_DAYS,
+    LoginRepository,
+)
 from services.login.use_cases.authenticate_user import AuthenticateUserUseCase
 from services.login.use_cases.create_session import CreateSessionUseCase
 from services.login.use_cases.list_available_roles import ListAvailableRolesUseCase
@@ -15,6 +20,7 @@ __all__ = [
     "LoginValidator",
     "LogoutSessionUseCase",
     "RefreshSessionUseCase",
+    "SESSION_COOKIE_MAX_AGE_SECONDS",
     "SESSION_MAX_DAYS",
     "SESSION_TTL_DAYS",
     "SwitchRoleUseCase",

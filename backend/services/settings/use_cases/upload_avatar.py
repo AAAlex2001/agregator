@@ -16,7 +16,7 @@ class UploadAvatarUseCase:
 
     async def execute(self, user_id: int, file: UploadFile) -> User:
         "Запускает основной сценарий use case."
-        user = await self.validator.get_user_or_404(user_id)
+        user = await self.validator.require_user(user_id)
         new_url = await AvatarStorage.save(user, file)
         user.avatar_url = new_url
         await self.repo.flush()

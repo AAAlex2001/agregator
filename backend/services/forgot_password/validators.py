@@ -41,8 +41,8 @@ class ForgotPasswordValidator:
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
 
-    async def find_user(self, email: str | None, phone: str | None) -> User:
-        "Ищет сущность по заданным параметрам."
+    async def require_user(self, email: str | None, phone: str | None) -> User:
+        "Возвращает требуемую сущность или бросает 404."
         self.ensure_contact_provided(email, phone)
         user: User | None = None
         if email:

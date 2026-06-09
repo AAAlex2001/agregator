@@ -11,8 +11,6 @@ import {
   confirmRegistrationEmail,
   registerLicenseHolder,
   registerUser,
-  toLicenseHolderPayload,
-  toRegisterPayload,
 } from "@/source/entities/user";
 import {
   emptyRegisterFormValues,
@@ -21,6 +19,7 @@ import {
   type RegisterConfirmValues,
   type RegisterFormValues,
 } from "./schema";
+import { toLicenseHolderPayload, toRegisterPayload } from "./mappers";
 import {
   initialRegisterWizardState,
   registerWizardReducer,

@@ -13,6 +13,6 @@ class UpdatePasswordUseCase:
 
     async def execute(self, user_id: int, new_password: str) -> None:
         "Запускает основной сценарий use case."
-        user = await self.validator.get_user_or_404(user_id)
+        user = await self.validator.require_user(user_id)
         user.password = await hash_password(new_password)
         await self.repo.flush()

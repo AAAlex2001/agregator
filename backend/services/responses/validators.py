@@ -31,8 +31,8 @@ class ResponseValidator:
             detail="Недостаточно прав для откликов",
         )
 
-    async def get_actor(self, user_id: int) -> User:
-        "Возвращает запрошенную сущность."
+    async def require_active_user(self, user_id: int) -> User:
+        "Возвращает требуемую сущность или бросает 404/403."
         user = await self.require_user(user_id)
         if user.is_active:
             return user

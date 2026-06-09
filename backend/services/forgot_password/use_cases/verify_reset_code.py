@@ -13,6 +13,6 @@ class VerifyResetCodeUseCase:
 
     async def execute(self, email: str | None, phone: str | None, code: str) -> User:
         "Запускает основной сценарий use case."
-        user = await self.validator.find_user(email, phone)
+        user = await self.validator.require_user(email, phone)
         await self.verification.ensure_code_valid(user.id, code)
         return user

@@ -14,8 +14,8 @@ class ChatValidator:
     def __init__(self, repo: ChatRepository) -> None:
         self.repo = repo
 
-    async def ensure_active_user(self, user_id: int) -> User:
-        "Бросает HTTPException, если условие не выполнено."
+    async def require_active_user(self, user_id: int) -> User:
+        "Возвращает требуемую сущность или бросает 404/403."
         user = await self.repo.find_user(user_id)
         if user is None:
             raise HTTPException(

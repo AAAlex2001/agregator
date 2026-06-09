@@ -20,10 +20,6 @@ export function getFileDisplayName(path: string, fallback = "Файл"): string 
   return path.split("/").pop() ?? fallback;
 }
 
-export function getShortFileName(name: string, limit = 12): string {
-  return name.length > limit ? `${name.slice(0, limit)}…` : name;
-}
-
 export function getFileExtension(name: string): string {
   const match = /\.([a-z0-9]+)$/i.exec(name);
 

@@ -42,7 +42,7 @@ class UpdateResponseStatusUseCase:
         reason: str | None = None,
     ) -> OrderResponse:
         "Запускает основной сценарий use case."
-        actor = await self.validator.get_actor(actor_id)
+        actor = await self.validator.require_active_user(actor_id)
         response = await self.get_response.execute(response_id)
         self.rules.check(actor, response, new_status)
 
@@ -142,7 +142,9 @@ class UpdateResponseStatusUseCase:
 
     async def auto_reject_siblings(self, response: OrderResponse) -> list[int]:
         "Публичный метод сервисного слоя."
-        siblings = await self.repo.list_active_siblings(response.order_id, response.id)
+        siblings = await self.repo.list_active_siblings(
+            response.order_id, response.id, for_update=True
+        )
         if not siblings:
             return []
         rejected_ids: list[int] = []

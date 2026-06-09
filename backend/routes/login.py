@@ -15,7 +15,7 @@ from schemas.login import (
     UserResponse,
 )
 from services.login import (
-    SESSION_MAX_DAYS,
+    SESSION_COOKIE_MAX_AGE_SECONDS,
     AuthenticateUserUseCase,
     CreateSessionUseCase,
     ListAvailableRolesUseCase,
@@ -54,7 +54,7 @@ async def login_user(
         httponly=True,
         secure=True,
         samesite="none",
-        max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
+        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
         path="/",
     )
     response.set_cookie(
@@ -63,7 +63,7 @@ async def login_user(
         httponly=True,
         secure=True,
         samesite="none",
-        max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
+        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
         path="/",
     )
     return response
@@ -155,7 +155,7 @@ async def switch_role(
         httponly=True,
         secure=True,
         samesite="none",
-        max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
+        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
         path="/",
     )
     response.set_cookie(
@@ -164,7 +164,7 @@ async def switch_role(
         httponly=True,
         secure=True,
         samesite="none",
-        max_age=60 * 60 * 24 * SESSION_MAX_DAYS,
+        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
         path="/",
     )
     return response

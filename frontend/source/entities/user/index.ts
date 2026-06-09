@@ -24,8 +24,6 @@ export {
   resetPassword,
 } from "./api/forgot-password.api";
 export {
-  toRegisterPayload,
-  toLicenseHolderPayload,
   registerUser,
   registerLicenseHolder,
   confirmRegistrationEmail,

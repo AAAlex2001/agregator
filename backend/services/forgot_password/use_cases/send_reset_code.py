@@ -24,7 +24,7 @@ class SendResetCodeUseCase:
     ) -> User:
         "Запускает основной сценарий use case."
         ensure_email_not_disposable(email)
-        user = await self.validator.find_user(email, phone)
+        user = await self.validator.require_user(email, phone)
         if email:
             await self.verification.schedule_code_email(
                 user.id, email, RESET_CODE_SUBJECT, background_tasks

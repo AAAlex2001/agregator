@@ -11,8 +11,8 @@ class SettingsValidator:
     def __init__(self, repo: SettingsRepository) -> None:
         self.repo = repo
 
-    async def get_user_or_404(self, user_id: int) -> User:
-        "Возвращает запрошенную сущность."
+    async def require_user(self, user_id: int) -> User:
+        "Возвращает требуемую сущность или бросает 404."
         user = await self.repo.find_user_by_id(user_id)
         if user is None:
             raise HTTPException(
@@ -23,7 +23,7 @@ class SettingsValidator:
 
     async def require_license_holder(self, user_id: int) -> User:
         "Возвращает требуемую сущность или бросает 404."
-        user = await self.get_user_or_404(user_id)
+        user = await self.require_user(user_id)
         if user.role != UserRole.LICENSE_HOLDER:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

@@ -1,0 +1,15 @@
+"Константы платежей и подписок: значения протокола YooKassa и форматы."
+
+KOPECKS_PER_RUBLE = 100
+
+YOOKASSA_CURRENCY = "RUB"
+YOOKASSA_CONFIRMATION_REDIRECT = "redirect"
+YOOKASSA_PAYMENT_SUBJECT_SERVICE = "service"
+YOOKASSA_PAYMENT_MODE_FULL = "full_payment"
+YOOKASSA_RECEIPT_QUANTITY = "1.00"
+YOOKASSA_ITEM_DESCRIPTION_MAX_LEN = 128
+
+# Код НДС YooKassa из env: 1 — без НДС, 2 — 0%, 3 — 10%, 4 — 20%, 5 — 10/110, 6 — 20/120.
+DEFAULT_VAT_CODE_FALLBACK = "1"
+
+SINGLE_RESPONSES = 1
