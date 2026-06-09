@@ -1,5 +1,6 @@
 import type {
   ChatMessageNotificationPayload,
+  NewBlogPostNotificationPayload,
   NotificationCardModel,
   NotificationItem,
   QuestionAnsweredNotificationPayload,
@@ -219,6 +220,22 @@ function mapQuestionAnswered(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapNewBlogPost(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as NewBlogPostNotificationPayload;
+  const title = payload.blog_title || "Новая статья";
+  const preview = payload.preview || "На платформе появилась новая публикация.";
+
+  return {
+    id: item.id,
+    title: "Новая статья в блоге",
+    message: `«${title}»: ${preview}`,
+    actionLabel: item.action_url ? "Читать статью" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 function mapSupportReply(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as SupportReplyNotificationPayload;
   const subject = payload.subject || "Обращение";
@@ -259,6 +276,10 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "SUPPORT_REPLY") {
     return mapSupportReply(item);
+  }
+
+  if (item.type === "NEW_BLOG_POST") {
+    return mapNewBlogPost(item);
   }
 
   return {

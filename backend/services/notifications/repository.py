@@ -24,6 +24,11 @@ class NotificationRepository:
         "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
 
+    async def list_all_user_ids(self) -> list[int]:
+        "ID всех пользователей для broadcast-рассылки in-app уведомлений (без фильтров — летит всем)."
+        result = await self.db.execute(select(User.id))
+        return list(result.scalars().all())
+
     async def find_by_id_for_user(self, notification_id: int, user_id: int) -> Notification | None:
         "Ищет сущность по заданным параметрам."
         query = select(Notification).where(

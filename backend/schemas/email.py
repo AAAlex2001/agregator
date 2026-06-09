@@ -106,3 +106,11 @@ class QuestionAnsweredContext(BaseContext):
     question_text: str
     answer_text: str
     cta_url: str
+
+
+class NewBlogPostEmailContext(BaseContext):
+    "Контекст письма о новой публикации в блоге."
+    recipient_greeting: str
+    blog_title: str
+    preview: str
+    cta_url: str

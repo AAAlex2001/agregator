@@ -50,4 +50,10 @@ export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescr
     description: "Заказчик ответил на ваш публичный вопрос по заявке.",
     roles: ["EXPERT"],
   },
+  {
+    key: "email_on_new_blog_post",
+    label: "Новые статьи блога",
+    description: "Письмо с превью при публикации новой статьи на платформе.",
+    roles: ["CUSTOMER", "EXPERT"],
+  },
 ];

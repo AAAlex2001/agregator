@@ -3,6 +3,7 @@ export { NotificationCardSkeleton } from "./ui/NotificationCardSkeleton";
 export { formatNotificationTime } from "./model/formatters";
 export type {
   ChatMessageNotificationPayload,
+  NewBlogPostNotificationPayload,
   NotificationActorRole,
   NotificationCardModel,
   NotificationType,

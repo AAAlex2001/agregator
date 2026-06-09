@@ -7,6 +7,7 @@ export interface EmailPreferences {
   email_on_chat_message: boolean;
   email_on_question_asked: boolean;
   email_on_question_answered: boolean;
+  email_on_new_blog_post: boolean;
 }
 
 export interface CompanyData {

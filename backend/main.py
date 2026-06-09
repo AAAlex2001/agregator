@@ -13,6 +13,7 @@ from routes import (
     chat,
     expert,
     forgot_password,
+    internal,
     landing,
     license_holder,
     login,
@@ -86,6 +87,7 @@ app.include_router(report.router, prefix="/api")
 app.include_router(article.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
+app.include_router(internal.router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
 os.makedirs("uploads", exist_ok=True)

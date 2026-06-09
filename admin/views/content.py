@@ -7,7 +7,8 @@ from typing import Any
 from sqladmin import ModelView
 from starlette.requests import Request
 
-from models import Article
+from integrations.backend_client import notify_blog_published
+from models import Article, ArticleKind, ArticleStatus
 
 
 class ArticleAdmin(ModelView, model=Article):
@@ -99,3 +100,13 @@ class ArticleAdmin(ModelView, model=Article):
         status = data.get("status")
         if status and str(status).upper().endswith("PUBLISHED") and not data.get("published_at"):
             data["published_at"] = datetime.now(UTC)
+
+    async def after_model_change(
+        self, data: dict[str, Any], model: Article, is_created: bool, request: Request
+    ) -> None:
+        "Если статья переходит в PUBLISHED — дёргает backend для рассылки in-app + email подписчикам."
+        if model.kind != ArticleKind.BLOG:
+            return
+        if model.status != ArticleStatus.PUBLISHED:
+            return
+        notify_blog_published(slug=model.slug, title=model.title, preview=model.excerpt or "")

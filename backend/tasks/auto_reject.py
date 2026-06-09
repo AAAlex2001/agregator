@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from database.database import AsyncSessionLocal
-from models.order import OrderStatus, Order
+from models.order import Order, OrderStatus
 from models.response import OrderResponse, ResponseStatus
 
 logger = logging.getLogger(__name__)

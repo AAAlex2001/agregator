@@ -71,6 +71,15 @@ class EmailRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
+    async def list_users_for_new_blog_post_email(self) -> list[User]:
+        "Получатели письма о новой статье: подтверждённый email + включенный тогглер email_on_new_blog_post."
+        query = select(User).where(
+            User.email.isnot(None),
+            User.email_verified.is_(True),
+            User.email_on_new_blog_post.is_(True),
+        )
+        return list((await self.db.execute(query)).scalars().all())
+
     async def list_experts_subscribed_to_order_types(self) -> list[User]:
         "Эксперты с email и непустым фильтром типов заказов. Пересечение проверяем в use case."
         query = select(User).where(

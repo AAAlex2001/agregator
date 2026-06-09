@@ -116,12 +116,25 @@ class SupportReplyNotificationItemResponse(NotificationItemBaseResponse):
     payload: SupportReplyNotificationPayload
 
 
+class NewBlogPostNotificationPayload(NotificationPayloadModel):
+    "Payload уведомления о новой публикации в блоге."
+    blog_title: str
+    preview: str
+
+
+class NewBlogPostNotificationItemResponse(NotificationItemBaseResponse):
+    "Уведомление о новой публикации в блоге."
+    type: Literal[NotificationType.NEW_BLOG_POST]
+    payload: NewBlogPostNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
     | ChatMessageNotificationItemResponse
     | QuestionAskedNotificationItemResponse
     | QuestionAnsweredNotificationItemResponse
+    | NewBlogPostNotificationItemResponse
     | SupportReplyNotificationItemResponse,
     Field(discriminator="type"),
 ]
