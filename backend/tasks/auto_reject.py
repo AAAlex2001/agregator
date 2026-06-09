@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from database.database import AsyncSessionLocal
-from models.order import OrderStatus
+from models.order import OrderStatus, Order
 from models.response import OrderResponse, ResponseStatus
 
 logger = logging.getLogger(__name__)
@@ -42,10 +42,32 @@ async def reject_expired_responses() -> None:
             logger.info("Auto-rejected %d expired IN_PROGRESS responses", len(expired))
 
 
+async def archive_orders_with_closed_responses() -> None:
+    "Архивирует заказы, у которых истёк срок приёма откликов (responses_deadline в прошлом)."
+    now = datetime.now(UTC)
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(Order).where(
+                Order.status == OrderStatus.ACTIVE,
+                Order.responses_deadline.is_not(None),
+                Order.responses_deadline < now,
+            )
+        )
+        orders = result.scalars().all()
+
+        for order in orders:
+            order.status = OrderStatus.ARCHIVED
+
+        if orders:
+            await db.commit()
+            logger.info("Archived %d orders with expired responses_deadline", len(orders))
+
+
 async def run_auto_reject_loop() -> None:
     while True:
         try:
             await reject_expired_responses()
+            await archive_orders_with_closed_responses()
         except Exception:
             logger.exception("Error in auto-reject task")
         await asyncio.sleep(CHECK_INTERVAL_SECONDS)
