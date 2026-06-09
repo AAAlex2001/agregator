@@ -6,7 +6,7 @@ export default function BlogArticleLoading() {
     <>
       <LandingHeader />
       <ArticleViewSkeleton />
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

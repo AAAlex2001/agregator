@@ -4,7 +4,6 @@ import {
   LandingArticlesPreview,
   LandingCtaFooter,
   LandingFaq,
-  LandingFooter,
   LandingHero,
   LandingHowItWorks,
   LandingIndustryDirections,
@@ -142,7 +141,6 @@ export default async function AuthRestrictedLandingPage() {
         subtitle={sectionHeaders.faq.subtitle}
       />
       <LandingCtaFooter />
-      <LandingFooter />
     </div>
   );
 }

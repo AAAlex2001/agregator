@@ -6,7 +6,7 @@ export default function NewsArticleLoading() {
     <>
       <LandingHeader />
       <ArticleViewSkeleton />
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

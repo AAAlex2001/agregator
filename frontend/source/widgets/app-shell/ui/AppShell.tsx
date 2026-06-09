@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { SidebarShell } from "@/source/widgets/sidebar";
 import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
-import { LayoutFooter } from "@/source/widgets/layout-footer";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -40,7 +39,6 @@ export function AppShell({ children }: AppShellProps) {
     <>
       <LandingHeaderAuthed />
       {children}
-      <LayoutFooter />
     </>
   );
 }

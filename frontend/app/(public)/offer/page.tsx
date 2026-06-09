@@ -21,7 +21,7 @@ export default function OfferPage() {
       <RedirectIfAuthed to="/landing/offer" />
       <LandingHeader />
       <OfferWidget />
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

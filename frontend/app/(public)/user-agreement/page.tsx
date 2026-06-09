@@ -21,7 +21,7 @@ export default function UserAgreementPage() {
       <RedirectIfAuthed to="/landing/user-agreement" />
       <LandingHeader />
       <UserAgreementWidget />
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

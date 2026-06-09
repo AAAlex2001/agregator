@@ -38,14 +38,3 @@
     padding-right: 262px;
   }
 }
-
-.contentVertical {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-}
-
-.contentBody {
-  flex: 1 1 auto;
-  min-width: 0;
-}

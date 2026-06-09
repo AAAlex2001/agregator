@@ -66,7 +66,7 @@ export default function NewsListPage() {
       <Suspense fallback={<ArticlesListSkeleton />}>
         <NewsListContent />
       </Suspense>
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

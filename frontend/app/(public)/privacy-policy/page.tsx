@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
       <RedirectIfAuthed to="/landing/privacy-policy" />
       <LandingHeader />
       <PrivacyPolicyWidget />
-      <LandingFooter variant="light" />
+      <LandingFooter />
     </>
   );
 }

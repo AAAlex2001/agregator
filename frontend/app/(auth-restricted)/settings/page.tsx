@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { SettingsWidget } from "@/source/widgets/profile/settings";
+import LandingFooter from "@/source/widgets/landing/ui/Footer";
 
 type Section = "personal" | "notifications" | "subscription";
 
@@ -16,5 +17,10 @@ export default function SettingsPage() {
   const searchParams = useSearchParams();
   const explicitSection = resolveExplicitSection(searchParams.get("section"));
 
-  return <SettingsWidget explicitSection={explicitSection} />;
+  return (
+    <>
+      <SettingsWidget explicitSection={explicitSection} />
+      <LandingFooter variant="light" />
+    </>
+  );
 }
