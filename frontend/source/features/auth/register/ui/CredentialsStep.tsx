@@ -11,17 +11,28 @@ import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import { useRef } from "react";
 import type { RegisterFormValues } from "../model/schema";
+import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
 import s from "./CredentialsStep.module.scss";
 
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 const LICENSE_FILE_HINT = "PDF / JPG / PNG, до 5 МБ";
 
+const REGULATORY_FILE_ACCEPT =
+  ".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const REGULATORY_FILE_HINT = "PDF / JPG / PNG / DOC / DOCX, до 10 МБ";
+
 interface Props {
   form: UseFormReturn<RegisterFormValues>;
   isLoading: boolean;
   licenseFile: File | null;
+  miningLicenseFile?: File | null;
+  sroDesignFile?: File | null;
+  labAccreditationFile?: File | null;
   onPhoneChange: (v: string) => void;
   onLicenseFileSelect: (file: File | null) => void;
+  onMiningLicenseFileSelect?: (file: File | null) => void;
+  onSroDesignFileSelect?: (file: File | null) => void;
+  onLabAccreditationFileSelect?: (file: File | null) => void;
   onSubmit: () => void;
 }
 
@@ -39,8 +50,14 @@ export function CredentialsStep({
   form,
   isLoading,
   licenseFile,
+  miningLicenseFile = null,
+  sroDesignFile = null,
+  labAccreditationFile = null,
   onPhoneChange,
   onLicenseFileSelect,
+  onMiningLicenseFileSelect,
+  onSroDesignFileSelect,
+  onLabAccreditationFileSelect,
   onSubmit,
 }: Props) {
   const { watch, setValue, formState } = form;
@@ -181,6 +198,23 @@ export function CredentialsStep({
               onChangeFixed={(value) => setValue("rentalFixedAmount", value, { shouldValidate })}
             />
           </div>
+        )}
+
+        {isLicenseHolder && (
+          <RegulatoryDocumentsBlock
+            miningLicenseFile={miningLicenseFile}
+            sroDesignFile={sroDesignFile}
+            labAccreditationFile={labAccreditationFile}
+            miningLicenseNumber={watch("miningLicenseNumber") ?? ""}
+            sroDesignNumber={watch("sroDesignNumber") ?? ""}
+            labAccreditationNumber={watch("labAccreditationNumber") ?? ""}
+            onMiningNumberChange={(v) => setValue("miningLicenseNumber", v, { shouldValidate })}
+            onSroNumberChange={(v) => setValue("sroDesignNumber", v, { shouldValidate })}
+            onLabNumberChange={(v) => setValue("labAccreditationNumber", v, { shouldValidate })}
+            onMiningFileSelect={onMiningLicenseFileSelect}
+            onSroFileSelect={onSroDesignFileSelect}
+            onLabFileSelect={onLabAccreditationFileSelect}
+          />
         )}
 
         <EmailInput

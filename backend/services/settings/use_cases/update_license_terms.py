@@ -24,5 +24,8 @@ class UpdateLicenseTermsUseCase:
         user.license_rental_fixed_amount = (
             data.license_rental_fixed_amount if data.license_rental_kind is LicenseRentalKind.FIXED else None
         )
+        user.mining_license_number = data.mining_license_number
+        user.sro_design_number = data.sro_design_number
+        user.lab_accreditation_number = data.lab_accreditation_number
         await self.repo.flush()
         return user

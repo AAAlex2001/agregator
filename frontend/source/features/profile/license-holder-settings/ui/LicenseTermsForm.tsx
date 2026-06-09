@@ -24,6 +24,10 @@ interface Props {
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 const LICENSE_FILE_HINT = "PDF / JPG / PNG, до 5 МБ";
 
+const REGULATORY_FILE_ACCEPT =
+  ".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const REGULATORY_FILE_HINT = "PDF / JPG / PNG / DOC / DOCX, до 10 МБ";
+
 const COMPANY_CARD_ACCEPT = ".pdf,application/pdf";
 const COMPANY_CARD_HINT = "Только PDF, до 5 МБ";
 
@@ -33,20 +37,38 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
     isSaving,
     isUploading,
     isCardUploading,
+    isMiningUploading,
+    isSroUploading,
+    isLabUploading,
     submit,
     replaceFile,
     replaceCompanyCard,
     removeCompanyCardFile,
+    replaceMiningLicenseFile,
+    replaceSroDesignFile,
+    replaceLabAccreditationFile,
   } = useLicenseTerms({ profile, onProfileUpdate });
   const { watch, setValue, formState } = form;
   const errors = formState.errors;
   const shouldValidate = formState.isSubmitted;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cardInputRef = useRef<HTMLInputElement>(null);
+  const miningInputRef = useRef<HTMLInputElement>(null);
+  const sroInputRef = useRef<HTMLInputElement>(null);
+  const labInputRef = useRef<HTMLInputElement>(null);
 
   const fileItems = profile.license_file_url ? [remoteFileItem(profile.license_file_url)] : [];
   const cardItems = profile.company_card_url
     ? [remoteFileItem(profile.company_card_url, "card-remote", "Карточка предприятия", removeCompanyCardFile)]
+    : [];
+  const miningItems = profile.mining_license_file_url
+    ? [remoteFileItem(profile.mining_license_file_url, "mining-remote", "Лицензия маркшейдера")]
+    : [];
+  const sroItems = profile.sro_design_file_url
+    ? [remoteFileItem(profile.sro_design_file_url, "sro-remote", "Выписка СРО")]
+    : [];
+  const labItems = profile.lab_accreditation_file_url
+    ? [remoteFileItem(profile.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
     : [];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -131,6 +153,104 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         onChangePercent={(value) => setValue("rentalPercent", value, { shouldValidate })}
         onChangeFixed={(value) => setValue("rentalFixedAmount", value, { shouldValidate })}
       />
+
+      <div className={s.extrasSection}>
+        <h3 className={s.extrasTitle}>Дополнительные разрешительные документы</h3>
+        <p className={s.extrasHint}>Заполняйте только если применимо к вашей деятельности.</p>
+
+        <div className={s.extrasItem}>
+          <TextInput
+            id="miningLicenseNumber"
+            value={watch("miningLicenseNumber") ?? ""}
+            autoComplete="off"
+            onChange={(e) => setValue("miningLicenseNumber", e.target.value, { shouldValidate })}
+            placeholder="Лицензия на маркшейдерские работы №"
+            error={errors.miningLicenseNumber?.message}
+          />
+          <FileGallery
+            label={isMiningUploading ? "Загрузка файла…" : "Файл лицензии маркшейдера"}
+            hint={REGULATORY_FILE_HINT}
+            items={miningItems}
+            variant="editable"
+            onAdd={() => miningInputRef.current?.click()}
+            input={
+              <input
+                ref={miningInputRef}
+                type="file"
+                accept={REGULATORY_FILE_ACCEPT}
+                hidden
+                onChange={(event) => {
+                  const next = event.target.files?.[0] ?? null;
+                  event.target.value = "";
+                  if (next) replaceMiningLicenseFile(next);
+                }}
+              />
+            }
+          />
+        </div>
+
+        <div className={s.extrasItem}>
+          <TextInput
+            id="sroDesignNumber"
+            value={watch("sroDesignNumber") ?? ""}
+            autoComplete="off"
+            onChange={(e) => setValue("sroDesignNumber", e.target.value, { shouldValidate })}
+            placeholder="ОГРН СРО в области проектирования"
+            error={errors.sroDesignNumber?.message}
+          />
+          <FileGallery
+            label={isSroUploading ? "Загрузка файла…" : "Файл выписки из реестра СРО"}
+            hint={REGULATORY_FILE_HINT}
+            items={sroItems}
+            variant="editable"
+            onAdd={() => sroInputRef.current?.click()}
+            input={
+              <input
+                ref={sroInputRef}
+                type="file"
+                accept={REGULATORY_FILE_ACCEPT}
+                hidden
+                onChange={(event) => {
+                  const next = event.target.files?.[0] ?? null;
+                  event.target.value = "";
+                  if (next) replaceSroDesignFile(next);
+                }}
+              />
+            }
+          />
+        </div>
+
+        <div className={s.extrasItem}>
+          <TextInput
+            id="labAccreditationNumber"
+            value={watch("labAccreditationNumber") ?? ""}
+            autoComplete="off"
+            onChange={(e) => setValue("labAccreditationNumber", e.target.value, { shouldValidate })}
+            placeholder="Свидетельство об аккредитации лаборатории №"
+            error={errors.labAccreditationNumber?.message}
+          />
+          <FileGallery
+            label={isLabUploading ? "Загрузка файла…" : "Файл свидетельства аккредитации"}
+            hint={REGULATORY_FILE_HINT}
+            items={labItems}
+            variant="editable"
+            onAdd={() => labInputRef.current?.click()}
+            input={
+              <input
+                ref={labInputRef}
+                type="file"
+                accept={REGULATORY_FILE_ACCEPT}
+                hidden
+                onChange={(event) => {
+                  const next = event.target.files?.[0] ?? null;
+                  event.target.value = "";
+                  if (next) replaceLabAccreditationFile(next);
+                }}
+              />
+            }
+          />
+        </div>
+      </div>
 
       <Button type="submit" variant="chat" size="md" className={s.save} isLoading={isSaving}>
         Сохранить изменения

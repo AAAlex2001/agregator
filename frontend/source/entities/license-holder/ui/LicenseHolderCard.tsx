@@ -111,12 +111,24 @@ function Field({ label, children }: FieldProps) {
 
 export function LicenseHolderCard({ item }: Props) {
   const [open, setOpen] = useState(false);
+  const [extrasOpen, setExtrasOpen] = useState(false);
   const types = (item.license_areas ?? [])
     .map(asExpertiseType)
     .filter((v): v is ExpertiseType => v !== null);
 
   const fileItems = buildFileItems(item.license_file_url, "license-file", "Лицензия");
   const cardItems = buildFileItems(item.company_card_url, "company-card", "Карточка предприятия");
+  const miningItems = buildFileItems(item.mining_license_file_url, "mining-license", "Лицензия маркшейдера");
+  const sroItems = buildFileItems(item.sro_design_file_url, "sro-design", "Выписка СРО");
+  const labItems = buildFileItems(item.lab_accreditation_file_url, "lab-accreditation", "Аккредитация лаборатории");
+  const hasAnyExtras = Boolean(
+    item.mining_license_number ||
+      item.sro_design_number ||
+      item.lab_accreditation_number ||
+      item.mining_license_file_url ||
+      item.sro_design_file_url ||
+      item.lab_accreditation_file_url,
+  );
   const companyName = getCompanyName(item);
 
   function toggle() {
@@ -218,6 +230,87 @@ export function LicenseHolderCard({ item }: Props) {
               gridProps={{ className: s.fileGrid }}
               hideWhenEmpty
             />
+          )}
+
+          {hasAnyExtras && (
+            <div className={s.fileBlock}>
+              <button
+                type="button"
+                className={s.extrasToggle}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setExtrasOpen((v) => !v);
+                }}
+                aria-expanded={extrasOpen}
+              >
+                <span>Дополнительные разрешительные документы</span>
+                <ChatChevronDownIcon className={`${s.chevron} ${extrasOpen ? s.chevronOpen : ""}`.trim()} />
+              </button>
+
+              {extrasOpen && (
+                <div className={s.extrasBody}>
+                  {(item.mining_license_number || miningItems.length > 0) && (
+                    <div className={s.extrasItem}>
+                      {item.mining_license_number && (
+                        <Field label="Лицензия на маркшейдерские работы №:">
+                          <span className={s.value}>{item.mining_license_number}</span>
+                        </Field>
+                      )}
+                      {miningItems.length > 0 && (
+                        <FileGallery
+                          items={miningItems}
+                          label="Файл лицензии:"
+                          labelClassName={s.label}
+                          blockClassName={s.fileBlock}
+                          gridProps={{ className: s.fileGrid }}
+                          hideWhenEmpty
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {(item.sro_design_number || sroItems.length > 0) && (
+                    <div className={s.extrasItem}>
+                      {item.sro_design_number && (
+                        <Field label="Выписка СРО проектирования, ОГРН:">
+                          <span className={s.value}>{item.sro_design_number}</span>
+                        </Field>
+                      )}
+                      {sroItems.length > 0 && (
+                        <FileGallery
+                          items={sroItems}
+                          label="Файл выписки:"
+                          labelClassName={s.label}
+                          blockClassName={s.fileBlock}
+                          gridProps={{ className: s.fileGrid }}
+                          hideWhenEmpty
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {(item.lab_accreditation_number || labItems.length > 0) && (
+                    <div className={s.extrasItem}>
+                      {item.lab_accreditation_number && (
+                        <Field label="Свидетельство об аккредитации лаборатории №:">
+                          <span className={s.value}>{item.lab_accreditation_number}</span>
+                        </Field>
+                      )}
+                      {labItems.length > 0 && (
+                        <FileGallery
+                          items={labItems}
+                          label="Файл свидетельства:"
+                          labelClassName={s.label}
+                          blockClassName={s.fileBlock}
+                          gridProps={{ className: s.fileGrid }}
+                          hideWhenEmpty
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}

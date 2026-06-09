@@ -31,3 +31,38 @@
 .save {
   width: 100%;
 }
+
+.extrasSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f0d8b3;
+}
+
+.extrasTitle {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
+}
+
+.extrasHint {
+  margin: -8px 0 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #808080;
+}
+
+.extrasItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #fff8ed;
+  border: 1px solid #fbd6a3;
+  border-radius: 10px;
+}

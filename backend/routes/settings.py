@@ -21,7 +21,10 @@ from services.settings import (
     GetProfileUseCase,
     MarkNotificationsIntroducedUseCase,
     ReplaceCompanyCardUseCase,
+    ReplaceLabAccreditationFileUseCase,
     ReplaceLicenseFileUseCase,
+    ReplaceMiningLicenseFileUseCase,
+    ReplaceSroDesignFileUseCase,
     RequestEmailChangeUseCase,
     SettingsRepository,
     SettingsValidator,
@@ -218,6 +221,42 @@ async def upload_license_file(
     "Заменяет загруженный файл лицензии."
     repo = build_repo(db)
     user = await ReplaceLicenseFileUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
+
+
+@router.post("/settings/mining-license-file", response_model=UserSettingsResponse)
+async def upload_mining_license_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Заменяет файл лицензии на маркшейдерские работы (PDF/Word/JPG/PNG)."
+    repo = build_repo(db)
+    user = await ReplaceMiningLicenseFileUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
+
+
+@router.post("/settings/sro-design-file", response_model=UserSettingsResponse)
+async def upload_sro_design_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Заменяет файл выписки из реестра СРО проектирования (PDF/Word/JPG/PNG)."
+    repo = build_repo(db)
+    user = await ReplaceSroDesignFileUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
+
+
+@router.post("/settings/lab-accreditation-file", response_model=UserSettingsResponse)
+async def upload_lab_accreditation_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Заменяет файл свидетельства об аккредитации лаборатории (PDF/Word/JPG/PNG)."
+    repo = build_repo(db)
+    user = await ReplaceLabAccreditationFileUseCase(repo, build_validator(repo)).execute(user_id, file)
     return to_response(user)
 
 

@@ -17,7 +17,14 @@ from schemas.registration import (
     UserResponse,
 )
 from services.dadata import DaDataService
-from services.license_holders import remove_license_file, save_license_file
+from services.license_holders import (
+    remove_license_file,
+    remove_regulatory_document_file,
+    save_lab_accreditation_file,
+    save_license_file,
+    save_mining_license_file,
+    save_sro_design_file,
+)
 from services.login import SESSION_MAX_DAYS, CreateSessionUseCase, LoginRepository
 from services.registration import (
     ConfirmEmailUseCase,
@@ -136,17 +143,31 @@ async def register_license_holder(
     background_tasks: BackgroundTasks,
     data: LicenseHolderRegistration = Depends(parse_license_holder_payload),
     license_file: UploadFile | None = File(None),
+    mining_license_file: UploadFile | None = File(None),
+    sro_design_file: UploadFile | None = File(None),
+    lab_accreditation_file: UploadFile | None = File(None),
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-    "Регистрирует лицензиата: сохраняет файл лицензии и отправляет письмо подтверждения."
+    "Регистрирует лицензиата: сохраняет основной файл лицензии + (опц.) 3 дополнительных регуляторных документа."
     file_url = await save_license_file(data.inn, license_file) if license_file else None
+    mining_url = await save_mining_license_file(data.inn, mining_license_file) if mining_license_file else None
+    sro_url = await save_sro_design_file(data.inn, sro_design_file) if sro_design_file else None
+    lab_url = await save_lab_accreditation_file(data.inn, lab_accreditation_file) if lab_accreditation_file else None
+
     repo = build_repo(db)
     try:
         user = await RegisterLicenseHolderUseCase(repo, build_validator(repo)).execute(
-            data, file_url
+            data,
+            file_url,
+            mining_license_file_url=mining_url,
+            sro_design_file_url=sro_url,
+            lab_accreditation_file_url=lab_url,
         )
     except Exception:
         remove_license_file(file_url)
+        remove_regulatory_document_file(mining_url)
+        remove_regulatory_document_file(sro_url)
+        remove_regulatory_document_file(lab_url)
         raise
 
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)

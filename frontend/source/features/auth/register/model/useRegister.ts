@@ -44,6 +44,9 @@ export function useRegister() {
   const { reload } = useSession();
   const [wizard, dispatch] = useReducer(registerWizardReducer, initialRegisterWizardState);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const [miningLicenseFile, setMiningLicenseFile] = useState<File | null>(null);
+  const [sroDesignFile, setSroDesignFile] = useState<File | null>(null);
+  const [labAccreditationFile, setLabAccreditationFile] = useState<File | null>(null);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
@@ -83,7 +86,13 @@ export function useRegister() {
     async (values) => {
       try {
         if (values.role === "LICENSE_HOLDER") {
-          await registerLicenseHolder(toLicenseHolderPayload(values), licenseFile);
+          await registerLicenseHolder(
+            toLicenseHolderPayload(values),
+            licenseFile,
+            miningLicenseFile,
+            sroDesignFile,
+            labAccreditationFile,
+          );
         } else {
           await registerUser(toRegisterPayload(values));
         }
@@ -132,6 +141,9 @@ export function useRegister() {
     form,
     confirmForm,
     licenseFile,
+    miningLicenseFile,
+    sroDesignFile,
+    labAccreditationFile,
     isLoading: form.formState.isSubmitting,
     isConfirmLoading: confirmForm.formState.isSubmitting,
     selectRole,
@@ -141,5 +153,8 @@ export function useRegister() {
     confirmSubmit,
     setPhone,
     selectLicenseFile,
+    setMiningLicenseFile,
+    setSroDesignFile,
+    setLabAccreditationFile,
   };
 }

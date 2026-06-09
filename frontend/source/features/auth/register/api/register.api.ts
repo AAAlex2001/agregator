@@ -36,6 +36,9 @@ export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolde
       values.rentalKind === "PERCENT" ? Number(values.rentalPercent.replace(",", ".")) : undefined,
     license_rental_fixed_amount:
       values.rentalKind === "FIXED" ? Number(values.rentalFixedAmount.replace(/\s/g, "")) : undefined,
+    mining_license_number: values.miningLicenseNumber?.trim() || null,
+    sro_design_number: values.sroDesignNumber?.trim() || null,
+    lab_accreditation_number: values.labAccreditationNumber?.trim() || null,
   };
 }
 
@@ -58,15 +61,24 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
 export async function registerLicenseHolder(
   payload: LicenseHolderRegisterPayload,
   licenseFile: File | null,
+  miningLicenseFile: File | null = null,
+  sroDesignFile: File | null = null,
+  labAccreditationFile: File | null = null,
 ): Promise<RegisterResponse> {
+  const allFiles = [licenseFile, miningLicenseFile, sroDesignFile, labAccreditationFile].filter(
+    (f): f is File => f !== null,
+  );
   const res = await stableMultipartFetch({
     input: `${API_URL}/register/license-holder`,
     method: "POST",
-    files: licenseFile ? [licenseFile] : [],
-    buildBody: (files) => {
+    files: allFiles,
+    buildBody: () => {
       const formData = new FormData();
       formData.append("payload", JSON.stringify(payload));
-      if (files[0]) formData.append("license_file", files[0]);
+      if (licenseFile) formData.append("license_file", licenseFile);
+      if (miningLicenseFile) formData.append("mining_license_file", miningLicenseFile);
+      if (sroDesignFile) formData.append("sro_design_file", sroDesignFile);
+      if (labAccreditationFile) formData.append("lab_accreditation_file", labAccreditationFile);
       return formData;
     },
   });

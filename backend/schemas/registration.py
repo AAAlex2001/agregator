@@ -43,6 +43,9 @@ class LicenseHolderRegistration(BaseModel):
     license_rental_kind: LicenseRentalKind
     license_rental_percent: float | None = Field(None, gt=0, le=100)
     license_rental_fixed_amount: int | None = Field(None, gt=0)
+    mining_license_number: str | None = Field(None, max_length=100)
+    sro_design_number: str | None = Field(None, max_length=100)
+    lab_accreditation_number: str | None = Field(None, max_length=100)
 
     @model_validator(mode="after")
     def cross_field_checks(self) -> "LicenseHolderRegistration":
@@ -97,6 +100,12 @@ class UserResponse(BaseModel):
     license_rental_kind: LicenseRentalKind | None = None
     license_rental_percent: float | None = None
     license_rental_fixed_amount: int | None = None
+    mining_license_number: str | None = None
+    mining_license_file_url: str | None = None
+    sro_design_number: str | None = None
+    sro_design_file_url: str | None = None
+    lab_accreditation_number: str | None = None
+    lab_accreditation_file_url: str | None = None
 
     class Config:
         from_attributes = True

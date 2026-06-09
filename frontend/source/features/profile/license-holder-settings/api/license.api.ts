@@ -60,3 +60,30 @@ export async function deleteCompanyCard(): Promise<UserProfile> {
   if (!res.ok) throw new Error(await readError(res, "Не удалось удалить карточку предприятия"));
   return res.json();
 }
+
+async function uploadRegulatoryDocument(file: File, endpoint: string, fallback: string): Promise<UserProfile> {
+  const res = await stableMultipartFetch({
+    input: `${API_URL}${endpoint}`,
+    method: "POST",
+    files: [file],
+    buildBody: (files) => {
+      const formData = new FormData();
+      if (files[0]) formData.append("file", files[0]);
+      return formData;
+    },
+  });
+  if (!res.ok) throw new Error(await readError(res, fallback));
+  return res.json();
+}
+
+export function uploadMiningLicenseFile(file: File): Promise<UserProfile> {
+  return uploadRegulatoryDocument(file, "/settings/mining-license-file", "Не удалось загрузить файл лицензии маркшейдера");
+}
+
+export function uploadSroDesignFile(file: File): Promise<UserProfile> {
+  return uploadRegulatoryDocument(file, "/settings/sro-design-file", "Не удалось загрузить файл выписки СРО");
+}
+
+export function uploadLabAccreditationFile(file: File): Promise<UserProfile> {
+  return uploadRegulatoryDocument(file, "/settings/lab-accreditation-file", "Не удалось загрузить файл аккредитации");
+}

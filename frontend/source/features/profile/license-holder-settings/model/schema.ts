@@ -13,6 +13,9 @@ export const licenseTermsSchema = z
     rentalKind: z.enum(["PERCENT", "FIXED", "NEGOTIABLE"]),
     rentalPercent: z.string().trim(),
     rentalFixedAmount: z.string().trim(),
+    miningLicenseNumber: z.string().trim().max(100, "Слишком длинный номер"),
+    sroDesignNumber: z.string().trim().max(100, "Слишком длинный ОГРН"),
+    labAccreditationNumber: z.string().trim().max(100, "Слишком длинный номер"),
   })
   .superRefine((data, ctx) => {
     if (data.rentalKind === "PERCENT") {

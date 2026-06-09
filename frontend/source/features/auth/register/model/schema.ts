@@ -47,6 +47,9 @@ export const registerFormSchema = z
     rentalKind: z.enum(["PERCENT", "FIXED", "NEGOTIABLE"]),
     rentalPercent: z.string().trim(),
     rentalFixedAmount: z.string().trim(),
+    miningLicenseNumber: z.string().trim().max(100),
+    sroDesignNumber: z.string().trim().max(100),
+    labAccreditationNumber: z.string().trim().max(100),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -157,6 +160,9 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   rentalKind: "PERCENT",
   rentalPercent: "",
   rentalFixedAmount: "",
+  miningLicenseNumber: "",
+  sroDesignNumber: "",
+  labAccreditationNumber: "",
 };
 
 export const registerConfirmSchema = z.object({

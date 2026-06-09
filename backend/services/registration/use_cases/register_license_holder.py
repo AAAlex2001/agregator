@@ -18,6 +18,9 @@ class RegisterLicenseHolderUseCase:
         self,
         data: LicenseHolderRegistration,
         license_file_url: str | None,
+        mining_license_file_url: str | None = None,
+        sro_design_file_url: str | None = None,
+        lab_accreditation_file_url: str | None = None,
     ) -> User:
         "Запускает основной сценарий use case."
         self.validator.ensure_password_strong(data.password)
@@ -48,6 +51,12 @@ class RegisterLicenseHolderUseCase:
                 if data.license_rental_kind is LicenseRentalKind.FIXED
                 else None
             ),
+            mining_license_number=data.mining_license_number,
+            mining_license_file_url=mining_license_file_url,
+            sro_design_number=data.sro_design_number,
+            sro_design_file_url=sro_design_file_url,
+            lab_accreditation_number=data.lab_accreditation_number,
+            lab_accreditation_file_url=lab_accreditation_file_url,
             email_on_response_created=False,
             email_on_response_updated=False,
             email_on_expert_rejected=False,

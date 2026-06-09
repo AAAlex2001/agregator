@@ -13,7 +13,10 @@ import {
   deleteCompanyCard,
   updateLicenseHolderProfile,
   uploadCompanyCard,
+  uploadLabAccreditationFile,
   uploadLicenseFile,
+  uploadMiningLicenseFile,
+  uploadSroDesignFile,
 } from "../api/license.api";
 import { licenseTermsSchema, type LicenseTermsValues } from "./schema";
 
@@ -38,6 +41,9 @@ function profileToValues(profile: UserProfile): LicenseTermsValues {
       profile.license_rental_kind === "FIXED" && profile.license_rental_fixed_amount !== null
         ? String(profile.license_rental_fixed_amount)
         : "",
+    miningLicenseNumber: profile.mining_license_number ?? "",
+    sroDesignNumber: profile.sro_design_number ?? "",
+    labAccreditationNumber: profile.lab_accreditation_number ?? "",
   };
 }
 
@@ -50,6 +56,9 @@ function valuesToPayload(values: LicenseTermsValues): LicenseHolderUpdatePayload
       values.rentalKind === "PERCENT" ? Number(values.rentalPercent.replace(",", ".")) : undefined,
     license_rental_fixed_amount:
       values.rentalKind === "FIXED" ? Number(values.rentalFixedAmount.replace(/\s/g, "")) : undefined,
+    mining_license_number: values.miningLicenseNumber.trim() || null,
+    sro_design_number: values.sroDesignNumber.trim() || null,
+    lab_accreditation_number: values.labAccreditationNumber.trim() || null,
   };
 }
 
@@ -57,6 +66,9 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
   const { showError, showSuccess } = useNotifications();
   const [isUploading, setIsUploading] = useState(false);
   const [isCardUploading, setIsCardUploading] = useState(false);
+  const [isMiningUploading, setIsMiningUploading] = useState(false);
+  const [isSroUploading, setIsSroUploading] = useState(false);
+  const [isLabUploading, setIsLabUploading] = useState(false);
 
   const form = useForm<LicenseTermsValues>({
     resolver: zodResolver(licenseTermsSchema),
@@ -124,14 +136,54 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     }
   };
 
+  const makeRegulatoryUploader = (
+    uploader: (file: File) => Promise<UserProfile>,
+    setBusy: (v: boolean) => void,
+    successMessage: string,
+  ) => async (file: File | null) => {
+    if (!file) return;
+    setBusy(true);
+    try {
+      const updated = await uploader(file);
+      onProfileUpdate(updated);
+      showSuccess(successMessage);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Не удалось загрузить файл");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const replaceMiningLicenseFile = makeRegulatoryUploader(
+    uploadMiningLicenseFile,
+    setIsMiningUploading,
+    "Файл лицензии маркшейдера обновлён",
+  );
+  const replaceSroDesignFile = makeRegulatoryUploader(
+    uploadSroDesignFile,
+    setIsSroUploading,
+    "Файл выписки СРО обновлён",
+  );
+  const replaceLabAccreditationFile = makeRegulatoryUploader(
+    uploadLabAccreditationFile,
+    setIsLabUploading,
+    "Файл аккредитации лаборатории обновлён",
+  );
+
   return {
     form,
     isSaving: form.formState.isSubmitting,
     isUploading,
     isCardUploading,
+    isMiningUploading,
+    isSroUploading,
+    isLabUploading,
     submit,
     replaceFile,
     replaceCompanyCard,
     removeCompanyCardFile,
+    replaceMiningLicenseFile,
+    replaceSroDesignFile,
+    replaceLabAccreditationFile,
   };
 }

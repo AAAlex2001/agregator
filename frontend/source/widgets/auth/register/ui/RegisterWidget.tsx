@@ -96,8 +96,14 @@ export function RegisterWidget() {
               form={reg.form}
               isLoading={reg.isLoading}
               licenseFile={reg.licenseFile}
+              miningLicenseFile={reg.miningLicenseFile}
+              sroDesignFile={reg.sroDesignFile}
+              labAccreditationFile={reg.labAccreditationFile}
               onPhoneChange={reg.setPhone}
               onLicenseFileSelect={reg.selectLicenseFile}
+              onMiningLicenseFileSelect={reg.setMiningLicenseFile}
+              onSroDesignFileSelect={reg.setSroDesignFile}
+              onLabAccreditationFileSelect={reg.setLabAccreditationFile}
               onSubmit={reg.submit}
             />
           )}

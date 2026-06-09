@@ -7,7 +7,10 @@ from services.settings.use_cases.mark_notifications_introduced import (
     MarkNotificationsIntroducedUseCase,
 )
 from services.settings.use_cases.replace_company_card import ReplaceCompanyCardUseCase
+from services.settings.use_cases.replace_lab_accreditation_file import ReplaceLabAccreditationFileUseCase
 from services.settings.use_cases.replace_license_file import ReplaceLicenseFileUseCase
+from services.settings.use_cases.replace_mining_license_file import ReplaceMiningLicenseFileUseCase
+from services.settings.use_cases.replace_sro_design_file import ReplaceSroDesignFileUseCase
 from services.settings.use_cases.request_email_change import RequestEmailChangeUseCase
 from services.settings.use_cases.update_email_preferences import UpdateEmailPreferencesUseCase
 from services.settings.use_cases.update_license_terms import UpdateLicenseTermsUseCase
@@ -23,7 +26,10 @@ __all__ = [
     "GetProfileUseCase",
     "MarkNotificationsIntroducedUseCase",
     "ReplaceCompanyCardUseCase",
+    "ReplaceLabAccreditationFileUseCase",
     "ReplaceLicenseFileUseCase",
+    "ReplaceMiningLicenseFileUseCase",
+    "ReplaceSroDesignFileUseCase",
     "RequestEmailChangeUseCase",
     "SettingsRepository",
     "SettingsValidator",
