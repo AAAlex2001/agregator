@@ -1,7 +1,7 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -9,86 +9,59 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  padding: 12px 14px;
-  background: #fff8ed;
-  border: 1px solid #fbd6a3;
-  border-radius: 10px;
+  padding: 14px 18px;
+  background: #ffffff;
+  border: 1px solid #e6d3b5;
+  border-radius: 12px;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  color: #8a4500;
+  color: #1a1a1a;
   cursor: pointer;
   text-align: left;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 
-  &:hover {
-    background: #ffe6c2;
+  &:hover,
+  &:focus-visible {
+    background: #ff8a00;
+    border-color: #ff8a00;
+    color: #ffffff;
+    outline: none;
+  }
+
+  &:hover .chevron,
+  &:focus-visible .chevron {
+    color: #ffffff;
   }
 }
 
+.toggleText {
+  flex: 1;
+}
+
 .chevron {
-  font-size: 18px;
-  line-height: 1;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: #ff8a00;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
 }
 
 .body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 14px;
-  background: #ffffff;
-  border: 1px solid #fbd6a3;
-  border-radius: 10px;
+  gap: 18px;
 }
 
 .row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.fileSlot {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
-}
-
-.pickBtn {
-  padding: 8px 14px;
-  background: #ff8a00;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 18px;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &:hover:not(:disabled) {
-    background: #e67a00;
-  }
-}
-
-.fileName {
-  font-family: "Montserrat", sans-serif;
-  font-size: 13px;
-  line-height: 18px;
-  color: #4d4d4d;
-  word-break: break-all;
-}
-
-.hint {
-  margin: 0;
-  font-family: "Montserrat", sans-serif;
-  font-size: 12px;
-  line-height: 16px;
-  color: #808080;
 }

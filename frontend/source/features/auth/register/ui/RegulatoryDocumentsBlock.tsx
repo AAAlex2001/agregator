@@ -2,10 +2,15 @@
 
 import { useRef, useState } from "react";
 import { TextInput } from "@/source/shared/ui/Inputs";
+import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
+import { isImageFileName } from "@/source/shared/lib/filePreview";
+import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import s from "./RegulatoryDocumentsBlock.module.scss";
 
 const ACCEPT =
   ".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const HINT = "PDF / JPG / PNG / DOC / DOCX, до 10 МБ";
 
 interface Props {
   miningLicenseFile: File | null;
@@ -27,35 +32,41 @@ export function RegulatoryDocumentsBlock(props: Props) {
 
   return (
     <div className={s.wrap}>
-      <button type="button" className={s.toggle} onClick={() => setOpen((v) => !v)}>
-        <span>Дополнительные разрешительные документы</span>
-        <span className={s.chevron} aria-hidden>
-          {open ? "▾" : "▸"}
-        </span>
+      <button
+        type="button"
+        className={s.toggle}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className={s.toggleText}>Дополнительные разрешительные документы</span>
+        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
       </button>
 
       {open && (
         <div className={s.body}>
           <DocRow
-            label="Лицензия на маркшейдерские работы №"
+            placeholder="Лицензия на маркшейдерские работы №"
             number={props.miningLicenseNumber}
             file={props.miningLicenseFile}
             onNumberChange={props.onMiningNumberChange}
             onFileSelect={props.onMiningFileSelect}
+            galleryId="mining"
           />
           <DocRow
-            label="Выписка СРО проектирования, ОГРН"
+            placeholder="Выписка СРО проектирования, ОГРН"
             number={props.sroDesignNumber}
             file={props.sroDesignFile}
             onNumberChange={props.onSroNumberChange}
             onFileSelect={props.onSroFileSelect}
+            galleryId="sro"
           />
           <DocRow
-            label="Свидетельство об аккредитации лаборатории №"
+            placeholder="Свидетельство об аккредитации лаборатории №"
             number={props.labAccreditationNumber}
             file={props.labAccreditationFile}
             onNumberChange={props.onLabNumberChange}
             onFileSelect={props.onLabFileSelect}
+            galleryId="lab"
           />
         </div>
       )}
@@ -64,15 +75,32 @@ export function RegulatoryDocumentsBlock(props: Props) {
 }
 
 interface RowProps {
-  label: string;
+  placeholder: string;
   number: string;
   file: File | null;
   onNumberChange: (v: string) => void;
   onFileSelect?: (f: File | null) => void;
+  galleryId: string;
 }
 
-function DocRow({ label, number, file, onNumberChange, onFileSelect }: RowProps) {
+function DocRow({ placeholder, number, file, onNumberChange, onFileSelect, galleryId }: RowProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const blobUrl = useObjectUrl(file);
+
+  const items: FileGalleryItem[] =
+    file && blobUrl
+      ? [
+          {
+            id: `${galleryId}-local`,
+            name: file.name,
+            url: blobUrl,
+            previewUrl: blobUrl,
+            thumbnailUrl: blobUrl,
+            isImage: isImageFileName(file.name),
+            onRemove: onFileSelect ? () => onFileSelect(null) : undefined,
+          },
+        ]
+      : [];
 
   return (
     <div className={s.row}>
@@ -80,31 +108,28 @@ function DocRow({ label, number, file, onNumberChange, onFileSelect }: RowProps)
         value={number}
         autoComplete="off"
         onChange={(e) => onNumberChange(e.target.value)}
-        placeholder={label}
+        placeholder={placeholder}
       />
-      <div className={s.fileSlot}>
-        <button
-          type="button"
-          className={s.pickBtn}
-          onClick={() => inputRef.current?.click()}
-          disabled={!onFileSelect}
-        >
-          {file ? "Заменить файл" : "Прикрепить файл"}
-        </button>
-        {file && <span className={s.fileName}>{file.name}</span>}
-        <input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPT}
-          hidden
-          onChange={(e) => {
-            const next = e.target.files?.[0] ?? null;
-            e.target.value = "";
-            if (onFileSelect) onFileSelect(next);
-          }}
-        />
-      </div>
-      <p className={s.hint}>PDF / JPG / PNG / DOC / DOCX, до 10 МБ</p>
+      <FileGallery
+        label="Файл документа"
+        hint={HINT}
+        items={items}
+        variant="editable"
+        onAdd={() => inputRef.current?.click()}
+        input={
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPT}
+            hidden
+            onChange={(e) => {
+              const next = e.target.files?.[0] ?? null;
+              e.target.value = "";
+              if (onFileSelect) onFileSelect(next);
+            }}
+          />
+        }
+      />
     </div>
   );
 }
