@@ -13,28 +13,23 @@
   width: 100%;
   padding: 14px 18px;
   background: #ffffff;
-  border: 1px solid #e6d3b5;
+  border: 1px solid #ffdda9;
   border-radius: 12px;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-base, "Montserrat", sans-serif);
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
   color: #1a1a1a;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
   &:hover,
   &:focus-visible {
-    background: #ffb366;
-    border-color: #ffb366;
-    color: #ffffff;
+    background: #fff8ed;
+    border-color: #ff8a00;
+    box-shadow: 0 4px 12px rgba(255, 138, 0, 0.08);
     outline: none;
-  }
-
-  &:hover .chevron,
-  &:focus-visible .chevron {
-    color: #ffffff;
   }
 }
 
@@ -46,8 +41,8 @@
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  color: #ffb366;
-  transition: transform 0.2s ease, color 0.2s ease;
+  color: #ff8a00;
+  transition: transform 0.2s ease;
 }
 
 .chevronOpen {
