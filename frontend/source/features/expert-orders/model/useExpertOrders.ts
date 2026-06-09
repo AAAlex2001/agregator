@@ -7,7 +7,7 @@ import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
-import { fetchOrders, respondToOrder } from "../api/expert-orders.api";
+import { fetchOrders, respondToOrder } from "@/source/entities/order";
 import type { RespondFormData } from "../ui/OrderModal";
 import { reducer, initial } from "./reducer";
 import { deleteDraft } from "./responseDraft";

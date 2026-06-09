@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Loader from "@/source/shared/ui/Loader";
-import { fetchPartySuggestions, type PartySuggestion } from "../api/parties.api";
+import { fetchPartySuggestions, type PartySuggestion } from "@/source/entities/party";
 import s from "./PartySuggestInput.module.scss";
 
 interface Props {

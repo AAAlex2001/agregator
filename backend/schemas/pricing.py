@@ -46,7 +46,7 @@ class UserSubscriptionResponse(BaseModel):
 class SubscribeRequest(BaseModel):
     "Payload оформления подписки: id тарифа и URL возврата после оплаты."
     plan_id: int = Field(..., ge=1)
-    return_url: str = Field(..., min_length=1)
+    return_url: str = Field(..., min_length=1, max_length=2000, pattern=r"^https?://")
 
 
 class SubscribeResponse(BaseModel):

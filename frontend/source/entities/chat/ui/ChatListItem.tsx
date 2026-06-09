@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ChatListItemData } from "@/source/entities/chat";
+import { formatChatListTime } from "@/source/shared/lib/formatDate";
 import { ChatAvatar } from "./ChatAvatar";
 import s from "./ChatListItem.module.scss";
 
@@ -8,24 +9,6 @@ interface ChatListItemProps {
   href: string;
   active?: boolean;
   isOwnLastMessage?: boolean;
-}
-
-function formatChatListTime(value: string | null): string {
-  if (!value) {
-    return "";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-
-  return isToday
-    ? date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })
-    : date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
 }
 
 export function ChatListItem({ chat, href, active = false, isOwnLastMessage = false }: ChatListItemProps) {

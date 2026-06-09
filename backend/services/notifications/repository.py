@@ -1,4 +1,5 @@
 "Repository: доступ к БД для notifications."
+from collections.abc import AsyncIterator
 from datetime import datetime
 
 from sqlalchemy import delete as sa_delete
@@ -24,10 +25,23 @@ class NotificationRepository:
         "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
 
-    async def list_all_user_ids(self) -> list[int]:
-        "ID всех пользователей для broadcast-рассылки in-app уведомлений (без фильтров — летит всем)."
-        result = await self.db.execute(select(User.id))
-        return list(result.scalars().all())
+    async def iter_all_user_ids_in_batches(
+        self, batch_size: int = 500
+    ) -> AsyncIterator[list[int]]:
+        "Итерирует ID всех пользователей батчами через keyset-пагинацию по User.id."
+        last_id = 0
+        while True:
+            result = await self.db.execute(
+                select(User.id)
+                .where(User.id > last_id)
+                .order_by(User.id)
+                .limit(batch_size)
+            )
+            batch = list(result.scalars().all())
+            if not batch:
+                return
+            yield batch
+            last_id = batch[-1]
 
     async def find_by_id_for_user(self, notification_id: int, user_id: int) -> Notification | None:
         "Ищет сущность по заданным параметрам."

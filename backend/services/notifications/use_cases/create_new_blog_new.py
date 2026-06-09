@@ -64,17 +64,19 @@ class CreateNewBlogPostNotificationUseCase:
         )
         payload_dump = payload.model_dump(mode="json")
 
-        user_ids = await self.repo.list_all_user_ids()
-        for user_id in user_ids:
-            notification = Notification(
-                user_id=user_id,
-                type=NotificationType.NEW_BLOG_POST,
-                payload=payload_dump,
-                action_url=action_url,
-            )
-            await self.repo.add(notification)
-            await self.repo.increment_unread(user_id)
-        await self.repo.flush()
+        total = 0
+        async for user_ids_batch in self.repo.iter_all_user_ids_in_batches():
+            for user_id in user_ids_batch:
+                notification = Notification(
+                    user_id=user_id,
+                    type=NotificationType.NEW_BLOG_POST,
+                    payload=payload_dump,
+                    action_url=action_url,
+                )
+                await self.repo.add(notification)
+                await self.repo.increment_unread(user_id)
+            await self.repo.flush()
+            total += len(user_ids_batch)
 
-        logger.info("Sent blog notification to %d users (slug=%s)", len(user_ids), slug)
-        return len(user_ids)
+        logger.info("Sent blog notification to %d users (slug=%s)", total, slug)
+        return total

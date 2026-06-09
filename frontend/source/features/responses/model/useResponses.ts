@@ -14,7 +14,7 @@ import {
   createReview,
   deleteRejectedResponse,
   deleteAllRejectedResponses,
-} from "../api/responses.api";
+} from "@/source/entities/response";
 import { openChatByOrder } from "@/source/features/chat";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { reducer, initial } from "./reducer";

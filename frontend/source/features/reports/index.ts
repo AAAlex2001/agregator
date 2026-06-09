@@ -1,2 +1,2 @@
 export { useReports } from "./model/useReports";
-export { fetchReports, getReportPdfUrl } from "./api/reports.api";
+export { fetchReports, getReportPdfUrl } from "@/source/entities/order";

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
 import { StarIcon } from "@/source/shared/ui/icons";
+import { formatDateRuOrEmpty } from "@/source/shared/lib/formatDate";
 import { DocumentsGallery, countDocuments } from "@/source/entities/order";
 import { TechSpecFiles } from "@/source/entities/response";
 import type { OrderCardData } from "@/source/entities/order";
@@ -38,12 +39,6 @@ function pluralOrders(count: number): string {
   return "заказов";
 }
 
-function formatJoinedDate(joinedAt: string): string {
-  const date = new Date(joinedAt);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
-}
-
 function Stars({ rating }: { rating: number | null }) {
   const filledCount = rating !== null ? Math.round(rating) : 0;
   return (
@@ -69,7 +64,7 @@ export function ExpertCard({
     rating !== null
       ? rating.toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
       : "—";
-  const joinedDisplay = formatJoinedDate(joinedAt);
+  const joinedDisplay = formatDateRuOrEmpty(joinedAt);
   const hasDocuments = lastOrder ? countDocuments(lastOrder.documents) > 0 : false;
   const hasExecutorFiles = lastOrder ? lastOrder.executorFiles.length > 0 : false;
 

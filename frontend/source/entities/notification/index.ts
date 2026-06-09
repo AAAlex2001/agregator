@@ -20,3 +20,10 @@ export type {
   ResponseUpdatedNotificationPayload,
   SupportReplyNotificationPayload,
 } from "./model/types";
+export {
+  fetchNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteNotification,
+  deleteAllNotifications,
+} from "./api/notifications.api";

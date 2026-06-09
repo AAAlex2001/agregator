@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchExpertReviews, fetchMyReviews } from "../api/reviews.api";
+import { fetchExpertReviews, fetchMyReviews } from "@/source/entities/review";
 import type { ReviewItem } from "./types";
 
 const PAGE_SIZE = 50;

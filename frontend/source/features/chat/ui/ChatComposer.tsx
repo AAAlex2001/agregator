@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { MessageComposer } from "@/source/shared/ui/MessageComposer";
 import { ChatClipIcon } from "@/source/shared/ui/icons";
 import type { ChatMessageData } from "@/source/entities/chat";
-import { sendChatMessage } from "../api/chat.api";
+import { sendChatMessage } from "@/source/entities/chat";
 import { FilePending, UploadProgress } from "./FilePending";
 import s from "./ChatComposer.module.scss";
 

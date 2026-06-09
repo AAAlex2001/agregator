@@ -1,7 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  border: 2px solid #FFB800;
+  border: 2px solid var(--color-orange-bright);
   border-radius: 20px;
   padding: 20px;
   gap: 15px;
@@ -69,7 +69,7 @@
   flex-direction: column;
   gap: 5px;
   margin-top: auto;
-  border-top: 1px solid #FF8A00;
+  border-top: 1px solid var(--color-orange-primary);
   position: relative;
   z-index: 1;
 }
@@ -123,7 +123,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: #FF8A00;
+    background: var(--color-orange-primary);
     border-radius: 50px;
     padding: 5px 15px;
     width: fit-content;
@@ -233,7 +233,7 @@
   max-width: 320px;
   margin: 0 auto;
   background: #FFFFFF;
-  border: 2px solid #FFB800;
+  border: 2px solid var(--color-orange-bright);
   box-shadow: 0 0 20px #C4994B33;
 
   p {

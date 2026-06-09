@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 AUTO_REJECT_DAYS = 3
 CHECK_INTERVAL_SECONDS = 3600  # hourly
+BACKOFF_INITIAL_SECONDS = 60
+BACKOFF_MAX_SECONDS = 600
 
 
 async def reject_expired_responses() -> None:
@@ -64,10 +66,15 @@ async def archive_orders_with_closed_responses() -> None:
 
 
 async def run_auto_reject_loop() -> None:
+    backoff_seconds = BACKOFF_INITIAL_SECONDS
     while True:
         try:
             await reject_expired_responses()
             await archive_orders_with_closed_responses()
+            backoff_seconds = BACKOFF_INITIAL_SECONDS
+            sleep_for = CHECK_INTERVAL_SECONDS
         except Exception:
             logger.exception("Error in auto-reject task")
-        await asyncio.sleep(CHECK_INTERVAL_SECONDS)
+            sleep_for = backoff_seconds
+            backoff_seconds = min(backoff_seconds * 2, BACKOFF_MAX_SECONDS)
+        await asyncio.sleep(sleep_for)

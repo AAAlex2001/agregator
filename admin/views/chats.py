@@ -18,8 +18,6 @@ class ChatAdmin(ModelView, model=Chat):
     icon = "fa-solid fa-comments"
     details_template = "chat_detail.html"
 
-    can_delete = False
-
     column_list = [
         Chat.id, Chat.uuid, Chat.order, Chat.customer,
         Chat.expert, Chat.created_at,

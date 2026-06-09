@@ -11,3 +11,13 @@ export { ChatListItem } from "./ui/ChatListItem";
 export { MessageBubble } from "./ui/MessageBubble";
 export { MessageGroup } from "./ui/MessageGroup";
 export type { ChatMessageGroupData } from "./ui/MessageGroup";
+export {
+  fetchChatList,
+  fetchChatDetail,
+  openChatByOrder,
+  blockChat,
+  unblockChat,
+  sendChatMessage,
+  markChatMessagesRead,
+  buildChatWebSocketUrl,
+} from "./api/chat.api";

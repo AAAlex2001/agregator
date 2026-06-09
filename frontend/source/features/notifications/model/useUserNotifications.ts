@@ -7,7 +7,7 @@ import {
   fetchNotifications,
   markAllNotificationsRead,
   markNotificationRead,
-} from "../api/notifications.api";
+} from "@/source/entities/notification";
 import { initialNotificationsState, notificationsReducer } from "./reducer";
 import { useUnreadCountContext } from "./UnreadCountContext";
 

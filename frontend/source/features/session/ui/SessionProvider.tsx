@@ -3,7 +3,7 @@
 import { useEffect, useReducer } from "react";
 import { usePathname } from "next/navigation";
 import type { UserProfile } from "@/source/entities/user";
-import { fetchSessionUser } from "../api/session.api";
+import { fetchSessionUser } from "@/source/entities/session";
 import { SessionContext } from "../model/context";
 import type { SessionRole } from "../model/types";
 import { initialSessionState, sessionReducer } from "../model/reducer";

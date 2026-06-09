@@ -91,6 +91,13 @@ def format_sum(sum_amount: int) -> str:
     return f"{formatted} ₽"
 
 
+PRE_CONTRACT_STATUSES = {
+    ResponseStatus.REVIEW,
+    ResponseStatus.REJECTED,
+    ResponseStatus.WITHDRAWN_BY_EXPERT,
+}
+
+
 def to_item(
     entity: OrderResponseModel,
     actor_role: UserRole | None = None,
@@ -101,14 +108,21 @@ def to_item(
     if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
         date_source = entity.updated_at or entity.created_at
     is_finalized = effective_status == ResponseStatus.COMPLETED
+    hide_customer_pii = (
+        actor_role == UserRole.EXPERT and effective_status in PRE_CONTRACT_STATUSES
+    )
     customer_name = ""
     customer_company = ""
     customer_inn = ""
     order_sum = ""
     if order:
-        customer_name = order.company or ""
-        customer_company = order.company or ""
-        customer_inn = (order.customer.inn or "") if order.customer is not None else ""
+        customer_name = "" if hide_customer_pii else (order.company or "")
+        customer_company = "" if hide_customer_pii else (order.company or "")
+        customer_inn = (
+            ""
+            if hide_customer_pii or order.customer is None
+            else (order.customer.inn or "")
+        )
         order_sum = "Не определено" if order.sum_amount == 0 else format_sum(order.sum_amount)
 
     expert = entity.expert
@@ -292,7 +306,7 @@ async def create_response_for_order(
         dispatcher=EmailDispatcher(background_tasks),
     )
     await email_use_case.execute(created.id)
-    return to_item(created)
+    return to_item(created, UserRole.EXPERT)
 
 
 @router.get("/responses", response_model=ExpertResponseList)
@@ -337,13 +351,15 @@ async def update_response_status(
 ) -> ExpertResponseItem:
     "Меняет статус отклика по правилам перехода с уведомлениями и проверкой подписки."
     repo = build_repo(db)
+    validator = ResponseValidator(repo)
+    actor = await validator.get_actor(user_id)
     send_bidding = SendBiddingFinishedEmailUseCase(
         repo=build_email_repo(db),
         dispatcher=EmailDispatcher(background_tasks),
     )
     use_case = UpdateResponseStatusUseCase(
         repo=repo,
-        validator=ResponseValidator(repo),
+        validator=validator,
         rules=ResponseStatusRules(),
         get_response=GetResponseByIdUseCase(repo),
         in_app=build_in_app(db, repo),
@@ -353,7 +369,7 @@ async def update_response_status(
     updated = await use_case.execute(
         response_id=response_id, actor_id=user_id, new_status=new_status, reason=rejection_reason
     )
-    return to_item(updated)
+    return to_item(updated, actor.role)
 
 
 @router.put("/responses/{response_id}", response_model=ExpertResponseItem)
@@ -404,7 +420,7 @@ async def update_response(
         keep_files=keep_files_list,
         new_files=[f for f in files if f.filename] or None,
     )
-    return to_item(updated)
+    return to_item(updated, UserRole.EXPERT)
 
 
 @router.delete("/responses/{response_id}", response_model=DetailResponse)
@@ -444,7 +460,7 @@ async def restore_withdrawn_response(
         get_response=GetResponseByIdUseCase(repo),
     )
     restored = await use_case.execute(response_id=response_id, expert_id=user_id)
-    return to_item(restored)
+    return to_item(restored, UserRole.EXPERT)
 
 
 @router.delete("/responses/rejected/all", response_model=DeletedCountResponse)

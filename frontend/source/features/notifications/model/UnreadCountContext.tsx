@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { fetchNotifications } from "../api/notifications.api";
+import { fetchNotifications } from "@/source/entities/notification";
 
 interface UnreadCountContextValue {
   count: number;

@@ -9,7 +9,7 @@ import type { EmailPreferences, UserProfile } from "@/source/entities/user";
 import {
   updateEmailPreferences,
   updateOrderNotifications,
-} from "../api/notifications.api";
+} from "@/source/entities/user";
 import { NOTIFICATION_DESCRIPTORS } from "../model/descriptors";
 import { useEmailPreferences } from "../model/useEmailPreferences";
 import type {

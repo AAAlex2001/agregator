@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { PricingPlan } from "@/source/entities/pricing";
-import { subscribeToPlan } from "../api/pricing.api";
+import { subscribeToPlan } from "@/source/entities/pricing";
 
 interface Options {
   returnPath?: string;

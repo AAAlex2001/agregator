@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   fetchAvailableRoles,
   type AvailableRole,
-} from "../api/session.api";
+} from "@/source/entities/session";
 import type { SessionRole } from "./types";
 
 export function useAvailableRoles(currentRole: SessionRole | null) {

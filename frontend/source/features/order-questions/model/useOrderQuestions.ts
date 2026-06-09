@@ -7,7 +7,7 @@ import {
   fetchQuestions,
   updateQuestion,
   type QuestionApiItem,
-} from "../api/questions.api";
+} from "@/source/entities/order-question";
 
 export function useOrderQuestions(orderId: number | null) {
   const [items, setItems] = useState<QuestionApiItem[]>([]);

@@ -7,3 +7,8 @@ export type {
 } from "./model/types";
 export { groupExpertRoomMessages } from "./model/groupMessages";
 export { ExpertRoomMessageGroup as ExpertRoomMessageGroupView } from "./ui/ExpertRoomMessageGroup";
+export {
+  fetchExpertRoomHistory,
+  sendExpertRoomMessage,
+  buildExpertRoomWebSocketUrl,
+} from "./api/expert-room.api";

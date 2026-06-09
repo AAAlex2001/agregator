@@ -5,7 +5,7 @@ import type {
   ExpertRoomMessageData,
   ExpertRoomTypingPayload,
 } from "@/source/entities/expert-room";
-import { buildExpertRoomWebSocketUrl } from "../api/expert-room.api";
+import { buildExpertRoomWebSocketUrl } from "@/source/entities/expert-room";
 
 interface Args {
   enabled: boolean;

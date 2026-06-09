@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { mapApiToOrderCard, type OrderCardData } from "@/source/entities/order";
-import { fetchReports } from "../api/reports.api";
+import { fetchReports } from "@/source/entities/order";
 
 const PAGE_SIZE = 50;
 

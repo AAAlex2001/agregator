@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchArchivedOrders } from "../api/archive.api";
+import { fetchArchivedOrders } from "@/source/entities/order";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
-import { createReview } from "@/source/features/responses/api/responses.api";
+import { createReview } from "@/source/entities/response";
 
 const PAGE_SIZE = 50;
 

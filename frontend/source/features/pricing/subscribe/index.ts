@@ -1,2 +1,2 @@
-export { fetchPricingPlans, subscribeToPlan, fetchMySubscription } from "./api/pricing.api";
+export { fetchPricingPlans, subscribeToPlan, fetchMySubscription } from "@/source/entities/pricing";
 export { useSubscribeToPlan } from "./model/useSubscribeToPlan";

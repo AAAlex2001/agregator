@@ -29,8 +29,6 @@ class UserAdmin(ModelView, model=User):
     details_template = "user_detail.html"
     edit_template = "user_edit.html"
 
-    can_delete = False
-
     column_list = [
         User.id, User.role, User.inn, User.email, User.phone,
         User.first_name, User.last_name,
@@ -166,8 +164,6 @@ class SessionAdmin(ModelView, model=Session):
     name_plural = "Сессии"
     icon = "fa-solid fa-key"
 
-    can_delete = False
-
     column_list = [
         Session.id, Session.user_id,
         Session.created_at, Session.expires_at,
@@ -198,13 +194,9 @@ class PasswordResetCodeAdmin(ModelView, model=PasswordResetCode):
     name_plural = "Коды сброса пароля"
     icon = "fa-solid fa-unlock"
 
-    can_delete = False
-    can_create = False
-    can_edit = False
-
     column_list = [
         PasswordResetCode.id, PasswordResetCode.user,
-        PasswordResetCode.is_used,
+        PasswordResetCode.code, PasswordResetCode.is_used,
         PasswordResetCode.created_at, PasswordResetCode.expires_at,
     ]
     column_sortable_list = [PasswordResetCode.id, PasswordResetCode.is_used, PasswordResetCode.created_at]
@@ -213,6 +205,7 @@ class PasswordResetCodeAdmin(ModelView, model=PasswordResetCode):
     column_labels = {
         PasswordResetCode.id: "ID",
         PasswordResetCode.user: "Пользователь",
+        PasswordResetCode.code: "Код",
         PasswordResetCode.is_used: "Использован",
         PasswordResetCode.created_at: "Создан",
         PasswordResetCode.expires_at: "Истекает",

@@ -5,6 +5,10 @@ export { RequirementsBadges } from "./ui/RequirementsBadges";
 export { DocumentsGallery } from "./ui/DocumentsGallery";
 export { mapApiToOrderCard } from "./model/mapper";
 export { searchOrdersPublic } from "./api/order-search.api";
+export { fetchArchivedOrders } from "./api/archive.api";
+export { fetchReports, getReportPdfUrl } from "./api/reports.api";
+export { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "./api/customer-orders.api";
+export { fetchOrders, respondToOrder, createPayment } from "./api/expert-orders.api";
 export { usePublicOrdersList } from "./model/usePublicOrdersList";
 export type {
   Badge, BadgeVariant, OrderApiBadge,

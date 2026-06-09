@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
-import type { QuestionApiItem } from "../api/questions.api";
+import { formatWithTime } from "@/source/shared/lib/formatDate";
+import type { QuestionApiItem } from "@/source/entities/order-question";
 import s from "./QuestionItem.module.scss";
 import f from "./Forms.module.scss";
 
@@ -16,15 +17,6 @@ interface Props {
   isSubmitting: boolean;
   onEdit: (text: string) => Promise<void>;
   onAnswer: (text: string) => Promise<void>;
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleString("ru-RU", {
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
 }
 
 export function QuestionItem({
@@ -58,7 +50,7 @@ export function QuestionItem({
         <UserAvatar src={item.expert_avatar_url} alt={item.expert_name} className={s.avatar} />
         <div className={s.headText}>
           <span className={s.name}>{item.expert_name || "Эксперт"}</span>
-          <span className={s.date}>{formatDate(item.asked_at)}</span>
+          <span className={s.date}>{formatWithTime(item.asked_at)}</span>
         </div>
         {item.is_anonymous && (
           <span className={s.anonBadge} title="Видят только вы и заказчик">

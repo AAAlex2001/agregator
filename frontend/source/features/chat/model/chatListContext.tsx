@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { ChatListItemData, ChatMessageData } from "@/source/entities/chat";
-import { fetchChatList } from "../api/chat.api";
+import { fetchChatList } from "@/source/entities/chat";
 
 interface ChatListContextValue {
   chats: ChatListItemData[];

@@ -13,7 +13,7 @@ import {
   registerUser,
   toLicenseHolderPayload,
   toRegisterPayload,
-} from "../api/register.api";
+} from "@/source/entities/user";
 import {
   emptyRegisterFormValues,
   registerConfirmSchema,

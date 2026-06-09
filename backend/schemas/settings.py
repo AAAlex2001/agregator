@@ -33,7 +33,7 @@ class UpdatePersonalDataRequest(BaseModel):
     """Обновление персональных данных пользователя (без email — он меняется отдельным эндпоинтом с подтверждением кода)."""
     last_name: str | None = Field(None, description="Фамилия", max_length=100)
     first_name: str | None = Field(None, description="Имя", max_length=100)
-    phone: str | None = Field(None, description="Номер телефона")
+    phone: str | None = Field(None, description="Номер телефона", max_length=20)
     inn: str | None = Field(None, description="ИНН", min_length=10, max_length=12)
 
     @model_validator(mode="after")

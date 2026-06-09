@@ -8,9 +8,9 @@ from models.user import UserRole
 class UserLogin(BaseModel):
     "Payload входа: один из идентификаторов (email/phone/inn) + пароль и опциональная роль."
     email: EmailStr | None = Field(None, description="Почта пользователя")
-    phone: str | None = Field(None, description="Номер телефона пользователя")
+    phone: str | None = Field(None, description="Номер телефона пользователя", min_length=10, max_length=20)
     inn: str | None = Field(None, description="ИНН пользователя")
-    password: str = Field(..., description="Пароль пользователя")
+    password: str = Field(..., description="Пароль пользователя", min_length=1)
     role: UserRole | None = Field(
         None,
         description="Если на одни данные зарегистрировано несколько ролей — указать какую использовать",
@@ -50,4 +50,4 @@ class AvailableRolesResponse(BaseModel):
 class SwitchRoleRequest(BaseModel):
     "Payload смены активной роли с подтверждением паролем."
     role: UserRole
-    password: str = Field(..., min_length=1)
+    password: str = Field(..., min_length=6)

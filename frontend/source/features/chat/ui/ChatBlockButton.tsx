@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { ChatDetailData } from "@/source/entities/chat";
 import { LockIcon } from "@/source/shared/ui/icons";
-import { blockChat, unblockChat } from "../api/chat.api";
+import { blockChat, unblockChat } from "@/source/entities/chat";
 import s from "./ChatBlockButton.module.scss";
 
 interface ChatBlockButtonProps {

@@ -1,4 +1,4 @@
-export { openChatByOrder } from "./api/chat.api";
+export { openChatByOrder } from "@/source/entities/chat";
 export { ChatListProvider, useChatListContext } from "./model/chatListContext";
 export { useChatThread } from "./model/useChatThread";
 export { ChatSidebar } from "./ui/ChatSidebar";

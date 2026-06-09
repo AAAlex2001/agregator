@@ -17,7 +17,7 @@ import {
   uploadLicenseFile,
   uploadMiningLicenseFile,
   uploadSroDesignFile,
-} from "../api/license.api";
+} from "@/source/entities/user";
 import { licenseTermsSchema, type LicenseTermsValues } from "./schema";
 
 interface Options {

@@ -12,6 +12,21 @@
   --page-pt: 94px;
   --page-pb: 40px;
   --page-maxw: 1620px;
+
+  --color-orange-primary: #FF8A00;
+  --color-orange-bright: #FFB800;
+  --color-orange-soft: #FFDDA9;
+  --color-orange-bg-soft: #FFF3E0;
+  --color-orange-bg-faint: #FFF8EE;
+  --color-orange-accent: #FF6A00;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #78909C;
+  --color-text-faint: #94A3B8;
+  --color-bg-card-soft: #F8FAFC;
+  --color-border-soft: #E2E8F0;
+  --color-success: #047857;
+  --color-error: #CF2C2C;
 }
 
 @media (min-width: 768px) {

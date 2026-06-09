@@ -23,7 +23,7 @@ class UserRegistration(BaseModel):
     "модель валидации пользователя"
     role: UserRole = Field(..., description="Роль пользователя")
     email: EmailStr = Field(..., description="Почта пользователя")
-    password: str = Field(..., description="Пароль пользователя")
+    password: str = Field(..., description="Пароль пользователя", min_length=6)
     phone: str | None = Field(None, description="Номер телефона пользователя")
     inn: str | None = Field(None, description="ИНН")
     company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")

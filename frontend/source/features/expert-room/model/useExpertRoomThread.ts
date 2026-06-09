@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ExpertRoomMessageData } from "@/source/entities/expert-room";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
-import { fetchExpertRoomHistory } from "../api/expert-room.api";
+import { fetchExpertRoomHistory } from "@/source/entities/expert-room";
 import { useExpertRoomWebSocket } from "./useExpertRoomWebSocket";
 import { useTypingIndicator } from "./useTypingIndicator";
 

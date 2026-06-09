@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { EmailPreferences, UserProfile } from "@/source/entities/user";
-import { updateEmailPreferences } from "../api/notifications.api";
+import { updateEmailPreferences } from "@/source/entities/user";
 import type { NotificationPreferenceKey } from "./types";
 
 interface ToggleResult {

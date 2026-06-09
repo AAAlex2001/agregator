@@ -1,8 +1,10 @@
 "Корень FastAPI-приложения админки: монтирует action-роуты, регистрирует все ModelView/BaseView."
 
+import logging
 import os
+from datetime import datetime, timezone
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from sqladmin import Admin
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -11,7 +13,30 @@ from auth import ADMIN_SECRET, admin_auth
 from db import engine
 from views import ALL_VIEWS
 
+logger = logging.getLogger("admin.audit")
+
+MUTATING_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
 app = FastAPI(title="Ресурс-Плюс Админ-панель")
+
+
+@app.middleware("http")
+async def audit_log_middleware(request: Request, call_next):
+    response = await call_next(request)
+    if request.method in MUTATING_METHODS:
+        login = request.session.get("login") if "session" in request.scope else None
+        ts = datetime.now(timezone.utc).isoformat()
+        logger.info(
+            "admin-audit: ts=%s login=%s method=%s path=%s status=%s",
+            ts,
+            login,
+            request.method,
+            request.url.path,
+            response.status_code,
+        )
+    return response
+
+
 app.add_middleware(
     SessionMiddleware,
     secret_key=ADMIN_SECRET,

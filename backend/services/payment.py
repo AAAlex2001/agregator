@@ -1,4 +1,5 @@
 "Сервисный модуль: payment."
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -15,12 +16,16 @@ load_dotenv()
 Configuration.account_id = os.getenv("YOOKASSA_SHOP_ID", "")
 Configuration.secret_key = os.getenv("YOOKASSA_SECRET_KEY", "")
 
+logger = logging.getLogger(__name__)
+
 
 YOOKASSA_TO_PAYMENT_STATUS = {
     "succeeded": PaymentStatus.SUCCEEDED,
     "waiting_for_capture": PaymentStatus.WAITING_FOR_CAPTURE,
     "canceled": PaymentStatus.CANCELED,
 }
+
+TERMINAL_PAYMENT_STATUSES = {PaymentStatus.SUCCEEDED, PaymentStatus.CANCELED}
 
 
 class PaymentWebhookService:
@@ -31,14 +36,24 @@ class PaymentWebhookService:
 
     async def handle_webhook(self, event_type: str, yookassa_id: str) -> None:
         "Публичный метод сервисного слоя."
-        verified_status = self.verify_with_yookassa(yookassa_id)
-        if verified_status is None:
-            return
-
         result = await self.db.execute(
             select(Payment).where(Payment.yookassa_id == yookassa_id)
         )
         payment = result.scalars().first()
+        if payment is not None and payment.status in TERMINAL_PAYMENT_STATUSES:
+            return
+
+        try:
+            verified_status = self.verify_with_yookassa(yookassa_id)
+        except Exception:
+            logger.exception(
+                "Failed to verify YooKassa payment %s; letting YooKassa retry",
+                yookassa_id,
+            )
+            return
+        if verified_status is None:
+            return
+
         if payment is None:
             return
 
@@ -53,11 +68,8 @@ class PaymentWebhookService:
 
     @staticmethod
     def verify_with_yookassa(yookassa_id: str) -> PaymentStatus | None:
-        "Подтягивает статус платежа из YooKassa API. Возвращает None, если не нашли/ошибка."
-        try:
-            remote = YooPayment.find_one(yookassa_id)
-        except Exception:
-            return None
+        "Подтягивает статус платежа из YooKassa API. Возвращает None, если не нашли."
+        remote = YooPayment.find_one(yookassa_id)
         return YOOKASSA_TO_PAYMENT_STATUS.get(remote.status)
 
     async def mark(self, payment: Payment, new_status: PaymentStatus) -> None:

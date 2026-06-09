@@ -13,8 +13,6 @@ class OrderAdmin(ModelView, model=Order):
     name_plural = "Заказы"
     icon = "fa-solid fa-clipboard-list"
 
-    can_delete = False
-
     column_list = [
         Order.id, Order.title, Order.company, Order.status,
         Order.sum_amount, Order.deadline, Order.customer, Order.assigned_expert,
@@ -74,8 +72,6 @@ class OrderResponseAdmin(ModelView, model=OrderResponse):
     name = "Отклик"
     name_plural = "Отклики"
     icon = "fa-solid fa-reply"
-
-    can_delete = False
 
     column_list = [
         OrderResponse.id, OrderResponse.order, OrderResponse.expert,

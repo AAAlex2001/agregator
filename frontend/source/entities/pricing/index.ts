@@ -8,3 +8,4 @@ export type {
   PricingCardState,
 } from "./model/types";
 export { derivePricingCardState, SUBSCRIPTION_TIER } from "./model/types";
+export { fetchPricingPlans, subscribeToPlan, fetchMySubscription } from "./api/pricing.api";

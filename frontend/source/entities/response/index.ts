@@ -17,3 +17,9 @@ export type {
   ResponseCardData, UserRole, VatKind,
   CardAction, ResponseBadge, SortDir, CustomerSortBy,
 } from "./model/types";
+export {
+  fetchResponses, updateStatus, deleteResponse,
+  restoreWithdrawnResponse, deleteRejectedResponse,
+  deleteAllRejectedResponses, editResponse, createReview,
+} from "./api/responses.api";
+export type { EditPayload } from "./api/responses.api";

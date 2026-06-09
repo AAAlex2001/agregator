@@ -1,5 +1,6 @@
 "use client";
 
+import { formatRelative } from "@/source/shared/lib/formatDate";
 import { CATEGORY_LABEL, type SupportTicket } from "../model/types";
 import { StatusBadge } from "./StatusBadge";
 import s from "./TicketCard.module.scss";
@@ -8,24 +9,6 @@ interface Props {
   ticket: SupportTicket;
   isActive: boolean;
   onClick: () => void;
-}
-
-function formatRelative(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "";
-  const today = new Date();
-  const sameDay =
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate();
-  if (sameDay) {
-    return date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-  }
-  return date.toLocaleDateString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-  });
 }
 
 export function TicketCard({ ticket, isActive, onClick }: Props) {

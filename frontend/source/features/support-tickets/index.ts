@@ -10,4 +10,4 @@ export {
   replyToTicket,
   type CreateTicketPayload,
   type ReplyPayload,
-} from "./api/tickets.api";
+} from "@/source/entities/ticket";

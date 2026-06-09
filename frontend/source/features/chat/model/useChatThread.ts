@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ChatDetailData, ChatMessageData } from "@/source/entities/chat";
-import { fetchChatDetail, markChatMessagesRead } from "../api/chat.api";
+import { fetchChatDetail, markChatMessagesRead } from "@/source/entities/chat";
 import { useChatListContext } from "./chatListContext";
 import { useChatWebSocket } from "./useChatWebSocket";
 

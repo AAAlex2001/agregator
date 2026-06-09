@@ -5,7 +5,7 @@ import { MessageComposer } from "@/source/shared/ui/MessageComposer";
 import { ChatClipIcon } from "@/source/shared/ui/icons";
 import { FilePending, UploadProgress } from "@/source/features/chat/ui/FilePending";
 import type { ExpertRoomMessageData } from "@/source/entities/expert-room";
-import { sendExpertRoomMessage } from "../api/expert-room.api";
+import { sendExpertRoomMessage } from "@/source/entities/expert-room";
 import s from "./ExpertRoomComposer.module.scss";
 
 interface Props {

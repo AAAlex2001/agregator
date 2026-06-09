@@ -1,3 +1,3 @@
 export { PartySuggestInput } from "./ui/PartySuggestInput";
-export { fetchPartySuggestions } from "./api/parties.api";
-export type { PartySuggestion } from "./api/parties.api";
+export { fetchPartySuggestions } from "@/source/entities/party";
+export type { PartySuggestion } from "@/source/entities/party";

@@ -7,7 +7,7 @@ import Button from "@/source/shared/ui/Button";
 import { TabNotificationIcon } from "@/source/shared/ui/icons";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
-import { markNotificationsIntroduced } from "../api/notifications-introduced.api";
+import { markNotificationsIntroduced } from "@/source/entities/user";
 import s from "./NotificationsWelcomeModal.module.scss";
 
 export function NotificationsWelcomeModal() {

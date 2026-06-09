@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { buildChatWebSocketUrl, markChatMessagesRead } from "../api/chat.api";
+import { buildChatWebSocketUrl, markChatMessagesRead } from "@/source/entities/chat";
 import type { ChatMessageData } from "@/source/entities/chat";
 
 interface UseChatWebSocketArgs {
