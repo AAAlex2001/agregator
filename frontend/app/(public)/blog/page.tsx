@@ -64,7 +64,7 @@ export default function BlogListPage() {
       <Suspense fallback={<ArticlesListSkeleton />}>
         <BlogListContent />
       </Suspense>
-      <LandingFooter />
+      <LandingFooter variant="light" />
     </>
   );
 }

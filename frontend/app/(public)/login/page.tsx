@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { LoginWidget } from "@/source/widgets/auth/login";
-import { LandingFooter } from "@/source/widgets/landing";
 
 export const metadata: Metadata = {
   title: "Вход в личный кабинет",
@@ -11,10 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return (
-    <>
-      <LoginWidget />
-      <LandingFooter />
-    </>
-  );
+  return <LoginWidget />;
 }

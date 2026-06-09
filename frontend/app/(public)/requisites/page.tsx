@@ -21,7 +21,7 @@ export default function RequisitesPage() {
       <RedirectIfAuthed to="/landing/requisites" />
       <LandingHeader />
       <RequisitesWidget />
-      <LandingFooter />
+      <LandingFooter variant="light" />
     </>
   );
 }

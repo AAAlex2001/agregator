@@ -167,7 +167,7 @@ export default async function LandingPage() {
 					/>
 				</main>
 				<LandingCtaFooter />
-				<LandingFooter variant="light" />
+				<LandingFooter />
 			</div>
 		</>
 	);

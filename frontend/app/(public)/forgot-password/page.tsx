@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ForgotPasswordWidget } from "@/source/widgets/auth/forgot-password";
-import { LandingFooter } from "@/source/widgets/landing";
 
 export const metadata: Metadata = {
   title: "Восстановление пароля | Ресурс Плюс",
@@ -15,10 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function ForgotPasswordPage() {
-  return (
-    <>
-      <ForgotPasswordWidget />
-      <LandingFooter />
-    </>
-  );
+  return <ForgotPasswordWidget />;
 }

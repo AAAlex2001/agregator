@@ -34,7 +34,7 @@ export default async function PublicReviewsPage() {
       <RedirectIfAuthed to="/landing/reviews" />
       <LandingHeader />
       <PublicReviewsWidget initial={initial} />
-      <LandingFooter />
+      <LandingFooter variant="light" />
     </>
   );
 }

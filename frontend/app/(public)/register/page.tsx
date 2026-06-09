@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { RegisterWidget } from "@/source/widgets/auth/register";
-import { LandingFooter } from "@/source/widgets/landing";
 
 export const metadata: Metadata = {
   title: "Регистрация на платформе экспертизы промышленной безопасности",
@@ -16,10 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  return (
-    <>
-      <RegisterWidget />
-      <LandingFooter />
-    </>
-  );
+  return <RegisterWidget />;
 }
