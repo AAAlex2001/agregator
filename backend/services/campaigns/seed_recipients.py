@@ -8,4 +8,5 @@ SEED_EMAILS: tuple[str, ...] = (
     "vanyakin_oleg@mail.ru",
     "av-expertiza@yandex.ru",
     "tyutyunikap@mail.ru",
+    "sasha_tolstov_2001@mail.ru",
 )
