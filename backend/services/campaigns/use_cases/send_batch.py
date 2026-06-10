@@ -1,59 +1,45 @@
 "Use case: отправка одной пачки писем рассылки по базе компаний. В конце пачки добиваем seed-адресами."
 
 import logging
-from pathlib import Path
 
 from models.company import Company
 from services.campaigns.company_repository import CompanyRepository
 from services.campaigns.seed_recipients import SEED_EMAILS
-from utils.email import EmailAttachment, send_email
+from utils.email import send_email
 from utils.email_templates import render_email
 
 logger = logging.getLogger(__name__)
 
 TEMPLATE = "campaign_presentation"
-PRESENTATION_FILENAME = "Презентация Ресурс-Плюс.pdf"
 
 # Письма уходят от имени expert@ и ответы получателей падают на этот же ящик.
 CAMPAIGN_FROM_EMAIL = "expert@plus-resurs.com"
 
 
 class SendBatchUseCase:
-    "Берёт пачку компаний из базы (которым ещё не слали), шлёт письма с PDF, в конце добивает seed-адресами."
+    "Берёт пачку компаний из базы (которым ещё не слали), шлёт письма со ссылкой на презентацию, в конце добивает seed-адресами."
 
     def __init__(self, repo: CompanyRepository) -> None:
         self.repo = repo
 
     async def execute(
-        self, subject: str, body_text: str, presentation_path: str | None, batch_size: int
+        self, subject: str, body_text: str, presentation_url: str | None, batch_size: int
     ) -> int:
         "Обрабатывает одну пачку. Возвращает число компаний, которым ушло письмо."
         companies = await self.repo.take_unsent_batch(batch_size)
-        attachments = self.build_attachments(presentation_path)
 
         sent_ids: list[int] = []
         for company in companies:
-            if await self.send_one(company, subject, body_text, attachments):
+            if await self.send_one(company, subject, body_text, presentation_url):
                 sent_ids.append(company.id)  # noqa: PERF401 — отправка с побочным эффектом, не трансформация
 
         await self.repo.mark_sent(sent_ids)
-        await self.send_seed_copies(subject, body_text, attachments)
+        await self.send_seed_copies(subject, body_text, presentation_url)
         logger.info("Mailing: batch processed, %d of %d companies sent", len(sent_ids), len(companies))
         return len(sent_ids)
 
-    @staticmethod
-    def build_attachments(presentation_path: str | None) -> list[EmailAttachment]:
-        "Готовит вложение с PDF-презентацией, если файл задан и существует на диске."
-        if not presentation_path:
-            return []
-        path = Path(presentation_path)
-        if not path.exists() or not path.is_file():
-            logger.warning("Presentation file not found: %s", presentation_path)
-            return []
-        return [EmailAttachment(path=path, filename=PRESENTATION_FILENAME)]
-
     async def send_one(
-        self, company: Company, subject: str, body_text: str, attachments: list[EmailAttachment]
+        self, company: Company, subject: str, body_text: str, presentation_url: str | None
     ) -> bool:
         "Шлёт письмо одной компании. True — успех (тогда компания помечается отправленной)."
         rendered = render_email(
@@ -62,12 +48,12 @@ class SendBatchUseCase:
             {
                 "company_name": company.name or "",
                 "body_text": body_text,
-                "has_presentation": bool(attachments),
+                "presentation_url": presentation_url,
             },
         )
         try:
             await send_email(
-                company.email or "", rendered.subject, rendered.text, rendered.html, attachments,
+                company.email or "", rendered.subject, rendered.text, rendered.html,
                 from_email=CAMPAIGN_FROM_EMAIL, reply_to=CAMPAIGN_FROM_EMAIL,
             )
             return True
@@ -76,18 +62,18 @@ class SendBatchUseCase:
             return False
 
     async def send_seed_copies(
-        self, subject: str, body_text: str, attachments: list[EmailAttachment]
+        self, subject: str, body_text: str, presentation_url: str | None
     ) -> None:
         "Дописывает контрольные seed-адреса в конец пачки — для самопроверки доставки."
         rendered = render_email(
             TEMPLATE,
             subject,
-            {"company_name": "", "body_text": body_text, "has_presentation": bool(attachments)},
+            {"company_name": "", "body_text": body_text, "presentation_url": presentation_url},
         )
         for email in SEED_EMAILS:
             try:
                 await send_email(
-                    email, rendered.subject, rendered.text, rendered.html, attachments,
+                    email, rendered.subject, rendered.text, rendered.html,
                     from_email=CAMPAIGN_FROM_EMAIL, reply_to=CAMPAIGN_FROM_EMAIL,
                 )
             except Exception:

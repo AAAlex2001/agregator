@@ -15,7 +15,7 @@ from schemas.internal import (
     SendBatchRequest,
 )
 from services.campaigns import CompanyRepository, import_companies_from_file
-from services.campaigns.storage import companies_json_path, presentation_path
+from services.campaigns.storage import companies_json_path
 from services.email import EmailDispatcher, EmailRepository, SendNewBlogPostEmailUseCase
 from services.notifications.repository import NotificationRepository
 from services.notifications.use_cases.create_new_blog_new import (
@@ -69,13 +69,13 @@ async def companies_stats(db: AsyncSession = Depends(get_db)) -> CompaniesStatsR
 async def mailing_preview(
     subject: str = Query("Тема письма", max_length=300),
     body_text: str = Query("Текст письма", max_length=5000),
-    has_presentation: bool = Query(True),
+    presentation_url: str | None = Query(None, max_length=500),
 ) -> HTMLResponse:
     "Рендерит письмо с примером компании и переданным текстом — для превью в админке перед отправкой."
     rendered = render_email(
         "campaign_presentation",
         subject,
-        {"company_name": "ООО «Пример»", "body_text": body_text, "has_presentation": has_presentation},
+        {"company_name": "ООО «Пример»", "body_text": body_text, "presentation_url": presentation_url},
     )
     return HTMLResponse(rendered.html)
 
@@ -85,10 +85,8 @@ async def send_batch(
     data: SendBatchRequest,
     background_tasks: BackgroundTasks,
 ) -> SendBatchQueuedResult:
-    "РАЗОВО шлёт одну пачку компаний из базы (которым ещё не слали) + контрольные seed-адреса. PDF берётся из общего тома."
-    pdf = presentation_path()
-    pdf_path = str(pdf) if pdf.exists() else None
+    "РАЗОВО шлёт одну пачку компаний из базы (которым ещё не слали) + контрольные seed-адреса. Презентация — ссылкой в письме."
     background_tasks.add_task(
-        send_one_batch, data.subject, data.body_text, pdf_path, data.batch_size
+        send_one_batch, data.subject, data.body_text, data.presentation_url, data.batch_size
     )
     return SendBatchQueuedResult()

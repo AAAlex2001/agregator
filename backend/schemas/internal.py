@@ -30,10 +30,11 @@ class CompaniesStatsResponse(BaseModel):
 
 
 class SendBatchRequest(BaseModel):
-    "Разослать одну пачку: тема, текст письма, размер пачки. PDF-презентация — в общем томе (если загружена)."
+    "Разослать одну пачку: тема, текст письма, размер пачки, ссылка на размещённую презентацию (опц.)."
     subject: str = Field(..., min_length=1, max_length=300)
     body_text: str = Field(..., min_length=1, max_length=5000)
     batch_size: int = Field(100, ge=1, le=5000)
+    presentation_url: str | None = Field(None, max_length=500)
 
 
 class SendBatchQueuedResult(BaseModel):

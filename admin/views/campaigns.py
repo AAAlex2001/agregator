@@ -55,8 +55,9 @@ class MailingView(BaseView):
 
     @expose("/mailing", methods=["GET"])
     async def mailing(self, request: Request) -> Any:
-        "Страница рассылки + текущая статистика базы (всего / к отправке / отправлено / осталось)."
+        "Страница рассылки + статистика базы и текущая презентация."
         from integrations.backend_client import companies_stats
+        from integrations.campaign_storage import presentation_public_url
 
         stats: dict[str, Any] = {}
         try:
@@ -71,6 +72,7 @@ class MailingView(BaseView):
                 "message": request.query_params.get("message"),
                 "error": request.query_params.get("error"),
                 "stats": stats,
+                "presentation_url": presentation_public_url(),
                 "default_subject": DEFAULT_SUBJECT,
                 "default_body": DEFAULT_BODY,
             },

@@ -1,12 +1,18 @@
-"Сохранение загруженных файлов рассылки в общий том uploads (его делят admin и backend-контейнеры)."
+"Файлы рассылки в общем томе uploads. JSON-база — внутренняя; презентация хостится публично (ссылка в письме)."
 
 from pathlib import Path
 
+PUBLIC_BASE = "https://plus-resurs.com"
+
 UPLOADS_ROOT = Path("/app/uploads")
+
+# Внутренняя JSON-база компаний (nginx закрывает /uploads/campaign_imports/ от публики).
 CAMPAIGN_IMPORTS_DIR = UPLOADS_ROOT / "campaign_imports"
-# Файлы фиксированы: одна актуальная база и одна актуальная презентация (перезаписываются при загрузке).
 COMPANIES_JSON = CAMPAIGN_IMPORTS_DIR / "companies.json"
-PRESENTATION_PDF = CAMPAIGN_IMPORTS_DIR / "presentation.pdf"
+
+# Презентация — публичная (nginx отдаёт /uploads/presentations/), письмо ссылается ссылкой.
+PRESENTATIONS_DIR = UPLOADS_ROOT / "presentations"
+PRESENTATION_PDF = PRESENTATIONS_DIR / "presentation.pdf"
 
 
 def save_companies_json(json_bytes: bytes) -> None:
@@ -16,6 +22,14 @@ def save_companies_json(json_bytes: bytes) -> None:
 
 
 def save_presentation(pdf_bytes: bytes) -> None:
-    "Перезаписывает PDF-презентацию в общем томе. Бэк прикрепит её к письмам."
-    CAMPAIGN_IMPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    "Перезаписывает PDF-презентацию в публичной папке тома. Письмо даёт на неё ссылку."
+    PRESENTATIONS_DIR.mkdir(parents=True, exist_ok=True)
     PRESENTATION_PDF.write_bytes(pdf_bytes)
+
+
+def presentation_public_url() -> str | None:
+    "Публичная ссылка на презентацию с cache-bust по mtime (None — если не загружена)."
+    if not PRESENTATION_PDF.exists():
+        return None
+    version = int(PRESENTATION_PDF.stat().st_mtime)
+    return f"{PUBLIC_BASE}/uploads/presentations/presentation.pdf?v={version}"

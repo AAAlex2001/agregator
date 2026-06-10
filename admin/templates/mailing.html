@@ -44,10 +44,24 @@
             <small class="form-text text-muted">Данные перезаписываются по ИНН (без дублей). Файл читается потоково — размер не ограничен.</small>
           </form>
 
+          <!-- Загрузка презентации -->
+          <form method="post" action="{{ url_for('mailing_upload_presentation') }}" enctype="multipart/form-data" class="mb-4">
+            <label class="form-label fw-bold">Презентация (PDF)</label>
+            <div class="input-group">
+              <input type="file" name="presentation_file" id="pdf_input" class="form-control" accept=".pdf,application/pdf" required>
+              <button type="submit" class="btn btn-outline-primary">Загрузить</button>
+            </div>
+            {% if presentation_url %}
+            <small class="form-text text-success">✓ Презентация загружена — <a href="{{ presentation_url }}" target="_blank">открыть</a>. В письме будет ссылка на неё.</small>
+            {% else %}
+            <small class="form-text text-muted">Размещается у нас, в письмо вставляется ссылкой (без вложения — размер не важен).</small>
+            {% endif %}
+          </form>
+
           <hr>
 
           <!-- Письмо + отправка -->
-          <form method="post" action="{{ url_for('mailing_send') }}" enctype="multipart/form-data">
+          <form method="post" action="{{ url_for('mailing_send') }}">
             <div class="mb-3">
               <label class="form-label fw-bold">Тема письма</label>
               <input type="text" name="subject" id="subject_input" class="form-control" value="{{ default_subject }}" required>
@@ -55,12 +69,7 @@
             <div class="mb-3">
               <label class="form-label fw-bold">Текст письма</label>
               <textarea name="body_text" id="body_input" class="form-control" rows="5" required>{{ default_body }}</textarea>
-              <small class="form-text text-muted">Каждая строка — отдельный абзац. Приветствие и подпись добавляются автоматически.</small>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Презентация (PDF)</label>
-              <input type="file" name="presentation_file" id="pdf_input" class="form-control" accept=".pdf,application/pdf">
-              <small class="form-text text-muted">Прикрепляется к каждому письму. Загруженный PDF хранится и используется для последующих пачек — повторно прикреплять не нужно.</small>
+              <small class="form-text text-muted">Каждая строка — отдельный абзац. Приветствие, блок «что даёт площадка» и подпись добавляются автоматически.</small>
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Размер пачки</label>
@@ -86,12 +95,10 @@
         function loadPreview() {
           const subject = encodeURIComponent(document.getElementById('subject_input').value || '');
           const body = encodeURIComponent(document.getElementById('body_input').value || '');
-          const hasPdf = document.getElementById('pdf_input').files.length ? '1' : '0';
           document.getElementById('preview_frame').src =
-            "{{ url_for('mailing_preview') }}" + '?subject=' + subject + '&body_text=' + body + '&has_pdf=' + hasPdf;
+            "{{ url_for('mailing_preview') }}" + '?subject=' + subject + '&body_text=' + body;
         }
         window.addEventListener('DOMContentLoaded', loadPreview);
-        document.getElementById('pdf_input').addEventListener('change', loadPreview);
       </script>
 
     </div>

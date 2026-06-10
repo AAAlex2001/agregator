@@ -59,11 +59,18 @@ def companies_stats() -> dict[str, Any]:
     return internal_get("/companies/stats")
 
 
-def send_batch(subject: str, body_text: str, batch_size: int) -> dict[str, Any]:
-    "Разово рассылает одну пачку по базе компаний. PDF берётся из общего тома (если загружен)."
+def send_batch(
+    subject: str, body_text: str, batch_size: int, presentation_url: str | None
+) -> dict[str, Any]:
+    "Разово рассылает одну пачку по базе компаний. Презентация — ссылкой в письме (если загружена)."
     return internal_post(
         "/mailing/send-batch",
-        {"subject": subject, "body_text": body_text, "batch_size": batch_size},
+        {
+            "subject": subject,
+            "body_text": body_text,
+            "batch_size": batch_size,
+            "presentation_url": presentation_url,
+        },
     )
 
 
