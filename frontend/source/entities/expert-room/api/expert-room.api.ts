@@ -72,3 +72,11 @@ export async function sendExpertRoomMessage(
 export function buildExpertRoomWebSocketUrl(): string {
   return buildWebSocketUrl("/ws/expert-room");
 }
+
+export function createExpertRoomWebSocket(): WebSocket {
+  return new WebSocket(buildExpertRoomWebSocketUrl());
+}
+
+export function serializeExpertRoomTypingFrame(): string {
+  return JSON.stringify({ type: "typing" });
+}

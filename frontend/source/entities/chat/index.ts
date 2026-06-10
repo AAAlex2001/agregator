@@ -20,4 +20,5 @@ export {
   sendChatMessage,
   markChatMessagesRead,
   buildChatWebSocketUrl,
+  createChatWebSocket,
 } from "./api/chat.api";

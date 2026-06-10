@@ -5,7 +5,10 @@ import type {
   ExpertRoomMessageData,
   ExpertRoomTypingPayload,
 } from "@/source/entities/expert-room";
-import { buildExpertRoomWebSocketUrl } from "@/source/entities/expert-room";
+import {
+  createExpertRoomWebSocket,
+  serializeExpertRoomTypingFrame,
+} from "@/source/entities/expert-room";
 
 interface Args {
   enabled: boolean;
@@ -46,7 +49,6 @@ export function useExpertRoomWebSocket(args: Args): ExpertRoomSocketHandle {
     let disposed = false;
     let retries = 0;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-    const wsUrl = buildExpertRoomWebSocketUrl();
 
     function scheduleReconnect() {
       if (disposed || retries >= MAX_RETRIES) {
@@ -62,7 +64,7 @@ export function useExpertRoomWebSocket(args: Args): ExpertRoomSocketHandle {
         return;
       }
 
-      const socket = new WebSocket(wsUrl);
+      const socket = createExpertRoomWebSocket();
       socketRef.current = socket;
 
       socket.onopen = () => {
@@ -124,7 +126,7 @@ export function useExpertRoomWebSocket(args: Args): ExpertRoomSocketHandle {
     }
     lastTypingSentRef.current = now;
     try {
-      socket.send(JSON.stringify({ type: "typing" }));
+      socket.send(serializeExpertRoomTypingFrame());
     } catch {
       // Ignore send errors.
     }

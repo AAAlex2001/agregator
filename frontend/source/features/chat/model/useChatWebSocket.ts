@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { buildChatWebSocketUrl, markChatMessagesRead } from "@/source/entities/chat";
+import { createChatWebSocket, markChatMessagesRead } from "@/source/entities/chat";
 import type { ChatMessageData } from "@/source/entities/chat";
 
 interface UseChatWebSocketArgs {
@@ -26,7 +26,6 @@ export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }:
     }
 
     const uuid = chatUuid;
-    const wsUrl = buildChatWebSocketUrl(uuid);
     let socket: WebSocket | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let disposed = false;
@@ -36,7 +35,7 @@ export function useChatWebSocket({ chatUuid, currentUserId, onMessage, onRead }:
         return;
       }
 
-      socket = new WebSocket(wsUrl);
+      socket = createChatWebSocket(uuid);
 
       socket.onopen = () => {
         void markChatMessagesRead(uuid).catch(() => undefined);

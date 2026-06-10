@@ -5,24 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Loader } from "@/source/shared/ui";
 import { LogoIcon } from "@/source/shared/ui/icons";
-import { fetchWithSession } from "@/source/shared/api/session";
-import { API_URL } from "@/source/shared/api/config";
-import { documentPaths, type OrderDocuments } from "@/source/entities/order";
+import { documentPaths, fetchPublicOrder, type PublicOrderPreview } from "@/source/entities/order";
+import { fetchProfile } from "@/source/entities/user";
 import styles from "./order-preview.module.scss";
 
-interface PreviewBadge { text: string; variant: string; }
-interface PreviewOrder {
-  id: number;
-  title: string;
-  company: string | null;
-  start_date?: string;
-  date: string;
-  sum: string;
-  responses_deadline: string | null;
-  badges: PreviewBadge[];
-  comment: string;
-  documents: OrderDocuments;
-}
+type PreviewOrder = PublicOrderPreview;
 
 function useOrderPreviewState() {
   const params = useParams();
@@ -40,18 +27,16 @@ function useOrderPreviewState() {
   useEffect(() => {
     if (!uuid) return;
     setIsLoading(true);
-    fetchWithSession(`${API_URL}/orders/public/${uuid}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Заказ не найден"))))
-      .then((data: PreviewOrder) => setOrder(data))
+    fetchPublicOrder(uuid)
+      .then((data) => setOrder(data))
       .catch((e) => setError(e instanceof Error ? e.message : "Заказ не найден"))
       .finally(() => setIsLoading(false));
   }, [uuid]);
 
   useEffect(() => {
     if (!order) return;
-    fetchWithSession(`${API_URL}/users/me`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((profile: { role: string }) => {
+    fetchProfile()
+      .then((profile) => {
         if (profile.role === "EXPERT") {
           sessionStorage.removeItem("pendingOrderUuid");
           router.replace(`/expert/orders?orderId=${order.id}`);

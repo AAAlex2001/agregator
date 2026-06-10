@@ -1,8 +1,8 @@
 import type { EmailPreferences } from "@/source/entities/user";
 
-export type NotificationPreferenceKey = keyof EmailPreferences;
+export type { UpdateEmailPreferencesPayload } from "@/source/entities/user";
 
-export type UpdateEmailPreferencesPayload = Partial<EmailPreferences>;
+export type NotificationPreferenceKey = keyof EmailPreferences;
 
 export interface NotificationPreferenceDescriptor {
   key: NotificationPreferenceKey;

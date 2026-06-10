@@ -11,5 +11,4 @@ export type {
   LandingSectionHeaders,
   LandingSnapshot,
   LandingStep,
-} from "@/source/entities/landing";
-export { LandingApi, loadLandingSnapshot } from "@/source/entities/landing/api/landing.api";
+} from "./model/types";

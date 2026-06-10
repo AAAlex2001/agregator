@@ -126,3 +126,7 @@ export async function markChatMessagesRead(chatUuid: string): Promise<void> {
 export function buildChatWebSocketUrl(chatUuid: string): string {
   return buildWebSocketUrl(`/ws/chats/${chatUuid}`);
 }
+
+export function createChatWebSocket(chatUuid: string): WebSocket {
+  return new WebSocket(buildChatWebSocketUrl(chatUuid));
+}

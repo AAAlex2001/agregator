@@ -11,4 +11,6 @@ export {
   fetchExpertRoomHistory,
   sendExpertRoomMessage,
   buildExpertRoomWebSocketUrl,
+  createExpertRoomWebSocket,
+  serializeExpertRoomTypingFrame,
 } from "./api/expert-room.api";

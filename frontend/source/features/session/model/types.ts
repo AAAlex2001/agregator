@@ -1,6 +1,7 @@
 import type { UserProfile } from "@/source/entities/user";
+import type { UserRole } from "@/source/entities/session";
 
-export type SessionRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
+export type SessionRole = UserRole;
 
 export interface SessionState {
   user: UserProfile | null;
