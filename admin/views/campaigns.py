@@ -1,13 +1,10 @@
-"Админ-вьюшки email-кампаний: список/получатели/стоп-лист + кастомная страница запуска рассылки."
+"Админ-вьюшки email-кампаний: список/получатели/стоп-лист + страница запуска рассылки (GET-лендинг)."
 
 from typing import Any
 
 from sqladmin import BaseView, ModelView, expose
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, RedirectResponse
 
-from integrations.backend_client import create_campaign, send_campaign_batch
-from integrations.campaign_storage import new_token, save_import_files
 from models import CampaignRecipient, EmailCampaign, EmailSuppression
 
 
@@ -108,7 +105,7 @@ class EmailSuppressionAdmin(ModelView, model=EmailSuppression):
 
 
 class CampaignLauncherView(BaseView):
-    "Страница запуска рассылки: загрузка JSON-базы, создание кампании, старт/пауза."
+    "Страница запуска рассылки (GET-лендинг). Действия (создать/превью/отправить) — отдельные роуты в actions/campaigns.py."
 
     name = "Запустить рассылку"
     icon = "fa-solid fa-rocket"
@@ -125,80 +122,3 @@ class CampaignLauncherView(BaseView):
                 "error": request.query_params.get("error"),
             },
         )
-
-    @expose("/campaign-launcher/preview", methods=["GET"])
-    async def preview(self, request: Request) -> Any:
-        "Проксирует превью письма из backend (рендер шаблона) — показывается в iframe на странице запуска."
-        from integrations.backend_client import internal_get_html
-
-        subject = request.query_params.get("subject", "Тема письма")
-        has_pdf = request.query_params.get("has_pdf", "1") == "1"
-        html = internal_get_html("/campaign-preview", {"subject": subject, "has_presentation": has_pdf})
-        return HTMLResponse(html)
-
-    @expose("/campaign-launcher/create", methods=["POST"])
-    async def create(self, request: Request) -> Any:
-        "Принимает форму: сохраняет JSON-базу и PDF в общий том, создаёт кампанию через backend (импорт идёт в фоне)."
-        form = await request.form()
-        name = str(form.get("name", "")).strip()
-        subject = str(form.get("subject", "")).strip()
-        batch_size_raw = str(form.get("batch_size", "100")).strip()
-        only_active = form.get("only_active") == "on"
-        json_upload = form.get("companies_file")
-        pdf_upload = form.get("presentation_file")
-
-        if not name or not subject:
-            return RedirectResponse(
-                request.url_for("admin:campaign-launcher").include_query_params(error="Заполните название и тему"),
-                status_code=303,
-            )
-        if json_upload is None or not hasattr(json_upload, "read"):
-            return RedirectResponse(
-                request.url_for("admin:campaign-launcher").include_query_params(error="Прикрепите JSON-файл базы"),
-                status_code=303,
-            )
-
-        try:
-            batch_size = max(1, min(5000, int(batch_size_raw)))
-        except ValueError:
-            batch_size = 100
-
-        token = new_token()
-        json_bytes = await json_upload.read()
-        pdf_bytes = await pdf_upload.read() if pdf_upload is not None and hasattr(pdf_upload, "read") else None
-        has_presentation = save_import_files(token, json_bytes, pdf_bytes)
-
-        try:
-            result = create_campaign(name, subject, batch_size, token, has_presentation, only_active)
-        except Exception as exc:
-            return RedirectResponse(
-                request.url_for("admin:campaign-launcher").include_query_params(error=f"Ошибка: {exc}"),
-                status_code=303,
-            )
-
-        msg = (
-            f"Кампания #{result['campaign_id']} создана, получатели импортируются в фоне "
-            f"(следите за счётчиком в разделе «Рассылки · Кампании»). "
-            f"Когда импорт завершится — запустите рассылку кнопкой ниже."
-        )
-        return RedirectResponse(
-            request.url_for("admin:campaign-launcher").include_query_params(message=msg),
-            status_code=303,
-        )
-
-    @expose("/campaign-launcher/send-batch/{campaign_id:int}", methods=["POST"])
-    async def send_batch(self, request: Request) -> Any:
-        "Разово отправляет одну пачку кампании по id (без цикла)."
-        campaign_id = int(request.path_params["campaign_id"])
-        try:
-            send_campaign_batch(campaign_id)
-            msg = f"Кампания #{campaign_id}: пачка поставлена на отправку. Проверьте контрольные адреса и статусы получателей."
-            return RedirectResponse(
-                request.url_for("admin:campaign-launcher").include_query_params(message=msg),
-                status_code=303,
-            )
-        except Exception as exc:
-            return RedirectResponse(
-                request.url_for("admin:campaign-launcher").include_query_params(error=f"Ошибка: {exc}"),
-                status_code=303,
-            )

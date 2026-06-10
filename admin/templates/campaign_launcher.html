@@ -15,7 +15,7 @@
       <div class="alert alert-danger" role="alert">{{ error }}</div>
       {% endif %}
 
-      <form method="post" action="{{ url_for('admin:campaign-launcher-create') }}" enctype="multipart/form-data">
+      <form method="post" action="{{ url_for('campaign_create') }}" enctype="multipart/form-data">
         <div class="mb-3">
           <label class="form-label">Название кампании (внутреннее)</label>
           <input type="text" name="name" class="form-control" placeholder="Например: Презентация — Татарстан, июнь" required>
@@ -30,7 +30,7 @@
         <div class="mb-3">
           <label class="form-label">Размер пачки (адресов за один проход)</label>
           <input type="number" name="batch_size" class="form-control" value="100" min="1" max="5000">
-          <small class="form-text text-muted">В конец каждой пачки автоматически добавляются контрольные адреса для самопроверки доставки. Пачка отправляется раз в 5 минут.</small>
+          <small class="form-text text-muted">В конец каждой пачки автоматически добавляются контрольные адреса для самопроверки доставки.</small>
         </div>
 
         <div class="mb-3 form-check">
@@ -66,8 +66,8 @@
           const subjectEl = document.querySelector('input[name="subject"]');
           const subject = encodeURIComponent(subjectEl ? subjectEl.value : '');
           const hasPdf = document.querySelector('input[name="presentation_file"]').files.length ? '1' : '0';
-          const base = "{{ url_for('admin:campaign-launcher') }}";
-          document.getElementById('preview_frame').src = base + '/preview?subject=' + subject + '&has_pdf=' + hasPdf;
+          document.getElementById('preview_frame').src =
+            "{{ url_for('campaign_preview_admin') }}" + '?subject=' + subject + '&has_pdf=' + hasPdf;
         }
         window.addEventListener('DOMContentLoaded', loadPreview);
       </script>
@@ -93,9 +93,8 @@
         function sendBatch() {
           const id = document.getElementById('campaign_id_input').value;
           if (!id) { alert('Укажите ID кампании'); return; }
-          const base = "{{ url_for('admin:campaign-launcher') }}";
           const form = document.getElementById('action_send');
-          form.action = base + '/send-batch/' + id;
+          form.action = '/admin-actions/campaigns/' + id + '/send-batch';
           form.submit();
         }
       </script>
