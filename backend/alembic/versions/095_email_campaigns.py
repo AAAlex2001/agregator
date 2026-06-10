@@ -1,7 +1,7 @@
 """email campaigns: campaigns, recipients, suppression
 
-Revision ID: 093
-Revises: 092
+Revision ID: 095
+Revises: 094
 """
 from typing import Sequence, Union
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = "093"
-down_revision: Union[str, None] = "092"
+revision: str = "095"
+down_revision: Union[str, None] = "094"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
