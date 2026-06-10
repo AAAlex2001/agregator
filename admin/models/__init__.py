@@ -2,6 +2,14 @@
 
 from models.article import Article, ArticleKind, ArticleStatus
 from models.base import Base
+from models.campaign import (
+    CampaignRecipient,
+    CampaignStatus,
+    EmailCampaign,
+    EmailSuppression,
+    RecipientStatus,
+    SuppressionReason,
+)
 from models.chat import Chat, ChatMessage, ExpertRoomBan, ExpertRoomMessage
 from models.landing import (
     LandingAdvantage,
@@ -36,6 +44,9 @@ __all__ = [
     "Article", "ArticleKind", "ArticleStatus",
     "BadgeVariant",
     "Base",
+    "CampaignRecipient", "CampaignStatus",
+    "EmailCampaign", "EmailSuppression",
+    "RecipientStatus", "SuppressionReason",
     "Chat", "ChatMessage",
     "ExpertRoomBan", "ExpertRoomMessage",
     "LandingAdvantage", "LandingFaq", "LandingHero", "LandingIndustry",

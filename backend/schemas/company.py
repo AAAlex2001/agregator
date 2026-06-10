@@ -38,6 +38,6 @@ def validate_company_data(value: Any) -> dict[str, Any] | None:
     if value is None:
         return None
     if not isinstance(value, dict):
-        raise ValueError("Данные компании должны быть объектом")
+        raise ValueError("Данные компании должны быть объектом")  # noqa: TRY004
     CompanyData.model_validate(value)
     return value

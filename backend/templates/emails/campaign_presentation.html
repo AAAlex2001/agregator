@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block preheader %}Информационное письмо и презентация площадки-агрегатора «Ресурс-Плюс»{% endblock %}
+
+{% block content %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Площадка-агрегатор «Ресурс-Плюс»
+</p>
+<h1 style="margin: 0 0 20px 0; font-size: 25px; line-height: 33px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  Добрый день{% if company_name %},<br><span style="color: #FF8A00;">{{ company_name }}</span>{% endif %}!
+</h1>
+
+<p style="margin: 0 0 18px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Направляем Вам информационное письмо и презентацию электронной
+  площадки-агрегатора <span style="color: #0F172A; font-weight: 600;">«Ресурс-Плюс»</span> —
+  сервиса для проведения тендеров на экспертизу промышленной безопасности
+  опасных производственных объектов.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 20px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 18px; color: #0F172A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;">
+        Что даёт платформа
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px; line-height: 22px; color: #334155;">
+        <tr><td style="padding: 4px 0;">• Размещение и поиск заказов на экспертизу ПБ</td></tr>
+        <tr><td style="padding: 4px 0;">• Аттестованные эксперты Ростехнадзора</td></tr>
+        <tr><td style="padding: 4px 0;">• Прозрачные тендеры, отклики и сравнение предложений</td></tr>
+        <tr><td style="padding: 4px 0;">• Договоры и отчёты в электронном виде</td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 24px; line-height: 24px; font-size: 0;" height="24">&nbsp;</td></tr>
+</table>
+
+{% if has_presentation %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 16px 20px; background: #FFF8EB; border: 1px solid #FFE0B2; border-radius: 12px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td valign="middle" style="padding-right: 12px; font-size: 28px; line-height: 28px;">📎</td>
+          <td valign="middle">
+            <p style="margin: 0; font-size: 14px; line-height: 20px; color: #8a4500; font-weight: 600;">К письму приложена презентация</p>
+            <p style="margin: 2px 0 0 0; font-size: 13px; line-height: 18px; color: #b06a16;">Презентация Ресурс-Плюс.pdf</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 24px; line-height: 24px; font-size: 0;" height="24">&nbsp;</td></tr>
+</table>
+{% endif %}
+
+<p style="margin: 0 0 24px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Просим подтвердить получение письма и направить входящий номер
+  в ответном сообщении.
+</p>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
+      <a href="https://plus-resurs.com" style="display: inline-block; padding: 13px 30px; background: #FF8A00; color: #FFFFFF; font-size: 15px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Перейти на платформу</a>
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td style="height: 28px; line-height: 28px; font-size: 0;" height="28">&nbsp;</td></tr>
+</table>
+
+<p style="margin: 0; font-size: 13px; line-height: 20px; color: #94A3B8;">
+  С уважением, команда «Ресурс-Плюс» · <a href="https://plus-resurs.com" style="color: #94A3B8; text-decoration: underline;">plus-resurs.com</a>
+</p>
+{% endblock %}
+
+{% block footer %}
+Это информационное письмо о платформе «Ресурс-Плюс».
+{% if unsubscribe_url %}Если письмо пришло по ошибке — <a href="{{ unsubscribe_url }}" style="color: #94A3B8; text-decoration: underline;">отписаться от рассылки</a>.{% endif %}
+{% endblock %}

@@ -5,7 +5,7 @@ from typing import Any
 
 from sqlalchemy import ColumnElement, Float, Select, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import InstrumentedAttribute, selectinload
 
 from models.order import Order, OrderStatus
 from models.response import OrderResponse as OrderResponseModel
@@ -216,7 +216,7 @@ class ExpertsRepository:
 
     def resolve_sort_column(
         self, sort_by: str, completed_orders_expr: ColumnElement[Any]
-    ) -> ColumnElement[Any]:
+    ) -> InstrumentedAttribute[Any] | ColumnElement[Any]:
         "Возвращает SQL-выражение для сортировки экспертов по заданному критерию."
         if sort_by == SORT_BY_COMPLETED_ORDERS:
             return completed_orders_expr

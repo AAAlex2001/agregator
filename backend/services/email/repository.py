@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
-from sqlalchemy import func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -76,7 +76,9 @@ class EmailRepository:
         return (await self.db.execute(query)).scalars().first()
 
     @staticmethod
-    def _filter_preference(query, preference_field: EmailPreferenceField):
+    def filter_preference(
+        query: Select[tuple[User]], preference_field: EmailPreferenceField
+    ) -> Select[tuple[User]]:
         "Применяет общий фильтр: email задан и тоггл preference_field включен."
         return query.where(
             User.email.isnot(None),
@@ -85,7 +87,7 @@ class EmailRepository:
 
     async def list_experts_with_preference(self, preference_field: EmailPreferenceField) -> list[User]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        query = self._filter_preference(
+        query = self.filter_preference(
             select(User).where(User.role == UserRole.EXPERT),
             preference_field,
         )
@@ -113,7 +115,7 @@ class EmailRepository:
         self, order_id: int, preference_field: EmailPreferenceField
     ) -> list[User]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        query = self._filter_preference(
+        query = self.filter_preference(
             select(User)
             .join(OrderResponse, OrderResponse.expert_id == User.id)
             .where(OrderResponse.order_id == order_id),

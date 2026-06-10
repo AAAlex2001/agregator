@@ -1,0 +1,106 @@
+{% extends "sqladmin/layout.html" %}
+
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Запуск email-рассылки</h3>
+    </div>
+    <div class="card-body">
+
+      {% if message %}
+      <div class="alert alert-success" role="alert">{{ message }}</div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('admin:campaign-launcher-create') }}" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Название кампании (внутреннее)</label>
+          <input type="text" name="name" class="form-control" placeholder="Например: Презентация — Татарстан, июнь" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Тема письма</label>
+          <input type="text" name="subject" class="form-control"
+                 value="Письмо и презентация новой площадки-агрегатора &quot;Ресурс-плюс&quot;" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Размер пачки (адресов за один проход)</label>
+          <input type="number" name="batch_size" class="form-control" value="100" min="1" max="5000">
+          <small class="form-text text-muted">В конец каждой пачки автоматически добавляются контрольные адреса для самопроверки доставки. Пачка отправляется раз в 5 минут.</small>
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" name="only_active" class="form-check-input" id="only_active" checked>
+          <label class="form-check-label" for="only_active">Только действующие компании (status = «Действующее»)</label>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">JSON-база компаний</label>
+          <input type="file" name="companies_file" class="form-control" accept=".json,application/json" required>
+          <small class="form-text text-muted">Массив компаний в формате [{"name": ..., "emails": [...], "status": ...}, ...]. Письмо уходит на первый email каждой компании. Файл импортируется потоково — размер не ограничен.</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Презентация (PDF)</label>
+          <input type="file" name="presentation_file" class="form-control" accept=".pdf,application/pdf">
+          <small class="form-text text-muted">Прикрепляется к каждому письму. Необязательно.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Создать кампанию и импортировать получателей</button>
+      </form>
+
+      <hr class="my-4">
+
+      <h4>Превью письма</h4>
+      <p class="text-muted">Так письмо увидит получатель (с примером названия компании).</p>
+      <div class="mb-2">
+        <button type="button" class="btn btn-outline-secondary" onclick="loadPreview()">Обновить превью</button>
+      </div>
+      <iframe id="preview_frame" style="width:100%;height:600px;border:1px solid #e0e0e0;border-radius:8px;background:#fff"></iframe>
+      <script>
+        function loadPreview() {
+          const subjectEl = document.querySelector('input[name="subject"]');
+          const subject = encodeURIComponent(subjectEl ? subjectEl.value : '');
+          const hasPdf = document.querySelector('input[name="presentation_file"]').files.length ? '1' : '0';
+          const base = "{{ url_for('admin:campaign-launcher') }}";
+          document.getElementById('preview_frame').src = base + '/preview?subject=' + subject + '&has_pdf=' + hasPdf;
+        }
+        window.addEventListener('DOMContentLoaded', loadPreview);
+      </script>
+
+      <hr class="my-4">
+
+      <h4>Отправка</h4>
+      <p class="text-muted">Разовая отправка <b>одной пачки</b> по ID кампании (без автоцикла). В конец пачки автоматически добавляются контрольные адреса. Нажмите ещё раз — уйдёт следующая пачка. Счётчики — в разделе «Рассылки · Кампании».</p>
+
+      <div class="row g-2 align-items-end">
+        <div class="col-auto">
+          <label class="form-label">ID кампании</label>
+          <input type="number" id="campaign_id_input" class="form-control" min="1" placeholder="напр. 1">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-success" onclick="sendBatch()">✉ Отправить одну пачку</button>
+        </div>
+      </div>
+
+      <form id="action_send" method="post" style="display:none"></form>
+
+      <script>
+        function sendBatch() {
+          const id = document.getElementById('campaign_id_input').value;
+          if (!id) { alert('Укажите ID кампании'); return; }
+          const base = "{{ url_for('admin:campaign-launcher') }}";
+          const form = document.getElementById('action_send');
+          form.action = base + '/send-batch/' + id;
+          form.submit();
+        }
+      </script>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

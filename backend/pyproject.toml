@@ -82,6 +82,7 @@ module = [
     "sqladmin.*",
     "starlette.*",
     "jinja2.*",
+    "ijson.*",
 ]
 ignore_missing_imports = true
 

@@ -53,8 +53,8 @@ class AvatarStorage:
 
         if user.avatar_url and user.avatar_url.startswith(f"/uploads/avatars/{user.id}/"):
             relative_subpath = PurePosixPath(user.avatar_url).relative_to("/")
-            candidate = Path(BACKEND_ROOT, *relative_subpath.parts).resolve()
-            uploads_root = Path(BACKEND_ROOT, "uploads").resolve()
+            candidate = Path(BACKEND_ROOT, *relative_subpath.parts).resolve()  # noqa: ASYNC240
+            uploads_root = Path(BACKEND_ROOT, "uploads").resolve()  # noqa: ASYNC240
             if uploads_root in candidate.parents:
                 previous_path = candidate
             else:

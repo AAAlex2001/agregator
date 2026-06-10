@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 import uuid
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -30,6 +30,7 @@ from routes import (
     review,
     settings,
     support,
+    unsubscribe,
 )
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
@@ -52,6 +53,9 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     await ws_pubsub.start()
     await redis_sliding_window.start()
     auto_reject_task = asyncio.create_task(run_auto_reject_loop())
+    # Авто-цикл рассылки кампаний пока выключен — отправка разовая по кнопке из админки
+    # (см. send_one_campaign_batch). Включить цикл: раскомментировать create_task ниже.
+    # campaign_sender_task = asyncio.create_task(run_campaign_sender_loop())
     yield
     auto_reject_task.cancel()
     await redis_sliding_window.stop()
@@ -75,7 +79,9 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def request_id_middleware(request: Request, call_next) -> Response:
+async def request_id_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
     "Прокидывает X-Request-ID: из заголовка или генерит UUID4; кладёт в state и contextvar."
     incoming = request.headers.get("X-Request-ID")
     request_id = incoming if incoming else uuid.uuid4().hex
@@ -105,6 +111,7 @@ app.include_router(article.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")
+app.include_router(unsubscribe.router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
 os.makedirs("uploads", exist_ok=True)
