@@ -18,10 +18,9 @@ interface Props {
   canLeaveReview?: boolean;
   onLeaveReview?: () => void;
   hideExpertHistoryLink?: boolean;
-  detailsAlwaysOpen?: boolean;
 }
 
-export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHistoryLink, detailsAlwaysOpen }: Props) {
+export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHistoryLink }: Props) {
   const { user, role } = useSession();
   const hasExecutor = Boolean(card.executorName);
 
@@ -78,7 +77,6 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
         ) : undefined
       }
       leftExtra={<RequirementsBadges badges={card.badges} />}
-      detailsAlwaysOpen={detailsAlwaysOpen}
       details={
         <>
           {card.comment && (
@@ -93,15 +91,17 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
           {countDocuments(card.documents) > 0 && (
             <DocumentsGallery documents={card.documents} />
           )}
-          <OrderQuestionsBlock
-            orderId={card.id}
-            currentUserId={user?.id ?? null}
-            customerId={card.customerId}
-            isCustomer={role === "CUSTOMER"}
-            isExpert={role === "EXPERT"}
-            expertCanAsk={false}
-          />
         </>
+      }
+      footer={
+        <OrderQuestionsBlock
+          orderId={card.id}
+          currentUserId={user?.id ?? null}
+          customerId={card.customerId}
+          isCustomer={role === "CUSTOMER"}
+          isExpert={role === "EXPERT"}
+          expertCanAsk={false}
+        />
       }
     />
   );

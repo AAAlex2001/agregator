@@ -1,13 +1,8 @@
-from services.campaigns.repository import CampaignRepository
-from services.campaigns.use_cases import (
-    SendBatchUseCase,
-    UnsubscribeUseCase,
-    import_recipients_from_file,
-)
+from services.campaigns.company_repository import CompanyRepository
+from services.campaigns.use_cases import SendBatchUseCase, import_companies_from_file
 
 __all__ = [
-    "CampaignRepository",
+    "CompanyRepository",
     "SendBatchUseCase",
-    "UnsubscribeUseCase",
-    "import_recipients_from_file",
+    "import_companies_from_file",
 ]

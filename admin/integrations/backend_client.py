@@ -37,26 +37,34 @@ def internal_get_html(path: str, params: dict[str, Any]) -> str:
         return r.text
 
 
-def create_campaign(
-    name: str, subject: str, batch_size: int, import_token: str, has_presentation: bool, only_active: bool
-) -> dict[str, Any]:
-    "Создаёт кампанию через backend. Файлы (JSON+PDF) уже лежат в общем томе под import_token — бэк читает их сам."
+def internal_get(path: str) -> dict[str, Any]:
+    "GET к backend internal-ручке (JSON). Бросает RuntimeError при отсутствии токена/ошибке HTTP."
+    if not INTERNAL_API_TOKEN:
+        raise RuntimeError("INTERNAL_API_TOKEN не задан в окружении админки")
+    url = f"{BACKEND_INTERNAL_BASE}{path}"
+    headers = {"X-Internal-Token": INTERNAL_API_TOKEN}
+    with httpx.Client(timeout=TIMEOUT_SECONDS) as client:
+        r = client.get(url, headers=headers)
+        r.raise_for_status()
+        return r.json()
+
+
+def import_companies() -> dict[str, Any]:
+    "Запускает на backend импорт базы компаний из JSON (файл уже в общем томе)."
+    return internal_post("/companies/import", {})
+
+
+def companies_stats() -> dict[str, Any]:
+    "Возвращает статистику базы: всего / к отправке / отправлено / осталось."
+    return internal_get("/companies/stats")
+
+
+def send_batch(subject: str, body_text: str, batch_size: int) -> dict[str, Any]:
+    "Разово рассылает одну пачку по базе компаний. PDF берётся из общего тома (если загружен)."
     return internal_post(
-        "/campaigns",
-        {
-            "name": name,
-            "subject": subject,
-            "batch_size": batch_size,
-            "import_token": import_token,
-            "has_presentation": has_presentation,
-            "only_active": only_active,
-        },
+        "/mailing/send-batch",
+        {"subject": subject, "body_text": body_text, "batch_size": batch_size},
     )
-
-
-def send_campaign_batch(campaign_id: int) -> dict[str, Any]:
-    "Разово отправляет одну пачку кампании (без цикла)."
-    return internal_post(f"/campaigns/{campaign_id}/send-batch", {})
 
 
 def notify_blog_published(slug: str, title: str, preview: str) -> None:

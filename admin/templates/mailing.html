@@ -1,0 +1,100 @@
+{% extends "sqladmin/layout.html" %}
+
+{% block content %}
+<div class="col-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Рассылка по базе компаний</h3>
+    </div>
+    <div class="card-body">
+
+      {% if message %}
+      <div class="alert alert-success" role="alert">{{ message }}</div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <div class="row">
+        <!-- ЛЕВО: статистика + загрузка базы + письмо + отправка -->
+        <div class="col-lg-6">
+
+          <div class="row mb-3">
+            <div class="col"><div class="card bg-light"><div class="card-body py-2 px-3">
+              <div class="text-muted small">Всего</div><div class="h4 mb-0">{{ stats.total if stats.total is defined else "—" }}</div>
+            </div></div></div>
+            <div class="col"><div class="card bg-light"><div class="card-body py-2 px-3">
+              <div class="text-muted small">К отправке</div><div class="h4 mb-0">{{ stats.sendable if stats.sendable is defined else "—" }}</div>
+            </div></div></div>
+            <div class="col"><div class="card bg-light"><div class="card-body py-2 px-3">
+              <div class="text-muted small">Отправлено</div><div class="h4 mb-0">{{ stats.sent if stats.sent is defined else "—" }}</div>
+            </div></div></div>
+            <div class="col"><div class="card bg-light"><div class="card-body py-2 px-3">
+              <div class="text-muted small">Осталось</div><div class="h4 mb-0">{{ stats.remaining if stats.remaining is defined else "—" }}</div>
+            </div></div></div>
+          </div>
+
+          <!-- Загрузка базы -->
+          <form method="post" action="{{ url_for('mailing_import_base') }}" enctype="multipart/form-data" class="mb-4">
+            <label class="form-label fw-bold">Загрузить базу компаний (JSON)</label>
+            <div class="input-group">
+              <input type="file" name="companies_file" class="form-control" accept=".json,application/json" required>
+              <button type="submit" class="btn btn-outline-primary">Загрузить</button>
+            </div>
+            <small class="form-text text-muted">Данные перезаписываются по ИНН (без дублей). Файл читается потоково — размер не ограничен.</small>
+          </form>
+
+          <hr>
+
+          <!-- Письмо + отправка -->
+          <form method="post" action="{{ url_for('mailing_send') }}" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Тема письма</label>
+              <input type="text" name="subject" id="subject_input" class="form-control" value="{{ default_subject }}" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Текст письма</label>
+              <textarea name="body_text" id="body_input" class="form-control" rows="5" required>{{ default_body }}</textarea>
+              <small class="form-text text-muted">Каждая строка — отдельный абзац. Приветствие и подпись добавляются автоматически.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Презентация (PDF)</label>
+              <input type="file" name="presentation_file" id="pdf_input" class="form-control" accept=".pdf,application/pdf">
+              <small class="form-text text-muted">Прикрепляется к каждому письму. Загруженный PDF хранится и используется для последующих пачек — повторно прикреплять не нужно.</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Размер пачки</label>
+              <input type="number" name="batch_size" class="form-control" value="100" min="1" max="5000" style="max-width:160px">
+              <small class="form-text text-muted">В конец каждой пачки добавляются контрольные адреса для самопроверки доставки.</small>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg">✉ Разослать пачку</button>
+          </form>
+
+        </div>
+
+        <!-- ПРАВО: превью письма -->
+        <div class="col-lg-6">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h4 class="mb-0">Превью письма</h4>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadPreview()">Обновить</button>
+          </div>
+          <iframe id="preview_frame" style="width:100%;height:760px;border:1px solid #e0e0e0;border-radius:8px;background:#fff"></iframe>
+        </div>
+      </div>
+
+      <script>
+        function loadPreview() {
+          const subject = encodeURIComponent(document.getElementById('subject_input').value || '');
+          const body = encodeURIComponent(document.getElementById('body_input').value || '');
+          const hasPdf = document.getElementById('pdf_input').files.length ? '1' : '0';
+          document.getElementById('preview_frame').src =
+            "{{ url_for('mailing_preview') }}" + '?subject=' + subject + '&body_text=' + body + '&has_pdf=' + hasPdf;
+        }
+        window.addEventListener('DOMContentLoaded', loadPreview);
+        document.getElementById('pdf_input').addEventListener('change', loadPreview);
+      </script>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

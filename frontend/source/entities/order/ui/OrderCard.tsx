@@ -2,12 +2,14 @@ import { ListCard } from "@/source/shared/ui/ListCard";
 import { DiffValue } from "@/source/shared/ui/DiffValue";
 import type { Badge } from "../model/types";
 import { RequirementsBadges } from "./RequirementsBadges";
+import s from "./OrderCardBottom.module.scss";
 
 interface Props {
   id?: number | string;
   badges: Badge[];
   title: string;
   customer: string;
+  customerInn?: string;
   startDate?: string;
   date: string;
   sum: string;
@@ -48,6 +50,7 @@ export function OrderCard({
   badges,
   title,
   customer,
+  customerInn,
   startDate,
   date,
   sum,
@@ -99,8 +102,13 @@ export function OrderCard({
       statusBg={statusBadge.bg}
       titleLabel="Название заказа"
       title={titleNode}
-      bottomLeftLabel="Организатор"
-      bottomLeftValue={customer || "—"}
+      bottomLeftCustom={
+        <div className={s.bottom}>
+          <span className={s.label}>Организатор</span>
+          <span className={s.value}>{customer || "—"}</span>
+          {customerInn && <span className={s.inn}>ИНН {customerInn}</span>}
+        </div>
+      }
       rightItems={rightItems}
       onClick={onClick}
       actions={children}

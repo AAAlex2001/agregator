@@ -76,15 +76,17 @@ export function ReportCard({ card, onView, onDownload }: Props) {
           {countDocuments(card.documents) > 0 && (
             <DocumentsGallery documents={card.documents} />
           )}
-          <OrderQuestionsBlock
-            orderId={card.id}
-            currentUserId={user?.id ?? null}
-            customerId={card.customerId}
-            isCustomer={role === "CUSTOMER"}
-            isExpert={role === "EXPERT"}
-            expertCanAsk={false}
-          />
         </>
+      }
+      footer={
+        <OrderQuestionsBlock
+          orderId={card.id}
+          currentUserId={user?.id ?? null}
+          customerId={card.customerId}
+          isCustomer={role === "CUSTOMER"}
+          isExpert={role === "EXPERT"}
+          expertCanAsk={false}
+        />
       }
     />
   );

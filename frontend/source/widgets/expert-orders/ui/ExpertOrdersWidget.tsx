@@ -59,6 +59,7 @@ export function ExpertOrdersWidget() {
                   badges={o.badges}
                   title={o.title}
                   customer={o.customer}
+                  customerInn={o.customerInn}
                   startDate={o.startDate}
                   date={o.date}
                   sum={o.sum}

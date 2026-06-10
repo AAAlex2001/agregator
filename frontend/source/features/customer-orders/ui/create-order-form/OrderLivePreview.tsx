@@ -9,6 +9,7 @@ import {
   emptyDocuments,
   type OrderDocuments,
 } from "@/source/entities/order";
+import { useSession } from "@/source/features/session";
 import type { DocumentsFormState } from "../../model/formFiles";
 import { buildPreviewBadges } from "../../model/mappers";
 import type { OrderFormValues } from "../../model/schema";
@@ -36,6 +37,7 @@ function formatDeadline(iso: string): string {
 export function OrderLivePreview({ form, documents }: Props) {
   const values = useWatch({ control: form.control }) as Partial<OrderFormValues>;
   const previewDocuments = usePreviewDocuments(documents);
+  const { user } = useSession();
 
   const badges = buildPreviewBadges(values.selectionsByType ?? {});
   const comment = values.comment?.trim() ?? "";
@@ -49,6 +51,7 @@ export function OrderLivePreview({ form, documents }: Props) {
         badges={badges}
         title={values.title?.trim() || "Название заказа"}
         customer={values.company?.trim() || "—"}
+        customerInn={user?.inn ?? undefined}
         startDate={values.startDate ? formatDeadline(values.startDate) : undefined}
         date={formatDeadline(values.deadline ?? "")}
         sum={formatBudget(values.budget ?? "")}

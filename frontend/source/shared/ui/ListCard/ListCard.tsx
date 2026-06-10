@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import s from "./ListCard.module.scss";
 
 export interface ListCardItem {
@@ -28,14 +26,10 @@ export interface ListCardProps {
   leftExtra?: ReactNode;
   /** Контент в правом конце шапки (рядом с meta + statusBadge). */
   headerExtra?: ReactNode;
-  /** Раскрывающаяся зона деталей под двумя колонками (комментарии, файлы, вопросы). */
+  /** Основная инфа (комментарий, файлы, документы) — показывается всегда, без дропдауна. */
   details?: ReactNode;
-  /** Метка кнопки раскрытия деталей. */
-  detailsLabel?: string;
-  /** Раскрывать ли блок деталей по умолчанию. */
-  detailsOpenByDefault?: boolean;
-  /** Всегда показывать детали и скрыть кнопку «Подробнее». */
-  detailsAlwaysOpen?: boolean;
+  /** Нижняя секция под разделительной чертой (вопросы по заказу). */
+  footer?: ReactNode;
 }
 
 export function ListCard({
@@ -54,11 +48,8 @@ export function ListCard({
   leftExtra,
   headerExtra,
   details,
-  detailsLabel = "Подробнее",
-  detailsOpenByDefault = false,
-  detailsAlwaysOpen = false,
+  footer,
 }: ListCardProps) {
-  const [open, setOpen] = useState(detailsOpenByDefault);
   const clickable = Boolean(onClick);
 
   return (
@@ -116,38 +107,9 @@ export function ListCard({
 
       {actions && <div className={s.actions}>{actions}</div>}
 
-      {details && detailsAlwaysOpen && <div className={s.details}>{details}</div>}
+      {details && <div className={s.details}>{details}</div>}
 
-      {details && !detailsAlwaysOpen && (
-        <>
-          {open && <div className={s.details}>{details}</div>}
-          <button
-            type="button"
-            className={s.detailsToggle}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen((prev) => !prev);
-            }}
-            aria-expanded={open}
-          >
-            <span className={s.detailsToggleLabel}>{open ? "Скрыть" : detailsLabel}</span>
-            <svg
-              className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()}
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M6 9L12 15L18 9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </>
-      )}
+      {footer && <div className={s.footer}>{footer}</div>}
     </article>
   );
 }

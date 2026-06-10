@@ -8,6 +8,7 @@ import { ActionButtons, CommentSection } from "@/source/entities/response";
 import type { CardAction } from "@/source/entities/response";
 import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
+import cardBottom from "@/source/entities/order/ui/OrderCardBottom.module.scss";
 
 interface Props {
   card: OrderCardData;
@@ -42,8 +43,15 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
       statusBg="#b2dfb6"
       titleLabel="Название заказа"
       title={<DiffValue previous={card.previousTitle} current={card.title} />}
-      bottomLeftLabel="Организатор"
-      bottomLeftValue={card.customer || card.company || "—"}
+      bottomLeftCustom={
+        <div className={cardBottom.bottom}>
+          <span className={cardBottom.label}>Организатор</span>
+          <span className={cardBottom.value}>{card.customer || card.company || "—"}</span>
+          {(card.customerInn || user?.inn) && (
+            <span className={cardBottom.inn}>ИНН {card.customerInn || user?.inn}</span>
+          )}
+        </div>
+      }
       rightItems={[
         {
           label: "Начальная максимальная цена",
@@ -75,15 +83,17 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
           {countDocuments(card.documents) > 0 && (
             <DocumentsGallery documents={card.documents} />
           )}
-          <OrderQuestionsBlock
-            orderId={card.id}
-            currentUserId={user?.id ?? null}
-            customerId={card.customerId}
-            isCustomer={role === "CUSTOMER"}
-            isExpert={role === "EXPERT"}
-            expertCanAsk={false}
-          />
         </>
+      }
+      footer={
+        <OrderQuestionsBlock
+          orderId={card.id}
+          currentUserId={user?.id ?? null}
+          customerId={card.customerId}
+          isCustomer={role === "CUSTOMER"}
+          isExpert={role === "EXPERT"}
+          expertCanAsk={false}
+        />
       }
     />
   );

@@ -163,48 +163,16 @@
   color: #ff8a00;
 }
 
-.detailsToggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: calc(100% + 48px);
-  margin: 0 -24px -20px;
-  padding: 12px 24px;
-  border: none;
-  border-top: 1px solid #f0f0f0;
-  border-radius: 0 0 12px 12px;
-  background: #fafafa;
-  color: #ff8a00;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-
-  &:hover {
-    background: #fff5e6;
-    color: #cc6e00;
-  }
-}
-
-.detailsToggleLabel {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.chevron {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
 .details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.footer {
   display: flex;
   flex-direction: column;
   gap: 12px;

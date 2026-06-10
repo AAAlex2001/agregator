@@ -91,13 +91,6 @@ def format_sum(sum_amount: int) -> str:
     return f"{formatted} ₽"
 
 
-PRE_CONTRACT_STATUSES = {
-    ResponseStatus.REVIEW,
-    ResponseStatus.REJECTED,
-    ResponseStatus.WITHDRAWN_BY_EXPERT,
-}
-
-
 def to_item(
     entity: OrderResponseModel,
     actor_role: UserRole | None = None,
@@ -108,21 +101,16 @@ def to_item(
     if effective_status in {ResponseStatus.ACCEPTED, ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
         date_source = entity.updated_at or entity.created_at
     is_finalized = effective_status == ResponseStatus.COMPLETED
-    hide_customer_pii = (
-        actor_role == UserRole.EXPERT and effective_status in PRE_CONTRACT_STATUSES
-    )
     customer_name = ""
     customer_company = ""
     customer_inn = ""
     order_sum = ""
     if order:
-        customer_name = "" if hide_customer_pii else (order.company or "")
-        customer_company = "" if hide_customer_pii else (order.company or "")
-        customer_inn = (
-            ""
-            if hide_customer_pii or order.customer is None
-            else (order.customer.inn or "")
-        )
+        # Компания-организатор и её ИНН видны эксперту всегда (как и документы заказчика),
+        # чтобы в «Моих откликах» было понятно, на чью заявку откликнулся.
+        customer_name = order.company or ""
+        customer_company = order.company or ""
+        customer_inn = order.customer.inn or "" if order.customer is not None else ""
         order_sum = "Не определено" if order.sum_amount == 0 else format_sum(order.sum_amount)
 
     expert = entity.expert

@@ -70,7 +70,6 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
                 key={order.id}
                 card={order}
                 hideExpertHistoryLink
-                detailsAlwaysOpen
               />
             ))}
             {isLoadingMore && (

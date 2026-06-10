@@ -122,15 +122,18 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       {showReminder && card.reminderText && (
         <ReminderSection text={card.reminderText} />
       )}
-      <OrderQuestionsBlock
-        orderId={card.orderId}
-        currentUserId={user?.id ?? null}
-        customerId={card.orderCustomerId}
-        isCustomer={role === "customer"}
-        isExpert={role === "expert"}
-        expertCanAsk={false}
-      />
     </>
+  );
+
+  const footer = (
+    <OrderQuestionsBlock
+      orderId={card.orderId}
+      currentUserId={user?.id ?? null}
+      customerId={card.orderCustomerId}
+      isCustomer={role === "customer"}
+      isExpert={role === "expert"}
+      expertCanAsk={false}
+    />
   );
 
   const bottomLeft = isExpert ? (
@@ -177,6 +180,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       onClick={onClick}
       actions={actions.length > 0 ? <ActionButtons actions={actions} /> : undefined}
       details={details}
+      footer={footer}
       leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousOrderBadges} />}
       headerExtra={
         card.statusMessage ? (
