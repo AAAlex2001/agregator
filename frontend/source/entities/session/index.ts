@@ -9,6 +9,7 @@ export {
 export {
   EmailNotVerifiedError,
   RoleChoiceRequiredError,
+  type LoginFormData,
   type LoginResponse,
   type UserRole,
 } from "./model/types";
