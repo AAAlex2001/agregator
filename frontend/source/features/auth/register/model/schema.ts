@@ -48,7 +48,6 @@ export const registerFormSchema = z
     rentalPercent: z.string().trim(),
     rentalFixedAmount: z.string().trim(),
     miningLicenseNumber: z.string().trim().max(100),
-    sroDesignNumber: z.string().trim().max(100),
     labAccreditationNumber: z.string().trim().max(100),
   })
   .superRefine((data, ctx) => {
@@ -161,7 +160,6 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   rentalPercent: "",
   rentalFixedAmount: "",
   miningLicenseNumber: "",
-  sroDesignNumber: "",
   labAccreditationNumber: "",
 };
 

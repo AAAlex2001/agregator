@@ -1,11 +1,15 @@
 "Внутренние ручки, которые дёргает admin-сервис по X-Internal-Token. Не для пользователей."
 
+import logging
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import HTMLResponse
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.internal_auth import require_internal_token
+from models.notification import Notification, NotificationType
 from schemas.internal import (
     BlogPublishedRequest,
     BroadcastResult,
@@ -24,6 +28,9 @@ from services.notifications.use_cases.create_new_blog_new import (
 from tasks.mailing import send_one_batch
 from utils.email_templates import render_email
 
+logger = logging.getLogger(__name__)
+BLOG_ACTION_URL_TEMPLATE = "/landing/blog/{slug}"
+
 router = APIRouter(prefix="/internal", tags=["internal"], dependencies=[Depends(require_internal_token)])
 
 
@@ -33,7 +40,20 @@ async def notify_blog_published(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ) -> BroadcastResult:
-    "Триггерит in-app рассылку всем и email-рассылку подписанным. Дёргается админкой после публикации статьи."
+    "Триггерит in-app рассылку всем и email-рассылку подписанным. Идемпотентно по slug — повторный вызов ничего не делает."
+    action_url = BLOG_ACTION_URL_TEMPLATE.format(slug=data.slug)
+    already_sent = await db.execute(
+        select(Notification.id)
+        .where(
+            Notification.type == NotificationType.NEW_BLOG_POST,
+            Notification.action_url == action_url,
+        )
+        .limit(1)
+    )
+    if already_sent.scalar_one_or_none() is not None:
+        logger.info("Blog notification for slug=%s already sent, skipping", data.slug)
+        return BroadcastResult(notifications_sent=0, emails_queued=0)
+
     in_app = await CreateNewBlogPostNotificationUseCase(NotificationRepository(db)).send_notification_to_all_users(
         blog_title=data.title,
         preview=data.preview,

@@ -207,10 +207,8 @@ export function CredentialsStep({
               sroDesignFile={sroDesignFile}
               labAccreditationFile={labAccreditationFile}
               miningLicenseNumber={watch("miningLicenseNumber") ?? ""}
-              sroDesignNumber={watch("sroDesignNumber") ?? ""}
               labAccreditationNumber={watch("labAccreditationNumber") ?? ""}
               onMiningNumberChange={(v) => setValue("miningLicenseNumber", v, { shouldValidate })}
-              onSroNumberChange={(v) => setValue("sroDesignNumber", v, { shouldValidate })}
               onLabNumberChange={(v) => setValue("labAccreditationNumber", v, { shouldValidate })}
               onMiningFileSelect={onMiningLicenseFileSelect}
               onSroFileSelect={onSroDesignFileSelect}

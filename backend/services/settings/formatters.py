@@ -32,7 +32,6 @@ def to_response(user: User) -> UserSettingsResponse:
         license_rental_fixed_amount=user.license_rental_fixed_amount,
         mining_license_number=user.mining_license_number,
         mining_license_file_url=user.mining_license_file_url,
-        sro_design_number=user.sro_design_number,
         sro_design_file_url=user.sro_design_file_url,
         lab_accreditation_number=user.lab_accreditation_number,
         lab_accreditation_file_url=user.lab_accreditation_file_url,

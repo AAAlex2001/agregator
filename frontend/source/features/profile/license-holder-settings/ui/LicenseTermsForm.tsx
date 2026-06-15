@@ -65,7 +65,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
     ? [remoteFileItem(profile.mining_license_file_url, "mining-remote", "Лицензия маркшейдера")]
     : [];
   const sroItems = profile.sro_design_file_url
-    ? [remoteFileItem(profile.sro_design_file_url, "sro-remote", "Выписка СРО")]
+    ? [remoteFileItem(profile.sro_design_file_url, "sro-remote", "Выписка из реестра членов СРО в области проектирования")]
     : [];
   const labItems = profile.lab_accreditation_file_url
     ? [remoteFileItem(profile.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
@@ -190,16 +190,8 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         </div>
 
         <div className={s.extrasItem}>
-          <TextInput
-            id="sroDesignNumber"
-            value={watch("sroDesignNumber") ?? ""}
-            autoComplete="off"
-            onChange={(e) => setValue("sroDesignNumber", e.target.value, { shouldValidate })}
-            placeholder="ОГРН СРО в области проектирования"
-            error={errors.sroDesignNumber?.message}
-          />
           <FileGallery
-            label={isSroUploading ? "Загрузка файла…" : "Файл выписки из реестра СРО"}
+            label={isSroUploading ? "Загрузка файла…" : "Выписка из реестра членов СРО в области проектирования"}
             hint={REGULATORY_FILE_HINT}
             items={sroItems}
             variant="editable"

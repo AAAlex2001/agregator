@@ -27,7 +27,7 @@ const NotificationsCta = () => {
             <span className={s.dot} />
           </div>
           <div className={s.textCol}>
-            <h2 className={s.title}>Настроить уведомления о новых заказах</h2>
+            <h2 className={s.title}>Настройка уведомлений о новых заказах</h2>
             <p className={s.subtitle}>{subtitle}</p>
           </div>
           <Button href={href} variant="primary" showArrow className={s.ctaButton}>

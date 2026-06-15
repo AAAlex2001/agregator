@@ -17,10 +17,8 @@ interface Props {
   sroDesignFile: File | null;
   labAccreditationFile: File | null;
   miningLicenseNumber: string;
-  sroDesignNumber: string;
   labAccreditationNumber: string;
   onMiningNumberChange: (v: string) => void;
-  onSroNumberChange: (v: string) => void;
   onLabNumberChange: (v: string) => void;
   onMiningFileSelect?: (f: File | null) => void;
   onSroFileSelect?: (f: File | null) => void;
@@ -53,10 +51,8 @@ export function RegulatoryDocumentsBlock(props: Props) {
             galleryId="mining"
           />
           <DocRow
-            placeholder="Выписка СРО проектирования, ОГРН"
-            number={props.sroDesignNumber}
+            fileLabel="Выписка из реестра членов СРО в области проектирования"
             file={props.sroDesignFile}
-            onNumberChange={props.onSroNumberChange}
             onFileSelect={props.onSroFileSelect}
             galleryId="sro"
           />
@@ -75,15 +71,16 @@ export function RegulatoryDocumentsBlock(props: Props) {
 }
 
 interface RowProps {
-  placeholder: string;
-  number: string;
+  placeholder?: string;
+  number?: string;
+  fileLabel?: string;
   file: File | null;
-  onNumberChange: (v: string) => void;
+  onNumberChange?: (v: string) => void;
   onFileSelect?: (f: File | null) => void;
   galleryId: string;
 }
 
-function DocRow({ placeholder, number, file, onNumberChange, onFileSelect, galleryId }: RowProps) {
+function DocRow({ placeholder, number, fileLabel, file, onNumberChange, onFileSelect, galleryId }: RowProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const blobUrl = useObjectUrl(file);
 
@@ -104,14 +101,16 @@ function DocRow({ placeholder, number, file, onNumberChange, onFileSelect, galle
 
   return (
     <div className={s.row}>
-      <TextInput
-        value={number}
-        autoComplete="off"
-        onChange={(e) => onNumberChange(e.target.value)}
-        placeholder={placeholder}
-      />
+      {placeholder && (
+        <TextInput
+          value={number ?? ""}
+          autoComplete="off"
+          onChange={(e) => onNumberChange?.(e.target.value)}
+          placeholder={placeholder}
+        />
+      )}
       <FileGallery
-        label="Файл документа"
+        label={fileLabel ?? "Файл документа"}
         hint={HINT}
         items={items}
         variant="editable"

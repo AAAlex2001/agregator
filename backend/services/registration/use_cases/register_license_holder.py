@@ -53,7 +53,6 @@ class RegisterLicenseHolderUseCase:
             ),
             mining_license_number=data.mining_license_number,
             mining_license_file_url=mining_license_file_url,
-            sro_design_number=data.sro_design_number,
             sro_design_file_url=sro_design_file_url,
             lab_accreditation_number=data.lab_accreditation_number,
             lab_accreditation_file_url=lab_accreditation_file_url,

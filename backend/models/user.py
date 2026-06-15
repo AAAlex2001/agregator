@@ -84,7 +84,6 @@ class User(Base):
     license_areas: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
     mining_license_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     mining_license_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    sro_design_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     sro_design_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     lab_accreditation_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     lab_accreditation_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)

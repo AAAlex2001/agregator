@@ -42,7 +42,6 @@ function profileToValues(profile: UserProfile): LicenseTermsValues {
         ? String(profile.license_rental_fixed_amount)
         : "",
     miningLicenseNumber: profile.mining_license_number ?? "",
-    sroDesignNumber: profile.sro_design_number ?? "",
     labAccreditationNumber: profile.lab_accreditation_number ?? "",
   };
 }
@@ -57,7 +56,6 @@ function valuesToPayload(values: LicenseTermsValues): LicenseHolderUpdatePayload
     license_rental_fixed_amount:
       values.rentalKind === "FIXED" ? Number(values.rentalFixedAmount.replace(/\s/g, "")) : undefined,
     mining_license_number: values.miningLicenseNumber.trim() || null,
-    sro_design_number: values.sroDesignNumber.trim() || null,
     lab_accreditation_number: values.labAccreditationNumber.trim() || null,
   };
 }
@@ -162,7 +160,7 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
   const replaceSroDesignFile = makeRegulatoryUploader(
     uploadSroDesignFile,
     setIsSroUploading,
-    "Файл выписки СРО обновлён",
+    "Выписка из реестра членов СРО обновлена",
   );
   const replaceLabAccreditationFile = makeRegulatoryUploader(
     uploadLabAccreditationFile,

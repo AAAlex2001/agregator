@@ -152,12 +152,24 @@
     display: none;
   }
 
-  & img, & video {
+  & img {
     display: block;
     max-width: 100%;
     height: auto;
     border-radius: 20px;
     margin: 16px 0;
+    filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.05));
+  }
+
+  & video {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(100%, 600px);
+    max-height: 600px;
+    border-radius: 20px;
+    margin: 16px auto;
+    background: #000;
     filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.05));
   }
 

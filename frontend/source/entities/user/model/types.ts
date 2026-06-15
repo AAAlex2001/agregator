@@ -35,7 +35,6 @@ export interface LicenseHolderRegisterPayload {
   license_rental_percent?: number;
   license_rental_fixed_amount?: number;
   mining_license_number?: string | null;
-  sro_design_number?: string | null;
   lab_accreditation_number?: string | null;
 }
 
@@ -46,7 +45,6 @@ export interface LicenseHolderUpdatePayload {
   license_rental_percent?: number;
   license_rental_fixed_amount?: number;
   mining_license_number?: string | null;
-  sro_design_number?: string | null;
   lab_accreditation_number?: string | null;
 }
 
@@ -74,7 +72,6 @@ export interface UserProfile {
   license_rental_fixed_amount: number | null;
   mining_license_number: string | null;
   mining_license_file_url: string | null;
-  sro_design_number: string | null;
   sro_design_file_url: string | null;
   lab_accreditation_number: string | null;
   lab_accreditation_file_url: string | null;

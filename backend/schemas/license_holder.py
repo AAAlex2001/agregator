@@ -19,7 +19,6 @@ class LicenseHolderListItem(BaseModel):
     license_rental_fixed_amount: int | None = None
     mining_license_number: str | None = None
     mining_license_file_url: str | None = None
-    sro_design_number: str | None = None
     sro_design_file_url: str | None = None
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None

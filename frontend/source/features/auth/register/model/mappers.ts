@@ -37,7 +37,6 @@ export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolde
     license_rental_fixed_amount:
       values.rentalKind === "FIXED" ? Number(values.rentalFixedAmount.replace(/\s/g, "")) : undefined,
     mining_license_number: values.miningLicenseNumber?.trim() || null,
-    sro_design_number: values.sroDesignNumber?.trim() || null,
     lab_accreditation_number: values.labAccreditationNumber?.trim() || null,
   };
 }
