@@ -48,6 +48,8 @@ export function useArchive() {
 
   useEffect(() => { void reload(); }, []);
 
+//комментарий
+
   const canLeaveReviewFor = (card: OrderCardData) =>
     role === "CUSTOMER"
     && user !== null
