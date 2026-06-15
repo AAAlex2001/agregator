@@ -14,6 +14,7 @@
   .article-quill .ql-editor h3 { color: #1A1A1A; font-size: 18px; font-weight: 600; margin: 20px 0 8px; }
   .article-quill .ql-editor img { max-width: 100%; border-radius: 12px; }
   .article-quill .ql-editor iframe { width: 100%; border-radius: 12px; }
+  .article-quill .ql-editor video { width: 100%; max-width: 100%; border-radius: 12px; display: block; margin: 12px 0; background: #000; }
 
   .article-tags label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; margin: 0 6px 6px 0; border: 1px solid #dbe4ee; border-radius: 20px; background: #fff; cursor: pointer; font-size: 13px; }
   .article-tags label:has(input:checked) { background: #FFF8EB; border-color: #FF8A00; color: #FF8A00; }
@@ -204,6 +205,24 @@
     if (wrap) wrap.style.display = "none";
   }
 
+  const BlockEmbed = Quill.import("blots/block/embed");
+  class VideoFileBlot extends BlockEmbed {
+    static create(value) {
+      const node = super.create();
+      node.setAttribute("controls", "");
+      node.setAttribute("width", "100%");
+      node.setAttribute("preload", "metadata");
+      node.setAttribute("src", typeof value === "string" ? value : (value && value.src) || "");
+      return node;
+    }
+    static value(node) {
+      return node.getAttribute("src");
+    }
+  }
+  VideoFileBlot.blotName = "videoFile";
+  VideoFileBlot.tagName = "video";
+  Quill.register(VideoFileBlot);
+
   const quill = new Quill(document.getElementById("article-editor"), {
     theme: "snow",
     placeholder: "Текст статьи...",
@@ -245,6 +264,36 @@
         quill.setSelection(range.index + 1);
       } catch (e) {
         alert("Не удалось загрузить картинку: " + e.message);
+      }
+    };
+    input.click();
+  });
+
+  quill.getModule("toolbar").addHandler("video", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "video/mp4,video/webm,video/quicktime,video/x-m4v";
+    input.onchange = async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append("file", file);
+      const range = quill.getSelection(true) || { index: quill.getLength() };
+      const placeholder = "⏳ Загружаю видео...";
+      quill.insertText(range.index, placeholder + "\n", "user");
+      try {
+        const res = await fetch("/admin-actions/articles/upload-video", { method: "POST", body: fd });
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody.detail || ("Ошибка загрузки: " + res.status));
+        }
+        const data = await res.json();
+        quill.deleteText(range.index, placeholder.length + 1, "user");
+        quill.insertEmbed(range.index, "videoFile", data.url, "user");
+        quill.setSelection(range.index + 1);
+      } catch (e) {
+        quill.deleteText(range.index, placeholder.length + 1, "user");
+        alert("Не удалось загрузить видео: " + e.message);
       }
     };
     input.click();
