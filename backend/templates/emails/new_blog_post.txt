@@ -1,14 +1,13 @@
-Здравствуйте, {{ recipient_greeting }}.
+Добрый день{% if recipient_greeting and recipient_greeting != "клиент Ресурс-Плюс" %}, {{ recipient_greeting }}{% endif %}!
 
-На Ресурс-Плюс вышла новая статья в блоге.
+На «Ресурс-Плюс» опубликовали новую статью — может быть полезна:
 
-«{{ blog_title }}»
+{{ blog_title }}
 {% if preview %}
 {{ preview }}
 {% endif %}
-Читать: {{ cta_url }}
+Читать полностью: {{ cta_url }}
 
-—
-Не хотите получать эти письма? Отключите тогглер «Новые статьи блога» в настройках уведомлений: https://plus-resurs.com/settings
-
-Ресурс-Плюс · plus-resurs.com
+С уважением,
+команда «Ресурс-Плюс»
+expert@plus-resurs.com · plus-resurs.com
