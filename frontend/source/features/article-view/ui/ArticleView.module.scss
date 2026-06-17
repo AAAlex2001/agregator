@@ -124,7 +124,7 @@
     margin: 20px 0 10px;
   }
 
-  & p { margin: 0 0 12px; }
+  & p { margin: 0 0 12px; text-align: justify; }
   & a { color: #ff8a00; text-decoration: underline; }
 
   & ul,
@@ -138,6 +138,7 @@
   & li {
     margin: 4px 0;
     display: list-item;
+    text-align: justify;
 
     &::marker { color: #ff8a00; }
   }
