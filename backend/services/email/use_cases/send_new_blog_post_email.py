@@ -10,8 +10,8 @@ from services.email.repository import EmailRepository
 logger = logging.getLogger(__name__)
 
 TEMPLATE = "new_blog_post"
-SUBJECT = "Новая статья на Ресурс-Плюс"
 CTA_URL_TEMPLATE = "https://plus-resurs.com/landing/blog/{slug}"
+BLOG_FROM_EMAIL = "expert@plus-resurs.com"
 
 
 class SendNewBlogPostEmailUseCase:
@@ -25,6 +25,7 @@ class SendNewBlogPostEmailUseCase:
         "Рассылает письмо. Возвращает число получателей."
         recipients = await self.repo.list_users_for_new_blog_post_email()
         cta_url = CTA_URL_TEMPLATE.format(slug=slug)
+        subject = blog_title.strip() or "Новая публикация на Ресурс-Плюс"
         for user in recipients:
             context = NewBlogPostEmailContext(
                 recipient_greeting=greeting_for(user),
@@ -32,6 +33,13 @@ class SendNewBlogPostEmailUseCase:
                 preview=preview,
                 cta_url=cta_url,
             )
-            self.dispatcher.dispatch(user.email, TEMPLATE, SUBJECT, context)
+            self.dispatcher.dispatch(
+                user.email,
+                TEMPLATE,
+                subject,
+                context,
+                from_email=BLOG_FROM_EMAIL,
+                reply_to=BLOG_FROM_EMAIL,
+            )
         logger.info("Sent new-blog-post email to %d users (slug=%s)", len(recipients), slug)
         return len(recipients)

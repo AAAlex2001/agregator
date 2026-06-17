@@ -17,11 +17,13 @@ async def deliver_email_task(
     subject: str,
     text: str,
     html: str,
+    from_email: str | None = None,
+    reply_to: str | None = None,
 ) -> None:
     "BackgroundTasks-обёртка: отправка письма, ошибка SMTP только в лог."
     request_id = request_id_var.get()
     try:
-        await send_email(recipient_email, subject, text, html)
+        await send_email(recipient_email, subject, text, html, from_email=from_email, reply_to=reply_to)
     except Exception:
         logger.exception(
             "Не удалось отправить письмо на %s [request_id=%s]",
@@ -42,15 +44,19 @@ class EmailDispatcher:
         template_name: str,
         subject: str,
         context: BaseModel,
+        from_email: str | None = None,
+        reply_to: str | None = None,
     ) -> None:
         "Публичный метод сервисного слоя."
         rendered = render_email(template_name, subject, context.model_dump())
         self.background_tasks.add_task(
             deliver_email_task,
-            recipient_email,
-            rendered.subject,
-            rendered.text,
-            rendered.html,
+            recipient_email=recipient_email,
+            subject=rendered.subject,
+            text=rendered.text,
+            html=rendered.html,
+            from_email=from_email,
+            reply_to=reply_to,
         )
 
     @staticmethod
