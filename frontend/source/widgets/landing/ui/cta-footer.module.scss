@@ -1,6 +1,7 @@
 .footer {
   display: flex;
   flex-direction: column;
+  margin-top: 210px;
   margin-bottom: 650px;
   padding: 0 var(--page-px);
 }
@@ -255,6 +256,7 @@
 @media (min-width: 768px) {
 
   .footer {
+  margin-top: 210px;
   margin-bottom: 600px;
 }
 
@@ -335,6 +337,7 @@
 @media (min-width: 1440px) {
 
   .footer {
+  margin-top: 270px;
   margin-bottom: 70px;
 }
 

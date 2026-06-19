@@ -1,4 +1,7 @@
 .section {
+  position: relative;
+  z-index: 4;
+  background: #ffffff;
   width: 100%;
   max-width: 1620px;
   margin: 40px auto 8px auto;
