@@ -63,9 +63,11 @@ export default function NewsListPage() {
     <>
       <RedirectIfAuthed to="/landing/news" />
       <LandingHeader />
-      <Suspense fallback={<ArticlesListSkeleton />}>
-        <NewsListContent />
-      </Suspense>
+      <main>
+        <Suspense fallback={<ArticlesListSkeleton />}>
+          <NewsListContent />
+        </Suspense>
+      </main>
       <LandingFooter variant="light" />
     </>
   );

@@ -65,20 +65,36 @@ class CompanyRepository:
         return int((await self.db.execute(stmt)).scalar_one() or 0)
 
     async def take_unsent_batch(self, limit: int) -> list[Company]:
-        "Берёт пачку компаний, которым ещё не слали (действующие, с email). С блокировкой строк (защита от гонок)."
+        "Берёт пачку компаний, которым ещё не слали (действующие, с email), по порядку id."
         stmt = (
             select(Company)
             .where(Company.status == ACTIVE_STATUS, Company.email.isnot(None), Company.sent_at.is_(None))
             .order_by(Company.id)
             .limit(limit)
-            .with_for_update(skip_locked=True)
+        )
+        return list((await self.db.execute(stmt)).scalars().all())
+
+    async def take_range(self, start: int, end: int) -> list[Company]:
+        "Берёт компании по позиции в базе (1-based, включительно): пригодные к рассылке, по порядку id, позиции start..end."
+        start = max(1, start)
+        if end < start:
+            return []
+        stmt = (
+            select(Company)
+            .where(Company.status == ACTIVE_STATUS, Company.email.isnot(None))
+            .order_by(Company.id)
+            .offset(start - 1)
+            .limit(end - start + 1)
         )
         return list((await self.db.execute(stmt)).scalars().all())
 
     async def mark_sent(self, company_ids: list[int]) -> None:
-        "Проставляет время отправки пачке компаний."
+        "Проставляет время отправки компаниям. Большие списки пишем чанками."
         if not company_ids:
             return
-        await self.db.execute(
-            update(Company).where(Company.id.in_(company_ids)).values(sent_at=datetime.now(UTC))
-        )
+        now = datetime.now(UTC)
+        chunk = 2000
+        for i in range(0, len(company_ids), chunk):
+            ids = company_ids[i:i + chunk]
+            await self.db.execute(update(Company).where(Company.id.in_(ids)).values(sent_at=now))
+            await self.db.commit()

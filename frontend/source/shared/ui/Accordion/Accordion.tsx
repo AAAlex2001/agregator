@@ -25,15 +25,24 @@ const Accordion = ({ items, activeId, onToggle, className = "" }: AccordionProps
           <div
             key={item.id}
             className={`${styles.item} ${isOpen ? styles.open : ""}`}
-            onClick={() => onToggle(item.id)}
           >
-            <div className={styles.question}>
+            <button
+              type="button"
+              className={styles.question}
+              onClick={() => onToggle(item.id)}
+              aria-expanded={isOpen}
+              aria-controls={`accordion-answer-${item.id}`}
+            >
               <span>{item.question}</span>
               <span className={`${styles.icon} ${isOpen ? styles.open : ""}`}>
                 <PlusIcon isOpen={isOpen} />
               </span>
-            </div>
-            <div className={`${styles.answer} ${isOpen ? styles.open : ""}`}>
+            </button>
+            <div
+              id={`accordion-answer-${item.id}`}
+              role="region"
+              className={`${styles.answer} ${isOpen ? styles.open : ""}`}
+            >
               <div className={styles.answerInner}>
                 <span>{item.answer}</span>
               </div>

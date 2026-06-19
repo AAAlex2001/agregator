@@ -22,7 +22,7 @@ const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsP
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
   return (
-    <section className={s.section} id="advantages">
+    <section className={s.section} id="industries">
       <div className={s.content}>
         <header className={s.header}>
           <Title text={title} className={s.title} />

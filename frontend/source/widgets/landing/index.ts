@@ -14,6 +14,7 @@ export { default as LandingSearchBlock } from "./ui/SearchBlock";
 export { default as LandingNotificationsCta } from "./ui/NotificationsCta";
 export { default as LandingStructuredData } from "./ui/StructuredData";
 export { default as LandingArticlesPreview } from "./ui/ArticlesPreview";
+export { default as LandingSeoText } from "./ui/SeoText";
 
 export { loadLandingSnapshot } from "./model/landing.data";
 

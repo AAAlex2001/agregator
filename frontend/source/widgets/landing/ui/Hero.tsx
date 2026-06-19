@@ -19,7 +19,7 @@ const Hero = ({ title, subtitle, buttonText, bullets, compact = false }: HeroPro
   return (
     <section className={sectionClass} id="about">
       <header className={s.heroTitle}>
-        <Title text={title} className={s.heroTitleText} />
+        <Title text={title} as="h1" className={s.heroTitleText} />
       </header>
       <div className={s.heroBody}>
         <div className={s.leftSection}>

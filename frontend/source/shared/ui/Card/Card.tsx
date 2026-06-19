@@ -99,7 +99,19 @@ const Card = ({
   // Advantage card
   if (variant === "advantage") {
     return (
-      <article className={cardClasses} onClick={onClick}>
+      <article
+        className={cardClasses}
+        onClick={onClick}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick?.();
+          }
+        }}
+      >
         {photo && (
           <div className={`${styles.image} ${isOpen ? styles.visible : ""}`}>
             <Image src={photo} alt={title || ""} fill style={{ objectFit: "cover" }} />

@@ -35,7 +35,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
           <LogoIcon title="Ресурс-Плюс" />
         </span>
 
-          <h1>Площадка для аттестованных экспертов промышленной безопасности</h1>
+          <p>Площадка для аттестованных экспертов промышленной безопасности</p>
           </div>
               <div className={s.links}>
                 <div>
@@ -43,17 +43,20 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <Link href="/#about">О нас</Link>
                   <Link href="/#advantages">Как это работает</Link>
                   <Link href="/#faq">FAQ</Link>
+                  <Link href="/news">Новости отрасли</Link>
+                  <Link href="/blog">Блог об экспертизе ОПО</Link>
                 </div>
                 <div>
                   <h2>Заказчикам</h2>
-                  <Link href="/register">Разместить заказ</Link>
-                  <Link href="/register">Найти исполнителя</Link>
+                  <Link href="/register">Разместить заказ на экспертизу промышленной безопасности</Link>
+                  <Link href="/orders">Тендеры на экспертизу ОПО</Link>
+                  <Link href="/register">Найти аттестованного эксперта Ростехнадзора</Link>
                 </div>
                 <div>
                   <h2>Специалистам</h2>
-                  <Link href="/register">Найти заказы</Link>
-                  <Link href="/register">Создать профиль</Link>
-                  <Link href="/register">Портфолио</Link>
+                  <Link href="/register">Найти заказы на экспертизу ПБ</Link>
+                  <Link href="/register">Создать профиль эксперта</Link>
+                  <Link href="/register">Портфолио и отзывы</Link>
                 </div>
                 <div>
                   <h2>Документы</h2>

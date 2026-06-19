@@ -73,10 +73,21 @@
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Размер пачки</label>
-              <input type="number" name="batch_size" class="form-control" value="100" min="1" max="5000" style="max-width:160px">
-              <small class="form-text text-muted">В конец каждой пачки добавляются контрольные адреса для самопроверки доставки.</small>
+              <input type="number" name="batch_size" class="form-control" value="100" min="1" max="10000" style="max-width:160px">
+              <small class="form-text text-muted">Используется, если диапазон ниже НЕ заполнен — уйдёт следующая непосланная пачка такого размера.</small>
             </div>
-            <button type="submit" class="btn btn-success btn-lg">✉ Разослать пачку</button>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Диапазон позиций базы (необязательно)</label>
+              <div class="input-group" style="max-width:320px">
+                <span class="input-group-text">от</span>
+                <input type="number" name="range_from" class="form-control" min="1" placeholder="10000">
+                <span class="input-group-text">до</span>
+                <input type="number" name="range_to" class="form-control" min="1" placeholder="15000">
+              </div>
+              <small class="form-text text-muted">Если заполнить — уйдёт именно этот срез базы по порядку (напр. 10000–15000 ≈ 5000 писем), независимо от размера пачки. Удобно слать большими порциями без перекрытий.</small>
+            </div>
+            <small class="form-text text-muted d-block mb-2">В конец рассылки добавляются контрольные адреса для самопроверки доставки.</small>
+            <button type="submit" class="btn btn-success btn-lg">✉ Разослать</button>
           </form>
 
         </div>

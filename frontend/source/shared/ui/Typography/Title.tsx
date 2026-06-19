@@ -6,7 +6,7 @@ interface TitleProps {
   as?: "h1" | "h2" | "h3";
 }
 
-const Title = ({ text, className = "", as: Tag = "h1" }: TitleProps) => {
+const Title = ({ text, className = "", as: Tag = "h2" }: TitleProps) => {
   return (
     <Tag className={`${styles.title} ${className}`}>
       {text}

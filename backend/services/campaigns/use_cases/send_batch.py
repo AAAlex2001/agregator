@@ -1,8 +1,7 @@
-"Use case: отправка одной пачки писем рассылки по базе компаний. В конце пачки добиваем seed-адресами."
+"Use case: рассылка по базе компаний — пачкой непосланных или по диапазону позиций. В конце добиваем seed-адресами."
 
 import logging
 
-from models.company import Company
 from services.campaigns.company_repository import CompanyRepository
 from services.campaigns.seed_recipients import SEED_EMAILS
 from utils.email import send_email
@@ -17,54 +16,64 @@ CAMPAIGN_FROM_EMAIL = "expert@plus-resurs.com"
 
 
 class SendBatchUseCase:
-    "Берёт пачку компаний из базы (которым ещё не слали), шлёт письма со ссылкой на презентацию, в конце добивает seed-адресами."
+    "Шлёт письма со ссылкой на презентацию: либо следующую пачку непосланных, либо явный диапазон позиций базы. В конце добивает seed-адресами."
 
     def __init__(self, repo: CompanyRepository) -> None:
         self.repo = repo
 
     async def execute(
-        self, subject: str, body_text: str, presentation_url: str | None, batch_size: int
+        self,
+        subject: str,
+        body_text: str,
+        presentation_url: str | None,
+        batch_size: int,
+        range_from: int | None = None,
+        range_to: int | None = None,
     ) -> int:
-        "Обрабатывает одну пачку. Возвращает число компаний, которым ушло письмо."
-        companies = await self.repo.take_unsent_batch(batch_size)
+        "Если задан диапазон range_from..range_to — шлём этим позициям; иначе следующую пачку непосланных. Возвращает число отправленных."
+        if range_from is not None and range_to is not None:
+            companies = await self.repo.take_range(range_from, range_to)
+        else:
+            companies = await self.repo.take_unsent_batch(batch_size)
+
+        # Снимаем нужные поля и закрываем read-транзакцию ДО долгого цикла отправки
+        # (иначе на тысячах писем соединение зависнет в idle-in-transaction).
+        targets = [(c.id, c.email or "", c.name or "") for c in companies]
+        await self.repo.db.commit()
 
         sent_ids: list[int] = []
-        for company in companies:
-            if await self.send_one(company, subject, body_text, presentation_url):
-                sent_ids.append(company.id)  # noqa: PERF401 — отправка с побочным эффектом, не трансформация
+        for company_id, email, name in targets:
+            if await self.send_one(email, name, subject, body_text, presentation_url):
+                sent_ids.append(company_id)
 
         await self.repo.mark_sent(sent_ids)
         await self.send_seed_copies(subject, body_text, presentation_url)
-        logger.info("Mailing: batch processed, %d of %d companies sent", len(sent_ids), len(companies))
+        logger.info("Mailing: processed, %d of %d companies sent", len(sent_ids), len(targets))
         return len(sent_ids)
 
     async def send_one(
-        self, company: Company, subject: str, body_text: str, presentation_url: str | None
+        self, email: str, name: str, subject: str, body_text: str, presentation_url: str | None
     ) -> bool:
         "Шлёт письмо одной компании. True — успех (тогда компания помечается отправленной)."
         rendered = render_email(
             TEMPLATE,
             subject,
-            {
-                "company_name": company.name or "",
-                "body_text": body_text,
-                "presentation_url": presentation_url,
-            },
+            {"company_name": name, "body_text": body_text, "presentation_url": presentation_url},
         )
         try:
             await send_email(
-                company.email or "", rendered.subject, rendered.text, rendered.html,
+                email, rendered.subject, rendered.text, rendered.html,
                 from_email=CAMPAIGN_FROM_EMAIL, reply_to=CAMPAIGN_FROM_EMAIL,
             )
             return True
         except Exception:
-            logger.exception("Mailing send failed for %s", company.email)
+            logger.exception("Mailing send failed for %s", email)
             return False
 
     async def send_seed_copies(
         self, subject: str, body_text: str, presentation_url: str | None
     ) -> None:
-        "Дописывает контрольные seed-адреса в конец пачки — для самопроверки доставки."
+        "Дописывает контрольные seed-адреса в конец рассылки — для самопроверки доставки."
         rendered = render_email(
             TEMPLATE,
             subject,

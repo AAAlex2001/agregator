@@ -33,7 +33,7 @@ export function PublicReviewCard({ text, reviewer, position, createdAt }: Props)
         <>
           <div className={s.ratingBlock}>
             <span className={s.label}>Оценка:</span>
-            <div className={s.ratingRow}>
+            <div className={s.ratingRow} role="img" aria-label={`Оценка ${RATING} из 5`}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <StarIcon key={star} filled={star <= RATING} width={20} height={20} />
               ))}

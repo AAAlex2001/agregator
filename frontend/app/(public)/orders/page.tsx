@@ -42,7 +42,9 @@ export default async function PublicOrdersPage() {
   return (
     <>
       <LandingHeader />
-      <PublicOrdersWidget initial={initial} />
+      <main>
+        <PublicOrdersWidget initial={initial} />
+      </main>
       <LandingFooter variant="light" />
     </>
   );

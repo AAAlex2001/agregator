@@ -126,23 +126,26 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
           {kind === "news" ? "Новостей пока нет — заходите позже." : "Статей пока нет — заходите позже."}
         </div>
       ) : (
-        <div className={s.grid}>
+        <ul className={s.grid}>
           {items.map((item) => (
-            <ArticleCard
-              key={item.id}
-              kind={item.kind}
-              slug={item.slug}
-              title={item.title}
-              excerpt={item.excerpt}
-              cover_image={item.cover_image}
-              tags={item.tags}
-              published_at={item.published_at}
-            />
+            <li key={item.id}>
+              <ArticleCard
+                kind={item.kind}
+                slug={item.slug}
+                title={item.title}
+                excerpt={item.excerpt}
+                cover_image={item.cover_image}
+                tags={item.tags}
+                published_at={item.published_at}
+              />
+            </li>
           ))}
           {isLoadingMore && Array.from({ length: 3 }).map((_, idx) => (
-            <ArticleCardSkeleton key={`more-${idx}`} />
+            <li key={`more-${idx}`} aria-hidden="true">
+              <ArticleCardSkeleton />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       {hasMore && !isReloading && (

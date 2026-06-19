@@ -70,7 +70,7 @@ export function ReviewCard({
         <>
           <div className={s.ratingBlock}>
             <span className={s.ratingLabel}>Оценка:</span>
-            <div className={s.ratingRow}>
+            <div className={s.ratingRow} role="img" aria-label={`Оценка ${rating} из 5`}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <StarIcon key={star} filled={star <= rating} width={20} height={20} />
               ))}

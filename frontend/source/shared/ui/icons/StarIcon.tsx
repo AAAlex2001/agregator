@@ -12,6 +12,8 @@ const StarIcon = ({ className, filled = true, width = 16, height = 16 }: StarIco
     height={height}
     viewBox="0 0 16 16"
     fill="none"
+    aria-hidden="true"
+    focusable="false"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path

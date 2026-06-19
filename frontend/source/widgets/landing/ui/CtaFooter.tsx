@@ -6,7 +6,7 @@ import { BulletIcon } from "@/source/shared/ui/icons";
 
 const CtaFooter = () => {
   return (
-    <footer className={s.footer} id="footer">
+    <section className={s.footer} id="cta">
       <div className={s.cta}>
         <div className={s.ctaCard}>
             <div className={s.backgroundImage}>
@@ -48,7 +48,7 @@ const CtaFooter = () => {
             </div>
           <div className={s.ctaLeft}>
             <Link href="/register" className={s.ctaChip}>Действуйте прямо сейчас</Link>
-            <h1>Найдите эксперта по промышленной безопасности или заявите о своей специализации</h1>
+            <h2>Найдите эксперта по промышленной безопасности или заявите о своей специализации</h2>
           </div>
           <div className={s.ctaRight}>
             <h2>После регистрации вы сможете:</h2>
@@ -89,7 +89,7 @@ const CtaFooter = () => {
           </div>
         </div>
       </div>
-    </footer>
+    </section>
   );
 };
 

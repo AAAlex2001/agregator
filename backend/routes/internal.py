@@ -105,8 +105,14 @@ async def send_batch(
     data: SendBatchRequest,
     background_tasks: BackgroundTasks,
 ) -> SendBatchQueuedResult:
-    "РАЗОВО шлёт одну пачку компаний из базы (которым ещё не слали) + контрольные seed-адреса. Презентация — ссылкой в письме."
+    "РАЗОВО шлёт письма + контрольные seed-адреса: либо пачку непосланных, либо диапазон позиций базы. Презентация — ссылкой в письме."
     background_tasks.add_task(
-        send_one_batch, data.subject, data.body_text, data.presentation_url, data.batch_size
+        send_one_batch,
+        data.subject,
+        data.body_text,
+        data.presentation_url,
+        data.batch_size,
+        data.range_from,
+        data.range_to,
     )
     return SendBatchQueuedResult()

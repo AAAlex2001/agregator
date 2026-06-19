@@ -20,6 +20,17 @@ def back(params: dict[str, str]) -> RedirectResponse:
     return RedirectResponse(f"{MAILING_URL}?{query}", status_code=303)
 
 
+def parse_optional_int(value: object) -> int | None:
+    "Необязательное целое из поля формы: пусто/мусор → None, иначе >= 1."
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return max(1, int(text))
+    except ValueError:
+        return None
+
+
 def setup(app: FastAPI) -> None:
     "Регистрирует роуты раздела рассылки в переданном приложении FastAPI."
 
@@ -76,7 +87,7 @@ def setup(app: FastAPI) -> None:
 
     @app.post("/admin-actions/mailing/send", name="mailing_send")
     async def send(request: Request) -> RedirectResponse:
-        "Разослать одну пачку: тема + текст + размер пачки. Ссылка на презентацию подставляется из размещённого файла."
+        "Рассылка: тема + текст. Либо следующая пачка непосланных, либо диапазон позиций базы (от-до)."
         if not request.session.get("authenticated", False):
             return RedirectResponse("/admin/login", status_code=303)
 
@@ -84,20 +95,32 @@ def setup(app: FastAPI) -> None:
         subject = str(form.get("subject", "")).strip()
         body_text = str(form.get("body_text", "")).strip()
         batch_size_raw = str(form.get("batch_size", "100")).strip()
+        range_from = parse_optional_int(form.get("range_from"))
+        range_to = parse_optional_int(form.get("range_to"))
 
         if not subject or not body_text:
             return back({"error": "Заполните тему и текст письма"})
 
+        if (range_from is None) != (range_to is None):
+            return back({"error": "Для диапазона укажите оба поля: «от» и «до»"})
+        if range_from is not None and range_to is not None and range_to < range_from:
+            return back({"error": "В диапазоне «до» должно быть не меньше «от»"})
+
         try:
-            batch_size = max(1, min(5000, int(batch_size_raw)))
+            batch_size = max(1, min(10000, int(batch_size_raw)))
         except ValueError:
             batch_size = 100
 
         try:
-            send_batch(subject, body_text, batch_size, presentation_public_url())
+            send_batch(subject, body_text, batch_size, presentation_public_url(), range_from, range_to)
         except Exception as exc:
             return back({"error": f"Ошибка: {exc}"})
 
-        return back({
-            "message": f"Пачка ({batch_size}) отправляется. Проверьте контрольные адреса; жмите ещё раз для следующей."
-        })
+        if range_from is not None and range_to is not None:
+            msg = (
+                f"Отправляется диапазон позиций {range_from}–{range_to} "
+                f"(~{range_to - range_from + 1} писем). Проверьте контрольные адреса."
+            )
+        else:
+            msg = f"Пачка ({batch_size}) отправляется. Проверьте контрольные адреса; жмите ещё раз для следующей."
+        return back({"message": msg})

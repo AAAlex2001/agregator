@@ -42,7 +42,7 @@ export function PublicReviewsWidget({ initial }: Props = {}) {
   }, []);
 
   return (
-    <div className={s.wrapper}>
+    <section className={s.wrapper}>
       <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Отзывы" }]} />
       <div className={s.pageHead}>
         <Title text="Отзывы" as="h1" className={s.pageTitle} />
@@ -62,18 +62,19 @@ export function PublicReviewsWidget({ initial }: Props = {}) {
           />
         </div>
       ) : (
-        <div className={s.list}>
+        <ul className={s.list}>
           {items.map((review) => (
-            <PublicReviewCard
-              key={review.id}
-              text={review.text}
-              reviewer={review.reviewer}
-              position={review.position}
-              createdAt={review.created_at}
-            />
+            <li key={review.id}>
+              <PublicReviewCard
+                text={review.text}
+                reviewer={review.reviewer}
+                position={review.position}
+                createdAt={review.created_at}
+              />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </section>
   );
 }

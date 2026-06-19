@@ -47,7 +47,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
   };
 
   return (
-    <div className={s.wrapper}>
+    <section className={s.wrapper}>
       <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Заявки" }]} />
       <div className={s.pageHead}>
         <Title text="Актуальные и архивные заявки" as="h1" className={s.pageTitle} />
@@ -76,12 +76,12 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
 
       {!isLoading && items.length > 0 && (
         <>
-          <div className={s.list}>
+          <ul className={s.list}>
             {items.map((order) => {
               const hasDetails = Boolean(order.comment) || countDocuments(order.documents) > 0;
               return (
+                <li key={order.id}>
                 <OrderCard
-                  key={order.id}
                   id={order.id}
                   status={order.status}
                   badges={order.badges}
@@ -113,17 +113,18 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
                     </>
                   ) : undefined}
                 />
+                </li>
               );
             })}
-            {isLoadingMore && (
-              <div className={s.loadMore}>
-                <Loader label="" size="md" />
-              </div>
-            )}
-          </div>
+          </ul>
+          {isLoadingMore && (
+            <div className={s.loadMore}>
+              <Loader label="" size="md" />
+            </div>
+          )}
           <div ref={sentinelRef} className={s.sentinel} aria-hidden="true" />
         </>
       )}
-    </div>
+    </section>
   );
 }

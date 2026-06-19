@@ -1,6 +1,7 @@
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { DocToc } from "@/source/shared/ui/DocToc";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { SITE_URL } from "@/source/shared/api/config";
 import {
   ArticleCard,
   formatArticleDate,
@@ -24,8 +25,22 @@ export function ArticleView({ article, related, homeHref = "/", sectionHrefPrefi
   const { html, toc } = extractToc(article.content_html || "");
   const dateLabel = formatArticleDate(article.published_at);
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: `${SITE_URL}${homeHref}` },
+      { "@type": "ListItem", position: 2, name: sectionTitle, item: `${SITE_URL}${sectionHref}` },
+      { "@type": "ListItem", position: 3, name: article.title, item: `${SITE_URL}${sectionHref}/${article.slug}` },
+    ],
+  };
+
   return (
     <article className={s.wrapper}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Breadcrumbs
         items={[
           { label: "Главная", href: homeHref },

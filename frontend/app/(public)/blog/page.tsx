@@ -61,9 +61,11 @@ export default function BlogListPage() {
     <>
       <RedirectIfAuthed to="/landing/blog" />
       <LandingHeader />
-      <Suspense fallback={<ArticlesListSkeleton />}>
-        <BlogListContent />
-      </Suspense>
+      <main>
+        <Suspense fallback={<ArticlesListSkeleton />}>
+          <BlogListContent />
+        </Suspense>
+      </main>
       <LandingFooter variant="light" />
     </>
   );

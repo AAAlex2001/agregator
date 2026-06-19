@@ -38,7 +38,7 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
     : "Смотрите оценки и комментарии по завершённым заказам";
 
   return (
-    <div className={s.wrapper}>
+    <section className={s.wrapper}>
       <div className={s.pageHead}>
         {showPublicExpertTitle ? (
           <div className={s.pageTitleGroup}>
@@ -91,7 +91,7 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
       {model.isLoading ? (
         <ExpertReviewsSkeleton />
       ) : model.error ? (
-        <div className={s.statusState}>
+        <div className={s.statusState} role="alert">
           <p className={s.statusTitle}>Ошибка загрузки</p>
           <p className={s.statusSubtitle}>{model.error}</p>
           <Button variant="primary" size="sm" onClick={() => void model.reload()}>
@@ -107,34 +107,35 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
         </div>
       ) : (
         <>
-          <div className={s.list}>
+          <ul className={s.list}>
             {model.reviews.map((review) => (
-              <ReviewCard
-                key={review.id}
-                customer={review.company_name}
-                order={review.order_title}
-                orderSum={review.order_sum}
-                orderStartDate={review.order_start_date}
-                orderDeadline={review.order_deadline}
-                expertStartDate={review.expert_start_date}
-                expertDeadline={review.expert_deadline}
-                expertSum={review.expert_sum}
-                documents={review.order_documents}
-                badges={review.badges}
-                rating={review.rating}
-                date={formatDateFull(review.created_at)}
-                comment={review.comment}
-              />
+              <li key={review.id}>
+                <ReviewCard
+                  customer={review.company_name}
+                  order={review.order_title}
+                  orderSum={review.order_sum}
+                  orderStartDate={review.order_start_date}
+                  orderDeadline={review.order_deadline}
+                  expertStartDate={review.expert_start_date}
+                  expertDeadline={review.expert_deadline}
+                  expertSum={review.expert_sum}
+                  documents={review.order_documents}
+                  badges={review.badges}
+                  rating={review.rating}
+                  date={formatDateFull(review.created_at)}
+                  comment={review.comment}
+                />
+              </li>
             ))}
-            {model.isLoadingMore && (
-              <div className={s.loadMore}>
-                <Loader label="" size="md" />
-              </div>
-            )}
-          </div>
+          </ul>
+          {model.isLoadingMore && (
+            <div className={s.loadMore}>
+              <Loader label="" size="md" />
+            </div>
+          )}
           <div ref={sentinelRef} aria-hidden="true" />
         </>
       )}
-    </div>
+    </section>
   );
 }

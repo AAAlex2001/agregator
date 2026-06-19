@@ -60,9 +60,14 @@ def companies_stats() -> dict[str, Any]:
 
 
 def send_batch(
-    subject: str, body_text: str, batch_size: int, presentation_url: str | None
+    subject: str,
+    body_text: str,
+    batch_size: int,
+    presentation_url: str | None,
+    range_from: int | None = None,
+    range_to: int | None = None,
 ) -> dict[str, Any]:
-    "Разово рассылает одну пачку по базе компаний. Презентация — ссылкой в письме (если загружена)."
+    "Рассылка по базе: пачка непосланных или диапазон позиций. Презентация — ссылкой в письме (если загружена)."
     return internal_post(
         "/mailing/send-batch",
         {
@@ -70,6 +75,8 @@ def send_batch(
             "body_text": body_text,
             "batch_size": batch_size,
             "presentation_url": presentation_url,
+            "range_from": range_from,
+            "range_to": range_to,
         },
     )
 

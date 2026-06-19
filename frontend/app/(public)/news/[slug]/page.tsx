@@ -51,7 +51,9 @@ export default async function NewsArticlePage({ params }: Props) {
       <LandingHeader />
       <ScrollToTopOnSlug slug={article.slug} />
       <ArticleJsonLd article={article} />
-      <ArticleView article={article} related={related} />
+      <main>
+        <ArticleView article={article} related={related} />
+      </main>
       <LandingFooter variant="light" />
     </>
   );
