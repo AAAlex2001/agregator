@@ -31,6 +31,7 @@ class UnisenderGoMessage(BaseModel):
     from_name: str
     reply_to: str
     attachments: list[UnisenderGoAttachment] = Field(default_factory=list)
+    headers: dict[str, str] | None = None
 
 
 class UnisenderGoPayload(BaseModel):
@@ -70,7 +71,7 @@ class UnisenderGoTransport:
                     "X-API-KEY": self.api_key,
                     "Content-Type": "application/json",
                 },
-                content=payload.model_dump_json().encode("utf-8"),
+                content=payload.model_dump_json(exclude_none=True).encode("utf-8"),
             )
         except httpx.HTTPError as exc:
             raise RuntimeError(f"Unisender Go сеть: {exc}") from exc
@@ -97,6 +98,7 @@ class UnisenderGoTransport:
                 from_name=message.from_name,
                 reply_to=message.reply_to,
                 attachments=self.build_attachments(message.attachments),
+                headers=message.headers or None,
             )
         )
 

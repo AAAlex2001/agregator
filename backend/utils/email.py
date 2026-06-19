@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from config import email_config
@@ -22,6 +22,7 @@ class EmailMessage:
     from_email: str
     from_name: str
     reply_to: str
+    headers: dict[str, str] = field(default_factory=dict)
 
 
 async def send_email(
@@ -32,6 +33,7 @@ async def send_email(
     attachments: list[EmailAttachment] | None = None,
     from_email: str | None = None,
     reply_to: str | None = None,
+    headers: dict[str, str] | None = None,
 ) -> None:
     "Отправляет письмо. from_email/reply_to по умолчанию из конфига; кампании их переопределяют."
     from utils.email_transport import email_transport
@@ -46,5 +48,6 @@ async def send_email(
         from_email=sender,
         from_name=email_config.email_from_name,
         reply_to=reply_to or email_config.email_reply_to or sender,
+        headers=headers or {},
     )
     await email_transport.send(message)

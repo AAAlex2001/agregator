@@ -28,4 +28,5 @@
 
 {% block footer %}
 Письмо отправлено электронной площадкой-агрегатором «Ресурс-Плюс» · <a href="https://plus-resurs.com" style="color: #94A3B8; text-decoration: underline;">plus-resurs.com</a>
+{% if unsubscribe_url %}<br>Не хотите получать такие письма? <a href="{{ unsubscribe_url }}" style="color: #94A3B8; text-decoration: underline;">Отписаться</a>{% endif %}
 {% endblock %}

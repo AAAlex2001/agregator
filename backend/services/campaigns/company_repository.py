@@ -8,8 +8,10 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.company import Company
+from models.email_suppression import EmailSuppression
 
 ACTIVE_STATUS = "Действующее"
+SUPPRESSED_EMAILS = select(EmailSuppression.email)
 
 
 class CompanyRepository:
@@ -57,6 +59,13 @@ class CompanyRepository:
         stmt = select(func.count()).select_from(Company).where(Company.sent_at.isnot(None))
         return int((await self.db.execute(stmt)).scalar_one() or 0)
 
+    async def sent_today_count(self) -> int:
+        "Сколько писем кампании отправлено сегодня — для дневного лимита прогрева."
+        stmt = select(func.count()).select_from(Company).where(
+            Company.sent_at >= func.date_trunc("day", func.now())
+        )
+        return int((await self.db.execute(stmt)).scalar_one() or 0)
+
     async def remaining_count(self) -> int:
         "Сколько действующих компаний с email ещё не получили письмо."
         stmt = select(func.count()).select_from(Company).where(
@@ -68,7 +77,12 @@ class CompanyRepository:
         "Берёт пачку компаний, которым ещё не слали (действующие, с email), по порядку id."
         stmt = (
             select(Company)
-            .where(Company.status == ACTIVE_STATUS, Company.email.isnot(None), Company.sent_at.is_(None))
+            .where(
+                Company.status == ACTIVE_STATUS,
+                Company.email.isnot(None),
+                Company.sent_at.is_(None),
+                func.lower(Company.email).notin_(SUPPRESSED_EMAILS),
+            )
             .order_by(Company.id)
             .limit(limit)
         )
@@ -81,7 +95,11 @@ class CompanyRepository:
             return []
         stmt = (
             select(Company)
-            .where(Company.status == ACTIVE_STATUS, Company.email.isnot(None))
+            .where(
+                Company.status == ACTIVE_STATUS,
+                Company.email.isnot(None),
+                func.lower(Company.email).notin_(SUPPRESSED_EMAILS),
+            )
             .order_by(Company.id)
             .offset(start - 1)
             .limit(end - start + 1)
@@ -89,7 +107,7 @@ class CompanyRepository:
         return list((await self.db.execute(stmt)).scalars().all())
 
     async def mark_sent(self, company_ids: list[int]) -> None:
-        "Проставляет время отправки компаниям. Большие списки пишем чанками."
+        "Проставляет время отправки компаниям. Коммит — на стороне use case."
         if not company_ids:
             return
         now = datetime.now(UTC)
@@ -97,4 +115,3 @@ class CompanyRepository:
         for i in range(0, len(company_ids), chunk):
             ids = company_ids[i:i + chunk]
             await self.db.execute(update(Company).where(Company.id.in_(ids)).values(sent_at=now))
-            await self.db.commit()

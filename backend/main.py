@@ -13,6 +13,7 @@ from starlette.responses import Response
 from routes import (
     article,
     chat,
+    email,
     expert,
     forgot_password,
     internal,
@@ -104,6 +105,7 @@ app.include_router(support.router, prefix="/api")
 app.include_router(license_holder.router, prefix="/api")
 app.include_router(report.router, prefix="/api")
 app.include_router(article.router, prefix="/api")
+app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")

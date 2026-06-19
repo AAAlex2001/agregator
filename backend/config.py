@@ -20,10 +20,19 @@ class EmailConfig(BaseSettings):
 
     attachments_max_total_bytes: int = 15 * 1024 * 1024
 
+    public_base_url: str = "https://plus-resurs.com"
+    mailing_token_secret: str | None = None
+
+    mailing_daily_limit: int = 0
+    mailing_chunk_size: int = 200
+    mailing_chunk_pause_seconds: float = 1.0
+
     @model_validator(mode="after")
-    def default_reply_to(self) -> "EmailConfig":
+    def fill_defaults(self) -> "EmailConfig":
         if not self.email_reply_to:
             object.__setattr__(self, "email_reply_to", self.email_from)
+        if not self.mailing_token_secret:
+            object.__setattr__(self, "mailing_token_secret", self.unisender_go_api_key)
         return self
 
 
