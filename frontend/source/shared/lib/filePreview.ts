@@ -28,7 +28,7 @@ export function getFileExtension(name: string): string {
 
 export function getFileGalleryPreviewUrl(fileUrl: string, name: string): string {
   if (isOfficeFileName(name) && canUseOfficeViewer(fileUrl)) {
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
   }
 
   return fileUrl;
