@@ -116,12 +116,19 @@ body {
   overflow: hidden;
 }
 
+/* Мобилка: уменьшаем iframe с PDF/DOC до ~50% viewport (раньше LG занимал ~75% и зажимал UI).
+   На ПК и планшетах оставляем дефолтные 100% — для нормального чтения документов на большом экране.
+   В LG v2 класс .lg-has-iframe сидит ПРЯМО на <iframe>, поэтому таргетим его как корневой элемент,
+   а не через descendant-селектор. Центрируем через absolute + transform. */
 @media (max-width: 768px) {
-  .lg-outer .lg-has-iframe .lg-object,
-  .lg-outer .lg-has-iframe iframe {
+  .lg-outer iframe.lg-has-iframe {
     width: 50vw !important;
     height: 50vh !important;
-    margin: auto !important;
-    inset: 0 !important;
+    max-width: 50vw !important;
+    max-height: 50vh !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
   }
 }
