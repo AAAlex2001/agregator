@@ -19,6 +19,10 @@ from services.email import (
     SendNewOrderEmailUseCase,
     SendOrderUpdatedEmailUseCase,
 )
+from services.notifications import (
+    CreateNewOrderNotificationUseCase,
+    NotificationRepository,
+)
 from services.orders import (
     CreateOrderUseCase,
     CreateOrderWithFilesUseCase,
@@ -54,6 +58,10 @@ def build_send_new_order_email(
         repo=EmailRepository(db),
         dispatcher=EmailDispatcher(background_tasks),
     )
+
+
+def build_create_new_order_notification(db: AsyncSession) -> CreateNewOrderNotificationUseCase:
+    return CreateNewOrderNotificationUseCase(repo=NotificationRepository(db))
 
 
 def build_send_order_updated_email(
@@ -163,6 +171,7 @@ async def create_order(
         repo=repo,
         validator=OrderValidator(repo),
         send_new_order_email=build_send_new_order_email(db, background_tasks),
+        create_new_order_notification=build_create_new_order_notification(db),
     )
     order = await use_case.execute(data, current_user_id=user_id)
     return OrderResponse.from_order(order)
@@ -211,6 +220,7 @@ async def create_order_with_files(
         repo=repo,
         validator=OrderValidator(repo),
         send_new_order_email=build_send_new_order_email(db, background_tasks),
+        create_new_order_notification=build_create_new_order_notification(db),
     )
     use_case = CreateOrderWithFilesUseCase(
         create_order=create,

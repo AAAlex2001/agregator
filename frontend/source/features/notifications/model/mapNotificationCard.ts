@@ -1,6 +1,7 @@
 import type {
   ChatMessageNotificationPayload,
   NewBlogPostNotificationPayload,
+  NewOrderNotificationPayload,
   NotificationCardModel,
   NotificationItem,
   QuestionAnsweredNotificationPayload,
@@ -236,6 +237,25 @@ function mapNewBlogPost(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapNewOrder(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as NewOrderNotificationPayload;
+  const orderTitle = getOrderTitle(payload.order_title);
+  const badges = (payload.badges ?? []).join(" · ");
+  const message = badges
+    ? `Опубликована заявка «${orderTitle}» по вашим типам: ${badges}.`
+    : `Опубликована заявка «${orderTitle}» по вашим типам.`;
+
+  return {
+    id: item.id,
+    title: "Новая заявка по вашим типам",
+    message,
+    actionLabel: item.action_url ? "Открыть заказы" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 function mapSupportReply(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as SupportReplyNotificationPayload;
   const subject = payload.subject || "Обращение";
@@ -280,6 +300,10 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "NEW_BLOG_POST") {
     return mapNewBlogPost(item);
+  }
+
+  if (item.type === "NEW_ORDER") {
+    return mapNewOrder(item);
   }
 
   return {

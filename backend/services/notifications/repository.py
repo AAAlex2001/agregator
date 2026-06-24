@@ -7,7 +7,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.notification import Notification
-from models.user import User
+from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 
@@ -24,6 +24,14 @@ class NotificationRepository:
     async def flush(self) -> None:
         "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
+
+    async def list_experts_subscribed_to_order_types(self) -> list[User]:
+        "Эксперты с непустым фильтром типов заказов — получатели in-app по новой заявке (без проверки email — нотификация в кабинете)."
+        query = select(User).where(
+            User.role == UserRole.EXPERT,
+            User.notify_order_types.isnot(None),
+        )
+        return list((await self.db.execute(query)).scalars().all())
 
     async def iter_all_user_ids_in_batches(
         self, batch_size: int = 500

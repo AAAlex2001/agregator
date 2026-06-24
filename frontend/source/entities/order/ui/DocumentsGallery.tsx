@@ -93,6 +93,7 @@ export function DocumentsGallery({ documents, heading = "Документы за
           dynamicEl={slides}
           speed={300}
           download={false}
+          mobileSettings={{ showCloseIcon: true, controls: false, download: false }}
         />
       ) : null}
 

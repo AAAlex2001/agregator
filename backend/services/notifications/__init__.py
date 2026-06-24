@@ -3,6 +3,9 @@ from services.notifications.repository import NotificationRepository
 from services.notifications.use_cases.create_chat_message_notification import (
     CreateChatMessageNotificationUseCase,
 )
+from services.notifications.use_cases.create_new_order_notification import (
+    CreateNewOrderNotificationUseCase,
+)
 from services.notifications.use_cases.create_response_status_changed_notification import (
     CreateResponseStatusChangedNotificationUseCase,
 )
@@ -21,6 +24,7 @@ from services.notifications.use_cases.mark_notification_read import (
 
 __all__ = [
     "CreateChatMessageNotificationUseCase",
+    "CreateNewOrderNotificationUseCase",
     "CreateResponseStatusChangedNotificationUseCase",
     "CreateResponseUpdatedNotificationUseCase",
     "DeleteAllNotificationsUseCase",

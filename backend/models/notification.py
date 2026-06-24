@@ -19,6 +19,7 @@ class NotificationType(str, PyEnum):
     QUESTION_ANSWERED = "QUESTION_ANSWERED"
     SUPPORT_REPLY = "SUPPORT_REPLY"
     NEW_BLOG_POST = "NEW_BLOG_POST"
+    NEW_ORDER = "NEW_ORDER"
 
 
 class Notification(Base):

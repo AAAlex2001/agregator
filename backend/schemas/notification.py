@@ -128,6 +128,18 @@ class NewBlogPostNotificationItemResponse(NotificationItemBaseResponse):
     payload: NewBlogPostNotificationPayload
 
 
+class NewOrderNotificationPayload(NotificationPayloadModel):
+    "Payload уведомления о новой заявке, попавшей в фильтр эксперта по типам."
+    order_title: str
+    badges: list[str] = Field(default_factory=list)
+
+
+class NewOrderNotificationItemResponse(NotificationItemBaseResponse):
+    "Уведомление о новой заявке по типам, на которые подписан эксперт."
+    type: Literal[NotificationType.NEW_ORDER]
+    payload: NewOrderNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
@@ -135,6 +147,7 @@ NotificationItemResponse = Annotated[
     | QuestionAskedNotificationItemResponse
     | QuestionAnsweredNotificationItemResponse
     | NewBlogPostNotificationItemResponse
+    | NewOrderNotificationItemResponse
     | SupportReplyNotificationItemResponse,
     Field(discriminator="type"),
 ]

@@ -1,4 +1,4 @@
-export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY" | "NEW_BLOG_POST";
+export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY" | "NEW_BLOG_POST" | "NEW_ORDER";
 export type NotificationActorRole = "CUSTOMER" | "EXPERT";
 export type NotificationResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type NotificationReason = "DIRECT_CHANGE" | "SELECTED_ANOTHER" | "SELECTED_ANOTHER_REVERTED";
@@ -46,6 +46,11 @@ export interface NewBlogPostNotificationPayload {
   preview: string;
 }
 
+export interface NewOrderNotificationPayload {
+  order_title: string;
+  badges: string[];
+}
+
 export type NotificationPayload =
   | ResponseUpdatedNotificationPayload
   | ResponseStatusChangedNotificationPayload
@@ -53,7 +58,8 @@ export type NotificationPayload =
   | QuestionAskedNotificationPayload
   | QuestionAnsweredNotificationPayload
   | SupportReplyNotificationPayload
-  | NewBlogPostNotificationPayload;
+  | NewBlogPostNotificationPayload
+  | NewOrderNotificationPayload;
 
 export interface NotificationItem {
   id: number;

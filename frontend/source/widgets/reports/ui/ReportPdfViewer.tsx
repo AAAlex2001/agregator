@@ -36,6 +36,7 @@ export function ReportPdfViewer({ orderId, onClose }: Props) {
       ]}
       speed={300}
       download={false}
+      mobileSettings={{ showCloseIcon: true, controls: false, download: false }}
     />
   );
 }

@@ -205,6 +205,7 @@ export function FileGallery({
           dynamicEl={dynamicSlides}
           speed={300}
           download={false}
+          mobileSettings={{ showCloseIcon: true, controls: false, download: false }}
         />
       ) : null}
 

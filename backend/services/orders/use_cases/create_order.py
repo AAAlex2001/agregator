@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from models.order import Order, OrderBadge
 from schemas.order import OrderCreate
 from services.email import SendNewOrderEmailUseCase
+from services.notifications import CreateNewOrderNotificationUseCase
 from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.validators import OrderValidator
@@ -18,10 +19,12 @@ class CreateOrderUseCase:
         repo: OrderRepository,
         validator: OrderValidator,
         send_new_order_email: SendNewOrderEmailUseCase | None = None,
+        create_new_order_notification: CreateNewOrderNotificationUseCase | None = None,
     ) -> None:
         self.repo = repo
         self.validator = validator
         self.send_new_order_email = send_new_order_email
+        self.create_new_order_notification = create_new_order_notification
 
     async def execute(self, data: OrderCreate, current_user_id: int) -> Order:
         "Запускает основной сценарий use case."
@@ -39,6 +42,8 @@ class CreateOrderUseCase:
             raise RuntimeError("Order disappeared after insert")
         if self.send_new_order_email is not None:
             await self.send_new_order_email.execute(created.id)
+        if self.create_new_order_notification is not None:
+            await self.create_new_order_notification.execute(created)
         return created
 
     def build_entity(self, data: OrderCreate) -> Order:

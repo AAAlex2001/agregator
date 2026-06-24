@@ -4,6 +4,7 @@ export { formatNotificationTime } from "./model/formatters";
 export type {
   ChatMessageNotificationPayload,
   NewBlogPostNotificationPayload,
+  NewOrderNotificationPayload,
   NotificationActorRole,
   NotificationCardModel,
   NotificationType,
