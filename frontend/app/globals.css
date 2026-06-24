@@ -115,3 +115,13 @@ body {
   border-radius: 12px;
   overflow: hidden;
 }
+
+@media (max-width: 768px) {
+  .lg-outer .lg-has-iframe .lg-object,
+  .lg-outer .lg-has-iframe iframe {
+    width: 50vw !important;
+    height: 50vh !important;
+    margin: auto !important;
+    inset: 0 !important;
+  }
+}
