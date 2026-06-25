@@ -1,0 +1,29 @@
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.title {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.message {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 15px;
+  line-height: 1.5;
+  color: #525969;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Button from "@/source/shared/ui/Button";
 import s from "./ArticleDiscussion.module.scss";
 
 interface Props {
@@ -40,9 +41,9 @@ export function CommentForm({ placeholder, submitLabel = "Отправить", o
         onChange={(e) => setText(e.target.value)}
       />
       {error && <span className={s.error}>{error}</span>}
-      <button className={s.submit} type="submit" disabled={busy}>
-        {busy ? "Отправка…" : submitLabel}
-      </button>
+      <Button variant="primary" size="md" type="submit" isLoading={busy}>
+        {submitLabel}
+      </Button>
     </form>
   );
 }

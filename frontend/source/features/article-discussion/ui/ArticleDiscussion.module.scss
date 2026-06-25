@@ -69,25 +69,10 @@
   border-color: #ff8a00;
 }
 
-.submit {
-  font: inherit;
-  font-weight: 600;
-  padding: 10px 22px;
-  border: none;
-  border-radius: 999px;
-  background: #ff8a00;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.submit:hover:not(:disabled) {
-  background: #e67c00;
-}
-
-.submit:disabled {
-  opacity: 0.65;
-  cursor: default;
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
 }
 
 .error {
@@ -147,24 +132,11 @@
 
 .commentActions {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  gap: 4px;
+  margin-left: -8px;
 }
 
-.action {
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  background: transparent;
-  color: #ff8a00;
-  padding: 0;
-  cursor: pointer;
-}
-
-.action:hover {
-  text-decoration: underline;
-}
-
-.danger {
-  color: #e23b3b;
+.deleteAction {
+  color: #e23b3b !important;
 }

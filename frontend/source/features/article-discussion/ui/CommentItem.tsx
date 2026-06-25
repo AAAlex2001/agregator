@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import type { ArticleComment } from "@/source/entities/article-comment";
+import Button from "@/source/shared/ui/Button";
+import { ConfirmModal } from "@/source/shared/ui/ConfirmModal";
 import { CommentForm } from "./CommentForm";
 import s from "./ArticleDiscussion.module.scss";
 
@@ -16,11 +18,8 @@ interface Props {
 
 export function CommentItem({ comment, all, canReply, depth, onReply, onDelete }: Props) {
   const [replying, setReplying] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const replies = all.filter((c) => c.parent_id === comment.id);
-
-  const remove = () => {
-    if (confirm("Удалить комментарий?")) onDelete(comment.id);
-  };
 
   return (
     <div className={`${s.comment} ${depth > 0 ? s.reply : ""}`}>
@@ -35,14 +34,14 @@ export function CommentItem({ comment, all, canReply, depth, onReply, onDelete }
 
       <div className={s.commentActions}>
         {canReply && (
-          <button type="button" className={s.action} onClick={() => setReplying((v) => !v)}>
+          <Button variant="transparent" size="sm" onClick={() => setReplying((v) => !v)}>
             Ответить
-          </button>
+          </Button>
         )}
         {comment.is_mine && (
-          <button type="button" className={`${s.action} ${s.danger}`} onClick={remove}>
+          <Button variant="transparent" size="sm" className={s.deleteAction} onClick={() => setConfirmOpen(true)}>
             Удалить
-          </button>
+          </Button>
         )}
       </div>
 
@@ -72,6 +71,19 @@ export function CommentItem({ comment, all, canReply, depth, onReply, onDelete }
           ))}
         </div>
       )}
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Удалить комментарий?"
+        message="Комментарий и ответы на него удалятся безвозвратно."
+        confirmLabel="Удалить"
+        danger
+        onConfirm={() => {
+          onDelete(comment.id);
+          setConfirmOpen(false);
+        }}
+        onClose={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

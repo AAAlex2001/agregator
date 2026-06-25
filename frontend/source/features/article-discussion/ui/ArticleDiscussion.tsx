@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useArticleComments } from "@/source/entities/article-comment";
 import { useSession } from "@/source/features/session";
+import Loader from "@/source/shared/ui/Loader";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
 import s from "./ArticleDiscussion.module.scss";
@@ -28,7 +29,9 @@ export function ArticleDiscussion({ articleId }: { articleId: number }) {
       )}
 
       {loading ? (
-        <p className={s.muted}>Загрузка комментариев…</p>
+        <div className={s.loading}>
+          <Loader size="md" label="" />
+        </div>
       ) : roots.length === 0 ? (
         <p className={s.muted}>Пока нет комментариев. Будьте первым!</p>
       ) : (
