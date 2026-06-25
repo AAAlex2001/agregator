@@ -1,6 +1,5 @@
 "Re-export всех моделей для коротких импортов из main.py: `from models import User, Order, ...`."
 
-from models.article import Article, ArticleKind, ArticleStatus
 from models.base import Base
 from models.chat import Chat, ChatMessage, ExpertRoomBan, ExpertRoomMessage
 from models.company import Company
@@ -34,7 +33,6 @@ from models.support_ticket import (
 from models.user import User, UserRole
 
 __all__ = [
-    "Article", "ArticleKind", "ArticleStatus",
     "BadgeVariant",
     "Base",
     "Company",

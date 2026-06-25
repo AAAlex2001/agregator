@@ -10,7 +10,6 @@ from views.chats import (
     ExpertRoomChatView,
     ExpertRoomMessageAdmin,
 )
-from views.content import ArticleAdmin
 from views.dashboard import DashboardView
 from views.landing import (
     LandingAdvantageAdmin,
@@ -50,7 +49,6 @@ ALL_VIEWS: list[Any] = [
     LandingFaqAdmin,
     LandingPricingContentAdmin,
     PlatformSettingsAdmin,
-    ArticleAdmin,
     SupportTicketAdmin,
     SupportTicketMessageAdmin,
     ExpertRoomChatView,

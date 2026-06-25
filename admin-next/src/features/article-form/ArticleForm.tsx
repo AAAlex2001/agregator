@@ -1,14 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Editor, useArticleForm } from "@/entities/article";
+import { useEffect, useState } from "react";
+import { CoverUpload, Editor, useArticleForm } from "@/entities/article";
+import { listTags } from "@/entities/tag";
 
 export function ArticleForm({ id }: { id: number | null }) {
-  const { state, setField, setTags, submit } = useArticleForm(id);
+  const { state, setField, toggleTag, submit } = useArticleForm(id);
+  const [allTags, setAllTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    listTags()
+      .then((tags) => setAllTags(tags.map((t) => t.name)))
+      .catch(() => {});
+  }, []);
 
   if (!state.isLoaded) return <div className="center muted">Загрузка…</div>;
 
   const f = state.fields;
+  const tagOptions = Array.from(new Set([...allTags, ...state.tags]));
 
   return (
     <div className="page">
@@ -52,13 +62,27 @@ export function ArticleForm({ id }: { id: number | null }) {
           <textarea rows={2} value={f.excerpt} onChange={(e) => setField("excerpt", e.target.value)} />
         </label>
         <label>
-          Обложка (URL)
-          <input value={f.coverImage} onChange={(e) => setField("coverImage", e.target.value)} />
+          Обложка (PNG)
+          <CoverUpload value={f.coverImage} onChange={(url) => setField("coverImage", url)} />
         </label>
-        <label>
-          Теги (через запятую)
-          <input value={state.tags} onChange={(e) => setTags(e.target.value)} placeholder="ЭПБ, Ростехнадзор" />
-        </label>
+
+        <label>Теги</label>
+        {tagOptions.length === 0 ? (
+          <span className="muted">Тегов пока нет — добавьте их на главной странице.</span>
+        ) : (
+          <div className="tag-pick">
+            {tagOptions.map((name) => (
+              <button
+                type="button"
+                key={name}
+                className={state.tags.includes(name) ? "tag-chip on" : "tag-chip"}
+                onClick={() => toggleTag(name)}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <label>Контент</label>
         <Editor value={f.contentHtml} onChange={(html) => setField("contentHtml", html)} />

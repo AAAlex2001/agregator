@@ -9,7 +9,7 @@ type Errors = { title?: string; slug?: string };
 
 type State = {
   fields: ArticleOut;
-  tags: string;
+  tags: string[];
   errors: Errors;
   isLoaded: boolean;
   isSaving: boolean;
@@ -18,15 +18,15 @@ type State = {
 
 type Action =
   | { type: "SET_FIELD"; field: keyof ArticleOut; value: string }
-  | { type: "SET_TAGS"; value: string }
-  | { type: "LOADED"; fields: ArticleOut; tags: string }
+  | { type: "TOGGLE_TAG"; name: string }
+  | { type: "LOADED"; fields: ArticleOut; tags: string[] }
   | { type: "SET_ERRORS"; errors: Errors }
   | { type: "SAVING" }
   | { type: "SAVE_ERROR"; message: string };
 
 const makeInitial = (isNew: boolean): State => ({
   fields: EMPTY_ARTICLE,
-  tags: "",
+  tags: [],
   errors: {},
   isLoaded: isNew,
   isSaving: false,
@@ -41,8 +41,13 @@ const reducer = (state: State, action: Action): State => {
         fields: { ...state.fields, [action.field]: action.value },
         errors: { ...state.errors, [action.field]: undefined },
       };
-    case "SET_TAGS":
-      return { ...state, tags: action.value };
+    case "TOGGLE_TAG":
+      return {
+        ...state,
+        tags: state.tags.includes(action.name)
+          ? state.tags.filter((t) => t !== action.name)
+          : [...state.tags, action.name],
+      };
     case "LOADED":
       return { ...state, fields: action.fields, tags: action.tags, isLoaded: true };
     case "SET_ERRORS":
@@ -63,8 +68,6 @@ const validate = (fields: ArticleOut): Errors => {
   return errors;
 };
 
-const parseTags = (text: string) => text.split(",").map((t) => t.trim()).filter(Boolean);
-
 export const useArticleForm = (id: number | null) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, id === null, makeInitial);
@@ -72,7 +75,7 @@ export const useArticleForm = (id: number | null) => {
   useEffect(() => {
     if (id === null) return;
     loadArticle(id)
-      .then((a) => dispatch({ type: "LOADED", fields: toOut(a), tags: a.tags.join(", ") }))
+      .then((a) => dispatch({ type: "LOADED", fields: toOut(a), tags: a.tags }))
       .catch((e) => {
         if (e instanceof Error && e.message === "UNAUTHORIZED") router.replace("/login");
         else dispatch({ type: "SAVE_ERROR", message: "Не удалось загрузить статью" });
@@ -80,7 +83,7 @@ export const useArticleForm = (id: number | null) => {
   }, [id, router]);
 
   const setField = (field: keyof ArticleOut, value: string) => dispatch({ type: "SET_FIELD", field, value });
-  const setTags = (value: string) => dispatch({ type: "SET_TAGS", value });
+  const toggleTag = (name: string) => dispatch({ type: "TOGGLE_TAG", name });
 
   const submit = async () => {
     const errors = validate(state.fields);
@@ -90,7 +93,7 @@ export const useArticleForm = (id: number | null) => {
     }
     dispatch({ type: "SAVING" });
     try {
-      await saveArticle(id, { ...state.fields, tags: parseTags(state.tags) });
+      await saveArticle(id, { ...state.fields, tags: state.tags });
       router.push("/");
       router.refresh();
     } catch (e) {
@@ -99,5 +102,5 @@ export const useArticleForm = (id: number | null) => {
     }
   };
 
-  return { state, setField, setTags, submit };
+  return { state, setField, toggleTag, submit };
 };

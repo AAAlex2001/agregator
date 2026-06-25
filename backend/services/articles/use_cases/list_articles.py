@@ -35,7 +35,7 @@ class ListArticlesUseCase:
                 title=row.title,
                 excerpt=row.excerpt,
                 cover_image=row.cover_image,
-                tags=list(row.tags or []),
+                tags=[t.name for t in row.tags],
                 published_at=row.published_at,
             )
             for row in rows

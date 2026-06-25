@@ -1,6 +1,16 @@
 "Тонкий CRUD статей для кастомной админки (admin-next). За X-Internal-Token; логин держит сама админка."
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -13,9 +23,13 @@ from schemas.admin_article import (
     ArticleWrite,
     Kind,
     Status,
+    TagCreate,
+    TagOut,
     UploadOut,
 )
 from services.articles import ArticleRepository
+from services.articles.tag_repository import TagRepository
+from services.articles.use_cases.notify_blog_published import NotifyBlogPublishedUseCase
 from services.articles.use_cases.save_article import SaveArticleUseCase, SlugTakenError
 from services.file_uploads import save_uploaded_file
 
@@ -39,7 +53,7 @@ def to_out(a: Article) -> ArticleOut:
         title=a.title,
         excerpt=a.excerpt,
         cover_image=a.cover_image,
-        tags=[str(t) for t in a.tags],
+        tags=[t.name for t in a.tags],
         content_html=a.content_html,
         meta_title=a.meta_title,
         meta_description=a.meta_description,
@@ -55,17 +69,11 @@ def to_out(a: Article) -> ArticleOut:
 async def list_articles(
     kind: Kind | None = Query(None),
     article_status: Status | None = Query(None, alias="status"),
-    search: str | None = Query(None, max_length=200),
-    offset: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
 ) -> ArticleListOut:
-    rows, total = await ArticleRepository(db).list_all(
+    rows = await ArticleRepository(db).list_all(
         kind=ArticleKind(kind) if kind else None,
         status=ArticleStatus(article_status) if article_status else None,
-        search=search,
-        offset=offset,
-        limit=limit,
     )
     items = [
         ArticleListItem(
@@ -79,7 +87,7 @@ async def list_articles(
         )
         for r in rows
     ]
-    return ArticleListOut(items=items, total=total)
+    return ArticleListOut(items=items, total=len(items))
 
 
 @router.get("/articles/{article_id}", response_model=ArticleOut)
@@ -91,24 +99,35 @@ async def get_article(article_id: int, db: AsyncSession = Depends(get_db)) -> Ar
 
 
 @router.post("/articles", response_model=ArticleOut, status_code=status.HTTP_201_CREATED)
-async def create_article(data: ArticleWrite, db: AsyncSession = Depends(get_db)) -> ArticleOut:
+async def create_article(
+    data: ArticleWrite,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+) -> ArticleOut:
     try:
-        article = await SaveArticleUseCase(ArticleRepository(db)).create(data)
+        article = await SaveArticleUseCase(ArticleRepository(db), TagRepository(db)).create(data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
+    await maybe_notify_blog(article, db, background_tasks)
     return to_out(article)
 
 
 @router.put("/articles/{article_id}", response_model=ArticleOut)
-async def update_article(article_id: int, data: ArticleWrite, db: AsyncSession = Depends(get_db)) -> ArticleOut:
+async def update_article(
+    article_id: int,
+    data: ArticleWrite,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+) -> ArticleOut:
     repo = ArticleRepository(db)
     article = await repo.get_by_id(article_id)
     if article is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Статья не найдена")
     try:
-        article = await SaveArticleUseCase(repo).update(article, data)
+        article = await SaveArticleUseCase(repo, TagRepository(db)).update(article, data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
+    await maybe_notify_blog(article, db, background_tasks)
     return to_out(article)
 
 
@@ -135,3 +154,40 @@ async def upload_image(file: UploadFile = File(...)) -> UploadOut:
         too_large_message="Файл слишком большой",
     )
     return UploadOut(url=url)
+
+
+@router.get("/tags", response_model=list[TagOut])
+async def list_tags(db: AsyncSession = Depends(get_db)) -> list[TagOut]:
+    return [TagOut(id=t.id, name=t.name) for t in await TagRepository(db).list_all()]
+
+
+@router.post("/tags", response_model=TagOut, status_code=status.HTTP_201_CREATED)
+async def create_tag(data: TagCreate, db: AsyncSession = Depends(get_db)) -> TagOut:
+    tag = await TagRepository(db).create(data.name.strip())
+    return TagOut(id=tag.id, name=tag.name)
+
+
+@router.put("/tags/{tag_id}", response_model=TagOut)
+async def rename_tag(tag_id: int, data: TagCreate, db: AsyncSession = Depends(get_db)) -> TagOut:
+    repo = TagRepository(db)
+    name = data.name.strip()
+    if await repo.name_taken(name, exclude_id=tag_id):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Тег с таким именем уже есть")
+    tag = await repo.rename(tag_id, name)
+    if tag is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Тег не найден")
+    return TagOut(id=tag.id, name=tag.name)
+
+
+@router.delete("/tags/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_tag(tag_id: int, db: AsyncSession = Depends(get_db)) -> Response:
+    await TagRepository(db).delete(tag_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+async def maybe_notify_blog(article: Article, db: AsyncSession, background_tasks: BackgroundTasks) -> None:
+    "Опубликованный пост блога триггерит уведомления (идемпотентно по slug)."
+    if article.kind == ArticleKind.BLOG and article.status == ArticleStatus.PUBLISHED:
+        await NotifyBlogPublishedUseCase(db, background_tasks).execute(
+            slug=article.slug, title=article.title, preview=article.excerpt or ""
+        )

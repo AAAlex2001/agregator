@@ -46,3 +46,12 @@ class ArticleListOut(BaseModel):
 
 class UploadOut(BaseModel):
     url: str
+
+
+class TagOut(BaseModel):
+    id: int
+    name: str
+
+
+class TagCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)

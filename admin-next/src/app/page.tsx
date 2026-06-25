@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { ArticleListItem, deleteArticle, listArticles, logout } from "@/entities/article";
+import { TagsPanel } from "@/features/tags-manage/TagsPanel";
 
 const KIND: Record<string, string> = { NEWS: "Новость", BLOG: "Блог" };
 const STATUS: Record<string, string> = { DRAFT: "Черновик", PUBLISHED: "Опубликована" };
@@ -14,15 +15,14 @@ export default function ListPage() {
   const [total, setTotal] = useState(0);
   const [kind, setKind] = useState("");
   const [status, setStatus] = useState("");
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const load = async (searchValue: string) => {
+  const load = async () => {
     setLoading(true);
     setError("");
     try {
-      const data = await listArticles({ kind: kind || undefined, status: status || undefined, search: searchValue || undefined });
+      const data = await listArticles({ kind: kind || undefined, status: status || undefined });
       setItems(data.items);
       setTotal(data.total);
     } catch (e) {
@@ -34,14 +34,9 @@ export default function ListPage() {
   };
 
   useEffect(() => {
-    void load(search);
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kind, status]);
-
-  const onSearch = (e: FormEvent) => {
-    e.preventDefault();
-    void load(search);
-  };
 
   const onLogout = async () => {
     await logout();
@@ -79,12 +74,10 @@ export default function ListPage() {
           <option value="DRAFT">Черновики</option>
           <option value="PUBLISHED">Опубликованные</option>
         </select>
-        <form className="search" onSubmit={onSearch}>
-          <input placeholder="Поиск по заголовку/slug" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <button type="submit">Найти</button>
-        </form>
         <span className="muted count">Всего: {total}</span>
       </div>
+
+      <TagsPanel />
 
       {error && <div className="error">{error}</div>}
       {loading ? (

@@ -1,12 +1,11 @@
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
-from typing import Any
 
-from sqlalchemy import DateTime, Enum, Index, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, String, Table, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+from models.tag import Tag
 
 
 class ArticleKind(str, PyEnum):
@@ -17,6 +16,14 @@ class ArticleKind(str, PyEnum):
 class ArticleStatus(str, PyEnum):
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
+
+
+article_tags = Table(
+    "article_tags",
+    Base.metadata,
+    Column("article_id", ForeignKey("articles.id", ondelete="CASCADE"), primary_key=True),
+    Column("tag_id", ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
+)
 
 
 class Article(Base):
@@ -37,7 +44,6 @@ class Article(Base):
     excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="")
     cover_image: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     content_html: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    tags: Mapped[list[Any]] = mapped_column(JSONB, nullable=False, default=list)
 
     meta_title: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     meta_description: Mapped[str] = mapped_column(Text, nullable=False, default="")
@@ -56,6 +62,8 @@ class Article(Base):
         onupdate=lambda: datetime.now(UTC),
         nullable=False,
     )
+
+    tags: Mapped[list[Tag]] = relationship(secondary=article_tags, lazy="selectin", order_by="Tag.name")
 
     __table_args__ = (
         Index("ix_articles_kind_status_published", "kind", "status", "published_at"),

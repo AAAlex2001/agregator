@@ -2,10 +2,11 @@
 "Repository: доступ к БД для articles."
 from typing import Any
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.article import Article, ArticleKind, ArticleStatus
+from models.tag import Tag
 
 
 class ArticleRepository:
@@ -26,7 +27,7 @@ class ArticleRepository:
             and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED)
         )
         if tag:
-            query = query.where(Article.tags.contains([tag]))
+            query = query.where(Article.tags.any(Tag.name == tag))
         query = query.order_by(Article.published_at.desc(), Article.id.desc()).offset(skip).limit(limit + 1)
 
         rows = list((await self.db.execute(query)).scalars().all())
@@ -61,30 +62,18 @@ class ArticleRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_all(
-        self,
-        kind: ArticleKind | None,
-        status: ArticleStatus | None,
-        search: str | None,
-        offset: int,
-        limit: int,
-    ) -> tuple[list[Article], int]:
-        "Админская выборка: любые статусы, фильтры, пагинация. Возвращает строки и общее число."
+    async def list_all(self, kind: ArticleKind | None, status: ArticleStatus | None) -> list[Article]:
+        "Админская выборка: любые статусы, фильтр по типу/статусу, весь список без пагинации."
         conditions = []
         if kind is not None:
             conditions.append(Article.kind == kind)
         if status is not None:
             conditions.append(Article.status == status)
-        if search:
-            like = f"%{search}%"
-            conditions.append(or_(Article.title.ilike(like), Article.slug.ilike(like)))
-
-        base = select(Article).where(and_(*conditions)) if conditions else select(Article)
-        total = (await self.db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
-        rows = (
-            await self.db.execute(base.order_by(Article.updated_at.desc(), Article.id.desc()).offset(offset).limit(limit))
-        ).scalars().all()
-        return list(rows), int(total or 0)
+        query = select(Article)
+        if conditions:
+            query = query.where(and_(*conditions))
+        query = query.order_by(Article.updated_at.desc(), Article.id.desc())
+        return list((await self.db.execute(query)).scalars().all())
 
     async def get_by_id(self, article_id: int) -> Article | None:
         return (await self.db.execute(select(Article).where(Article.id == article_id))).scalars().first()
@@ -95,15 +84,16 @@ class ArticleRepository:
             query = query.where(Article.id != exclude_id)
         return (await self.db.execute(query.limit(1))).scalar_one_or_none() is not None
 
-    async def create(self, values: dict[str, Any]) -> Article:
-        article = Article(**values)
+    async def create(self, values: dict[str, Any], tags: list[Tag]) -> Article:
+        article = Article(**values, tags=tags)
         self.db.add(article)
         await self.db.flush()
         return article
 
-    async def update(self, article: Article, values: dict[str, Any]) -> Article:
+    async def update(self, article: Article, values: dict[str, Any], tags: list[Tag]) -> Article:
         for key, value in values.items():
             setattr(article, key, value)
+        article.tags = tags
         await self.db.flush()
         return article
 

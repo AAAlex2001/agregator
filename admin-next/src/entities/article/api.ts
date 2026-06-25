@@ -5,12 +5,10 @@ const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const listArticles = async (params: {
   kind?: string;
   status?: string;
-  search?: string;
 }): Promise<{ items: ArticleListItem[]; total: number }> => {
   const qs = new URLSearchParams();
   if (params.kind) qs.set("kind", params.kind);
   if (params.status) qs.set("status", params.status);
-  if (params.search) qs.set("search", params.search);
 
   const response = await fetch(`${base}/api/articles?${qs.toString()}`);
   if (response.status === 401) throw new Error("UNAUTHORIZED");

@@ -27,7 +27,7 @@ class GetArticleBySlugUseCase:
             excerpt=row.excerpt,
             cover_image=row.cover_image,
             content_html=row.content_html,
-            tags=list(row.tags or []),
+            tags=[t.name for t in row.tags],
             meta_title=row.meta_title,
             meta_description=row.meta_description,
             meta_keywords=row.meta_keywords,
