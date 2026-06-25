@@ -4,11 +4,12 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
-import { uploadImage } from "./api";
+import { uploadImage, uploadVideo } from "./api";
+import { Video } from "./VideoNode";
 
 export function Editor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
   const editor = useEditor({
-    extensions: [StarterKit, Image, Link.configure({ openOnClick: false })],
+    extensions: [StarterKit, Image, Link.configure({ openOnClick: false }), Video],
     content: value,
     immediatelyRender: false,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -33,6 +34,23 @@ export function Editor({ value, onChange }: { value: string; onChange: (html: st
     input.click();
   };
 
+  const addVideo = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "video/*";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      try {
+        const url = await uploadVideo(file);
+        editor.chain().focus().insertContent({ type: "video", attrs: { src: url } }).run();
+      } catch {
+        alert("Не удалось загрузить видео");
+      }
+    };
+    input.click();
+  };
+
   return (
     <div className="editor">
       <div className="toolbar">
@@ -43,6 +61,7 @@ export function Editor({ value, onChange }: { value: string; onChange: (html: st
         <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}>• Список</button>
         <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()}>Цитата</button>
         <button type="button" onClick={addImage}>Картинка</button>
+        <button type="button" onClick={addVideo}>Видео</button>
       </div>
       <EditorContent editor={editor} />
     </div>

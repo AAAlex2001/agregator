@@ -1,0 +1,51 @@
+"use client";
+
+import Link from "next/link";
+import { useArticleComments } from "@/source/entities/article-comment";
+import { useSession } from "@/source/features/session";
+import { CommentForm } from "./CommentForm";
+import { CommentItem } from "./CommentItem";
+import s from "./ArticleDiscussion.module.scss";
+
+export function ArticleDiscussion({ articleId }: { articleId: number }) {
+  const { user } = useSession();
+  const { comments, loading, add, remove } = useArticleComments(articleId);
+  const roots = comments.filter((c) => c.parent_id === null);
+
+  return (
+    <section className={s.discussion} aria-label="Обсуждение">
+      <h2 className={s.title}>
+        Обсуждение
+        {comments.length > 0 && <span className={s.total}>{comments.length}</span>}
+      </h2>
+
+      {user ? (
+        <CommentForm placeholder="Напишите комментарий…" onSubmit={(text) => add(text, null)} />
+      ) : (
+        <p className={s.loginHint}>
+          <Link href="/login">Войдите</Link>, чтобы оставить комментарий.
+        </p>
+      )}
+
+      {loading ? (
+        <p className={s.muted}>Загрузка комментариев…</p>
+      ) : roots.length === 0 ? (
+        <p className={s.muted}>Пока нет комментариев. Будьте первым!</p>
+      ) : (
+        <div className={s.list}>
+          {roots.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              all={comments}
+              canReply={Boolean(user)}
+              depth={0}
+              onReply={add}
+              onDelete={(id) => void remove(id)}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}

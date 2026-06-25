@@ -93,6 +93,15 @@ export const uploadImage = async (file: File): Promise<string> => {
   return data.url;
 };
 
+export const uploadVideo = async (file: File): Promise<string> => {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch(`${base}/api/upload-video`, { method: "POST", body: form });
+  if (!response.ok) throw new Error("Не удалось загрузить видео");
+  const data = await response.json();
+  return data.url;
+};
+
 export const logout = async () => {
   await fetch(`${base}/api/logout`, { method: "POST" });
 };

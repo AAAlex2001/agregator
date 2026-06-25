@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, String, Table, Text
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, String, Table, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -49,6 +49,9 @@ class Article(Base):
     meta_description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     meta_keywords: Mapped[str] = mapped_column(Text, nullable=False, default="")
     og_image: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+
+    likes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    dislikes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(

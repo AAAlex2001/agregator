@@ -43,6 +43,10 @@ IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"}
 IMAGE_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"}
 MAX_IMAGE_SIZE = 20 * 1024 * 1024
 
+VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov", ".m4v"}
+VIDEO_CONTENT_TYPES = {"video/mp4", "video/webm", "video/quicktime", "video/x-m4v"}
+MAX_VIDEO_SIZE = 200 * 1024 * 1024
+
 
 def to_out(a: Article) -> ArticleOut:
     return ArticleOut(
@@ -152,6 +156,22 @@ async def upload_image(file: UploadFile = File(...)) -> UploadOut:
         max_size=MAX_IMAGE_SIZE,
         bad_format_message="Недопустимое расширение",
         too_large_message="Файл слишком большой",
+    )
+    return UploadOut(url=url)
+
+
+@router.post("/upload-video", response_model=UploadOut)
+async def upload_video(file: UploadFile = File(...)) -> UploadOut:
+    "Сохраняет видео для встраивания в статью и возвращает его публичный URL."
+    url = await save_uploaded_file(
+        subdir="articles",
+        owner_key="videos",
+        file=file,
+        allowed_extensions=VIDEO_EXTENSIONS,
+        allowed_content_types=VIDEO_CONTENT_TYPES,
+        max_size=MAX_VIDEO_SIZE,
+        bad_format_message="Недопустимый формат видео (mp4, webm, mov, m4v)",
+        too_large_message="Видео слишком большое (макс 200 МБ)",
     )
     return UploadOut(url=url)
 

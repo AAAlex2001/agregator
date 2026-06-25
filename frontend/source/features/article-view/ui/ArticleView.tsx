@@ -8,6 +8,8 @@ import {
   type ArticleDetail,
   type ArticleListItem,
 } from "@/source/entities/article";
+import { ArticleReactions } from "@/source/features/article-reactions/ui/ArticleReactions";
+import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
 import { extractToc } from "../lib/extractToc";
 import s from "./ArticleView.module.scss";
 
@@ -64,6 +66,8 @@ export function ArticleView({ article, related, homeHref = "/", sectionHrefPrefi
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
+          <ArticleReactions articleId={article.id} />
+          <ArticleDiscussion articleId={article.id} />
         </div>
       </div>
 

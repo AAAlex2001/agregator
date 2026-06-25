@@ -2,10 +2,12 @@
 "Repository: доступ к БД для articles."
 from typing import Any
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.article import Article, ArticleKind, ArticleStatus
+from models.article_comment import ArticleComment
+from models.article_reaction import ArticleReaction, ReactionValue
 from models.tag import Tag
 
 
@@ -78,6 +80,10 @@ class ArticleRepository:
     async def get_by_id(self, article_id: int) -> Article | None:
         return (await self.db.execute(select(Article).where(Article.id == article_id))).scalars().first()
 
+    async def get_published_by_id(self, article_id: int) -> Article | None:
+        query = select(Article).where(Article.id == article_id, Article.status == ArticleStatus.PUBLISHED)
+        return (await self.db.execute(query)).scalars().first()
+
     async def slug_exists(self, slug: str, exclude_id: int | None = None) -> bool:
         query = select(Article.id).where(Article.slug == slug)
         if exclude_id is not None:
@@ -99,3 +105,61 @@ class ArticleRepository:
 
     async def delete(self, article: Article) -> None:
         await self.db.delete(article)
+
+
+
+class ArticleReactionRepository:
+    "Голоса 👍/👎 по статьям. Источник правды; счётчики на articles обновляет use case."
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def get(self, article_id: int, user_id: int) -> ArticleReaction | None:
+        query = select(ArticleReaction).where(
+            ArticleReaction.article_id == article_id,
+            ArticleReaction.user_id == user_id,
+        )
+        return (await self.db.execute(query)).scalar_one_or_none()
+
+    async def add(self, article_id: int, user_id: int, value: ReactionValue) -> ArticleReaction:
+        reaction = ArticleReaction(article_id=article_id, user_id=user_id, value=value)
+        self.db.add(reaction)
+        await self.db.flush()
+        return reaction
+
+    async def remove(self, article_id: int, user_id: int) -> None:
+        await self.db.execute(
+            delete(ArticleReaction).where(
+                ArticleReaction.article_id == article_id,
+                ArticleReaction.user_id == user_id,
+            )
+        )
+
+
+class ArticleCommentRepository:
+    "Комментарии к статьям. user грузится сразу (lazy=selectin) — для имени автора."
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def list_for_article(self, article_id: int) -> list[ArticleComment]:
+        query = (
+            select(ArticleComment)
+            .where(ArticleComment.article_id == article_id)
+            .order_by(ArticleComment.created_at.asc(), ArticleComment.id.asc())
+        )
+        return list((await self.db.execute(query)).scalars().all())
+
+    async def get_by_id(self, comment_id: int) -> ArticleComment | None:
+        return (
+            await self.db.execute(select(ArticleComment).where(ArticleComment.id == comment_id))
+        ).scalar_one_or_none()
+
+    async def add(self, article_id: int, user_id: int, text: str, parent_id: int | None) -> ArticleComment:
+        comment = ArticleComment(article_id=article_id, user_id=user_id, text=text, parent_id=parent_id)
+        self.db.add(comment)
+        await self.db.flush()
+        return comment
+
+    async def delete(self, comment: ArticleComment) -> None:
+        await self.db.delete(comment)

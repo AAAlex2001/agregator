@@ -1,0 +1,170 @@
+.discussion {
+  margin: 40px 0 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+}
+
+.total {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #fff4e6;
+  color: #ff8a00;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.loginHint {
+  font-size: 15px;
+  color: #525969;
+  margin: 0 0 24px;
+}
+
+.loginHint a {
+  color: #ff8a00;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.textarea {
+  width: 100%;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #ff8a00;
+}
+
+.submit {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 999px;
+  background: #ff8a00;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+  background: #e67c00;
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.error {
+  font-size: 14px;
+  color: #e23b3b;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reply {
+  padding-top: 16px;
+}
+
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  padding-left: 18px;
+  border-left: 2px solid #ececec;
+}
+
+.commentHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.author {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.date {
+  font-size: 13px;
+  color: #9aa1ad;
+}
+
+.text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #2b2f38;
+  white-space: pre-wrap;
+}
+
+.commentActions {
+  display: flex;
+  gap: 16px;
+}
+
+.action {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #ff8a00;
+  padding: 0;
+  cursor: pointer;
+}
+
+.action:hover {
+  text-decoration: underline;
+}
+
+.danger {
+  color: #e23b3b;
+}

@@ -1,0 +1,77 @@
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  margin: 32px 0;
+  background: #fafafa;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+}
+
+.caption {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid #e2e2e2;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #4d4d4d;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: #ff8a00;
+  color: #ff8a00;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.likeActive {
+  background: #fff4e6;
+  border-color: #ff8a00;
+  color: #ff8a00;
+}
+
+.dislikeActive {
+  background: #fdecec;
+  border-color: #e23b3b;
+  color: #e23b3b;
+}
+
+.icon {
+  display: block;
+}
+
+.count {
+  min-width: 12px;
+  text-align: center;
+}
+
+.hint {
+  font-size: 14px;
+  color: #e23b3b;
+}
