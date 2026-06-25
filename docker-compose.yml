@@ -121,6 +121,7 @@ services:
       - frontend
       - backend
       - admin
+      - admin-next
     restart: unless-stopped
     networks:
       - agregator-network
@@ -148,6 +149,25 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - agregator-network
+
+  admin-next:
+    build:
+      context: ./admin-next
+      dockerfile: Dockerfile
+    container_name: agregator-admin-next
+    environment:
+      ADMIN_NEXT_LOGIN: ${ADMIN_NEXT_LOGIN}
+      ADMIN_NEXT_PASSWORD: ${ADMIN_NEXT_PASSWORD}
+      ADMIN_NEXT_SECRET: ${ADMIN_NEXT_SECRET}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+      BACKEND_URL: ${BACKEND_URL:-http://backend:8000/api}
+    expose:
+      - "3000"
+    depends_on:
+      - backend
     restart: unless-stopped
     networks:
       - agregator-network
