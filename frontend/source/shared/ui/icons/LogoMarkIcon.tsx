@@ -1,10 +1,11 @@
 import { FC, SVGProps } from "react";
+import anim from "./logoAnim.module.scss";
 
 interface LogoMarkIconProps extends SVGProps<SVGSVGElement> {
   title?: string;
 }
 
-const LogoMarkIcon: FC<LogoMarkIconProps> = ({ title, ...props }) => (
+const LogoMarkIcon: FC<LogoMarkIconProps> = ({ title, className, ...props }) => (
   <svg
     width="38"
     height="38"
@@ -13,6 +14,7 @@ const LogoMarkIcon: FC<LogoMarkIconProps> = ({ title, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     role="img"
     aria-label={title}
+    className={[anim.mark, className].filter(Boolean).join(" ")}
     {...props}
   >
     {title && <title>{title}</title>}

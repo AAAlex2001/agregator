@@ -3,8 +3,8 @@
 import { useState } from "react";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import Button from "@/source/shared/ui/Button";
-import { ConfirmModal } from "@/source/shared/ui/ConfirmModal";
 import { CommentForm } from "./CommentForm";
+import { DeleteCommentModal } from "./DeleteCommentModal";
 import s from "./ArticleDiscussion.module.scss";
 
 interface Props {
@@ -72,17 +72,13 @@ export function CommentItem({ comment, all, canReply, depth, onReply, onDelete }
         </div>
       )}
 
-      <ConfirmModal
+      <DeleteCommentModal
         open={confirmOpen}
-        title="Удалить комментарий?"
-        message="Комментарий и ответы на него удалятся безвозвратно."
-        confirmLabel="Удалить"
-        danger
         onConfirm={() => {
           onDelete(comment.id);
           setConfirmOpen(false);
         }}
-        onClose={() => setConfirmOpen(false)}
+        onCancel={() => setConfirmOpen(false)}
       />
     </div>
   );
