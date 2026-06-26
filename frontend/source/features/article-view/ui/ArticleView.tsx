@@ -10,6 +10,8 @@ import {
 } from "@/source/entities/article";
 import { ArticleReactions } from "@/source/features/article-reactions/ui/ArticleReactions";
 import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
+import type { ReactionState } from "@/source/entities/article-reaction";
+import type { ArticleComment } from "@/source/entities/article-comment";
 import { extractToc } from "../lib/extractToc";
 import s from "./ArticleView.module.scss";
 
@@ -18,9 +20,18 @@ interface Props {
   related: ArticleListItem[];
   homeHref?: string;
   sectionHrefPrefix?: string;
+  initialReactions?: ReactionState;
+  initialComments?: ArticleComment[];
 }
 
-export function ArticleView({ article, related, homeHref = "/", sectionHrefPrefix = "" }: Props) {
+export function ArticleView({
+  article,
+  related,
+  homeHref = "/",
+  sectionHrefPrefix = "",
+  initialReactions,
+  initialComments,
+}: Props) {
   const isNews = article.kind === "news";
   const sectionTitle = isNews ? "Новости" : "Блог";
   const sectionHref = `${sectionHrefPrefix}${isNews ? "/news" : "/blog"}`;
@@ -66,8 +77,8 @@ export function ArticleView({ article, related, homeHref = "/", sectionHrefPrefi
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
-          <ArticleReactions articleId={article.id} />
-          <ArticleDiscussion articleId={article.id} />
+          <ArticleReactions articleId={article.id} initial={initialReactions} />
+          <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
         </div>
       </div>
 

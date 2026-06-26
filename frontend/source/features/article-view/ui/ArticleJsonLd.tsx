@@ -1,8 +1,11 @@
 import { SITE_URL } from "@/source/shared/api/config";
 import type { ArticleDetail } from "@/source/entities/article";
+import type { ReactionState } from "@/source/entities/article-reaction";
 
 interface Props {
   article: ArticleDetail;
+  reactions?: ReactionState;
+  commentCount?: number;
 }
 
 function absoluteUrl(path: string): string {
@@ -11,10 +14,30 @@ function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-export function ArticleJsonLd({ article }: Props) {
+export function ArticleJsonLd({ article, reactions, commentCount }: Props) {
   const isNews = article.kind === "news";
   const pageUrl = `${SITE_URL}${isNews ? "/news/" : "/blog/"}${article.slug}`;
   const image = absoluteUrl(article.og_image || article.cover_image || "/hero_svg.webp");
+
+  const interactionStatistic = reactions
+    ? [
+        {
+          "@type": "InteractionCounter",
+          interactionType: "https://schema.org/LikeAction",
+          userInteractionCount: reactions.likes_count,
+        },
+        {
+          "@type": "InteractionCounter",
+          interactionType: "https://schema.org/DislikeAction",
+          userInteractionCount: reactions.dislikes_count,
+        },
+        {
+          "@type": "InteractionCounter",
+          interactionType: "https://schema.org/CommentAction",
+          userInteractionCount: commentCount ?? 0,
+        },
+      ]
+    : undefined;
 
   const data = {
     "@context": "https://schema.org",
@@ -34,6 +57,8 @@ export function ArticleJsonLd({ article }: Props) {
       logo: { "@type": "ImageObject", url: `${SITE_URL}/hero_svg.webp` },
     },
     articleSection: isNews ? "Новости" : "Блог",
+    commentCount: commentCount ?? undefined,
+    interactionStatistic,
   };
 
   const breadcrumbs = {

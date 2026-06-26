@@ -19,13 +19,12 @@ function withoutSubtree(comments: ArticleComment[], rootId: number): ArticleComm
   return comments.filter((comment) => !removed.has(comment.id));
 }
 
-export function useArticleComments(articleId: number) {
-  const [comments, setComments] = useState<ArticleComment[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useArticleComments(articleId: number, initial?: ArticleComment[]) {
+  const [comments, setComments] = useState<ArticleComment[]>(initial ?? []);
+  const [loading, setLoading] = useState(initial === undefined);
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     fetchComments(articleId)
       .then((list) => {
         if (!cancelled) setComments(list);

@@ -1,16 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useArticleComments } from "@/source/entities/article-comment";
+import { useArticleComments, type ArticleComment } from "@/source/entities/article-comment";
 import { useSession } from "@/source/features/session";
 import Loader from "@/source/shared/ui/Loader";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
 import s from "./ArticleDiscussion.module.scss";
 
-export function ArticleDiscussion({ articleId }: { articleId: number }) {
+interface Props {
+  articleId: number;
+  initialComments?: ArticleComment[];
+}
+
+export function ArticleDiscussion({ articleId, initialComments }: Props) {
   const { user } = useSession();
-  const { comments, loading, add, remove } = useArticleComments(articleId);
+  const { comments, loading, add, remove } = useArticleComments(articleId, initialComments);
   const roots = comments.filter((c) => c.parent_id === null);
 
   return (

@@ -1,15 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useArticleReactions, type ReactionValue } from "@/source/entities/article-reaction";
+import { useArticleReactions, type ReactionState, type ReactionValue } from "@/source/entities/article-reaction";
 import { useSession } from "@/source/features/session";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
 import { ThumbUpIcon } from "@/source/shared/ui/icons/ThumbUpIcon";
 import s from "./ArticleReactions.module.scss";
 
-export function ArticleReactions({ articleId }: { articleId: number }) {
+interface Props {
+  articleId: number;
+  initial?: ReactionState;
+}
+
+export function ArticleReactions({ articleId, initial }: Props) {
   const { user } = useSession();
-  const { state, react, pending } = useArticleReactions(articleId);
+  const { state, react, pending } = useArticleReactions(articleId, initial);
   const [hint, setHint] = useState("");
 
   const onVote = (value: ReactionValue) => {

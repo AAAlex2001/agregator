@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
+import { fetchReactions } from "@/source/entities/article-reaction";
+import { fetchComments } from "@/source/entities/article-comment";
 import { ArticleJsonLd, ArticleView, ScrollToTopOnSlug } from "@/source/features/article-view";
 import { RedirectIfAuthed } from "@/source/features/session";
 
@@ -43,16 +45,25 @@ export default async function NewsArticlePage({ params }: Props) {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "news") notFound();
-  const related = await fetchRelatedArticles(slug, { limit: 3, server: true });
+  const [related, reactions, comments] = await Promise.all([
+    fetchRelatedArticles(slug, { limit: 3, server: true }),
+    fetchReactions(article.id, { server: true }).catch(() => undefined),
+    fetchComments(article.id, { server: true }).catch(() => []),
+  ]);
 
   return (
     <>
       <RedirectIfAuthed to={`/landing/news/${slug}`} />
       <LandingHeader />
       <ScrollToTopOnSlug slug={article.slug} />
-      <ArticleJsonLd article={article} />
+      <ArticleJsonLd article={article} reactions={reactions} commentCount={comments.length} />
       <main>
-        <ArticleView article={article} related={related} />
+        <ArticleView
+          article={article}
+          related={related}
+          initialReactions={reactions}
+          initialComments={comments}
+        />
       </main>
       <LandingFooter variant="light" />
     </>
