@@ -1,7 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import Loader from "@/source/shared/ui/Loader";
+import Tabs from "@/source/shared/ui/Tabs";
+import { RadioGroup } from "@/source/shared/ui";
+import { TextInput } from "@/source/shared/ui/Inputs";
+import type { HazardProfile } from "@/source/entities/hazard";
 import { useHazardCalculator } from "../model/useHazardCalculator";
 import s from "./HazardCalculator.module.scss";
 
@@ -21,30 +26,28 @@ export function HazardCalculator() {
     calculate,
     generate,
   } = useHazardCalculator();
+  const [activeGroup, setActiveGroup] = useState("R0");
+
+  const currentGroup = catalog?.groups.find((group) => group.group === activeGroup) ?? catalog?.groups[0];
 
   return (
     <div className={s.wrap}>
-      <div className={s.profiles}>
-        <button
-          className={profile === "rudnik" ? s.profileActive : s.profile}
-          onClick={() => setProfile("rudnik")}
-        >
-          Рудник
-        </button>
-        <button
-          className={profile === "shahta" ? s.profileActive : s.profile}
-          onClick={() => setProfile("shahta")}
-        >
-          Шахта
-        </button>
-      </div>
+      <Tabs
+        variant="pill"
+        activeTab={profile}
+        onTabChange={(value) => setProfile(value as HazardProfile)}
+        tabs={[
+          { id: "rudnik", label: "Рудник" },
+          { id: "shahta", label: "Шахта" },
+        ]}
+      />
 
       <div className={s.actions}>
-        <input
-          className={s.nameInput}
+        <TextInput
           value={reportName}
           onChange={(e) => setReportName(e.target.value)}
           placeholder="Название отчёта"
+          className={s.nameInput}
         />
         <Button variant="chat" onClick={calculate} isLoading={calculating}>
           Рассчитать
@@ -93,36 +96,33 @@ export function HazardCalculator() {
         </div>
       )}
 
-      {loading || !catalog ? (
+      {loading || !catalog || !currentGroup ? (
         <Loader />
       ) : (
-        <div className={s.groups}>
-          {catalog.groups.map((group) => (
-            <details key={group.group} className={s.group} open={group.group === "R0"}>
-              <summary className={s.summary}>
-                {group.group} · {group.title}
-              </summary>
-              <div className={s.factors}>
-                {group.factors.map((factor) => (
-                  <label key={factor.code} className={s.factor}>
-                    <span className={s.name}>{factor.name}</span>
-                    <select
-                      className={s.select}
-                      value={Math.max(0, factor.options.findIndex((o) => o.value === selections[factor.code]))}
-                      onChange={(e) => select(factor.code, factor.options[Number(e.target.value)].value)}
-                    >
-                      {factor.options.map((option, index) => (
-                        <option key={index} value={index}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ))}
+        <>
+          <Tabs
+            className={s.groupTabs}
+            activeTab={currentGroup.group}
+            onTabChange={setActiveGroup}
+            tabs={catalog.groups.map((group) => ({ id: group.group, label: group.group }))}
+          />
+          <h3 className={s.groupTitle}>
+            {currentGroup.group} · {currentGroup.title}
+          </h3>
+          <div className={s.factors}>
+            {currentGroup.factors.map((factor) => (
+              <div key={factor.code} className={s.factor}>
+                <span className={s.name}>{factor.name}</span>
+                <RadioGroup
+                  name={factor.code}
+                  value={String(Math.max(0, factor.options.findIndex((o) => o.value === selections[factor.code])))}
+                  options={factor.options.map((option, index) => ({ value: String(index), label: option.label }))}
+                  onChange={(value) => select(factor.code, factor.options[Number(value)].value)}
+                />
               </div>
-            </details>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

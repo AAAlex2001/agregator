@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/source/shared/ui/Button";
 import { getHazardReportPdfUrl, type HazardReportItem } from "@/source/entities/hazard";
+import { HazardPdfViewer } from "./HazardPdfViewer";
 import s from "./HazardReportCard.module.scss";
 
 const PROFILE_LABELS: Record<string, string> = { rudnik: "Рудник", shahta: "Шахта" };
@@ -27,30 +29,27 @@ function formatDate(iso: string): string {
 }
 
 function Ring({ percent }: { percent: number }) {
-  const radius = 24;
+  const radius = 26;
   const circumference = 2 * Math.PI * radius;
   const fraction = Math.max(0, Math.min(1, percent / 100));
   return (
     <div className={s.ring}>
-      <svg width="60" height="60" viewBox="0 0 60 60">
-        <circle cx="30" cy="30" r={radius} fill="none" stroke="#ffe3bd" strokeWidth="5.5" />
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r={radius} fill="none" stroke="#ffe3bd" strokeWidth="6" />
         <circle
-          cx="30"
-          cy="30"
+          cx="32"
+          cy="32"
           r={radius}
           fill="none"
           stroke="#ff8a00"
-          strokeWidth="5.5"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - fraction)}
-          transform="rotate(-90 30 30)"
+          transform="rotate(-90 32 32)"
         />
       </svg>
-      <span className={s.ringNum}>
-        {Math.round(percent)}
-        <small>%</small>
-      </span>
+      <span className={s.ringNum}>{Math.round(percent)}%</span>
     </div>
   );
 }
@@ -58,6 +57,17 @@ function Ring({ percent }: { percent: number }) {
 export function HazardReportCard({ item }: { item: HazardReportItem }) {
   const [viewing, setViewing] = useState(false);
   const pdfUrl = getHazardReportPdfUrl(item.id);
+
+  const download = () => {
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = `${item.name}.pdf`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
 
   return (
     <div className={s.card}>
@@ -88,15 +98,15 @@ export function HazardReportCard({ item }: { item: HazardReportItem }) {
       )}
 
       <div className={s.actions}>
-        <button className={s.view} onClick={() => setViewing((value) => !value)}>
-          {viewing ? "Скрыть" : "Посмотреть"}
-        </button>
-        <a className={s.download} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+        <Button variant="outlineOrange" fullWidth onClick={() => setViewing(true)}>
+          Посмотреть
+        </Button>
+        <Button variant="primary" fullWidth onClick={download}>
           Скачать
-        </a>
+        </Button>
       </div>
 
-      {viewing && <iframe className={s.viewer} src={pdfUrl} title={item.name} />}
+      {viewing && <HazardPdfViewer url={pdfUrl} title={item.name} onClose={() => setViewing(false)} />}
     </div>
   );
 }
