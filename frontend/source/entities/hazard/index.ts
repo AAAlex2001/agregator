@@ -5,6 +5,7 @@ export type {
   HazardGroup,
   HazardOption,
   HazardProfile,
+  HazardReportBlock,
   HazardReportItem,
   HazardResult,
   HazardSelections,

@@ -45,11 +45,19 @@ export interface HazardResult {
   r_int_category: string;
 }
 
+export interface HazardReportBlock {
+  group: string;
+  title: string;
+  value: number;
+  category: string;
+}
+
 export interface HazardReportItem {
   id: number;
   name: string;
   profile: string;
   overall_r: number;
   overall_category: string;
+  blocks: HazardReportBlock[];
   created_at: string;
 }

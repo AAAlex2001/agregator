@@ -60,11 +60,16 @@ async def create_report(
     "Сохраняет отчёт в историю и возвращает PDF."
     repo = HazardRepository(db)
     result = await CalculateHazardUseCase(repo).execute(request)
+    blocks = [
+        {"group": block.group, "title": block.title, "value": block.value, "category": block.category}
+        for block in [result.r0, *result.blocks]
+    ]
     report = await repo.save_report(HazardReport(
         expert_id=user_id,
         name=request.report_name,
         profile=request.profile,
         selections=request.selections,
+        blocks=blocks,
         overall_r=result.overall_r,
         overall_category=result.overall_r_category,
     ))

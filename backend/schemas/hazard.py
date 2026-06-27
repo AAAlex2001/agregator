@@ -65,6 +65,14 @@ class HazardCalculateResponse(BaseModel):
     r_int_category: str
 
 
+class HazardReportBlock(BaseModel):
+    "Показатель блока в снимке отчёта (для карточки истории)."
+    group: str
+    title: str
+    value: float
+    category: str
+
+
 class HazardReportItem(BaseModel):
     "Карточка сохранённого отчёта в истории эксперта."
     id: int
@@ -72,6 +80,7 @@ class HazardReportItem(BaseModel):
     profile: str
     overall_r: float
     overall_category: str
+    blocks: list[HazardReportBlock] = Field(default_factory=list)
     created_at: datetime
 
     class Config:

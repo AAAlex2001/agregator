@@ -36,6 +36,7 @@ class HazardReport(Base):
     name: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     profile: Mapped[str] = mapped_column(String(10), nullable=False)
     selections: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    blocks: Mapped[list[Any]] = mapped_column(JSONB, nullable=False, default=list)
     overall_r: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     overall_category: Mapped[str] = mapped_column(String(120), nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
