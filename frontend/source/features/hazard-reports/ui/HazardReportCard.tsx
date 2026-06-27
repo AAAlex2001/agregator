@@ -49,7 +49,7 @@ function Ring({ percent }: { percent: number }) {
           transform="rotate(-90 32 32)"
         />
       </svg>
-      <span className={s.ringNum}>{Math.round(percent)}%</span>
+      <span className={s.ringNum}>{percent.toFixed(1)}%</span>
     </div>
   );
 }

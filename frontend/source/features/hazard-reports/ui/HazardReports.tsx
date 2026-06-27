@@ -8,14 +8,23 @@ import s from "./HazardReports.module.scss";
 export function HazardReports() {
   const { reports, loading } = useHazardReports();
 
-  if (loading) return <Loader />;
-  if (reports.length === 0) return <p className={s.empty}>Сохранённых отчётов пока нет.</p>;
-
   return (
-    <div className={s.list}>
-      {reports.map((report) => (
-        <HazardReportCard key={report.id} item={report} />
-      ))}
+    <div className={s.panel}>
+      <div className={s.body}>
+        {loading ? (
+          <div className={s.loaderWrap}>
+            <Loader label="" size="lg" />
+          </div>
+        ) : reports.length === 0 ? (
+          <p className={s.empty}>Сохранённых отчётов пока нет.</p>
+        ) : (
+          <div className={s.list}>
+            {reports.map((report) => (
+              <HazardReportCard key={report.id} item={report} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
