@@ -1,4 +1,6 @@
 "Схемы оценки опасности аварий: справочник факторов, запрос расчёта и результат."
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -37,6 +39,11 @@ class HazardCalculateRequest(BaseModel):
     selections: dict[str, float | None] = Field(default_factory=dict)
 
 
+class HazardReportRequest(HazardCalculateRequest):
+    "Запрос PDF-отчёта: расчёт + название (для истории и имени файла)."
+    report_name: str = "Оценка опасности аварий"
+
+
 class HazardBlockDto(BaseModel):
     "Показатель опасности по блоку: процент и лингвистическая категория."
     group: str
@@ -56,3 +63,21 @@ class HazardCalculateResponse(BaseModel):
     overall_r_category: str
     r_int: float
     r_int_category: str
+
+
+class HazardReportItem(BaseModel):
+    "Карточка сохранённого отчёта в истории эксперта."
+    id: int
+    name: str
+    profile: str
+    overall_r: float
+    overall_category: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class HazardReportListResponse(BaseModel):
+    "История отчётов эксперта."
+    items: list[HazardReportItem] = Field(default_factory=list)

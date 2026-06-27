@@ -1,0 +1,163 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profiles {
+  display: flex;
+  gap: 8px;
+}
+
+.profile,
+.profileActive {
+  padding: 9px 22px;
+  border-radius: 12px;
+  border: 1px solid #e6e8ee;
+  background: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.profileActive {
+  background: #ff8a00;
+  border-color: #ff8a00;
+  color: #fff;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.nameInput {
+  flex: 1 1 280px;
+  min-width: 220px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid #e6e8ee;
+  font-size: 15px;
+
+  &:focus {
+    outline: none;
+    border-color: #ff8a00;
+  }
+}
+
+.result {
+  border: 1px solid #ffe3bd;
+  background: #fff8ee;
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.resultTitle {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.resultTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th,
+  td {
+    border: 1px solid #f0e2cd;
+    padding: 8px 10px;
+    text-align: left;
+  }
+
+  th {
+    background: #fff1d6;
+    font-weight: 600;
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+.bold td {
+  font-weight: 700;
+  background: #fff1d6;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group {
+  border: 1px solid #e6e8ee;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.summary {
+  padding: 14px 16px;
+  background: #f7f8fa;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.factors {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.factor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.name {
+  font-size: 14px;
+  line-height: 19px;
+  color: #1a1a1a;
+}
+
+.select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e6e8ee;
+  font-size: 14px;
+  background: #fff;
+
+  &:focus {
+    outline: none;
+    border-color: #ff8a00;
+  }
+}
+
+@media (min-width: 768px) {
+  .factor {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .name {
+    flex: 1;
+  }
+
+  .select {
+    flex: 0 0 360px;
+    max-width: 360px;
+  }
+}

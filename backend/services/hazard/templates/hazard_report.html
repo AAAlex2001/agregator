@@ -3,65 +3,307 @@
 <head>
   <meta charset="utf-8">
   <style>
-    @page { size: A4; margin: 18mm 16mm; }
-    body { font-family: "DejaVu Sans", sans-serif; color: #1a1a1a; font-size: 11px; line-height: 1.45; }
-    h1 { font-size: 18px; text-align: center; margin: 0 0 4px; }
-    .meta { text-align: center; color: #6b7280; font-size: 11px; margin-bottom: 20px; }
-    h2 { font-size: 13px; margin: 22px 0 8px; color: #b35a00; }
-    table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-    th, td { border: 0.5px solid #9ca3af; padding: 5px 7px; vertical-align: middle; }
-    th { background: #f3f4f6; font-weight: 700; text-align: center; }
-    td.center { text-align: center; }
-    td.symbol { text-align: center; font-style: italic; white-space: nowrap; }
-    tr.highlight td { background: #fff1d6; font-weight: 700; }
+    @page {
+      size: A4;
+      margin: 16mm 14mm 18mm;
+    }
+    body {
+      font-family: "DejaVu Sans", sans-serif;
+      color: #111;
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
+    h1 {
+      font-size: 15px;
+      text-align: center;
+      margin: 0 0 4px;
+    }
+    .meta {
+      text-align: center;
+      color: #444;
+      margin-bottom: 14px;
+    }
+    .section {
+      font-weight: 700;
+      text-decoration: underline;
+      font-size: 12px;
+      margin: 20px 0 8px;
+    }
+    .sub-title {
+      text-align: center;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+    p {
+      margin: 0 0 8px;
+      text-align: justify;
+    }
+    ul {
+      margin: 4px 0 8px;
+      padding-left: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0;
+    }
+    th,
+    td {
+      border: 0.5px solid #555;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+    th {
+      background: #eee;
+      font-weight: 700;
+      text-align: center;
+    }
+    td.c {
+      text-align: center;
+    }
+    tr.grp td {
+      background: #e3e3e3;
+      font-weight: 700;
+      text-align: center;
+    }
+    tr.sum td {
+      background: #eee;
+      font-weight: 700;
+      text-align: center;
+    }
+    tr.hl td {
+      background: #fff1d6;
+      font-weight: 700;
+    }
+    .def {
+      margin: 1px 0;
+    }
+    .formula {
+      text-align: center;
+      font-size: 11px;
+      margin: 10px 0;
+    }
+    .frac {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 4px;
+    }
+    .frac > .n {
+      display: block;
+      border-bottom: 1px solid #000;
+      padding: 0 6px;
+    }
+    .frac > .d {
+      display: block;
+      padding: 0 6px;
+    }
+    .res {
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
-  <h1>{{ title }}</h1>
-  <div class="meta">Объект: {{ profile_title }} · Дата формирования: {{ generated_at }}</div>
 
-  <h2>Результаты оценки опасности (риска) аварий</h2>
+  <h1>Оценка опасности (риска) аварий</h1>
+  <div class="meta">
+    Объект: {{ meta.profile_title }} &middot; Дата: {{ meta.generated_at }}
+  </div>
+
+  <div class="section">Исходные данные</div>
+  <p>Рекомендуемый общий перечень опасностей аварии на стадии эксплуатации объекта:</p>
+  <ul>
+    {% for hazard in hazards %}
+    <li>{{ hazard }};</li>
+    {% endfor %}
+  </ul>
+
+  <div class="sub-title">Факторы и блоки факторов, влияющие на опасности аварии, и ИОА</div>
   <table>
     <thead>
       <tr>
-        <th style="width:6%">№</th>
-        <th>Наименование показателя</th>
-        <th style="width:10%">Обозн.</th>
-        <th style="width:16%">Значение, %</th>
-        <th style="width:26%">Категория риска</th>
+        <th style="width: 6%">Усл.&nbsp;об.</th>
+        <th style="width: 38%">Факторы, влияющие на опасность</th>
+        <th style="width: 25%">Критерий установления ИОА</th>
+        <th style="width: 15%">ИОА, баллы</th>
+        <th style="width: 16%">ИОА<sub>max</sub>, баллы</th>
       </tr>
     </thead>
     <tbody>
-      {% for row in rows %}
-      <tr class="{{ 'highlight' if row.highlight else '' }}">
-        <td class="center">{{ loop.index }}</td>
+      {% for g in ioa_groups %}
+      <tr class="grp">
+        <td><i>R<sub>{{ g.num }}</sub></i></td>
+        <td colspan="4">{{ g.desc }}</td>
+      </tr>
+      {% for f in g.factors %}
+      <tr>
+        <td class="c">{{ f.idx }}</td>
+        <td>{{ f.name }}</td>
+        <td class="c">{{ f.criterion }}</td>
+        <td class="c"><i>r<sub>{{ g.num }}({{ f.idx }})</sub></i> = {{ "%.2f"|format(f.score) }}</td>
+        <td class="c"><i>r<sub>{{ g.num }}({{ f.idx }})</sub><sup>max</sup></i> = {{ "%.2f"|format(f.max) }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="sum">
+        <td colspan="3">СУММА ИОА:</td>
+        <td class="c">{{ "%.2f"|format(g.sum_score) }}</td>
+        <td class="c">{{ "%.2f"|format(g.sum_max) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section">Оценка риска аварий</div>
+  <p>
+    Оценка риска аварии на объекте проводится на основании факторов, влияющих на опасности аварии,
+    и ИОА. Для оценки риска аварии рекомендуется метод балльной оценки риска (метод индексов риска).
+  </p>
+  <p>
+    Анализ риска аварий проводится на основе фактических данных работы объекта за предшествующий год.
+    В случае допущения аварии показатели количества аварий данного вида и количества людей, погибших
+    при авариях данного вида, учитываются за три последних года.
+  </p>
+
+  <p>Опасность (риск) аварий, обусловленная субъективным (человеческим) фактором, определяется по формуле:</p>
+  <div class="formula">
+    <i>R</i><sub>0</sub> =
+    <span class="frac">
+      <span class="n">∑ r<sub>0(i)</sub></span>
+      <span class="d">∑ r<sub>0(i)</sub><sup>max</sup></span>
+    </span>
+    &middot; 100
+  </div>
+  <p>где</p>
+  <div class="def"><i>R</i><sub>0</sub> — показатель опасности (риска) аварий, обусловленный субъективным (человеческим) фактором, %;</div>
+  <div class="def"><i>r</i><sub>0(i)</sub> — ИОА <i>i</i>-го фактора в блоке субъективного (человеческого) фактора, баллы;</div>
+  <div class="def"><i>r</i><sub>0(i)</sub><sup>max</sup> — максимально возможное значение ИОА <i>i</i>-го фактора в этом блоке, баллы;</div>
+  <div class="def"><i>m</i> — количество факторов в блоке субъективного (человеческого) фактора, шт.</div>
+
+  <p style="margin-top: 10px">
+    В состав каждого блока факторов в обязательном порядке включаются факторы, влияющие на опасность
+    (риск) аварий, обусловленные влиянием субъективного (человеческого) фактора.
+  </p>
+  <p>
+    По каждому блоку факторов оценивается показатель опасности (риска) аварии как отношение суммы ИОА
+    по блоку к сумме максимально возможных ИОА по данному блоку с учётом человеческого фактора:
+  </p>
+  <div class="formula">
+    <i>R</i><sub>x</sub> =
+    <span class="frac">
+      <span class="n">∑ r<sub>x(i)</sub> + ∑ r<sub>0(i)</sub></span>
+      <span class="d">∑ r<sub>x(i)</sub><sup>max</sup> + ∑ r<sub>0(i)</sub><sup>max</sup></span>
+    </span>
+    &middot; 100
+  </div>
+  <p>где</p>
+  <div class="def"><i>R</i><sub>x</sub> — показатель опасности (риска) аварии <i>x</i>-го вида, %;</div>
+  <div class="def"><i>r</i><sub>x(i)</sub> — фактический ИОА <i>i</i>-го фактора в блоке <i>x</i>-го вида аварии, баллы;</div>
+  <div class="def"><i>r</i><sub>x(i)</sub><sup>max</sup> — максимально возможное значение ИОА <i>i</i>-го фактора в этом блоке, баллы;</div>
+  <div class="def"><i>n</i> — количество факторов в блоке <i>x</i>-го вида аварии, шт.</div>
+
+  <div class="sub-title" style="text-decoration: underline; margin-top: 14px">
+    Расчётные показатели опасности (риска) аварий по видам
+  </div>
+  {% for row in calc_rows %}
+  <p style="text-align: center; margin: 2px 0">{{ row.desc }}</p>
+  <div class="formula">
+    {% if row.kind == 'r0' %}
+    <i>R</i><sub>0</sub> =
+    <span class="frac">
+      <span class="n">{{ "%.2f"|format(row.num) }}</span>
+      <span class="d">{{ "%.2f"|format(row.den) }}</span>
+    </span>
+    &middot; 100 = <span class="res">{{ "%.1f"|format(row.pct) }}%</span>
+    {% else %}
+    <i>R</i><sub>{{ row.sub }}</sub> =
+    <span class="frac">
+      <span class="n">{{ "%.2f"|format(row.rx_score) }} + {{ "%.2f"|format(row.r0_score) }}</span>
+      <span class="d">{{ "%.2f"|format(row.rx_max) }} + {{ "%.2f"|format(row.r0_max) }}</span>
+    </span>
+    &middot; 100 = <span class="res">{{ "%.1f"|format(row.pct) }}%</span>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <p style="margin-top: 14px">
+    Показатель опасности (риска) аварий на объекте <i>R</i> определяется как величина показателя
+    опасности (риска) аварии <i>x</i>-го вида с наибольшим значением:
+  </p>
+  <div class="formula">
+    <i>R</i> = max(<i>R</i><sub>x</sub>) = <span class="res">{{ "%.1f"|format(overall_r) }}%</span>
+  </div>
+
+  <p>
+    Интегральный показатель опасности (риска) аварий на объекте <i>R</i><sup>int</sup> определяется
+    с учётом совокупности показателей опасности (риска) аварий всех видов:
+  </p>
+  <div class="formula">
+    <i>R</i><sup>int</sup> =
+    <span class="frac">
+      <span class="n">{{ "%.2f"|format(rint.num) }}</span>
+      <span class="d">{{ "%.2f"|format(rint.den) }}</span>
+    </span>
+    &middot; 100 = <span class="res">{{ "%.1f"|format(rint.pct) }}%</span>
+  </div>
+
+  <p style="margin-top: 10px">
+    Рекомендованная стратегия по дальнейшей обработке риска определяется в зависимости от категории
+    опасности (риска) аварии <i>x</i>-го вида <i>R</i><sub>x</sub> и риска аварий на объекте <i>R</i>.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 4%">№</th>
+        <th style="width: 14%">Диапазон показателя, %</th>
+        <th style="width: 20%">Лингвистический уровень (категория) опасности (риска)</th>
+        <th style="width: 25%">Допустимость опасности (риска)</th>
+        <th style="width: 37%">Рекомендованная стратегия по обработке риска</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in risk_table %}
+      <tr>
+        <td class="c">{{ r.num }}</td>
+        <td class="c">{{ r.range }}</td>
+        <td>{{ r.level }}</td>
+        <td>{{ r.permissibility }}</td>
+        <td>{{ r.strategy }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section">Результаты оценки опасности (риска) аварий</div>
+  <p>
+    Категория опасности (риска) аварии определяется согласно шестиуровневой лингвистической шкале
+    в зависимости от попадания соответствующего показателя в пределы одного из диапазонов значений.
+  </p>
+  <div class="sub-title">Определены лингвистические уровни риска:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 5%">№</th>
+        <th style="width: 45%">Наименование показателя</th>
+        <th style="width: 9%">Обозн.</th>
+        <th style="width: 16%">Значение, %</th>
+        <th style="width: 25%">Категория риска</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr class="{{ 'hl' if row.highlight else '' }}">
+        <td class="c">{{ loop.index }}</td>
         <td>{{ row.name }}</td>
-        <td class="symbol">{{ row.symbol }}</td>
-        <td class="center">{{ "%.1f"|format(row.value) }}</td>
+        <td class="c">
+          <i>{% if row.kind == 'int' %}R<sup>int</sup>{% elif row.kind == 'overall' %}R{% else %}R<sub>{{ row.sub }}</sub>{% endif %}</i>
+        </td>
+        <td class="c">{{ "%.1f"|format(row.value) }}</td>
         <td>{{ row.category }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <h2>Шкала категорий опасности (риска) аварий</h2>
-  <table>
-    <thead>
-      <tr>
-        <th style="width:8%">№</th>
-        <th style="width:30%">Диапазон показателя, %</th>
-        <th>Лингвистический уровень (категория) опасности (риска)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for low, high, level in risk_levels %}
-      <tr>
-        <td class="center">{{ loop.index }}</td>
-        <td class="center">от {{ "%.1f"|format(low) }} до {{ "%.1f"|format(high) }}</td>
-        <td>{{ level }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 </body>
 </html>

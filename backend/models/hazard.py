@@ -1,6 +1,7 @@
+from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import Float, Integer, String, Text, UniqueConstraint
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -24,3 +25,17 @@ class HazardFactor(Base):
     __table_args__ = (
         UniqueConstraint("profile", "code", name="uq_hazard_factor_profile_code"),
     )
+
+
+class HazardReport(Base):
+    "Сохранённый расчёт эксперта: выбранные значения + итог. PDF пересобирается из selections."
+    __tablename__ = "hazard_reports"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    profile: Mapped[str] = mapped_column(String(10), nullable=False)
+    selections: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
+    overall_r: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    overall_category: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)

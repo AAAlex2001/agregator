@@ -45,6 +45,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
+        { href: "/expert/hazard", label: "Оценка опасности", icon: FileIcon },
       ],
     },
     {
