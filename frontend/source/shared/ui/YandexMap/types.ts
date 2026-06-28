@@ -26,13 +26,11 @@ export interface YmapsPlacemark {
 
 export interface YmapsClusterer {
   add(objects: YmapsPlacemark[]): void;
-  getBounds(): number[][] | null;
 }
 
 export interface YmapsMap {
   geoObjects: { add(object: unknown): void; removeAll(): void };
   events: { add(event: string, handler: (e: YmapsEvent) => void): void };
-  setBounds(bounds: number[][], options?: Record<string, unknown>): Promise<void>;
   setCenter(center: [number, number], zoom?: number): void;
   destroy(): void;
 }

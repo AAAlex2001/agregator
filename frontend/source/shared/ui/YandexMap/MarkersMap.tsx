@@ -64,8 +64,6 @@ export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {
       ),
     );
     map.geoObjects.add(clusterer);
-    const bounds = clusterer.getBounds();
-    if (bounds) map.setBounds(bounds, { checkZoomRange: true, zoomMargin: 40 });
   }, [ymaps, markers]);
 
   return (
