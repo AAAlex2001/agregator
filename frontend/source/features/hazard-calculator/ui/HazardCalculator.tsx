@@ -6,7 +6,7 @@ import Loader from "@/source/shared/ui/Loader";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Checkbox } from "@/source/shared/ui";
 import { TextInput } from "@/source/shared/ui/Inputs";
-import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
+import { ChatChevronDownIcon, PlusThinIcon } from "@/source/shared/ui/icons";
 import type { HazardProfile } from "@/source/entities/hazard";
 import { useHazardCalculator } from "../model/useHazardCalculator";
 import { FactorEditorModal } from "./FactorEditorModal";
@@ -66,7 +66,10 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
               {editMode ? "Готово" : "Редактировать факторы"}
             </Button>
             <Button variant="outlineOrange" className={s.actionBtn} onClick={() => addFactor(activeGroup)}>
-              + Новый фактор
+              <span className={s.plusLabel}>
+                <PlusThinIcon className={s.plusIcon} />
+                Новый фактор
+              </span>
             </Button>
             <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
               Сформировать отчёт

@@ -63,6 +63,18 @@
   max-height: none;
 }
 
+.plusLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.plusIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .headerBlock {
   border: 1px solid #ececf0;
   border-radius: 12px;
