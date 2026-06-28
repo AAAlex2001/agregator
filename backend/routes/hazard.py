@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from dependencies.subscription import require_expert_subscription
+from dependencies.subscription import consume_response_slot, require_expert_subscription
 from models.hazard import HazardReport
 from schemas.hazard import (
     HazardCatalogResponse,
@@ -108,15 +108,16 @@ async def create_report(
         overall_r=result.overall_r,
         overall_category=result.overall_r_category,
     ))
+    await consume_response_slot(user_id, db)
     return HazardReportItem.model_validate(report)
 
 
 @router.get("/reports", response_model=HazardReportListResponse)
 async def list_reports(
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(get_current_user),
 ) -> HazardReportListResponse:
-    "История отчётов эксперта."
+    "История отчётов эксперта. Доступна без подписки."
     reports = await HazardRepository(db).list_reports(user_id)
     return HazardReportListResponse(items=[HazardReportItem.model_validate(report) for report in reports])
 
@@ -125,9 +126,9 @@ async def list_reports(
 async def download_saved_report(
     report_id: int,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(get_current_user),
 ) -> Response:
-    "Пересобирает и отдаёт PDF сохранённого отчёта."
+    "Пересобирает и отдаёт PDF сохранённого отчёта. Доступно без подписки."
     repo = HazardRepository(db)
     report = await repo.get_report(report_id, user_id)
     if report is None:

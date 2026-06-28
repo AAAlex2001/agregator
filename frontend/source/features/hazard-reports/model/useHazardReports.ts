@@ -18,7 +18,7 @@ export function useHazardReports() {
     return () => {
       active = false;
     };
-  }, [showError]);
+  }, []);
 
   return { reports, loading };
 }

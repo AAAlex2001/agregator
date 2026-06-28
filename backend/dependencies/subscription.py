@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from models.user import UserRole
-from services.subscriptions import SubscriptionRepository
+from services.platform_settings import PlatformSettingsService
+from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 
 
 async def require_active_subscription(
@@ -46,3 +47,11 @@ async def require_expert_subscription(
             detail="Нужна активная подписка для доступа к инструменту.",
         )
     return user_id
+
+
+async def consume_response_slot(user_id: int, db: AsyncSession) -> None:
+    "Списывает слот разового тарифа за платное действие (отклик или формирование отчёта). MONTHLY/YEARLY — безлимит."
+    access = SubscriptionAccess(SubscriptionRepository(db), PlatformSettingsService(db))
+    subscription = await access.require_for_response(user_id)
+    if subscription is not None:
+        await access.consume_for_response(subscription)

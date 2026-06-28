@@ -18,7 +18,7 @@ export function useLiningReports() {
     return () => {
       active = false;
     };
-  }, [showError]);
+  }, []);
 
   return { reports, loading };
 }
