@@ -163,6 +163,7 @@ export function LiningCalculator({ onSaved }: { onSaved?: () => void }) {
             {section === "factors" && currentGroup && (
               <div className={s.sectionBody}>
                 <Tabs
+                  variant="pill"
                   className={s.groupTabs}
                   activeTab={currentGroup.group}
                   onTabChange={setActiveGroup}

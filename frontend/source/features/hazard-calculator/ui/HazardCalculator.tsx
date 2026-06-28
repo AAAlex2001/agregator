@@ -121,6 +121,7 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
         ) : (
           <>
             <Tabs
+              variant="pill"
               className={s.groupTabs}
               activeTab={currentGroup.group}
               onTabChange={setActiveGroup}

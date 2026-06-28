@@ -4,6 +4,10 @@ import { getInitialSessionRole } from "@/source/features/session/server/getIniti
 import { AppShell } from "@/source/widgets/app-shell";
 import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
 import { SidebarMobileProvider } from "@/source/widgets/sidebar";
+import {
+  LicenseHoldersDrawer,
+  LicenseHoldersDrawerProvider,
+} from "@/source/widgets/license-holders-drawer";
 import { UnreadCountProvider } from "@/source/features/notifications";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
@@ -27,11 +31,14 @@ export default async function AppLayout({
       <AuthGuard>
         <UnreadCountProvider>
           <SidebarMobileProvider>
-            <div className={s.root}>
-              <AppShell>{children}</AppShell>
-            </div>
-            <CabinetMenuTabs />
-            <NotificationsWelcomeModal />
+            <LicenseHoldersDrawerProvider>
+              <div className={s.root}>
+                <AppShell>{children}</AppShell>
+              </div>
+              <CabinetMenuTabs />
+              <LicenseHoldersDrawer />
+              <NotificationsWelcomeModal />
+            </LicenseHoldersDrawerProvider>
           </SidebarMobileProvider>
         </UnreadCountProvider>
       </AuthGuard>
