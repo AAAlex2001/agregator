@@ -1,0 +1,148 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e6e8ee;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.date {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.info {
+  min-width: 0;
+}
+
+.name {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #1a1a1a;
+  word-break: break-word;
+}
+
+.caption {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ring {
+  position: relative;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+}
+
+.ringNum {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.figures {
+  display: flex;
+  gap: 10px;
+}
+
+.figure {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff7ec;
+  border: 1px solid #ffe3bd;
+}
+
+.figLabel {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.figValue {
+  font-size: 16px;
+  font-weight: 800;
+  color: #b35a00;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid #eef0f4;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rowName {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.badge {
+  flex: 0 0 auto;
+  padding: 4px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.green {
+  background: #e2f6df;
+  color: #2e7a2a;
+}
+
+.yellow {
+  background: #fdf3d0;
+  color: #8a6d00;
+}
+
+.red {
+  background: #fde2e2;
+  color: #b42318;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+
+  > * {
+    flex: 1;
+  }
+}

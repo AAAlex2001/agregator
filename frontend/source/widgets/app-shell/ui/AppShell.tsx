@@ -15,6 +15,7 @@ const SIDEBAR_ROUTES = [
   /^\/expert\/orders(?:\/.*)?$/,
   /^\/expert\/reviews(?:\/.*)?$/,
   /^\/expert\/hazard(?:\/.*)?$/,
+  /^\/expert\/lining(?:\/.*)?$/,
   /^\/expert\/room$/,
   /^\/expert-reviews(?:\/.*)?$/,
   /^\/experts\/[^/]+\/orders$/,

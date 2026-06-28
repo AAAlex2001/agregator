@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 18mm;
+    }
+    body {
+      font-family: "DejaVu Sans", sans-serif;
+      color: #111;
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
+    .program {
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+    .introc {
+      text-align: center;
+      margin: 2px 0;
+    }
+    .just {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .maker {
+      text-align: center;
+      font-size: 8px;
+      color: #777;
+      margin: 8px 0 14px;
+    }
+    .namebox {
+      margin: 10px 0 14px;
+    }
+    .namebox div {
+      margin: 1px 0;
+    }
+    .section {
+      font-weight: 700;
+      text-decoration: underline;
+      font-size: 12px;
+      margin: 20px 0 8px;
+    }
+    .sub-title {
+      text-align: center;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+    .lead {
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+    p {
+      margin: 0 0 8px;
+      text-align: justify;
+    }
+    ul {
+      margin: 4px 0 8px;
+      padding-left: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0;
+    }
+    th,
+    td {
+      border: 0.5px solid #555;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+    th {
+      background: #eee;
+      font-weight: 700;
+      text-align: center;
+    }
+    td.c {
+      text-align: center;
+    }
+    tr.grp td {
+      background: #e3e3e3;
+      font-weight: 700;
+      text-align: center;
+    }
+    tr.sum td {
+      background: #eee;
+      font-weight: 700;
+      text-align: center;
+    }
+    tr.hl td {
+      background: #fff1d6;
+      font-weight: 700;
+    }
+    tr.sect td {
+      background: #efefef;
+      font-weight: 700;
+    }
+    .def {
+      margin: 1px 0;
+    }
+    .formula {
+      text-align: center;
+      font-size: 11px;
+      margin: 10px 0;
+    }
+    .frac {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 4px;
+    }
+    .frac > .n {
+      display: block;
+      border-bottom: 1px solid #000;
+      padding: 0 6px;
+    }
+    .frac > .d {
+      display: block;
+      padding: 0 6px;
+    }
+    .res {
+      font-weight: 700;
+    }
+    table.redframe {
+      margin: 10px 0;
+    }
+    table.redframe td {
+      border: 2px solid #d40000;
+      background: #fff2f2;
+      font-size: 11px;
+      padding: 8px 10px;
+    }
+    table.redframe td.val {
+      text-align: center;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="program">Программное обеспечение по анализу опасностей и оценки риска аварий</div>
+  {% if meta.intro_line1 %}<p class="introc">{{ meta.intro_line1 }}</p>{% endif %}
+  {% if meta.intro_line2 %}<p class="introc">{{ meta.intro_line2 }}</p>{% endif %}
+  {% if meta.intro_line3 %}<p class="introc">{{ meta.intro_line3 }}</p>{% endif %}
+  {% if meta.justification %}<p class="just">{{ meta.justification }}</p>{% endif %}
+  {% if meta.manufacturer %}<p class="maker">{{ meta.manufacturer }}</p>{% endif %}
+
+  <div class="namebox">
+    <div>Название: {{ meta.report_name }}</div>
+    {% if meta.author %}<div>Автор: {{ meta.author }}</div>{% endif %}
+    <div>Срок эксплуатации на момент обследования: {{ meta.service_life_years }} лет</div>
+    <div>Дата создания: {{ meta.generated_at }}</div>
+  </div>
+
+  <div class="section">Постоянная износа</div>
+  <p>Постоянная износа анкерной крепи кровли выработки определяется по формуле [3, п.2.7]:</p>
+  <div class="formula">
+    <i>λ</i> =
+    <span class="frac">
+      <span class="n">&minus;ln <i>y</i></span>
+      <span class="d"><i>t</i><sub>ф</sub> &middot; (1 &minus; <i>r</i><sub>1</sub>) &middot; (1 &minus; <i>r</i><sub>2</sub>) &middot; (1 &minus; <i>r</i><sub>3</sub>)</span>
+    </span>
+  </div>
+  <p>где</p>
+  <div class="def"><i>y</i> — относительная надёжность, определяемая по категории технического состояния конструкции в зависимости от повреждений по табл. 4;</div>
+  <div class="def"><i>t</i><sub>ф</sub> — срок эксплуатации в годах на момент обследования ({{ meta.service_life_years }} лет);</div>
+  <div class="def"><i>r</i><sub>1</sub> — коэффициент опасности (риска) аварий, обусловленный субъективным (человеческим) фактором;</div>
+  <div class="def"><i>r</i><sub>2</sub> — коэффициент опасности аварии в результате горного удара;</div>
+  <div class="def"><i>r</i><sub>3</sub> — коэффициент опасности аварии в результате обрушения горных пород.</div>
+
+  <div class="lead">Расчёт постоянной износа анкерной крепи кровли выработки:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 7%">№</th>
+        <th style="width: 60%">Элементы анкерной крепи (вида нарушения) горной выработки</th>
+        <th style="width: 33%">Постоянная износа анкерной крепи кровли выработки</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in lam_rows %}
+      <tr>
+        <td class="c">{{ row.num }}</td>
+        <td>{{ row.name }}</td>
+        <td class="c"><i>λ</i><sub>{{ row.sub }}</sub> = {{ row.value }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section">Определение срока эксплуатации горной выработки до капитального ремонта</div>
+  <p>Срок эксплуатации анкерной крепи горной выработки до капитального ремонта в годах определяется по формуле [3, п.2.8]:</p>
+  <div class="formula">
+    <i>t</i> =
+    <span class="frac">
+      <span class="n">0,16</span>
+      <span class="d"><i>λ</i></span>
+    </span>
+  </div>
+  <p>где <i>λ</i> — постоянная износа, определяемая по данным обследования на основании изменения несущей способности в момент обследования [3, п.2.7].</p>
+  <div class="lead">Расчёт срока капитального ремонта с начала эксплуатации в годах:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 7%">№</th>
+        <th style="width: 60%">Элементы анкерной крепи (вида нарушения) горной выработки</th>
+        <th style="width: 33%">Срок капитального ремонта с начала эксплуатации в годах</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in capital_rows %}
+      <tr>
+        <td class="c">{{ row.num }}</td>
+        <td>{{ row.name }}</td>
+        <td class="c">{% if row.value == 'Не требует' %}{{ row.value }}{% else %}<i>t</i><sub>{{ row.sub }}</sub> = {{ row.value }}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <table class="redframe">
+    <tr>
+      <td style="width: 70%">Необходимость проведения капитального ремонта горной выработки в ближайшее к моменту обследования время</td>
+      <td class="val" style="width: 18%">{{ final_capital }}</td>
+      <td class="val" style="width: 12%">лет</td>
+    </tr>
+  </table>
+
+  <div class="section">Определение срока эксплуатации горной выработки до аварийного состояния</div>
+  <p>Срок эксплуатации анкерной крепи горной выработки до аварийного состояния определяется по формуле [3, п.2.9]:</p>
+  <div class="formula">
+    <i>t</i><sub>a</sub> =
+    <span class="frac">
+      <span class="n">0,22</span>
+      <span class="d"><i>λ</i></span>
+    </span>
+  </div>
+  <p>где <i>λ</i> — постоянная износа, определяемая по данным обследования на основании изменения несущей способности в момент обследования [3, п.2.7].</p>
+  <div class="lead">Расчёт срока до аварийного состояния с начала эксплуатации в годах:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 7%">№</th>
+        <th style="width: 60%">Элементы анкерной крепи (вида нарушения) горной выработки</th>
+        <th style="width: 33%">Срок до аварийного состояния с начала эксплуатации в годах</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in emergency_rows %}
+      <tr>
+        <td class="c">{{ row.num }}</td>
+        <td>{{ row.name }}</td>
+        <td class="c">{% if row.value == 'Не требует' %}{{ row.value }}{% else %}<i>t</i><sub>{{ row.sub }}</sub> = {{ row.value }}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <table class="redframe">
+    <tr>
+      <td style="width: 70%">Срок эксплуатации горной выработки до аварийного состояния</td>
+      <td class="val" style="width: 18%">{{ final_emergency }}</td>
+      <td class="val" style="width: 12%">лет</td>
+    </tr>
+  </table>
+
+  <div class="section">Исходные данные</div>
+  <p>Рекомендуемый общий перечень опасностей аварии на стадии эксплуатации рудника:</p>
+  <ul>
+    {% for hazard in hazards %}
+    <li>{{ hazard }};</li>
+    {% endfor %}
+  </ul>
+
+  <div class="sub-title">Факторы и блоки факторов, влияющие на опасности аварии, и ИОА</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 6%">Усл.&nbsp;об.</th>
+        <th style="width: 38%">Факторы, влияющие на опасность</th>
+        <th style="width: 25%">Критерий установления ИОА</th>
+        <th style="width: 15%">ИОА, баллы</th>
+        <th style="width: 16%">ИОА<sub>max</sub>, баллы</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in ioa_groups %}
+      <tr class="grp">
+        <td><i>R<sub>{{ g.num }}</sub></i></td>
+        <td colspan="4">{{ g.desc }}</td>
+      </tr>
+      {% for f in g.factors %}
+      <tr>
+        <td class="c">{{ f.idx }}</td>
+        <td>{{ f.name }}</td>
+        <td class="c">{{ f.criterion }}</td>
+        <td class="c"><i>r<sub>{{ g.num }}({{ f.idx }})</sub></i> = {{ "%.2f"|format(f.score) }}</td>
+        <td class="c"><i>r<sub>{{ g.num }}({{ f.idx }})</sub><sup>max</sup></i> = {{ "%.2f"|format(f.max) }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="sum">
+        <td colspan="3">СУММА ИОА:</td>
+        <td class="c">{{ "%.2f"|format(g.sum_score) }}</td>
+        <td class="c">{{ "%.2f"|format(g.sum_max) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section">Результаты оценки опасности (риска) аварий</div>
+  <p>
+    Категория опасности (риска) аварии определяется согласно шестиуровневой лингвистической шкале
+    в зависимости от попадания соответствующего показателя в пределы одного из диапазонов значений.
+  </p>
+  <div class="sub-title">Определены лингвистические уровни риска:</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 5%">№</th>
+        <th style="width: 45%">Наименование показателя</th>
+        <th style="width: 9%">Обозн.</th>
+        <th style="width: 16%">Значение, %</th>
+        <th style="width: 25%">Категория риска</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr class="{{ 'hl' if row.highlight else '' }}">
+        <td class="c">{{ loop.index }}</td>
+        <td>{{ row.name }}</td>
+        <td class="c">
+          <i>{% if row.kind == 'int' %}R<sup>int</sup>{% elif row.kind == 'overall' %}R{% else %}R<sub>{{ row.sub }}</sub>{% endif %}</i>
+        </td>
+        <td class="c">{{ "%.1f"|format(row.value) }}</td>
+        <td>{{ row.category }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="section">Экспертная оценка надёжности анкерной крепи</div>
+  <p>
+    Определение вероятности аварии производится на основании анализа условий, влияющих на надёжность
+    сооружений (горной выработки), используя экспертные оценки, что не исключает применение расчётных
+    данных или данных натурных обследований [3, п.3.5].
+  </p>
+  <p>Условная надёжность сооружения (анкерной крепи) определяется по формуле [3, п.3.6]:</p>
+  <div class="formula">
+    <i>β</i> =
+    <span class="frac">
+      <span class="n">∑ <i>P</i><sub>i</sub></span>
+      <span class="d">5</span>
+    </span>
+  </div>
+  <p>
+    где <i>P</i><sub>i</sub> — удельная оценка надёжности, получаемая умножением удельного веса условия
+    на оценку в баллах. Каждое условие надёжности имеет свой удельный вес с общей суммой весов условий, равной 1 [3, п.3.5].
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 6%">№</th>
+        <th style="width: 52%">Условие надёжности</th>
+        <th style="width: 14%">Удельный вес условия</th>
+        <th style="width: 8%">Балл</th>
+        <th style="width: 20%">Удельная надёжность</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sect in expert_sections %}
+      <tr class="sect">
+        <td colspan="5">{{ sect.title }}</td>
+      </tr>
+      {% for row in sect.rows %}
+      <tr>
+        <td class="c">{{ row.num }}</td>
+        <td>{{ row.name }}</td>
+        <td class="c">{{ row.weight }}</td>
+        <td class="c">{{ row.score }}</td>
+        <td class="c"><i>P</i><sub>{{ row.num }}</sub> = {{ row.weight }}&middot;{{ row.score }} = {{ row.p }}</td>
+      </tr>
+      {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="formula">
+    <i>β</i> =
+    <span class="frac">
+      <span class="n">∑ <i>P</i><sub>i</sub></span>
+      <span class="d">5</span>
+    </span>
+    = <span class="res">{{ beta }}</span>
+  </div>
+
+</body>
+</html>

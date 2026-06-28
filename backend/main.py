@@ -22,6 +22,7 @@ from routes import (
     internal,
     landing,
     license_holder,
+    lining,
     login,
     notification,
     order,
@@ -108,6 +109,7 @@ app.include_router(support.router, prefix="/api")
 app.include_router(license_holder.router, prefix="/api")
 app.include_router(report.router, prefix="/api")
 app.include_router(hazard.router, prefix="/api")
+app.include_router(lining.router, prefix="/api")
 app.include_router(article.router, prefix="/api")
 app.include_router(article_interactions.router, prefix="/api")
 app.include_router(admin_content.router, prefix="/api")
