@@ -1,86 +1,30 @@
-.fab {
+.handle {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   z-index: 1200;
   display: none;
-  align-items: center;
-  height: 56px;
-  padding: 0;
+  writing-mode: vertical-rl;
+  padding: 18px 9px;
   border: none;
-  border-radius: 28px;
-  background: linear-gradient(135deg, #ffb800, #ff8a00);
+  border-radius: 12px 0 0 12px;
+  background: linear-gradient(180deg, #ffb800, #ff8a00);
   color: #ffffff;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(255, 138, 0, 0.42);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-
-  @media (min-width: 1024px) {
-    display: inline-flex;
-  }
+  box-shadow: -4px 4px 18px rgba(255, 138, 0, 0.34);
+  transition: padding-right 0.15s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 38px rgba(255, 138, 0, 0.5);
-  }
-}
-
-.fabIcon {
-  position: relative;
-  flex-shrink: 0;
-  width: 56px;
-  height: 56px;
-  display: grid;
-  place-items: center;
-
-  &::before {
-    content: "";
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #ffffff;
+    padding-right: 13px;
   }
 
-  svg {
-    position: relative;
-    width: 24px;
-    height: 24px;
+  @media (min-width: 1440px) {
+    display: inline-flex;
   }
-}
-
-.fabBadge {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  z-index: 1;
-  min-width: 19px;
-  height: 19px;
-  padding: 0 5px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #ff7a00;
-  font-size: 11px;
-  font-weight: 800;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22);
-}
-
-.fabLabel {
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  font-weight: 600;
-  font-size: 15px;
-  transition: max-width 0.28s ease, opacity 0.2s ease, padding 0.28s ease;
-}
-
-.fab:hover .fabLabel {
-  max-width: 260px;
-  opacity: 1;
-  padding-right: 22px;
 }
 
 .backdrop {

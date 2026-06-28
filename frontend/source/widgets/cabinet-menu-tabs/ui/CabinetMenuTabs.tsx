@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useSidebarMobile } from "@/source/widgets/sidebar";
+import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";
 
 const FULLSCREEN_ROUTES = [
@@ -19,6 +20,7 @@ export function CabinetMenuTabs() {
   const pathname = usePathname();
   const { role } = useSession();
   const { open } = useSidebarMobile();
+  const { isAvailable: licenseDrawerAvailable, open: openLicenseDrawer } = useLicenseHoldersDrawer();
 
   if (role === null) {
     return null;
@@ -42,6 +44,10 @@ export function CabinetMenuTabs() {
     { key: "responses", label: "Отклики", href: "/responses" },
     { key: "chat", label: "Чат", href: "/chat" },
   ];
+
+  if (licenseDrawerAvailable) {
+    items.push({ key: "license-holders", label: "Держатели лицензии", onClick: openLicenseDrawer });
+  }
 
   return <CabinetMenuTabsView items={items} activeKey={activeKey} withSpacer={!fullScreen} />;
 }

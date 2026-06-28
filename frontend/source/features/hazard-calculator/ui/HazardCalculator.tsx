@@ -62,6 +62,9 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
               placeholder="Название отчёта"
               className={s.nameInput}
             />
+            <Button variant="outlineOrange" className={s.actionBtn} onClick={() => setEditMode((value) => !value)}>
+              {editMode ? "Готово" : "Редактировать факторы"}
+            </Button>
             <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
               Сформировать отчёт
             </Button>
@@ -167,27 +170,18 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 </div>
               ))}
             </div>
-            <div className={s.editBar}>
-              {editMode ? (
-                <>
-                  <Button variant="outlineOrange" onClick={() => addFactor(currentGroup.group)}>
-                    Добавить фактор
-                  </Button>
-                  {catalog.customized && (
-                    <Button variant="outlineOrange" onClick={resetCatalog}>
-                      Сбросить факторы
-                    </Button>
-                  )}
-                  <Button variant="primary" onClick={() => setEditMode(false)}>
-                    Готово
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outlineOrange" onClick={() => setEditMode(true)}>
-                  Редактировать факторы
+            {editMode && (
+              <div className={s.editBar}>
+                <Button variant="outlineOrange" onClick={() => addFactor(currentGroup.group)}>
+                  Добавить фактор
                 </Button>
-              )}
-            </div>
+                {catalog.customized && (
+                  <Button variant="outlineOrange" onClick={resetCatalog}>
+                    Сбросить факторы
+                  </Button>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

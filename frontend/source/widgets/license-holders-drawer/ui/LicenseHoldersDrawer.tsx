@@ -20,17 +20,13 @@ export function LicenseHoldersDrawer() {
 
   if (!isAvailable) return null;
 
-  const hideFab = HIDDEN_ROUTES.some((pattern) => pattern.test(pathname));
+  const hideHandle = HIDDEN_ROUTES.some((pattern) => pattern.test(pathname));
 
   return (
     <>
-      {!isOpen && !hideFab && (
-        <button type="button" className={s.fab} onClick={open} aria-label="Держатели лицензии">
-          <span className={s.fabIcon}>
-            <ExpertIcon />
-            {!isLoading && items.length > 0 && <span className={s.fabBadge}>{items.length}</span>}
-          </span>
-          <span className={s.fabLabel}>Держатели лицензии</span>
+      {!isOpen && !hideHandle && (
+        <button type="button" className={s.handle} onClick={open} aria-label="Держатели лицензии">
+          Держатели лицензии
         </button>
       )}
 
