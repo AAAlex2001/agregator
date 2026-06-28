@@ -49,14 +49,35 @@
 
 .actionsRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
   align-items: stretch;
+  gap: 10px;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
 }
 
 .nameInput {
-  flex: 1 1 280px;
-  min-width: 220px;
+  width: 100%;
+
+  @media (min-width: 1024px) {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 220px;
+  }
+}
+
+.btnGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px;
+
+  @media (min-width: 1024px) {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
 }
 
 .actionsRow .actionBtn {
