@@ -8,15 +8,15 @@
   max-width: 1640px;
   margin: 0 auto;
   position: relative;
-  overflow-x: hidden;
-  min-height: calc(100dvh - 137px);
+  overflow: hidden;
+  height: calc(100dvh - 137px);
 
   @media (min-width: 768px) {
     gap: 40px;
   }
 
   @media (min-width: 1024px) {
-    min-height: calc(100dvh - 65px);
+    height: calc(100dvh - 65px);
   }
 }
 

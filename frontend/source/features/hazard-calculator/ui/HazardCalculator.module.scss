@@ -6,8 +6,8 @@
   flex-direction: column;
   gap: 16px;
   padding: 18px;
-  background: #fffaf3;
-  border: 1px solid #ffeacb;
+  background: #fffcf8;
+  border: 1px solid #ffeeda;
   border-radius: 20px;
 }
 
@@ -64,7 +64,7 @@
 
 .result {
   background: #fff;
-  border: 1px solid #ffeacb;
+  border: 1px solid #ffeeda;
   border-radius: 14px;
   padding: 16px 18px;
 }
@@ -125,7 +125,7 @@
   flex-direction: column;
   gap: 12px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #ffeacb;
+  border-bottom: 1px solid #ffeeda;
 
   &:last-child {
     border-bottom: none;
