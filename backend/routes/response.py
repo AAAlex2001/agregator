@@ -446,6 +446,7 @@ async def restore_withdrawn_response(
     use_case = RestoreWithdrawnResponseUseCase(
         repo=repo,
         get_response=GetResponseByIdUseCase(repo),
+        subscription_access=build_subscription_access(db),
     )
     restored = await use_case.execute(response_id=response_id, expert_id=user_id)
     return to_item(restored, UserRole.EXPERT)

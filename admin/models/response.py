@@ -29,6 +29,7 @@ class ResponseStatus(str, PyEnum):
     ACCEPTED = "ACCEPTED"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
+    WITHDRAWN_BY_EXPERT = "WITHDRAWN_BY_EXPERT"
 
     def __str__(self) -> str:
         labels = {
@@ -37,6 +38,7 @@ class ResponseStatus(str, PyEnum):
             "ACCEPTED": "Принят",
             "IN_PROGRESS": "В работе",
             "COMPLETED": "Завершён",
+            "WITHDRAWN_BY_EXPERT": "Отозван экспертом",
         }
         return labels.get(self.value, self.value)
 
