@@ -31,6 +31,11 @@ class UserRegistration(BaseModel):
     company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
     first_name: str | None = Field(None, description="Имя", max_length=100)
     last_name: str | None = Field(None, description="Фамилия", max_length=100)
+    location_lat: float | None = Field(None, description="Широта базирования эксперта", ge=-90, le=90)
+    location_lng: float | None = Field(None, description="Долгота базирования эксперта", ge=-180, le=180)
+    location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
+    location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
+    travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
 
     @field_validator("company_data", mode="before")
     @classmethod
@@ -116,6 +121,11 @@ class UserResponse(BaseModel):
     sro_design_file_url: str | None = None
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None
+    location_lat: float | None = None
+    location_lng: float | None = None
+    location_address: str | None = None
+    location_city: str | None = None
+    travels_to_other_regions: bool = False
 
     class Config:
         from_attributes = True

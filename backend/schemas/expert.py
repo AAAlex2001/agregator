@@ -22,3 +22,20 @@ class ExpertListResponse(BaseModel):
     "Постраничный ответ со списком публичных карточек экспертов."
     items: list[ExpertSummary]
     has_more: bool
+
+
+class ExpertMapItem(BaseModel):
+    "Эксперт с координатами базирования — точка на карте."
+    public_id: str
+    full_name: str
+    avatar_url: str | None = None
+    rating: float | None = None
+    city: str | None = None
+    lat: float
+    lng: float
+    travels_to_other_regions: bool = False
+
+
+class ExpertMapResponse(BaseModel):
+    "Список экспертов с координатами — для карты при создании заказа."
+    items: list[ExpertMapItem]

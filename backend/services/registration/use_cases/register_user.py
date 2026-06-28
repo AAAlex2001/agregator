@@ -36,6 +36,11 @@ class RegisterUserUseCase:
             password=await hash_password(data.password),
             first_name=data.first_name,
             last_name=data.last_name,
+            location_lat=data.location_lat,
+            location_lng=data.location_lng,
+            location_address=data.location_address,
+            location_city=data.location_city,
+            travels_to_other_regions=data.travels_to_other_regions,
         )
         if data.role.value == UserRole.EXPERT.value:
             user.notify_order_types = list(ALL_BADGE_CODES)

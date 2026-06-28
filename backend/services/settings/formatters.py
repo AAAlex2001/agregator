@@ -36,4 +36,9 @@ def to_response(user: User) -> UserSettingsResponse:
         lab_accreditation_number=user.lab_accreditation_number,
         lab_accreditation_file_url=user.lab_accreditation_file_url,
         company_card_url=user.company_card_url,
+        location_lat=user.location_lat,
+        location_lng=user.location_lng,
+        location_address=user.location_address,
+        location_city=user.location_city,
+        travels_to_other_regions=bool(user.travels_to_other_regions),
     )

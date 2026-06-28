@@ -46,6 +46,20 @@ class ExpertOrderHistoryItem:
     accepted_response: OrderResponseModel | None
 
 
+@dataclass(frozen=True)
+class ExpertLocationRow:
+    "Эксперт с координатами базирования — точка на карте."
+
+    public_id: str
+    full_name: str
+    avatar_url: str | None
+    rating: float | None
+    city: str | None
+    lat: float
+    lng: float
+    travels_to_other_regions: bool
+
+
 class ExpertsRepository:
     "Все обращения к БД по сущности эксперт. Никакой бизнес-логики, только запросы."
 
@@ -144,6 +158,38 @@ class ExpertsRepository:
             self.find_accepted_response(last_order, user.id) if last_order is not None else None
         )
         return self.build_summary_row(user, completed_orders_count, last_order, last_response)
+
+    async def list_with_location(self, limit: int = 1000) -> list[ExpertLocationRow]:
+        "Активные эксперты с заданными координатами базирования — для карты."
+        query: Select[tuple[User]] = (
+            select(User)
+            .where(
+                User.role == UserRole.EXPERT,
+                User.is_active.is_(True),
+                User.location_lat.is_not(None),
+                User.location_lng.is_not(None),
+            )
+            .order_by(User.created_at.desc())
+            .limit(limit)
+        )
+        users = (await self.db.execute(query)).scalars().all()
+        return [self.build_location_row(user) for user in users]
+
+    def build_location_row(self, user: User) -> ExpertLocationRow:
+        "Строит точку карты из эксперта."
+        first = user.first_name or ""
+        last = user.last_name or ""
+        full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
+        return ExpertLocationRow(
+            public_id=user.public_id,
+            full_name=full_name,
+            avatar_url=user.avatar_url,
+            rating=float(user.rating) if user.rating is not None else None,
+            city=user.location_city,
+            lat=float(user.location_lat),
+            lng=float(user.location_lng),
+            travels_to_other_regions=bool(user.travels_to_other_regions),
+        )
 
     async def get_expert_id_by_public_id(self, public_id: str) -> int | None:
         "Возвращает запрошенную сущность."

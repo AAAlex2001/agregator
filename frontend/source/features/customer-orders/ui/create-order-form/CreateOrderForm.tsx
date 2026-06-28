@@ -11,6 +11,7 @@ import type { OrderFormValues } from "../../model/schema";
 import { BadgeSection } from "./sections/BadgeSection";
 import { CommentSection } from "./sections/CommentSection";
 import { DetailsSection } from "./sections/DetailsSection";
+import { ExpertsMapSection } from "./sections/ExpertsMapSection";
 import { FilesSection } from "./sections/FilesSection";
 import { FormActions } from "./sections/FormActions";
 import { RequirementsSection } from "./sections/RequirementsSection";
@@ -64,6 +65,8 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
               <DetailsSection form={formState.form} />
 
               <RequirementsSection form={formState.form} />
+
+              <ExpertsMapSection />
 
               <BadgeSection
                 form={formState.form}

@@ -10,6 +10,7 @@ from schemas.settings import (
     ConfirmEmailChangeRequest,
     RequestEmailChangeRequest,
     UpdateEmailPreferencesRequest,
+    UpdateExpertLocationRequest,
     UpdateLicenseHolderRequest,
     UpdateOrderNotificationsRequest,
     UpdatePersonalDataRequest,
@@ -29,6 +30,7 @@ from services.settings import (
     SettingsRepository,
     SettingsValidator,
     UpdateEmailPreferencesUseCase,
+    UpdateExpertLocationUseCase,
     UpdateLicenseTermsUseCase,
     UpdateOrderNotificationsUseCase,
     UpdatePasswordUseCase,
@@ -204,6 +206,18 @@ async def upload_avatar(
         samesite="none",
         path="/",
     )
+    return to_response(user)
+
+
+@router.put("/settings/expert-location", response_model=UserSettingsResponse)
+async def update_expert_location(
+    data: UpdateExpertLocationRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Обновляет место базирования эксперта на карте и готовность к выездам."
+    repo = build_repo(db)
+    user = await UpdateExpertLocationUseCase(repo, build_validator(repo)).execute(user_id, data)
     return to_response(user)
 
 

@@ -11,6 +11,11 @@ export interface RegisterApiPayload {
   last_name?: string;
   inn?: string;
   company_data?: CompanyData | null;
+  location_lat?: number | null;
+  location_lng?: number | null;
+  location_address?: string | null;
+  location_city?: string | null;
+  travels_to_other_regions?: boolean;
 }
 
 export interface RegisterResponse {

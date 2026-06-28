@@ -33,3 +33,18 @@ export interface ExpertList {
   items: ExpertSummary[];
   hasMore: boolean;
 }
+
+export interface ExpertMapItemApi {
+  public_id: string;
+  full_name: string;
+  avatar_url: string | null;
+  rating: number | null;
+  city: string | null;
+  lat: number;
+  lng: number;
+  travels_to_other_regions: boolean;
+}
+
+export interface ExpertMapApi {
+  items: ExpertMapItemApi[];
+}

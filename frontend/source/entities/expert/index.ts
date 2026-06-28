@@ -1,5 +1,6 @@
 export {
   fetchExperts,
+  fetchExpertsMap,
   fetchExpertSummary,
   fetchExpertOrdersHistory,
 } from "./api/experts.api";
@@ -14,6 +15,8 @@ export { ExpertCardSkeleton } from "./ui/ExpertCardSkeleton";
 export type {
   ExpertList,
   ExpertListApi,
+  ExpertMapApi,
+  ExpertMapItemApi,
   ExpertSortBy,
   ExpertSummary,
   ExpertSummaryApi,

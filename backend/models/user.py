@@ -13,6 +13,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     Enum,
+    Float,
     Numeric,
     String,
     UniqueConstraint,
@@ -91,6 +92,11 @@ class User(Base):
     license_rental_percent: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
     license_rental_fixed_amount: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     company_card_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    location_lat: Mapped[float | None] = mapped_column(Float, nullable=True)
+    location_lng: Mapped[float | None] = mapped_column(Float, nullable=True)
+    location_address: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    location_city: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    travels_to_other_regions: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 

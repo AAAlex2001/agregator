@@ -7,6 +7,7 @@ import { Checkbox } from "@/source/shared/ui";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import { TypesPicker, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, RentalPriceField } from "@/source/shared/ui";
+import { YandexAddressPicker } from "@/source/shared/ui/YandexMap";
 import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import { useRef } from "react";
@@ -73,6 +74,13 @@ export function CredentialsStep({
   const isLicenseHolder = role === "LICENSE_HOLDER";
   const showCompany = isCustomer || isLicenseHolder;
 
+  const locationLat = watch("locationLat");
+  const locationLng = watch("locationLng");
+  const locationValue =
+    locationLat != null && locationLng != null
+      ? { lat: locationLat, lng: locationLng, address: watch("locationAddress"), city: watch("locationCity") }
+      : null;
+
   const licenseFileItems =
     licenseFile && licenseBlobUrl
       ? [
@@ -117,6 +125,35 @@ export function CredentialsStep({
               error={errors.firstName?.message}
             />
           </>
+        )}
+
+        {isExpert && (
+          <div className={`${s.locationBlock} ${s.fullRow}`}>
+            <div className={s.locationHead}>
+              <span className={s.locationTitle}>Где вы находитесь</span>
+              <span className={s.locationHint}>
+                Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать
+                эксперта рядом. Это не ваш личный адрес: достаточно города или района, где вам удобно
+                работать. Можно заполнить позже в профиле.
+              </span>
+            </div>
+            <YandexAddressPicker
+              value={locationValue}
+              onChange={(location) => {
+                setValue("locationLat", location.lat);
+                setValue("locationLng", location.lng);
+                setValue("locationAddress", location.address);
+                setValue("locationCity", location.city);
+              }}
+            />
+            <Checkbox
+              id="travelsToOtherRegions"
+              checked={watch("travelsToOtherRegions")}
+              onChange={(checked) => setValue("travelsToOtherRegions", checked)}
+            >
+              Готов выезжать на объекты в другие регионы
+            </Checkbox>
+          </div>
         )}
 
         {showCompany && (

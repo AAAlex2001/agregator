@@ -49,6 +49,11 @@ export const registerFormSchema = z
     rentalFixedAmount: z.string().trim(),
     miningLicenseNumber: z.string().trim().max(100),
     labAccreditationNumber: z.string().trim().max(100),
+    locationLat: z.number().nullable(),
+    locationLng: z.number().nullable(),
+    locationAddress: z.string(),
+    locationCity: z.string().nullable(),
+    travelsToOtherRegions: z.boolean(),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -161,6 +166,11 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   rentalFixedAmount: "",
   miningLicenseNumber: "",
   labAccreditationNumber: "",
+  locationLat: null,
+  locationLng: null,
+  locationAddress: "",
+  locationCity: null,
+  travelsToOtherRegions: false,
 };
 
 export const registerConfirmSchema = z.object({

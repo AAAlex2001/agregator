@@ -3,12 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.expert import ExpertListResponse, ExpertSummary
+from schemas.expert import ExpertListResponse, ExpertMapItem, ExpertMapResponse, ExpertSummary
 from schemas.order import OrderListResponse, OrderResponse
 from services.experts import (
     ExpertsRepository,
     GetExpertSummaryUseCase,
     ListExpertOrdersHistoryUseCase,
+    ListExpertsMapUseCase,
     ListExpertsUseCase,
 )
 from services.experts.repository import (
@@ -67,6 +68,30 @@ async def list_experts(
     return ExpertListResponse(
         items=[build_expert_summary(item) for item in items],
         has_more=has_more,
+    )
+
+
+@router.get("/experts/map", response_model=ExpertMapResponse)
+async def list_experts_map(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> ExpertMapResponse:
+    "Активные эксперты с координатами базирования — точки на карте при создании заказа."
+    rows = await ListExpertsMapUseCase(build_repo(db)).execute()
+    return ExpertMapResponse(
+        items=[
+            ExpertMapItem(
+                public_id=row.public_id,
+                full_name=row.full_name,
+                avatar_url=row.avatar_url,
+                rating=row.rating,
+                city=row.city,
+                lat=row.lat,
+                lng=row.lng,
+                travels_to_other_regions=row.travels_to_other_regions,
+            )
+            for row in rows
+        ]
     )
 
 

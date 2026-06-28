@@ -19,6 +19,11 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayloa
     company_data: role === "CUSTOMER"
       ? (values.companyData as CompanyData | null)
       : null,
+    location_lat: role === "EXPERT" ? values.locationLat : undefined,
+    location_lng: role === "EXPERT" ? values.locationLng : undefined,
+    location_address: role === "EXPERT" ? (values.locationAddress || null) : undefined,
+    location_city: role === "EXPERT" ? values.locationCity : undefined,
+    travels_to_other_regions: role === "EXPERT" ? values.travelsToOtherRegions : undefined,
   };
 }
 

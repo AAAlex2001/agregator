@@ -76,4 +76,9 @@ export interface UserProfile {
   lab_accreditation_number: string | null;
   lab_accreditation_file_url: string | null;
   company_card_url: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
+  location_address: string | null;
+  location_city: string | null;
+  travels_to_other_regions: boolean;
 }

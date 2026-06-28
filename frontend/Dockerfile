@@ -18,6 +18,9 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source code
 COPY . .
 
+ARG NEXT_PUBLIC_YANDEX_MAPS_API_KEY=""
+ENV NEXT_PUBLIC_YANDEX_MAPS_API_KEY=$NEXT_PUBLIC_YANDEX_MAPS_API_KEY
+
 # Build the application
 RUN npm run build
 

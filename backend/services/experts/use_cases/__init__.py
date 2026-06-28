@@ -3,9 +3,11 @@ from services.experts.use_cases.list_expert_orders_history import (
     ListExpertOrdersHistoryUseCase,
 )
 from services.experts.use_cases.list_experts import ListExpertsUseCase
+from services.experts.use_cases.list_experts_map import ListExpertsMapUseCase
 
 __all__ = [
     "GetExpertSummaryUseCase",
     "ListExpertOrdersHistoryUseCase",
+    "ListExpertsMapUseCase",
     "ListExpertsUseCase",
 ]

@@ -85,6 +85,15 @@ class UpdateOrderNotificationsRequest(BaseModel):
         return self
 
 
+class UpdateExpertLocationRequest(BaseModel):
+    "Место базирования эксперта на карте и готовность к выездам в другие регионы."
+    location_lat: float | None = Field(None, ge=-90, le=90)
+    location_lng: float | None = Field(None, ge=-180, le=180)
+    location_address: str | None = Field(None, max_length=500)
+    location_city: str | None = Field(None, max_length=200)
+    travels_to_other_regions: bool = False
+
+
 class ChangePasswordRequest(BaseModel):
     """Смена пароля пользователя"""
     new_password: str = Field(..., description="Новый пароль", min_length=8)
@@ -146,6 +155,11 @@ class UserSettingsResponse(BaseModel):
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None
     company_card_url: str | None = None
+    location_lat: float | None = None
+    location_lng: float | None = None
+    location_address: str | None = None
+    location_city: str | None = None
+    travels_to_other_regions: bool = False
 
     class Config:
         from_attributes = True

@@ -34,6 +34,25 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<UserPro
   return res.json();
 }
 
+export async function updateExpertLocation(data: {
+  location_lat: number | null;
+  location_lng: number | null;
+  location_address: string | null;
+  location_city: string | null;
+  travels_to_other_regions: boolean;
+}): Promise<UserProfile> {
+  const res = await fetchWithSession(`${API_URL}/settings/expert-location`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail || "Не удалось сохранить локацию");
+  }
+  return res.json();
+}
+
 export async function changePassword(
   newPassword: string,
   newPasswordConfirm: string,

@@ -1,7 +1,7 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
 import type { OrdersApiList } from "@/source/entities/order";
-import type { ExpertListApi, ExpertSortBy, ExpertSummaryApi } from "../model/types";
+import type { ExpertListApi, ExpertMapApi, ExpertSortBy, ExpertSummaryApi } from "../model/types";
 import type { SortDir } from "@/source/shared/ui/SortPills";
 
 function buildErrorMessage(response: Response, fallback: string): Promise<string> {
@@ -29,6 +29,14 @@ export async function fetchExperts(params: {
   const response = await fetchWithSession(`${API_URL}/experts?${searchParams.toString()}`);
   if (!response.ok) {
     throw new Error(await buildErrorMessage(response, "Не удалось загрузить экспертов"));
+  }
+  return response.json();
+}
+
+export async function fetchExpertsMap(): Promise<ExpertMapApi> {
+  const response = await fetchWithSession(`${API_URL}/experts/map`);
+  if (!response.ok) {
+    throw new Error(await buildErrorMessage(response, "Не удалось загрузить экспертов на карте"));
   }
   return response.json();
 }
