@@ -52,7 +52,7 @@ export function HazardCalculator() {
               placeholder="Название отчёта"
               className={s.nameInput}
             />
-            <Button variant="chat" className={s.actionBtn} onClick={calculate} isLoading={calculating}>
+            <Button variant="outlineOrange" className={s.actionBtn} onClick={calculate} isLoading={calculating}>
               Рассчитать
             </Button>
             <Button variant="primary" className={s.actionBtn} onClick={generate} isLoading={generating}>
