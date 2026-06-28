@@ -137,7 +137,7 @@ export function Sidebar() {
   const { role } = useSession();
   const mobile = useSidebarMobile();
   const unreadCount = useUnreadNotificationCount();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   useEffect(() => {

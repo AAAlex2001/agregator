@@ -39,6 +39,7 @@ export function HazardCalculator() {
     generate,
   } = useHazardCalculator();
   const [activeGroup, setActiveGroup] = useState("R0");
+  const [editMode, setEditMode] = useState(false);
 
   const currentGroup = catalog?.groups.find((group) => group.group === activeGroup) ?? catalog?.groups[0];
 
@@ -172,11 +173,11 @@ export function HazardCalculator() {
               </div>
             )}
 
-            <div className={s.groupBar}>
+            <div className={s.groupHeader}>
               <h3 className={s.groupTitle}>
                 {currentGroup.group} · {currentGroup.title}
               </h3>
-              <div className={s.groupBarActions}>
+              <div className={s.groupInclude}>
                 <Checkbox
                   id={`include-${currentGroup.group}`}
                   checked={!excludedGroups.includes(currentGroup.group)}
@@ -184,11 +185,6 @@ export function HazardCalculator() {
                 >
                   Включать в отчёт
                 </Checkbox>
-                {catalog.customized && (
-                  <Button variant="outlineOrange" size="sm" onClick={resetCatalog}>
-                    Сбросить факторы
-                  </Button>
-                )}
               </div>
             </div>
             <div className={s.factors}>
@@ -196,9 +192,11 @@ export function HazardCalculator() {
                 <div key={factor.code} className={s.factor}>
                   <div className={s.factorInfo}>
                     <span className={s.name}>{factor.name}</span>
-                    <button className={s.editBtn} onClick={() => setEditing(factor)} aria-label="Редактировать фактор">
-                      ✎
-                    </button>
+                    {editMode && (
+                      <Button variant="outlineOrange" size="sm" className={s.editBtn} onClick={() => setEditing(factor)}>
+                        Изменить
+                      </Button>
+                    )}
                   </div>
                   <div className={s.options}>
                     {factor.options.map((option, index) => (
@@ -214,9 +212,27 @@ export function HazardCalculator() {
                   </div>
                 </div>
               ))}
-              <button className={s.addFactor} onClick={() => addFactor(currentGroup.group)}>
-                + Добавить фактор
-              </button>
+            </div>
+            <div className={s.editBar}>
+              {editMode ? (
+                <>
+                  <Button variant="outlineOrange" onClick={() => addFactor(currentGroup.group)}>
+                    Добавить фактор
+                  </Button>
+                  {catalog.customized && (
+                    <Button variant="outlineOrange" onClick={resetCatalog}>
+                      Сбросить факторы
+                    </Button>
+                  )}
+                  <Button variant="primary" onClick={() => setEditMode(false)}>
+                    Готово
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outlineOrange" onClick={() => setEditMode(true)}>
+                  Редактировать факторы
+                </Button>
+              )}
             </div>
           </>
         )}

@@ -53,17 +53,7 @@
 }
 
 .value {
-  flex: 0 0 90px;
-  width: 90px;
-  padding: 11px 12px;
-  border-radius: 12px;
-  border: 1px solid #e6e8ee;
-  font-size: 14px;
-
-  &:focus {
-    outline: none;
-    border-color: #ff8a00;
-  }
+  flex: 0 0 120px;
 }
 
 .optLabel {
@@ -72,26 +62,10 @@
 
 .remove {
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid #f1d4d4;
-  background: #fff;
-  color: #b42318;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 .addOption {
   align-self: flex-start;
-  border: none;
-  background: none;
-  color: #ff8a00;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
 }
 
 .actions {

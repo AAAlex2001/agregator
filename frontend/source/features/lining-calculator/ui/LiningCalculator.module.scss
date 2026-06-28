@@ -63,19 +63,12 @@
 }
 
 .numInput {
-  width: 130px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid #e6e8ee;
-  font-size: 14px;
-
-  &:focus {
-    outline: none;
-    border-color: #ff8a00;
-  }
+  width: 140px;
 }
 
 .actionBtn {
+  box-sizing: border-box;
+  height: 48px;
   max-height: none;
 }
 

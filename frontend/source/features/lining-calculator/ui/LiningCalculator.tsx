@@ -54,6 +54,7 @@ export function LiningCalculator() {
   } = useLiningCalculator();
   const [section, setSection] = useState("elements");
   const [activeGroup, setActiveGroup] = useState("R0");
+  const [lifeYears, setLifeYears] = useState(String(serviceLifeYears));
 
   const currentGroup = catalog?.groups.find((group) => group.group === activeGroup) ?? catalog?.groups[0];
   const scoreOptions = [1, 2, 3, 4, 5];
@@ -68,13 +69,16 @@ export function LiningCalculator() {
           </label>
           <label className={s.field}>
             <span className={s.label}>Срок эксплуатации t<sub>ф</sub>, лет:</span>
-            <input
+            <TextInput
               className={s.numInput}
-              type="number"
-              min="0.1"
-              step="0.1"
-              value={serviceLifeYears}
-              onChange={(e) => setServiceLife(Number(e.target.value) || 0)}
+              value={lifeYears}
+              inputMode="decimal"
+              placeholder="5"
+              onChange={(e) => {
+                const next = e.target.value.replace(/[^\d.,]/g, "");
+                setLifeYears(next);
+                setServiceLife(Number(next.replace(",", ".")) || 0);
+              }}
             />
           </label>
           <Button variant="outlineOrange" className={s.actionBtn} onClick={calculate} isLoading={calculating}>

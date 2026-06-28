@@ -3,8 +3,13 @@
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { TextInput } from "@/source/shared/ui/Inputs";
-import type { HazardFactor, HazardOption } from "@/source/entities/hazard";
+import type { HazardFactor } from "@/source/entities/hazard";
 import s from "./FactorEditorModal.module.scss";
+
+interface EditOption {
+  value: string;
+  label: string;
+}
 
 interface Props {
   factor: HazardFactor;
@@ -15,12 +20,28 @@ interface Props {
 
 export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) {
   const [name, setName] = useState(factor.name);
-  const [options, setOptions] = useState<HazardOption[]>(factor.options);
+  const [options, setOptions] = useState<EditOption[]>(
+    factor.options.map((option) => ({
+      value: option.value === null ? "" : String(option.value).replace(".", ","),
+      label: option.label,
+    })),
+  );
 
-  const setOption = (index: number, patch: Partial<HazardOption>) =>
+  const setOption = (index: number, patch: Partial<EditOption>) =>
     setOptions((prev) => prev.map((option, i) => (i === index ? { ...option, ...patch } : option)));
-  const addOption = () => setOptions((prev) => [...prev, { value: 0, label: "Вариант (0,00)" }]);
+  const addOption = () => setOptions((prev) => [...prev, { value: "0", label: "Вариант (0,00)" }]);
   const removeOption = (index: number) => setOptions((prev) => prev.filter((_, i) => i !== index));
+
+  const save = () =>
+    onSave({
+      ...factor,
+      name,
+      options: options.map((option) => {
+        const raw = option.value.replace(",", ".").trim();
+        const numeric = raw === "" ? null : Number(raw);
+        return { value: raw === "" || Number.isNaN(numeric) ? null : numeric, label: option.label };
+      }),
+    });
 
   return (
     <div className={s.overlay} onClick={onClose}>
@@ -36,29 +57,28 @@ export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) 
         <div className={s.options}>
           {options.map((option, index) => (
             <div key={index} className={s.optionRow}>
-              <input
+              <TextInput
                 className={s.value}
-                type="number"
-                step="0.01"
-                value={option.value ?? ""}
+                value={option.value}
+                inputMode="decimal"
                 placeholder="—"
-                onChange={(e) => setOption(index, { value: e.target.value === "" ? null : Number(e.target.value) })}
+                onChange={(e) => setOption(index, { value: e.target.value.replace(/[^\d.,]/g, "") })}
               />
               <TextInput
-                value={option.label}
-                onChange={(e) => setOption(index, { label: e.target.value })}
-                placeholder="Подпись варианта"
                 className={s.optLabel}
+                value={option.label}
+                placeholder="Подпись варианта"
+                onChange={(e) => setOption(index, { label: e.target.value })}
               />
-              <button className={s.remove} onClick={() => removeOption(index)} aria-label="Удалить вариант">
+              <Button variant="danger" size="sm" className={s.remove} onClick={() => removeOption(index)}>
                 ×
-              </button>
+              </Button>
             </div>
           ))}
         </div>
-        <button className={s.addOption} onClick={addOption}>
+        <Button variant="outlineOrange" size="sm" className={s.addOption} onClick={addOption}>
           + Добавить вариант
-        </button>
+        </Button>
 
         <div className={s.actions}>
           <Button variant="danger" onClick={() => onDelete(factor)}>
@@ -68,7 +88,7 @@ export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) 
           <Button variant="outlineOrange" onClick={onClose}>
             Отмена
           </Button>
-          <Button variant="primary" onClick={() => onSave({ ...factor, name, options })}>
+          <Button variant="primary" onClick={save}>
             Сохранить
           </Button>
         </div>

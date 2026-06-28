@@ -6,10 +6,10 @@ import { getLiningReportPdfUrl, type LiningReportItem } from "@/source/entities/
 import { LiningPdfViewer } from "./LiningPdfViewer";
 import s from "./LiningReportCard.module.scss";
 
-function riskClass(category: string): string {
-  if (category.startsWith("Низк") || category.startsWith("Умерен")) return s.green;
-  if (category.startsWith("Средн") || category.startsWith("Значит")) return s.yellow;
-  return s.red;
+function riskColor(category: string): string {
+  if (category.startsWith("Низк") || category.startsWith("Умерен")) return "#2fb344";
+  if (category.startsWith("Средн") || category.startsWith("Значит")) return "#f5a524";
+  return "#e5484d";
 }
 
 function shortCategory(category: string): string {
@@ -26,28 +26,40 @@ function formatDate(iso: string): string {
   });
 }
 
-function Ring({ percent }: { percent: number }) {
-  const radius = 26;
+function Gauge({ display, unit, label, fraction, color }: {
+  display: string;
+  unit: string;
+  label: string;
+  fraction: number;
+  color: string;
+}) {
+  const radius = 30;
   const circumference = 2 * Math.PI * radius;
-  const fraction = Math.max(0, Math.min(1, percent / 100));
+  const filled = Math.max(0, Math.min(1, fraction));
   return (
-    <div className={s.ring}>
-      <svg width="64" height="64" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r={radius} fill="none" stroke="#ffe3bd" strokeWidth="6" />
-        <circle
-          cx="32"
-          cy="32"
-          r={radius}
-          fill="none"
-          stroke="#ff8a00"
-          strokeWidth="6"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - fraction)}
-          transform="rotate(-90 32 32)"
-        />
-      </svg>
-      <span className={s.ringNum}>{percent.toFixed(1)}%</span>
+    <div className={s.gauge}>
+      <div className={s.ring}>
+        <svg width="78" height="78" viewBox="0 0 78 78">
+          <circle cx="39" cy="39" r={radius} fill="none" stroke="#eef0f4" strokeWidth="6" />
+          <circle
+            cx="39"
+            cy="39"
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference * (1 - filled)}
+            transform="rotate(-90 39 39)"
+          />
+        </svg>
+        <span className={s.ringValue}>
+          {display}
+          {unit && <span className={s.ringUnit}>{unit}</span>}
+        </span>
+      </div>
+      <span className={s.gaugeLabel}>{label}</span>
     </div>
   );
 }
@@ -73,23 +85,30 @@ export function LiningReportCard({ item }: { item: LiningReportItem }) {
         <span className={s.date}>{formatDate(item.created_at)}</span>
       </div>
 
-      <div className={s.main}>
-        <div className={s.info}>
-          <div className={s.name}>{item.name}</div>
-          <div className={s.caption}>Показатель риска на выработке · {shortCategory(item.overall_category)}</div>
-        </div>
-        <Ring percent={item.overall_r} />
-      </div>
+      <div className={s.name}>{item.name}</div>
 
-      <div className={s.figures}>
-        <div className={s.figure}>
-          <span className={s.figLabel}>До капремонта</span>
-          <span className={s.figValue}>{item.final_capital.toFixed(1)} лет</span>
-        </div>
-        <div className={s.figure}>
-          <span className={s.figLabel}>До аварии</span>
-          <span className={s.figValue}>{item.final_emergency.toFixed(1)} лет</span>
-        </div>
+      <div className={s.gauges}>
+        <Gauge
+          display={item.overall_r.toFixed(1)}
+          unit="%"
+          label={`Риск · ${shortCategory(item.overall_category)}`}
+          fraction={item.overall_r / 100}
+          color={riskColor(item.overall_category)}
+        />
+        <Gauge
+          display={item.final_capital.toFixed(1)}
+          unit="лет"
+          label="До капремонта"
+          fraction={Math.min(item.final_capital / 20, 1)}
+          color="#ff8a00"
+        />
+        <Gauge
+          display={item.final_emergency.toFixed(1)}
+          unit="лет"
+          label="До аварии"
+          fraction={Math.min(item.final_emergency / 20, 1)}
+          color="#e5484d"
+        />
       </div>
 
       {item.blocks.length > 0 && (
@@ -97,7 +116,7 @@ export function LiningReportCard({ item }: { item: LiningReportItem }) {
           {item.blocks.map((block) => (
             <div key={block.group} className={s.row}>
               <span className={s.rowName}>{block.title}</span>
-              <span className={`${s.badge} ${riskClass(block.category)}`}>
+              <span className={`${s.badge} ${riskClassName(block.category)}`}>
                 {block.value.toFixed(1)}% · {shortCategory(block.category)}
               </span>
             </div>
@@ -117,4 +136,10 @@ export function LiningReportCard({ item }: { item: LiningReportItem }) {
       {viewing && <LiningPdfViewer url={pdfUrl} title={item.name} onClose={() => setViewing(false)} />}
     </div>
   );
+}
+
+function riskClassName(category: string): string {
+  if (category.startsWith("Низк") || category.startsWith("Умерен")) return s.green;
+  if (category.startsWith("Средн") || category.startsWith("Значит")) return s.yellow;
+  return s.red;
 }
