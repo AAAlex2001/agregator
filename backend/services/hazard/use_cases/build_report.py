@@ -31,13 +31,16 @@ class BuildHazardReportUseCase:
             autoescape=select_autoescape(["html"]),
         )
 
-    async def execute(self, request: HazardReportRequest) -> bytes:
-        "Запускает основной сценарий use case."
-        factors = await self.repo.list_factors(request.profile)
+    async def execute(self, request: HazardReportRequest, expert_id: int) -> bytes:
+        "Запускает основной сценарий use case. Исключённые группы не идут в расчёт и в отчёт."
+        factors = await self.repo.resolve_factors(expert_id, request.profile)
+        excluded = set(request.excluded_groups or [])
 
         inputs: list[FactorInput] = []
         groups: dict[str, list[dict]] = {}
         for factor in factors:
+            if factor.group_code in excluded:
+                continue
             selected = request.selections.get(factor.code, factor.default_value)
             inputs.append(FactorInput(group=factor.group_code, score=selected, max_score=factor.max_score))
 

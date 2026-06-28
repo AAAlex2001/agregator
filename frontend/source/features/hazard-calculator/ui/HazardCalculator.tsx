@@ -6,8 +6,10 @@ import Loader from "@/source/shared/ui/Loader";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Checkbox } from "@/source/shared/ui";
 import { TextInput } from "@/source/shared/ui/Inputs";
+import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import type { HazardProfile } from "@/source/entities/hazard";
 import { useHazardCalculator } from "../model/useHazardCalculator";
+import { FactorEditorModal } from "./FactorEditorModal";
 import s from "./HazardCalculator.module.scss";
 
 export function HazardCalculator() {
@@ -17,6 +19,14 @@ export function HazardCalculator() {
     catalog,
     selections,
     select,
+    excludedGroups,
+    toggleGroupExcluded,
+    editing,
+    setEditing,
+    saveFactor,
+    deleteFactor,
+    addFactor,
+    resetCatalog,
     result,
     reportName,
     setReportName,
@@ -64,7 +74,10 @@ export function HazardCalculator() {
         </div>
 
         <details className={s.headerBlock}>
-          <summary className={s.headerSummary}>Шапка отчёта (для PDF)</summary>
+          <summary className={s.headerSummary}>
+            <span>Шапка отчёта (для PDF)</span>
+            <ChatChevronDownIcon className={s.headerChevron} />
+          </summary>
           <div className={s.headerFields}>
             <label className={s.headerField}>
               <span className={s.headerLabel}>Автор</span>
@@ -159,13 +172,34 @@ export function HazardCalculator() {
               </div>
             )}
 
-            <h3 className={s.groupTitle}>
-              {currentGroup.group} · {currentGroup.title}
-            </h3>
+            <div className={s.groupBar}>
+              <h3 className={s.groupTitle}>
+                {currentGroup.group} · {currentGroup.title}
+              </h3>
+              <div className={s.groupBarActions}>
+                <Checkbox
+                  id={`include-${currentGroup.group}`}
+                  checked={!excludedGroups.includes(currentGroup.group)}
+                  onChange={() => toggleGroupExcluded(currentGroup.group)}
+                >
+                  Включать в отчёт
+                </Checkbox>
+                {catalog.customized && (
+                  <Button variant="outlineOrange" size="sm" onClick={resetCatalog}>
+                    Сбросить факторы
+                  </Button>
+                )}
+              </div>
+            </div>
             <div className={s.factors}>
               {currentGroup.factors.map((factor) => (
                 <div key={factor.code} className={s.factor}>
-                  <span className={s.name}>{factor.name}</span>
+                  <div className={s.factorInfo}>
+                    <span className={s.name}>{factor.name}</span>
+                    <button className={s.editBtn} onClick={() => setEditing(factor)} aria-label="Редактировать фактор">
+                      ✎
+                    </button>
+                  </div>
                   <div className={s.options}>
                     {factor.options.map((option, index) => (
                       <Checkbox
@@ -180,10 +214,22 @@ export function HazardCalculator() {
                   </div>
                 </div>
               ))}
+              <button className={s.addFactor} onClick={() => addFactor(currentGroup.group)}>
+                + Добавить фактор
+              </button>
             </div>
           </>
         )}
       </div>
+
+      {editing && (
+        <FactorEditorModal
+          factor={editing}
+          onSave={saveFactor}
+          onDelete={deleteFactor}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }

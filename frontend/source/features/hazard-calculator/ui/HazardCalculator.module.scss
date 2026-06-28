@@ -69,6 +69,9 @@
 }
 
 .headerSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 11px 14px;
   font-size: 14px;
   font-weight: 600;
@@ -78,6 +81,17 @@
   &::-webkit-details-marker {
     display: none;
   }
+}
+
+.headerChevron {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.15s ease;
+}
+
+.headerBlock[open] .headerChevron {
+  transform: rotate(180deg);
 }
 
 .headerFields {
@@ -159,6 +173,20 @@
   overflow-x: auto;
 }
 
+.groupBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.groupBarActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .groupTitle {
   margin: 0;
   font-size: 16px;
@@ -191,21 +219,52 @@
   }
 }
 
-.name {
-  font-size: 14px;
-  line-height: 20px;
-  color: #1a1a1a;
-  font-weight: 600;
+.factorInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 
   @media (min-width: 768px) {
     flex: 1 1 auto;
   }
 }
 
+.name {
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a1a1a;
+  font-weight: 600;
+  flex: 1 1 auto;
+}
+
+.editBtn {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #ffeacb;
+  background: #fff;
+  color: #ff8a00;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.addFactor {
+  align-self: flex-start;
+  border: 1px dashed #ffcf8f;
+  border-radius: 10px;
+  background: #fff;
+  color: #ff8a00;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
 .options {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 8px;
 
   @media (min-width: 768px) {

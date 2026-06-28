@@ -1,4 +1,4 @@
-"Use case: справочник факторов профиля, сгруппированный по видам аварий."
+"Use case: справочник факторов профиля (кастомный или дефолтный), сгруппированный по видам аварий."
 from schemas.hazard import (
     HazardCatalogResponse,
     HazardFactorDto,
@@ -10,14 +10,15 @@ from services.hazard.repository import HazardRepository
 
 
 class GetHazardCatalogUseCase:
-    "Отдаёт справочник факторов профиля для фронтенда."
+    "Отдаёт справочник факторов эксперта для фронтенда (кастомный набор либо дефолт)."
 
     def __init__(self, repo: HazardRepository) -> None:
         self.repo = repo
 
-    async def execute(self, profile: str) -> HazardCatalogResponse:
+    async def execute(self, profile: str, expert_id: int) -> HazardCatalogResponse:
         "Запускает основной сценарий use case."
-        factors = await self.repo.list_factors(profile)
+        factors = await self.repo.resolve_factors(expert_id, profile)
+        customized = await self.repo.is_customized(expert_id, profile)
         groups: dict[str, HazardGroupDto] = {}
         for factor in factors:
             group = groups.get(factor.group_code)
@@ -32,5 +33,5 @@ class GetHazardCatalogUseCase:
                 default_value=factor.default_value,
                 options=[HazardOptionDto(value=o.get("value"), label=o.get("label") or "") for o in factor.options],
             ))
-        ordered = sorted(groups.values(), key=lambda g: int(g.group[1:]))
-        return HazardCatalogResponse(profile=profile, groups=ordered)
+        ordered = sorted(groups.values(), key=lambda g: int(g.group[1:]) if g.group[1:].isdigit() else 99)
+        return HazardCatalogResponse(profile=profile, customized=customized, groups=ordered)

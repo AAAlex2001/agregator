@@ -6,14 +6,15 @@ from services.hazard.repository import HazardRepository
 
 
 class CalculateHazardUseCase:
-    "Сопоставляет выбор пользователя со справочником из БД и считает показатели риска."
+    "Сопоставляет выбор эксперта с его набором факторов и считает показатели риска."
 
     def __init__(self, repo: HazardRepository) -> None:
         self.repo = repo
 
-    async def execute(self, request: HazardCalculateRequest) -> HazardCalculateResponse:
-        "Запускает основной сценарий use case."
-        factors = await self.repo.list_factors(request.profile)
+    async def execute(self, request: HazardCalculateRequest, expert_id: int) -> HazardCalculateResponse:
+        "Запускает основной сценарий use case. Исключённые группы не участвуют в расчёте."
+        factors = await self.repo.resolve_factors(expert_id, request.profile)
+        excluded = set(request.excluded_groups or [])
         inputs = [
             FactorInput(
                 group=factor.group_code,
@@ -21,6 +22,7 @@ class CalculateHazardUseCase:
                 max_score=factor.max_score,
             )
             for factor in factors
+            if factor.group_code not in excluded
         ]
         result = calculate(inputs)
 

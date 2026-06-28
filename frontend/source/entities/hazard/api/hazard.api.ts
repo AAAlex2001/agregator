@@ -1,6 +1,12 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
-import type { HazardCatalog, HazardReportItem, HazardResult, HazardSelections } from "../model/types";
+import type {
+  HazardCatalog,
+  HazardFactor,
+  HazardReportItem,
+  HazardResult,
+  HazardSelections,
+} from "../model/types";
 
 async function detail(res: Response, fallback: string): Promise<string> {
   return (await res.json().catch(() => ({})))?.detail || fallback;
@@ -12,11 +18,31 @@ export async function fetchHazardCatalog(profile: string): Promise<HazardCatalog
   return res.json();
 }
 
-export async function calculateHazard(profile: string, selections: HazardSelections): Promise<HazardResult> {
+export async function saveHazardCatalog(profile: string, factors: HazardFactor[]): Promise<HazardCatalog> {
+  const res = await fetchWithSession(`${API_URL}/hazard/catalog`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ profile, factors }),
+  });
+  if (!res.ok) throw new Error(await detail(res, "Не удалось сохранить факторы"));
+  return res.json();
+}
+
+export async function resetHazardCatalog(profile: string): Promise<HazardCatalog> {
+  const res = await fetchWithSession(`${API_URL}/hazard/catalog?profile=${profile}`, { method: "DELETE" });
+  if (!res.ok) throw new Error(await detail(res, "Не удалось сбросить факторы"));
+  return res.json();
+}
+
+export async function calculateHazard(
+  profile: string,
+  selections: HazardSelections,
+  excludedGroups: string[],
+): Promise<HazardResult> {
   const res = await fetchWithSession(`${API_URL}/hazard/calculate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, selections }),
+    body: JSON.stringify({ profile, selections, excluded_groups: excludedGroups }),
   });
   if (!res.ok) throw new Error(await detail(res, "Не удалось выполнить расчёт"));
   return res.json();
@@ -27,11 +53,12 @@ export async function createHazardReport(
   selections: HazardSelections,
   reportName: string,
   header: Record<string, string>,
+  excludedGroups: string[],
 ): Promise<Blob> {
   const res = await fetchWithSession(`${API_URL}/hazard/report`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, selections, report_name: reportName, ...header }),
+    body: JSON.stringify({ profile, selections, report_name: reportName, excluded_groups: excludedGroups, ...header }),
   });
   if (!res.ok) throw new Error(await detail(res, "Не удалось сформировать отчёт"));
   return res.blob();

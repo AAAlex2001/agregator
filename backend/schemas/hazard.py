@@ -30,13 +30,21 @@ class HazardGroupDto(BaseModel):
 class HazardCatalogResponse(BaseModel):
     "Полный справочник факторов для профиля, сгруппированный по видам аварий."
     profile: str
+    customized: bool = False
     groups: list[HazardGroupDto] = Field(default_factory=list)
 
 
+class HazardSaveCatalogRequest(BaseModel):
+    "Сохранение кастомного набора факторов эксперта для профиля."
+    profile: str = Field("rudnik")
+    factors: list[HazardFactorDto] = Field(default_factory=list)
+
+
 class HazardCalculateRequest(BaseModel):
-    "Запрос расчёта: профиль и выбранные значения по коду фактора (None — без оценки)."
+    "Запрос расчёта: профиль, выбранные значения по коду фактора (None — без оценки), исключённые группы."
     profile: str = Field("rudnik")
     selections: dict[str, float | None] = Field(default_factory=dict)
+    excluded_groups: list[str] = Field(default_factory=list)
 
 
 class HazardReportRequest(HazardCalculateRequest):
