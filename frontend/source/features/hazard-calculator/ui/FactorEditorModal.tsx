@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
+import Tabs from "@/source/shared/ui/Tabs";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import type { HazardFactor } from "@/source/entities/hazard";
 import s from "./FactorEditorModal.module.scss";
@@ -13,12 +14,17 @@ interface EditOption {
 
 interface Props {
   factor: HazardFactor;
+  groups: string[];
+  isNew: boolean;
+  nextCode: (group: string) => string;
   onSave: (factor: HazardFactor) => void;
   onDelete: (factor: HazardFactor) => void;
   onClose: () => void;
 }
 
-export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) {
+export function FactorEditorModal({ factor, groups, isNew, nextCode, onSave, onDelete, onClose }: Props) {
+  const [group, setGroup] = useState(factor.group);
+  const [code, setCode] = useState(factor.code);
   const [name, setName] = useState(factor.name);
   const [options, setOptions] = useState<EditOption[]>(
     factor.options.map((option) => ({
@@ -32,9 +38,16 @@ export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) 
   const addOption = () => setOptions((prev) => [...prev, { value: "0", label: "Вариант (0,00)" }]);
   const removeOption = (index: number) => setOptions((prev) => prev.filter((_, i) => i !== index));
 
+  const changeGroup = (next: string) => {
+    setGroup(next);
+    setCode(nextCode(next));
+  };
+
   const save = () =>
     onSave({
       ...factor,
+      group,
+      code,
       name,
       options: options.map((option) => {
         const raw = option.value.replace(",", ".").trim();
@@ -46,7 +59,19 @@ export function FactorEditorModal({ factor, onSave, onDelete, onClose }: Props) 
   return (
     <div className={s.overlay} onClick={onClose}>
       <div className={s.modal} onClick={(event) => event.stopPropagation()}>
-        <h3 className={s.title}>Фактор {factor.code}</h3>
+        <h3 className={s.title}>Фактор {code}</h3>
+
+        {isNew && groups.length > 0 && (
+          <div className={s.field}>
+            <span className={s.label}>Группа факторов</span>
+            <Tabs
+              className={s.groupTabs}
+              activeTab={group}
+              onTabChange={changeGroup}
+              tabs={groups.map((g) => ({ id: g, label: g }))}
+            />
+          </div>
+        )}
 
         <label className={s.field}>
           <span className={s.label}>Название фактора</span>

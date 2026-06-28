@@ -49,6 +49,7 @@ export function useHazardCalculator(onSaved?: () => void) {
   const [reportName, setReportName] = useState("Оценка опасности аварий");
   const [header, setHeader] = useState<Record<string, string>>(HEADER_DEFAULTS);
   const [editing, setEditing] = useState<HazardFactor | null>(null);
+  const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -121,12 +122,22 @@ export function useHazardCalculator(onSaved?: () => void) {
     await persist(groups);
   };
 
+  const nextCodeForGroup = (group: string) => {
+    const groupData = catalog?.groups.find((g) => g.group === group);
+    const maxIdx = Math.max(0, ...(groupData?.factors ?? []).map((f) => Number(f.code.split(".")[1]) || 0));
+    return `${group}.${maxIdx + 1}`;
+  };
+
+  const editFactor = (factor: HazardFactor) => {
+    setCreating(false);
+    setEditing(factor);
+  };
+
   const addFactor = (group: string) => {
     if (!catalog) return;
-    const groupData = catalog.groups.find((g) => g.group === group);
-    const maxIdx = Math.max(0, ...(groupData?.factors ?? []).map((f) => Number(f.code.split(".")[1]) || 0));
+    setCreating(true);
     setEditing({
-      code: `${group}.${maxIdx + 1}`,
+      code: nextCodeForGroup(group),
       group,
       name: "Новый фактор",
       max_score: 0,
@@ -172,6 +183,9 @@ export function useHazardCalculator(onSaved?: () => void) {
     toggleGroupExcluded,
     editing,
     setEditing,
+    creating,
+    editFactor,
+    nextCodeForGroup,
     saveFactor,
     deleteFactor,
     addFactor,

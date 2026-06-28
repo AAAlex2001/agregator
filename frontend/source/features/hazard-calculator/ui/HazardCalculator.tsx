@@ -23,6 +23,9 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
     toggleGroupExcluded,
     editing,
     setEditing,
+    creating,
+    editFactor,
+    nextCodeForGroup,
     saveFactor,
     deleteFactor,
     addFactor,
@@ -157,7 +160,7 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                   <div className={s.factorInfo}>
                     <span className={s.name}>{factor.name}</span>
                     {editMode && (
-                      <Button variant="outlineOrange" size="sm" className={s.editBtn} onClick={() => setEditing(factor)}>
+                      <Button variant="outlineOrange" size="sm" className={s.editBtn} onClick={() => editFactor(factor)}>
                         Изменить
                       </Button>
                     )}
@@ -191,6 +194,9 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
       {editing && (
         <FactorEditorModal
           factor={editing}
+          groups={catalog ? catalog.groups.map((group) => group.group) : []}
+          isNew={creating}
+          nextCode={nextCodeForGroup}
           onSave={saveFactor}
           onDelete={deleteFactor}
           onClose={() => setEditing(null)}

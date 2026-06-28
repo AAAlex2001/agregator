@@ -37,20 +37,23 @@
 
 .actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
+  flex-direction: column;
   gap: 12px;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
 
-.field:first-child {
-  flex: 1 1 260px;
-  min-width: 220px;
+  @media (min-width: 1024px) {
+    flex: 1 1 auto;
+  }
 }
 
 .label {
@@ -64,13 +67,19 @@
 }
 
 .numInput {
-  width: 140px;
+  width: 100%;
 }
 
 .actionBtn {
   box-sizing: border-box;
   height: 48px;
   max-height: none;
+  width: 100%;
+
+  @media (min-width: 1024px) {
+    width: auto;
+    flex: 0 0 auto;
+  }
 }
 
 .headerBlock {
