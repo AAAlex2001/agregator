@@ -59,3 +59,25 @@
   flex-direction: column;
   min-height: 0;
 }
+
+.stub {
+  display: none;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1a1a1a;
+}
+
+@media (max-width: 767px) {
+  .contentArea {
+    display: none;
+  }
+
+  .stub {
+    display: flex;
+  }
+}

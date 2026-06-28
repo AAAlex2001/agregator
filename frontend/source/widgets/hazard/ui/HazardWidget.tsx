@@ -35,6 +35,10 @@ export function HazardWidget() {
           {tab === "calc" ? <HazardCalculator /> : <HazardReports />}
         </div>
       </div>
+
+      <div className={s.stub}>
+        Для работы с инструментом откройте страницу с компьютера — на мобильных устройствах оценка опасности аварий недоступна.
+      </div>
     </div>
   );
 }
