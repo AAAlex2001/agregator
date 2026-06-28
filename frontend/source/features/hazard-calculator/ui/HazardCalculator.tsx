@@ -65,6 +65,9 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
             <Button variant="outlineOrange" className={s.actionBtn} onClick={() => setEditMode((value) => !value)}>
               {editMode ? "Готово" : "Редактировать факторы"}
             </Button>
+            <Button variant="outlineOrange" className={s.actionBtn} onClick={() => addFactor(activeGroup)}>
+              + Новый фактор
+            </Button>
             <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
               Сформировать отчёт
             </Button>
@@ -169,16 +172,11 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 </div>
               ))}
             </div>
-            {editMode && (
+            {editMode && catalog.customized && (
               <div className={s.editBar}>
-                <Button variant="outlineOrange" onClick={() => addFactor(currentGroup.group)}>
-                  Добавить фактор
+                <Button variant="outlineOrange" onClick={resetCatalog}>
+                  Сбросить факторы
                 </Button>
-                {catalog.customized && (
-                  <Button variant="outlineOrange" onClick={resetCatalog}>
-                    Сбросить факторы
-                  </Button>
-                )}
               </div>
             )}
           </>
