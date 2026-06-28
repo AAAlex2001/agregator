@@ -5,10 +5,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 18px;
-  background: #fffcf8;
-  border: 1px solid #ffeeda;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #ececf0;
   border-radius: 20px;
+  box-shadow: 0 6px 28px rgba(17, 24, 39, 0.05);
 }
 
 .head {
@@ -63,9 +64,9 @@
 }
 
 .headerBlock {
-  border: 1px solid #ffeeda;
+  border: 1px solid #ececf0;
   border-radius: 12px;
-  background: #fff;
+  background: #fafbfc;
 }
 
 .headerSummary {
@@ -129,8 +130,8 @@
 }
 
 .result {
-  background: #fff;
-  border: 1px solid #ffeeda;
+  background: #fafbfc;
+  border: 1px solid #ececf0;
   border-radius: 14px;
   padding: 16px 18px;
 }
@@ -148,13 +149,13 @@
 
   th,
   td {
-    border: 1px solid #f0e2cd;
+    border: 1px solid #eceef2;
     padding: 8px 10px;
     text-align: left;
   }
 
   th {
-    background: #fff1d6;
+    background: #f6f7f9;
     font-weight: 600;
   }
 }
@@ -165,7 +166,7 @@
 
 .bold td {
   font-weight: 700;
-  background: #fff1d6;
+  background: #fff6ea;
 }
 
 .groupTabs {
@@ -221,7 +222,7 @@
   flex-direction: column;
   gap: 12px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #ffeeda;
+  border-bottom: 1px solid #ececf0;
 
   &:last-child {
     border-bottom: none;

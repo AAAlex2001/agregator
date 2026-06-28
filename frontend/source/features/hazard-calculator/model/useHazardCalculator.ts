@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
-  calculateHazard,
   createHazardReport,
   fetchHazardCatalog,
   resetHazardCatalog,
@@ -11,7 +10,6 @@ import {
   type HazardCatalog,
   type HazardFactor,
   type HazardProfile,
-  type HazardResult,
   type HazardSelections,
 } from "@/source/entities/hazard";
 
@@ -42,24 +40,21 @@ function selectionsFor(catalog: HazardCatalog, previous: HazardSelections): Haza
   return next;
 }
 
-export function useHazardCalculator() {
+export function useHazardCalculator(onSaved?: () => void) {
   const { showError, showSuccess } = useNotifications();
   const [profile, setProfile] = useState<HazardProfile>("rudnik");
   const [catalog, setCatalog] = useState<HazardCatalog | null>(null);
   const [selections, setSelections] = useState<HazardSelections>({});
   const [excludedGroups, setExcludedGroups] = useState<string[]>([]);
-  const [result, setResult] = useState<HazardResult | null>(null);
   const [reportName, setReportName] = useState("Оценка опасности аварий");
   const [header, setHeader] = useState<Record<string, string>>(HEADER_DEFAULTS);
   const [editing, setEditing] = useState<HazardFactor | null>(null);
   const [loading, setLoading] = useState(true);
-  const [calculating, setCalculating] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    setResult(null);
     setExcludedGroups([]);
     fetchHazardCatalog(profile)
       .then((data) => {
@@ -74,20 +69,14 @@ export function useHazardCalculator() {
     };
   }, [profile, showError]);
 
-  const select = (code: string, value: number | null) => {
-    setSelections((prev) => ({ ...prev, [code]: value }));
-    setResult(null);
-  };
+  const select = (code: string, value: number | null) => setSelections((prev) => ({ ...prev, [code]: value }));
 
-  const toggleGroupExcluded = (group: string) => {
+  const toggleGroupExcluded = (group: string) =>
     setExcludedGroups((prev) => (prev.includes(group) ? prev.filter((g) => g !== group) : [...prev, group]));
-    setResult(null);
-  };
 
   const applyCatalog = (next: HazardCatalog) => {
     setCatalog(next);
     setSelections((prev) => selectionsFor(next, prev));
-    setResult(null);
   };
 
   const persist = async (groups: HazardCatalog["groups"]) => {
@@ -158,36 +147,18 @@ export function useHazardCalculator() {
     }
   };
 
-  const calculate = async () => {
-    setCalculating(true);
-    try {
-      setResult(await calculateHazard(profile, selections, excludedGroups));
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось рассчитать");
-    } finally {
-      setCalculating(false);
-    }
-  };
-
   const setHeaderField = (key: string, value: string) => setHeader((prev) => ({ ...prev, [key]: value }));
 
-  const generate = async () => {
-    setGenerating(true);
+  const save = async () => {
+    setSaving(true);
     try {
-      const blob = await createHazardReport(profile, selections, reportName, header, excludedGroups);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${reportName || "otchet"}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showSuccess("Отчёт сформирован и сохранён в историю");
+      await createHazardReport(profile, selections, reportName, header, excludedGroups);
+      showSuccess("Отчёт сформирован и сохранён в «Историю отчётов»");
+      onSaved?.();
     } catch (error) {
       showError(error instanceof Error ? error.message : "Не удалось сформировать отчёт");
     } finally {
-      setGenerating(false);
+      setSaving(false);
     }
   };
 
@@ -205,15 +176,12 @@ export function useHazardCalculator() {
     deleteFactor,
     addFactor,
     resetCatalog,
-    result,
     reportName,
     setReportName,
     header,
     setHeaderField,
     loading,
-    calculating,
-    generating,
-    calculate,
-    generate,
+    saving,
+    save,
   };
 }

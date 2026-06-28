@@ -32,7 +32,7 @@ export function LiningWidget() {
           ]}
         />
         <div className={s.contentBody}>
-          {tab === "calc" ? <LiningCalculator /> : <LiningReports />}
+          {tab === "calc" ? <LiningCalculator onSaved={() => setTab("history")} /> : <LiningReports />}
         </div>
       </div>
 

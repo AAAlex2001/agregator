@@ -13,15 +13,20 @@ const LiningIcon = ({ className }: LiningIconProps) => (
     aria-hidden="true"
   >
     <path
-      d="M3 21V12a9 9 0 0 1 18 0v9"
+      d="M2 17.5a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1.5Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10 9.5V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4.5"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M3 13.5h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <path d="M8.5 21v-5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <path d="M15.5 21v-5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M4 16v-3a6 6 0 0 1 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M14 7a6 6 0 0 1 6 6v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 

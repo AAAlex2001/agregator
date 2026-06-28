@@ -30,7 +30,7 @@ function groupBySection(criteria: LiningCriterion[]): { title: string; items: Li
   return sections;
 }
 
-export function LiningCalculator() {
+export function LiningCalculator({ onSaved }: { onSaved?: () => void }) {
   const {
     catalog,
     selections,
@@ -41,17 +41,14 @@ export function LiningCalculator() {
     setServiceLife,
     expertScores,
     setExpertScore,
-    result,
     reportName,
     setReportName,
     header,
     setHeaderField,
     loading,
-    calculating,
-    generating,
-    calculate,
-    generate,
-  } = useLiningCalculator();
+    saving,
+    save,
+  } = useLiningCalculator(onSaved);
   const [section, setSection] = useState("elements");
   const [activeGroup, setActiveGroup] = useState("R0");
   const [lifeYears, setLifeYears] = useState(String(serviceLifeYears));
@@ -81,11 +78,8 @@ export function LiningCalculator() {
               }}
             />
           </label>
-          <Button variant="outlineOrange" className={s.actionBtn} onClick={calculate} isLoading={calculating}>
-            Рассчитать
-          </Button>
-          <Button variant="primary" className={s.actionBtn} onClick={generate} isLoading={generating}>
-            Сформировать PDF
+          <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
+            Сформировать отчёт
           </Button>
         </div>
 
@@ -130,85 +124,6 @@ export function LiningCalculator() {
           </div>
         ) : (
           <>
-            {result && (
-              <div className={s.result}>
-                <h3 className={s.resultTitle}>Результат оценки</h3>
-                <div className={s.figures}>
-                  <div className={s.figure}>
-                    <span className={s.figLabel}>Срок до капитального ремонта</span>
-                    <span className={s.figValue}>{result.final_capital.toFixed(1)} лет</span>
-                  </div>
-                  <div className={s.figure}>
-                    <span className={s.figLabel}>Срок до аварийного состояния</span>
-                    <span className={s.figValue}>{result.final_emergency.toFixed(1)} лет</span>
-                  </div>
-                  <div className={s.figure}>
-                    <span className={s.figLabel}>Экспертная надёжность β</span>
-                    <span className={s.figValue}>{result.beta.toFixed(2)}</span>
-                  </div>
-                </div>
-
-                <table className={s.resultTable}>
-                  <thead>
-                    <tr>
-                      <th>Показатель</th>
-                      <th>Значение, %</th>
-                      <th>Категория риска</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{result.r0.title}</td>
-                      <td className={s.center}>{result.r0.value.toFixed(1)}</td>
-                      <td>{result.r0.category}</td>
-                    </tr>
-                    {result.blocks.map((block) => (
-                      <tr key={block.group}>
-                        <td>{block.title}</td>
-                        <td className={s.center}>{block.value.toFixed(1)}</td>
-                        <td>{block.category}</td>
-                      </tr>
-                    ))}
-                    <tr className={s.bold}>
-                      <td>Показатель риска на выработке (R)</td>
-                      <td className={s.center}>{result.overall_r.toFixed(1)}</td>
-                      <td>{result.overall_r_category}</td>
-                    </tr>
-                    <tr>
-                      <td>Интегральный показатель (Rᶦⁿᵗ)</td>
-                      <td className={s.center}>{result.r_int.toFixed(1)}</td>
-                      <td>{result.r_int_category}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table className={s.resultTable}>
-                  <thead>
-                    <tr>
-                      <th>№</th>
-                      <th>Элемент крепи</th>
-                      <th>Кат.</th>
-                      <th>λ</th>
-                      <th>Срок до капремонта, лет</th>
-                      <th>Срок до аварии, лет</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.elements.map((element) => (
-                      <tr key={element.element_id}>
-                        <td className={s.center}>{element.element_id}</td>
-                        <td>{element.name}</td>
-                        <td className={s.center}>{element.category}</td>
-                        <td className={s.center}>{element.lam.toFixed(4)}</td>
-                        <td className={s.center}>{element.t_capital === null ? "Не требует" : element.t_capital.toFixed(3)}</td>
-                        <td className={s.center}>{element.t_emergency === null ? "Не требует" : element.t_emergency.toFixed(1)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
             {section === "elements" && (
               <div className={s.sectionBody}>
                 <p className={s.hint}>

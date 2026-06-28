@@ -23,18 +23,32 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 15px 10px;
-  gap: 12px;
   width: 262px;
   background: #ffffff;
   border-left: 1px solid #ffdda9;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, width 0.2s ease;
   transform: translateX(100%);
+
+  @media (min-width: 1440px) {
+    transform: none;
+  }
 }
 
 .sidebarOpen {
   transform: translateX(0);
+  padding: 15px 10px;
+  gap: 12px;
+}
+
+.collapsed {
+  padding: 15px 10px;
+  gap: 12px;
+
+  @media (min-width: 1440px) {
+    width: 80px;
+    padding: 15px 8px;
+    overflow: visible;
+  }
 }
 
 .header {
@@ -93,32 +107,84 @@
   color: #c62828;
 }
 
-.handle {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 1200;
-  display: none;
-  writing-mode: vertical-rl;
-  padding: 18px 9px;
-  border: none;
-  border-radius: 12px 0 0 12px;
-  background: #ff8a00;
-  color: #ffffff;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.railItem {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  background: #ffffff;
   cursor: pointer;
-  box-shadow: -4px 4px 16px rgba(255, 138, 0, 0.28);
-  transition: padding-right 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
 
-  &:hover {
-    padding-right: 13px;
-  }
+.railItem:hover {
+  border-color: #ffcf8f;
+  background: #fff7ec;
+}
 
-  @media (min-width: 1440px) {
-    display: inline-flex;
+.railIcon {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+.railTip {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 14px);
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  max-width: 220px;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #0d0d0d;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.12));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 1400;
+}
+
+.railItem:hover .railTip {
+  opacity: 1;
+}
+
+.railTip::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 8px solid #ffffff;
+}
+
+@media (max-width: 1439px) {
+  .railTip {
+    display: none;
   }
 }

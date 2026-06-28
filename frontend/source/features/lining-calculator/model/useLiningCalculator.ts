@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
-  calculateLining,
   createLiningReport,
   fetchLiningCatalog,
   type ElementCategories,
   type ExpertScores,
   type LiningCatalog,
   type LiningInput,
-  type LiningResult,
   type LiningSelections,
 } from "@/source/entities/lining";
 
@@ -23,19 +21,17 @@ const HEADER_DEFAULTS: Record<string, string> = {
   manufacturer: "",
 };
 
-export function useLiningCalculator() {
+export function useLiningCalculator(onSaved?: () => void) {
   const { showError, showSuccess } = useNotifications();
   const [catalog, setCatalog] = useState<LiningCatalog | null>(null);
   const [selections, setSelections] = useState<LiningSelections>({});
   const [elementCategories, setElementCategories] = useState<ElementCategories>({});
   const [serviceLifeYears, setServiceLifeYears] = useState(5);
   const [expertScores, setExpertScores] = useState<ExpertScores>({});
-  const [result, setResult] = useState<LiningResult | null>(null);
   const [reportName, setReportName] = useState("Оценка крепи горной выработки");
   const [header, setHeader] = useState<Record<string, string>>(HEADER_DEFAULTS);
   const [loading, setLoading] = useState(true);
-  const [calculating, setCalculating] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -66,26 +62,12 @@ export function useLiningCalculator() {
     };
   }, [showError]);
 
-  const select = (code: string, value: number | null) => {
-    setSelections((prev) => ({ ...prev, [code]: value }));
-    setResult(null);
-  };
-
-  const setElementCategory = (id: number, category: number) => {
+  const select = (code: string, value: number | null) => setSelections((prev) => ({ ...prev, [code]: value }));
+  const setElementCategory = (id: number, category: number) =>
     setElementCategories((prev) => ({ ...prev, [String(id)]: category }));
-    setResult(null);
-  };
-
-  const setExpertScore = (id: number, score: number) => {
+  const setExpertScore = (id: number, score: number) =>
     setExpertScores((prev) => ({ ...prev, [String(id)]: score }));
-    setResult(null);
-  };
-
-  const setServiceLife = (years: number) => {
-    setServiceLifeYears(years);
-    setResult(null);
-  };
-
+  const setServiceLife = (years: number) => setServiceLifeYears(years);
   const setHeaderField = (key: string, value: string) => setHeader((prev) => ({ ...prev, [key]: value }));
 
   const buildInput = (): LiningInput => ({
@@ -96,34 +78,16 @@ export function useLiningCalculator() {
     expert_scores: expertScores,
   });
 
-  const calculate = async () => {
-    setCalculating(true);
+  const save = async () => {
+    setSaving(true);
     try {
-      setResult(await calculateLining(buildInput()));
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось рассчитать");
-    } finally {
-      setCalculating(false);
-    }
-  };
-
-  const generate = async () => {
-    setGenerating(true);
-    try {
-      const blob = await createLiningReport(buildInput(), reportName, header);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${reportName || "otchet"}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-      showSuccess("Отчёт сформирован и сохранён в историю");
+      await createLiningReport(buildInput(), reportName, header);
+      showSuccess("Отчёт сформирован и сохранён в «Историю отчётов»");
+      onSaved?.();
     } catch (error) {
       showError(error instanceof Error ? error.message : "Не удалось сформировать отчёт");
     } finally {
-      setGenerating(false);
+      setSaving(false);
     }
   };
 
@@ -137,15 +101,12 @@ export function useLiningCalculator() {
     setServiceLife,
     expertScores,
     setExpertScore,
-    result,
     reportName,
     setReportName,
     header,
     setHeaderField,
     loading,
-    calculating,
-    generating,
-    calculate,
-    generate,
+    saving,
+    save,
   };
 }

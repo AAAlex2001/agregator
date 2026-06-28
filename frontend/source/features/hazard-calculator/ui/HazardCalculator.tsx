@@ -12,7 +12,7 @@ import { useHazardCalculator } from "../model/useHazardCalculator";
 import { FactorEditorModal } from "./FactorEditorModal";
 import s from "./HazardCalculator.module.scss";
 
-export function HazardCalculator() {
+export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
   const {
     profile,
     setProfile,
@@ -27,17 +27,14 @@ export function HazardCalculator() {
     deleteFactor,
     addFactor,
     resetCatalog,
-    result,
     reportName,
     setReportName,
     header,
     setHeaderField,
     loading,
-    calculating,
-    generating,
-    calculate,
-    generate,
-  } = useHazardCalculator();
+    saving,
+    save,
+  } = useHazardCalculator(onSaved);
   const [activeGroup, setActiveGroup] = useState("R0");
   const [editMode, setEditMode] = useState(false);
 
@@ -65,11 +62,8 @@ export function HazardCalculator() {
               placeholder="Название отчёта"
               className={s.nameInput}
             />
-            <Button variant="outlineOrange" className={s.actionBtn} onClick={calculate} isLoading={calculating}>
-              Рассчитать
-            </Button>
-            <Button variant="primary" className={s.actionBtn} onClick={generate} isLoading={generating}>
-              Сформировать PDF
+            <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
+              Сформировать отчёт
             </Button>
           </div>
         </div>
@@ -134,45 +128,6 @@ export function HazardCalculator() {
           </div>
         ) : (
           <>
-            {result && (
-              <div className={s.result}>
-                <h3 className={s.resultTitle}>Результат оценки</h3>
-                <table className={s.resultTable}>
-                  <thead>
-                    <tr>
-                      <th>Показатель</th>
-                      <th>Значение, %</th>
-                      <th>Категория риска</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{result.r0.title}</td>
-                      <td className={s.center}>{result.r0.value.toFixed(1)}</td>
-                      <td>{result.r0.category}</td>
-                    </tr>
-                    {result.blocks.map((block) => (
-                      <tr key={block.group}>
-                        <td>{block.title}</td>
-                        <td className={s.center}>{block.value.toFixed(1)}</td>
-                        <td>{block.category}</td>
-                      </tr>
-                    ))}
-                    <tr className={s.bold}>
-                      <td>Показатель риска на объекте (R)</td>
-                      <td className={s.center}>{result.overall_r.toFixed(1)}</td>
-                      <td>{result.overall_r_category}</td>
-                    </tr>
-                    <tr>
-                      <td>Интегральный показатель (Rᶦⁿᵗ)</td>
-                      <td className={s.center}>{result.r_int.toFixed(1)}</td>
-                      <td>{result.r_int_category}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-
             <div className={s.groupHeader}>
               <h3 className={s.groupTitle}>
                 {currentGroup.group} · {currentGroup.title}

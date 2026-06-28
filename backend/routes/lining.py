@@ -6,8 +6,6 @@ from dependencies.auth import get_current_user
 from dependencies.subscription import require_expert_subscription
 from models.lining import LiningReport
 from schemas.lining import (
-    LiningCalculateRequest,
-    LiningCalculateResponse,
     LiningCatalogResponse,
     LiningReportItem,
     LiningReportListResponse,
@@ -41,23 +39,13 @@ async def get_catalog(
     return await GetLiningCatalogUseCase(LiningRepository(db)).execute(profile)
 
 
-@router.post("/calculate", response_model=LiningCalculateResponse)
-async def calculate_lining(
-    request: LiningCalculateRequest,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
-) -> LiningCalculateResponse:
-    "Расчёт показателей риска, срока службы крепи и экспертной надёжности. Эксперт с активной подпиской."
-    return await CalculateLiningUseCase(LiningRepository(db)).execute(request)
-
-
-@router.post("/report", response_class=Response)
+@router.post("/report", response_model=LiningReportItem)
 async def create_report(
     request: LiningReportRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(require_expert_subscription),
-) -> Response:
-    "Сохраняет отчёт в историю и возвращает PDF."
+) -> LiningReportItem:
+    "Считает показатели и сохраняет отчёт в историю. PDF собирается при просмотре из истории."
     repo = LiningRepository(db)
     result = await CalculateLiningUseCase(repo).execute(request)
     blocks = [
@@ -86,8 +74,7 @@ async def create_report(
         final_capital=result.final_capital,
         final_emergency=result.final_emergency,
     ))
-    pdf_bytes = await BuildLiningReportUseCase(repo).execute(request)
-    return pdf_response(pdf_bytes, report.id)
+    return LiningReportItem.model_validate(report)
 
 
 @router.get("/reports", response_model=LiningReportListResponse)

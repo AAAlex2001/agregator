@@ -11,7 +11,6 @@ export type {
   HazardSelections,
 } from "./model/types";
 export {
-  calculateHazard,
   createHazardReport,
   fetchHazardCatalog,
   fetchHazardReports,

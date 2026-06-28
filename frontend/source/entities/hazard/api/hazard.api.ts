@@ -4,7 +4,6 @@ import type {
   HazardCatalog,
   HazardFactor,
   HazardReportItem,
-  HazardResult,
   HazardSelections,
 } from "../model/types";
 
@@ -34,34 +33,20 @@ export async function resetHazardCatalog(profile: string): Promise<HazardCatalog
   return res.json();
 }
 
-export async function calculateHazard(
-  profile: string,
-  selections: HazardSelections,
-  excludedGroups: string[],
-): Promise<HazardResult> {
-  const res = await fetchWithSession(`${API_URL}/hazard/calculate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, selections, excluded_groups: excludedGroups }),
-  });
-  if (!res.ok) throw new Error(await detail(res, "Не удалось выполнить расчёт"));
-  return res.json();
-}
-
 export async function createHazardReport(
   profile: string,
   selections: HazardSelections,
   reportName: string,
   header: Record<string, string>,
   excludedGroups: string[],
-): Promise<Blob> {
+): Promise<HazardReportItem> {
   const res = await fetchWithSession(`${API_URL}/hazard/report`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ profile, selections, report_name: reportName, excluded_groups: excludedGroups, ...header }),
   });
   if (!res.ok) throw new Error(await detail(res, "Не удалось сформировать отчёт"));
-  return res.blob();
+  return res.json();
 }
 
 export async function fetchHazardReports(): Promise<HazardReportItem[]> {

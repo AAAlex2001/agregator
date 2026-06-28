@@ -2,7 +2,10 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { LicenseHoldersPanel } from "@/source/widgets/license-holders-drawer";
+import {
+  LicenseHoldersPanel,
+  useLicenseHoldersDrawer,
+} from "@/source/widgets/license-holders-drawer";
 import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
 import { Sidebar } from "./Sidebar";
 import s from "./SidebarShell.module.scss";
@@ -22,14 +25,16 @@ function isFullScreenRoute(pathname: string): boolean {
 }
 
 export function SidebarShell({ children }: SidebarShellProps) {
+  const { isAvailable } = useLicenseHoldersDrawer();
   const pathname = usePathname();
   const fullScreen = isFullScreenRoute(pathname);
   const layoutClass = fullScreen ? `${s.layout} ${s.layoutFullScreen}` : s.layout;
+  const contentClass = isAvailable ? `${s.content} ${s.contentWithRightRail}` : s.content;
 
   return (
     <div className={layoutClass}>
       <Sidebar />
-      <main className={s.content}>
+      <main className={contentClass}>
         {!fullScreen && <LandingHeaderAuthed />}
         {children}
       </main>

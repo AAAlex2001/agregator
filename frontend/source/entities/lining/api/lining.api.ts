@@ -1,6 +1,6 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
-import type { LiningCatalog, LiningInput, LiningReportItem, LiningResult } from "../model/types";
+import type { LiningCatalog, LiningInput, LiningReportItem } from "../model/types";
 
 async function detail(res: Response, fallback: string): Promise<string> {
   return (await res.json().catch(() => ({})))?.detail || fallback;
@@ -12,28 +12,18 @@ export async function fetchLiningCatalog(profile: string): Promise<LiningCatalog
   return res.json();
 }
 
-export async function calculateLining(input: LiningInput): Promise<LiningResult> {
-  const res = await fetchWithSession(`${API_URL}/lining/calculate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  if (!res.ok) throw new Error(await detail(res, "Не удалось выполнить расчёт"));
-  return res.json();
-}
-
 export async function createLiningReport(
   input: LiningInput,
   reportName: string,
   header: Record<string, string>,
-): Promise<Blob> {
+): Promise<LiningReportItem> {
   const res = await fetchWithSession(`${API_URL}/lining/report`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...input, report_name: reportName, ...header }),
   });
   if (!res.ok) throw new Error(await detail(res, "Не удалось сформировать отчёт"));
-  return res.blob();
+  return res.json();
 }
 
 export async function fetchLiningReports(): Promise<LiningReportItem[]> {

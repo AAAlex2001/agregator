@@ -17,7 +17,6 @@ export type {
   LiningSelections,
 } from "./model/types";
 export {
-  calculateLining,
   createLiningReport,
   fetchLiningCatalog,
   fetchLiningReports,

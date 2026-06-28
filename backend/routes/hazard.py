@@ -6,8 +6,6 @@ from dependencies.auth import get_current_user
 from dependencies.subscription import require_expert_subscription
 from models.hazard import HazardReport
 from schemas.hazard import (
-    HazardCalculateRequest,
-    HazardCalculateResponse,
     HazardCatalogResponse,
     HazardReportItem,
     HazardReportListResponse,
@@ -77,23 +75,13 @@ async def reset_catalog(
     return await GetHazardCatalogUseCase(repo).execute(profile, user_id)
 
 
-@router.post("/calculate", response_model=HazardCalculateResponse)
-async def calculate_hazard(
-    request: HazardCalculateRequest,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
-) -> HazardCalculateResponse:
-    "Расчёт показателей опасности. Эксперт с активной подпиской."
-    return await CalculateHazardUseCase(HazardRepository(db)).execute(request, user_id)
-
-
-@router.post("/report", response_class=Response)
+@router.post("/report", response_model=HazardReportItem)
 async def create_report(
     request: HazardReportRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(require_expert_subscription),
-) -> Response:
-    "Сохраняет отчёт в историю и возвращает PDF."
+) -> HazardReportItem:
+    "Считает показатели и сохраняет отчёт в историю. PDF собирается при просмотре из истории."
     repo = HazardRepository(db)
     result = await CalculateHazardUseCase(repo).execute(request, user_id)
     blocks = [
@@ -120,8 +108,7 @@ async def create_report(
         overall_r=result.overall_r,
         overall_category=result.overall_r_category,
     ))
-    pdf_bytes = await BuildHazardReportUseCase(repo).execute(request, user_id)
-    return pdf_response(pdf_bytes, report.id)
+    return HazardReportItem.model_validate(report)
 
 
 @router.get("/reports", response_model=HazardReportListResponse)

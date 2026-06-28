@@ -32,7 +32,7 @@ export function HazardWidget() {
           ]}
         />
         <div className={s.contentBody}>
-          {tab === "calc" ? <HazardCalculator /> : <HazardReports />}
+          {tab === "calc" ? <HazardCalculator onSaved={() => setTab("history")} /> : <HazardReports />}
         </div>
       </div>
 
