@@ -111,14 +111,6 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
           </div>
         </details>
 
-        {currentGroup && (
-          <Tabs
-            className={s.groupTabs}
-            activeTab={currentGroup.group}
-            onTabChange={setActiveGroup}
-            tabs={(catalog?.groups ?? []).map((group) => ({ id: group.group, label: group.group }))}
-          />
-        )}
       </div>
 
       <div className={s.body}>
@@ -128,6 +120,12 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
           </div>
         ) : (
           <>
+            <Tabs
+              className={s.groupTabs}
+              activeTab={currentGroup.group}
+              onTabChange={setActiveGroup}
+              tabs={catalog.groups.map((group) => ({ id: group.group, label: group.group }))}
+            />
             <div className={s.groupHeader}>
               <h3 className={s.groupTitle}>
                 {currentGroup.group} · {currentGroup.title}
