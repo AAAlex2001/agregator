@@ -5,10 +5,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 18px;
-  background: #fffcf8;
-  border: 1px solid #ffeeda;
+  padding: 22px;
+  background: #fff;
+  border: 1px solid #ececf0;
   border-radius: 20px;
+  box-shadow: 0 6px 28px rgba(17, 24, 39, 0.05);
 }
 
 .head {
@@ -73,9 +74,9 @@
 }
 
 .headerBlock {
-  border: 1px solid #ffeeda;
+  border: 1px solid #ececf0;
   border-radius: 12px;
-  background: #fff;
+  background: #fafbfc;
 }
 
 .headerSummary {
@@ -183,7 +184,7 @@
   flex-direction: column;
   gap: 12px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #ffeeda;
+  border-bottom: 1px solid #eef0f4;
 
   &:last-child {
     border-bottom: none;
@@ -241,10 +242,10 @@
 }
 
 .result {
-  background: #fff;
-  border: 1px solid #ffeeda;
+  background: #fafbfc;
+  border: 1px solid #ececf0;
   border-radius: 14px;
-  padding: 16px 18px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -267,10 +268,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: 12px;
-  background: #fff7ec;
-  border: 1px solid #ffe3bd;
+  background: #fff;
+  border: 1px solid #ececf0;
+  border-left: 3px solid #ff8a00;
 }
 
 .figLabel {
@@ -279,9 +281,9 @@
 }
 
 .figValue {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 800;
-  color: #b35a00;
+  color: #ff8a00;
 }
 
 .resultTable {
@@ -291,13 +293,13 @@
 
   th,
   td {
-    border: 1px solid #f0e2cd;
+    border: 1px solid #eceef2;
     padding: 7px 9px;
     text-align: left;
   }
 
   th {
-    background: #fff1d6;
+    background: #f6f7f9;
     font-weight: 600;
   }
 }
@@ -308,5 +310,5 @@
 
 .bold td {
   font-weight: 700;
-  background: #fff1d6;
+  background: #fff6ea;
 }

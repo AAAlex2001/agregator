@@ -14,10 +14,6 @@
   pointer-events: auto;
 }
 
-@media (min-width: 1440px) {
-  .backdrop { display: none; }
-}
-
 .sidebar {
   position: fixed;
   top: 0;

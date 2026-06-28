@@ -52,3 +52,5 @@ export { default as TabArchiveIcon } from "./TabArchiveIcon";
 export { default as TabSupportIcon } from "./TabSupportIcon";
 export { default as TabNotificationIcon } from "./TabNotificationIcon";
 export { default as CollapseSidebarIcon } from "./CollapseSidebarIcon";
+export { default as DangerIcon } from "./DangerIcon";
+export { default as LiningIcon } from "./LiningIcon";

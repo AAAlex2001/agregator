@@ -14,12 +14,6 @@
   pointer-events: auto;
 }
 
-@media (min-width: 1440px) {
-  .backdrop {
-    display: none;
-  }
-}
-
 .sidebar {
   position: fixed;
   top: 0;
@@ -37,10 +31,6 @@
   border-left: 1px solid #ffdda9;
   transition: transform 0.25s ease;
   transform: translateX(100%);
-
-  @media (min-width: 1440px) {
-    transform: none;
-  }
 }
 
 .sidebarOpen {
@@ -73,10 +63,6 @@
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
 }
 
 .body {
@@ -105,4 +91,34 @@
   font-size: 13px;
   line-height: 16px;
   color: #c62828;
+}
+
+.handle {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1200;
+  display: none;
+  writing-mode: vertical-rl;
+  padding: 18px 9px;
+  border: none;
+  border-radius: 12px 0 0 12px;
+  background: #ff8a00;
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  box-shadow: -4px 4px 16px rgba(255, 138, 0, 0.28);
+  transition: padding-right 0.15s ease;
+
+  &:hover {
+    padding-right: 13px;
+  }
+
+  @media (min-width: 1440px) {
+    display: inline-flex;
+  }
 }

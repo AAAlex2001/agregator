@@ -11,13 +11,19 @@ import s from "./LicenseHoldersPanel.module.scss";
 const SKELETON_COUNT = 3;
 
 export function LicenseHoldersPanel() {
-  const { isAvailable, isOpen, close } = useLicenseHoldersDrawer();
+  const { isAvailable, isOpen, open, close } = useLicenseHoldersDrawer();
   const { items, isLoading, error } = useLicenseHolders(isAvailable);
 
   if (!isAvailable) return null;
 
   return (
     <>
+      {!isOpen && (
+        <button type="button" className={s.handle} onClick={open} aria-label="Держатели лицензии">
+          Держатели лицензии
+        </button>
+      )}
+
       <div
         className={`${s.backdrop} ${isOpen ? s.backdropVisible : ""}`}
         onClick={close}

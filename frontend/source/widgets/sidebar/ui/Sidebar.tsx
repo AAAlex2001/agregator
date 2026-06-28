@@ -8,8 +8,10 @@ import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
+  DangerIcon,
   ExpertRoomIcon,
   FileIcon,
+  LiningIcon,
   LogoIcon,
   LogoMarkIcon,
   LogoutIcon,
@@ -45,8 +47,8 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
-        { href: "/expert/hazard", label: "Оценка опасности", icon: FileIcon },
-        { href: "/expert/lining", label: "Оценка крепи", icon: FileIcon },
+        { href: "/expert/hazard", label: "Оценка опасности", icon: DangerIcon },
+        { href: "/expert/lining", label: "Оценка крепи", icon: LiningIcon },
       ],
     },
     {
@@ -141,11 +143,6 @@ export function Sidebar() {
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof document === "undefined") return;
-    document.documentElement.dataset.sidebarCollapsed = collapsed ? "true" : "false";
-  }, [collapsed]);
-
-  useEffect(() => {
     setHoveredKey(null);
   }, [pathname]);
 
@@ -155,6 +152,11 @@ export function Sidebar() {
       return;
     }
     setCollapsed((prev) => !prev);
+  };
+
+  const closeOverlay = () => {
+    mobile.close();
+    setCollapsed(true);
   };
 
   const handleLogout = async () => {
@@ -235,7 +237,7 @@ export function Sidebar() {
     }
     return (
       <span key={key} className={s.tipAnchor} {...wrapperHandlers}>
-        <Link href={options.href} className={tabClass} onClick={mobile.close}>
+        <Link href={options.href} className={tabClass} onClick={closeOverlay}>
           {inner}
         </Link>
         {tooltipNode}
@@ -246,15 +248,15 @@ export function Sidebar() {
   return (
     <>
       <div
-        className={`${s.backdrop} ${mobile.isOpen ? s.backdropVisible : ""}`.trim()}
-        onClick={mobile.close}
+        className={`${s.backdrop} ${mobile.isOpen || !collapsed ? s.backdropVisible : ""}`.trim()}
+        onClick={closeOverlay}
         aria-hidden="true"
       />
       <aside
         className={`${s.sidebar} ${visualCollapsed ? s.collapsed : ""} ${mobile.isOpen ? s.mobileOpen : ""}`.trim()}
         aria-label="Главное меню"
       >
-        <Link href="/landing" className={s.logo} aria-label="На главную" onClick={mobile.close}>
+        <Link href="/landing" className={s.logo} aria-label="На главную" onClick={closeOverlay}>
           {visualCollapsed ? <LogoMarkIcon /> : <LogoIcon />}
         </Link>
 
