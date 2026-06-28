@@ -40,8 +40,15 @@ class HazardCalculateRequest(BaseModel):
 
 
 class HazardReportRequest(HazardCalculateRequest):
-    "Запрос PDF-отчёта: расчёт + название (для истории и имени файла)."
+    "Запрос PDF-отчёта: расчёт + название и редактируемая шапка документа."
     report_name: str = "Оценка опасности аварий"
+    author: str = ""
+    intro_line1: str = ""
+    intro_line2: str = ""
+    intro_line3: str = ""
+    justification: str = ""
+    certificate: str = ""
+    manufacturer: str = ""
 
 
 class HazardBlockDto(BaseModel):

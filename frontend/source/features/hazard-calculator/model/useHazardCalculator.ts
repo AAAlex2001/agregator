@@ -12,6 +12,21 @@ import {
   type HazardSelections,
 } from "@/source/entities/hazard";
 
+const HEADER_DEFAULTS: Record<string, string> = {
+  author: "",
+  intro_line1: "для анализа риска аварий Шахта+Рудник (АРА Шахта+Рудник)",
+  intro_line2: "на руднике «Интернациональный» АК «АЛРОСА» (ПАО)",
+  intro_line3: "документации по ведению горных работ при условии соблюдения требований ФНП",
+  justification:
+    "«Обоснование безопасности опасного производственного объекта подземного рудника «Интернациональный» " +
+    "Мирнинско-Нюрбинского ГОК по использованию аппарата распыления полимочевины Graco Reactor 2 E-CP2 " +
+    "в подземных горных выработках рудника «Интернациональный»",
+  certificate:
+    "Сертификат соответствия от 05.03.2024 г. № РОСС RU.32001.04ИБФ1.ОСП28.48630. Расчёт анализа риска аварий " +
+    "Шахта+Рудник проводится на основании факторов, влияющих на опасность аварий и индексов опасности аварий (далее ИОА)",
+  manufacturer: "Изготовитель ООО «СКК» ИНН 4217140314",
+};
+
 export function useHazardCalculator() {
   const { showError, showSuccess } = useNotifications();
   const [profile, setProfile] = useState<HazardProfile>("rudnik");
@@ -19,6 +34,7 @@ export function useHazardCalculator() {
   const [selections, setSelections] = useState<HazardSelections>({});
   const [result, setResult] = useState<HazardResult | null>(null);
   const [reportName, setReportName] = useState("Оценка опасности аварий");
+  const [header, setHeader] = useState<Record<string, string>>(HEADER_DEFAULTS);
   const [loading, setLoading] = useState(true);
   const [calculating, setCalculating] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -62,10 +78,12 @@ export function useHazardCalculator() {
     }
   };
 
+  const setHeaderField = (key: string, value: string) => setHeader((prev) => ({ ...prev, [key]: value }));
+
   const generate = async () => {
     setGenerating(true);
     try {
-      const blob = await createHazardReport(profile, selections, reportName);
+      const blob = await createHazardReport(profile, selections, reportName, header);
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -91,6 +109,8 @@ export function useHazardCalculator() {
     result,
     reportName,
     setReportName,
+    header,
+    setHeaderField,
     loading,
     calculating,
     generating,

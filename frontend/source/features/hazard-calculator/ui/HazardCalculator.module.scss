@@ -62,6 +62,58 @@
   max-height: none;
 }
 
+.headerBlock {
+  border: 1px solid #ffeeda;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.headerSummary {
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.headerFields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.headerField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.headerLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.headerArea {
+  width: 100%;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e6e8ee;
+  font-size: 14px;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #ff8a00;
+  }
+}
+
 .result {
   background: #fff;
   border: 1px solid #ffeeda;

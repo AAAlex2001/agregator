@@ -20,6 +20,8 @@ export function HazardCalculator() {
     result,
     reportName,
     setReportName,
+    header,
+    setHeaderField,
     loading,
     calculating,
     generating,
@@ -60,6 +62,46 @@ export function HazardCalculator() {
             </Button>
           </div>
         </div>
+
+        <details className={s.headerBlock}>
+          <summary className={s.headerSummary}>Шапка отчёта (для PDF)</summary>
+          <div className={s.headerFields}>
+            <label className={s.headerField}>
+              <span className={s.headerLabel}>Автор</span>
+              <TextInput
+                value={header.author}
+                onChange={(e) => setHeaderField("author", e.target.value)}
+                placeholder="ФИО автора"
+              />
+            </label>
+            <label className={s.headerField}>
+              <span className={s.headerLabel}>Объект</span>
+              <TextInput
+                value={header.intro_line2}
+                onChange={(e) => setHeaderField("intro_line2", e.target.value)}
+                placeholder="на руднике / шахте …"
+              />
+            </label>
+            <label className={s.headerField}>
+              <span className={s.headerLabel}>Обоснование</span>
+              <textarea
+                className={s.headerArea}
+                rows={3}
+                value={header.justification}
+                onChange={(e) => setHeaderField("justification", e.target.value)}
+              />
+            </label>
+            <label className={s.headerField}>
+              <span className={s.headerLabel}>Сертификат</span>
+              <textarea
+                className={s.headerArea}
+                rows={2}
+                value={header.certificate}
+                onChange={(e) => setHeaderField("certificate", e.target.value)}
+              />
+            </label>
+          </div>
+        </details>
 
         {currentGroup && (
           <Tabs

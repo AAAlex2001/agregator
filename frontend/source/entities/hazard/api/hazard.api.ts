@@ -26,11 +26,12 @@ export async function createHazardReport(
   profile: string,
   selections: HazardSelections,
   reportName: string,
+  header: Record<string, string>,
 ): Promise<Blob> {
   const res = await fetchWithSession(`${API_URL}/hazard/report`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, selections, report_name: reportName }),
+    body: JSON.stringify({ profile, selections, report_name: reportName, ...header }),
   });
   if (!res.ok) throw new Error(await detail(res, "Не удалось сформировать отчёт"));
   return res.blob();

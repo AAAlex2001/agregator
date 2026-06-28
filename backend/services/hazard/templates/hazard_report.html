@@ -18,10 +18,38 @@
       text-align: center;
       margin: 0 0 4px;
     }
-    .meta {
+    .program {
+      font-size: 13px;
+      font-weight: 700;
       text-align: center;
-      color: #444;
-      margin-bottom: 14px;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+    .introc {
+      text-align: center;
+      margin: 2px 0;
+    }
+    .just {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .cert {
+      text-align: center;
+      font-size: 9px;
+      color: #333;
+      margin: 8px 0;
+    }
+    .maker {
+      text-align: center;
+      font-size: 8px;
+      color: #777;
+      margin: 8px 0 14px;
+    }
+    .namebox {
+      margin: 10px 0 14px;
+    }
+    .namebox div {
+      margin: 1px 0;
     }
     .section {
       font-weight: 700;
@@ -105,10 +133,13 @@
 </head>
 <body>
 
-  <h1>Оценка опасности (риска) аварий</h1>
-  <div class="meta">
-    Объект: {{ meta.profile_title }} &middot; Дата: {{ meta.generated_at }}
-  </div>
+  <div class="program">Программное обеспечение по анализу опасностей и оценки риска аварий</div>
+  {% if meta.intro_line1 %}<p class="introc">{{ meta.intro_line1 }}</p>{% endif %}
+  {% if meta.intro_line2 %}<p class="introc">{{ meta.intro_line2 }}</p>{% endif %}
+  {% if meta.intro_line3 %}<p class="introc">{{ meta.intro_line3 }}</p>{% endif %}
+  {% if meta.justification %}<p class="just">{{ meta.justification }}</p>{% endif %}
+  {% if meta.certificate %}<p class="cert">{{ meta.certificate }}</p>{% endif %}
+  {% if meta.manufacturer %}<p class="maker">{{ meta.manufacturer }}</p>{% endif %}
 
   <div class="section">Исходные данные</div>
   <p>Рекомендуемый общий перечень опасностей аварии на стадии эксплуатации объекта:</p>
@@ -117,6 +148,12 @@
     <li>{{ hazard }};</li>
     {% endfor %}
   </ul>
+
+  <div class="namebox">
+    <div>Название: {{ meta.report_name }}</div>
+    {% if meta.author %}<div>Автор: {{ meta.author }}</div>{% endif %}
+    <div>Дата создания: {{ meta.generated_at }}</div>
+  </div>
 
   <div class="sub-title">Факторы и блоки факторов, влияющие на опасности аварии, и ИОА</div>
   <table>

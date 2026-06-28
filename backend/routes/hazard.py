@@ -64,11 +64,21 @@ async def create_report(
         {"group": block.group, "title": block.title, "value": block.value, "category": block.category}
         for block in [result.r0, *result.blocks]
     ]
+    header = {
+        "author": request.author,
+        "intro_line1": request.intro_line1,
+        "intro_line2": request.intro_line2,
+        "intro_line3": request.intro_line3,
+        "justification": request.justification,
+        "certificate": request.certificate,
+        "manufacturer": request.manufacturer,
+    }
     report = await repo.save_report(HazardReport(
         expert_id=user_id,
         name=request.report_name,
         profile=request.profile,
         selections=request.selections,
+        header=header,
         blocks=blocks,
         overall_r=result.overall_r,
         overall_category=result.overall_r_category,
@@ -98,6 +108,11 @@ async def download_saved_report(
     report = await repo.get_report(report_id, user_id)
     if report is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Отчёт не найден")
-    request = HazardReportRequest(profile=report.profile, selections=report.selections, report_name=report.name)
+    request = HazardReportRequest(
+        profile=report.profile,
+        selections=report.selections,
+        report_name=report.name,
+        **(report.header or {}),
+    )
     pdf_bytes = await BuildHazardReportUseCase(repo).execute(request)
     return pdf_response(pdf_bytes, report.id)

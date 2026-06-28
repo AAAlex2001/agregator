@@ -110,6 +110,14 @@ class BuildHazardReportUseCase:
 
         html = self.env.get_template("hazard_report.html").render(
             meta={
+                "report_name": request.report_name,
+                "author": request.author,
+                "intro_line1": request.intro_line1,
+                "intro_line2": request.intro_line2,
+                "intro_line3": request.intro_line3,
+                "justification": request.justification,
+                "certificate": request.certificate,
+                "manufacturer": request.manufacturer,
                 "profile_title": PROFILE_TITLES.get(request.profile, request.profile),
                 "generated_at": datetime.now(UTC).strftime("%d.%m.%Y %H:%M"),
             },
