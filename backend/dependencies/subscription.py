@@ -1,4 +1,4 @@
-"Зависимость доступа к платным инструментам: требует активную подписку."
+"Зависимости и хелперы доступа к платным функциям эксперта: проверка роли/подписки + списание слотов тарифа."
 from datetime import UTC, datetime
 
 from fastapi import Depends, HTTPException, status
@@ -27,11 +27,11 @@ async def require_active_subscription(
     return user_id
 
 
-async def require_expert_subscription(
+async def require_expert_tool_access(
     user_id: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> int:
-    "Инструмент для экспертов: роль EXPERT (403) + активная подписка (402)."
+    "Доступ к инструментам экспертов (Оценка крепи / Оценка опасности): роль EXPERT (403); активная подписка (402) только при включённом платном режиме инструментов."
     repo = SubscriptionRepository(db)
     user = await repo.find_user(user_id)
     if user is None or user.role != UserRole.EXPERT:
@@ -39,6 +39,8 @@ async def require_expert_subscription(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Инструмент доступен только экспертам.",
         )
+    if not await PlatformSettingsService(db).is_paid_tools_enabled():
+        return user_id
     await repo.expire_stale(user_id, datetime.now(UTC))
     await repo.flush()
     if await repo.find_active_for_user(user_id) is None:
@@ -49,9 +51,9 @@ async def require_expert_subscription(
     return user_id
 
 
-async def consume_response_slot(user_id: int, db: AsyncSession) -> None:
-    "Списывает слот разового тарифа за платное действие (отклик или формирование отчёта). MONTHLY/YEARLY — безлимит."
+async def consume_tool_slot(user_id: int, db: AsyncSession) -> None:
+    "Списывает слот разового тарифа за формирование отчёта в инструменте. MONTHLY/YEARLY — безлимит, бесплатный режим — без списания."
     access = SubscriptionAccess(SubscriptionRepository(db), PlatformSettingsService(db))
-    subscription = await access.require_for_response(user_id)
+    subscription = await access.require_for_tool(user_id)
     if subscription is not None:
         await access.consume_for_response(subscription)

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from dependencies.subscription import consume_response_slot, require_expert_subscription
+from dependencies.subscription import consume_tool_slot, require_expert_tool_access
 from models.hazard import HazardReport
 from schemas.hazard import (
     HazardCatalogResponse,
@@ -44,7 +44,7 @@ async def get_catalog(
 async def save_catalog(
     request: HazardSaveCatalogRequest,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(require_expert_tool_access),
 ) -> HazardCatalogResponse:
     "Сохраняет кастомный набор факторов эксперта и возвращает обновлённый справочник."
     repo = HazardRepository(db)
@@ -67,7 +67,7 @@ async def save_catalog(
 async def reset_catalog(
     profile: str = Query("rudnik"),
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(require_expert_tool_access),
 ) -> HazardCatalogResponse:
     "Сбрасывает факторы эксперта к исходному справочнику."
     repo = HazardRepository(db)
@@ -79,7 +79,7 @@ async def reset_catalog(
 async def create_report(
     request: HazardReportRequest,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(require_expert_tool_access),
 ) -> HazardReportItem:
     "Считает показатели и сохраняет отчёт в историю. PDF собирается при просмотре из истории."
     repo = HazardRepository(db)
@@ -108,7 +108,7 @@ async def create_report(
         overall_r=result.overall_r,
         overall_category=result.overall_r_category,
     ))
-    await consume_response_slot(user_id, db)
+    await consume_tool_slot(user_id, db)
     return HazardReportItem.model_validate(report)
 
 

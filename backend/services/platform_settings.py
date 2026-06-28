@@ -19,9 +19,13 @@ class PlatformSettingsService:
             await self.db.execute(select(PlatformSettings).limit(1))
         ).scalar_one_or_none()
         if row is None:
-            return PlatformSettings(id=1, paid_responses_enabled=True)
+            return PlatformSettings(id=1, paid_responses_enabled=True, paid_tools_enabled=True)
         return row
 
     async def is_paid_responses_enabled(self) -> bool:
-        "Признак: соответствует ли сущность условию."
+        "Платный режим откликов на заказы."
         return (await self.get()).paid_responses_enabled
+
+    async def is_paid_tools_enabled(self) -> bool:
+        "Платный доступ к инструментам эксперта (Оценка крепи / Оценка опасности)."
+        return (await self.get()).paid_tools_enabled

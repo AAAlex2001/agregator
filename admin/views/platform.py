@@ -16,11 +16,21 @@ class PlatformSettingsAdmin(ModelView, model=PlatformSettings):
     can_create = False
     can_delete = False
 
-    column_list = [PlatformSettings.id, PlatformSettings.paid_responses_enabled]
-    form_columns = [PlatformSettings.paid_responses_enabled]
+    column_list = [
+        PlatformSettings.id,
+        PlatformSettings.paid_responses_enabled,
+        PlatformSettings.paid_tools_enabled,
+    ]
+    form_columns = [
+        PlatformSettings.paid_responses_enabled,
+        PlatformSettings.paid_tools_enabled,
+    ]
     column_labels = {
         PlatformSettings.id: "ID",
         PlatformSettings.paid_responses_enabled: (
-            "Платный режим откликов (выкл = эксперты откликаются бесплатно)"
+            "Платные отклики на заказы (выкл = отклики бесплатны)"
+        ),
+        PlatformSettings.paid_tools_enabled: (
+            "Платный доступ к инструментам «Оценка крепи» и «Оценка опасности» (выкл = инструменты бесплатны)"
         ),
     }

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from dependencies.subscription import consume_response_slot, require_expert_subscription
+from dependencies.subscription import consume_tool_slot, require_expert_tool_access
 from models.lining import LiningReport
 from schemas.lining import (
     LiningCatalogResponse,
@@ -43,7 +43,7 @@ async def get_catalog(
 async def create_report(
     request: LiningReportRequest,
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_subscription),
+    user_id: int = Depends(require_expert_tool_access),
 ) -> LiningReportItem:
     "Считает показатели и сохраняет отчёт в историю. PDF собирается при просмотре из истории."
     repo = LiningRepository(db)
@@ -74,7 +74,7 @@ async def create_report(
         final_capital=result.final_capital,
         final_emergency=result.final_emergency,
     ))
-    await consume_response_slot(user_id, db)
+    await consume_tool_slot(user_id, db)
     return LiningReportItem.model_validate(report)
 
 

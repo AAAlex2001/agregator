@@ -13,6 +13,7 @@ class PlatformSettings(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     paid_responses_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    paid_tools_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     def __str__(self) -> str:
         return "Настройки платформы"
