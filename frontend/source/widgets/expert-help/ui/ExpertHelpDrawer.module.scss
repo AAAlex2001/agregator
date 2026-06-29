@@ -26,13 +26,13 @@
   display: flex;
   flex-direction: column;
   background: #ffffff;
-  box-shadow: -18px 0 50px rgba(0, 0, 0, 0.16);
   transform: translateX(100%);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .drawerOpen {
   transform: translateX(0);
+  box-shadow: -18px 0 50px rgba(0, 0, 0, 0.16);
 }
 
 .head {
@@ -59,7 +59,8 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: #fff7ec;
+  background: #e8f7ee;
+  color: #2f9b52;
 
   svg {
     width: 26px;
@@ -116,14 +117,14 @@
   align-items: flex-start;
   gap: 14px;
   padding: 16px;
-  border: 1px solid #eef0f4;
+  border: 1px solid transparent;
   border-radius: 14px;
   background: #ffffff;
   text-decoration: none;
   transition: border-color 0.15s ease;
 
   &:hover {
-    border-color: #ff8a00;
+    border-color: #2f9b52;
   }
 }
 
@@ -134,8 +135,8 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: #fff7ec;
-  color: #ff8a00;
+  background: #e8f7ee;
+  color: #2f9b52;
 
   svg {
     width: 24px;

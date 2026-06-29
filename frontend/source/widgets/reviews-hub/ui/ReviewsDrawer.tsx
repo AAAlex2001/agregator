@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
-import { ReviewIcon } from "@/source/shared/ui/icons";
+import { ReviewsAllIcon } from "@/source/shared/ui/icons";
 import { getReviewLinks } from "../model/links";
 import { useReviewsHub } from "../model/ReviewsHubContext";
 import s from "./ReviewsDrawer.module.scss";
@@ -31,7 +31,7 @@ export function ReviewsDrawer() {
         <header className={s.head}>
           <div className={s.headTitle}>
             <span className={s.headIcon}>
-              <ReviewIcon />
+              <ReviewsAllIcon />
             </span>
             <div>
               <h2 className={s.title}>Все отзывы</h2>

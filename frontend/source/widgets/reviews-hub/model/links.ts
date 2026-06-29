@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { ExpertIcon, ReviewIcon, ReviewStarIcon } from "@/source/shared/ui/icons";
+import { ReviewsAboutIcon, ReviewsExpertsIcon, ReviewsMineIcon } from "@/source/shared/ui/icons";
 
 export interface ReviewLink {
   href: string;
@@ -14,7 +14,7 @@ export function getReviewLinks(role: string | null): ReviewLink[] {
       href: "/landing/reviews",
       label: "Отзывы о нас",
       description: "Что клиенты говорят о площадке",
-      Icon: ReviewIcon,
+      Icon: ReviewsAboutIcon,
     },
   ];
 
@@ -23,7 +23,7 @@ export function getReviewLinks(role: string | null): ReviewLink[] {
       href: "/expert/reviews",
       label: "Мои отзывы",
       description: "Отзывы, оставленные о вас",
-      Icon: ReviewStarIcon,
+      Icon: ReviewsMineIcon,
     });
   }
 
@@ -31,7 +31,7 @@ export function getReviewLinks(role: string | null): ReviewLink[] {
     href: "/expert-reviews",
     label: "Отзывы экспертов",
     description: "Отзывы и рейтинги экспертов площадки",
-    Icon: ExpertIcon,
+    Icon: ReviewsExpertsIcon,
   });
 
   return links;

@@ -3,7 +3,7 @@
 import { useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "@/source/features/session";
+import { useAvailableRoles, useSession } from "@/source/features/session";
 import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
 import {
@@ -14,6 +14,7 @@ import {
   LogoMarkIcon,
   LogoutIcon,
   ReviewIcon,
+  SwitchRoleIcon,
   TabArchiveIcon,
   TabChatIcon,
   TabNotificationIcon,
@@ -50,7 +51,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
     {
       label: "Общение",
       items: [
-        { href: "/chat", label: "Чат", icon: TabChatIcon },
+        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
         { href: "/expert/room", label: "Чат экспертов", icon: ExpertRoomIcon },
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
@@ -81,7 +82,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
     {
       label: "Общение",
       items: [
-        { href: "/chat", label: "Чат", icon: TabChatIcon },
+        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],
@@ -120,6 +121,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { role } = useSession();
+  const { roles } = useAvailableRoles(role);
   const mobile = useSidebarMobile();
   const unreadCount = useUnreadNotificationCount();
   const [collapsed, setCollapsed] = useState(true);
@@ -262,7 +264,13 @@ export function Sidebar() {
           </div>
 
           <div className={s.bottom}>
-            {!visualCollapsed && <RoleSwitcher />}
+            {visualCollapsed
+              ? roles.length > 0 &&
+                renderTab("switch-role", "Сменить роль", SwitchRoleIcon, {
+                  type: "button",
+                  onClick: () => setCollapsed(false),
+                })
+              : <RoleSwitcher />}
 
             {renderTab(
               "collapse",

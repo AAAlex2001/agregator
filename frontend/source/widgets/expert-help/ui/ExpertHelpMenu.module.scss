@@ -18,8 +18,8 @@
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
-  background: #fff8eb;
-  color: #ff8a00;
+  background: #e8f7ee;
+  color: #2f9b52;
   padding: 8px 14px;
   border-radius: 10px;
   white-space: nowrap;
@@ -27,8 +27,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #ffe6c2;
-    color: #e67e00;
+    background: #d3eddd;
+    color: #25804a;
   }
 
   @media (min-width: 768px) {
@@ -40,8 +40,8 @@
 }
 
 .pillOpen {
-  background: #ffe6c2;
-  color: #e67e00;
+  background: #d3eddd;
+  color: #25804a;
 }
 
 .chevron {
@@ -66,8 +66,9 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 95;
-  min-width: 240px;
-  max-width: calc(100vw - 24px);
+  min-width: 0;
+  width: max-content;
+  max-width: calc(100vw - 20px);
   padding: 6px;
   background: #ffffff;
   border: 1px solid #e6e6e6;
@@ -99,8 +100,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #fff8eb;
-    color: #ff8a00;
+    background: #e8f7ee;
+    color: #2f9b52;
   }
 }
 
@@ -110,7 +111,7 @@
   height: 26px;
   display: grid;
   place-items: center;
-  color: #ff8a00;
+  color: #2f9b52;
 
   svg {
     width: 20px;

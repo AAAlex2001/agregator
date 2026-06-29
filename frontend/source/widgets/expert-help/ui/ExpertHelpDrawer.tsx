@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExpertIcon } from "@/source/shared/ui/icons";
+import { HelmetIcon } from "@/source/shared/ui/icons";
 import { EXPERT_HELP_LINKS } from "../model/links";
 import { useExpertHelpDrawer } from "../model/ExpertHelpContext";
 import s from "./ExpertHelpDrawer.module.scss";
@@ -27,7 +27,7 @@ export function ExpertHelpDrawer() {
         <header className={s.head}>
           <div className={s.headTitle}>
             <span className={s.headIcon}>
-              <ExpertIcon />
+              <HelmetIcon />
             </span>
             <div>
               <h2 className={s.title}>Помощь эксперту</h2>
