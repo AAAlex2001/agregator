@@ -18,8 +18,8 @@
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
-  background: #fff8eb;
-  color: #ff8a00;
+  background: #eef3ff;
+  color: #2f5bbf;
   padding: 8px 14px;
   border-radius: 10px;
   white-space: nowrap;
@@ -27,8 +27,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #ffe6c2;
-    color: #e67e00;
+    background: #dde6fb;
+    color: #244aa0;
   }
 
   @media (min-width: 768px) {
@@ -40,8 +40,8 @@
 }
 
 .pillOpen {
-  background: #ffe6c2;
-  color: #e67e00;
+  background: #dde6fb;
+  color: #244aa0;
 }
 
 .chevron {
@@ -99,8 +99,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #fff8eb;
-    color: #ff8a00;
+    background: #eef3ff;
+    color: #2f5bbf;
   }
 }
 
@@ -110,7 +110,7 @@
   height: 26px;
   display: grid;
   place-items: center;
-  color: #ff8a00;
+  color: #2f5bbf;
 
   svg {
     width: 20px;

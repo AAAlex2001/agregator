@@ -48,12 +48,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       ],
     },
     {
-      label: "Эксперты",
-      items: [
-        { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
-      ],
-    },
-    {
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат", icon: TabChatIcon },
@@ -65,7 +59,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
     {
       label: "Аккаунт",
       items: [
-        { href: "/expert/reviews", label: "Мои отзывы", icon: ReviewIcon },
         { href: "/settings", label: "Профиль", icon: TabProfileIcon },
       ],
     },
@@ -83,12 +76,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       items: [
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
         { href: "/customer/reports", label: "Отчёты", icon: FileIcon },
-      ],
-    },
-    {
-      label: "Эксперты",
-      items: [
-        { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
       ],
     },
     {
