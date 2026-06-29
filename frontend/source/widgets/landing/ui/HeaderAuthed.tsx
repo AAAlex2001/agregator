@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ExpertHelpMenu, ExpertHelpPlates } from "@/source/widgets/expert-help";
-import { ReviewsMenu } from "@/source/widgets/reviews-hub";
+import { ExpertHelpPlates } from "@/source/widgets/expert-help";
+import CabinetBurgerMenu from "./CabinetBurgerMenu";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -12,10 +12,6 @@ const HeaderAuthed = () => (
   <header className={s.header}>
     <nav className={s.nav} aria-label="Основная навигация">
       <ExpertHelpPlates />
-      <div className={s.mobileMenus}>
-        <ExpertHelpMenu />
-        <ReviewsMenu />
-      </div>
       <div className={s.menuLinks}>
         {NAV_PAGES.map((page) => (
           <Link key={page.href} href={page.href} className={s.navLink}>
@@ -23,6 +19,7 @@ const HeaderAuthed = () => (
           </Link>
         ))}
       </div>
+      <CabinetBurgerMenu />
     </nav>
   </header>
 );
