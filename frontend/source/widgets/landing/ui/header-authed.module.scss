@@ -27,13 +27,9 @@
 
 .menuLinks {
   order: 1;
-  display: none;
+  display: flex;
   align-items: center;
   gap: 4px;
-
-  @media (min-width: 1440px) {
-    display: flex;
-  }
 }
 
 .navLink {

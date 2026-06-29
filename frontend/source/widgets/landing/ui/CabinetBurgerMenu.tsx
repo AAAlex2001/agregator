@@ -8,11 +8,6 @@ import { EXPERT_HELP_LINKS } from "@/source/widgets/expert-help";
 import { getReviewLinks } from "@/source/widgets/reviews-hub";
 import s from "./cabinet-burger.module.scss";
 
-const NAV = [
-  { href: "/landing/news", label: "Новости" },
-  { href: "/landing/blog", label: "Блог" },
-] as const;
-
 export function CabinetBurgerMenu() {
   const { role } = useSession();
   const [open, setOpen] = useState(false);
@@ -44,12 +39,6 @@ export function CabinetBurgerMenu() {
 
       {open && (
         <nav className={s.menu}>
-          {NAV.map((page) => (
-            <Link key={page.href} href={page.href} className={s.link} onClick={close}>
-              {page.label}
-            </Link>
-          ))}
-
           {showHelp && (
             <div className={s.group}>
               <button
