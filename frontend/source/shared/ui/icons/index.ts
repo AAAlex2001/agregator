@@ -27,7 +27,7 @@ export { default as ReviewsAboutIcon } from "./ReviewsAboutIcon";
 export { default as ReviewsMineIcon } from "./ReviewsMineIcon";
 export { default as ReviewsExpertsIcon } from "./ReviewsExpertsIcon";
 export { default as ReviewsAllIcon } from "./ReviewsAllIcon";
-export { default as HelmetIcon } from "./HelmetIcon";
+export { default as LifebuoyIcon } from "./LifebuoyIcon";
 export { default as SwitchRoleIcon } from "./SwitchRoleIcon";
 export { default as ProfileIcon } from "./ProfileIcon";
 export { default as LogoutIcon } from "./LogoutIcon";
