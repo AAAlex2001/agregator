@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
+import { ChevronIcon } from "@/source/shared/ui/icons";
 import { EXPERT_HELP_LINKS } from "../model/links";
 import s from "./ExpertHelpMenu.module.scss";
 
@@ -24,9 +25,7 @@ export function ExpertHelpMenu() {
         aria-haspopup="menu"
       >
         Помощь эксперту
-        <span className={s.chevron} aria-hidden>
-          ▾
-        </span>
+        <ChevronIcon className={s.chevron} color="currentColor" />
       </button>
 
       {open && (

@@ -12,13 +12,13 @@
   align-items: center;
   gap: 4px;
   border: none;
-  background: transparent;
   cursor: pointer;
   font-family: inherit;
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
-  color: #1a1a1a;
+  background: #fff8eb;
+  color: #ff8a00;
   padding: 8px 10px;
   border-radius: 10px;
   white-space: nowrap;
@@ -26,8 +26,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #fff8eb;
-    color: #ff8a00;
+    background: #ffe6c2;
+    color: #e67e00;
   }
 
   @media (min-width: 768px) {
@@ -39,12 +39,13 @@
 }
 
 .triggerOpen {
-  background: #fff8eb;
-  color: #ff8a00;
+  background: #ffe6c2;
+  color: #e67e00;
 }
 
 .chevron {
-  font-size: 10px;
+  width: 14px;
+  height: 14px;
   transition: transform 0.15s ease;
 }
 
@@ -61,10 +62,10 @@
 .menu {
   position: absolute;
   top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0;
   z-index: 95;
   min-width: 240px;
+  max-width: calc(100vw - 24px);
   padding: 6px;
   background: #ffffff;
   border: 1px solid #e6e6e6;

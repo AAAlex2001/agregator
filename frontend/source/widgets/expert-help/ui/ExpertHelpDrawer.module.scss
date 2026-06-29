@@ -2,7 +2,7 @@
   position: fixed;
   top: 50%;
   right: 0;
-  transform: translateY(calc(-50% - 175px));
+  transform: translateY(calc(-50% - 205px));
   z-index: 1200;
   display: none;
   writing-mode: vertical-rl;
@@ -149,12 +149,10 @@
   border-radius: 14px;
   background: #ffffff;
   text-decoration: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease;
 
   &:hover {
-    border-color: #ffd591;
-    box-shadow: 0 8px 22px rgba(255, 138, 0, 0.14);
-    transform: translateY(-1px);
+    border-color: #ff8a00;
   }
 }
 
