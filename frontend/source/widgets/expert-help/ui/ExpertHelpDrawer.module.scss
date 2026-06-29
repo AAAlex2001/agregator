@@ -2,7 +2,7 @@
   position: fixed;
   top: 50%;
   right: 0;
-  transform: translateY(-50%);
+  transform: translateY(calc(-50% - 175px));
   z-index: 1200;
   display: none;
   writing-mode: vertical-rl;
@@ -140,16 +140,55 @@
   gap: 12px;
 }
 
-.loading {
+.card {
   display: flex;
-  justify-content: center;
-  padding: 48px 0;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #eef0f4;
+  border-radius: 14px;
+  background: #ffffff;
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: #ffd591;
+    box-shadow: 0 8px 22px rgba(255, 138, 0, 0.14);
+    transform: translateY(-1px);
+  }
 }
 
-.message {
-  margin: 0;
-  padding: 44px 0;
-  text-align: center;
+.cardIcon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #fff7ec;
+  color: #ff8a00;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.cardText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cardLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.cardDesc {
+  font-size: 13px;
+  line-height: 18px;
   color: #6b7280;
-  font-size: 14px;
 }

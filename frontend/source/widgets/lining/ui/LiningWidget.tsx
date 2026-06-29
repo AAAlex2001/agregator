@@ -13,7 +13,7 @@ export function LiningWidget() {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Оценка крепи горных выработок" as="h1" className={s.pageTitle} />
+        <Title text="Расчёт остаточного ресурса" as="h1" className={s.pageTitle} />
         <Subtitle
           text="Расчёт срока службы анкерной крепи по факторам риска и категориям повреждений с формированием PDF-отчёта"
           className={s.pageSubtitle}

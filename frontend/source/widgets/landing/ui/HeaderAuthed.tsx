@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ExpertHelpMenu } from "@/source/widgets/expert-help";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -15,6 +16,7 @@ const HeaderAuthed = () => (
           {page.label}
         </Link>
       ))}
+      <ExpertHelpMenu />
     </nav>
   </header>
 );

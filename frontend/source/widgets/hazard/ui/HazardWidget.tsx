@@ -13,7 +13,7 @@ export function HazardWidget() {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Оценка опасности аварий" as="h1" className={s.pageTitle} />
+        <Title text="Анализ риска аварий" as="h1" className={s.pageTitle} />
         <Subtitle
           text="Расчёт показателей опасности (риска) аварий по факторам R0–R9 с формированием PDF-отчёта"
           className={s.pageSubtitle}

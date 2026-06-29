@@ -8,10 +8,8 @@ import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
-  DangerIcon,
   ExpertRoomIcon,
   FileIcon,
-  LiningIcon,
   LogoIcon,
   LogoMarkIcon,
   LogoutIcon,
@@ -47,8 +45,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
-        { href: "/expert/hazard", label: "Оценка опасности", icon: DangerIcon },
-        { href: "/expert/lining", label: "Оценка крепи", icon: LiningIcon },
       ],
     },
     {

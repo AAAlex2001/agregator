@@ -8,6 +8,7 @@ import {
   LicenseHoldersDrawer,
   LicenseHoldersDrawerProvider,
 } from "@/source/widgets/license-holders-drawer";
+import { ExpertHelpDrawer } from "@/source/widgets/expert-help";
 import { UnreadCountProvider } from "@/source/features/notifications";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
@@ -37,6 +38,7 @@ export default async function AppLayout({
               </div>
               <CabinetMenuTabs />
               <LicenseHoldersDrawer />
+              <ExpertHelpDrawer />
               <NotificationsWelcomeModal />
             </LicenseHoldersDrawerProvider>
           </SidebarMobileProvider>

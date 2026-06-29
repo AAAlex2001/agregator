@@ -1,16 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import {
-  LicenseHolderCard,
-  LicenseHolderCardSkeleton,
-  useLicenseHolders,
-} from "@/source/entities/license-holder";
+import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import { ExpertIcon } from "@/source/shared/ui/icons";
+import Loader from "@/source/shared/ui/Loader";
 import { useLicenseHoldersDrawer } from "../model/DrawerContext";
 import s from "./LicenseHoldersDrawer.module.scss";
 
-const SKELETON_COUNT = 4;
 const HIDDEN_ROUTES = [/^\/chat(?:\/.*)?$/, /^\/expert\/room$/, /^\/support(?:\/.*)?$/];
 
 export function LicenseHoldersDrawer() {
@@ -58,10 +54,8 @@ export function LicenseHoldersDrawer() {
 
         <div className={s.body}>
           {isLoading ? (
-            <div className={s.list}>
-              {Array.from({ length: SKELETON_COUNT }, (_, i) => (
-                <LicenseHolderCardSkeleton key={i} />
-              ))}
+            <div className={s.loading}>
+              <Loader size="md" label="" />
             </div>
           ) : error ? (
             <p className={s.message}>{error}</p>

@@ -1,0 +1,80 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "@/source/features/session";
+import { ExpertIcon } from "@/source/shared/ui/icons";
+import { EXPERT_HELP_LINKS } from "../model/links";
+import s from "./ExpertHelpDrawer.module.scss";
+
+const HIDDEN_ROUTES = [/^\/chat(?:\/.*)?$/, /^\/expert\/room$/, /^\/support(?:\/.*)?$/];
+
+export function ExpertHelpDrawer() {
+  const { role } = useSession();
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (role !== "EXPERT") return null;
+
+  const hideHandle = HIDDEN_ROUTES.some((pattern) => pattern.test(pathname));
+  const close = () => setIsOpen(false);
+
+  return (
+    <>
+      {!isOpen && !hideHandle && (
+        <button
+          type="button"
+          className={s.handle}
+          onClick={() => setIsOpen(true)}
+          aria-label="Помощь эксперту"
+        >
+          Помощь эксперту
+        </button>
+      )}
+
+      <div
+        className={`${s.backdrop} ${isOpen ? s.backdropVisible : ""}`}
+        onClick={close}
+        aria-hidden
+      />
+
+      <aside
+        className={`${s.drawer} ${isOpen ? s.drawerOpen : ""}`}
+        aria-label="Помощь эксперту"
+        aria-hidden={!isOpen}
+      >
+        <header className={s.head}>
+          <div className={s.headTitle}>
+            <span className={s.headIcon}>
+              <ExpertIcon />
+            </span>
+            <div>
+              <h2 className={s.title}>Помощь эксперту</h2>
+              <p className={s.subtitle}>Инструменты расчётов для экспертизы</p>
+            </div>
+          </div>
+          <button type="button" className={s.close} onClick={close} aria-label="Закрыть">
+            ×
+          </button>
+        </header>
+
+        <div className={s.body}>
+          <div className={s.list}>
+            {EXPERT_HELP_LINKS.map(({ href, label, description, Icon }) => (
+              <Link key={href} href={href} className={s.card} onClick={close}>
+                <span className={s.cardIcon}>
+                  <Icon />
+                </span>
+                <span className={s.cardText}>
+                  <span className={s.cardLabel}>{label}</span>
+                  <span className={s.cardDesc}>{description}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
