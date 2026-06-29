@@ -13,14 +13,17 @@ from schemas.article_interactions import (
     CommentResponse,
     ReactionRequest,
     ReactionResponse,
+    ViewResponse,
 )
 from services.articles.repository import (
     ArticleCommentRepository,
     ArticleReactionRepository,
     ArticleRepository,
+    ArticleViewRepository,
 )
 from services.articles.use_cases.article_comments import ArticleCommentsUseCase
 from services.articles.use_cases.react_to_article import ReactToArticleUseCase
+from services.articles.use_cases.record_article_view import RecordArticleViewUseCase
 
 router = APIRouter(tags=["article-interactions"])
 
@@ -70,6 +73,17 @@ async def react(
         dislikes_count=article.dislikes_count,
         my_reaction=my_reaction.value if my_reaction else None,
     )
+
+
+@router.post("/public/articles/{article_id}/view", response_model=ViewResponse)
+async def record_view(
+    article_id: int,
+    user_id: int = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> ViewResponse:
+    use_case = RecordArticleViewUseCase(ArticleRepository(db), ArticleViewRepository(db))
+    article = await use_case.record(article_id, user_id)
+    return ViewResponse(views_count=article.views_count)
 
 
 @router.get("/public/articles/{article_id}/comments", response_model=CommentListResponse)

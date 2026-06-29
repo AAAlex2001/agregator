@@ -137,6 +137,9 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
                 cover_image={item.cover_image}
                 tags={item.tags}
                 published_at={item.published_at}
+                likes_count={item.likes_count}
+                dislikes_count={item.dislikes_count}
+                views_count={item.views_count}
               />
             </li>
           ))}
@@ -173,6 +176,9 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
                 cover_image={item.cover_image}
                 tags={item.tags}
                 published_at={item.published_at}
+                likes_count={item.likes_count}
+                dislikes_count={item.dislikes_count}
+                views_count={item.views_count}
               />
             ))}
           </div>

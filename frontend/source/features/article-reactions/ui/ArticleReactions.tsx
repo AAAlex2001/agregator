@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useArticleReactions, type ReactionState, type ReactionValue } from "@/source/entities/article-reaction";
 import { useSession } from "@/source/features/session";
+import { EyeIcon } from "@/source/shared/ui/icons";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
 import { ThumbUpIcon } from "@/source/shared/ui/icons/ThumbUpIcon";
 import s from "./ArticleReactions.module.scss";
@@ -10,9 +11,10 @@ import s from "./ArticleReactions.module.scss";
 interface Props {
   articleId: number;
   initial?: ReactionState;
+  views?: number;
 }
 
-export function ArticleReactions({ articleId, initial }: Props) {
+export function ArticleReactions({ articleId, initial, views }: Props) {
   const { user } = useSession();
   const { state, react, pending } = useArticleReactions(articleId, initial);
   const [hint, setHint] = useState("");
@@ -57,6 +59,13 @@ export function ArticleReactions({ articleId, initial }: Props) {
       </div>
 
       {hint && <span className={s.hint}>{hint}</span>}
+
+      {views !== undefined && (
+        <span className={s.views} title="Просмотры">
+          <EyeIcon className={s.viewsIcon} />
+          {views}
+        </span>
+      )}
     </section>
   );
 }

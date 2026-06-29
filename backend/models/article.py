@@ -52,6 +52,7 @@ class Article(Base):
 
     likes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     dislikes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    views_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(

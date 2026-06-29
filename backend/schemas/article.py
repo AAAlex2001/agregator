@@ -16,6 +16,9 @@ class ArticleListItemDto(BaseModel):
     cover_image: str
     tags: list[str]
     published_at: datetime | None
+    likes_count: int = 0
+    dislikes_count: int = 0
+    views_count: int = 0
 
 
 class ArticleListDto(BaseModel):
@@ -40,3 +43,6 @@ class ArticleDetailDto(BaseModel):
     og_image: str
     published_at: datetime | None
     updated_at: datetime
+    likes_count: int = 0
+    dislikes_count: int = 0
+    views_count: int = 0

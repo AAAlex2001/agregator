@@ -34,4 +34,7 @@ class GetArticleBySlugUseCase:
             og_image=row.og_image,
             published_at=row.published_at,
             updated_at=row.updated_at,
+            likes_count=row.likes_count,
+            dislikes_count=row.dislikes_count,
+            views_count=row.views_count,
         )

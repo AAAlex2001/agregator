@@ -1,4 +1,5 @@
 import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
+import { fetchWithSession } from "@/source/shared/api/session";
 
 export type ArticleKind = "news" | "blog";
 
@@ -11,6 +12,9 @@ export interface ArticleListItem {
   cover_image: string;
   tags: string[];
   published_at: string | null;
+  likes_count: number;
+  dislikes_count: number;
+  views_count: number;
 }
 
 export interface ArticleList {
@@ -33,6 +37,9 @@ export interface ArticleDetail {
   og_image: string;
   published_at: string | null;
   updated_at: string;
+  likes_count: number;
+  dislikes_count: number;
+  views_count: number;
 }
 
 function base(server: boolean): string {
@@ -61,6 +68,19 @@ export async function fetchArticleBySlug(
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Не удалось загрузить статью: ${res.status}`);
   return res.json();
+}
+
+export async function recordArticleView(articleId: number): Promise<number | null> {
+  try {
+    const res = await fetchWithSession(`${API_URL}/public/articles/${articleId}/view`, {
+      method: "POST",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.views_count as number;
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchRelatedArticles(

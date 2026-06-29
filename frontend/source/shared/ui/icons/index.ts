@@ -29,6 +29,7 @@ export { default as ReviewsExpertsIcon } from "./ReviewsExpertsIcon";
 export { default as ReviewsAllIcon } from "./ReviewsAllIcon";
 export { default as LifebuoyIcon } from "./LifebuoyIcon";
 export { default as SwitchRoleIcon } from "./SwitchRoleIcon";
+export { default as EyeIcon } from "./EyeIcon";
 export { default as ProfileIcon } from "./ProfileIcon";
 export { default as LogoutIcon } from "./LogoutIcon";
 export { default as MenuOrdersIcon } from "./MenuOrdersIcon";

@@ -1,16 +1,18 @@
 .burger {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   width: 30px;
   height: 30px;
-  margin-left: auto;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
   z-index: 1303;
-  position: relative;
 
   span {
     width: 100%;
@@ -102,6 +104,10 @@
   color: #2f5bbf;
 }
 
+.purple {
+  color: #6c4ec8;
+}
+
 .chevron {
   width: 18px;
   height: 18px;
@@ -148,4 +154,13 @@
 
 .blueLink .subIcon {
   color: #2f5bbf;
+}
+
+.purpleLink .subIcon {
+  color: #6c4ec8;
+
+  svg {
+    width: auto;
+    height: 22px;
+  }
 }

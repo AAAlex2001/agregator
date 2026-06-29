@@ -10,6 +10,7 @@ import {
 } from "@/source/widgets/license-holders-drawer";
 import { ExpertHelpDrawer, ExpertHelpProvider } from "@/source/widgets/expert-help";
 import { ReviewsDrawer, ReviewsHubProvider } from "@/source/widgets/reviews-hub";
+import { UsefulLinksDrawer, UsefulLinksProvider } from "@/source/widgets/useful-links";
 import { UnreadCountProvider } from "@/source/features/notifications";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
@@ -36,14 +37,17 @@ export default async function AppLayout({
             <LicenseHoldersDrawerProvider>
               <ExpertHelpProvider>
                 <ReviewsHubProvider>
-                  <div className={s.root}>
-                    <AppShell>{children}</AppShell>
-                  </div>
-                  <CabinetMenuTabs />
-                  <LicenseHoldersDrawer />
-                  <ExpertHelpDrawer />
-                  <ReviewsDrawer />
-                  <NotificationsWelcomeModal />
+                  <UsefulLinksProvider>
+                    <div className={s.root}>
+                      <AppShell>{children}</AppShell>
+                    </div>
+                    <CabinetMenuTabs />
+                    <LicenseHoldersDrawer />
+                    <ExpertHelpDrawer />
+                    <ReviewsDrawer />
+                    <UsefulLinksDrawer />
+                    <NotificationsWelcomeModal />
+                  </UsefulLinksProvider>
                 </ReviewsHubProvider>
               </ExpertHelpProvider>
             </LicenseHoldersDrawerProvider>

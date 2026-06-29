@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.article import Article, ArticleKind, ArticleStatus
 from models.article_comment import ArticleComment
 from models.article_reaction import ArticleReaction, ReactionValue
+from models.article_view import ArticleView
 from models.tag import Tag
 
 
@@ -134,6 +135,24 @@ class ArticleReactionRepository:
                 ArticleReaction.user_id == user_id,
             )
         )
+
+
+class ArticleViewRepository:
+    "Уникальные просмотры статей зарегистрированными пользователями."
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def exists(self, article_id: int, user_id: int) -> bool:
+        query = select(ArticleView.id).where(
+            ArticleView.article_id == article_id,
+            ArticleView.user_id == user_id,
+        )
+        return (await self.db.execute(query.limit(1))).scalar_one_or_none() is not None
+
+    async def add(self, article_id: int, user_id: int) -> None:
+        self.db.add(ArticleView(article_id=article_id, user_id=user_id))
+        await self.db.flush()
 
 
 class ArticleCommentRepository:

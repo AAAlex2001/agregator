@@ -2,6 +2,7 @@ export {
   fetchArticleList,
   fetchArticleBySlug,
   fetchRelatedArticles,
+  recordArticleView,
 } from "./api/article.api";
 export type {
   ArticleKind,

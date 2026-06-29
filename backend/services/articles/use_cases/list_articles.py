@@ -37,6 +37,9 @@ class ListArticlesUseCase:
                 cover_image=row.cover_image,
                 tags=[t.name for t in row.tags],
                 published_at=row.published_at,
+                likes_count=row.likes_count,
+                dislikes_count=row.dislikes_count,
+                views_count=row.views_count,
             )
             for row in rows
         ]

@@ -95,10 +95,44 @@
   overflow: hidden;
 }
 
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.reactions {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a6acbf;
+}
+
+.statIcon {
+  width: 16px;
+  height: 16px;
 }
 
 .date {

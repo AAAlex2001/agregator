@@ -10,6 +10,7 @@ import {
 } from "@/source/entities/article";
 import { ArticleReactions } from "@/source/features/article-reactions/ui/ArticleReactions";
 import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
+import { ArticleViewTracker } from "./ArticleViewTracker";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import { extractToc } from "../lib/extractToc";
@@ -77,7 +78,8 @@ export function ArticleView({
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
-          <ArticleReactions articleId={article.id} initial={initialReactions} />
+          <ArticleViewTracker articleId={article.id} />
+          <ArticleReactions articleId={article.id} initial={initialReactions} views={article.views_count} />
           <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
         </div>
       </div>
@@ -96,6 +98,9 @@ export function ArticleView({
                 cover_image={item.cover_image}
                 tags={item.tags}
                 published_at={item.published_at}
+                likes_count={item.likes_count}
+                dislikes_count={item.dislikes_count}
+                views_count={item.views_count}
               />
             ))}
           </div>

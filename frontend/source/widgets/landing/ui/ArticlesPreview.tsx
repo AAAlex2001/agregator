@@ -33,6 +33,9 @@ const ArticlesPreview = ({ title, subtitle, ctaHref, ctaLabel, items }: Props) =
               cover_image={item.cover_image}
               tags={item.tags}
               published_at={item.published_at}
+              likes_count={item.likes_count}
+              dislikes_count={item.dislikes_count}
+              views_count={item.views_count}
             />
           ))}
         </div>
