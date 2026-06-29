@@ -16,11 +16,15 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 4px;
   max-width: var(--page-maxw);
   margin: 0 auto;
   width: 100%;
+
+  @media (min-width: 1440px) {
+    justify-content: flex-end;
+  }
 }
 
 .menuLinks {

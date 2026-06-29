@@ -1,0 +1,121 @@
+.wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  order: 2;
+  width: 100%;
+
+  @media (min-width: 1440px) {
+    display: none;
+  }
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+  background: #fff8eb;
+  color: #ff8a00;
+  padding: 8px 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #ffe6c2;
+    color: #e67e00;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+    line-height: 18px;
+    padding: 10px 18px;
+    border-radius: 12px;
+  }
+}
+
+.triggerOpen {
+  background: #ffe6c2;
+  color: #e67e00;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.15s ease;
+}
+
+.triggerOpen .chevron {
+  transform: rotate(180deg);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  min-width: 240px;
+  max-width: calc(100vw - 24px);
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #fff8eb;
+    color: #ff8a00;
+  }
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: #ff8a00;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}

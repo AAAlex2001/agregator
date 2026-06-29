@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExpertHelpPlates } from "@/source/widgets/expert-help";
+import { ExpertHelpMenu, ExpertHelpPlates } from "@/source/widgets/expert-help";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -12,6 +12,7 @@ const HeaderAuthed = () => (
   <header className={s.header}>
     <nav className={s.nav} aria-label="Основная навигация">
       <ExpertHelpPlates />
+      <ExpertHelpMenu />
       <div className={s.menuLinks}>
         {NAV_PAGES.map((page) => (
           <Link key={page.href} href={page.href} className={s.navLink}>
