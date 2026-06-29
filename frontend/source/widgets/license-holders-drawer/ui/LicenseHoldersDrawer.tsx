@@ -1,31 +1,19 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import { ExpertIcon } from "@/source/shared/ui/icons";
 import Loader from "@/source/shared/ui/Loader";
 import { useLicenseHoldersDrawer } from "../model/DrawerContext";
 import s from "./LicenseHoldersDrawer.module.scss";
 
-const HIDDEN_ROUTES = [/^\/chat(?:\/.*)?$/, /^\/expert\/room$/, /^\/support(?:\/.*)?$/];
-
 export function LicenseHoldersDrawer() {
-  const { isAvailable, isOpen, open, close } = useLicenseHoldersDrawer();
+  const { isAvailable, isOpen, close } = useLicenseHoldersDrawer();
   const { items, isLoading, error } = useLicenseHolders(isAvailable);
-  const pathname = usePathname();
 
   if (!isAvailable) return null;
 
-  const hideHandle = HIDDEN_ROUTES.some((pattern) => pattern.test(pathname));
-
   return (
     <>
-      {!isOpen && !hideHandle && (
-        <button type="button" className={s.handle} onClick={open} aria-label="Держатели лицензии">
-          Держатели лицензии
-        </button>
-      )}
-
       <div
         className={`${s.backdrop} ${isOpen ? s.backdropVisible : ""}`}
         onClick={close}

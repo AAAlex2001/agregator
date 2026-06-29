@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
-import { ChevronIcon } from "@/source/shared/ui/icons";
+import { ChevronIcon, ExpertIcon } from "@/source/shared/ui/icons";
+import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { EXPERT_HELP_LINKS } from "../model/links";
 import s from "./ExpertHelpMenu.module.scss";
 
 export function ExpertHelpMenu() {
   const { role } = useSession();
+  const licenseDrawer = useLicenseHoldersDrawer();
   const [open, setOpen] = useState(false);
 
   if (role !== "EXPERT") return null;
@@ -40,6 +42,20 @@ export function ExpertHelpMenu() {
                 {label}
               </Link>
             ))}
+            <button
+              type="button"
+              className={s.item}
+              role="menuitem"
+              onClick={() => {
+                close();
+                licenseDrawer.open();
+              }}
+            >
+              <span className={s.itemIcon}>
+                <ExpertIcon />
+              </span>
+              Держатели лицензии
+            </button>
           </div>
         </>
       )}

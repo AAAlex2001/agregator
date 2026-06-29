@@ -1,2 +1,2 @@
-export { ExpertHelpDrawer } from "./ui/ExpertHelpDrawer";
+export { ExpertHelpTabs } from "./ui/ExpertHelpTabs";
 export { ExpertHelpMenu } from "./ui/ExpertHelpMenu";

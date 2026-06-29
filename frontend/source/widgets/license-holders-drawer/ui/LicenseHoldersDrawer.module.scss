@@ -1,32 +1,3 @@
-.handle {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 1200;
-  display: none;
-  writing-mode: vertical-rl;
-  padding: 18px 9px;
-  border: none;
-  border-radius: 12px 0 0 12px;
-  background: linear-gradient(180deg, #ffb800, #ff8a00);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.2px;
-  cursor: pointer;
-  box-shadow: -4px 4px 18px rgba(255, 138, 0, 0.34);
-  transition: padding-right 0.15s ease;
-
-  &:hover {
-    padding-right: 13px;
-  }
-
-  @media (min-width: 1440px) {
-    display: inline-flex;
-  }
-}
-
 .backdrop {
   position: fixed;
   inset: 0;
