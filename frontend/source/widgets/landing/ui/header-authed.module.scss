@@ -14,6 +14,7 @@
 
 .nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
@@ -23,6 +24,7 @@
 }
 
 .menuLinks {
+  order: 1;
   display: flex;
   align-items: center;
   gap: 4px;

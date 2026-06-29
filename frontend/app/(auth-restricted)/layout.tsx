@@ -8,6 +8,7 @@ import {
   LicenseHoldersDrawer,
   LicenseHoldersDrawerProvider,
 } from "@/source/widgets/license-holders-drawer";
+import { ExpertHelpDrawer, ExpertHelpProvider } from "@/source/widgets/expert-help";
 import { UnreadCountProvider } from "@/source/features/notifications";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
@@ -32,12 +33,15 @@ export default async function AppLayout({
         <UnreadCountProvider>
           <SidebarMobileProvider>
             <LicenseHoldersDrawerProvider>
-              <div className={s.root}>
-                <AppShell>{children}</AppShell>
-              </div>
-              <CabinetMenuTabs />
-              <LicenseHoldersDrawer />
-              <NotificationsWelcomeModal />
+              <ExpertHelpProvider>
+                <div className={s.root}>
+                  <AppShell>{children}</AppShell>
+                </div>
+                <CabinetMenuTabs />
+                <LicenseHoldersDrawer />
+                <ExpertHelpDrawer />
+                <NotificationsWelcomeModal />
+              </ExpertHelpProvider>
             </LicenseHoldersDrawerProvider>
           </SidebarMobileProvider>
         </UnreadCountProvider>
