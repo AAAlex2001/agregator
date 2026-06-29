@@ -4,13 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { ChevronIcon } from "@/source/shared/ui/icons";
-import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { EXPERT_HELP_LINKS } from "../model/links";
 import s from "./ExpertHelpMenu.module.scss";
 
 export function ExpertHelpMenu() {
   const { role } = useSession();
-  const license = useLicenseHoldersDrawer();
   const [open, setOpen] = useState(false);
 
   if (role !== "EXPERT") return null;
@@ -47,10 +45,6 @@ export function ExpertHelpMenu() {
           </>
         )}
       </div>
-
-      <button type="button" className={s.pill} onClick={license.open}>
-        Держатели лицензии
-      </button>
     </div>
   );
 }
