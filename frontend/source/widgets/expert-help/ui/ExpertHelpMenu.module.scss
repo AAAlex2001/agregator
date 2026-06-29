@@ -1,7 +1,8 @@
 .wrap {
-  position: relative;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 8px;
   order: 2;
   width: 100%;
 
@@ -10,7 +11,12 @@
   }
 }
 
-.trigger {
+.dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -22,7 +28,7 @@
   font-weight: 500;
   background: #fff8eb;
   color: #ff8a00;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 10px;
   white-space: nowrap;
   transition: background-color 0.15s ease, color 0.15s ease;
@@ -41,7 +47,7 @@
   }
 }
 
-.triggerOpen {
+.pillOpen {
   background: #ffe6c2;
   color: #e67e00;
 }
@@ -52,7 +58,7 @@
   transition: transform 0.15s ease;
 }
 
-.triggerOpen .chevron {
+.pillOpen .chevron {
   transform: rotate(180deg);
 }
 
