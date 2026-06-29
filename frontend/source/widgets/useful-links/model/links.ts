@@ -18,6 +18,12 @@ export function getUsefulLinks(role: string | null): UsefulLink[] {
       description: "Реестр аттестованных экспертов Ростехнадзора",
       Icon: CheckIcon,
     });
+    links.push({
+      href: "https://экг-рейтинг.рф",
+      label: "Проверка рейтинга экспертной организации",
+      description: "Национальный ЭКГ-рейтинг организаций",
+      Icon: CheckIcon,
+    });
   }
 
   return links;
