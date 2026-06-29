@@ -1,7 +1,7 @@
 """article views
 
-Revision ID: 111
-Revises: 110
+Revision ID: 120
+Revises: 119
 """
 from collections.abc import Sequence
 
@@ -9,8 +9,8 @@ import sqlalchemy as sa
 
 from alembic import op
 
-revision: str = "111"
-down_revision: str | None = "110"
+revision: str = "120"
+down_revision: str | None = "119"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
