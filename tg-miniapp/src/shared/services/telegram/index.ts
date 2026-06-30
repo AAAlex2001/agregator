@@ -84,6 +84,14 @@ export function initTelegram(): void {
   applyTheme();
 }
 
+export function setHeaderColor(hex: string): void {
+  tg?.setHeaderColor?.(hex);
+}
+
+export function restoreHeaderColor(): void {
+  tg?.setHeaderColor?.(headerHex());
+}
+
 export function notifyHaptic(type: HapticNotify): void {
   if (hapticEnabled()) tg?.HapticFeedback?.notificationOccurred(type);
 }

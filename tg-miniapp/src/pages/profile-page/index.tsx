@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import cn from "classnames";
 import { useSession } from "@/entites/session";
@@ -6,7 +6,13 @@ import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { RoleTabs } from "@/features/role-switch";
-import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
+import {
+  hapticEnabled,
+  restoreHeaderColor,
+  setHapticEnabled,
+  setHeaderColor,
+  tapHaptic,
+} from "@/shared/services/telegram";
 import {
   BellIcon,
   ChevronRightIcon,
@@ -18,13 +24,14 @@ import {
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
+import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import { formatPhone } from "@/shared/lib/phone";
 import s from "./style.module.scss";
 
 const ROLE_META = {
-  EXPERT: { kind: "expert", noun: "Эксперт" },
-  CUSTOMER: { kind: "customer", noun: "Заказчик" },
-  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат" },
+  EXPERT: { kind: "expert", noun: "Эксперт", Icon: ExpertRoleIcon, header: "#ff9f2e" },
+  CUSTOMER: { kind: "customer", noun: "Заказчик", Icon: CustomerRoleIcon, header: "#4a86ee" },
+  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", Icon: LicenseRoleIcon, header: "#34c759" },
 } as const;
 
 function Row({
@@ -71,6 +78,12 @@ export function ProfilePage() {
   const { profile, role, signOut } = useSession();
   const [themeOpen, setThemeOpen] = useState(false);
   const [haptic, setHaptic] = useState(hapticEnabled);
+  const meta = ROLE_META[role ?? "CUSTOMER"];
+
+  useEffect(() => {
+    setHeaderColor(meta.header);
+    return () => restoreHeaderColor();
+  }, [meta.header]);
 
   if (!profile) {
     return (
@@ -81,7 +94,6 @@ export function ProfilePage() {
   }
 
   const name = [profile.last_name, profile.first_name].filter(Boolean).join(" ") || "—";
-  const meta = ROLE_META[role ?? "CUSTOMER"];
 
   return (
     <Screen
@@ -89,9 +101,15 @@ export function ProfilePage() {
       panel
       hero={
         <div className={cn(s.hero, s[`hero_${meta.kind}`])}>
-          <p className={s.heroName}>{name}</p>
-          <p className={s.heroRole}>{meta.noun}</p>
-          <p className={s.heroSub}>Ваш профиль</p>
+          <div className={s.heroPattern} aria-hidden="true">
+            {Array.from({ length: 48 }).map((_, i) => (
+              <meta.Icon key={i} size={28} />
+            ))}
+          </div>
+          <div className={s.heroInner}>
+            <p className={s.heroName}>{name}</p>
+            <p className={s.heroRole}>Вы — {meta.noun}</p>
+          </div>
           <span className={s.heroShade} />
         </div>
       }

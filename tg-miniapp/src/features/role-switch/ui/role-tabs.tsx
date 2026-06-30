@@ -31,7 +31,7 @@ export function RoleTabs() {
     getAvailableRoles()
       .then((resp) => setAvailable(resp.roles))
       .catch(() => setAvailable([]));
-  }, []);
+  }, [role]);
 
   if (!role) return null;
 
@@ -67,7 +67,7 @@ export function RoleTabs() {
   return (
     <div className={s.wrap}>
       <p className={s.label}>Доступные роли</p>
-      <div className={s.tabs}>
+      <div className={cn(s.tabs, s[`tabs_${KIND[role]}`])}>
         {tabs.map((item) => (
           <button
             key={item}

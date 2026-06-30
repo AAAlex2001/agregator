@@ -63,6 +63,9 @@ class SwitchRoleUseCase:
                 },
             )
 
+        if current.telegram_id is not None:
+            await self.repo.set_telegram_id(target.id, current.telegram_id)
+
         if current_session_id:
             await self.repo.delete_session_by_uuid(current_session_id)
         return await self.repo.add_session(target.id)

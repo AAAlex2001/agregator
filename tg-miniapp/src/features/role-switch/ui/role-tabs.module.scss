@@ -1,7 +1,8 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin: 16px 0;
 }
 
 .label {
@@ -16,15 +17,26 @@
 .tabs {
   display: flex;
   gap: 4px;
-  padding: 4px;
-  background: var(--card-2);
+  padding: 5px;
   border-radius: 14px;
+}
+
+.tabs_expert {
+  background: var(--role-expert-bg);
+}
+
+.tabs_customer {
+  background: var(--role-customer-bg);
+}
+
+.tabs_license {
+  background: var(--role-license-bg);
 }
 
 .tab {
   flex: 1 1 0;
   min-width: 0;
-  padding: 10px 8px;
+  padding: 12px 8px;
   border: none;
   border-radius: 10px;
   background: transparent;

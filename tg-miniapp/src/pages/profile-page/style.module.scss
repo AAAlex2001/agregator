@@ -1,12 +1,31 @@
 .hero {
   position: relative;
+  overflow: hidden;
+  padding: calc(26px + var(--safe-top)) 20px 46px;
+  color: #fff;
+}
+
+.heroPattern {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 16px;
+  padding: 16px;
+  opacity: 0.13;
+  color: #fff;
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 5px;
-  padding: calc(26px + var(--safe-top)) 20px 46px;
-  color: #fff;
+  gap: 4px;
 }
 
 .heroName {
@@ -21,12 +40,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-}
-
-.heroSub {
-  margin: 0;
-  font-size: 13px;
-  opacity: 0.82;
+  opacity: 0.95;
 }
 
 .heroShade {
@@ -40,21 +54,15 @@
 }
 
 .hero_expert {
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
-    linear-gradient(160deg, #ff9f2e 0%, #ef7600 100%);
+  background: linear-gradient(160deg, #ff9f2e 0%, #ef7600 100%);
 }
 
 .hero_customer {
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
-    linear-gradient(160deg, #4a86ee 0%, #2452c6 100%);
+  background: linear-gradient(160deg, #4a86ee 0%, #2452c6 100%);
 }
 
 .hero_license {
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
-    linear-gradient(160deg, #34c759 0%, #1f9c47 100%);
+  background: linear-gradient(160deg, #34c759 0%, #1f9c47 100%);
 }
 
 .groupTitle {
