@@ -74,6 +74,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       key: "labor",
       label: "Трудовые резервы",
       color: "amber",
+      roles: ["EXPERT", "LICENSE_HOLDER"],
       items: [
         {
           label: "Поиск эксперта в штат — для держателя лицензии",

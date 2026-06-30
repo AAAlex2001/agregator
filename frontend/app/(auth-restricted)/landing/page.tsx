@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import {
   LandingAdvantages,
   LandingArticlesPreview,
@@ -23,8 +22,6 @@ import s from "./landing.module.scss";
 export const dynamic = "force-dynamic";
 
 export default async function AuthRestrictedLandingPage() {
-  ReactDOM.preload("/hero_svg.webp", { as: "image", fetchPriority: "high" });
-
   const [
     {
       hero,

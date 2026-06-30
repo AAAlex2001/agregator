@@ -1,0 +1,33 @@
+.wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4a4a4a;
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .sub {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}

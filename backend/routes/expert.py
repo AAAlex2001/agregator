@@ -74,9 +74,8 @@ async def list_experts(
 @router.get("/experts/map", response_model=ExpertMapResponse)
 async def list_experts_map(
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
 ) -> ExpertMapResponse:
-    "Активные эксперты с координатами базирования — точки на карте при создании заказа."
+    "Активные эксперты с координатами базирования — публичные точки на карте (лендинг и создание заказа)."
     rows = await ListExpertsMapUseCase(build_repo(db)).execute()
     return ExpertMapResponse(
         items=[
