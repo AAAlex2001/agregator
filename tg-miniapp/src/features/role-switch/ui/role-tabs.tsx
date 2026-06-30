@@ -72,7 +72,7 @@ export function RoleTabs() {
           <button
             key={item}
             type="button"
-            className={cn(s.tab, item === role && s.active, item === role && s[KIND[item]])}
+            className={cn(s.tab, item === role && s[KIND[item]])}
             onClick={() => pick(item)}
           >
             {LABEL[item]}

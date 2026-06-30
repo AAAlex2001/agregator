@@ -37,20 +37,19 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.active {
+.expert {
+  background: #ff8a00;
   color: #fff;
 }
 
-.active.expert {
-  background: #ff8a00;
-}
-
-.active.customer {
+.customer {
   background: #2d6cdf;
+  color: #fff;
 }
 
-.active.license {
+.license {
   background: #1faa52;
+  color: #fff;
 }
 
 .confirm {
