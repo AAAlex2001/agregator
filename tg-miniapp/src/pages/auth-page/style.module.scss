@@ -3,7 +3,17 @@
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #0d0e13;
+  background-color: #0d0e13;
+  background-image: linear-gradient(
+      180deg,
+      rgba(13, 14, 19, 0.45) 0%,
+      rgba(13, 14, 19, 0.66) 58%,
+      rgba(13, 14, 19, 0.92) 100%
+    ),
+    url("/auth-bg.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
 }
 
 .hero {
@@ -90,13 +100,12 @@
 }
 
 .roleBtn {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 20px;
   width: 100%;
   min-height: 60px;
-  padding: 10px 56px;
+  padding: 10px 16px;
   border: none;
   border-radius: 10px;
   background: var(--card-2);
@@ -114,10 +123,7 @@
 }
 
 .roleIcon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   width: 44px;
@@ -127,5 +133,6 @@
 }
 
 .roleLabel {
-  text-align: center;
+  flex: 1 1 auto;
+  text-align: left;
 }

@@ -5,6 +5,7 @@ from fastapi import BackgroundTasks
 from pydantic import BaseModel
 
 from models.user import User
+from services.telegram_notify import send_telegram_message
 from utils.email import send_email
 from utils.email_templates import render_email
 from utils.request_context import request_id_var
@@ -67,3 +68,13 @@ class EmailDispatcher:
         if not user.email:
             return False
         return bool(getattr(user, preference_field, False))
+
+    def send_telegram(self, user: User | None, preference_field: str | None, text: str) -> None:
+        "TG-уведомление: если привязан Telegram, включены TG-уведомления и (если задан) тип уведомления."
+        if user is None or not user.telegram_id:
+            return
+        if not getattr(user, "notify_telegram_enabled", True):
+            return
+        if preference_field and not getattr(user, preference_field, False):
+            return
+        self.background_tasks.add_task(send_telegram_message, int(user.telegram_id), text)

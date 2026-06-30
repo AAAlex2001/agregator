@@ -5,14 +5,13 @@
   height: 52px;
   padding: 0 14px;
   background: var(--card-2);
-  border: 1.5px solid transparent;
   border-radius: 14px;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 0 0 0 rgba(255, 138, 0, 0);
+  transition: box-shadow 0.22s ease;
 }
 
 .focused {
-  border-color: var(--accent);
-  background: var(--card);
+  box-shadow: 0 0 0 2px rgba(255, 138, 0, 0.4);
 }
 
 .icon {

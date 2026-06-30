@@ -24,6 +24,7 @@ class EmailPreferences(BaseModel):
     email_on_question_asked: bool = True
     email_on_question_answered: bool = True
     email_on_new_blog_post: bool = True
+    notify_telegram_enabled: bool = True
 
     class Config:
         from_attributes = True
@@ -70,6 +71,7 @@ class UpdateEmailPreferencesRequest(BaseModel):
     email_on_question_asked: bool | None = None
     email_on_question_answered: bool | None = None
     email_on_new_blog_post: bool | None = None
+    notify_telegram_enabled: bool | None = None
 
 
 class UpdateOrderNotificationsRequest(BaseModel):

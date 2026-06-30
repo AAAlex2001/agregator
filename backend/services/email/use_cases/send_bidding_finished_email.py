@@ -65,11 +65,19 @@ class SendBiddingFinishedEmailUseCase:
         expert = await self.repo.find_user(expert_id)
         if expert is None:
             return
-        if not self.dispatcher.can_send(expert, PREFERENCE_FIELD):
-            return
 
         order = await self.repo.find_order(order_id)
         if order is None:
+            return
+
+        order_title = order.title or f"Заказ #{order.id}"
+        if outcome == OUTCOME_WON:
+            tg_text = f"🔔 <b>Вы победили!</b>\nПо заявке «{order_title}» заказчик выбрал вас.\n\n{CTA_URL}"
+        else:
+            tg_text = f"🔔 <b>Торги завершены</b>\nПо заявке «{order_title}» выбран другой исполнитель.\n\n{CTA_URL}"
+        self.dispatcher.send_telegram(expert, PREFERENCE_FIELD, tg_text)
+
+        if not self.dispatcher.can_send(expert, PREFERENCE_FIELD):
             return
 
         response = None

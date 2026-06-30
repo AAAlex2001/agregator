@@ -41,5 +41,10 @@ class SendNewBlogPostEmailUseCase:
                 from_email=BLOG_FROM_EMAIL,
                 reply_to=BLOG_FROM_EMAIL,
             )
+            self.dispatcher.send_telegram(
+                user,
+                "email_on_new_blog_post",
+                f"🔔 <b>Новая статья в блоге</b>\n{blog_title}\n\n{cta_url}",
+            )
         logger.info("Sent new-blog-post email to %d users (slug=%s)", len(recipients), slug)
         return len(recipients)

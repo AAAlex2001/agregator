@@ -28,6 +28,7 @@ class SendNewOrderEmailUseCase:
         if not order_codes:
             return
 
+        order_title = order.title or f"Заказ #{order.id}"
         experts = await self.repo.list_experts_subscribed_to_order_types()
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
@@ -35,6 +36,11 @@ class SendNewOrderEmailUseCase:
                 continue
             context = self.build_context(order, expert)
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
+            self.dispatcher.send_telegram(
+                expert,
+                None,
+                f"🔔 <b>Новая заявка</b>\n«{order_title}» по вашим направлениям.\n\n{CTA_URL}",
+            )
 
     def build_context(self, order: Order, expert: User) -> NewOrderContext:
         "Строит объект из входных данных."

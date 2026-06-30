@@ -7,6 +7,7 @@ import { Card, Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
 import {
+  BellIcon,
   ChevronRightIcon,
   CreditIcon,
   LogoutIcon,
@@ -16,6 +17,7 @@ import {
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
+import { formatPhone } from "@/shared/lib/phone";
 import s from "./style.module.scss";
 
 function roleLabel(role: string | null): string {
@@ -94,7 +96,7 @@ export function ProfilePage() {
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>
         <Row icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => navigate("/edit-name")} />
-        <Row icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone || "—"} onClick={() => navigate("/edit-phone")} />
+        <Row icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone ? formatPhone(profile.phone) : "—"} onClick={() => navigate("/edit-phone")} />
         <Row icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
       </div>
 
@@ -103,6 +105,7 @@ export function ProfilePage() {
         {role === "EXPERT" && (
           <Row icon={<CreditIcon width={19} height={19} />} label="Тарифы" onClick={() => navigate("/pricing")} />
         )}
+        <Row icon={<BellIcon width={19} height={19} />} label="Уведомления" onClick={() => navigate("/notifications")} />
         <Row
           icon={<MoonIcon width={19} height={19} />}
           label="Тема оформления"

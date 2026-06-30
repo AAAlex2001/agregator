@@ -139,7 +139,7 @@ export function AuthPage() {
               </button>
             );
           })}
-          <Button variant="ghost" onClick={() => setRolesOpen(false)}>
+          <Button variant="outline" onClick={() => setRolesOpen(false)}>
             Отмена
           </Button>
         </div>

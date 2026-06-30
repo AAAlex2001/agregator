@@ -32,9 +32,15 @@ class SendOrderUpdatedEmailUseCase:
         if not experts:
             return
 
+        order_title = order.title or f"Заказ #{order.id}"
         for expert in experts:
             context = self.build_context(order, expert, changes_summary)
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
+            self.dispatcher.send_telegram(
+                expert,
+                PREFERENCE_FIELD,
+                f"🔔 <b>Заявка изменилась</b>\nИзменения по заявке «{order_title}».\n\n{CTA_URL}",
+            )
 
     def build_context(
         self,

@@ -29,6 +29,12 @@ class SendResponseUpdatedEmailUseCase:
             return
 
         customer = response.order.customer
+        order_title = response.order.title or f"Заказ #{response.order_id}"
+        self.dispatcher.send_telegram(
+            customer,
+            PREFERENCE_FIELD,
+            f"🔔 <b>Отклик обновлён</b>\nЭксперт изменил отклик по заявке «{order_title}».\n\n{CTA_URL}",
+        )
         if not self.dispatcher.can_send(customer, PREFERENCE_FIELD):
             return
 

@@ -30,7 +30,19 @@ class SendChatMessageEmailUseCase:
             return
 
         recipient = self.resolve_recipient(message)
-        if recipient is None or not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
+        if recipient is None:
+            return
+
+        chat = message.chat
+        order_title = (chat.order.title if chat and chat.order else None) or "Заявка"
+        sender_name = full_name(message.sender) or "Собеседник"
+        self.dispatcher.send_telegram(
+            recipient,
+            PREFERENCE_FIELD,
+            f"🔔 <b>Новое сообщение</b>\n{sender_name} написал по заявке «{order_title}».\n\n"
+            + CTA_URL_TEMPLATE.format(chat_uuid=chat.uuid),
+        )
+        if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return
 
         context = self.build_context(message, recipient)

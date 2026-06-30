@@ -1,0 +1,59 @@
+.tg {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.tgText {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tgTitle {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.tgSub {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.groupTitle {
+  margin: 8px 4px -2px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.group {
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+}
+
+.row + .row {
+  border-top: 1px solid var(--hairline);
+}
+
+.rowLabel {
+  flex: 1 1 auto;
+  font-size: 15px;
+  color: var(--text);
+}

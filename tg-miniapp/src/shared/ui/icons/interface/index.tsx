@@ -125,6 +125,13 @@ export const PhoneIcon = (p: P) => (
   </svg>
 );
 
+export const BellIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+  </svg>
+);
+
 export const VibrateIcon = (p: P) => (
   <svg {...base} {...p}>
     <rect x="8" y="4" width="8" height="16" rx="2" />
@@ -146,7 +153,21 @@ export const CheckIcon = (p: P) => (
 );
 
 export const CrownIcon = (p: P) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" {...p}>
-    <path d="M5 19h14a1 1 0 0 0 .98-1.2l-1.4-7.9-3.9 3-2.86-5.4a1 1 0 0 0-1.76 0L7.2 12.9l-3.9-3-1.4 7.9A1 1 0 0 0 3 19h2Z" />
+  <svg
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...p}
+  >
+    <path d="M3 9.5 6.8 12 12 5 17.2 12 21 9.5 19.3 18.5H4.7L3 9.5Z" />
+    <path d="M4.7 21.5H19.3" />
+    <circle cx="3" cy="9.5" r="1.05" />
+    <circle cx="12" cy="5" r="1.05" />
+    <circle cx="21" cy="9.5" r="1.05" />
   </svg>
 );
