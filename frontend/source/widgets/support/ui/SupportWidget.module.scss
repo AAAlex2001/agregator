@@ -1,6 +1,6 @@
 .body {
-  height: calc(100dvh - 56px);
-  min-height: calc(100dvh - 72px);
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   max-width: 1620px;
   margin: 0 auto;
@@ -21,8 +21,6 @@
     align-items: stretch;
     justify-content: center;
     gap: 20px;
-    height: 100dvh;
-    min-height: 100dvh;
   }
 }
 

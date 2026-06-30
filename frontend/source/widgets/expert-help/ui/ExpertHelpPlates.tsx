@@ -90,7 +90,7 @@ function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" 
 export function ExpertHelpPlates() {
   const { role } = useSession();
 
-  if (role !== "EXPERT" && role !== "CUSTOMER") return null;
+  if (role !== "EXPERT" && role !== "CUSTOMER" && role !== "LICENSE_HOLDER") return null;
 
   const plates = getCabinetNav(role);
   const leftPlates = plates.filter((p) => p.key !== "reviews");

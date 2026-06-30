@@ -56,7 +56,7 @@ export function CabinetBurgerMenu() {
   const toggle = (key: string) => setOpenKey((prev) => (prev === key ? null : key));
 
   const plates =
-    role === "EXPERT" || role === "CUSTOMER"
+    role === "EXPERT" || role === "CUSTOMER" || role === "LICENSE_HOLDER"
       ? getCabinetNav(role).filter((p) => p.dynamic !== "license")
       : [];
 

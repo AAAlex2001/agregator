@@ -28,21 +28,39 @@ function reviewItems(role: string | null): NavItem[] {
   return items;
 }
 
+function usefulItems(role: string | null): NavItem[] {
+  if (role === "CUSTOMER") {
+    return [
+      { label: "Проверка ЭО", href: "https://pb.nalog.ru/search.html#search-ul", external: true },
+      { label: "Рейтинг ЭО", href: "https://экг-рейтинг.рф", external: true },
+    ];
+  }
+  return [
+    { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
+    { label: "Проверки прокуратуры", href: "https://proverki.gov.ru/portal", external: true },
+    { label: "Результаты поверки приборов", href: "https://grmetr.ru/arshin", external: true },
+    { label: "Единый реестр проверок", href: "https://proverki.gov.ru/portal", external: true },
+  ];
+}
+
 export function getCabinetNav(role: string | null): NavPlate[] {
   const all: NavPlate[] = [
     {
       key: "tech",
       label: "ТехЭксперт",
       color: "indigo",
+      roles: ["EXPERT"],
       items: [{ label: "Интеграция с ТехЭкспертом", soon: true }],
     },
     {
       key: "edu",
       label: "Учебный центр",
       color: "indigo",
+      roles: ["EXPERT"],
       items: [
         { label: "Подготовка к аттестации на эксперта", soon: true },
         { label: "Аттестация на дефектоскописта", soon: true },
+        { label: "Дополнительное профессиональное образование", soon: true },
       ],
     },
     {
@@ -97,17 +115,8 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       key: "useful",
       label: "Полезные ссылки",
       color: "green",
-      items: [
-        {
-          label: "Реестр экспертов Ростехнадзора",
-          href: "https://www.gosnadzor.ru/service/list/certification%20experts/index.php",
-          external: true,
-        },
-        { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
-        { label: "Поверка приборов", href: "https://grmetr.ru/arshin", external: true },
-        { label: "Результаты поверки приборов", href: "https://grmetr.ru/arshin", external: true },
-        { label: "Проверки прокуратуры", href: "https://proverki.gov.ru/portal", external: true },
-      ],
+      roles: ["EXPERT", "CUSTOMER"],
+      items: usefulItems(role),
     },
     {
       key: "reviews",

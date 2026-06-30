@@ -62,7 +62,7 @@ export function ExpertLocationSection({ profile, onProfileUpdate }: Props) {
           Готов выезжать на объекты в другие регионы
         </Checkbox>
         <div className={s.actions}>
-          <Button type="button" variant="primary" onClick={save} isLoading={saving}>
+          <Button type="button" variant="primary" fullWidth onClick={save} isLoading={saving}>
             Сохранить локацию
           </Button>
         </div>

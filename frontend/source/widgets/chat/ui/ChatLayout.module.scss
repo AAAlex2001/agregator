@@ -1,6 +1,6 @@
 .body {
-  height: calc(100dvh - 56px);
-  min-height: calc(100dvh - 72px);
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   max-width: 1620px;
   margin: 0 auto;
@@ -14,11 +14,6 @@
   @media (min-width: 1200px) {
     align-items: center;
     padding: 20px var(--page-px);
-  }
-
-  @media (min-width: 1440px) {
-    height: 100dvh;
-    min-height: 100dvh;
   }
 }
 
