@@ -24,9 +24,9 @@ import { formatPhone } from "@/shared/lib/phone";
 import s from "./style.module.scss";
 
 const ROLE_BANNER = {
-  EXPERT: { kind: "expert", noun: "Эксперт", icon: <ExpertRoleIcon size={66} /> },
-  CUSTOMER: { kind: "customer", noun: "Заказчик", icon: <CustomerRoleIcon size={66} /> },
-  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", icon: <LicenseRoleIcon size={70} /> },
+  EXPERT: { kind: "expert", noun: "Эксперт", icon: <ExpertRoleIcon size={30} /> },
+  CUSTOMER: { kind: "customer", noun: "Заказчик", icon: <CustomerRoleIcon size={30} /> },
+  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", icon: <LicenseRoleIcon size={32} /> },
 } as const;
 
 function Row({
@@ -89,11 +89,14 @@ export function ProfilePage() {
   return (
     <Screen bare heading="Профиль" panel>
       <div className={cn(s.banner, s[banner.kind])}>
+        <span className={s.avatar}>{banner.icon}</span>
         <div className={s.bannerText}>
           <p className={s.name}>{name}</p>
-          <span className={s.roleBadge}>Вы — {banner.noun}</span>
+          <span className={s.roleChip}>
+            <span className={s.roleDot} />
+            Вы — {banner.noun}
+          </span>
         </div>
-        <span className={s.bannerIcon}>{banner.icon}</span>
       </div>
 
       <p className={s.groupTitle}>Общая информация</p>

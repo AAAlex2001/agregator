@@ -1,12 +1,21 @@
 .banner {
-  position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: var(--shadow);
+}
+
+.avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
 }
 
 .bannerText {
@@ -14,54 +23,62 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
 }
 
 .name {
   margin: 0;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
 }
 
-.roleBadge {
+.roleChip {
   align-self: flex-start;
-  padding: 5px 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 700;
-  background: #fff;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.bannerIcon {
-  flex: 0 0 auto;
-  display: flex;
-  color: rgba(255, 255, 255, 0.9);
+.roleDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
 }
 
-.expert {
-  background: linear-gradient(120deg, #ffa12e 0%, #ef7600 100%);
+.expert .avatar,
+.expert .roleChip {
+  background: rgba(255, 138, 0, 0.12);
+  color: #ef7d00;
 }
 
-.expert .roleBadge {
-  color: #e0700a;
+.expert .roleDot {
+  background: #ff8a00;
 }
 
-.customer {
-  background: linear-gradient(120deg, #5b8def 0%, #2c5fd6 100%);
-}
-
-.customer .roleBadge {
+.customer .avatar,
+.customer .roleChip {
+  background: rgba(45, 108, 223, 0.12);
   color: #2c5fd6;
 }
 
-.license {
-  background: linear-gradient(120deg, #34c56e 0%, #129b4d 100%);
+.customer .roleDot {
+  background: #2d6cdf;
 }
 
-.license .roleBadge {
-  color: #119a4c;
+.license .avatar,
+.license .roleChip {
+  background: rgba(31, 170, 82, 0.13);
+  color: #129a4c;
+}
+
+.license .roleDot {
+  background: #1faa52;
 }
 
 .groupTitle {
