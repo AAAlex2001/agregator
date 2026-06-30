@@ -16,24 +16,17 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 4px;
   width: 100%;
-}
 
-.logo {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-
-  svg {
-    width: 140px;
-    height: auto;
-    display: block;
+  @media (min-width: 1440px) {
+    justify-content: flex-end;
   }
 }
 
 .menuLinks {
-  margin-left: auto;
+  order: 1;
   display: flex;
   align-items: center;
   gap: 4px;

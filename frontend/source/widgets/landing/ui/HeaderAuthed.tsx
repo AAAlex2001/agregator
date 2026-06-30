@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LogoIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
 import s from "./header-authed.module.scss";
@@ -12,9 +11,6 @@ const NAV_PAGES = [
 const HeaderAuthed = () => (
   <header className={s.header}>
     <nav className={s.nav} aria-label="Основная навигация">
-      <Link href="/landing" className={s.logo} aria-label="На главную">
-        <LogoIcon />
-      </Link>
       <ExpertHelpPlates />
       <div className={s.menuLinks}>
         {NAV_PAGES.map((page) => (

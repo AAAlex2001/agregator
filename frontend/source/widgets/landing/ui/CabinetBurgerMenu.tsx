@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
-import { ChevronIcon } from "@/source/shared/ui/icons";
+import { ChevronIcon, LogoIcon } from "@/source/shared/ui/icons";
 import { EXPERT_HELP_LINKS } from "@/source/widgets/expert-help";
 import { getReviewLinks } from "@/source/widgets/reviews-hub";
 import { getUsefulLinks } from "@/source/widgets/useful-links";
@@ -43,6 +43,9 @@ export function CabinetBurgerMenu() {
 
       {open && (
         <nav className={s.menu}>
+          <div className={s.menuLogo}>
+            <LogoIcon />
+          </div>
           {showHelp && (
             <div className={s.group}>
               <button

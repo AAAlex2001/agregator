@@ -1,6 +1,8 @@
 .burger {
-  position: relative;
-  flex-shrink: 0;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -61,6 +63,19 @@
 
   @media (min-width: 1440px) {
     display: none;
+  }
+}
+
+.menuLogo {
+  display: flex;
+  margin-bottom: 6px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  svg {
+    width: 150px;
+    height: auto;
+    display: block;
   }
 }
 
