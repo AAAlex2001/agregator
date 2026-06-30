@@ -50,11 +50,11 @@ export function EditEmail() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
+          <Button onClick={() => void send()} loading={busy} disabled={!email.trim()}>
+            Отправить код
+          </Button>
         </Card>
-        <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
-        <Button className={s.save} onClick={() => void send()} loading={busy} disabled={!email.trim()}>
-          Отправить код
-        </Button>
       </>
     );
   }
@@ -68,11 +68,11 @@ export function EditEmail() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
+        <p className={s.hint}>Код отправлен на {email}.</p>
+        <Button onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
+          Подтвердить
+        </Button>
       </Card>
-      <p className={s.hint}>Код отправлен на {email}.</p>
-      <Button className={s.save} onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
-        Подтвердить
-      </Button>
       <SuccessModal open={done} title="Готово!" subtitle="Почта обновлена" onClose={() => setDone(false)} />
     </>
   );

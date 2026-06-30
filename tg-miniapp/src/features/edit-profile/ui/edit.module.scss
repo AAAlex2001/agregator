@@ -1,15 +1,11 @@
 .fields {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.save {
-  margin-top: auto;
+  gap: 12px;
 }
 
 .hint {
-  margin: -4px 4px 2px;
+  margin: 0;
   font-size: 13px;
   line-height: 1.4;
   color: var(--muted);

@@ -35,10 +35,10 @@ export function EditPhone() {
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
         />
+        <Button onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
+          Сохранить
+        </Button>
       </Card>
-      <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
-        Сохранить
-      </Button>
       <SuccessModal open={done} title="Готово!" subtitle="Телефон обновлён" onClose={() => setDone(false)} />
     </>
   );

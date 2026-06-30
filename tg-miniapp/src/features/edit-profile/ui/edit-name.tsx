@@ -31,10 +31,10 @@ export function EditName() {
       <Card className={s.fields}>
         <TextField placeholder="Имя" value={first} onChange={(e) => setFirst(e.target.value)} />
         <TextField placeholder="Фамилия" value={last} onChange={(e) => setLast(e.target.value)} />
+        <Button onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
+          Сохранить
+        </Button>
       </Card>
-      <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
-        Сохранить
-      </Button>
       <SuccessModal open={done} title="Готово!" subtitle="Имя обновлено" onClose={() => setDone(false)} />
     </>
   );
