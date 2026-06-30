@@ -60,8 +60,8 @@ export function AuthPage() {
     <div className={s.page}>
       <div className={s.hero}>
         <Logo size={62} className={s.logo} />
-        <h1 className={s.heroTitle}>{step === "welcome" ? "Добро пожаловать!" : "Вход в аккаунт"}</h1>
-        {step === "welcome" && <p className={s.heroSub}>Войдите в аккаунт или создайте новый</p>}
+        <h1 className={s.heroTitle}>Добро пожаловать!</h1>
+        <p className={s.heroSub}>Войдите в аккаунт или создайте новый</p>
       </div>
 
       <div className={s.card}>
