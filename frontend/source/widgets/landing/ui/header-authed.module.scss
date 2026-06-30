@@ -37,7 +37,7 @@
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
-  color: #1A1A1A;
+  color: #c0453e;
   padding: 8px 10px;
   border-radius: 10px;
   white-space: nowrap;
@@ -45,8 +45,8 @@
 
   &:hover,
   &:focus-visible {
-    background: #FFF8EB;
-    color: #FF8A00;
+    background: #fbe9e8;
+    color: #a23631;
   }
 
   @media (min-width: 768px) {
