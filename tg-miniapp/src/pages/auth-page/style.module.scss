@@ -6,9 +6,9 @@
   background-color: #0d0e13;
   background-image: linear-gradient(
       180deg,
-      rgba(11, 12, 17, 0.25) 0%,
-      rgba(11, 12, 17, 0.15) 50%,
-      rgba(11, 12, 17, 0.7) 100%
+      rgba(11, 12, 17, 0.45) 0%,
+      rgba(11, 12, 17, 0.45) 50%,
+      rgba(11, 12, 17, 0.8) 100%
     ),
     url("/auth-bg.png");
   background-size: cover;
@@ -102,6 +102,7 @@
 .roleBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
   width: 100%;
   min-height: 60px;
@@ -133,6 +134,5 @@
 }
 
 .roleLabel {
-  flex: 1 1 auto;
-  text-align: center;
+  flex: 0 0 auto;
 }
