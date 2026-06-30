@@ -23,7 +23,6 @@ export interface HazardGroup {
 
 export interface HazardCatalog {
   profile: string;
-  customized: boolean;
   groups: HazardGroup[];
 }
 

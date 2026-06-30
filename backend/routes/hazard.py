@@ -10,7 +10,6 @@ from schemas.hazard import (
     HazardReportItem,
     HazardReportListResponse,
     HazardReportRequest,
-    HazardSaveCatalogRequest,
 )
 from services.hazard import (
     BuildHazardReportUseCase,
@@ -30,49 +29,13 @@ def pdf_response(pdf_bytes: bytes, report_id: int) -> Response:
     )
 
 
-@router.get("/catalog", response_model=HazardCatalogResponse)
+@router.get("/catalog", response_model=HazardCatalogResponse, dependencies=[Depends(get_current_user)])
 async def get_catalog(
     profile: str = Query("rudnik"),
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
 ) -> HazardCatalogResponse:
-    "Справочник факторов эксперта (кастомный либо дефолтный)."
-    return await GetHazardCatalogUseCase(HazardRepository(db)).execute(profile, user_id)
-
-
-@router.put("/catalog", response_model=HazardCatalogResponse)
-async def save_catalog(
-    request: HazardSaveCatalogRequest,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_tool_access),
-) -> HazardCatalogResponse:
-    "Сохраняет кастомный набор факторов эксперта и возвращает обновлённый справочник."
-    repo = HazardRepository(db)
-    factors = [
-        {
-            "code": factor.code,
-            "group_code": factor.group,
-            "name": factor.name,
-            "max_score": factor.max_score,
-            "default_value": factor.default_value,
-            "options": [{"value": option.value, "label": option.label} for option in factor.options],
-        }
-        for factor in request.factors
-    ]
-    await repo.save_user_catalog(user_id, request.profile, factors)
-    return await GetHazardCatalogUseCase(repo).execute(request.profile, user_id)
-
-
-@router.delete("/catalog", response_model=HazardCatalogResponse)
-async def reset_catalog(
-    profile: str = Query("rudnik"),
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(require_expert_tool_access),
-) -> HazardCatalogResponse:
-    "Сбрасывает факторы эксперта к исходному справочнику."
-    repo = HazardRepository(db)
-    await repo.reset_user_catalog(user_id, profile)
-    return await GetHazardCatalogUseCase(repo).execute(profile, user_id)
+    "Справочник факторов оценки опасности аварий."
+    return await GetHazardCatalogUseCase(HazardRepository(db)).execute(profile)
 
 
 @router.post("/report", response_model=HazardReportItem)
@@ -83,7 +46,7 @@ async def create_report(
 ) -> HazardReportItem:
     "Считает показатели и сохраняет отчёт в историю. PDF собирается при просмотре из истории."
     repo = HazardRepository(db)
-    result = await CalculateHazardUseCase(repo).execute(request, user_id)
+    result = await CalculateHazardUseCase(repo).execute(request)
     blocks = [
         {"group": block.group, "title": block.title, "value": block.value, "category": block.category}
         for block in [result.r0, *result.blocks]
@@ -140,5 +103,5 @@ async def download_saved_report(
         report_name=report.name,
         **(report.header or {}),
     )
-    pdf_bytes = await BuildHazardReportUseCase(repo).execute(request, user_id)
+    pdf_bytes = await BuildHazardReportUseCase(repo).execute(request)
     return pdf_response(pdf_bytes, report.id)

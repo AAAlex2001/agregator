@@ -1,11 +1,6 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
-import type {
-  HazardCatalog,
-  HazardFactor,
-  HazardReportItem,
-  HazardSelections,
-} from "../model/types";
+import type { HazardCatalog, HazardReportItem, HazardSelections } from "../model/types";
 
 async function detail(res: Response, fallback: string): Promise<string> {
   return (await res.json().catch(() => ({})))?.detail || fallback;
@@ -14,22 +9,6 @@ async function detail(res: Response, fallback: string): Promise<string> {
 export async function fetchHazardCatalog(profile: string): Promise<HazardCatalog> {
   const res = await fetchWithSession(`${API_URL}/hazard/catalog?profile=${profile}`);
   if (!res.ok) throw new Error(await detail(res, "Не удалось загрузить факторы"));
-  return res.json();
-}
-
-export async function saveHazardCatalog(profile: string, factors: HazardFactor[]): Promise<HazardCatalog> {
-  const res = await fetchWithSession(`${API_URL}/hazard/catalog`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile, factors }),
-  });
-  if (!res.ok) throw new Error(await detail(res, "Не удалось сохранить факторы"));
-  return res.json();
-}
-
-export async function resetHazardCatalog(profile: string): Promise<HazardCatalog> {
-  const res = await fetchWithSession(`${API_URL}/hazard/catalog?profile=${profile}`, { method: "DELETE" });
-  if (!res.ok) throw new Error(await detail(res, "Не удалось сбросить факторы"));
   return res.json();
 }
 

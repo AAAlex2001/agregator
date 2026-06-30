@@ -42,23 +42,3 @@ class HazardReport(Base):
     overall_r: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     overall_category: Mapped[str] = mapped_column(String(120), nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
-
-
-class HazardUserCatalog(Base):
-    "Кастомный набор факторов эксперта для профиля. Нет записи — используется дефолтный справочник."
-    __tablename__ = "hazard_user_catalogs"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    profile: Mapped[str] = mapped_column(String(10), nullable=False)
-    factors: Mapped[list[Any]] = mapped_column(JSONB, nullable=False, default=list)
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(UTC),
-        onupdate=lambda: datetime.now(UTC),
-        nullable=False,
-    )
-
-    __table_args__ = (
-        UniqueConstraint("expert_id", "profile", name="uq_hazard_user_catalog"),
-    )

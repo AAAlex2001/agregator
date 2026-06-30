@@ -15,6 +15,4 @@ export {
   fetchHazardCatalog,
   fetchHazardReports,
   getHazardReportPdfUrl,
-  resetHazardCatalog,
-  saveHazardCatalog,
 } from "./api/hazard.api";

@@ -30,14 +30,7 @@ class HazardGroupDto(BaseModel):
 class HazardCatalogResponse(BaseModel):
     "Полный справочник факторов для профиля, сгруппированный по видам аварий."
     profile: str
-    customized: bool = False
     groups: list[HazardGroupDto] = Field(default_factory=list)
-
-
-class HazardSaveCatalogRequest(BaseModel):
-    "Сохранение кастомного набора факторов эксперта для профиля."
-    profile: str = Field("rudnik")
-    factors: list[HazardFactorDto] = Field(default_factory=list)
 
 
 class HazardCalculateRequest(BaseModel):

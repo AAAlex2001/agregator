@@ -31,9 +31,9 @@ class BuildHazardReportUseCase:
             autoescape=select_autoescape(["html"]),
         )
 
-    async def execute(self, request: HazardReportRequest, expert_id: int) -> bytes:
+    async def execute(self, request: HazardReportRequest) -> bytes:
         "Запускает основной сценарий use case. Исключённые группы не идут в расчёт и в отчёт."
-        factors = await self.repo.resolve_factors(expert_id, request.profile)
+        factors = await self.repo.list_factors(request.profile)
         excluded = set(request.excluded_groups or [])
 
         inputs: list[FactorInput] = []

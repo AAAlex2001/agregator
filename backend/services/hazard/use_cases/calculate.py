@@ -11,9 +11,9 @@ class CalculateHazardUseCase:
     def __init__(self, repo: HazardRepository) -> None:
         self.repo = repo
 
-    async def execute(self, request: HazardCalculateRequest, expert_id: int) -> HazardCalculateResponse:
+    async def execute(self, request: HazardCalculateRequest) -> HazardCalculateResponse:
         "Запускает основной сценарий use case. Исключённые группы не участвуют в расчёте."
-        factors = await self.repo.resolve_factors(expert_id, request.profile)
+        factors = await self.repo.list_factors(request.profile)
         excluded = set(request.excluded_groups or [])
         inputs = [
             FactorInput(

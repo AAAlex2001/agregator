@@ -6,10 +6,9 @@ import Loader from "@/source/shared/ui/Loader";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Checkbox } from "@/source/shared/ui";
 import { TextInput } from "@/source/shared/ui/Inputs";
-import { ChatChevronDownIcon, PlusThinIcon } from "@/source/shared/ui/icons";
+import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import type { HazardProfile } from "@/source/entities/hazard";
 import { useHazardCalculator } from "../model/useHazardCalculator";
-import { FactorEditorModal } from "./FactorEditorModal";
 import s from "./HazardCalculator.module.scss";
 
 export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
@@ -21,15 +20,6 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
     select,
     excludedGroups,
     toggleGroupExcluded,
-    editing,
-    setEditing,
-    creating,
-    editFactor,
-    nextCodeForGroup,
-    saveFactor,
-    deleteFactor,
-    addFactor,
-    resetCatalog,
     reportName,
     setReportName,
     header,
@@ -39,7 +29,6 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
     save,
   } = useHazardCalculator(onSaved);
   const [activeGroup, setActiveGroup] = useState("R0");
-  const [editMode, setEditMode] = useState(false);
 
   const currentGroup = catalog?.groups.find((group) => group.group === activeGroup) ?? catalog?.groups[0];
 
@@ -66,15 +55,6 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
               className={s.nameInput}
             />
             <div className={s.btnGroup}>
-              <Button variant="outlineOrange" className={s.actionBtn} onClick={() => setEditMode((value) => !value)}>
-                {editMode ? "Готово" : "Редактировать факторы"}
-              </Button>
-              <Button variant="outlineOrange" className={s.actionBtn} onClick={() => addFactor(activeGroup)}>
-                <span className={s.plusLabel}>
-                  <PlusThinIcon className={s.plusIcon} />
-                  Новый фактор
-                </span>
-              </Button>
               <Button variant="primary" className={s.actionBtn} onClick={save} isLoading={saving}>
                 Сформировать отчёт
               </Button>
@@ -101,7 +81,7 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
               <TextInput
                 value={header.intro_line2}
                 onChange={(e) => setHeaderField("intro_line2", e.target.value)}
-                placeholder="на руднике / шахте …"
+                placeholder="Введите объект — например, на руднике «Мир» / в шахте «Северная»"
               />
             </label>
             <label className={s.headerField}>
@@ -111,6 +91,7 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 rows={3}
                 value={header.justification}
                 onChange={(e) => setHeaderField("justification", e.target.value)}
+                placeholder="Опишите обоснование безопасности объекта и проводимых работ"
               />
             </label>
             <label className={s.headerField}>
@@ -119,7 +100,7 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 className={s.headerArea}
                 rows={2}
                 value={header.certificate}
-                onChange={(e) => setHeaderField("certificate", e.target.value)}
+                readOnly
               />
             </label>
           </div>
@@ -159,11 +140,6 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 <div key={factor.code} className={s.factor}>
                   <div className={s.factorInfo}>
                     <span className={s.name}>{factor.name}</span>
-                    {editMode && (
-                      <Button variant="outlineOrange" size="sm" className={s.editBtn} onClick={() => editFactor(factor)}>
-                        Изменить
-                      </Button>
-                    )}
                   </div>
                   <div className={s.options}>
                     {factor.options.map((option, index) => (
@@ -180,28 +156,9 @@ export function HazardCalculator({ onSaved }: { onSaved?: () => void }) {
                 </div>
               ))}
             </div>
-            {editMode && catalog.customized && (
-              <div className={s.editBar}>
-                <Button variant="outlineOrange" onClick={resetCatalog}>
-                  Сбросить факторы
-                </Button>
-              </div>
-            )}
           </>
         )}
       </div>
-
-      {editing && (
-        <FactorEditorModal
-          factor={editing}
-          groups={catalog ? catalog.groups.map((group) => group.group) : []}
-          isNew={creating}
-          nextCode={nextCodeForGroup}
-          onSave={saveFactor}
-          onDelete={deleteFactor}
-          onClose={() => setEditing(null)}
-        />
-      )}
     </div>
   );
 }
