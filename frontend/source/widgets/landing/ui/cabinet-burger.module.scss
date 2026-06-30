@@ -111,16 +111,40 @@
   font-weight: 600;
 }
 
+.teal {
+  color: #0d9488;
+}
+
+.indigo {
+  color: #4f46e5;
+}
+
+.orange {
+  color: #ff8a00;
+}
+
+.amber {
+  color: #b45309;
+}
+
 .green {
   color: #2f9b52;
+}
+
+.pink {
+  color: #db2777;
+}
+
+.purple {
+  color: #6c4ec8;
 }
 
 .blue {
   color: #2f5bbf;
 }
 
-.purple {
-  color: #6c4ec8;
+.red {
+  color: #c0453e;
 }
 
 .chevron {
@@ -141,8 +165,8 @@
 
 .subLink {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 3px;
   padding: 12px 4px;
   text-decoration: none;
   font-size: 15px;
@@ -150,32 +174,35 @@
   color: #1a1a1a;
 }
 
-.subIcon {
+.subHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subLabel {
+  font-weight: 600;
+}
+
+.subMuted .subLabel {
+  color: #9aa1ac;
+  font-weight: 500;
+}
+
+.subDesc {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.soon {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-}
-
-.greenLink .subIcon {
-  color: #2f9b52;
-}
-
-.blueLink .subIcon {
-  color: #2f5bbf;
-}
-
-.purpleLink .subIcon {
-  color: #6c4ec8;
-
-  svg {
-    width: auto;
-    height: 22px;
-  }
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0f1f4;
+  color: #9aa1ac;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }

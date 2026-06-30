@@ -4,28 +4,61 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { ChevronIcon, LogoIcon } from "@/source/shared/ui/icons";
-import { EXPERT_HELP_LINKS } from "@/source/widgets/expert-help";
-import { getReviewLinks } from "@/source/widgets/reviews-hub";
-import { getUsefulLinks } from "@/source/widgets/useful-links";
+import { getCabinetNav, type NavItem } from "@/source/widgets/expert-help";
 import s from "./cabinet-burger.module.scss";
 
-type Section = "help" | "reviews" | "useful";
+function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+  const inner = (
+    <>
+      <span className={s.subHead}>
+        <span className={s.subLabel}>{item.label}</span>
+        {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+      </span>
+      {item.description && <span className={s.subDesc}>{item.description}</span>}
+    </>
+  );
+
+  if (item.soon || !item.href) {
+    return <span className={`${s.subLink} ${s.subMuted}`}>{inner}</span>;
+  }
+
+  if (item.external) {
+    return (
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={s.subLink}
+        onClick={onNavigate}
+      >
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={item.href} className={s.subLink} onClick={onNavigate}>
+      {inner}
+    </Link>
+  );
+}
 
 export function CabinetBurgerMenu() {
   const { role } = useSession();
   const [open, setOpen] = useState(false);
-  const [section, setSection] = useState<Section | null>(null);
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   const close = () => {
     setOpen(false);
-    setSection(null);
+    setOpenKey(null);
   };
 
-  const showHelp = role === "EXPERT";
-  const reviewLinks = role === "EXPERT" || role === "CUSTOMER" ? getReviewLinks(role) : [];
-  const usefulLinks = getUsefulLinks(role);
+  const toggle = (key: string) => setOpenKey((prev) => (prev === key ? null : key));
 
-  const toggle = (key: Section) => setSection((prev) => (prev === key ? null : key));
+  const plates =
+    role === "EXPERT" || role === "CUSTOMER"
+      ? getCabinetNav(role).filter((p) => p.dynamic !== "license")
+      : [];
 
   return (
     <>
@@ -46,89 +79,32 @@ export function CabinetBurgerMenu() {
           <div className={s.menuLogo}>
             <LogoIcon />
           </div>
-          {showHelp && (
-            <div className={s.group}>
-              <button
-                type="button"
-                className={`${s.groupHead} ${s.green} ${section === "help" ? s.groupOpen : ""}`}
-                onClick={() => toggle("help")}
-                aria-expanded={section === "help"}
-              >
-                Помощь эксперту
-                <ChevronIcon className={s.chevron} color="currentColor" />
-              </button>
-              {section === "help" && (
-                <div className={s.groupBody}>
-                  {EXPERT_HELP_LINKS.map(({ href, label, Icon }) => (
-                    <Link key={href} href={href} className={`${s.subLink} ${s.greenLink}`} onClick={close}>
-                      <span className={s.subIcon}>
-                        <Icon />
-                      </span>
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
-          {reviewLinks.length > 0 && (
-            <div className={s.group}>
-              <button
-                type="button"
-                className={`${s.groupHead} ${s.blue} ${section === "reviews" ? s.groupOpen : ""}`}
-                onClick={() => toggle("reviews")}
-                aria-expanded={section === "reviews"}
-              >
-                Все отзывы
-                <ChevronIcon className={s.chevron} color="currentColor" />
-              </button>
-              {section === "reviews" && (
-                <div className={s.groupBody}>
-                  {reviewLinks.map(({ href, label, Icon }) => (
-                    <Link key={href} href={href} className={`${s.subLink} ${s.blueLink}`} onClick={close}>
-                      <span className={s.subIcon}>
-                        <Icon />
-                      </span>
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {usefulLinks.length > 0 && (
-            <div className={s.group}>
-              <button
-                type="button"
-                className={`${s.groupHead} ${s.purple} ${section === "useful" ? s.groupOpen : ""}`}
-                onClick={() => toggle("useful")}
-                aria-expanded={section === "useful"}
-              >
-                Полезные ссылки
-                <ChevronIcon className={s.chevron} color="currentColor" />
-              </button>
-              {section === "useful" && (
-                <div className={s.groupBody}>
-                  {usefulLinks.map(({ href, label, Icon }) => (
-                    <a
-                      key={href}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${s.subLink} ${s.purpleLink}`}
-                      onClick={close}
-                    >
-                      <span className={s.subIcon}>
-                        <Icon color="currentColor" />
-                      </span>
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
+          {plates.map((plate) =>
+            plate.href ? (
+              <Link key={plate.key} href={plate.href} className={s.link} onClick={close}>
+                {plate.label}
+              </Link>
+            ) : (
+              <div key={plate.key} className={s.group}>
+                <button
+                  type="button"
+                  className={`${s.groupHead} ${s[plate.color]} ${openKey === plate.key ? s.groupOpen : ""}`}
+                  onClick={() => toggle(plate.key)}
+                  aria-expanded={openKey === plate.key}
+                >
+                  {plate.label}
+                  <ChevronIcon className={s.chevron} color="currentColor" />
+                </button>
+                {openKey === plate.key && (
+                  <div className={s.groupBody}>
+                    {(plate.items ?? []).map((item) => (
+                      <BurgerItem key={item.label} item={item} onNavigate={close} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ),
           )}
         </nav>
       )}

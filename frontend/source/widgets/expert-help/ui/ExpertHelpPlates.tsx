@@ -1,88 +1,97 @@
 "use client";
 
-import { type ComponentType, type ReactNode } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import Loader from "@/source/shared/ui/Loader";
 import { ChevronIcon } from "@/source/shared/ui/icons";
-import { getReviewLinks } from "@/source/widgets/reviews-hub";
-import { getUsefulLinks } from "@/source/widgets/useful-links";
-import { EXPERT_HELP_LINKS } from "../model/links";
+import { getCabinetNav, type NavItem, type NavPlate } from "../model/navConfig";
 import s from "./ExpertHelpPlates.module.scss";
 
-type Color = "green" | "orange" | "blue" | "purple";
+function ItemRow({ item }: { item: NavItem }) {
+  const inner = (
+    <>
+      <span className={s.itemHead}>
+        <span className={s.itemLabel}>{item.label}</span>
+        {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+      </span>
+      {item.description && <span className={s.itemDesc}>{item.description}</span>}
+    </>
+  );
 
-interface CardLink {
-  href: string;
-  label: string;
-  description: string;
-  Icon: ComponentType<{ className?: string; color?: string }>;
-}
+  if (item.soon || !item.href) {
+    return <span className={`${s.item} ${s.itemMuted}`}>{inner}</span>;
+  }
 
-function Plate({ color, label, children }: { color: Color; label: string; children: ReactNode }) {
+  if (item.external) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer" className={s.item}>
+        {inner}
+      </a>
+    );
+  }
+
   return (
-    <div className={`${s.plateWrap} ${s[color]}`}>
-      <button type="button" className={s.plate}>
-        <span className={s.plateLabel}>{label}</span>
-        <ChevronIcon className={s.chevron} color="currentColor" />
-      </button>
-      <div className={s.dropdown}>
-        <div className={s.panel}>{children}</div>
-      </div>
-    </div>
+    <Link href={item.href} className={s.item}>
+      {inner}
+    </Link>
   );
 }
 
-function LinkCards({ links, external }: { links: CardLink[]; external?: boolean }) {
+function LicenseList() {
+  const { items, isLoading, error } = useLicenseHolders(true);
+
+  if (isLoading) {
+    return (
+      <div className={s.loading}>
+        <Loader size="sm" label="" />
+      </div>
+    );
+  }
+  if (error) {
+    return <p className={s.message}>{error}</p>;
+  }
+  if (items.length === 0) {
+    return <p className={s.message}>Пока нет зарегистрированных держателей лицензии.</p>;
+  }
   return (
     <div className={s.list}>
-      {links.map(({ href, label, description, Icon }) => {
-        const inner = (
-          <>
-            <span className={s.cardIcon}>
-              <Icon color="currentColor" />
-            </span>
-            <span className={s.cardText}>
-              <span className={s.cardLabel}>{label}</span>
-              <span className={s.cardDesc}>{description}</span>
-            </span>
-          </>
-        );
-        return external ? (
-          <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={s.card}>
-            {inner}
-          </a>
-        ) : (
-          <Link key={href} href={href} className={s.card}>
-            {inner}
-          </Link>
-        );
-      })}
+      {items.map((item) => (
+        <LicenseHolderCard key={item.id} item={item} />
+      ))}
     </div>
   );
 }
 
-function LicensePlate() {
-  const { items, isLoading, error } = useLicenseHolders(true);
+function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" }) {
+  if (plate.href) {
+    return (
+      <Link href={plate.href} className={`${s.linkPlate} ${s[plate.color]}`}>
+        {plate.label}
+      </Link>
+    );
+  }
+
   return (
-    <Plate color="orange" label="Держатели лицензии">
-      {isLoading ? (
-        <div className={s.loading}>
-          <Loader size="sm" label="" />
+    <div className={`${s.plateWrap} ${s[plate.color]}`}>
+      <button type="button" className={s.plate}>
+        <span className={s.plateLabel}>{plate.label}</span>
+        <ChevronIcon className={s.chevron} color="currentColor" />
+      </button>
+      <div className={`${s.dropdown} ${align === "right" ? s.dropRight : ""}`}>
+        <div className={s.panel}>
+          {plate.dynamic === "license" ? (
+            <LicenseList />
+          ) : (
+            <div className={s.list}>
+              {(plate.items ?? []).map((item) => (
+                <ItemRow key={item.label} item={item} />
+              ))}
+            </div>
+          )}
         </div>
-      ) : error ? (
-        <p className={s.message}>{error}</p>
-      ) : items.length === 0 ? (
-        <p className={s.message}>Пока нет зарегистрированных держателей лицензии.</p>
-      ) : (
-        <div className={s.list}>
-          {items.map((item) => (
-            <LicenseHolderCard key={item.id} item={item} />
-          ))}
-        </div>
-      )}
-    </Plate>
+      </div>
+    </div>
   );
 }
 
@@ -91,29 +100,23 @@ export function ExpertHelpPlates() {
 
   if (role !== "EXPERT" && role !== "CUSTOMER") return null;
 
-  const reviewLinks = getReviewLinks(role);
-  const usefulLinks = getUsefulLinks(role);
+  const plates = getCabinetNav(role);
+  const rightAligned = new Set(
+    plates
+      .filter((p) => !p.href)
+      .slice(-2)
+      .map((p) => p.key),
+  );
 
   return (
     <div className={s.plates}>
-      {role === "EXPERT" && (
-        <>
-          <Plate color="green" label="Помощь эксперту">
-            <LinkCards links={EXPERT_HELP_LINKS} />
-          </Plate>
-          <LicensePlate />
-        </>
-      )}
-
-      <Plate color="blue" label="Все отзывы">
-        <LinkCards links={reviewLinks} />
-      </Plate>
-
-      {usefulLinks.length > 0 && (
-        <Plate color="purple" label="Полезные ссылки">
-          <LinkCards links={usefulLinks} external />
-        </Plate>
-      )}
+      {plates.map((plate) => (
+        <PlateNode
+          key={plate.key}
+          plate={plate}
+          align={rightAligned.has(plate.key) ? "right" : "left"}
+        />
+      ))}
     </div>
   );
 }

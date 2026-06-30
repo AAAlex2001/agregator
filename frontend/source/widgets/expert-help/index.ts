@@ -1,2 +1,3 @@
 export { ExpertHelpPlates } from "./ui/ExpertHelpPlates";
-export { EXPERT_HELP_LINKS } from "./model/links";
+export { getCabinetNav } from "./model/navConfig";
+export type { NavItem, NavPlate, PlateColor, CabinetRole } from "./model/navConfig";

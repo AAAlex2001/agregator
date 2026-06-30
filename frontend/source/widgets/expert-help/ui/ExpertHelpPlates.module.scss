@@ -4,7 +4,7 @@
   @media (min-width: 1440px) {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     margin-right: auto;
   }
 }
@@ -16,19 +16,38 @@
 .plate {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  gap: 5px;
+  padding: 9px 12px;
   border: none;
   border-radius: 12px;
   background: transparent;
   color: #1a1a1a;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 18px;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.linkPlate {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--plate-bg);
+    color: var(--plate-color);
+  }
 }
 
 .plateLabel {
@@ -37,22 +56,27 @@
 }
 
 .chevron {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   transition: transform 0.2s ease;
 }
 
 .dropdown {
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: 0;
   z-index: 95;
   padding-top: 8px;
   opacity: 0;
   visibility: hidden;
-  transform: translateX(-50%) translateY(-6px);
+  transform: translateY(-6px);
   pointer-events: none;
   transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+}
+
+.dropRight {
+  left: auto;
+  right: 0;
 }
 
 .panel {
@@ -81,23 +105,19 @@
   .dropdown {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     pointer-events: auto;
   }
 }
 
-.plateWrap:first-child .dropdown {
-  left: 0;
-  transform: translateX(0) translateY(-6px);
+.teal {
+  --plate-color: #0d9488;
+  --plate-bg: #e0f2f1;
 }
 
-.plateWrap:first-child:hover .dropdown {
-  transform: translateX(0) translateY(0);
-}
-
-.green {
-  --plate-color: #2f9b52;
-  --plate-bg: #e8f7ee;
+.indigo {
+  --plate-color: #4f46e5;
+  --plate-bg: #ecedfc;
 }
 
 .orange {
@@ -105,14 +125,34 @@
   --plate-bg: #fff8eb;
 }
 
-.blue {
-  --plate-color: #2f5bbf;
-  --plate-bg: #eef3ff;
+.amber {
+  --plate-color: #b45309;
+  --plate-bg: #fbf0e2;
+}
+
+.green {
+  --plate-color: #2f9b52;
+  --plate-bg: #e8f7ee;
+}
+
+.pink {
+  --plate-color: #db2777;
+  --plate-bg: #fce7f0;
 }
 
 .purple {
   --plate-color: #6c4ec8;
   --plate-bg: #f1ecfb;
+}
+
+.blue {
+  --plate-color: #2f5bbf;
+  --plate-bg: #eef3ff;
+}
+
+.red {
+  --plate-color: #c0453e;
+  --plate-bg: #fbe9e8;
 }
 
 .list {
@@ -121,10 +161,10 @@
   gap: 2px;
 }
 
-.card {
+.item {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 3px;
   padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
@@ -135,36 +175,43 @@
   }
 }
 
-.cardIcon {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #f3f4f6;
-  color: var(--plate-color);
+.itemMuted {
+  cursor: default;
 
-  svg {
-    width: 20px;
-    height: 20px;
+  &:hover {
+    background: transparent;
   }
 }
 
-.cardText {
+.itemHead {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: 8px;
 }
 
-.cardLabel {
+.itemLabel {
   font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
 }
 
-.cardDesc {
+.itemMuted .itemLabel {
+  color: #9aa1ac;
+  font-weight: 500;
+}
+
+.soon {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0f1f4;
+  color: #9aa1ac;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.itemDesc {
   font-size: 12px;
   line-height: 16px;
   color: #6b7280;
