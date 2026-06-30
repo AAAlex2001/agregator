@@ -11,7 +11,7 @@ export function PricingPage() {
   const { buy, payingId } = useBuyTariff();
 
   return (
-    <Screen bare heading="Тарифы">
+    <Screen bare heading="Тарифы" panel>
       {plans === null ? (
         <Spinner page />
       ) : plans.length === 0 ? (

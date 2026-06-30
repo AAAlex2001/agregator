@@ -71,7 +71,7 @@ export function ProfilePage() {
 
   if (!profile) {
     return (
-      <Screen bare heading="Профиль">
+      <Screen bare heading="Профиль" panel>
         <Spinner page />
       </Screen>
     );
@@ -80,7 +80,7 @@ export function ProfilePage() {
   const name = [profile.last_name, profile.first_name].filter(Boolean).join(" ") || "—";
 
   return (
-    <Screen bare heading="Профиль">
+    <Screen bare heading="Профиль" panel>
       <Card className={s.head}>
         <span className={s.avatar}>
           <UserIcon width={26} height={26} />

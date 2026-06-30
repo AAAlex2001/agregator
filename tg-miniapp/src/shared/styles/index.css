@@ -8,6 +8,8 @@
   --role-customer: #2f5bbf;
   --role-expert: #ff8a00;
   --role-license: #2f9b52;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 :root[data-theme="light"] {
@@ -24,6 +26,7 @@
   --role-customer-bg: #eaf2ff;
   --role-expert-bg: #fff1df;
   --role-license-bg: #e9f7ef;
+  --panel-bg: #f3f5f9;
 }
 
 :root[data-theme="dark"] {
@@ -40,6 +43,7 @@
   --role-customer-bg: #16243d;
   --role-expert-bg: #2c2113;
   --role-license-bg: #15291e;
+  --panel-bg: #101218;
 }
 
 * {
@@ -51,8 +55,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -63,8 +66,7 @@ body {
 }
 
 .app {
-  height: var(--app-h, 100dvh);
-  overflow: hidden;
+  min-height: 100dvh;
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -72,7 +74,6 @@ body {
 
 .app-body {
   flex: 1 1 auto;
-  min-height: 0;
   width: 100%;
   display: flex;
   flex-direction: column;

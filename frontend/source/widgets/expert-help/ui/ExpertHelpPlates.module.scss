@@ -182,6 +182,85 @@
   color: #6b7280;
 }
 
+.regionsWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.regionsToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: #f6f7f9;
+  }
+}
+
+.regionsChevron {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: #9aa1ac;
+  transition: transform 0.2s ease;
+}
+
+.regionsChevronOpen {
+  transform: rotate(180deg);
+}
+
+.regions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 12px 8px;
+}
+
+.region {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.regionName {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa1ac;
+}
+
+.regionLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.regionLink {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 17px;
+  color: #334155;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: #f6f7f9;
+    color: #1a1a1a;
+  }
+}
+
 .loading {
   display: flex;
   justify-content: center;

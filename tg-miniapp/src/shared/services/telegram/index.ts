@@ -5,8 +5,6 @@ interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
   colorScheme: "light" | "dark";
-  viewportHeight?: number;
-  viewportStableHeight?: number;
   initData: string;
   initDataUnsafe?: { user?: { id?: number }; start_param?: string };
   onEvent?: (event: string, cb: () => void) => void;
@@ -77,20 +75,13 @@ function applyTheme(): void {
   tg?.setHeaderColor?.(bg);
 }
 
-function setAppHeight(): void {
-  const height = tg?.viewportStableHeight ?? tg?.viewportHeight;
-  if (height) document.documentElement.style.setProperty("--app-h", `${height}px`);
-}
-
 export function initTelegram(): void {
   if (tg) {
     tg.ready();
     tg.expand();
     tg.onEvent?.("themeChanged", applyTheme);
-    tg.onEvent?.("viewportChanged", setAppHeight);
   }
   applyTheme();
-  setAppHeight();
 }
 
 export function notifyHaptic(type: HapticNotify): void {

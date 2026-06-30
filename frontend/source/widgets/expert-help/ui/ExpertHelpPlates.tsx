@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
@@ -35,6 +36,44 @@ function ItemRow({ item }: { item: NavItem }) {
     <Link href={item.href} className={s.item}>
       {inner}
     </Link>
+  );
+}
+
+function RegionsItem({ item }: { item: NavItem }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={s.regionsWrap}>
+      <button type="button" className={s.regionsToggle} onClick={() => setOpen((value) => !value)}>
+        <span className={s.itemLabel}>{item.label}</span>
+        <ChevronIcon
+          className={`${s.regionsChevron} ${open ? s.regionsChevronOpen : ""}`}
+          color="currentColor"
+        />
+      </button>
+      {open && (
+        <div className={s.regions}>
+          {(item.regions ?? []).map((group) => (
+            <div key={group.region} className={s.region}>
+              <span className={s.regionName}>{group.region}</span>
+              <div className={s.regionLinks}>
+                {group.links.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={s.regionLink}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -76,9 +115,13 @@ function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" 
             <LicenseList />
           ) : (
             <div className={s.list}>
-              {(plate.items ?? []).map((item) => (
-                <ItemRow key={item.label} item={item} />
-              ))}
+              {(plate.items ?? []).map((item) =>
+                item.regions ? (
+                  <RegionsItem key={item.label} item={item} />
+                ) : (
+                  <ItemRow key={item.label} item={item} />
+                ),
+              )}
             </div>
           )}
         </div>

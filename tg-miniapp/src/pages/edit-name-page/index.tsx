@@ -3,7 +3,7 @@ import { EditName } from "@/features/edit-profile";
 
 export function EditNamePage() {
   return (
-    <Screen bare heading="Имя и фамилия">
+    <Screen bare heading="Имя и фамилия" panel>
       <EditName />
     </Screen>
   );

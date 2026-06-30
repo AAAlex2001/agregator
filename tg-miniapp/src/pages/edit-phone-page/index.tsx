@@ -3,7 +3,7 @@ import { EditPhone } from "@/features/edit-profile";
 
 export function EditPhonePage() {
   return (
-    <Screen bare heading="Телефон">
+    <Screen bare heading="Телефон" panel>
       <EditPhone />
     </Screen>
   );

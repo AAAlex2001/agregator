@@ -37,6 +37,7 @@ export function HomePage() {
           <UserIcon width={22} height={22} />
         </button>
       }
+      panel
     >
       <p className={s.sectionTitle}>{isExpert ? "Лента заказов" : "Мои заказы"}</p>
 
