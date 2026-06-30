@@ -80,32 +80,26 @@ export function CabinetBurgerMenu() {
             <LogoIcon />
           </div>
 
-          {plates.map((plate) =>
-            plate.href ? (
-              <Link key={plate.key} href={plate.href} className={s.link} onClick={close}>
+          {plates.map((plate) => (
+            <div key={plate.key} className={s.group}>
+              <button
+                type="button"
+                className={`${s.groupHead} ${s[plate.color]} ${openKey === plate.key ? s.groupOpen : ""}`}
+                onClick={() => toggle(plate.key)}
+                aria-expanded={openKey === plate.key}
+              >
                 {plate.label}
-              </Link>
-            ) : (
-              <div key={plate.key} className={s.group}>
-                <button
-                  type="button"
-                  className={`${s.groupHead} ${s[plate.color]} ${openKey === plate.key ? s.groupOpen : ""}`}
-                  onClick={() => toggle(plate.key)}
-                  aria-expanded={openKey === plate.key}
-                >
-                  {plate.label}
-                  <ChevronIcon className={s.chevron} color="currentColor" />
-                </button>
-                {openKey === plate.key && (
-                  <div className={s.groupBody}>
-                    {(plate.items ?? []).map((item) => (
-                      <BurgerItem key={item.label} item={item} onNavigate={close} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ),
-          )}
+                <ChevronIcon className={s.chevron} color="currentColor" />
+              </button>
+              {openKey === plate.key && (
+                <div className={s.groupBody}>
+                  {(plate.items ?? []).map((item) => (
+                    <BurgerItem key={item.label} item={item} onNavigate={close} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </nav>
       )}
     </>

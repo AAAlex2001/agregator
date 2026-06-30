@@ -64,14 +64,6 @@ function LicenseList() {
 }
 
 function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" }) {
-  if (plate.href) {
-    return (
-      <Link href={plate.href} className={`${s.linkPlate} ${s[plate.color]}`}>
-        {plate.label}
-      </Link>
-    );
-  }
-
   return (
     <div className={`${s.plateWrap} ${s[plate.color]}`}>
       <button type="button" className={s.plate}>
@@ -101,12 +93,7 @@ export function ExpertHelpPlates() {
   if (role !== "EXPERT" && role !== "CUSTOMER") return null;
 
   const plates = getCabinetNav(role);
-  const rightAligned = new Set(
-    plates
-      .filter((p) => !p.href)
-      .slice(-2)
-      .map((p) => p.key),
-  );
+  const rightAligned = new Set(plates.slice(-2).map((p) => p.key));
 
   return (
     <div className={s.plates}>

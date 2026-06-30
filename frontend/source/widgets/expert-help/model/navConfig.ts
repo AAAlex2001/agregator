@@ -1,15 +1,6 @@
 export type CabinetRole = "EXPERT" | "CUSTOMER" | "LICENSE_HOLDER";
 
-export type PlateColor =
-  | "teal"
-  | "indigo"
-  | "orange"
-  | "amber"
-  | "green"
-  | "pink"
-  | "purple"
-  | "blue"
-  | "red";
+export type PlateColor = "indigo" | "amber" | "green" | "red";
 
 export interface NavItem {
   label: string;
@@ -23,7 +14,6 @@ export interface NavPlate {
   key: string;
   label: string;
   color: PlateColor;
-  href?: string;
   dynamic?: "license";
   items?: NavItem[];
   roles?: CabinetRole[];
@@ -43,7 +33,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
     {
       key: "tech",
       label: "ТехЭксперт",
-      color: "teal",
+      color: "indigo",
       items: [{ label: "Интеграция с ТехЭкспертом", soon: true }],
     },
     {
@@ -58,7 +48,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
     {
       key: "license",
       label: "Держатели лицензии",
-      color: "orange",
+      color: "amber",
       dynamic: "license",
       roles: ["EXPERT"],
     },
@@ -95,7 +85,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
     {
       key: "help-customer",
       label: "Помощь заказчику",
-      color: "pink",
+      color: "green",
       roles: ["CUSTOMER"],
       items: [
         { label: "Проверка ЭО", soon: true },
@@ -106,7 +96,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
     {
       key: "useful",
       label: "Полезные ссылки",
-      color: "purple",
+      color: "green",
       items: [
         {
           label: "Реестр экспертов Ростехнадзора",
@@ -115,17 +105,16 @@ export function getCabinetNav(role: string | null): NavPlate[] {
         },
         { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
         { label: "Поверка приборов", href: "https://grmetr.ru/arshin", external: true },
+        { label: "Результаты поверки приборов", href: "https://grmetr.ru/arshin", external: true },
         { label: "Проверки прокуратуры", href: "https://proverki.gov.ru/portal", external: true },
       ],
     },
     {
       key: "reviews",
       label: "Все отзывы",
-      color: "blue",
+      color: "red",
       items: reviewItems(role),
     },
-    { key: "blog", label: "Блог", color: "red", href: "/landing/blog" },
-    { key: "news", label: "Новости", color: "red", href: "/landing/news" },
   ];
 
   return all.filter((p) => !p.roles || (role !== null && p.roles.includes(role as CabinetRole)));

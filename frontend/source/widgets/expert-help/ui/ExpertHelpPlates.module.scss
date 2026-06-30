@@ -31,25 +31,6 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.linkPlate {
-  display: inline-flex;
-  align-items: center;
-  padding: 9px 12px;
-  border-radius: 12px;
-  color: #1a1a1a;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 500;
-  white-space: nowrap;
-  text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
-
-  &:hover {
-    background: var(--plate-bg);
-    color: var(--plate-color);
-  }
-}
-
 .plateLabel {
   display: inline-flex;
   align-items: center;
@@ -110,19 +91,9 @@
   }
 }
 
-.teal {
-  --plate-color: #0d9488;
-  --plate-bg: #e0f2f1;
-}
-
 .indigo {
   --plate-color: #4f46e5;
   --plate-bg: #ecedfc;
-}
-
-.orange {
-  --plate-color: #ff8a00;
-  --plate-bg: #fff8eb;
 }
 
 .amber {
@@ -133,21 +104,6 @@
 .green {
   --plate-color: #2f9b52;
   --plate-bg: #e8f7ee;
-}
-
-.pink {
-  --plate-color: #db2777;
-  --plate-bg: #fce7f0;
-}
-
-.purple {
-  --plate-color: #6c4ec8;
-  --plate-bg: #f1ecfb;
-}
-
-.blue {
-  --plate-color: #2f5bbf;
-  --plate-bg: #eef3ff;
 }
 
 .red {
