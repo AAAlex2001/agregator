@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import cn from "classnames";
 import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
-import { Card, Spinner, Toggle } from "@/shared/ui";
+import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { RoleSheet } from "@/features/role-switch";
 import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
@@ -19,14 +19,15 @@ import {
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
+import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import { formatPhone } from "@/shared/lib/phone";
 import s from "./style.module.scss";
 
-function roleLabel(role: string | null): string {
-  if (role === "EXPERT") return "Эксперт";
-  if (role === "LICENSE_HOLDER") return "Держатель лицензии";
-  return "Заказчик";
-}
+const ROLE_BANNER = {
+  EXPERT: { kind: "expert", noun: "Эксперт", icon: <ExpertRoleIcon size={66} /> },
+  CUSTOMER: { kind: "customer", noun: "Заказчик", icon: <CustomerRoleIcon size={66} /> },
+  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", icon: <LicenseRoleIcon size={70} /> },
+} as const;
 
 function Row({
   icon,
@@ -83,18 +84,17 @@ export function ProfilePage() {
   }
 
   const name = [profile.last_name, profile.first_name].filter(Boolean).join(" ") || "—";
+  const banner = ROLE_BANNER[role ?? "CUSTOMER"];
 
   return (
     <Screen bare heading="Профиль" panel>
-      <Card className={s.head}>
-        <span className={s.avatar}>
-          <UserIcon width={26} height={26} />
-        </span>
-        <div className={s.headText}>
+      <div className={cn(s.banner, s[banner.kind])}>
+        <div className={s.bannerText}>
           <p className={s.name}>{name}</p>
-          <p className={s.role}>{roleLabel(role)}</p>
+          <span className={s.roleBadge}>Вы — {banner.noun}</span>
         </div>
-      </Card>
+        <span className={s.bannerIcon}>{banner.icon}</span>
+      </div>
 
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>

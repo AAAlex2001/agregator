@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import cn from "classnames";
 import s from "./style.module.scss";
 
-const SIZE = 56;
-const STROKE = 5;
+const SIZE = 68;
+const STROKE = 6;
 const RADIUS = (SIZE - STROKE) / 2;
 const CIRC = 2 * Math.PI * RADIUS;
 const CENTER = SIZE / 2;
@@ -14,6 +14,7 @@ const FULL_MS = 3 * DAY;
 const RED_MS = 6 * HOUR;
 
 function deadlineTime(deadline: string): number {
+  if (deadline.includes("T")) return new Date(deadline).getTime();
   const [year, month, day] = deadline.split("-").map(Number);
   return new Date(year, month - 1, day, 23, 59, 59, 999).getTime();
 }

@@ -19,12 +19,17 @@
 
 .react-calendar__navigation button {
   min-width: 40px;
-  background: none;
+  background: transparent;
   border: none;
   color: var(--text);
   font-size: 15px;
   font-weight: 600;
   border-radius: var(--radius-sm);
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background: transparent;
 }
 
 .react-calendar__navigation button:enabled:active {
@@ -33,7 +38,7 @@
 
 .react-calendar__navigation button:disabled {
   opacity: 0.3;
-  background: none;
+  background: transparent;
 }
 
 .react-calendar__month-view__weekdays {
@@ -54,7 +59,7 @@
 
 .react-calendar__tile {
   height: 42px;
-  background: none;
+  background: transparent;
   border: none;
   color: var(--text);
   font-size: 14px;
@@ -62,8 +67,10 @@
 }
 
 .react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus,
 .react-calendar__tile:enabled:active {
   background: var(--accent-soft);
+  color: var(--text);
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {
@@ -73,7 +80,7 @@
 
 .react-calendar__tile:disabled {
   opacity: 0.3;
-  background: none;
+  background: transparent;
 }
 
 .react-calendar__tile--now {
@@ -83,6 +90,7 @@
 
 .react-calendar__tile--active,
 .react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus,
 .react-calendar__tile--active:enabled:active {
   background: var(--accent);
   color: #fff;

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
-import { useOrders, type Order } from "@/entites/order";
+import { useOrders, OrderCard, type Order } from "@/entites/order";
 import { RespondSheet } from "@/features/respond-order";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
-import { Card, BottomSheet, CountdownRing, Logo, Spinner } from "@/shared/ui";
+import { Button, Card, BottomSheet, Logo, Spinner } from "@/shared/ui";
 import { UserIcon } from "@/shared/ui/icons/interface";
+import { EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
 
 export function HomePage() {
@@ -24,7 +25,9 @@ export function HomePage() {
       title={
         <>
           <Logo size={28} className={s.logoMark} />
-          Ресурс-<span className={s.brandPlus}>Плюс</span>
+          <span>
+            Ресурс-<span className={s.brandPlus}>Плюс</span>
+          </span>
         </>
       }
       right={
@@ -48,15 +51,23 @@ export function HomePage() {
           <Spinner />
         </div>
       ) : orders.length === 0 ? (
-        <Card className={s.empty}>
-          {isExpert ? "Пока нет подходящих заказов" : "У вас пока нет заказов"}
-        </Card>
+        isExpert ? (
+          <Card className={s.empty}>Пока нет подходящих заказов</Card>
+        ) : (
+          <div className={s.emptyState}>
+            <EmptyOrdersIcon />
+            <p className={s.emptyTitle}>Вы ещё не создали ни одного заказа</p>
+            <p className={s.emptySub}>
+              Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности
+            </p>
+          </div>
+        )
       ) : (
         <div className={s.feed}>
           {orders.map((o) => (
-            <Card
+            <OrderCard
               key={o.id}
-              className={s.orderCard}
+              order={o}
               onClick={() => {
                 if (isExpert) {
                   setRespondOrder(o);
@@ -65,34 +76,31 @@ export function HomePage() {
                   setSoonOpen(true);
                 }
               }}
-            >
-              <div className={s.orderMain}>
-                <span className={s.orderTitle}>{o.title}</span>
-                {o.company && <span className={s.orderCompany}>{o.company}</span>}
-                {o.badges.length > 0 && (
-                  <div className={s.orderBadges}>
-                    {o.badges.slice(0, 4).map((b, i) => (
-                      <span key={i} className={s.orderBadge}>
-                        {b.text}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className={s.orderSide}>
-                <span className={s.orderSum}>{o.sum}</span>
-                <CountdownRing deadline={o.deadline_at} />
-              </div>
-            </Card>
+            />
           ))}
         </div>
       )}
+
+      {!isExpert && <div className={s.createSpacer} />}
 
       <BottomSheet open={soonOpen} title={soonTitle} onClose={() => setSoonOpen(false)}>
         <p className={s.soonText}>Раздел скоро появится — делаем его следующим шагом.</p>
       </BottomSheet>
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
+
+      {!isExpert && (
+        <div className={s.createBar}>
+          <Button
+            onClick={() => {
+              setSoonTitle("Создание заказа");
+              setSoonOpen(true);
+            }}
+          >
+            Создать заказ
+          </Button>
+        </div>
+      )}
     </Screen>
   );
 }

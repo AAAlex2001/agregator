@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { BottomSheet } from "../bottom-sheet";
 import { Button } from "../button";
@@ -19,6 +19,10 @@ function toISODate(date: Date): string {
 
 export function CalendarPicker({ open, value, onClose, onApply }: Props) {
   const [date, setDate] = useState<Date | null>(value ? new Date(value) : null);
+
+  useEffect(() => {
+    if (open) setDate(value ? new Date(value) : null);
+  }, [open, value]);
 
   const apply = () => {
     if (!date) return;

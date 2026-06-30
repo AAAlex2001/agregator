@@ -51,64 +51,44 @@
   color: var(--muted);
 }
 
-.orderCard {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.orderMain {
-  flex: 1 1 auto;
-  min-width: 0;
+.emptyState {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 8px;
+  padding: 28px 16px 12px;
 }
 
-.orderSide {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.orderTitle {
-  font-size: 15px;
-  font-weight: 600;
+.emptyTitle {
+  margin: 6px 0 0;
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1.3;
   color: var(--text);
 }
 
-.orderSum {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
-  white-space: nowrap;
-}
-
-.orderCompany {
-  font-size: 13px;
+.emptySub {
+  margin: 0;
+  max-width: 280px;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.orderBadges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 2px;
+.createSpacer {
+  height: 64px;
 }
 
-.orderBadge {
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
+.createBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 12px 16px calc(14px + var(--safe-bottom));
+  background: var(--panel-bg);
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .soonText {

@@ -14,6 +14,7 @@ interface Props {
 export function BottomSheet({ open, title, onClose, children }: Props) {
   const [render, setRender] = useState(open);
   const [closing, setClosing] = useState(false);
+  const [frozen, setFrozen] = useState<{ title?: string; content: ReactNode }>({ title, content: children });
 
   useEffect(() => {
     if (open) {
@@ -25,6 +26,10 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
     const timer = window.setTimeout(() => setRender(false), 320);
     return () => window.clearTimeout(timer);
   }, [open]);
+
+  useEffect(() => {
+    if (open) setFrozen({ title, content: children });
+  }, [open, title, children]);
 
   useEffect(() => {
     if (!render) return;
@@ -42,16 +47,18 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
     onClose();
   };
 
+  const shownTitle = open ? title : frozen.title;
+
   return (
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={close}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         <div className={s.top}>
-          {title ? <h3 className={s.title}>{title}</h3> : <span />}
+          {shownTitle ? <h3 className={s.title}>{shownTitle}</h3> : <span />}
           <button className={s.close} onClick={close} aria-label="Закрыть">
             <CloseIcon width={18} height={18} />
           </button>
         </div>
-        <div className={s.body}>{children}</div>
+        <div className={s.body}>{open ? children : frozen.content}</div>
       </div>
     </div>
   );

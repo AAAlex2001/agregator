@@ -1,6 +1,6 @@
 type Props = { size?: number };
 
-export function NameFieldIcon({ size = 108 }: Props) {
+export function NameFieldIcon({ size = 138 }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 148 148" fill="none" aria-hidden="true">
       <g>
@@ -38,7 +38,7 @@ export function NameFieldIcon({ size = 108 }: Props) {
   );
 }
 
-export function PhoneFieldIcon({ size = 108 }: Props) {
+export function PhoneFieldIcon({ size = 138 }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 128 128" fill="none" aria-hidden="true">
       <g>
@@ -54,7 +54,7 @@ export function PhoneFieldIcon({ size = 108 }: Props) {
   );
 }
 
-export function MailFieldIcon({ size = 108 }: Props) {
+export function MailFieldIcon({ size = 138 }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 148 148" fill="none" aria-hidden="true">
       <g>

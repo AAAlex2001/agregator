@@ -92,6 +92,30 @@
   font-weight: 600;
 }
 
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirmLead {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.confirmList {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -127,6 +151,37 @@
 
 .dateEmpty {
   color: var(--muted);
+}
+
+.vatGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.vatOption {
+  height: 46px;
+  border: none;
+  border-radius: 12px;
+  background: var(--card-2);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.vatActive {
+  background: var(--accent);
+  color: #fff;
+}
+
+.vatTotal {
+  padding-left: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .textarea {
