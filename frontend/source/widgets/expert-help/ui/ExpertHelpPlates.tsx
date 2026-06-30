@@ -93,17 +93,21 @@ export function ExpertHelpPlates() {
   if (role !== "EXPERT" && role !== "CUSTOMER") return null;
 
   const plates = getCabinetNav(role);
-  const rightAligned = new Set(plates.slice(-2).map((p) => p.key));
+  const leftPlates = plates.filter((p) => p.key !== "reviews");
+  const reviewsPlate = plates.find((p) => p.key === "reviews");
 
   return (
-    <div className={s.plates}>
-      {plates.map((plate) => (
-        <PlateNode
-          key={plate.key}
-          plate={plate}
-          align={rightAligned.has(plate.key) ? "right" : "left"}
-        />
-      ))}
-    </div>
+    <>
+      <div className={s.plates}>
+        {leftPlates.map((plate) => (
+          <PlateNode key={plate.key} plate={plate} align="left" />
+        ))}
+      </div>
+      {reviewsPlate && (
+        <div className={s.platesRight}>
+          <PlateNode plate={reviewsPlate} align="right" />
+        </div>
+      )}
+    </>
   );
 }
