@@ -4,7 +4,7 @@
   @media (min-width: 1440px) {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     order: 0;
     margin-right: auto;
   }
@@ -13,21 +13,22 @@
 .plate {
   display: inline-flex;
   align-items: center;
-  padding: 9px 20px;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
   background: transparent;
   color: #1a1a1a;
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover,
   &:focus-visible {
-    border-color: var(--plate-color);
+    background: var(--plate-bg);
     color: var(--plate-color);
   }
 }
@@ -38,17 +39,21 @@
 }
 
 .green {
+  --plate-bg: #e8f7ee;
   --plate-color: #2f9b52;
 }
 
 .orange {
+  --plate-bg: #fff8eb;
   --plate-color: #ff8a00;
 }
 
 .blue {
+  --plate-bg: #eef3ff;
   --plate-color: #2f5bbf;
 }
 
 .purple {
+  --plate-bg: #f1ecfb;
   --plate-color: #6c4ec8;
 }
