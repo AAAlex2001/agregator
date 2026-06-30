@@ -1,12 +1,13 @@
-import { useState, type ComponentType, type SVGProps } from "react";
+import { useEffect, useState, type ComponentType, type SVGProps } from "react";
 import { useNavigate } from "react-router-dom";
 import cn from "classnames";
 import { useSession } from "@/entites/session";
+import { listOrders, type Order } from "@/entites/order";
+import { emitError } from "@/shared/services/error-bus";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
-import { Card, BottomSheet, Logo } from "@/shared/ui";
+import { Card, BottomSheet, Logo, Spinner } from "@/shared/ui";
 import {
-  BoltIcon,
   ChevronRightIcon,
   CreditIcon,
   DocIcon,
@@ -31,7 +32,6 @@ const CUSTOMER_ACTIONS: Action[] = [
 ];
 
 const EXPERT_ACTIONS: Action[] = [
-  { key: "feed", title: "Заказы под вас", sub: "Новые тендеры по вашей аттестации", Icon: BoltIcon, tint: s.tintAccent },
   { key: "responses", title: "Мои отклики", sub: "Статусы по отправленным заявкам", Icon: DocIcon, tint: s.tintBlue },
   { key: "tools", title: "Инструменты", sub: "Анализ риска и остаточный ресурс", Icon: ToolIcon, tint: s.tintGreen },
   { key: "tariffs", title: "Тарифы", sub: "Подписка эксперта", Icon: CreditIcon, tint: s.tintAccent, to: "/pricing" },
@@ -48,16 +48,37 @@ export function HomePage() {
   const navigate = useNavigate();
   const [soonOpen, setSoonOpen] = useState(false);
   const [soonTitle, setSoonTitle] = useState("");
+  const [orders, setOrders] = useState<Order[] | null>(null);
 
-  const actions = role === "EXPERT" ? EXPERT_ACTIONS : CUSTOMER_ACTIONS;
+  const isExpert = role === "EXPERT";
+  const actions = isExpert ? EXPERT_ACTIONS : CUSTOMER_ACTIONS;
+
+  useEffect(() => {
+    let active = true;
+    listOrders(8)
+      .then((d) => {
+        if (active) setOrders(d.items);
+      })
+      .catch((e) => {
+        emitError(e instanceof Error ? e.message : "Не удалось загрузить заказы");
+        if (active) setOrders([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const openSoon = (title: string) => {
+    setSoonTitle(title);
+    setSoonOpen(true);
+  };
 
   const handle = (a: Action) => {
     if (a.to) {
       navigate(a.to);
       return;
     }
-    setSoonTitle(a.title);
-    setSoonOpen(true);
+    openSoon(a.title);
   };
 
   return (
@@ -87,6 +108,38 @@ export function HomePage() {
           Вы вошли как <b>{roleLabel(role)}</b>
         </p>
       </Card>
+
+      <p className={s.sectionTitle}>{isExpert ? "Лента заказов" : "Мои заказы"}</p>
+      {orders === null ? (
+        <div className={s.feedLoading}>
+          <Spinner />
+        </div>
+      ) : orders.length === 0 ? (
+        <Card className={s.empty}>
+          {isExpert ? "Пока нет подходящих заказов" : "У вас пока нет заказов"}
+        </Card>
+      ) : (
+        <div className={s.feed}>
+          {orders.map((o) => (
+            <Card key={o.id} className={s.orderCard} onClick={() => openSoon(o.title)}>
+              <div className={s.orderTop}>
+                <span className={s.orderTitle}>{o.title}</span>
+                <span className={s.orderSum}>{o.sum}</span>
+              </div>
+              {o.company && <span className={s.orderCompany}>{o.company}</span>}
+              {o.badges.length > 0 && (
+                <div className={s.orderBadges}>
+                  {o.badges.slice(0, 4).map((b, i) => (
+                    <span key={i} className={s.orderBadge}>
+                      {b.text}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
 
       <p className={s.sectionTitle}>Действия</p>
       <div className={s.actions}>

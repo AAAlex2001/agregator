@@ -50,15 +50,14 @@ export function PricingPage() {
       ) : (
         plans.map((plan) => (
           <Card key={plan.id} className={cn(s.plan, { [s.hot]: plan.highlighted })}>
-            <div className={s.planTop}>
-              <div>
-                <p className={s.planName}>{plan.name}</p>
-                {plan.badge && <span className={s.badge}>{plan.badge}</span>}
-              </div>
-              <div className={s.price}>
-                <span className={s.priceVal}>{plan.price_display}</span>
-                <span className={s.period}>{plan.period_label}</span>
-              </div>
+            <div className={s.head}>
+              <p className={s.name}>{plan.name}</p>
+              {plan.badge && <span className={s.badge}>{plan.badge}</span>}
+            </div>
+
+            <div className={s.priceRow}>
+              <span className={s.price}>{plan.price_display}</span>
+              <span className={s.period}>{plan.period_label}</span>
             </div>
 
             {plan.description && <p className={s.desc}>{plan.description}</p>}
@@ -66,8 +65,10 @@ export function PricingPage() {
             {plan.features.length > 0 && (
               <ul className={s.features}>
                 {plan.features.map((f, i) => (
-                  <li key={i} className={s.feature}>
-                    <CheckIcon width={18} height={18} className={s.featIcon} />
+                  <li key={i}>
+                    <span className={s.featIcon}>
+                      <CheckIcon width={16} height={16} />
+                    </span>
                     <span>{f}</span>
                   </li>
                 ))}

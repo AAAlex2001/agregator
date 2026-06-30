@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--hero);
+  background: #0d0e13;
 }
 
 .hero {
@@ -38,10 +38,11 @@
 
 .card {
   background: var(--card);
-  border-radius: 24px;
+  border: 1px solid var(--hairline);
+  border-radius: 22px;
   margin: 0 14px calc(18px + env(safe-area-inset-bottom));
   padding: 22px 18px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 .actions,
