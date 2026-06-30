@@ -49,7 +49,11 @@ class LoginRepository:
         ).scalars().first()
 
     async def set_telegram_id(self, user_id: int, telegram_id: int) -> None:
-        "Привязывает Telegram к пользователю (commit — на границе запроса)."
+        "Привязывает Telegram к пользователю; снимает привязку с прежнего владельца (один Telegram — один активный аккаунт)."
+        existing = await self.find_user_by_telegram_id(telegram_id)
+        if existing is not None and existing.id != user_id:
+            existing.telegram_id = None
+            await self.db.flush()
         user = await self.find_user_by_id(user_id)
         if user is not None:
             user.telegram_id = telegram_id

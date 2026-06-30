@@ -1,0 +1,87 @@
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 0;
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hot {
+  box-shadow: 0 0 0 1.6px var(--accent), var(--shadow);
+}
+
+.planTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.planName {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.price {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.priceVal {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.period {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.featIcon {
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-top: 1px;
+}

@@ -1,19 +1,19 @@
-import { useState } from "react";
-import cn from "classnames";
+import { useState, type ComponentType } from "react";
 import { useSession } from "@/entites/session";
 import { ApiError, type Role } from "@/shared/services/api";
 import { emitError } from "@/shared/services/error-bus";
 import { openLink, tapHaptic } from "@/shared/services/telegram";
 import { Button, TextField, BottomSheet, Logo } from "@/shared/ui";
-import { MailIcon, LockIcon } from "@/shared/ui/icons/interface";
+import { MailIcon, LockIcon, ChevronRightIcon } from "@/shared/ui/icons/interface";
+import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import s from "./style.module.scss";
 
 const REGISTER_URL = "https://plus-resurs.com/register";
 
-const ROLE_META: Record<Role, { label: string; cls: string }> = {
-  CUSTOMER: { label: "Вы — заказчик", cls: s.roleCustomer },
-  EXPERT: { label: "Вы — эксперт", cls: s.roleExpert },
-  LICENSE_HOLDER: { label: "Вы — держатель лицензии", cls: s.roleLicense },
+const ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?: number }> }> = {
+  CUSTOMER: { label: "Вы — заказчик", Icon: CustomerRoleIcon },
+  EXPERT: { label: "Вы — эксперт", Icon: ExpertRoleIcon },
+  LICENSE_HOLDER: { label: "Вы — держатель лицензии", Icon: LicenseRoleIcon },
 };
 
 function availableRoles(error: unknown): Role[] | null {
@@ -117,19 +117,26 @@ export function AuthPage() {
       <BottomSheet open={rolesOpen} title="Под какой ролью войти?" onClose={() => setRolesOpen(false)}>
         <p className={s.roleHint}>На эти данные зарегистрировано несколько аккаунтов</p>
         <div className={s.roleList}>
-          {roles.map((r) => (
-            <button
-              key={r}
-              className={cn(s.roleBtn, ROLE_META[r].cls)}
-              onClick={() => {
-                tapHaptic();
-                setRolesOpen(false);
-                void submit(r);
-              }}
-            >
-              {ROLE_META[r].label}
-            </button>
-          ))}
+          {roles.map((r) => {
+            const { label, Icon } = ROLE_META[r];
+            return (
+              <button
+                key={r}
+                className={s.roleBtn}
+                onClick={() => {
+                  tapHaptic();
+                  setRolesOpen(false);
+                  void submit(r);
+                }}
+              >
+                <span className={s.roleIcon}>
+                  <Icon size={26} />
+                </span>
+                <span className={s.roleLabel}>{label}</span>
+                <ChevronRightIcon className={s.roleChev} width={20} height={20} />
+              </button>
+            );
+          })}
           <Button variant="ghost" onClick={() => setRolesOpen(false)}>
             Отмена
           </Button>

@@ -1,40 +1,10 @@
-.page {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  background: var(--bg);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
-}
-
 .logoMark {
   color: var(--text);
 }
 
-.brand {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.spacer {
-  flex: 1 1 auto;
-}
-
 .iconBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   width: 40px;
   height: 40px;
   border: none;
@@ -43,15 +13,11 @@
   color: var(--text);
   box-shadow: var(--shadow);
   cursor: pointer;
+  transition: transform 0.08s ease;
 }
 
-.body {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 6px 16px calc(28px + env(safe-area-inset-bottom));
-  animation: appear 0.3s ease;
+.iconBtn:active {
+  transform: scale(0.94);
 }
 
 .hero {
@@ -143,17 +109,6 @@
 .chev {
   flex-shrink: 0;
   color: var(--muted);
-}
-
-.logout {
-  margin: 10px auto 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
 }
 
 .soonText {

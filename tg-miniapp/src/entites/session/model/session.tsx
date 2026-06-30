@@ -8,14 +8,17 @@ import {
 } from "react";
 import { telegramAuth, telegramLink, logout as apiLogout, type Role } from "@/shared/services/api";
 import { getInitData } from "@/shared/services/telegram";
+import { getProfile, type Profile } from "@/entites/profile";
 
 interface SessionValue {
   booting: boolean;
   authed: boolean;
   linkRequired: boolean;
   role: Role | null;
+  profile: Profile | null;
   signInLink: (email: string, password: string, role?: Role) => Promise<void>;
   signOut: () => Promise<void>;
+  reloadProfile: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionValue | undefined>(undefined);
@@ -25,6 +28,20 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [authed, setAuthed] = useState(false);
   const [linkRequired, setLinkRequired] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  const reloadProfile = useCallback(async () => {
+    try {
+      setProfile(await getProfile());
+    } catch {
+      setProfile(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authed) void reloadProfile();
+    else setProfile(null);
+  }, [authed, reloadProfile]);
 
   useEffect(() => {
     const initData = getInitData();
@@ -65,7 +82,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   return (
     <SessionContext.Provider
-      value={{ booting, authed, linkRequired, role, signInLink, signOut }}
+      value={{ booting, authed, linkRequired, role, profile, signInLink, signOut, reloadProfile }}
     >
       {children}
     </SessionContext.Provider>

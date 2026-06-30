@@ -89,7 +89,7 @@ export function notifyHaptic(type: HapticNotify): void {
 }
 
 export function tapHaptic(): void {
-  if (hapticEnabled()) tg?.HapticFeedback?.impactOccurred("light");
+  if (hapticEnabled()) tg?.HapticFeedback?.impactOccurred("rigid");
 }
 
 export function openLink(url: string): void {

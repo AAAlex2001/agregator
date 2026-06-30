@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--card);
+  background: var(--hero);
 }
 
 .hero {
@@ -13,10 +13,8 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 32px 24px 40px;
-  background: var(--hero);
+  padding: 40px 24px;
   color: var(--hero-text);
-  border-radius: 0 0 28px 28px;
   text-align: center;
 }
 
@@ -40,9 +38,10 @@
 
 .card {
   background: var(--card);
-  border-radius: 24px 24px 0 0;
-  margin-top: -22px;
-  padding: 24px 20px calc(28px + env(safe-area-inset-bottom));
+  border-radius: 24px;
+  margin: 0 14px calc(18px + env(safe-area-inset-bottom));
+  padding: 22px 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
 .actions,
@@ -93,27 +92,41 @@
 .roleBtn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 52px;
-  border: 1.5px solid transparent;
-  border-radius: 14px;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--card-2);
   font-family: inherit;
   font-size: 16px;
   font-weight: 600;
+  color: var(--text);
   cursor: pointer;
+  transition: background-color 0.12s ease, transform 0.08s ease;
 }
 
-.roleCustomer {
-  background: var(--role-customer-bg);
-  color: var(--role-customer);
+.roleBtn:active {
+  background: var(--accent-soft);
+  transform: scale(0.99);
 }
 
-.roleExpert {
-  background: var(--role-expert-bg);
-  color: var(--role-expert);
+.roleIcon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: var(--accent-soft);
 }
 
-.roleLicense {
-  background: var(--role-license-bg);
-  color: var(--role-license);
+.roleLabel {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.roleChev {
+  flex: 0 0 auto;
+  color: var(--muted);
 }

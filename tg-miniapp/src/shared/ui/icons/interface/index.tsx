@@ -118,3 +118,29 @@ export const CloseIcon = (p: P) => (
     <path d="M6 6l12 12M18 6 6 18" />
   </svg>
 );
+
+export const PhoneIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+  </svg>
+);
+
+export const VibrateIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <rect x="8" y="4" width="8" height="16" rx="2" />
+    <path d="M3 9v6M21 9v6" />
+  </svg>
+);
+
+export const LogoutIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="m16 17 5-5-5-5M21 12H9" />
+  </svg>
+);
+
+export const CheckIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="m5 12 5 5L20 7" />
+  </svg>
+);

@@ -14,8 +14,6 @@
 
 .sheet {
   width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
   background: var(--card);
   border-radius: 22px 22px 0 0;
   padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
