@@ -1,84 +1,60 @@
-.banner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.avatar {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-}
-
-.bannerText {
-  flex: 1 1 auto;
-  min-width: 0;
+.hero {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-}
-
-.name {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.roleChip {
-  align-self: flex-start;
-  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 13px;
+  text-align: center;
+  gap: 5px;
+  padding: calc(26px + var(--safe-top)) 20px 46px;
+  color: #fff;
+}
+
+.heroName {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.heroRole {
+  margin: 0;
+  font-size: 16px;
   font-weight: 600;
-  white-space: nowrap;
 }
 
-.roleDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
+.heroSub {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.82;
 }
 
-.expert .avatar,
-.expert .roleChip {
-  background: rgba(255, 138, 0, 0.12);
-  color: #ef7d00;
+.heroShade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 100%);
+  pointer-events: none;
 }
 
-.expert .roleDot {
-  background: #ff8a00;
+.hero_expert {
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    linear-gradient(160deg, #ff9f2e 0%, #ef7600 100%);
 }
 
-.customer .avatar,
-.customer .roleChip {
-  background: rgba(45, 108, 223, 0.12);
-  color: #2c5fd6;
+.hero_customer {
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    linear-gradient(160deg, #4a86ee 0%, #2452c6 100%);
 }
 
-.customer .roleDot {
-  background: #2d6cdf;
-}
-
-.license .avatar,
-.license .roleChip {
-  background: rgba(31, 170, 82, 0.13);
-  color: #129a4c;
-}
-
-.license .roleDot {
-  background: #1faa52;
+.hero_license {
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
+    linear-gradient(160deg, #34c759 0%, #1f9c47 100%);
 }
 
 .groupTitle {

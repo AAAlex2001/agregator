@@ -70,6 +70,16 @@
   margin-top: 20px;
 }
 
+.heroSlot {
+  position: relative;
+}
+
+.heroSlot + .panel {
+  position: relative;
+  z-index: 1;
+  margin-top: -22px;
+}
+
 .heading {
   margin: 0;
   font-size: 24px;

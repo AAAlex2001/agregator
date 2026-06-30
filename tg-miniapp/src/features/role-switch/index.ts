@@ -1,1 +1,1 @@
-export { RoleSheet } from "./ui/role-sheet";
+export { RoleTabs } from "./ui/role-tabs";

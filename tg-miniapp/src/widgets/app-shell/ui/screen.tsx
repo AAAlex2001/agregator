@@ -7,10 +7,11 @@ interface Props {
   bare?: boolean;
   heading?: string;
   panel?: boolean;
+  hero?: ReactNode;
   children: ReactNode;
 }
 
-export function Screen({ title, right, bare = false, heading, panel = false, children }: Props) {
+export function Screen({ title, right, bare = false, heading, panel = false, hero, children }: Props) {
   return (
     <div className={s.screen}>
       {!bare && (
@@ -21,10 +22,14 @@ export function Screen({ title, right, bare = false, heading, panel = false, chi
       )}
       {panel ? (
         <main className={s.bleed}>
-          {heading && (
-            <div className={s.head}>
-              <h1 className={s.heading}>{heading}</h1>
-            </div>
+          {hero ? (
+            <div className={s.heroSlot}>{hero}</div>
+          ) : (
+            heading && (
+              <div className={s.head}>
+                <h1 className={s.heading}>{heading}</h1>
+              </div>
+            )
           )}
           <div className={s.panel}>{children}</div>
         </main>

@@ -5,7 +5,7 @@ import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
-import { RoleSheet } from "@/features/role-switch";
+import { RoleTabs } from "@/features/role-switch";
 import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
 import {
   BellIcon,
@@ -15,18 +15,16 @@ import {
   MailIcon,
   MoonIcon,
   PhoneIcon,
-  SwitchRoleIcon,
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
-import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import { formatPhone } from "@/shared/lib/phone";
 import s from "./style.module.scss";
 
-const ROLE_BANNER = {
-  EXPERT: { kind: "expert", noun: "Эксперт", icon: <ExpertRoleIcon size={30} /> },
-  CUSTOMER: { kind: "customer", noun: "Заказчик", icon: <CustomerRoleIcon size={30} /> },
-  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", icon: <LicenseRoleIcon size={32} /> },
+const ROLE_META = {
+  EXPERT: { kind: "expert", noun: "Эксперт" },
+  CUSTOMER: { kind: "customer", noun: "Заказчик" },
+  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат" },
 } as const;
 
 function Row({
@@ -72,32 +70,33 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { profile, role, signOut } = useSession();
   const [themeOpen, setThemeOpen] = useState(false);
-  const [roleOpen, setRoleOpen] = useState(false);
   const [haptic, setHaptic] = useState(hapticEnabled);
 
   if (!profile) {
     return (
-      <Screen bare heading="Профиль" panel>
+      <Screen bare panel>
         <Spinner page />
       </Screen>
     );
   }
 
   const name = [profile.last_name, profile.first_name].filter(Boolean).join(" ") || "—";
-  const banner = ROLE_BANNER[role ?? "CUSTOMER"];
+  const meta = ROLE_META[role ?? "CUSTOMER"];
 
   return (
-    <Screen bare heading="Профиль" panel>
-      <div className={cn(s.banner, s[banner.kind])}>
-        <span className={s.avatar}>{banner.icon}</span>
-        <div className={s.bannerText}>
-          <p className={s.name}>{name}</p>
-          <span className={s.roleChip}>
-            <span className={s.roleDot} />
-            Вы — {banner.noun}
-          </span>
+    <Screen
+      bare
+      panel
+      hero={
+        <div className={cn(s.hero, s[`hero_${meta.kind}`])}>
+          <p className={s.heroName}>{name}</p>
+          <p className={s.heroRole}>{meta.noun}</p>
+          <p className={s.heroSub}>Ваш профиль</p>
+          <span className={s.heroShade} />
         </div>
-      </div>
+      }
+    >
+      <RoleTabs />
 
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>
@@ -117,7 +116,6 @@ export function ProfilePage() {
 
       <p className={s.groupTitle}>Управление</p>
       <div className={s.group}>
-        <Row icon={<SwitchRoleIcon width={19} height={19} />} label="Смена роли" onClick={() => setRoleOpen(true)} />
         <Row icon={<BellIcon width={19} height={19} />} label="Уведомления" onClick={() => navigate("/notifications")} />
       </div>
 
@@ -153,7 +151,6 @@ export function ProfilePage() {
       </div>
 
       <ThemeSheet open={themeOpen} onClose={() => setThemeOpen(false)} />
-      <RoleSheet open={roleOpen} onClose={() => setRoleOpen(false)} />
     </Screen>
   );
 }
