@@ -3,6 +3,7 @@ import { useSession } from "@/entites/session";
 import { updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { Button, Card, TextField } from "@/shared/ui";
+import { PhoneFieldIcon } from "@/shared/ui/icons/fields";
 import { SuccessModal } from "@/widgets/success-modal";
 import { PHONE_PLACEHOLDER, formatPhone, isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import s from "./edit.module.scss";
@@ -29,6 +30,9 @@ export function EditPhone() {
   return (
     <>
       <Card className={s.fields}>
+        <span className={s.headIcon}>
+          <PhoneFieldIcon />
+        </span>
         <TextField
           label="Ваш телефон"
           placeholder={PHONE_PLACEHOLDER}

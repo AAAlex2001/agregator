@@ -11,6 +11,7 @@ function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => voi
   const inner = (
     <>
       <span className={s.subHead}>
+        <span className={s.bullet} />
         <span className={s.subLabel}>{item.label}</span>
         {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
       </span>
@@ -40,6 +41,49 @@ function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => voi
     <Link href={item.href} className={s.subLink} onClick={onNavigate}>
       {inner}
     </Link>
+  );
+}
+
+function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={s.regionsWrap}>
+      <button
+        type="button"
+        className={s.regionsToggle}
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+      >
+        <span className={s.subHead}>
+          <span className={s.bullet} />
+          <span className={s.subLabel}>{item.label}</span>
+        </span>
+        <ChevronIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`} color="currentColor" />
+      </button>
+      {open && (
+        <div className={s.regions}>
+          {(item.regions ?? []).map((group) => (
+            <div key={group.region} className={s.region}>
+              <span className={s.regionName}>{group.region}</span>
+              {group.links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={s.regionLink}
+                  onClick={onNavigate}
+                >
+                  <span className={s.bulletSmall} />
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -93,9 +137,13 @@ export function CabinetBurgerMenu() {
               </button>
               {openKey === plate.key && (
                 <div className={s.groupBody}>
-                  {(plate.items ?? []).map((item) => (
-                    <BurgerItem key={item.label} item={item} onNavigate={close} />
-                  ))}
+                  {(plate.items ?? []).map((item) =>
+                    item.regions ? (
+                      <BurgerRegionsItem key={item.label} item={item} onNavigate={close} />
+                    ) : (
+                      <BurgerItem key={item.label} item={item} onNavigate={close} />
+                    ),
+                  )}
                 </div>
               )}
             </div>

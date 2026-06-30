@@ -149,6 +149,87 @@
   gap: 8px;
 }
 
+.bullet {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
+.subMuted .bullet {
+  background: #b6bcc6;
+}
+
+.regionsWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.regionsToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: #1a1a1a;
+
+  .subLabel {
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.regions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0 10px 13px;
+}
+
+.region {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.regionName {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa1ac;
+}
+
+.regionLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 4px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #334155;
+}
+
+.bulletSmall {
+  flex-shrink: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
 .subLabel {
   font-weight: 600;
 }

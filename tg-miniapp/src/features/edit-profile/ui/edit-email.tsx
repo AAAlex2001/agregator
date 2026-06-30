@@ -3,6 +3,7 @@ import { useSession } from "@/entites/session";
 import { confirmEmailChange, requestEmailChange } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { Button, Card, TextField } from "@/shared/ui";
+import { MailFieldIcon } from "@/shared/ui/icons/fields";
 import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
@@ -43,6 +44,9 @@ export function EditEmail() {
     return (
       <>
         <Card className={s.fields}>
+          <span className={s.headIcon}>
+            <MailFieldIcon />
+          </span>
           <TextField
             label="Ваша почта"
             placeholder="Новая почта"
@@ -63,6 +67,9 @@ export function EditEmail() {
   return (
     <>
       <Card className={s.fields}>
+        <span className={s.headIcon}>
+          <MailFieldIcon />
+        </span>
         <TextField
           label="Код из письма"
           placeholder="Код из письма"

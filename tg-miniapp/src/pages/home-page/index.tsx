@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
-import { useOrders } from "@/entites/order";
+import { useOrders, type Order } from "@/entites/order";
+import { RespondSheet } from "@/features/respond-order";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Card, BottomSheet, Logo, Spinner } from "@/shared/ui";
@@ -14,6 +15,7 @@ export function HomePage() {
   const { orders } = useOrders(12);
   const [soonOpen, setSoonOpen] = useState(false);
   const [soonTitle, setSoonTitle] = useState("");
+  const [respondOrder, setRespondOrder] = useState<Order | null>(null);
 
   const isExpert = role === "EXPERT";
 
@@ -56,8 +58,12 @@ export function HomePage() {
               key={o.id}
               className={s.orderCard}
               onClick={() => {
-                setSoonTitle(o.title);
-                setSoonOpen(true);
+                if (isExpert) {
+                  setRespondOrder(o);
+                } else {
+                  setSoonTitle(o.title);
+                  setSoonOpen(true);
+                }
               }}
             >
               <div className={s.orderTop}>
@@ -82,6 +88,8 @@ export function HomePage() {
       <BottomSheet open={soonOpen} title={soonTitle} onClose={() => setSoonOpen(false)}>
         <p className={s.soonText}>Раздел скоро появится — делаем его следующим шагом.</p>
       </BottomSheet>
+
+      <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
     </Screen>
   );
 }

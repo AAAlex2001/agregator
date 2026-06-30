@@ -3,6 +3,7 @@ import { useSession } from "@/entites/session";
 import { updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { Button, Card, TextField } from "@/shared/ui";
+import { NameFieldIcon } from "@/shared/ui/icons/fields";
 import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
@@ -29,6 +30,9 @@ export function EditName() {
   return (
     <>
       <Card className={s.fields}>
+        <span className={s.headIcon}>
+          <NameFieldIcon />
+        </span>
         <TextField label="Ваше имя" placeholder="Имя" value={first} onChange={(e) => setFirst(e.target.value)} />
         <TextField label="Ваша фамилия" placeholder="Фамилия" value={last} onChange={(e) => setLast(e.target.value)} />
         <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
