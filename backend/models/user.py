@@ -75,6 +75,7 @@ class User(Base):
     email_on_new_blog_post: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     notifications_introduced: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
     phone: Mapped[str | None] = mapped_column(String, index=True, nullable=True)
+    telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True, index=True, nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(String, nullable=True)
     password: Mapped[str] = mapped_column(String, nullable=False)
     notification_unread_count: Mapped[int] = mapped_column(default=0, nullable=False, server_default="0")

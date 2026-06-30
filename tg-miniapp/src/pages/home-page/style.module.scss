@@ -1,0 +1,165 @@
+.page {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+}
+
+.logoMark {
+  color: var(--text);
+}
+
+.brand {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px 16px calc(28px + env(safe-area-inset-bottom));
+  animation: appear 0.3s ease;
+}
+
+.hero {
+  background: var(--hero);
+  color: var(--hero-text);
+}
+
+.hi {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.roleLine {
+  margin: 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.roleLine b {
+  color: var(--accent);
+}
+
+.sectionTitle {
+  margin: 6px 4px 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.actionIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+}
+
+.tintAccent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tintBlue {
+  background: var(--role-customer-bg);
+  color: var(--role-customer);
+}
+
+.tintGreen {
+  background: var(--role-license-bg);
+  color: var(--role-license);
+}
+
+.actionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.actionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.actionSub {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.chev {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.logout {
+  margin: 10px auto 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.soonText {
+  margin: -2px 0 6px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}

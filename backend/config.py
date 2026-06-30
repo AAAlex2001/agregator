@@ -37,3 +37,18 @@ class EmailConfig(BaseSettings):
 
 
 email_config = EmailConfig()
+
+
+class TelegramConfig(BaseSettings):
+    "Настройки Telegram-бота / мини-аппа."
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
+    telegram_bot_token: str = ""
+
+
+telegram_config = TelegramConfig()

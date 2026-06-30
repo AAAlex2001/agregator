@@ -36,6 +36,7 @@ from routes import (
     review,
     settings,
     support,
+    telegram_auth,
 )
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
@@ -94,6 +95,7 @@ async def request_id_middleware(
     return response
 
 app.include_router(login.router, prefix="/api")
+app.include_router(telegram_auth.router, prefix="/api")
 app.include_router(registration.router, prefix="/api")
 app.include_router(forgot_password.router, prefix="/api")
 app.include_router(order.router, prefix="/api")

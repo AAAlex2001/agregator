@@ -1,0 +1,94 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.24s ease;
+}
+
+.overlay.closing {
+  animation: fadeOut 0.24s ease forwards;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--card);
+  border-radius: 22px 22px 0 0;
+  padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
+  max-height: 86vh;
+  overflow-y: auto;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sheet.closing {
+  animation: slideDown 0.24s ease forwards;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  padding-left: 2px;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.close:active {
+  transform: scale(0.94);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slideDown {
+  to {
+    transform: translateY(100%);
+  }
+}

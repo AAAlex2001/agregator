@@ -1,0 +1,18 @@
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.pad {
+  padding: 16px;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.clickable:active {
+  transform: scale(0.985);
+}

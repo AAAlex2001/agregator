@@ -42,6 +42,18 @@ class LoginRepository:
         result = await self.db.execute(select(User).where(User.inn == inn))
         return list(result.scalars().all())
 
+    async def find_user_by_telegram_id(self, telegram_id: int) -> User | None:
+        "Ищет пользователя по привязанному Telegram ID."
+        return (
+            await self.db.execute(select(User).where(User.telegram_id == telegram_id))
+        ).scalars().first()
+
+    async def set_telegram_id(self, user_id: int, telegram_id: int) -> None:
+        "Привязывает Telegram к пользователю (commit — на границе запроса)."
+        user = await self.find_user_by_id(user_id)
+        if user is not None:
+            user.telegram_id = telegram_id
+
     async def find_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
         "Ищет сущность по заданным параметрам."
         return (

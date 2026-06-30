@@ -1,0 +1,25 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page {
+  flex: 1 1 auto;
+  min-height: 60dvh;
+}
+
+.ring {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--hairline);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
