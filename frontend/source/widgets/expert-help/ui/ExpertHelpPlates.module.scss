@@ -28,7 +28,7 @@
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .plateLabel {
@@ -68,9 +68,9 @@
   padding: 8px;
 }
 
-.plateWrap:hover,
-.plateWrap:focus-within {
+.plateWrap:hover {
   .plate {
+    background: var(--plate-bg);
     color: var(--plate-color);
   }
 
@@ -86,20 +86,33 @@
   }
 }
 
+.plateWrap:first-child .dropdown {
+  left: 0;
+  transform: translateX(0) translateY(-6px);
+}
+
+.plateWrap:first-child:hover .dropdown {
+  transform: translateX(0) translateY(0);
+}
+
 .green {
   --plate-color: #2f9b52;
+  --plate-bg: #e8f7ee;
 }
 
 .orange {
   --plate-color: #ff8a00;
+  --plate-bg: #fff8eb;
 }
 
 .blue {
   --plate-color: #2f5bbf;
+  --plate-bg: #eef3ff;
 }
 
 .purple {
   --plate-color: #6c4ec8;
+  --plate-bg: #f1ecfb;
 }
 
 .list {

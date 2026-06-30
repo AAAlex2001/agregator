@@ -55,7 +55,7 @@
   height: 100vh;
   background: #ffffff;
   z-index: 1301;
-  padding: 66px 20px 24px;
+  padding: 12px 30px 24px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -68,8 +68,10 @@
 
 .menuLogo {
   display: flex;
-  margin-bottom: 6px;
-  padding-bottom: 16px;
+  align-items: center;
+  height: 41px;
+  margin: 0 -30px 12px;
+  padding: 0 30px;
   border-bottom: 1px solid #f0f0f0;
 
   svg {
