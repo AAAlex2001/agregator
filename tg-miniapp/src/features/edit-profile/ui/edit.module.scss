@@ -12,6 +12,11 @@
   opacity: 0.5;
 }
 
+.fieldIcon svg {
+  width: clamp(130px, 36vw, 280px);
+  height: auto;
+}
+
 :global([data-theme="dark"]) .fieldIcon {
   opacity: 0.72;
 }
