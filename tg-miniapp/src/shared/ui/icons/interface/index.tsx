@@ -144,3 +144,9 @@ export const CheckIcon = (p: P) => (
     <path d="m5 12 5 5L20 7" />
   </svg>
 );
+
+export const CrownIcon = (p: P) => (
+  <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" {...p}>
+    <path d="M5 19h14a1 1 0 0 0 .98-1.2l-1.4-7.9-3.9 3-2.86-5.4a1 1 0 0 0-1.76 0L7.2 12.9l-3.9-3-1.4 7.9A1 1 0 0 0 3 19h2Z" />
+  </svg>
+);

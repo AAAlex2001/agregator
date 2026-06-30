@@ -31,17 +31,17 @@ class UserAdmin(ModelView, model=User):
 
     column_list = [
         User.id, User.role, User.inn, User.email, User.phone,
-        User.first_name, User.last_name,
+        User.telegram_id, User.first_name, User.last_name,
         User.rating, User.review_count, User.is_active, User.created_at,
     ]
-    column_searchable_list = [User.inn, User.email, User.phone, User.first_name, User.last_name]
+    column_searchable_list = [User.inn, User.email, User.phone, User.telegram_id, User.first_name, User.last_name]
     column_sortable_list = [User.id, User.role, User.rating, User.created_at]
     column_default_sort = (User.id, True)
 
     column_details_list = [
         User.id, User.role, User.is_active,
         User.first_name, User.last_name, User.inn,
-        User.email, User.email_verified, User.phone,
+        User.email, User.email_verified, User.phone, User.telegram_id,
         User.rating, User.review_count,
         User.email_on_response_created, User.email_on_response_updated,
         User.email_on_expert_rejected, User.email_on_order_updated,
@@ -83,6 +83,7 @@ class UserAdmin(ModelView, model=User):
         User.email: "Email",
         User.email_verified: "Email подтверждён",
         User.phone: "Телефон",
+        User.telegram_id: "Telegram ID",
         User.password: "Пароль (хеш)",
         User.company_data: "Данные компании (DaData)",
         User.rating: "Рейтинг",

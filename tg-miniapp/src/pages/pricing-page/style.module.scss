@@ -5,6 +5,8 @@
 }
 
 .plan {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -13,6 +15,17 @@
 .hot {
   border-color: var(--accent);
   box-shadow: 0 8px 26px rgba(255, 138, 0, 0.18);
+}
+
+.crown {
+  position: absolute;
+  top: 34px;
+  right: 8px;
+  color: var(--accent);
+  opacity: 0.1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
 }
 
 .head {
@@ -87,7 +100,7 @@
 .featIcon {
   flex: 0 0 auto;
   margin-top: 2px;
-  color: #34c759;
+  color: var(--accent);
   display: grid;
   place-items: center;
 }

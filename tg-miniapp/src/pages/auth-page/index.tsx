@@ -1,10 +1,11 @@
 import { useState, type ComponentType } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { ApiError, type Role } from "@/shared/services/api";
 import { emitError } from "@/shared/services/error-bus";
 import { openLink, tapHaptic } from "@/shared/services/telegram";
 import { Button, TextField, BottomSheet, Logo } from "@/shared/ui";
-import { MailIcon, LockIcon, ChevronRightIcon } from "@/shared/ui/icons/interface";
+import { MailIcon, LockIcon } from "@/shared/ui/icons/interface";
 import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import s from "./style.module.scss";
 
@@ -24,6 +25,7 @@ function availableRoles(error: unknown): Role[] | null {
 
 export function AuthPage() {
   const { signInLink } = useSession();
+  const navigate = useNavigate();
   const [step, setStep] = useState<"welcome" | "login">("welcome");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +42,7 @@ export function AuthPage() {
     setLoading(true);
     try {
       await signInLink(email.trim(), password, role);
+      navigate("/", { replace: true });
     } catch (e) {
       const avail = availableRoles(e);
       if (avail) {
@@ -133,7 +136,6 @@ export function AuthPage() {
                   <Icon size={26} />
                 </span>
                 <span className={s.roleLabel}>{label}</span>
-                <ChevronRightIcon className={s.roleChev} width={20} height={20} />
               </button>
             );
           })}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import cn from "classnames";
 import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
-import { Card, Spinner } from "@/shared/ui";
+import { Card, Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
 import {
@@ -71,7 +71,7 @@ export function ProfilePage() {
 
   if (!profile) {
     return (
-      <Screen title="Профиль">
+      <Screen bare heading="Профиль">
         <Spinner page />
       </Screen>
     );
@@ -79,15 +79,8 @@ export function ProfilePage() {
 
   const name = [profile.last_name, profile.first_name].filter(Boolean).join(" ") || "—";
 
-  const toggleHaptic = () => {
-    const next = !haptic;
-    setHapticEnabled(next);
-    setHaptic(next);
-    if (next) tapHaptic();
-  };
-
   return (
-    <Screen title="Профиль">
+    <Screen bare heading="Профиль">
       <Card className={s.head}>
         <span className={s.avatar}>
           <UserIcon width={26} height={26} />
@@ -100,9 +93,9 @@ export function ProfilePage() {
 
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>
-        <Row icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} />
-        <Row icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone || "—"} />
-        <Row icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} />
+        <Row icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => navigate("/edit-name")} />
+        <Row icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone || "—"} onClick={() => navigate("/edit-phone")} />
+        <Row icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
       </div>
 
       <p className={s.groupTitle}>Управление</p>
@@ -122,14 +115,13 @@ export function ProfilePage() {
           icon={<VibrateIcon width={19} height={19} />}
           label="Вибрация"
           action={
-            <button
-              type="button"
-              className={cn(s.toggle, { [s.toggleOn]: haptic })}
-              onClick={toggleHaptic}
-              aria-label="Вибрация"
-            >
-              <span className={s.toggleKnob} />
-            </button>
+            <Toggle
+              on={haptic}
+              onChange={(next) => {
+                setHapticEnabled(next);
+                setHaptic(next);
+              }}
+            />
           }
         />
         <Row

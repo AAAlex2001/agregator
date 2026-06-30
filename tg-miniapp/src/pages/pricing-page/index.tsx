@@ -1,48 +1,17 @@
-import { useEffect, useState } from "react";
 import cn from "classnames";
 import { Screen } from "@/widgets/app-shell";
 import { Button, Card, Spinner } from "@/shared/ui";
-import { CheckIcon } from "@/shared/ui/icons/interface";
-import { listPlans, subscribe, type Plan } from "@/entites/tariff";
-import { emitError } from "@/shared/services/error-bus";
-import { openLink } from "@/shared/services/telegram";
+import { CheckIcon, CrownIcon } from "@/shared/ui/icons/interface";
+import { usePlans } from "@/entites/tariff";
+import { useBuyTariff } from "@/features/buy-tariff";
 import s from "./style.module.scss";
 
-const RETURN_URL = "https://tg.plus-resurs.com";
-
 export function PricingPage() {
-  const [plans, setPlans] = useState<Plan[] | null>(null);
-  const [paying, setPaying] = useState<number | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    listPlans()
-      .then((d) => {
-        if (active) setPlans(d.plans);
-      })
-      .catch((e) => {
-        emitError(e instanceof Error ? e.message : "Не удалось загрузить тарифы");
-        if (active) setPlans([]);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const buy = async (plan: Plan) => {
-    setPaying(plan.id);
-    try {
-      const res = await subscribe(plan.id, RETURN_URL);
-      openLink(res.confirmation_url);
-    } catch (e) {
-      emitError(e instanceof Error ? e.message : "Не удалось оформить тариф");
-    } finally {
-      setPaying(null);
-    }
-  };
+  const { plans } = usePlans();
+  const { buy, payingId } = useBuyTariff();
 
   return (
-    <Screen title="Тарифы">
+    <Screen bare heading="Тарифы">
       {plans === null ? (
         <Spinner page />
       ) : plans.length === 0 ? (
@@ -50,6 +19,11 @@ export function PricingPage() {
       ) : (
         plans.map((plan) => (
           <Card key={plan.id} className={cn(s.plan, { [s.hot]: plan.highlighted })}>
+            {plan.highlighted && (
+              <span className={s.crown}>
+                <CrownIcon width={118} height={118} />
+              </span>
+            )}
             <div className={s.head}>
               <p className={s.name}>{plan.name}</p>
               {plan.badge && <span className={s.badge}>{plan.badge}</span>}
@@ -75,7 +49,11 @@ export function PricingPage() {
               </ul>
             )}
 
-            <Button loading={paying === plan.id} onClick={() => void buy(plan)}>
+            <Button
+              variant={plan.highlighted ? "primary" : "outline"}
+              loading={payingId === plan.id}
+              onClick={() => void buy(plan)}
+            >
               {plan.cta_label || "Оформить"}
             </Button>
           </Card>

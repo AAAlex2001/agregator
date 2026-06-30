@@ -1,8 +1,10 @@
 .page {
   flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  overflow-y: auto;
   background: #0d0e13;
 }
 
@@ -91,13 +93,15 @@
 }
 
 .roleBtn {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
   width: 100%;
-  padding: 12px 14px;
+  min-height: 60px;
+  padding: 10px 56px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   background: var(--card-2);
   font-family: inherit;
   font-size: 16px;
@@ -113,21 +117,18 @@
 }
 
 .roleIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
-  flex: 0 0 auto;
   border-radius: 12px;
   background: var(--accent-soft);
 }
 
 .roleLabel {
-  flex: 1 1 auto;
-  text-align: left;
-}
-
-.roleChev {
-  flex: 0 0 auto;
-  color: var(--muted);
+  text-align: center;
 }

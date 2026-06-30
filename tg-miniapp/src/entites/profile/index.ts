@@ -1,1 +1,7 @@
-export { getProfile, type Profile } from "./model/api";
+export {
+  getProfile,
+  updateProfile,
+  requestEmailChange,
+  confirmEmailChange,
+  type Profile,
+} from "./model/api";
