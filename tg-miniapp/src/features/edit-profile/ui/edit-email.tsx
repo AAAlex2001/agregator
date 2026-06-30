@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { confirmEmailChange, requestEmailChange } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
@@ -8,7 +7,6 @@ import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
 export function EditEmail() {
-  const navigate = useNavigate();
   const { reloadProfile } = useSession();
   const [stage, setStage] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -75,7 +73,7 @@ export function EditEmail() {
       <Button className={s.save} onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
         Подтвердить
       </Button>
-      <SuccessModal open={done} message="Почта обновлена" onClose={() => navigate("/profile", { replace: true })} />
+      <SuccessModal open={done} title="Готово!" subtitle="Почта обновлена" onClose={() => setDone(false)} />
     </>
   );
 }

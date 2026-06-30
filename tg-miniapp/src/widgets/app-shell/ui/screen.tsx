@@ -26,7 +26,7 @@ export function Screen({ title, right, bare = false, heading, panel = false, chi
               <h1 className={s.heading}>{heading}</h1>
             </div>
           )}
-          <div className={s.panel}>{children}</div>
+          <div className={`${s.panel} ${bare ? "" : s.panelFlush}`}>{children}</div>
         </main>
       ) : (
         <main className={s.content}>

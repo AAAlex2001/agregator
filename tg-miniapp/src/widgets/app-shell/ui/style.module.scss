@@ -53,18 +53,21 @@
 }
 
 .head {
-  padding: calc(14px + var(--safe-top)) 16px 12px;
+  padding: calc(14px + var(--safe-top)) 16px 30px;
 }
 
 .panel {
   flex: 1 1 auto;
   background: var(--panel-bg);
   border-radius: 24px 24px 0 0;
-  box-shadow: 0 -1px 0 var(--hairline), 0 -14px 30px rgba(0, 0, 0, 0.06);
   padding: 16px 16px calc(28px + var(--safe-bottom));
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.panelFlush {
+  border-radius: 0;
 }
 
 .heading {

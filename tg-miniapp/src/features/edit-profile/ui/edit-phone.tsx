@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
@@ -9,7 +8,6 @@ import { PHONE_PLACEHOLDER, formatPhone, isPhoneComplete, phoneApiValue } from "
 import s from "./edit.module.scss";
 
 export function EditPhone() {
-  const navigate = useNavigate();
   const { profile, reloadProfile } = useSession();
   const [phone, setPhone] = useState(formatPhone(profile?.phone ?? ""));
   const [saving, setSaving] = useState(false);
@@ -41,7 +39,7 @@ export function EditPhone() {
       <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
         Сохранить
       </Button>
-      <SuccessModal open={done} message="Телефон обновлён" onClose={() => navigate("/profile", { replace: true })} />
+      <SuccessModal open={done} title="Готово!" subtitle="Телефон обновлён" onClose={() => setDone(false)} />
     </>
   );
 }

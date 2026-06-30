@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
@@ -8,7 +7,6 @@ import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
 export function EditName() {
-  const navigate = useNavigate();
   const { profile, reloadProfile } = useSession();
   const [first, setFirst] = useState(profile?.first_name ?? "");
   const [last, setLast] = useState(profile?.last_name ?? "");
@@ -37,7 +35,7 @@ export function EditName() {
       <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
         Сохранить
       </Button>
-      <SuccessModal open={done} message="Имя сохранено" onClose={() => navigate("/profile", { replace: true })} />
+      <SuccessModal open={done} title="Готово!" subtitle="Имя обновлено" onClose={() => setDone(false)} />
     </>
   );
 }
