@@ -1,3 +1,16 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  padding-left: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
 .wrap {
   display: flex;
   align-items: center;

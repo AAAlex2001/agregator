@@ -30,12 +30,13 @@ export function EditPhone() {
     <>
       <Card className={s.fields}>
         <TextField
+          label="Ваш телефон"
           placeholder={PHONE_PLACEHOLDER}
           inputMode="tel"
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
         />
-        <Button onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
+        <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
           Сохранить
         </Button>
       </Card>

@@ -29,9 +29,9 @@ export function EditName() {
   return (
     <>
       <Card className={s.fields}>
-        <TextField placeholder="Имя" value={first} onChange={(e) => setFirst(e.target.value)} />
-        <TextField placeholder="Фамилия" value={last} onChange={(e) => setLast(e.target.value)} />
-        <Button onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
+        <TextField label="Ваше имя" placeholder="Имя" value={first} onChange={(e) => setFirst(e.target.value)} />
+        <TextField label="Ваша фамилия" placeholder="Фамилия" value={last} onChange={(e) => setLast(e.target.value)} />
+        <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
           Сохранить
         </Button>
       </Card>

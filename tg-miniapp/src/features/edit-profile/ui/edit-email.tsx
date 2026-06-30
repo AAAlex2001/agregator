@@ -44,6 +44,7 @@ export function EditEmail() {
       <>
         <Card className={s.fields}>
           <TextField
+            label="Ваша почта"
             placeholder="Новая почта"
             type="email"
             inputMode="email"
@@ -51,7 +52,7 @@ export function EditEmail() {
             onChange={(e) => setEmail(e.target.value)}
           />
           <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
-          <Button onClick={() => void send()} loading={busy} disabled={!email.trim()}>
+          <Button className={s.save} onClick={() => void send()} loading={busy} disabled={!email.trim()}>
             Отправить код
           </Button>
         </Card>
@@ -63,13 +64,14 @@ export function EditEmail() {
     <>
       <Card className={s.fields}>
         <TextField
+          label="Код из письма"
           placeholder="Код из письма"
           inputMode="numeric"
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
         <p className={s.hint}>Код отправлен на {email}.</p>
-        <Button onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
+        <Button className={s.save} onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
           Подтвердить
         </Button>
       </Card>

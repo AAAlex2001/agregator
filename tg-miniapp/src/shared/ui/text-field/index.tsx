@@ -6,14 +6,15 @@ import s from "./style.module.scss";
 interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   icon?: ReactNode;
   password?: boolean;
+  label?: string;
 }
 
-export function TextField({ icon, password = false, ...rest }: Props) {
+export function TextField({ icon, password = false, label, ...rest }: Props) {
   const [focused, setFocused] = useState(false);
   const [reveal, setReveal] = useState(false);
   const type = password ? (reveal ? "text" : "password") : rest.type ?? "text";
 
-  return (
+  const control = (
     <div className={cn(s.wrap, { [s.focused]: focused })}>
       {icon && <span className={s.icon}>{icon}</span>}
       <input
@@ -35,5 +36,14 @@ export function TextField({ icon, password = false, ...rest }: Props) {
         </button>
       )}
     </div>
+  );
+
+  if (!label) return control;
+
+  return (
+    <label className={s.field}>
+      <span className={s.label}>{label}</span>
+      {control}
+    </label>
   );
 }
