@@ -3,10 +3,13 @@
 import { createContext, useContext, useState } from "react";
 import { useSession } from "@/source/features/session";
 
+export type DrawerAnchor = { left: number; top: number };
+
 interface ExpertHelpContextValue {
   isAvailable: boolean;
   isOpen: boolean;
-  open: () => void;
+  anchor: DrawerAnchor | null;
+  open: (anchor?: DrawerAnchor | null) => void;
   close: () => void;
 }
 
@@ -15,11 +18,16 @@ const ExpertHelpContext = createContext<ExpertHelpContextValue | null>(null);
 export function ExpertHelpProvider({ children }: { children: React.ReactNode }) {
   const { role } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [anchor, setAnchor] = useState<DrawerAnchor | null>(null);
 
   const value: ExpertHelpContextValue = {
     isAvailable: role === "EXPERT",
     isOpen,
-    open: () => setIsOpen(true),
+    anchor,
+    open: (next = null) => {
+      setAnchor(next ?? null);
+      setIsOpen(true);
+    },
     close: () => setIsOpen(false),
   };
 
@@ -29,7 +37,7 @@ export function ExpertHelpProvider({ children }: { children: React.ReactNode }) 
 export function useExpertHelpDrawer(): ExpertHelpContextValue {
   const ctx = useContext(ExpertHelpContext);
   if (!ctx) {
-    return { isAvailable: false, isOpen: false, open: () => {}, close: () => {} };
+    return { isAvailable: false, isOpen: false, anchor: null, open: () => {}, close: () => {} };
   }
   return ctx;
 }

@@ -9,7 +9,7 @@ import s from "./ReviewsDrawer.module.scss";
 
 export function ReviewsDrawer() {
   const { role } = useSession();
-  const { isAvailable, isOpen, close } = useReviewsHub();
+  const { isAvailable, isOpen, anchor, close } = useReviewsHub();
 
   if (!isAvailable) return null;
 
@@ -24,7 +24,8 @@ export function ReviewsDrawer() {
       />
 
       <aside
-        className={`${s.drawer} ${isOpen ? s.drawerOpen : ""}`}
+        className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
+        style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
         aria-label="Все отзывы"
         aria-hidden={!isOpen}
       >

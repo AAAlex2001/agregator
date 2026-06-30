@@ -7,7 +7,7 @@ import { useExpertHelpDrawer } from "../model/ExpertHelpContext";
 import s from "./ExpertHelpDrawer.module.scss";
 
 export function ExpertHelpDrawer() {
-  const { isAvailable, isOpen, close } = useExpertHelpDrawer();
+  const { isAvailable, isOpen, anchor, close } = useExpertHelpDrawer();
 
   if (!isAvailable) return null;
 
@@ -20,7 +20,8 @@ export function ExpertHelpDrawer() {
       />
 
       <aside
-        className={`${s.drawer} ${isOpen ? s.drawerOpen : ""}`}
+        className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
+        style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
         aria-label="Помощь эксперту"
         aria-hidden={!isOpen}
       >

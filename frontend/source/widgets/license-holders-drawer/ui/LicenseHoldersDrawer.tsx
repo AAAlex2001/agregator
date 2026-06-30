@@ -7,7 +7,7 @@ import { useLicenseHoldersDrawer } from "../model/DrawerContext";
 import s from "./LicenseHoldersDrawer.module.scss";
 
 export function LicenseHoldersDrawer() {
-  const { isAvailable, isOpen, close } = useLicenseHoldersDrawer();
+  const { isAvailable, isOpen, anchor, close } = useLicenseHoldersDrawer();
   const { items, isLoading, error } = useLicenseHolders(isAvailable);
 
   if (!isAvailable) return null;
@@ -21,7 +21,8 @@ export function LicenseHoldersDrawer() {
       />
 
       <aside
-        className={`${s.drawer} ${isOpen ? s.drawerOpen : ""}`}
+        className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
+        style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
         aria-label="Держатели лицензии"
         aria-hidden={!isOpen}
       >

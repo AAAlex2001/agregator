@@ -8,7 +8,7 @@ import s from "./UsefulLinksDrawer.module.scss";
 
 export function UsefulLinksDrawer() {
   const { role } = useSession();
-  const { isOpen, close } = useUsefulLinks();
+  const { isOpen, anchor, close } = useUsefulLinks();
 
   const links = getUsefulLinks(role);
   if (links.length === 0) return null;
@@ -22,7 +22,8 @@ export function UsefulLinksDrawer() {
       />
 
       <aside
-        className={`${s.drawer} ${isOpen ? s.drawerOpen : ""}`}
+        className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
+        style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
         aria-label="Полезные ссылки"
         aria-hidden={!isOpen}
       >

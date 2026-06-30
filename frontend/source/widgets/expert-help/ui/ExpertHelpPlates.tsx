@@ -1,11 +1,17 @@
 "use client";
 
+import { type MouseEvent } from "react";
 import { useSession } from "@/source/features/session";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { useReviewsHub } from "@/source/widgets/reviews-hub";
 import { getUsefulLinks, useUsefulLinks } from "@/source/widgets/useful-links";
 import { useExpertHelpDrawer } from "../model/ExpertHelpContext";
 import s from "./ExpertHelpPlates.module.scss";
+
+function anchorOf(e: MouseEvent<HTMLButtonElement>) {
+  const r = e.currentTarget.getBoundingClientRect();
+  return { left: r.left, top: r.bottom + 6 };
+}
 
 export function ExpertHelpPlates() {
   const { role } = useSession();
@@ -22,22 +28,38 @@ export function ExpertHelpPlates() {
     <div className={s.plates}>
       {role === "EXPERT" && (
         <>
-          <button type="button" className={`${s.plate} ${s.green}`} onClick={expertHelp.open}>
+          <button
+            type="button"
+            className={`${s.plate} ${s.green}`}
+            onClick={(e) => expertHelp.open(anchorOf(e))}
+          >
             <span className={s.label}>Помощь эксперту</span>
           </button>
 
-          <button type="button" className={`${s.plate} ${s.orange}`} onClick={license.open}>
+          <button
+            type="button"
+            className={`${s.plate} ${s.orange}`}
+            onClick={(e) => license.open(anchorOf(e))}
+          >
             <span className={s.label}>Держатели лицензии</span>
           </button>
         </>
       )}
 
-      <button type="button" className={`${s.plate} ${s.blue}`} onClick={reviews.open}>
+      <button
+        type="button"
+        className={`${s.plate} ${s.blue}`}
+        onClick={(e) => reviews.open(anchorOf(e))}
+      >
         <span className={s.label}>Все отзывы</span>
       </button>
 
       {hasUseful && (
-        <button type="button" className={`${s.plate} ${s.purple}`} onClick={useful.open}>
+        <button
+          type="button"
+          className={`${s.plate} ${s.purple}`}
+          onClick={(e) => useful.open(anchorOf(e))}
+        >
           <span className={s.label}>Полезные ссылки</span>
         </button>
       )}

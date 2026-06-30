@@ -16,17 +16,24 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  gap: 8px;
   width: 100%;
+}
 
-  @media (min-width: 1440px) {
-    justify-content: flex-end;
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 140px;
+    height: auto;
+    display: block;
   }
 }
 
 .menuLinks {
-  order: 1;
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -37,7 +44,7 @@
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
-  color: #c0453e;
+  color: #1A1A1A;
   padding: 8px 10px;
   border-radius: 10px;
   white-space: nowrap;
@@ -46,7 +53,7 @@
   &:hover,
   &:focus-visible {
     background: #fbe9e8;
-    color: #a23631;
+    color: #c0453e;
   }
 
   @media (min-width: 768px) {
