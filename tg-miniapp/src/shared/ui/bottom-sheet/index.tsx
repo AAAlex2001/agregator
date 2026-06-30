@@ -22,7 +22,7 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
       return;
     }
     setClosing(true);
-    const timer = window.setTimeout(() => setRender(false), 240);
+    const timer = window.setTimeout(() => setRender(false), 320);
     return () => window.clearTimeout(timer);
   }, [open]);
 

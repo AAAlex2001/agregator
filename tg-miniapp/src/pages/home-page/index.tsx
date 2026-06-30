@@ -5,7 +5,7 @@ import { useOrders, type Order } from "@/entites/order";
 import { RespondSheet } from "@/features/respond-order";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
-import { Card, BottomSheet, Logo, Spinner } from "@/shared/ui";
+import { Card, BottomSheet, CountdownRing, Logo, Spinner } from "@/shared/ui";
 import { UserIcon } from "@/shared/ui/icons/interface";
 import s from "./style.module.scss";
 
@@ -24,7 +24,7 @@ export function HomePage() {
       title={
         <>
           <Logo size={28} className={s.logoMark} />
-          Ресурс-Плюс
+          Ресурс-<span className={s.brandPlus}>Плюс</span>
         </>
       }
       right={
@@ -66,20 +66,23 @@ export function HomePage() {
                 }
               }}
             >
-              <div className={s.orderTop}>
+              <div className={s.orderMain}>
                 <span className={s.orderTitle}>{o.title}</span>
-                <span className={s.orderSum}>{o.sum}</span>
+                {o.company && <span className={s.orderCompany}>{o.company}</span>}
+                {o.badges.length > 0 && (
+                  <div className={s.orderBadges}>
+                    {o.badges.slice(0, 4).map((b, i) => (
+                      <span key={i} className={s.orderBadge}>
+                        {b.text}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-              {o.company && <span className={s.orderCompany}>{o.company}</span>}
-              {o.badges.length > 0 && (
-                <div className={s.orderBadges}>
-                  {o.badges.slice(0, 4).map((b, i) => (
-                    <span key={i} className={s.orderBadge}>
-                      {b.text}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <div className={s.orderSide}>
+                <span className={s.orderSum}>{o.sum}</span>
+                <CountdownRing deadline={o.deadline_at} />
+              </div>
             </Card>
           ))}
         </div>

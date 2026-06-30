@@ -152,6 +152,12 @@ export const CheckIcon = (p: P) => (
   </svg>
 );
 
+export const SwitchRoleIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />
+  </svg>
+);
+
 export const CrownIcon = (p: P) => (
   <svg
     width={24}

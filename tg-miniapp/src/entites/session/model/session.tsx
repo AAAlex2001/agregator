@@ -32,7 +32,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const reloadProfile = useCallback(async () => {
     try {
-      setProfile(await getProfile());
+      const next = await getProfile();
+      setProfile(next);
+      setRole(next.role);
     } catch {
       setProfile(null);
     }

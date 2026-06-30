@@ -4,4 +4,5 @@ export { Toggle } from "./toggle";
 export { TextField } from "./text-field";
 export { Card } from "./card";
 export { BottomSheet } from "./bottom-sheet";
+export { CountdownRing } from "./countdown-ring";
 export { Logo } from "./icons/logo";

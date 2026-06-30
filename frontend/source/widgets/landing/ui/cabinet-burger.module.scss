@@ -149,19 +149,6 @@
   gap: 8px;
 }
 
-.bullet {
-  flex-shrink: 0;
-  width: 5px;
-  height: 5px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: #1a1a1a;
-}
-
-.subMuted .bullet {
-  background: #b6bcc6;
-}
-
 .regionsWrap {
   display: flex;
   flex-direction: column;
@@ -220,14 +207,6 @@
   text-decoration: none;
   font-size: 14px;
   color: #334155;
-}
-
-.bulletSmall {
-  flex-shrink: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #1a1a1a;
 }
 
 .subLabel {

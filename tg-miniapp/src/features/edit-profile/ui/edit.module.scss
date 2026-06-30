@@ -5,10 +5,15 @@
   gap: 12px;
 }
 
-.headIcon {
+.fieldIcon {
   display: flex;
   justify-content: center;
-  margin-bottom: 2px;
+  margin-top: auto;
+  opacity: 0.5;
+}
+
+:global([data-theme="dark"]) .fieldIcon {
+  opacity: 0.72;
 }
 
 .save {

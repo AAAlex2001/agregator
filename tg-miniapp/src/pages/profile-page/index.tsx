@@ -5,6 +5,7 @@ import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
 import { Card, Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
+import { RoleSheet } from "@/features/role-switch";
 import { hapticEnabled, setHapticEnabled, tapHaptic } from "@/shared/services/telegram";
 import {
   BellIcon,
@@ -14,6 +15,7 @@ import {
   MailIcon,
   MoonIcon,
   PhoneIcon,
+  SwitchRoleIcon,
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
@@ -69,6 +71,7 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { profile, role, signOut } = useSession();
   const [themeOpen, setThemeOpen] = useState(false);
+  const [roleOpen, setRoleOpen] = useState(false);
   const [haptic, setHaptic] = useState(hapticEnabled);
 
   if (!profile) {
@@ -100,12 +103,23 @@ export function ProfilePage() {
         <Row icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
       </div>
 
+      {role === "EXPERT" && (
+        <>
+          <p className={s.groupTitle}>Оплата</p>
+          <div className={s.group}>
+            <Row icon={<CreditIcon width={19} height={19} />} label="Тарифы" onClick={() => navigate("/pricing")} />
+          </div>
+        </>
+      )}
+
       <p className={s.groupTitle}>Управление</p>
       <div className={s.group}>
-        {role === "EXPERT" && (
-          <Row icon={<CreditIcon width={19} height={19} />} label="Тарифы" onClick={() => navigate("/pricing")} />
-        )}
+        <Row icon={<SwitchRoleIcon width={19} height={19} />} label="Смена роли" onClick={() => setRoleOpen(true)} />
         <Row icon={<BellIcon width={19} height={19} />} label="Уведомления" onClick={() => navigate("/notifications")} />
+      </div>
+
+      <p className={s.groupTitle}>Системные настройки</p>
+      <div className={s.group}>
         <Row
           icon={<MoonIcon width={19} height={19} />}
           label="Тема оформления"
@@ -136,6 +150,7 @@ export function ProfilePage() {
       </div>
 
       <ThemeSheet open={themeOpen} onClose={() => setThemeOpen(false)} />
+      <RoleSheet open={roleOpen} onClose={() => setRoleOpen(false)} />
     </Screen>
   );
 }

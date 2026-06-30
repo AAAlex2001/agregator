@@ -30,9 +30,6 @@ export function EditPhone() {
   return (
     <>
       <Card className={s.fields}>
-        <span className={s.headIcon}>
-          <PhoneFieldIcon />
-        </span>
         <TextField
           label="Ваш телефон"
           placeholder={PHONE_PLACEHOLDER}
@@ -40,6 +37,9 @@ export function EditPhone() {
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
         />
+        <span className={s.fieldIcon}>
+          <PhoneFieldIcon />
+        </span>
         <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
           Сохранить
         </Button>

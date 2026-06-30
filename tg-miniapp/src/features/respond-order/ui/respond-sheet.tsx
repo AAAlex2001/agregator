@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
+import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { CheckIcon } from "@/shared/ui/icons/interface";
@@ -15,6 +16,11 @@ interface Props {
 function toKopecks(value: string): number {
   const n = Number(value.replace(/\s/g, "").replace(",", "."));
   return Number.isFinite(n) && n > 0 ? Math.round(n * 100) : 0;
+}
+
+function formatDateRu(iso: string): string {
+  const [year, month, day] = iso.split("-");
+  return `${day}.${month}.${year}`;
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -33,6 +39,7 @@ export function RespondSheet({ order, onClose }: Props) {
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
 
   const close = () => {
     setStep(0);
@@ -40,6 +47,7 @@ export function RespondSheet({ order, onClose }: Props) {
     setDeadline("");
     setComment("");
     setDone(false);
+    setCalOpen(false);
     onClose();
   };
 
@@ -111,16 +119,17 @@ export function RespondSheet({ order, onClose }: Props) {
                 value={sum}
                 onChange={(e) => setSum(e.target.value)}
               />
-              <label className={s.field}>
+              <div className={s.field}>
                 <span className={s.fieldLabel}>Срок выполнения</span>
-                <input
-                  type="date"
-                  className={s.control}
-                  value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                />
-              </label>
-              <label className={s.field}>
+                <button
+                  type="button"
+                  className={`${s.dateBtn} ${deadline ? "" : s.dateEmpty}`}
+                  onClick={() => setCalOpen(true)}
+                >
+                  {deadline ? formatDateRu(deadline) : "Выберите дату"}
+                </button>
+              </div>
+              <div className={s.field}>
                 <span className={s.fieldLabel}>Комментарий</span>
                 <textarea
                   className={s.textarea}
@@ -129,7 +138,7 @@ export function RespondSheet({ order, onClose }: Props) {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
-              </label>
+              </div>
             </div>
           )}
 
@@ -147,6 +156,13 @@ export function RespondSheet({ order, onClose }: Props) {
               </Button>
             )}
           </div>
+
+          <CalendarPicker
+            open={calOpen}
+            value={deadline}
+            onClose={() => setCalOpen(false)}
+            onApply={setDeadline}
+          />
         </div>
       )}
     </BottomSheet>

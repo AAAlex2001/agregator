@@ -111,6 +111,7 @@ class OrderResponse(BaseModel):
     sum_amount_raw: int
     start_date: str = ""
     date: str
+    deadline_at: str = ""
     created_at_display: str = ""
     responses_deadline: str | None = None
     requires_expert: bool
@@ -248,6 +249,7 @@ class OrderResponse(BaseModel):
             sum_amount_raw=amount,
             start_date=start_date_display,
             date=date_display,
+            deadline_at=order.deadline.isoformat(),
             created_at_display=created_at_display,
             responses_deadline=responses_deadline_display,
             requires_expert=order.requires_expert,

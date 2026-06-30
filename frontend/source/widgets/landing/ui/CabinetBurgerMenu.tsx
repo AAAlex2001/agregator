@@ -11,7 +11,6 @@ function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => voi
   const inner = (
     <>
       <span className={s.subHead}>
-        <span className={s.bullet} />
         <span className={s.subLabel}>{item.label}</span>
         {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
       </span>
@@ -56,7 +55,6 @@ function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: ()
         aria-expanded={open}
       >
         <span className={s.subHead}>
-          <span className={s.bullet} />
           <span className={s.subLabel}>{item.label}</span>
         </span>
         <ChevronIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`} color="currentColor" />
@@ -75,7 +73,6 @@ function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: ()
                   className={s.regionLink}
                   onClick={onNavigate}
                 >
-                  <span className={s.bulletSmall} />
                   {link.label}
                 </a>
               ))}

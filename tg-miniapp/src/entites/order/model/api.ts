@@ -12,6 +12,7 @@ export interface Order {
   company: string;
   sum: string;
   date: string;
+  deadline_at: string;
   badges: OrderBadge[];
   status: string;
   responses_deadline: string | null;

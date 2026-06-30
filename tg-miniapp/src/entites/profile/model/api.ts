@@ -23,7 +23,21 @@ export interface Profile {
   email_preferences: EmailPreferences;
 }
 
+export interface AvailableRole {
+  role: Role;
+  email_verified: boolean;
+}
+
 export const getProfile = () => apiJson<Profile>("/settings/profile");
+
+export const getAvailableRoles = () =>
+  apiJson<{ roles: AvailableRole[] }>("/login/available-roles");
+
+export const switchRole = (role: Role, password: string) =>
+  apiJson<{ role: Role }>("/login/switch-role", {
+    method: "POST",
+    body: JSON.stringify({ role, password }),
+  });
 
 export const updateProfile = (fields: { first_name?: string; last_name?: string; phone?: string }) =>
   apiJson<Profile>("/settings/profile", { method: "PUT", body: JSON.stringify(fields) });

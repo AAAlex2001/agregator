@@ -30,11 +30,11 @@ export function EditName() {
   return (
     <>
       <Card className={s.fields}>
-        <span className={s.headIcon}>
-          <NameFieldIcon />
-        </span>
         <TextField label="Ваше имя" placeholder="Имя" value={first} onChange={(e) => setFirst(e.target.value)} />
         <TextField label="Ваша фамилия" placeholder="Фамилия" value={last} onChange={(e) => setLast(e.target.value)} />
+        <span className={s.fieldIcon}>
+          <NameFieldIcon />
+        </span>
         <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!first.trim() && !last.trim()}>
           Сохранить
         </Button>
