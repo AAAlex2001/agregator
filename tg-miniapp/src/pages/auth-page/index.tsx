@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { ApiError, type Role } from "@/shared/services/api";
 import { emitError } from "@/shared/services/error-bus";
-import { openLink, tapHaptic } from "@/shared/services/telegram";
+import { tapHaptic } from "@/shared/services/telegram";
 import { Button, TextField, BottomSheet, Logo } from "@/shared/ui";
 import { MailIcon, LockIcon } from "@/shared/ui/icons/interface";
 import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import s from "./style.module.scss";
-
-const REGISTER_URL = "https://plus-resurs.com/register";
 
 const ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?: number }> }> = {
   CUSTOMER: { label: "Вы — заказчик", Icon: CustomerRoleIcon },
@@ -26,17 +24,11 @@ function availableRoles(error: unknown): Role[] | null {
 export function AuthPage() {
   const { signInLink } = useSession();
   const navigate = useNavigate();
-  const [step, setStep] = useState<"welcome" | "login">("welcome");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState<Role[]>([]);
   const [rolesOpen, setRolesOpen] = useState(false);
-
-  const register = () => {
-    tapHaptic();
-    openLink(REGISTER_URL);
-  };
 
   const submit = async (role?: Role) => {
     setLoading(true);
@@ -61,60 +53,38 @@ export function AuthPage() {
       <div className={s.hero}>
         <Logo size={62} className={s.logo} />
         <h1 className={s.heroTitle}>Добро пожаловать!</h1>
-        <p className={s.heroSub}>Войдите в аккаунт или создайте новый</p>
+        <p className={s.heroSub}>Войдите в свой аккаунт</p>
       </div>
 
       <div className={s.card}>
-        {step === "welcome" ? (
-          <div className={s.actions}>
-            <Button
-              onClick={() => {
-                tapHaptic();
-                setStep("login");
-              }}
-            >
-              Войти
-            </Button>
-            <Button variant="outline" onClick={register}>
-              Зарегистрироваться
-            </Button>
-          </div>
-        ) : (
-          <form
-            className={s.form}
-            onSubmit={(e) => {
-              e.preventDefault();
-              void submit();
-            }}
-          >
-            <TextField
-              icon={<MailIcon width={20} height={20} />}
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="Электронная почта"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              icon={<LockIcon width={20} height={20} />}
-              password
-              autoComplete="current-password"
-              placeholder="Пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button type="submit" loading={loading}>
-              Войти
-            </Button>
-            <p className={s.foot}>
-              Нет аккаунта?{" "}
-              <button type="button" className={s.link} onClick={register}>
-                Зарегистрироваться
-              </button>
-            </p>
-          </form>
-        )}
+        <form
+          className={s.form}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void submit();
+          }}
+        >
+          <TextField
+            icon={<MailIcon width={20} height={20} />}
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="Электронная почта"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            icon={<LockIcon width={20} height={20} />}
+            password
+            autoComplete="current-password"
+            placeholder="Пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit" loading={loading}>
+            Войти
+          </Button>
+        </form>
       </div>
 
       <BottomSheet open={rolesOpen} title="Под какой ролью войти?" onClose={() => setRolesOpen(false)}>
