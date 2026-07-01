@@ -16,6 +16,15 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
       last_name: payload.last_name,
       inn: payload.inn,
       company_data: payload.company_data,
+      location_lat: payload.location_lat,
+      location_lng: payload.location_lng,
+      location_address: payload.location_address,
+      location_city: payload.location_city,
+      travels_to_other_regions: payload.travels_to_other_regions,
+      expert_areas: payload.expert_areas,
+      expert_objects: payload.expert_objects,
+      expert_categories: payload.expert_categories,
+      expert_map_fields: payload.expert_map_fields,
     },
   });
   if (result === null) throw new Error("Empty response");

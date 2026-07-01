@@ -54,6 +54,11 @@ export const registerFormSchema = z
     locationAddress: z.string(),
     locationCity: z.string().nullable(),
     travelsToOtherRegions: z.boolean(),
+    expertConfirmed: z.boolean(),
+    expertAreas: z.array(z.string()),
+    expertObjects: z.array(expertiseTypeSchema),
+    expertCategories: z.array(z.string()),
+    mapFields: z.array(z.string()),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -171,6 +176,11 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   locationAddress: "",
   locationCity: null,
   travelsToOtherRegions: false,
+  expertConfirmed: false,
+  expertAreas: [],
+  expertObjects: [],
+  expertCategories: [],
+  mapFields: [],
 };
 
 export const registerConfirmSchema = z.object({

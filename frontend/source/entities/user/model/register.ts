@@ -16,6 +16,10 @@ export interface RegisterApiPayload {
   location_address?: string | null;
   location_city?: string | null;
   travels_to_other_regions?: boolean;
+  expert_areas?: string[] | null;
+  expert_objects?: string[] | null;
+  expert_categories?: string[] | null;
+  expert_map_fields?: string[] | null;
 }
 
 export interface RegisterResponse {

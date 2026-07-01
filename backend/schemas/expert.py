@@ -34,6 +34,11 @@ class ExpertMapItem(BaseModel):
     lat: float
     lng: float
     travels_to_other_regions: bool = False
+    areas: list[str] | None = None
+    objects: list[str] | None = None
+    categories: list[str] | None = None
+    phone: str | None = None
+    email: str | None = None
 
 
 class ExpertMapResponse(BaseModel):

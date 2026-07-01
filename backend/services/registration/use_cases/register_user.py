@@ -44,5 +44,9 @@ class RegisterUserUseCase:
         )
         if data.role.value == UserRole.EXPERT.value:
             user.notify_order_types = list(ALL_BADGE_CODES)
+            user.expert_areas = data.expert_areas
+            user.expert_objects = data.expert_objects
+            user.expert_categories = data.expert_categories
+            user.expert_map_fields = data.expert_map_fields
         await self.repo.add(user)
         return user

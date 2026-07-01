@@ -58,6 +58,11 @@ class ExpertLocationRow:
     lat: float
     lng: float
     travels_to_other_regions: bool
+    areas: list[str] | None
+    objects: list[str] | None
+    categories: list[str] | None
+    phone: str | None
+    email: str | None
 
 
 class ExpertsRepository:
@@ -176,19 +181,32 @@ class ExpertsRepository:
         return [self.build_location_row(user) for user in users]
 
     def build_location_row(self, user: User) -> ExpertLocationRow:
-        "Строит точку карты из эксперта."
+        "Строит точку карты из эксперта; поля показываются согласно выбору эксперта (expert_map_fields)."
         first = user.first_name or ""
         last = user.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
+
+        fields = user.expert_map_fields
+        show_name = fields is None or "name" in fields
+        show_area = fields is None or "area" in fields
+        show_object = fields is None or "object" in fields
+        show_category = fields is None or "category" in fields
+        show_contacts = fields is not None and "contacts" in fields
+
         return ExpertLocationRow(
             public_id=user.public_id,
-            full_name=full_name,
+            full_name=full_name if show_name else "Эксперт",
             avatar_url=user.avatar_url,
             rating=float(user.rating) if user.rating is not None else None,
             city=user.location_city,
             lat=float(user.location_lat),
             lng=float(user.location_lng),
             travels_to_other_regions=bool(user.travels_to_other_regions),
+            areas=user.expert_areas if show_area else None,
+            objects=user.expert_objects if show_object else None,
+            categories=user.expert_categories if show_category else None,
+            phone=user.phone if show_contacts else None,
+            email=user.email if show_contacts else None,
         )
 
     async def get_expert_id_by_public_id(self, public_id: str) -> int | None:

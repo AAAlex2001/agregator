@@ -99,6 +99,10 @@ class User(Base):
     location_address: Mapped[str | None] = mapped_column(String(500), nullable=True)
     location_city: Mapped[str | None] = mapped_column(String(200), nullable=True)
     travels_to_other_regions: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
+    expert_areas: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    expert_objects: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    expert_categories: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    expert_map_fields: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 

@@ -14,11 +14,25 @@ interface Props {
 
 const RUSSIA_CENTER: [number, number] = [61.524, 105.3188];
 
+function balloonRow(label: string, value: string): string {
+  return `<div style="margin-top:4px"><b>${label}:</b> ${value}</div>`;
+}
+
 function balloonBody(marker: MapMarker): string {
-  const city = marker.city ?? "";
-  const rating = marker.rating != null ? `Рейтинг ${marker.rating.toFixed(1)}` : "";
-  const travel = marker.travelsToOtherRegions ? "Выезжает в другие регионы" : "";
-  return [city, rating, travel].filter(Boolean).join("<br>");
+  const parts: string[] = [];
+  if (marker.city) parts.push(marker.city);
+  if (marker.rating != null) parts.push(`Рейтинг ${marker.rating.toFixed(1)}`);
+  if (marker.travelsToOtherRegions) parts.push("Выезжает в другие регионы");
+
+  const head = parts.join("<br>");
+  const rows: string[] = [];
+  if (marker.areas?.length) rows.push(balloonRow("Область аттестации", marker.areas.join(", ")));
+  if (marker.objects?.length) rows.push(balloonRow("Объекты экспертизы", marker.objects.join(", ")));
+  if (marker.categories?.length) rows.push(balloonRow("Категория", marker.categories.join(", ")));
+  if (marker.phone) rows.push(balloonRow("Телефон", marker.phone));
+  if (marker.email) rows.push(balloonRow("Email", marker.email));
+
+  return [head, ...rows].filter(Boolean).join("");
 }
 
 export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {

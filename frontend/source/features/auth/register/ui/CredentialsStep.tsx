@@ -13,6 +13,7 @@ import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import { useRef } from "react";
 import type { RegisterFormValues } from "../model/schema";
 import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
+import { ExpertAttestationBlock } from "./ExpertAttestationBlock";
 import s from "./CredentialsStep.module.scss";
 
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
@@ -153,6 +154,23 @@ export function CredentialsStep({
             >
               Готов выезжать на объекты в другие регионы
             </Checkbox>
+          </div>
+        )}
+
+        {isExpert && (
+          <div className={s.fullRow}>
+            <ExpertAttestationBlock
+              confirmed={watch("expertConfirmed")}
+              areas={watch("expertAreas")}
+              objects={watch("expertObjects") as ExpertiseType[]}
+              categories={watch("expertCategories")}
+              mapFields={watch("mapFields")}
+              onToggleConfirmed={(v) => setValue("expertConfirmed", v)}
+              onChangeAreas={(v) => setValue("expertAreas", v)}
+              onChangeObjects={(v) => setValue("expertObjects", v)}
+              onChangeCategories={(v) => setValue("expertCategories", v)}
+              onChangeMapFields={(v) => setValue("mapFields", v)}
+            />
           </div>
         )}
 

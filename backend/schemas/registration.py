@@ -36,6 +36,10 @@ class UserRegistration(BaseModel):
     location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
     location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
+    expert_areas: list[str] | None = Field(None, description="Области аттестации эксперта (Э-коды ОПО)")
+    expert_objects: list[str] | None = Field(None, description="Объекты экспертизы (КЛ/ТП, ТУ, ЗС, Д, ОБ)")
+    expert_categories: list[str] | None = Field(None, description="Категории эксперта (1/2/3)")
+    expert_map_fields: list[str] | None = Field(None, description="Какие поля показывать на карте России")
 
     @field_validator("company_data", mode="before")
     @classmethod
