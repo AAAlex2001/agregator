@@ -6,9 +6,10 @@ import {
   AREA_OPTIONS,
   CATEGORY_OPTIONS,
   TYPES,
-  formatCertificate,
   type ExpertCertificate,
+  type ExpertiseType,
 } from "../model/data";
+import { TypeBadge } from "./TypeBadge";
 import s from "./CertificateBuilder.module.scss";
 
 interface Props {
@@ -61,16 +62,14 @@ export function CertificateBuilder({ value, onChange }: Props) {
 
       <div className={s.group}>
         <span className={s.groupLabel}>Объект экспертизы</span>
-        <div className={s.options}>
+        <div className={s.badges}>
           {TYPES.map((type) => (
-            <button
+            <TypeBadge
               key={type}
-              type="button"
-              className={`${s.option} ${object === type ? s.optionActive : ""}`}
+              type={type}
+              active={object === type}
               onClick={() => setObject(type)}
-            >
-              {type}
-            </button>
+            />
           ))}
         </div>
       </div>
@@ -99,7 +98,11 @@ export function CertificateBuilder({ value, onChange }: Props) {
         <ul className={s.certList}>
           {value.map((cert, index) => (
             <li key={`${cert.area}-${cert.object}-${cert.category}`} className={s.certRow}>
-              <span className={s.certText}>{formatCertificate(cert)}</span>
+              <span className={s.certContent}>
+                <span className={s.certArea}>{cert.area}</span>
+                <TypeBadge type={cert.object as ExpertiseType} active />
+                <span className={s.certCat}>· {cert.category} кат.</span>
+              </span>
               <button
                 type="button"
                 className={s.certRemove}
