@@ -1,0 +1,68 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: calc(56px + var(--safe-top)) 20px 76px;
+  color: #fff;
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  opacity: 0.13;
+  color: #fff;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 68%, transparent 96%);
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.role {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.18) 100%);
+  pointer-events: none;
+}
+
+.hero_expert {
+  background: linear-gradient(160deg, #ff9f2e 0%, #ef7600 100%);
+}
+
+.hero_customer {
+  background: linear-gradient(160deg, #4a86ee 0%, #2452c6 100%);
+}
+
+.hero_license {
+  background: linear-gradient(160deg, #34c759 0%, #1f9c47 100%);
+}

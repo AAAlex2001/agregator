@@ -1,6 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import cn from "classnames";
 import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
@@ -11,11 +10,9 @@ import {
   restoreHeaderColor,
   setHapticEnabled,
   setHeaderColor,
-  tapHaptic,
 } from "@/shared/services/telegram";
 import {
   BellIcon,
-  ChevronRightIcon,
   CreditIcon,
   LogoutIcon,
   MailIcon,
@@ -26,6 +23,8 @@ import {
 } from "@/shared/ui/icons/interface";
 import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import { formatPhone } from "@/shared/lib/phone";
+import { ProfileHero } from "./ui/profile-hero";
+import { SettingRow } from "./ui/setting-row";
 import s from "./style.module.scss";
 
 const ROLE_META = {
@@ -33,45 +32,6 @@ const ROLE_META = {
   CUSTOMER: { kind: "customer", noun: "Заказчик", Icon: CustomerRoleIcon, header: "#4a86ee" },
   LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", Icon: LicenseRoleIcon, header: "#34c759" },
 } as const;
-
-function Row({
-  icon,
-  label,
-  value,
-  onClick,
-  action,
-  danger,
-}: {
-  icon: ReactNode;
-  label: string;
-  value?: ReactNode;
-  onClick?: () => void;
-  action?: ReactNode;
-  danger?: boolean;
-}) {
-  const className = cn(s.row, { [s.danger]: danger });
-  const content = (
-    <>
-      <span className={s.rowIcon}>{icon}</span>
-      <span className={s.rowLabel}>{label}</span>
-      {value != null && <span className={s.rowValue}>{value}</span>}
-      {action ?? (onClick && <ChevronRightIcon className={s.rowChev} width={18} height={18} />)}
-    </>
-  );
-  if (!onClick) return <div className={className}>{content}</div>;
-  return (
-    <button
-      type="button"
-      className={className}
-      onClick={() => {
-        tapHaptic();
-        onClick();
-      }}
-    >
-      {content}
-    </button>
-  );
-}
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -99,55 +59,39 @@ export function ProfilePage() {
     <Screen
       bare
       panel
-      hero={
-        <div className={cn(s.hero, s[`hero_${meta.kind}`])}>
-          <div className={s.heroPattern} aria-hidden="true">
-            {Array.from({ length: 120 }).map((_, i) => (
-              <meta.Icon key={i} size={28} />
-            ))}
-          </div>
-          <div className={s.heroInner}>
-            <p className={s.heroName}>{name}</p>
-            <p className={s.heroRole}>Вы — {meta.noun}</p>
-          </div>
-          <span className={s.heroShade} />
-        </div>
-      }
+      hero={<ProfileHero name={name} roleKind={meta.kind} roleNoun={meta.noun} Icon={meta.Icon} />}
     >
       <RoleTabs />
 
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>
-        <Row icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => navigate("/edit-name")} />
-        <Row icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone ? formatPhone(profile.phone) : "—"} onClick={() => navigate("/edit-phone")} />
-        <Row icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
+        <SettingRow icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => navigate("/edit-name")} />
+        <SettingRow icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone ? formatPhone(profile.phone) : "—"} onClick={() => navigate("/edit-phone")} />
+        <SettingRow icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
       </div>
 
       {role === "EXPERT" && (
         <>
           <p className={s.groupTitle}>Оплата</p>
           <div className={s.group}>
-            <Row icon={<CreditIcon width={19} height={19} />} label="Тарифы" onClick={() => navigate("/pricing")} />
+            <SettingRow icon={<CreditIcon width={19} height={19} />} label="Тарифы" onClick={() => navigate("/pricing")} />
           </div>
         </>
       )}
 
       <p className={s.groupTitle}>Управление</p>
       <div className={s.group}>
-        <Row icon={<BellIcon width={19} height={19} />} label="Уведомления" onClick={() => navigate("/notifications")} />
+        <SettingRow icon={<BellIcon width={19} height={19} />} label="Уведомления" onClick={() => navigate("/notifications")} />
       </div>
 
       <p className={s.groupTitle}>Системные настройки</p>
       <div className={s.group}>
-        <Row
+        <SettingRow
           icon={<MoonIcon width={19} height={19} />}
           label="Тема оформления"
-          onClick={() => {
-            tapHaptic();
-            setThemeOpen(true);
-          }}
+          onClick={() => setThemeOpen(true)}
         />
-        <Row
+        <SettingRow
           icon={<VibrateIcon width={19} height={19} />}
           label="Вибрация"
           action={
@@ -160,7 +104,7 @@ export function ProfilePage() {
             />
           }
         />
-        <Row
+        <SettingRow
           icon={<LogoutIcon width={19} height={19} />}
           label="Выйти"
           danger

@@ -1,0 +1,68 @@
+.row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  text-align: left;
+  color: var(--text);
+  cursor: default;
+}
+
+.row + .row {
+  border-top: 1px solid var(--hairline);
+}
+
+button.row {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+button.row:active {
+  background: var(--card-2);
+}
+
+.danger {
+  color: #e7000b;
+}
+
+.danger .rowIcon {
+  color: #e7000b;
+  background: rgba(231, 0, 11, 0.1);
+}
+
+.rowIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.rowLabel {
+  flex: 1 1 auto;
+  font-weight: 500;
+}
+
+.rowValue {
+  flex: 0 0 auto;
+  max-width: 55%;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowChev {
+  flex: 0 0 auto;
+  color: var(--muted);
+}

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
 import { CheckIcon } from "@/shared/ui/icons/interface";
-import type { Order } from "@/entites/order";
-import { createOrderResponse, type VatKind } from "../model/api";
+import { orderDocuments, type Order } from "@/entites/order";
+import { createOrderResponse, type Party, type VatKind } from "../model/api";
+import { CompanySuggest } from "./company-suggest";
 import s from "./respond-sheet.module.scss";
 
 interface Props {
@@ -61,9 +62,13 @@ export function RespondSheet({ order, onClose }: Props) {
   const [sum, setSum] = useState("");
   const [vat, setVat] = useState<VatKind>("NONE");
   const [comment, setComment] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [party, setParty] = useState<Party | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [calField, setCalField] = useState<"start" | "end" | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const close = () => {
     setStep(0);
@@ -72,16 +77,32 @@ export function RespondSheet({ order, onClose }: Props) {
     setSum("");
     setVat("NONE");
     setComment("");
+    setCompanyName("");
+    setParty(null);
+    setFiles([]);
     setCalField(null);
     setBusy(false);
     setDone(false);
     onClose();
   };
 
+  const pickFiles = (list: FileList | null) => {
+    if (!list) return;
+    setFiles((prev) => [...prev, ...Array.from(list)]);
+  };
+
+  const removeFile = (index: number) => setFiles((prev) => prev.filter((_, i) => i !== index));
+
+  const needsCompany = order?.requires_license ?? false;
+
   const submit = async () => {
     if (!order) return;
     if (startDate && deadline && startDate > deadline) {
       emitError("Срок начала не может быть позже срока окончания");
+      return;
+    }
+    if (needsCompany && !(party && party.data.inn)) {
+      emitError("Выберите организацию из списка");
       return;
     }
     setBusy(true);
@@ -92,6 +113,9 @@ export function RespondSheet({ order, onClose }: Props) {
         proposed_deadline: deadline,
         vat_kind: vat,
         comment: comment.trim(),
+        expert_inn: needsCompany ? party?.data.inn ?? undefined : undefined,
+        expert_company_data: needsCompany && party ? JSON.stringify(party) : undefined,
+        files,
       });
       notifyHaptic("success");
       setDone(true);
@@ -103,8 +127,12 @@ export function RespondSheet({ order, onClose }: Props) {
   };
 
   const base = toKopecks(sum);
-  const canSubmit = base > 0 && startDate !== "" && deadline !== "";
-  const total = base > 0 ? Math.round(base * (1 + VAT_RATE[vat] / 100)) : 0;
+  const vatAmount = Math.round((base * VAT_RATE[vat]) / 100);
+  const total = base + vatAmount;
+  const companyOk = !needsCompany || Boolean(party && party.data.inn);
+  const canSubmit = base > 0 && startDate !== "" && deadline !== "" && companyOk;
+
+  const documents = order ? orderDocuments(order) : [];
 
   return (
     <BottomSheet open={order !== null} title={done ? "" : TITLES[step]} onClose={close}>
@@ -131,11 +159,39 @@ export function RespondSheet({ order, onClose }: Props) {
               {order.company && <p className={s.company}>{order.company}</p>}
               <div className={s.rows}>
                 <Row label="Начальная цена" value={order.sum} />
+                {order.start_date && <Row label="Начало работ" value={order.start_date} />}
                 <Row label="Срок выполнения" value={order.date} />
                 {order.responses_deadline && (
                   <Row label="Приём откликов до" value={formatDeadline(order.responses_deadline)} />
                 )}
               </div>
+
+              {order.comment && (
+                <div className={s.descBlock}>
+                  <span className={s.blockLabel}>Описание заказа</span>
+                  <p className={s.descText}>{order.comment}</p>
+                </div>
+              )}
+
+              {documents.length > 0 && (
+                <div className={s.descBlock}>
+                  <span className={s.blockLabel}>Документы</span>
+                  <div className={s.docs}>
+                    {documents.map((doc, index) => (
+                      <a
+                        key={index}
+                        className={s.doc}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        📄 {doc.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {order.badges.length > 0 && (
                 <div className={s.badges}>
                   {order.badges.map((badge, index) => (
@@ -153,7 +209,7 @@ export function RespondSheet({ order, onClose }: Props) {
               <p className={s.confirmLead}>Что будет дальше</p>
               <ul className={s.confirmList}>
                 <li>Отклик спишется с вашего тарифа.</li>
-                <li>Заказчик увидит ваше предложение: цену, сроки и комментарий.</li>
+                <li>Заказчик увидит ваше предложение: цену, сроки, комментарий и файлы.</li>
                 <li>Если заказчик выберет вас — он свяжется для заключения договора.</li>
               </ul>
             </div>
@@ -181,6 +237,7 @@ export function RespondSheet({ order, onClose }: Props) {
                   {deadline ? formatDateRu(deadline) : "Выберите дату"}
                 </button>
               </div>
+
               <TextField
                 label="Ваша оценка стоимости работ"
                 inputMode="numeric"
@@ -188,6 +245,7 @@ export function RespondSheet({ order, onClose }: Props) {
                 value={sum}
                 onChange={(e) => setSum(e.target.value)}
               />
+
               <div className={s.field}>
                 <span className={s.fieldLabel}>НДС</span>
                 <div className={s.vatGroup}>
@@ -205,10 +263,43 @@ export function RespondSheet({ order, onClose }: Props) {
                     </button>
                   ))}
                 </div>
-                {total > 0 && vat !== "NONE" && (
-                  <span className={s.vatTotal}>Итого с НДС: {formatRub(total)}</span>
+                {base > 0 && (
+                  <div className={s.breakdown}>
+                    <div className={s.bdRow}>
+                      <span>Стоимость работ</span>
+                      <span>{formatRub(base)}</span>
+                    </div>
+                    {vat !== "NONE" && (
+                      <div className={s.bdRow}>
+                        <span>НДС {VAT_RATE[vat]}%</span>
+                        <span>{formatRub(vatAmount)}</span>
+                      </div>
+                    )}
+                    <div className={s.bdTotal}>
+                      <span>Итого</span>
+                      <span>{formatRub(total)}</span>
+                    </div>
+                  </div>
                 )}
               </div>
+
+              {needsCompany && (
+                <div className={s.field}>
+                  <span className={s.fieldLabel}>Организация для заключения договора</span>
+                  <CompanySuggest
+                    value={companyName}
+                    onChangeText={(text) => {
+                      setCompanyName(text);
+                      setParty(null);
+                    }}
+                    onPick={(picked) => {
+                      setCompanyName(picked.value);
+                      setParty(picked);
+                    }}
+                  />
+                </div>
+              )}
+
               <div className={s.field}>
                 <span className={s.fieldLabel}>Комментарий для заказчика</span>
                 <textarea
@@ -219,6 +310,44 @@ export function RespondSheet({ order, onClose }: Props) {
                   onChange={(e) => setComment(e.target.value)}
                 />
               </div>
+
+              <div className={s.field}>
+                <span className={s.fieldLabel}>Файлы к отклику (необязательно)</span>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  multiple
+                  hidden
+                  onChange={(e) => {
+                    pickFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  className={s.attachBtn}
+                  onClick={() => fileRef.current?.click()}
+                >
+                  + Прикрепить файлы
+                </button>
+                {files.length > 0 && (
+                  <ul className={s.fileList}>
+                    {files.map((file, index) => (
+                      <li key={index} className={s.fileItem}>
+                        <span className={s.fileName}>{file.name}</span>
+                        <button
+                          type="button"
+                          className={s.fileRemove}
+                          onClick={() => removeFile(index)}
+                          aria-label="Удалить файл"
+                        >
+                          ✕
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           )}
 
@@ -226,8 +355,8 @@ export function RespondSheet({ order, onClose }: Props) {
             {step === 0 && <Button onClick={() => setStep(1)}>Откликнуться</Button>}
             {step === 1 && (
               <>
-                <Button variant="outline" onClick={close}>
-                  Отмена
+                <Button variant="outline" onClick={() => setStep(0)}>
+                  Назад
                 </Button>
                 <Button onClick={() => setStep(2)}>Продолжить</Button>
               </>

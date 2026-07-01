@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
+import { useShowOnboarding } from "@/entites/onboarding";
 import { hideBackButton, isTelegram, showBackButton } from "@/shared/services/telegram";
 import { Spinner } from "@/shared/ui";
 import { TelegramOnly } from "@/widgets/telegram-only";
@@ -27,6 +28,8 @@ export function App() {
     return () => hideBackButton();
   }, [authed, location.pathname, navigate]);
 
+  const onboarding = useShowOnboarding();
+
   if (import.meta.env.PROD && !isTelegram) {
     return (
       <div className="app">
@@ -43,16 +46,19 @@ export function App() {
         ) : !authed ? (
           <AuthPage />
         ) : (
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/edit-name" element={<EditNamePage />} />
-            <Route path="/edit-phone" element={<EditPhonePage />} />
-            <Route path="/edit-email" element={<EditEmailPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/edit-name" element={<EditNamePage />} />
+              <Route path="/edit-phone" element={<EditPhonePage />} />
+              <Route path="/edit-email" element={<EditEmailPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            {onboarding}
+          </>
         )}
       </div>
     </div>
