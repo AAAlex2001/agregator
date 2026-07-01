@@ -1,3 +1,5 @@
+import type { ExpertCertificate } from "@/source/entities/expertise";
+
 export interface EmailPreferences {
   email_on_response_created: boolean;
   email_on_response_updated: boolean;
@@ -81,4 +83,7 @@ export interface UserProfile {
   location_address: string | null;
   location_city: string | null;
   travels_to_other_regions: boolean;
+  expert_certificates: ExpertCertificate[] | null;
+  expert_show_on_map: boolean;
+  expert_map_fields: string[] | null;
 }

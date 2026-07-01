@@ -3,6 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
+from schemas.expert import ExpertCertificate
 from services.experts.badge_codes import ALL_BADGE_CODES_SET
 
 
@@ -96,6 +97,13 @@ class UpdateExpertLocationRequest(BaseModel):
     travels_to_other_regions: bool = False
 
 
+class UpdateExpertCertificatesRequest(BaseModel):
+    "Удостоверения эксперта и настройки отображения на карте."
+    certificates: list[ExpertCertificate] = Field(default_factory=list)
+    show_on_map: bool = True
+    map_fields: list[str] = Field(default_factory=list)
+
+
 class ChangePasswordRequest(BaseModel):
     """Смена пароля пользователя"""
     new_password: str = Field(..., description="Новый пароль", min_length=8)
@@ -162,6 +170,9 @@ class UserSettingsResponse(BaseModel):
     location_address: str | None = None
     location_city: str | None = None
     travels_to_other_regions: bool = False
+    expert_certificates: list[ExpertCertificate] | None = None
+    expert_show_on_map: bool = True
+    expert_map_fields: list[str] | None = None
 
     class Config:
         from_attributes = True

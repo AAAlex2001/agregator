@@ -41,4 +41,11 @@ def to_response(user: User) -> UserSettingsResponse:
         location_address=user.location_address,
         location_city=user.location_city,
         travels_to_other_regions=bool(user.travels_to_other_regions),
+        expert_certificates=(
+            user.expert_certificates if isinstance(user.expert_certificates, list) else None
+        ),
+        expert_show_on_map=bool(user.expert_show_on_map),
+        expert_map_fields=(
+            user.expert_map_fields if isinstance(user.expert_map_fields, list) else None
+        ),
     )

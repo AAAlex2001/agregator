@@ -43,9 +43,7 @@ export interface ExpertMapItemApi {
   lat: number;
   lng: number;
   travels_to_other_regions: boolean;
-  areas: string[] | null;
-  objects: string[] | null;
-  categories: string[] | null;
+  certificates: string[] | null;
   phone: string | null;
   email: string | null;
 }

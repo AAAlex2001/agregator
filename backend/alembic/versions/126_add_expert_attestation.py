@@ -1,4 +1,4 @@
-"""add expert attestation fields (areas, objects, categories, map fields)
+"""add expert certificates + map display prefs
 
 Revision ID: 126
 Revises: 125
@@ -17,14 +17,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column("users", sa.Column("expert_areas", postgresql.JSONB(), nullable=True))
-    op.add_column("users", sa.Column("expert_objects", postgresql.JSONB(), nullable=True))
-    op.add_column("users", sa.Column("expert_categories", postgresql.JSONB(), nullable=True))
+    op.add_column("users", sa.Column("expert_certificates", postgresql.JSONB(), nullable=True))
+    op.add_column(
+        "users",
+        sa.Column(
+            "expert_show_on_map",
+            sa.Boolean(),
+            nullable=False,
+            server_default=sa.text("true"),
+        ),
+    )
     op.add_column("users", sa.Column("expert_map_fields", postgresql.JSONB(), nullable=True))
 
 
 def downgrade() -> None:
     op.drop_column("users", "expert_map_fields")
-    op.drop_column("users", "expert_categories")
-    op.drop_column("users", "expert_objects")
-    op.drop_column("users", "expert_areas")
+    op.drop_column("users", "expert_show_on_map")
+    op.drop_column("users", "expert_certificates")

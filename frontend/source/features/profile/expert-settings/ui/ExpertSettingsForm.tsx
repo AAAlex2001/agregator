@@ -13,6 +13,7 @@ import {
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
 import { ExpertLocationSection } from "./ExpertLocationSection";
+import { ExpertCertificatesSection } from "./ExpertCertificatesSection";
 import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
@@ -70,6 +71,8 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
         </section>
 
         <ExpertLocationSection profile={profile} onProfileUpdate={onProfileUpdate} />
+
+        <ExpertCertificatesSection profile={profile} onProfileUpdate={onProfileUpdate} />
 
         <SaveBar isSaving={isSaving} />
       </form>

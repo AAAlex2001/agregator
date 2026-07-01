@@ -5,6 +5,7 @@ from typing import Any
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 from schemas.company import validate_company_data
+from schemas.expert import ExpertCertificate
 
 
 class UserRole(str, Enum):
@@ -36,10 +37,13 @@ class UserRegistration(BaseModel):
     location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
     location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
-    expert_areas: list[str] | None = Field(None, description="Области аттестации эксперта (Э-коды ОПО)")
-    expert_objects: list[str] | None = Field(None, description="Объекты экспертизы (КЛ/ТП, ТУ, ЗС, Д, ОБ)")
-    expert_categories: list[str] | None = Field(None, description="Категории эксперта (1/2/3)")
-    expert_map_fields: list[str] | None = Field(None, description="Какие поля показывать на карте России")
+    expert_certificates: list[ExpertCertificate] | None = Field(
+        None, description="Удостоверения эксперта: область + объект + категория"
+    )
+    expert_show_on_map: bool = Field(True, description="Показывать эксперта на карте России")
+    expert_map_fields: list[str] | None = Field(
+        None, description="Какие поля показывать на карте: name/object/area/category/contacts"
+    )
 
     @field_validator("company_data", mode="before")
     @classmethod

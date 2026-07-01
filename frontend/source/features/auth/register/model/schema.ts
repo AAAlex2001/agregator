@@ -55,9 +55,14 @@ export const registerFormSchema = z
     locationCity: z.string().nullable(),
     travelsToOtherRegions: z.boolean(),
     expertConfirmed: z.boolean(),
-    expertAreas: z.array(z.string()),
-    expertObjects: z.array(expertiseTypeSchema),
-    expertCategories: z.array(z.string()),
+    expertCertificates: z.array(
+      z.object({
+        area: z.string(),
+        object: z.string(),
+        category: z.string(),
+      }),
+    ),
+    showOnMap: z.boolean(),
     mapFields: z.array(z.string()),
   })
   .superRefine((data, ctx) => {
@@ -177,10 +182,9 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   locationCity: null,
   travelsToOtherRegions: false,
   expertConfirmed: false,
-  expertAreas: [],
-  expertObjects: [],
-  expertCategories: [],
-  mapFields: [],
+  expertCertificates: [],
+  showOnMap: true,
+  mapFields: ["name", "area", "object", "category"],
 };
 
 export const registerConfirmSchema = z.object({

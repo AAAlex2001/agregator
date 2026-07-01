@@ -84,3 +84,19 @@ export const isOpoEnabled = (opo: string, types: ExpertiseType[]) =>
 
 export const isTypeEnabled = (type: ExpertiseType, opos: string[]) =>
   !opos.length || opos.some((o) => cell(o, type).length > 0);
+
+export interface ExpertCertificate {
+  area: string;
+  object: string;
+  category: string;
+}
+
+export const AREA_OPTIONS: Array<{ value: string; name: string }> = OPO_ROWS.flat().map((key) => ({
+  value: `Э${key}`,
+  name: TABLE[key]?.name ?? "",
+}));
+
+export const CATEGORY_OPTIONS = ["1", "2", "3"];
+
+export const formatCertificate = (cert: ExpertCertificate): string =>
+  `${cert.area} ${cert.object} · ${cert.category} кат.`;

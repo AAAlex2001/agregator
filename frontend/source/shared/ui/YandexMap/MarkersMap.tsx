@@ -26,9 +26,9 @@ function balloonBody(marker: MapMarker): string {
 
   const head = parts.join("<br>");
   const rows: string[] = [];
-  if (marker.areas?.length) rows.push(balloonRow("Область аттестации", marker.areas.join(", ")));
-  if (marker.objects?.length) rows.push(balloonRow("Объекты экспертизы", marker.objects.join(", ")));
-  if (marker.categories?.length) rows.push(balloonRow("Категория", marker.categories.join(", ")));
+  if (marker.certificates?.length) {
+    rows.push(balloonRow("Удостоверения", marker.certificates.join("<br>")));
+  }
   if (marker.phone) rows.push(balloonRow("Телефон", marker.phone));
   if (marker.email) rows.push(balloonRow("Email", marker.email));
 

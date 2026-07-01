@@ -161,14 +161,12 @@ export function CredentialsStep({
           <div className={s.fullRow}>
             <ExpertAttestationBlock
               confirmed={watch("expertConfirmed")}
-              areas={watch("expertAreas")}
-              objects={watch("expertObjects") as ExpertiseType[]}
-              categories={watch("expertCategories")}
+              certificates={watch("expertCertificates")}
+              showOnMap={watch("showOnMap")}
               mapFields={watch("mapFields")}
               onToggleConfirmed={(v) => setValue("expertConfirmed", v)}
-              onChangeAreas={(v) => setValue("expertAreas", v)}
-              onChangeObjects={(v) => setValue("expertObjects", v)}
-              onChangeCategories={(v) => setValue("expertCategories", v)}
+              onChangeCertificates={(v) => setValue("expertCertificates", v)}
+              onChangeShowOnMap={(v) => setValue("showOnMap", v)}
               onChangeMapFields={(v) => setValue("mapFields", v)}
             />
           </div>

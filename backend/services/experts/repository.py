@@ -22,6 +22,22 @@ SORT_DIR_ASC = "asc"
 RATING_PRIOR_WEIGHT = 5.0
 RATING_PRIOR_MEAN = 4.5
 
+DEFAULT_MAP_FIELDS = ("name", "area", "object", "category")
+
+
+def format_cert_for_map(cert: dict[str, str], fields: list[str]) -> str:
+    "Строка удостоверения для карты — только те части, что эксперт разрешил показывать."
+    head = []
+    if "area" in fields and cert.get("area"):
+        head.append(cert["area"])
+    if "object" in fields and cert.get("object"):
+        head.append(cert["object"])
+    text = " ".join(head)
+    if "category" in fields and cert.get("category"):
+        category = f"{cert['category']} кат."
+        text = f"{text} · {category}" if text else category
+    return text
+
 
 @dataclass(frozen=True)
 class ExpertSummaryRow:
@@ -58,9 +74,7 @@ class ExpertLocationRow:
     lat: float
     lng: float
     travels_to_other_regions: bool
-    areas: list[str] | None
-    objects: list[str] | None
-    categories: list[str] | None
+    certificates: list[str] | None
     phone: str | None
     email: str | None
 
@@ -173,6 +187,7 @@ class ExpertsRepository:
                 User.is_active.is_(True),
                 User.location_lat.is_not(None),
                 User.location_lng.is_not(None),
+                User.expert_show_on_map.is_(True),
             )
             .order_by(User.created_at.desc())
             .limit(limit)
@@ -181,17 +196,17 @@ class ExpertsRepository:
         return [self.build_location_row(user) for user in users]
 
     def build_location_row(self, user: User) -> ExpertLocationRow:
-        "Строит точку карты из эксперта; поля показываются согласно выбору эксперта (expert_map_fields)."
+        "Строит точку карты из эксперта — показывает только те поля, что эксперт сам выбрал (expert_map_fields)."
         first = user.first_name or ""
         last = user.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
 
-        fields = user.expert_map_fields
-        show_name = fields is None or "name" in fields
-        show_area = fields is None or "area" in fields
-        show_object = fields is None or "object" in fields
-        show_category = fields is None or "category" in fields
-        show_contacts = fields is not None and "contacts" in fields
+        fields = user.expert_map_fields if user.expert_map_fields is not None else list(DEFAULT_MAP_FIELDS)
+        show_name = "name" in fields
+        show_contacts = "contacts" in fields
+
+        certificates = [format_cert_for_map(cert, fields) for cert in (user.expert_certificates or [])]
+        certificates = [text for text in certificates if text]
 
         return ExpertLocationRow(
             public_id=user.public_id,
@@ -202,9 +217,7 @@ class ExpertsRepository:
             lat=float(user.location_lat),
             lng=float(user.location_lng),
             travels_to_other_regions=bool(user.travels_to_other_regions),
-            areas=user.expert_areas if show_area else None,
-            objects=user.expert_objects if show_object else None,
-            categories=user.expert_categories if show_category else None,
+            certificates=certificates or None,
             phone=user.phone if show_contacts else None,
             email=user.email if show_contacts else None,
         )

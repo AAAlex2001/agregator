@@ -21,9 +21,8 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
       location_address: payload.location_address,
       location_city: payload.location_city,
       travels_to_other_regions: payload.travels_to_other_regions,
-      expert_areas: payload.expert_areas,
-      expert_objects: payload.expert_objects,
-      expert_categories: payload.expert_categories,
+      expert_certificates: payload.expert_certificates,
+      expert_show_on_map: payload.expert_show_on_map,
       expert_map_fields: payload.expert_map_fields,
     },
   });

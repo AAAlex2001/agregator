@@ -10,6 +10,7 @@ from schemas.settings import (
     ConfirmEmailChangeRequest,
     RequestEmailChangeRequest,
     UpdateEmailPreferencesRequest,
+    UpdateExpertCertificatesRequest,
     UpdateExpertLocationRequest,
     UpdateLicenseHolderRequest,
     UpdateOrderNotificationsRequest,
@@ -30,6 +31,7 @@ from services.settings import (
     SettingsRepository,
     SettingsValidator,
     UpdateEmailPreferencesUseCase,
+    UpdateExpertCertificatesUseCase,
     UpdateExpertLocationUseCase,
     UpdateLicenseTermsUseCase,
     UpdateOrderNotificationsUseCase,
@@ -218,6 +220,18 @@ async def update_expert_location(
     "Обновляет место базирования эксперта на карте и готовность к выездам."
     repo = build_repo(db)
     user = await UpdateExpertLocationUseCase(repo, build_validator(repo)).execute(user_id, data)
+    return to_response(user)
+
+
+@router.put("/settings/expert-certificates", response_model=UserSettingsResponse)
+async def update_expert_certificates(
+    data: UpdateExpertCertificatesRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Обновляет список удостоверений эксперта (область + объект + категория)."
+    repo = build_repo(db)
+    user = await UpdateExpertCertificatesUseCase(repo, build_validator(repo)).execute(user_id, data)
     return to_response(user)
 
 

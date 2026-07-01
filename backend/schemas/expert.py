@@ -1,8 +1,15 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from schemas.order import OrderResponse
+
+
+class ExpertCertificate(BaseModel):
+    "Одно удостоверение эксперта: область аттестации + объект экспертизы + категория."
+    area: str = Field(..., max_length=20, description="Область аттестации, напр. 'Э12'")
+    object: str = Field(..., max_length=20, description="Объект экспертизы, напр. 'ТУ'")
+    category: str = Field(..., max_length=5, description="Категория, напр. '3'")
 
 
 class ExpertSummary(BaseModel):
@@ -34,9 +41,7 @@ class ExpertMapItem(BaseModel):
     lat: float
     lng: float
     travels_to_other_regions: bool = False
-    areas: list[str] | None = None
-    objects: list[str] | None = None
-    categories: list[str] | None = None
+    certificates: list[str] | None = None
     phone: str | None = None
     email: str | None = None
 

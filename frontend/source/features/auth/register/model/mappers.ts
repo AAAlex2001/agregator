@@ -24,10 +24,12 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayloa
     location_address: role === "EXPERT" ? (values.locationAddress || null) : undefined,
     location_city: role === "EXPERT" ? values.locationCity : undefined,
     travels_to_other_regions: role === "EXPERT" ? values.travelsToOtherRegions : undefined,
-    expert_areas: role === "EXPERT" && values.expertConfirmed ? values.expertAreas : undefined,
-    expert_objects: role === "EXPERT" && values.expertConfirmed ? values.expertObjects : undefined,
-    expert_categories: role === "EXPERT" && values.expertConfirmed ? values.expertCategories : undefined,
-    expert_map_fields: role === "EXPERT" && values.expertConfirmed ? values.mapFields : undefined,
+    expert_certificates:
+      role === "EXPERT" && values.expertConfirmed ? values.expertCertificates : undefined,
+    expert_show_on_map:
+      role === "EXPERT" && values.expertConfirmed ? values.showOnMap : undefined,
+    expert_map_fields:
+      role === "EXPERT" && values.expertConfirmed ? values.mapFields : undefined,
   };
 }
 

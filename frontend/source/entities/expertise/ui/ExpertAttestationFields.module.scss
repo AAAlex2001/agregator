@@ -1,0 +1,62 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionLabel {
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.sectionHint {
+  font-family: "Montserrat";
+  font-size: 12px;
+  line-height: 16px;
+  color: #999999;
+}
+
+.mapFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.option {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #555555;
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.option:hover {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.optionActive {
+  background: #fff3e0;
+  color: #e65100;
+  font-weight: 600;
+}
