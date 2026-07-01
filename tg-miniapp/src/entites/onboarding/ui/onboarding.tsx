@@ -55,14 +55,22 @@ export function Onboarding({ onComplete }: Props) {
   return (
     <div className={s.overlay}>
       <div className={s.card}>
-        <div className={s.slide} key={step}>
-          <div className={s.imageWrap}>
-            <img className={s.image} src={slide.image} alt="" />
-          </div>
-          <div className={s.text}>
-            <h1 className={s.title}>{slide.title}</h1>
-            <p className={s.desc}>{slide.desc}</p>
-          </div>
+        <div className={s.imageWrap}>
+          {SLIDES.map((item, index) => (
+            <img
+              key={index}
+              className={s.image}
+              src={item.image}
+              alt=""
+              decoding="async"
+              style={{ opacity: index === step ? 1 : 0 }}
+            />
+          ))}
+        </div>
+
+        <div className={s.text} key={step}>
+          <h1 className={s.title}>{slide.title}</h1>
+          <p className={s.desc}>{slide.desc}</p>
         </div>
 
         <div className={s.dots}>
