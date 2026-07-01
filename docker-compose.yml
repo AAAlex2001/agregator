@@ -84,8 +84,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     command: ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port 8000 --workers $${WEB_CONCURRENCY:-1} --timeout-keep-alive $${UVICORN_TIMEOUT_KEEP_ALIVE:-10}"]
-    extra_hosts:
-      - "api.telegram.org:2001:67c:4e8:f004::9"
     environment:
       DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
       REDIS_URL: redis://redis:6379/0

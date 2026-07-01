@@ -14,7 +14,9 @@ async def send_telegram_message(chat_id: int, text: str) -> None:
     if not token:
         return
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        # IPv4 Bot API режет РКН → форсим IPv6 (адрес резолвится динамически по DNS).
+        transport = httpx.AsyncHTTPTransport(local_address="::")
+        async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
             await client.post(
                 f"https://api.telegram.org/bot{token}/sendMessage",
                 json={
