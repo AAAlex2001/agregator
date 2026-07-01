@@ -11,17 +11,17 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   {
-    image: "/onboarding/onboarding-1.png",
+    image: "/onboarding/onboarding-1.webp",
     title: "Ресурс-Плюс — теперь в Telegram",
     desc: "Заказы на экспертизу промышленной безопасности, отклики и тарифы — в одном мини-приложении, без браузера.",
   },
   {
-    image: "/onboarding/onboarding-2.png",
+    image: "/onboarding/onboarding-2.webp",
     title: "Узнавайте о заказах первыми",
     desc: "Включите пуш-уведомления — и подходящие заявки будут приходить прямо в Telegram. Откликайтесь, пока думают конкуренты.",
   },
   {
-    image: "/onboarding/onboarding-3.png",
+    image: "/onboarding/onboarding-3.webp",
     title: "Отклик за пару касаний",
     desc: "Пошаговая форма с ценой, сроками и файлами и приятная тактильная отдача — заявка уходит за минуту.",
   },
