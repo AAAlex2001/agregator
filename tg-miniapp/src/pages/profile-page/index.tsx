@@ -102,7 +102,7 @@ export function ProfilePage() {
       hero={
         <div className={cn(s.hero, s[`hero_${meta.kind}`])}>
           <div className={s.heroPattern} aria-hidden="true">
-            {Array.from({ length: 48 }).map((_, i) => (
+            {Array.from({ length: 120 }).map((_, i) => (
               <meta.Icon key={i} size={28} />
             ))}
           </div>

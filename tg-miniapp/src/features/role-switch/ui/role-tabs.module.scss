@@ -19,18 +19,7 @@
   gap: 4px;
   padding: 5px;
   border-radius: 14px;
-}
-
-.tabs_expert {
-  background: var(--role-expert-bg);
-}
-
-.tabs_customer {
-  background: var(--role-customer-bg);
-}
-
-.tabs_license {
-  background: var(--role-license-bg);
+  background: var(--accent-soft);
 }
 
 .tab {
@@ -49,18 +38,8 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.expert {
-  background: #ff8a00;
-  color: #fff;
-}
-
-.customer {
-  background: #2d6cdf;
-  color: #fff;
-}
-
-.license {
-  background: #1faa52;
+.active {
+  background: var(--accent);
   color: #fff;
 }
 

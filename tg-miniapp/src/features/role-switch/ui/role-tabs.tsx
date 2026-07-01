@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import cn from "classnames";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
 import { useSession } from "@/entites/session";
-import { getAvailableRoles, switchRole, type AvailableRole } from "@/entites/profile";
+import { switchRole } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
 import type { Role } from "@/shared/services/api";
@@ -14,32 +14,17 @@ const LABEL: Record<Role, string> = {
   LICENSE_HOLDER: "Лицензиат",
 };
 
-const KIND: Record<Role, string> = {
-  EXPERT: "expert",
-  CUSTOMER: "customer",
-  LICENSE_HOLDER: "license",
-};
-
 export function RoleTabs() {
-  const { role, reloadProfile } = useSession();
-  const [available, setAvailable] = useState<AvailableRole[]>([]);
+  const { role, availableRoles, reloadProfile } = useSession();
   const [target, setTarget] = useState<Role | null>(null);
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    getAvailableRoles()
-      .then((resp) => setAvailable(resp.roles))
-      .catch(() => setAvailable([]));
-  }, [role]);
-
-  if (!role) return null;
-
-  const tabs: Role[] = [role, ...available.map((a) => a.role)];
+  if (!role || availableRoles.length < 2) return null;
 
   const pick = (next: Role) => {
     if (next === role) return;
-    const item = available.find((a) => a.role === next);
+    const item = availableRoles.find((a) => a.role === next);
     if (item && !item.email_verified) {
       emitError("Сначала подтвердите почту для этой роли");
       return;
@@ -67,15 +52,15 @@ export function RoleTabs() {
   return (
     <div className={s.wrap}>
       <p className={s.label}>Доступные роли</p>
-      <div className={cn(s.tabs, s[`tabs_${KIND[role]}`])}>
-        {tabs.map((item) => (
+      <div className={s.tabs}>
+        {availableRoles.map((a) => (
           <button
-            key={item}
+            key={a.role}
             type="button"
-            className={cn(s.tab, item === role && s[KIND[item]])}
-            onClick={() => pick(item)}
+            className={cn(s.tab, a.role === role && s.active)}
+            onClick={() => pick(a.role)}
           >
-            {LABEL[item]}
+            {LABEL[a.role]}
           </button>
         ))}
       </div>

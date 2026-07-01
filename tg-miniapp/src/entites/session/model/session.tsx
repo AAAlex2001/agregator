@@ -8,7 +8,7 @@ import {
 } from "react";
 import { telegramAuth, telegramLink, logout as apiLogout, type Role } from "@/shared/services/api";
 import { getInitData } from "@/shared/services/telegram";
-import { getProfile, type Profile } from "@/entites/profile";
+import { getAvailableRoles, getProfile, type AvailableRole, type Profile } from "@/entites/profile";
 
 interface SessionValue {
   booting: boolean;
@@ -16,6 +16,7 @@ interface SessionValue {
   linkRequired: boolean;
   role: Role | null;
   profile: Profile | null;
+  availableRoles: AvailableRole[];
   signInLink: (email: string, password: string, role?: Role) => Promise<void>;
   signOut: () => Promise<void>;
   reloadProfile: () => Promise<void>;
@@ -29,6 +30,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [linkRequired, setLinkRequired] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [availableRoles, setAvailableRoles] = useState<AvailableRole[]>([]);
 
   const reloadProfile = useCallback(async () => {
     try {
@@ -41,9 +43,30 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (authed) void reloadProfile();
-    else setProfile(null);
-  }, [authed, reloadProfile]);
+    if (!authed) {
+      setProfile(null);
+      setAvailableRoles([]);
+      return;
+    }
+    let active = true;
+    void (async () => {
+      try {
+        const next = await getProfile();
+        if (!active) return;
+        setProfile(next);
+        setRole(next.role);
+        const resp = await getAvailableRoles().catch(() => ({ roles: [] as AvailableRole[] }));
+        if (!active) return;
+        const others = resp.roles.filter((r) => r.role !== next.role);
+        setAvailableRoles([{ role: next.role, email_verified: true }, ...others]);
+      } catch {
+        if (active) setProfile(null);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [authed]);
 
   useEffect(() => {
     const initData = getInitData();
@@ -84,7 +107,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   return (
     <SessionContext.Provider
-      value={{ booting, authed, linkRequired, role, profile, signInLink, signOut, reloadProfile }}
+      value={{ booting, authed, linkRequired, role, profile, availableRoles, signInLink, signOut, reloadProfile }}
     >
       {children}
     </SessionContext.Provider>

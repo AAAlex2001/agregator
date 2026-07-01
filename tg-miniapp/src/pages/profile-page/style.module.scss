@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   overflow: hidden;
-  padding: calc(26px + var(--safe-top)) 20px 46px;
+  padding: calc(56px + var(--safe-top)) 20px 76px;
   color: #fff;
 }
 
@@ -11,8 +11,9 @@
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  gap: 16px;
-  padding: 16px;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0;
   opacity: 0.13;
   color: #fff;
   pointer-events: none;
