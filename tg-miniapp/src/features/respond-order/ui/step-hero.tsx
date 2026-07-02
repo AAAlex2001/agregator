@@ -24,14 +24,6 @@ export function StepHero({ image, illu, step, total, label, title, desc, showDot
       />
       <span className={s.heroIllu}>{illu}</span>
 
-      {showDots && (
-        <div className={s.dots}>
-          {Array.from({ length: total }).map((_, i) => (
-            <span key={i} className={i + 1 === step ? `${s.dot} ${s.dotOn}` : s.dot} />
-          ))}
-        </div>
-      )}
-
       <button className={s.close} onClick={onClose} aria-label="Закрыть">
         <CloseIcon width={16} height={16} />
       </button>
@@ -40,6 +32,13 @@ export function StepHero({ image, illu, step, total, label, title, desc, showDot
         <span className={s.stepLab}>{label}</span>
         <span className={s.stepTitle}>{title}</span>
         <span className={s.stepDesc}>{desc}</span>
+        {showDots && (
+          <div className={s.dots}>
+            {Array.from({ length: total }).map((_, i) => (
+              <span key={i} className={i + 1 === step ? `${s.dot} ${s.dotOn}` : s.dot} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

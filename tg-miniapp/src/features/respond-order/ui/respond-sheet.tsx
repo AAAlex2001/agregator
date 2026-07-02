@@ -99,6 +99,17 @@ export function RespondSheet({ order, onClose }: Props) {
   }, [rendered]);
 
   useEffect(() => {
+    if (!rendered) return;
+    const names = ["step-1", "step-2", "step-3", "step-4", "step-5", "success"];
+    for (const name of names) {
+      for (const theme of ["light", "dark"]) {
+        const img = new Image();
+        img.src = `/respond-order/${name}-${theme}.webp`;
+      }
+    }
+  }, [rendered]);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [step, done]);
 
@@ -147,6 +158,7 @@ export function RespondSheet({ order, onClose }: Props) {
     <div className={`${s.overlay} ${closing ? s.closing : ""}`} onClick={close}>
       <div className={`${s.sheet} ${closing ? s.closing : ""}`} onClick={(e) => e.stopPropagation()}>
         <StepHero
+          key={meta.image}
           image={meta.image}
           illu={meta.illu}
           step={step}
@@ -160,68 +172,70 @@ export function RespondSheet({ order, onClose }: Props) {
 
         <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>
-            {done ? (
-              <div className={s.success}>
-                <p className={s.successTitle}>Отклик отправлен!</p>
-                <p className={s.successSub}>
-                  Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота 🔔
-                </p>
-              </div>
-            ) : step === 1 ? (
-              <InfoStep order={data} />
-            ) : step === 2 ? (
-              <DocumentsStep order={data} />
-            ) : step === 3 ? (
-              <QuestionsStep orderId={data.id} />
-            ) : step === 4 ? (
-              <ConfirmStep />
-            ) : (
-              <OfferStep
-                requiresLicense={needsCompany}
-                startDate={startDate}
-                deadline={deadline}
-                sum={sum}
-                vat={vat}
-                comment={comment}
-                companyName={companyName}
-                files={files}
-                onOpenDate={setCalField}
-                onChangeSum={setSum}
-                onChangeVat={setVat}
-                onChangeComment={setComment}
-                onCompanyText={(t) => {
-                  setCompanyName(t);
-                  setParty(null);
-                }}
-                onCompanyPick={(picked) => {
-                  setCompanyName(picked.value);
-                  setParty(picked);
-                }}
-                onAddFiles={(list) => list && setFiles((prev) => [...prev, ...Array.from(list)])}
-                onRemoveFile={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
-              />
-            )}
-          </div>
-        </div>
+            <div key={done ? "done" : step} className={s.stepAnim}>
+              {done ? (
+                <div className={s.success}>
+                  <p className={s.successTitle}>Отклик отправлен!</p>
+                  <p className={s.successSub}>
+                    Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота 🔔
+                  </p>
+                </div>
+              ) : step === 1 ? (
+                <InfoStep order={data} />
+              ) : step === 2 ? (
+                <DocumentsStep order={data} />
+              ) : step === 3 ? (
+                <QuestionsStep orderId={data.id} />
+              ) : step === 4 ? (
+                <ConfirmStep />
+              ) : (
+                <OfferStep
+                  requiresLicense={needsCompany}
+                  startDate={startDate}
+                  deadline={deadline}
+                  sum={sum}
+                  vat={vat}
+                  comment={comment}
+                  companyName={companyName}
+                  files={files}
+                  onOpenDate={setCalField}
+                  onChangeSum={setSum}
+                  onChangeVat={setVat}
+                  onChangeComment={setComment}
+                  onCompanyText={(t) => {
+                    setCompanyName(t);
+                    setParty(null);
+                  }}
+                  onCompanyPick={(picked) => {
+                    setCompanyName(picked.value);
+                    setParty(picked);
+                  }}
+                  onAddFiles={(list) => list && setFiles((prev) => [...prev, ...Array.from(list)])}
+                  onRemoveFile={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
+                />
+              )}
 
-        <div className={s.footer}>
-          {done ? (
-            <Button onClick={close}>Готово</Button>
-          ) : step === 1 ? (
-            <Button onClick={() => setStep(2)}>Далее</Button>
-          ) : step === 5 ? (
-            <>
-              <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
-              <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
-                Откликнуться
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="outline" onClick={() => setStep(step - 1)}>Назад</Button>
-              <Button onClick={() => setStep(step + 1)}>{step === 4 ? "Продолжить" : "Далее"}</Button>
-            </>
-          )}
+              <div className={s.actions}>
+                {done ? (
+                  <Button onClick={close}>Готово</Button>
+                ) : step === 1 ? (
+                  <Button onClick={() => setStep(2)}>Далее</Button>
+                ) : step === 5 ? (
+                  <>
+                    <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
+                    <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
+                      Откликнуться
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={() => setStep(step - 1)}>Назад</Button>
+                    <Button onClick={() => setStep(step + 1)}>{step === 4 ? "Продолжить" : "Далее"}</Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <CalendarPicker
