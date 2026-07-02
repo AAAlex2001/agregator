@@ -5,8 +5,11 @@
 }
 
 .block {
-  background: var(--card-2);
-  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
   padding: 0 14px;
 }
 

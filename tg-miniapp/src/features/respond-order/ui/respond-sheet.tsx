@@ -193,14 +193,14 @@ export function RespondSheet({ order, onClose }: Props) {
           onClose={close}
         />
 
-        <div className={s.scroll} ref={scrollRef}>
+        <div className={`${s.scroll} ${pinnedActions ? s.scrollGray : ""}`} ref={scrollRef}>
           <div className={s.panel}>
             <div key={done ? "done" : step} className={s.stepAnim}>
               {done ? (
                 <div className={s.success}>
                   <p className={s.successTitle}>Отклик отправлен!</p>
                   <p className={s.successSub}>
-                    Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота 🔔
+                    Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота
                   </p>
                 </div>
               ) : step === 1 ? (
