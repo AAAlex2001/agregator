@@ -1,16 +1,27 @@
+.block {
+  background: var(--card-2);
+  border-radius: 16px;
+  padding: 0 14px;
+}
+
+.blockTitle {
+  margin: 0;
+  padding: 13px 0 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 .hero {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 18px;
-  background: var(--card);
-  border: 1px solid var(--hairline);
+  gap: 12px;
+  padding: 4px 0 14px;
 }
 
-.heroTitle {
+.orderTitle {
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.35;
   color: var(--text);
@@ -36,7 +47,7 @@
 }
 
 .price {
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 800;
   line-height: 1.1;
   color: var(--accent);
@@ -47,73 +58,34 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 7px 11px;
+  padding: 6px 10px;
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.metric {
-  background: var(--card-2);
-  border-radius: 14px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.mCap {
-  font-size: 11.5px;
-  color: var(--muted);
-}
-
-.mVal {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.info {
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.infoRow {
+.row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 11px 0;
 }
 
-.infoRow + .infoRow {
+.row + .row {
   border-top: 1px solid var(--hairline);
 }
 
-.infoLab {
+.rowLab {
   flex: none;
   font-size: 13px;
   color: var(--muted);
 }
 
-.infoVal {
+.rowVal {
   min-width: 0;
   text-align: right;
   font-size: 14px;
@@ -126,6 +98,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  padding: 2px 0 13px;
 }
 
 .chip {
@@ -139,9 +112,7 @@
 
 .comment {
   margin: 0;
-  padding: 12px 14px;
-  background: var(--card-2);
-  border-radius: 14px;
+  padding: 2px 0 14px;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text);

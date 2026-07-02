@@ -7,55 +7,54 @@ import c from "./common.module.scss";
 export function InfoStep({ order }: { order: Order }) {
   return (
     <div className={c.step}>
-      <div className={s.hero}>
-        <p className={s.heroTitle}>{order.title}</p>
-        <div className={s.priceRow}>
-          <div className={s.priceCol}>
-            <span className={s.priceLab}>Начальная цена</span>
-            <span className={s.price}>{order.sum || "—"}</span>
-          </div>
-          {order.responses_deadline && (
-            <span className={s.deadline}>
-              <ClockIcon width={15} height={15} />
-              до {formatDeadline(order.responses_deadline)}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className={s.group}>
-        <span className={c.blockLab}>Сроки выполнения</span>
-        <div className={s.metrics}>
-          <div className={s.metric}>
-            <span className={s.mCap}>Начало</span>
-            <span className={s.mVal}>{order.start_date || "—"}</span>
-          </div>
-          <div className={s.metric}>
-            <span className={s.mCap}>Окончание</span>
-            <span className={s.mVal}>{order.date || "—"}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className={s.group}>
-        <span className={c.blockLab}>Заказчик</span>
-        <div className={s.info}>
-          <div className={s.infoRow}>
-            <span className={s.infoLab}>Организатор</span>
-            <span className={s.infoVal}>{order.company || "—"}</span>
-          </div>
-          {order.customer_inn && (
-            <div className={s.infoRow}>
-              <span className={s.infoLab}>ИНН</span>
-              <span className={s.infoVal}>{order.customer_inn}</span>
+      <div className={s.block}>
+        <p className={s.blockTitle}>Заказ</p>
+        <div className={s.hero}>
+          <p className={s.orderTitle}>{order.title}</p>
+          <div className={s.priceRow}>
+            <div className={s.priceCol}>
+              <span className={s.priceLab}>Начальная цена</span>
+              <span className={s.price}>{order.sum || "—"}</span>
             </div>
-          )}
+            {order.responses_deadline && (
+              <span className={s.deadline}>
+                <ClockIcon width={14} height={14} />
+                до {formatDeadline(order.responses_deadline)}
+              </span>
+            )}
+          </div>
         </div>
+      </div>
+
+      <div className={s.block}>
+        <p className={s.blockTitle}>Сроки выполнения</p>
+        <div className={s.row}>
+          <span className={s.rowLab}>Начало работ</span>
+          <span className={s.rowVal}>{order.start_date || "—"}</span>
+        </div>
+        <div className={s.row}>
+          <span className={s.rowLab}>Окончание</span>
+          <span className={s.rowVal}>{order.date || "—"}</span>
+        </div>
+      </div>
+
+      <div className={s.block}>
+        <p className={s.blockTitle}>Заказчик</p>
+        <div className={s.row}>
+          <span className={s.rowLab}>Организатор</span>
+          <span className={s.rowVal}>{order.company || "—"}</span>
+        </div>
+        {order.customer_inn && (
+          <div className={s.row}>
+            <span className={s.rowLab}>ИНН</span>
+            <span className={s.rowVal}>{order.customer_inn}</span>
+          </div>
+        )}
       </div>
 
       {order.badges.length > 0 && (
-        <div className={s.group}>
-          <span className={c.blockLab}>Требования к эксперту</span>
+        <div className={s.block}>
+          <p className={s.blockTitle}>Требования к эксперту</p>
           <div className={s.chips}>
             {order.badges.map((b, i) => (
               <span key={i} className={s.chip}>
@@ -67,8 +66,8 @@ export function InfoStep({ order }: { order: Order }) {
       )}
 
       {order.comment && (
-        <div className={s.group}>
-          <span className={c.blockLab}>Комментарий заказчика</span>
+        <div className={s.block}>
+          <p className={s.blockTitle}>Комментарий заказчика</p>
           <p className={s.comment}>{order.comment}</p>
         </div>
       )}

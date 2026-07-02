@@ -233,7 +233,10 @@ export function RespondSheet({ order, onClose }: Props) {
                     setCompanyName(picked.value);
                     setParty(picked);
                   }}
-                  onAddFiles={(list) => list && setFiles((prev) => [...prev, ...Array.from(list)])}
+                  onAddFiles={(list) => {
+                    const picked = list ? Array.from(list) : [];
+                    if (picked.length) setFiles((prev) => [...prev, ...picked]);
+                  }}
                   onRemoveFile={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
                 />
               )}
