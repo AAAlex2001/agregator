@@ -21,9 +21,9 @@
 .textarea {
   width: 100%;
   min-height: 84px;
-  border: none;
+  border: 1px solid var(--hairline);
   border-radius: 14px;
-  background: var(--card-2);
+  background: var(--card);
   padding: 12px 14px;
   font-family: inherit;
   font-size: 15px;

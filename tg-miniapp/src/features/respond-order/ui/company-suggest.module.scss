@@ -6,10 +6,10 @@
   width: 100%;
   height: 52px;
   padding: 0 14px;
-  border: none;
+  border: 1px solid var(--hairline);
   outline: none;
   border-radius: 14px;
-  background: var(--card-2);
+  background: var(--card);
   font-family: inherit;
   font-size: 16px;
   color: var(--text);
@@ -34,7 +34,7 @@
   margin: 0;
   padding: 6px;
   list-style: none;
-  background: var(--card-2);
+  background: var(--card);
   border: 1px solid var(--hairline);
   border-radius: 14px;
   max-height: 240px;

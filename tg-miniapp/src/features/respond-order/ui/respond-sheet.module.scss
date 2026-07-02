@@ -42,15 +42,11 @@
   flex: 1;
   min-height: 0;
   margin-top: -22px;
-  background: var(--bg);
+  background: var(--panel-bg);
   border-radius: 24px 24px 0 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.scrollGray {
-  background: var(--panel-bg);
 }
 
 .panel {
