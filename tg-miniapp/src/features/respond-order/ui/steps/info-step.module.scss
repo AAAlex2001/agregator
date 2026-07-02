@@ -1,15 +1,65 @@
-.group {
+.hero {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
 }
 
-.orderTitle {
+.heroTitle {
   margin: 0;
   font-size: 17px;
   font-weight: 700;
   line-height: 1.35;
   color: var(--text);
+}
+
+.priceRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.priceCol {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.priceLab {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.price {
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.deadline {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .metrics {
@@ -36,10 +86,6 @@
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
-}
-
-.mAccent {
-  color: var(--accent);
 }
 
 .info {

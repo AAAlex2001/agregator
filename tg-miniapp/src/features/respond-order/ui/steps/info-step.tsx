@@ -1,4 +1,5 @@
 import type { Order } from "@/entites/order";
+import { ClockIcon } from "@/shared/ui/icons/interface";
 import { formatDeadline } from "../../model/format";
 import s from "./info-step.module.scss";
 import c from "./common.module.scss";
@@ -6,29 +7,33 @@ import c from "./common.module.scss";
 export function InfoStep({ order }: { order: Order }) {
   return (
     <div className={c.step}>
-      <div className={s.group}>
-        <span className={c.blockLab}>Заказ</span>
-        <p className={s.orderTitle}>{order.title}</p>
+      <div className={s.hero}>
+        <p className={s.heroTitle}>{order.title}</p>
+        <div className={s.priceRow}>
+          <div className={s.priceCol}>
+            <span className={s.priceLab}>Начальная цена</span>
+            <span className={s.price}>{order.sum || "—"}</span>
+          </div>
+          {order.responses_deadline && (
+            <span className={s.deadline}>
+              <ClockIcon width={15} height={15} />
+              до {formatDeadline(order.responses_deadline)}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className={s.metrics}>
-        <div className={s.metric}>
-          <span className={s.mCap}>Начало работ</span>
-          <span className={s.mVal}>{order.start_date || "—"}</span>
-        </div>
-        <div className={s.metric}>
-          <span className={s.mCap}>Окончание</span>
-          <span className={s.mVal}>{order.date || "—"}</span>
-        </div>
-        <div className={s.metric}>
-          <span className={s.mCap}>Начальная цена</span>
-          <span className={`${s.mVal} ${s.mAccent}`}>{order.sum || "—"}</span>
-        </div>
-        <div className={s.metric}>
-          <span className={s.mCap}>Приём откликов до</span>
-          <span className={`${s.mVal} ${s.mAccent}`}>
-            {order.responses_deadline ? formatDeadline(order.responses_deadline) : "—"}
-          </span>
+      <div className={s.group}>
+        <span className={c.blockLab}>Сроки выполнения</span>
+        <div className={s.metrics}>
+          <div className={s.metric}>
+            <span className={s.mCap}>Начало</span>
+            <span className={s.mVal}>{order.start_date || "—"}</span>
+          </div>
+          <div className={s.metric}>
+            <span className={s.mCap}>Окончание</span>
+            <span className={s.mVal}>{order.date || "—"}</span>
+          </div>
         </div>
       </div>
 

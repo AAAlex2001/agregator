@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/icons/interface";
@@ -37,7 +36,6 @@ interface Props {
 }
 
 export function OfferStep(p: Props) {
-  const fileRef = useRef<HTMLInputElement>(null);
   const base = toKopecks(p.sum);
   const rate = VAT_RATE[p.vat];
   const vatAmount = Math.round((base * rate) / 100);
@@ -134,30 +132,23 @@ export function OfferStep(p: Props) {
 
       <div className={s.field}>
         <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
-        <input
-          ref={fileRef}
-          type="file"
-          multiple
-          className={s.fileInput}
-          onChange={(e) => {
-            p.onAddFiles(e.target.files);
-            e.target.value = "";
-          }}
-        />
-        <button
-          type="button"
-          className={s.attach}
-          onClick={() => {
-            tapHaptic();
-            fileRef.current?.click();
-          }}
-        >
+        <div className={s.attach}>
           <span className={s.attachIcon}>
             <UploadIcon width={20} height={20} />
           </span>
           <span className={s.attachText}>Прикрепить файлы</span>
           <PlusIcon className={s.attachPlus} width={18} height={18} />
-        </button>
+          <input
+            type="file"
+            multiple
+            className={s.attachInput}
+            onClick={() => tapHaptic()}
+            onChange={(e) => {
+              p.onAddFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+        </div>
         <span className={c.note}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
         {p.files.length > 0 && (
           <ul className={s.fileList}>

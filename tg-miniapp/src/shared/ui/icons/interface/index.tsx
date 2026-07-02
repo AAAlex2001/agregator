@@ -159,6 +159,13 @@ export const UploadIcon = (p: P) => (
   </svg>
 );
 
+export const ClockIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
+);
+
 export const SwitchRoleIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />

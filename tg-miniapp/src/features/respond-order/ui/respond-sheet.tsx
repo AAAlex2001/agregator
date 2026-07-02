@@ -157,6 +157,25 @@ export function RespondSheet({ order, onClose }: Props) {
   };
 
   const meta = done ? SUCCESS_META : META[step];
+  const pinnedActions = step === 1 && !done;
+
+  const actionsContent = done ? (
+    <Button onClick={close}>Готово</Button>
+  ) : step === 1 ? (
+    <Button onClick={() => setStep(2)}>Далее</Button>
+  ) : step === 5 ? (
+    <>
+      <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
+      <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
+        Откликнуться
+      </Button>
+    </>
+  ) : (
+    <>
+      <Button variant="outline" onClick={() => setStep(step - 1)}>Назад</Button>
+      <Button onClick={() => setStep(step + 1)}>{step === 4 ? "Продолжить" : "Далее"}</Button>
+    </>
+  );
 
   return (
     <div className={`${s.overlay} ${closing ? s.closing : ""}`} onClick={close}>
@@ -219,28 +238,12 @@ export function RespondSheet({ order, onClose }: Props) {
                 />
               )}
 
-              <div className={s.actions}>
-                {done ? (
-                  <Button onClick={close}>Готово</Button>
-                ) : step === 1 ? (
-                  <Button onClick={() => setStep(2)}>Далее</Button>
-                ) : step === 5 ? (
-                  <>
-                    <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
-                    <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
-                      Откликнуться
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={() => setStep(step - 1)}>Назад</Button>
-                    <Button onClick={() => setStep(step + 1)}>{step === 4 ? "Продолжить" : "Далее"}</Button>
-                  </>
-                )}
-              </div>
+              {!pinnedActions && <div className={s.actions}>{actionsContent}</div>}
             </div>
           </div>
         </div>
+
+        {pinnedActions && <div className={s.footer}>{actionsContent}</div>}
 
         <CalendarPicker
           open={calField !== null}
