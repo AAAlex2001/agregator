@@ -28,6 +28,10 @@
   box-shadow: 0 0 0 2px rgba(255, 138, 0, 0.4);
 }
 
+.control::placeholder {
+  color: var(--muted);
+}
+
 .dateBtn {
   display: flex;
   align-items: center;
@@ -102,23 +106,21 @@
   color: var(--text);
 }
 
-.dropzone {
+.attach {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 20px 16px;
-  border: 1.5px dashed var(--accent);
-  border-radius: 16px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  text-align: center;
+  gap: 12px;
+  width: 100%;
+  height: 50px;
+  padding: 0 12px 0 10px;
+  border-radius: 14px;
+  background: var(--card-2);
+  color: var(--text);
   cursor: pointer;
-  transition: filter 0.18s ease;
+  transition: filter 0.15s ease;
 }
 
-.dropzone:active {
+.attach:active {
   filter: brightness(0.97);
 }
 
@@ -131,19 +133,26 @@
   clip: rect(0 0 0 0);
 }
 
-.dropIcon {
-  width: 26px;
-  height: 26px;
+.attachIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
-.dropTitle {
+.attachText {
+  flex: 1;
+  min-width: 0;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
-.dropHint {
-  font-size: 11.5px;
-  font-weight: 500;
+.attachPlus {
+  flex: none;
   color: var(--muted);
 }
 

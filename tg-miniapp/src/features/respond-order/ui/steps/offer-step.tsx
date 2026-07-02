@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
-import { ChevronDownIcon, CloseIcon, UploadIcon } from "@/shared/ui/icons/interface";
+import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/icons/interface";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
@@ -132,7 +132,7 @@ export function OfferStep(p: Props) {
 
       <div className={s.field}>
         <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
-        <label className={s.dropzone} onClick={() => tapHaptic()}>
+        <label className={s.attach} onClick={() => tapHaptic()}>
           <input
             type="file"
             multiple
@@ -142,10 +142,13 @@ export function OfferStep(p: Props) {
               e.target.value = "";
             }}
           />
-          <UploadIcon className={s.dropIcon} />
-          <span className={s.dropTitle}>Прикрепить файлы</span>
-          <span className={s.dropHint}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
+          <span className={s.attachIcon}>
+            <UploadIcon width={20} height={20} />
+          </span>
+          <span className={s.attachText}>Прикрепить файлы</span>
+          <PlusIcon className={s.attachPlus} width={18} height={18} />
         </label>
+        <span className={c.note}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
         {p.files.length > 0 && (
           <ul className={s.fileList}>
             {p.files.map((f, i) => (

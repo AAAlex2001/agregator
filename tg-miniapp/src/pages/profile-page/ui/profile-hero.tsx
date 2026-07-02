@@ -12,8 +12,8 @@ export function ProfileHero({ name, roleKind, roleNoun }: Props) {
     <div className={s.hero}>
       <ThemedImage
         className={s.bg}
-        light={`/profile/${roleKind}-light.webp`}
-        dark={`/profile/${roleKind}-dark.webp`}
+        light={`/profile-hero/${roleKind}-light.webp`}
+        dark={`/profile-hero/${roleKind}-dark.webp`}
       />
       <div className={s.inner}>
         <p className={s.name}>{name}</p>

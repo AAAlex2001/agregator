@@ -44,7 +44,12 @@ export function HomePage() {
       }
       panel
     >
-      <p className={s.sectionTitle}>{isExpert ? "Лента заказов" : "Мои заказы"}</p>
+      <div className={s.feedHead}>
+        <p className={s.sectionTitle}>{isExpert ? "Лента заказов" : "Мои заказы"}</p>
+        <p className={s.sectionSub}>
+          {isExpert ? "Выберите заказ, чтобы откликнуться" : "Ваши размещённые заявки"}
+        </p>
+      </div>
 
       {orders === null ? (
         <div className={s.feedLoading}>
