@@ -5,7 +5,7 @@ import { ResponseCard, type ResponseTab } from "@/entites/response";
 import { useResponses } from "../model/useResponses";
 import s from "./responses-panel.module.scss";
 
-const TABS: TabItem[] = [
+const STATUS: { key: ResponseTab; label: string }[] = [
   { key: "all", label: "Все отклики" },
   { key: "review", label: "На рассмотрении" },
   { key: "in_progress", label: "В работе" },
@@ -18,9 +18,15 @@ export function ResponsesPanel() {
   const [tab, setTab] = useState<ResponseTab>("all");
   const r = useResponses(tab);
 
+  const tabs: TabItem[] = STATUS.map((t) => ({
+    key: t.key,
+    label: t.label,
+    badge: r.counters[t.key] > 0 ? String(r.counters[t.key]) : undefined,
+  }));
+
   return (
     <>
-      <Tabs tabs={TABS} active={tab} onChange={(k) => setTab(k as ResponseTab)} />
+      <Tabs tabs={tabs} active={tab} onChange={(k) => setTab(k as ResponseTab)} />
       {r.items === null ? (
         <div className={s.feedLoading}>
           <Spinner />

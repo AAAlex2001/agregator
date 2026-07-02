@@ -39,8 +39,8 @@ export function Tabs({ tabs, active, onChange }: Props) {
             onChange(t.key);
           }}
         >
-          {t.badge ? <span className={s.badge}>{t.badge}</span> : null}
           {t.label}
+          {t.badge ? <span className={s.badge}>{t.badge}</span> : null}
         </button>
       ))}
     </div>
