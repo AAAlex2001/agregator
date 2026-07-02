@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
-import { listOrders, type Order } from "./api";
+import { listOrders, listArchivedOrders, type Order } from "@/entites/order";
 
-export function useOrders(limit = 8) {
+export function useOrders(limit = 8, archived = false) {
   const [orders, setOrders] = useState<Order[] | null>(null);
 
   useEffect(() => {
     let active = true;
-    listOrders(limit)
+    const fetcher = archived ? listArchivedOrders : listOrders;
+    fetcher(limit)
       .then((data) => {
         if (active) setOrders(data.items);
       })
@@ -18,7 +19,7 @@ export function useOrders(limit = 8) {
     return () => {
       active = false;
     };
-  }, [limit]);
+  }, [limit, archived]);
 
   return { orders };
 }

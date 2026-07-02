@@ -51,6 +51,13 @@
   color: var(--muted);
 }
 
+.emptyLine {
+  margin: 0;
+  padding: 8px 2px 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
 .emptyState {
   display: flex;
   flex-direction: column;

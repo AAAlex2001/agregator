@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSession } from "@/entites/session";
+import { useSession } from "@/features/session";
 import { confirmEmailChange, requestEmailChange } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { Button, Card, TextField } from "@/shared/ui";

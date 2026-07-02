@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
-import { listPlans, type Plan } from "./api";
+import { listPlans, type Plan } from "@/entites/tariff";
 
 export function usePlans() {
   const [plans, setPlans] = useState<Plan[] | null>(null);

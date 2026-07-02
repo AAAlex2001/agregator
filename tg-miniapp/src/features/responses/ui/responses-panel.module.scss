@@ -1,0 +1,18 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feedLoading {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0;
+}
+
+.emptyLine {
+  margin: 0;
+  padding: 8px 2px 4px;
+  font-size: 14px;
+  color: var(--muted);
+}

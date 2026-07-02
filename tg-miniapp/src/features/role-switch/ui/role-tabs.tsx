@@ -1,7 +1,7 @@
 import { useState } from "react";
 import cn from "classnames";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
-import { useSession } from "@/entites/session";
+import { useSession } from "@/features/session";
 import { switchRole } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";

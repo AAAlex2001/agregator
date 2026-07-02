@@ -65,3 +65,6 @@ export function orderDocuments(order: Order): OrderDocument[] {
 
 export const listOrders = (limit = 10) =>
   apiJson<OrderList>(`/orders/?skip=0&limit=${limit}`);
+
+export const listArchivedOrders = (limit = 20) =>
+  apiJson<OrderList>(`/orders/archive?skip=0&limit=${limit}`);

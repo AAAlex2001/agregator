@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "@/entites/session";
+import { useSession } from "@/features/session";
 import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";

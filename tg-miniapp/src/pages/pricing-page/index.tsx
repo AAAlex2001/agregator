@@ -2,8 +2,7 @@ import cn from "classnames";
 import { Screen } from "@/widgets/app-shell";
 import { Button, Card, Spinner } from "@/shared/ui";
 import { CheckIcon, CrownIcon } from "@/shared/ui/icons/interface";
-import { usePlans } from "@/entites/tariff";
-import { useBuyTariff } from "@/features/buy-tariff";
+import { usePlans, useBuyTariff } from "@/features/buy-tariff";
 import s from "./style.module.scss";
 
 export function PricingPage() {

@@ -1,6 +1,6 @@
 import { useState, type ComponentType } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "@/entites/session";
+import { useSession } from "@/features/session";
 import { ApiError, type Role } from "@/shared/services/api";
 import { emitError } from "@/shared/services/error-bus";
 import { tapHaptic } from "@/shared/services/telegram";

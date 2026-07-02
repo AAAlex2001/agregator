@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { useSession } from "@/entites/session";
-import { useShowOnboarding } from "@/entites/onboarding";
+import { useSession } from "@/features/session";
+import { useShowOnboarding } from "@/features/onboarding";
 import { hideBackButton, isTelegram, showBackButton } from "@/shared/services/telegram";
 import { Spinner } from "@/shared/ui";
 import { TelegramOnly } from "@/widgets/telegram-only";

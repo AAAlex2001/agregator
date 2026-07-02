@@ -34,7 +34,6 @@
 @keyframes fadeOut { to { opacity: 0; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes slideDown { to { transform: translateY(100%); } }
-@keyframes stepIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .scroll {
   position: relative;
@@ -63,7 +62,6 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  animation: stepIn 0.3s ease;
 }
 
 .actions {

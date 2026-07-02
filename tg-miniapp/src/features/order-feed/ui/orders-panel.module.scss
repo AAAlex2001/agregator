@@ -1,0 +1,11 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feedLoading {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0;
+}

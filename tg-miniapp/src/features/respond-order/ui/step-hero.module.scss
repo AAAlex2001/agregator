@@ -1,5 +1,3 @@
-@keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
-
 .hero {
   position: relative;
   flex: none;
@@ -8,7 +6,6 @@
   background: linear-gradient(120deg, var(--accent), var(--accent-press));
   display: flex;
   align-items: center;
-  animation: heroIn 0.32s ease;
 }
 
 .heroImg {

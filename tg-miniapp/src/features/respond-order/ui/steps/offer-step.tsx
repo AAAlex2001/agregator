@@ -78,6 +78,7 @@ export function OfferStep(p: Props) {
           inputMode="numeric"
           placeholder="Сумма в рублях"
           value={p.sum}
+          onFocus={() => tapHaptic()}
           onChange={(e) => p.onChangeSum(e.target.value)}
         />
       </div>
@@ -126,6 +127,7 @@ export function OfferStep(p: Props) {
           className={c.textarea}
           placeholder="Напишите комментарий для заказчика…"
           value={p.comment}
+          onFocus={() => tapHaptic()}
           onChange={(e) => p.onChangeComment(e.target.value)}
         />
       </div>

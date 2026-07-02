@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSession } from "@/entites/session";
+import { useSession } from "@/features/session";
 import { updateEmailPreferences, type EmailPreferences } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { tapHaptic } from "@/shared/services/telegram";
