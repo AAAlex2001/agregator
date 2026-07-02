@@ -51,36 +51,6 @@
   color: var(--muted);
 }
 
-.seg {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: 14px;
-}
-
-.segBtn {
-  flex: 1;
-  height: 42px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-}
-
-.segBtnOn {
-  background: var(--accent);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 138, 0, 0.35);
-}
-
 .breakdown {
   background: var(--card);
   border: 1px solid var(--hairline);

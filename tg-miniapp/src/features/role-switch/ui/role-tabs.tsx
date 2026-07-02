@@ -1,10 +1,10 @@
 import { useState } from "react";
-import cn from "classnames";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
+import { Tabs } from "@/shared/ui/tabs";
 import { useSession } from "@/features/session";
 import { switchRole } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
+import { notifyHaptic } from "@/shared/services/telegram";
 import type { Role } from "@/shared/services/api";
 import s from "./role-tabs.module.scss";
 
@@ -29,7 +29,6 @@ export function RoleTabs() {
       emitError("Сначала подтвердите почту для этой роли");
       return;
     }
-    tapHaptic();
     setPassword("");
     setTarget(next);
   };
@@ -52,18 +51,11 @@ export function RoleTabs() {
   return (
     <div className={s.wrap}>
       <p className={s.label}>Доступные роли</p>
-      <div className={s.tabs}>
-        {availableRoles.map((a) => (
-          <button
-            key={a.role}
-            type="button"
-            className={cn(s.tab, a.role === role && s.active)}
-            onClick={() => pick(a.role)}
-          >
-            {LABEL[a.role]}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        tabs={availableRoles.map((a) => ({ key: a.role, label: LABEL[a.role] }))}
+        active={role}
+        onChange={(key) => pick(key as Role)}
+      />
 
       <BottomSheet
         open={target !== null}

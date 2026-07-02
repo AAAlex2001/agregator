@@ -14,35 +14,6 @@
   color: var(--muted);
 }
 
-.tabs {
-  display: flex;
-  gap: 4px;
-  padding: 5px;
-  border-radius: 14px;
-  background: var(--accent-soft);
-}
-
-.tab {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 12px 8px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.active {
-  background: var(--accent);
-  color: #fff;
-}
-
 .confirm {
   display: flex;
   flex-direction: column;

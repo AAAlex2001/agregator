@@ -2,6 +2,7 @@ import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/icons/interface";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
+import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
 import { toKopecks, formatRub, formatDateRu, formatSize } from "../../model/format";
@@ -85,21 +86,11 @@ export function OfferStep(p: Props) {
 
       <div className={s.field}>
         <span className={s.fieldLab}>Ставка НДС</span>
-        <div className={s.seg}>
-          {VAT_OPTIONS.map((o) => (
-            <button
-              key={o.code}
-              type="button"
-              className={cn(s.segBtn, { [s.segBtnOn]: p.vat === o.code })}
-              onClick={() => {
-                tapHaptic();
-                p.onChangeVat(o.code);
-              }}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={VAT_OPTIONS.map((o) => ({ key: o.code, label: o.label }))}
+          active={p.vat}
+          onChange={(k) => p.onChangeVat(k as VatKind)}
+        />
         {base > 0 && (
           <div className={s.breakdown}>
             <div className={s.bd}><span>Стоимость работ</span><span>{formatRub(base)}</span></div>
