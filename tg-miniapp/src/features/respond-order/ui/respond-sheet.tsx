@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
+import { Button } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import type { Order } from "@/entites/order";
 import { createOrderResponse, type Party, type VatKind } from "../model/api";
@@ -205,26 +206,20 @@ export function RespondSheet({ order, onClose }: Props) {
 
         <div className={s.footer}>
           {done ? (
-            <button className={`${s.btn} ${s.btnPrimary}`} onClick={close}>Готово</button>
+            <Button onClick={close}>Готово</Button>
           ) : step === 1 ? (
-            <button className={`${s.btn} ${s.btnPrimary}`} onClick={() => setStep(2)}>Далее →</button>
+            <Button onClick={() => setStep(2)}>Далее</Button>
           ) : step === 5 ? (
             <>
-              <button className={`${s.btn} ${s.btnOutline}`} onClick={() => setStep(4)}>Назад</button>
-              <button
-                className={`${s.btn} ${s.btnPrimary}`}
-                disabled={!canSubmit || busy}
-                onClick={() => void submit()}
-              >
-                Откликнуться →
-              </button>
+              <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
+              <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
+                Откликнуться
+              </Button>
             </>
           ) : (
             <>
-              <button className={`${s.btn} ${s.btnOutline}`} onClick={() => setStep(step - 1)}>Назад</button>
-              <button className={`${s.btn} ${s.btnPrimary}`} onClick={() => setStep(step + 1)}>
-                {step === 4 ? "Продолжить" : "Далее →"}
-              </button>
+              <Button variant="outline" onClick={() => setStep(step - 1)}>Назад</Button>
+              <Button onClick={() => setStep(step + 1)}>{step === 4 ? "Продолжить" : "Далее"}</Button>
             </>
           )}
         </div>

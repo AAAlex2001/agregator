@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { tapHaptic } from "@/shared/services/telegram";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
 import { toKopecks, formatRub, formatDateRu } from "../../model/format";
@@ -43,7 +44,10 @@ export function OfferStep(p: Props) {
         <span className={s.fieldLab}>Срок начала выполнения работ</span>
         <button
           className={`${s.control} ${s.dateBtn} ${p.startDate ? "" : s.dateEmpty}`}
-          onClick={() => p.onOpenDate("start")}
+          onClick={() => {
+            tapHaptic();
+            p.onOpenDate("start");
+          }}
         >
           {p.startDate ? formatDateRu(p.startDate) : "Выберите дату"}<span>▾</span>
         </button>
@@ -52,7 +56,10 @@ export function OfferStep(p: Props) {
         <span className={s.fieldLab}>Срок окончания выполнения работ</span>
         <button
           className={`${s.control} ${s.dateBtn} ${p.deadline ? "" : s.dateEmpty}`}
-          onClick={() => p.onOpenDate("end")}
+          onClick={() => {
+            tapHaptic();
+            p.onOpenDate("end");
+          }}
         >
           {p.deadline ? formatDateRu(p.deadline) : "Выберите дату"}<span>▾</span>
         </button>
@@ -76,7 +83,10 @@ export function OfferStep(p: Props) {
             <button
               key={o.code}
               className={`${s.vat} ${p.vat === o.code ? s.vatOn : ""}`}
-              onClick={() => p.onChangeVat(o.code)}
+              onClick={() => {
+                tapHaptic();
+                p.onChangeVat(o.code);
+              }}
             >
               {o.label}
             </button>
@@ -125,13 +135,30 @@ export function OfferStep(p: Props) {
             e.target.value = "";
           }}
         />
-        <button className={s.attach} onClick={() => fileRef.current?.click()}>+ Прикрепить файлы</button>
+        <button
+          className={s.attach}
+          onClick={() => {
+            tapHaptic();
+            fileRef.current?.click();
+          }}
+        >
+          + Прикрепить файлы
+        </button>
         {p.files.length > 0 && (
           <ul className={s.fileList}>
             {p.files.map((f, i) => (
               <li key={i} className={s.fileItem}>
                 <span className={s.fileName}>{f.name}</span>
-                <button className={s.fileRemove} onClick={() => p.onRemoveFile(i)} aria-label="Удалить файл">✕</button>
+                <button
+                  className={s.fileRemove}
+                  onClick={() => {
+                    tapHaptic();
+                    p.onRemoveFile(i);
+                  }}
+                  aria-label="Удалить файл"
+                >
+                  ✕
+                </button>
               </li>
             ))}
           </ul>

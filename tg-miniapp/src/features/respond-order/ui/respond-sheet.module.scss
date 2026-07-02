@@ -15,7 +15,8 @@
 .sheet {
   position: relative;
   width: 100%;
-  max-height: 94vh;
+  height: calc(100vh - 22px);
+  height: calc(100dvh - 22px);
   background: var(--bg);
   border-radius: 22px 22px 0 0;
   overflow: hidden;
@@ -129,18 +130,21 @@
   place-items: center;
 }
 
-/* Подложка / скролл */
+/* Подложка со скруглёнными углами, наезжает на hero; внутри — скролл контента */
 .scroll {
+  position: relative;
+  z-index: 4;
   flex: 1;
+  min-height: 0;
+  margin-top: -22px;
+  background: var(--bg);
+  border-radius: 24px 24px 0 0;
   overflow-y: auto;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .panel {
-  position: relative;
-  margin-top: -20px;
-  background: var(--bg);
-  border-radius: 22px 22px 0 0;
-  padding: 20px 16px 20px;
+  padding: 20px 16px 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -601,46 +605,6 @@
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   display: flex;
   gap: 10px;
-}
-
-.btn {
-  flex: 1;
-  height: 52px;
-  border: none;
-  border-radius: 14px;
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: transform 0.08s ease, background-color 0.15s ease;
-}
-
-.btn:active {
-  transform: scale(0.99);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.btnPrimary {
-  background: var(--accent);
-  color: #ffffff;
-}
-
-.btnPrimary:active {
-  background: var(--accent-press);
-}
-
-.btnOutline {
-  background: transparent;
-  color: var(--text);
-  border: 1.5px solid var(--hairline);
 }
 
 /* Success */

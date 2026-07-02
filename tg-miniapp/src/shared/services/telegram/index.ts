@@ -4,6 +4,7 @@ type ImpactStyle = "light" | "medium" | "heavy" | "rigid" | "soft";
 interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
+  disableVerticalSwipes?: () => void;
   colorScheme: "light" | "dark";
   initData: string;
   initDataUnsafe?: { user?: { id?: number }; start_param?: string };
@@ -79,6 +80,8 @@ export function initTelegram(): void {
   if (tg) {
     tg.ready();
     tg.expand();
+    // приложение не сворачивается вертикальным свайпом по контенту — только тягой за шапку
+    tg.disableVerticalSwipes?.();
     tg.onEvent?.("themeChanged", applyTheme);
   }
   applyTheme();

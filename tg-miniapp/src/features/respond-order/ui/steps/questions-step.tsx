@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Spinner } from "@/shared/ui";
+import { Button, Spinner } from "@/shared/ui";
 import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic } from "@/shared/services/telegram";
+import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
 import { fetchOrderQuestions, askOrderQuestion, type OrderQuestion } from "@/entites/order-question";
 import s from "../respond-sheet.module.scss";
 
@@ -63,20 +63,26 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <div className={s.checkline} onClick={() => setAnon((v) => !v)}>
+      <div
+        className={s.checkline}
+        onClick={() => {
+          tapHaptic();
+          setAnon((v) => !v);
+        }}
+      >
         <span className={`${s.cbx} ${anon ? s.cbxOn : ""}`}>{anon ? "✓" : ""}</span>
         Задать анонимно — вопрос и ответ увидите только вы и заказчик
       </div>
       <div className={s.qaActions}>
         <span className={s.counter}>{text.length} / 2000</span>
-        <button
-          className={`${s.btn} ${s.btnPrimary}`}
-          style={{ flex: "none", height: 42, padding: "0 18px" }}
-          disabled={!text.trim() || busy}
+        <Button
+          style={{ width: "auto", height: 42, padding: "0 18px" }}
+          disabled={!text.trim()}
+          loading={busy}
           onClick={() => void ask()}
         >
           Задать вопрос
-        </button>
+        </Button>
       </div>
     </div>
   );
