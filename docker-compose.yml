@@ -121,6 +121,7 @@ services:
     restart: unless-stopped
     networks:
       - agregator-network
+      - ipv6-egress
     deploy:
       replicas: 2
 
@@ -218,6 +219,8 @@ services:
 
 networks:
   agregator-network:
+    driver: bridge
+  ipv6-egress:
     driver: bridge
     enable_ipv6: true
     ipam:

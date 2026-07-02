@@ -64,6 +64,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <Link href="/offer">Публичная оферта</Link>
                   <Link href="/user-agreement">Пользовательское соглашение</Link>
                   <Link href="/privacy-policy">Политика конфиденциальности</Link>
+                  <Link href="/personal-data-consent">Согласие на обработку ПДн</Link>
                 </div>
               </div>
 
@@ -91,7 +92,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                 </div>
             */}
         </div>
-          <span>© {new Date().getFullYear()} Ресурс-Плюс. Все права защищены.</span>
+          <span>© {new Date().getFullYear()} ООО «НПИ «Недра». Все права защищены.</span>
       </div>
             </div>
     </footer>

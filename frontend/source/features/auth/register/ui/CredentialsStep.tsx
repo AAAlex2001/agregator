@@ -340,6 +340,17 @@ export function CredentialsStep({
               Пользовательским соглашением
             </Link>
           </Checkbox>
+          <Checkbox
+            id="agreeConsent"
+            checked={watch("agreeConsent")}
+            onChange={(checked) => setValue("agreeConsent", checked, { shouldValidate })}
+            error={errors.agreeConsent?.message}
+          >
+            Я даю{" "}
+            <Link href="/personal-data-consent" target="_blank" rel="noopener noreferrer" className={s.agreementLink}>
+              Согласие на обработку персональных данных
+            </Link>
+          </Checkbox>
         </div>
 
         <Button type="submit" variant="chat" size="lg" fullWidth isLoading={isLoading} className={s.fullRow}>

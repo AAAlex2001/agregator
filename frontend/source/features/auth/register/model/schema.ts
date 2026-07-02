@@ -28,6 +28,7 @@ export const registerFormSchema = z
     repeatPassword: z.string(),
     agreePrivacy: z.boolean(),
     agreeTerms: z.boolean(),
+    agreeConsent: z.boolean(),
     companyName: z.string().trim(),
     companyData: z
       .object({
@@ -152,6 +153,13 @@ export const registerFormSchema = z
         message: "Требуется согласие с Пользовательским соглашением",
       });
     }
+    if (!data.agreeConsent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["agreeConsent"],
+        message: "Требуется согласие на обработку персональных данных",
+      });
+    }
   });
 
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
@@ -166,6 +174,7 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   repeatPassword: "",
   agreePrivacy: false,
   agreeTerms: false,
+  agreeConsent: false,
   companyName: "",
   companyData: null,
   licenseNumber: "",

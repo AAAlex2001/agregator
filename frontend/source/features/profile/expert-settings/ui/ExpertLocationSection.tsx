@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { Checkbox } from "@/source/shared/ui";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -30,6 +30,12 @@ export function ExpertLocationSection({ profile, onProfileUpdate }: Props) {
   const [travels, setTravels] = useState(profile.travels_to_other_regions);
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    if (window.location.hash === "#location-map") {
+      document.getElementById("location-map")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
   const save = async () => {
     setSaving(true);
     try {
@@ -50,7 +56,7 @@ export function ExpertLocationSection({ profile, onProfileUpdate }: Props) {
   };
 
   return (
-    <section className={form.section}>
+    <section id="location-map" className={form.section} style={{ scrollMarginTop: 100 }}>
       <h2 className={form.subtitle}>Местоположение на карте</h2>
       <div className={s.body}>
         <p className={s.hint}>
