@@ -33,6 +33,37 @@
   color: var(--muted);
 }
 
+.feedHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 2px;
+  padding: 0 2px;
+}
+
+.feedHead .sectionTitle {
+  margin: 0;
+}
+
+.filterBtn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.filterBtn:active {
+  transform: scale(0.94);
+}
+
 .feed {
   display: flex;
   flex-direction: column;

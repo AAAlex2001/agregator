@@ -166,6 +166,12 @@ export const ClockIcon = (p: P) => (
   </svg>
 );
 
+export const FilterIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M22 4H2l8 9.46V19l4 2v-7.54L22 4z" />
+  </svg>
+);
+
 export const SwitchRoleIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />

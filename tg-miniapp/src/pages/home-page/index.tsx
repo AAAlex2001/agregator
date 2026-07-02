@@ -2,27 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/features/session";
 import { type Order } from "@/entites/order";
+import { type ResponseTab } from "@/entites/response";
 import { RespondSheet } from "@/features/respond-order";
 import { ResponsesPanel } from "@/features/responses";
 import { OrdersPanel } from "@/features/order-feed";
+import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Button, BottomSheet, Logo } from "@/shared/ui";
-import { Tabs } from "@/shared/ui/tabs";
-import { UserIcon } from "@/shared/ui/icons/interface";
+import { UserIcon, FilterIcon } from "@/shared/ui/icons/interface";
 import { EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
-
-const TOP_TABS = [
-  { id: "orders", label: "Все заказы" },
-  { id: "responses", label: "Мои отклики" },
-  { id: "archive", label: "Архив" },
-];
 
 export function HomePage() {
   const { role } = useSession();
   const navigate = useNavigate();
-  const [topTab, setTopTab] = useState("orders");
+  const [view, setView] = useState<FeedView>("orders");
+  const [respTab, setRespTab] = useState<ResponseTab>("all");
+  const [filterOpen, setFilterOpen] = useState(false);
   const [soonOpen, setSoonOpen] = useState(false);
   const [soonTitle, setSoonTitle] = useState("");
   const [respondOrder, setRespondOrder] = useState<Order | null>(null);
@@ -64,17 +61,30 @@ export function HomePage() {
     >
       {isExpert ? (
         <>
-          <Tabs items={TOP_TABS} active={topTab} onChange={setTopTab} />
-          {topTab === "orders" && (
+          <div className={s.feedHead}>
+            <p className={s.sectionTitle}>{VIEW_LABEL[view]}</p>
+            <button
+              className={s.filterBtn}
+              aria-label="Фильтр"
+              onClick={() => {
+                tapHaptic();
+                setFilterOpen(true);
+              }}
+            >
+              <FilterIcon width={20} height={20} />
+            </button>
+          </div>
+
+          {view === "orders" && (
             <OrdersPanel
               onOpen={openRespond}
               empty={<p className={s.emptyLine}>Пока нет подходящих заказов</p>}
             />
           )}
-          {topTab === "responses" && <ResponsesPanel />}
-          {topTab === "archive" && (
+          {view === "archive" && (
             <OrdersPanel archived limit={20} empty={<p className={s.emptyLine}>Архив пуст</p>} />
           )}
+          {view === "responses" && <ResponsesPanel tab={respTab} />}
         </>
       ) : (
         <>
@@ -94,6 +104,15 @@ export function HomePage() {
           <div className={s.createSpacer} />
         </>
       )}
+
+      <FilterSheet
+        open={filterOpen}
+        view={view}
+        respTab={respTab}
+        onChangeView={setView}
+        onChangeRespTab={setRespTab}
+        onClose={() => setFilterOpen(false)}
+      />
 
       <BottomSheet open={soonOpen} title={soonTitle} onClose={() => setSoonOpen(false)}>
         <p className={s.soonText}>Раздел скоро появится — делаем его следующим шагом.</p>
