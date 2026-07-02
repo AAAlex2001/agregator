@@ -152,6 +152,13 @@ export const CheckIcon = (p: P) => (
   </svg>
 );
 
+export const UploadIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+    <path d="M12 15V4M8 8l4-4 4 4" />
+  </svg>
+);
+
 export const SwitchRoleIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />

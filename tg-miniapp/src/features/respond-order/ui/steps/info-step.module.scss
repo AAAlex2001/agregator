@@ -1,0 +1,111 @@
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metric {
+  background: var(--card-2);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mCap {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.mVal {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mAccent {
+  color: var(--accent);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
+.row + .row {
+  border-top: 1px solid var(--hairline);
+}
+
+.hook {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+}
+
+.rl {
+  flex: 1;
+  min-width: 0;
+}
+
+.lab {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.value {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 1px;
+  word-break: break-word;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chip {
+  padding: 6px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textBlock {
+  padding: 12px 14px;
+}
+
+.desc {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.muted {
+  color: var(--muted);
+}

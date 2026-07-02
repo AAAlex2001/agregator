@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/entites/session";
 import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { RoleTabs } from "@/features/role-switch";
-import {
-  hapticEnabled,
-  restoreHeaderColor,
-  setHapticEnabled,
-  setHeaderColor,
-} from "@/shared/services/telegram";
+import { hapticEnabled, setHapticEnabled } from "@/shared/services/telegram";
 import {
   BellIcon,
   CreditIcon,
@@ -21,16 +16,15 @@ import {
   UserIcon,
   VibrateIcon,
 } from "@/shared/ui/icons/interface";
-import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import { formatPhone } from "@/shared/lib/phone";
 import { ProfileHero } from "./ui/profile-hero";
 import { SettingRow } from "./ui/setting-row";
 import s from "./style.module.scss";
 
 const ROLE_META = {
-  EXPERT: { kind: "expert", noun: "Эксперт", Icon: ExpertRoleIcon, header: "#ff9f2e" },
-  CUSTOMER: { kind: "customer", noun: "Заказчик", Icon: CustomerRoleIcon, header: "#4a86ee" },
-  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат", Icon: LicenseRoleIcon, header: "#34c759" },
+  EXPERT: { kind: "expert", noun: "Эксперт" },
+  CUSTOMER: { kind: "customer", noun: "Заказчик" },
+  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат" },
 } as const;
 
 export function ProfilePage() {
@@ -39,11 +33,6 @@ export function ProfilePage() {
   const [themeOpen, setThemeOpen] = useState(false);
   const [haptic, setHaptic] = useState(hapticEnabled);
   const meta = ROLE_META[role ?? "CUSTOMER"];
-
-  useEffect(() => {
-    setHeaderColor(meta.header);
-    return () => restoreHeaderColor();
-  }, [meta.header]);
 
   if (!profile) {
     return (
@@ -59,7 +48,7 @@ export function ProfilePage() {
     <Screen
       bare
       panel
-      hero={<ProfileHero name={name} roleKind={meta.kind} roleNoun={meta.noun} Icon={meta.Icon} />}
+      hero={<ProfileHero name={name} roleKind={meta.kind} roleNoun={meta.noun} />}
     >
       <RoleTabs />
 

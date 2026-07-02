@@ -1,6 +1,6 @@
 import { ThemedImage } from "@/shared/ui";
 import { CloseIcon } from "@/shared/ui/icons/interface";
-import s from "./respond-sheet.module.scss";
+import s from "./step-hero.module.scss";
 
 interface Props {
   image: string;

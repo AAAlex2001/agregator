@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Spinner } from "@/shared/ui";
+import { Toggle } from "@/shared/ui/toggle";
 import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
+import { notifyHaptic } from "@/shared/services/telegram";
 import { fetchOrderQuestions, askOrderQuestion, type OrderQuestion } from "@/entites/order-question";
-import s from "../respond-sheet.module.scss";
+import s from "./questions-step.module.scss";
+import c from "./common.module.scss";
 
 export function QuestionsStep({ orderId }: { orderId: number }) {
   const [items, setItems] = useState<OrderQuestion[] | null>(null);
@@ -38,8 +40,8 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
   };
 
   return (
-    <div className={s.step}>
-      <span className={s.blockLab}>Вопросы по заказу</span>
+    <div className={c.step}>
+      <span className={c.blockLab}>Вопросы по заказу</span>
 
       {items === null ? (
         <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}><Spinner /></div>
@@ -57,21 +59,18 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
       )}
 
       <textarea
-        className={s.textarea}
+        className={c.textarea}
         maxLength={2000}
         placeholder="Задайте вопрос — его увидит только заказчик…"
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <div
-        className={s.checkline}
-        onClick={() => {
-          tapHaptic();
-          setAnon((v) => !v);
-        }}
-      >
-        <span className={`${s.cbx} ${anon ? s.cbxOn : ""}`}>{anon ? "✓" : ""}</span>
-        Задать анонимно — вопрос и ответ увидите только вы и заказчик
+      <div className={s.toggleRow}>
+        <div className={s.toggleText}>
+          <span className={s.toggleTitle}>Задать анонимно</span>
+          <span className={s.toggleHint}>Вопрос и ответ увидите только вы и заказчик</span>
+        </div>
+        <Toggle on={anon} onChange={setAnon} />
       </div>
       <div className={s.qaActions}>
         <span className={s.counter}>{text.length} / 2000</span>

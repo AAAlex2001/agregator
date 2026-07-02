@@ -1,0 +1,43 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.blockLab {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  padding-left: 2px;
+}
+
+.note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  padding-left: 2px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 84px;
+  border: none;
+  border-radius: 14px;
+  background: var(--card-2);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+  resize: none;
+  outline: none;
+  box-shadow: 0 0 0 0 rgba(255, 138, 0, 0);
+  transition: box-shadow 0.22s ease;
+}
+
+.textarea:focus {
+  box-shadow: 0 0 0 2px rgba(255, 138, 0, 0.4);
+}
+
+.textarea::placeholder {
+  color: var(--muted);
+}

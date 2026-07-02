@@ -1,15 +1,18 @@
-import { useRef } from "react";
+import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
+import { ChevronDownIcon, CloseIcon, UploadIcon } from "@/shared/ui/icons/interface";
+import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
-import { toKopecks, formatRub, formatDateRu } from "../../model/format";
-import s from "../respond-sheet.module.scss";
+import { toKopecks, formatRub, formatDateRu, formatSize } from "../../model/format";
+import s from "./offer-step.module.scss";
+import c from "./common.module.scss";
 
 const VAT_OPTIONS: { code: VatKind; label: string }[] = [
   { code: "NONE", label: "Без НДС" },
-  { code: "VAT_5", label: "С НДС 5%" },
-  { code: "VAT_7", label: "С НДС 7%" },
-  { code: "VAT_22", label: "С НДС 22%" },
+  { code: "VAT_5", label: "5%" },
+  { code: "VAT_7", label: "7%" },
+  { code: "VAT_22", label: "22%" },
 ];
 const VAT_RATE: Record<VatKind, number> = { NONE: 0, VAT_5: 5, VAT_7: 7, VAT_22: 22 };
 
@@ -33,35 +36,38 @@ interface Props {
 }
 
 export function OfferStep(p: Props) {
-  const fileRef = useRef<HTMLInputElement>(null);
   const base = toKopecks(p.sum);
   const rate = VAT_RATE[p.vat];
   const vatAmount = Math.round((base * rate) / 100);
 
   return (
-    <div className={s.step}>
+    <div className={c.step}>
       <div className={s.field}>
         <span className={s.fieldLab}>Срок начала выполнения работ</span>
         <button
-          className={`${s.control} ${s.dateBtn} ${p.startDate ? "" : s.dateEmpty}`}
+          type="button"
+          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.startDate })}
           onClick={() => {
             tapHaptic();
             p.onOpenDate("start");
           }}
         >
-          {p.startDate ? formatDateRu(p.startDate) : "Выберите дату"}<span>▾</span>
+          {p.startDate ? formatDateRu(p.startDate) : "Выберите дату"}
+          <ChevronDownIcon className={s.chev} />
         </button>
       </div>
       <div className={s.field}>
         <span className={s.fieldLab}>Срок окончания выполнения работ</span>
         <button
-          className={`${s.control} ${s.dateBtn} ${p.deadline ? "" : s.dateEmpty}`}
+          type="button"
+          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.deadline })}
           onClick={() => {
             tapHaptic();
             p.onOpenDate("end");
           }}
         >
-          {p.deadline ? formatDateRu(p.deadline) : "Выберите дату"}<span>▾</span>
+          {p.deadline ? formatDateRu(p.deadline) : "Выберите дату"}
+          <ChevronDownIcon className={s.chev} />
         </button>
       </div>
 
@@ -77,12 +83,13 @@ export function OfferStep(p: Props) {
       </div>
 
       <div className={s.field}>
-        <span className={s.fieldLab}>НДС</span>
-        <div className={s.vatGroup}>
+        <span className={s.fieldLab}>Ставка НДС</span>
+        <div className={s.seg}>
           {VAT_OPTIONS.map((o) => (
             <button
               key={o.code}
-              className={`${s.vat} ${p.vat === o.code ? s.vatOn : ""}`}
+              type="button"
+              className={cn(s.segBtn, { [s.segBtnOn]: p.vat === o.code })}
               onClick={() => {
                 tapHaptic();
                 p.onChangeVat(o.code);
@@ -101,7 +108,7 @@ export function OfferStep(p: Props) {
             <div className={s.bdTotal}><span>Итого</span><span>{formatRub(base + vatAmount)}</span></div>
           </div>
         )}
-        <span className={s.note}>
+        <span className={c.note}>
           Сумма ориентировочная. Точная стоимость согласуется с заказчиком после изучения ТЗ.
         </span>
       </div>
@@ -116,7 +123,7 @@ export function OfferStep(p: Props) {
       <div className={s.field}>
         <span className={s.fieldLab}>Комментарий для заказчика</span>
         <textarea
-          className={s.textarea}
+          className={c.textarea}
           placeholder="Напишите комментарий для заказчика…"
           value={p.comment}
           onChange={(e) => p.onChangeComment(e.target.value)}
@@ -125,31 +132,31 @@ export function OfferStep(p: Props) {
 
       <div className={s.field}>
         <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
-        <input
-          ref={fileRef}
-          type="file"
-          multiple
-          hidden
-          onChange={(e) => {
-            p.onAddFiles(e.target.files);
-            e.target.value = "";
-          }}
-        />
-        <button
-          className={s.attach}
-          onClick={() => {
-            tapHaptic();
-            fileRef.current?.click();
-          }}
-        >
-          + Прикрепить файлы
-        </button>
+        <label className={s.dropzone} onClick={() => tapHaptic()}>
+          <input
+            type="file"
+            multiple
+            className={s.fileInput}
+            onChange={(e) => {
+              p.onAddFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <UploadIcon className={s.dropIcon} />
+          <span className={s.dropTitle}>Прикрепить файлы</span>
+          <span className={s.dropHint}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
+        </label>
         {p.files.length > 0 && (
           <ul className={s.fileList}>
             {p.files.map((f, i) => (
               <li key={i} className={s.fileItem}>
-                <span className={s.fileName}>{f.name}</span>
+                <FileTypeIcon name={f.name} className={s.fileIcon} />
+                <div className={s.fileMeta}>
+                  <span className={s.fileName}>{f.name}</span>
+                  <span className={s.fileSize}>{formatSize(f.size)}</span>
+                </div>
                 <button
+                  type="button"
                   className={s.fileRemove}
                   onClick={() => {
                     tapHaptic();
@@ -157,7 +164,7 @@ export function OfferStep(p: Props) {
                   }}
                   aria-label="Удалить файл"
                 >
-                  ✕
+                  <CloseIcon width={16} height={16} />
                 </button>
               </li>
             ))}

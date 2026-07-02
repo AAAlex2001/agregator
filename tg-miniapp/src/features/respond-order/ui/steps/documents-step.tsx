@@ -1,5 +1,10 @@
+import cn from "classnames";
 import type { Order, OrderDocuments } from "@/entites/order";
-import s from "../respond-sheet.module.scss";
+import { openLink, tapHaptic } from "@/shared/services/telegram";
+import { FileTypeIcon } from "@/shared/ui/file-icon";
+import { DocIcon } from "@/shared/ui/icons/interface";
+import s from "./documents-step.module.scss";
+import c from "./common.module.scss";
 
 const CATEGORIES: { key: keyof OrderDocuments; label: string }[] = [
   { key: "technical", label: "Техническое задание" },
@@ -7,44 +12,53 @@ const CATEGORIES: { key: keyof OrderDocuments; label: string }[] = [
   { key: "company", label: "Карточка предприятия" },
 ];
 
-function ext(url: string): string {
-  const tail = url.split("?")[0].split(".").pop();
-  return tail ? tail.toUpperCase().slice(0, 4) : "ФАЙЛ";
-}
-
 interface Tile {
   label: string;
   url?: string;
+}
+
+function fileUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  return window.location.origin + (url.startsWith("/") ? url : `/${url}`);
 }
 
 export function DocumentsStep({ order }: { order: Order }) {
   const docs = order.documents;
   const others = docs?.other ?? [];
   const tiles: Tile[] = [
-    ...CATEGORIES.map((c) => ({ label: c.label, url: (docs?.[c.key] ?? [])[0] })),
+    ...CATEGORIES.map((cat) => ({ label: cat.label, url: (docs?.[cat.key] ?? [])[0] })),
     ...(others.length ? others.map((url, i) => ({ label: `Иное ${i + 1}`, url })) : [{ label: "Иное" }]),
   ];
   const hasAny = tiles.some((t) => t.url);
 
+  const open = (url: string) => {
+    tapHaptic();
+    openLink(fileUrl(url));
+  };
+
   return (
-    <div className={s.step}>
-      <span className={s.blockLab}>Документы заказчика</span>
+    <div className={c.step}>
+      <span className={c.blockLab}>Документы заказчика</span>
       <div className={s.docGrid}>
         {tiles.map((t, i) =>
           t.url ? (
-            <a key={i} className={s.doc} href={t.url} target="_blank" rel="noreferrer">
-              <span className={s.thumb}>{ext(t.url)}</span>
+            <button key={i} className={s.doc} onClick={() => open(t.url!)}>
+              <span className={s.thumb}>
+                <FileTypeIcon name={t.url} className={s.docIcon} />
+              </span>
               <span className={s.docCap}>{t.label}</span>
-            </a>
+            </button>
           ) : (
-            <div key={i} className={`${s.doc} ${s.docEmpty}`}>
-              <span className={s.thumb}>—</span>
+            <div key={i} className={cn(s.doc, s.docEmpty)}>
+              <span className={s.thumb}>
+                <DocIcon className={s.docEmptyIcon} />
+              </span>
               <span className={s.docCap}>{t.label}</span>
             </div>
           ),
         )}
       </div>
-      <p className={s.note}>
+      <p className={c.note}>
         {hasAny ? "Нажмите на документ, чтобы открыть." : "Заказчик пока не приложил документы."}
       </p>
     </div>

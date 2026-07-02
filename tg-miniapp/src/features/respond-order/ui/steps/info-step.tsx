@@ -1,10 +1,11 @@
 import type { Order } from "@/entites/order";
 import { formatDeadline } from "../../model/format";
-import s from "../respond-sheet.module.scss";
+import s from "./info-step.module.scss";
+import c from "./common.module.scss";
 
 export function InfoStep({ order }: { order: Order }) {
   return (
-    <div className={s.step}>
+    <div className={c.step}>
       <div className={s.metrics}>
         <div className={s.metric}>
           <span className={s.mCap}>📅 Начало работ</span>
@@ -56,12 +57,12 @@ export function InfoStep({ order }: { order: Order }) {
       </div>
 
       <div className={s.section}>
-        <span className={s.blockLab}>Название заказа</span>
+        <span className={c.blockLab}>Название заказа</span>
         <div className={s.card}><div className={s.textBlock}><p className={s.desc}>{order.title}</p></div></div>
       </div>
 
       <div className={s.section}>
-        <span className={s.blockLab}>Комментарий к заказу</span>
+        <span className={c.blockLab}>Комментарий к заказу</span>
         <div className={s.card}>
           <div className={s.textBlock}>
             <p className={`${s.desc} ${order.comment ? "" : s.muted}`}>
