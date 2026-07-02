@@ -1,62 +1,43 @@
-import { useRef, useState } from "react";
-import { BottomSheet, Button, TextField } from "@/shared/ui";
-import { CalendarPicker } from "@/shared/ui/calendar-picker";
+import { useEffect, useRef, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
-import { CheckIcon } from "@/shared/ui/icons/interface";
-import { orderDocuments, type Order } from "@/entites/order";
+import { CalendarPicker } from "@/shared/ui/calendar-picker";
+import type { Order } from "@/entites/order";
 import { createOrderResponse, type Party, type VatKind } from "../model/api";
-import { CompanySuggest } from "./company-suggest";
+import { toKopecks } from "../model/format";
+import { StepHero } from "./step-hero";
+import { InfoStep } from "./steps/info-step";
+import { DocumentsStep } from "./steps/documents-step";
+import { QuestionsStep } from "./steps/questions-step";
+import { ConfirmStep } from "./steps/confirm-step";
+import { OfferStep } from "./steps/offer-step";
 import s from "./respond-sheet.module.scss";
+
+const TOTAL = 5;
+type StepMeta = { image: string; illu: string; label: string; title: string; desc: string };
+
+const META: Record<number, StepMeta> = {
+  1: { image: "step-1", illu: "📋", label: "Шаг 1 из 5", title: "Информация по заказу", desc: "Изучите условия перед откликом" },
+  2: { image: "step-2", illu: "📎", label: "Шаг 2 из 5", title: "Документы заказчика", desc: "ТЗ, договор и другие вложения" },
+  3: { image: "step-3", illu: "💬", label: "Шаг 3 из 5", title: "Вопросы по заказу", desc: "Уточните детали у заказчика" },
+  4: { image: "step-4", illu: "🤝", label: "Шаг 4 из 5", title: "Подтверждение", desc: "Что произойдёт после отклика" },
+  5: { image: "step-5", illu: "✍️", label: "Шаг 5 из 5", title: "Ваше предложение", desc: "Сроки, цена и комментарий" },
+};
+const SUCCESS_META: StepMeta = { image: "success", illu: "🎉", label: "Готово", title: "Отклик отправлен", desc: "Ждите ответа в боте" };
 
 interface Props {
   order: Order | null;
   onClose: () => void;
 }
 
-const VAT_OPTIONS: { code: VatKind; label: string }[] = [
-  { code: "NONE", label: "Без НДС" },
-  { code: "VAT_5", label: "С НДС 5%" },
-  { code: "VAT_7", label: "С НДС 7%" },
-  { code: "VAT_22", label: "С НДС 22%" },
-];
-
-const VAT_RATE: Record<VatKind, number> = { NONE: 0, VAT_5: 5, VAT_7: 7, VAT_22: 22 };
-
-const TITLES = ["Отклик на заявку", "Подтверждение", "Ваше предложение"];
-
-function toKopecks(value: string): number {
-  const n = Number(value.replace(/\s/g, "").replace(",", "."));
-  return Number.isFinite(n) && n > 0 ? Math.round(n * 100) : 0;
-}
-
-function formatRub(kopecks: number): string {
-  const rub = Math.round(kopecks / 100);
-  return `${String(rub).replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ₽`;
-}
-
-function formatDateRu(iso: string): string {
-  const [year, month, day] = iso.split("-");
-  return `${day}.${month}.${year}`;
-}
-
-function formatDeadline(iso: string): string {
-  const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}, ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className={s.row}>
-      <span className={s.rowLabel}>{label}</span>
-      <span className={s.rowValue}>{value}</span>
-    </div>
-  );
-}
-
 export function RespondSheet({ order, onClose }: Props) {
-  const [step, setStep] = useState(0);
+  const open = order !== null;
+  const [rendered, setRendered] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [frozen, setFrozen] = useState<Order | null>(null);
+
+  const [step, setStep] = useState(1);
+  const [done, setDone] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [deadline, setDeadline] = useState("");
   const [sum, setSum] = useState("");
@@ -67,11 +48,11 @@ export function RespondSheet({ order, onClose }: Props) {
   const [files, setFiles] = useState<File[]>([]);
   const [calField, setCalField] = useState<"start" | "end" | null>(null);
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const close = () => {
-    setStep(0);
+  const reset = () => {
+    setStep(1);
+    setDone(false);
     setStartDate("");
     setDeadline("");
     setSum("");
@@ -82,32 +63,65 @@ export function RespondSheet({ order, onClose }: Props) {
     setFiles([]);
     setCalField(null);
     setBusy(false);
-    setDone(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      setFrozen(order);
+      setRendered(true);
+      setClosing(false);
+      return;
+    }
+    if (!rendered) return;
+    setClosing(true);
+    const timer = window.setTimeout(() => {
+      setRendered(false);
+      setClosing(false);
+      reset();
+    }, 320);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    if (order) reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.id]);
+
+  useEffect(() => {
+    if (!rendered) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [rendered]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step, done]);
+
+  const data = order ?? frozen;
+  if (!rendered || !data) return null;
+
+  const close = () => {
+    tapHaptic();
     onClose();
   };
 
-  const pickFiles = (list: FileList | null) => {
-    if (!list) return;
-    setFiles((prev) => [...prev, ...Array.from(list)]);
-  };
-
-  const removeFile = (index: number) => setFiles((prev) => prev.filter((_, i) => i !== index));
-
-  const needsCompany = order?.requires_license ?? false;
+  const needsCompany = data.requires_license;
+  const companyOk = !needsCompany || Boolean(party && party.data.inn);
+  const canSubmit = toKopecks(sum) > 0 && startDate !== "" && deadline !== "" && companyOk;
 
   const submit = async () => {
-    if (!order) return;
-    if (startDate && deadline && startDate > deadline) {
+    if (!canSubmit || busy) return;
+    if (startDate > deadline) {
       emitError("Срок начала не может быть позже срока окончания");
-      return;
-    }
-    if (needsCompany && !(party && party.data.inn)) {
-      emitError("Выберите организацию из списка");
       return;
     }
     setBusy(true);
     try {
-      await createOrderResponse(order.id, {
+      await createOrderResponse(data.id, {
         proposed_sum_amount: toKopecks(sum),
         proposed_start_date: startDate,
         proposed_deadline: deadline,
@@ -126,261 +140,102 @@ export function RespondSheet({ order, onClose }: Props) {
     }
   };
 
-  const base = toKopecks(sum);
-  const vatAmount = Math.round((base * VAT_RATE[vat]) / 100);
-  const total = base + vatAmount;
-  const companyOk = !needsCompany || Boolean(party && party.data.inn);
-  const canSubmit = base > 0 && startDate !== "" && deadline !== "" && companyOk;
-
-  const documents = order ? orderDocuments(order) : [];
+  const meta = done ? SUCCESS_META : META[step];
 
   return (
-    <BottomSheet open={order !== null} title={done ? "" : TITLES[step]} onClose={close}>
-      {order === null ? null : done ? (
-        <div className={s.success}>
-          <span className={s.check}>
-            <CheckIcon width={34} height={34} />
-          </span>
-          <p className={s.successTitle}>Отклик отправлен!</p>
-          <p className={s.successSub}>Заказчик увидит ваше предложение по заявке «{order.title}».</p>
-          <Button onClick={close}>Готово</Button>
-        </div>
-      ) : (
-        <div className={s.flow}>
-          <div className={s.dots}>
-            <span className={step === 0 ? s.dotActive : s.dot} />
-            <span className={step === 1 ? s.dotActive : s.dot} />
-            <span className={step === 2 ? s.dotActive : s.dot} />
-          </div>
+    <div className={`${s.overlay} ${closing ? s.closing : ""}`} onClick={close}>
+      <div className={`${s.sheet} ${closing ? s.closing : ""}`} onClick={(e) => e.stopPropagation()}>
+        <StepHero
+          image={meta.image}
+          illu={meta.illu}
+          step={step}
+          total={TOTAL}
+          label={meta.label}
+          title={meta.title}
+          desc={meta.desc}
+          showDots={!done}
+          onClose={close}
+        />
 
-          {step === 0 && (
-            <div className={s.info}>
-              <p className={s.orderTitle}>{order.title}</p>
-              {order.company && <p className={s.company}>{order.company}</p>}
-              <div className={s.rows}>
-                <Row label="Начальная цена" value={order.sum} />
-                {order.start_date && <Row label="Начало работ" value={order.start_date} />}
-                <Row label="Срок выполнения" value={order.date} />
-                {order.responses_deadline && (
-                  <Row label="Приём откликов до" value={formatDeadline(order.responses_deadline)} />
-                )}
+        <div className={s.scroll} ref={scrollRef}>
+          <div className={s.panel}>
+            {done ? (
+              <div className={s.success}>
+                <p className={s.successTitle}>Отклик отправлен!</p>
+                <p className={s.successSub}>
+                  Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота 🔔
+                </p>
               </div>
-
-              {order.comment && (
-                <div className={s.descBlock}>
-                  <span className={s.blockLabel}>Описание заказа</span>
-                  <p className={s.descText}>{order.comment}</p>
-                </div>
-              )}
-
-              {documents.length > 0 && (
-                <div className={s.descBlock}>
-                  <span className={s.blockLabel}>Документы</span>
-                  <div className={s.docs}>
-                    {documents.map((doc, index) => (
-                      <a
-                        key={index}
-                        className={s.doc}
-                        href={doc.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        📄 {doc.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {order.badges.length > 0 && (
-                <div className={s.badges}>
-                  {order.badges.map((badge, index) => (
-                    <span key={index} className={s.badge}>
-                      {badge.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className={s.confirm}>
-              <p className={s.confirmLead}>Что будет дальше</p>
-              <ul className={s.confirmList}>
-                <li>Отклик спишется с вашего тарифа.</li>
-                <li>Заказчик увидит ваше предложение: цену, сроки, комментарий и файлы.</li>
-                <li>Если заказчик выберет вас — он свяжется для заключения договора.</li>
-              </ul>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className={s.form}>
-              <div className={s.field}>
-                <span className={s.fieldLabel}>Срок начала выполнения работ</span>
-                <button
-                  type="button"
-                  className={`${s.dateBtn} ${startDate ? "" : s.dateEmpty}`}
-                  onClick={() => setCalField("start")}
-                >
-                  {startDate ? formatDateRu(startDate) : "Выберите дату"}
-                </button>
-              </div>
-              <div className={s.field}>
-                <span className={s.fieldLabel}>Срок окончания выполнения работ</span>
-                <button
-                  type="button"
-                  className={`${s.dateBtn} ${deadline ? "" : s.dateEmpty}`}
-                  onClick={() => setCalField("end")}
-                >
-                  {deadline ? formatDateRu(deadline) : "Выберите дату"}
-                </button>
-              </div>
-
-              <TextField
-                label="Ваша оценка стоимости работ"
-                inputMode="numeric"
-                placeholder="Сумма в рублях"
-                value={sum}
-                onChange={(e) => setSum(e.target.value)}
+            ) : step === 1 ? (
+              <InfoStep order={data} />
+            ) : step === 2 ? (
+              <DocumentsStep order={data} />
+            ) : step === 3 ? (
+              <QuestionsStep orderId={data.id} />
+            ) : step === 4 ? (
+              <ConfirmStep />
+            ) : (
+              <OfferStep
+                requiresLicense={needsCompany}
+                startDate={startDate}
+                deadline={deadline}
+                sum={sum}
+                vat={vat}
+                comment={comment}
+                companyName={companyName}
+                files={files}
+                onOpenDate={setCalField}
+                onChangeSum={setSum}
+                onChangeVat={setVat}
+                onChangeComment={setComment}
+                onCompanyText={(t) => {
+                  setCompanyName(t);
+                  setParty(null);
+                }}
+                onCompanyPick={(picked) => {
+                  setCompanyName(picked.value);
+                  setParty(picked);
+                }}
+                onAddFiles={(list) => list && setFiles((prev) => [...prev, ...Array.from(list)])}
+                onRemoveFile={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
               />
-
-              <div className={s.field}>
-                <span className={s.fieldLabel}>НДС</span>
-                <div className={s.vatGroup}>
-                  {VAT_OPTIONS.map((option) => (
-                    <button
-                      key={option.code}
-                      type="button"
-                      className={`${s.vatOption} ${vat === option.code ? s.vatActive : ""}`}
-                      onClick={() => {
-                        tapHaptic();
-                        setVat(option.code);
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-                {base > 0 && (
-                  <div className={s.breakdown}>
-                    <div className={s.bdRow}>
-                      <span>Стоимость работ</span>
-                      <span>{formatRub(base)}</span>
-                    </div>
-                    {vat !== "NONE" && (
-                      <div className={s.bdRow}>
-                        <span>НДС {VAT_RATE[vat]}%</span>
-                        <span>{formatRub(vatAmount)}</span>
-                      </div>
-                    )}
-                    <div className={s.bdTotal}>
-                      <span>Итого</span>
-                      <span>{formatRub(total)}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {needsCompany && (
-                <div className={s.field}>
-                  <span className={s.fieldLabel}>Организация для заключения договора</span>
-                  <CompanySuggest
-                    value={companyName}
-                    onChangeText={(text) => {
-                      setCompanyName(text);
-                      setParty(null);
-                    }}
-                    onPick={(picked) => {
-                      setCompanyName(picked.value);
-                      setParty(picked);
-                    }}
-                  />
-                </div>
-              )}
-
-              <div className={s.field}>
-                <span className={s.fieldLabel}>Комментарий для заказчика</span>
-                <textarea
-                  className={s.textarea}
-                  rows={3}
-                  placeholder="Напишите комментарий для заказчика…"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                />
-              </div>
-
-              <div className={s.field}>
-                <span className={s.fieldLabel}>Файлы к отклику (необязательно)</span>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  multiple
-                  hidden
-                  onChange={(e) => {
-                    pickFiles(e.target.files);
-                    e.target.value = "";
-                  }}
-                />
-                <button
-                  type="button"
-                  className={s.attachBtn}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  + Прикрепить файлы
-                </button>
-                {files.length > 0 && (
-                  <ul className={s.fileList}>
-                    {files.map((file, index) => (
-                      <li key={index} className={s.fileItem}>
-                        <span className={s.fileName}>{file.name}</span>
-                        <button
-                          type="button"
-                          className={s.fileRemove}
-                          onClick={() => removeFile(index)}
-                          aria-label="Удалить файл"
-                        >
-                          ✕
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className={s.footer}>
-            {step === 0 && <Button onClick={() => setStep(1)}>Откликнуться</Button>}
-            {step === 1 && (
-              <>
-                <Button variant="outline" onClick={() => setStep(0)}>
-                  Назад
-                </Button>
-                <Button onClick={() => setStep(2)}>Продолжить</Button>
-              </>
-            )}
-            {step === 2 && (
-              <>
-                <Button variant="outline" onClick={() => setStep(1)}>
-                  Назад
-                </Button>
-                <Button onClick={() => void submit()} loading={busy} disabled={!canSubmit}>
-                  Подать заявку
-                </Button>
-              </>
             )}
           </div>
-
-          <CalendarPicker
-            open={calField !== null}
-            value={calField === "start" ? startDate : deadline}
-            onClose={() => setCalField(null)}
-            onApply={(date) => (calField === "start" ? setStartDate(date) : setDeadline(date))}
-          />
         </div>
-      )}
-    </BottomSheet>
+
+        <div className={s.footer}>
+          {done ? (
+            <button className={`${s.btn} ${s.btnPrimary}`} onClick={close}>Готово</button>
+          ) : step === 1 ? (
+            <button className={`${s.btn} ${s.btnPrimary}`} onClick={() => setStep(2)}>Далее →</button>
+          ) : step === 5 ? (
+            <>
+              <button className={`${s.btn} ${s.btnOutline}`} onClick={() => setStep(4)}>Назад</button>
+              <button
+                className={`${s.btn} ${s.btnPrimary}`}
+                disabled={!canSubmit || busy}
+                onClick={() => void submit()}
+              >
+                Откликнуться →
+              </button>
+            </>
+          ) : (
+            <>
+              <button className={`${s.btn} ${s.btnOutline}`} onClick={() => setStep(step - 1)}>Назад</button>
+              <button className={`${s.btn} ${s.btnPrimary}`} onClick={() => setStep(step + 1)}>
+                {step === 4 ? "Продолжить" : "Далее →"}
+              </button>
+            </>
+          )}
+        </div>
+
+        <CalendarPicker
+          open={calField !== null}
+          value={calField === "start" ? startDate : deadline}
+          onClose={() => setCalField(null)}
+          onApply={(date) => (calField === "start" ? setStartDate(date) : setDeadline(date))}
+        />
+      </div>
+    </div>
   );
 }
