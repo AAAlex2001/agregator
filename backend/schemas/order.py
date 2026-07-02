@@ -113,6 +113,7 @@ class OrderResponse(BaseModel):
     date: str
     deadline_at: str = ""
     created_at_display: str = ""
+    created_at: str = ""
     responses_deadline: str | None = None
     requires_expert: bool
     requires_license: bool
@@ -251,6 +252,7 @@ class OrderResponse(BaseModel):
             date=date_display,
             deadline_at=order.deadline.isoformat(),
             created_at_display=created_at_display,
+            created_at=order.created_at.isoformat() if order.created_at else "",
             responses_deadline=responses_deadline_display,
             requires_expert=order.requires_expert,
             requires_license=order.requires_license,

@@ -25,6 +25,7 @@ export interface Order {
   start_date: string;
   date: string;
   deadline_at: string;
+  created_at: string;
   responses_deadline: string | null;
   requires_license: boolean;
   documents: OrderDocuments;

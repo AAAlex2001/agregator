@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/features/session";
 import { type Order } from "@/entites/order";
-import { type ResponseTab } from "@/entites/response";
 import { RespondSheet } from "@/features/respond-order";
 import { ResponsesPanel } from "@/features/responses";
 import { OrdersPanel } from "@/features/order-feed";
@@ -18,7 +17,6 @@ export function HomePage() {
   const { role } = useSession();
   const navigate = useNavigate();
   const [view, setView] = useState<FeedView>("orders");
-  const [respTab, setRespTab] = useState<ResponseTab>("all");
   const [filterOpen, setFilterOpen] = useState(false);
   const [soonOpen, setSoonOpen] = useState(false);
   const [soonTitle, setSoonTitle] = useState("");
@@ -84,7 +82,7 @@ export function HomePage() {
           {view === "archive" && (
             <OrdersPanel archived limit={20} empty={<p className={s.emptyLine}>Архив пуст</p>} />
           )}
-          {view === "responses" && <ResponsesPanel tab={respTab} />}
+          {view === "responses" && <ResponsesPanel />}
         </>
       ) : (
         <>
@@ -108,9 +106,7 @@ export function HomePage() {
       <FilterSheet
         open={filterOpen}
         view={view}
-        respTab={respTab}
         onChangeView={setView}
-        onChangeRespTab={setRespTab}
         onClose={() => setFilterOpen(false)}
       />
 

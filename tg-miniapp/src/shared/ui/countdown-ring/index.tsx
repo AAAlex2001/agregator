@@ -35,7 +35,7 @@ function tone(ms: number): "green" | "amber" | "red" {
   return "green";
 }
 
-export function CountdownRing({ deadline }: { deadline: string }) {
+export function CountdownRing({ deadline, from }: { deadline: string; from?: string }) {
   const target = deadlineTime(deadline);
   const [now, setNow] = useState(Date.now());
 
@@ -45,7 +45,9 @@ export function CountdownRing({ deadline }: { deadline: string }) {
   }, []);
 
   const remaining = Math.max(0, target - now);
-  const fraction = Math.min(1, remaining / FULL_MS);
+  const start = from ? deadlineTime(from) : target - FULL_MS;
+  const total = Math.max(target - start, HOUR);
+  const fraction = Math.min(1, Math.max(0, remaining / total));
   const offset = CIRC * (1 - fraction);
 
   return (

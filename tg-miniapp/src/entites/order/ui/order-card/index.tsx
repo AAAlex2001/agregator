@@ -20,7 +20,7 @@ export function OrderCard({ order, onClick }: { order: Order; onClick: () => voi
       </div>
       <div className={s.side}>
         <span className={s.sum}>{order.sum}</span>
-        <CountdownRing deadline={order.responses_deadline ?? order.deadline_at} />
+        <CountdownRing deadline={order.responses_deadline ?? order.deadline_at} from={order.created_at} />
       </div>
     </Card>
   );
