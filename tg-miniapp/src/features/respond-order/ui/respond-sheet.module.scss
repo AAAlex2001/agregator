@@ -36,7 +36,6 @@
 @keyframes heroIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes stepIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* HERO */
 .hero {
   position: relative;
   flex: none;
@@ -132,7 +131,6 @@
   place-items: center;
 }
 
-/* Подложка со скруглёнными углами, наезжает на hero; внутри — скролл контента */
 .scroll {
   position: relative;
   z-index: 4;
@@ -146,28 +144,29 @@
 }
 
 .panel {
+  box-sizing: border-box;
+  min-height: 100%;
   padding: 20px 16px calc(22px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
-/* Обёртка контента шага — плавная смена */
 .stepAnim {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 14px;
   animation: stepIn 0.3s ease;
 }
 
-/* Кнопки в конце шага (в потоке, не липкие) */
 .actions {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: auto;
+  padding-top: 16px;
 }
 
-/* Метрики */
 .metrics {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -197,7 +196,6 @@
   color: var(--accent);
 }
 
-/* Карточка со строками */
 .card {
   background: var(--card);
   border: 1px solid var(--hairline);
@@ -282,7 +280,6 @@
   color: var(--muted);
 }
 
-/* Документы */
 .docGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -322,7 +319,6 @@
   line-height: 1.2;
 }
 
-/* Вопросы */
 .qaList {
   display: flex;
   flex-direction: column;
@@ -415,7 +411,6 @@
   color: var(--muted);
 }
 
-/* Что дальше */
 .lead {
   font-size: 15px;
   font-weight: 700;
@@ -451,7 +446,6 @@
   font-weight: 800;
 }
 
-/* Форма */
 .field {
   display: flex;
   flex-direction: column;
@@ -600,7 +594,6 @@
   cursor: pointer;
 }
 
-/* Секция-обёртка шага */
 .step {
   display: flex;
   flex-direction: column;
@@ -613,7 +606,6 @@
   gap: 8px;
 }
 
-/* Success */
 .success {
   display: flex;
   flex-direction: column;

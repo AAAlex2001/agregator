@@ -8,8 +8,6 @@ interface Props {
   className?: string;
 }
 
-// Растровая картинка с двумя вариантами под тему: рендерим обе, ненужную прячет CSS по [data-theme].
-// Если файла ещё нет (404) — прячем битую картинку, под ней остаётся градиент-фолбэк родителя.
 const hideBroken = (e: React.SyntheticEvent<HTMLImageElement>) => {
   e.currentTarget.style.display = "none";
 };

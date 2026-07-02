@@ -98,7 +98,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     try {
       await apiLogout();
     } catch {
-      /* всё равно сбрасываем локально */
+      setAuthed(false);
     }
     setAuthed(false);
     setRole(null);
