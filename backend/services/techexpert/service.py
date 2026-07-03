@@ -2,7 +2,7 @@ from typing import Literal
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from dependencies.auth import get_current_user
 
@@ -56,6 +56,11 @@ class TechExpertTipsResponse(BaseModel):
 
 class TechExpertNamed(BaseModel):
     name: str = ""
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def empty_if_null(cls, value: object) -> object:
+        return value if isinstance(value, str) else ""
 
 
 class TechExpertRegistration(BaseModel):
