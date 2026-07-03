@@ -6,6 +6,12 @@
   gap: 12px;
 }
 
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .hint {
   margin: 0;
   font-size: 13px;

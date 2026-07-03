@@ -1,9 +1,10 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import cn from "classnames";
 import s from "./style.module.scss";
 
 interface Frozen {
   hero: ReactNode;
+  footer: ReactNode;
   content: ReactNode;
 }
 
@@ -11,13 +12,16 @@ interface Props {
   open: boolean;
   onClose: () => void;
   hero: ReactNode;
+  footer?: ReactNode;
+  scrollKey?: unknown;
   children: ReactNode;
 }
 
-export function FullSheet({ open, onClose, hero, children }: Props) {
+export function FullSheet({ open, onClose, hero, footer = null, scrollKey, children }: Props) {
   const [rendered, setRendered] = useState(open);
   const [closing, setClosing] = useState(false);
-  const [frozen, setFrozen] = useState<Frozen>({ hero, content: children });
+  const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -35,8 +39,8 @@ export function FullSheet({ open, onClose, hero, children }: Props) {
   }, [open, rendered]);
 
   useEffect(() => {
-    if (open) setFrozen({ hero, content: children });
-  }, [open, hero, children]);
+    if (open) setFrozen({ hero, footer, content: children });
+  }, [open, hero, footer, children]);
 
   useEffect(() => {
     if (!rendered) return;
@@ -51,17 +55,22 @@ export function FullSheet({ open, onClose, hero, children }: Props) {
     };
   }, [rendered]);
 
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [scrollKey]);
+
   if (!rendered) return null;
 
-  const view: Frozen = open ? { hero, content: children } : frozen;
+  const view: Frozen = open ? { hero, footer, content: children } : frozen;
 
   return (
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         {view.hero}
-        <div className={s.scroll}>
+        <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>{view.content}</div>
         </div>
+        {view.footer && <div className={s.footer}>{view.footer}</div>}
       </div>
     </div>
   );

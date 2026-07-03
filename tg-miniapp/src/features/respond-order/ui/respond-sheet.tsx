@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
-import { Button } from "@/shared/ui";
+import { useEffect, useState } from "react";
+import { tapHaptic } from "@/shared/services/telegram";
+import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import type { Order } from "@/entites/order";
-import { createOrderResponse, type Party, type VatKind } from "../model/api";
-import { toKopecks } from "../model/format";
-import { StepHero } from "./step-hero";
+import { useRespondForm } from "../model/use-respond-form";
 import { InfoStep } from "./steps/info-step";
 import { DocumentsStep } from "./steps/documents-step";
 import { QuestionsStep } from "./steps/questions-step";
@@ -15,16 +12,16 @@ import { OfferStep } from "./steps/offer-step";
 import s from "./respond-sheet.module.scss";
 
 const TOTAL = 5;
-type StepMeta = { image: string; illu: string; label: string; title: string; desc: string };
+type StepMeta = { image: string; label: string; title: string; desc: string };
 
 const META: Record<number, StepMeta> = {
-  1: { image: "step-1", illu: "📋", label: "Шаг 1 из 5", title: "Информация по заказу", desc: "Изучите условия перед откликом" },
-  2: { image: "step-2", illu: "📎", label: "Шаг 2 из 5", title: "Документы заказчика", desc: "ТЗ, договор и другие вложения" },
-  3: { image: "step-3", illu: "💬", label: "Шаг 3 из 5", title: "Вопросы по заказу", desc: "Уточните детали у заказчика" },
-  4: { image: "step-4", illu: "🤝", label: "Шаг 4 из 5", title: "Подтверждение", desc: "Что произойдёт после отклика" },
-  5: { image: "step-5", illu: "✍️", label: "Шаг 5 из 5", title: "Ваше предложение", desc: "Сроки, цена и комментарий" },
+  1: { image: "step-1", label: "Шаг 1 из 5", title: "Информация по заказу", desc: "Изучите условия перед откликом" },
+  2: { image: "step-2", label: "Шаг 2 из 5", title: "Документы заказчика", desc: "ТЗ, договор и другие вложения" },
+  3: { image: "step-3", label: "Шаг 3 из 5", title: "Вопросы по заказу", desc: "Уточните детали у заказчика" },
+  4: { image: "step-4", label: "Шаг 4 из 5", title: "Подтверждение", desc: "Что произойдёт после отклика" },
+  5: { image: "step-5", label: "Шаг 5 из 5", title: "Ваше предложение", desc: "Сроки, цена и комментарий" },
 };
-const SUCCESS_META: StepMeta = { image: "success", illu: "🎉", label: "Готово", title: "Отклик отправлен", desc: "Ждите ответа в боте" };
+const SUCCESS_META: StepMeta = { image: "success", label: "Готово", title: "Отклик отправлен", desc: "Ждите ответа в боте" };
 
 interface Props {
   order: Order | null;
@@ -33,140 +30,38 @@ interface Props {
 
 export function RespondSheet({ order, onClose }: Props) {
   const open = order !== null;
-  const [rendered, setRendered] = useState(false);
-  const [closing, setClosing] = useState(false);
-  const [frozen, setFrozen] = useState<Order | null>(null);
-
   const [step, setStep] = useState(1);
-  const [done, setDone] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [sum, setSum] = useState("");
-  const [vat, setVat] = useState<VatKind>("NONE");
-  const [comment, setComment] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [party, setParty] = useState<Party | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
   const [calField, setCalField] = useState<"start" | "end" | null>(null);
-  const [busy, setBusy] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const { state, needsCompany, canSubmit, submit, dispatch } = useRespondForm(order);
 
-  const reset = () => {
+  useEffect(() => {
+    if (!open) return;
     setStep(1);
-    setDone(false);
-    setStartDate("");
-    setDeadline("");
-    setSum("");
-    setVat("NONE");
-    setComment("");
-    setCompanyName("");
-    setParty(null);
-    setFiles([]);
     setCalField(null);
-    setBusy(false);
-  };
-
-  useEffect(() => {
-    if (open) {
-      setFrozen(order);
-      setRendered(true);
-      setClosing(false);
-      return;
-    }
-    if (!rendered) return;
-    setClosing(true);
-    const timer = window.setTimeout(() => {
-      setRendered(false);
-      setClosing(false);
-      reset();
-    }, 320);
-    return () => window.clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  useEffect(() => {
-    if (order) reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order?.id]);
-
-  useEffect(() => {
-    if (!rendered) return;
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-    };
-  }, [rendered]);
-
-  useEffect(() => {
-    if (!rendered) return;
-    const names = ["step-1", "step-2", "step-3", "step-4", "step-5", "success"];
-    for (const name of names) {
+    for (const meta of [...Object.values(META), SUCCESS_META]) {
       for (const theme of ["light", "dark"]) {
         const img = new Image();
-        img.src = `/respond-order/${name}-${theme}.webp`;
+        img.src = `/respond-order/${meta.image}-${theme}.webp`;
       }
     }
-  }, [rendered]);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step, done]);
-
-  const data = order ?? frozen;
-  if (!rendered || !data) return null;
+  }, [open]);
 
   const close = () => {
     tapHaptic();
     onClose();
   };
 
-  const needsCompany = data.requires_license;
-  const companyOk = !needsCompany || Boolean(party && party.data.inn);
-  const canSubmit = toKopecks(sum) > 0 && startDate !== "" && deadline !== "" && companyOk;
+  const meta = state.done ? SUCCESS_META : META[step];
+  const pinned = step === 1 && !state.done;
 
-  const submit = async () => {
-    if (!canSubmit || busy) return;
-    if (startDate > deadline) {
-      emitError("Срок начала не может быть позже срока окончания");
-      return;
-    }
-    setBusy(true);
-    try {
-      await createOrderResponse(data.id, {
-        proposed_sum_amount: toKopecks(sum),
-        proposed_start_date: startDate,
-        proposed_deadline: deadline,
-        vat_kind: vat,
-        comment: comment.trim(),
-        expert_inn: needsCompany ? party?.data.inn ?? undefined : undefined,
-        expert_company_data: needsCompany && party ? JSON.stringify(party) : undefined,
-        files,
-      });
-      notifyHaptic("success");
-      setDone(true);
-    } catch (e) {
-      emitError(e instanceof Error ? e.message : "Не удалось откликнуться");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const meta = done ? SUCCESS_META : META[step];
-  const pinnedActions = step === 1 && !done;
-
-  const actionsContent = done ? (
+  const actions = state.done ? (
     <Button onClick={close}>Готово</Button>
   ) : step === 1 ? (
     <Button onClick={() => setStep(2)}>Далее</Button>
   ) : step === 5 ? (
     <>
       <Button variant="outline" onClick={() => setStep(4)}>Назад</Button>
-      <Button disabled={!canSubmit} loading={busy} onClick={() => void submit()}>
+      <Button disabled={!canSubmit} loading={state.busy} onClick={() => void submit()}>
         Откликнуться
       </Button>
     </>
@@ -178,83 +73,75 @@ export function RespondSheet({ order, onClose }: Props) {
   );
 
   return (
-    <div className={`${s.overlay} ${closing ? s.closing : ""}`} onClick={close}>
-      <div className={`${s.sheet} ${closing ? s.closing : ""}`} onClick={(e) => e.stopPropagation()}>
-        <StepHero
+    <FullSheet
+      open={open}
+      onClose={close}
+      scrollKey={state.done ? "done" : step}
+      hero={
+        <SheetHero
           key={meta.image}
-          image={meta.image}
-          illu={meta.illu}
-          step={step}
-          total={TOTAL}
+          light={`/respond-order/${meta.image}-light.webp`}
+          dark={`/respond-order/${meta.image}-dark.webp`}
           label={meta.label}
           title={meta.title}
           desc={meta.desc}
-          showDots={!done}
+          step={state.done ? undefined : step}
+          total={state.done ? undefined : TOTAL}
           onClose={close}
         />
-
-        <div className={s.scroll} ref={scrollRef}>
-          <div className={s.panel}>
-            <div key={done ? "done" : step} className={s.stepAnim}>
-              {done ? (
-                <div className={s.success}>
-                  <p className={s.successTitle}>Отклик отправлен!</p>
-                  <p className={s.successSub}>
-                    Заказчик увидит ваше предложение по заявке «{data.title}». Ответ придёт в бота
-                  </p>
-                </div>
-              ) : step === 1 ? (
-                <InfoStep order={data} />
-              ) : step === 2 ? (
-                <DocumentsStep order={data} />
-              ) : step === 3 ? (
-                <QuestionsStep orderId={data.id} />
-              ) : step === 4 ? (
-                <ConfirmStep />
-              ) : (
-                <OfferStep
-                  requiresLicense={needsCompany}
-                  startDate={startDate}
-                  deadline={deadline}
-                  sum={sum}
-                  vat={vat}
-                  comment={comment}
-                  companyName={companyName}
-                  files={files}
-                  onOpenDate={setCalField}
-                  onChangeSum={setSum}
-                  onChangeVat={setVat}
-                  onChangeComment={setComment}
-                  onCompanyText={(t) => {
-                    setCompanyName(t);
-                    setParty(null);
-                  }}
-                  onCompanyPick={(picked) => {
-                    setCompanyName(picked.value);
-                    setParty(picked);
-                  }}
-                  onAddFiles={(list) => {
-                    const picked = list ? Array.from(list) : [];
-                    if (picked.length) setFiles((prev) => [...prev, ...picked]);
-                  }}
-                  onRemoveFile={(i) => setFiles((prev) => prev.filter((_, j) => j !== i))}
-                />
-              )}
-
-              {!pinnedActions && <div className={s.actions}>{actionsContent}</div>}
+      }
+      footer={pinned ? actions : null}
+    >
+      {order && (
+        <div className={s.body}>
+          {state.done ? (
+            <div className={s.success}>
+              <p className={s.successTitle}>Отклик отправлен!</p>
+              <p className={s.successSub}>
+                Заказчик увидит ваше предложение по заявке «{order.title}». Ответ придёт в бота
+              </p>
             </div>
-          </div>
+          ) : step === 1 ? (
+            <InfoStep order={order} />
+          ) : step === 2 ? (
+            <DocumentsStep order={order} />
+          ) : step === 3 ? (
+            <QuestionsStep orderId={order.id} />
+          ) : step === 4 ? (
+            <ConfirmStep />
+          ) : (
+            <OfferStep
+              requiresLicense={needsCompany}
+              startDate={state.startDate}
+              deadline={state.deadline}
+              sum={state.sum}
+              vat={state.vat}
+              comment={state.comment}
+              companyName={state.companyName}
+              files={state.files}
+              onOpenDate={setCalField}
+              onChangeSum={(value) => dispatch({ type: "sum", value })}
+              onChangeVat={(value) => dispatch({ type: "vat", value })}
+              onChangeComment={(value) => dispatch({ type: "comment", value })}
+              onCompanyText={(value) => dispatch({ type: "companyText", value })}
+              onCompanyPick={(party) => dispatch({ type: "companyPick", party })}
+              onAddFiles={(list) => dispatch({ type: "addFiles", files: list ? Array.from(list) : [] })}
+              onRemoveFile={(index) => dispatch({ type: "removeFile", index })}
+            />
+          )}
+
+          {!pinned && <div className={s.actions}>{actions}</div>}
+
+          <CalendarPicker
+            open={calField !== null}
+            value={calField === "start" ? state.startDate : state.deadline}
+            onClose={() => setCalField(null)}
+            onApply={(date) =>
+              dispatch(calField === "start" ? { type: "startDate", value: date } : { type: "deadline", value: date })
+            }
+          />
         </div>
-
-        {pinnedActions && <div className={s.footer}>{actionsContent}</div>}
-
-        <CalendarPicker
-          open={calField !== null}
-          value={calField === "start" ? startDate : deadline}
-          onClose={() => setCalField(null)}
-          onApply={(date) => (calField === "start" ? setStartDate(date) : setDeadline(date))}
-        />
-      </div>
-    </div>
+      )}
+    </FullSheet>
   );
 }

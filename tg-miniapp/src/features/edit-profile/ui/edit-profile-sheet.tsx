@@ -1,4 +1,4 @@
-import { Button, CodeInput, FullSheet, SheetHero, TextField } from "@/shared/ui";
+import { Button, Card, CodeInput, FullSheet, SheetHero, TextField } from "@/shared/ui";
 import { SuccessModal } from "@/widgets/success-modal";
 import { tapHaptic } from "@/shared/services/telegram";
 import { PHONE_PLACEHOLDER, formatPhone } from "@/shared/lib/phone";
@@ -49,7 +49,7 @@ export function EditProfileSheet({ kind, onClose }: Props) {
       {kind && meta && (
         <div className={s.body}>
           {kind === "name" && (
-            <>
+            <Card className={s.fields}>
               <TextField
                 label="Ваше имя"
                 placeholder="Имя"
@@ -62,29 +62,33 @@ export function EditProfileSheet({ kind, onClose }: Props) {
                 value={form.state.last}
                 onChange={(e) => form.setField({ type: "last", value: e.target.value })}
               />
-            </>
+            </Card>
           )}
 
           {kind === "phone" && (
-            <TextField
-              label="Ваш телефон"
-              placeholder={PHONE_PLACEHOLDER}
-              inputMode="tel"
-              value={form.state.phone}
-              onChange={(e) => form.setField({ type: "phone", value: formatPhone(e.target.value) })}
-            />
+            <Card className={s.fields}>
+              <TextField
+                label="Ваш телефон"
+                placeholder={PHONE_PLACEHOLDER}
+                inputMode="tel"
+                value={form.state.phone}
+                onChange={(e) => form.setField({ type: "phone", value: formatPhone(e.target.value) })}
+              />
+            </Card>
           )}
 
           {kind === "email" && form.state.stage === "email" && (
             <>
-              <TextField
-                label="Ваша почта"
-                placeholder="Новая почта"
-                type="email"
-                inputMode="email"
-                value={form.state.email}
-                onChange={(e) => form.setField({ type: "email", value: e.target.value })}
-              />
+              <Card className={s.fields}>
+                <TextField
+                  label="Ваша почта"
+                  placeholder="Новая почта"
+                  type="email"
+                  inputMode="email"
+                  value={form.state.email}
+                  onChange={(e) => form.setField({ type: "email", value: e.target.value })}
+                />
+              </Card>
               <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
             </>
           )}

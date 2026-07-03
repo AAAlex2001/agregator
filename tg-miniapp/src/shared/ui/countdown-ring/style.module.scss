@@ -1,0 +1,90 @@
+.ring {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: var(--hairline);
+  stroke-width: 4;
+}
+
+.arc {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.label {
+  position: relative;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 800;
+  color: currentColor;
+}
+
+.spark {
+  position: absolute;
+  z-index: 3;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+  opacity: 0;
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+.spark:nth-child(3) {
+  top: 1px;
+  left: 22px;
+  animation-delay: 0s;
+}
+
+.spark:nth-child(4) {
+  top: 22px;
+  right: 1px;
+  animation-delay: 0.8s;
+}
+
+.spark:nth-child(5) {
+  bottom: 3px;
+  left: 7px;
+  animation-delay: 1.6s;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.green {
+  color: #2fbf5c;
+}
+
+.amber {
+  color: var(--accent);
+}
+
+.red {
+  color: #e7000b;
+}

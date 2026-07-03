@@ -1,11 +1,7 @@
-import { useState } from "react";
 import { BottomSheet, Button, TextField } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
-import { useSession } from "@/features/session";
-import { switchRole } from "@/entites/profile";
-import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic } from "@/shared/services/telegram";
 import type { Role } from "@/shared/services/api";
+import { useRoleSwitch } from "../model/use-role-switch";
 import s from "./role-tabs.module.scss";
 
 const LABEL: Record<Role, string> = {
@@ -15,38 +11,9 @@ const LABEL: Record<Role, string> = {
 };
 
 export function RoleTabs() {
-  const { role, availableRoles, reloadProfile } = useSession();
-  const [target, setTarget] = useState<Role | null>(null);
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
+  const { role, availableRoles, state, dispatch, pick, confirm } = useRoleSwitch();
 
   if (!role || availableRoles.length < 2) return null;
-
-  const pick = (next: Role) => {
-    if (next === role) return;
-    const item = availableRoles.find((a) => a.role === next);
-    if (item && !item.email_verified) {
-      emitError("Сначала подтвердите почту для этой роли");
-      return;
-    }
-    setPassword("");
-    setTarget(next);
-  };
-
-  const confirm = async () => {
-    if (!target) return;
-    setBusy(true);
-    try {
-      await switchRole(target, password);
-      notifyHaptic("success");
-      await reloadProfile();
-      setTarget(null);
-    } catch (e) {
-      emitError(e instanceof Error ? e.message : "Не удалось сменить роль");
-    } finally {
-      setBusy(false);
-    }
-  };
 
   return (
     <div className={s.wrap}>
@@ -58,23 +25,23 @@ export function RoleTabs() {
       />
 
       <BottomSheet
-        open={target !== null}
-        title={target ? `Войти как ${LABEL[target].toLowerCase()}` : ""}
-        onClose={() => setTarget(null)}
+        open={state.target !== null}
+        title={state.target ? `Войти как ${LABEL[state.target].toLowerCase()}` : ""}
+        onClose={() => dispatch({ type: "close" })}
       >
         <div className={s.confirm}>
           <p className={s.hint}>Введите пароль от аккаунта этой роли.</p>
           <TextField
             password
             placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={state.password}
+            onChange={(e) => dispatch({ type: "password", value: e.target.value })}
           />
           <div className={s.actions}>
-            <Button variant="outline" onClick={() => setTarget(null)}>
+            <Button variant="outline" onClick={() => dispatch({ type: "close" })}>
               Отмена
             </Button>
-            <Button onClick={() => void confirm()} loading={busy} disabled={password.length < 6}>
+            <Button onClick={() => void confirm()} loading={state.busy} disabled={state.password.length < 6}>
               Войти
             </Button>
           </div>

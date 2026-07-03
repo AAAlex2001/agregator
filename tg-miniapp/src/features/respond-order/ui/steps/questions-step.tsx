@@ -1,55 +1,25 @@
-import { useEffect, useState } from "react";
 import { Button, Spinner } from "@/shared/ui";
 import { Toggle } from "@/shared/ui/toggle";
-import { emitError } from "@/shared/services/error-bus";
-import { notifyHaptic } from "@/shared/services/telegram";
-import { fetchOrderQuestions, askOrderQuestion, type OrderQuestion } from "@/entites/order-question";
+import { useOrderQuestions } from "../../model/use-order-questions";
 import s from "./questions-step.module.scss";
 import c from "./common.module.scss";
 
 export function QuestionsStep({ orderId }: { orderId: number }) {
-  const [items, setItems] = useState<OrderQuestion[] | null>(null);
-  const [text, setText] = useState("");
-  const [anon, setAnon] = useState(true);
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    fetchOrderQuestions(orderId)
-      .then((r) => active && setItems(r.items))
-      .catch(() => active && setItems([]));
-    return () => {
-      active = false;
-    };
-  }, [orderId]);
-
-  const ask = async () => {
-    const question = text.trim();
-    if (!question || busy) return;
-    setBusy(true);
-    try {
-      const created = await askOrderQuestion(orderId, question, anon);
-      setItems((prev) => [created, ...(prev ?? [])]);
-      setText("");
-      notifyHaptic("success");
-    } catch (e) {
-      emitError(e instanceof Error ? e.message : "Не удалось отправить вопрос");
-    } finally {
-      setBusy(false);
-    }
-  };
+  const { state, dispatch, ask } = useOrderQuestions(orderId);
 
   return (
     <div className={c.step}>
       <span className={c.blockLab}>Вопросы по заказу</span>
 
-      {items === null ? (
-        <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}><Spinner /></div>
-      ) : items.length === 0 ? (
+      {state.items === null ? (
+        <div className={s.loading}>
+          <Spinner />
+        </div>
+      ) : state.items.length === 0 ? (
         <span className={s.qaEmpty}>Вопросов пока нет.</span>
       ) : (
         <div className={s.qaList}>
-          {items.map((q) => (
+          {state.items.map((q) => (
             <div key={q.id} className={s.qaItem}>
               <div className={s.qaQ}>{q.question}</div>
               <div className={s.qaA}>{q.answer ? `Ответ: ${q.answer}` : "Ожидает ответа заказчика"}</div>
@@ -62,24 +32,19 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
         className={c.textarea}
         maxLength={2000}
         placeholder="Задайте вопрос — его увидит только заказчик…"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        value={state.text}
+        onChange={(e) => dispatch({ type: "text", value: e.target.value })}
       />
       <div className={s.toggleRow}>
         <div className={s.toggleText}>
           <span className={s.toggleTitle}>Задать анонимно</span>
           <span className={s.toggleHint}>Вопрос и ответ увидите только вы и заказчик</span>
         </div>
-        <Toggle on={anon} onChange={setAnon} />
+        <Toggle on={state.anon} onChange={(value) => dispatch({ type: "anon", value })} />
       </div>
       <div className={s.qaActions}>
-        <span className={s.counter}>{text.length} / 2000</span>
-        <Button
-          style={{ width: "auto", height: 42, padding: "0 18px" }}
-          disabled={!text.trim()}
-          loading={busy}
-          onClick={() => void ask()}
-        >
+        <span className={s.counter}>{state.text.length} / 2000</span>
+        <Button className={s.askBtn} disabled={!state.text.trim()} loading={state.busy} onClick={() => void ask()}>
           Задать вопрос
         </Button>
       </div>

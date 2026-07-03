@@ -1,9 +1,7 @@
-import { useState, type ComponentType } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSession } from "@/features/session";
-import { ApiError, type Role } from "@/shared/services/api";
-import { emitError } from "@/shared/services/error-bus";
+import { type ComponentType } from "react";
+import { type Role } from "@/shared/services/api";
 import { tapHaptic } from "@/shared/services/telegram";
+import { useAuthForm } from "@/features/session";
 import { Button, TextField, BottomSheet, Logo } from "@/shared/ui";
 import { MailIcon, LockIcon } from "@/shared/ui/icons/interface";
 import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
@@ -15,38 +13,8 @@ const ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?: numb
   LICENSE_HOLDER: { label: "Вы — держатель лицензии", Icon: LicenseRoleIcon },
 };
 
-function availableRoles(error: unknown): Role[] | null {
-  if (!(error instanceof ApiError) || error.status !== 409) return null;
-  const roles = (error.body as { detail?: { available_roles?: Role[] } } | null)?.detail?.available_roles;
-  return roles && roles.length ? roles : null;
-}
-
 export function AuthPage() {
-  const { signInLink } = useSession();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [rolesOpen, setRolesOpen] = useState(false);
-
-  const submit = async (role?: Role) => {
-    setLoading(true);
-    try {
-      await signInLink(email.trim(), password, role);
-      navigate("/", { replace: true });
-    } catch (e) {
-      const avail = availableRoles(e);
-      if (avail) {
-        setRoles(avail);
-        setRolesOpen(true);
-        return;
-      }
-      emitError(e instanceof Error ? e.message : "Не удалось войти");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { state, dispatch, submit } = useAuthForm();
 
   return (
     <div className={s.page}>
@@ -70,27 +38,27 @@ export function AuthPage() {
             inputMode="email"
             autoComplete="email"
             placeholder="Электронная почта"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={state.email}
+            onChange={(e) => dispatch({ type: "email", value: e.target.value })}
           />
           <TextField
             icon={<LockIcon width={20} height={20} />}
             password
             autoComplete="current-password"
             placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={state.password}
+            onChange={(e) => dispatch({ type: "password", value: e.target.value })}
           />
-          <Button type="submit" loading={loading}>
+          <Button type="submit" loading={state.loading}>
             Войти
           </Button>
         </form>
       </div>
 
-      <BottomSheet open={rolesOpen} title="Под какой ролью войти?" onClose={() => setRolesOpen(false)}>
+      <BottomSheet open={state.rolesOpen} title="Под какой ролью войти?" onClose={() => dispatch({ type: "closeRoles" })}>
         <p className={s.roleHint}>На эти данные зарегистрировано несколько аккаунтов</p>
         <div className={s.roleList}>
-          {roles.map((r) => {
+          {state.roles.map((r) => {
             const { label, Icon } = ROLE_META[r];
             return (
               <button
@@ -98,7 +66,7 @@ export function AuthPage() {
                 className={s.roleBtn}
                 onClick={() => {
                   tapHaptic();
-                  setRolesOpen(false);
+                  dispatch({ type: "closeRoles" });
                   void submit(r);
                 }}
               >
@@ -109,7 +77,7 @@ export function AuthPage() {
               </button>
             );
           })}
-          <Button variant="outline" onClick={() => setRolesOpen(false)}>
+          <Button variant="outline" onClick={() => dispatch({ type: "closeRoles" })}>
             Отмена
           </Button>
         </div>

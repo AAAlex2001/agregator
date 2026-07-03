@@ -1,3 +1,9 @@
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
 .qaList {
   display: flex;
   flex-direction: column;
@@ -62,4 +68,10 @@
 .counter {
   font-size: 12px;
   color: var(--muted);
+}
+
+.askBtn {
+  width: auto;
+  height: 42px;
+  padding: 0 18px;
 }

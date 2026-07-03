@@ -1,5 +1,5 @@
 import { Button, Card } from "@/shared/ui";
-import { CountdownBar } from "@/shared/ui/countdown-bar";
+import { CountdownRing } from "@/shared/ui/countdown-ring";
 import type { ExpertResponse } from "../../model/types";
 import { statusMeta, canWithdraw, canRestore } from "../../model/status";
 import s from "./style.module.scss";
@@ -26,11 +26,10 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
       {customer && <span className={s.customer}>{customer}</span>}
 
       {response.status === "REVIEW" && response.order_responses_deadline && (
-        <CountdownBar
-          deadline={response.order_responses_deadline}
-          from={response.order_created_at || undefined}
-          label="До окончания приёма откликов"
-        />
+        <div className={s.deadline}>
+          <CountdownRing deadline={response.order_responses_deadline} from={response.order_created_at || undefined} />
+          <span className={s.deadlineText}>До конца приёма откликов</span>
+        </div>
       )}
 
       <div className={s.sums}>
@@ -49,12 +48,12 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
       {(canWithdraw(response.status) || canRestore(response.status)) && (
         <div className={s.actions}>
           {canWithdraw(response.status) && (
-            <Button variant="outline" loading={busy} onClick={() => onWithdraw(response.id)} style={{ height: 42 }}>
+            <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onWithdraw(response.id)}>
               Отозвать
             </Button>
           )}
           {canRestore(response.status) && (
-            <Button loading={busy} onClick={() => onRestore(response.id)} style={{ height: 42 }}>
+            <Button className={s.actionBtn} loading={busy} onClick={() => onRestore(response.id)}>
               Восстановить
             </Button>
           )}

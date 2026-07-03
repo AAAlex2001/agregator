@@ -41,6 +41,17 @@
   white-space: nowrap;
 }
 
+.deadline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deadlineText {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
 .sums {
   display: flex;
   justify-content: space-between;
@@ -93,4 +104,8 @@
 .actions {
   display: flex;
   gap: 10px;
+}
+
+.actionBtn {
+  height: 42px;
 }
