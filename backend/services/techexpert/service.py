@@ -41,23 +41,14 @@ class TechExpertService:
             response = await self.client.request(method, url, **kwargs)
 
             if response.status_code >= 400:
-                error_detail = "TechExpert API request error"
-
-                try:
-                    error_body = response.json()
-                    error_detail = error_body.get("message") or error_detail
-                except ValueError:
-                    pass
-
-                if response.status_code in (500, 502, 503, 504):
-                    raise HTTPException(
-                        status_code=502,
-                        detail=error_detail,
-                    )
-
                 raise HTTPException(
                     status_code=response.status_code,
-                    detail=error_detail,
+                    detail={
+                        "message": "TechExpert API request error",
+                        "external_url": str(response.request.url),
+                        "external_status": response.status_code,
+                        "external_body": response.text,
+                    },
                 )
 
             return response.json()
