@@ -104,6 +104,28 @@ class TechExpertDocumentsOutput(BaseModel):
 
 # ---------- Модели внешнего API /document/{id} ----------
 
+class TechExpertPdfSources(BaseModel):
+    scan: bool = False
+    djvu: bool = False
+    html: bool = False
+
+
+class TechExpertFiles(BaseModel):
+    attachments: bool = False
+    pdf: str | None = None
+    pdf_sources: TechExpertPdfSources = Field(default_factory=TechExpertPdfSources)
+    djvu: bool = False
+
+
+class TechExpertContentText(BaseModel):
+    blocks: int = 0
+    titles: bool = False
+
+
+class TechExpertContent(BaseModel):
+    text: TechExpertContentText = Field(default_factory=TechExpertContentText)
+
+
 class TechExpertDocumentDetail(BaseModel):
     id: int
     names: list[str] = Field(default_factory=list)
@@ -111,11 +133,24 @@ class TechExpertDocumentDetail(BaseModel):
     status: TechExpertNamed | None = None
     registrations: list[TechExpertRegistration] = Field(default_factory=list)
     access: str = ""
+    access_reason: str | None = None
+    is_important: bool = False
+    is_favorite: bool = False
+    is_purchased: bool = False
+    price: int = 0
     edition_date: str | None = None
     change_date: str | None = None
     action_start_date: str | None = None
     action_end_date: str | None = None
+    certificate_number: str | None = None
+    certificate_date: str | None = None
+    mu_number: str | None = None
+    mu_date: str | None = None
+    in_product_created: str | None = None
+    in_product_updated: str | None = None
     publications: list[str] = Field(default_factory=list)
+    content: TechExpertContent = Field(default_factory=TechExpertContent)
+    files: TechExpertFiles = Field(default_factory=TechExpertFiles)
 
 
 class TechExpertDocumentDetailResponse(BaseModel):
@@ -131,10 +166,26 @@ class TechExpertDocumentCard(BaseModel):
     date: str | None
     department: str
     access: str
+    access_reason: str | None
+    is_important: bool
+    is_favorite: bool
+    is_purchased: bool
+    price: int
     edition_date: str | None
     change_date: str | None
     action_start_date: str | None
     action_end_date: str | None
+    certificate_number: str | None
+    certificate_date: str | None
+    mu_number: str | None
+    mu_date: str | None
+    in_product_created: str | None
+    in_product_updated: str | None
+    has_text: bool
+    has_pdf: bool
+    has_scan: bool
+    has_html: bool
+    has_attachments: bool
     publications: list[str]
 
 
@@ -282,6 +333,7 @@ class TechExpertService:
         )
 
         name = document.clean_name or (document.names[0] if document.names else "")
+        sources = document.files.pdf_sources
 
         return TechExpertDocumentCard(
             id=document.id,
@@ -292,10 +344,26 @@ class TechExpertService:
             date=registration.date,
             department=registration.department.name if registration.department else "",
             access=document.access,
+            access_reason=document.access_reason,
+            is_important=document.is_important,
+            is_favorite=document.is_favorite,
+            is_purchased=document.is_purchased,
+            price=document.price,
             edition_date=document.edition_date,
             change_date=document.change_date,
             action_start_date=document.action_start_date,
             action_end_date=document.action_end_date,
+            certificate_number=document.certificate_number,
+            certificate_date=document.certificate_date,
+            mu_number=document.mu_number,
+            mu_date=document.mu_date,
+            in_product_created=document.in_product_created,
+            in_product_updated=document.in_product_updated,
+            has_text=document.content.text.blocks > 0,
+            has_pdf=document.files.pdf is not None,
+            has_scan=sources.scan,
+            has_html=sources.html,
+            has_attachments=document.files.attachments,
             publications=document.publications,
         )
 
