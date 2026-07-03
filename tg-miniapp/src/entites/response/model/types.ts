@@ -14,6 +14,15 @@ export type ResponseTab =
   | "accepted"
   | "withdrawn_by_expert";
 
+export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
+
+export const VAT_LABEL: Record<VatKind, string> = {
+  NONE: "Без НДС",
+  VAT_5: "НДС 5%",
+  VAT_7: "НДС 7%",
+  VAT_22: "НДС 22%",
+};
+
 export interface ResponseBadge {
   text: string;
   variant: string;
@@ -34,6 +43,21 @@ export interface ExpertResponse {
   customer_name: string;
   customer_company: string;
   badges: ResponseBadge[];
+  vat_kind: VatKind;
+  proposed_sum_amount_raw: number;
+  proposed_start_date_raw: string;
+  proposed_deadline_raw: string;
+  response_files: string[];
+}
+
+export interface EditResponseData {
+  proposed_sum_amount: number;
+  proposed_start_date: string;
+  proposed_deadline: string;
+  vat_kind: VatKind;
+  comment: string;
+  keep_files: string[];
+  files: File[];
 }
 
 export interface ResponseCounters {

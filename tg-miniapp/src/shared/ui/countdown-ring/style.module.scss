@@ -35,45 +35,34 @@
   color: currentColor;
 }
 
-.spark {
+.shine {
   position: absolute;
+  inset: 0;
   z-index: 3;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 6px currentColor;
-  opacity: 0;
-  animation: twinkle 2.4s ease-in-out infinite;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 58%
+  );
+  background-size: 280% 100%;
+  background-repeat: no-repeat;
+  background-position: 220% 0;
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 15px, #000 16px, #000 20px, transparent 21px);
+  mask: radial-gradient(circle at 50% 50%, transparent 15px, #000 16px, #000 20px, transparent 21px);
+  animation: ringShine 4.5s ease-in-out infinite;
 }
 
-.spark:nth-child(3) {
-  top: 1px;
-  left: 22px;
-  animation-delay: 0s;
-}
-
-.spark:nth-child(4) {
-  top: 22px;
-  right: 1px;
-  animation-delay: 0.8s;
-}
-
-.spark:nth-child(5) {
-  bottom: 3px;
-  left: 7px;
-  animation-delay: 1.6s;
-}
-
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0;
-    transform: scale(0.4);
+@keyframes ringShine {
+  0% {
+    background-position: 220% 0;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1);
+  32% {
+    background-position: -70% 0;
+  }
+  100% {
+    background-position: -70% 0;
   }
 }
 

@@ -9,3 +9,7 @@ export function openFile(url: string): void {
   tapHaptic();
   openLink(fileUrl(url));
 }
+
+export function fileName(url: string): string {
+  return url.split("/").pop() || url;
+}

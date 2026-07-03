@@ -1,7 +1,7 @@
 import { Button, Card } from "@/shared/ui";
 import { CountdownRing } from "@/shared/ui/countdown-ring";
 import type { ExpertResponse } from "../../model/types";
-import { statusMeta, canWithdraw, canRestore } from "../../model/status";
+import { statusMeta, canWithdraw, canRestore, canEdit } from "../../model/status";
 import s from "./style.module.scss";
 
 interface Props {
@@ -9,9 +9,10 @@ interface Props {
   busy: boolean;
   onWithdraw: (id: number) => void;
   onRestore: (id: number) => void;
+  onEdit: (response: ExpertResponse) => void;
 }
 
-export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
+export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: Props) {
   const meta = statusMeta(response.status);
   const customer = response.customer_company || response.customer_name;
 
@@ -45,8 +46,13 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
 
       {response.comment && <p className={s.comment}>{response.comment}</p>}
 
-      {(canWithdraw(response.status) || canRestore(response.status)) && (
+      {(canEdit(response.status) || canWithdraw(response.status) || canRestore(response.status)) && (
         <div className={s.actions}>
+          {canEdit(response.status) && (
+            <Button className={s.actionBtn} loading={busy} onClick={() => onEdit(response)}>
+              Редактировать
+            </Button>
+          )}
           {canWithdraw(response.status) && (
             <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onWithdraw(response.id)}>
               Отозвать

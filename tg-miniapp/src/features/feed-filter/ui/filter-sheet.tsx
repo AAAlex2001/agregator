@@ -6,7 +6,7 @@ import type { FeedView } from "../model/types";
 import { VIEW_LABEL } from "../model/types";
 import s from "./filter-sheet.module.scss";
 
-const VIEWS: FeedView[] = ["orders", "archive", "responses"];
+const VIEWS: FeedView[] = ["orders", "responses", "archive"];
 
 interface Props {
   open: boolean;

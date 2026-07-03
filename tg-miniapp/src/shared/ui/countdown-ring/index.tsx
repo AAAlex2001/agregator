@@ -39,9 +39,7 @@ export function CountdownRing({ deadline, from }: Props) {
         />
       </svg>
       <span className={s.label}>{countdownLabel(remaining)}</span>
-      <span className={s.spark} />
-      <span className={s.spark} />
-      <span className={s.spark} />
+      <span className={s.shine} />
     </div>
   );
 }

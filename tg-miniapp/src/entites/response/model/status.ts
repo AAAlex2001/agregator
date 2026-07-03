@@ -26,3 +26,7 @@ export function canWithdraw(status: ResponseStatus): boolean {
 export function canRestore(status: ResponseStatus): boolean {
   return status === "WITHDRAWN_BY_EXPERT";
 }
+
+export function canEdit(status: ResponseStatus): boolean {
+  return status === "REVIEW";
+}
