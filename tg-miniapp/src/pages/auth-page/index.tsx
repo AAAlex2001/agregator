@@ -1,14 +1,13 @@
 import { useState, type ComponentType } from "react";
 import { type Role } from "@/shared/services/api";
-import { openLink, tapHaptic } from "@/shared/services/telegram";
+import { tapHaptic } from "@/shared/services/telegram";
 import { useAuthForm } from "@/features/session";
 import { RegisterSheet } from "@/features/register";
+import { ForgotSheet } from "@/features/forgot-password";
 import { Button, TextField, BottomSheet, Logo } from "@/shared/ui";
 import { MailIcon, LockIcon, ChevronRightIcon } from "@/shared/ui/icons/interface";
 import { CustomerRoleIcon, ExpertRoleIcon, LicenseRoleIcon } from "@/shared/ui/icons/roles";
 import s from "./style.module.scss";
-
-const REGISTER_URL = "https://plus-resurs.com/register";
 
 const LOGIN_ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?: number }> }> = {
   CUSTOMER: { label: "Вы — заказчик", Icon: CustomerRoleIcon },
@@ -26,13 +25,10 @@ export function AuthPage() {
   const { state, dispatch, submit } = useAuthForm();
   const [mode, setMode] = useState<"welcome" | "login" | "register">("welcome");
   const [regRole, setRegRole] = useState<Role | null>(null);
+  const [forgotOpen, setForgotOpen] = useState(false);
 
   const pickRegRole = (role: Role) => {
     tapHaptic();
-    if (role === "LICENSE_HOLDER") {
-      openLink(REGISTER_URL);
-      return;
-    }
     setRegRole(role);
   };
 
@@ -95,6 +91,16 @@ export function AuthPage() {
             <Button type="submit" loading={state.loading}>
               Войти
             </Button>
+            <button
+              type="button"
+              className={s.forgot}
+              onClick={() => {
+                tapHaptic();
+                setForgotOpen(true);
+              }}
+            >
+              Забыли пароль?
+            </button>
             <button type="button" className={s.back} onClick={() => setMode("welcome")}>
               Назад
             </button>
@@ -151,6 +157,7 @@ export function AuthPage() {
       </BottomSheet>
 
       <RegisterSheet role={regRole} onClose={() => setRegRole(null)} />
+      <ForgotSheet open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </div>
   );
 }

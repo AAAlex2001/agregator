@@ -1,0 +1,38 @@
+.wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.native {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.box {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--card);
+  color: #fff;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.label {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}

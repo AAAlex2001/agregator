@@ -2,12 +2,7 @@ import { apiJson } from "@/shared/services/api";
 import type { VatKind } from "@/entites/response";
 
 export type { VatKind };
-
-export interface Party {
-  value: string;
-  unrestricted_value: string;
-  data: { inn?: string | null };
-}
+export type { Party } from "@/entites/party";
 
 export interface RespondData {
   proposed_sum_amount: number;
@@ -31,11 +26,4 @@ export async function createOrderResponse(orderId: number, data: RespondData): P
   if (data.expert_company_data) form.append("expert_company_data", data.expert_company_data);
   for (const file of data.files ?? []) form.append("files", file);
   await apiJson(`/orders/${orderId}/responses`, { method: "POST", body: form });
-}
-
-export async function suggestParties(query: string): Promise<Party[]> {
-  return apiJson<Party[]>("/register/party-suggestions", {
-    method: "POST",
-    body: JSON.stringify({ query, count: 8 }),
-  });
 }

@@ -3,7 +3,7 @@ import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronDownIcon } from "@/shared/ui/icons/interface";
 import { FilePicker } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
-import { CompanySuggest } from "../company-suggest";
+import { CompanySuggest } from "@/entites/party";
 import type { Party, VatKind } from "../../model/api";
 import { toKopecks, formatRub, formatDateRu } from "@/shared/lib/format";
 import s from "./offer-step.module.scss";

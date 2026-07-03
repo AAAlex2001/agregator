@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
-import { suggestParties, type Party } from "../model/api";
-import s from "./company-suggest.module.scss";
+import { geoSuggest, type GeoPoint } from "../../model/api";
+import s from "./style.module.scss";
 
 interface Props {
   value: string;
   onChangeText: (text: string) => void;
-  onPick: (party: Party) => void;
+  onPick: (point: GeoPoint) => void;
 }
 
-export function CompanySuggest({ value, onChangeText, onPick }: Props) {
-  const [results, setResults] = useState<Party[]>([]);
+export function AddressSuggest({ value, onChangeText, onPick }: Props) {
+  const [results, setResults] = useState<GeoPoint[]>([]);
   const [open, setOpen] = useState(false);
   const timer = useRef<number | null>(null);
 
@@ -22,7 +22,7 @@ export function CompanySuggest({ value, onChangeText, onPick }: Props) {
       return;
     }
     timer.current = window.setTimeout(() => {
-      suggestParties(text.trim())
+      geoSuggest(text.trim())
         .then((items) => {
           setResults(items);
           setOpen(items.length > 0);
@@ -31,8 +31,8 @@ export function CompanySuggest({ value, onChangeText, onPick }: Props) {
     }, 300);
   };
 
-  const pick = (party: Party) => {
-    onPick(party);
+  const pick = (point: GeoPoint) => {
+    onPick(point);
     setResults([]);
     setOpen(false);
   };
@@ -42,18 +42,17 @@ export function CompanySuggest({ value, onChangeText, onPick }: Props) {
       <input
         className={s.input}
         value={value}
-        placeholder="ИНН или название компании"
+        placeholder="Город или адрес базирования"
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
         onBlur={() => window.setTimeout(() => setOpen(false), 150)}
       />
       {open && (
         <ul className={s.list}>
-          {results.map((party, index) => (
+          {results.map((point, index) => (
             <li key={index}>
-              <button type="button" className={s.item} onClick={() => pick(party)}>
-                <span className={s.itemName}>{party.value}</span>
-                {party.data.inn && <span className={s.itemInn}>ИНН {party.data.inn}</span>}
+              <button type="button" className={s.item} onClick={() => pick(point)}>
+                {point.address}
               </button>
             </li>
           ))}
