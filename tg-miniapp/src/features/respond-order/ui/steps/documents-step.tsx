@@ -1,63 +1,16 @@
-import cn from "classnames";
-import type { Order, OrderDocuments } from "@/entites/order";
-import { openLink, tapHaptic } from "@/shared/services/telegram";
-import { FileTypeIcon } from "@/shared/ui/file-icon";
-import { DocIcon } from "@/shared/ui/icons/interface";
-import s from "./documents-step.module.scss";
+import { DocumentsGrid, type Order } from "@/entites/order";
 import c from "./common.module.scss";
-
-const CATEGORIES: { key: keyof OrderDocuments; label: string }[] = [
-  { key: "technical", label: "Техническое задание" },
-  { key: "contract", label: "Проект договора" },
-  { key: "company", label: "Карточка предприятия" },
-];
-
-interface Tile {
-  label: string;
-  url?: string;
-}
-
-function fileUrl(url: string): string {
-  if (/^https?:\/\//i.test(url)) return url;
-  return window.location.origin + (url.startsWith("/") ? url : `/${url}`);
-}
 
 export function DocumentsStep({ order }: { order: Order }) {
   const docs = order.documents;
-  const others = docs?.other ?? [];
-  const tiles: Tile[] = [
-    ...CATEGORIES.map((cat) => ({ label: cat.label, url: (docs?.[cat.key] ?? [])[0] })),
-    ...(others.length ? others.map((url, i) => ({ label: `Иное ${i + 1}`, url })) : [{ label: "Иное" }]),
-  ];
-  const hasAny = tiles.some((t) => t.url);
-
-  const open = (url: string) => {
-    tapHaptic();
-    openLink(fileUrl(url));
-  };
+  const hasAny = docs
+    ? [...docs.technical, ...docs.contract, ...docs.company, ...docs.other].length > 0
+    : false;
 
   return (
     <div className={c.step}>
       <span className={c.blockLab}>Документы заказчика</span>
-      <div className={s.docGrid}>
-        {tiles.map((t, i) =>
-          t.url ? (
-            <button key={i} className={s.doc} onClick={() => open(t.url!)}>
-              <span className={s.thumb}>
-                <FileTypeIcon name={t.url} className={s.docIcon} />
-              </span>
-              <span className={s.docCap}>{t.label}</span>
-            </button>
-          ) : (
-            <div key={i} className={cn(s.doc, s.docEmpty)}>
-              <span className={s.thumb}>
-                <DocIcon className={s.docEmptyIcon} />
-              </span>
-              <span className={s.docCap}>{t.label}</span>
-            </div>
-          ),
-        )}
-      </div>
+      <DocumentsGrid documents={docs} />
       <p className={c.note}>
         {hasAny ? "Нажмите на документ, чтобы открыть." : "Заказчик пока не приложил документы."}
       </p>

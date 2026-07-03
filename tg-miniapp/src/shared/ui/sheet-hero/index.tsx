@@ -1,27 +1,23 @@
-import { ThemedImage } from "@/shared/ui";
+import { ThemedImage } from "@/shared/ui/themed-image";
 import { CloseIcon } from "@/shared/ui/icons/interface";
-import s from "./step-hero.module.scss";
+import s from "./style.module.scss";
 
 interface Props {
-  image: string;
+  light: string;
+  dark: string;
   illu: string;
-  step: number;
-  total: number;
-  label: string;
+  label?: string;
   title: string;
   desc: string;
-  showDots: boolean;
+  step?: number;
+  total?: number;
   onClose: () => void;
 }
 
-export function StepHero({ image, illu, step, total, label, title, desc, showDots, onClose }: Props) {
+export function SheetHero({ light, dark, illu, label, title, desc, step, total, onClose }: Props) {
   return (
     <div className={s.hero}>
-      <ThemedImage
-        className={s.heroImg}
-        light={`/respond-order/${image}-light.webp`}
-        dark={`/respond-order/${image}-dark.webp`}
-      />
+      <ThemedImage className={s.heroImg} light={light} dark={dark} />
       <span className={s.heroIllu}>{illu}</span>
 
       <button className={s.close} onClick={onClose} aria-label="Закрыть">
@@ -29,10 +25,10 @@ export function StepHero({ image, illu, step, total, label, title, desc, showDot
       </button>
 
       <div className={s.heroTxt}>
-        <span className={s.stepLab}>{label}</span>
+        {label && <span className={s.stepLab}>{label}</span>}
         <span className={s.stepTitle}>{title}</span>
         <span className={s.stepDesc}>{desc}</span>
-        {showDots && (
+        {step !== undefined && total !== undefined && (
           <div className={s.dots}>
             {Array.from({ length: total }).map((_, i) => (
               <span key={i} className={i + 1 === step ? `${s.dot} ${s.dotOn}` : s.dot} />

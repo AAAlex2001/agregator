@@ -1,3 +1,15 @@
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.askBtn {
+  width: auto;
+  height: 42px;
+  padding: 0 18px;
+}
+
 .qaList {
   display: flex;
   flex-direction: column;

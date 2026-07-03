@@ -6,4 +6,5 @@ export { Card } from "./card";
 export { BottomSheet } from "./bottom-sheet";
 export { CountdownRing } from "./countdown-ring";
 export { ThemedImage } from "./themed-image";
+export { SheetHero } from "./sheet-hero";
 export { Logo } from "./icons/logo";

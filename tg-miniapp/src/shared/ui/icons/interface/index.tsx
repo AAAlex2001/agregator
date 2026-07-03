@@ -172,6 +172,12 @@ export const FilterIcon = (p: P) => (
   </svg>
 );
 
+export const StarIcon = (p: P) => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" stroke="none" {...p}>
+    <path d="M12 2l2.94 6.26 6.56.6-4.95 4.4 1.45 6.54L12 16.9 6 19.8l1.45-6.54L2.5 8.86l6.56-.6L12 2z" />
+  </svg>
+);
+
 export const SwitchRoleIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />

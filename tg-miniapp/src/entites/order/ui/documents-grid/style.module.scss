@@ -1,6 +1,6 @@
-.docGrid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -26,24 +26,29 @@
   place-items: center;
 }
 
-.docIcon {
+.icon {
   width: 42px;
   height: auto;
+}
+
+.docEmpty {
+  cursor: default;
 }
 
 .docEmpty .thumb {
   border-style: dashed;
 }
 
-.docEmptyIcon {
+.emptyIcon {
   width: 26px;
   height: 26px;
   color: var(--muted);
 }
 
-.docCap {
+.cap {
   font-size: 11px;
   text-align: center;
   color: var(--muted);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
