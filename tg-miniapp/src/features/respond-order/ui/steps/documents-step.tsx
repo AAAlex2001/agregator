@@ -1,10 +1,10 @@
 import cn from "classnames";
 import type { Order, OrderDocuments } from "@/entites/order";
 import { openFile } from "@/shared/lib/files";
+import { Field } from "@/shared/ui";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { DocIcon } from "@/shared/ui/icons/interface";
 import s from "./documents-step.module.scss";
-import c from "./common.module.scss";
 
 const CATEGORIES: { key: keyof OrderDocuments; label: string }[] = [
   { key: "technical", label: "Техническое задание" },
@@ -27,8 +27,10 @@ export function DocumentsStep({ order }: { order: Order }) {
   const hasAny = tiles.some((t) => t.url);
 
   return (
-    <div className={c.step}>
-      <span className={c.blockLab}>Документы заказчика</span>
+    <Field
+      label="Документы заказчика"
+      hint={hasAny ? "Нажмите на документ, чтобы открыть." : "Заказчик пока не приложил документы."}
+    >
       <div className={s.docGrid}>
         {tiles.map((t, i) =>
           t.url ? (
@@ -48,9 +50,6 @@ export function DocumentsStep({ order }: { order: Order }) {
           ),
         )}
       </div>
-      <p className={c.note}>
-        {hasAny ? "Нажмите на документ, чтобы открыть." : "Заказчик пока не приложил документы."}
-      </p>
-    </div>
+    </Field>
   );
 }

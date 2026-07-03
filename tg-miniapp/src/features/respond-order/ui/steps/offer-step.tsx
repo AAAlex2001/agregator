@@ -1,13 +1,12 @@
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronDownIcon } from "@/shared/ui/icons/interface";
-import { FilePicker } from "@/shared/ui";
+import { Field, FilePicker, TextArea, TextField } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "@/entites/party";
 import type { Party, VatKind } from "../../model/api";
 import { toKopecks, formatRub, formatDateRu } from "@/shared/lib/format";
 import s from "./offer-step.module.scss";
-import c from "./common.module.scss";
 
 const VAT_OPTIONS: { code: VatKind; label: string }[] = [
   { code: "NONE", label: "Без НДС" },
@@ -42,9 +41,8 @@ export function OfferStep(p: Props) {
   const vatAmount = Math.round((base * rate) / 100);
 
   return (
-    <div className={c.step}>
-      <div className={s.field}>
-        <span className={s.fieldLab}>Срок начала выполнения работ</span>
+    <>
+      <Field label="Срок начала выполнения работ">
         <button
           type="button"
           className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.startDate })}
@@ -56,9 +54,9 @@ export function OfferStep(p: Props) {
           {p.startDate ? formatDateRu(p.startDate) : "Выберите дату"}
           <ChevronDownIcon className={s.chev} />
         </button>
-      </div>
-      <div className={s.field}>
-        <span className={s.fieldLab}>Срок окончания выполнения работ</span>
+      </Field>
+
+      <Field label="Срок окончания выполнения работ">
         <button
           type="button"
           className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.deadline })}
@@ -70,22 +68,22 @@ export function OfferStep(p: Props) {
           {p.deadline ? formatDateRu(p.deadline) : "Выберите дату"}
           <ChevronDownIcon className={s.chev} />
         </button>
-      </div>
+      </Field>
 
-      <div className={s.field}>
-        <span className={s.fieldLab}>Ваша оценка стоимости работ</span>
-        <input
-          className={s.control}
+      <Field label="Ваша оценка стоимости работ">
+        <TextField
           inputMode="numeric"
           placeholder="Сумма в рублях"
           value={p.sum}
           onFocus={() => tapHaptic()}
           onChange={(e) => p.onChangeSum(e.target.value)}
         />
-      </div>
+      </Field>
 
-      <div className={s.field}>
-        <span className={s.fieldLab}>Ставка НДС</span>
+      <Field
+        label="Ставка НДС"
+        hint="Сумма ориентировочная. Точная стоимость согласуется с заказчиком после изучения ТЗ."
+      >
         <Tabs
           tabs={VAT_OPTIONS.map((o) => ({ key: o.code, label: o.label }))}
           active={p.vat}
@@ -93,45 +91,47 @@ export function OfferStep(p: Props) {
         />
         {base > 0 && (
           <div className={s.breakdown}>
-            <div className={s.bd}><span>Стоимость работ</span><span>{formatRub(base)}</span></div>
+            <div className={s.bd}>
+              <span>Стоимость работ</span>
+              <span>{formatRub(base)}</span>
+            </div>
             {p.vat !== "NONE" && (
-              <div className={s.bd}><span>НДС {rate}%</span><span>{formatRub(vatAmount)}</span></div>
+              <div className={s.bd}>
+                <span>НДС {rate}%</span>
+                <span>{formatRub(vatAmount)}</span>
+              </div>
             )}
-            <div className={s.bdTotal}><span>Итого</span><span>{formatRub(base + vatAmount)}</span></div>
+            <div className={s.bdTotal}>
+              <span>Итого</span>
+              <span>{formatRub(base + vatAmount)}</span>
+            </div>
           </div>
         )}
-        <span className={c.note}>
-          Сумма ориентировочная. Точная стоимость согласуется с заказчиком после изучения ТЗ.
-        </span>
-      </div>
+      </Field>
 
       {p.requiresLicense && (
-        <div className={s.field}>
-          <span className={s.fieldLab}>Организация для заключения договора</span>
+        <Field label="Организация для заключения договора">
           <CompanySuggest value={p.companyName} onChangeText={p.onCompanyText} onPick={p.onCompanyPick} />
-        </div>
+        </Field>
       )}
 
-      <div className={s.field}>
-        <span className={s.fieldLab}>Комментарий для заказчика</span>
-        <textarea
-          className={c.textarea}
+      <Field label="Комментарий для заказчика">
+        <TextArea
           placeholder="Напишите комментарий для заказчика…"
           value={p.comment}
           onFocus={() => tapHaptic()}
           onChange={(e) => p.onChangeComment(e.target.value)}
         />
-      </div>
+      </Field>
 
-      <div className={s.field}>
-        <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
+      <Field label="Файлы к отклику (необязательно)">
         <FilePicker
           files={p.files}
           onAdd={p.onAddFiles}
           onRemove={p.onRemoveFile}
           note="PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ"
         />
-      </div>
-    </div>
+      </Field>
+    </>
   );
 }

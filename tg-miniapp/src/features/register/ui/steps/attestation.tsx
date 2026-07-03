@@ -29,6 +29,7 @@ export function Attestation({ state, dispatch }: StepProps) {
         <div className={s.block}>
           <Field label="Область аттестации">
             <Select
+              title="Область аттестации"
               options={AREAS}
               value={state.certArea ? [state.certArea] : []}
               placeholder="Выберите область"
@@ -37,6 +38,7 @@ export function Attestation({ state, dispatch }: StepProps) {
           </Field>
           <Field label="Объект экспертизы">
             <Select
+              title="Объект экспертизы"
               options={OBJECTS}
               value={state.certObject ? [state.certObject] : []}
               placeholder="Выберите объект"
@@ -83,6 +85,7 @@ export function Attestation({ state, dispatch }: StepProps) {
             <Field label="Что показывать на карте">
               <Select
                 multi
+                title="Что показывать на карте"
                 options={MAP_FIELDS}
                 value={state.mapFields}
                 placeholder="Выберите поля"

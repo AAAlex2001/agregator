@@ -1,7 +1,7 @@
 import { Field, Select, TextField } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "@/entites/party";
-import { type RentalKind } from "../../model/api";
+import { type RentalKind } from "@/entites/registration";
 import { type StepProps } from "./types";
 
 const AREAS = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"].map((v) => ({ key: v, label: v }));
@@ -35,6 +35,7 @@ export function LicenseStep({ state, dispatch }: StepProps) {
       <Field label="Области экспертизы">
         <Select
           multi
+          title="Области экспертизы"
           options={AREAS}
           value={state.licenseAreas}
           placeholder="Выберите области"

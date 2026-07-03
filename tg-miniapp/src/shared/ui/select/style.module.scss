@@ -1,7 +1,3 @@
-.wrap {
-  position: relative;
-}
-
 .trigger {
   display: flex;
   align-items: center;
@@ -35,55 +31,45 @@
 .chev {
   flex: none;
   color: var(--muted);
-  transition: transform 0.2s ease;
 }
 
-.chevOpen {
-  transform: rotate(180deg);
-}
-
-.list {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  z-index: 20;
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: 14px;
-  max-height: 260px;
-  overflow-y: auto;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-}
-
-.option {
+.item {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  padding: 11px 12px;
+  gap: 14px;
+  padding: 14px 12px;
   border: none;
-  border-radius: 10px;
-  background: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
   font-family: inherit;
-  font-size: 15px;
-  color: var(--text);
-  text-align: left;
   cursor: pointer;
   transition: background-color 0.12s ease;
 }
 
-.option.on {
+.item:active {
   background: var(--accent-soft);
+}
+
+.active {
+  background: var(--accent-soft);
+}
+
+.name {
+  flex: 1 1 auto;
+  text-align: left;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.active .name {
   color: var(--accent);
   font-weight: 600;
 }
 
 .check {
-  flex: none;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
   color: var(--accent);
 }

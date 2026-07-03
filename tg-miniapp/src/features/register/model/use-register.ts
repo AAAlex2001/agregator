@@ -7,7 +7,7 @@ import { isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import { isEmail } from "@/shared/lib/email";
 import { passwordValid } from "@/shared/lib/password";
 import { type Role } from "@/shared/services/api";
-import { confirmEmail, registerLicenseHolder, registerUser, resendCode } from "./api";
+import { confirmEmail, registerLicenseHolder, registerUser, resendCode } from "@/entites/registration";
 import { initialState, reducer } from "./reducer";
 
 export type StepKey = "org" | "profile" | "license" | "docs" | "account" | "code";

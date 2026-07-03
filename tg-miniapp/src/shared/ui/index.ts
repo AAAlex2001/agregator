@@ -2,6 +2,7 @@ export { Spinner } from "./spinner";
 export { Button } from "./button";
 export { Toggle } from "./toggle";
 export { TextField } from "./text-field";
+export { TextArea } from "./textarea";
 export { Checkbox } from "./checkbox";
 export { Field } from "./field";
 export { Select, type SelectOption } from "./select";

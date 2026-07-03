@@ -1,6 +1,6 @@
 import type { Party } from "@/entites/party";
 import type { GeoPoint } from "@/entites/geo";
-import type { Certificate, RentalKind } from "./api";
+import type { Certificate, RentalKind } from "@/entites/registration";
 
 export type StringField =
   | "email"

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import cn from "classnames";
+import { BottomSheet } from "@/shared/ui/bottom-sheet";
 import { CheckIcon, ChevronDownIcon } from "@/shared/ui/icons/interface";
 import { tapHaptic } from "@/shared/services/telegram";
 import s from "./style.module.scss";
@@ -13,22 +14,13 @@ interface Props {
   options: SelectOption[];
   value: string[];
   onChange: (value: string[]) => void;
+  title?: string;
   placeholder?: string;
   multi?: boolean;
 }
 
-export function Select({ options, value, onChange, placeholder = "Выберите", multi = false }: Props) {
+export function Select({ options, value, onChange, title, placeholder = "Выберите", multi = false }: Props) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onPointer = (e: PointerEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("pointerdown", onPointer);
-    return () => document.removeEventListener("pointerdown", onPointer);
-  }, [open]);
 
   const choose = (key: string) => {
     tapHaptic();
@@ -44,34 +36,34 @@ export function Select({ options, value, onChange, placeholder = "Выберит
   const text = chosen.length ? chosen.map((o) => o.label).join(", ") : placeholder;
 
   return (
-    <div className={s.wrap} ref={ref}>
+    <>
       <button
         type="button"
         className={cn(s.trigger, { [s.empty]: chosen.length === 0 })}
         onClick={() => {
           tapHaptic();
-          setOpen((v) => !v);
+          setOpen(true);
         }}
       >
         <span className={s.value}>{text}</span>
-        <ChevronDownIcon width={18} height={18} className={cn(s.chev, { [s.chevOpen]: open })} />
+        <ChevronDownIcon width={18} height={18} className={s.chev} />
       </button>
 
-      {open ? (
-        <ul className={s.list}>
-          {options.map((o) => {
-            const on = value.includes(o.key);
-            return (
-              <li key={o.key}>
-                <button type="button" className={cn(s.option, { [s.on]: on })} onClick={() => choose(o.key)}>
-                  <span>{o.label}</span>
-                  {on ? <CheckIcon width={16} height={16} className={s.check} /> : null}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
-    </div>
+      <BottomSheet open={open} title={title} onClose={() => setOpen(false)}>
+        {options.map((o) => {
+          const on = value.includes(o.key);
+          return (
+            <button key={o.key} type="button" className={cn(s.item, { [s.active]: on })} onClick={() => choose(o.key)}>
+              <span className={s.name}>{o.label}</span>
+              {on ? (
+                <span className={s.check}>
+                  <CheckIcon width={18} height={18} />
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </BottomSheet>
+    </>
   );
 }

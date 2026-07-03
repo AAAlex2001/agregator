@@ -1,35 +1,33 @@
-import { Button, Spinner } from "@/shared/ui";
+import { Button, Field, Spinner, TextArea } from "@/shared/ui";
 import { Toggle } from "@/shared/ui/toggle";
 import { useOrderQuestions } from "../../model/use-order-questions";
 import s from "./questions-step.module.scss";
-import c from "./common.module.scss";
 
 export function QuestionsStep({ orderId }: { orderId: number }) {
   const { state, dispatch, ask } = useOrderQuestions(orderId);
 
   return (
-    <div className={c.step}>
-      <span className={c.blockLab}>Вопросы по заказу</span>
+    <>
+      <Field label="Вопросы по заказу">
+        {state.items === null ? (
+          <div className={s.loading}>
+            <Spinner />
+          </div>
+        ) : state.items.length === 0 ? (
+          <span className={s.qaEmpty}>Вопросов пока нет.</span>
+        ) : (
+          <div className={s.qaList}>
+            {state.items.map((q) => (
+              <div key={q.id} className={s.qaItem}>
+                <div className={s.qaQ}>{q.question}</div>
+                <div className={s.qaA}>{q.answer ? `Ответ: ${q.answer}` : "Ожидает ответа заказчика"}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Field>
 
-      {state.items === null ? (
-        <div className={s.loading}>
-          <Spinner />
-        </div>
-      ) : state.items.length === 0 ? (
-        <span className={s.qaEmpty}>Вопросов пока нет.</span>
-      ) : (
-        <div className={s.qaList}>
-          {state.items.map((q) => (
-            <div key={q.id} className={s.qaItem}>
-              <div className={s.qaQ}>{q.question}</div>
-              <div className={s.qaA}>{q.answer ? `Ответ: ${q.answer}` : "Ожидает ответа заказчика"}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <textarea
-        className={c.textarea}
+      <TextArea
         maxLength={2000}
         placeholder="Задайте вопрос — его увидит только заказчик…"
         value={state.text}
@@ -48,6 +46,6 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
           Задать вопрос
         </Button>
       </div>
-    </div>
+    </>
   );
 }
