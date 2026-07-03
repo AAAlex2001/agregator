@@ -1,6 +1,7 @@
 from typing import Literal
+
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 
@@ -31,7 +32,6 @@ class TechExpertService:
             timeout=httpx.Timeout(10.0, connect=10.0),
             headers={
                 "Accept": "application/json",
-                "Content-Type": "application/json",
             },
         )
 
@@ -39,25 +39,26 @@ class TechExpertService:
         try:
             response = await self.client.request(method, url, **kwargs)
 
-            if response.status_code == 401:
-                raise HTTPException(status_code=401, detail="Unauthorized")
+            if response.status_code >= 400:
+                error_detail = "TechExpert API request error"
 
-            if response.status_code == 400:
-                raise HTTPException(status_code=400, detail="Bad Request")
+                try:
+                    error_body = response.json()
+                    error_detail = error_body.get("message") or error_detail
+                except ValueError:
+                    pass
 
-            if response.status_code == 404:
-                raise HTTPException(status_code=404, detail="Not Found")
+                if response.status_code in (500, 502, 503, 504):
+                    raise HTTPException(
+                        status_code=502,
+                        detail=error_detail,
+                    )
 
-            if response.status_code == 429:
-                raise HTTPException(status_code=429, detail="Too Many Requests")
-
-            if response.status_code >= 500:
                 raise HTTPException(
-                    status_code=502,
-                    detail="TechExpert external API error",
+                    status_code=response.status_code,
+                    detail=error_detail,
                 )
 
-            response.raise_for_status()
             return response.json()
 
         except httpx.TimeoutException:
@@ -90,18 +91,22 @@ class TechExpertService:
         await self.client.aclose()
 
 
-
 @router.get(
     "/autocomplete",
     response_model=list[TechExpertOutput],
 )
-async def autocomplete(q: str):
+async def autocomplete(
+    q: str = Query(..., description="Поисковая строка"),
+):
     service = TechExpertService(
-        url="https://api.docs.cntd.ru/v1",
+        url="https://docs.cntd.ru/api",
     )
+
     try:
         payload = TechExpertInput(q=q)
         result = await service.get_tech_autocomplete(payload)
+
         return result
+
     finally:
         await service.close()
