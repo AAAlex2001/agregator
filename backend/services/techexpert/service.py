@@ -1,8 +1,10 @@
 from typing import Literal
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+
+from dependencies.auth import get_current_user
 
 
 router = APIRouter(
@@ -154,7 +156,11 @@ class TechExpertService:
 )
 async def autocomplete(
     q: str = Query(..., description="Поисковая строка"),
+    user_id: int = Depends(get_current_user),
 ):
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     service = TechExpertService(
         url="https://docs.cntd.ru/api",
     )
