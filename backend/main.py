@@ -38,6 +38,7 @@ from routes import (
     support,
     telegram_auth,
 )
+from services.techexpert.service import router as techexpert_router
 from tasks.auto_reject import run_auto_reject_loop
 from utils.redis_sliding_window import redis_sliding_window
 from utils.request_context import request_id_var
@@ -67,8 +68,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
 
-# CORS_ORIGINS: comma-separated list of allowed origins (e.g. "https://a.com,https://b.com").
-# Falls back to production + local dev defaults when the env var is not set.
+
 cors_origins_env = os.getenv("CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000")
 cors_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 
@@ -122,7 +122,7 @@ app.include_router(geo.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
-
+app.include_router(techexpert_router, prefix="/api")
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
