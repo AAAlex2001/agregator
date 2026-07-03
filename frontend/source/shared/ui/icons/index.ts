@@ -3,6 +3,7 @@ export { default as ChevronIcon } from "./ChevronIcon";
 export { default as PlusIcon } from "./PlusIcon";
 export { default as PlusThinIcon } from "./PlusThinIcon";
 export { default as FileIcon } from "./FileIcon";
+export { default as TechExpertIcon } from "./TechExpertIcon";
 export { default as BulletIcon } from "./BulletIcon";
 export { default as CheckIcon } from "./CheckIcon";
 export { default as PricingFeatureIcon } from "./PricingFeatureIcon";

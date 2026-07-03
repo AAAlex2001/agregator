@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
-import type { Order } from "@/entites/order";
+import { OrderInfo, type Order } from "@/entites/order";
 import { useRespondForm } from "../model/use-respond-form";
-import { InfoStep } from "./steps/info-step";
 import { DocumentsStep } from "./steps/documents-step";
 import { QuestionsStep } from "./steps/questions-step";
 import { ConfirmStep } from "./steps/confirm-step";
@@ -102,7 +101,7 @@ export function RespondSheet({ order, onClose }: Props) {
               </p>
             </div>
           ) : step === 1 ? (
-            <InfoStep order={order} />
+            <OrderInfo order={order} />
           ) : step === 2 ? (
             <DocumentsStep order={order} />
           ) : step === 3 ? (

@@ -22,6 +22,7 @@ import {
   TabProfileIcon,
   TabResponsesIcon,
   TabSupportIcon,
+  TechExpertIcon,
 } from "@/source/shared/ui/icons";
 import { useSidebarMobile } from "../model/SidebarMobileContext";
 import { RoleSwitcher } from "./RoleSwitcher";
@@ -46,6 +47,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
+        { href: "/tech-expert", label: "ТехЭксперт", icon: TechExpertIcon },
       ],
     },
     {
@@ -70,6 +72,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       items: [
         { href: "/customer/orders", label: "Мои заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
+        { href: "/tech-expert", label: "ТехЭксперт", icon: TechExpertIcon },
       ],
     },
     {
@@ -99,6 +102,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       label: "Эксперты",
       items: [
         { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
+        { href: "/tech-expert", label: "ТехЭксперт", icon: TechExpertIcon },
       ],
     },
     {

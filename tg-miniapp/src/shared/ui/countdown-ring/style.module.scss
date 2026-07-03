@@ -1,8 +1,8 @@
 .ring {
   position: relative;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
   display: grid;
   place-items: center;
 }
@@ -16,13 +16,13 @@
 .track {
   fill: none;
   stroke: var(--hairline);
-  stroke-width: 4;
+  stroke-width: 5;
 }
 
 .arc {
   fill: none;
   stroke: currentColor;
-  stroke-width: 4;
+  stroke-width: 5;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.6s ease;
 }
@@ -30,7 +30,7 @@
 .label {
   position: relative;
   z-index: 2;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 800;
   color: currentColor;
 }
@@ -49,8 +49,8 @@
   background-size: 280% 100%;
   background-repeat: no-repeat;
   background-position: 220% 0;
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 15px, #000 16px, #000 20px, transparent 21px);
-  mask: radial-gradient(circle at 50% 50%, transparent 15px, #000 16px, #000 20px, transparent 21px);
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 21px, #000 22px, #000 28px, transparent 29px);
+  mask: radial-gradient(circle at 50% 50%, transparent 21px, #000 22px, #000 28px, transparent 29px);
   animation: ringShine 4.5s ease-in-out infinite;
 }
 

@@ -1,7 +1,20 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.blockLab {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  padding-left: 2px;
 }
 
 .block {

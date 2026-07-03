@@ -18,42 +18,48 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: 
 
   return (
     <Card className={s.card}>
-      <div className={s.head}>
-        <span className={s.title}>{response.order_title}</span>
+      <div className={s.header}>
+        <span className={s.date}>Отклик от {response.date}</span>
         <span className={s.status} style={{ color: meta.color, background: meta.bg }}>
           {meta.label}
         </span>
       </div>
 
-      <span className={s.sub}>
-        {customer ? `${customer} · ` : ""}Отклик от {response.date}
-      </span>
+      <span className={s.title}>{response.order_title}</span>
+      {customer && <span className={s.customer}>{customer}</span>}
 
       {response.status === "REVIEW" && response.order_responses_deadline && (
         <div className={s.deadline}>
-          <CountdownRing deadline={response.order_responses_deadline} from={response.order_created_at || undefined} />
           <span className={s.deadlineText}>До конца приёма откликов</span>
+          <CountdownRing deadline={response.order_responses_deadline} from={response.order_created_at || undefined} />
         </div>
       )}
 
       <div className={s.info}>
-        <div className={s.infoRow}>
-          <span className={s.infoLab}>Моё предложение</span>
-          <span className={s.infoMine}>
+        <div className={s.row}>
+          <span className={s.rowLab}>Моё предложение</span>
+          <span className={s.rowMine}>
             {response.proposed_sum} · {VAT_LABEL[response.vat_kind]}
           </span>
         </div>
-        <div className={s.infoRow}>
-          <span className={s.infoLab}>Начальная цена</span>
-          <span className={s.infoVal}>{response.order_sum}</span>
+        <div className={s.row}>
+          <span className={s.rowLab}>Начальная цена</span>
+          <span className={s.rowVal}>{response.order_sum}</span>
         </div>
-        <div className={s.infoRow}>
-          <span className={s.infoLab}>Сроки работ</span>
-          <span className={s.infoVal}>до {response.proposed_deadline}</span>
+        <div className={s.row}>
+          <span className={s.rowLab}>Сроки работ</span>
+          <span className={s.rowVal}>до {response.proposed_deadline}</span>
         </div>
       </div>
 
-      {response.comment && <p className={s.comment}>{response.comment}</p>}
+      {response.comment && (
+        <div className={s.commentGroup}>
+          <span className={s.commentLab}>Ваш комментарий</span>
+          <div className={s.commentBlock}>
+            <p className={s.comment}>{response.comment}</p>
+          </div>
+        </div>
+      )}
 
       {(canEdit(response.status) || canWithdraw(response.status) || canRestore(response.status)) && (
         <div className={s.actions}>

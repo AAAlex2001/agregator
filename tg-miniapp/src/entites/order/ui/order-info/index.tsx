@@ -1,13 +1,12 @@
-import type { Order } from "@/entites/order";
 import { formatDeadline } from "@/shared/lib/format";
-import s from "./info-step.module.scss";
-import c from "./common.module.scss";
+import type { Order } from "../../model/types";
+import s from "./style.module.scss";
 
-export function InfoStep({ order }: { order: Order }) {
+export function OrderInfo({ order }: { order: Order }) {
   return (
-    <div className={c.step}>
+    <div className={s.wrap}>
       <div className={s.group}>
-        <span className={c.blockLab}>Заказ</span>
+        <span className={s.blockLab}>Заказ</span>
         <div className={s.block}>
           <div className={s.hero}>
             <p className={s.orderTitle}>{order.title}</p>
@@ -28,7 +27,7 @@ export function InfoStep({ order }: { order: Order }) {
       </div>
 
       <div className={s.group}>
-        <span className={c.blockLab}>Сроки выполнения</span>
+        <span className={s.blockLab}>Сроки выполнения</span>
         <div className={s.block}>
           <div className={s.row}>
             <span className={s.rowLab}>Начало работ</span>
@@ -42,7 +41,7 @@ export function InfoStep({ order }: { order: Order }) {
       </div>
 
       <div className={s.group}>
-        <span className={c.blockLab}>Заказчик</span>
+        <span className={s.blockLab}>Заказчик</span>
         <div className={s.block}>
           <div className={s.row}>
             <span className={s.rowLab}>Организатор</span>
@@ -59,7 +58,7 @@ export function InfoStep({ order }: { order: Order }) {
 
       {order.badges.length > 0 && (
         <div className={s.group}>
-          <span className={c.blockLab}>Требования к эксперту</span>
+          <span className={s.blockLab}>Требования к эксперту</span>
           <div className={s.block}>
             <div className={s.chips}>
               {order.badges.map((b, i) => (
@@ -74,7 +73,7 @@ export function InfoStep({ order }: { order: Order }) {
 
       {order.comment && (
         <div className={s.group}>
-          <span className={c.blockLab}>Комментарий заказчика</span>
+          <span className={s.blockLab}>Комментарий заказчика</span>
           <div className={s.block}>
             <p className={s.comment}>{order.comment}</p>
           </div>

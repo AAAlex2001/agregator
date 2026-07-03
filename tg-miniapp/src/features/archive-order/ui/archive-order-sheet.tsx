@@ -1,29 +1,22 @@
 import { useEffect, useState } from "react";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
+import { ExpertIcon, StarIcon } from "@/shared/ui/icons/expert";
 import { fileName, openFile } from "@/shared/lib/files";
 import { pluralRu } from "@/shared/lib/format";
 import { tapHaptic } from "@/shared/services/telegram";
-import type { Order } from "@/entites/order";
+import { OrderInfo, type Order } from "@/entites/order";
+import { useArchiveOrder } from "../model/use-archive-order";
 import s from "./archive-order-sheet.module.scss";
 
-type StepKey = "order" | "customer" | "executor" | "docs";
+type StepKey = "order" | "docs" | "questions" | "executor";
 
 const META: Record<StepKey, { title: string; desc: string; image: string }> = {
-  order: { title: "Заказ", desc: "Условия и требования", image: "archieve" },
-  customer: { title: "Заказчик", desc: "Кто разместил заявку", image: "step-1" },
+  order: { title: "Информация по заказу", desc: "Условия завершённого заказа", image: "archieve" },
+  docs: { title: "Документы заказчика", desc: "Вложения по заказу", image: "step-2" },
+  questions: { title: "Вопросы по заказу", desc: "Переписка с заказчиком", image: "step-3" },
   executor: { title: "Исполнитель", desc: "Кто выполнил заказ", image: "step-4" },
-  docs: { title: "Документы", desc: "Вложения заказчика", image: "step-2" },
 };
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className={s.row}>
-      <span className={s.rowLab}>{label}</span>
-      <span className={s.rowVal}>{value}</span>
-    </div>
-  );
-}
 
 function FileRow({ url }: { url: string }) {
   return (
@@ -34,6 +27,15 @@ function FileRow({ url }: { url: string }) {
   );
 }
 
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className={s.row}>
+      <span className={s.rowLab}>{label}</span>
+      <span className={s.rowVal}>{value}</span>
+    </div>
+  );
+}
+
 interface Props {
   order: Order | null;
   onClose: () => void;
@@ -41,6 +43,7 @@ interface Props {
 
 export function ArchiveOrderSheet({ order, onClose }: Props) {
   const [step, setStep] = useState(0);
+  const { questions } = useArchiveOrder(order);
 
   useEffect(() => {
     if (!order) return;
@@ -59,9 +62,10 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
 
   const keys: StepKey[] = [];
   if (order) {
-    keys.push("order", "customer");
+    keys.push("order");
+    if (docs.length > 0) keys.push("docs");
+    if (questions && questions.length > 0) keys.push("questions");
     if (order.executor_name) keys.push("executor");
-    if (docs.length) keys.push("docs");
   }
   const total = keys.length;
   const current = keys[step] ?? "order";
@@ -109,49 +113,63 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
     >
       {order && (
         <div className={s.body}>
-          {current === "order" && (
-            <>
-              <div className={s.header}>
-                <h2 className={s.orderTitle}>{order.title}</h2>
-                <span className={s.sum}>{order.sum}</span>
+          {current === "order" && <OrderInfo order={order} />}
+
+          {current === "docs" && (
+            <div className={s.group}>
+              <span className={s.blockLab}>Документы заказчика</span>
+              <div className={s.files}>
+                {docs.map((url) => (
+                  <FileRow key={url} url={url} />
+                ))}
               </div>
-              {order.badges.length > 0 && (
-                <div className={s.chips}>
-                  {order.badges.map((b, i) => (
-                    <span key={i} className={s.chip}>
-                      {b.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <Row label="Начало работ" value={order.start_date || "—"} />
-              <Row label="Окончание работ" value={order.deadline_at || "—"} />
-            </>
+            </div>
           )}
 
-          {current === "customer" && (
-            <>
-              <Row label="Организация" value={order.customer_name || "—"} />
-              {order.customer_inn && <Row label="ИНН" value={order.customer_inn} />}
-              {order.comment && <p className={s.text}>{order.comment}</p>}
-            </>
+          {current === "questions" && (
+            <div className={s.group}>
+              <span className={s.blockLab}>Вопросы по заказу</span>
+              <div className={s.qaList}>
+                {(questions ?? []).map((q) => (
+                  <div key={q.id} className={s.qaItem}>
+                    <p className={s.qaQuestion}>{q.question}</p>
+                    <p className={s.qaAnswer}>{q.answer ? q.answer : "Заказчик не ответил"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {current === "executor" && (
-            <>
+            <div className={s.group}>
               <div className={s.execHead}>
-                <span className={s.execName}>{order.executor_name}</span>
-                {order.executor_rating !== null && (
-                  <span className={s.rating}>
-                    ★ {order.executor_rating.toFixed(1)} · {order.executor_review_count}{" "}
-                    {pluralRu(order.executor_review_count, "отзыв", "отзыва", "отзывов")}
-                  </span>
-                )}
+                <span className={s.execAvatar}>
+                  <ExpertIcon size={30} />
+                </span>
+                <div className={s.execIdentity}>
+                  <span className={s.execName}>{order.executor_name}</span>
+                  {order.executor_rating !== null && (
+                    <span className={s.execRating}>
+                      <StarIcon className={s.star} /> {order.executor_rating.toFixed(1)} ·{" "}
+                      {order.executor_review_count}{" "}
+                      {pluralRu(order.executor_review_count, "отзыв", "отзыва", "отзывов")}
+                    </span>
+                  )}
+                </div>
               </div>
-              <Row label="Стоимость" value={order.executor_proposed_sum || "—"} />
-              <Row label="Начало" value={order.executor_proposed_start_date || "—"} />
-              <Row label="Окончание" value={order.executor_proposed_deadline || "—"} />
-              {order.executor_comment && <p className={s.text}>{order.executor_comment}</p>}
+
+              <div className={s.block}>
+                <Row label="Стоимость" value={order.executor_proposed_sum || "—"} />
+                <Row label="Начало работ" value={order.executor_proposed_start_date || "—"} />
+                <Row label="Окончание" value={order.executor_proposed_deadline || "—"} />
+              </div>
+
+              {order.executor_comment && (
+                <div className={s.commentBlock}>
+                  <p className={s.comment}>{order.executor_comment}</p>
+                </div>
+              )}
+
               {order.executor_files.length > 0 && (
                 <div className={s.files}>
                   {order.executor_files.map((url) => (
@@ -159,14 +177,6 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
                   ))}
                 </div>
               )}
-            </>
-          )}
-
-          {current === "docs" && (
-            <div className={s.files}>
-              {docs.map((url) => (
-                <FileRow key={url} url={url} />
-              ))}
             </div>
           )}
         </div>
