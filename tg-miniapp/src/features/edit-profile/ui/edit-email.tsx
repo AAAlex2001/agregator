@@ -7,7 +7,7 @@ import { MailFieldIcon } from "@/shared/ui/icons/fields";
 import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
-export function EditEmail() {
+export function EditEmail({ onDone }: { onDone: () => void }) {
   const { reloadProfile } = useSession();
   const [stage, setStage] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -82,7 +82,15 @@ export function EditEmail() {
           Подтвердить
         </Button>
       </Card>
-      <SuccessModal open={done} title="Готово!" subtitle="Почта обновлена" onClose={() => setDone(false)} />
+      <SuccessModal
+        open={done}
+        title="Готово!"
+        subtitle="Почта обновлена"
+        onClose={() => {
+          setDone(false);
+          onDone();
+        }}
+      />
     </>
   );
 }

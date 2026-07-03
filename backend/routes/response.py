@@ -160,6 +160,10 @@ def to_item(
         ),
         order_date=order.deadline.strftime("%d.%m.%Y") if order else "",
         order_comment=order.comment if order else "",
+        order_responses_deadline=(
+            order.responses_deadline.isoformat() if order and order.responses_deadline else None
+        ),
+        order_created_at=order.created_at.isoformat() if order and order.created_at else "",
         customer_name=customer_name,
         customer_company=customer_company,
         customer_inn=customer_inn,

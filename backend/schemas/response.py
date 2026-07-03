@@ -76,6 +76,8 @@ class ExpertResponseItem(BaseModel):
     order_start_date: str = ""
     order_date: str
     order_comment: str = ""
+    order_responses_deadline: str | None = None
+    order_created_at: str = ""
     customer_name: str
     customer_company: str
     customer_inn: str = ""

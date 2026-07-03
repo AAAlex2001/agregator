@@ -7,7 +7,7 @@ import { NameFieldIcon } from "@/shared/ui/icons/fields";
 import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
 
-export function EditName() {
+export function EditName({ onDone }: { onDone: () => void }) {
   const { profile, reloadProfile } = useSession();
   const [first, setFirst] = useState(profile?.first_name ?? "");
   const [last, setLast] = useState(profile?.last_name ?? "");
@@ -39,7 +39,15 @@ export function EditName() {
           Сохранить
         </Button>
       </Card>
-      <SuccessModal open={done} title="Готово!" subtitle="Имя обновлено" onClose={() => setDone(false)} />
+      <SuccessModal
+        open={done}
+        title="Готово!"
+        subtitle="Имя обновлено"
+        onClose={() => {
+          setDone(false);
+          onDone();
+        }}
+      />
     </>
   );
 }

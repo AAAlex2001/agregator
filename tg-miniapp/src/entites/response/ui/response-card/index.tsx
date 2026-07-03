@@ -1,4 +1,5 @@
 import { Button, Card } from "@/shared/ui";
+import { CountdownBar } from "@/shared/ui/countdown-bar";
 import type { ExpertResponse } from "../../model/api";
 import { statusMeta, canWithdraw, canRestore } from "../../model/status";
 import s from "./style.module.scss";
@@ -23,6 +24,14 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
         </span>
       </div>
       {customer && <span className={s.customer}>{customer}</span>}
+
+      {response.status === "REVIEW" && response.order_responses_deadline && (
+        <CountdownBar
+          deadline={response.order_responses_deadline}
+          from={response.order_created_at || undefined}
+          label="До окончания приёма откликов"
+        />
+      )}
 
       <div className={s.sums}>
         <div className={s.sumCol}>

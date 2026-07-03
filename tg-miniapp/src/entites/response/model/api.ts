@@ -31,6 +31,8 @@ export interface ExpertResponse {
   proposed_deadline: string;
   order_title: string;
   order_sum: string;
+  order_responses_deadline: string | null;
+  order_created_at: string;
   customer_name: string;
   customer_company: string;
   badges: ResponseBadge[];

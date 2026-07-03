@@ -1,3 +1,1 @@
-export { EditName } from "./ui/edit-name";
-export { EditPhone } from "./ui/edit-phone";
-export { EditEmail } from "./ui/edit-email";
+export { EditProfileSheet, type EditProfileKind } from "./ui/edit-profile-sheet";

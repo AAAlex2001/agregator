@@ -8,7 +8,7 @@ import { SuccessModal } from "@/widgets/success-modal";
 import { PHONE_PLACEHOLDER, formatPhone, isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import s from "./edit.module.scss";
 
-export function EditPhone() {
+export function EditPhone({ onDone }: { onDone: () => void }) {
   const { profile, reloadProfile } = useSession();
   const [phone, setPhone] = useState(formatPhone(profile?.phone ?? ""));
   const [saving, setSaving] = useState(false);
@@ -44,7 +44,15 @@ export function EditPhone() {
           Сохранить
         </Button>
       </Card>
-      <SuccessModal open={done} title="Готово!" subtitle="Телефон обновлён" onClose={() => setDone(false)} />
+      <SuccessModal
+        open={done}
+        title="Готово!"
+        subtitle="Телефон обновлён"
+        onClose={() => {
+          setDone(false);
+          onDone();
+        }}
+      />
     </>
   );
 }
