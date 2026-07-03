@@ -17,24 +17,19 @@ export function DocumentContent({
   const [html, setHtml] = useState("");
   const [count, setCount] = useState(1);
   const [loading, setLoading] = useState(false);
-  const loadingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (count < 1 || count > blocks) return;
     let active = true;
     setLoading(true);
-    loadingRef.current = true;
     fetchTechExpertDocumentContent(documentId, count, count > 1)
       .then((chunk) => {
         if (active) setHtml((prev) => prev + chunk);
       })
       .catch(() => {})
       .finally(() => {
-        if (active) {
-          setLoading(false);
-          loadingRef.current = false;
-        }
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -42,19 +37,18 @@ export function DocumentContent({
   }, [documentId, count, blocks]);
 
   useEffect(() => {
+    if (loading || count >= blocks) return;
     const el = sentinelRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !loadingRef.current) {
-          setCount((c) => (c < blocks ? c + 1 : c));
-        }
+        if (entries[0].isIntersecting) setCount((c) => c + 1);
       },
       { rootMargin: "600px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [blocks]);
+  }, [loading, count, blocks]);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const link = (e.target as HTMLElement).closest("a.document");
