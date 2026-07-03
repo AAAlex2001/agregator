@@ -52,6 +52,56 @@ class TechExpertTipsResponse(BaseModel):
     data: TechExpertTipsData
 
 
+# ---------- Модели внешнего API /search/intellectual/documents ----------
+
+class TechExpertNamed(BaseModel):
+    name: str = ""
+
+
+class TechExpertRegistration(BaseModel):
+    date: str | None = None
+    number: str | None = None
+    department: TechExpertNamed | None = None
+    doctype: TechExpertNamed | None = None
+
+
+class TechExpertSearchDocument(BaseModel):
+    id: int
+    names: list[str] = Field(default_factory=list)
+    status: TechExpertNamed | None = None
+    registrations: list[TechExpertRegistration] = Field(default_factory=list)
+    access: str = ""
+
+
+class TechExpertPagination(BaseModel):
+    total: int = 0
+
+
+class TechExpertDocumentsBlock(BaseModel):
+    data: list[TechExpertSearchDocument] = Field(default_factory=list)
+    pagination: TechExpertPagination = Field(default_factory=TechExpertPagination)
+
+
+class TechExpertDocumentsResponse(BaseModel):
+    documents: TechExpertDocumentsBlock
+
+
+class TechExpertDocumentItem(BaseModel):
+    id: int
+    name: str
+    status: str | None
+    doctype: str
+    number: str | None
+    date: str | None
+    department: str
+    access: str
+
+
+class TechExpertDocumentsOutput(BaseModel):
+    items: list[TechExpertDocumentItem]
+    total: int
+
+
 # ---------- Сервис ----------
 
 class TechExpertService:
@@ -144,6 +194,45 @@ class TechExpertService:
 
         return result
 
+    async def search_documents(
+        self,
+        payload: TechExpertInput,
+    ) -> TechExpertDocumentsOutput:
+        data = await self.request(
+            "GET",
+            "/search/intellectual/documents",
+            params=payload.model_dump(exclude_none=True),
+        )
+
+        parsed = TechExpertDocumentsResponse.model_validate(data)
+
+        items: list[TechExpertDocumentItem] = []
+
+        for document in parsed.documents.data:
+            registration = (
+                document.registrations[0]
+                if document.registrations
+                else TechExpertRegistration()
+            )
+
+            items.append(
+                TechExpertDocumentItem(
+                    id=document.id,
+                    name=document.names[0] if document.names else "",
+                    status=document.status.name if document.status else None,
+                    doctype=registration.doctype.name if registration.doctype else "",
+                    number=registration.number,
+                    date=registration.date,
+                    department=registration.department.name if registration.department else "",
+                    access=document.access,
+                )
+            )
+
+        return TechExpertDocumentsOutput(
+            items=items,
+            total=parsed.documents.pagination.total,
+        )
+
     async def close(self) -> None:
         await self.client.aclose()
 
@@ -168,6 +257,31 @@ async def autocomplete(
     try:
         payload = TechExpertInput(q=q)
         result = await service.get_tech_autocomplete(payload)
+
+        return result
+
+    finally:
+        await service.close()
+
+
+@router.get(
+    "/documents",
+    response_model=TechExpertDocumentsOutput,
+)
+async def documents(
+    q: str = Query(..., description="Поисковая строка"),
+    user_id: int = Depends(get_current_user),
+):
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
+
+    service = TechExpertService(
+        url="https://docs.cntd.ru/api",
+    )
+
+    try:
+        payload = TechExpertInput(q=q)
+        result = await service.search_documents(payload)
 
         return result
 
