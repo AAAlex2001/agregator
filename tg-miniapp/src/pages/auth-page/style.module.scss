@@ -62,30 +62,6 @@
   animation: appear 0.28s ease;
 }
 
-.error {
-  margin: 0;
-  font-size: 14px;
-  color: #e7000b;
-  text-align: center;
-}
-
-.foot {
-  margin: 4px 0 0;
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.link {
-  border: none;
-  background: none;
-  padding: 0;
-  font: inherit;
-  color: var(--accent);
-  font-weight: 600;
-  cursor: pointer;
-}
-
 .roleHint {
   margin: -4px 0 14px;
   text-align: center;
@@ -136,4 +112,67 @@
 
 .roleLabel {
   flex: 0 0 auto;
+}
+
+.back {
+  align-self: center;
+  border: none;
+  background: none;
+  padding: 6px;
+  font: inherit;
+  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.regRoles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: appear 0.28s ease;
+}
+
+.regRoleBtn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--card-2);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.08s ease;
+}
+
+.regRoleBtn:active {
+  transform: scale(0.99);
+  border-color: var(--accent);
+}
+
+.regRoleText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.regRoleLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.regRoleDesc {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.regRoleChev {
+  flex: 0 0 auto;
+  color: var(--muted);
 }
