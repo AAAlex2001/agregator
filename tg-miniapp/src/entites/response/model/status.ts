@@ -1,4 +1,4 @@
-import type { ResponseStatus } from "./api";
+import type { ResponseStatus } from "./types";
 
 interface StatusMeta {
   label: string;

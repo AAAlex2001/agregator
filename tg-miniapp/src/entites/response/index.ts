@@ -1,11 +1,10 @@
-export {
-  listResponses,
-  withdrawResponse,
-  restoreResponse,
-  type ExpertResponse,
-  type ResponseStatus,
-  type ResponseTab,
-  type ResponseCounters,
-  type ResponseList,
-} from "./model/api";
+export { listResponses, withdrawResponse, restoreResponse } from "./model/api";
+export type {
+  ExpertResponse,
+  ResponseStatus,
+  ResponseTab,
+  ResponseBadge,
+  ResponseCounters,
+  ResponseList,
+} from "./model/types";
 export { ResponseCard } from "./ui/response-card";

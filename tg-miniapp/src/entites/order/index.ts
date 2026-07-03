@@ -1,9 +1,3 @@
-export {
-  listOrders,
-  listArchivedOrders,
-  orderDocuments,
-  type Order,
-  type OrderDocument,
-  type OrderDocuments,
-} from "./model/api";
+export { listOrders, listArchivedOrders } from "./model/api";
+export type { Order, OrderBadge, OrderDocuments, OrderList } from "./model/types";
 export { OrderCard } from "./ui/order-card";

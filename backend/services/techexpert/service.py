@@ -353,3 +353,27 @@ async def documents(
 
     finally:
         await service.close()
+
+
+@router.get(
+    "/document/{document_id}",
+    response_model=TechExpertDocumentCard,
+)
+async def document(
+    document_id: int,
+    user_id: int = Depends(get_current_user),
+):
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
+
+    service = TechExpertService(
+        url="https://docs.cntd.ru/api",
+    )
+
+    try:
+        result = await service.get_document(document_id)
+
+        return result
+
+    finally:
+        await service.close()
