@@ -1,6 +1,6 @@
 import cn from "classnames";
 import type { Order, OrderDocuments } from "@/entites/order";
-import { openLink, tapHaptic } from "@/shared/services/telegram";
+import { openFile } from "@/shared/lib/files";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { DocIcon } from "@/shared/ui/icons/interface";
 import s from "./documents-step.module.scss";
@@ -17,11 +17,6 @@ interface Tile {
   url?: string;
 }
 
-function fileUrl(url: string): string {
-  if (/^https?:\/\//i.test(url)) return url;
-  return window.location.origin + (url.startsWith("/") ? url : `/${url}`);
-}
-
 export function DocumentsStep({ order }: { order: Order }) {
   const docs = order.documents;
   const others = docs?.other ?? [];
@@ -31,18 +26,13 @@ export function DocumentsStep({ order }: { order: Order }) {
   ];
   const hasAny = tiles.some((t) => t.url);
 
-  const open = (url: string) => {
-    tapHaptic();
-    openLink(fileUrl(url));
-  };
-
   return (
     <div className={c.step}>
       <span className={c.blockLab}>Документы заказчика</span>
       <div className={s.docGrid}>
         {tiles.map((t, i) =>
           t.url ? (
-            <button key={i} className={s.doc} onClick={() => open(t.url!)}>
+            <button key={i} className={s.doc} onClick={() => openFile(t.url!)}>
               <span className={s.thumb}>
                 <FileTypeIcon name={t.url} className={s.docIcon} />
               </span>

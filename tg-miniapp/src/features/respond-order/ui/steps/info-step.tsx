@@ -1,5 +1,5 @@
 import type { Order } from "@/entites/order";
-import { formatDeadline } from "../../model/format";
+import { formatDeadline } from "@/shared/lib/format";
 import s from "./info-step.module.scss";
 import c from "./common.module.scss";
 

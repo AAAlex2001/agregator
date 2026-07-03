@@ -31,6 +31,15 @@ export interface Order {
   documents: OrderDocuments;
   badges: OrderBadge[];
   status: string;
+  executor_name: string;
+  executor_rating: number | null;
+  executor_review_count: number;
+  executor_proposed_sum: string;
+  executor_proposed_start_date: string;
+  executor_proposed_deadline: string;
+  executor_comment: string;
+  executor_files: string[];
+  accepted_response_id: number | null;
 }
 
 export interface OrderList {

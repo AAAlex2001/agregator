@@ -4,6 +4,6 @@ export { Toggle } from "./toggle";
 export { TextField } from "./text-field";
 export { Card } from "./card";
 export { BottomSheet } from "./bottom-sheet";
-export { CountdownRing } from "./countdown-ring";
 export { ThemedImage } from "./themed-image";
+export { CodeInput } from "./code-input";
 export { Logo } from "./icons/logo";

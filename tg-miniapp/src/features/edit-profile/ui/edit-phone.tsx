@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useSession } from "@/features/session";
 import { updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
-import { Button, Card, TextField } from "@/shared/ui";
-import { PhoneFieldIcon } from "@/shared/ui/icons/fields";
+import { Button, Card, TextField, ThemedImage } from "@/shared/ui";
 import { SuccessModal } from "@/widgets/success-modal";
 import { PHONE_PLACEHOLDER, formatPhone, isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import s from "./edit.module.scss";
@@ -37,9 +36,9 @@ export function EditPhone({ onDone }: { onDone: () => void }) {
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
         />
-        <span className={s.fieldIcon}>
-          <PhoneFieldIcon />
-        </span>
+        <div className={s.picture}>
+          <ThemedImage light="/profile-hero/change-telephone-light.webp" dark="/profile-hero/change-telephone-dark.webp" />
+        </div>
         <Button className={s.save} onClick={() => void save()} loading={saving} disabled={!isPhoneComplete(phone)}>
           Сохранить
         </Button>

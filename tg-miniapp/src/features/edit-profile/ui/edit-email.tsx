@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useSession } from "@/features/session";
 import { confirmEmailChange, requestEmailChange } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
-import { Button, Card, TextField } from "@/shared/ui";
-import { MailFieldIcon } from "@/shared/ui/icons/fields";
+import { Button, Card, CodeInput, TextField, ThemedImage } from "@/shared/ui";
 import { SuccessModal } from "@/widgets/success-modal";
 import s from "./edit.module.scss";
+
+const CODE_LENGTH = 6;
 
 export function EditEmail({ onDone }: { onDone: () => void }) {
   const { reloadProfile } = useSession();
@@ -53,9 +54,9 @@ export function EditEmail({ onDone }: { onDone: () => void }) {
             onChange={(e) => setEmail(e.target.value)}
           />
           <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
-          <span className={s.fieldIcon}>
-            <MailFieldIcon />
-          </span>
+          <div className={s.picture}>
+            <ThemedImage light="/profile-hero/change-mail-light.webp" dark="/profile-hero/change-mail-dark.webp" />
+          </div>
           <Button className={s.save} onClick={() => void send()} loading={busy} disabled={!email.trim()}>
             Отправить код
           </Button>
@@ -67,18 +68,18 @@ export function EditEmail({ onDone }: { onDone: () => void }) {
   return (
     <>
       <Card className={s.fields}>
-        <TextField
-          label="Код из письма"
-          placeholder="Код из письма"
-          inputMode="numeric"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-        />
+        <p className={s.codeLab}>Код из письма</p>
+        <CodeInput length={CODE_LENGTH} value={code} onChange={setCode} />
         <p className={s.hint}>Код отправлен на {email}.</p>
-        <span className={s.fieldIcon}>
-          <MailFieldIcon />
-        </span>
-        <Button className={s.save} onClick={() => void confirm()} loading={busy} disabled={!code.trim()}>
+        <div className={s.picture}>
+          <ThemedImage light="/profile-hero/change-mail-light.webp" dark="/profile-hero/change-mail-dark.webp" />
+        </div>
+        <Button
+          className={s.save}
+          onClick={() => void confirm()}
+          loading={busy}
+          disabled={code.length !== CODE_LENGTH}
+        >
           Подтвердить
         </Button>
       </Card>

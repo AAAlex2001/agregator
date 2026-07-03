@@ -5,24 +5,17 @@
   gap: 12px;
 }
 
-.fieldIcon {
-  display: flex;
-  justify-content: center;
+.picture {
+  position: relative;
+  aspect-ratio: 1731 / 909;
+  border-radius: 16px;
+  overflow: hidden;
   margin-top: auto;
-  opacity: 0.5;
-}
-
-.fieldIcon svg {
-  width: clamp(130px, 36vw, 280px);
-  height: auto;
-}
-
-:global([data-theme="dark"]) .fieldIcon {
-  opacity: 0.72;
+  background: var(--card-2);
 }
 
 .save {
-  margin-top: auto;
+  margin-top: 12px;
 }
 
 .hint {
@@ -30,4 +23,12 @@
   font-size: 13px;
   line-height: 1.4;
   color: var(--muted);
+}
+
+.codeLab {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  padding-left: 2px;
 }
