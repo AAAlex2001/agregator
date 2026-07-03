@@ -5,6 +5,7 @@ import s from "./style.module.scss";
 interface Props {
   light: string;
   dark: string;
+  illu: string;
   label?: string;
   title: string;
   desc: string;
@@ -13,10 +14,11 @@ interface Props {
   onClose: () => void;
 }
 
-export function SheetHero({ light, dark, label, title, desc, step, total, onClose }: Props) {
+export function SheetHero({ light, dark, illu, label, title, desc, step, total, onClose }: Props) {
   return (
     <div className={s.hero}>
       <ThemedImage className={s.heroImg} light={light} dark={dark} />
+      <span className={s.heroIllu}>{illu}</span>
 
       <button className={s.close} onClick={onClose} aria-label="Закрыть">
         <CloseIcon width={16} height={16} />
