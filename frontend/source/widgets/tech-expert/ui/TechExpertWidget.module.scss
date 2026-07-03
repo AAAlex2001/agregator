@@ -62,11 +62,7 @@
   align-items: center;
   gap: 24px;
   padding: 24px;
-  background-color: #134fa4;
-  background-image: url("/91.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(120deg, #134fa4 0%, #0f3f83 100%);
   border-radius: 20px;
 
   @media (min-width: 768px) {
@@ -239,12 +235,10 @@
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   text-align: left;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 4px 6px 24px rgba(0, 0, 0, 0.14);
+    border-color: var(--color-orange-primary);
   }
 }
 

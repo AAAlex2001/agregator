@@ -12,25 +12,21 @@ const CATEGORIES = [
     Icon: NormsIcon,
     title: "Нормы и стандарты",
     desc: "ГОСТы, СНиПы, СП, СанПиН и другие нормативные документы",
-    query: "ГОСТ",
   },
   {
     Icon: LawIcon,
     title: "Законодательство РФ",
     desc: "Федеральные законы, кодексы, постановления и приказы",
-    query: "федеральный закон",
   },
   {
     Icon: SafetyIcon,
     title: "Промышленная безопасность",
     desc: "Правила, нормы и требования промышленной безопасности",
-    query: "промышленная безопасность",
   },
   {
     Icon: PracticeIcon,
     title: "Судебная и экспертная практика",
     desc: "Судебные решения, экспертизы и разъяснения",
-    query: "судебная практика экспертиза",
   },
 ];
 
@@ -140,15 +136,7 @@ export function TechExpertWidget() {
       ) : (
         <section className={s.cards}>
           {CATEGORIES.map((c) => (
-            <button
-              key={c.title}
-              type="button"
-              className={s.card}
-              onClick={() => {
-                h.setQuery(c.query);
-                void h.search(c.query);
-              }}
-            >
+            <div key={c.title} className={s.card}>
               <span className={s.cardIcon}>
                 <c.Icon />
               </span>
@@ -156,7 +144,7 @@ export function TechExpertWidget() {
                 <span className={s.cardTitle}>{c.title}</span>
                 <span className={s.cardDesc}>{c.desc}</span>
               </span>
-            </button>
+            </div>
           ))}
         </section>
       )}

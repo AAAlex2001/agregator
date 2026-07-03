@@ -60,10 +60,8 @@
 }
 
 .info {
-  background: var(--card);
-  border: 1px solid var(--hairline);
+  background: var(--card-2);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   overflow: hidden;
   padding: 0 14px;
 }
@@ -118,10 +116,8 @@
 }
 
 .commentBlock {
-  background: var(--card);
-  border: 1px solid var(--hairline);
+  background: var(--card-2);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   padding: 12px 14px;
 }
 

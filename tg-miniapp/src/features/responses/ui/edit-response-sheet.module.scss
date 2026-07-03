@@ -3,56 +3,116 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.lab {
+.fieldLab {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
+  font-weight: 500;
+  color: var(--muted);
+  padding-left: 2px;
 }
 
 .control {
   width: 100%;
   box-sizing: border-box;
-  height: 52px;
-  padding: 0 14px;
-  border: none;
+  height: 50px;
+  border: 1px solid var(--hairline);
   border-radius: 14px;
-  background: var(--card-2);
+  background: var(--card);
+  padding: 0 14px;
   font-family: inherit;
   font-size: 16px;
   color: var(--text);
-  text-align: left;
+  outline: none;
 }
 
-.empty {
+.control:focus {
+  box-shadow: 0 0 0 2px rgba(255, 138, 0, 0.4);
+}
+
+.control::placeholder {
   color: var(--muted);
 }
 
-.total {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
+.dateBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dateEmpty {
+  color: var(--muted);
+}
+
+.chev {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+}
+
+.breakdown {
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bd {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.bdTotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .textarea {
   width: 100%;
   box-sizing: border-box;
-  min-height: 96px;
-  padding: 12px 14px;
-  border: none;
+  min-height: 84px;
+  border: 1px solid var(--hairline);
   border-radius: 14px;
-  background: var(--card-2);
+  background: var(--card);
+  padding: 12px 14px;
   font-family: inherit;
   font-size: 15px;
   line-height: 1.4;
   color: var(--text);
   resize: none;
+  outline: none;
+}
+
+.textarea:focus {
+  box-shadow: 0 0 0 2px rgba(255, 138, 0, 0.4);
+}
+
+.textarea::placeholder {
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
 }

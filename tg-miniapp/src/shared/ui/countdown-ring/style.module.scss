@@ -1,8 +1,8 @@
 .ring {
   position: relative;
   flex: none;
-  width: 60px;
-  height: 60px;
+  width: 72px;
+  height: 72px;
   display: grid;
   place-items: center;
 }
@@ -33,6 +33,7 @@
   font-size: 14px;
   font-weight: 800;
   color: currentColor;
+  white-space: nowrap;
 }
 
 .shine {
@@ -49,8 +50,8 @@
   background-size: 280% 100%;
   background-repeat: no-repeat;
   background-position: 220% 0;
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 21px, #000 22px, #000 28px, transparent 29px);
-  mask: radial-gradient(circle at 50% 50%, transparent 21px, #000 22px, #000 28px, transparent 29px);
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 27px, #000 28px, #000 34px, transparent 35px);
+  mask: radial-gradient(circle at 50% 50%, transparent 27px, #000 28px, #000 34px, transparent 35px);
   animation: ringShine 4.5s ease-in-out infinite;
 }
 

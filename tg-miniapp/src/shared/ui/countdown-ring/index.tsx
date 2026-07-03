@@ -3,7 +3,7 @@ import cn from "classnames";
 import { FULL_MS, countdownLabel, countdownTone, deadlineTime } from "@/shared/lib/countdown";
 import s from "./style.module.scss";
 
-const RADIUS = 25;
+const RADIUS = 31;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 interface Props {
@@ -27,12 +27,12 @@ export function CountdownRing({ deadline, from }: Props) {
 
   return (
     <div className={cn(s.ring, s[countdownTone(remaining)])}>
-      <svg className={s.svg} viewBox="0 0 60 60">
-        <circle className={s.track} cx="30" cy="30" r={RADIUS} />
+      <svg className={s.svg} viewBox="0 0 72 72">
+        <circle className={s.track} cx="36" cy="36" r={RADIUS} />
         <circle
           className={s.arc}
-          cx="30"
-          cy="30"
+          cx="36"
+          cy="36"
           r={RADIUS}
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={CIRCUMFERENCE * (1 - fraction)}

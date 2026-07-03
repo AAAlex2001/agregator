@@ -141,7 +141,7 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
           )}
 
           {current === "executor" && (
-            <div className={s.group}>
+            <div className={s.execWrap}>
               <div className={s.execHead}>
                 <span className={s.execAvatar}>
                   <ExpertIcon size={30} />
@@ -158,23 +158,32 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
                 </div>
               </div>
 
-              <div className={s.block}>
-                <Row label="Стоимость" value={order.executor_proposed_sum || "—"} />
-                <Row label="Начало работ" value={order.executor_proposed_start_date || "—"} />
-                <Row label="Окончание" value={order.executor_proposed_deadline || "—"} />
+              <div className={s.group}>
+                <span className={s.blockLab}>Предложение исполнителя</span>
+                <div className={s.block}>
+                  <Row label="Стоимость" value={order.executor_proposed_sum || "—"} />
+                  <Row label="Начало работ" value={order.executor_proposed_start_date || "—"} />
+                  <Row label="Окончание" value={order.executor_proposed_deadline || "—"} />
+                </div>
               </div>
 
               {order.executor_comment && (
-                <div className={s.commentBlock}>
-                  <p className={s.comment}>{order.executor_comment}</p>
+                <div className={s.group}>
+                  <span className={s.blockLab}>Комментарий исполнителя</span>
+                  <div className={s.commentBlock}>
+                    <p className={s.comment}>{order.executor_comment}</p>
+                  </div>
                 </div>
               )}
 
               {order.executor_files.length > 0 && (
-                <div className={s.files}>
-                  {order.executor_files.map((url) => (
-                    <FileRow key={url} url={url} />
-                  ))}
+                <div className={s.group}>
+                  <span className={s.blockLab}>Файлы исполнителя</span>
+                  <div className={s.files}>
+                    {order.executor_files.map((url) => (
+                      <FileRow key={url} url={url} />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -112,7 +112,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       label: "ТехЭксперт",
       color: "indigo",
       roles: ["EXPERT", "LICENSE_HOLDER"],
-      items: [{ label: "Интеграция с ТехЭкспертом", soon: true }],
+      items: [{ label: "Поиск нормативных документов", href: "/tech-expert" }],
     },
     {
       key: "edu",
