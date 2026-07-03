@@ -2,6 +2,7 @@ export {
   fetchTechExpertAutocomplete,
   fetchTechExpertDocuments,
   fetchTechExpertDocument,
+  fetchTechExpertDocumentContent,
 } from "./api/tech-expert.api";
 export type {
   TechExpertTip,

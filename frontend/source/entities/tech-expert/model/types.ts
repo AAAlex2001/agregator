@@ -53,5 +53,6 @@ export interface TechExpertDocumentCard {
   has_scan: boolean;
   has_html: boolean;
   has_attachments: boolean;
+  blocks: number;
   publications: string[];
 }

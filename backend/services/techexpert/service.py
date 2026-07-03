@@ -1,3 +1,4 @@
+import re
 from typing import Literal
 
 import httpx
@@ -191,7 +192,12 @@ class TechExpertDocumentCard(BaseModel):
     has_scan: bool
     has_html: bool
     has_attachments: bool
+    blocks: int
     publications: list[str]
+
+
+class TechExpertContentResponse(BaseModel):
+    content: str
 
 
 # ---------- Сервис ----------
@@ -369,8 +375,24 @@ class TechExpertService:
             has_scan=sources.scan,
             has_html=sources.html,
             has_attachments=document.files.attachments,
+            blocks=document.content.text.blocks,
             publications=document.publications,
         )
+
+    async def get_document_content(self, document_id: int, block: int, strict: bool) -> str:
+        data = await self.request(
+            "GET",
+            f"/document/{document_id}/content/text/block/{block}",
+            params={"strict": "true" if strict else "false"},
+        )
+        content = data.get("data", {}).get("content", "")
+        return self.clean_content(content)
+
+    @staticmethod
+    def clean_content(html: str) -> str:
+        html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+        return html
 
     async def close(self) -> None:
         await self.client.aclose()
@@ -447,6 +469,31 @@ async def document(
         result = await service.get_document(document_id)
 
         return result
+
+    finally:
+        await service.close()
+
+
+@router.get(
+    "/document/{document_id}/content",
+    response_model=TechExpertContentResponse,
+)
+async def document_content(
+    document_id: int,
+    block: int = Query(1, ge=1),
+    strict: bool = Query(False),
+    user_id: int = Depends(get_current_user),
+):
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
+
+    service = TechExpertService(
+        url="https://docs.cntd.ru/api",
+    )
+
+    try:
+        content = await service.get_document_content(document_id, block, strict)
+        return TechExpertContentResponse(content=content)
 
     finally:
         await service.close()

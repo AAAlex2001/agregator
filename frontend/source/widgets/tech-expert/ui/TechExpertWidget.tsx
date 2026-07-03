@@ -6,6 +6,7 @@ import { SearchIcon } from "@/source/shared/ui/icons";
 import { useTechExpertSearch } from "@/source/features/tech-expert";
 import type { TechExpertAccess, TechExpertDocumentCard } from "@/source/entities/tech-expert";
 import { LawIcon, NormsIcon, PracticeIcon, SafetyIcon } from "./CategoryIcons";
+import { DocumentContent } from "./DocumentContent";
 import s from "./TechExpertWidget.module.scss";
 
 const CATEGORIES = [
@@ -165,7 +166,7 @@ export function TechExpertWidget() {
       )}
 
       <Modal open={detail !== null} onClose={h.closeDetail} size="lg">
-        {detail && <DocumentDetail card={detail} formatDate={formatDate} />}
+        {detail && <DocumentDetail card={detail} formatDate={formatDate} onOpenDocument={h.openDocument} />}
       </Modal>
     </div>
   );
@@ -174,9 +175,11 @@ export function TechExpertWidget() {
 function DocumentDetail({
   card,
   formatDate,
+  onOpenDocument,
 }: {
   card: TechExpertDocumentCard;
   formatDate: (value: string | null) => string;
+  onOpenDocument: (id: number) => void;
 }) {
   const flags = [
     card.is_important && "Важный документ",
@@ -227,6 +230,18 @@ function DocumentDetail({
               {pub}
             </p>
           ))}
+        </div>
+      )}
+
+      {card.has_text && (
+        <div className={s.detailSection}>
+          <span className={s.detailSectionTitle}>Текст документа</span>
+          <DocumentContent
+            key={card.id}
+            documentId={card.id}
+            blocks={card.blocks}
+            onOpenDocument={onOpenDocument}
+          />
         </div>
       )}
     </div>

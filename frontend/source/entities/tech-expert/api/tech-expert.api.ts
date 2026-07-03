@@ -32,3 +32,18 @@ export async function fetchTechExpertDocument(id: number): Promise<TechExpertDoc
   }
   return response.json();
 }
+
+export async function fetchTechExpertDocumentContent(
+  id: number,
+  block: number,
+  strict: boolean,
+): Promise<string> {
+  const response = await fetchWithSession(
+    `${API_URL}/tech-expert/document/${id}/content?block=${block}&strict=${strict}`,
+  );
+  if (!response.ok) {
+    throw new Error(await buildErrorMessage(response, "Не удалось загрузить содержимое"));
+  }
+  const data = await response.json();
+  return typeof data?.content === "string" ? data.content : "";
+}
