@@ -1,10 +1,9 @@
 from typing import Literal
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from dependencies.auth import get_current_user
 
 router = APIRouter(
     prefix="/tech-expert",
@@ -12,9 +11,13 @@ router = APIRouter(
 )
 
 
-class TechExpertInput(BaseModel):
-    q: str = Field(..., description="Запрос")
+# ---------- Твой входной query ----------
 
+class TechExpertInput(BaseModel):
+    q: str = Field(..., description="Поисковая строка")
+
+
+# ---------- Нормальный ответ для твоего фронта ----------
 
 class TechExpertOutput(BaseModel):
     id: int
@@ -22,9 +25,32 @@ class TechExpertOutput(BaseModel):
     type: Literal["string", "document", "number", "type", "department"]
 
 
-class TechExpertCompleteResponse(BaseModel):
-    data: list[TechExpertOutput]
+# ---------- Модели внешнего API /search/intellectual/tips ----------
 
+class TechExpertTip(BaseModel):
+    id: int
+    q: str
+
+
+class TechExpertDocument(BaseModel):
+    id: int
+    names: list[str] = Field(default_factory=list)
+
+
+class TechExpertGroups(BaseModel):
+    tips: list[TechExpertTip] = Field(default_factory=list)
+    documents: list[TechExpertDocument] = Field(default_factory=list)
+
+
+class TechExpertTipsData(BaseModel):
+    groups: TechExpertGroups
+
+
+class TechExpertTipsResponse(BaseModel):
+    data: TechExpertTipsData
+
+
+# ---------- Сервис ----------
 
 class TechExpertService:
     def __init__(self, url: str):
@@ -41,14 +67,31 @@ class TechExpertService:
             response = await self.client.request(method, url, **kwargs)
 
             if response.status_code >= 400:
+                error_detail = "TechExpert API request error"
+
+                try:
+                    error_body = response.json()
+
+                    error_detail = (
+                        error_body.get("message")
+                        or error_body.get("errors", {})
+                            .get("exception", {})
+                            .get("message")
+                        or error_detail
+                    )
+
+                except ValueError:
+                    pass
+
+                if response.status_code in (500, 502, 503, 504):
+                    raise HTTPException(
+                        status_code=502,
+                        detail=error_detail,
+                    )
+
                 raise HTTPException(
                     status_code=response.status_code,
-                    detail={
-                        "message": "TechExpert API request error",
-                        "external_url": str(response.request.url),
-                        "external_status": response.status_code,
-                        "external_body": response.text,
-                    },
+                    detail=error_detail,
                 )
 
             return response.json()
@@ -71,17 +114,39 @@ class TechExpertService:
     ) -> list[TechExpertOutput]:
         data = await self.request(
             "GET",
-            "/search/complete",
+            "/search/intellectual/tips",
             params=payload.model_dump(exclude_none=True),
         )
 
-        parsed = TechExpertCompleteResponse.model_validate(data)
+        parsed = TechExpertTipsResponse.model_validate(data)
 
-        return parsed.data
+        result: list[TechExpertOutput] = []
+
+        for tip in parsed.data.groups.tips:
+            result.append(
+                TechExpertOutput(
+                    id=tip.id,
+                    value=tip.q,
+                    type="string",
+                )
+            )
+
+        for document in parsed.data.groups.documents:
+            result.append(
+                TechExpertOutput(
+                    id=document.id,
+                    value=document.names[0] if document.names else "",
+                    type="document",
+                )
+            )
+
+        return result
 
     async def close(self) -> None:
         await self.client.aclose()
 
+
+# ---------- Роут ----------
 
 @router.get(
     "/autocomplete",
@@ -89,11 +154,7 @@ class TechExpertService:
 )
 async def autocomplete(
     q: str = Query(..., description="Поисковая строка"),
-    user_id: int = Depends(get_current_user),
-) -> list[TechExpertOutput]:
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+):
     service = TechExpertService(
         url="https://docs.cntd.ru/api",
     )
