@@ -1,44 +1,16 @@
-.form {
+.body {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.field {
+.actions {
+  margin-top: auto;
+  padding-top: 22px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-.label {
-  padding-left: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.sectionNote {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.codeHint {
-  margin: 0 0 4px;
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.resend {
-  align-self: flex-start;
-  padding: 4px 2px;
-  border: none;
-  background: transparent;
-  color: var(--accent);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+.actions > * {
+  flex: 1 1 0;
 }

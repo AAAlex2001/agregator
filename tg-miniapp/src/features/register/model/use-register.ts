@@ -4,12 +4,15 @@ import { useSession } from "@/features/session";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
+import { isEmail } from "@/shared/lib/email";
+import { passwordValid } from "@/shared/lib/password";
 import { type Role } from "@/shared/services/api";
 import { confirmEmail, registerLicenseHolder, registerUser, resendCode } from "./api";
-import { passwordValid } from "./password-rules";
 import { initialState, reducer } from "./reducer";
 
 export type StepKey = "org" | "profile" | "license" | "docs" | "account" | "code";
+
+const CODE_LENGTH = 6;
 
 const FLOW: Record<Role, StepKey[]> = {
   CUSTOMER: ["org", "account", "code"],
@@ -31,11 +34,12 @@ export function useRegister(role: Role | null) {
   const total = flow.length;
   const isLicense = role === "LICENSE_HOLDER";
 
-  const percent = Number(state.rentalPercent.replace(",", "."));
+  const percent = Number(state.rentalPercent);
+  const fixed = Number(state.rentalFixed);
   const rentalOk =
     state.rentalKind === "NEGOTIABLE" ||
     (state.rentalKind === "PERCENT" && percent > 0 && percent <= 100) ||
-    (state.rentalKind === "FIXED" && Number(state.rentalFixed.replace(/\s/g, "")) > 0);
+    (state.rentalKind === "FIXED" && fixed > 0);
   const phoneOk = isLicense
     ? isPhoneComplete(state.phone)
     : state.phone === "" || isPhoneComplete(state.phone);
@@ -50,14 +54,14 @@ export function useRegister(role: Role | null) {
       rentalOk,
     docs: true,
     account:
-      state.email.trim() !== "" &&
+      isEmail(state.email) &&
       passwordValid(state.password) &&
       state.password === state.confirm &&
       phoneOk &&
       state.consents.privacy &&
       state.consents.terms &&
       state.consents.personal,
-    code: state.code.trim().length >= 4,
+    code: state.code.trim().length === CODE_LENGTH,
   };
 
   const submitData = async () => {
@@ -76,8 +80,7 @@ export function useRegister(role: Role | null) {
             license_areas: state.licenseAreas,
             license_rental_kind: state.rentalKind,
             license_rental_percent: state.rentalKind === "PERCENT" ? percent : undefined,
-            license_rental_fixed_amount:
-              state.rentalKind === "FIXED" ? Number(state.rentalFixed.replace(/\s/g, "")) : undefined,
+            license_rental_fixed_amount: state.rentalKind === "FIXED" ? fixed : undefined,
             mining_license_number: state.miningNumber.trim() || null,
             lab_accreditation_number: state.labNumber.trim() || null,
           },

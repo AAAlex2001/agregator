@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
+import { passwordValid } from "@/shared/lib/password";
 import { resetPassword, sendResetCode } from "./api";
 
 export function useForgotPassword(open: boolean) {
@@ -34,7 +35,7 @@ export function useForgotPassword(open: boolean) {
   };
 
   const submitReset = async () => {
-    if (code.trim().length < 4 || password.length < 6 || busy) return;
+    if (code.trim().length !== 6 || !passwordValid(password) || busy) return;
     setBusy(true);
     try {
       await resetPassword(email.trim(), code.trim(), password);

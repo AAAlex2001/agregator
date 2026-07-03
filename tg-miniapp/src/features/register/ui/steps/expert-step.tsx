@@ -1,16 +1,9 @@
-import { type Dispatch } from "react";
-import { Checkbox, TextField } from "@/shared/ui";
+import { Checkbox, Field, TextField } from "@/shared/ui";
 import { AddressSuggest } from "@/entites/geo";
-import { type RegisterAction, type RegisterState } from "../../model/reducer";
-import { AttestationFields } from "./attestation-fields";
-import s from "../register-sheet.module.scss";
+import { type StepProps } from "./types";
+import { Attestation } from "./attestation";
 
-interface Props {
-  state: RegisterState;
-  dispatch: Dispatch<RegisterAction>;
-}
-
-export function ExpertFields({ state, dispatch }: Props) {
+export function ExpertStep({ state, dispatch }: StepProps) {
   return (
     <>
       <TextField
@@ -25,19 +18,18 @@ export function ExpertFields({ state, dispatch }: Props) {
         value={state.firstName}
         onChange={(e) => dispatch({ type: "set", key: "firstName", value: e.target.value })}
       />
-      <div className={s.field}>
-        <span className={s.label}>Где вы находитесь (необязательно)</span>
+      <Field label="Где вы находитесь (необязательно)">
         <AddressSuggest
           value={state.locationAddress}
-          onChangeText={(v) => dispatch({ type: "set", key: "locationAddress", value: v })}
+          onChangeText={(v) => dispatch({ type: "addressText", value: v })}
           onPick={(point) => dispatch({ type: "location", point })}
         />
-      </div>
+      </Field>
       <Checkbox checked={state.travels} onChange={(v) => dispatch({ type: "travels", value: v })}>
         Готов выезжать на объекты в другие регионы
       </Checkbox>
 
-      <AttestationFields state={state} dispatch={dispatch} />
+      <Attestation state={state} dispatch={dispatch} />
     </>
   );
 }

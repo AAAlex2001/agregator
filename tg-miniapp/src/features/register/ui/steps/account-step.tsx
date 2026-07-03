@@ -1,16 +1,13 @@
-import { type Dispatch } from "react";
-import { TextField } from "@/shared/ui";
+import { PasswordRules, TextField } from "@/shared/ui";
 import { PHONE_PLACEHOLDER, formatPhone } from "@/shared/lib/phone";
-import { type RegisterAction, type RegisterState } from "../../model/reducer";
-import { PasswordRules } from "./password-rules";
+import { type StepProps } from "./types";
+import { Consents } from "./consents";
 
-interface Props {
-  state: RegisterState;
-  dispatch: Dispatch<RegisterAction>;
+interface Props extends StepProps {
   phoneRequired: boolean;
 }
 
-export function AccountFields({ state, dispatch, phoneRequired }: Props) {
+export function AccountStep({ state, dispatch, phoneRequired }: Props) {
   return (
     <>
       <TextField
@@ -43,6 +40,8 @@ export function AccountFields({ state, dispatch, phoneRequired }: Props) {
         value={state.confirm}
         onChange={(e) => dispatch({ type: "set", key: "confirm", value: e.target.value })}
       />
+
+      <Consents state={state} dispatch={dispatch} />
     </>
   );
 }

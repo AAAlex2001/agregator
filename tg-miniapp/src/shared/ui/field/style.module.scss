@@ -1,0 +1,19 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  padding-left: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.hint {
+  padding-left: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}

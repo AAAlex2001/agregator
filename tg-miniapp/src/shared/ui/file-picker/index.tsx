@@ -12,20 +12,21 @@ interface Props {
   keptUrls?: string[];
   onRemoveKept?: (url: string) => void;
   note?: string;
+  multiple?: boolean;
 }
 
-export function FilePicker({ files, onAdd, onRemove, keptUrls = [], onRemoveKept, note }: Props) {
+export function FilePicker({ files, onAdd, onRemove, keptUrls = [], onRemoveKept, note, multiple = true }: Props) {
   return (
     <div className={s.wrap}>
       <div className={s.attach}>
         <span className={s.attachIcon}>
           <UploadIcon width={20} height={20} />
         </span>
-        <span className={s.attachText}>Прикрепить файлы</span>
+        <span className={s.attachText}>{multiple ? "Прикрепить файлы" : "Прикрепить файл"}</span>
         <PlusIcon className={s.attachPlus} width={18} height={18} />
         <input
           type="file"
-          multiple
+          multiple={multiple}
           className={s.attachInput}
           onClick={() => tapHaptic()}
           onChange={(e) => {

@@ -64,12 +64,14 @@ export type RegisterAction =
   | { type: "travels"; value: boolean }
   | { type: "attested"; value: boolean }
   | { type: "showOnMap"; value: boolean }
-  | { type: "toggleMapField"; field: string }
+  | { type: "mapFields"; value: string[] }
   | { type: "addCertificate" }
   | { type: "removeCertificate"; index: number }
   | { type: "location"; point: GeoPoint }
+  | { type: "addressText"; value: string }
   | { type: "party"; party: Party }
-  | { type: "toggleArea"; area: string }
+  | { type: "companyText"; value: string }
+  | { type: "areas"; value: string[] }
   | { type: "rentalKind"; value: RentalKind }
   | { type: "file"; key: FileKey; file: File | null }
   | { type: "consent"; key: ConsentKey; value: boolean }
@@ -122,13 +124,8 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, attested: action.value };
     case "showOnMap":
       return { ...state, showOnMap: action.value };
-    case "toggleMapField":
-      return {
-        ...state,
-        mapFields: state.mapFields.includes(action.field)
-          ? state.mapFields.filter((f) => f !== action.field)
-          : [...state.mapFields, action.field],
-      };
+    case "mapFields":
+      return { ...state, mapFields: action.value };
     case "addCertificate": {
       const cert = { area: state.certArea, object: state.certObject, category: state.certCategory };
       const exists = state.certificates.some(
@@ -152,15 +149,14 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         locationLng: action.point.lng,
         locationCity: action.point.city,
       };
+    case "addressText":
+      return { ...state, locationAddress: action.value, locationLat: null, locationLng: null, locationCity: null };
     case "party":
       return { ...state, party: action.party, companyName: action.party.value };
-    case "toggleArea":
-      return {
-        ...state,
-        licenseAreas: state.licenseAreas.includes(action.area)
-          ? state.licenseAreas.filter((a) => a !== action.area)
-          : [...state.licenseAreas, action.area],
-      };
+    case "companyText":
+      return { ...state, companyName: action.value, party: null };
+    case "areas":
+      return { ...state, licenseAreas: action.value };
     case "rentalKind":
       return { ...state, rentalKind: action.value };
     case "file":

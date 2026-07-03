@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { CheckIcon } from "@/shared/ui/icons/interface";
-import { PASSWORD_RULES } from "../../model/password-rules";
-import s from "./password-rules.module.scss";
+import { PASSWORD_RULES } from "@/shared/lib/password";
+import s from "./style.module.scss";
 
 export function PasswordRules({ password }: { password: string }) {
   return (

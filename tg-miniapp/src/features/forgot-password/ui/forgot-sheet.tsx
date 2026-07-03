@@ -1,4 +1,5 @@
-import { Button, CodeInput, FullSheet, SheetHero, TextField } from "@/shared/ui";
+import { Button, CodeInput, FullSheet, PasswordRules, SheetHero, TextField } from "@/shared/ui";
+import { passwordValid } from "@/shared/lib/password";
 import { useForgotPassword } from "../model/use-forgot-password";
 import s from "./forgot-sheet.module.scss";
 
@@ -24,7 +25,7 @@ export function ForgotSheet({ open, onClose }: { open: boolean; onClose: () => v
       <Button
         onClick={() => void submitReset()}
         loading={busy}
-        disabled={code.trim().length < 4 || password.length < 6}
+        disabled={code.trim().length !== 6 || !passwordValid(password)}
       >
         Изменить пароль
       </Button>
@@ -69,10 +70,11 @@ export function ForgotSheet({ open, onClose }: { open: boolean; onClose: () => v
           <TextField
             label="Новый пароль"
             password
-            placeholder="Не менее 6 символов"
+            placeholder="Новый пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <PasswordRules password={password} />
         </div>
       )}
 
