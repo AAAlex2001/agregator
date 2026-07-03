@@ -6,15 +6,27 @@
 
 .head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
 
+.dateLab {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .title {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 700;
   line-height: 1.3;
   color: var(--text);
@@ -24,16 +36,8 @@
   overflow: hidden;
 }
 
-.status {
-  flex: none;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
 .customer {
+  margin-top: -6px;
   font-size: 13px;
   color: var(--muted);
   overflow: hidden;
@@ -41,49 +45,63 @@
   white-space: nowrap;
 }
 
-.sums {
+.info {
+  background: var(--card-2);
+  border-radius: 12px;
+  padding: 2px 12px;
+}
+
+.infoRow {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
+}
+
+.infoRow + .infoRow {
   border-top: 1px solid var(--hairline);
-  border-bottom: 1px solid var(--hairline);
 }
 
-.sumCol {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sumColEnd {
-  align-items: flex-end;
-  text-align: right;
-}
-
-.sumLab {
-  font-size: 11.5px;
+.infoLab {
+  flex: none;
+  font-size: 13px;
   color: var(--muted);
 }
 
-.sumMine {
-  font-size: 16px;
+.infoSum {
+  min-width: 0;
+  text-align: right;
+  font-size: 14.5px;
   font-weight: 800;
   color: var(--accent);
 }
 
-.sumBase {
-  font-size: 15px;
-  font-weight: 700;
+.infoVal {
+  min-width: 0;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text);
+}
+
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.commentLab {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
 }
 
 .comment {
   margin: 0;
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.45;
-  color: var(--muted);
+  color: var(--text);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;

@@ -1,6 +1,5 @@
 import { apiJson } from "@/shared/services/api";
-
-export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
+import type { VatKind } from "@/entites/response";
 
 export interface Party {
   value: string;

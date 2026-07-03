@@ -1,14 +1,12 @@
 import cn from "classnames";
-import { tapHaptic } from "@/shared/services/telegram";
+import { Tabs } from "@/shared/ui/tabs";
 import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/icons/interface";
 import { FileTypeIcon } from "@/shared/ui/file-icon";
-import { Tabs } from "@/shared/ui/tabs";
-import { CompanySuggest } from "../company-suggest";
-import type { Party } from "../../model/api";
+import { tapHaptic } from "@/shared/services/telegram";
 import type { VatKind } from "@/entites/response";
-import { toKopecks, formatRub, formatDateRu, formatSize } from "@/shared/lib/format";
-import s from "./offer-step.module.scss";
-import c from "./common.module.scss";
+import { formatDateRu, formatSize } from "@/shared/lib/format";
+import type { useEditResponse } from "../model/useEditResponse";
+import s from "./edit-form.module.scss";
 
 const VAT_OPTIONS: { code: VatKind; label: string }[] = [
   { code: "NONE", label: "Без НДС" },
@@ -16,45 +14,26 @@ const VAT_OPTIONS: { code: VatKind; label: string }[] = [
   { code: "VAT_7", label: "7%" },
   { code: "VAT_22", label: "22%" },
 ];
-const VAT_RATE: Record<VatKind, number> = { NONE: 0, VAT_5: 5, VAT_7: 7, VAT_22: 22 };
 
 interface Props {
-  requiresLicense: boolean;
-  startDate: string;
-  deadline: string;
-  sum: string;
-  vat: VatKind;
-  comment: string;
-  companyName: string;
-  files: File[];
+  form: ReturnType<typeof useEditResponse>;
   onOpenDate: (which: "start" | "end") => void;
-  onChangeSum: (value: string) => void;
-  onChangeVat: (value: VatKind) => void;
-  onChangeComment: (value: string) => void;
-  onCompanyText: (value: string) => void;
-  onCompanyPick: (party: Party) => void;
-  onAddFiles: (list: FileList | null) => void;
-  onRemoveFile: (index: number) => void;
 }
 
-export function OfferStep(p: Props) {
-  const base = toKopecks(p.sum);
-  const rate = VAT_RATE[p.vat];
-  const vatAmount = Math.round((base * rate) / 100);
-
+export function EditForm({ form, onOpenDate }: Props) {
   return (
-    <div className={c.step}>
+    <>
       <div className={s.field}>
         <span className={s.fieldLab}>Срок начала выполнения работ</span>
         <button
           type="button"
-          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.startDate })}
+          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !form.startDate })}
           onClick={() => {
             tapHaptic();
-            p.onOpenDate("start");
+            onOpenDate("start");
           }}
         >
-          {p.startDate ? formatDateRu(p.startDate) : "Выберите дату"}
+          {form.startDate ? formatDateRu(form.startDate) : "Выберите дату"}
           <ChevronDownIcon className={s.chev} />
         </button>
       </div>
@@ -62,13 +41,13 @@ export function OfferStep(p: Props) {
         <span className={s.fieldLab}>Срок окончания выполнения работ</span>
         <button
           type="button"
-          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !p.deadline })}
+          className={cn(s.control, s.dateBtn, { [s.dateEmpty]: !form.deadline })}
           onClick={() => {
             tapHaptic();
-            p.onOpenDate("end");
+            onOpenDate("end");
           }}
         >
-          {p.deadline ? formatDateRu(p.deadline) : "Выберите дату"}
+          {form.deadline ? formatDateRu(form.deadline) : "Выберите дату"}
           <ChevronDownIcon className={s.chev} />
         </button>
       </div>
@@ -79,9 +58,9 @@ export function OfferStep(p: Props) {
           className={s.control}
           inputMode="numeric"
           placeholder="Сумма в рублях"
-          value={p.sum}
+          value={form.sum}
           onFocus={() => tapHaptic()}
-          onChange={(e) => p.onChangeSum(e.target.value)}
+          onChange={(e) => form.setSum(e.target.value)}
         />
       </div>
 
@@ -89,43 +68,24 @@ export function OfferStep(p: Props) {
         <span className={s.fieldLab}>Ставка НДС</span>
         <Tabs
           tabs={VAT_OPTIONS.map((o) => ({ key: o.code, label: o.label }))}
-          active={p.vat}
-          onChange={(k) => p.onChangeVat(k as VatKind)}
+          active={form.vat}
+          onChange={(k) => form.setVat(k as VatKind)}
         />
-        {base > 0 && (
-          <div className={s.breakdown}>
-            <div className={s.bd}><span>Стоимость работ</span><span>{formatRub(base)}</span></div>
-            {p.vat !== "NONE" && (
-              <div className={s.bd}><span>НДС {rate}%</span><span>{formatRub(vatAmount)}</span></div>
-            )}
-            <div className={s.bdTotal}><span>Итого</span><span>{formatRub(base + vatAmount)}</span></div>
-          </div>
-        )}
-        <span className={c.note}>
-          Сумма ориентировочная. Точная стоимость согласуется с заказчиком после изучения ТЗ.
-        </span>
       </div>
-
-      {p.requiresLicense && (
-        <div className={s.field}>
-          <span className={s.fieldLab}>Организация для заключения договора</span>
-          <CompanySuggest value={p.companyName} onChangeText={p.onCompanyText} onPick={p.onCompanyPick} />
-        </div>
-      )}
 
       <div className={s.field}>
         <span className={s.fieldLab}>Комментарий для заказчика</span>
         <textarea
-          className={c.textarea}
+          className={s.textarea}
           placeholder="Напишите комментарий для заказчика…"
-          value={p.comment}
+          value={form.comment}
           onFocus={() => tapHaptic()}
-          onChange={(e) => p.onChangeComment(e.target.value)}
+          onChange={(e) => form.setComment(e.target.value)}
         />
       </div>
 
       <div className={s.field}>
-        <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
+        <span className={s.fieldLab}>Файлы к отклику</span>
         <div className={s.attach}>
           <span className={s.attachIcon}>
             <UploadIcon width={20} height={20} />
@@ -138,16 +98,32 @@ export function OfferStep(p: Props) {
             className={s.attachInput}
             onClick={() => tapHaptic()}
             onChange={(e) => {
-              p.onAddFiles(e.target.files);
+              form.addFiles(e.target.files);
               e.target.value = "";
             }}
           />
         </div>
-        <span className={c.note}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
-        {p.files.length > 0 && (
+        {(form.keepFiles.length > 0 || form.newFiles.length > 0) && (
           <ul className={s.fileList}>
-            {p.files.map((f, i) => (
-              <li key={i} className={s.fileItem}>
+            {form.keepFiles.map((url) => (
+              <li key={url} className={s.fileItem}>
+                <FileTypeIcon name={url} className={s.fileIcon} />
+                <span className={s.fileName}>{url.split("/").pop() || "файл"}</span>
+                <button
+                  type="button"
+                  className={s.fileRemove}
+                  onClick={() => {
+                    tapHaptic();
+                    form.removeKeepFile(url);
+                  }}
+                  aria-label="Удалить файл"
+                >
+                  <CloseIcon width={16} height={16} />
+                </button>
+              </li>
+            ))}
+            {form.newFiles.map((f, i) => (
+              <li key={`${f.name}-${i}`} className={s.fileItem}>
                 <FileTypeIcon name={f.name} className={s.fileIcon} />
                 <div className={s.fileMeta}>
                   <span className={s.fileName}>{f.name}</span>
@@ -158,7 +134,7 @@ export function OfferStep(p: Props) {
                   className={s.fileRemove}
                   onClick={() => {
                     tapHaptic();
-                    p.onRemoveFile(i);
+                    form.removeNewFile(i);
                   }}
                   aria-label="Удалить файл"
                 >
@@ -169,6 +145,6 @@ export function OfferStep(p: Props) {
           </ul>
         )}
       </div>
-    </div>
+    </>
   );
 }
