@@ -158,8 +158,8 @@ async def autocomplete(
     q: str = Query(..., description="Поисковая строка"),
     user_id: int = Depends(get_current_user),
 ):
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    if user_id is None: 
+        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
 
     service = TechExpertService(
         url="https://docs.cntd.ru/api",
