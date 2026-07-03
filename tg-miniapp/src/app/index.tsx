@@ -10,6 +10,9 @@ import { HomePage } from "@/pages/home-page";
 import { ProfilePage } from "@/pages/profile-page";
 import { NotificationsPage } from "@/pages/notifications-page";
 import { PricingPage } from "@/pages/pricing-page";
+import { EditNamePage } from "@/pages/edit-name-page";
+import { EditPhonePage } from "@/pages/edit-phone-page";
+import { EditEmailPage } from "@/pages/edit-email-page";
 
 export function App() {
   const { booting, authed } = useSession();
@@ -49,6 +52,9 @@ export function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/edit-name" element={<EditNamePage />} />
+              <Route path="/edit-phone" element={<EditPhonePage />} />
+              <Route path="/edit-email" element={<EditEmailPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             {onboarding}

@@ -7,12 +7,11 @@ import s from "./style.module.scss";
 interface Props {
   open: boolean;
   title?: string;
-  full?: boolean;
   onClose: () => void;
   children: ReactNode;
 }
 
-export function BottomSheet({ open, title, full = false, onClose, children }: Props) {
+export function BottomSheet({ open, title, onClose, children }: Props) {
   const [render, setRender] = useState(open);
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<{ title?: string; content: ReactNode }>({ title, content: children });
@@ -52,7 +51,7 @@ export function BottomSheet({ open, title, full = false, onClose, children }: Pr
 
   return (
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={close}>
-      <div className={cn(s.sheet, { [s.closing]: closing, [s.full]: full })} onClick={(e) => e.stopPropagation()}>
+      <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         <div className={s.top}>
           {shownTitle ? <h3 className={s.title}>{shownTitle}</h3> : <span />}
           <button className={s.close} onClick={close} aria-label="Закрыть">

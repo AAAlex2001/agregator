@@ -5,7 +5,6 @@ import { Screen } from "@/widgets/app-shell";
 import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { RoleTabs } from "@/features/role-switch";
-import { EditProfileSheet, type EditProfileKind } from "@/features/edit-profile";
 import { hapticEnabled, setHapticEnabled } from "@/shared/services/telegram";
 import {
   BellIcon,
@@ -32,7 +31,6 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { profile, role, signOut } = useSession();
   const [themeOpen, setThemeOpen] = useState(false);
-  const [edit, setEdit] = useState<EditProfileKind | null>(null);
   const [haptic, setHaptic] = useState(hapticEnabled);
   const meta = ROLE_META[role ?? "CUSTOMER"];
 
@@ -56,9 +54,9 @@ export function ProfilePage() {
 
       <p className={s.groupTitle}>Общая информация</p>
       <div className={s.group}>
-        <SettingRow icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => setEdit("name")} />
-        <SettingRow icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone ? formatPhone(profile.phone) : "—"} onClick={() => setEdit("phone")} />
-        <SettingRow icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => setEdit("email")} />
+        <SettingRow icon={<UserIcon width={19} height={19} />} label="ФИО" value={name} onClick={() => navigate("/edit-name")} />
+        <SettingRow icon={<PhoneIcon width={19} height={19} />} label="Телефон" value={profile.phone ? formatPhone(profile.phone) : "—"} onClick={() => navigate("/edit-phone")} />
+        <SettingRow icon={<MailIcon width={19} height={19} />} label="Почта" value={profile.email || "—"} onClick={() => navigate("/edit-email")} />
       </div>
 
       {role === "EXPERT" && (
@@ -104,8 +102,6 @@ export function ProfilePage() {
       </div>
 
       <ThemeSheet open={themeOpen} onClose={() => setThemeOpen(false)} />
-
-      <EditProfileSheet kind={edit} onClose={() => setEdit(null)} />
     </Screen>
   );
 }

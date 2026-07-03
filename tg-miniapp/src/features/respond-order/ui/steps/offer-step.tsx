@@ -4,9 +4,8 @@ import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/ic
 import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "../company-suggest";
-import type { Party } from "../../model/api";
-import type { VatKind } from "@/entites/response";
-import { toKopecks, formatRub, formatDateRu, formatSize } from "@/shared/lib/format";
+import type { Party, VatKind } from "../../model/api";
+import { toKopecks, formatRub, formatDateRu, formatSize } from "../../model/format";
 import s from "./offer-step.module.scss";
 import c from "./common.module.scss";
 

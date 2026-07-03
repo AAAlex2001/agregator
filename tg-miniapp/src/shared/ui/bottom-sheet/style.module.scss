@@ -28,18 +28,6 @@
   animation: slideDown 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.sheet.full {
-  height: calc(100vh - 22px);
-  height: calc(100dvh - 22px);
-  max-height: none;
-  display: flex;
-  flex-direction: column;
-}
-
-.sheet.full .body {
-  flex: 1 1 auto;
-}
-
 .top {
   display: flex;
   align-items: center;

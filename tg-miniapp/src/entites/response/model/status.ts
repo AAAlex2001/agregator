@@ -19,10 +19,6 @@ export function statusMeta(status: ResponseStatus): StatusMeta {
   return STATUS_META[status] ?? STATUS_META.REVIEW;
 }
 
-export function canEdit(status: ResponseStatus): boolean {
-  return status === "REVIEW";
-}
-
 export function canWithdraw(status: ResponseStatus): boolean {
   return status === "REVIEW" || status === "ACCEPTED" || status === "IN_PROGRESS";
 }

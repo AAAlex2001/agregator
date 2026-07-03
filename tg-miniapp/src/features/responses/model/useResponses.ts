@@ -66,5 +66,5 @@ export function useResponses(tab: ResponseTab) {
     }
   };
 
-  return { items, counters, busyId, withdraw, restore, reload };
+  return { items, counters, busyId, withdraw, restore };
 }

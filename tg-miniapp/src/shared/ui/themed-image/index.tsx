@@ -15,8 +15,8 @@ const hideBroken = (e: React.SyntheticEvent<HTMLImageElement>) => {
 export function ThemedImage({ light, dark, alt = "", className }: Props) {
   return (
     <span className={cn(s.wrap, className)}>
-      <img className={cn(s.img, s.light)} src={light} alt={alt} onError={hideBroken} loading="eager" decoding="async" />
-      <img className={cn(s.img, s.dark)} src={dark} alt={alt} onError={hideBroken} loading="eager" decoding="async" />
+      <img className={cn(s.img, s.light)} src={light} alt={alt} onError={hideBroken} loading="eager" />
+      <img className={cn(s.img, s.dark)} src={dark} alt={alt} onError={hideBroken} loading="eager" />
     </span>
   );
 }

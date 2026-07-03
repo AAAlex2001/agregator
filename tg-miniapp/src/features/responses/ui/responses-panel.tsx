@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Spinner } from "@/shared/ui";
 import { Tabs, type TabItem } from "@/shared/ui/tabs";
-import { ResponseCard, type ExpertResponse, type ResponseTab } from "@/entites/response";
+import { ResponseCard, type ResponseTab } from "@/entites/response";
 import { useResponses } from "../model/useResponses";
-import { EditResponseSheet } from "./edit-response-sheet";
 import s from "./responses-panel.module.scss";
 
 const STATUS: { key: ResponseTab; label: string }[] = [
@@ -17,7 +16,6 @@ const STATUS: { key: ResponseTab; label: string }[] = [
 
 export function ResponsesPanel() {
   const [tab, setTab] = useState<ResponseTab>("all");
-  const [editTarget, setEditTarget] = useState<ExpertResponse | null>(null);
   const r = useResponses(tab);
 
   const tabs: TabItem[] = STATUS.map((t) => ({
@@ -42,22 +40,12 @@ export function ResponsesPanel() {
               key={resp.id}
               response={resp}
               busy={r.busyId === resp.id}
-              onEdit={setEditTarget}
               onWithdraw={r.withdraw}
               onRestore={r.restore}
             />
           ))}
         </div>
       )}
-
-      <EditResponseSheet
-        response={editTarget}
-        onClose={() => setEditTarget(null)}
-        onSaved={() => {
-          setEditTarget(null);
-          void r.reload();
-        }}
-      />
     </>
   );
 }
