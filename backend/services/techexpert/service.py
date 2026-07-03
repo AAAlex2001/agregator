@@ -102,6 +102,42 @@ class TechExpertDocumentsOutput(BaseModel):
     total: int
 
 
+# ---------- Модели внешнего API /document/{id} ----------
+
+class TechExpertDocumentDetail(BaseModel):
+    id: int
+    names: list[str] = Field(default_factory=list)
+    clean_name: str = ""
+    status: TechExpertNamed | None = None
+    registrations: list[TechExpertRegistration] = Field(default_factory=list)
+    access: str = ""
+    edition_date: str | None = None
+    change_date: str | None = None
+    action_start_date: str | None = None
+    action_end_date: str | None = None
+    publications: list[str] = Field(default_factory=list)
+
+
+class TechExpertDocumentDetailResponse(BaseModel):
+    data: TechExpertDocumentDetail
+
+
+class TechExpertDocumentCard(BaseModel):
+    id: int
+    name: str
+    status: str | None
+    doctype: str
+    number: str | None
+    date: str | None
+    department: str
+    access: str
+    edition_date: str | None
+    change_date: str | None
+    action_start_date: str | None
+    action_end_date: str | None
+    publications: list[str]
+
+
 # ---------- Сервис ----------
 
 class TechExpertService:
@@ -231,6 +267,36 @@ class TechExpertService:
         return TechExpertDocumentsOutput(
             items=items,
             total=parsed.documents.pagination.total,
+        )
+
+    async def get_document(self, document_id: int) -> TechExpertDocumentCard:
+        data = await self.request("GET", f"/document/{document_id}")
+
+        parsed = TechExpertDocumentDetailResponse.model_validate(data)
+        document = parsed.data
+
+        registration = (
+            document.registrations[0]
+            if document.registrations
+            else TechExpertRegistration()
+        )
+
+        name = document.clean_name or (document.names[0] if document.names else "")
+
+        return TechExpertDocumentCard(
+            id=document.id,
+            name=name,
+            status=document.status.name if document.status else None,
+            doctype=registration.doctype.name if registration.doctype else "",
+            number=registration.number,
+            date=registration.date,
+            department=registration.department.name if registration.department else "",
+            access=document.access,
+            edition_date=document.edition_date,
+            change_date=document.change_date,
+            action_start_date=document.action_start_date,
+            action_end_date=document.action_end_date,
+            publications=document.publications,
         )
 
     async def close(self) -> None:
