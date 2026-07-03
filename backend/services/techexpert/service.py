@@ -11,13 +11,13 @@ router = APIRouter(
 )
 
 
-# ---------- Твой входной query ----------
+# ---------- входной query ----------
 
 class TechExpertInput(BaseModel):
     q: str = Field(..., description="Поисковая строка")
 
 
-# ---------- Нормальный ответ для твоего фронта ----------
+# ---------- ответ для фронта ----------
 
 class TechExpertOutput(BaseModel):
     id: int
