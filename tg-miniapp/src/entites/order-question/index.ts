@@ -1,6 +1,2 @@
-export {
-  fetchOrderQuestions,
-  askOrderQuestion,
-  type OrderQuestion,
-  type OrderQuestionList,
-} from "./model/api";
+export { fetchOrderQuestions, askOrderQuestion, type OrderQuestion } from "./model/api";
+export { QuestionItem } from "./ui/question-item";

@@ -1,4 +1,4 @@
-import { Field } from "@/shared/ui";
+import { Card, Field } from "@/shared/ui";
 import s from "./confirm-step.module.scss";
 
 export function ConfirmStep() {
@@ -6,7 +6,7 @@ export function ConfirmStep() {
     <>
       <p className={s.lead}>Проверьте условия — на следующем шаге заполните предложение.</p>
       <Field label="Что будет дальше">
-        <div className={s.card}>
+        <Card>
           <ul className={s.checklist}>
             <li>
               <span className={s.ck}>1</span>
@@ -21,7 +21,7 @@ export function ConfirmStep() {
               <span>Если заказчик выберет вас — детали согласуете напрямую.</span>
             </li>
           </ul>
-        </div>
+        </Card>
       </Field>
     </>
   );

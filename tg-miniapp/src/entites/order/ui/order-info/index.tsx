@@ -1,3 +1,4 @@
+import { Field, InfoRow } from "@/shared/ui";
 import { formatDeadline } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
 import s from "./style.module.scss";
@@ -5,8 +6,7 @@ import s from "./style.module.scss";
 export function OrderInfo({ order }: { order: Order }) {
   return (
     <div className={s.wrap}>
-      <div className={s.group}>
-        <span className={s.blockLab}>Заказ</span>
+      <Field label="Заказ">
         <div className={s.block}>
           <div className={s.hero}>
             <p className={s.orderTitle}>{order.title}</p>
@@ -24,41 +24,24 @@ export function OrderInfo({ order }: { order: Order }) {
             </div>
           </div>
         </div>
-      </div>
+      </Field>
 
-      <div className={s.group}>
-        <span className={s.blockLab}>Сроки выполнения</span>
+      <Field label="Сроки выполнения">
         <div className={s.block}>
-          <div className={s.row}>
-            <span className={s.rowLab}>Начало работ</span>
-            <span className={s.rowVal}>{order.start_date || "—"}</span>
-          </div>
-          <div className={s.row}>
-            <span className={s.rowLab}>Окончание</span>
-            <span className={s.rowVal}>{order.date || "—"}</span>
-          </div>
+          <InfoRow label="Начало работ" value={order.start_date || "—"} />
+          <InfoRow label="Окончание" value={order.date || "—"} />
         </div>
-      </div>
+      </Field>
 
-      <div className={s.group}>
-        <span className={s.blockLab}>Заказчик</span>
+      <Field label="Заказчик">
         <div className={s.block}>
-          <div className={s.row}>
-            <span className={s.rowLab}>Организатор</span>
-            <span className={s.rowVal}>{order.company || "—"}</span>
-          </div>
-          {order.customer_inn && (
-            <div className={s.row}>
-              <span className={s.rowLab}>ИНН</span>
-              <span className={s.rowVal}>{order.customer_inn}</span>
-            </div>
-          )}
+          <InfoRow label="Организатор" value={order.company || "—"} />
+          {order.customer_inn && <InfoRow label="ИНН" value={order.customer_inn} />}
         </div>
-      </div>
+      </Field>
 
       {order.badges.length > 0 && (
-        <div className={s.group}>
-          <span className={s.blockLab}>Требования к эксперту</span>
+        <Field label="Требования к эксперту">
           <div className={s.block}>
             <div className={s.chips}>
               {order.badges.map((b, i) => (
@@ -68,16 +51,15 @@ export function OrderInfo({ order }: { order: Order }) {
               ))}
             </div>
           </div>
-        </div>
+        </Field>
       )}
 
       {order.comment && (
-        <div className={s.group}>
-          <span className={s.blockLab}>Комментарий заказчика</span>
+        <Field label="Комментарий заказчика">
           <div className={s.block}>
             <p className={s.comment}>{order.comment}</p>
           </div>
-        </div>
+        </Field>
       )}
     </div>
   );

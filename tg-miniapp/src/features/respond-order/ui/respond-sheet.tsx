@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { tapHaptic } from "@/shared/services/telegram";
+import { preloadThemedImages } from "@/shared/lib/preload-images";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { OrderInfo, type Order } from "@/entites/order";
@@ -37,12 +38,7 @@ export function RespondSheet({ order, onClose }: Props) {
     if (!open) return;
     setStep(1);
     setCalField(null);
-    for (const meta of [...Object.values(META), SUCCESS_META]) {
-      for (const theme of ["light", "dark"]) {
-        const img = new Image();
-        img.src = `/respond-order/${meta.image}-${theme}.webp`;
-      }
-    }
+    preloadThemedImages([...Object.values(META), SUCCESS_META].map((m) => m.image), "/respond-order");
   }, [open]);
 
   const close = () => {

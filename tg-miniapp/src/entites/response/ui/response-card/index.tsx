@@ -1,4 +1,4 @@
-import { Button, Card } from "@/shared/ui";
+import { Button, Card, Field, InfoRow } from "@/shared/ui";
 import { CountdownRing } from "@/shared/ui/countdown-ring";
 import { VAT_LABEL, type ExpertResponse } from "../../model/types";
 import { statusMeta, canWithdraw, canRestore, canEdit } from "../../model/status";
@@ -36,29 +36,17 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: 
       )}
 
       <div className={s.info}>
-        <div className={s.row}>
-          <span className={s.rowLab}>Моё предложение</span>
-          <span className={s.rowMine}>
-            {response.proposed_sum} · {VAT_LABEL[response.vat_kind]}
-          </span>
-        </div>
-        <div className={s.row}>
-          <span className={s.rowLab}>Начальная цена</span>
-          <span className={s.rowVal}>{response.order_sum}</span>
-        </div>
-        <div className={s.row}>
-          <span className={s.rowLab}>Сроки работ</span>
-          <span className={s.rowVal}>до {response.proposed_deadline}</span>
-        </div>
+        <InfoRow label="Моё предложение" value={`${response.proposed_sum} · ${VAT_LABEL[response.vat_kind]}`} accent />
+        <InfoRow label="Начальная цена" value={response.order_sum} />
+        <InfoRow label="Сроки работ" value={`до ${response.proposed_deadline}`} />
       </div>
 
       {response.comment && (
-        <div className={s.commentGroup}>
-          <span className={s.commentLab}>Ваш комментарий</span>
+        <Field label="Ваш комментарий">
           <div className={s.commentBlock}>
             <p className={s.comment}>{response.comment}</p>
           </div>
-        </div>
+        </Field>
       )}
 
       {(canEdit(response.status) || canWithdraw(response.status) || canRestore(response.status)) && (

@@ -5,7 +5,7 @@ import { emitError } from "@/shared/services/error-bus";
 import { formatPhone, isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import { CODE_LENGTH } from "./constants";
 import { initialState, reducer } from "./reducer";
-import type { EditProfileAction, EditProfileKind } from "./types";
+import type { EditProfileKind } from "./types";
 
 export function useEditProfile(kind: EditProfileKind | null) {
   const { profile, reloadProfile } = useSession();
@@ -81,7 +81,5 @@ export function useEditProfile(kind: EditProfileKind | null) {
     dispatch({ type: "done" });
   };
 
-  const setField = (action: EditProfileAction) => dispatch(action);
-
-  return { state, canSubmit, submit, setField };
+  return { state, canSubmit, submit, dispatch };
 }

@@ -55,33 +55,6 @@
   padding: 0 14px;
 }
 
-.row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-}
-
-.row + .row {
-  border-top: 1px solid var(--hairline);
-}
-
-.rowLab {
-  flex: none;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.rowVal {
-  min-width: 0;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  word-break: break-word;
-}
-
 .commentBlock {
   background: var(--card);
   border: 1px solid var(--hairline);

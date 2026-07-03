@@ -64,24 +64,6 @@
   transform: scale(0.94);
 }
 
-.feed {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.feedLoading {
-  display: flex;
-  justify-content: center;
-  padding: 18px 0;
-}
-
-.empty {
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-}
-
 .emptyLine {
   margin: 0;
   padding: 8px 2px 4px;

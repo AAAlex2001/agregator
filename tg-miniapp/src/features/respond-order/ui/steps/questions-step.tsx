@@ -1,5 +1,6 @@
 import { Button, Field, Spinner, TextArea } from "@/shared/ui";
 import { Toggle } from "@/shared/ui/toggle";
+import { QuestionItem } from "@/entites/order-question";
 import { useOrderQuestions } from "../../model/use-order-questions";
 import s from "./questions-step.module.scss";
 
@@ -18,10 +19,11 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
         ) : (
           <div className={s.qaList}>
             {state.items.map((q) => (
-              <div key={q.id} className={s.qaItem}>
-                <div className={s.qaQ}>{q.question}</div>
-                <div className={s.qaA}>{q.answer ? `Ответ: ${q.answer}` : "Ожидает ответа заказчика"}</div>
-              </div>
+              <QuestionItem
+                key={q.id}
+                question={q.question}
+                answer={q.answer ? `Ответ: ${q.answer}` : "Ожидает ответа заказчика"}
+              />
             ))}
           </div>
         )}

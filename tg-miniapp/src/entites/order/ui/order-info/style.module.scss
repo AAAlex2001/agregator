@@ -4,19 +4,6 @@
   gap: 14px;
 }
 
-.group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.blockLab {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted);
-  padding-left: 2px;
-}
-
 .block {
   background: var(--card);
   border: 1px solid var(--hairline);
@@ -71,33 +58,6 @@
   line-height: 1.1;
   color: var(--accent);
   white-space: nowrap;
-}
-
-.row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-}
-
-.row + .row {
-  border-top: 1px solid var(--hairline);
-}
-
-.rowLab {
-  flex: none;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.rowVal {
-  min-width: 0;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  word-break: break-word;
 }
 
 .chips {

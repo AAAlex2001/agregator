@@ -3,25 +3,3 @@
   flex-direction: column;
   gap: 8px;
 }
-
-.item {
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
-  padding: 12px 14px;
-}
-
-.question {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--text);
-}
-
-.answer {
-  margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--muted);
-}

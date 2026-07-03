@@ -1,18 +1,9 @@
-import { Field } from "@/shared/ui";
+import { Field, InfoRow } from "@/shared/ui";
 import { ExpertIcon, StarIcon } from "@/shared/ui/icons/expert";
 import { pluralRu } from "@/shared/lib/format";
 import type { Order } from "@/entites/order";
 import { FileRow } from "../file-row";
 import s from "./executor-step.module.scss";
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className={s.row}>
-      <span className={s.rowLab}>{label}</span>
-      <span className={s.rowVal}>{value}</span>
-    </div>
-  );
-}
 
 export function ExecutorStep({ order }: { order: Order }) {
   return (
@@ -34,9 +25,9 @@ export function ExecutorStep({ order }: { order: Order }) {
 
       <Field label="Предложение исполнителя">
         <div className={s.block}>
-          <Row label="Стоимость" value={order.executor_proposed_sum || "—"} />
-          <Row label="Начало работ" value={order.executor_proposed_start_date || "—"} />
-          <Row label="Окончание" value={order.executor_proposed_deadline || "—"} />
+          <InfoRow label="Стоимость" value={order.executor_proposed_sum || "—"} />
+          <InfoRow label="Начало работ" value={order.executor_proposed_start_date || "—"} />
+          <InfoRow label="Окончание" value={order.executor_proposed_deadline || "—"} />
         </div>
       </Field>
 

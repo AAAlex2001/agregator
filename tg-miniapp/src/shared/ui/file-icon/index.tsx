@@ -9,7 +9,7 @@ const PALETTES: Record<string, Palette> = {
   file: { fill: "#7A869A", fold: "#5A6474" },
 };
 
-export function fileExt(nameOrUrl: string): string {
+function fileExt(nameOrUrl: string): string {
   const clean = nameOrUrl.split("?")[0].split("#")[0];
   const tail = clean.split(".").pop() ?? "";
   return tail.toLowerCase();

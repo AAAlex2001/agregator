@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import BurgerMenu from "./BurgerMenu";
+import PromoBanner from "./PromoBanner";
 import s from "./header.module.scss";
 
 const NAV_PAGES = [
@@ -14,32 +15,35 @@ const NAV_PAGES = [
 
 const Header = () => {
   return (
-    <header className={s.header}>
-      <div className={s.container}>
-        <Link href="/" className={s.brand} aria-label="На главную">
-          <span className={s.logo}>
-            <LogoIcon />
-          </span>
-        </Link>
-        <nav className={s.nav}>
-          {NAV_PAGES.map((page) => (
-            <Link key={page.href} href={page.href}>
-              {page.label}
+    <>
+      <PromoBanner />
+      <header className={s.header}>
+        <div className={s.container}>
+          <Link href="/" className={s.brand} aria-label="На главную">
+            <span className={s.logo}>
+              <LogoIcon />
+            </span>
+          </Link>
+          <nav className={s.nav}>
+            {NAV_PAGES.map((page) => (
+              <Link key={page.href} href={page.href}>
+                {page.label}
+              </Link>
+            ))}
+          </nav>
+          <div className={s.actions}>
+            <Link href="/login" className={s.login}> Войти
             </Link>
-          ))}
-        </nav>
-        <div className={s.actions}>
-          <Link href="/login" className={s.login}> Войти
-          </Link>
-          <Link href="/register" className={s.signUp}>  Зарегистрироваться
-          </Link>
+            <Link href="/register" className={s.signUp}>  Зарегистрироваться
+            </Link>
+          </div>
+          <div className={s.mobileActions}>
+            <Link href="/login" className={s.mobileLogin}>Войти</Link>
+            <BurgerMenu />
+          </div>
         </div>
-        <div className={s.mobileActions}>
-          <Link href="/login" className={s.mobileLogin}>Войти</Link>
-          <BurgerMenu />
-        </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 };
 

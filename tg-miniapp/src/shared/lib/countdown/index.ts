@@ -1,4 +1,4 @@
-export const HOUR = 60 * 60 * 1000;
+const HOUR = 60 * 60 * 1000;
 export const FULL_MS = 3 * 24 * HOUR;
 const RED_MS = 6 * HOUR;
 

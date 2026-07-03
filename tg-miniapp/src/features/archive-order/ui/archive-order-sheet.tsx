@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { tapHaptic } from "@/shared/services/telegram";
+import { preloadThemedImages } from "@/shared/lib/preload-images";
 import { OrderInfo, type Order } from "@/entites/order";
 import { useArchiveOrder } from "../model/use-archive-order";
 import { DocsStep } from "./steps/docs-step";
@@ -29,12 +30,7 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
   useEffect(() => {
     if (!order) return;
     setStep(0);
-    for (const { image } of Object.values(META)) {
-      for (const theme of ["light", "dark"]) {
-        const img = new Image();
-        img.src = `/respond-order/${image}-${theme}.webp`;
-      }
-    }
+    preloadThemedImages(Object.values(META).map((m) => m.image), "/respond-order");
   }, [order]);
 
   const docs = order

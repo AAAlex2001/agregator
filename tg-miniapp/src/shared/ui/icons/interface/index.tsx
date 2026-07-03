@@ -74,35 +74,9 @@ export const DocIcon = (p: P) => (
   </svg>
 );
 
-export const BoltIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <path d="M13 2 4 14h7l-1 8 9-12h-7z" />
-  </svg>
-);
-
-export const ToolIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <path d="M14.5 5.5a3.5 3.5 0 0 1-4.6 4.6L5 15v4h4l4.9-4.9a3.5 3.5 0 0 0 4.6-4.6l-2.2 2.2-2-.5-.5-2z" />
-  </svg>
-);
-
-export const SunIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <circle cx="12" cy="12" r="4" />
-    <path d="M12 2v2m0 16v2M4 12H2m20 0h-2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19" />
-  </svg>
-);
-
 export const MoonIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-  </svg>
-);
-
-export const MonitorIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <rect x="3" y="4" width="18" height="12" rx="2" />
-    <path d="M8 20h8M12 16v4" />
   </svg>
 );
 
@@ -159,22 +133,9 @@ export const UploadIcon = (p: P) => (
   </svg>
 );
 
-export const ClockIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7.5V12l3 2" />
-  </svg>
-);
-
 export const FilterIcon = (p: P) => (
   <svg {...base} {...p}>
     <path d="M22 4H2l8 9.46V19l4 2v-7.54L22 4z" />
-  </svg>
-);
-
-export const SwitchRoleIcon = (p: P) => (
-  <svg {...base} {...p}>
-    <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5" />
   </svg>
 );
 

@@ -54,13 +54,13 @@ export function EditProfileSheet({ kind, onClose }: Props) {
                 label="Ваше имя"
                 placeholder="Имя"
                 value={form.state.first}
-                onChange={(e) => form.setField({ type: "first", value: e.target.value })}
+                onChange={(e) => form.dispatch({ type: "first", value: e.target.value })}
               />
               <TextField
                 label="Ваша фамилия"
                 placeholder="Фамилия"
                 value={form.state.last}
-                onChange={(e) => form.setField({ type: "last", value: e.target.value })}
+                onChange={(e) => form.dispatch({ type: "last", value: e.target.value })}
               />
             </Card>
           )}
@@ -72,7 +72,7 @@ export function EditProfileSheet({ kind, onClose }: Props) {
                 placeholder={PHONE_PLACEHOLDER}
                 inputMode="tel"
                 value={form.state.phone}
-                onChange={(e) => form.setField({ type: "phone", value: formatPhone(e.target.value) })}
+                onChange={(e) => form.dispatch({ type: "phone", value: formatPhone(e.target.value) })}
               />
             </Card>
           )}
@@ -86,7 +86,7 @@ export function EditProfileSheet({ kind, onClose }: Props) {
                   type="email"
                   inputMode="email"
                   value={form.state.email}
-                  onChange={(e) => form.setField({ type: "email", value: e.target.value })}
+                  onChange={(e) => form.dispatch({ type: "email", value: e.target.value })}
                 />
               </Card>
               <p className={s.hint}>На новый адрес придёт код подтверждения.</p>
@@ -99,7 +99,7 @@ export function EditProfileSheet({ kind, onClose }: Props) {
               <CodeInput
                 length={CODE_LENGTH}
                 value={form.state.code}
-                onChange={(value) => form.setField({ type: "code", value })}
+                onChange={(value) => form.dispatch({ type: "code", value })}
               />
               <p className={s.hint}>Код отправлен на {form.state.email}.</p>
             </>
