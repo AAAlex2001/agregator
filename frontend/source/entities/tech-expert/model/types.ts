@@ -1,7 +1,7 @@
 export type TechExpertTipType = "string" | "document" | "number" | "type" | "department";
 
 export interface TechExpertTip {
-  id: number;
+  id: number | null;
   value: string;
   type: TechExpertTipType;
 }

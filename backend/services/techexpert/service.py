@@ -22,7 +22,7 @@ class TechExpertInput(BaseModel):
 # ---------- ответ для фронта ----------
 
 class TechExpertOutput(BaseModel):
-    id: int
+    id: int | None = None
     value: str
     type: Literal["string", "document", "number", "type", "department"]
 
@@ -30,12 +30,12 @@ class TechExpertOutput(BaseModel):
 # ---------- Модели внешнего API /search/intellectual/tips ----------
 
 class TechExpertTip(BaseModel):
-    id: int
+    id: int | None = None
     q: str
 
 
 class TechExpertDocument(BaseModel):
-    id: int
+    id: int | None = None
     names: list[str] = Field(default_factory=list)
 
 

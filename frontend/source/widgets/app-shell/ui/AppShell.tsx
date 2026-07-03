@@ -20,6 +20,7 @@ const SIDEBAR_ROUTES = [
   /^\/expert-reviews(?:\/.*)?$/,
   /^\/experts\/[^/]+\/orders$/,
   /^\/responses$/,
+  /^\/tech-expert$/,
   /^\/settings$/,
   /^\/chat(?:\/.*)?$/,
   /^\/archive(?:\/.*)?$/,

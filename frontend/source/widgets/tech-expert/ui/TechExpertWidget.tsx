@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Loader, Modal } from "@/source/shared/ui";
+import Image from "next/image";
+import { Button, Loader, Modal, Subtitle, Title } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { useTechExpertSearch } from "@/source/features/tech-expert";
 import type { TechExpertAccess, TechExpertDocumentCard } from "@/source/entities/tech-expert";
@@ -61,20 +62,21 @@ export function TechExpertWidget() {
   return (
     <div className={s.wrapper}>
       <header className={s.head}>
-        <h1 className={s.title}>Поиск нормативных документов</h1>
-        <p className={s.subtitle}>
-          Доступ к электронному фонду Консорциума «КОДЕКС» — более 100 000 000 актуальных правовых и
-          нормативно-технических документов
-        </p>
+        <Title as="h1" text="Поиск нормативных документов" />
+        <Subtitle text="Доступ к электронному фонду Консорциума «КОДЕКС» — более 100 000 000 актуальных правовых и нормативно-технических документов" />
       </header>
 
       <section className={s.banner}>
         <div className={s.bannerTop}>
-          <span className={s.bannerTitle}>Электронный фонд</span>
+          <Image className={s.bannerLogo} src="/codex.png" alt="Консорциум КОДЕКС" width={364} height={182} />
           <span className={s.bannerDivider} aria-hidden="true" />
-          <span className={s.bannerText}>
-            более 100 000 000 актуальных правовых и нормативно-технических документов
-          </span>
+          <div className={s.bannerText}>
+            <span className={s.bannerTitle}>Электронный фонд</span>
+            <span className={s.bannerSub}>
+              более <span className={s.bannerAccent}>100 000 000</span> актуальных правовых и
+              нормативно-технических документов
+            </span>
+          </div>
         </div>
 
         <form className={s.searchWrap} onSubmit={submit}>
@@ -82,11 +84,18 @@ export function TechExpertWidget() {
             <SearchIcon className={s.searchIcon} />
             <input
               className={s.searchInput}
-              placeholder="Введите название, номер или ключевые слова…"
+              placeholder="Введите наименование или номер документа для поиска"
               value={query}
               onChange={(e) => h.setQuery(e.target.value)}
               onFocus={() => tips.length > 0 && h.setTipsOpen(true)}
             />
+            {query && (
+              <button type="button" className={s.clearBtn} onClick={h.clear} aria-label="Очистить">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
             <Button type="submit" variant="primary" size="md" isLoading={searching}>
               Найти
             </Button>
@@ -94,8 +103,8 @@ export function TechExpertWidget() {
 
           {tipsOpen && tips.length > 0 && (
             <ul className={s.dropdown}>
-              {tips.map((tip) => (
-                <li key={`${tip.type}-${tip.id}`}>
+              {tips.map((tip, i) => (
+                <li key={`${tip.type}-${i}`}>
                   <button type="button" className={s.dropdownItem} onClick={() => h.pickTip(tip)}>
                     <SearchIcon className={s.dropdownIcon} />
                     <span>{tip.value}</span>

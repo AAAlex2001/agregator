@@ -38,12 +38,8 @@
   justify-content: center;
   align-items: flex-end;
   gap: 6px;
-  color: #ffffff;
-  text-align: right;
-}
-
-.textDark {
   color: var(--text);
+  text-align: right;
 }
 
 .label {
@@ -76,12 +72,12 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--hairline);
   transition: width 0.2s ease;
 }
 
 .dotOn {
   width: 20px;
   border-radius: 4px;
-  background: #ffffff;
+  background: var(--accent);
 }

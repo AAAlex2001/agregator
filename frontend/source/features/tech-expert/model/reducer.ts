@@ -33,6 +33,8 @@ export function reducer(state: TechExpertState, action: TechExpertAction): TechE
       return { ...state, detailLoading: false, error: action.error };
     case "detailClose":
       return { ...state, detail: null };
+    case "reset":
+      return initialState;
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import {
   fetchTechExpertAutocomplete,
   fetchTechExpertDocument,
@@ -13,8 +13,13 @@ const MIN_QUERY = 2;
 
 export function useTechExpertSearch() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const skipAutocomplete = useRef(false);
 
   useEffect(() => {
+    if (skipAutocomplete.current) {
+      skipAutocomplete.current = false;
+      return;
+    }
     const q = state.query.trim();
     if (q.length < MIN_QUERY) {
       dispatch({ type: "tips", tips: [] });
@@ -52,6 +57,7 @@ export function useTechExpertSearch() {
 
   const pickTip = useCallback(
     (tip: TechExpertTip) => {
+      skipAutocomplete.current = true;
       dispatch({ type: "query", value: tip.value });
       void search(tip.value);
     },
@@ -72,6 +78,7 @@ export function useTechExpertSearch() {
     state,
     setQuery: (value: string) => dispatch({ type: "query", value }),
     setTipsOpen: (value: boolean) => dispatch({ type: "tipsOpen", value }),
+    clear: () => dispatch({ type: "reset" }),
     search,
     pickTip,
     openDocument,

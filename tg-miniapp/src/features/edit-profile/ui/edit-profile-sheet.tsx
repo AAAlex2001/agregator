@@ -41,7 +41,6 @@ export function EditProfileSheet({ kind, onClose }: Props) {
             dark={`/profile-hero/${meta.image}-dark.webp`}
             title={meta.title}
             desc={meta.desc}
-            tone="dark"
             onClose={close}
           />
         )

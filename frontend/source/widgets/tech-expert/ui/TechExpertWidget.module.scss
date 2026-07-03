@@ -24,38 +24,6 @@
   gap: 12px;
 }
 
-.title {
-  margin: 0;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 1.2;
-  color: #000000;
-
-  @media (min-width: 768px) {
-    font-size: 28px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 32px;
-  }
-}
-
-.subtitle {
-  margin: 0;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.35;
-  color: #000000;
-
-  @media (min-width: 768px) {
-    font-size: 18px;
-  }
-
-  @media (min-width: 1024px) {
-    font-size: 22px;
-  }
-}
-
 .banner {
   display: flex;
   flex-direction: column;
@@ -80,14 +48,44 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   text-align: center;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     flex-direction: row;
-    gap: 40px;
+    gap: 28px;
     text-align: left;
   }
+}
+
+.bannerLogo {
+  flex: none;
+  height: 64px;
+  width: auto;
+  border-radius: 8px;
+
+  @media (min-width: 768px) {
+    height: 80px;
+  }
+}
+
+.bannerDivider {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    flex: none;
+    width: 1px;
+    height: 72px;
+    background: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 560px;
 }
 
 .bannerTitle {
@@ -95,33 +93,45 @@
   font-size: 20px;
   line-height: 1.2;
   color: #ffffff;
-  white-space: nowrap;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     font-size: 24px;
   }
 }
 
-.bannerDivider {
-  display: none;
+.bannerSub {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.35;
+  color: #ffffff;
 
-  @media (min-width: 1024px) {
-    display: block;
-    width: 1px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.6);
+  @media (min-width: 768px) {
+    font-size: 19px;
   }
 }
 
-.bannerText {
-  max-width: 520px;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.3;
-  color: #ffffff;
+.bannerAccent {
+  color: var(--color-orange-bright);
+  font-weight: 700;
+  white-space: nowrap;
+}
 
-  @media (min-width: 1024px) {
-    font-size: 20px;
+.clearBtn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    color: var(--color-text-secondary);
   }
 }
 

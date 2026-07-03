@@ -25,4 +25,5 @@ export type TechExpertAction =
   | { type: "detailStart" }
   | { type: "detailSuccess"; detail: TechExpertDocumentCard }
   | { type: "detailError"; error: string }
-  | { type: "detailClose" };
+  | { type: "detailClose" }
+  | { type: "reset" };
