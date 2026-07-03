@@ -12,12 +12,12 @@ interface Props {
 
 export function CodeStep({ email, code, dispatch, onResend }: Props) {
   return (
-    <div className={s.form}>
+    <>
       <p className={s.codeHint}>Мы отправили код подтверждения на {email.trim()}. Введите его ниже.</p>
       <CodeInput value={code} onChange={(v) => dispatch({ type: "set", key: "code", value: v })} />
       <button type="button" className={s.resend} onClick={onResend}>
         Отправить код повторно
       </button>
-    </div>
+    </>
   );
 }

@@ -11,11 +11,10 @@ interface Props {
   label?: string;
   step?: number;
   total?: number;
-  textDark?: boolean;
   onClose: () => void;
 }
 
-export function SheetHero({ light, dark, title, desc, label, step, total, textDark, onClose }: Props) {
+export function SheetHero({ light, dark, title, desc, label, step, total, onClose }: Props) {
   return (
     <div className={s.hero}>
       <ThemedImage className={s.image} light={light} dark={dark} />
@@ -24,7 +23,7 @@ export function SheetHero({ light, dark, title, desc, label, step, total, textDa
         <CloseIcon width={16} height={16} />
       </button>
 
-      <div className={cn(s.text, { [s.textDark]: textDark })}>
+      <div className={s.text}>
         {label && <span className={s.label}>{label}</span>}
         <span className={s.title}>{title}</span>
         <span className={s.desc}>{desc}</span>

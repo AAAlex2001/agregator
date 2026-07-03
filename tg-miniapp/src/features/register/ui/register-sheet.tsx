@@ -1,46 +1,60 @@
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { type Role } from "@/shared/services/api";
-import { useRegister } from "../model/use-register";
-import { DataStep } from "./data-step";
+import { useRegister, type StepKey } from "../model/use-register";
+import { AccountFields } from "./fields/account-fields";
+import { ConsentFields } from "./fields/consent-fields";
+import { CustomerFields } from "./fields/customer-fields";
+import { ExpertFields } from "./fields/expert-fields";
+import { LicenseFields } from "./fields/license-fields";
+import { LicenseDocsFields } from "./fields/license-docs-fields";
 import { CodeStep } from "./code-step";
+import s from "./register-sheet.module.scss";
 
-const ROLE_META: Record<Role, { light: string; dark: string; title: string; desc: string }> = {
+const ROLE_META: Record<Role, { light: string; dark: string; title: string }> = {
   CUSTOMER: {
     light: "/profile-hero/customer-light.webp",
     dark: "/profile-hero/customer-dark.webp",
     title: "Заказчик",
-    desc: "Размещайте заказы и находите аттестованных экспертов",
   },
   EXPERT: {
     light: "/profile-hero/expert-light.webp",
     dark: "/profile-hero/expert-dark.webp",
     title: "Эксперт",
-    desc: "Находите проекты и участвуйте в тендерах",
   },
   LICENSE_HOLDER: {
     light: "/profile-hero/license-light.webp",
     dark: "/profile-hero/license-dark.webp",
     title: "Держатель лицензии",
-    desc: "Предоставляйте лицензию ЭПБ ОПО для работы экспертов",
   },
 };
 
+const STEP_DESC: Record<StepKey, string> = {
+  org: "Укажите вашу организацию",
+  profile: "Расскажите о себе",
+  license: "Данные лицензии ЭПБ ОПО",
+  docs: "Документы — можно добавить позже",
+  account: "Почта, телефон и пароль",
+  code: "Подтвердите почту кодом из письма",
+};
+
 export function RegisterSheet({ role, onClose }: { role: Role | null; onClose: () => void }) {
-  const { state, dispatch, isLicense, canSubmit, submitData, submitCode, resend } = useRegister(role);
+  const { state, dispatch, stepKey, total, stepReady, next, back, submitCode, resend } = useRegister(role);
   const meta = role ? ROLE_META[role] : null;
 
   const actions =
-    state.step === 1 ? (
-      <Button onClick={() => void submitData()} loading={state.busy} disabled={!canSubmit}>
-        Далее
+    stepKey === "code" ? (
+      <Button onClick={() => void submitCode()} loading={state.busy} disabled={!stepReady.code}>
+        Подтвердить
       </Button>
     ) : (
       <>
-        <Button variant="outline" onClick={() => dispatch({ type: "step", value: 1 })}>
-          Назад
-        </Button>
-        <Button onClick={() => void submitCode()} loading={state.busy} disabled={state.code.trim().length < 4}>
-          Подтвердить
+        {state.step > 1 && (
+          <Button variant="outline" onClick={back}>
+            Назад
+          </Button>
+        )}
+        <Button onClick={next} loading={state.busy} disabled={!stepReady[stepKey]}>
+          {stepKey === "account" ? "Зарегистрироваться" : "Далее"}
         </Button>
       </>
     );
@@ -55,24 +69,34 @@ export function RegisterSheet({ role, onClose }: { role: Role | null; onClose: (
           <SheetHero
             light={meta.light}
             dark={meta.dark}
-            textDark
-            label={`Шаг ${state.step} из 2`}
+            label={`Шаг ${state.step} из ${total}`}
             title={meta.title}
-            desc={meta.desc}
+            desc={STEP_DESC[stepKey]}
             step={state.step}
-            total={2}
+            total={total}
             onClose={onClose}
           />
         )
       }
       footer={actions}
     >
-      {role &&
-        (state.step === 1 ? (
-          <DataStep role={role} isLicense={isLicense} state={state} dispatch={dispatch} />
-        ) : (
-          <CodeStep email={state.email} code={state.code} dispatch={dispatch} onResend={() => void resend()} />
-        ))}
+      {role && (
+        <div className={s.form}>
+          {stepKey === "org" && <CustomerFields state={state} dispatch={dispatch} />}
+          {stepKey === "profile" && <ExpertFields state={state} dispatch={dispatch} />}
+          {stepKey === "license" && <LicenseFields state={state} dispatch={dispatch} />}
+          {stepKey === "docs" && <LicenseDocsFields state={state} dispatch={dispatch} />}
+          {stepKey === "account" && (
+            <>
+              <AccountFields state={state} dispatch={dispatch} phoneRequired={role === "LICENSE_HOLDER"} />
+              <ConsentFields consents={state.consents} dispatch={dispatch} />
+            </>
+          )}
+          {stepKey === "code" && (
+            <CodeStep email={state.email} code={state.code} dispatch={dispatch} onResend={() => void resend()} />
+          )}
+        </div>
+      )}
     </FullSheet>
   );
 }

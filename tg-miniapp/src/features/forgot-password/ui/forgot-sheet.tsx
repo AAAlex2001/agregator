@@ -41,7 +41,6 @@ export function ForgotSheet({ open, onClose }: { open: boolean; onClose: () => v
         <SheetHero
           light={HERO.light}
           dark={HERO.dark}
-          textDark
           label={meta.label}
           title={meta.title}
           desc={meta.desc}

@@ -6,7 +6,16 @@ import { notifyHaptic } from "@/shared/services/telegram";
 import { isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import { type Role } from "@/shared/services/api";
 import { confirmEmail, registerLicenseHolder, registerUser, resendCode } from "./api";
+import { passwordValid } from "./password-rules";
 import { initialState, reducer } from "./reducer";
+
+export type StepKey = "org" | "profile" | "license" | "docs" | "account" | "code";
+
+const FLOW: Record<Role, StepKey[]> = {
+  CUSTOMER: ["org", "account", "code"],
+  EXPERT: ["profile", "account", "code"],
+  LICENSE_HOLDER: ["license", "docs", "account", "code"],
+};
 
 export function useRegister(role: Role | null) {
   const { signInLink } = useSession();
@@ -17,25 +26,42 @@ export function useRegister(role: Role | null) {
     if (role) dispatch({ type: "reset" });
   }, [role]);
 
+  const flow = role ? FLOW[role] : [];
+  const stepKey: StepKey = flow[state.step - 1] ?? "org";
+  const total = flow.length;
   const isLicense = role === "LICENSE_HOLDER";
-  const nameOk = role !== "EXPERT" || (state.firstName.trim() !== "" && state.lastName.trim() !== "");
-  const companyOk = !(role === "CUSTOMER" || isLicense) || Boolean(state.party?.data.inn);
+
   const percent = Number(state.rentalPercent.replace(",", "."));
   const rentalOk =
-    !isLicense ||
     state.rentalKind === "NEGOTIABLE" ||
     (state.rentalKind === "PERCENT" && percent > 0 && percent <= 100) ||
     (state.rentalKind === "FIXED" && Number(state.rentalFixed.replace(/\s/g, "")) > 0);
-  const licenseOk =
-    !isLicense ||
-    (state.licenseNumber.trim() !== "" && state.licenseAreas.length > 0 && isPhoneComplete(state.phone) && rentalOk);
-  const passwordOk =
-    state.password.length >= 6 && /[A-Z]/.test(state.password) && /[a-z]/.test(state.password);
-  const baseOk = state.email.trim() !== "" && passwordOk && state.password === state.confirm && state.agree;
-  const canSubmit = baseOk && nameOk && companyOk && licenseOk;
+  const phoneOk = isLicense
+    ? isPhoneComplete(state.phone)
+    : state.phone === "" || isPhoneComplete(state.phone);
+
+  const stepReady: Record<StepKey, boolean> = {
+    org: Boolean(state.party?.data.inn),
+    profile: state.firstName.trim() !== "" && state.lastName.trim() !== "",
+    license:
+      Boolean(state.party?.data.inn) &&
+      state.licenseNumber.trim() !== "" &&
+      state.licenseAreas.length > 0 &&
+      rentalOk,
+    docs: true,
+    account:
+      state.email.trim() !== "" &&
+      passwordValid(state.password) &&
+      state.password === state.confirm &&
+      phoneOk &&
+      state.consents.privacy &&
+      state.consents.terms &&
+      state.consents.personal,
+    code: state.code.trim().length >= 4,
+  };
 
   const submitData = async () => {
-    if (!role || !canSubmit || state.busy) return;
+    if (!role || state.busy) return;
     dispatch({ type: "busy", value: true });
     try {
       if (isLicense && state.party) {
@@ -49,16 +75,18 @@ export function useRegister(role: Role | null) {
             license_number: state.licenseNumber.trim(),
             license_areas: state.licenseAreas,
             license_rental_kind: state.rentalKind,
-            license_rental_percent:
-              state.rentalKind === "PERCENT" ? Number(state.rentalPercent.replace(",", ".")) : undefined,
+            license_rental_percent: state.rentalKind === "PERCENT" ? percent : undefined,
             license_rental_fixed_amount:
               state.rentalKind === "FIXED" ? Number(state.rentalFixed.replace(/\s/g, "")) : undefined,
+            mining_license_number: state.miningNumber.trim() || null,
+            lab_accreditation_number: state.labNumber.trim() || null,
           },
-          state.file,
+          state.files,
         );
       } else {
         const isExpert = role === "EXPERT";
         const isCustomer = role === "CUSTOMER";
+        const attested = isExpert && state.attested;
         await registerUser({
           role,
           email: state.email.trim(),
@@ -73,16 +101,29 @@ export function useRegister(role: Role | null) {
           location_address: isExpert && state.locationAddress ? state.locationAddress : undefined,
           location_city: isExpert && state.locationCity ? state.locationCity : undefined,
           travels_to_other_regions: isExpert ? state.travels : undefined,
+          expert_certificates: attested && state.certificates.length ? state.certificates : undefined,
+          expert_show_on_map: attested ? state.showOnMap : undefined,
+          expert_map_fields: attested && state.showOnMap ? state.mapFields : undefined,
         });
       }
       notifyHaptic("success");
-      dispatch({ type: "step", value: 2 });
+      dispatch({ type: "step", value: state.step + 1 });
     } catch (e) {
       emitError(e instanceof Error ? e.message : "Не удалось зарегистрироваться");
     } finally {
       dispatch({ type: "busy", value: false });
     }
   };
+
+  const next = () => {
+    if (stepKey === "account") {
+      void submitData();
+      return;
+    }
+    dispatch({ type: "step", value: state.step + 1 });
+  };
+
+  const back = () => dispatch({ type: "step", value: state.step - 1 });
 
   const submitCode = async () => {
     if (!role || state.busy) return;
@@ -108,5 +149,5 @@ export function useRegister(role: Role | null) {
     }
   };
 
-  return { state, dispatch, isLicense, canSubmit, submitData, submitCode, resend };
+  return { state, dispatch, stepKey, total, stepReady, next, back, submitCode, resend };
 }

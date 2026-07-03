@@ -1,13 +1,13 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .label {
@@ -17,35 +17,10 @@
   color: var(--muted);
 }
 
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  padding: 9px 14px;
-  border: 1px solid var(--hairline);
-  border-radius: 999px;
-  background: var(--card);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
-}
-
-.chipOn {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.hint {
-  padding-left: 4px;
-  font-size: 12px;
-  line-height: 1.4;
+.sectionNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
   color: var(--muted);
 }
 

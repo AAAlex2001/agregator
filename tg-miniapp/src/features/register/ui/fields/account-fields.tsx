@@ -2,7 +2,7 @@ import { type Dispatch } from "react";
 import { TextField } from "@/shared/ui";
 import { PHONE_PLACEHOLDER, formatPhone } from "@/shared/lib/phone";
 import { type RegisterAction, type RegisterState } from "../../model/reducer";
-import s from "../register-sheet.module.scss";
+import { PasswordRules } from "./password-rules";
 
 interface Props {
   state: RegisterState;
@@ -35,7 +35,7 @@ export function AccountFields({ state, dispatch, phoneRequired }: Props) {
         value={state.password}
         onChange={(e) => dispatch({ type: "set", key: "password", value: e.target.value })}
       />
-      <span className={s.hint}>Минимум 6 символов, заглавная и строчная буквы</span>
+      <PasswordRules password={state.password} />
       <TextField
         label="Повторите пароль"
         password

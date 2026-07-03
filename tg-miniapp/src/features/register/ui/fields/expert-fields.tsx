@@ -2,6 +2,7 @@ import { type Dispatch } from "react";
 import { Checkbox, TextField } from "@/shared/ui";
 import { AddressSuggest } from "@/entites/geo";
 import { type RegisterAction, type RegisterState } from "../../model/reducer";
+import { AttestationFields } from "./attestation-fields";
 import s from "../register-sheet.module.scss";
 
 interface Props {
@@ -35,6 +36,8 @@ export function ExpertFields({ state, dispatch }: Props) {
       <Checkbox checked={state.travels} onChange={(v) => dispatch({ type: "travels", value: v })}>
         Готов выезжать на объекты в другие регионы
       </Checkbox>
+
+      <AttestationFields state={state} dispatch={dispatch} />
     </>
   );
 }

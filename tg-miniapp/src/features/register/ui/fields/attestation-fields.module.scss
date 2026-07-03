@@ -1,0 +1,44 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+}
+
+.certs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--accent-soft);
+  border-radius: 12px;
+}
+
+.certLabel {
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.certRemove {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
