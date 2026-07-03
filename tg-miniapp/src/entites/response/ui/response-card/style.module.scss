@@ -26,15 +26,15 @@
 
 .status {
   flex: none;
-  padding: 4px 10px;
-  border-radius: 999px;
+  padding: 5px 10px;
+  border-radius: 9px;
   font-size: 11.5px;
   font-weight: 700;
   white-space: nowrap;
 }
 
-.customer {
-  font-size: 13px;
+.sub {
+  font-size: 12.5px;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,42 +52,42 @@
   color: var(--muted);
 }
 
-.sums {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-top: 1px solid var(--hairline);
-  border-bottom: 1px solid var(--hairline);
-}
-
-.sumCol {
-  min-width: 0;
+.info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--card-2);
 }
 
-.sumColEnd {
-  align-items: flex-end;
-  text-align: right;
+.infoRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.sumLab {
-  font-size: 11.5px;
+.infoLab {
+  flex: none;
+  font-size: 12.5px;
   color: var(--muted);
 }
 
-.sumMine {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--accent);
+.infoVal {
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
 }
 
-.sumBase {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
+.infoMine {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent);
+  text-align: right;
 }
 
 .comment {

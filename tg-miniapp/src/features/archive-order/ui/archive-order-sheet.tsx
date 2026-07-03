@@ -9,11 +9,11 @@ import s from "./archive-order-sheet.module.scss";
 
 type StepKey = "order" | "customer" | "executor" | "docs";
 
-const META: Record<StepKey, { title: string; desc: string }> = {
-  order: { title: "Заказ", desc: "Условия и требования" },
-  customer: { title: "Заказчик", desc: "Кто разместил заявку" },
-  executor: { title: "Исполнитель", desc: "Кто выполнил заказ" },
-  docs: { title: "Документы", desc: "Вложения заказчика" },
+const META: Record<StepKey, { title: string; desc: string; image: string }> = {
+  order: { title: "Заказ", desc: "Условия и требования", image: "archieve" },
+  customer: { title: "Заказчик", desc: "Кто разместил заявку", image: "step-1" },
+  executor: { title: "Исполнитель", desc: "Кто выполнил заказ", image: "step-4" },
+  docs: { title: "Документы", desc: "Вложения заказчика", image: "step-2" },
 };
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -43,7 +43,14 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    if (order) setStep(0);
+    if (!order) return;
+    setStep(0);
+    for (const { image } of Object.values(META)) {
+      for (const theme of ["light", "dark"]) {
+        const img = new Image();
+        img.src = `/respond-order/${image}-${theme}.webp`;
+      }
+    }
   }, [order]);
 
   const docs = order
@@ -87,8 +94,9 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
       scrollKey={step}
       hero={
         <SheetHero
-          light="/respond-order/archieve-light.webp"
-          dark="/respond-order/archieve-dark.webp"
+          key={current}
+          light={`/respond-order/${meta.image}-light.webp`}
+          dark={`/respond-order/${meta.image}-dark.webp`}
           label={`Шаг ${step + 1} из ${total}`}
           title={meta.title}
           desc={meta.desc}

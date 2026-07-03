@@ -1,11 +1,11 @@
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
-import { ChevronDownIcon, CloseIcon, PlusIcon, UploadIcon } from "@/shared/ui/icons/interface";
-import { FileTypeIcon } from "@/shared/ui/file-icon";
+import { ChevronDownIcon } from "@/shared/ui/icons/interface";
+import { FilePicker } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
-import { toKopecks, formatRub, formatDateRu, formatSize } from "@/shared/lib/format";
+import { toKopecks, formatRub, formatDateRu } from "@/shared/lib/format";
 import s from "./offer-step.module.scss";
 import c from "./common.module.scss";
 
@@ -125,48 +125,12 @@ export function OfferStep(p: Props) {
 
       <div className={s.field}>
         <span className={s.fieldLab}>Файлы к отклику (необязательно)</span>
-        <div className={s.attach}>
-          <span className={s.attachIcon}>
-            <UploadIcon width={20} height={20} />
-          </span>
-          <span className={s.attachText}>Прикрепить файлы</span>
-          <PlusIcon className={s.attachPlus} width={18} height={18} />
-          <input
-            type="file"
-            multiple
-            className={s.attachInput}
-            onClick={() => tapHaptic()}
-            onChange={(e) => {
-              p.onAddFiles(e.target.files);
-              e.target.value = "";
-            }}
-          />
-        </div>
-        <span className={c.note}>PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ</span>
-        {p.files.length > 0 && (
-          <ul className={s.fileList}>
-            {p.files.map((f, i) => (
-              <li key={i} className={s.fileItem}>
-                <FileTypeIcon name={f.name} className={s.fileIcon} />
-                <div className={s.fileMeta}>
-                  <span className={s.fileName}>{f.name}</span>
-                  <span className={s.fileSize}>{formatSize(f.size)}</span>
-                </div>
-                <button
-                  type="button"
-                  className={s.fileRemove}
-                  onClick={() => {
-                    tapHaptic();
-                    p.onRemoveFile(i);
-                  }}
-                  aria-label="Удалить файл"
-                >
-                  <CloseIcon width={16} height={16} />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <FilePicker
+          files={p.files}
+          onAdd={p.onAddFiles}
+          onRemove={p.onRemoveFile}
+          note="PDF, JPG, PNG, DOC, XLS, ZIP · до 200 МБ"
+        />
       </div>
     </div>
   );

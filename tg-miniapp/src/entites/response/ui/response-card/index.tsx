@@ -1,6 +1,6 @@
 import { Button, Card } from "@/shared/ui";
 import { CountdownRing } from "@/shared/ui/countdown-ring";
-import type { ExpertResponse } from "../../model/types";
+import { VAT_LABEL, type ExpertResponse } from "../../model/types";
 import { statusMeta, canWithdraw, canRestore, canEdit } from "../../model/status";
 import s from "./style.module.scss";
 
@@ -24,7 +24,10 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: 
           {meta.label}
         </span>
       </div>
-      {customer && <span className={s.customer}>{customer}</span>}
+
+      <span className={s.sub}>
+        {customer ? `${customer} · ` : ""}Отклик от {response.date}
+      </span>
 
       {response.status === "REVIEW" && response.order_responses_deadline && (
         <div className={s.deadline}>
@@ -33,14 +36,20 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: 
         </div>
       )}
 
-      <div className={s.sums}>
-        <div className={s.sumCol}>
-          <span className={s.sumLab}>Моё предложение</span>
-          <span className={s.sumMine}>{response.proposed_sum}</span>
+      <div className={s.info}>
+        <div className={s.infoRow}>
+          <span className={s.infoLab}>Моё предложение</span>
+          <span className={s.infoMine}>
+            {response.proposed_sum} · {VAT_LABEL[response.vat_kind]}
+          </span>
         </div>
-        <div className={`${s.sumCol} ${s.sumColEnd}`}>
-          <span className={s.sumLab}>Начальная</span>
-          <span className={s.sumBase}>{response.order_sum}</span>
+        <div className={s.infoRow}>
+          <span className={s.infoLab}>Начальная цена</span>
+          <span className={s.infoVal}>{response.order_sum}</span>
+        </div>
+        <div className={s.infoRow}>
+          <span className={s.infoLab}>Сроки работ</span>
+          <span className={s.infoVal}>до {response.proposed_deadline}</span>
         </div>
       </div>
 

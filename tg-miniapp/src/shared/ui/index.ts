@@ -7,5 +7,6 @@ export { BottomSheet } from "./bottom-sheet";
 export { FullSheet } from "./full-sheet";
 export { SheetHero } from "./sheet-hero";
 export { CodeInput } from "./code-input";
+export { FilePicker } from "./file-picker";
 export { ThemedImage } from "./themed-image";
 export { Logo } from "./icons/logo";
