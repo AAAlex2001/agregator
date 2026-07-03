@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic, tapHaptic } from "@/shared/services/telegram";
-import { Button, SheetHero } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import type { Order } from "@/entites/order";
 import { createOrderResponse, type Party, type VatKind } from "../model/api";
-import { toKopecks } from "@/shared/lib/format";
+import { toKopecks } from "../model/format";
+import { StepHero } from "./step-hero";
 import { InfoStep } from "./steps/info-step";
 import { DocumentsStep } from "./steps/documents-step";
 import { QuestionsStep } from "./steps/questions-step";
@@ -179,16 +180,16 @@ export function RespondSheet({ order, onClose }: Props) {
   return (
     <div className={`${s.overlay} ${closing ? s.closing : ""}`} onClick={close}>
       <div className={`${s.sheet} ${closing ? s.closing : ""}`} onClick={(e) => e.stopPropagation()}>
-        <SheetHero
+        <StepHero
           key={meta.image}
-          light={`/respond-order/${meta.image}-light.webp`}
-          dark={`/respond-order/${meta.image}-dark.webp`}
+          image={meta.image}
           illu={meta.illu}
+          step={step}
+          total={TOTAL}
           label={meta.label}
           title={meta.title}
           desc={meta.desc}
-          step={done ? undefined : step}
-          total={done ? undefined : TOTAL}
+          showDots={!done}
           onClose={close}
         />
 

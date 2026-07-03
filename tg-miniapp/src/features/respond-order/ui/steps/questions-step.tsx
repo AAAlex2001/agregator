@@ -44,7 +44,7 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
       <span className={c.blockLab}>Вопросы по заказу</span>
 
       {items === null ? (
-        <div className={s.loading}><Spinner /></div>
+        <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}><Spinner /></div>
       ) : items.length === 0 ? (
         <span className={s.qaEmpty}>Вопросов пока нет.</span>
       ) : (
@@ -75,7 +75,7 @@ export function QuestionsStep({ orderId }: { orderId: number }) {
       <div className={s.qaActions}>
         <span className={s.counter}>{text.length} / 2000</span>
         <Button
-          className={s.askBtn}
+          style={{ width: "auto", height: 42, padding: "0 18px" }}
           disabled={!text.trim()}
           loading={busy}
           onClick={() => void ask()}

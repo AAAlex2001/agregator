@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useSession } from "@/features/session";
 import { type Order } from "@/entites/order";
 import { RespondSheet } from "@/features/respond-order";
-import { ArchiveSheet } from "@/features/archive-order";
 import { ResponsesPanel } from "@/features/responses";
 import { OrdersPanel } from "@/features/order-feed";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
@@ -22,7 +21,6 @@ export function HomePage() {
   const [soonOpen, setSoonOpen] = useState(false);
   const [soonTitle, setSoonTitle] = useState("");
   const [respondOrder, setRespondOrder] = useState<Order | null>(null);
-  const [archiveOrder, setArchiveOrder] = useState<Order | null>(null);
 
   const isExpert = role === "EXPERT";
 
@@ -82,12 +80,7 @@ export function HomePage() {
             />
           )}
           {view === "archive" && (
-            <OrdersPanel
-              archived
-              limit={20}
-              onOpen={setArchiveOrder}
-              empty={<p className={s.emptyLine}>Архив пуст</p>}
-            />
+            <OrdersPanel archived limit={20} empty={<p className={s.emptyLine}>Архив пуст</p>} />
           )}
           {view === "responses" && <ResponsesPanel />}
         </>
@@ -122,8 +115,6 @@ export function HomePage() {
       </BottomSheet>
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
-
-      <ArchiveSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
 
       {!isExpert && (
         <div className={s.createBar}>

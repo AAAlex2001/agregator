@@ -5,7 +5,7 @@ import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "../company-suggest";
 import type { Party, VatKind } from "../../model/api";
-import { toKopecks, formatRub, formatDateRu, formatSize } from "@/shared/lib/format";
+import { toKopecks, formatRub, formatDateRu, formatSize } from "../../model/format";
 import s from "./offer-step.module.scss";
 import c from "./common.module.scss";
 

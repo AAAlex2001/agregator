@@ -40,12 +40,12 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore }: Props) {
       {(canWithdraw(response.status) || canRestore(response.status)) && (
         <div className={s.actions}>
           {canWithdraw(response.status) && (
-            <Button variant="outline" loading={busy} onClick={() => onWithdraw(response.id)} className={s.actionBtn}>
+            <Button variant="outline" loading={busy} onClick={() => onWithdraw(response.id)} style={{ height: 42 }}>
               Отозвать
             </Button>
           )}
           {canRestore(response.status) && (
-            <Button loading={busy} onClick={() => onRestore(response.id)} className={s.actionBtn}>
+            <Button loading={busy} onClick={() => onRestore(response.id)} style={{ height: 42 }}>
               Восстановить
             </Button>
           )}
