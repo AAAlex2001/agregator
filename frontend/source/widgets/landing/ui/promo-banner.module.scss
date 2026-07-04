@@ -1,14 +1,26 @@
 .banner {
   display: flex;
   width: 100%;
-  background: #ffffff;
   border-bottom: 1px solid #e6e6e6;
 }
 
 .half {
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex: 1 1 0;
   min-width: 0;
+  height: clamp(52px, 6vw, 76px);
+  padding: 8px clamp(10px, 2vw, 24px);
+  overflow: hidden;
+}
+
+.tg {
+  background: linear-gradient(135deg, rgb(238, 196, 137) 0%, rgb(247, 214, 168) 100%);
+}
+
+.app {
+  background: linear-gradient(135deg, rgb(243, 201, 150) 0%, rgb(250, 218, 179) 100%);
 }
 
 .half + .half {
@@ -16,52 +28,51 @@
 }
 
 .img {
-  display: block;
-  width: 100%;
-  height: auto;
+  flex: none;
+  width: auto;
+  height: 100%;
 }
 
 .text {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-end;
-  gap: 4px;
-  max-width: 58%;
-  padding-right: clamp(16px, 3vw, 44px);
-  text-align: right;
+  gap: 2px;
+  min-width: 0;
   color: #1a1a1a;
 }
 
 .title {
-  font-size: clamp(13px, 1.4vw, 19px);
+  font-size: clamp(12px, 1.1vw, 15px);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .subtitle {
-  font-size: clamp(11px, 1vw, 13px);
+  font-size: clamp(10px, 0.85vw, 12px);
   font-weight: 500;
-  line-height: 1.3;
-  color: #5a4a2e;
+  line-height: 1.25;
+  color: #6b5636;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 767px) {
+  .half {
+    gap: 8px;
+    padding: 6px 10px;
+    height: 52px;
+  }
+
   .subtitle {
     display: none;
   }
 
   .title {
     font-size: 11px;
-    line-height: 1.1;
-  }
-
-  .text {
-    padding-right: 8px;
-    max-width: 64%;
   }
 }
