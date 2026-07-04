@@ -105,8 +105,8 @@ function LicenseList() {
 function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" }) {
   if (plate.href) {
     return (
-      <div className={`${s.plateWrap} ${s[plate.color]}`}>
-        <Link href={plate.href} className={s.plate} aria-label={plate.label}>
+      <div className={s.plateWrap}>
+        <Link href={plate.href} className={`${s.plate} ${s.plateLogo}`} aria-label={plate.label}>
           {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <span className={s.plateLabel}>{plate.label}</span>}
         </Link>
       </div>

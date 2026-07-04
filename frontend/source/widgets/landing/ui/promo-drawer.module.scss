@@ -127,16 +127,11 @@
   border-radius: 18px;
 }
 
-.art {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
 .img {
-  object-fit: cover;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
 }
 
 .cardHead {

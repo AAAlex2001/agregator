@@ -9,7 +9,7 @@ const SECTIONS = [
   {
     key: "bot",
     title: "Telegram-бот Ресурс-Плюс",
-    image: "/promo/tg-bot.webp",
+    image: "/promo/tg-bot-sq.webp",
     features: [
       "Лента заявок и отклики — не выходя из Telegram",
       "Мгновенные уведомления о новых заказах и ответах",
@@ -19,7 +19,7 @@ const SECTIONS = [
   {
     key: "app",
     title: "Мобильное приложение",
-    image: "/promo/app.webp",
+    image: "/promo/app-sq.webp",
     features: [
       "Все сделки и документы всегда под рукой",
       "Push-уведомления о каждом движении по заказу",
@@ -67,9 +67,7 @@ const PromoDrawer = () => {
         <div className={s.body}>
           {SECTIONS.map((section) => (
             <section key={section.key} className={s.card}>
-              <div className={s.art}>
-                <Image className={s.img} src={section.image} alt="" fill sizes="420px" />
-              </div>
+              <Image className={s.img} src={section.image} alt="" width={800} height={800} />
               <div className={s.cardHead}>
                 <span className={`${s.dot} ${s[section.key]}`}>
                   {section.key === "bot" ? <PromoBotIcon width={18} height={18} /> : <PromoAppIcon width={18} height={18} />}

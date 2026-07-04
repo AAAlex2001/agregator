@@ -126,7 +126,7 @@ export function CabinetBurgerMenu() {
               {plate.href ? (
                 <Link
                   href={plate.href}
-                  className={`${s.groupHead} ${s[plate.color]}`}
+                  className={`${s.groupHead} ${s.logoHead}`}
                   aria-label={plate.label}
                   onClick={close}
                 >

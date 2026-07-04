@@ -121,6 +121,15 @@
   --plate-bg: #fbe9e8;
 }
 
+.plateLogo {
+  color: var(--color-orange-primary);
+}
+
+.plateWrap:hover .plateLogo {
+  background: transparent;
+  color: var(--color-orange-primary);
+}
+
 .list {
   display: flex;
   flex-direction: column;
