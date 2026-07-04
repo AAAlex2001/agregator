@@ -63,3 +63,4 @@ export { default as DangerIcon } from "./DangerIcon";
 export { default as LiningIcon } from "./LiningIcon";
 export { default as PromoBotIcon } from "./PromoBotIcon";
 export { default as PromoAppIcon } from "./PromoAppIcon";
+export { default as TechExpertLogoIcon } from "./TechExpertLogoIcon";

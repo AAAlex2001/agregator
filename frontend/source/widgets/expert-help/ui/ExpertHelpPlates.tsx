@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import Loader from "@/source/shared/ui/Loader";
-import { ChevronIcon } from "@/source/shared/ui/icons";
+import { ChevronIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import { getCabinetNav, type NavItem, type NavPlate } from "../model/navConfig";
 import s from "./ExpertHelpPlates.module.scss";
 
@@ -103,6 +103,16 @@ function LicenseList() {
 }
 
 function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" }) {
+  if (plate.href) {
+    return (
+      <div className={`${s.plateWrap} ${s[plate.color]}`}>
+        <Link href={plate.href} className={s.plate} aria-label={plate.label}>
+          {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <span className={s.plateLabel}>{plate.label}</span>}
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className={`${s.plateWrap} ${s[plate.color]}`}>
       <button type="button" className={s.plate}>

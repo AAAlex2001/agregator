@@ -28,6 +28,8 @@ export interface NavPlate {
   dynamic?: "license";
   items?: NavItem[];
   roles?: CabinetRole[];
+  href?: string;
+  logo?: boolean;
 }
 
 function reviewItems(role: string | null): NavItem[] {
@@ -112,7 +114,8 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       label: "ТехЭксперт",
       color: "indigo",
       roles: ["EXPERT", "LICENSE_HOLDER"],
-      items: [{ label: "Поиск нормативных документов", href: "/tech-expert" }],
+      href: "/tech-expert",
+      logo: true,
     },
     {
       key: "edu",

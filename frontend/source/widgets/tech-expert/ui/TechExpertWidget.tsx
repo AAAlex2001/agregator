@@ -90,6 +90,15 @@ export function TechExpertWidget() {
       </header>
 
       <section className={s.banner}>
+        <div className={s.bannerArt} aria-hidden="true">
+          <Image
+            className={s.bannerArtImg}
+            src="/tech-expert-people.webp"
+            alt=""
+            fill
+            sizes="(max-width: 1023px) 0px, 640px"
+          />
+        </div>
         <div className={s.bannerTop}>
           <Image className={s.bannerLogo} src="/codex.png" alt="Консорциум КОДЕКС" width={364} height={182} />
           <span className={s.bannerDivider} aria-hidden="true" />

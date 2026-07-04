@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
-import { ChevronIcon, LogoIcon } from "@/source/shared/ui/icons";
+import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import { getCabinetNav, type NavItem } from "@/source/widgets/expert-help";
 import s from "./cabinet-burger.module.scss";
 
@@ -123,15 +123,26 @@ export function CabinetBurgerMenu() {
 
           {plates.map((plate) => (
             <div key={plate.key} className={s.group}>
-              <button
-                type="button"
-                className={`${s.groupHead} ${s[plate.color]} ${openKey === plate.key ? s.groupOpen : ""}`}
-                onClick={() => toggle(plate.key)}
-                aria-expanded={openKey === plate.key}
-              >
-                {plate.label}
-                <ChevronIcon className={s.chevron} color="currentColor" />
-              </button>
+              {plate.href ? (
+                <Link
+                  href={plate.href}
+                  className={`${s.groupHead} ${s[plate.color]}`}
+                  aria-label={plate.label}
+                  onClick={close}
+                >
+                  {plate.logo ? <TechExpertLogoIcon title={plate.label} width={96} height={17} /> : plate.label}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className={`${s.groupHead} ${s[plate.color]} ${openKey === plate.key ? s.groupOpen : ""}`}
+                  onClick={() => toggle(plate.key)}
+                  aria-expanded={openKey === plate.key}
+                >
+                  {plate.label}
+                  <ChevronIcon className={s.chevron} color="currentColor" />
+                </button>
+              )}
               {openKey === plate.key && (
                 <div className={s.groupBody}>
                   {(plate.items ?? []).map((item) =>
