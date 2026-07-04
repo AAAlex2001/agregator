@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { CheckIcon } from "@/source/shared/ui/icons";
 import s from "./promo-drawer.module.scss";
@@ -29,6 +30,12 @@ const SECTIONS = [
 ] as const;
 
 export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -43,7 +50,9 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
     };
   }, [open, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       <div className={`${s.backdrop} ${open ? s.backdropVisible : ""}`} onClick={onClose} aria-hidden />
 
@@ -78,7 +87,8 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
           ))}
         </div>
       </aside>
-    </>
+    </>,
+    document.body,
   );
 }
 

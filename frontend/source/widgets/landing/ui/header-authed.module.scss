@@ -4,8 +4,7 @@
   z-index: 90;
   background: #ffffff;
   border-bottom: 1px solid #E6E6E6;
-  padding: 12px 30px;
-  min-height: 65px;
+  padding: 10px 30px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -20,6 +19,10 @@
   gap: 4px;
   width: 100%;
 
+  @media (max-width: 1439px) {
+    padding: 0 44px;
+  }
+
   @media (min-width: 1440px) {
     justify-content: flex-end;
   }
@@ -30,6 +33,18 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.promoRow {
+  order: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+
+  @media (min-width: 1440px) {
+    display: none;
+  }
 }
 
 .navLink {

@@ -16,12 +16,14 @@ const HeaderAuthed = () => (
       <nav className={s.nav} aria-label="Основная навигация">
         <ExpertHelpPlates />
         <div className={s.menuLinks}>
-          <PromoNavButtons className={`${s.navLink} ${s.navLinkPromo}`} />
           {NAV_PAGES.map((page) => (
             <Link key={page.href} href={page.href} className={s.navLink}>
               {page.label}
             </Link>
           ))}
+        </div>
+        <div className={s.promoRow}>
+          <PromoNavButtons className={`${s.navLink} ${s.navLinkPromo}`} />
         </div>
         <CabinetBurgerMenu />
       </nav>
