@@ -4,11 +4,13 @@ import s from "./coming-soon.module.scss";
 const ITEMS = [
   {
     image: "/promo/landing-bot.webp",
+    alt: "Telegram-бот Ресурс-Плюс для экспертизы промышленной безопасности",
     title: "Скоро — удобный Telegram-бот",
     subtitle: "Заявки, отклики и чат с заказчиком — прямо в Telegram",
   },
   {
     image: "/promo/landing-app.webp",
+    alt: "Мобильное приложение Ресурс-Плюс для заказчиков и экспертов",
     title: "Скоро — мобильное приложение",
     subtitle: "Сделки, документы и уведомления — всегда под рукой",
   },
@@ -22,7 +24,7 @@ const ComingSoon = () => (
           <Image
             className={s.img}
             src={item.image}
-            alt=""
+            alt={item.alt}
             width={1400}
             height={735}
             sizes="(max-width: 767px) 100vw, 50vw"

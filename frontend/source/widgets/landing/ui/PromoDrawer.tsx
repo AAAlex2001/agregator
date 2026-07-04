@@ -28,13 +28,11 @@ const SECTIONS = [
   },
 ] as const;
 
-const PromoDrawer = () => {
-  const [open, setOpen] = useState(false);
-
+export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -43,15 +41,11 @@ const PromoDrawer = () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [open]);
+  }, [open, onClose]);
 
   return (
     <>
-      <button type="button" className={s.tab} onClick={() => setOpen(true)}>
-        Мобильное приложение и telegram бот
-      </button>
-
-      <div className={`${s.backdrop} ${open ? s.backdropVisible : ""}`} onClick={() => setOpen(false)} aria-hidden />
+      <div className={`${s.backdrop} ${open ? s.backdropVisible : ""}`} onClick={onClose} aria-hidden />
 
       <aside className={`${s.drawer} ${open ? s.drawerOpen : ""}`} aria-label="Скоро на Ресурс-Плюс" aria-hidden={!open}>
         <header className={s.head}>
@@ -59,7 +53,7 @@ const PromoDrawer = () => {
             <h2 className={s.title}>Скоро на Ресурс-Плюс</h2>
             <p className={s.subtitle}>Telegram-бот и мобильное приложение</p>
           </div>
-          <button type="button" className={s.close} onClick={() => setOpen(false)} aria-label="Закрыть">
+          <button type="button" className={s.close} onClick={onClose} aria-label="Закрыть">
             ×
           </button>
         </header>
@@ -84,6 +78,19 @@ const PromoDrawer = () => {
           ))}
         </div>
       </aside>
+    </>
+  );
+}
+
+const PromoDrawer = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button type="button" className={s.tab} onClick={() => setOpen(true)}>
+        Мобильное приложение и telegram бот
+      </button>
+      <PromoDrawerPanel open={open} onClose={() => setOpen(false)} />
     </>
   );
 };

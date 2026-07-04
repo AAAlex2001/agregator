@@ -109,12 +109,34 @@
   transition: color 0.15s ease;
 }
 
-.groupOpen {
+.indigo {
+  color: #4f46e5;
+}
+
+.amber {
+  color: #b45309;
+}
+
+.green {
   color: #2f9b52;
+}
+
+.red {
+  color: #c0453e;
 }
 
 .logoHead {
   color: var(--color-orange-primary);
+}
+
+.promoHead {
+  color: #e07c00;
+}
+
+.chevronSide {
+  width: 18px;
+  height: 18px;
+  transform: rotate(-90deg);
 }
 
 .chevron {
