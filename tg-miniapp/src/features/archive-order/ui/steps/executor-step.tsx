@@ -1,5 +1,6 @@
 import { Field, InfoRow } from "@/shared/ui";
-import { ExpertIcon, StarIcon } from "@/shared/ui/icons/expert";
+import { ExpertIcon } from "@/shared/ui/icons/expert";
+import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import type { Order } from "@/entites/order";
 import { FileRow } from "../file-row";
@@ -16,8 +17,8 @@ export function ExecutorStep({ order }: { order: Order }) {
           <span className={s.name}>{order.executor_name}</span>
           {order.executor_rating !== null && (
             <span className={s.rating}>
-              <StarIcon className={s.star} /> {order.executor_rating.toFixed(1)} · {order.executor_review_count}{" "}
-              {pluralRu(order.executor_review_count, "отзыв", "отзыва", "отзывов")}
+              <ReviewStarIcon active width={14} height={14} /> {order.executor_rating.toFixed(1)} ·{" "}
+              {order.executor_review_count} {pluralRu(order.executor_review_count, "отзыв", "отзыва", "отзывов")}
             </span>
           )}
         </div>

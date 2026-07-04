@@ -10,21 +10,39 @@ function formatDateFull(value: string): string {
 export function ReviewCard({ review }: { review: ReviewItem }) {
   return (
     <Card className={s.card}>
-      <div className={s.head}>
-        <span className={s.stars}>
+      <span className={s.meta}>Отзыв от {formatDateFull(review.created_at)}</span>
+
+      <div className={s.block}>
+        <span className={s.label}>Оценка:</span>
+        <div className={s.stars} role="img" aria-label={`Оценка ${review.rating} из 5`}>
           {[1, 2, 3, 4, 5].map((n) => (
-            <ReviewStarIcon key={n} active={n <= review.rating} width={20} height={20} />
+            <ReviewStarIcon key={n} active={n <= review.rating} />
           ))}
-        </span>
-        <span className={s.date}>{formatDateFull(review.created_at)}</span>
+        </div>
       </div>
 
-      {review.comment && <p className={s.comment}>{review.comment}</p>}
+      {review.comment && (
+        <div className={s.block}>
+          <span className={s.label}>Отзыв:</span>
+          <p className={s.quote}>
+            <span className={s.quoteMark}>&ldquo;</span>
+            {review.comment}
+            <span className={s.quoteMark}>&rdquo;</span>
+          </p>
+        </div>
+      )}
 
-      <div className={s.order}>
-        <span className={s.orderTitle}>{review.order_title}</span>
-        {review.company_name && <span className={s.company}>{review.company_name}</span>}
+      <div className={s.block}>
+        <span className={s.label}>Название заказа:</span>
+        <span className={s.value}>{review.order_title || "—"}</span>
       </div>
+
+      {review.company_name && (
+        <div className={s.block}>
+          <span className={s.label}>Организатор:</span>
+          <span className={s.value}>{review.company_name}</span>
+        </div>
+      )}
     </Card>
   );
 }

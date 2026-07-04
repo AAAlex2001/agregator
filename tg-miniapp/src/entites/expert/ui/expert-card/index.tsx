@@ -1,6 +1,6 @@
 import { Card } from "@/shared/ui";
-import { ExpertIcon, StarIcon } from "@/shared/ui/icons/expert";
-import { ChevronRightIcon } from "@/shared/ui/icons/interface";
+import { ExpertIcon } from "@/shared/ui/icons/expert";
+import { ChevronRightIcon, ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import type { ExpertSummary } from "../../model/api";
 import s from "./style.module.scss";
@@ -16,7 +16,7 @@ export function ExpertCard({ expert, onClick }: { expert: ExpertSummary; onClick
         <span className={s.meta}>
           {expert.rating !== null && (
             <span className={s.rating}>
-              <StarIcon className={s.star} /> {expert.rating.toFixed(1)}
+              <ReviewStarIcon active width={14} height={14} /> {expert.rating.toFixed(1)}
             </span>
           )}
           {expert.review_count} {pluralRu(expert.review_count, "отзыв", "отзыва", "отзывов")} ·{" "}

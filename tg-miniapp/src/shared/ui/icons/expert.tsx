@@ -22,10 +22,3 @@ export function ExpertIcon({ size = 24, className }: Props) {
   );
 }
 
-export function StarIcon({ size = 14, className }: Props) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2.5L14.85 8.27L21.22 9.2L16.61 13.69L17.7 20.03L12 17.03L6.3 20.03L7.39 13.69L2.78 9.2L9.15 8.27L12 2.5Z" />
-    </svg>
-  );
-}

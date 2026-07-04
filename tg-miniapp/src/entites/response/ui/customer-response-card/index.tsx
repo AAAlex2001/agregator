@@ -1,5 +1,6 @@
 import { Card, InfoRow } from "@/shared/ui";
-import { ExpertIcon, StarIcon } from "@/shared/ui/icons/expert";
+import { ExpertIcon } from "@/shared/ui/icons/expert";
+import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import { VAT_LABEL, type ExpertResponse } from "../../model/types";
 import { statusMeta } from "../../model/status";
@@ -25,8 +26,8 @@ export function CustomerResponseCard({ response }: { response: ExpertResponse })
           <span className={s.name}>{response.expert_name}</span>
           {response.expert_rating !== null && (
             <span className={s.rating}>
-              <StarIcon className={s.star} /> {response.expert_rating.toFixed(1)} · {response.expert_review_count}{" "}
-              {pluralRu(response.expert_review_count, "отзыв", "отзыва", "отзывов")}
+              <ReviewStarIcon active width={14} height={14} /> {response.expert_rating.toFixed(1)} ·{" "}
+              {response.expert_review_count} {pluralRu(response.expert_review_count, "отзыв", "отзыва", "отзывов")}
             </span>
           )}
         </div>
