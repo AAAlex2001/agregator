@@ -1,0 +1,81 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Screen } from "@/widgets/app-shell";
+import { SortSheet, Spinner, type SortChoice } from "@/shared/ui";
+import { SortIcon } from "@/shared/ui/icons/interface";
+import { tapHaptic } from "@/shared/services/telegram";
+import { ExpertCard, listExperts, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
+import s from "./style.module.scss";
+
+const EXPERT_SORTS: SortChoice[] = [
+  { key: "rating", dir: "desc", label: "Рейтинг — сначала выше" },
+  { key: "rating", dir: "asc", label: "Рейтинг — сначала ниже" },
+  { key: "completed_orders", dir: "desc", label: "Заказы — сначала больше" },
+  { key: "completed_orders", dir: "asc", label: "Заказы — сначала меньше" },
+  { key: "review_count", dir: "desc", label: "Отзывы — сначала больше" },
+  { key: "review_count", dir: "asc", label: "Отзывы — сначала меньше" },
+];
+
+export function ExpertsReviewsPage() {
+  const navigate = useNavigate();
+  const [sort, setSort] = useState<SortChoice>(EXPERT_SORTS[0]);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [items, setItems] = useState<ExpertSummary[] | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    setItems(null);
+    listExperts(sort.key as ExpertSortBy, sort.dir)
+      .then((r) => active && setItems(r.items))
+      .catch(() => active && setItems([]));
+    return () => {
+      active = false;
+    };
+  }, [sort]);
+
+  return (
+    <Screen title="Отзывы экспертов" panel>
+      <div className={s.wrap}>
+        <div className={s.head}>
+          <p className={s.sub}>Аттестованные эксперты платформы — отзывы заказчиков по завершённым заказам</p>
+          <button
+            className={s.sortBtn}
+            aria-label="Сортировка"
+            onClick={() => {
+              tapHaptic();
+              setSortOpen(true);
+            }}
+          >
+            <SortIcon width={20} height={20} />
+          </button>
+        </div>
+
+        {items === null ? (
+          <div className={s.loading}>
+            <Spinner />
+          </div>
+        ) : items.length === 0 ? (
+          <p className={s.empty}>Пока нет экспертов с отзывами</p>
+        ) : (
+          <div className={s.list}>
+            {items.map((expert) => (
+              <ExpertCard
+                key={expert.public_id}
+                expert={expert}
+                onClick={() => navigate(`/experts-reviews/${expert.public_id}`)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <SortSheet
+        open={sortOpen}
+        onClose={() => setSortOpen(false)}
+        choices={EXPERT_SORTS}
+        value={sort}
+        onSelect={setSort}
+      />
+    </Screen>
+  );
+}

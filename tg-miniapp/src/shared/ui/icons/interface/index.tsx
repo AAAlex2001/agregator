@@ -139,6 +139,12 @@ export const FilterIcon = (p: P) => (
   </svg>
 );
 
+export const ReviewsIcon = (p: P) => (
+  <svg {...base} {...p}>
+    <path d="m12 3.4 2.6 5.27 5.82.85-4.21 4.1.99 5.8L12 16.68l-5.2 2.74.99-5.8-4.21-4.1 5.82-.85L12 3.4Z" />
+  </svg>
+);
+
 export const SortIcon = (p: P) => (
   <svg {...base} viewBox="0 0 16 16" strokeWidth={1.4} {...p}>
     <path d="M7.3335 10.6667L5.3335 12.6667L3.3335 10.6667" />

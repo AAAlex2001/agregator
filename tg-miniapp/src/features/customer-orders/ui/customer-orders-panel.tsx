@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
-import { Spinner } from "@/shared/ui";
+import { EmptyState, Spinner } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
+import { EmptyArchiveIcon, EmptyInWorkIcon } from "@/shared/ui/icons/empty";
 import { CustomerOrderCard, OrderCard, type Order } from "@/entites/order";
 import { useCustomerOrders, type CustomerTab } from "../model/use-customer-orders";
 import s from "./customer-orders-panel.module.scss";
@@ -30,11 +31,19 @@ export function CustomerOrdersPanel({ view, refreshKey, onOpen, emptyActive }: P
         </div>
       ) : items.length === 0 ? (
         view === "archive" ? (
-          <p className={s.empty}>Архив пуст</p>
+          <EmptyState
+            icon={<EmptyArchiveIcon />}
+            title="Архив пуст"
+            subtitle="Завершённые заказы будут храниться здесь"
+          />
         ) : tab === "active" ? (
           emptyActive
         ) : (
-          <p className={s.empty}>Пока нет заказов в работе</p>
+          <EmptyState
+            icon={<EmptyInWorkIcon />}
+            title="Нет заказов в работе"
+            subtitle="Примите отклик эксперта — заказ перейдёт в работу"
+          />
         )
       ) : (
         <div className={s.list}>

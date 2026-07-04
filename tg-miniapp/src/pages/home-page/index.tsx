@@ -10,10 +10,11 @@ import { CustomerOrdersPanel } from "@/features/customer-orders";
 import { CustomerResponsesPanel } from "@/features/customer-responses";
 import { CreateOrderSheet } from "@/features/create-order";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
+import { type CustomerSortBy, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
-import { Button, Logo } from "@/shared/ui";
-import { UserIcon, FilterIcon } from "@/shared/ui/icons/interface";
+import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
+import { UserIcon, FilterIcon, ReviewsIcon, SortIcon } from "@/shared/ui/icons/interface";
 import { EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
 
@@ -22,6 +23,15 @@ const CUSTOMER_VIEW_LABEL: Record<FeedView, string> = {
   responses: "Отклики",
   archive: "Архивные",
 };
+
+const RESPONSE_SORTS: SortChoice[] = [
+  { key: "created_at", dir: "desc", label: "По дате — сначала новые" },
+  { key: "created_at", dir: "asc", label: "По дате — сначала старые" },
+  { key: "proposed_sum_amount", dir: "desc", label: "По цене — сначала дороже" },
+  { key: "proposed_sum_amount", dir: "asc", label: "По цене — сначала дешевле" },
+  { key: "expert_rating", dir: "desc", label: "По рейтингу — сначала выше" },
+  { key: "expert_rating", dir: "asc", label: "По рейтингу — сначала ниже" },
+];
 
 export function HomePage() {
   const { role } = useSession();
@@ -32,6 +42,8 @@ export function HomePage() {
   const [archiveOrder, setArchiveOrder] = useState<Order | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [respSort, setRespSort] = useState<SortChoice>(RESPONSE_SORTS[0]);
 
   const isExpert = role === "EXPERT";
 
@@ -46,16 +58,28 @@ export function HomePage() {
         </>
       }
       right={
-        <button
-          className={s.iconBtn}
-          aria-label="Профиль"
-          onClick={() => {
-            tapHaptic();
-            navigate("/profile");
-          }}
-        >
-          <UserIcon width={22} height={22} />
-        </button>
+        <>
+          <button
+            className={s.iconBtn}
+            aria-label="Отзывы экспертов"
+            onClick={() => {
+              tapHaptic();
+              navigate("/experts-reviews");
+            }}
+          >
+            <ReviewsIcon width={22} height={22} />
+          </button>
+          <button
+            className={s.iconBtn}
+            aria-label="Профиль"
+            onClick={() => {
+              tapHaptic();
+              navigate("/profile");
+            }}
+          >
+            <UserIcon width={22} height={22} />
+          </button>
+        </>
       }
       panel
     >
@@ -95,32 +119,44 @@ export function HomePage() {
         <>
           <div className={s.feedHead}>
             <p className={s.sectionTitle}>{CUSTOMER_VIEW_LABEL[view]}</p>
-            <button
-              className={s.filterBtn}
-              aria-label="Фильтр"
-              onClick={() => {
-                tapHaptic();
-                setFilterOpen(true);
-              }}
-            >
-              <FilterIcon width={20} height={20} />
-            </button>
+            <div className={s.headBtns}>
+              {view === "responses" && (
+                <button
+                  className={s.filterBtn}
+                  aria-label="Сортировка"
+                  onClick={() => {
+                    tapHaptic();
+                    setSortOpen(true);
+                  }}
+                >
+                  <SortIcon width={20} height={20} />
+                </button>
+              )}
+              <button
+                className={s.filterBtn}
+                aria-label="Фильтр"
+                onClick={() => {
+                  tapHaptic();
+                  setFilterOpen(true);
+                }}
+              >
+                <FilterIcon width={20} height={20} />
+              </button>
+            </div>
           </div>
           {view === "responses" ? (
-            <CustomerResponsesPanel />
+            <CustomerResponsesPanel sortBy={respSort.key as CustomerSortBy} sortDir={respSort.dir as SortDir} />
           ) : (
             <CustomerOrdersPanel
               view={view}
               refreshKey={refreshKey}
               onOpen={setArchiveOrder}
               emptyActive={
-                <div className={s.emptyState}>
-                  <EmptyOrdersIcon />
-                  <p className={s.emptyTitle}>Вы ещё не создали ни одного заказа</p>
-                  <p className={s.emptySub}>
-                    Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности
-                  </p>
-                </div>
+                <EmptyState
+                  icon={<EmptyOrdersIcon />}
+                  title="Вы ещё не создали ни одного заказа"
+                  subtitle="Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности"
+                />
               }
             />
           )}
@@ -135,6 +171,14 @@ export function HomePage() {
         onClose={() => setFilterOpen(false)}
         views={isExpert ? undefined : ["orders", "responses", "archive"]}
         labels={isExpert ? undefined : CUSTOMER_VIEW_LABEL}
+      />
+
+      <SortSheet
+        open={sortOpen}
+        onClose={() => setSortOpen(false)}
+        choices={RESPONSE_SORTS}
+        value={respSort}
+        onSelect={setRespSort}
       />
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />

@@ -1,0 +1,51 @@
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.item:active {
+  background: var(--accent-soft);
+}
+
+.active {
+  background: var(--accent-soft);
+}
+
+.dir {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.active .dir {
+  color: var(--accent);
+}
+
+.name {
+  flex: 1 1 auto;
+  text-align: left;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.active .name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--accent);
+}

@@ -1,9 +1,14 @@
-import cn from "classnames";
-import { Spinner } from "@/shared/ui";
+import { type ReactNode } from "react";
+import { EmptyState, Spinner } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
-import { tapHaptic } from "@/shared/services/telegram";
-import { SortAscIcon, SortDescIcon, SortIcon } from "@/shared/ui/icons/interface";
-import { CustomerResponseCard, type CustomerSortBy, type ResponseTab } from "@/entites/response";
+import {
+  EmptyAcceptedIcon,
+  EmptyInWorkIcon,
+  EmptyNewResponsesIcon,
+  EmptyRejectedIcon,
+  EmptyResponsesIcon,
+} from "@/shared/ui/icons/empty";
+import { CustomerResponseCard, type CustomerSortBy, type ResponseTab, type SortDir } from "@/entites/response";
 import { useCustomerResponses } from "../model/use-customer-responses";
 import s from "./customer-responses-panel.module.scss";
 
@@ -15,14 +20,41 @@ const TAB_LABELS: { key: ResponseTab; label: string }[] = [
   { key: "accepted", label: "В переговорах" },
 ];
 
-const SORTS: { key: CustomerSortBy; label: string }[] = [
-  { key: "created_at", label: "По дате" },
-  { key: "proposed_sum_amount", label: "По цене" },
-  { key: "expert_rating", label: "По рейтингу" },
-];
+const EMPTY_META: Record<string, { icon: ReactNode; title: string; subtitle: string }> = {
+  all: {
+    icon: <EmptyResponsesIcon />,
+    title: "Пока нет откликов",
+    subtitle: "Отклики экспертов на ваши заказы появятся здесь",
+  },
+  review: {
+    icon: <EmptyNewResponsesIcon />,
+    title: "Новых откликов нет",
+    subtitle: "Когда эксперт откликнется на заказ, вы увидите его здесь",
+  },
+  in_progress: {
+    icon: <EmptyInWorkIcon />,
+    title: "Нет откликов в работе",
+    subtitle: "Выберите исполнителя из новых откликов — работа начнётся здесь",
+  },
+  rejected: {
+    icon: <EmptyRejectedIcon />,
+    title: "Нет отклонённых откликов",
+    subtitle: "Сюда попадают отклики, которые вы отклонили",
+  },
+  accepted: {
+    icon: <EmptyAcceptedIcon />,
+    title: "Переговоры не ведутся",
+    subtitle: "Примите отклик, чтобы обсудить детали с экспертом",
+  },
+};
 
-export function CustomerResponsesPanel() {
-  const { tab, setTab, sortBy, sortDir, toggleSort, items, counters } = useCustomerResponses();
+interface Props {
+  sortBy: CustomerSortBy;
+  sortDir: SortDir;
+}
+
+export function CustomerResponsesPanel({ sortBy, sortDir }: Props) {
+  const { tab, setTab, items, counters } = useCustomerResponses(sortBy, sortDir);
 
   return (
     <div className={s.wrap}>
@@ -36,40 +68,12 @@ export function CustomerResponsesPanel() {
         onChange={(key) => setTab(key as ResponseTab)}
       />
 
-      <div className={s.sortRow}>
-        {SORTS.map((sort) => {
-          const active = sortBy === sort.key;
-          return (
-            <button
-              key={sort.key}
-              type="button"
-              className={cn(s.sortPill, { [s.sortOn]: active })}
-              onClick={() => {
-                tapHaptic();
-                toggleSort(sort.key);
-              }}
-            >
-              {sort.label}
-              {active ? (
-                sortDir === "desc" ? (
-                  <SortDescIcon width={15} height={15} />
-                ) : (
-                  <SortAscIcon width={15} height={15} />
-                )
-              ) : (
-                <SortIcon width={15} height={15} />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
       {items === null ? (
         <div className={s.loading}>
           <Spinner />
         </div>
       ) : items.length === 0 ? (
-        <p className={s.empty}>Пока нет откликов</p>
+        <EmptyState {...EMPTY_META[tab]} />
       ) : (
         <div className={s.list}>
           {items.map((response) => (

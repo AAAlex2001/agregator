@@ -10,6 +10,8 @@ import { HomePage } from "@/pages/home-page";
 import { ProfilePage } from "@/pages/profile-page";
 import { NotificationsPage } from "@/pages/notifications-page";
 import { PricingPage } from "@/pages/pricing-page";
+import { ExpertsReviewsPage } from "@/pages/experts-reviews-page";
+import { ExpertReviewsPage } from "@/pages/expert-reviews-page";
 
 export function App() {
   const { booting, authed } = useSession();
@@ -49,6 +51,8 @@ export function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/experts-reviews" element={<ExpertsReviewsPage />} />
+              <Route path="/experts-reviews/:publicId" element={<ExpertReviewsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             {onboarding}

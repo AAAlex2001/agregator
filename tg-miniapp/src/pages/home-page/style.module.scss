@@ -64,35 +64,15 @@
   transform: scale(0.94);
 }
 
+.headBtns {
+  display: flex;
+  gap: 8px;
+}
+
 .emptyLine {
   margin: 0;
   padding: 8px 2px 4px;
   font-size: 14px;
-  color: var(--muted);
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 8px;
-  padding: 28px 16px 12px;
-}
-
-.emptyTitle {
-  margin: 6px 0 0;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--text);
-}
-
-.emptySub {
-  margin: 0;
-  max-width: 280px;
-  font-size: 14px;
-  line-height: 1.5;
   color: var(--muted);
 }
 
