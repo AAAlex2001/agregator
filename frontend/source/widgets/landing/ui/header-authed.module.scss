@@ -56,3 +56,18 @@
     border-radius: 12px;
   }
 }
+
+.navLinkPromo {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  color: #e07c00;
+  font-weight: 600;
+
+  &:hover,
+  &:focus-visible {
+    background: #fff3e0;
+    color: #cc6f00;
+  }
+}

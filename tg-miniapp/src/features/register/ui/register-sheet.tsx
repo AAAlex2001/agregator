@@ -43,19 +43,6 @@ export function RegisterSheet({ role, onClose }: { role: Role | null; onClose: (
   const primaryLabel = stepKey === "code" ? "Подтвердить" : stepKey === "account" ? "Зарегистрироваться" : "Далее";
   const onPrimary = stepKey === "code" ? () => void submitCode() : next;
 
-  const actions = role ? (
-    <>
-      {state.step > 1 && stepKey !== "code" ? (
-        <Button variant="outline" onClick={back} disabled={state.busy}>
-          Назад
-        </Button>
-      ) : null}
-      <Button onClick={onPrimary} loading={state.busy} disabled={!stepReady[stepKey]}>
-        {primaryLabel}
-      </Button>
-    </>
-  ) : null;
-
   return (
     <FullSheet
       open={role !== null}
@@ -75,21 +62,33 @@ export function RegisterSheet({ role, onClose }: { role: Role | null; onClose: (
           />
         ) : null
       }
-      footer={actions}
     >
       {role ? (
-        <div className={s.body}>
-          {stepKey === "org" ? <CompanyStep state={state} dispatch={dispatch} /> : null}
-          {stepKey === "profile" ? <ExpertStep state={state} dispatch={dispatch} /> : null}
-          {stepKey === "license" ? <LicenseStep state={state} dispatch={dispatch} /> : null}
-          {stepKey === "docs" ? <DocsStep state={state} dispatch={dispatch} /> : null}
-          {stepKey === "account" ? (
-            <AccountStep state={state} dispatch={dispatch} phoneRequired={role === "LICENSE_HOLDER"} />
-          ) : null}
-          {stepKey === "code" ? (
-            <CodeStep state={state} dispatch={dispatch} onResend={() => void resend()} />
-          ) : null}
-        </div>
+        <>
+          <div className={s.body}>
+            {stepKey === "org" ? <CompanyStep state={state} dispatch={dispatch} /> : null}
+            {stepKey === "profile" ? <ExpertStep state={state} dispatch={dispatch} /> : null}
+            {stepKey === "license" ? <LicenseStep state={state} dispatch={dispatch} /> : null}
+            {stepKey === "docs" ? <DocsStep state={state} dispatch={dispatch} /> : null}
+            {stepKey === "account" ? (
+              <AccountStep state={state} dispatch={dispatch} phoneRequired={role === "LICENSE_HOLDER"} />
+            ) : null}
+            {stepKey === "code" ? (
+              <CodeStep state={state} dispatch={dispatch} onResend={() => void resend()} />
+            ) : null}
+          </div>
+
+          <div className={s.actions}>
+            {state.step > 1 && stepKey !== "code" ? (
+              <Button variant="outline" onClick={back} disabled={state.busy}>
+                Назад
+              </Button>
+            ) : null}
+            <Button onClick={onPrimary} loading={state.busy} disabled={!stepReady[stepKey]}>
+              {primaryLabel}
+            </Button>
+          </div>
+        </>
       ) : null}
     </FullSheet>
   );

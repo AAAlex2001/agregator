@@ -82,6 +82,22 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
   );
 }
 
+export function PromoNavButtons({ className }: { className?: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button type="button" className={className} onClick={() => setOpen(true)}>
+        Telegram-бот
+      </button>
+      <button type="button" className={className} onClick={() => setOpen(true)}>
+        Мобильное приложение
+      </button>
+      <PromoDrawerPanel open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
 const PromoDrawer = () => {
   const [open, setOpen] = useState(false);
 

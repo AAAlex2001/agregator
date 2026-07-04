@@ -14,11 +14,13 @@
 
 .sheet {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--card);
   border-radius: 22px 22px 0 0;
-  padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
   max-height: 86vh;
-  overflow-y: auto;
+  max-height: 86dvh;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
   will-change: transform;
   animation: slideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1);
@@ -29,11 +31,12 @@
 }
 
 .top {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
+  padding: 14px 16px 12px;
 }
 
 .title {
@@ -63,9 +66,14 @@
 }
 
 .body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 0 16px calc(20px + env(safe-area-inset-bottom));
 }
 
 @keyframes fadeIn {

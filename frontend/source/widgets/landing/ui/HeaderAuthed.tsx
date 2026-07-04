@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
-import PromoDrawer from "./PromoDrawer";
+import PromoDrawer, { PromoNavButtons } from "./PromoDrawer";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -16,6 +16,7 @@ const HeaderAuthed = () => (
       <nav className={s.nav} aria-label="Основная навигация">
         <ExpertHelpPlates />
         <div className={s.menuLinks}>
+          <PromoNavButtons className={`${s.navLink} ${s.navLinkPromo}`} />
           {NAV_PAGES.map((page) => (
             <Link key={page.href} href={page.href} className={s.navLink}>
               {page.label}

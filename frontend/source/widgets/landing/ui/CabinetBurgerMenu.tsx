@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import { getCabinetNav, type NavItem } from "@/source/widgets/expert-help";
-import { PromoDrawerPanel } from "./PromoDrawer";
 import s from "./cabinet-burger.module.scss";
 
 function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
@@ -89,7 +88,6 @@ export function CabinetBurgerMenu() {
   const { role } = useSession();
   const [open, setOpen] = useState(false);
   const [openKey, setOpenKey] = useState<string | null>(null);
-  const [promoOpen, setPromoOpen] = useState(false);
 
   const close = () => {
     setOpen(false);
@@ -121,19 +119,6 @@ export function CabinetBurgerMenu() {
         <nav className={s.menu}>
           <div className={s.menuLogo}>
             <LogoIcon />
-          </div>
-
-          <div className={s.group}>
-            <button type="button" className={`${s.groupHead} ${s.promoHead}`} onClick={() => setPromoOpen(true)}>
-              Telegram-бот
-              <ChevronIcon className={s.chevronSide} color="currentColor" />
-            </button>
-          </div>
-          <div className={s.group}>
-            <button type="button" className={`${s.groupHead} ${s.promoHead}`} onClick={() => setPromoOpen(true)}>
-              Мобильное приложение
-              <ChevronIcon className={s.chevronSide} color="currentColor" />
-            </button>
           </div>
 
           {plates.map((plate) => (
@@ -173,8 +158,6 @@ export function CabinetBurgerMenu() {
           ))}
         </nav>
       )}
-
-      <PromoDrawerPanel open={promoOpen} onClose={() => setPromoOpen(false)} />
     </>
   );
 }
