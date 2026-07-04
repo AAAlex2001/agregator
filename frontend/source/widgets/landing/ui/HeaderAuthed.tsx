@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
+import PromoBanner from "./PromoBanner";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -10,6 +11,7 @@ const NAV_PAGES = [
 
 const HeaderAuthed = () => (
   <>
+    <PromoBanner />
     <header className={s.header}>
       <nav className={s.nav} aria-label="Основная навигация">
         <ExpertHelpPlates />
