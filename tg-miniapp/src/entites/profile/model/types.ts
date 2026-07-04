@@ -19,6 +19,8 @@ export interface Profile {
   email: string | null;
   phone: string | null;
   role: Role;
+  inn: string | null;
+  company_data: { value?: string } | null;
   email_preferences: EmailPreferences;
 }
 
