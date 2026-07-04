@@ -100,7 +100,8 @@ function usefulItems(role: string | null): NavItem[] {
   }
   return [
     { label: "Реестр экспертов Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
-    { label: "Реестры ЗЭПБ Ростехнадзора", href: "/zepb-registry" },
+    { label: "Реестр заключений ЭПБ", href: "/zepb-registry" },
+    { label: "Сервис проверки подлинности протоколов ИС ЕПТ", href: "https://qr.gosnadzor.ru/prombez", external: true },
     { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
     { label: "Поверка приборов", regions: VERIFICATION_REGIONS },
     { label: "Результаты поверки приборов", href: "https://grmetr.ru/arshin", external: true },

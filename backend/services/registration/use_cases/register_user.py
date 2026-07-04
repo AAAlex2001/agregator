@@ -24,7 +24,6 @@ class RegisterUserUseCase:
 
         await self.validator.ensure_email_is_free(data.email, data.role)
         await self.validator.ensure_phone_is_free(data.phone, data.role)
-        await self.validator.ensure_inn_is_free(data.inn, data.role)
 
         user = User(
             role=data.role,

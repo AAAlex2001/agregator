@@ -116,7 +116,6 @@ class User(Base):
         ),
         UniqueConstraint("email", "role", name="uq_users_email_role"),
         UniqueConstraint("phone", "role", name="uq_users_phone_role"),
-        UniqueConstraint("inn", "role", name="uq_users_inn_role"),
     )
 
     password_reset_codes: Mapped[list["PasswordResetCode"]] = relationship(

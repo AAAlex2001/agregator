@@ -15,7 +15,7 @@ export function ZepbRegistryWidget() {
           <thead>
             <tr>
               <th className={s.th}>Управление</th>
-              <th className={s.th}>Ссылка на реестр ЗЭПБ</th>
+              <th className={s.th}>Ссылка на реестр зЭПБ</th>
             </tr>
           </thead>
           <tbody>
