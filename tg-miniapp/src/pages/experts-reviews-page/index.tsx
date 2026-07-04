@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Screen } from "@/widgets/app-shell";
 import { SortSheet, Spinner, type SortChoice } from "@/shared/ui";
 import { SortIcon } from "@/shared/ui/icons/interface";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ExpertCard, listExperts, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
+import { ExpertReviewsSheet } from "@/features/expert-reviews";
 import s from "./style.module.scss";
 
 const EXPERT_SORTS: SortChoice[] = [
@@ -17,10 +17,10 @@ const EXPERT_SORTS: SortChoice[] = [
 ];
 
 export function ExpertsReviewsPage() {
-  const navigate = useNavigate();
   const [sort, setSort] = useState<SortChoice>(EXPERT_SORTS[0]);
   const [sortOpen, setSortOpen] = useState(false);
   const [items, setItems] = useState<ExpertSummary[] | null>(null);
+  const [selected, setSelected] = useState<ExpertSummary | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -59,11 +59,7 @@ export function ExpertsReviewsPage() {
         ) : (
           <div className={s.list}>
             {items.map((expert) => (
-              <ExpertCard
-                key={expert.public_id}
-                expert={expert}
-                onClick={() => navigate(`/experts-reviews/${expert.public_id}`)}
-              />
+              <ExpertCard key={expert.public_id} expert={expert} onClick={() => setSelected(expert)} />
             ))}
           </div>
         )}
@@ -76,6 +72,8 @@ export function ExpertsReviewsPage() {
         value={sort}
         onSelect={setSort}
       />
+
+      <ExpertReviewsSheet expert={selected} onClose={() => setSelected(null)} />
     </Screen>
   );
 }

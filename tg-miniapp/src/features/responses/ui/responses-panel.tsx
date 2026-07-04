@@ -1,6 +1,13 @@
-import { useState } from "react";
-import { Spinner } from "@/shared/ui";
+import { useState, type ReactNode } from "react";
+import { EmptyState, Spinner } from "@/shared/ui";
 import { Tabs, type TabItem } from "@/shared/ui/tabs";
+import {
+  EmptyAcceptedIcon,
+  EmptyInWorkIcon,
+  EmptyNewResponsesIcon,
+  EmptyRejectedIcon,
+  EmptyResponsesIcon,
+} from "@/shared/ui/icons/empty";
 import { ResponseCard, type ExpertResponse, type ResponseTab } from "@/entites/response";
 import { useResponses } from "../model/useResponses";
 import { EditResponseSheet } from "./edit-response-sheet";
@@ -14,6 +21,39 @@ const STATUS: { key: ResponseTab; label: string }[] = [
   { key: "accepted", label: "В переговорах" },
   { key: "withdrawn_by_expert", label: "Отозванные мной" },
 ];
+
+const EMPTY_META: Record<ResponseTab, { icon: ReactNode; title: string; subtitle: string }> = {
+  all: {
+    icon: <EmptyResponsesIcon />,
+    title: "Пока нет откликов",
+    subtitle: "Откликнитесь на подходящий заказ — ваши отклики появятся здесь",
+  },
+  review: {
+    icon: <EmptyNewResponsesIcon />,
+    title: "Нет откликов на рассмотрении",
+    subtitle: "Отклики, ожидающие решения заказчика, появятся здесь",
+  },
+  in_progress: {
+    icon: <EmptyInWorkIcon />,
+    title: "Нет заказов в работе",
+    subtitle: "Когда заказчик выберет вас исполнителем, заказ появится здесь",
+  },
+  rejected: {
+    icon: <EmptyRejectedIcon />,
+    title: "Нет отклонённых откликов",
+    subtitle: "Сюда попадают отклики, отклонённые заказчиком",
+  },
+  accepted: {
+    icon: <EmptyAcceptedIcon />,
+    title: "Переговоры не ведутся",
+    subtitle: "Когда заказчик примет ваш отклик, здесь начнутся переговоры",
+  },
+  withdrawn_by_expert: {
+    icon: <EmptyRejectedIcon />,
+    title: "Нет отозванных откликов",
+    subtitle: "Отклики, которые вы отозвали, появятся здесь",
+  },
+};
 
 export function ResponsesPanel() {
   const [tab, setTab] = useState<ResponseTab>("all");
@@ -34,7 +74,7 @@ export function ResponsesPanel() {
           <Spinner />
         </div>
       ) : r.items.length === 0 ? (
-        <p className={s.emptyLine}>В этой вкладке пока пусто</p>
+        <EmptyState {...EMPTY_META[tab]} />
       ) : (
         <div className={s.feed}>
           {r.items.map((resp) => (

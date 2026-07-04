@@ -15,7 +15,7 @@ import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
 import { UserIcon, FilterIcon, ReviewsIcon, SortIcon } from "@/shared/ui/icons/interface";
-import { EmptyOrdersIcon } from "@/shared/ui/icons/empty";
+import { EmptyArchiveIcon, EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
 
 const CUSTOMER_VIEW_LABEL: Record<FeedView, string> = {
@@ -102,7 +102,13 @@ export function HomePage() {
           {view === "orders" && (
             <OrdersPanel
               onOpen={setRespondOrder}
-              empty={<p className={s.emptyLine}>Пока нет подходящих заказов</p>}
+              empty={
+                <EmptyState
+                  icon={<EmptyOrdersIcon />}
+                  title="Пока нет подходящих заказов"
+                  subtitle="Новые заказы по вашим областям аттестации появятся здесь"
+                />
+              }
             />
           )}
           {view === "archive" && (
@@ -110,7 +116,13 @@ export function HomePage() {
               archived
               limit={20}
               onOpen={setArchiveOrder}
-              empty={<p className={s.emptyLine}>Архив пуст</p>}
+              empty={
+                <EmptyState
+                  icon={<EmptyArchiveIcon />}
+                  title="Архив пуст"
+                  subtitle="Завершённые заказы будут храниться здесь"
+                />
+              }
             />
           )}
           {view === "responses" && <ResponsesPanel />}
