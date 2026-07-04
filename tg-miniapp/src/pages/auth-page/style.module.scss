@@ -54,12 +54,22 @@
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
 }
 
-.actions,
 .form {
   display: flex;
   flex-direction: column;
   gap: 12px;
   animation: appear 0.28s ease;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  animation: appear 0.28s ease;
+}
+
+.actions > * {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .roleHint {
