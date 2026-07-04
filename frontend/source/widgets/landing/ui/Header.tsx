@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import BurgerMenu from "./BurgerMenu";
-import PromoBanner from "./PromoBanner";
+// import PromoBanner from "./PromoBanner";
 import s from "./header.module.scss";
 
 const NAV_PAGES = [
@@ -16,7 +16,7 @@ const NAV_PAGES = [
 const Header = () => {
   return (
     <>
-      <PromoBanner />
+      {/* <PromoBanner /> */}
       <header className={s.header}>
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
