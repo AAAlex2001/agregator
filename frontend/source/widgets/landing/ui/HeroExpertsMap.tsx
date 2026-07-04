@@ -42,7 +42,9 @@ export function HeroExpertsMap() {
         Аттестованные эксперты Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему
         опасному производственному объекту.
       </p>
-      <YandexMarkersMap markers={markers} height={360} emptyText="Загрузка карты экспертов…" />
+      <div className={s.mapArea}>
+        <YandexMarkersMap markers={markers} height="100%" emptyText="Загрузка карты экспертов…" />
+      </div>
     </div>
   );
 }

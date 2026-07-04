@@ -55,7 +55,7 @@
   height: 100vh;
   background: #ffffff;
   z-index: 1301;
-  padding: 12px 30px 24px;
+  padding: 0 30px 24px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -67,11 +67,16 @@
 }
 
 .menuLogo {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  height: 41px;
+  height: 53px;
   margin: 0 -30px 12px;
   padding: 0 30px;
+  background: #ffffff;
   border-bottom: 1px solid #f0f0f0;
 
   svg {
@@ -100,22 +105,12 @@
   font-size: 16px;
   line-height: 20px;
   font-weight: 600;
+  color: #1a1a1a;
+  transition: color 0.15s ease;
 }
 
-.indigo {
-  color: #4f46e5;
-}
-
-.amber {
-  color: #b45309;
-}
-
-.green {
+.groupOpen {
   color: #2f9b52;
-}
-
-.red {
-  color: #c0453e;
 }
 
 .logoHead {

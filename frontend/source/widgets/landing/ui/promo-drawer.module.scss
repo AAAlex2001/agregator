@@ -140,24 +140,6 @@
   gap: 10px;
 }
 
-.dot {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-}
-
-.bot {
-  background: linear-gradient(135deg, #ff9a3c, #ff6a3d);
-}
-
-.app {
-  background: linear-gradient(135deg, #5b2bd6, #2f7bff);
-}
-
 .cardTitle {
   flex: 1 1 auto;
   min-width: 0;

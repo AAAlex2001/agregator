@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import {
 	LandingAdvantages,
 	LandingArticlesPreview,
+	LandingComingSoon,
 	LandingCtaFooter,
 	LandingFaq,
 	LandingFooter,
@@ -102,6 +103,7 @@ export default async function LandingPage() {
 						buttonText={hero.buttonText}
 						bullets={hero.bullets}
 					/>
+					<LandingComingSoon />
 					<LandingSearchBlock />
 					<LandingNotificationsCta />
 					<LandingHowItWorks

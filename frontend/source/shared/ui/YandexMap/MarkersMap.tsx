@@ -8,7 +8,7 @@ import s from "./YandexMap.module.scss";
 
 interface Props {
   markers: MapMarker[];
-  height?: number;
+  height?: number | string;
   emptyText?: string;
 }
 

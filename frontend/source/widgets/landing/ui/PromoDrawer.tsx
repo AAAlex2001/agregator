@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { CheckIcon, PromoAppIcon, PromoBotIcon } from "@/source/shared/ui/icons";
+import { CheckIcon } from "@/source/shared/ui/icons";
 import s from "./promo-drawer.module.scss";
 
 const SECTIONS = [
@@ -48,7 +48,7 @@ const PromoDrawer = () => {
   return (
     <>
       <button type="button" className={s.tab} onClick={() => setOpen(true)}>
-        Скоро: бот и приложение
+        Мобильное приложение и telegram бот
       </button>
 
       <div className={`${s.backdrop} ${open ? s.backdropVisible : ""}`} onClick={() => setOpen(false)} aria-hidden />
@@ -69,9 +69,6 @@ const PromoDrawer = () => {
             <section key={section.key} className={s.card}>
               <Image className={s.img} src={section.image} alt="" width={800} height={800} />
               <div className={s.cardHead}>
-                <span className={`${s.dot} ${s[section.key]}`}>
-                  {section.key === "bot" ? <PromoBotIcon width={18} height={18} /> : <PromoAppIcon width={18} height={18} />}
-                </span>
                 <h3 className={s.cardTitle}>{section.title}</h3>
                 <span className={s.soon}>скоро</span>
               </div>

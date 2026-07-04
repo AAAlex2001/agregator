@@ -5,6 +5,16 @@
   gap: 12px;
 }
 
+.mapArea {
+  height: 360px;
+
+  @media (min-width: 1440px) {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 360px;
+  }
+}
+
 .heading {
   margin: 0;
   font-size: 20px;
