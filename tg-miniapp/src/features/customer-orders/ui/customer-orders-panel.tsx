@@ -1,7 +1,13 @@
 import { type ReactNode } from "react";
 import { Spinner } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
-import { CustomerOrderCard, CUSTOMER_STATUS_LABEL, type CustomerOrderStatus, type Order } from "@/entites/order";
+import {
+  CustomerOrderCard,
+  OrderCard,
+  CUSTOMER_STATUS_LABEL,
+  type CustomerOrderStatus,
+  type Order,
+} from "@/entites/order";
 import { useCustomerOrders } from "../model/use-customer-orders";
 import s from "./customer-orders-panel.module.scss";
 
@@ -41,9 +47,13 @@ export function CustomerOrdersPanel({ refreshKey, onOpen, emptyActive }: Props) 
         )
       ) : (
         <div className={s.list}>
-          {items.map((order) => (
-            <CustomerOrderCard key={order.id} order={order} onClick={() => onOpen(order)} />
-          ))}
+          {items.map((order) =>
+            tab === "archive" ? (
+              <OrderCard key={order.id} order={order} onClick={() => onOpen(order)} />
+            ) : (
+              <CustomerOrderCard key={order.id} order={order} onClick={() => onOpen(order)} />
+            ),
+          )}
         </div>
       )}
     </div>
