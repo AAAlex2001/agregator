@@ -30,9 +30,13 @@
 
 .menuLinks {
   order: 1;
-  display: flex;
+  display: none;
   align-items: center;
   gap: 4px;
+
+  @media (min-width: 1440px) {
+    display: flex;
+  }
 }
 
 .promoRow {

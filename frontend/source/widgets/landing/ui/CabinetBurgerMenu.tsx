@@ -156,6 +156,17 @@ export function CabinetBurgerMenu() {
               )}
             </div>
           ))}
+
+          <div className={s.group}>
+            <Link href="/landing/news" className={s.groupHead} onClick={close}>
+              Новости
+            </Link>
+          </div>
+          <div className={s.group}>
+            <Link href="/landing/blog" className={s.groupHead} onClick={close}>
+              Блог
+            </Link>
+          </div>
         </nav>
       )}
     </>

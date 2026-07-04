@@ -6,10 +6,12 @@ import Image from "next/image";
 import { CheckIcon } from "@/source/shared/ui/icons";
 import s from "./promo-drawer.module.scss";
 
-const SECTIONS = [
-  {
-    key: "bot",
+export type PromoKind = "bot" | "app";
+
+const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; features: string[] }> = {
+  bot: {
     title: "Telegram-бот Ресурс-Плюс",
+    tab: "Telegram бот",
     image: "/promo/tg-bot-sq.webp",
     features: [
       "Лента заявок и отклики — не выходя из Telegram",
@@ -17,9 +19,9 @@ const SECTIONS = [
       "Чат с заказчиком и статусы сделок в одном месте",
     ],
   },
-  {
-    key: "app",
+  app: {
     title: "Мобильное приложение",
+    tab: "Мобильное приложение",
     image: "/promo/app-sq.webp",
     features: [
       "Все сделки и документы всегда под рукой",
@@ -27,14 +29,20 @@ const SECTIONS = [
       "Полный кабинет эксперта и заказчика в кармане",
     ],
   },
-] as const;
+};
 
-export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; onClose: () => void }) {
   const [mounted, setMounted] = useState(false);
+  const [view, setView] = useState<PromoKind>("bot");
+  const open = kind !== null;
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (kind) setView(kind);
+  }, [kind]);
 
   useEffect(() => {
     if (!open) return;
@@ -52,15 +60,17 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
 
   if (!mounted) return null;
 
+  const content = CONTENT[kind ?? view];
+
   return createPortal(
     <>
       <div className={`${s.backdrop} ${open ? s.backdropVisible : ""}`} onClick={onClose} aria-hidden />
 
-      <aside className={`${s.drawer} ${open ? s.drawerOpen : ""}`} aria-label="Скоро на Ресурс-Плюс" aria-hidden={!open}>
+      <aside className={`${s.drawer} ${open ? s.drawerOpen : ""}`} aria-label={content.title} aria-hidden={!open}>
         <header className={s.head}>
-          <div>
-            <h2 className={s.title}>Скоро на Ресурс-Плюс</h2>
-            <p className={s.subtitle}>Telegram-бот и мобильное приложение</p>
+          <div className={s.titleRow}>
+            <h2 className={s.title}>{content.title}</h2>
+            <span className={s.soon}>скоро</span>
           </div>
           <button type="button" className={s.close} onClick={onClose} aria-label="Закрыть">
             ×
@@ -68,23 +78,17 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
         </header>
 
         <div className={s.body}>
-          {SECTIONS.map((section) => (
-            <section key={section.key} className={s.card}>
-              <Image className={s.img} src={section.image} alt="" width={800} height={800} />
-              <div className={s.cardHead}>
-                <h3 className={s.cardTitle}>{section.title}</h3>
-                <span className={s.soon}>скоро</span>
-              </div>
-              <ul className={s.features}>
-                {section.features.map((feature) => (
-                  <li key={feature}>
-                    <CheckIcon className={s.check} />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+          <section className={s.card}>
+            <Image className={s.img} src={content.image} alt="" width={800} height={800} />
+            <ul className={s.features}>
+              {content.features.map((feature) => (
+                <li key={feature}>
+                  <CheckIcon className={s.check} />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </aside>
     </>,
@@ -93,30 +97,34 @@ export function PromoDrawerPanel({ open, onClose }: { open: boolean; onClose: ()
 }
 
 export function PromoNavButtons({ className }: { className?: string }) {
-  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<PromoKind | null>(null);
 
   return (
     <>
-      <button type="button" className={className} onClick={() => setOpen(true)}>
+      <button type="button" className={className} onClick={() => setKind("bot")}>
         Telegram-бот
       </button>
-      <button type="button" className={className} onClick={() => setOpen(true)}>
+      <button type="button" className={className} onClick={() => setKind("app")}>
         Мобильное приложение
       </button>
-      <PromoDrawerPanel open={open} onClose={() => setOpen(false)} />
+      <PromoDrawerPanel kind={kind} onClose={() => setKind(null)} />
     </>
   );
 }
 
 const PromoDrawer = () => {
-  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<PromoKind | null>(null);
 
   return (
     <>
-      <button type="button" className={s.tab} onClick={() => setOpen(true)}>
-        Мобильное приложение и telegram бот
-      </button>
-      <PromoDrawerPanel open={open} onClose={() => setOpen(false)} />
+      <div className={s.tabs}>
+        {(Object.keys(CONTENT) as PromoKind[]).map((key) => (
+          <button key={key} type="button" className={s.tab} onClick={() => setKind(key)}>
+            {CONTENT[key].tab}
+          </button>
+        ))}
+      </div>
+      <PromoDrawerPanel kind={kind} onClose={() => setKind(null)} />
     </>
   );
 };
