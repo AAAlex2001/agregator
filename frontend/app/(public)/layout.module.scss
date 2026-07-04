@@ -1,0 +1,11 @@
+.promo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1303;
+}
+
+.spacer {
+  height: var(--promo-h);
+}
