@@ -20,7 +20,7 @@
   width: 100%;
 
   @media (max-width: 1439px) {
-    padding: 0 44px;
+    padding-right: 44px;
   }
 
   @media (min-width: 1440px) {
@@ -43,7 +43,7 @@
   order: 2;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4px;
 
   @media (min-width: 1440px) {
