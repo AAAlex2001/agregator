@@ -1,8 +1,14 @@
 import { apiJson } from "@/shared/services/api";
-import type { EditResponseData, ResponseList, ResponseTab } from "./types";
+import type { CustomerSortBy, EditResponseData, ResponseList, ResponseTab, SortDir } from "./types";
 
-export function listResponses(tab: ResponseTab, skip = 0, limit = 50): Promise<ResponseList> {
-  return apiJson<ResponseList>(`/responses?tab=${tab}&skip=${skip}&limit=${limit}`);
+export function listResponses(
+  tab: ResponseTab,
+  sortBy: CustomerSortBy = "created_at",
+  sortDir: SortDir = "desc",
+  skip = 0,
+  limit = 50,
+): Promise<ResponseList> {
+  return apiJson<ResponseList>(`/responses?tab=${tab}&sort_by=${sortBy}&sort_dir=${sortDir}&skip=${skip}&limit=${limit}`);
 }
 
 export function withdrawResponse(id: number): Promise<unknown> {

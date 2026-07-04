@@ -7,6 +7,7 @@ import { ResponsesPanel } from "@/features/responses";
 import { ArchiveOrderSheet } from "@/features/archive-order";
 import { OrdersPanel } from "@/features/order-feed";
 import { CustomerOrdersPanel } from "@/features/customer-orders";
+import { CustomerResponsesPanel } from "@/features/customer-responses";
 import { CreateOrderSheet } from "@/features/create-order";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { tapHaptic } from "@/shared/services/telegram";
@@ -15,6 +16,12 @@ import { Button, Logo } from "@/shared/ui";
 import { UserIcon, FilterIcon } from "@/shared/ui/icons/interface";
 import { EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
+
+const CUSTOMER_VIEW_LABEL: Record<FeedView, string> = {
+  orders: "Мои заказы",
+  responses: "Отклики",
+  archive: "Архивные",
+};
 
 export function HomePage() {
   const { role } = useSession();
@@ -86,20 +93,37 @@ export function HomePage() {
         </>
       ) : (
         <>
-          <p className={s.sectionTitle}>Мои заказы</p>
-          <CustomerOrdersPanel
-            refreshKey={refreshKey}
-            onOpen={setArchiveOrder}
-            emptyActive={
-              <div className={s.emptyState}>
-                <EmptyOrdersIcon />
-                <p className={s.emptyTitle}>Вы ещё не создали ни одного заказа</p>
-                <p className={s.emptySub}>
-                  Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности
-                </p>
-              </div>
-            }
-          />
+          <div className={s.feedHead}>
+            <p className={s.sectionTitle}>{CUSTOMER_VIEW_LABEL[view]}</p>
+            <button
+              className={s.filterBtn}
+              aria-label="Фильтр"
+              onClick={() => {
+                tapHaptic();
+                setFilterOpen(true);
+              }}
+            >
+              <FilterIcon width={20} height={20} />
+            </button>
+          </div>
+          {view === "responses" ? (
+            <CustomerResponsesPanel />
+          ) : (
+            <CustomerOrdersPanel
+              view={view}
+              refreshKey={refreshKey}
+              onOpen={setArchiveOrder}
+              emptyActive={
+                <div className={s.emptyState}>
+                  <EmptyOrdersIcon />
+                  <p className={s.emptyTitle}>Вы ещё не создали ни одного заказа</p>
+                  <p className={s.emptySub}>
+                    Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности
+                  </p>
+                </div>
+              }
+            />
+          )}
           <div className={s.createSpacer} />
         </>
       )}
@@ -109,6 +133,8 @@ export function HomePage() {
         view={view}
         onChangeView={setView}
         onClose={() => setFilterOpen(false)}
+        views={isExpert ? undefined : ["orders", "responses", "archive"]}
+        labels={isExpert ? undefined : CUSTOMER_VIEW_LABEL}
       />
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />

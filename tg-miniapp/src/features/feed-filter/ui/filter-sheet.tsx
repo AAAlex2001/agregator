@@ -6,19 +6,21 @@ import type { FeedView } from "../model/types";
 import { VIEW_LABEL } from "../model/types";
 import s from "./filter-sheet.module.scss";
 
-const VIEWS: FeedView[] = ["orders", "responses", "archive"];
+const ALL_VIEWS: FeedView[] = ["orders", "responses", "archive"];
 
 interface Props {
   open: boolean;
   view: FeedView;
   onChangeView: (view: FeedView) => void;
   onClose: () => void;
+  views?: FeedView[];
+  labels?: Partial<Record<FeedView, string>>;
 }
 
-export function FilterSheet({ open, view, onChangeView, onClose }: Props) {
+export function FilterSheet({ open, view, onChangeView, onClose, views = ALL_VIEWS, labels }: Props) {
   return (
     <BottomSheet open={open} title="Фильтрация заказов" onClose={onClose}>
-      {VIEWS.map((code) => (
+      {views.map((code) => (
         <button
           key={code}
           type="button"
@@ -29,7 +31,7 @@ export function FilterSheet({ open, view, onChangeView, onClose }: Props) {
             onClose();
           }}
         >
-          <span className={s.name}>{VIEW_LABEL[code]}</span>
+          <span className={s.name}>{labels?.[code] ?? VIEW_LABEL[code]}</span>
           {code === view && (
             <span className={s.check}>
               <CheckIcon width={18} height={18} />

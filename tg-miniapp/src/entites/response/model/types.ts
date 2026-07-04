@@ -14,6 +14,10 @@ export type ResponseTab =
   | "accepted"
   | "withdrawn_by_expert";
 
+export type CustomerSortBy = "created_at" | "proposed_sum_amount" | "expert_rating";
+
+export type SortDir = "asc" | "desc";
+
 export type VatKind = "NONE" | "VAT_5" | "VAT_7" | "VAT_22";
 
 export const VAT_LABEL: Record<VatKind, string> = {
@@ -42,6 +46,9 @@ export interface ExpertResponse {
   order_created_at: string;
   customer_name: string;
   customer_company: string;
+  expert_name: string;
+  expert_rating: number | null;
+  expert_review_count: number;
   badges: ResponseBadge[];
   vat_kind: VatKind;
   proposed_sum_amount_raw: number;

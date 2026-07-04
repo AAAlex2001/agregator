@@ -139,6 +139,35 @@ export const FilterIcon = (p: P) => (
   </svg>
 );
 
+export const SortIcon = (p: P) => (
+  <svg {...base} viewBox="0 0 16 16" strokeWidth={1.4} {...p}>
+    <path d="M7.3335 10.6667L5.3335 12.6667L3.3335 10.6667" />
+    <path d="M8.6665 5.33333L10.6665 3.33333L12.6665 5.33333" />
+    <path d="M10.6665 12.6667L10.6665 3.33333" />
+    <path d="M5.3335 3.33333V12.6667" />
+  </svg>
+);
+
+export const SortAscIcon = (p: P) => (
+  <svg {...base} viewBox="0 0 16 16" strokeWidth={1.4} {...p}>
+    <path d="M2.6665 11.3333H6.6665" />
+    <path d="M2.6665 8H8.6665" />
+    <path d="M12 7.33334L12 12.6667" />
+    <path d="M14 10.6667L12 12.6667L10 10.6667" />
+    <path d="M2.6665 4.66666H10.6665" />
+  </svg>
+);
+
+export const SortDescIcon = (p: P) => (
+  <svg {...base} viewBox="0 0 16 16" strokeWidth={1.4} {...p}>
+    <path d="M2.6665 11.3333L10.6665 11.3333" />
+    <path d="M2.6665 8H8.6665" />
+    <path d="M2.6665 4.66666H6.6665" />
+    <path d="M12 8.66666L12 3.33333" />
+    <path d="M14 5.33333L12 3.33333L10 5.33333" />
+  </svg>
+);
+
 export const CrownIcon = (p: P) => (
   <svg
     width={24}

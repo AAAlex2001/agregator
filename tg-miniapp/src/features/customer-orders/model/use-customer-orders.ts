@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { customerOrderStatus, listArchivedOrders, listOrders, type CustomerOrderStatus, type Order } from "@/entites/order";
+import { customerOrderStatus, listArchivedOrders, listOrders, type Order } from "@/entites/order";
 
-export function useCustomerOrders(refreshKey: number) {
-  const [tab, setTab] = useState<CustomerOrderStatus>("active");
+export type CustomerTab = "active" | "inwork";
+
+export function useCustomerOrders(view: "orders" | "archive", refreshKey: number) {
+  const [tab, setTab] = useState<CustomerTab>("active");
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [archived, setArchived] = useState<Order[] | null>(null);
 
@@ -18,7 +20,7 @@ export function useCustomerOrders(refreshKey: number) {
   }, [refreshKey]);
 
   useEffect(() => {
-    if (tab !== "archive" || archived !== null) return;
+    if (view !== "archive" || archived !== null) return;
     let active = true;
     listArchivedOrders(50)
       .then((r) => active && setArchived(r.items))
@@ -26,14 +28,14 @@ export function useCustomerOrders(refreshKey: number) {
     return () => {
       active = false;
     };
-  }, [tab, archived]);
+  }, [view, archived]);
 
   useEffect(() => {
     setArchived(null);
   }, [refreshKey]);
 
   const items =
-    tab === "archive" ? archived : orders === null ? null : orders.filter((o) => customerOrderStatus(o) === tab);
+    view === "archive" ? archived : orders === null ? null : orders.filter((o) => customerOrderStatus(o) === tab);
 
   return { tab, setTab, items };
 }
