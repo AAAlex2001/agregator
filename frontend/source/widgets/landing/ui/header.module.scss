@@ -1,10 +1,9 @@
 .header {
-  position: fixed !important;
-  top: var(--promo-h) !important;
-  left: 0 !important;
-  right: 0 !important;
+  position: sticky;
+  top: 0;
   z-index: 1302;
   backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.72);
   padding: 15px var(--page-px);
   border-bottom: 1px solid #E6E6E6;
 }
