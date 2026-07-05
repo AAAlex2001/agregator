@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Screen } from "@/widgets/app-shell";
-import { SortSheet, Spinner, type SortChoice } from "@/shared/ui";
+import { SortSheet, type SortChoice } from "@/shared/ui";
 import { SortIcon } from "@/shared/ui/icons/interface";
 import { tapHaptic } from "@/shared/services/telegram";
-import { ExpertCard, listExperts, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
+import { ExpertCard, ExpertCardSkeleton, listExperts, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
 import { ExpertReviewsSheet } from "@/features/expert-reviews";
 import s from "./style.module.scss";
 
@@ -51,8 +51,10 @@ export function ExpertsReviewsPage() {
         </div>
 
         {items === null ? (
-          <div className={s.loading}>
-            <Spinner />
+          <div className={s.list}>
+            {[0, 1, 2, 3].map((n) => (
+              <ExpertCardSkeleton key={n} />
+            ))}
           </div>
         ) : items.length === 0 ? (
           <p className={s.empty}>Пока нет экспертов с отзывами</p>

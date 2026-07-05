@@ -79,9 +79,9 @@ export function EmptyNewResponsesIcon({ size = 148 }: Props) {
 export function EmptyInWorkIcon({ size = 148 }: Props) {
   return (
     <EmptyBase size={size}>
-      <Shape d="M46 84C46 68.536 58.536 56 74 56C89.464 56 102 68.536 102 84H46Z" />
+      <Shape d="M50 84C50 63 60 48 74 48C88 48 98 63 98 84H50Z" />
+      <Shape d="M68 84V50C68 45.5 70.7 42 74 42C77.3 42 80 45.5 80 50V84H68Z" />
       <Shape d="M44 84H104C106.209 84 108 85.7909 108 88V90C108 92.2091 106.209 94 104 94H44C41.7909 94 40 92.2091 40 90V88C40 85.7909 41.7909 84 44 84Z" />
-      <Shape d="M74 44V56" filled={false} />
     </EmptyBase>
   );
 }

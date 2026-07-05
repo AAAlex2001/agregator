@@ -9,6 +9,7 @@ interface Props {
   certificates: ExpertCertificate[];
   showOnMap: boolean;
   mapFields: string[];
+  error?: string;
   onToggleConfirmed: (value: boolean) => void;
   onChangeCertificates: (value: ExpertCertificate[]) => void;
   onChangeShowOnMap: (value: boolean) => void;
@@ -20,6 +21,7 @@ export function ExpertAttestationBlock({
   certificates,
   showOnMap,
   mapFields,
+  error,
   onToggleConfirmed,
   onChangeCertificates,
   onChangeShowOnMap,
@@ -33,6 +35,7 @@ export function ExpertAttestationBlock({
           Укажите аттестацию — она поможет заказчикам найти вас на карте России
         </span>
       </Checkbox>
+      {error && <span className={s.error}>{error}</span>}
 
       {confirmed && (
         <div className={s.reveal}>

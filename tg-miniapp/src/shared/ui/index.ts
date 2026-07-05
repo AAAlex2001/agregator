@@ -1,4 +1,5 @@
 export { Spinner } from "./spinner";
+export { Skeleton } from "./skeleton";
 export { Button } from "./button";
 export { Toggle } from "./toggle";
 export { TextField } from "./text-field";

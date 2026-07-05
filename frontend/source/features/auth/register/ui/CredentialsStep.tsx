@@ -164,7 +164,8 @@ export function CredentialsStep({
               certificates={watch("expertCertificates")}
               showOnMap={watch("showOnMap")}
               mapFields={watch("mapFields")}
-              onToggleConfirmed={(v) => setValue("expertConfirmed", v)}
+              error={errors.expertConfirmed?.message as string | undefined}
+              onToggleConfirmed={(v) => setValue("expertConfirmed", v, { shouldValidate })}
               onChangeCertificates={(v) => setValue("expertCertificates", v)}
               onChangeShowOnMap={(v) => setValue("showOnMap", v)}
               onChangeMapFields={(v) => setValue("mapFields", v)}

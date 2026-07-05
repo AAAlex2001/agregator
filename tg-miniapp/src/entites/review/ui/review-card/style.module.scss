@@ -1,23 +1,12 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .meta {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-}
-
-.block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.label {
-  font-size: 13px;
+  font-weight: 700;
   color: var(--muted);
 }
 
@@ -31,6 +20,7 @@
   margin: 0;
   font-style: italic;
   font-size: 16px;
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text);
   word-break: break-word;

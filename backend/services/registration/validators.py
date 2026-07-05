@@ -59,6 +59,17 @@ class RegistrationValidator:
             )
 
     @staticmethod
+    def ensure_expert_attested(data: UserRegistration) -> None:
+        "Бросает HTTPException, если условие не выполнено."
+        if data.role != UserRole.EXPERT:
+            return
+        if not data.expert_is_attested:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Подтвердите, что вы являетесь аттестованным экспертом",
+            )
+
+    @staticmethod
     def ensure_company_matches_inn(inn: str | None, company_data: dict[str, Any] | None) -> None:
         "Бросает HTTPException, если условие не выполнено."
         if not inn or not isinstance(company_data, dict):

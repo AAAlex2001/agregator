@@ -1,4 +1,4 @@
-import { Card } from "@/shared/ui";
+import { Card, Field } from "@/shared/ui";
 import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import type { ReviewItem } from "../../model/api";
 import s from "./style.module.scss";
@@ -12,36 +12,32 @@ export function ReviewCard({ review }: { review: ReviewItem }) {
     <Card className={s.card}>
       <span className={s.meta}>Отзыв от {formatDateFull(review.created_at)}</span>
 
-      <div className={s.block}>
-        <span className={s.label}>Оценка:</span>
+      <Field label="Оценка:">
         <div className={s.stars} role="img" aria-label={`Оценка ${review.rating} из 5`}>
           {[1, 2, 3, 4, 5].map((n) => (
             <ReviewStarIcon key={n} active={n <= review.rating} />
           ))}
         </div>
-      </div>
+      </Field>
 
       {review.comment && (
-        <div className={s.block}>
-          <span className={s.label}>Отзыв:</span>
+        <Field label="Отзыв:">
           <p className={s.quote}>
             <span className={s.quoteMark}>&ldquo;</span>
             {review.comment}
             <span className={s.quoteMark}>&rdquo;</span>
           </p>
-        </div>
+        </Field>
       )}
 
-      <div className={s.block}>
-        <span className={s.label}>Название заказа:</span>
+      <Field label="Название заказа:">
         <span className={s.value}>{review.order_title || "—"}</span>
-      </div>
+      </Field>
 
       {review.company_name && (
-        <div className={s.block}>
-          <span className={s.label}>Организатор:</span>
+        <Field label="Организатор:">
           <span className={s.value}>{review.company_name}</span>
-        </div>
+        </Field>
       )}
     </Card>
   );

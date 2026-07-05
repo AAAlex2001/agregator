@@ -17,6 +17,7 @@ export interface RegisterApiPayload {
   location_address?: string | null;
   location_city?: string | null;
   travels_to_other_regions?: boolean;
+  expert_is_attested?: boolean;
   expert_certificates?: ExpertCertificate[] | null;
   expert_show_on_map?: boolean;
   expert_map_fields?: string[] | null;

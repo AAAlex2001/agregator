@@ -37,6 +37,7 @@ class UserRegistration(BaseModel):
     location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
     location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
+    expert_is_attested: bool = Field(False, description="Подтверждение, что пользователь — аттестованный эксперт")
     expert_certificates: list[ExpertCertificate] | None = Field(
         None, description="Удостоверения эксперта: область + объект + категория"
     )
