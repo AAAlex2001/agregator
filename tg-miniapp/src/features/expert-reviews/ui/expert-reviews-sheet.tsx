@@ -27,7 +27,7 @@ export function ExpertReviewsSheet({ expert, onClose }: Props) {
 
   const desc = expert
     ? expert.rating !== null
-      ? `★ ${expert.rating.toFixed(1)} · ${expert.review_count} ${pluralRu(expert.review_count, "отзыв", "отзыва", "отзывов")}`
+      ? `Рейтинг ${expert.rating.toFixed(1)} из 5 · ${expert.review_count} ${pluralRu(expert.review_count, "отзыв", "отзыва", "отзывов")}`
       : "Отзывы заказчиков по завершённым заказам"
     : "";
 

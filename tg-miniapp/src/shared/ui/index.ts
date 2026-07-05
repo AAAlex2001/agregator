@@ -9,6 +9,7 @@ export { Select, type SelectOption } from "./select";
 export { InfoRow } from "./info-row";
 export { SortSheet, type SortChoice } from "./sort-sheet";
 export { EmptyState } from "./empty-state";
+export { RatingRing } from "./rating-ring";
 export { PasswordRules } from "./password-rules";
 export { Card } from "./card";
 export { BottomSheet } from "./bottom-sheet";

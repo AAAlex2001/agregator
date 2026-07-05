@@ -1,5 +1,11 @@
 .card {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.head {
+  display: flex;
   align-items: center;
   gap: 12px;
 }
@@ -21,7 +27,7 @@
   object-fit: cover;
 }
 
-.main {
+.identity {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
@@ -38,23 +44,14 @@
   white-space: nowrap;
 }
 
-.meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.joined {
   font-size: 12.5px;
   color: var(--muted);
 }
 
-.rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.chev {
-  flex: none;
-  color: var(--muted);
+.info {
+  background: var(--card-2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding: 0 14px;
 }
