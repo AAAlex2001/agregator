@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import cn from "classnames";
+import { lockDocument, unlockDocument } from "@/shared/lib/scroll-lock";
 import s from "./style.module.scss";
 
 interface Frozen {
@@ -22,7 +23,6 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
   const [rendered, setRendered] = useState(open);
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
-  const [viewport, setViewport] = useState<{ top: number; height: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,46 +46,21 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
 
   useEffect(() => {
     if (!rendered) return;
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    return () => {
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-    };
+    lockDocument();
+    return () => unlockDocument();
   }, [rendered]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [scrollKey]);
 
-  useEffect(() => {
-    if (!rendered) return;
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const update = () => setViewport({ top: vv.offsetTop, height: vv.height });
-    update();
-    vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
-    return () => {
-      vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
-      setViewport(null);
-    };
-  }, [rendered]);
-
   if (!rendered) return null;
 
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
-  const sheetStyle = viewport
-    ? { top: viewport.top + 22, height: viewport.height - 22, bottom: "auto" as const }
-    : undefined;
 
   return createPortal(
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
-      <div className={cn(s.sheet, { [s.closing]: closing })} style={sheetStyle} onClick={(e) => e.stopPropagation()}>
+      <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         {view.hero}
         <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>{view.content}</div>

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
+import { lockDocument, unlockDocument } from "@/shared/lib/scroll-lock";
 import { CloseIcon } from "@/shared/ui/icons/interface";
 import s from "./style.module.scss";
 
@@ -34,11 +35,8 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
 
   useEffect(() => {
     if (!render) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    lockDocument();
+    return () => unlockDocument();
   }, [render]);
 
   if (!render) return null;
