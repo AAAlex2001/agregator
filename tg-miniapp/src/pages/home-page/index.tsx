@@ -10,6 +10,7 @@ import { CustomerOrdersPanel } from "@/features/customer-orders";
 import { CustomerResponsesPanel } from "@/features/customer-responses";
 import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
+import { BlogStrip } from "@/features/blog";
 import { EditOrderSheet } from "@/features/edit-order";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type SortDir } from "@/entites/response";
@@ -105,6 +106,8 @@ export function HomePage() {
       }
       panel
     >
+      <BlogStrip />
+
       {isExpert ? (
         <>
           <div className={s.feedHead}>
