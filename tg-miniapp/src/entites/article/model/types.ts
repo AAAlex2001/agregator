@@ -11,6 +11,7 @@ export interface ArticleListItem {
   tags: string[];
   published_at: string | null;
   likes_count: number;
+  dislikes_count: number;
   views_count: number;
 }
 

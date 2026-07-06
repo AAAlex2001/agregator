@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useKeenSlider } from "keen-slider/react";
+import { useKeenSlider, type KeenSliderInstance } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronRightIcon } from "@/shared/ui/icons/interface";
@@ -9,13 +9,36 @@ import { useLatestArticles } from "../model/use-latest-articles";
 import { ArticleSheet } from "./article-sheet";
 import s from "./blog-strip.module.scss";
 
+function autoplay(slider: KeenSliderInstance) {
+  let timer: ReturnType<typeof setTimeout>;
+  let paused = false;
+
+  const next = () => {
+    clearTimeout(timer);
+    if (paused) return;
+    timer = setTimeout(() => slider.next(), 3000);
+  };
+
+  slider.on("created", () => {
+    slider.container.addEventListener("pointerdown", () => {
+      paused = true;
+      clearTimeout(timer);
+    });
+    next();
+  });
+  slider.on("dragStarted", () => clearTimeout(timer));
+  slider.on("animationEnded", next);
+  slider.on("updated", next);
+}
+
 export function BlogStrip() {
   const navigate = useNavigate();
   const { items } = useLatestArticles(5);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [sliderRef] = useKeenSlider({
-    slides: { perView: 1.12, spacing: 12 },
-  });
+  const [sliderRef] = useKeenSlider(
+    { loop: true, slides: { perView: 1.15, spacing: 12, origin: "center" } },
+    [autoplay],
+  );
 
   if (!items || items.length === 0) return null;
 

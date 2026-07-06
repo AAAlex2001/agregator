@@ -105,9 +105,8 @@ export function HomePage() {
         </>
       }
       panel
+      hero={<BlogStrip />}
     >
-      <BlogStrip />
-
       {isExpert ? (
         <>
           <div className={s.feedHead}>
