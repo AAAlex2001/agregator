@@ -2,68 +2,8 @@ import { useEffect, useReducer } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { toKopecks } from "@/shared/lib/format";
-import { editResponse, type ExpertResponse, type VatKind } from "@/entites/response";
-
-interface State {
-  startDate: string;
-  deadline: string;
-  sum: string;
-  vat: VatKind;
-  comment: string;
-  keepFiles: string[];
-  newFiles: File[];
-  busy: boolean;
-}
-
-type Prefill = Pick<State, "startDate" | "deadline" | "sum" | "vat" | "comment" | "keepFiles">;
-
-type Action =
-  | { type: "prefill"; payload: Prefill }
-  | { type: "startDate"; value: string }
-  | { type: "deadline"; value: string }
-  | { type: "sum"; value: string }
-  | { type: "vat"; value: VatKind }
-  | { type: "comment"; value: string }
-  | { type: "removeKeep"; url: string }
-  | { type: "addFiles"; files: File[] }
-  | { type: "removeNew"; index: number }
-  | { type: "busy"; value: boolean };
-
-const initialState: State = {
-  startDate: "",
-  deadline: "",
-  sum: "",
-  vat: "NONE",
-  comment: "",
-  keepFiles: [],
-  newFiles: [],
-  busy: false,
-};
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "prefill":
-      return { ...initialState, ...action.payload };
-    case "startDate":
-      return { ...state, startDate: action.value };
-    case "deadline":
-      return { ...state, deadline: action.value };
-    case "sum":
-      return { ...state, sum: action.value };
-    case "vat":
-      return { ...state, vat: action.value };
-    case "comment":
-      return { ...state, comment: action.value };
-    case "removeKeep":
-      return { ...state, keepFiles: state.keepFiles.filter((u) => u !== action.url) };
-    case "addFiles":
-      return { ...state, newFiles: [...state.newFiles, ...action.files] };
-    case "removeNew":
-      return { ...state, newFiles: state.newFiles.filter((_, i) => i !== action.index) };
-    case "busy":
-      return { ...state, busy: action.value };
-  }
-}
+import { editResponse, type ExpertResponse } from "@/entites/response";
+import { initialState, reducer } from "./edit-reducer";
 
 export function useEditResponse(response: ExpertResponse | null, onSaved: () => void) {
   const [state, dispatch] = useReducer(reducer, initialState);

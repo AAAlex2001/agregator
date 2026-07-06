@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
 import { CloseIcon } from "@/shared/ui/icons/interface";
@@ -49,7 +50,7 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
 
   const shownTitle = open ? title : frozen.title;
 
-  return (
+  return createPortal(
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={close}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         <div className={s.top}>
@@ -60,6 +61,7 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
         </div>
         <div className={s.body}>{open ? children : frozen.content}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -9,12 +9,13 @@ import { OrdersPanel } from "@/features/order-feed";
 import { CustomerOrdersPanel } from "@/features/customer-orders";
 import { CustomerResponsesPanel } from "@/features/customer-responses";
 import { CreateOrderSheet } from "@/features/create-order";
+import { ChatSheet, useChats } from "@/features/chat";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
-import { UserIcon, FilterIcon, ReviewsIcon, SortIcon } from "@/shared/ui/icons/interface";
+import { UserIcon, FilterIcon, ReviewsIcon, SortIcon, ChatIcon } from "@/shared/ui/icons/interface";
 import { EmptyArchiveIcon, EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
 
@@ -44,6 +45,8 @@ export function HomePage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [sortOpen, setSortOpen] = useState(false);
   const [respSort, setRespSort] = useState<SortChoice>(RESPONSE_SORTS[0]);
+  const [chatOpen, setChatOpen] = useState(false);
+  const { unread: chatUnread } = useChats(60000);
 
   const isExpert = role === "EXPERT";
 
@@ -59,6 +62,17 @@ export function HomePage() {
       }
       right={
         <>
+          <button
+            className={s.iconBtn}
+            aria-label="Чаты"
+            onClick={() => {
+              tapHaptic();
+              setChatOpen(true);
+            }}
+          >
+            <ChatIcon width={22} height={22} />
+            {chatUnread > 0 && <span className={s.chatBadge}>{chatUnread > 99 ? "99+" : chatUnread}</span>}
+          </button>
           <button
             className={s.iconBtn}
             aria-label="Отзывы экспертов"
@@ -196,6 +210,8 @@ export function HomePage() {
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
 
       <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
+
+      <ChatSheet open={chatOpen} onClose={() => setChatOpen(false)} />
 
       {!isExpert && (
         <>

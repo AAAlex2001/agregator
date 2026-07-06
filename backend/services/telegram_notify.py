@@ -25,7 +25,8 @@ async def send_telegram_message(chat_id: int, text: str) -> None:
     }
     for attempt in range(1, SEND_RETRIES + 1):
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            transport = httpx.AsyncHTTPTransport(local_address="::")
+            async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
                 await client.post(url, json=payload)
             return
         except (httpx.ConnectError, httpx.ConnectTimeout) as error:

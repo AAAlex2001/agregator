@@ -1,5 +1,5 @@
 import { Field, FilePicker, TextArea } from "@/shared/ui";
-import { type FileKey } from "../../model/reducer";
+import { type FileKey } from "../../model/types";
 import { type StepProps } from "./types";
 
 const NOTE = "PDF, JPEG, PNG, DOC, XLSX, ZIP · до 6 файлов, суммарно до 100 МБ";

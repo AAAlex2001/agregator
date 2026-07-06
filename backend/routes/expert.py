@@ -3,7 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.expert import ExpertListResponse, ExpertMapItem, ExpertMapResponse, ExpertSummary
+from schemas.expert import (
+    ExpertListResponse,
+    ExpertMapItem,
+    ExpertMapResponse,
+    ExpertPickerItem,
+    ExpertPickerResponse,
+    ExpertSummary,
+)
 from schemas.order import OrderListResponse, OrderResponse
 from services.experts import (
     ExpertsRepository,
@@ -93,6 +100,30 @@ async def list_experts_map(
                 email=row.email,
             )
             for row in rows
+        ]
+    )
+
+
+@router.get("/experts/picker", response_model=ExpertPickerResponse)
+async def list_experts_picker(
+    q: str | None = Query(None, max_length=200),
+    limit: int = Query(20, ge=1, le=50),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> ExpertPickerResponse:
+    "Лёгкий список активных экспертов для выбора, кому виден заказ."
+    experts = await build_repo(db).list_picker(q, limit)
+    return ExpertPickerResponse(
+        items=[
+            ExpertPickerItem(
+                id=user.id,
+                full_name=" ".join(
+                    part for part in (user.first_name or "", user.last_name or "") if part
+                ).strip() or "Эксперт",
+                avatar_url=user.avatar_url,
+                rating=float(user.rating) if user.rating is not None else None,
+            )
+            for user in experts
         ]
     )
 

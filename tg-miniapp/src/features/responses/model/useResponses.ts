@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import {
@@ -24,7 +24,7 @@ export function useResponses(tab: ResponseTab) {
   const [counters, setCounters] = useState<ResponseCounters>(EMPTY_COUNTERS);
   const [busyId, setBusyId] = useState<number | null>(null);
 
-  const reload = useCallback(async () => {
+  const reload = async () => {
     try {
       const data = await listResponses(tab);
       setItems(data.items);
@@ -33,12 +33,13 @@ export function useResponses(tab: ResponseTab) {
       emitError(e instanceof Error ? e.message : "Не удалось загрузить отклики");
       setItems([]);
     }
-  }, [tab]);
+  };
 
   useEffect(() => {
     setItems(null);
     void reload();
-  }, [reload]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
 
   const withdraw = async (id: number) => {
     setBusyId(id);

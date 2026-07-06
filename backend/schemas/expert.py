@@ -12,6 +12,19 @@ class ExpertCertificate(BaseModel):
     category: str = Field(..., max_length=5, description="Категория, напр. '3'")
 
 
+class ExpertPickerItem(BaseModel):
+    "Минимальная карточка эксперта для выбора получателей заказа."
+    id: int
+    full_name: str
+    avatar_url: str | None = None
+    rating: float | None = None
+
+
+class ExpertPickerResponse(BaseModel):
+    "Список экспертов для пикера видимости заказа."
+    items: list[ExpertPickerItem]
+
+
 class ExpertSummary(BaseModel):
     "Карточка эксперта без контактов: данные публичного профиля + агрегаты + последний выполненный заказ."
 

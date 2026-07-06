@@ -1,6 +1,5 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -32,7 +31,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [availableRoles, setAvailableRoles] = useState<AvailableRole[]>([]);
 
-  const reloadProfile = useCallback(async () => {
+  const reloadProfile = async () => {
     try {
       const next = await getProfile();
       setProfile(next);
@@ -40,7 +39,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     } catch {
       setProfile(null);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (!authed) {
@@ -87,14 +86,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .finally(() => setBooting(false));
   }, []);
 
-  const signInLink = useCallback(async (email: string, password: string, signRole?: Role) => {
+  const signInLink = async (email: string, password: string, signRole?: Role) => {
     const resp = await telegramLink(getInitData(), email, password, signRole);
     setRole(resp.role ?? null);
     setLinkRequired(false);
     setAuthed(true);
-  }, []);
+  };
 
-  const signOut = useCallback(async () => {
+  const signOut = async () => {
     try {
       await apiLogout();
     } catch {
@@ -103,7 +102,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setAuthed(false);
     setRole(null);
     setLinkRequired(true);
-  }, []);
+  };
 
   return (
     <SessionContext.Provider

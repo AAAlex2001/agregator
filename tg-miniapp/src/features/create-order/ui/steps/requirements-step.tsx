@@ -1,6 +1,7 @@
-import { Checkbox, Field, Select } from "@/shared/ui";
+import { Checkbox, Field, Select, Toggle } from "@/shared/ui";
 import { OPO_KEYS, TABLE, TYPES } from "@/entites/expertise";
 import type { ExpertiseType } from "@/entites/expertise";
+import { ExpertPicker } from "../expert-picker";
 import { type StepProps } from "./types";
 import s from "./requirements-step.module.scss";
 
@@ -62,6 +63,30 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
           </div>
         </Field>
       )}
+
+      <Field
+        label="Кто увидит заказ"
+        hint="Если никого не выбрать — заказ увидят все подходящие эксперты"
+      >
+        <ExpertPicker
+          selected={state.visibleExperts}
+          onAdd={(expert) => dispatch({ type: "addExpert", expert })}
+          onRemove={(id) => dispatch({ type: "removeExpert", id })}
+        />
+      </Field>
+
+      <Field label="Уведомления">
+        <div className={s.notifyRow}>
+          <div className={s.notifyText}>
+            <span className={s.notifyTitle}>Сообщить экспертам о заказе</span>
+            <span className={s.notifyHint}>Если выключить — рассылка не уйдёт никому и никуда</span>
+          </div>
+          <Toggle
+            on={state.notifyExperts}
+            onChange={(value) => dispatch({ type: "notifyExperts", value })}
+          />
+        </div>
+      </Field>
     </>
   );
 }

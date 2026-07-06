@@ -71,6 +71,12 @@ def parse_optional_date(raw: str) -> date_type | None:
     return date_type.fromisoformat(raw)
 
 
+def parse_visible_expert_ids(raw: str) -> list[int] | None:
+    "Пустая строка/пустой список = заказ виден всем экспертам."
+    ids = [int(item) for item in parse_json_list(raw) if str(item).isdigit()]
+    return ids or None
+
+
 def build_order_create_data(
     title: str,
     company: str,
@@ -83,6 +89,8 @@ def build_order_create_data(
     badge_codes_json: str,
     requires_expert: bool = True,
     requires_license: bool = True,
+    visible_expert_ids_json: str = "[]",
+    notify_experts: bool = True,
 ) -> OrderCreate:
     return OrderCreate(
         title=title,
@@ -96,6 +104,8 @@ def build_order_create_data(
         requires_expert=requires_expert,
         requires_license=requires_license,
         badges=parse_badge_codes(badge_codes_json),
+        visible_expert_ids=parse_visible_expert_ids(visible_expert_ids_json),
+        notify_experts=notify_experts,
     )
 
 

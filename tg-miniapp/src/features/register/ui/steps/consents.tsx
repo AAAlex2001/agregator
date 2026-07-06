@@ -1,6 +1,6 @@
 import { Checkbox } from "@/shared/ui";
 import { openLink } from "@/shared/services/telegram";
-import { type ConsentKey } from "../../model/reducer";
+import { type ConsentKey } from "../../model/types";
 import { type StepProps } from "./types";
 import s from "./consents.module.scss";
 

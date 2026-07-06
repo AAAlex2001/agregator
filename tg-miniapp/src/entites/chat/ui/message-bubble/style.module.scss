@@ -1,0 +1,86 @@
+.row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.row.mine {
+  justify-content: flex-end;
+}
+
+.bubble {
+  position: relative;
+  max-width: 80%;
+  padding: 9px 12px 20px;
+  border-radius: 16px 16px 16px 5px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+}
+
+.mine .bubble {
+  border-radius: 16px 16px 5px 16px;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.42;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mine .text {
+  color: #ffffff;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 7px 9px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+}
+
+.mine .file {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.fileIcon {
+  flex: none;
+  width: 22px;
+  height: auto;
+}
+
+.fileName {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mine .fileName {
+  color: #ffffff;
+}
+
+.time {
+  position: absolute;
+  right: 12px;
+  bottom: 5px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.mine .time {
+  color: rgba(255, 255, 255, 0.75);
+}

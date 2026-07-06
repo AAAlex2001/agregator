@@ -26,8 +26,11 @@ class CreateNewOrderNotificationUseCase:
         )
         payload_dump = payload.model_dump(mode="json")
 
+        visible_ids = set(order.visible_expert_ids or [])
         sent = 0
         for expert in experts:
+            if visible_ids and expert.id not in visible_ids:
+                continue
             wanted = set(expert.notify_order_types or [])
             if not wanted & order_codes:
                 continue

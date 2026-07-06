@@ -1,5 +1,5 @@
 import { Field, FilePicker, TextField } from "@/shared/ui";
-import { type FileKey } from "../../model/reducer";
+import { type FileKey } from "../../model/types";
 import { type StepProps } from "./types";
 import s from "./docs-step.module.scss";
 

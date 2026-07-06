@@ -4,7 +4,8 @@ import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { computeBadgeCodes } from "@/entites/expertise";
 import { createOrder } from "@/entites/order";
-import { initialState, reducer, type FileKey } from "./reducer";
+import { initialState, reducer } from "./reducer";
+import type { FileKey } from "./types";
 
 export const MAX_FILES = 6;
 export const MAX_FILES_TOTAL_BYTES = 100 * 1024 * 1024;
@@ -83,6 +84,8 @@ export function useCreateOrder(open: boolean, onCreated: () => void) {
           requiresExpert: state.requiresExpert,
           requiresLicense: state.requiresLicense,
           badgeCodes,
+          visibleExpertIds: state.visibleExperts.map((expert) => expert.id),
+          notifyExperts: state.notifyExperts,
         },
         { ...state.files, other: state.otherFiles },
       );

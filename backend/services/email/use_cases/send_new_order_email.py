@@ -29,8 +29,11 @@ class SendNewOrderEmailUseCase:
             return
 
         order_title = order.title or f"Заказ #{order.id}"
+        visible_ids = set(order.visible_expert_ids or [])
         experts = await self.repo.list_experts_subscribed_to_order_types()
         for expert in experts:
+            if visible_ids and expert.id not in visible_ids:
+                continue
             wanted = set(expert.notify_order_types or [])
             if not wanted & order_codes:
                 continue

@@ -1,39 +1,4 @@
-import type { ExpertiseType } from "@/entites/expertise";
-
-export type StringField = "title" | "sum" | "startDate" | "deadline" | "responsesDeadline" | "comment";
-export type FileKey = "technical" | "contract" | "company";
-export type FlagKey = "requiresExpert" | "requiresLicense";
-
-export interface CreateOrderState {
-  step: number;
-  busy: boolean;
-  done: boolean;
-  title: string;
-  sum: string;
-  startDate: string;
-  deadline: string;
-  responsesDeadline: string;
-  requiresExpert: boolean;
-  requiresLicense: boolean;
-  types: ExpertiseType[];
-  opos: string[];
-  comment: string;
-  files: Record<FileKey, File | null>;
-  otherFiles: File[];
-}
-
-export type CreateOrderAction =
-  | { type: "set"; key: StringField; value: string }
-  | { type: "flag"; key: FlagKey; value: boolean }
-  | { type: "types"; value: ExpertiseType[] }
-  | { type: "opos"; value: string[] }
-  | { type: "file"; key: FileKey; file: File | null }
-  | { type: "addOther"; files: File[] }
-  | { type: "removeOther"; index: number }
-  | { type: "step"; value: number }
-  | { type: "busy"; value: boolean }
-  | { type: "done" }
-  | { type: "reset" };
+import type { CreateOrderAction, CreateOrderState } from "./types";
 
 export const initialState: CreateOrderState = {
   step: 1,
@@ -51,6 +16,8 @@ export const initialState: CreateOrderState = {
   comment: "",
   files: { technical: null, contract: null, company: null },
   otherFiles: [],
+  visibleExperts: [],
+  notifyExperts: true,
 };
 
 export function reducer(state: CreateOrderState, action: CreateOrderAction): CreateOrderState {
@@ -69,6 +36,14 @@ export function reducer(state: CreateOrderState, action: CreateOrderAction): Cre
       return { ...state, otherFiles: [...state.otherFiles, ...action.files] };
     case "removeOther":
       return { ...state, otherFiles: state.otherFiles.filter((_, i) => i !== action.index) };
+    case "addExpert":
+      return state.visibleExperts.some((e) => e.id === action.expert.id)
+        ? state
+        : { ...state, visibleExperts: [...state.visibleExperts, action.expert] };
+    case "removeExpert":
+      return { ...state, visibleExperts: state.visibleExperts.filter((e) => e.id !== action.id) };
+    case "notifyExperts":
+      return { ...state, notifyExperts: action.value };
     case "step":
       return { ...state, step: action.value };
     case "busy":
