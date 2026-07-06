@@ -23,7 +23,7 @@ export function ExpertsReviewsPage() {
   const { items } = useExpertsList(sort.key as ExpertSortBy, sort.dir);
 
   return (
-    <Screen title="Отзывы экспертов" panel>
+    <Screen bare heading="Отзывы экспертов" panel>
       <div className={s.wrap}>
         <div className={s.head}>
           <p className={s.sub}>Аттестованные эксперты платформы — отзывы заказчиков по завершённым заказам</p>
