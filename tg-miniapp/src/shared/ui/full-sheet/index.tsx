@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import cn from "classnames";
 import s from "./style.module.scss";
 
@@ -63,7 +64,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
 
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
 
-  return (
+  return createPortal(
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         {view.hero}
@@ -72,6 +73,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
         </div>
         {view.footer && <div className={s.footer}>{view.footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
