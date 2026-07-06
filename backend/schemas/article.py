@@ -14,6 +14,7 @@ class ArticleListItemDto(BaseModel):
     title: str
     excerpt: str
     cover_image: str
+    tg_cover_image: str = ""
     tags: list[str]
     published_at: datetime | None
     likes_count: int = 0
@@ -35,6 +36,7 @@ class ArticleDetailDto(BaseModel):
     title: str
     excerpt: str
     cover_image: str
+    tg_cover_image: str = ""
     content_html: str
     tags: list[str]
     meta_title: str

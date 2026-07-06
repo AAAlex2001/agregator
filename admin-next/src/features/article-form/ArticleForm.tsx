@@ -65,6 +65,10 @@ export function ArticleForm({ id }: { id: number | null }) {
           Обложка (PNG)
           <CoverUpload value={f.coverImage} onChange={(url) => setField("coverImage", url)} />
         </label>
+        <label>
+          Превью для Telegram (картинка слева, справа — место под заголовок)
+          <CoverUpload value={f.tgCoverImage} onChange={(url) => setField("tgCoverImage", url)} />
+        </label>
 
         <label>Теги</label>
         {tagOptions.length === 0 ? (

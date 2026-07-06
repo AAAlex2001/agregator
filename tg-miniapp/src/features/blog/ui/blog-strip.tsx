@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 import { tapHaptic } from "@/shared/services/telegram";
 import { ChevronRightIcon } from "@/shared/ui/icons/interface";
 import { ArticleSlide } from "@/entites/article";
@@ -11,6 +13,9 @@ export function BlogStrip() {
   const navigate = useNavigate();
   const { items } = useLatestArticles(5);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [sliderRef] = useKeenSlider({
+    slides: { perView: 1.12, spacing: 12 },
+  });
 
   if (!items || items.length === 0) return null;
 
@@ -30,9 +35,11 @@ export function BlogStrip() {
         </button>
       </div>
 
-      <div className={s.slider}>
+      <div ref={sliderRef} className="keen-slider">
         {items.map((article) => (
-          <ArticleSlide key={article.id} article={article} onClick={() => setOpenSlug(article.slug)} />
+          <div key={article.id} className="keen-slider__slide">
+            <ArticleSlide article={article} onClick={() => setOpenSlug(article.slug)} />
+          </div>
         ))}
       </div>
 

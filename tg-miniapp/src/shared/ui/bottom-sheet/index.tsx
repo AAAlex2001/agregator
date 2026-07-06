@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
-import { useKeyboardInset } from "@/shared/lib/use-keyboard-inset";
 import { CloseIcon } from "@/shared/ui/icons/interface";
 import s from "./style.module.scss";
 
@@ -17,7 +16,6 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
   const [render, setRender] = useState(open);
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<{ title?: string; content: ReactNode }>({ title, content: children });
-  const keyboardInset = useKeyboardInset(render);
 
   useEffect(() => {
     if (open) {
@@ -53,11 +51,7 @@ export function BottomSheet({ open, title, onClose, children }: Props) {
   const shownTitle = open ? title : frozen.title;
 
   return createPortal(
-    <div
-      className={cn(s.overlay, { [s.closing]: closing })}
-      style={{ paddingBottom: keyboardInset }}
-      onClick={close}
-    >
+    <div className={cn(s.overlay, { [s.closing]: closing })} onClick={close}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         <div className={s.top}>
           {shownTitle ? <h3 className={s.title}>{shownTitle}</h3> : <span />}

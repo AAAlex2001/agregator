@@ -10,6 +10,7 @@ export type ArticleIn = {
   title: string;
   excerpt: string;
   coverImage: string;
+  tgCoverImage: string;
   tags: string[];
   contentHtml: string;
   metaTitle: string;
@@ -39,6 +40,7 @@ export const EMPTY_ARTICLE: ArticleOut = {
   title: "",
   excerpt: "",
   coverImage: "",
+  tgCoverImage: "",
   tags: [],
   contentHtml: "",
   metaTitle: "",
@@ -55,6 +57,7 @@ export const toOut = (a: ArticleIn): ArticleOut => ({
   title: a.title,
   excerpt: a.excerpt,
   coverImage: a.coverImage,
+  tgCoverImage: a.tgCoverImage,
   tags: a.tags,
   contentHtml: a.contentHtml,
   metaTitle: a.metaTitle,

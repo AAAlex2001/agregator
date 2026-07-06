@@ -43,6 +43,7 @@ class Article(Base):
     title: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="")
     cover_image: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    tg_cover_image: Mapped[str] = mapped_column(String(500), nullable=False, default="", server_default="")
     content_html: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     meta_title: Mapped[str] = mapped_column(String(300), nullable=False, default="")

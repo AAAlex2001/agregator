@@ -57,6 +57,7 @@ def to_out(a: Article) -> ArticleOut:
         title=a.title,
         excerpt=a.excerpt,
         cover_image=a.cover_image,
+        tg_cover_image=a.tg_cover_image,
         tags=[t.name for t in a.tags],
         content_html=a.content_html,
         meta_title=a.meta_title,

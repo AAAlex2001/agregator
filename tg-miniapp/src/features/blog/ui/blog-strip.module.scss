@@ -31,19 +31,3 @@
   cursor: pointer;
 }
 
-.slider {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 2px 0 4px;
-  margin: 0 -16px;
-  padding-left: 16px;
-  padding-right: 16px;
-  scrollbar-width: none;
-}
-
-.slider::-webkit-scrollbar {
-  display: none;
-}

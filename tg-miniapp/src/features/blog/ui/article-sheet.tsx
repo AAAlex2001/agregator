@@ -1,6 +1,8 @@
 import { FullSheet, SheetHero, Spinner } from "@/shared/ui";
 import { formatDayRu, pluralRu } from "@/shared/lib/format";
+import { articleImage } from "@/entites/article";
 import { useArticle } from "../model/use-article";
+import { ArticleReactions } from "./article-reactions";
 import s from "./article-sheet.module.scss";
 
 interface Props {
@@ -26,8 +28,8 @@ export function ArticleSheet({ slug, onClose }: Props) {
       hero={
         article && (
           <SheetHero
-            light={article.cover_image}
-            dark={article.cover_image}
+            light={articleImage(article)}
+            dark={articleImage(article)}
             label={KIND_LABEL[article.kind] ?? "Блог платформы"}
             title={article.title}
             desc={desc}
@@ -41,7 +43,10 @@ export function ArticleSheet({ slug, onClose }: Props) {
           <Spinner />
         </div>
       ) : (
-        <article className={s.prose} dangerouslySetInnerHTML={{ __html: article.content_html }} />
+        <>
+          <article className={s.prose} dangerouslySetInnerHTML={{ __html: article.content_html }} />
+          <ArticleReactions articleId={article.id} />
+        </>
       )}
     </FullSheet>
   );

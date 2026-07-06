@@ -14,6 +14,7 @@ class ArticleWrite(BaseModel):
     title: str = Field(default="", max_length=300)
     excerpt: str = ""
     cover_image: str = Field(default="", max_length=500)
+    tg_cover_image: str = Field(default="", max_length=500)
     tags: list[str] = Field(default_factory=list)
     content_html: str = ""
     meta_title: str = Field(default="", max_length=300)

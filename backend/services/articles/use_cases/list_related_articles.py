@@ -25,6 +25,7 @@ class ListRelatedArticlesUseCase:
                 title=row.title,
                 excerpt=row.excerpt,
                 cover_image=row.cover_image,
+                tg_cover_image=row.tg_cover_image,
                 tags=[t.name for t in row.tags],
                 published_at=row.published_at,
                 likes_count=row.likes_count,

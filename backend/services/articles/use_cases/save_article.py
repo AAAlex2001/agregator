@@ -43,6 +43,7 @@ class SaveArticleUseCase:
             "title": data.title.strip(),
             "excerpt": data.excerpt,
             "cover_image": data.cover_image.strip(),
+            "tg_cover_image": data.tg_cover_image.strip(),
             "content_html": data.content_html,
             "meta_title": data.meta_title.strip(),
             "meta_description": data.meta_description,
