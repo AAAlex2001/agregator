@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import cn from "classnames";
+import { useKeyboardInset } from "@/shared/lib/use-keyboard-inset";
 import s from "./style.module.scss";
 
 interface Frozen {
@@ -22,6 +23,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
   const scrollRef = useRef<HTMLDivElement>(null);
+  const keyboardInset = useKeyboardInset(rendered);
 
   useEffect(() => {
     if (open) {
@@ -64,8 +66,16 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
 
   return (
-    <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
-      <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={cn(s.overlay, { [s.closing]: closing })}
+      style={{ paddingBottom: keyboardInset }}
+      onClick={onClose}
+    >
+      <div
+        className={cn(s.sheet, { [s.closing]: closing })}
+        style={keyboardInset ? { height: `calc(var(--tg-viewport-height, 100dvh) - 22px - ${keyboardInset}px)` } : undefined}
+        onClick={(e) => e.stopPropagation()}
+      >
         {view.hero}
         <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>{view.content}</div>

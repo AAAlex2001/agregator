@@ -72,7 +72,7 @@ export function Modal({
     if (dialog) {
       const focusables = getFocusable(dialog);
       const target = focusables[0] ?? dialog;
-      target.focus({ preventScroll: true });
+      target.focus();
     }
     const trap = (e: KeyboardEvent) => {
       if (e.key !== "Tab" || !dialogRef.current) return;
@@ -106,14 +106,10 @@ export function Modal({
 
   useEffect(() => {
     if (!open) return;
-    const root = document.documentElement;
-    const prevRootOverflow = root.style.overflow;
-    const prevBodyOverflow = document.body.style.overflow;
-    root.style.overflow = "hidden";
+    const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
-      root.style.overflow = prevRootOverflow;
-      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.overflow = previous;
     };
   }, [open]);
 

@@ -3,10 +3,11 @@
   inset: 0;
   z-index: 2000;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 5vh 16px;
-  background: rgba(26, 26, 26, 0.6);
+  padding: 16px;
+  background: rgba(26, 26, 26, 0.55);
+  backdrop-filter: blur(6px);
   animation: fadeIn 0.18s ease-out;
 }
 
@@ -17,7 +18,7 @@
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-height: calc(100vh - 10vh);
+  max-height: calc(100vh - 32px);
   padding: 24px;
   overflow-y: auto;
   background: #ffffff;

@@ -6,6 +6,7 @@
   display: flex;
   align-items: flex-end;
   animation: fadeIn 0.24s ease;
+  transition: padding-bottom 0.22s ease;
 }
 
 .overlay.closing {

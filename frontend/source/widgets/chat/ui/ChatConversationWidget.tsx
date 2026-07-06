@@ -14,12 +14,8 @@ interface ChatConversationWidgetProps {
 
 function groupMessages(messages: ChatMessageData[]): ChatMessageGroupData[] {
   const groups: ChatMessageGroupData[] = [];
-  const seen = new Set<number>();
 
   for (const message of messages) {
-    if (seen.has(message.id)) continue;
-    seen.add(message.id);
-
     const lastGroup = groups[groups.length - 1];
 
     if (lastGroup && lastGroup.senderId === message.sender_id) {
