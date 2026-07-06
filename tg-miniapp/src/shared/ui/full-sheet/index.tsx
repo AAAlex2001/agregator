@@ -22,7 +22,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
   const [rendered, setRendered] = useState(open);
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
-  const [viewport, setViewport] = useState<{ height: number; keyboard: number } | null>(null);
+  const [viewport, setViewport] = useState<{ top: number; height: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,11 +65,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
     if (!rendered) return;
     const vv = window.visualViewport;
     if (!vv) return;
-    const update = () =>
-      setViewport({
-        height: vv.height,
-        keyboard: Math.max(0, window.innerHeight - vv.offsetTop - vv.height),
-      });
+    const update = () => setViewport({ top: vv.offsetTop, height: vv.height });
     update();
     vv.addEventListener("resize", update);
     vv.addEventListener("scroll", update);
@@ -84,7 +80,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
 
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
   const sheetStyle = viewport
-    ? { height: `${viewport.height - 22}px`, marginBottom: viewport.keyboard }
+    ? { top: viewport.top + 22, height: viewport.height - 22, bottom: "auto" as const }
     : undefined;
 
   return createPortal(
