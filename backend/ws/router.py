@@ -26,7 +26,7 @@ ALLOWED_WS_ORIGINS = {
         "CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000"
     ).split(",")
     if o.strip()
-}
+} | {"https://tg.plus-resurs.com"}
 MAX_WS_PAYLOAD_BYTES = 100 * 1024
 SESSION_RECHECK_INTERVAL = 50
 
