@@ -18,7 +18,7 @@ import { type CustomerSortBy, type ExpertResponse, type SortDir } from "@/entite
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
-import { UserIcon, FilterIcon, ReviewsIcon, SortIcon, ChatIcon } from "@/shared/ui/icons/interface";
+import { UserIcon, FilterIcon, ReviewsIcon, SortIcon, ChatIcon, CompassIcon } from "@/shared/ui/icons/interface";
 import { EmptyArchiveIcon, EmptyOrdersIcon } from "@/shared/ui/icons/empty";
 import s from "./style.module.scss";
 
@@ -82,6 +82,16 @@ export function HomePage() {
       }
       right={
         <>
+          <button
+            className={s.iconBtn}
+            aria-label="Полезное"
+            onClick={() => {
+              tapHaptic();
+              navigate("/useful");
+            }}
+          >
+            <CompassIcon width={22} height={22} />
+          </button>
           <button
             className={s.iconBtn}
             aria-label="Чаты"

@@ -12,6 +12,7 @@ import { NotificationsPage } from "@/pages/notifications-page";
 import { PricingPage } from "@/pages/pricing-page";
 import { ExpertsReviewsPage } from "@/pages/experts-reviews-page";
 import { ArticlesPage } from "@/pages/articles-page";
+import { UsefulPage } from "@/pages/useful-page";
 
 export function App() {
   const { booting, authed } = useSession();
@@ -53,6 +54,7 @@ export function App() {
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/experts-reviews" element={<ExpertsReviewsPage />} />
               <Route path="/blog" element={<ArticlesPage />} />
+              <Route path="/useful" element={<UsefulPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             {onboarding}

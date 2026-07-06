@@ -1,9 +1,8 @@
-import { Field, InfoRow } from "@/shared/ui";
+import { Field, FileRow, InfoRow } from "@/shared/ui";
 import { ExpertIcon } from "@/shared/ui/icons/expert";
 import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import type { Order } from "@/entites/order";
-import { FileRow } from "../file-row";
 import s from "./executor-step.module.scss";
 
 export function ExecutorStep({ order }: { order: Order }) {

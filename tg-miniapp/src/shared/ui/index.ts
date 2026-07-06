@@ -18,5 +18,6 @@ export { FullSheet } from "./full-sheet";
 export { SheetHero } from "./sheet-hero";
 export { CodeInput, CODE_LENGTH } from "./code-input";
 export { FilePicker } from "./file-picker";
+export { FileRow } from "./file-row";
 export { ThemedImage } from "./themed-image";
 export { Logo } from "./icons/logo";

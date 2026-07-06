@@ -1,6 +1,6 @@
 import { FileTypeIcon } from "@/shared/ui/file-icon";
 import { fileName, openFile } from "@/shared/lib/files";
-import s from "./file-row.module.scss";
+import s from "./style.module.scss";
 
 export function FileRow({ url }: { url: string }) {
   return (

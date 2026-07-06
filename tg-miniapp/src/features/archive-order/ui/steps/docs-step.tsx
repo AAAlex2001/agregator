@@ -1,5 +1,4 @@
-import { Field } from "@/shared/ui";
-import { FileRow } from "../file-row";
+import { Field, FileRow } from "@/shared/ui";
 import s from "./docs-step.module.scss";
 
 export function DocsStep({ docs }: { docs: string[] }) {

@@ -1,0 +1,70 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.block {
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  padding: 0 14px;
+}
+
+.contactRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  text-decoration: none;
+}
+
+.contactRow + .contactRow {
+  border-top: 1px solid var(--hairline);
+}
+
+.contactLab {
+  flex: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.contactVal {
+  min-width: 0;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 0;
+}
+
+.chip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
