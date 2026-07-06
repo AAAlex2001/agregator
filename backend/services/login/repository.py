@@ -43,20 +43,35 @@ class LoginRepository:
         return list(result.scalars().all())
 
     async def find_user_by_telegram_id(self, telegram_id: int) -> User | None:
-        "Ищет пользователя по привязанному Telegram ID."
+        "Ищет пользователя по привязанному Telegram ID; при нескольких ролях — последнего активного."
         return (
-            await self.db.execute(select(User).where(User.telegram_id == telegram_id))
+            await self.db.execute(
+                select(User)
+                .where(User.telegram_id == telegram_id)
+                .order_by(User.updated_at.desc())
+            )
         ).scalars().first()
 
     async def set_telegram_id(self, user_id: int, telegram_id: int) -> None:
-        "Привязывает Telegram к пользователю; снимает привязку с прежнего владельца (один Telegram — один активный аккаунт)."
-        existing = await self.find_user_by_telegram_id(telegram_id)
-        if existing is not None and existing.id != user_id:
-            existing.telegram_id = None
-            await self.db.flush()
+        "Привязывает Telegram ко всем ролям пользователя (User-записи одного email); у другого пользователя привязка снимается."
         user = await self.find_user_by_id(user_id)
-        if user is not None:
+        if user is None:
+            return
+        owners = (
+            await self.db.execute(select(User).where(User.telegram_id == telegram_id))
+        ).scalars().all()
+        for owner in owners:
+            if owner.email is None or user.email is None or owner.email != user.email:
+                owner.telegram_id = None
+        if user.email:
+            siblings = (
+                await self.db.execute(select(User).where(User.email == user.email))
+            ).scalars().all()
+            for sibling in siblings:
+                sibling.telegram_id = telegram_id
+        else:
             user.telegram_id = telegram_id
+        await self.db.flush()
 
     async def find_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
         "Ищет сущность по заданным параметрам."
