@@ -28,9 +28,10 @@ export function reducer(state: ChatThreadState, action: ChatThreadAction): ChatT
         text: "",
         files: [],
         sending: false,
-        detail: state.detail
-          ? { ...state.detail, messages: [...state.detail.messages, action.message] }
-          : state.detail,
+        detail:
+          state.detail && !state.detail.messages.some((m) => m.id === action.message.id)
+            ? { ...state.detail, messages: [...state.detail.messages, action.message] }
+            : state.detail,
       };
     case "reset":
       return initialState;
