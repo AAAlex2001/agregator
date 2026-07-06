@@ -54,7 +54,7 @@ export function useCustomerResponses(sortBy: CustomerSortBy, sortDir: SortDir, o
     const changed = await changeStatus(response.id, "ACCEPTED", "Не удалось принять отклик");
     if (!changed) return;
     try {
-      const chat = await openChatByOrder(response.order_id);
+      const chat = await openChatByOrder(response.order_id, response.expert_id);
       onOpenChat(chat.uuid);
     } catch (e) {
       emitError(e instanceof Error ? e.message : "Не удалось открыть чат");
@@ -86,7 +86,7 @@ export function useCustomerResponses(sortBy: CustomerSortBy, sortDir: SortDir, o
   const openChat = async (response: ExpertResponse) => {
     setBusyId(response.id);
     try {
-      const chat = await openChatByOrder(response.order_id);
+      const chat = await openChatByOrder(response.order_id, response.expert_id);
       onOpenChat(chat.uuid);
     } catch (e) {
       emitError(e instanceof Error ? e.message : "Не удалось открыть чат");

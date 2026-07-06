@@ -37,11 +37,11 @@ export async function fetchChatDetail(chatUuid: string): Promise<ChatDetailData>
   return (await response.json()) as ChatDetailData;
 }
 
-export async function openChatByOrder(orderId: number): Promise<ChatDetailData> {
+export async function openChatByOrder(orderId: number, expertId?: number): Promise<ChatDetailData> {
   const response = await fetchWithSession(`${API_URL}/chats/open`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ order_id: orderId }),
+    body: JSON.stringify({ order_id: orderId, expert_id: expertId ?? null }),
   });
 
   if (!response.ok) {

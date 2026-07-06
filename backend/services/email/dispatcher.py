@@ -1,6 +1,7 @@
 "Диспетчер: маршрутизирует задачи между обработчиками."
 import html
 import logging
+import re
 
 from fastapi import BackgroundTasks
 from pydantic import BaseModel
@@ -16,12 +17,19 @@ logger = logging.getLogger(__name__)
 UNSUBSCRIBE_MARKER = "\nВы получили это письмо"
 
 
-def telegram_text(email_text: str) -> str:
-    "Текст письма (.txt-версия) → текст для Telegram: без email-приписки, первая строка жирным."
-    body = email_text.split(UNSUBSCRIBE_MARKER)[0].rstrip()
-    first_line, _, rest = body.partition("\n")
+def telegram_text(email_text: str, cta: str) -> str:
+    "Текст письма (.txt-версия) → Telegram: без ссылок и подписи, с подсказкой открыть приложение."
+    body = email_text.split(UNSUBSCRIBE_MARKER)[0]
+    lines = [
+        line
+        for line in body.splitlines()
+        if "plus-resurs.com" not in line and line.strip() != "—"
+    ]
+    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+    first_line, _, rest = text.partition("\n")
     heading = f"<b>{html.escape(first_line)}</b>"
-    return f"{heading}\n{html.escape(rest)}" if rest else heading
+    body_part = f"{heading}\n{html.escape(rest.strip())}" if rest.strip() else heading
+    return f"{body_part}\n\n{html.escape(cta)}"
 
 
 async def deliver_email_task(
@@ -78,6 +86,7 @@ class EmailDispatcher:
         template_name: str,
         subject: str,
         context: BaseModel,
+        tg_cta: str,
         from_email: str | None = None,
         reply_to: str | None = None,
     ) -> None:
@@ -85,7 +94,7 @@ class EmailDispatcher:
         if user is None:
             return
         rendered = render_email(template_name, subject, context.model_dump())
-        self.send_telegram(user, None, telegram_text(rendered.text))
+        self.send_telegram(user, None, telegram_text(rendered.text, tg_cta))
         if self.can_send(user, preference_field):
             self.dispatch(user.email, template_name, subject, context, from_email, reply_to)
 

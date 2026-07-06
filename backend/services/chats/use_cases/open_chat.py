@@ -15,10 +15,13 @@ class OpenChatUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, actor_id: int, order_id: int) -> Chat:
+    async def execute(self, actor_id: int, order_id: int, expert_id: int | None = None) -> Chat:
         "Запускает основной сценарий use case."
         actor = await self.validator.require_active_user(actor_id)
         order = await self.require_order(order_id)
+
+        if expert_id is not None and actor.role == UserRole.CUSTOMER:
+            return await self.require_pair_chat(order, actor, expert_id)
 
         existing = await self.find_existing_for_actor(actor, order)
         if existing is not None:
@@ -40,6 +43,21 @@ class OpenChatUseCase:
         )
         await self.repo.add(chat)
         await self.repo.flush()
+        return chat
+
+    async def require_pair_chat(self, order: Order, actor: User, expert_id: int) -> Chat:
+        "Чат заказчика с конкретным экспертом. Создаётся при принятии отклика — здесь только ищем."
+        if order.customer_id != actor.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Нет доступа к чату этого заказа",
+            )
+        chat = await self.repo.find_pair_chat(order.id, actor.id, expert_id)
+        if chat is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Чат с этим экспертом не найден",
+            )
         return chat
 
     async def require_order(self, order_id: int) -> Order:

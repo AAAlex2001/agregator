@@ -31,6 +31,7 @@ export interface ResponseApiBadge { text: string; variant: string }
 export interface ResponseApiItem {
   id: number;
   order_id: number;
+  expert_id?: number;
   order_public_id: string;
   order_customer_id?: number;
   status: ResponseStatus;
@@ -90,6 +91,7 @@ export interface ResponsesApiList {
 export interface ResponseCardData {
   id: number;
   orderId: number;
+  expertId: number;
   orderPublicId: string;
   orderCustomerId: number;
   rawStatus: ResponseStatus;

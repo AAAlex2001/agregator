@@ -12,7 +12,7 @@ import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
 import { BlogStrip } from "@/features/blog";
 import { EditOrderSheet } from "@/features/edit-order";
-import { LeaveReviewFullSheet, LeaveReviewSheet } from "@/features/leave-review";
+import { LeaveReviewFullSheet, type ReviewTarget } from "@/features/leave-review";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type ExpertResponse, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
@@ -51,13 +51,21 @@ export function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUuid, setChatUuid] = useState<string | null>(null);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
-  const [reviewOrder, setReviewOrder] = useState<Order | null>(null);
-  const [reviewResponse, setReviewResponse] = useState<ExpertResponse | null>(null);
+  const [review, setReview] = useState<ReviewTarget | null>(null);
   const chatBadge = useChats();
 
   const openChatThread = (uuid: string) => {
     setChatUuid(uuid);
     setChatOpen(true);
+  };
+
+  const reviewFromOrder = (order: Order) => {
+    if (order.accepted_response_id === null) return;
+    setReview({ responseId: order.accepted_response_id, expertName: order.executor_name, orderTitle: order.title });
+  };
+
+  const reviewFromResponse = (response: ExpertResponse) => {
+    setReview({ responseId: response.id, expertName: response.expert_name, orderTitle: response.order_title });
   };
 
   const isExpert = role === "EXPERT";
@@ -188,7 +196,7 @@ export function HomePage() {
               sortBy={respSort.key as CustomerSortBy}
               sortDir={respSort.dir as SortDir}
               onOpenChat={openChatThread}
-              onCompleted={setReviewResponse}
+              onCompleted={reviewFromResponse}
             />
           ) : (
             <CustomerOrdersPanel
@@ -197,7 +205,7 @@ export function HomePage() {
               viewerId={profile?.id ?? null}
               onOpen={setArchiveOrder}
               onEdit={setEditOrder}
-              onLeaveReview={setReviewOrder}
+              onLeaveReview={reviewFromOrder}
               emptyActive={
                 <EmptyState
                   icon={<EmptyOrdersIcon />}
@@ -259,15 +267,8 @@ export function HomePage() {
             onCreated={() => setRefreshKey((k) => k + 1)}
           />
           <LeaveReviewFullSheet
-            order={reviewOrder}
-            onClose={() => setReviewOrder(null)}
-            onSubmitted={() => setRefreshKey((k) => k + 1)}
-          />
-          <LeaveReviewSheet
-            open={reviewResponse !== null}
-            responseId={reviewResponse?.id ?? null}
-            expertName={reviewResponse?.expert_name ?? ""}
-            onClose={() => setReviewResponse(null)}
+            target={review}
+            onClose={() => setReview(null)}
             onSubmitted={() => setRefreshKey((k) => k + 1)}
           />
           <div className={s.createBar}>

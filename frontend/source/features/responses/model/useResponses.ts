@@ -116,11 +116,11 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onChat = async (rid: number, oid: number) => {
+  const onChat = async (rid: number, oid: number, expertId?: number) => {
     if (!role) return;
     d({ type: "ACTION_LOADING", id: rid, mode: "chat" });
     try {
-      const detail = await openChatByOrder(oid);
+      const detail = await openChatByOrder(oid, role === "customer" ? expertId : undefined);
       router.push(`/chat/${detail.uuid}`);
     } catch (e) {
       toast(e, "Не удалось открыть чат");
@@ -166,11 +166,11 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onAccept = async (id: number, oid: number) => {
+  const onAccept = async (id: number, oid: number, expertId?: number) => {
     d({ type: "ACTION_LOADING", id, mode: "accept" });
     try {
       await updateStatus(id, "ACCEPTED");
-      void onChat(id, oid);
+      void onChat(id, oid, expertId);
     } catch (e) {
       toast(e);
     } finally {

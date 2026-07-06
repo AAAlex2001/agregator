@@ -10,6 +10,7 @@ TEMPLATE = "expert_rejected"
 SUBJECT = "Эксперт отказался от вашей заявки — Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/customer/orders"
 PREFERENCE_FIELD = "email_on_expert_rejected"
+TG_CTA = "Чтобы выбрать другого исполнителя, откройте приложение."
 
 
 class SendExpertRejectedEmailUseCase:
@@ -27,7 +28,7 @@ class SendExpertRejectedEmailUseCase:
 
         customer = response.order.customer
         context = self.build_context(response, customer)
-        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     def build_context(self, response: OrderResponse, customer: User) -> ExpertRejectedContext:
         "Строит объект из входных данных."

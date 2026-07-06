@@ -15,6 +15,7 @@ TEMPLATE = "response_notification"
 SUBJECT = "Новый отклик на вашу заявку — Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/customer/orders"
 PREFERENCE_FIELD = "email_on_response_created"
+TG_CTA = "Чтобы рассмотреть отклик, откройте раздел «Отклики» в приложении."
 
 
 class SendResponseCreatedEmailUseCase:
@@ -33,7 +34,7 @@ class SendResponseCreatedEmailUseCase:
         customer = response.order.customer
         stats = await self.repo.get_expert_stats(response.expert_id)
         context = self.build_context(response, customer, stats)
-        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     def build_context(
         self,

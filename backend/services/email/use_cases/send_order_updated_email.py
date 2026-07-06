@@ -10,6 +10,7 @@ TEMPLATE = "order_updated"
 SUBJECT = "Заявка, на которую вы откликнулись, изменилась — Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/expert/orders"
 PREFERENCE_FIELD = "email_on_order_updated"
+TG_CTA = "Чтобы перейти к заявке, откройте «Мои отклики» в приложении."
 
 
 class SendOrderUpdatedEmailUseCase:
@@ -31,7 +32,7 @@ class SendOrderUpdatedEmailUseCase:
         experts = await self.repo.list_responders(order_id)
         for expert in experts:
             context = self.build_context(order, expert, changes_summary)
-            self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+            self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     def build_context(
         self,

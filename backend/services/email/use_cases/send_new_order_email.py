@@ -9,6 +9,7 @@ from services.email.repository import EmailRepository
 TEMPLATE = "new_order"
 SUBJECT = "Новая заявка на Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/expert/orders"
+TG_CTA = "Чтобы посмотреть заявку и откликнуться, откройте приложение."
 
 
 class SendNewOrderEmailUseCase:
@@ -33,7 +34,7 @@ class SendNewOrderEmailUseCase:
             wanted = set(expert.notify_order_types or [])
             if not wanted & order_codes:
                 continue
-            self.dispatcher.notify(expert, None, TEMPLATE, SUBJECT, self.build_context(order, expert))
+            self.dispatcher.notify(expert, None, TEMPLATE, SUBJECT, self.build_context(order, expert), TG_CTA)
 
     def build_context(self, order: Order, expert: User) -> NewOrderContext:
         "Строит объект из входных данных."

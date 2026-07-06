@@ -35,6 +35,7 @@ export interface ResponseBadge {
 export interface ExpertResponse {
   id: number;
   order_id: number;
+  expert_id: number;
   status: ResponseStatus;
   date: string;
   comment: string;

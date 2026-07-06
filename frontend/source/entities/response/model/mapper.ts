@@ -67,6 +67,7 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
   return {
     id: item.id,
     orderId: item.order_id,
+    expertId: item.expert_id ?? 0,
     orderPublicId: item.order_public_id || "",
     orderCustomerId: item.order_customer_id ?? 0,
     rawStatus: item.status,

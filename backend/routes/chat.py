@@ -115,7 +115,9 @@ async def open_chat(
     open_use_case = OpenChatUseCase(repo, validator)
     detail_use_case = GetChatDetailUseCase(repo, validator)
 
-    chat = await open_use_case.execute(actor_id=user_id, order_id=payload.order_id)
+    chat = await open_use_case.execute(
+        actor_id=user_id, order_id=payload.order_id, expert_id=payload.expert_id
+    )
     return await detail_use_case.execute(chat_id=chat.id, actor_id=user_id, limit=200)
 
 

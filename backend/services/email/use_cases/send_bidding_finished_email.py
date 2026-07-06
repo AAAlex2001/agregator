@@ -15,6 +15,8 @@ OUTCOME_WON = "won"
 OUTCOME_LOST = "lost"
 
 LOST_SUBJECT = "Заказчик выбрал другого исполнителя — Ресурс-Плюс"
+WON_TG_CTA = "Чтобы перейти к работе, откройте «Мои отклики» в приложении."
+LOST_TG_CTA = "Чтобы посмотреть новые заявки, откройте приложение."
 
 
 def won_subject(order: Order) -> str:
@@ -60,8 +62,9 @@ class SendBiddingFinishedEmailUseCase:
             customer = response.order.customer
 
         subject = won_subject(order) if outcome == OUTCOME_WON else LOST_SUBJECT
+        tg_cta = WON_TG_CTA if outcome == OUTCOME_WON else LOST_TG_CTA
         context = self.build_context(expert, order, outcome, response, customer)
-        self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, subject, context)
+        self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, subject, context, tg_cta)
 
     def build_context(
         self,

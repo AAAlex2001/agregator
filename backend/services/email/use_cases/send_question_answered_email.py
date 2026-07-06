@@ -8,6 +8,7 @@ TEMPLATE = "question_answered"
 SUBJECT = "Заказчик ответил на ваш вопрос — Ресурс-Плюс"
 CTA_URL_TEMPLATE = "https://plus-resurs.com/expert/orders"
 PREFERENCE_FIELD = "email_on_question_answered"
+TG_CTA = "Чтобы продолжить работу с заявкой, откройте приложение."
 
 
 class SendQuestionAnsweredEmailUseCase:
@@ -31,4 +32,4 @@ class SendQuestionAnsweredEmailUseCase:
             answer_text=question.answer or "",
             cta_url=CTA_URL_TEMPLATE,
         )
-        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)

@@ -1,18 +1,23 @@
 import { Button, FullSheet, SheetHero, TextArea } from "@/shared/ui";
-import type { Order } from "@/entites/order";
 import { useLeaveReview } from "../model/use-leave-review";
 import { RatingStars } from "./rating-stars";
 import s from "./leave-review-full-sheet.module.scss";
 
+export interface ReviewTarget {
+  responseId: number;
+  expertName: string;
+  orderTitle: string;
+}
+
 interface Props {
-  order: Order | null;
+  target: ReviewTarget | null;
   onClose: () => void;
   onSubmitted: () => void;
 }
 
-export function LeaveReviewFullSheet({ order, onClose, onSubmitted }: Props) {
-  const open = order !== null;
-  const { state, dispatch, canSubmit, submit } = useLeaveReview(order?.accepted_response_id ?? null, open, () => {
+export function LeaveReviewFullSheet({ target, onClose, onSubmitted }: Props) {
+  const open = target !== null;
+  const { state, dispatch, canSubmit, submit } = useLeaveReview(target?.responseId ?? null, open, () => {
     onSubmitted();
     onClose();
   });
@@ -22,13 +27,13 @@ export function LeaveReviewFullSheet({ order, onClose, onSubmitted }: Props) {
       open={open}
       onClose={onClose}
       hero={
-        order && (
+        target && (
           <SheetHero
             light="/profile-hero/expert-light.webp"
             dark="/profile-hero/expert-dark.webp"
             label="Отзыв об исполнителе"
-            title={order.executor_name}
-            desc={`Заказ «${order.title}»`}
+            title={target.expertName}
+            desc={`Заказ «${target.orderTitle}»`}
             onClose={onClose}
           />
         )
@@ -44,10 +49,10 @@ export function LeaveReviewFullSheet({ order, onClose, onSubmitted }: Props) {
         </>
       }
     >
-      {order && (
+      {target && (
         <div className={s.body}>
           <p className={s.hint}>
-            Оцените работу исполнителя {order.executor_name} — отзыв увидят другие заказчики.
+            Оцените работу исполнителя {target.expertName} — отзыв увидят другие заказчики.
           </p>
           <RatingStars value={state.rating} onChange={(value) => dispatch({ type: "rating", value })} />
           <TextArea

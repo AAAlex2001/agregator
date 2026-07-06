@@ -63,6 +63,7 @@ class ExpertResponseItem(BaseModel):
     "Карточка отклика эксперта в списке: данные отклика, заказа и исполнителя."
     id: int
     order_id: int
+    expert_id: int = 0
     order_public_id: str = ""
     order_customer_id: int = 0
     status: ResponseStatus

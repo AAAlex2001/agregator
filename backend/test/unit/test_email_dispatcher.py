@@ -47,20 +47,30 @@ class TestCanSend:
 
 
 class TestTelegramText:
-    "telegram_text — текст письма (.txt) превращается в Telegram-сообщение."
+    "telegram_text — текст письма (.txt) превращается в Telegram-сообщение без ссылок."
+
+    CTA = "Чтобы продолжить, откройте приложение."
 
     def test_first_line_becomes_bold_heading(self):
-        assert telegram_text("Заголовок\nТело письма") == "<b>Заголовок</b>\nТело письма"
+        result = telegram_text("Заголовок\nТело письма", self.CTA)
+        assert result == f"<b>Заголовок</b>\nТело письма\n\n{self.CTA}"
 
-    def test_single_line(self):
-        assert telegram_text("Только заголовок") == "<b>Только заголовок</b>"
+    def test_site_links_and_signature_stripped(self):
+        text = (
+            "Заголовок\n\nТело\n\nОткрыть чат: https://plus-resurs.com/chat/abc\n\n"
+            "—\nРесурс-Плюс · plus-resurs.com"
+        )
+        result = telegram_text(text, self.CTA)
+        assert "plus-resurs.com" not in result
+        assert "—" not in result
+        assert result == f"<b>Заголовок</b>\nТело\n\n{self.CTA}"
 
     def test_unsubscribe_tail_stripped(self):
         text = "Заголовок\nТело\nВы получили это письмо, так как включены уведомления."
-        assert telegram_text(text) == "<b>Заголовок</b>\nТело"
+        assert telegram_text(text, self.CTA) == f"<b>Заголовок</b>\nТело\n\n{self.CTA}"
 
     def test_user_input_escaped_for_html(self):
-        result = telegram_text("Заголовок\nКомментарий: <script> & \"кавычки\"")
+        result = telegram_text("Заголовок\nКомментарий: <script> & \"кавычки\"", self.CTA)
         assert "<script>" not in result
         assert "&lt;script&gt;" in result
 

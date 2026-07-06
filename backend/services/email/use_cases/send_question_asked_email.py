@@ -8,6 +8,7 @@ TEMPLATE = "question_asked"
 SUBJECT = "Новый вопрос по заказу — Ресурс-Плюс"
 CTA_URL_TEMPLATE = "https://plus-resurs.com/customer/orders"
 PREFERENCE_FIELD = "email_on_question_asked"
+TG_CTA = "Чтобы ответить на вопрос, откройте приложение."
 
 
 class SendQuestionAskedEmailUseCase:
@@ -31,4 +32,4 @@ class SendQuestionAskedEmailUseCase:
             question_text=question.question or "",
             cta_url=CTA_URL_TEMPLATE,
         )
-        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)

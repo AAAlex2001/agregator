@@ -11,6 +11,7 @@ SUBJECT = "Новое сообщение в чате — Ресурс-Плюс"
 CTA_URL_TEMPLATE = "https://plus-resurs.com/chat/{chat_uuid}"
 PREFERENCE_FIELD = "email_on_chat_message"
 PREVIEW_MAX_LENGTH = 240
+TG_CTA = "Чтобы перейти в чат, откройте приложение."
 
 
 class SendChatMessageEmailUseCase:
@@ -34,7 +35,7 @@ class SendChatMessageEmailUseCase:
             return
 
         context = self.build_context(message, recipient)
-        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     @staticmethod
     def resolve_recipient(message: ChatMessage) -> User | None:

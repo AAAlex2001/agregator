@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 TEMPLATE = "new_blog_post"
 CTA_URL_TEMPLATE = "https://plus-resurs.com/landing/blog/{slug}"
 BLOG_FROM_EMAIL = "expert@plus-resurs.com"
+TG_CTA = "Чтобы прочитать статью, откройте раздел «Блог» в приложении."
 
 
 class SendNewBlogPostEmailUseCase:
@@ -39,6 +40,7 @@ class SendNewBlogPostEmailUseCase:
                 TEMPLATE,
                 subject,
                 context,
+                TG_CTA,
                 from_email=BLOG_FROM_EMAIL,
                 reply_to=BLOG_FROM_EMAIL,
             )

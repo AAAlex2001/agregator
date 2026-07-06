@@ -6,11 +6,11 @@ interface Handlers {
   onWithdraw?: (r: ResponseCardData) => void;
   onEdit?: (r: ResponseCardData) => void;
   onShare?: (publicId: string) => void;
-  onChat?: (rid: number, oid: number) => void;
+  onChat?: (rid: number, oid: number, expertId?: number) => void;
   onStart?: (id: number) => void;
   onComplete?: (id: number) => void;
   onReject?: (r: ResponseCardData) => void;
-  onAccept?: (id: number, orderId: number) => void;
+  onAccept?: (id: number, orderId: number, expertId?: number) => void;
   onSelect?: (id: number) => void;
   onRestore?: (id: number) => void;
   onRestoreWithdrawn?: (id: number) => void;
@@ -42,19 +42,19 @@ function expertActions(card: ResponseCardData, loading: Loading, h: Handlers): C
       ];
     case "ACCEPTED":
       return [
-        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId, card.expertId), isLoading: loading === "chat" },
         share,
         withdraw("Отказаться"),
       ];
     case "IN_PROGRESS":
       if (card.expertConfirmed) {
         return [
-          { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+          { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId, card.expertId), isLoading: loading === "chat" },
           share,
         ];
       }
       return [
-        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с заказчиком", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId, card.expertId), isLoading: loading === "chat" },
         { text: "Принять проект", variant: "green", onClick: () => h.onStart?.(card.id), isLoading: loading === "start" },
         share,
         withdraw("Отказаться"),
@@ -80,19 +80,19 @@ function customerActions(card: ResponseCardData, loading: Loading, h: Handlers):
   switch (card.rawStatus) {
     case "REVIEW":
       return [
-        { text: "Пригласить в чат", variant: "secondary", onClick: () => h.onAccept?.(card.id, card.orderId), isLoading: loading === "accept" },
+        { text: "Пригласить в чат", variant: "secondary", onClick: () => h.onAccept?.(card.id, card.orderId, card.expertId), isLoading: loading === "accept" },
         { text: "Выбрать исполнителем", variant: "green", onClick: () => h.onSelect?.(card.id), isLoading: loading === "select" },
         reject,
       ];
     case "ACCEPTED":
       return [
         { text: "Выбрать исполнителем", variant: "green", onClick: () => h.onSelect?.(card.id), isLoading: loading === "select" },
-        { text: "Перейти в чат", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Перейти в чат", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId, card.expertId), isLoading: loading === "chat" },
         reject,
       ];
     case "IN_PROGRESS":
       return [
-        { text: "Чат с экспертом", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId), isLoading: loading === "chat" },
+        { text: "Чат с экспертом", variant: "secondary", onClick: () => h.onChat?.(card.id, card.orderId, card.expertId), isLoading: loading === "chat" },
         { text: "Завершить проект", variant: "green", onClick: () => h.onComplete?.(card.id), isLoading: loading === "complete" },
         reject,
       ];

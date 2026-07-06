@@ -147,6 +147,7 @@ def to_item(
     return ExpertResponseItem(
         id=entity.id,
         order_id=entity.order_id,
+        expert_id=entity.expert_id,
         order_public_id=order.public_id if order else "",
         order_customer_id=order.customer_id if order else 0,
         status=effective_status,

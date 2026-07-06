@@ -20,8 +20,9 @@ class ChatAttachmentData(BaseModel):
 
 
 class ChatOpenRequest(BaseModel):
-    "Запрос на открытие/получение чата по заказу."
+    "Запрос на открытие/получение чата по заказу. expert_id — чат заказчика с конкретным экспертом."
     order_id: int = Field(..., ge=1)
+    expert_id: int | None = Field(None, ge=1)
 
 
 class ChatSendMessageRequest(BaseModel):

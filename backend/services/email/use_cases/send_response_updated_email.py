@@ -10,6 +10,7 @@ TEMPLATE = "response_updated"
 SUBJECT = "Эксперт обновил отклик на вашу заявку — Ресурс-Плюс"
 CTA_URL = "https://plus-resurs.com/customer/orders"
 PREFERENCE_FIELD = "email_on_response_updated"
+TG_CTA = "Чтобы посмотреть изменения, откройте раздел «Отклики» в приложении."
 
 
 class SendResponseUpdatedEmailUseCase:
@@ -30,7 +31,7 @@ class SendResponseUpdatedEmailUseCase:
 
         customer = response.order.customer
         context = self.build_context(response, customer, changes_summary)
-        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     def build_context(
         self,

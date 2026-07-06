@@ -1,2 +1,1 @@
-export { LeaveReviewSheet } from "./ui/leave-review-sheet";
-export { LeaveReviewFullSheet } from "./ui/leave-review-full-sheet";
+export { LeaveReviewFullSheet, type ReviewTarget } from "./ui/leave-review-full-sheet";
