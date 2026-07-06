@@ -20,9 +20,13 @@ export function restoreResponse(id: number): Promise<unknown> {
 }
 
 export function setResponseStatus(id: number, status: string, reason?: string): Promise<unknown> {
-  const form = new FormData();
-  if (reason) form.append("rejection_reason", reason);
-  return apiJson(`/responses/${id}/status?new_status=${status}`, { method: "PATCH", body: form });
+  const init: RequestInit = { method: "PATCH" };
+  if (reason) {
+    const form = new FormData();
+    form.append("rejection_reason", reason);
+    init.body = form;
+  }
+  return apiJson(`/responses/${id}/status?new_status=${status}`, init);
 }
 
 export function editResponse(id: number, data: EditResponseData): Promise<unknown> {

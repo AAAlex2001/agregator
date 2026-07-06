@@ -32,3 +32,34 @@
   font-size: 14px;
   font-weight: 800;
 }
+
+.shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 58%
+  );
+  background-size: 280% 100%;
+  background-repeat: no-repeat;
+  background-position: 220% 0;
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 19px, #000 20px, #000 25px, transparent 26px);
+  mask: radial-gradient(circle at 50% 50%, transparent 19px, #000 20px, #000 25px, transparent 26px);
+  animation: ringShine 4.5s ease-in-out infinite;
+}
+
+@keyframes ringShine {
+  0% {
+    background-position: 220% 0;
+  }
+  32% {
+    background-position: -70% 0;
+  }
+  100% {
+    background-position: -70% 0;
+  }
+}

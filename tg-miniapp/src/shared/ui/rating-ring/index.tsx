@@ -32,6 +32,7 @@ export function RatingRing({ rating }: { rating: number }) {
       <span className={s.value} style={{ color }}>
         {rating.toFixed(1)}
       </span>
+      <span className={s.shine} />
     </div>
   );
 }
