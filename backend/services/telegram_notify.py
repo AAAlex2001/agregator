@@ -24,19 +24,19 @@ async def send_telegram_message(chat_id: int, text: str) -> None:
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }
+    proxy = telegram_config.telegram_proxy or None
+    route = "proxy" if proxy else "direct"
     timeout = httpx.Timeout(10.0, connect=5.0)
     for attempt in range(1, SEND_RETRIES + 1):
-        force_ipv6 = attempt < SEND_RETRIES
-        transport = httpx.AsyncHTTPTransport(local_address="::") if force_ipv6 else None
         try:
-            async with httpx.AsyncClient(timeout=timeout, transport=transport) as client:
+            async with httpx.AsyncClient(timeout=timeout, proxy=proxy) as client:
                 await client.post(url, json=payload)
             return
         except (httpx.ConnectError, httpx.ConnectTimeout) as error:
             logger.warning(
                 "Telegram: попытка %s (%s) не удалась, chat_id=%s: %s",
                 attempt,
-                "IPv6" if force_ipv6 else "IPv4/IPv6",
+                route,
                 chat_id,
                 type(error).__name__,
             )

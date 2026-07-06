@@ -49,6 +49,7 @@ class TelegramConfig(BaseSettings):
     )
 
     telegram_bot_token: str = ""
+    telegram_proxy: str = ""
 
 
 telegram_config = TelegramConfig()
