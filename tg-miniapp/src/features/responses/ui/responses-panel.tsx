@@ -55,10 +55,14 @@ const EMPTY_META: Record<ResponseTab, { icon: ReactNode; title: string; subtitle
   },
 };
 
-export function ResponsesPanel() {
+interface Props {
+  onOpenChat: (uuid: string) => void;
+}
+
+export function ResponsesPanel({ onOpenChat }: Props) {
   const [tab, setTab] = useState<ResponseTab>("all");
   const [editTarget, setEditTarget] = useState<ExpertResponse | null>(null);
-  const r = useResponses(tab);
+  const r = useResponses(tab, onOpenChat);
 
   const tabs: TabItem[] = STATUS.map((t) => ({
     key: t.key,
@@ -85,6 +89,8 @@ export function ResponsesPanel() {
               onWithdraw={r.withdraw}
               onRestore={r.restore}
               onEdit={setEditTarget}
+              onChat={r.openChat}
+              onConfirm={r.confirmProject}
             />
           ))}
         </div>

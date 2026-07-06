@@ -55,6 +55,8 @@ export interface ExpertResponse {
   proposed_start_date_raw: string;
   proposed_deadline_raw: string;
   response_files: string[];
+  order_locked: boolean;
+  expert_confirmed: boolean;
 }
 
 export interface EditResponseData {

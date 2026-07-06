@@ -3,7 +3,7 @@ import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
 import s from "./style.module.scss";
 
-type Variant = "primary" | "outline" | "ghost";
+type Variant = "primary" | "outline" | "ghost" | "danger";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;

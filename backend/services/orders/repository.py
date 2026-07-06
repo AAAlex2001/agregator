@@ -1,10 +1,11 @@
 
 "Repository: доступ к БД для orders."
-from sqlalchemy import delete, not_, or_, select
+from sqlalchemy import delete, func, not_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.order import Order, OrderBadge, OrderStatus
+from models.question import OrderQuestion
 from models.response import OrderResponse as OrderResponseModel
 from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
@@ -35,6 +36,36 @@ class OrderRepository:
         )
         result = await self.db.execute(query)
         return result.scalars().first()
+
+    async def count_unanswered_questions(self, order_ids: list[int]) -> dict[int, int]:
+        "Количество вопросов без ответа по каждому заказу."
+        if not order_ids:
+            return {}
+        query = (
+            select(OrderQuestion.order_id, func.count())
+            .where(OrderQuestion.order_id.in_(order_ids), OrderQuestion.answer.is_(None))
+            .group_by(OrderQuestion.order_id)
+        )
+        result = await self.db.execute(query)
+        return dict(result.all())
+
+    async def count_expert_answered_questions(
+        self, order_ids: list[int], expert_id: int
+    ) -> dict[int, int]:
+        "Количество отвеченных вопросов данного эксперта по каждому заказу."
+        if not order_ids:
+            return {}
+        query = (
+            select(OrderQuestion.order_id, func.count())
+            .where(
+                OrderQuestion.order_id.in_(order_ids),
+                OrderQuestion.expert_id == expert_id,
+                OrderQuestion.answer.is_not(None),
+            )
+            .group_by(OrderQuestion.order_id)
+        )
+        result = await self.db.execute(query)
+        return dict(result.all())
 
     async def list_active_unassigned_unresponded_by_expert(
         self,

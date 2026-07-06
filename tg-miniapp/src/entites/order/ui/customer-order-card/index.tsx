@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { Button, Card } from "@/shared/ui";
-import { formatDeadline } from "@/shared/lib/format";
+import { formatDeadline, pluralRu } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
 import { CUSTOMER_STATUS_LABEL, customerOrderStatus } from "../../model/customer-status";
 import s from "./style.module.scss";
@@ -40,6 +40,13 @@ export function CustomerOrderCard({ order, onClick, onEdit }: Props) {
           ))}
           {order.badges.length > 4 && <span className={s.badge}>+{order.badges.length - 4}</span>}
         </div>
+      )}
+
+      {order.unanswered_questions > 0 && (
+        <span className={s.questionBadge}>
+          {order.unanswered_questions}{" "}
+          {pluralRu(order.unanswered_questions, "новый вопрос", "новых вопроса", "новых вопросов")}
+        </span>
       )}
 
       {onEdit && status === "active" && (

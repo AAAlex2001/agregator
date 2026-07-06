@@ -102,9 +102,11 @@ export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
               response={response}
               busy={r.busyId === response.id}
               onAccept={r.accept}
+              onHire={r.hire}
               onReject={openReject}
               onComplete={r.complete}
               onReturn={r.returnToReview}
+              onDeleteRejected={r.removeRejected}
               onChat={r.openChat}
             />
           ))}
@@ -125,7 +127,7 @@ export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
             <Button variant="outline" onClick={() => setRejectTarget(null)}>
               Отмена
             </Button>
-            <Button loading={r.busyId === rejectTarget?.id} onClick={() => void confirmReject()}>
+            <Button variant="danger" loading={r.busyId === rejectTarget?.id} onClick={() => void confirmReject()}>
               Отклонить
             </Button>
           </div>

@@ -6,9 +6,11 @@ import { VAT_LABEL, type ExpertResponse } from "../../model/types";
 import {
   statusMeta,
   customerCanAccept,
+  customerCanHire,
   customerCanReject,
   customerCanComplete,
   customerCanReturn,
+  customerCanDeleteRejected,
   customerCanChat,
 } from "../../model/status";
 import s from "./style.module.scss";
@@ -17,13 +19,25 @@ interface Props {
   response: ExpertResponse;
   busy: boolean;
   onAccept: (response: ExpertResponse) => void;
+  onHire: (id: number) => void;
   onReject: (response: ExpertResponse) => void;
   onComplete: (id: number) => void;
   onReturn: (id: number) => void;
+  onDeleteRejected: (id: number) => void;
   onChat: (response: ExpertResponse) => void;
 }
 
-export function CustomerResponseCard({ response, busy, onAccept, onReject, onComplete, onReturn, onChat }: Props) {
+export function CustomerResponseCard({
+  response,
+  busy,
+  onAccept,
+  onHire,
+  onReject,
+  onComplete,
+  onReturn,
+  onDeleteRejected,
+  onChat,
+}: Props) {
   const meta = statusMeta(response.status);
 
   return (
@@ -60,28 +74,38 @@ export function CustomerResponseCard({ response, busy, onAccept, onReject, onCom
 
       <div className={s.actions}>
         {customerCanAccept(response.status) && (
-          <Button className={s.actionBtn} loading={busy} onClick={() => onAccept(response)}>
-            Принять
+          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onAccept(response)}>
+            Пригласить в чат
+          </Button>
+        )}
+        {customerCanHire(response.status) && (
+          <Button className={s.actionBtn} loading={busy} onClick={() => onHire(response.id)}>
+            Выбрать исполнителем
           </Button>
         )}
         {customerCanChat(response.status) && (
-          <Button className={s.actionBtn} loading={busy} onClick={() => onChat(response)}>
-            Чат
+          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onChat(response)}>
+            {response.status === "IN_PROGRESS" ? "Чат с экспертом" : "Перейти в чат"}
           </Button>
         )}
         {customerCanComplete(response.status) && (
-          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onComplete(response.id)}>
-            Завершить
+          <Button className={s.actionBtn} loading={busy} onClick={() => onComplete(response.id)}>
+            Завершить проект
           </Button>
         )}
         {customerCanReject(response.status) && (
-          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onReject(response)}>
+          <Button className={s.actionBtn} variant="danger" loading={busy} onClick={() => onReject(response)}>
             Отклонить
           </Button>
         )}
-        {customerCanReturn(response.status) && (
-          <Button className={s.actionBtn} loading={busy} onClick={() => onReturn(response.id)}>
-            Вернуть
+        {customerCanReturn(response.status) && !response.order_locked && (
+          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onReturn(response.id)}>
+            Вернуть на рассмотрение
+          </Button>
+        )}
+        {customerCanDeleteRejected(response.status) && (
+          <Button className={s.actionBtn} variant="danger" loading={busy} onClick={() => onDeleteRejected(response.id)}>
+            Удалить
           </Button>
         )}
       </div>

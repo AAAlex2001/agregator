@@ -3,6 +3,7 @@ from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 from schemas.notification import ResponseStatusChangeReason, ResponseUpdateKind
+from services.email.dispatcher import EmailDispatcher
 from services.notifications import (
     CreateResponseStatusChangedNotificationUseCase,
     CreateResponseUpdatedNotificationUseCase,
@@ -11,15 +12,30 @@ from services.notifications import (
 from services.responses.repository import ResponseRepository
 
 RESPONSES_ACTION_URL = "/responses"
+EXPERT_ORDERS_URL = "https://plus-resurs.com/expert/orders"
+CUSTOMER_ORDERS_URL = "https://plus-resurs.com/customer/orders"
 
 
 class ResponseInAppNotifier:
     "Внутренние (in-app) уведомления по откликам — обёртка над двумя use case'ами уведомлений."
 
-    def __init__(self, repo: ResponseRepository, notifications: NotificationRepository) -> None:
+    def __init__(
+        self,
+        repo: ResponseRepository,
+        notifications: NotificationRepository,
+        dispatcher: EmailDispatcher | None = None,
+    ) -> None:
         self.repo = repo
+        self.dispatcher = dispatcher
         self.create_response_updated = CreateResponseUpdatedNotificationUseCase(notifications)
         self.create_status_changed = CreateResponseStatusChangedNotificationUseCase(notifications)
+
+    async def push_telegram(self, user_id: int, text: str) -> None:
+        "ТГ-дубль статусного уведомления; молчит, если нотификатор собран без диспетчера."
+        if self.dispatcher is None:
+            return
+        user = await self.repo.find_user(user_id)
+        self.dispatcher.send_telegram(user, None, text)
 
     @staticmethod
     def order_title(order: Order | None, order_id: int) -> str:
@@ -123,6 +139,10 @@ class ResponseInAppNotifier:
                 reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                 action_url=chat_url,
             )
+            await self.push_telegram(
+                response.expert_id,
+                f"\U0001F514 <b>Приглашение в переговоры</b>\nЗаказчик пригласил вас в чат по заявке «{title}».\n\n{EXPERT_ORDERS_URL}",
+            )
 
         if new_status == ResponseStatus.IN_PROGRESS and old_status != ResponseStatus.IN_PROGRESS:
             await self.create_status_changed.execute(
@@ -156,6 +176,11 @@ class ResponseInAppNotifier:
                 action_url=RESPONSES_ACTION_URL,
                 rejection_reason=rejection_reason,
             )
+            reason_line = f"\nПричина: {rejection_reason}" if rejection_reason else ""
+            await self.push_telegram(
+                response.expert_id,
+                f"\U0001F514 <b>Отклик отклонён</b>\nЗаказчик отклонил ваш отклик по заявке «{title}».{reason_line}\n\n{EXPERT_ORDERS_URL}",
+            )
             for reverted_expert_id in reverted_expert_ids:
                 await self.create_status_changed.execute(
                     user_id=reverted_expert_id,
@@ -165,6 +190,10 @@ class ResponseInAppNotifier:
                     status_to=ResponseStatus.REVIEW,
                     reason=ResponseStatusChangeReason.SELECTED_ANOTHER_REVERTED,
                     action_url=RESPONSES_ACTION_URL,
+                )
+                await self.push_telegram(
+                    reverted_expert_id,
+                    f"\U0001F514 <b>Отклик снова на рассмотрении</b>\nЗаказчик отменил выбор исполнителя по заявке «{title}» — ваш отклик вернулся на рассмотрение.\n\n{EXPERT_ORDERS_URL}",
                 )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
@@ -176,6 +205,10 @@ class ResponseInAppNotifier:
                 status_to=new_status,
                 reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                 action_url=RESPONSES_ACTION_URL,
+            )
+            await self.push_telegram(
+                response.expert_id,
+                f"\U0001F514 <b>Проект завершён</b>\nЗаказчик завершил проект по заявке «{title}».\n\n{EXPERT_ORDERS_URL}",
             )
 
     async def notify_expert_actions(
@@ -200,6 +233,10 @@ class ResponseInAppNotifier:
                 reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                 action_url=chat_url,
             )
+            await self.push_telegram(
+                order.customer_id,
+                f"\U0001F514 <b>Эксперт принял проект</b>\nЭксперт подтвердил участие по заявке «{title}».\n\n{CUSTOMER_ORDERS_URL}",
+            )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
             await self.create_status_changed.execute(
@@ -210,4 +247,8 @@ class ResponseInAppNotifier:
                 status_to=new_status,
                 reason=ResponseStatusChangeReason.DIRECT_CHANGE,
                 action_url=RESPONSES_ACTION_URL,
+            )
+            await self.push_telegram(
+                order.customer_id,
+                f"\U0001F514 <b>Проект завершён</b>\nЭксперт завершил работу по заявке «{title}».\n\n{CUSTOMER_ORDERS_URL}",
             )

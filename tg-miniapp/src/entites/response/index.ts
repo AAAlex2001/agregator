@@ -1,13 +1,17 @@
-export { listResponses, withdrawResponse, restoreResponse, editResponse, setResponseStatus } from "./model/api";
+export { listResponses, withdrawResponse, restoreResponse, editResponse, setResponseStatus, deleteRejectedResponse } from "./model/api";
 export {
   statusMeta,
   canWithdraw,
   canRestore,
   canEdit,
+  expertCanChat,
+  expertCanConfirm,
   customerCanAccept,
+  customerCanHire,
   customerCanReject,
   customerCanComplete,
   customerCanReturn,
+  customerCanDeleteRejected,
   customerCanChat,
 } from "./model/status";
 export { VAT_LABEL } from "./model/types";

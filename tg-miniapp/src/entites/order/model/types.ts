@@ -40,6 +40,8 @@ export interface Order {
   executor_comment: string;
   executor_files: string[];
   accepted_response_id: number | null;
+  unanswered_questions: number;
+  my_answered_questions: number;
 }
 
 export interface OrderList {

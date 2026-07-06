@@ -142,6 +142,8 @@ class OrderResponse(BaseModel):
     executor_files: list[str] = []
     accepted_response_id: int | None = None
     customer_has_review: bool = False
+    unanswered_questions: int = 0
+    my_answered_questions: int = 0
 
     model_config = {"from_attributes": True}
 

@@ -63,8 +63,12 @@ def build_get_response(db: AsyncSession) -> GetResponseByIdUseCase:
     return GetResponseByIdUseCase(build_repo(db))
 
 
-def build_in_app(db: AsyncSession, repo: ResponseRepository) -> ResponseInAppNotifier:
-    return ResponseInAppNotifier(repo, NotificationRepository(db))
+def build_in_app(
+    db: AsyncSession,
+    repo: ResponseRepository,
+    dispatcher: EmailDispatcher | None = None,
+) -> ResponseInAppNotifier:
+    return ResponseInAppNotifier(repo, NotificationRepository(db), dispatcher)
 
 
 def build_subscription_access(db: AsyncSession) -> SubscriptionAccess:
@@ -345,16 +349,17 @@ async def update_response_status(
     repo = build_repo(db)
     validator = ResponseValidator(repo)
     actor = await validator.require_active_user(user_id)
+    dispatcher = EmailDispatcher(background_tasks)
     send_bidding = SendBiddingFinishedEmailUseCase(
         repo=build_email_repo(db),
-        dispatcher=EmailDispatcher(background_tasks),
+        dispatcher=dispatcher,
     )
     use_case = UpdateResponseStatusUseCase(
         repo=repo,
         validator=validator,
         rules=ResponseStatusRules(),
         get_response=GetResponseByIdUseCase(repo),
-        in_app=build_in_app(db, repo),
+        in_app=build_in_app(db, repo, dispatcher),
         send_bidding_email=send_bidding,
         subscription_access=build_subscription_access(db),
     )

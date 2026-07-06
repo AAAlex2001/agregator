@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.rate_limit import rate_limit
-from models.order import OrderStatus
+from models.order import Order, OrderStatus
+from models.user import UserRole
 from schemas.common import OkResponse
 from schemas.order import (
     OrderCreate,
@@ -49,6 +50,27 @@ def build_repo(db: AsyncSession) -> OrderRepository:
 
 def build_get_order(db: AsyncSession) -> GetOrderByIdUseCase:
     return GetOrderByIdUseCase(build_repo(db))
+
+
+async def apply_question_badges(
+    repo: OrderRepository,
+    orders: list[Order],
+    items: list[OrderResponse],
+    user_id: int | None,
+) -> None:
+    "Проставляет карточкам счётчики вопросов: заказчику — без ответа, эксперту — отвеченные ему."
+    if user_id is None or not orders:
+        return
+    role = await repo.get_user_role(user_id)
+    order_ids = [order.id for order in orders]
+    if role == UserRole.CUSTOMER:
+        counts = await repo.count_unanswered_questions(order_ids)
+        for item in items:
+            item.unanswered_questions = counts.get(item.id, 0)
+    if role == UserRole.EXPERT:
+        counts = await repo.count_expert_answered_questions(order_ids, user_id)
+        for item in items:
+            item.my_answered_questions = counts.get(item.id, 0)
 
 
 def build_send_new_order_email(
@@ -102,12 +124,12 @@ async def get_orders(
     user_id: int | None = Depends(get_current_user_optional),
 ) -> OrderListResponse:
     "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
-    use_case = ListOrdersUseCase(build_repo(db))
+    repo = build_repo(db)
+    use_case = ListOrdersUseCase(repo)
     orders, has_more = await use_case.execute(skip, limit, status, user_id)
-    return OrderListResponse(
-        items=[OrderResponse.from_order(o) for o in orders],
-        has_more=has_more,
-    )
+    items = [OrderResponse.from_order(o) for o in orders]
+    await apply_question_badges(repo, orders, items, user_id)
+    return OrderListResponse(items=items, has_more=has_more)
 
 
 @router.get("/archive", response_model=OrderListResponse)
@@ -118,15 +140,15 @@ async def get_archived_orders(
     user_id: int = Depends(get_current_user),
 ) -> OrderListResponse:
     "Возвращает архив заказов текущего пользователя с пагинацией."
-    use_case = ListArchivedOrdersUseCase(build_repo(db))
-    items, has_more = await use_case.execute(skip, limit, current_user_id=user_id)
-    return OrderListResponse(
-        items=[
-            OrderResponse.from_archived_order(it.order, it.accepted_response, it.has_review)
-            for it in items
-        ],
-        has_more=has_more,
-    )
+    repo = build_repo(db)
+    use_case = ListArchivedOrdersUseCase(repo)
+    archived, has_more = await use_case.execute(skip, limit, current_user_id=user_id)
+    items = [
+        OrderResponse.from_archived_order(it.order, it.accepted_response, it.has_review)
+        for it in archived
+    ]
+    await apply_question_badges(repo, [it.order for it in archived], items, user_id)
+    return OrderListResponse(items=items, has_more=has_more)
 
 
 @router.get("/public/{public_id}", response_model=OrderResponse)

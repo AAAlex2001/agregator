@@ -69,3 +69,21 @@
   margin-top: auto;
   padding-top: 16px;
 }
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirmHint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.confirmActions {
+  display: flex;
+  gap: 10px;
+}

@@ -3,6 +3,7 @@ export {
   listArchivedOrders,
   createOrder,
   updateOrder,
+  deleteOrder,
   type CreateOrderPayload,
   type CreateOrderFiles,
   type UpdateOrderPayload,

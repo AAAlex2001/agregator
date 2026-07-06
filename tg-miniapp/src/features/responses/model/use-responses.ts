@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
+import { openChatByOrder } from "@/entites/chat";
 import {
   listResponses,
   withdrawResponse,
   restoreResponse,
+  setResponseStatus,
   type ExpertResponse,
   type ResponseCounters,
   type ResponseTab,
@@ -19,7 +21,7 @@ const EMPTY_COUNTERS: ResponseCounters = {
   withdrawn_by_expert: 0,
 };
 
-export function useResponses(tab: ResponseTab) {
+export function useResponses(tab: ResponseTab, onOpenChat: (uuid: string) => void) {
   const [items, setItems] = useState<ExpertResponse[] | null>(null);
   const [counters, setCounters] = useState<ResponseCounters>(EMPTY_COUNTERS);
   const [busyId, setBusyId] = useState<number | null>(null);
@@ -67,5 +69,30 @@ export function useResponses(tab: ResponseTab) {
     }
   };
 
-  return { items, counters, busyId, withdraw, restore, reload };
+  const confirmProject = async (id: number) => {
+    setBusyId(id);
+    try {
+      await setResponseStatus(id, "IN_PROGRESS");
+      notifyHaptic("success");
+      await reload();
+    } catch (e) {
+      emitError(e instanceof Error ? e.message : "Не удалось принять проект");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const openChat = async (response: ExpertResponse) => {
+    setBusyId(response.id);
+    try {
+      const chat = await openChatByOrder(response.order_id);
+      onOpenChat(chat.uuid);
+    } catch (e) {
+      emitError(e instanceof Error ? e.message : "Не удалось открыть чат");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  return { items, counters, busyId, withdraw, restore, confirmProject, openChat, reload };
 }

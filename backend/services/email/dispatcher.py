@@ -72,9 +72,13 @@ class EmailDispatcher:
     def send_telegram(self, user: User | None, preference_field: str | None, text: str) -> None:
         "TG-уведомление: если привязан Telegram, включены TG-уведомления и (если задан) тип уведомления."
         if user is None or not user.telegram_id:
+            logger.info("TG пропущен: user=%s без telegram_id", getattr(user, "id", None))
             return
         if not getattr(user, "notify_telegram_enabled", True):
+            logger.info("TG пропущен: user=%s выключил Telegram-уведомления", user.id)
             return
         if preference_field and not getattr(user, preference_field, False):
+            logger.info("TG пропущен: user=%s выключен тумблер %s", user.id, preference_field)
             return
+        logger.info("TG-уведомление в очереди: user=%s chat_id=%s", user.id, user.telegram_id)
         self.background_tasks.add_task(send_telegram_message, int(user.telegram_id), text)

@@ -19,6 +19,10 @@ export function restoreResponse(id: number): Promise<unknown> {
   return apiJson(`/responses/${id}/restore`, { method: "POST" });
 }
 
+export function deleteRejectedResponse(id: number): Promise<unknown> {
+  return apiJson(`/responses/${id}/rejected`, { method: "DELETE" });
+}
+
 export function setResponseStatus(id: number, status: string, reason?: string): Promise<unknown> {
   const init: RequestInit = { method: "PATCH" };
   if (reason) {

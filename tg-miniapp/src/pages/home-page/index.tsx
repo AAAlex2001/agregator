@@ -147,7 +147,7 @@ export function HomePage() {
               }
             />
           )}
-          {view === "responses" && <ResponsesPanel />}
+          {view === "responses" && <ResponsesPanel onOpenChat={openChatThread} />}
         </>
       ) : (
         <>

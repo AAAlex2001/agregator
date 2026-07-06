@@ -20,7 +20,6 @@ interface Props {
 export function FullSheet({ open, onClose, hero, footer = null, scrollKey, children }: Props) {
   const [rendered, setRendered] = useState(open);
   const [closing, setClosing] = useState(false);
-  const [typing, setTyping] = useState(false);
   const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
   const scrollRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -61,33 +60,6 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [scrollKey]);
 
-  useEffect(() => {
-    if (!rendered) return;
-    const sheet = sheetRef.current;
-    if (!sheet) return;
-    const isField = (target: EventTarget | null) =>
-      target instanceof HTMLElement && (target.tagName === "INPUT" || target.tagName === "TEXTAREA");
-    let timer = 0;
-    const onFocusIn = (e: FocusEvent) => {
-      if (!isField(e.target)) return;
-      window.clearTimeout(timer);
-      setTyping(true);
-    };
-    const onFocusOut = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        if (!isField(document.activeElement)) setTyping(false);
-      }, 120);
-    };
-    sheet.addEventListener("focusin", onFocusIn);
-    sheet.addEventListener("focusout", onFocusOut);
-    return () => {
-      window.clearTimeout(timer);
-      sheet.removeEventListener("focusin", onFocusIn);
-      sheet.removeEventListener("focusout", onFocusOut);
-    };
-  }, [rendered]);
-
   if (!rendered) return null;
 
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
@@ -99,7 +71,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
         <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>{view.content}</div>
         </div>
-        {view.footer && <div className={cn(s.footer, { [s.footerHidden]: typing })}>{view.footer}</div>}
+        {view.footer && <div className={s.footer}>{view.footer}</div>}
       </div>
     </div>
   );

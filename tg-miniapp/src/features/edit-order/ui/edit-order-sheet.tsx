@@ -1,7 +1,7 @@
 import { useState } from "react";
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
-import { Button, Field, FilePicker, FullSheet, SheetHero, TextArea, TextField, Toggle } from "@/shared/ui";
+import { BottomSheet, Button, Field, FilePicker, FullSheet, SheetHero, TextArea, TextField, Toggle } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { ChevronDownIcon } from "@/shared/ui/icons/interface";
 import { formatDateRu } from "@/shared/lib/format";
@@ -26,7 +26,8 @@ interface Props {
 
 export function EditOrderSheet({ order, onClose, onSaved }: Props) {
   const [calField, setCalField] = useState<DateField | null>(null);
-  const { state, dispatch, canSubmit, submit, keptUrls } = useEditOrder(order, onSaved);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const { state, dispatch, canSubmit, submit, remove, keptUrls } = useEditOrder(order, onSaved);
 
   const close = () => {
     tapHaptic();
@@ -122,6 +123,26 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
               Сохранить
             </Button>
           </div>
+
+          <Button variant="danger" onClick={() => setConfirmDelete(true)}>
+            Удалить заказ
+          </Button>
+
+          <BottomSheet open={confirmDelete} title="Удалить заказ?" onClose={() => setConfirmDelete(false)}>
+            <div className={s.confirm}>
+              <p className={s.confirmHint}>
+                Заказ «{state.title}» будет удалён вместе с откликами. Это действие нельзя отменить.
+              </p>
+              <div className={s.confirmActions}>
+                <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+                  Отмена
+                </Button>
+                <Button variant="danger" loading={state.busy} onClick={() => void remove()}>
+                  Удалить
+                </Button>
+              </div>
+            </div>
+          </BottomSheet>
 
           <CalendarPicker
             open={calField !== null}

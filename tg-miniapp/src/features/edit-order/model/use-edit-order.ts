@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { parseDateRu, toKopecks } from "@/shared/lib/format";
-import { updateOrder, type Order } from "@/entites/order";
+import { deleteOrder, updateOrder, type Order } from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 
 export function useEditOrder(order: Order | null, onSaved: () => void) {
@@ -59,6 +59,19 @@ export function useEditOrder(order: Order | null, onSaved: () => void) {
     }
   };
 
+  const remove = async () => {
+    if (!order || state.busy) return;
+    dispatch({ type: "busy", value: true });
+    try {
+      await deleteOrder(order.id);
+      notifyHaptic("success");
+      onSaved();
+    } catch (e) {
+      emitError(e instanceof Error ? e.message : "Не удалось удалить заказ");
+      dispatch({ type: "busy", value: false });
+    }
+  };
+
   const keptUrls = [
     ...state.keepDocuments.technical,
     ...state.keepDocuments.contract,
@@ -66,5 +79,5 @@ export function useEditOrder(order: Order | null, onSaved: () => void) {
     ...state.keepDocuments.other,
   ];
 
-  return { state, dispatch, canSubmit, submit, keptUrls };
+  return { state, dispatch, canSubmit, submit, remove, keptUrls };
 }

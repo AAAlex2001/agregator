@@ -51,6 +51,10 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   return apiJson("/orders/create-with-files", { method: "POST", body: form });
 }
 
+export function deleteOrder(orderId: number): Promise<unknown> {
+  return apiJson(`/orders/${orderId}`, { method: "DELETE" });
+}
+
 export interface UpdateOrderPayload {
   title: string;
   company: string;

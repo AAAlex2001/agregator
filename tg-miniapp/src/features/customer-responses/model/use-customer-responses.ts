@@ -3,6 +3,7 @@ import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { openChatByOrder } from "@/entites/chat";
 import {
+  deleteRejectedResponse,
   listResponses,
   setResponseStatus,
   type CustomerSortBy,
@@ -63,9 +64,24 @@ export function useCustomerResponses(sortBy: CustomerSortBy, sortDir: SortDir, o
   const reject = (id: number, reason: string) =>
     changeStatus(id, "REJECTED", "Не удалось отклонить отклик", reason.trim() || undefined);
 
+  const hire = (id: number) => changeStatus(id, "IN_PROGRESS", "Не удалось выбрать исполнителя");
+
   const complete = (id: number) => changeStatus(id, "COMPLETED", "Не удалось завершить проект");
 
   const returnToReview = (id: number) => changeStatus(id, "REVIEW", "Не удалось вернуть отклик");
+
+  const removeRejected = async (id: number) => {
+    setBusyId(id);
+    try {
+      await deleteRejectedResponse(id);
+      notifyHaptic("success");
+      await reload();
+    } catch (e) {
+      emitError(e instanceof Error ? e.message : "Не удалось удалить отклик");
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   const openChat = async (response: ExpertResponse) => {
     setBusyId(response.id);
@@ -79,5 +95,5 @@ export function useCustomerResponses(sortBy: CustomerSortBy, sortDir: SortDir, o
     }
   };
 
-  return { tab, setTab, items, counters, busyId, accept, reject, complete, returnToReview, openChat };
+  return { tab, setTab, items, counters, busyId, accept, hire, reject, complete, returnToReview, removeRejected, openChat };
 }

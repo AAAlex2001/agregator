@@ -111,3 +111,13 @@
 .editRow .editBtn {
   flex: 1;
 }
+
+.questionBadge {
+  align-self: flex-start;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(231, 0, 11, 0.12);
+  color: #e7000b;
+  font-size: 12px;
+  font-weight: 700;
+}

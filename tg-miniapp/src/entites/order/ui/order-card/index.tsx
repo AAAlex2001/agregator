@@ -18,6 +18,7 @@ export function OrderCard({ order, onClick }: { order: Order; onClick: () => voi
             ))}
           </div>
         )}
+        {order.my_answered_questions > 0 && <span className={s.questionBadge}>Ответ на вопрос</span>}
       </div>
       <div className={s.side}>
         <span className={s.sum}>{order.sum}</span>

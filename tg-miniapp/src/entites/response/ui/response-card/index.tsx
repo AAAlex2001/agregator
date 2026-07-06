@@ -1,7 +1,7 @@
 import { Button, Card, Field, InfoRow } from "@/shared/ui";
 import { CountdownRing } from "@/shared/ui/countdown-ring";
 import { VAT_LABEL, type ExpertResponse } from "../../model/types";
-import { statusMeta, canWithdraw, canRestore, canEdit } from "../../model/status";
+import { statusMeta, canWithdraw, canRestore, canEdit, expertCanChat, expertCanConfirm } from "../../model/status";
 import s from "./style.module.scss";
 
 interface Props {
@@ -10,9 +10,11 @@ interface Props {
   onWithdraw: (id: number) => void;
   onRestore: (id: number) => void;
   onEdit: (response: ExpertResponse) => void;
+  onChat: (response: ExpertResponse) => void;
+  onConfirm: (id: number) => void;
 }
 
-export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: Props) {
+export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit, onChat, onConfirm }: Props) {
   const meta = statusMeta(response.status);
   const customer = response.customer_company || response.customer_name;
 
@@ -49,21 +51,39 @@ export function ResponseCard({ response, busy, onWithdraw, onRestore, onEdit }: 
         </Field>
       )}
 
-      {(canEdit(response.status) || canWithdraw(response.status) || canRestore(response.status)) && (
+      {(canEdit(response.status) ||
+        expertCanChat(response.status) ||
+        canWithdraw(response.status, response.expert_confirmed) ||
+        canRestore(response.status)) && (
         <div className={s.actions}>
           {canEdit(response.status) && (
             <Button className={s.actionBtn} loading={busy} onClick={() => onEdit(response)}>
-              Редактировать
+              Изменить предложение
             </Button>
           )}
-          {canWithdraw(response.status) && (
-            <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onWithdraw(response.id)}>
-              Отозвать
+          {expertCanChat(response.status) && (
+            <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onChat(response)}>
+              Чат с заказчиком
+            </Button>
+          )}
+          {expertCanConfirm(response.status, response.expert_confirmed) && (
+            <Button className={s.actionBtn} loading={busy} onClick={() => onConfirm(response.id)}>
+              Принять проект
+            </Button>
+          )}
+          {canWithdraw(response.status, response.expert_confirmed) && (
+            <Button
+              className={s.actionBtn}
+              variant="danger"
+              loading={busy}
+              onClick={() => onWithdraw(response.id)}
+            >
+              {response.status === "REVIEW" ? "Отозвать" : "Отказаться"}
             </Button>
           )}
           {canRestore(response.status) && (
-            <Button className={s.actionBtn} loading={busy} onClick={() => onRestore(response.id)}>
-              Восстановить
+            <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onRestore(response.id)}>
+              Восстановить отклик
             </Button>
           )}
         </div>
