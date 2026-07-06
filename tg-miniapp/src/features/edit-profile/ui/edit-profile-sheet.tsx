@@ -1,5 +1,4 @@
 import { Button, Card, CodeInput, CODE_LENGTH, FullSheet, SheetHero, SuccessModal, TextField } from "@/shared/ui";
-import { tapHaptic } from "@/shared/services/telegram";
 import { PHONE_PLACEHOLDER, formatPhone } from "@/shared/lib/phone";
 import { useEditProfile } from "../model/use-edit-profile";
 import type { EditProfileKind } from "../model/types";
@@ -20,18 +19,13 @@ export function EditProfileSheet({ kind, onClose }: Props) {
   const form = useEditProfile(kind);
   const meta = kind ? META[kind] : null;
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const buttonText =
     kind === "email" ? (form.state.stage === "email" ? "Отправить код" : "Подтвердить") : "Сохранить";
 
   return (
     <FullSheet
       open={kind !== null}
-      onClose={close}
+      onClose={onClose}
       hero={
         meta && (
           <SheetHero
@@ -39,7 +33,7 @@ export function EditProfileSheet({ kind, onClose }: Props) {
             dark={`/profile-hero/${meta.image}-dark.webp`}
             title={meta.title}
             desc={meta.desc}
-            onClose={close}
+            onClose={onClose}
           />
         )
       }

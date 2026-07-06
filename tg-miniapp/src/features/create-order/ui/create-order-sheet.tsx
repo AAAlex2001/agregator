@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { tapHaptic } from "@/shared/services/telegram";
 import { preloadThemedImages } from "@/shared/lib/preload-images";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
@@ -38,18 +37,13 @@ export function CreateOrderSheet({ open, onClose, onCreated }: Props) {
     preloadThemedImages([...Object.values(META), SUCCESS_META].map((m) => m.image), "/create-order");
   }, [open]);
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const meta = state.done ? SUCCESS_META : META[stepKey];
   const filesCount = [state.files.technical, state.files.contract, state.files.company].filter(Boolean).length + state.otherFiles.length;
 
   return (
     <FullSheet
       open={open}
-      onClose={close}
+      onClose={onClose}
       scrollKey={state.done ? "done" : state.step}
       hero={
         <SheetHero
@@ -61,7 +55,7 @@ export function CreateOrderSheet({ open, onClose, onCreated }: Props) {
           desc={meta.desc}
           step={state.done ? undefined : state.step}
           total={state.done ? undefined : total}
-          onClose={close}
+          onClose={onClose}
         />
       }
     >
@@ -92,7 +86,7 @@ export function CreateOrderSheet({ open, onClose, onCreated }: Props) {
 
         <div className={s.actions}>
           {state.done ? (
-            <Button onClick={close}>Готово</Button>
+            <Button onClick={onClose}>Готово</Button>
           ) : (
             <>
               {state.step > 1 && (

@@ -26,6 +26,7 @@ export interface Order {
   created_at: string;
   responses_deadline: string | null;
   requires_license: boolean;
+  customer_id: number;
   assigned_expert_id: number | null;
   documents: OrderDocuments;
   badges: OrderBadge[];

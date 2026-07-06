@@ -1,8 +1,7 @@
 "Repository: доступ к БД для email."
 from dataclasses import dataclass
-from typing import Literal
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -12,18 +11,6 @@ from models.question import OrderQuestion
 from models.response import OrderResponse
 from models.review import Review
 from models.user import User, UserRole
-
-EmailPreferenceField = Literal[
-    "email_on_response_created",
-    "email_on_response_updated",
-    "email_on_expert_rejected",
-    "email_on_order_updated",
-    "email_on_bidding_finished",
-    "email_on_chat_message",
-    "email_on_question_asked",
-    "email_on_question_answered",
-    "email_on_new_blog_post",
-]
 
 
 @dataclass(frozen=True)
@@ -75,24 +62,6 @@ class EmailRepository:
         )
         return (await self.db.execute(query)).scalars().first()
 
-    @staticmethod
-    def filter_preference(
-        query: Select[tuple[User]], preference_field: EmailPreferenceField
-    ) -> Select[tuple[User]]:
-        "Применяет общий фильтр: email задан и тоггл preference_field включен."
-        return query.where(
-            User.email.isnot(None),
-            getattr(User, preference_field).is_(True),
-        )
-
-    async def list_experts_with_preference(self, preference_field: EmailPreferenceField) -> list[User]:
-        "Возвращает список сущностей с пагинацией/фильтрами."
-        query = self.filter_preference(
-            select(User).where(User.role == UserRole.EXPERT),
-            preference_field,
-        )
-        return list((await self.db.execute(query)).scalars().all())
-
     async def list_users_for_new_blog_post_email(self) -> list[User]:
         "Получатели письма о новой статье: подтверждённый email + включенный тогглер email_on_new_blog_post. Дедуп по email (один ящик может быть в users под разными ролями)."
         query = (
@@ -108,23 +77,19 @@ class EmailRepository:
         return list((await self.db.execute(query)).scalars().all())
 
     async def list_experts_subscribed_to_order_types(self) -> list[User]:
-        "Эксперты с email и непустым фильтром типов заказов. Пересечение проверяем в use case."
+        "Эксперты с непустым фильтром типов заказов. Пересечение проверяем в use case."
         query = select(User).where(
             User.role == UserRole.EXPERT,
-            User.email.isnot(None),
             User.notify_order_types.isnot(None),
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_responders_with_preference(
-        self, order_id: int, preference_field: EmailPreferenceField
-    ) -> list[User]:
-        "Возвращает список сущностей с пагинацией/фильтрами."
-        query = self.filter_preference(
+    async def list_responders(self, order_id: int) -> list[User]:
+        "Эксперты, откликнувшиеся на заявку. Кому и куда слать — решает диспетчер."
+        query = (
             select(User)
             .join(OrderResponse, OrderResponse.expert_id == User.id)
-            .where(OrderResponse.order_id == order_id),
-            preference_field,
+            .where(OrderResponse.order_id == order_id)
         )
         return list((await self.db.execute(query)).scalars().all())
 

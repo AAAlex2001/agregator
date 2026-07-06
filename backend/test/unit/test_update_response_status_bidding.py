@@ -16,7 +16,6 @@ def build_use_case(send_bidding_email=None):
     rules = MagicMock()
     get_response = MagicMock()
     in_app = MagicMock()
-    broadcaster = MagicMock()
     return (
         UpdateResponseStatusUseCase(
             repo=repo,
@@ -24,12 +23,11 @@ def build_use_case(send_bidding_email=None):
             rules=rules,
             get_response=get_response,
             in_app=in_app,
-            broadcaster=broadcaster,
             send_bidding_email=send_bidding_email,
         ),
         SimpleNamespace(
             repo=repo, validator=validator, rules=rules,
-            get_response=get_response, in_app=in_app, broadcaster=broadcaster,
+            get_response=get_response, in_app=in_app,
         ),
     )
 
@@ -44,7 +42,7 @@ class TestBiddingFanOut:
         use_case, _ = build_use_case(send_bidding_email=send_email)
 
         customer = SimpleNamespace(id=1, role=UserRole.CUSTOMER)
-        winner_response = SimpleNamespace(expert_id=42, order_id=7)
+        winner_response = SimpleNamespace(id=5, expert_id=42, order_id=7)
         auto_rejected_ids = [100, 101, 102]
 
         await use_case.send_bidding_emails_on_selection(

@@ -3,7 +3,7 @@ from models.order import Order
 from models.user import User
 from schemas.email import NewOrderContext, OrderBrief
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import escape_html, format_date, format_price, greeting_for
+from services.email.formatting import greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "new_order"
@@ -28,24 +28,12 @@ class SendNewOrderEmailUseCase:
         if not order_codes:
             return
 
-        order_title = escape_html(order.title or f"Заказ #{order.id}")
-        company_line = f"\nЗаказчик: {escape_html(order.company)}" if order.company else ""
         experts = await self.repo.list_experts_subscribed_to_order_types()
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
             if not wanted & order_codes:
                 continue
-            context = self.build_context(order, expert)
-            self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
-            self.dispatcher.send_telegram(
-                expert,
-                None,
-                f"🆕 <b>Новая заявка по вашим направлениям</b>\n"
-                f"«{order_title}»{company_line}\n"
-                f"Бюджет: {format_price(order.sum_amount)}\n"
-                f"Срок: до {format_date(order.deadline)}\n\n"
-                f"Откройте приложение, чтобы откликнуться.",
-            )
+            self.dispatcher.notify(expert, None, TEMPLATE, SUBJECT, self.build_context(order, expert))
 
     def build_context(self, order: Order, expert: User) -> NewOrderContext:
         "Строит объект из входных данных."

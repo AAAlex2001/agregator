@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { ThemedImage } from "@/shared/ui/themed-image";
 import { CloseIcon } from "@/shared/ui/icons/interface";
+import { tapHaptic } from "@/shared/services/telegram";
 import s from "./style.module.scss";
 
 interface Props {
@@ -19,7 +20,14 @@ export function SheetHero({ light, dark, title, desc, label, step, total, onClos
     <div className={s.hero}>
       <ThemedImage className={s.image} light={light} dark={dark} />
 
-      <button className={s.close} onClick={onClose} aria-label="Закрыть">
+      <button
+        className={s.close}
+        onClick={() => {
+          tapHaptic();
+          onClose();
+        }}
+        aria-label="Закрыть"
+      >
         <CloseIcon width={16} height={16} />
       </button>
 

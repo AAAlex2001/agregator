@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from services.email.dispatcher import EmailDispatcher
+from services.email.dispatcher import EmailDispatcher, telegram_text
 
 
 class TestCanSend:
@@ -8,6 +8,11 @@ class TestCanSend:
 
     def test_no_user_returns_false(self):
         assert EmailDispatcher.can_send(None, "email_on_chat_message") is False
+
+    def test_none_preference_requires_only_email(self):
+        "preference_field=None — событие без отдельного тумблера, достаточно email."
+        assert EmailDispatcher.can_send(SimpleNamespace(email="a@b.ru"), None) is True
+        assert EmailDispatcher.can_send(SimpleNamespace(email=None), None) is False
 
     def test_no_email_returns_false(self):
         user = SimpleNamespace(email=None, email_on_chat_message=True)
@@ -39,3 +44,23 @@ class TestCanSend:
         )
         assert EmailDispatcher.can_send(user, "email_on_order_updated") is True
         assert EmailDispatcher.can_send(user, "email_on_chat_message") is False
+
+
+class TestTelegramText:
+    "telegram_text — текст письма (.txt) превращается в Telegram-сообщение."
+
+    def test_first_line_becomes_bold_heading(self):
+        assert telegram_text("Заголовок\nТело письма") == "<b>Заголовок</b>\nТело письма"
+
+    def test_single_line(self):
+        assert telegram_text("Только заголовок") == "<b>Только заголовок</b>"
+
+    def test_unsubscribe_tail_stripped(self):
+        text = "Заголовок\nТело\nВы получили это письмо, так как включены уведомления."
+        assert telegram_text(text) == "<b>Заголовок</b>\nТело"
+
+    def test_user_input_escaped_for_html(self):
+        result = telegram_text("Заголовок\nКомментарий: <script> & \"кавычки\"")
+        assert "<script>" not in result
+        assert "&lt;script&gt;" in result
+

@@ -8,7 +8,7 @@ from schemas.email import (
     ResponseCreatedContext,
 )
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import contact_line, escape_html, format_date, format_price, full_name, greeting_for
+from services.email.formatting import contact_line, full_name, greeting_for
 from services.email.repository import EmailRepository, ExpertStats
 
 TEMPLATE = "response_notification"
@@ -31,24 +31,9 @@ class SendResponseCreatedEmailUseCase:
             return
 
         customer = response.order.customer
-        order_title = escape_html(response.order.title or f"Заказ #{response.order_id}")
-        expert_name = escape_html(full_name(response.expert) or "Эксперт")
-        self.dispatcher.send_telegram(
-            customer,
-            None,
-            f"📩 <b>Новый отклик на вашу заявку</b>\n"
-            f"Заявка: «{order_title}»\n"
-            f"Эксперт: {expert_name}\n"
-            f"Цена: {format_price(response.proposed_sum_amount)}\n"
-            f"Срок: до {format_date(response.proposed_deadline)}\n\n"
-            f"Откройте приложение, чтобы рассмотреть отклик.",
-        )
-        if not self.dispatcher.can_send(customer, PREFERENCE_FIELD):
-            return
-
         stats = await self.repo.get_expert_stats(response.expert_id)
         context = self.build_context(response, customer, stats)
-        self.dispatcher.dispatch(customer.email, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
 
     def build_context(
         self,

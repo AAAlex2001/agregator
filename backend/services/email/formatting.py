@@ -1,6 +1,5 @@
 "Сервисный модуль: formatting."
 import html
-from datetime import date
 
 from models.user import User
 
@@ -16,22 +15,9 @@ def format_price(amount_kopecks: int | None) -> str:
     return f"{formatted} ₽"
 
 
-def format_date(value: date | None) -> str:
-    "Дата -> 'ДД.ММ.ГГГГ'."
-    return value.strftime("%d.%m.%Y") if value else "не указан"
-
-
 def escape_html(value: str | None) -> str:
     "Экранирует пользовательский текст для Telegram parse_mode=HTML."
     return html.escape(value or "", quote=False)
-
-
-def preview(text: str | None, limit: int) -> str:
-    "Однострочный обрезанный и экранированный превью пользовательского текста."
-    trimmed = (text or "").strip()
-    if len(trimmed) > limit:
-        trimmed = trimmed[:limit] + "…"
-    return escape_html(trimmed)
 
 
 def greeting_for(user: User | None) -> str:

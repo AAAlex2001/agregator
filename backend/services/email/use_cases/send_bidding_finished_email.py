@@ -4,7 +4,7 @@ from models.response import OrderResponse
 from models.user import User
 from schemas.email import BiddingFinishedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import escape_html, format_price, greeting_for
+from services.email.formatting import format_price, full_name, greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "bidding_finished"
@@ -14,11 +14,7 @@ PREFERENCE_FIELD = "email_on_bidding_finished"
 OUTCOME_WON = "won"
 OUTCOME_LOST = "lost"
 
-
-def full_name(user: User) -> str:
-    "Публичный метод сервисного слоя."
-    parts = [user.first_name or "", user.last_name or ""]
-    return " ".join(p for p in parts if p).strip()
+LOST_SUBJECT = "Заказчик выбрал другого исполнителя — Ресурс-Плюс"
 
 
 def won_subject(order: Order) -> str:
@@ -26,12 +22,9 @@ def won_subject(order: Order) -> str:
     return f"Уведомление о победе №{order.id} «{order.title or 'Заказ'}»"
 
 
-LOST_SUBJECT = "Заказчик выбрал другого исполнителя — Ресурс-Плюс"
-
-
 class SendBiddingFinishedEmailUseCase:
     """
-    Эксперту уходит письмо, когда закрываются торги по его отклику:
+    Эксперту уходит уведомление, когда закрываются торги по его отклику:
     либо он выбран исполнителем, либо заказчик выбрал другого.
     """
 
@@ -58,32 +51,9 @@ class SendBiddingFinishedEmailUseCase:
         if order is None:
             return
 
-        order_title = escape_html(order.title or f"Заказ #{order.id}")
         response = None
         if outcome == OUTCOME_WON and response_id is not None:
             response = await self.repo.find_response(response_id)
-        if outcome == OUTCOME_WON:
-            price_line = (
-                f"\nВаша цена: {format_price(response.proposed_sum_amount)}"
-                if response is not None else ""
-            )
-            tg_text = (
-                f"🎉 <b>Вы победили в торгах!</b>\n"
-                f"Заявка: «{order_title}»\n"
-                f"Заказчик выбрал вас исполнителем.{price_line}\n\n"
-                f"Откройте приложение, чтобы перейти к работе."
-            )
-        else:
-            tg_text = (
-                f"🔚 <b>Торги завершены</b>\n"
-                f"Заявка: «{order_title}»\n"
-                f"Заказчик выбрал другого исполнителя. Спасибо за участие!\n\n"
-                f"Откройте приложение, чтобы посмотреть новые заявки."
-            )
-        self.dispatcher.send_telegram(expert, None, tg_text)
-
-        if not self.dispatcher.can_send(expert, PREFERENCE_FIELD):
-            return
 
         customer = None
         if response is not None and response.order is not None:
@@ -91,7 +61,7 @@ class SendBiddingFinishedEmailUseCase:
 
         subject = won_subject(order) if outcome == OUTCOME_WON else LOST_SUBJECT
         context = self.build_context(expert, order, outcome, response, customer)
-        self.dispatcher.dispatch(expert.email, TEMPLATE, subject, context)
+        self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, subject, context)
 
     def build_context(
         self,

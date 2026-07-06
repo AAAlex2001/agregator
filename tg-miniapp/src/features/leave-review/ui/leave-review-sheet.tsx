@@ -1,7 +1,6 @@
 import { BottomSheet, Button, TextArea } from "@/shared/ui";
-import { ReviewStarIcon } from "@/shared/ui/icons/interface";
-import { tapHaptic } from "@/shared/services/telegram";
 import { useLeaveReview } from "../model/use-leave-review";
+import { RatingStars } from "./rating-stars";
 import s from "./leave-review-sheet.module.scss";
 
 interface Props {
@@ -11,8 +10,6 @@ interface Props {
   onClose: () => void;
   onSubmitted: () => void;
 }
-
-const STARS = [1, 2, 3, 4, 5];
 
 export function LeaveReviewSheet({ open, responseId, expertName, onClose, onSubmitted }: Props) {
   const { state, dispatch, canSubmit, submit } = useLeaveReview(responseId, open, () => {
@@ -24,22 +21,7 @@ export function LeaveReviewSheet({ open, responseId, expertName, onClose, onSubm
     <BottomSheet open={open} title="Оставить отзыв" onClose={onClose}>
       <div className={s.wrap}>
         <p className={s.hint}>Оцените работу исполнителя {expertName} — отзыв увидят другие заказчики.</p>
-        <div className={s.stars}>
-          {STARS.map((value) => (
-            <button
-              key={value}
-              type="button"
-              className={s.star}
-              aria-label={`Оценка ${value}`}
-              onClick={() => {
-                tapHaptic();
-                dispatch({ type: "rating", value });
-              }}
-            >
-              <ReviewStarIcon active={value <= state.rating} width={32} height={32} />
-            </button>
-          ))}
-        </div>
+        <RatingStars value={state.rating} onChange={(value) => dispatch({ type: "rating", value })} />
         <TextArea
           placeholder="Расскажите о качестве работы, сроках и общении…"
           value={state.comment}

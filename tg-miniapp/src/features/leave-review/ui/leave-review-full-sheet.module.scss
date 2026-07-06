@@ -1,7 +1,7 @@
-.wrap {
+.body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .hint {
@@ -9,13 +9,4 @@
   font-size: 13px;
   line-height: 1.45;
   color: var(--muted);
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-}
-
-.actions > button {
-  flex: 1;
 }

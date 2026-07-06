@@ -58,9 +58,10 @@ interface Props {
   sortBy: CustomerSortBy;
   sortDir: SortDir;
   onOpenChat: (uuid: string) => void;
+  onCompleted: (response: ExpertResponse) => void;
 }
 
-export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
+export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat, onCompleted }: Props) {
   const r = useCustomerResponses(sortBy, sortDir, onOpenChat);
   const [rejectTarget, setRejectTarget] = useState<ExpertResponse | null>(null);
   const [rejectReason, setRejectReason] = useState("");
@@ -68,6 +69,12 @@ export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
   const openReject = (response: ExpertResponse) => {
     setRejectReason("");
     setRejectTarget(response);
+  };
+
+  const completeAndReview = async (id: number) => {
+    const target = r.items?.find((item) => item.id === id) ?? null;
+    const done = await r.complete(id);
+    if (done && target) onCompleted(target);
   };
 
   const confirmReject = async () => {
@@ -104,7 +111,7 @@ export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
               onAccept={r.accept}
               onHire={r.hire}
               onReject={openReject}
-              onComplete={r.complete}
+              onComplete={(id) => void completeAndReview(id)}
               onReturn={r.returnToReview}
               onDeleteRejected={r.removeRejected}
               onChat={r.openChat}

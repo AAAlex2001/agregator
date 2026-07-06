@@ -3,15 +3,7 @@ from models.response import OrderResponse
 from models.user import User
 from schemas.email import ExpertBrief, ResponseBrief, ResponseUpdatedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import (
-    contact_line,
-    escape_html,
-    format_date,
-    format_price,
-    full_name,
-    greeting_for,
-    preview,
-)
+from services.email.formatting import contact_line, full_name, greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "response_updated"
@@ -37,24 +29,8 @@ class SendResponseUpdatedEmailUseCase:
             return
 
         customer = response.order.customer
-        order_title = escape_html(response.order.title or f"Заказ #{response.order_id}")
-        expert_name = escape_html(full_name(response.expert) or "Эксперт")
-        summary_line = f"\nЧто изменилось: {preview(changes_summary, 200)}" if changes_summary else ""
-        self.dispatcher.send_telegram(
-            customer,
-            None,
-            f"🔄 <b>Эксперт обновил отклик</b>\n"
-            f"Заявка: «{order_title}»\n"
-            f"Эксперт: {expert_name}{summary_line}\n"
-            f"Актуальная цена: {format_price(response.proposed_sum_amount)}\n"
-            f"Срок: до {format_date(response.proposed_deadline)}\n\n"
-            f"Откройте приложение, чтобы пересмотреть отклик.",
-        )
-        if not self.dispatcher.can_send(customer, PREFERENCE_FIELD):
-            return
-
         context = self.build_context(response, customer, changes_summary)
-        self.dispatcher.dispatch(customer.email, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
 
     def build_context(
         self,

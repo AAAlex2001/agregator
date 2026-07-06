@@ -43,9 +43,9 @@ def make_chat_message(customer_id=10, expert_id=20, sender_id=10, text="прив
 
 @pytest.mark.asyncio
 class TestSendChatMessageEmail:
-    "Проверки: early-return при online, фильтр по флагу, выбор получателя."
+    "Проверки: early-return при online, выбор получателя, превью."
 
-    async def test_online_recipient_skips_email(self):
+    async def test_online_recipient_skips_notify(self):
         repo = MagicMock()
         repo.find_message = AsyncMock()
         dispatcher = MagicMock()
@@ -54,7 +54,7 @@ class TestSendChatMessageEmail:
         await use_case.execute(message_id=1, recipient_online=True)
 
         repo.find_message.assert_not_called()
-        dispatcher.dispatch.assert_not_called()
+        dispatcher.notify.assert_not_called()
 
     async def test_missing_message_skips(self):
         repo = MagicMock()
@@ -64,64 +64,55 @@ class TestSendChatMessageEmail:
         use_case = SendChatMessageEmailUseCase(repo=repo, dispatcher=dispatcher)
         await use_case.execute(message_id=999, recipient_online=False)
 
-        dispatcher.dispatch.assert_not_called()
+        dispatcher.notify.assert_not_called()
 
     async def test_customer_sends_to_expert(self):
         message = make_chat_message(sender_id=10)  # customer отправил
         repo = MagicMock()
         repo.find_message = AsyncMock(return_value=message)
-
         dispatcher = MagicMock()
-        dispatcher.can_send = MagicMock(return_value=True)
 
         use_case = SendChatMessageEmailUseCase(repo=repo, dispatcher=dispatcher)
         await use_case.execute(message_id=1, recipient_online=False)
 
-        dispatcher.dispatch.assert_called_once()
-        called_email = dispatcher.dispatch.call_args[0][0]
-        assert called_email == "expert@test.ru"
+        dispatcher.notify.assert_called_once()
+        recipient = dispatcher.notify.call_args[0][0]
+        assert recipient.email == "expert@test.ru"
 
     async def test_expert_sends_to_customer(self):
         message = make_chat_message(sender_id=20)  # expert отправил
         repo = MagicMock()
         repo.find_message = AsyncMock(return_value=message)
-
         dispatcher = MagicMock()
-        dispatcher.can_send = MagicMock(return_value=True)
 
         use_case = SendChatMessageEmailUseCase(repo=repo, dispatcher=dispatcher)
         await use_case.execute(message_id=1, recipient_online=False)
 
-        called_email = dispatcher.dispatch.call_args[0][0]
-        assert called_email == "customer@test.ru"
+        recipient = dispatcher.notify.call_args[0][0]
+        assert recipient.email == "customer@test.ru"
 
-    async def test_disabled_preference_skips(self):
+    async def test_notify_gets_preference_field(self):
         message = make_chat_message()
-        message.chat.expert.email_on_chat_message = False
-
         repo = MagicMock()
         repo.find_message = AsyncMock(return_value=message)
-
         dispatcher = MagicMock()
-        dispatcher.can_send = MagicMock(return_value=False)
 
         use_case = SendChatMessageEmailUseCase(repo=repo, dispatcher=dispatcher)
         await use_case.execute(message_id=1, recipient_online=False)
 
-        dispatcher.dispatch.assert_not_called()
+        preference_field = dispatcher.notify.call_args[0][1]
+        assert preference_field == "email_on_chat_message"
 
     async def test_long_text_truncated_in_preview(self):
         long_text = "а" * 500
         message = make_chat_message(text=long_text)
         repo = MagicMock()
         repo.find_message = AsyncMock(return_value=message)
-
         dispatcher = MagicMock()
-        dispatcher.can_send = MagicMock(return_value=True)
 
         use_case = SendChatMessageEmailUseCase(repo=repo, dispatcher=dispatcher)
         await use_case.execute(message_id=1, recipient_online=False)
 
-        context = dispatcher.dispatch.call_args[0][3]
+        context = dispatcher.notify.call_args[0][4]
         assert len(context.message_preview) <= 241   # 240 + "…"
         assert context.message_preview.endswith("…")

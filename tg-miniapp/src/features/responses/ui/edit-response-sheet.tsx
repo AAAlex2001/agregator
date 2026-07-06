@@ -23,11 +23,6 @@ export function EditResponseSheet({ response, onClose, onSaved }: Props) {
   const [calField, setCalField] = useState<"start" | "end" | null>(null);
   const { state, canSubmit, submit, dispatch } = useEditResponse(response, onSaved);
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const base = toKopecks(state.sum);
   const rate = VAT_RATE[state.vat];
   const vatAmount = Math.round((base * rate) / 100);
@@ -35,7 +30,7 @@ export function EditResponseSheet({ response, onClose, onSaved }: Props) {
   return (
     <FullSheet
       open={response !== null}
-      onClose={close}
+      onClose={onClose}
       hero={
         <SheetHero
           light="/respond-order/step-5-light.webp"
@@ -43,7 +38,7 @@ export function EditResponseSheet({ response, onClose, onSaved }: Props) {
           label="Редактирование"
           title="Ваше предложение"
           desc="Измените сроки, цену и файлы"
-          onClose={close}
+          onClose={onClose}
         />
       }
     >

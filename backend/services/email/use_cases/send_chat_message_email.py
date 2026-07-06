@@ -3,7 +3,7 @@ from models.chat import ChatMessage
 from models.user import User
 from schemas.email import ChatMessageContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import escape_html, full_name, greeting_for, preview
+from services.email.formatting import full_name, greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "chat_message"
@@ -14,7 +14,7 @@ PREVIEW_MAX_LENGTH = 240
 
 
 class SendChatMessageEmailUseCase:
-    "Письмо о новом сообщении — только если получатель оффлайн (проверяется снаружи, до вызова)."
+    "Уведомление о новом сообщении — только если получатель оффлайн (проверяется снаружи, до вызова)."
 
     def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
@@ -33,24 +33,8 @@ class SendChatMessageEmailUseCase:
         if recipient is None:
             return
 
-        chat = message.chat
-        order_title = escape_html((chat.order.title if chat and chat.order else None) or "Заявка")
-        sender_name = escape_html(full_name(message.sender) or "Собеседник")
-        message_line = preview(message.text, 120) or "(вложение)"
-        self.dispatcher.send_telegram(
-            recipient,
-            None,
-            f"💬 <b>Новое сообщение</b>\n"
-            f"От: {sender_name}\n"
-            f"Заявка: «{order_title}»\n"
-            f"«{message_line}»\n\n"
-            f"Откройте приложение, чтобы ответить.",
-        )
-        if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
-            return
-
         context = self.build_context(message, recipient)
-        self.dispatcher.dispatch(recipient.email, TEMPLATE, SUBJECT, context)
+        self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
 
     @staticmethod
     def resolve_recipient(message: ChatMessage) -> User | None:

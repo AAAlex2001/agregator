@@ -3,7 +3,7 @@ from models.order import Order
 from models.user import User
 from schemas.email import OrderBrief, OrderUpdatedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import escape_html, format_date, format_price, greeting_for, preview
+from services.email.formatting import greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "order_updated"
@@ -13,7 +13,7 @@ PREFERENCE_FIELD = "email_on_order_updated"
 
 
 class SendOrderUpdatedEmailUseCase:
-    "Эксперты, уже откликнувшиеся на заявку, получают письмо об изменениях."
+    "Эксперты, уже откликнувшиеся на заявку, получают уведомление об изменениях."
 
     def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
@@ -28,24 +28,10 @@ class SendOrderUpdatedEmailUseCase:
         if order is None:
             return
 
-        experts = await self.repo.list_responders_with_preference(order_id, PREFERENCE_FIELD)
-        if not experts:
-            return
-
-        order_title = escape_html(order.title or f"Заказ #{order.id}")
-        summary_line = f"\nЧто изменилось: {preview(changes_summary, 200)}" if changes_summary else ""
+        experts = await self.repo.list_responders(order_id)
         for expert in experts:
             context = self.build_context(order, expert, changes_summary)
-            self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
-            self.dispatcher.send_telegram(
-                expert,
-                None,
-                f"✏️ <b>Заявка изменилась</b>\n"
-                f"«{order_title}»{summary_line}\n"
-                f"Актуальный бюджет: {format_price(order.sum_amount)}\n"
-                f"Срок: до {format_date(order.deadline)}\n\n"
-                f"Откройте приложение, чтобы пересмотреть отклик.",
-            )
+            self.dispatcher.notify(expert, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context)
 
     def build_context(
         self,

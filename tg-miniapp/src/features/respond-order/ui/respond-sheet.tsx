@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { tapHaptic } from "@/shared/services/telegram";
 import { preloadThemedImages } from "@/shared/lib/preload-images";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
@@ -41,16 +40,11 @@ export function RespondSheet({ order, onClose }: Props) {
     preloadThemedImages([...Object.values(META), SUCCESS_META].map((m) => m.image), "/respond-order");
   }, [open]);
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const meta = state.done ? SUCCESS_META : META[step];
   const pinned = step === 1 && !state.done;
 
   const actions = state.done ? (
-    <Button onClick={close}>Готово</Button>
+    <Button onClick={onClose}>Готово</Button>
   ) : step === 1 ? (
     <Button onClick={() => setStep(2)}>Далее</Button>
   ) : step === 5 ? (
@@ -70,7 +64,7 @@ export function RespondSheet({ order, onClose }: Props) {
   return (
     <FullSheet
       open={open}
-      onClose={close}
+      onClose={onClose}
       scrollKey={state.done ? "done" : step}
       hero={
         <SheetHero
@@ -82,7 +76,7 @@ export function RespondSheet({ order, onClose }: Props) {
           desc={meta.desc}
           step={state.done ? undefined : step}
           total={state.done ? undefined : TOTAL}
-          onClose={close}
+          onClose={onClose}
         />
       }
       footer={pinned ? actions : null}

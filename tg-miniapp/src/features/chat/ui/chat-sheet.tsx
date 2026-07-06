@@ -32,11 +32,6 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [messagesCount, active]);
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const openThread = (chat: ChatListItem) => {
     tapHaptic();
     setActive(chat.uuid);
@@ -55,7 +50,7 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
       label="Общение"
       title="Чаты по заказам"
       desc="Переписка с участниками сделок"
-      onClose={close}
+      onClose={onClose}
     />
   );
 
@@ -68,7 +63,15 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
         <span className={s.headName}>{state.detail.counterpart_name}</span>
         <span className={s.headOrder}>{state.detail.order_title}</span>
       </div>
-      <button type="button" className={s.headBtn} onClick={close} aria-label="Закрыть">
+      <button
+        type="button"
+        className={s.headBtn}
+        onClick={() => {
+          tapHaptic();
+          onClose();
+        }}
+        aria-label="Закрыть"
+      >
         <CloseIcon width={18} height={18} />
       </button>
     </div>
@@ -132,7 +135,7 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
   return (
     <FullSheet
       open={open}
-      onClose={close}
+      onClose={onClose}
       hero={active ? threadHero : listHero}
       footer={active ? threadFooter : null}
     >
@@ -179,7 +182,7 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
       )}
       {!active && chats !== null && chats.length === 0 && (
         <div className={s.emptyAction}>
-          <Button variant="outline" onClick={close}>
+          <Button variant="outline" onClick={onClose}>
             Понятно
           </Button>
         </div>

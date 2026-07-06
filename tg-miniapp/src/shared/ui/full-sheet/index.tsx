@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import cn from "classnames";
+import { tapHaptic } from "@/shared/services/telegram";
 import { lockDocument, unlockDocument } from "@/shared/lib/scroll-lock";
 import s from "./style.module.scss";
 
@@ -58,8 +59,13 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
 
   const view: Frozen = open ? { hero, footer, content: children } : frozen;
 
+  const close = () => {
+    tapHaptic();
+    onClose();
+  };
+
   return createPortal(
-    <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
+    <div className={cn(s.overlay, { [s.closing]: closing })} onClick={close}>
       <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         {view.hero}
         <div className={s.scroll} ref={scrollRef}>

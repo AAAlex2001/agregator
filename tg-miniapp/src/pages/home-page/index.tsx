@@ -12,8 +12,9 @@ import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
 import { BlogStrip } from "@/features/blog";
 import { EditOrderSheet } from "@/features/edit-order";
+import { LeaveReviewFullSheet, LeaveReviewSheet } from "@/features/leave-review";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
-import { type CustomerSortBy, type SortDir } from "@/entites/response";
+import { type CustomerSortBy, type ExpertResponse, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
 import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
@@ -37,7 +38,7 @@ const RESPONSE_SORTS: SortChoice[] = [
 ];
 
 export function HomePage() {
-  const { role } = useSession();
+  const { role, profile } = useSession();
   const navigate = useNavigate();
   const [view, setView] = useState<FeedView>("orders");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -50,6 +51,8 @@ export function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUuid, setChatUuid] = useState<string | null>(null);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
+  const [reviewOrder, setReviewOrder] = useState<Order | null>(null);
+  const [reviewResponse, setReviewResponse] = useState<ExpertResponse | null>(null);
   const chatBadge = useChats();
 
   const openChatThread = (uuid: string) => {
@@ -181,13 +184,20 @@ export function HomePage() {
             </div>
           </div>
           {view === "responses" ? (
-            <CustomerResponsesPanel sortBy={respSort.key as CustomerSortBy} sortDir={respSort.dir as SortDir} onOpenChat={openChatThread} />
+            <CustomerResponsesPanel
+              sortBy={respSort.key as CustomerSortBy}
+              sortDir={respSort.dir as SortDir}
+              onOpenChat={openChatThread}
+              onCompleted={setReviewResponse}
+            />
           ) : (
             <CustomerOrdersPanel
               view={view}
               refreshKey={refreshKey}
+              viewerId={profile?.id ?? null}
               onOpen={setArchiveOrder}
               onEdit={setEditOrder}
+              onLeaveReview={setReviewOrder}
               emptyActive={
                 <EmptyState
                   icon={<EmptyOrdersIcon />}
@@ -220,11 +230,7 @@ export function HomePage() {
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
 
-      <ArchiveOrderSheet
-        order={archiveOrder}
-        onClose={() => setArchiveOrder(null)}
-        onReviewed={() => setRefreshKey((k) => k + 1)}
-      />
+      <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
 
       <EditOrderSheet
         order={editOrder}
@@ -251,6 +257,18 @@ export function HomePage() {
             open={createOpen}
             onClose={() => setCreateOpen(false)}
             onCreated={() => setRefreshKey((k) => k + 1)}
+          />
+          <LeaveReviewFullSheet
+            order={reviewOrder}
+            onClose={() => setReviewOrder(null)}
+            onSubmitted={() => setRefreshKey((k) => k + 1)}
+          />
+          <LeaveReviewSheet
+            open={reviewResponse !== null}
+            responseId={reviewResponse?.id ?? null}
+            expertName={reviewResponse?.expert_name ?? ""}
+            onClose={() => setReviewResponse(null)}
+            onSubmitted={() => setRefreshKey((k) => k + 1)}
           />
           <div className={s.createBar}>
             <Button

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Button, FullSheet, SheetHero } from "@/shared/ui";
-import { tapHaptic } from "@/shared/services/telegram";
 import { preloadThemedImages } from "@/shared/lib/preload-images";
 import { OrderInfo, type Order } from "@/entites/order";
 import { useArchiveOrder } from "../model/use-archive-order";
@@ -21,10 +20,9 @@ const META: Record<StepKey, { title: string; desc: string; image: string }> = {
 interface Props {
   order: Order | null;
   onClose: () => void;
-  onReviewed?: () => void;
 }
 
-export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
+export function ArchiveOrderSheet({ order, onClose }: Props) {
   const [step, setStep] = useState(0);
   const { questions, canAnswer, drafts, setDraft, answer, answeringId } = useArchiveOrder(order);
 
@@ -49,11 +47,6 @@ export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
   const current = keys[step] ?? "order";
   const meta = META[current];
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   const footer = (
     <>
       {step > 0 && (
@@ -64,7 +57,7 @@ export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
       {step < total - 1 ? (
         <Button onClick={() => setStep(step + 1)}>Далее</Button>
       ) : (
-        <Button onClick={close}>Готово</Button>
+        <Button onClick={onClose}>Готово</Button>
       )}
     </>
   );
@@ -72,7 +65,7 @@ export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
   return (
     <FullSheet
       open={order !== null}
-      onClose={close}
+      onClose={onClose}
       scrollKey={step}
       hero={
         <SheetHero
@@ -84,7 +77,7 @@ export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
           desc={meta.desc}
           step={step + 1}
           total={total}
-          onClose={close}
+          onClose={onClose}
         />
       }
       footer={footer}
@@ -103,15 +96,7 @@ export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
               onAnswer={(questionId) => void answer(questionId)}
             />
           )}
-          {current === "executor" && (
-            <ExecutorStep
-              order={order}
-              onReviewed={() => {
-                onReviewed?.();
-                close();
-              }}
-            />
-          )}
+          {current === "executor" && <ExecutorStep order={order} />}
         </div>
       )}
     </FullSheet>

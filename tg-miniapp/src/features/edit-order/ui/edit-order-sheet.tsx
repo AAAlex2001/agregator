@@ -29,15 +29,10 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const { state, dispatch, canSubmit, submit, remove, keptUrls } = useEditOrder(order, onSaved);
 
-  const close = () => {
-    tapHaptic();
-    onClose();
-  };
-
   return (
     <FullSheet
       open={order !== null}
-      onClose={close}
+      onClose={onClose}
       hero={
         <SheetHero
           light="/create-order/step-1-light.webp"
@@ -45,7 +40,7 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
           label="Редактирование"
           title="Изменить заказ"
           desc="Обновите условия — эксперты увидят изменения"
-          onClose={close}
+          onClose={onClose}
         />
       }
     >
@@ -116,7 +111,7 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
           </Field>
 
           <div className={s.actions}>
-            <Button variant="outline" onClick={close}>
+            <Button variant="outline" onClick={onClose}>
               Отмена
             </Button>
             <Button disabled={!canSubmit} loading={state.busy} onClick={() => void submit()}>
