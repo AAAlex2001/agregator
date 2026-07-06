@@ -6,6 +6,7 @@
   display: flex;
   align-items: flex-end;
   overscroll-behavior: none;
+  transform: translateZ(0);
   animation: fadeIn 0.25s ease;
 }
 
@@ -22,6 +23,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  backface-visibility: hidden;
   animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 

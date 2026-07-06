@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Screen } from "@/widgets/app-shell";
+import { tapHaptic } from "@/shared/services/telegram";
 import { Spinner } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { ArticleRow, type ArticleKind } from "@/entites/article";
@@ -30,7 +31,14 @@ export function ArticlesPage() {
         ) : (
           <div className={s.list}>
             {items.map((article) => (
-              <ArticleRow key={article.id} article={article} onClick={() => setOpenSlug(article.slug)} />
+              <ArticleRow
+                key={article.id}
+                article={article}
+                onClick={() => {
+                  tapHaptic();
+                  setOpenSlug(article.slug);
+                }}
+              />
             ))}
           </div>
         )}

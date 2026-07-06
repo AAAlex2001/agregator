@@ -11,24 +11,19 @@ import s from "./blog-strip.module.scss";
 
 function autoplay(slider: KeenSliderInstance) {
   let timer: ReturnType<typeof setTimeout>;
-  let paused = false;
 
+  const clear = () => clearTimeout(timer);
   const next = () => {
-    clearTimeout(timer);
-    if (paused) return;
+    clear();
     timer = setTimeout(() => slider.next(), 3000);
   };
 
-  slider.on("created", () => {
-    slider.container.addEventListener("pointerdown", () => {
-      paused = true;
-      clearTimeout(timer);
-    });
-    next();
-  });
-  slider.on("dragStarted", () => clearTimeout(timer));
+  slider.on("created", next);
+  slider.on("dragStarted", clear);
+  slider.on("dragEnded", next);
   slider.on("animationEnded", next);
   slider.on("updated", next);
+  slider.on("destroyed", clear);
 }
 
 export function BlogStrip() {
@@ -61,7 +56,13 @@ export function BlogStrip() {
       <div ref={sliderRef} className="keen-slider">
         {items.map((article) => (
           <div key={article.id} className="keen-slider__slide">
-            <ArticleSlide article={article} onClick={() => setOpenSlug(article.slug)} />
+            <ArticleSlide
+              article={article}
+              onClick={() => {
+                tapHaptic();
+                setOpenSlug(article.slug);
+              }}
+            />
           </div>
         ))}
       </div>
