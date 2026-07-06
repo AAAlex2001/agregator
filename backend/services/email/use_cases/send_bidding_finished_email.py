@@ -4,7 +4,7 @@ from models.response import OrderResponse
 from models.user import User
 from schemas.email import BiddingFinishedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import escape_html, greeting_for
+from services.email.formatting import escape_html, format_price, greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "bidding_finished"
@@ -13,18 +13,6 @@ PREFERENCE_FIELD = "email_on_bidding_finished"
 
 OUTCOME_WON = "won"
 OUTCOME_LOST = "lost"
-
-
-def format_price(amount_kopecks: int) -> str:
-    "Форматирует значение для отображения."
-    if amount_kopecks <= 0:
-        return "не определена"
-    roubles = amount_kopecks // 100
-    formatted = f"{roubles:,}".replace(",", " ")
-    if amount_kopecks % 100:
-        kopecks = amount_kopecks % 100
-        return f"{formatted},{kopecks:02d} ₽"
-    return f"{formatted} ₽"
 
 
 def full_name(user: User) -> str:
