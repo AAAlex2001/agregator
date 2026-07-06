@@ -16,8 +16,6 @@ export const initialState: CreateOrderState = {
   comment: "",
   files: { technical: null, contract: null, company: null },
   otherFiles: [],
-  visibleExperts: [],
-  notifyExperts: true,
 };
 
 export function reducer(state: CreateOrderState, action: CreateOrderAction): CreateOrderState {
@@ -36,14 +34,6 @@ export function reducer(state: CreateOrderState, action: CreateOrderAction): Cre
       return { ...state, otherFiles: [...state.otherFiles, ...action.files] };
     case "removeOther":
       return { ...state, otherFiles: state.otherFiles.filter((_, i) => i !== action.index) };
-    case "addExpert":
-      return state.visibleExperts.some((e) => e.id === action.expert.id)
-        ? state
-        : { ...state, visibleExperts: [...state.visibleExperts, action.expert] };
-    case "removeExpert":
-      return { ...state, visibleExperts: state.visibleExperts.filter((e) => e.id !== action.id) };
-    case "notifyExperts":
-      return { ...state, notifyExperts: action.value };
     case "step":
       return { ...state, step: action.value };
     case "busy":

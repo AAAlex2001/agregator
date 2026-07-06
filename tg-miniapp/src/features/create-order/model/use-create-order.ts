@@ -84,8 +84,6 @@ export function useCreateOrder(open: boolean, onCreated: () => void) {
           requiresExpert: state.requiresExpert,
           requiresLicense: state.requiresLicense,
           badgeCodes,
-          visibleExpertIds: state.visibleExperts.map((expert) => expert.id),
-          notifyExperts: state.notifyExperts,
         },
         { ...state.files, other: state.otherFiles },
       );

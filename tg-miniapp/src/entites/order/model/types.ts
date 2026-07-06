@@ -40,6 +40,7 @@ export interface Order {
   executor_comment: string;
   executor_files: string[];
   accepted_response_id: number | null;
+  customer_has_review: boolean;
   unanswered_questions: number;
   my_answered_questions: number;
 }

@@ -1,8 +1,7 @@
-import cn from "classnames";
 import { Button, Card } from "@/shared/ui";
 import { formatDeadline, pluralRu } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
-import { CUSTOMER_STATUS_LABEL, customerOrderStatus } from "../../model/customer-status";
+import { customerOrderStatus } from "../../model/customer-status";
 import s from "./style.module.scss";
 
 interface Props {
@@ -18,7 +17,6 @@ export function CustomerOrderCard({ order, onClick, onEdit }: Props) {
     <Card className={s.card} onClick={onClick}>
       <div className={s.head}>
         <span className={s.meta}>№ {order.id}</span>
-        <span className={cn(s.status, s[status])}>{CUSTOMER_STATUS_LABEL[status]}</span>
       </div>
 
       <span className={s.title}>{order.title}</span>

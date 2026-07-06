@@ -20,16 +20,3 @@ export interface ExpertList {
 export function listExperts(sortBy: ExpertSortBy, sortDir: "asc" | "desc", limit = 50): Promise<ExpertList> {
   return apiJson<ExpertList>(`/experts?skip=0&limit=${limit}&sort_by=${sortBy}&sort_dir=${sortDir}`);
 }
-
-export interface ExpertPickerItem {
-  id: number;
-  full_name: string;
-  avatar_url: string | null;
-  rating: number | null;
-}
-
-export function searchExpertsPicker(query: string, limit = 20): Promise<{ items: ExpertPickerItem[] }> {
-  const params = new URLSearchParams({ limit: String(limit) });
-  if (query.trim()) params.set("q", query.trim());
-  return apiJson<{ items: ExpertPickerItem[] }>(`/experts/picker?${params.toString()}`);
-}

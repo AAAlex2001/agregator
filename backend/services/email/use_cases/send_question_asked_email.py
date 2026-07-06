@@ -1,7 +1,7 @@
 "Use case: send question asked email."
 from schemas.email import QuestionAskedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import full_name, greeting_for
+from services.email.formatting import escape_html, full_name, greeting_for, preview
 from services.email.repository import EmailRepository
 
 TEMPLATE = "question_asked"
@@ -24,11 +24,15 @@ class SendQuestionAskedEmailUseCase:
             return
 
         recipient = question.order.customer
-        order_title = question.order.title or "Заявка"
+        order_title = escape_html(question.order.title or "Заявка")
+        question_line = preview(question.question, 200)
         self.dispatcher.send_telegram(
             recipient,
             None,
-            f"🔔 <b>Новый вопрос по заказу</b>\nЭксперт задал вопрос по заявке «{order_title}».\n\n{CTA_URL_TEMPLATE}",
+            f"❓ <b>Новый вопрос по вашей заявке</b>\n"
+            f"Заявка: «{order_title}»\n"
+            f"Вопрос: «{question_line}»\n\n"
+            f"Откройте приложение, чтобы ответить.",
         )
         if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return

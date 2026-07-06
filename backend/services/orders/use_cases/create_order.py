@@ -40,11 +40,10 @@ class CreateOrderUseCase:
         created = await self.repo.get_by_id(order.id)
         if created is None:
             raise RuntimeError("Order disappeared after insert")
-        if data.notify_experts:
-            if self.send_new_order_email is not None:
-                await self.send_new_order_email.execute(created.id)
-            if self.create_new_order_notification is not None:
-                await self.create_new_order_notification.execute(created)
+        if self.send_new_order_email is not None:
+            await self.send_new_order_email.execute(created.id)
+        if self.create_new_order_notification is not None:
+            await self.create_new_order_notification.execute(created)
         return created
 
     def build_entity(self, data: OrderCreate) -> Order:
@@ -60,7 +59,6 @@ class CreateOrderUseCase:
             responses_deadline=data.responses_deadline,
             requires_expert=data.requires_expert,
             requires_license=data.requires_license,
-            visible_expert_ids=data.visible_expert_ids,
             status=data.status,
         )
         OrderDocumentsService.write(order, data.documents)

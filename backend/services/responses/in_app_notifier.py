@@ -4,6 +4,7 @@ from models.response import OrderResponse, ResponseStatus
 from models.user import User, UserRole
 from schemas.notification import ResponseStatusChangeReason, ResponseUpdateKind
 from services.email.dispatcher import EmailDispatcher
+from services.email.formatting import escape_html
 from services.notifications import (
     CreateResponseStatusChangedNotificationUseCase,
     CreateResponseUpdatedNotificationUseCase,
@@ -12,8 +13,6 @@ from services.notifications import (
 from services.responses.repository import ResponseRepository
 
 RESPONSES_ACTION_URL = "/responses"
-EXPERT_ORDERS_URL = "https://plus-resurs.com/expert/orders"
-CUSTOMER_ORDERS_URL = "https://plus-resurs.com/customer/orders"
 
 
 class ResponseInAppNotifier:
@@ -141,7 +140,10 @@ class ResponseInAppNotifier:
             )
             await self.push_telegram(
                 response.expert_id,
-                f"\U0001F514 <b>Приглашение в переговоры</b>\nЗаказчик пригласил вас в чат по заявке «{title}».\n\n{EXPERT_ORDERS_URL}",
+                f"\U0001F91D <b>Приглашение в переговоры</b>\n"
+                f"Заявка: «{escape_html(title)}»\n"
+                f"Заказчик пригласил вас обсудить проект в чате.\n\n"
+                f"Откройте приложение, чтобы начать переговоры.",
             )
 
         if new_status == ResponseStatus.IN_PROGRESS and old_status != ResponseStatus.IN_PROGRESS:
@@ -176,10 +178,12 @@ class ResponseInAppNotifier:
                 action_url=RESPONSES_ACTION_URL,
                 rejection_reason=rejection_reason,
             )
-            reason_line = f"\nПричина: {rejection_reason}" if rejection_reason else ""
+            reason_line = f"\nПричина: {escape_html(rejection_reason)}" if rejection_reason else ""
             await self.push_telegram(
                 response.expert_id,
-                f"\U0001F514 <b>Отклик отклонён</b>\nЗаказчик отклонил ваш отклик по заявке «{title}».{reason_line}\n\n{EXPERT_ORDERS_URL}",
+                f"❌ <b>Ваш отклик отклонён</b>\n"
+                f"Заявка: «{escape_html(title)}»{reason_line}\n\n"
+                f"Откройте приложение, чтобы посмотреть другие заявки.",
             )
             for reverted_expert_id in reverted_expert_ids:
                 await self.create_status_changed.execute(
@@ -193,7 +197,10 @@ class ResponseInAppNotifier:
                 )
                 await self.push_telegram(
                     reverted_expert_id,
-                    f"\U0001F514 <b>Отклик снова на рассмотрении</b>\nЗаказчик отменил выбор исполнителя по заявке «{title}» — ваш отклик вернулся на рассмотрение.\n\n{EXPERT_ORDERS_URL}",
+                    f"\U0001F501 <b>Ваш отклик снова на рассмотрении</b>\n"
+                    f"Заявка: «{escape_html(title)}»\n"
+                    f"Заказчик отменил выбор исполнителя — у вас снова есть шанс.\n\n"
+                    f"Откройте приложение, чтобы проверить статус.",
                 )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
@@ -208,7 +215,10 @@ class ResponseInAppNotifier:
             )
             await self.push_telegram(
                 response.expert_id,
-                f"\U0001F514 <b>Проект завершён</b>\nЗаказчик завершил проект по заявке «{title}».\n\n{EXPERT_ORDERS_URL}",
+                f"✅ <b>Проект завершён</b>\n"
+                f"Заявка: «{escape_html(title)}»\n"
+                f"Заказчик подтвердил завершение работ. Спасибо за работу!\n\n"
+                f"Откройте приложение, чтобы оставить отзыв.",
             )
 
     async def notify_expert_actions(
@@ -235,7 +245,10 @@ class ResponseInAppNotifier:
             )
             await self.push_telegram(
                 order.customer_id,
-                f"\U0001F514 <b>Эксперт принял проект</b>\nЭксперт подтвердил участие по заявке «{title}».\n\n{CUSTOMER_ORDERS_URL}",
+                f"\U0001F44D <b>Эксперт принял проект в работу</b>\n"
+                f"Заявка: «{escape_html(title)}»\n"
+                f"Исполнитель подтвердил участие и приступает к работе.\n\n"
+                f"Откройте приложение, чтобы следить за ходом.",
             )
 
         if new_status == ResponseStatus.COMPLETED and old_status != ResponseStatus.COMPLETED:
@@ -250,5 +263,8 @@ class ResponseInAppNotifier:
             )
             await self.push_telegram(
                 order.customer_id,
-                f"\U0001F514 <b>Проект завершён</b>\nЭксперт завершил работу по заявке «{title}».\n\n{CUSTOMER_ORDERS_URL}",
+                f"✅ <b>Эксперт завершил работу</b>\n"
+                f"Заявка: «{escape_html(title)}»\n"
+                f"Исполнитель отметил проект как выполненный.\n\n"
+                f"Откройте приложение, чтобы принять работу и оставить отзыв.",
             )

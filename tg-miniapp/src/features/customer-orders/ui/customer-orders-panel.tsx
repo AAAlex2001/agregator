@@ -1,15 +1,9 @@
 import { type ReactNode } from "react";
 import { EmptyState, Spinner } from "@/shared/ui";
-import { Tabs } from "@/shared/ui/tabs";
-import { EmptyArchiveIcon, EmptyInWorkIcon } from "@/shared/ui/icons/empty";
+import { EmptyArchiveIcon } from "@/shared/ui/icons/empty";
 import { CustomerOrderCard, OrderCard, type Order } from "@/entites/order";
-import { useCustomerOrders, type CustomerTab } from "../model/use-customer-orders";
+import { useCustomerOrders } from "../model/use-customer-orders";
 import s from "./customer-orders-panel.module.scss";
-
-const TABS = [
-  { key: "active", label: "Активные" },
-  { key: "inwork", label: "В работе" },
-];
 
 interface Props {
   view: "orders" | "archive";
@@ -20,12 +14,10 @@ interface Props {
 }
 
 export function CustomerOrdersPanel({ view, refreshKey, onOpen, onEdit, emptyActive }: Props) {
-  const { tab, setTab, items } = useCustomerOrders(view, refreshKey);
+  const { items } = useCustomerOrders(view, refreshKey);
 
   return (
     <div className={s.wrap}>
-      {view === "orders" && <Tabs tabs={TABS} active={tab} onChange={(key) => setTab(key as CustomerTab)} />}
-
       {items === null ? (
         <div className={s.loading}>
           <Spinner />
@@ -37,14 +29,8 @@ export function CustomerOrdersPanel({ view, refreshKey, onOpen, onEdit, emptyAct
             title="Архив пуст"
             subtitle="Завершённые заказы будут храниться здесь"
           />
-        ) : tab === "active" ? (
-          emptyActive
         ) : (
-          <EmptyState
-            icon={<EmptyInWorkIcon />}
-            title="Нет заказов в работе"
-            subtitle="Примите отклик эксперта — заказ перейдёт в работу"
-          />
+          emptyActive
         )
       ) : (
         <div className={s.list}>

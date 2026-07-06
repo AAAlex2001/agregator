@@ -4,7 +4,7 @@ from models.response import OrderResponse
 from models.user import User
 from schemas.email import BiddingFinishedContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import greeting_for
+from services.email.formatting import escape_html, greeting_for
 from services.email.repository import EmailRepository
 
 TEMPLATE = "bidding_finished"
@@ -70,19 +70,32 @@ class SendBiddingFinishedEmailUseCase:
         if order is None:
             return
 
-        order_title = order.title or f"Заказ #{order.id}"
+        order_title = escape_html(order.title or f"Заказ #{order.id}")
+        response = None
+        if outcome == OUTCOME_WON and response_id is not None:
+            response = await self.repo.find_response(response_id)
         if outcome == OUTCOME_WON:
-            tg_text = f"🔔 <b>Вы победили!</b>\nПо заявке «{order_title}» заказчик выбрал вас.\n\n{CTA_URL}"
+            price_line = (
+                f"\nВаша цена: {format_price(response.proposed_sum_amount)}"
+                if response is not None else ""
+            )
+            tg_text = (
+                f"🎉 <b>Вы победили в торгах!</b>\n"
+                f"Заявка: «{order_title}»\n"
+                f"Заказчик выбрал вас исполнителем.{price_line}\n\n"
+                f"Откройте приложение, чтобы перейти к работе."
+            )
         else:
-            tg_text = f"🔔 <b>Торги завершены</b>\nПо заявке «{order_title}» выбран другой исполнитель.\n\n{CTA_URL}"
+            tg_text = (
+                f"🔚 <b>Торги завершены</b>\n"
+                f"Заявка: «{order_title}»\n"
+                f"Заказчик выбрал другого исполнителя. Спасибо за участие!\n\n"
+                f"Откройте приложение, чтобы посмотреть новые заявки."
+            )
         self.dispatcher.send_telegram(expert, None, tg_text)
 
         if not self.dispatcher.can_send(expert, PREFERENCE_FIELD):
             return
-
-        response = None
-        if outcome == OUTCOME_WON and response_id is not None:
-            response = await self.repo.find_response(response_id)
 
         customer = None
         if response is not None and response.order is not None:

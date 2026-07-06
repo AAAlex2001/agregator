@@ -76,8 +76,6 @@ class OrderCreate(BaseModel):
     documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
-    visible_expert_ids: list[int] | None = None
-    notify_experts: bool = True
 
 
 class OrderUpdate(BaseModel):

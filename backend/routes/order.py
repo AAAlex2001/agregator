@@ -216,8 +216,6 @@ async def create_order_with_files(
     requires_expert: bool = Form(True),
     requires_license: bool = Form(True),
     badge_codes_json: str = Form("[]"),
-    visible_expert_ids_json: str = Form("[]"),
-    notify_experts: bool = Form(True),
     technical_files: list[UploadFile] = File(default=[]),
     contract_files: list[UploadFile] = File(default=[]),
     company_files: list[UploadFile] = File(default=[]),
@@ -238,8 +236,6 @@ async def create_order_with_files(
         badge_codes_json=badge_codes_json,
         requires_expert=requires_expert,
         requires_license=requires_license,
-        visible_expert_ids_json=visible_expert_ids_json,
-        notify_experts=notify_experts,
     )
     repo = build_repo(db)
     create = CreateOrderUseCase(

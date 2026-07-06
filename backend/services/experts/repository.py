@@ -146,22 +146,6 @@ class ExpertsRepository:
             )
         return summaries, has_more
 
-    async def list_picker(self, query: str | None, limit: int = 20) -> list[User]:
-        "Активные эксперты для выбора видимости заказа: лёгкий поиск по имени."
-        base: Select[tuple[User]] = (
-            select(User)
-            .where(
-                User.role == UserRole.EXPERT,
-                User.is_active.is_(True),
-            )
-            .order_by(User.rating.desc().nullslast(), User.id)
-        )
-        if query and query.strip():
-            pattern = f"%{query.strip()}%"
-            base = base.where(User.first_name.ilike(pattern) | User.last_name.ilike(pattern))
-        rows = (await self.db.execute(base.limit(limit))).scalars().all()
-        return list(rows)
-
     async def get_summary(self, public_id: str) -> ExpertSummaryRow | None:
         "Возвращает запрошенную сущность."
         completed_orders_expr = (

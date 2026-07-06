@@ -19,8 +19,6 @@ export interface CreateOrderPayload {
   requiresExpert: boolean;
   requiresLicense: boolean;
   badgeCodes: string[];
-  visibleExpertIds: number[];
-  notifyExperts: boolean;
 }
 
 export interface CreateOrderFiles {
@@ -42,8 +40,6 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
-  form.append("visible_expert_ids_json", JSON.stringify(payload.visibleExpertIds));
-  form.append("notify_experts", String(payload.notifyExperts));
   if (files.technical) form.append("technical_files", files.technical);
   if (files.contract) form.append("contract_files", files.contract);
   if (files.company) form.append("company_files", files.company);

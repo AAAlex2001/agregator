@@ -11,7 +11,6 @@ export {
 export type { Order, OrderBadge, OrderDocuments, OrderList } from "./model/types";
 export {
   customerOrderStatus,
-  CUSTOMER_STATUS_LABEL,
   type CustomerOrderStatus,
 } from "./model/customer-status";
 export { OrderCard } from "./ui/order-card";

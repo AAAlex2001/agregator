@@ -14,7 +14,6 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -65,7 +64,6 @@ class Order(Base):
     other_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     requires_expert: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
     requires_license: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
-    visible_expert_ids: Mapped[list[int] | None] = mapped_column(JSONB, nullable=True)
     sum_amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
     start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     deadline: Mapped[date] = mapped_column(Date, nullable=False)

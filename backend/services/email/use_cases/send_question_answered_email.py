@@ -1,7 +1,7 @@
 "Use case: send question answered email."
 from schemas.email import QuestionAnsweredContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import greeting_for
+from services.email.formatting import escape_html, greeting_for, preview
 from services.email.repository import EmailRepository
 
 TEMPLATE = "question_answered"
@@ -24,11 +24,15 @@ class SendQuestionAnsweredEmailUseCase:
             return
 
         recipient = question.expert
-        order_title = question.order.title or "Заявка"
+        order_title = escape_html(question.order.title or "Заявка")
+        answer_line = preview(question.answer, 200)
         self.dispatcher.send_telegram(
             recipient,
             None,
-            f"🔔 <b>Ответ на ваш вопрос</b>\nЗаказчик ответил по заявке «{order_title}».\n\n{CTA_URL_TEMPLATE}",
+            f"💬 <b>Заказчик ответил на ваш вопрос</b>\n"
+            f"Заявка: «{order_title}»\n"
+            f"Ответ: «{answer_line}»\n\n"
+            f"Откройте приложение, чтобы продолжить.",
         )
         if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return

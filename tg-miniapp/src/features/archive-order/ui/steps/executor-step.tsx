@@ -1,12 +1,22 @@
-import { Field, InfoRow } from "@/shared/ui";
+import { useState } from "react";
+import { Button, Field, InfoRow } from "@/shared/ui";
 import { ExpertIcon } from "@/shared/ui/icons/expert";
 import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import type { Order } from "@/entites/order";
+import { LeaveReviewSheet } from "@/features/leave-review";
 import { FileRow } from "../file-row";
 import s from "./executor-step.module.scss";
 
-export function ExecutorStep({ order }: { order: Order }) {
+interface Props {
+  order: Order;
+  onReviewed: () => void;
+}
+
+export function ExecutorStep({ order, onReviewed }: Props) {
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const canReview = order.accepted_response_id !== null && !order.customer_has_review;
+
   return (
     <div className={s.wrap}>
       <div className={s.head}>
@@ -49,6 +59,20 @@ export function ExecutorStep({ order }: { order: Order }) {
           </div>
         </Field>
       )}
+
+      {canReview && (
+        <Button className={s.reviewBtn} onClick={() => setReviewOpen(true)}>
+          Оставить отзыв об исполнителе
+        </Button>
+      )}
+
+      <LeaveReviewSheet
+        open={reviewOpen}
+        responseId={order.accepted_response_id}
+        expertName={order.executor_name}
+        onClose={() => setReviewOpen(false)}
+        onSubmitted={onReviewed}
+      />
     </div>
   );
 }

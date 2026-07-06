@@ -107,13 +107,13 @@ export function Modal({
   useEffect(() => {
     if (!open) return;
     const root = document.documentElement;
-    const previousOverflow = document.body.style.overflow;
-    const previousScroll = root.style.scrollBehavior;
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-    root.style.scrollBehavior = "auto";
     return () => {
-      document.body.style.overflow = previousOverflow;
-      root.style.scrollBehavior = previousScroll;
+      root.style.overflow = prevRootOverflow;
+      document.body.style.overflow = prevBodyOverflow;
     };
   }, [open]);
 

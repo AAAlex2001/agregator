@@ -1,6 +1,6 @@
 
 "Repository: доступ к БД для orders."
-from sqlalchemy import delete, func, not_, or_, select
+from sqlalchemy import delete, func, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -90,10 +90,6 @@ class OrderRepository:
                 Order.status == OrderStatus.ACTIVE,
                 Order.assigned_expert_id.is_(None),
                 not_(responded),
-                or_(
-                    Order.visible_expert_ids.is_(None),
-                    Order.visible_expert_ids.contains([expert_id]),
-                ),
             )
             .order_by(Order.created_at.desc())
         )

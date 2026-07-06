@@ -218,7 +218,11 @@ export function HomePage() {
 
       <RespondSheet order={respondOrder} onClose={() => setRespondOrder(null)} />
 
-      <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
+      <ArchiveOrderSheet
+        order={archiveOrder}
+        onClose={() => setArchiveOrder(null)}
+        onReviewed={() => setRefreshKey((k) => k + 1)}
+      />
 
       <EditOrderSheet
         order={editOrder}

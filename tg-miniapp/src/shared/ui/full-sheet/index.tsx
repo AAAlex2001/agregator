@@ -22,7 +22,6 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
   const [closing, setClosing] = useState(false);
   const [frozen, setFrozen] = useState<Frozen>({ hero, footer, content: children });
   const scrollRef = useRef<HTMLDivElement>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -66,7 +65,7 @@ export function FullSheet({ open, onClose, hero, footer = null, scrollKey, child
 
   return (
     <div className={cn(s.overlay, { [s.closing]: closing })} onClick={onClose}>
-      <div className={cn(s.sheet, { [s.closing]: closing })} ref={sheetRef} onClick={(e) => e.stopPropagation()}>
+      <div className={cn(s.sheet, { [s.closing]: closing })} onClick={(e) => e.stopPropagation()}>
         {view.hero}
         <div className={s.scroll} ref={scrollRef}>
           <div className={s.panel}>{view.content}</div>

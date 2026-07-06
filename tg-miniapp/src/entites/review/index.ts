@@ -1,2 +1,8 @@
-export { fetchExpertReviews, type ReviewItem, type ReviewList } from "./model/api";
+export {
+  fetchExpertReviews,
+  createExpertReview,
+  type ReviewItem,
+  type ReviewList,
+  type CreateReviewPayload,
+} from "./model/api";
 export { ReviewCard } from "./ui/review-card";

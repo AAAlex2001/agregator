@@ -21,3 +21,13 @@ export interface ReviewList {
 export function fetchExpertReviews(publicId: string, limit = 50): Promise<ReviewList> {
   return apiJson<ReviewList>(`/experts/${publicId}/reviews?skip=0&limit=${limit}`);
 }
+
+export interface CreateReviewPayload {
+  response_id: number;
+  rating: number;
+  comment: string;
+}
+
+export function createExpertReview(payload: CreateReviewPayload): Promise<unknown> {
+  return apiJson("/reviews", { method: "POST", body: JSON.stringify(payload) });
+}

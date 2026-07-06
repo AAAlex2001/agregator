@@ -1,5 +1,4 @@
 import type { ExpertiseType } from "@/entites/expertise";
-import type { ExpertPickerItem } from "@/entites/expert";
 
 export type StringField = "title" | "sum" | "startDate" | "deadline" | "responsesDeadline" | "comment";
 export type FileKey = "technical" | "contract" | "company";
@@ -21,8 +20,6 @@ export interface CreateOrderState {
   comment: string;
   files: Record<FileKey, File | null>;
   otherFiles: File[];
-  visibleExperts: ExpertPickerItem[];
-  notifyExperts: boolean;
 }
 
 export type CreateOrderAction =
@@ -33,9 +30,6 @@ export type CreateOrderAction =
   | { type: "file"; key: FileKey; file: File | null }
   | { type: "addOther"; files: File[] }
   | { type: "removeOther"; index: number }
-  | { type: "addExpert"; expert: ExpertPickerItem }
-  | { type: "removeExpert"; id: number }
-  | { type: "notifyExperts"; value: boolean }
   | { type: "step"; value: number }
   | { type: "busy"; value: boolean }
   | { type: "done" }

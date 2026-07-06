@@ -21,9 +21,10 @@ const META: Record<StepKey, { title: string; desc: string; image: string }> = {
 interface Props {
   order: Order | null;
   onClose: () => void;
+  onReviewed?: () => void;
 }
 
-export function ArchiveOrderSheet({ order, onClose }: Props) {
+export function ArchiveOrderSheet({ order, onClose, onReviewed }: Props) {
   const [step, setStep] = useState(0);
   const { questions, canAnswer, drafts, setDraft, answer, answeringId } = useArchiveOrder(order);
 
@@ -102,7 +103,15 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
               onAnswer={(questionId) => void answer(questionId)}
             />
           )}
-          {current === "executor" && <ExecutorStep order={order} />}
+          {current === "executor" && (
+            <ExecutorStep
+              order={order}
+              onReviewed={() => {
+                onReviewed?.();
+                close();
+              }}
+            />
+          )}
         </div>
       )}
     </FullSheet>

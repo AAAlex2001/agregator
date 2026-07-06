@@ -3,7 +3,7 @@ from models.chat import ChatMessage
 from models.user import User
 from schemas.email import ChatMessageContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import full_name, greeting_for
+from services.email.formatting import escape_html, full_name, greeting_for, preview
 from services.email.repository import EmailRepository
 
 TEMPLATE = "chat_message"
@@ -34,13 +34,17 @@ class SendChatMessageEmailUseCase:
             return
 
         chat = message.chat
-        order_title = (chat.order.title if chat and chat.order else None) or "Заявка"
-        sender_name = full_name(message.sender) or "Собеседник"
+        order_title = escape_html((chat.order.title if chat and chat.order else None) or "Заявка")
+        sender_name = escape_html(full_name(message.sender) or "Собеседник")
+        message_line = preview(message.text, 120) or "(вложение)"
         self.dispatcher.send_telegram(
             recipient,
             None,
-            f"🔔 <b>Новое сообщение</b>\n{sender_name} написал по заявке «{order_title}».\n\n"
-            + CTA_URL_TEMPLATE.format(chat_uuid=chat.uuid),
+            f"💬 <b>Новое сообщение</b>\n"
+            f"От: {sender_name}\n"
+            f"Заявка: «{order_title}»\n"
+            f"«{message_line}»\n\n"
+            f"Откройте приложение, чтобы ответить.",
         )
         if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return
