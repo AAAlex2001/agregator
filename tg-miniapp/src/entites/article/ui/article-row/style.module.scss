@@ -28,6 +28,13 @@
   gap: 6px;
 }
 
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .title {
   font-size: 14px;
   font-weight: 700;
@@ -37,6 +44,21 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.likes {
+  flex: none;
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.like {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .excerpt {

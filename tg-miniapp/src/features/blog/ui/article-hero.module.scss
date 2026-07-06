@@ -40,8 +40,9 @@
   width: 56%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-end;
+  padding-top: 44px;
   text-align: right;
 }
 
@@ -51,7 +52,7 @@
   line-height: 1.2;
   color: #1a1a1a;
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
