@@ -6,13 +6,13 @@ import { notifyHaptic } from "@/shared/services/telegram";
 import { isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
 import { isEmail } from "@/shared/lib/email";
 import { passwordValid } from "@/shared/lib/password";
+import { CODE_LENGTH } from "@/shared/ui";
 import { type Role } from "@/shared/services/api";
 import { confirmEmail, registerLicenseHolder, registerUser, resendCode } from "@/entites/registration";
 import { initialState, reducer } from "./reducer";
 
 export type StepKey = "org" | "profile" | "license" | "docs" | "account" | "code";
 
-const CODE_LENGTH = 6;
 
 const FLOW: Record<Role, StepKey[]> = {
   CUSTOMER: ["org", "account", "code"],

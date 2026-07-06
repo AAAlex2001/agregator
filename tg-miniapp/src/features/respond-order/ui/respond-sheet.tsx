@@ -6,7 +6,7 @@ import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { OrderInfo, type Order } from "@/entites/order";
 import { useRespondForm } from "../model/use-respond-form";
 import { DocumentsStep } from "./steps/documents-step";
-import { QuestionsStep } from "./steps/questions-step";
+import { QuestionsStep } from "@/features/order-questions";
 import { ConfirmStep } from "./steps/confirm-step";
 import { OfferStep } from "./steps/offer-step";
 import s from "./respond-sheet.module.scss";

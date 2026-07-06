@@ -9,6 +9,7 @@ export interface ChatThreadState {
 
 export type ChatThreadAction =
   | { type: "loaded"; detail: ChatDetail }
+  | { type: "received"; message: ChatMessage }
   | { type: "text"; value: string }
   | { type: "addFiles"; files: File[] }
   | { type: "removeFile"; index: number }

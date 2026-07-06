@@ -1,4 +1,4 @@
-import type { ChatThreadAction, ChatThreadState } from "./thread-types";
+import type { ChatThreadAction, ChatThreadState } from "./types";
 
 export const initialState: ChatThreadState = {
   detail: null,
@@ -11,6 +11,9 @@ export function reducer(state: ChatThreadState, action: ChatThreadAction): ChatT
   switch (action.type) {
     case "loaded":
       return { ...state, detail: action.detail };
+    case "received":
+      if (!state.detail || state.detail.messages.some((m) => m.id === action.message.id)) return state;
+      return { ...state, detail: { ...state.detail, messages: [...state.detail.messages, action.message] } };
     case "text":
       return { ...state, text: action.value };
     case "addFiles":

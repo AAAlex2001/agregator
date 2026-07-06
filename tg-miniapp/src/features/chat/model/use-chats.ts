@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { listChats, type ChatListItem } from "@/entites/chat";
 
-export function useChats(pollMs = 30000) {
+export function useChats(active = true) {
   const [chats, setChats] = useState<ChatListItem[] | null>(null);
 
   const reload = async () => {
@@ -14,11 +14,9 @@ export function useChats(pollMs = 30000) {
   };
 
   useEffect(() => {
-    void reload();
-    const id = setInterval(() => void reload(), pollMs);
-    return () => clearInterval(id);
+    if (active) void reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pollMs]);
+  }, [active]);
 
   const unread = (chats ?? []).reduce((sum, chat) => sum + chat.unread_count, 0);
 

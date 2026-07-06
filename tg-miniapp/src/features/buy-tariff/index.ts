@@ -1,2 +1,2 @@
-export { useBuyTariff } from "./model/useBuyTariff";
-export { usePlans } from "./model/usePlans";
+export { useBuyTariff } from "./model/use-buy-tariff";
+export { usePlans } from "./model/use-plans";

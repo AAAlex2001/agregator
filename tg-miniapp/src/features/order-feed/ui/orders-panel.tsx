@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Spinner } from "@/shared/ui";
 import { OrderCard, type Order } from "@/entites/order";
-import { useOrders } from "../model/useOrders";
+import { useOrders } from "../model/use-orders";
 import s from "./orders-panel.module.scss";
 
 interface Props {

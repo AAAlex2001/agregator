@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { fetchOrderQuestions, askOrderQuestion } from "@/entites/order-question";
-import { initialState, reducer } from "./question-reducer";
+import { initialState, reducer } from "./reducer";
 
 export function useOrderQuestions(orderId: number) {
   const [state, dispatch] = useReducer(reducer, initialState);

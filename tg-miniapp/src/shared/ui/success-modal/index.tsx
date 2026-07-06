@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { notifyHaptic } from "@/shared/services/telegram";
-import { BottomSheet } from "@/shared/ui";
+import { BottomSheet } from "@/shared/ui/bottom-sheet";
 import { CheckIcon } from "@/shared/ui/icons/interface";
 import s from "./style.module.scss";
 

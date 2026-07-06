@@ -24,6 +24,12 @@ class SendQuestionAskedEmailUseCase:
             return
 
         recipient = question.order.customer
+        order_title = question.order.title or "Заявка"
+        self.dispatcher.send_telegram(
+            recipient,
+            PREFERENCE_FIELD,
+            f"🔔 <b>Новый вопрос по заказу</b>\nЭксперт задал вопрос по заявке «{order_title}».\n\n{CTA_URL_TEMPLATE}",
+        )
         if not self.dispatcher.can_send(recipient, PREFERENCE_FIELD):
             return
 

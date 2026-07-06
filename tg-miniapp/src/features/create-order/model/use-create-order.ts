@@ -7,8 +7,8 @@ import { createOrder } from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 import type { FileKey } from "./types";
 
-export const MAX_FILES = 6;
-export const MAX_FILES_TOTAL_BYTES = 100 * 1024 * 1024;
+const MAX_FILES = 6;
+const MAX_FILES_TOTAL_BYTES = 100 * 1024 * 1024;
 
 export type StepKey = "details" | "requirements" | "docs" | "confirm";
 

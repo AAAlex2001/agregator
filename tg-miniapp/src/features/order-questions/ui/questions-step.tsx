@@ -1,7 +1,7 @@
 import { Button, Field, Spinner, TextArea } from "@/shared/ui";
 import { Toggle } from "@/shared/ui/toggle";
 import { QuestionItem } from "@/entites/order-question";
-import { useOrderQuestions } from "../../model/use-order-questions";
+import { useOrderQuestions } from "../model/use-order-questions";
 import s from "./questions-step.module.scss";
 
 export function QuestionsStep({ orderId }: { orderId: number }) {

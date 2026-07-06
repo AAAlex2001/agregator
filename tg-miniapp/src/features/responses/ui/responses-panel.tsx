@@ -9,7 +9,7 @@ import {
   EmptyResponsesIcon,
 } from "@/shared/ui/icons/empty";
 import { ResponseCard, type ExpertResponse, type ResponseTab } from "@/entites/response";
-import { useResponses } from "../model/useResponses";
+import { useResponses } from "../model/use-responses";
 import { EditResponseSheet } from "./edit-response-sheet";
 import s from "./responses-panel.module.scss";
 

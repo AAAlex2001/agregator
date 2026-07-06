@@ -1,4 +1,4 @@
-import type { QuestionsAction, QuestionsState } from "./question-types";
+import type { QuestionsAction, QuestionsState } from "./types";
 
 export const initialState: QuestionsState = {
   items: null,

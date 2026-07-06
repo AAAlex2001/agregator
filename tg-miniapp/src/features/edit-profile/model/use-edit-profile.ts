@@ -3,7 +3,7 @@ import { useSession } from "@/features/session";
 import { confirmEmailChange, requestEmailChange, updateProfile } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { formatPhone, isPhoneComplete, phoneApiValue } from "@/shared/lib/phone";
-import { CODE_LENGTH } from "./constants";
+import { CODE_LENGTH } from "@/shared/ui";
 import { initialState, reducer } from "./reducer";
 import type { EditProfileKind } from "./types";
 

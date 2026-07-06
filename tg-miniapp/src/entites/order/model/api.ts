@@ -1,4 +1,5 @@
 import { apiJson } from "@/shared/services/api";
+import { toKopecks } from "@/shared/lib/format";
 import type { OrderList } from "./types";
 
 export const listOrders = (limit = 10) =>
@@ -34,7 +35,7 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   form.append("title", payload.title.trim());
   form.append("company", payload.company.trim());
   form.append("comment", payload.comment.trim());
-  form.append("sum_amount", payload.sumRubles ? String(Number(payload.sumRubles) * 100) : "0");
+  form.append("sum_amount", String(toKopecks(payload.sumRubles)));
   if (payload.startDate) form.append("start_date", payload.startDate);
   form.append("deadline", payload.deadline);
   if (payload.responsesDeadline) form.append("responses_deadline", `${payload.responsesDeadline}T23:59`);

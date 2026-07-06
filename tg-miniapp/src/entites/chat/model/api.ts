@@ -19,3 +19,9 @@ export function sendChatMessage(uuid: string, text: string, files: File[]): Prom
 export function markChatRead(uuid: string): Promise<unknown> {
   return apiJson(`/chats/${uuid}/read`, { method: "POST" });
 }
+
+export function chatSocketUrl(uuid: string): string {
+  const scheme = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${scheme}://${window.location.host}/api/ws/chats/${uuid}`;
+}
+

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ApiError, type Role } from "@/shared/services/api";
 import { emitError } from "@/shared/services/error-bus";
 import { useSession } from "./session";
-import { initialState, reducer } from "./auth-reducer";
+import { initialState, reducer } from "./reducer";
 
 function rolesFrom409(error: unknown): Role[] | null {
   if (!(error instanceof ApiError) || error.status !== 409) return null;

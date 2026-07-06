@@ -1,13 +1,15 @@
 import cn from "classnames";
 import s from "./style.module.scss";
 
+export const CODE_LENGTH = 6;
+
 interface Props {
   length?: number;
   value: string;
   onChange: (value: string) => void;
 }
 
-export function CodeInput({ length = 6, value, onChange }: Props) {
+export function CodeInput({ length = CODE_LENGTH, value, onChange }: Props) {
   const digits = value.split("");
 
   return (

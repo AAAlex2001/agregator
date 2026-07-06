@@ -1,11 +1,12 @@
 import { Button, Checkbox, Field, Select } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { CloseIcon } from "@/shared/ui/icons/interface";
+import { TYPES } from "@/entites/expertise";
 import { type StepProps } from "./types";
 import s from "./attestation.module.scss";
 
 const AREAS = Array.from({ length: 15 }, (_, i) => ({ key: `Э${i + 1}`, label: `Э${i + 1}` }));
-const OBJECTS = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"].map((v) => ({ key: v, label: v }));
+const OBJECTS = TYPES.map((v) => ({ key: v, label: v }));
 const CATEGORIES = ["1", "2", "3"].map((v) => ({ key: v, label: `${v} категория` }));
 
 const MAP_FIELDS = [

@@ -1,4 +1,4 @@
-export { listChats, getChat, sendChatMessage, markChatRead } from "./model/api";
+export { listChats, getChat, sendChatMessage, markChatRead, chatSocketUrl } from "./model/api";
 export type {
   ChatList,
   ChatListItem,

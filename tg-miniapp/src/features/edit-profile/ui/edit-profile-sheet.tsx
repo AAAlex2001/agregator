@@ -1,8 +1,6 @@
-import { Button, Card, CodeInput, FullSheet, SheetHero, TextField } from "@/shared/ui";
-import { SuccessModal } from "@/widgets/success-modal";
+import { Button, Card, CodeInput, CODE_LENGTH, FullSheet, SheetHero, SuccessModal, TextField } from "@/shared/ui";
 import { tapHaptic } from "@/shared/services/telegram";
 import { PHONE_PLACEHOLDER, formatPhone } from "@/shared/lib/phone";
-import { CODE_LENGTH } from "../model/constants";
 import { useEditProfile } from "../model/use-edit-profile";
 import type { EditProfileKind } from "../model/types";
 import s from "./edit-profile-sheet.module.scss";

@@ -15,6 +15,7 @@ async def send_telegram_message(chat_id: int, text: str) -> None:
     "Шлёт сообщение через Telegram Bot API с ретраями. Ошибки доставки только в лог."
     token = telegram_config.telegram_bot_token
     if not token:
+        logger.warning("TELEGRAM_BOT_TOKEN не задан — Telegram-уведомление chat_id=%s пропущено", chat_id)
         return
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {

@@ -1,4 +1,4 @@
-import type { EditResponseAction, EditResponseState } from "./edit-types";
+import type { EditResponseAction, EditResponseState } from "./types";
 
 export const initialState: EditResponseState = {
   startDate: "",

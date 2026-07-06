@@ -3,7 +3,7 @@ import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { toKopecks } from "@/shared/lib/format";
 import { editResponse, type ExpertResponse } from "@/entites/response";
-import { initialState, reducer } from "./edit-reducer";
+import { initialState, reducer } from "./reducer";
 
 export function useEditResponse(response: ExpertResponse | null, onSaved: () => void) {
   const [state, dispatch] = useReducer(reducer, initialState);

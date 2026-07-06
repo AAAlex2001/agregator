@@ -46,7 +46,7 @@ export function HomePage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [respSort, setRespSort] = useState<SortChoice>(RESPONSE_SORTS[0]);
   const [chatOpen, setChatOpen] = useState(false);
-  const { unread: chatUnread } = useChats(60000);
+  const chatBadge = useChats();
 
   const isExpert = role === "EXPERT";
 
@@ -71,7 +71,7 @@ export function HomePage() {
             }}
           >
             <ChatIcon width={22} height={22} />
-            {chatUnread > 0 && <span className={s.chatBadge}>{chatUnread > 99 ? "99+" : chatUnread}</span>}
+            {chatBadge.unread > 0 && <span className={s.chatBadge}>{chatBadge.unread > 99 ? "99+" : chatBadge.unread}</span>}
           </button>
           <button
             className={s.iconBtn}
@@ -211,7 +211,13 @@ export function HomePage() {
 
       <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
 
-      <ChatSheet open={chatOpen} onClose={() => setChatOpen(false)} />
+      <ChatSheet
+        open={chatOpen}
+        onClose={() => {
+          setChatOpen(false);
+          void chatBadge.reload();
+        }}
+      />
 
       {!isExpert && (
         <>

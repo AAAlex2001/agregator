@@ -2,9 +2,10 @@ import { Field, Select, TextField } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import { CompanySuggest } from "@/entites/party";
 import { type RentalKind } from "@/entites/registration";
+import { TYPES } from "@/entites/expertise";
 import { type StepProps } from "./types";
 
-const AREAS = ["КЛ", "ТП", "КЛ/ТП", "ЗС", "ТУ", "Д", "ОБ"].map((v) => ({ key: v, label: v }));
+const AREAS = TYPES.map((v) => ({ key: v, label: v }));
 
 const RENTAL: { key: RentalKind; label: string }[] = [
   { key: "PERCENT", label: "% от договора" },

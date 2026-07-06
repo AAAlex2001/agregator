@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "@/features/session";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Button, EmptyState, FullSheet, SheetHero, Spinner } from "@/shared/ui";
-import { ArrowLeftIcon, ChatIcon, CloseIcon, PaperclipIcon, SendIcon } from "@/shared/ui/icons/interface";
+import { ArrowLeftIcon, CloseIcon, PaperclipIcon, SendIcon } from "@/shared/ui/icons/interface";
+import { EmptyAcceptedIcon } from "@/shared/ui/icons/empty";
 import { formatDayRu } from "@/shared/lib/format";
 import { ChatCard, MessageBubble, type ChatListItem, type ChatMessage } from "@/entites/chat";
 import { useChats } from "../model/use-chats";
@@ -31,7 +32,7 @@ interface Props {
 export function ChatSheet({ open, onClose }: Props) {
   const { role } = useSession();
   const [active, setActive] = useState<ChatListItem | null>(null);
-  const { chats, reload } = useChats(30000);
+  const { chats, reload } = useChats(open);
   const { state, dispatch, canSend, send } = useChatThread(active?.uuid ?? null);
   const endRef = useRef<HTMLDivElement>(null);
   const messagesCount = state.detail?.messages.length ?? 0;
@@ -155,7 +156,7 @@ export function ChatSheet({ open, onClose }: Props) {
           </div>
         ) : chats.length === 0 ? (
           <EmptyState
-            icon={<ChatIcon width={40} height={40} />}
+            icon={<EmptyAcceptedIcon />}
             title="Пока нет чатов"
             subtitle="Чат появится, когда по заказу начнётся общение с экспертом или заказчиком"
           />
