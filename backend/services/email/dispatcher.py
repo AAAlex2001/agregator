@@ -15,21 +15,22 @@ from utils.request_context import request_id_var
 logger = logging.getLogger(__name__)
 
 UNSUBSCRIBE_MARKER = "\nВы получили это письмо"
+SIGNATURE = "—\nРесурс-Плюс · plus-resurs.com"
 
 
 def telegram_text(email_text: str, cta: str) -> str:
-    "Текст письма (.txt-версия) → Telegram: без ссылок и подписи, с подсказкой открыть приложение."
+    "Текст письма (.txt-версия) → Telegram: без ссылок-переходов, с подсказкой открыть приложение."
     body = email_text.split(UNSUBSCRIBE_MARKER)[0]
     lines = [
         line
         for line in body.splitlines()
-        if "plus-resurs.com" not in line and line.strip() != "—"
+        if "https://" not in line and line.strip() not in {"—", "Ресурс-Плюс · plus-resurs.com"}
     ]
     text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
     first_line, _, rest = text.partition("\n")
     heading = f"<b>{html.escape(first_line)}</b>"
     body_part = f"{heading}\n{html.escape(rest.strip())}" if rest.strip() else heading
-    return f"{body_part}\n\n{html.escape(cta)}"
+    return f"{body_part}\n\n{html.escape(cta)}\n\n{SIGNATURE}"
 
 
 async def deliver_email_task(
