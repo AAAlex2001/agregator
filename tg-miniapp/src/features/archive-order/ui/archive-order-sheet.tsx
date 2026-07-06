@@ -25,7 +25,7 @@ interface Props {
 
 export function ArchiveOrderSheet({ order, onClose }: Props) {
   const [step, setStep] = useState(0);
-  const { questions } = useArchiveOrder(order);
+  const { questions, canAnswer, drafts, setDraft, answer, answeringId } = useArchiveOrder(order);
 
   useEffect(() => {
     if (!order) return;
@@ -92,7 +92,16 @@ export function ArchiveOrderSheet({ order, onClose }: Props) {
         <div className={s.body}>
           {current === "order" && <OrderInfo order={order} />}
           {current === "docs" && <DocsStep docs={docs} />}
-          {current === "questions" && <QuestionsStep questions={questions ?? []} />}
+          {current === "questions" && (
+            <QuestionsStep
+              questions={questions ?? []}
+              canAnswer={canAnswer}
+              drafts={drafts}
+              answeringId={answeringId}
+              onDraft={setDraft}
+              onAnswer={(questionId) => void answer(questionId)}
+            />
+          )}
           {current === "executor" && <ExecutorStep order={order} />}
         </div>
       )}

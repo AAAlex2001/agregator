@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Screen } from "@/widgets/app-shell";
-import { SortSheet, type SortChoice } from "@/shared/ui";
+import { SortSheet, Spinner, type SortChoice } from "@/shared/ui";
 import { SortIcon } from "@/shared/ui/icons/interface";
 import { tapHaptic } from "@/shared/services/telegram";
-import { ExpertCard, ExpertCardSkeleton, listExperts, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
-import { ExpertReviewsSheet } from "@/features/expert-reviews";
+import { ExpertCard, type ExpertSortBy, type ExpertSummary } from "@/entites/expert";
+import { ExpertReviewsSheet, useExpertsList } from "@/features/expert-reviews";
 import s from "./style.module.scss";
 
 const EXPERT_SORTS: SortChoice[] = [
@@ -19,19 +19,8 @@ const EXPERT_SORTS: SortChoice[] = [
 export function ExpertsReviewsPage() {
   const [sort, setSort] = useState<SortChoice>(EXPERT_SORTS[0]);
   const [sortOpen, setSortOpen] = useState(false);
-  const [items, setItems] = useState<ExpertSummary[] | null>(null);
   const [selected, setSelected] = useState<ExpertSummary | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    setItems(null);
-    listExperts(sort.key as ExpertSortBy, sort.dir)
-      .then((r) => active && setItems(r.items))
-      .catch(() => active && setItems([]));
-    return () => {
-      active = false;
-    };
-  }, [sort]);
+  const { items } = useExpertsList(sort.key as ExpertSortBy, sort.dir);
 
   return (
     <Screen title="Отзывы экспертов" panel>
@@ -51,10 +40,8 @@ export function ExpertsReviewsPage() {
         </div>
 
         {items === null ? (
-          <div className={s.list}>
-            {[0, 1, 2, 3].map((n) => (
-              <ExpertCardSkeleton key={n} />
-            ))}
+          <div className={s.loading}>
+            <Spinner />
           </div>
         ) : items.length === 0 ? (
           <p className={s.empty}>Пока нет экспертов с отзывами</p>

@@ -99,3 +99,15 @@
   font-size: 12px;
   font-weight: 600;
 }
+
+.editBtn {
+  height: 42px;
+}
+
+.editRow {
+  display: flex;
+}
+
+.editRow .editBtn {
+  flex: 1;
+}

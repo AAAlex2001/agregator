@@ -82,3 +82,15 @@
   overflow: hidden;
   padding: 0 14px;
 }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actionBtn {
+  flex: 1 1 auto;
+  min-width: 120px;
+  height: 42px;
+}

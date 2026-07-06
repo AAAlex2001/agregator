@@ -1,11 +1,17 @@
 import cn from "classnames";
-import { Card } from "@/shared/ui";
+import { Button, Card } from "@/shared/ui";
 import { formatDeadline } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
 import { CUSTOMER_STATUS_LABEL, customerOrderStatus } from "../../model/customer-status";
 import s from "./style.module.scss";
 
-export function CustomerOrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
+interface Props {
+  order: Order;
+  onClick: () => void;
+  onEdit?: (order: Order) => void;
+}
+
+export function CustomerOrderCard({ order, onClick, onEdit }: Props) {
   const status = customerOrderStatus(order);
 
   return (
@@ -33,6 +39,14 @@ export function CustomerOrderCard({ order, onClick }: { order: Order; onClick: (
             </span>
           ))}
           {order.badges.length > 4 && <span className={s.badge}>+{order.badges.length - 4}</span>}
+        </div>
+      )}
+
+      {onEdit && status === "active" && (
+        <div className={s.editRow} onClick={(e) => e.stopPropagation()}>
+          <Button className={s.editBtn} variant="outline" onClick={() => onEdit(order)}>
+            Редактировать
+          </Button>
         </div>
       )}
     </Card>

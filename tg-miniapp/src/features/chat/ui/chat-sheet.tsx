@@ -4,42 +4,29 @@ import { tapHaptic } from "@/shared/services/telegram";
 import { Button, EmptyState, FullSheet, SheetHero, Spinner } from "@/shared/ui";
 import { ArrowLeftIcon, CloseIcon, PaperclipIcon, SendIcon } from "@/shared/ui/icons/interface";
 import { EmptyAcceptedIcon } from "@/shared/ui/icons/empty";
-import { formatDayRu } from "@/shared/lib/format";
-import { ChatCard, MessageBubble, type ChatListItem, type ChatMessage } from "@/entites/chat";
+import { ChatCard, MessageBubble, type ChatListItem } from "@/entites/chat";
 import { useChats } from "../model/use-chats";
 import { useChatThread } from "../model/use-chat-thread";
+import { groupMessagesByDay } from "../model/group-messages";
 import s from "./chat-sheet.module.scss";
-
-function groupByDay(messages: ChatMessage[]): { day: string; items: ChatMessage[] }[] {
-  const groups: { day: string; items: ChatMessage[] }[] = [];
-  for (const message of messages) {
-    const day = formatDayRu(message.created_at);
-    const last = groups[groups.length - 1];
-    if (last && last.day === day) {
-      last.items.push(message);
-    } else {
-      groups.push({ day, items: [message] });
-    }
-  }
-  return groups;
-}
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  initialUuid?: string | null;
 }
 
-export function ChatSheet({ open, onClose }: Props) {
+export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
   const { role } = useSession();
-  const [active, setActive] = useState<ChatListItem | null>(null);
+  const [active, setActive] = useState<string | null>(null);
   const { chats, reload } = useChats(open);
-  const { state, dispatch, canSend, send } = useChatThread(active?.uuid ?? null);
+  const { state, dispatch, canSend, send } = useChatThread(active);
   const endRef = useRef<HTMLDivElement>(null);
   const messagesCount = state.detail?.messages.length ?? 0;
 
   useEffect(() => {
-    if (open) setActive(null);
-  }, [open]);
+    if (open) setActive(initialUuid);
+  }, [open, initialUuid]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -52,7 +39,7 @@ export function ChatSheet({ open, onClose }: Props) {
 
   const openThread = (chat: ChatListItem) => {
     tapHaptic();
-    setActive(chat);
+    setActive(chat.uuid);
   };
 
   const backToList = () => {
@@ -176,7 +163,7 @@ export function ChatSheet({ open, onClose }: Props) {
           {state.detail.messages.length === 0 && (
             <p className={s.threadEmpty}>Сообщений пока нет — напишите первым</p>
           )}
-          {groupByDay(state.detail.messages).map((group) => (
+          {groupMessagesByDay(state.detail.messages).map((group) => (
             <div key={group.day} className={s.dayGroup}>
               <span className={s.day}>{group.day}</span>
               {group.items.map((message) => (

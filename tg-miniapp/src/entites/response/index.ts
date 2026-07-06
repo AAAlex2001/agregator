@@ -1,5 +1,15 @@
-export { listResponses, withdrawResponse, restoreResponse, editResponse } from "./model/api";
-export { statusMeta, canWithdraw, canRestore, canEdit } from "./model/status";
+export { listResponses, withdrawResponse, restoreResponse, editResponse, setResponseStatus } from "./model/api";
+export {
+  statusMeta,
+  canWithdraw,
+  canRestore,
+  canEdit,
+  customerCanAccept,
+  customerCanReject,
+  customerCanComplete,
+  customerCanReturn,
+  customerCanChat,
+} from "./model/status";
 export { VAT_LABEL } from "./model/types";
 export type {
   ExpertResponse,

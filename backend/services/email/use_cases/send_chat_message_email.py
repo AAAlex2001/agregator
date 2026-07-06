@@ -38,7 +38,7 @@ class SendChatMessageEmailUseCase:
         sender_name = full_name(message.sender) or "Собеседник"
         self.dispatcher.send_telegram(
             recipient,
-            PREFERENCE_FIELD,
+            None,
             f"🔔 <b>Новое сообщение</b>\n{sender_name} написал по заявке «{order_title}».\n\n"
             + CTA_URL_TEMPLATE.format(chat_uuid=chat.uuid),
         )

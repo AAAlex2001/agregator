@@ -7,4 +7,3 @@ export {
   type ExpertPickerItem,
 } from "./model/api";
 export { ExpertCard } from "./ui/expert-card";
-export { ExpertCardSkeleton } from "./ui/expert-card-skeleton";

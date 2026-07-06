@@ -38,7 +38,7 @@ class SendOrderUpdatedEmailUseCase:
             self.dispatcher.dispatch(expert.email, TEMPLATE, SUBJECT, context)
             self.dispatcher.send_telegram(
                 expert,
-                PREFERENCE_FIELD,
+                None,
                 f"🔔 <b>Заявка изменилась</b>\nИзменения по заявке «{order_title}».\n\n{CTA_URL}",
             )
 

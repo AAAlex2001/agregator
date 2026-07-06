@@ -20,8 +20,10 @@ export function useRoleSwitch() {
     dispatch({ type: "open", target: next });
   };
 
+  const canConfirm = state.password.length >= 6;
+
   const confirm = async () => {
-    if (!state.target) return;
+    if (!state.target || !canConfirm) return;
     dispatch({ type: "busy", value: true });
     try {
       await switchRole(state.target, state.password);
@@ -34,5 +36,5 @@ export function useRoleSwitch() {
     }
   };
 
-  return { role, availableRoles, state, dispatch, pick, confirm };
+  return { role, availableRoles, state, dispatch, pick, confirm, canConfirm };
 }

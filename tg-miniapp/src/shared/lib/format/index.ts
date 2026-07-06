@@ -13,6 +13,12 @@ export function formatDateRu(iso: string): string {
   return `${day}.${month}.${year}`;
 }
 
+export function parseDateRu(display: string): string {
+  const [day, month, year] = display.split(".");
+  if (!day || !month || !year) return "";
+  return `${year}-${month}-${day}`;
+}
+
 export function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} Б`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} КБ`;

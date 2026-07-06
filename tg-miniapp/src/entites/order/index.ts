@@ -2,8 +2,10 @@ export {
   listOrders,
   listArchivedOrders,
   createOrder,
+  updateOrder,
   type CreateOrderPayload,
   type CreateOrderFiles,
+  type UpdateOrderPayload,
 } from "./model/api";
 export type { Order, OrderBadge, OrderDocuments, OrderList } from "./model/types";
 export {

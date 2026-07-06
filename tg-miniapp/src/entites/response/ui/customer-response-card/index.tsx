@@ -1,12 +1,29 @@
-import { Card, InfoRow } from "@/shared/ui";
+import { Button, Card, InfoRow } from "@/shared/ui";
 import { ExpertIcon } from "@/shared/ui/icons/expert";
 import { ReviewStarIcon } from "@/shared/ui/icons/interface";
 import { pluralRu } from "@/shared/lib/format";
 import { VAT_LABEL, type ExpertResponse } from "../../model/types";
-import { statusMeta } from "../../model/status";
+import {
+  statusMeta,
+  customerCanAccept,
+  customerCanReject,
+  customerCanComplete,
+  customerCanReturn,
+  customerCanChat,
+} from "../../model/status";
 import s from "./style.module.scss";
 
-export function CustomerResponseCard({ response }: { response: ExpertResponse }) {
+interface Props {
+  response: ExpertResponse;
+  busy: boolean;
+  onAccept: (response: ExpertResponse) => void;
+  onReject: (response: ExpertResponse) => void;
+  onComplete: (id: number) => void;
+  onReturn: (id: number) => void;
+  onChat: (response: ExpertResponse) => void;
+}
+
+export function CustomerResponseCard({ response, busy, onAccept, onReject, onComplete, onReturn, onChat }: Props) {
   const meta = statusMeta(response.status);
 
   return (
@@ -39,6 +56,34 @@ export function CustomerResponseCard({ response }: { response: ExpertResponse })
         <InfoRow label="Предложение" value={`${response.proposed_sum} · ${VAT_LABEL[response.vat_kind]}`} accent />
         <InfoRow label="Начальная цена" value={response.order_sum} />
         <InfoRow label="Сроки работ" value={`до ${response.proposed_deadline}`} />
+      </div>
+
+      <div className={s.actions}>
+        {customerCanAccept(response.status) && (
+          <Button className={s.actionBtn} loading={busy} onClick={() => onAccept(response)}>
+            Принять
+          </Button>
+        )}
+        {customerCanChat(response.status) && (
+          <Button className={s.actionBtn} loading={busy} onClick={() => onChat(response)}>
+            Чат
+          </Button>
+        )}
+        {customerCanComplete(response.status) && (
+          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onComplete(response.id)}>
+            Завершить
+          </Button>
+        )}
+        {customerCanReject(response.status) && (
+          <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onReject(response)}>
+            Отклонить
+          </Button>
+        )}
+        {customerCanReturn(response.status) && (
+          <Button className={s.actionBtn} loading={busy} onClick={() => onReturn(response.id)}>
+            Вернуть
+          </Button>
+        )}
       </div>
     </Card>
   );

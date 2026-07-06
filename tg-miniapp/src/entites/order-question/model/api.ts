@@ -26,3 +26,9 @@ export const askOrderQuestion = (orderId: number, question: string, isAnonymous:
     method: "POST",
     body: JSON.stringify({ question, is_anonymous: isAnonymous }),
   });
+
+export const answerOrderQuestion = (questionId: number, answer: string) =>
+  apiJson<OrderQuestion>(`/questions/${questionId}/answer`, {
+    method: "PATCH",
+    body: JSON.stringify({ answer }),
+  });

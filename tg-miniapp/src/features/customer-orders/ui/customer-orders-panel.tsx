@@ -15,10 +15,11 @@ interface Props {
   view: "orders" | "archive";
   refreshKey: number;
   onOpen: (order: Order) => void;
+  onEdit: (order: Order) => void;
   emptyActive: ReactNode;
 }
 
-export function CustomerOrdersPanel({ view, refreshKey, onOpen, emptyActive }: Props) {
+export function CustomerOrdersPanel({ view, refreshKey, onOpen, onEdit, emptyActive }: Props) {
   const { tab, setTab, items } = useCustomerOrders(view, refreshKey);
 
   return (
@@ -51,7 +52,7 @@ export function CustomerOrdersPanel({ view, refreshKey, onOpen, emptyActive }: P
             view === "archive" ? (
               <OrderCard key={order.id} order={order} onClick={() => onOpen(order)} />
             ) : (
-              <CustomerOrderCard key={order.id} order={order} onClick={() => onOpen(order)} />
+              <CustomerOrderCard key={order.id} order={order} onClick={() => onOpen(order)} onEdit={onEdit} />
             ),
           )}
         </div>

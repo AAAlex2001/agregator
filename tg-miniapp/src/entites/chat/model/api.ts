@@ -16,6 +16,13 @@ export function sendChatMessage(uuid: string, text: string, files: File[]): Prom
   return apiJson<ChatMessage>(`/chats/${uuid}/messages`, { method: "POST", body: form });
 }
 
+export function openChatByOrder(orderId: number): Promise<ChatDetail> {
+  return apiJson<ChatDetail>("/chats/open", {
+    method: "POST",
+    body: JSON.stringify({ order_id: orderId }),
+  });
+}
+
 export function markChatRead(uuid: string): Promise<unknown> {
   return apiJson(`/chats/${uuid}/read`, { method: "POST" });
 }

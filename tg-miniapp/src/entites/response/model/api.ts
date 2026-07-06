@@ -19,6 +19,12 @@ export function restoreResponse(id: number): Promise<unknown> {
   return apiJson(`/responses/${id}/restore`, { method: "POST" });
 }
 
+export function setResponseStatus(id: number, status: string, reason?: string): Promise<unknown> {
+  const form = new FormData();
+  if (reason) form.append("rejection_reason", reason);
+  return apiJson(`/responses/${id}/status?new_status=${status}`, { method: "PATCH", body: form });
+}
+
 export function editResponse(id: number, data: EditResponseData): Promise<unknown> {
   const form = new FormData();
   form.append("comment", data.comment);

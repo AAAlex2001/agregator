@@ -1,5 +1,5 @@
-import { type ReactNode } from "react";
-import { EmptyState, Spinner } from "@/shared/ui";
+import { useState, type ReactNode } from "react";
+import { BottomSheet, Button, EmptyState, Spinner, TextArea } from "@/shared/ui";
 import { Tabs } from "@/shared/ui/tabs";
 import {
   EmptyAcceptedIcon,
@@ -8,7 +8,13 @@ import {
   EmptyRejectedIcon,
   EmptyResponsesIcon,
 } from "@/shared/ui/icons/empty";
-import { CustomerResponseCard, type CustomerSortBy, type ResponseTab, type SortDir } from "@/entites/response";
+import {
+  CustomerResponseCard,
+  type CustomerSortBy,
+  type ExpertResponse,
+  type ResponseTab,
+  type SortDir,
+} from "@/entites/response";
 import { useCustomerResponses } from "../model/use-customer-responses";
 import s from "./customer-responses-panel.module.scss";
 
@@ -51,10 +57,24 @@ const EMPTY_META: Record<string, { icon: ReactNode; title: string; subtitle: str
 interface Props {
   sortBy: CustomerSortBy;
   sortDir: SortDir;
+  onOpenChat: (uuid: string) => void;
 }
 
-export function CustomerResponsesPanel({ sortBy, sortDir }: Props) {
-  const { tab, setTab, items, counters } = useCustomerResponses(sortBy, sortDir);
+export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat }: Props) {
+  const r = useCustomerResponses(sortBy, sortDir, onOpenChat);
+  const [rejectTarget, setRejectTarget] = useState<ExpertResponse | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+
+  const openReject = (response: ExpertResponse) => {
+    setRejectReason("");
+    setRejectTarget(response);
+  };
+
+  const confirmReject = async () => {
+    if (!rejectTarget) return;
+    const done = await r.reject(rejectTarget.id, rejectReason);
+    if (done) setRejectTarget(null);
+  };
 
   return (
     <div className={s.wrap}>
@@ -62,25 +82,55 @@ export function CustomerResponsesPanel({ sortBy, sortDir }: Props) {
         tabs={TAB_LABELS.map((t) => ({
           key: t.key,
           label: t.label,
-          badge: counters && counters[t.key] > 0 ? String(counters[t.key]) : undefined,
+          badge: r.counters && r.counters[t.key] > 0 ? String(r.counters[t.key]) : undefined,
         }))}
-        active={tab}
-        onChange={(key) => setTab(key as ResponseTab)}
+        active={r.tab}
+        onChange={(key) => r.setTab(key as ResponseTab)}
       />
 
-      {items === null ? (
+      {r.items === null ? (
         <div className={s.loading}>
           <Spinner />
         </div>
-      ) : items.length === 0 ? (
-        <EmptyState {...EMPTY_META[tab]} />
+      ) : r.items.length === 0 ? (
+        <EmptyState {...EMPTY_META[r.tab]} />
       ) : (
         <div className={s.list}>
-          {items.map((response) => (
-            <CustomerResponseCard key={response.id} response={response} />
+          {r.items.map((response) => (
+            <CustomerResponseCard
+              key={response.id}
+              response={response}
+              busy={r.busyId === response.id}
+              onAccept={r.accept}
+              onReject={openReject}
+              onComplete={r.complete}
+              onReturn={r.returnToReview}
+              onChat={r.openChat}
+            />
           ))}
         </div>
       )}
+
+      <BottomSheet open={rejectTarget !== null} title="Отклонить отклик" onClose={() => setRejectTarget(null)}>
+        <div className={s.reject}>
+          <p className={s.rejectHint}>
+            Эксперт {rejectTarget?.expert_name} получит уведомление. Можно указать причину — она видна эксперту.
+          </p>
+          <TextArea
+            placeholder="Причина отклонения (необязательно)…"
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+          />
+          <div className={s.rejectActions}>
+            <Button variant="outline" onClick={() => setRejectTarget(null)}>
+              Отмена
+            </Button>
+            <Button loading={r.busyId === rejectTarget?.id} onClick={() => void confirmReject()}>
+              Отклонить
+            </Button>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 }

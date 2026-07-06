@@ -75,7 +75,7 @@ class SendBiddingFinishedEmailUseCase:
             tg_text = f"🔔 <b>Вы победили!</b>\nПо заявке «{order_title}» заказчик выбрал вас.\n\n{CTA_URL}"
         else:
             tg_text = f"🔔 <b>Торги завершены</b>\nПо заявке «{order_title}» выбран другой исполнитель.\n\n{CTA_URL}"
-        self.dispatcher.send_telegram(expert, PREFERENCE_FIELD, tg_text)
+        self.dispatcher.send_telegram(expert, None, tg_text)
 
         if not self.dispatcher.can_send(expert, PREFERENCE_FIELD):
             return

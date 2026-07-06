@@ -11,7 +11,7 @@ const LABEL: Record<Role, string> = {
 };
 
 export function RoleTabs() {
-  const { role, availableRoles, state, dispatch, pick, confirm } = useRoleSwitch();
+  const { role, availableRoles, state, dispatch, pick, confirm, canConfirm } = useRoleSwitch();
 
   if (!role || availableRoles.length < 2) return null;
 
@@ -41,7 +41,7 @@ export function RoleTabs() {
             <Button variant="outline" onClick={() => dispatch({ type: "close" })}>
               Отмена
             </Button>
-            <Button onClick={() => void confirm()} loading={state.busy} disabled={state.password.length < 6}>
+            <Button onClick={() => void confirm()} loading={state.busy} disabled={!canConfirm}>
               Войти
             </Button>
           </div>

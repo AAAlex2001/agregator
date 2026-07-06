@@ -10,6 +10,7 @@ import { CustomerOrdersPanel } from "@/features/customer-orders";
 import { CustomerResponsesPanel } from "@/features/customer-responses";
 import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
+import { EditOrderSheet } from "@/features/edit-order";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
@@ -46,7 +47,14 @@ export function HomePage() {
   const [sortOpen, setSortOpen] = useState(false);
   const [respSort, setRespSort] = useState<SortChoice>(RESPONSE_SORTS[0]);
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatUuid, setChatUuid] = useState<string | null>(null);
+  const [editOrder, setEditOrder] = useState<Order | null>(null);
   const chatBadge = useChats();
+
+  const openChatThread = (uuid: string) => {
+    setChatUuid(uuid);
+    setChatOpen(true);
+  };
 
   const isExpert = role === "EXPERT";
 
@@ -171,12 +179,13 @@ export function HomePage() {
             </div>
           </div>
           {view === "responses" ? (
-            <CustomerResponsesPanel sortBy={respSort.key as CustomerSortBy} sortDir={respSort.dir as SortDir} />
+            <CustomerResponsesPanel sortBy={respSort.key as CustomerSortBy} sortDir={respSort.dir as SortDir} onOpenChat={openChatThread} />
           ) : (
             <CustomerOrdersPanel
               view={view}
               refreshKey={refreshKey}
               onOpen={setArchiveOrder}
+              onEdit={setEditOrder}
               emptyActive={
                 <EmptyState
                   icon={<EmptyOrdersIcon />}
@@ -211,10 +220,21 @@ export function HomePage() {
 
       <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
 
+      <EditOrderSheet
+        order={editOrder}
+        onClose={() => setEditOrder(null)}
+        onSaved={() => {
+          setEditOrder(null);
+          setRefreshKey((k) => k + 1);
+        }}
+      />
+
       <ChatSheet
         open={chatOpen}
+        initialUuid={chatUuid}
         onClose={() => {
           setChatOpen(false);
+          setChatUuid(null);
           void chatBadge.reload();
         }}
       />

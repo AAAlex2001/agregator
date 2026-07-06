@@ -30,3 +30,23 @@ export function canRestore(status: ResponseStatus): boolean {
 export function canEdit(status: ResponseStatus): boolean {
   return status === "REVIEW";
 }
+
+export function customerCanAccept(status: ResponseStatus): boolean {
+  return status === "REVIEW" || status === "IN_PROGRESS";
+}
+
+export function customerCanReject(status: ResponseStatus): boolean {
+  return status === "REVIEW" || status === "ACCEPTED" || status === "IN_PROGRESS";
+}
+
+export function customerCanComplete(status: ResponseStatus): boolean {
+  return status === "ACCEPTED" || status === "IN_PROGRESS";
+}
+
+export function customerCanReturn(status: ResponseStatus): boolean {
+  return status === "REJECTED";
+}
+
+export function customerCanChat(status: ResponseStatus): boolean {
+  return status === "ACCEPTED" || status === "IN_PROGRESS";
+}
