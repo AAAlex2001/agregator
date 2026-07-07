@@ -46,7 +46,7 @@ export function useRegister(role: Role | null) {
 
   const stepReady: Record<StepKey, boolean> = {
     org: Boolean(state.party?.data.inn),
-    profile: state.firstName.trim() !== "" && state.lastName.trim() !== "" && state.attested,
+    profile: state.firstName.trim() !== "" && state.lastName.trim() !== "",
     license:
       Boolean(state.party?.data.inn) &&
       state.licenseNumber.trim() !== "" &&
@@ -104,7 +104,6 @@ export function useRegister(role: Role | null) {
           location_address: isExpert && state.locationAddress ? state.locationAddress : undefined,
           location_city: isExpert && state.locationCity ? state.locationCity : undefined,
           travels_to_other_regions: isExpert ? state.travels : undefined,
-          expert_is_attested: isExpert ? state.attested : undefined,
           expert_certificates: attested && state.certificates.length ? state.certificates : undefined,
           expert_show_on_map: attested ? state.showOnMap : undefined,
           expert_map_fields: attested && state.showOnMap ? state.mapFields : undefined,

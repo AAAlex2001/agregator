@@ -88,13 +88,6 @@ export const registerFormSchema = z
       if (!data.lastName) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["lastName"], message: "Укажите фамилию" });
       }
-      if (!data.expertConfirmed) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["expertConfirmed"],
-          message: "Подтвердите, что вы являетесь аттестованным экспертом",
-        });
-      }
     }
 
     const needsCompany = data.role === "CUSTOMER" || data.role === "LICENSE_HOLDER";

@@ -23,7 +23,6 @@ export interface RegisterPayload {
   location_address?: string;
   location_city?: string;
   travels_to_other_regions?: boolean;
-  expert_is_attested?: boolean;
   expert_certificates?: Certificate[];
   expert_show_on_map?: boolean;
   expert_map_fields?: string[];
