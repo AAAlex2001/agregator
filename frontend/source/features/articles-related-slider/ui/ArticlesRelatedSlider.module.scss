@@ -8,13 +8,13 @@
 
 .header {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .title {
+  min-width: 0;
   margin: 0;
   font-weight: 700;
   font-size: 20px;
@@ -28,10 +28,8 @@
 }
 
 .navigation {
-  width: 100%;
-  max-width: none;
   margin: 0;
-  justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .swiper {
@@ -40,16 +38,28 @@
 }
 
 .slide {
-  width: 450px !important;
+  width: 100% !important;
   height: auto;
   display: flex;
-  flex: 0 0 450px;
+  flex: 0 0 100%;
 }
 
 .slide > * {
-  width: 450px;
-  min-width: 450px;
-  max-width: 450px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .slide {
+    width: 450px !important;
+    flex-basis: 450px;
+  }
+
+  .slide > * {
+    width: 450px;
+    max-width: 450px;
+  }
 }
 
 .ctaRow {

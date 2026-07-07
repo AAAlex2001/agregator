@@ -67,5 +67,11 @@
 }
 
 .relatedGrid > * {
-  flex: 0 0 450px;
+  flex: 0 0 100%;
+}
+
+@media (min-width: 768px) {
+  .relatedGrid > * {
+    flex-basis: 450px;
+  }
 }
