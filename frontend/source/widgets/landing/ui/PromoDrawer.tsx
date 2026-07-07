@@ -8,7 +8,9 @@ import s from "./promo-drawer.module.scss";
 
 export type PromoKind = "bot" | "app";
 
-const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; features: string[] }> = {
+const BOT_URL = "https://t.me/resursplus_robot";
+
+const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; features: string[]; href: string | null }> = {
   bot: {
     title: "Telegram-бот Ресурс-Плюс",
     tab: "Telegram бот",
@@ -18,6 +20,7 @@ const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; fe
       "Мгновенные уведомления о новых заказах и ответах",
       "Чат с заказчиком и статусы сделок в одном месте",
     ],
+    href: BOT_URL,
   },
   app: {
     title: "Мобильное приложение",
@@ -28,6 +31,7 @@ const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; fe
       "Push-уведомления о каждом движении по заказу",
       "Полный кабинет эксперта и заказчика в кармане",
     ],
+    href: null,
   },
 };
 
@@ -70,7 +74,11 @@ export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; on
         <header className={s.head}>
           <div className={s.titleRow}>
             <h2 className={s.title}>{content.title}</h2>
-            <span className={s.soon}>скоро</span>
+            {content.href ? (
+              <span className={s.live}>уже работает</span>
+            ) : (
+              <span className={s.soon}>скоро</span>
+            )}
           </div>
           <button type="button" className={s.close} onClick={onClose} aria-label="Закрыть">
             ×
@@ -88,6 +96,11 @@ export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; on
                 </li>
               ))}
             </ul>
+            {content.href && (
+              <a className={s.openBot} href={content.href} target="_blank" rel="noopener noreferrer">
+                Открыть в Telegram
+              </a>
+            )}
           </section>
         </div>
       </aside>
