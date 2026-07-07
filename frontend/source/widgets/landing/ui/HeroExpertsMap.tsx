@@ -14,7 +14,6 @@ function toMarker(item: ExpertMapItemApi): MapMarker {
     city: item.city,
     rating: item.rating,
     travelsToOtherRegions: item.travels_to_other_regions,
-    attested: item.attested,
     certificates: item.certificates,
     phone: item.phone,
     email: item.email,

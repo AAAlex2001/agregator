@@ -18,12 +18,8 @@ function balloonRow(label: string, value: string): string {
   return `<div style="margin-top:4px"><b>${label}:</b> ${value}</div>`;
 }
 
-function roleLabel(marker: MapMarker): string {
-  return marker.attested ? "Эксперт" : "Исполнитель";
-}
-
 function balloonBody(marker: MapMarker): string {
-  const parts: string[] = [roleLabel(marker)];
+  const parts: string[] = [];
   if (marker.city) parts.push(marker.city);
   if (marker.rating != null) parts.push(`Рейтинг ${marker.rating.toFixed(1)}`);
   if (marker.travelsToOtherRegions) parts.push("Выезжает в другие регионы");
@@ -75,7 +71,7 @@ export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {
             {
               balloonContentHeader: marker.title,
               balloonContentBody: balloonBody(marker),
-              hintContent: `${marker.title} · ${roleLabel(marker)}`,
+              hintContent: marker.title,
             },
             { preset: "islands#orangeIcon" },
           ),

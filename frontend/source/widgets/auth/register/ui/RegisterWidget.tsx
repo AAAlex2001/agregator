@@ -30,8 +30,7 @@ const roles: Role[] = [
   },
   {
     id: ROLE_ID_EXPERT,
-    title: "Исполнитель",
-    subtitle: "Эксперт, специалист, инженер",
+    title: "Эксперт",
     icon: <ExpertIcon />,
     expandedTitle: "Находите проекты и укрепляйте репутацию, расширяя портфолио",
     description: [
