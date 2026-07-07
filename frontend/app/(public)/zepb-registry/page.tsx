@@ -14,7 +14,7 @@ export default function PublicZepbRegistryPage() {
     <>
       <LandingHeader />
       <ZepbRegistryWidget />
-      <LandingFooter />
+      <LandingFooter variant="light" />
     </>
   );
 }

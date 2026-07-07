@@ -55,7 +55,9 @@ export default async function AuthRestrictedLandingPage() {
         bullets={hero.bullets}
         compact
       />
-      <LandingComingSoon />
+      <div className={s.comingSoonOffset}>
+        <LandingComingSoon />
+      </div>
       <LandingSearchBlock />
       <LandingNotificationsCta />
       <LandingHowItWorks

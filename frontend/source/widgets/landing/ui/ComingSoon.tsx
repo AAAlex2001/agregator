@@ -7,7 +7,8 @@ const BOT_URL = "https://t.me/resursplus_robot";
 
 const ITEMS = [
   {
-    image: "/promo/landing-bot.webp",
+    kind: "bot",
+    image: "/promo/landing-bot-blue.webp",
     alt: "Telegram-бот Ресурс-Плюс для экспертизы промышленной безопасности",
     title: "Telegram-бот уже работает",
     subtitle: "Заявки, отклики и чат с заказчиком — прямо в Telegram",
@@ -15,6 +16,7 @@ const ITEMS = [
     cta: "Открыть @resursplus_robot",
   },
   {
+    kind: "app",
     image: "/promo/landing-app.webp",
     alt: "Мобильное приложение Ресурс-Плюс для заказчиков и экспертов",
     title: "Скоро — мобильное приложение",
@@ -59,7 +61,7 @@ const ComingSoon = () => (
         );
 
         return (
-          <article key={item.title} className={s.card}>
+          <article key={item.title} className={`${s.card} ${item.kind === "bot" ? s.cardBot : s.cardApp}`}>
             {inner}
           </article>
         );

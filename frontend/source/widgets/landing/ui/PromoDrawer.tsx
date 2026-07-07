@@ -15,7 +15,7 @@ const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; fe
   bot: {
     title: "Telegram-бот Ресурс-Плюс",
     tab: "Telegram бот",
-    image: "/promo/tg-bot-sq.webp",
+    image: "/promo/tg-bot-drawer-blue.png",
     features: [
       "Лента заявок и отклики — не выходя из Telegram",
       "Мгновенные уведомления о новых заказах и ответах",
@@ -96,7 +96,13 @@ export function PromoDrawerPanel({
 
         <div className={s.body}>
           <section className={s.card}>
-            <Image className={s.img} src={content.image} alt="" width={800} height={800} />
+            <Image
+              className={`${s.img} ${kind === "bot" ? s.imgBot : ""}`}
+              src={content.image}
+              alt=""
+              width={800}
+              height={800}
+            />
             <ul className={s.features}>
               {content.features.map((feature) => (
                 <li key={feature}>
@@ -127,15 +133,31 @@ export function PromoDrawerPanel({
   );
 }
 
-export function PromoNavButtons({ className }: { className?: string }) {
+export function PromoNavButtons({
+  className,
+  botClassName,
+  appClassName,
+}: {
+  className?: string;
+  botClassName?: string;
+  appClassName?: string;
+}) {
   const [drawer, setDrawer] = useState<PromoDrawerState>({ kind: "bot", open: false });
 
   return (
     <>
-      <button type="button" className={className} onClick={() => setDrawer({ kind: "bot", open: true })}>
+      <button
+        type="button"
+        className={[className, botClassName].filter(Boolean).join(" ")}
+        onClick={() => setDrawer({ kind: "bot", open: true })}
+      >
         Telegram-бот
       </button>
-      <button type="button" className={className} onClick={() => setDrawer({ kind: "app", open: true })}>
+      <button
+        type="button"
+        className={[className, appClassName].filter(Boolean).join(" ")}
+        onClick={() => setDrawer({ kind: "app", open: true })}
+      >
         Мобильное приложение
       </button>
       <PromoDrawerPanel
@@ -154,7 +176,12 @@ const PromoDrawer = () => {
     <>
       <div className={s.tabs}>
         {(Object.keys(CONTENT) as PromoKind[]).map((key) => (
-          <button key={key} type="button" className={s.tab} onClick={() => setDrawer({ kind: key, open: true })}>
+          <button
+            key={key}
+            type="button"
+            className={`${s.tab} ${key === "bot" ? s.tabBot : s.tabApp}`}
+            onClick={() => setDrawer({ kind: key, open: true })}
+          >
             {CONTENT[key].tab}
           </button>
         ))}

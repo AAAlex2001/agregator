@@ -23,7 +23,11 @@ const HeaderAuthed = () => (
           ))}
         </div>
         <div className={s.promoRow}>
-          <PromoNavButtons className={`${s.navLink} ${s.navLinkPromo}`} />
+          <PromoNavButtons
+            className={`${s.navLink} ${s.navLinkPromo}`}
+            botClassName={s.navLinkPromoBot}
+            appClassName={s.navLinkPromoApp}
+          />
         </div>
         <CabinetBurgerMenu />
       </nav>

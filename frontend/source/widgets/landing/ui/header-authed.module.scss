@@ -78,15 +78,29 @@
 
 .navLinkPromo {
   border: none;
-  background: rgba(34, 158, 217, 0.1);
   font-family: inherit;
   cursor: pointer;
-  color: #147fba;
   font-weight: 600;
+}
+
+.navLinkPromoBot {
+  background: rgba(34, 158, 217, 0.1);
+  color: #147fba;
 
   &:hover,
   &:focus-visible {
     background: #229ed9;
+    color: #ffffff;
+  }
+}
+
+.navLinkPromoApp {
+  background: #fff3e0;
+  color: #e87800;
+
+  &:hover,
+  &:focus-visible {
+    background: #ff8a00;
     color: #ffffff;
   }
 }

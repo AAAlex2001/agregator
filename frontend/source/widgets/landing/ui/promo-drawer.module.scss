@@ -18,7 +18,6 @@
   padding: 16px 9px;
   border: none;
   border-radius: 12px 0 0 12px;
-  background: linear-gradient(180deg, #2aa8e8, #229ed9);
   color: #ffffff;
   font-family: inherit;
   font-size: 13px;
@@ -30,9 +29,25 @@
   transition: background 0.15s ease, padding 0.15s ease, box-shadow 0.15s ease;
 
   &:hover {
-    background: linear-gradient(180deg, #188aca, #147fba);
     padding-right: 12px;
+  }
+}
+
+.tabBot {
+  background: linear-gradient(180deg, #2aa8e8, #229ed9);
+
+  &:hover {
+    background: linear-gradient(180deg, #188aca, #147fba);
     box-shadow: -8px 0 24px rgba(34, 158, 217, 0.28);
+  }
+}
+
+.tabApp {
+  background: linear-gradient(180deg, #ffb800, #ff8a00);
+
+  &:hover {
+    background: linear-gradient(180deg, #ffad00, #e87800);
+    box-shadow: -8px 0 24px rgba(255, 138, 0, 0.28);
   }
 }
 
@@ -184,6 +199,11 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+.imgBot {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .features {
