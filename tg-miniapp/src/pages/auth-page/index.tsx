@@ -15,9 +15,15 @@ const LOGIN_ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?
   LICENSE_HOLDER: { label: "Вы — держатель лицензии", Icon: LicenseRoleIcon },
 };
 
-const REG_ROLES: { role: Role; label: string; desc: string; Icon: ComponentType<{ size?: number }> }[] = [
+const REG_ROLES: { role: Role; label: string; subtitle?: string; desc: string; Icon: ComponentType<{ size?: number }> }[] = [
   { role: "CUSTOMER", label: "Заказчик", desc: "Размещаю заказы и ищу экспертов", Icon: CustomerRoleIcon },
-  { role: "EXPERT", label: "Эксперт", desc: "Ищу проекты и участвую в тендерах", Icon: ExpertRoleIcon },
+  {
+    role: "EXPERT",
+    label: "Эксперт",
+    subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
+    desc: "Ищу проекты и участвую в тендерах",
+    Icon: ExpertRoleIcon,
+  },
   { role: "LICENSE_HOLDER", label: "Держатель лицензии", desc: "Предоставляю лицензию ЭПБ ОПО", Icon: LicenseRoleIcon },
 ];
 
@@ -116,6 +122,7 @@ export function AuthPage() {
                 </span>
                 <span className={s.regRoleText}>
                   <span className={s.regRoleLabel}>{r.label}</span>
+                  {r.subtitle ? <span className={s.regRoleSubtitle}>{r.subtitle}</span> : null}
                   <span className={s.regRoleDesc}>{r.desc}</span>
                 </span>
                 <ChevronRightIcon className={s.regRoleChev} width={18} height={18} />

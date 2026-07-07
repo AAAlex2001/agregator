@@ -8,6 +8,7 @@ interface Props {
   light: string;
   dark: string;
   title: string;
+  subtitle?: string;
   desc: string;
   label?: string;
   step?: number;
@@ -15,7 +16,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function SheetHero({ light, dark, title, desc, label, step, total, onClose }: Props) {
+export function SheetHero({ light, dark, title, subtitle, desc, label, step, total, onClose }: Props) {
   return (
     <div className={s.hero}>
       <ThemedImage className={s.image} light={light} dark={dark} />
@@ -34,6 +35,7 @@ export function SheetHero({ light, dark, title, desc, label, step, total, onClos
       <div className={s.text}>
         {label && <span className={s.label}>{label}</span>}
         <span className={s.title}>{title}</span>
+        {subtitle ? <span className={s.subtitle}>{subtitle}</span> : null}
         <span className={s.desc}>{desc}</span>
         {step !== undefined && total !== undefined && (
           <div className={s.dots}>

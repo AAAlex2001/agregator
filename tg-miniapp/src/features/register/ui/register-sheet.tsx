@@ -9,7 +9,7 @@ import { AccountStep } from "./steps/account-step";
 import { CodeStep } from "./steps/code-step";
 import s from "./register-sheet.module.scss";
 
-const ROLE_META: Record<Role, { light: string; dark: string; title: string }> = {
+const ROLE_META: Record<Role, { light: string; dark: string; title: string; subtitle?: string }> = {
   CUSTOMER: {
     light: "/profile-hero/customer-light.webp",
     dark: "/profile-hero/customer-dark.webp",
@@ -19,6 +19,7 @@ const ROLE_META: Record<Role, { light: string; dark: string; title: string }> = 
     light: "/profile-hero/expert-light.webp",
     dark: "/profile-hero/expert-dark.webp",
     title: "Эксперт",
+    subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
   },
   LICENSE_HOLDER: {
     light: "/profile-hero/license-light.webp",
@@ -55,6 +56,7 @@ export function RegisterSheet({ role, onClose }: { role: Role | null; onClose: (
             dark={meta.dark}
             label={`Шаг ${state.step} из ${total}`}
             title={meta.title}
+            subtitle={meta.subtitle}
             desc={STEP_DESC[stepKey]}
             step={state.step}
             total={total}
