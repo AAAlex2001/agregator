@@ -4,7 +4,7 @@
   z-index: 90;
   background: #ffffff;
   border-bottom: 1px solid #E6E6E6;
-  padding: 10px 30px;
+  padding: 10px 16px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -18,9 +18,10 @@
   justify-content: center;
   gap: 4px;
   width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 1439px) {
-    padding-right: 44px;
+    padding-right: 48px;
   }
 
   @media (min-width: 1440px) {
@@ -41,10 +42,13 @@
 
 .promoRow {
   order: 2;
-  width: 100%;
-  display: flex;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  display: inline-flex;
   justify-content: flex-start;
-  gap: 4px;
+  gap: 8px;
+  overflow: hidden;
 
   @media (min-width: 1440px) {
     display: none;
@@ -81,6 +85,19 @@
   font-family: inherit;
   cursor: pointer;
   font-weight: 600;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-inline: 12px;
+
+  @media (max-width: 389px) {
+    font-size: 12px;
+    padding-inline: 9px;
+  }
+
+  @media (min-width: 768px) and (max-width: 1439px) {
+    min-width: 210px;
+    text-align: center;
+  }
 }
 
 .navLinkPromoBot {

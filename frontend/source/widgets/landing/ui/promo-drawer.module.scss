@@ -14,7 +14,11 @@
 }
 
 .tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   writing-mode: vertical-rl;
+  height: 174px;
   padding: 16px 9px;
   border: none;
   border-radius: 12px 0 0 12px;
