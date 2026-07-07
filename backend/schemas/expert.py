@@ -41,6 +41,7 @@ class ExpertMapItem(BaseModel):
     lat: float
     lng: float
     travels_to_other_regions: bool = False
+    attested: bool = False
     certificates: list[str] | None = None
     phone: str | None = None
     email: str | None = None

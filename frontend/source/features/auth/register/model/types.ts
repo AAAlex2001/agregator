@@ -9,6 +9,7 @@ export const ROLE_ID_LICENSE_HOLDER = 3;
 export interface Role {
   id: number;
   title: string;
+  subtitle?: string;
   icon: ReactNode;
   expandedTitle: string;
   description: string[];

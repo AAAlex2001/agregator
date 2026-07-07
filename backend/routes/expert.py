@@ -93,6 +93,7 @@ async def list_experts_map(
                 lat=row.lat,
                 lng=row.lng,
                 travels_to_other_regions=row.travels_to_other_regions,
+                attested=row.attested,
                 certificates=row.certificates,
                 phone=row.phone,
                 email=row.email,

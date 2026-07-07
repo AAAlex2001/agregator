@@ -6,6 +6,7 @@ export interface MapMarker {
   city?: string | null;
   rating?: number | null;
   travelsToOtherRegions?: boolean;
+  attested?: boolean;
   certificates?: string[] | null;
   phone?: string | null;
   email?: string | null;

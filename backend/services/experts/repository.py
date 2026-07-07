@@ -74,6 +74,7 @@ class ExpertLocationRow:
     lat: float
     lng: float
     travels_to_other_regions: bool
+    attested: bool
     certificates: list[str] | None
     phone: str | None
     email: str | None
@@ -197,9 +198,11 @@ class ExpertsRepository:
 
     def build_location_row(self, user: User) -> ExpertLocationRow:
         "Строит точку карты из эксперта — показывает только те поля, что эксперт сам выбрал (expert_map_fields)."
+        attested = bool(user.expert_certificates)
+        role_label = "Эксперт" if attested else "Исполнитель"
         first = user.first_name or ""
         last = user.last_name or ""
-        full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
+        full_name = " ".join(part for part in (first, last) if part).strip() or role_label
 
         fields = user.expert_map_fields if user.expert_map_fields is not None else list(DEFAULT_MAP_FIELDS)
         show_name = "name" in fields
@@ -210,13 +213,14 @@ class ExpertsRepository:
 
         return ExpertLocationRow(
             public_id=user.public_id,
-            full_name=full_name if show_name else "Эксперт",
+            full_name=full_name if show_name else role_label,
             avatar_url=user.avatar_url,
             rating=float(user.rating) if user.rating is not None else None,
             city=user.location_city,
             lat=float(user.location_lat),
             lng=float(user.location_lng),
             travels_to_other_regions=bool(user.travels_to_other_regions),
+            attested=attested,
             certificates=certificates or None,
             phone=user.phone if show_contacts else None,
             email=user.email if show_contacts else None,

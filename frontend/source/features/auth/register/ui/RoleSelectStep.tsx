@@ -32,7 +32,10 @@ export function RoleSelectStep({ roles, openedCardId, onToggleCard, onSelectRole
               <div className={s.roleContent}>
                 <div className={s.roleHeader}>
                   <div className={s.roleIcon}>{role.icon}</div>
-                  <Title as="h3" text={role.title} className={s.roleTitle} />
+                  <div className={s.roleTitleBlock}>
+                    <Title as="h3" text={role.title} className={s.roleTitle} />
+                    {role.subtitle && <span className={s.roleSubtitle}>{role.subtitle}</span>}
+                  </div>
                   <ChevronIcon className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`} color="#FFB800" />
                 </div>
                 <div className={`${s.roleDescriptionWrapper} ${isOpen ? s.roleDescriptionOpen : ""}`}>

@@ -17,7 +17,7 @@ const LOGIN_ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?
 
 const REG_ROLES: { role: Role; label: string; desc: string; Icon: ComponentType<{ size?: number }> }[] = [
   { role: "CUSTOMER", label: "Заказчик", desc: "Размещаю заказы и ищу экспертов", Icon: CustomerRoleIcon },
-  { role: "EXPERT", label: "Эксперт", desc: "Ищу проекты и участвую в тендерах", Icon: ExpertRoleIcon },
+  { role: "EXPERT", label: "Исполнитель", desc: "Эксперт, специалист, инженер", Icon: ExpertRoleIcon },
   { role: "LICENSE_HOLDER", label: "Держатель лицензии", desc: "Предоставляю лицензию ЭПБ ОПО", Icon: LicenseRoleIcon },
 ];
 

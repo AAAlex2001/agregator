@@ -43,6 +43,7 @@ export interface ExpertMapItemApi {
   lat: number;
   lng: number;
   travels_to_other_regions: boolean;
+  attested: boolean;
   certificates: string[] | null;
   phone: string | null;
   email: string | null;
