@@ -11,6 +11,7 @@ import {
 import { ArticleReactions } from "@/source/features/article-reactions/ui/ArticleReactions";
 import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
 import { ArticleViewTracker } from "./ArticleViewTracker";
+import { ArticleShareButton } from "./ArticleShareButton";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import { extractToc } from "../lib/extractToc";
@@ -36,6 +37,8 @@ export function ArticleView({
   const isNews = article.kind === "news";
   const sectionTitle = isNews ? "Новости" : "Блог";
   const sectionHref = `${sectionHrefPrefix}${isNews ? "/news" : "/blog"}`;
+  const publicPath = `${isNews ? "/news" : "/blog"}/${article.slug}`;
+  const publicUrl = `${SITE_URL}${publicPath}`;
   const { html, toc } = extractToc(article.content_html || "");
   const dateLabel = formatArticleDate(article.published_at);
 
@@ -79,6 +82,9 @@ export function ArticleView({
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
           <ArticleViewTracker articleId={article.id} />
+          <div className={s.shareRow}>
+            <ArticleShareButton url={publicUrl} />
+          </div>
           <ArticleReactions articleId={article.id} initial={initialReactions} views={article.views_count} />
           <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
         </div>

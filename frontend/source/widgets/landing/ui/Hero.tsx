@@ -1,8 +1,10 @@
 import s from "./hero.module.scss";
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { CheckIcon } from "@/source/shared/ui/icons";
+import { CheckIcon, TelegramIcon } from "@/source/shared/ui/icons";
 import { HeroExpertsMap } from "./HeroExpertsMap";
+
+const BOT_URL = "https://t.me/resursplus_robot";
 
 type HeroProps = {
   title: string;
@@ -36,9 +38,22 @@ const Hero = ({ title, subtitle, buttonText, bullets, compact = false }: HeroPro
             )}
             <Subtitle text={subtitle} className={s.heroSubtitle} />
           </div>
-          <Button href="/register" variant="primary" fullWidth showArrow className={s.heroButton}>
-            {buttonText}
-          </Button>
+          <div className={s.heroActions}>
+            <Button href="/register" variant="primary" fullWidth showArrow className={s.heroButton}>
+              {buttonText}
+            </Button>
+            <Button
+              href={BOT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="telegram"
+              fullWidth
+              className={s.heroButton}
+            >
+              <span>Начать работать в Telegram</span>
+              <TelegramIcon />
+            </Button>
+          </div>
         </div>
         <div className={s.visual}>
           <HeroExpertsMap />

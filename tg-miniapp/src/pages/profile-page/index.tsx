@@ -6,10 +6,11 @@ import { Spinner, Toggle } from "@/shared/ui";
 import { ThemeSheet } from "@/features/theme-switch";
 import { RoleTabs } from "@/features/role-switch";
 import { EditProfileSheet, type EditProfileKind } from "@/features/edit-profile";
-import { hapticEnabled, setHapticEnabled } from "@/shared/services/telegram";
+import { hapticEnabled, openLink, setHapticEnabled } from "@/shared/services/telegram";
 import {
   BellIcon,
   CreditIcon,
+  LinkOutIcon,
   LogoutIcon,
   MailIcon,
   MoonIcon,
@@ -27,6 +28,8 @@ const ROLE_META = {
   CUSTOMER: { kind: "customer", noun: "Заказчик" },
   LICENSE_HOLDER: { kind: "license", noun: "Лицензиат" },
 } as const;
+
+const SITE_URL = "https://plus-resurs.com/";
 
 export function ProfilePage() {
   const navigate = useNavigate();
@@ -77,6 +80,11 @@ export function ProfilePage() {
 
       <p className={s.groupTitle}>Системные настройки</p>
       <div className={s.group}>
+        <SettingRow
+          icon={<LinkOutIcon width={19} height={19} />}
+          label="Открыть сайт Ресурс-Плюс"
+          onClick={() => openLink(SITE_URL)}
+        />
         <SettingRow
           icon={<MoonIcon width={19} height={19} />}
           label="Тема оформления"

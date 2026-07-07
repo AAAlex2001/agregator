@@ -1,10 +1,12 @@
 import { Subtitle, Title } from "@/source/shared/ui";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { REGISTRIES } from "../model/registries";
 import s from "./ZepbRegistryWidget.module.scss";
 
 export function ZepbRegistryWidget() {
   return (
     <div className={s.wrapper}>
+      <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Реестр заключений ЭПБ" }]} />
       <header className={s.head}>
         <Title as="h1" text="Реестры заключений ЭПБ Ростехнадзора" />
         <Subtitle text="Сведения из реестров заключений экспертизы промышленной безопасности по территориальным управлениям Ростехнадзора" />

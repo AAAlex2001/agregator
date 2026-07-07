@@ -62,3 +62,4 @@ export { default as CollapseSidebarIcon } from "./CollapseSidebarIcon";
 export { default as DangerIcon } from "./DangerIcon";
 export { default as LiningIcon } from "./LiningIcon";
 export { default as TechExpertLogoIcon } from "./TechExpertLogoIcon";
+export { default as TelegramIcon } from "./TelegramIcon";

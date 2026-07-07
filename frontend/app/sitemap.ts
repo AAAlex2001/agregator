@@ -11,8 +11,9 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; pri
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/orders", changeFrequency: "daily", priority: 0.9 },
   { path: "/news", changeFrequency: "daily", priority: 0.9 },
-  { path: "/blog", changeFrequency: "weekly", priority: 0.8 },
+  { path: "/blog", changeFrequency: "weekly", priority: 0.9 },
   { path: "/reviews", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/zepb-registry", changeFrequency: "monthly", priority: 0.8 },
   { path: "/register", changeFrequency: "monthly", priority: 0.7 },
   { path: "/login", changeFrequency: "monthly", priority: 0.4 },
   { path: "/forgot-password", changeFrequency: "yearly", priority: 0.3 },
@@ -39,8 +40,8 @@ async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
     return items.map((item) => ({
       url: `${SITE_URL}/${kind}/${item.slug}`,
       lastModified: item.published_at ? new Date(item.published_at) : new Date(),
-      changeFrequency: kind === "news" ? "weekly" : "monthly",
-      priority: kind === "news" ? 0.8 : 0.6,
+      changeFrequency: "weekly",
+      priority: 0.8,
     }));
   } catch {
     return [];

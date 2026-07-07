@@ -1,6 +1,7 @@
 import {
   LandingAdvantages,
   LandingArticlesPreview,
+  LandingComingSoon,
   LandingCtaFooter,
   LandingFaq,
   LandingFooter,
@@ -54,6 +55,7 @@ export default async function AuthRestrictedLandingPage() {
         bullets={hero.bullets}
         compact
       />
+      <LandingComingSoon />
       <LandingSearchBlock />
       <LandingNotificationsCta />
       <LandingHowItWorks

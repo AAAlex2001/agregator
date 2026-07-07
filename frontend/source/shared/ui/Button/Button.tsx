@@ -14,6 +14,7 @@ type ButtonVariant =
   | "outlineOrange"
   | "danger"
   | "green"
+  | "telegram"
   | "transparent"
   | "pill"
   | "pillMuted"
@@ -34,6 +35,8 @@ interface ButtonProps {
   disabled?: boolean;
   isLoading?: boolean;
   href?: string;
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
 }
 
 const Button = ({
@@ -49,6 +52,8 @@ const Button = ({
   disabled = false,
   isLoading = false,
   href,
+  target,
+  rel,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
@@ -74,7 +79,7 @@ const Button = ({
 
   if (href && !disabled && !isLoading) {
     return (
-      <Link href={href} className={buttonClasses}>
+      <Link href={href} className={buttonClasses} target={target} rel={rel}>
         {content}
       </Link>
     );

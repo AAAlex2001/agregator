@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Button from "@/source/shared/ui/Button";
+import { TelegramIcon } from "@/source/shared/ui/icons";
 import s from "./coming-soon.module.scss";
 
 const BOT_URL = "https://t.me/resursplus_robot";
@@ -39,16 +41,24 @@ const ComingSoon = () => (
             <div className={s.text}>
               <h3 className={s.title}>{item.title}</h3>
               <p className={s.subtitle}>{item.subtitle}</p>
-              {item.cta && <span className={s.cta}>{item.cta} →</span>}
+              {item.href && item.cta ? (
+                <Button
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="telegram"
+                  size="sm"
+                  className={s.cta}
+                >
+                  <span>{item.cta}</span>
+                  <TelegramIcon />
+                </Button>
+              ) : null}
             </div>
           </>
         );
 
-        return item.href ? (
-          <a key={item.title} className={s.card} href={item.href} target="_blank" rel="noopener noreferrer">
-            {inner}
-          </a>
-        ) : (
+        return (
           <article key={item.title} className={s.card}>
             {inner}
           </article>

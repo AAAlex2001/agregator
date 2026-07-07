@@ -54,7 +54,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                 </div>
                 <div>
                   <h2>Специалистам</h2>
-                  <Link href="/register">Найти заказы на экспертизу ПБ</Link>
+                  <Link href="/zepb-registry">Реестр заключений ЭПБ</Link>
                   <Link href="/register">Создать профиль эксперта</Link>
                   <Link href="/register">Портфолио и отзывы</Link>
                 </div>

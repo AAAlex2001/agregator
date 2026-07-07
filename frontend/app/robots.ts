@@ -9,6 +9,7 @@ const INDEXABLE_PATHS: string[] = [
   "/reviews",
   "/news",
   "/blog",
+  "/zepb-registry",
   "/login",
   "/register",
   "/forgot-password",

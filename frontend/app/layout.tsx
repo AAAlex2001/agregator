@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Ресурс-Плюс | Экспертиза промышленной безопасности ОПО",
+    default: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
     template: "%s | Ресурс-Плюс",
   },
   description:

@@ -12,6 +12,7 @@ interface TelegramWebApp {
   setHeaderColor?: (color: string) => void;
   setBackgroundColor?: (color: string) => void;
   openLink?: (url: string, options?: { try_instant_view?: boolean }) => void;
+  openTelegramLink?: (url: string) => void;
   HapticFeedback?: {
     impactOccurred: (style: ImpactStyle) => void;
     notificationOccurred: (type: HapticNotify) => void;
@@ -92,6 +93,14 @@ export function tapHaptic(): void {
 export function openLink(url: string): void {
   if (tg?.openLink) tg.openLink(url);
   else window.open(url, "_blank");
+}
+
+export function shareUrl(url: string, text?: string): void {
+  const shareLink = `https://t.me/share/url?url=${encodeURIComponent(url)}${
+    text ? `&text=${encodeURIComponent(text)}` : ""
+  }`;
+  if (tg?.openTelegramLink) tg.openTelegramLink(shareLink);
+  else openLink(shareLink);
 }
 
 export function getInitData(): string {

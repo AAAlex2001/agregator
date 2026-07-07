@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 78px auto 120px auto;
+  margin: 25px auto 120px auto;
   padding: 0 var(--page-px);
   max-width: 1620px;
 }
@@ -89,9 +89,16 @@
   text-align-last: left;
 }
 
+.heroActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
 .heroButton {
   min-height: 55px;
-  margin-bottom: 40px;
 }
 
 .visual {
@@ -100,7 +107,7 @@
 
 @media (min-width: 768px) {
   .hero {
-    margin: 78px auto 200px auto;
+    margin: 25px auto 200px auto;
   }
 
   .heroCompact {
@@ -139,7 +146,7 @@
 
 @media (min-width: 1440px) {
   .hero {
-    margin: 112px auto 200px auto;
+    margin: 50px auto 200px auto;
   }
 
   .heroCompact {
@@ -188,7 +195,7 @@
 
 @media (min-width: 1920px) {
   .hero {
-    margin: 140px auto 200px auto;
+    margin: 50px auto 200px auto;
   }
 
   .heroCompact {

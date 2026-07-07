@@ -193,6 +193,16 @@
   }
 }
 
+.shareRow {
+  display: flex;
+  justify-content: flex-start;
+  margin: 22px 0 18px;
+}
+
+.shareButton {
+  min-width: 160px;
+}
+
 .related {
   display: flex;
   flex-direction: column;

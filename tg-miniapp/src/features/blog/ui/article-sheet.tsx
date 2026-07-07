@@ -1,5 +1,6 @@
-import { FullSheet, Spinner } from "@/shared/ui";
+import { Button, FullSheet, Spinner } from "@/shared/ui";
 import { articleImage } from "@/entites/article";
+import { shareUrl } from "@/shared/services/telegram";
 import { useArticle } from "../model/use-article";
 import { ArticleHero } from "./article-hero";
 import { ArticleReactions } from "./article-reactions";
@@ -24,6 +25,7 @@ function splitTrailingImage(html: string): { body: string; trailing: string } {
 export function ArticleSheet({ slug, onClose }: Props) {
   const { article } = useArticle(slug);
   const content = article ? splitTrailingImage(article.content_html) : { body: "", trailing: "" };
+  const articleUrl = article ? `https://plus-resurs.com/${article.kind}/${article.slug}` : "";
 
   return (
     <FullSheet
@@ -38,6 +40,14 @@ export function ArticleSheet({ slug, onClose }: Props) {
       ) : (
         <>
           <article className={s.prose} dangerouslySetInnerHTML={{ __html: content.body }} />
+          <Button
+            type="button"
+            variant="outline"
+            className={s.shareButton}
+            onClick={() => shareUrl(articleUrl, article.title)}
+          >
+            Поделиться
+          </Button>
           <ArticleReactions articleId={article.id} />
           {content.trailing && <div className={s.prose} dangerouslySetInnerHTML={{ __html: content.trailing }} />}
         </>

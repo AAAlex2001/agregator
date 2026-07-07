@@ -18,18 +18,17 @@
 .card {
   position: relative;
   display: block;
+  border: 2px solid transparent;
   border-radius: 20px;
   overflow: hidden;
   color: inherit;
   text-decoration: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 
-a.card {
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-a.card:hover {
+.card:hover {
   transform: translateY(-3px);
+  border-color: #229ed9;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
 }
 
@@ -71,13 +70,7 @@ a.card:hover {
 }
 
 .cta {
-  display: inline-block;
   margin-top: clamp(6px, 0.9vw, 12px);
-  padding: clamp(6px, 0.8vw, 10px) clamp(12px, 1.4vw, 20px);
-  border-radius: 999px;
-  background: #1a1a1a;
-  color: #ffffff;
+  align-self: flex-end;
   font-size: clamp(11px, 1.05vw, 15px);
-  font-weight: 700;
-  white-space: nowrap;
 }

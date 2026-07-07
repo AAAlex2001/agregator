@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { CheckIcon } from "@/source/shared/ui/icons";
+import Button from "@/source/shared/ui/Button";
+import { CheckIcon, TelegramIcon } from "@/source/shared/ui/icons";
 import s from "./promo-drawer.module.scss";
 
 export type PromoKind = "bot" | "app";
@@ -35,18 +36,26 @@ const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; fe
   },
 };
 
-export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; onClose: () => void }) {
-  const [mounted, setMounted] = useState(false);
-  const [view, setView] = useState<PromoKind>("bot");
-  const open = kind !== null;
+type PromoDrawerState = {
+  kind: PromoKind;
+  open: boolean;
+};
+
+export function PromoDrawerPanel({
+  kind,
+  open,
+  onClose,
+}: {
+  kind: PromoKind;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const frame = window.requestAnimationFrame(() => setPortalRoot(document.body));
+    return () => window.cancelAnimationFrame(frame);
   }, []);
-
-  useEffect(() => {
-    if (kind) setView(kind);
-  }, [kind]);
 
   useEffect(() => {
     if (!open) return;
@@ -62,9 +71,9 @@ export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; on
     };
   }, [open, onClose]);
 
-  if (!mounted) return null;
+  if (!portalRoot) return null;
 
-  const content = CONTENT[kind ?? view];
+  const content = CONTENT[kind];
 
   return createPortal(
     <>
@@ -97,47 +106,64 @@ export function PromoDrawerPanel({ kind, onClose }: { kind: PromoKind | null; on
               ))}
             </ul>
             {content.href && (
-              <a className={s.openBot} href={content.href} target="_blank" rel="noopener noreferrer">
-                Открыть в Telegram
-              </a>
+              <Button
+                className={s.openBot}
+                href={content.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="telegram"
+                size="md"
+                fullWidth
+              >
+                <span>Открыть в Telegram</span>
+                <TelegramIcon />
+              </Button>
             )}
           </section>
         </div>
       </aside>
     </>,
-    document.body,
+    portalRoot,
   );
 }
 
 export function PromoNavButtons({ className }: { className?: string }) {
-  const [kind, setKind] = useState<PromoKind | null>(null);
+  const [drawer, setDrawer] = useState<PromoDrawerState>({ kind: "bot", open: false });
 
   return (
     <>
-      <button type="button" className={className} onClick={() => setKind("bot")}>
+      <button type="button" className={className} onClick={() => setDrawer({ kind: "bot", open: true })}>
         Telegram-бот
       </button>
-      <button type="button" className={className} onClick={() => setKind("app")}>
+      <button type="button" className={className} onClick={() => setDrawer({ kind: "app", open: true })}>
         Мобильное приложение
       </button>
-      <PromoDrawerPanel kind={kind} onClose={() => setKind(null)} />
+      <PromoDrawerPanel
+        kind={drawer.kind}
+        open={drawer.open}
+        onClose={() => setDrawer((current) => ({ ...current, open: false }))}
+      />
     </>
   );
 }
 
 const PromoDrawer = () => {
-  const [kind, setKind] = useState<PromoKind | null>(null);
+  const [drawer, setDrawer] = useState<PromoDrawerState>({ kind: "bot", open: false });
 
   return (
     <>
       <div className={s.tabs}>
         {(Object.keys(CONTENT) as PromoKind[]).map((key) => (
-          <button key={key} type="button" className={s.tab} onClick={() => setKind(key)}>
+          <button key={key} type="button" className={s.tab} onClick={() => setDrawer({ kind: key, open: true })}>
             {CONTENT[key].tab}
           </button>
         ))}
       </div>
-      <PromoDrawerPanel kind={kind} onClose={() => setKind(null)} />
+      <PromoDrawerPanel
+        kind={drawer.kind}
+        open={drawer.open}
+        onClose={() => setDrawer((current) => ({ ...current, open: false }))}
+      />
     </>
   );
 };

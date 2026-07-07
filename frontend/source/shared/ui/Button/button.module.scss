@@ -114,6 +114,38 @@
   }
 }
 
+.telegram {
+  position: relative;
+  background: #229ed9;
+  color: #ffffff;
+  border: 2px solid #229ed9;
+  font-weight: 700;
+  gap: 0;
+  transition: background-color 0.22s ease, border-color 0.22s ease, transform 0.18s ease, box-shadow 0.22s ease;
+
+  svg:last-child {
+    position: absolute;
+    right: 22px;
+    width: 22px;
+    height: 22px;
+    transform-origin: 50% 50%;
+    transition: transform 0.24s ease, filter 0.24s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: #147fba;
+    border-color: #147fba;
+    box-shadow: 0 12px 28px rgba(34, 158, 217, 0.28);
+  }
+
+  &:hover svg:last-child,
+  &:focus-visible svg:last-child {
+    animation: telegramFly 0.62s cubic-bezier(0.2, 0.8, 0.2, 1);
+    filter: drop-shadow(0 3px 6px rgba(255, 255, 255, 0.22));
+  }
+}
+
 .transparent {
   background: transparent;
   color: #1A1A1A;
@@ -234,6 +266,13 @@
   max-height: 40px;
 }
 
+.button.telegram.sm,
+.button.telegram.md,
+.button.telegram.lg {
+  padding-left: 56px;
+  padding-right: 56px;
+}
+
 .arrow {
   display: inline-flex;
   transition: transform 0.5s ease;
@@ -247,6 +286,13 @@
 .button:hover .arrow,
 .button:focus-visible .arrow {
   transform: translateX(12px);
+}
+
+@keyframes telegramFly {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  38% { transform: translate(8px, -8px) rotate(-12deg) scale(1.12); }
+  68% { transform: translate(-2px, 2px) rotate(4deg) scale(0.96); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
 }
 
 .inlineLoader {
