@@ -11,6 +11,7 @@ import {
 } from "@/source/entities/article";
 import { ArticlesRelatedSlider } from "@/source/features/articles-related-slider";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
+import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -154,9 +155,9 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
 
       {hasMore && !isReloading && (
         <div className={s.loadMoreWrap}>
-          <button type="button" className={s.loadMore} onClick={loadMore} disabled={isLoadingMore}>
+          <Button type="button" variant="outline" className={s.loadMore} onClick={loadMore} disabled={isLoadingMore}>
             {isLoadingMore ? "Загружаем..." : "Показать ещё"}
-          </button>
+          </Button>
         </div>
       )}
 

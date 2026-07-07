@@ -56,25 +56,7 @@
 }
 
 .loadMore {
-  appearance: none;
-  background: transparent;
-  border: 1px solid #ff8a00;
-  color: #1a1a1a;
-  padding: 10px 28px;
-  border-radius: 10px;
-  font-family: "Montserrat", system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  cursor: pointer;
-
-  &:hover,
-  &:focus-visible {
-    background: #ff8a00;
-    color: #fff;
-  }
-
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  min-width: 180px;
 }
 
 .cross {
