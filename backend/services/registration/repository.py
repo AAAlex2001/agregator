@@ -1,4 +1,5 @@
 "Repository: доступ к БД для registration."
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
@@ -30,6 +31,17 @@ class RegistrationRepository:
             query = query.where(User.role == ModelUserRole(role.value))
         result = await self.db.execute(query)
         return list(result.scalars().all())
+
+    async def delete_unverified(self, email: str, role: UserRole) -> None:
+        "Удаляет брошенную регистрацию: юзер с этим email+ролью, не подтвердивший почту."
+        await self.db.execute(
+            delete(User).where(
+                User.email == email,
+                User.role == ModelUserRole(role.value),
+                User.email_verified.is_(False),
+            )
+        )
+        await self.db.flush()
 
     async def add(self, user: User) -> None:
         "Добавляет сущность в сессию."

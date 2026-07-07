@@ -22,6 +22,7 @@ class RegisterUserUseCase:
         self.validator.ensure_inn_format(data.inn)
         self.validator.ensure_company_matches_inn(data.inn, data.company_data)
 
+        await self.repo.delete_unverified(data.email, data.role)
         await self.validator.ensure_email_is_free(data.email, data.role)
         await self.validator.ensure_phone_is_free(data.phone, data.role)
 
