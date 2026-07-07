@@ -31,8 +31,9 @@
 .grid {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(246px, 1fr));
+  grid-template-columns: repeat(auto-fill, 450px);
   align-items: stretch;
+  justify-content: start;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -40,6 +41,7 @@
 
 .grid > li {
   display: flex;
+  width: 450px;
 }
 
 .empty {
@@ -76,40 +78,6 @@
 }
 
 .cross {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   padding-top: 16px;
   border-top: 1px solid #e6eaf1;
-}
-
-.crossHead {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.crossTitle {
-  margin: 0;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
-  color: #1a1a1a;
-
-  @media (min-width: 768px) {
-    font-size: 24px;
-    line-height: 28px;
-  }
-}
-
-.crossLink {
-  font-size: 14px;
-  line-height: 20px;
-  color: #ff8a00;
-  text-decoration: none;
-
-  &:hover,
-  &:focus-visible { text-decoration: underline; }
 }

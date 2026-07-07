@@ -46,7 +46,7 @@ export default async function BlogArticlePage({ params }: Props) {
   const article = await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "blog") notFound();
   const [related, reactions, comments] = await Promise.all([
-    fetchRelatedArticles(slug, { limit: 3, server: true }),
+    fetchRelatedArticles(slug, { limit: 10, server: true }),
     fetchReactions(article.id, { server: true }).catch(() => undefined),
     fetchComments(article.id, { server: true }).catch(() => []),
   ]);

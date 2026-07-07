@@ -26,9 +26,9 @@ export function ArticleViewSkeleton() {
         <Skeleton className={s.toc} rounded="lg" />
       </div>
 
-      <div className={styles.related}>
+      <div className={s.related}>
         <Skeleton className={s.relatedTitle} rounded="md" />
-        <div className={styles.relatedGrid}>
+        <div className={s.relatedGrid}>
           {Array.from({ length: 3 }).map((_, idx) => (
             <ArticleCardSkeleton key={idx} />
           ))}

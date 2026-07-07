@@ -53,3 +53,19 @@
   width: 200px;
   height: 24px;
 }
+
+.related {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.relatedGrid {
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.relatedGrid > * {
+  flex: 0 0 450px;
+}

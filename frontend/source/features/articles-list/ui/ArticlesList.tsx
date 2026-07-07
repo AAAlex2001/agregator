@@ -9,6 +9,7 @@ import {
   type ArticleList,
   type ArticleListItem,
 } from "@/source/entities/article";
+import { ArticlesRelatedSlider } from "@/source/features/articles-related-slider";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -161,27 +162,11 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
 
       {cross && cross.items.length > 0 && (
         <section className={s.cross}>
-          <div className={s.crossHead}>
-            <h2 className={s.crossTitle}>{cross.title}</h2>
-            <a href={cross.href} className={s.crossLink}>{cross.hrefLabel} →</a>
-          </div>
-          <div className={s.grid}>
-            {cross.items.map((item) => (
-              <ArticleCard
-                key={item.id}
-                kind={item.kind}
-                slug={item.slug}
-                title={item.title}
-                excerpt={item.excerpt}
-                cover_image={item.cover_image}
-                tags={item.tags}
-                published_at={item.published_at}
-                likes_count={item.likes_count}
-                dislikes_count={item.dislikes_count}
-                views_count={item.views_count}
-              />
-            ))}
-          </div>
+          <ArticlesRelatedSlider
+            title={cross.title}
+            items={cross.items}
+            cta={{ href: cross.href, label: cross.hrefLabel }}
+          />
         </section>
       )}
     </div>

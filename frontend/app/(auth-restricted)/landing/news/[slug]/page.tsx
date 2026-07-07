@@ -23,7 +23,7 @@ export default async function AuthedNewsArticlePage({ params }: Props) {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "news") notFound();
-  const related = await fetchRelatedArticles(slug, { limit: 3, server: true });
+  const related = await fetchRelatedArticles(slug, { limit: 10, server: true });
 
   return (
     <>

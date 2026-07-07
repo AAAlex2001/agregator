@@ -3,11 +3,11 @@ import { DocToc } from "@/source/shared/ui/DocToc";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { SITE_URL } from "@/source/shared/api/config";
 import {
-  ArticleCard,
   formatArticleDate,
   type ArticleDetail,
   type ArticleListItem,
 } from "@/source/entities/article";
+import { ArticlesRelatedSlider } from "@/source/features/articles-related-slider";
 import { ArticleReactions } from "@/source/features/article-reactions/ui/ArticleReactions";
 import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
 import { ArticleViewTracker } from "./ArticleViewTracker";
@@ -91,26 +91,7 @@ export function ArticleView({
       </div>
 
       {related.length > 0 && (
-        <section className={s.related}>
-          <h2 className={s.relatedTitle}>Смотрите также</h2>
-          <div className={s.relatedGrid}>
-            {related.map((item) => (
-              <ArticleCard
-                key={item.id}
-                kind={item.kind}
-                slug={item.slug}
-                title={item.title}
-                excerpt={item.excerpt}
-                cover_image={item.cover_image}
-                tags={item.tags}
-                published_at={item.published_at}
-                likes_count={item.likes_count}
-                dislikes_count={item.dislikes_count}
-                views_count={item.views_count}
-              />
-            ))}
-          </div>
-        </section>
+        <ArticlesRelatedSlider title="Смотрите также" items={related} />
       )}
     </article>
   );

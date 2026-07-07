@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 async function NewsListContent() {
   const [initial, crossBlog] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
-    fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
   ]);
   return (
     <ArticlesList

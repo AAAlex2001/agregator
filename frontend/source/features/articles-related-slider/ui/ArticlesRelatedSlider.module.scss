@@ -1,0 +1,59 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #1a1a1a;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+    line-height: 28px;
+  }
+}
+
+.navigation {
+  margin: 0;
+}
+
+.swiper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.slide {
+  width: 450px !important;
+  height: auto;
+  display: flex;
+  flex: 0 0 450px;
+}
+
+.slide > * {
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+}
+
+.ctaRow {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.ctaButton {
+  min-width: 180px;
+}
