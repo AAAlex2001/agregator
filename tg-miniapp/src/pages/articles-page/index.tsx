@@ -18,7 +18,7 @@ export function ArticlesPage() {
   const { items } = useArticles(kind);
 
   return (
-    <Screen title="Новости и блог" panel>
+    <Screen bare heading="Новости и блог" panel>
       <div className={s.wrap}>
         <Tabs tabs={TABS} active={kind} onChange={(key) => setKind(key as ArticleKind)} />
 
