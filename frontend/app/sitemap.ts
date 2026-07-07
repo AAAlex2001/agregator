@@ -24,8 +24,19 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; pri
 
 async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
   try {
-    const page = await fetchArticleList({ kind, limit: 1000, offset: 0 }, { server: true });
-    return page.items.map((item) => ({
+    const items = [];
+    const limit = 48;
+    let offset = 0;
+    let hasMore = true;
+
+    while (hasMore) {
+      const page = await fetchArticleList({ kind, limit, offset }, { server: true });
+      items.push(...page.items);
+      hasMore = page.has_more;
+      offset += limit;
+    }
+
+    return items.map((item) => ({
       url: `${SITE_URL}/${kind}/${item.slug}`,
       lastModified: item.published_at ? new Date(item.published_at) : new Date(),
       changeFrequency: kind === "news" ? "weekly" : "monthly",
