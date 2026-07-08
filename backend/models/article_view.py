@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
@@ -14,15 +14,14 @@ class ArticleView(Base):
     article_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    user_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True
     )
+    visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
-    __table_args__ = (
-        UniqueConstraint("article_id", "user_id", name="uq_article_view_user"),
-    )
+    __table_args__ = (Index("ix_article_views_identity_created", "article_id", "visitor_key", "created_at"),)

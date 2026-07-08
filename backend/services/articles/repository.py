@@ -1,5 +1,6 @@
 
 "Repository: доступ к БД для articles."
+from datetime import datetime
 from typing import Any
 
 from sqlalchemy import and_, delete, select
@@ -115,26 +116,35 @@ class ArticleReactionRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def get(self, article_id: int, user_id: int) -> ArticleReaction | None:
+    async def get(self, article_id: int, user_id: int | None, visitor_key: str | None) -> ArticleReaction | None:
         query = select(ArticleReaction).where(
             ArticleReaction.article_id == article_id,
-            ArticleReaction.user_id == user_id,
         )
+        if visitor_key:
+            query = query.where(ArticleReaction.visitor_key == visitor_key)
+        else:
+            query = query.where(ArticleReaction.user_id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none()
 
-    async def add(self, article_id: int, user_id: int, value: ReactionValue) -> ArticleReaction:
-        reaction = ArticleReaction(article_id=article_id, user_id=user_id, value=value)
+    async def add(
+        self,
+        article_id: int,
+        user_id: int | None,
+        visitor_key: str | None,
+        value: ReactionValue,
+    ) -> ArticleReaction:
+        reaction = ArticleReaction(article_id=article_id, user_id=user_id, visitor_key=visitor_key or "", value=value)
         self.db.add(reaction)
         await self.db.flush()
         return reaction
 
-    async def remove(self, article_id: int, user_id: int) -> None:
-        await self.db.execute(
-            delete(ArticleReaction).where(
-                ArticleReaction.article_id == article_id,
-                ArticleReaction.user_id == user_id,
-            )
-        )
+    async def remove(self, article_id: int, user_id: int | None, visitor_key: str | None) -> None:
+        query = delete(ArticleReaction).where(ArticleReaction.article_id == article_id)
+        if visitor_key:
+            query = query.where(ArticleReaction.visitor_key == visitor_key)
+        else:
+            query = query.where(ArticleReaction.user_id == user_id)
+        await self.db.execute(query)
 
 
 class ArticleViewRepository:
@@ -143,15 +153,16 @@ class ArticleViewRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def exists(self, article_id: int, user_id: int) -> bool:
+    async def get_recent(self, article_id: int, visitor_key: str, since: datetime) -> bool:
         query = select(ArticleView.id).where(
             ArticleView.article_id == article_id,
-            ArticleView.user_id == user_id,
+            ArticleView.visitor_key == visitor_key,
+            ArticleView.created_at >= since,
         )
         return (await self.db.execute(query.limit(1))).scalar_one_or_none() is not None
 
-    async def add(self, article_id: int, user_id: int) -> None:
-        self.db.add(ArticleView(article_id=article_id, user_id=user_id))
+    async def add(self, article_id: int, user_id: int | None, visitor_key: str) -> None:
+        self.db.add(ArticleView(article_id=article_id, user_id=user_id, visitor_key=visitor_key))
         await self.db.flush()
 
 
@@ -174,8 +185,21 @@ class ArticleCommentRepository:
             await self.db.execute(select(ArticleComment).where(ArticleComment.id == comment_id))
         ).scalar_one_or_none()
 
-    async def add(self, article_id: int, user_id: int, text: str, parent_id: int | None) -> ArticleComment:
-        comment = ArticleComment(article_id=article_id, user_id=user_id, text=text, parent_id=parent_id)
+    async def add(
+        self,
+        article_id: int,
+        user_id: int | None,
+        visitor_key: str | None,
+        text: str,
+        parent_id: int | None,
+    ) -> ArticleComment:
+        comment = ArticleComment(
+            article_id=article_id,
+            user_id=user_id,
+            visitor_key=visitor_key or "",
+            text=text,
+            parent_id=parent_id,
+        )
         self.db.add(comment)
         await self.db.flush()
         return comment

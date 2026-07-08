@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useArticleComments, type ArticleComment } from "@/source/entities/article-comment";
-import { useSession } from "@/source/features/session";
 import Loader from "@/source/shared/ui/Loader";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
@@ -14,7 +12,6 @@ interface Props {
 }
 
 export function ArticleDiscussion({ articleId, initialComments }: Props) {
-  const { user } = useSession();
   const { comments, loading, add, remove } = useArticleComments(articleId, initialComments);
   const roots = comments.filter((c) => c.parent_id === null);
 
@@ -25,13 +22,7 @@ export function ArticleDiscussion({ articleId, initialComments }: Props) {
         {comments.length > 0 && <span className={s.total}>{comments.length}</span>}
       </h2>
 
-      {user ? (
-        <CommentForm placeholder="Напишите комментарий…" onSubmit={(text) => add(text, null)} />
-      ) : (
-        <p className={s.loginHint}>
-          <Link href="/login">Войдите</Link>, чтобы оставить комментарий.
-        </p>
-      )}
+      <CommentForm placeholder="Напишите комментарий..." onSubmit={(text) => add(text, null)} />
 
       {loading ? (
         <div className={s.loading}>
@@ -46,7 +37,7 @@ export function ArticleDiscussion({ articleId, initialComments }: Props) {
               key={comment.id}
               comment={comment}
               all={comments}
-              canReply={Boolean(user)}
+              canReply
               depth={0}
               onReply={add}
               onDelete={(id) => void remove(id)}

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useArticleReactions, type ReactionState, type ReactionValue } from "@/source/entities/article-reaction";
-import { useSession } from "@/source/features/session";
 import { EyeIcon } from "@/source/shared/ui/icons";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
 import { ThumbUpIcon } from "@/source/shared/ui/icons/ThumbUpIcon";
@@ -15,15 +14,10 @@ interface Props {
 }
 
 export function ArticleReactions({ articleId, initial, views }: Props) {
-  const { user } = useSession();
   const { state, react, pending } = useArticleReactions(articleId, initial);
   const [hint, setHint] = useState("");
 
   const onVote = (value: ReactionValue) => {
-    if (!user) {
-      setHint("Войдите, чтобы оценить статью");
-      return;
-    }
     setHint("");
     void react(value);
   };

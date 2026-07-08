@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Text
+from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -18,9 +18,10 @@ class ArticleComment(Base):
     article_id: Mapped[int] = mapped_column(
         ForeignKey("articles.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
     )
+    visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     parent_id: Mapped[int | None] = mapped_column(
         ForeignKey("article_comments.id", ondelete="CASCADE"), nullable=True, index=True
     )
