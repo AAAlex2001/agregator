@@ -59,6 +59,7 @@ class NewOrderContext(BaseContext):
     order_title: str
     cta_url: str
     order: OrderBrief
+    fallback_notice: str = ""
 
 
 class OrderUpdatedContext(BaseContext):

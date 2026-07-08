@@ -84,6 +84,10 @@ class EmailRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
+    async def list_all_experts(self) -> list[User]:
+        query = select(User).where(User.role == UserRole.EXPERT)
+        return list((await self.db.execute(query)).scalars().all())
+
     async def list_responders(self, order_id: int) -> list[User]:
         "Эксперты, откликнувшиеся на заявку. Кому и куда слать — решает диспетчер."
         query = (

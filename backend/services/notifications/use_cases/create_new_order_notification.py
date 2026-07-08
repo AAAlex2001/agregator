@@ -5,6 +5,10 @@ from schemas.notification import NewOrderNotificationPayload
 from services.notifications.repository import NotificationRepository
 
 ACTION_URL = "/expert/orders"
+FALLBACK_MESSAGE = (
+    "Заказ опубликован без указания направлений. "
+    "Посмотрите карточку: возможно, он подходит вашему профилю."
+)
 
 
 class CreateNewOrderNotificationUseCase:
@@ -13,23 +17,27 @@ class CreateNewOrderNotificationUseCase:
     def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
-    async def execute(self, order: Order) -> int:
+    async def execute(self, order: Order, force_all_experts: bool = False) -> int:
         "Принимает уже загруженный заказ с badges. Возвращает число получателей."
         order_codes = {badge.text for badge in order.badges}
-        if not order_codes:
-            return 0
+        fallback_to_all = force_all_experts or not order_codes
 
-        experts = await self.repo.list_experts_subscribed_to_order_types()
+        experts = (
+            await self.repo.list_all_experts()
+            if fallback_to_all
+            else await self.repo.list_experts_subscribed_to_order_types()
+        )
         payload = NewOrderNotificationPayload(
             order_title=order.title or f"Заказ #{order.id}",
             badges=sorted(order_codes),
+            message=FALLBACK_MESSAGE if fallback_to_all else "",
         )
         payload_dump = payload.model_dump(mode="json")
 
         sent = 0
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
-            if not wanted & order_codes:
+            if not fallback_to_all and not wanted & order_codes:
                 continue
             notification = Notification(
                 user_id=expert.id,

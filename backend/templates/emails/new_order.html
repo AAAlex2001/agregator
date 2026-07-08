@@ -14,6 +14,11 @@
   <span style="color: #0F172A; font-weight: 500;">«{{ order_title }}»</span>.
   Если условия вам подходят — откликнитесь первым.
 </p>
+{% if fallback_notice %}
+<p style="margin: -12px 0 28px 0; font-size: 14px; line-height: 22px; color: #475569; background: #F8FAFC; border-left: 3px solid #FF8A00; padding: 12px 14px; border-radius: 8px;">
+  {{ fallback_notice }}
+</p>
+{% endif %}
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>

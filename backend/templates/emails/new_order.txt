@@ -1,6 +1,9 @@
 Новая заявка на Ресурс-Плюс
 
 Здравствуйте, {{ expert_greeting }}. На платформе появилась новая заявка «{{ order_title }}».
+{% if fallback_notice %}
+{{ fallback_notice }}
+{% endif %}
 
 {% if order.company %}Компания: {{ order.company }}
 {% endif %}Бюджет: {{ order.sum_amount | rubles }}

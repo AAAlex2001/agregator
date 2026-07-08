@@ -49,6 +49,7 @@ export interface NewBlogPostNotificationPayload {
 export interface NewOrderNotificationPayload {
   order_title: string;
   badges: string[];
+  message?: string;
 }
 
 export type NotificationPayload =

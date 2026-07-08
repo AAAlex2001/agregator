@@ -132,6 +132,7 @@ class NewOrderNotificationPayload(NotificationPayloadModel):
     "Payload уведомления о новой заявке, попавшей в фильтр эксперта по типам."
     order_title: str
     badges: list[str] = Field(default_factory=list)
+    message: str = ""
 
 
 class NewOrderNotificationItemResponse(NotificationItemBaseResponse):

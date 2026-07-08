@@ -241,13 +241,13 @@ function mapNewOrder(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as NewOrderNotificationPayload;
   const orderTitle = getOrderTitle(payload.order_title);
   const badges = (payload.badges ?? []).join(" · ");
-  const message = badges
+  const message = payload.message || (badges
     ? `Опубликована заявка «${orderTitle}» по вашим типам: ${badges}.`
-    : `Опубликована заявка «${orderTitle}» по вашим типам.`;
+    : `Опубликована заявка «${orderTitle}» по вашим типам.`);
 
   return {
     id: item.id,
-    title: "Новая заявка по вашим типам",
+    title: payload.message ? `Вам может быть интересен этот заказ: ${orderTitle}` : "Новая заявка по вашим типам",
     message,
     actionLabel: item.action_url ? "Открыть заказы" : null,
     actionUrl: item.action_url,
