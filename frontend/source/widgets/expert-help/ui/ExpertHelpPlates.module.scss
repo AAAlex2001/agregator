@@ -122,12 +122,18 @@
 }
 
 .plateLogo {
-  color: var(--color-orange-primary);
+  color: #06445f;
+
+  svg {
+    width: 150px;
+    height: auto;
+    display: block;
+  }
 }
 
 .plateWrap:hover .plateLogo {
   background: transparent;
-  color: #cc6f00;
+  color: #06445f;
 }
 
 .list {

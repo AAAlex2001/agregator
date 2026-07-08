@@ -130,7 +130,7 @@ export function CabinetBurgerMenu() {
                   aria-label={plate.label}
                   onClick={close}
                 >
-                  {plate.logo ? <TechExpertLogoIcon title={plate.label} width={96} height={17} /> : plate.label}
+                  {plate.logo ? <TechExpertLogoIcon title={plate.label} width={160} height={38} /> : plate.label}
                 </Link>
               ) : (
                 <button
