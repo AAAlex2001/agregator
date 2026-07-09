@@ -48,6 +48,64 @@ export function toMoscowDateTimeInput(iso: string): string {
   return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:00+03:00`;
 }
 
+export function parseMoscowWallClock(value: string): Date | null {
+  if (!value) return null;
+  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value);
+  if (value.includes("T") && hasTimezone) {
+    const parts = moscowParts(value);
+    return parts
+      ? new Date(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute)
+      : null;
+  }
+  const date = new Date(value.includes("T") ? value : `${value}T12:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export function formatMoscowApiValue(date: Date, withTime: boolean): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  return withTime
+    ? `${day}T${pad(date.getHours())}:${pad(date.getMinutes())}:00+03:00`
+    : day;
+}
+
+export function formatManualDateValue(date: Date, withTime: boolean): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const day = `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+  return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day;
+}
+
+export function parseManualDateValue(value: string, withTime: boolean): Date | null {
+  const match = value.trim().match(
+    withTime
+      ? /^(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})$/
+      : /^(\d{2})\.(\d{2})\.(\d{4})$/,
+  );
+  if (!match) return null;
+  const [, day, month, year, hour = "12", minute = "00"] = match;
+  const date = new Date(+year, +month - 1, +day, +hour, +minute);
+  const valid =
+    date.getFullYear() === +year &&
+    date.getMonth() === +month - 1 &&
+    date.getDate() === +day &&
+    date.getHours() === +hour &&
+    date.getMinutes() === +minute;
+  return valid ? date : null;
+}
+
+export function maskManualDateValue(value: string, withTime: boolean): string {
+  const digits = value.replace(/\D/g, "").slice(0, withTime ? 12 : 8);
+  const date = [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8)]
+    .filter(Boolean)
+    .join(".");
+  if (!withTime || digits.length <= 8) return date;
+  const timeDigits = digits.slice(8);
+  const time = [timeDigits.slice(0, 2), timeDigits.slice(2, 4)]
+    .filter(Boolean)
+    .join(":");
+  return `${date} ${time}`;
+}
+
 export function parseDateRu(display: string): string {
   const [day, month, year] = display.split(".");
   if (!day || !month || !year) return "";

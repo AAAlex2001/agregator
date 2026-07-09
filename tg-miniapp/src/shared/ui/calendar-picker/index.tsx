@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { BottomSheet } from "../bottom-sheet";
 import { Button } from "../button";
+import {
+  formatManualDateValue,
+  formatMoscowApiValue,
+  maskManualDateValue,
+  parseManualDateValue,
+  parseMoscowWallClock,
+} from "@/shared/lib/format";
 import "react-calendar/dist/Calendar.css";
 import "./calendar.scss";
 
@@ -13,49 +20,23 @@ interface Props {
   onApply: (date: string) => void;
 }
 
-function toISODate(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
-function parseValue(value: string): Date | null {
-  if (!value) return null;
-  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value);
-  if (value.includes("T") && hasTimezone) {
-    const instant = new Date(value);
-    if (Number.isNaN(instant.getTime())) return null;
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Europe/Moscow",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(instant);
-    const part = (type: Intl.DateTimeFormatPartTypes) =>
-      Number(parts.find((item) => item.type === type)?.value);
-    return new Date(part("year"), part("month") - 1, part("day"), part("hour"), part("minute"));
-  }
-  const date = new Date(value.includes("T") ? value : `${value}T12:00`);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function toMoscowDateTime(date: Date): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${toISODate(date)}T${pad(date.getHours())}:${pad(date.getMinutes())}:00+03:00`;
-}
-
 export function CalendarPicker({ open, value, withTime = false, onClose, onApply }: Props) {
-  const [date, setDate] = useState<Date | null>(parseValue(value));
+  const [date, setDate] = useState<Date | null>(parseMoscowWallClock(value));
+  const [manualValue, setManualValue] = useState(
+    date ? formatManualDateValue(date, withTime) : "",
+  );
 
   useEffect(() => {
-    if (open) setDate(parseValue(value));
-  }, [open, value]);
+    if (open) {
+      const parsed = parseMoscowWallClock(value);
+      setDate(parsed);
+      setManualValue(parsed ? formatManualDateValue(parsed, withTime) : "");
+    }
+  }, [open, value, withTime]);
 
   const apply = () => {
     if (!date) return;
-    onApply(withTime ? toMoscowDateTime(date) : toISODate(date));
+    onApply(formatMoscowApiValue(date, withTime));
     onClose();
   };
 
@@ -64,9 +45,16 @@ export function CalendarPicker({ open, value, withTime = false, onClose, onApply
       <label className="calendar-manual">
         <span>{withTime ? "Дата и время (МСК)" : "Дата"}</span>
         <input
-          type={withTime ? "datetime-local" : "date"}
-          value={date ? (withTime ? toMoscowDateTime(date).slice(0, 16) : toISODate(date)) : ""}
-          onChange={(event) => setDate(parseValue(event.target.value))}
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          placeholder={withTime ? "ДД.ММ.ГГГГ ЧЧ:ММ" : "ДД.ММ.ГГГГ"}
+          value={manualValue}
+          onChange={(event) => {
+            const next = maskManualDateValue(event.target.value, withTime);
+            setManualValue(next);
+            setDate(parseManualDateValue(next, withTime));
+          }}
         />
       </label>
       <Calendar
@@ -75,6 +63,7 @@ export function CalendarPicker({ open, value, withTime = false, onClose, onApply
           if (next instanceof Date) {
             next.setHours(date?.getHours() ?? (withTime ? 23 : 12), date?.getMinutes() ?? (withTime ? 59 : 0));
             setDate(next);
+            setManualValue(formatManualDateValue(next, withTime));
           }
         }}
         locale="ru-RU"
