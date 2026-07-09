@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/features/session";
-import { type Order } from "@/entites/order";
+import { listArchivedOrders, listOrders, type Order } from "@/entites/order";
 import { RespondSheet } from "@/features/respond-order";
 import { ResponsesPanel } from "@/features/responses";
 import { ArchiveOrderSheet } from "@/features/archive-order";
@@ -55,6 +55,7 @@ export function HomePage() {
   const [copyOpen, setCopyOpen] = useState(false);
   const [copyContext, setCopyContext] = useState<"create" | "edit">("create");
   const [copyTemplate, setCopyTemplate] = useState<Order | null>(null);
+  const [hasCopyableOrders, setHasCopyableOrders] = useState(false);
   const returnAnchor = useRef<{ id: number; top: number } | null>(null);
   const [review, setReview] = useState<ReviewTarget | null>(null);
   const chatBadge = useChats();
@@ -74,6 +75,13 @@ export function HomePage() {
   };
 
   const isExpert = role === "EXPERT";
+
+  useEffect(() => {
+    if (isExpert) return;
+    Promise.all([listOrders(1), listArchivedOrders(1)])
+      .then(([active, archived]) => setHasCopyableOrders(active.items.length > 0 || archived.items.length > 0))
+      .catch(() => setHasCopyableOrders(false));
+  }, [isExpert, refreshKey]);
 
   const openEditOrder = (order: Order) => {
     const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${order.id}"]`);
@@ -311,15 +319,17 @@ export function HomePage() {
             onSubmitted={() => setRefreshKey((k) => k + 1)}
           />
           <div className={s.createBar}>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setCopyContext("create");
-                setCopyOpen(true);
-              }}
-            >
-              Скопировать заявку
-            </Button>
+            {hasCopyableOrders && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCopyContext("create");
+                  setCopyOpen(true);
+                }}
+              >
+                Скопировать заявку
+              </Button>
+            )}
             <Button
               onClick={() => {
                 tapHaptic();

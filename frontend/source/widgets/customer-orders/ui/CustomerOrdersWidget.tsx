@@ -120,9 +120,6 @@ export function CustomerOrdersWidget() {
             actionLabel="Добавить заказ"
             onAction={h.openCreate}
           />
-          <Button variant="outlineOrange" size="md" onClick={() => setCopyPickerOpen(true)}>
-            Скопировать заявку
-          </Button>
         </div>
       )}
 
