@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useSession } from "@/features/session";
-import { listArchivedOrders, listOrders, type Order } from "@/entites/order";
+import { type Order } from "@/entites/order";
 import { RespondSheet } from "@/features/respond-order";
 import { ResponsesPanel } from "@/features/responses";
 import { ArchiveOrderSheet } from "@/features/archive-order";
@@ -12,15 +11,17 @@ import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
 import { BlogStrip } from "@/features/blog";
 import { EditOrderSheet } from "@/features/edit-order";
-import { CopyOrderSheet } from "@/features/copy-order";
+import { CopyOrderSheet, useOrderCopyFlow } from "@/features/copy-order";
 import { LeaveReviewFullSheet, type ReviewTarget } from "@/features/leave-review";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type ExpertResponse, type SortDir } from "@/entites/response";
 import { tapHaptic } from "@/shared/services/telegram";
 import { Screen } from "@/widgets/app-shell";
-import { Button, EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
-import { UserIcon, FilterIcon, ReviewsIcon, SortIcon, ChatIcon, CompassIcon } from "@/shared/ui/icons/interface";
+import { EmptyState, Logo, SortSheet, type SortChoice } from "@/shared/ui";
+import { FilterIcon, SortIcon } from "@/shared/ui/icons/interface";
 import { EmptyArchiveIcon, EmptyOrdersIcon } from "@/shared/ui/icons/empty";
+import { CreateBar } from "./ui/create-bar";
+import { HeaderActions } from "./ui/header-actions";
 import s from "./style.module.scss";
 
 const CUSTOMER_VIEW_LABEL: Record<FeedView, string> = {
@@ -40,7 +41,6 @@ const RESPONSE_SORTS: SortChoice[] = [
 
 export function HomePage() {
   const { role, profile } = useSession();
-  const navigate = useNavigate();
   const [view, setView] = useState<FeedView>("orders");
   const [filterOpen, setFilterOpen] = useState(false);
   const [respondOrder, setRespondOrder] = useState<Order | null>(null);
@@ -51,12 +51,6 @@ export function HomePage() {
   const [respSort, setRespSort] = useState<SortChoice>(RESPONSE_SORTS[0]);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUuid, setChatUuid] = useState<string | null>(null);
-  const [editOrder, setEditOrder] = useState<Order | null>(null);
-  const [copyOpen, setCopyOpen] = useState(false);
-  const [copyContext, setCopyContext] = useState<"create" | "edit">("create");
-  const [copyTemplate, setCopyTemplate] = useState<Order | null>(null);
-  const [hasCopyableOrders, setHasCopyableOrders] = useState(false);
-  const returnAnchor = useRef<{ id: number; top: number } | null>(null);
   const [review, setReview] = useState<ReviewTarget | null>(null);
   const chatBadge = useChats();
 
@@ -75,30 +69,11 @@ export function HomePage() {
   };
 
   const isExpert = role === "EXPERT";
-
-  useEffect(() => {
-    if (isExpert) return;
-    Promise.all([listOrders(1), listArchivedOrders(1)])
-      .then(([active, archived]) => setHasCopyableOrders(active.items.length > 0 || archived.items.length > 0))
-      .catch(() => setHasCopyableOrders(false));
-  }, [isExpert, refreshKey]);
-
-  const openEditOrder = (order: Order) => {
-    const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${order.id}"]`);
-    returnAnchor.current = { id: order.id, top: card?.getBoundingClientRect().top ?? 24 };
-    setCopyTemplate(null);
-    setEditOrder(order);
-  };
-
-  const restoreEditedOrder = () => {
-    const anchor = returnAnchor.current;
-    if (!anchor) return;
-    window.setTimeout(() => {
-      const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${anchor.id}"]`);
-      if (card) window.scrollBy({ top: card.getBoundingClientRect().top - anchor.top });
-      returnAnchor.current = null;
-    }, 350);
-  };
+  const copy = useOrderCopyFlow({
+    enabled: !isExpert,
+    refreshKey,
+    onOpenCreate: () => setCreateOpen(true),
+  });
 
   return (
     <Screen
@@ -110,51 +85,7 @@ export function HomePage() {
           </span>
         </>
       }
-      right={
-        <>
-          <button
-            className={s.iconBtn}
-            aria-label="Полезное"
-            onClick={() => {
-              tapHaptic();
-              navigate("/useful");
-            }}
-          >
-            <CompassIcon width={22} height={22} />
-          </button>
-          <button
-            className={s.iconBtn}
-            aria-label="Чаты"
-            onClick={() => {
-              tapHaptic();
-              setChatOpen(true);
-            }}
-          >
-            <ChatIcon width={22} height={22} />
-            {chatBadge.unread > 0 && <span className={s.chatBadge}>{chatBadge.unread > 99 ? "99+" : chatBadge.unread}</span>}
-          </button>
-          <button
-            className={s.iconBtn}
-            aria-label="Отзывы экспертов"
-            onClick={() => {
-              tapHaptic();
-              navigate("/experts-reviews");
-            }}
-          >
-            <ReviewsIcon width={22} height={22} />
-          </button>
-          <button
-            className={s.iconBtn}
-            aria-label="Профиль"
-            onClick={() => {
-              tapHaptic();
-              navigate("/profile");
-            }}
-          >
-            <UserIcon width={22} height={22} />
-          </button>
-        </>
-      }
+      right={<HeaderActions unread={chatBadge.unread} onOpenChat={() => setChatOpen(true)} />}
       panel
       hero={<BlogStrip />}
     >
@@ -244,7 +175,7 @@ export function HomePage() {
               refreshKey={refreshKey}
               viewerId={profile?.id ?? null}
               onOpen={setArchiveOrder}
-              onEdit={openEditOrder}
+              onEdit={copy.openEdit}
               onLeaveReview={reviewFromOrder}
               emptyActive={
                 <EmptyState
@@ -281,17 +212,12 @@ export function HomePage() {
       <ArchiveOrderSheet order={archiveOrder} onClose={() => setArchiveOrder(null)} />
 
       <EditOrderSheet
-        order={editOrder}
-        copyTemplate={copyContext === "edit" ? copyTemplate : null}
-        onCopy={() => {
-          setCopyContext("edit");
-          setCopyOpen(true);
-        }}
-        onClose={() => setEditOrder(null)}
+        order={copy.editOrder}
+        copyTemplate={copy.copyContext === "edit" ? copy.copyTemplate : null}
+        onCopy={() => copy.openPicker("edit")}
+        onClose={copy.closeEdit}
         onSaved={() => {
-          setEditOrder(null);
-          setRefreshKey((k) => k + 1);
-          restoreEditedOrder();
+          copy.finishEdit(() => setRefreshKey((key) => key + 1));
         }}
       />
 
@@ -309,7 +235,7 @@ export function HomePage() {
         <>
           <CreateOrderSheet
             open={createOpen}
-            template={copyContext === "create" ? copyTemplate : null}
+            template={copy.copyContext === "create" ? copy.copyTemplate : null}
             onClose={() => setCreateOpen(false)}
             onCreated={() => setRefreshKey((k) => k + 1)}
           />
@@ -318,39 +244,21 @@ export function HomePage() {
             onClose={() => setReview(null)}
             onSubmitted={() => setRefreshKey((k) => k + 1)}
           />
-          <div className={s.createBar}>
-            {hasCopyableOrders && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCopyContext("create");
-                  setCopyOpen(true);
-                }}
-              >
-                Скопировать заявку
-              </Button>
-            )}
-            <Button
-              onClick={() => {
-                tapHaptic();
-                setCopyTemplate(null);
-                setCreateOpen(true);
-              }}
-            >
-              Создать заказ
-            </Button>
-          </div>
+          <CreateBar
+            canCopy={copy.hasCopyableOrders}
+            onCopy={() => copy.openPicker("create")}
+            onCreate={() => {
+              tapHaptic();
+              copy.startBlank();
+            }}
+          />
         </>
       )}
       <CopyOrderSheet
-        open={copyOpen}
+        open={copy.copyOpen}
         customerId={profile?.id ?? 0}
-        onClose={() => setCopyOpen(false)}
-        onSelect={(order) => {
-          setCopyTemplate(order);
-          setCopyOpen(false);
-          if (copyContext === "create") setCreateOpen(true);
-        }}
+        onClose={copy.closePicker}
+        onSelect={copy.selectTemplate}
       />
     </Screen>
   );
