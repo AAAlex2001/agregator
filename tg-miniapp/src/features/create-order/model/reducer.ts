@@ -16,6 +16,8 @@ export const initialState: CreateOrderState = {
   comment: "",
   files: { technical: null, contract: null, company: null },
   otherFiles: [],
+  copySourceOrderId: null,
+  copiedDocuments: { technical: [], contract: [], company: [], other: [] },
 };
 
 export function reducer(state: CreateOrderState, action: CreateOrderAction): CreateOrderState {
@@ -34,6 +36,18 @@ export function reducer(state: CreateOrderState, action: CreateOrderAction): Cre
       return { ...state, otherFiles: [...state.otherFiles, ...action.files] };
     case "removeOther":
       return { ...state, otherFiles: state.otherFiles.filter((_, i) => i !== action.index) };
+    case "copy":
+      return { ...initialState, ...action, copySourceOrderId: action.sourceOrderId, copiedDocuments: action.documents };
+    case "removeCopied":
+      return {
+        ...state,
+        copiedDocuments: {
+          technical: state.copiedDocuments.technical.filter((url) => url !== action.url),
+          contract: state.copiedDocuments.contract.filter((url) => url !== action.url),
+          company: state.copiedDocuments.company.filter((url) => url !== action.url),
+          other: state.copiedDocuments.other.filter((url) => url !== action.url),
+        },
+      };
     case "step":
       return { ...state, step: action.value };
     case "busy":

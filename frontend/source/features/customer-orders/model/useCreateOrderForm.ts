@@ -22,6 +22,7 @@ const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
 
 interface Props {
   editTarget?: OrderCardData;
+  copyTemplate?: OrderCardData;
   onSubmit: (values: OrderFormValues, documents: DocumentsFormState, options: { notifyResponders: boolean }) => void;
 }
 
@@ -29,18 +30,21 @@ function wouldExceedTotalSize(state: DocumentsFormState, incomingBytes: number):
   return totalNewFilesBytes(state) + incomingBytes > MAX_ORDER_FILES_TOTAL_BYTES;
 }
 
-export function useCreateOrderForm({ editTarget, onSubmit }: Props) {
+export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props) {
   const isEdit = Boolean(editTarget);
+  const source = copyTemplate ?? editTarget;
   const { showError } = useNotifications();
   const [documents, dispatch] = useReducer(
     documentsFormReducer,
-    initialDocumentsFormState(editTarget?.documents),
+    initialDocumentsFormState(source?.documents, copyTemplate?.id ?? null),
   );
   const [notifyResponders, setNotifyResponders] = useState(true);
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: isEdit ? getDefaultValues(editTarget) : { ...getDefaultValues(), ...(loadDraft() ?? {}) },
+    defaultValues: source
+      ? getDefaultValues(source)
+      : { ...getDefaultValues(), ...(loadDraft() ?? {}) },
   });
 
   useEffect(() => {

@@ -19,6 +19,8 @@ export interface CreateOrderPayload {
   requiresExpert: boolean;
   requiresLicense: boolean;
   badgeCodes: string[];
+  copySourceOrderId?: number | null;
+  copyDocuments?: OrderDocuments;
 }
 
 export interface CreateOrderFiles {
@@ -40,6 +42,10 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
+  if (payload.copySourceOrderId && payload.copyDocuments) {
+    form.append("copy_source_order_id", String(payload.copySourceOrderId));
+    form.append("copy_documents_json", JSON.stringify(payload.copyDocuments));
+  }
   if (files.technical) form.append("technical_files", files.technical);
   if (files.contract) form.append("contract_files", files.contract);
   if (files.company) form.append("company_files", files.company);
@@ -62,6 +68,9 @@ export interface UpdateOrderPayload {
   badgeCodes: string[];
   keepDocuments: OrderDocuments;
   notifyResponders: boolean;
+  copySourceOrderId?: number | null;
+  requiresExpert: boolean;
+  requiresLicense: boolean;
 }
 
 export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFiles: File[]): Promise<unknown> {
@@ -74,7 +83,13 @@ export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFil
   form.append("deadline", payload.deadline);
   if (payload.responsesDeadline) form.append("responses_deadline", payload.responsesDeadline);
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
-  form.append("keep_documents_json", JSON.stringify(payload.keepDocuments));
+  form.append("requires_expert", String(payload.requiresExpert));
+  form.append("requires_license", String(payload.requiresLicense));
+  form.append("keep_documents_json", JSON.stringify(payload.copySourceOrderId ? {} : payload.keepDocuments));
+  if (payload.copySourceOrderId) {
+    form.append("copy_source_order_id", String(payload.copySourceOrderId));
+    form.append("copy_documents_json", JSON.stringify(payload.keepDocuments));
+  }
   form.append("notify_responders", String(payload.notifyResponders));
   for (const file of newFiles) form.append("other_files", file);
   return apiJson(`/orders/${orderId}/update-with-files`, { method: "PATCH", body: form });

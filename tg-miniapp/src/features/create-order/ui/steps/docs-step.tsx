@@ -14,6 +14,8 @@ export function DocsStep({ state, dispatch, onSetFile, onAddOther }: Props) {
     <FilePicker
       multiple={false}
       files={state.files[key] ? [state.files[key] as File] : []}
+      keptUrls={state.copiedDocuments[key]}
+      onRemoveKept={(url) => dispatch({ type: "removeCopied", url })}
       onAdd={(list) => onSetFile(key, list)}
       onRemove={() => dispatch({ type: "file", key, file: null })}
       note={NOTE}
@@ -37,6 +39,8 @@ export function DocsStep({ state, dispatch, onSetFile, onAddOther }: Props) {
       <Field label="Иное">
         <FilePicker
           files={state.otherFiles}
+          keptUrls={state.copiedDocuments.other}
+          onRemoveKept={(url) => dispatch({ type: "removeCopied", url })}
           onAdd={onAddOther}
           onRemove={(index) => dispatch({ type: "removeOther", index })}
           note={NOTE}

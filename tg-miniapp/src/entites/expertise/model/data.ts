@@ -57,3 +57,14 @@ export function computeBadgeCodes(types: ExpertiseType[], opos: string[]): strin
   }
   return result;
 }
+
+export function parseBadgeCodes(codes: string[]): { types: ExpertiseType[]; opos: string[] } {
+  const codeSet = new Set(codes);
+  const types = TYPES.filter((type) =>
+    OPO_KEYS.some((opo) => cell(opo, type).some((code) => codeSet.has(code))),
+  );
+  const opos = OPO_KEYS.filter((opo) =>
+    TYPES.some((type) => cell(opo, type).some((code) => codeSet.has(code))),
+  );
+  return { types, opos };
+}

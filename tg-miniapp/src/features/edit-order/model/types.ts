@@ -13,6 +13,7 @@ export interface EditOrderState {
   newFiles: File[];
   notifyResponders: boolean;
   busy: boolean;
+  copySourceOrderId: number | null;
 }
 
 export type EditOrderPrefill = Omit<EditOrderState, "newFiles" | "notifyResponders" | "busy">;

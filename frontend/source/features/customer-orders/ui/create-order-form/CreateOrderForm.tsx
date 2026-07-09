@@ -31,14 +31,16 @@ interface Props {
   ) => void;
   isSubmitting: boolean;
   editTarget?: OrderCardData;
+  copyTemplate?: OrderCardData;
+  onCopy: () => void;
 }
 
 type View = "form" | "help";
 
 const transition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
 
-export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }: Props) {
-  const formState = useCreateOrderForm({ editTarget, onSubmit });
+export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, copyTemplate, onCopy }: Props) {
+  const formState = useCreateOrderForm({ editTarget, copyTemplate, onSubmit });
   const [view, setView] = useState<View>("form");
 
   const shellClassName = [
@@ -104,6 +106,7 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget }
                 isEdit={formState.isEdit}
                 isSubmitting={isSubmitting}
                 onCancel={onCancel}
+                onCopy={onCopy}
               />
             </form>
             <div className={s.previewSide}>

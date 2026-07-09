@@ -25,6 +25,7 @@ export interface Order {
   deadline_at: string;
   created_at: string;
   responses_deadline: string | null;
+  requires_expert: boolean;
   requires_license: boolean;
   customer_id: number;
   assigned_expert_id: number | null;

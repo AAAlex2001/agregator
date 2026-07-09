@@ -8,7 +8,7 @@ export function useCustomerOrders(view: "orders" | "archive", refreshKey: number
   useEffect(() => {
     let active = true;
     setOrders(null);
-    listOrders(50)
+    listOrders(100)
       .then((r) => active && setOrders(r.items))
       .catch(() => active && setOrders([]));
     return () => {
@@ -19,7 +19,7 @@ export function useCustomerOrders(view: "orders" | "archive", refreshKey: number
   useEffect(() => {
     if (view !== "archive" || archived !== null) return;
     let active = true;
-    listArchivedOrders(50)
+    listArchivedOrders(100)
       .then((r) => active && setArchived(r.items))
       .catch(() => active && setArchived([]));
     return () => {

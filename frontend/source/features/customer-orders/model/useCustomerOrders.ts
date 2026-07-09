@@ -23,12 +23,18 @@ export function useCustomerOrders() {
   const { user } = useSession();
   const { showSuccess, showError } = useNotifications();
 
-  const reload = async () => {
+  const reload = async (requestedCount = 50) => {
     d({ type: "LOADING", value: true });
     d({ type: "ERROR", value: null });
     try {
-      const data = await fetchCustomerOrders(0, 50);
-      d({ type: "DATA", items: data.items.map(mapApiToOrderCard), hasMore: data.has_more });
+      const items: OrderCardData[] = [];
+      let hasMore = true;
+      while (items.length < requestedCount && hasMore) {
+        const data = await fetchCustomerOrders(items.length, Math.min(100, requestedCount - items.length));
+        items.push(...data.items.map(mapApiToOrderCard));
+        hasMore = data.has_more;
+      }
+      d({ type: "DATA", items, hasMore });
     } catch (e) {
       d({ type: "ERROR", value: e instanceof Error ? e.message : "Ошибка загрузки" });
     } finally {
@@ -62,7 +68,7 @@ export function useCustomerOrders() {
       showSuccess("Заказ создан");
       setDraft(null);
       backToList();
-      void reload();
+      await reload(Math.max(50, s.items.length));
     } catch (e) {
       showError(e instanceof Error ? e.message : "Ошибка создания");
     } finally {
@@ -83,8 +89,8 @@ export function useCustomerOrders() {
         buildUpdatePayload(values, documents, options.notifyResponders),
       );
       showSuccess("Заказ обновлён");
+      await reload(Math.max(50, s.items.length));
       backToList();
-      void reload();
     } catch (e) {
       showError(e instanceof Error ? e.message : "Ошибка обновления");
     } finally {
@@ -113,6 +119,7 @@ export function useCustomerOrders() {
 
   return {
     ...s,
+    customerId: user?.id ?? 0,
     draft,
     reload,
     loadMore,

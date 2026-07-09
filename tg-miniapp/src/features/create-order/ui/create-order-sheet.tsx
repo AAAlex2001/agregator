@@ -8,6 +8,7 @@ import { RequirementsStep } from "./steps/requirements-step";
 import { DocsStep } from "./steps/docs-step";
 import { ConfirmStep } from "./steps/confirm-step";
 import s from "./create-order-sheet.module.scss";
+import type { Order } from "@/entites/order";
 
 type StepMeta = { image: string; title: string; desc: string };
 
@@ -24,11 +25,12 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onCreated: () => void;
+  template?: Order | null;
 }
 
-export function CreateOrderSheet({ open, onClose, onCreated }: Props) {
+export function CreateOrderSheet({ open, onClose, onCreated, template = null }: Props) {
   const { state, dispatch, stepKey, total, stepReady, badgeCodes, company, next, back, setFile, addOther } =
-    useCreateOrder(open, onCreated);
+    useCreateOrder(open, onCreated, template);
   const [calField, setCalField] = useState<DateField | null>(null);
 
   useEffect(() => {

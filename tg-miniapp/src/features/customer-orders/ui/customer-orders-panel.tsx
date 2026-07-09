@@ -55,7 +55,9 @@ export function CustomerOrdersPanel({ view, refreshKey, viewerId, onOpen, onEdit
                 }
               />
             ) : (
-              <CustomerOrderCard key={order.id} order={order} onClick={() => onOpen(order)} onEdit={onEdit} />
+              <div key={order.id} data-customer-order-id={order.id}>
+                <CustomerOrderCard order={order} onClick={() => onOpen(order)} onEdit={onEdit} />
+              </div>
             ),
           )}
         </div>

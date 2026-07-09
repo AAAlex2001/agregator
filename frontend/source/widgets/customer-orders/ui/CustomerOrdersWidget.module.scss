@@ -58,6 +58,8 @@
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 16px;
   padding: 0 0 150px;
 }
 
@@ -84,6 +86,19 @@
   padding: 16px 24px !important;
   font-size: 18px;
   line-height: 22px;
+}
+
+.createActions {
+  display: grid;
+  width: 100%;
+  max-width: 1340px;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .createActions {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .list {

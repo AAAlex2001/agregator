@@ -72,6 +72,53 @@ class OrderFileStorage:
 
         return f"/uploads/orders/{order_id}/{generated_name}"
 
+    async def copy_documents(
+        self,
+        source_order_id: int,
+        target_order_id: int,
+        documents: OrderDocuments,
+    ) -> OrderDocuments:
+        target_dir = self.dir_for(target_order_id)
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        async def copy_category(paths: list[str]) -> list[str]:
+            return [
+                await self.copy_one(source_order_id, target_order_id, target_dir, path)
+                for path in paths
+            ]
+
+        return OrderDocuments(
+            technical=await copy_category(documents.technical),
+            contract=await copy_category(documents.contract),
+            company=await copy_category(documents.company),
+            other=await copy_category(documents.other),
+        )
+
+    async def copy_one(
+        self,
+        source_order_id: int,
+        target_order_id: int,
+        target_dir: Path,
+        file_url: str,
+    ) -> str:
+        source_dir = self.dir_for(source_order_id).resolve()
+        source_path = (BACKEND_ROOT / file_url.lstrip("/")).resolve()
+        if source_path.parent != source_dir or not source_path.is_file():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Документ исходной заявки не найден",
+            )
+
+        extension = source_path.suffix.lower()
+        self.ensure_extension_allowed(extension)
+        generated_name = f"{uuid4().hex}{extension}"
+        target_path = target_dir / generated_name
+        async with aiofiles.open(source_path, "rb") as source:
+            async with aiofiles.open(target_path, "wb") as target:
+                while chunk := await source.read(UPLOAD_CHUNK_SIZE):
+                    await target.write(chunk)
+        return f"/uploads/orders/{target_order_id}/{generated_name}"
+
     @staticmethod
     def ensure_extension_allowed(extension: str) -> None:
         "Бросает HTTPException, если условие не выполнено."

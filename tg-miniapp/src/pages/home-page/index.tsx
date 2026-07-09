@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@/features/session";
 import { type Order } from "@/entites/order";
@@ -12,6 +12,7 @@ import { CreateOrderSheet } from "@/features/create-order";
 import { ChatSheet, useChats } from "@/features/chat";
 import { BlogStrip } from "@/features/blog";
 import { EditOrderSheet } from "@/features/edit-order";
+import { CopyOrderSheet } from "@/features/copy-order";
 import { LeaveReviewFullSheet, type ReviewTarget } from "@/features/leave-review";
 import { FilterSheet, VIEW_LABEL, type FeedView } from "@/features/feed-filter";
 import { type CustomerSortBy, type ExpertResponse, type SortDir } from "@/entites/response";
@@ -51,6 +52,10 @@ export function HomePage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUuid, setChatUuid] = useState<string | null>(null);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
+  const [copyOpen, setCopyOpen] = useState(false);
+  const [copyContext, setCopyContext] = useState<"create" | "edit">("create");
+  const [copyTemplate, setCopyTemplate] = useState<Order | null>(null);
+  const returnAnchor = useRef<{ id: number; top: number } | null>(null);
   const [review, setReview] = useState<ReviewTarget | null>(null);
   const chatBadge = useChats();
 
@@ -69,6 +74,23 @@ export function HomePage() {
   };
 
   const isExpert = role === "EXPERT";
+
+  const openEditOrder = (order: Order) => {
+    const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${order.id}"]`);
+    returnAnchor.current = { id: order.id, top: card?.getBoundingClientRect().top ?? 24 };
+    setCopyTemplate(null);
+    setEditOrder(order);
+  };
+
+  const restoreEditedOrder = () => {
+    const anchor = returnAnchor.current;
+    if (!anchor) return;
+    window.setTimeout(() => {
+      const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${anchor.id}"]`);
+      if (card) window.scrollBy({ top: card.getBoundingClientRect().top - anchor.top });
+      returnAnchor.current = null;
+    }, 350);
+  };
 
   return (
     <Screen
@@ -214,7 +236,7 @@ export function HomePage() {
               refreshKey={refreshKey}
               viewerId={profile?.id ?? null}
               onOpen={setArchiveOrder}
-              onEdit={setEditOrder}
+              onEdit={openEditOrder}
               onLeaveReview={reviewFromOrder}
               emptyActive={
                 <EmptyState
@@ -252,10 +274,16 @@ export function HomePage() {
 
       <EditOrderSheet
         order={editOrder}
+        copyTemplate={copyContext === "edit" ? copyTemplate : null}
+        onCopy={() => {
+          setCopyContext("edit");
+          setCopyOpen(true);
+        }}
         onClose={() => setEditOrder(null)}
         onSaved={() => {
           setEditOrder(null);
           setRefreshKey((k) => k + 1);
+          restoreEditedOrder();
         }}
       />
 
@@ -273,6 +301,7 @@ export function HomePage() {
         <>
           <CreateOrderSheet
             open={createOpen}
+            template={copyContext === "create" ? copyTemplate : null}
             onClose={() => setCreateOpen(false)}
             onCreated={() => setRefreshKey((k) => k + 1)}
           />
@@ -283,8 +312,18 @@ export function HomePage() {
           />
           <div className={s.createBar}>
             <Button
+              variant="outline"
+              onClick={() => {
+                setCopyContext("create");
+                setCopyOpen(true);
+              }}
+            >
+              Скопировать заявку
+            </Button>
+            <Button
               onClick={() => {
                 tapHaptic();
+                setCopyTemplate(null);
                 setCreateOpen(true);
               }}
             >
@@ -293,6 +332,16 @@ export function HomePage() {
           </div>
         </>
       )}
+      <CopyOrderSheet
+        open={copyOpen}
+        customerId={profile?.id ?? 0}
+        onClose={() => setCopyOpen(false)}
+        onSelect={(order) => {
+          setCopyTemplate(order);
+          setCopyOpen(false);
+          if (copyContext === "create") setCreateOpen(true);
+        }}
+      />
     </Screen>
   );
 }

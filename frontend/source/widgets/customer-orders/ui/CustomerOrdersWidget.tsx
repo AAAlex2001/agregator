@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/source/shared/ui";
 import { CustomerActiveCard } from "./CustomerActiveCard";
 import { EmptyStateCard } from "@/source/shared/ui";
@@ -12,9 +13,14 @@ import { useCustomerOrders } from "@/source/features/customer-orders";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { CustomerOrdersSkeleton } from "./CustomerOrdersSkeleton";
 import s from "./CustomerOrdersWidget.module.scss";
+import type { OrderCardData } from "@/source/entities/order";
+import { OrderCopyPicker } from "@/source/features/customer-orders/ui/OrderCopyPicker/OrderCopyPicker";
 
 export function CustomerOrdersWidget() {
   const h = useCustomerOrders();
+  const [copyPickerOpen, setCopyPickerOpen] = useState(false);
+  const [copyTemplate, setCopyTemplate] = useState<OrderCardData | null>(null);
+  const returnAnchor = useRef<{ id: number; top: number } | null>(null);
   const showOrdersContent = h.isLoading || (!h.error && h.items.length > 0);
   const sentinelRef = useInfiniteScroll({
     hasMore: h.hasMore,
@@ -22,14 +28,47 @@ export function CustomerOrdersWidget() {
     onLoadMore: () => void h.loadMore(),
   });
 
+  useEffect(() => {
+    const anchor = returnAnchor.current;
+    if (h.mode !== "list" || h.isLoading || !anchor) return;
+    requestAnimationFrame(() => {
+      const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${anchor.id}"]`);
+      if (!card) return;
+      window.scrollBy({ top: card.getBoundingClientRect().top - anchor.top });
+      returnAnchor.current = null;
+    });
+  }, [h.mode, h.isLoading, h.items]);
+
+  const openEdit = (order: OrderCardData) => {
+    const card = document.querySelector<HTMLElement>(`[data-customer-order-id="${order.id}"]`);
+    returnAnchor.current = { id: order.id, top: card?.getBoundingClientRect().top ?? 24 };
+    setCopyTemplate(null);
+    h.openEdit(order);
+  };
+
+  const chooseCopy = (order: OrderCardData) => {
+    setCopyTemplate(order);
+    setCopyPickerOpen(false);
+    if (h.mode === "list") h.openCreate();
+  };
+
   if (h.mode === "create" || h.mode === "edit") {
     return (
       <div className={s.wrapper}>
         <CreateOrderForm
+          key={`${h.mode}-${h.editTarget?.id ?? "new"}-${copyTemplate?.id ?? "original"}`}
           onCancel={h.backToList}
           onSubmit={h.mode === "edit" ? h.onUpdate : h.onCreate}
           isSubmitting={h.submitting}
           editTarget={h.editTarget ?? undefined}
+          copyTemplate={copyTemplate ?? undefined}
+          onCopy={() => setCopyPickerOpen(true)}
+        />
+        <OrderCopyPicker
+          open={copyPickerOpen}
+          customerId={h.customerId}
+          onClose={() => setCopyPickerOpen(false)}
+          onSelect={chooseCopy}
         />
       </div>
     );
@@ -81,6 +120,9 @@ export function CustomerOrdersWidget() {
             actionLabel="Добавить заказ"
             onAction={h.openCreate}
           />
+          <Button variant="outlineOrange" size="md" onClick={() => setCopyPickerOpen(true)}>
+            Скопировать заявку
+          </Button>
         </div>
       )}
 
@@ -89,9 +131,17 @@ export function CustomerOrdersWidget() {
           {h.isLoading ? (
             <Skeleton className={s.createBtn} rounded="md" />
           ) : (
-            <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={h.openCreate}>
-              Добавить заказ
-            </Button>
+            <div className={s.createActions}>
+              <Button variant="primary" size="md" fullWidth className={s.createBtn} onClick={() => {
+                setCopyTemplate(null);
+                h.openCreate();
+              }}>
+                Добавить заказ
+              </Button>
+              <Button variant="outlineOrange" size="md" fullWidth className={s.createBtn} onClick={() => setCopyPickerOpen(true)}>
+                Скопировать заявку
+              </Button>
+            </div>
           )}
 
           {h.isLoading ? (
@@ -100,13 +150,14 @@ export function CustomerOrdersWidget() {
             <>
               <div className={s.list}>
                 {h.items.map((o) => (
-                  <CustomerActiveCard
-                    key={o.id}
-                    card={o}
-                    isDeleting={h.deletingId === o.id}
-                    onEdit={() => h.openEdit(o)}
-                    onDelete={() => void h.onDelete(o.id)}
-                  />
+                  <div key={o.id} data-customer-order-id={o.id}>
+                    <CustomerActiveCard
+                      card={o}
+                      isDeleting={h.deletingId === o.id}
+                      onEdit={() => openEdit(o)}
+                      onDelete={() => void h.onDelete(o.id)}
+                    />
+                  </div>
                 ))}
                 {h.isLoadingMore && (
                   <div className={s.loadMore}>
@@ -119,6 +170,12 @@ export function CustomerOrdersWidget() {
           )}
         </>
       )}
+      <OrderCopyPicker
+        open={copyPickerOpen}
+        customerId={h.customerId}
+        onClose={() => setCopyPickerOpen(false)}
+        onSelect={chooseCopy}
+      />
     </div>
   );
 }

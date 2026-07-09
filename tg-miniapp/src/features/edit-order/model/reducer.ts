@@ -11,6 +11,7 @@ export const initialState: EditOrderState = {
   newFiles: [],
   notifyResponders: true,
   busy: false,
+  copySourceOrderId: null,
 };
 
 export function reducer(state: EditOrderState, action: EditOrderAction): EditOrderState {

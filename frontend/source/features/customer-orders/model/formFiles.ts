@@ -12,6 +12,7 @@ export interface OtherFilesSlot {
 }
 
 export interface DocumentsFormState {
+  copySourceOrderId: number | null;
   technical: SingleFileSlot;
   contract: SingleFileSlot;
   company: SingleFileSlot;
@@ -25,8 +26,9 @@ export type DocumentsFormAction =
   | { type: "REMOVE_OTHER_NEW"; index: number }
   | { type: "REMOVE_OTHER_EXISTING"; index: number };
 
-export function initialDocumentsFormState(existing?: OrderDocuments): DocumentsFormState {
+export function initialDocumentsFormState(existing?: OrderDocuments, copySourceOrderId: number | null = null): DocumentsFormState {
   return {
+    copySourceOrderId,
     technical: { newFile: null, existing: existing?.technical[0] ?? null },
     contract:  { newFile: null, existing: existing?.contract[0]  ?? null },
     company:   { newFile: null, existing: existing?.company[0]   ?? null },
@@ -40,7 +42,13 @@ export function documentsFormReducer(
 ): DocumentsFormState {
   switch (action.type) {
     case "SET_SINGLE":
-      return { ...state, [action.category]: { ...state[action.category], newFile: action.file } };
+      return {
+        ...state,
+        [action.category]: {
+          newFile: action.file,
+          existing: action.file ? null : state[action.category].existing,
+        },
+      };
     case "REMOVE_SINGLE_EXISTING":
       return { ...state, [action.category]: { newFile: state[action.category].newFile, existing: null } };
     case "ADD_OTHER":

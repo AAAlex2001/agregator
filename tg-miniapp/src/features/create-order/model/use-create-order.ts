@@ -2,8 +2,8 @@ import { useEffect, useReducer } from "react";
 import { useSession } from "@/features/session";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
-import { computeBadgeCodes } from "@/entites/expertise";
-import { createOrder } from "@/entites/order";
+import { computeBadgeCodes, parseBadgeCodes } from "@/entites/expertise";
+import { createOrder, type Order } from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 import type { FileKey } from "./types";
 
@@ -14,13 +14,33 @@ export type StepKey = "details" | "requirements" | "docs" | "confirm";
 
 const FLOW: StepKey[] = ["details", "requirements", "docs", "confirm"];
 
-export function useCreateOrder(open: boolean, onCreated: () => void) {
+export function useCreateOrder(open: boolean, onCreated: () => void, template: Order | null = null) {
   const { profile } = useSession();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    if (open) dispatch({ type: "reset" });
-  }, [open]);
+    if (!open) return;
+    if (!template) {
+      dispatch({ type: "reset" });
+      return;
+    }
+    const selection = parseBadgeCodes(template.badges.map((badge) => badge.text));
+    dispatch({
+      type: "copy",
+      sourceOrderId: template.id,
+      documents: template.documents,
+      title: template.title,
+      sum: template.sum_amount_raw ? String(Math.round(template.sum_amount_raw / 100)) : "",
+      startDate: template.start_date ? template.start_date.split(".").reverse().join("-") : "",
+      deadline: template.deadline_at,
+      responsesDeadline: template.responses_deadline ?? "",
+      requiresExpert: template.requires_expert,
+      requiresLicense: template.requires_license,
+      types: selection.types,
+      opos: selection.opos,
+      comment: template.comment,
+    });
+  }, [open, template]);
 
   const stepKey: StepKey = FLOW[state.step - 1] ?? "details";
   const total = FLOW.length;
@@ -33,9 +53,10 @@ export function useCreateOrder(open: boolean, onCreated: () => void) {
     state.files.company,
     ...state.otherFiles,
   ].filter((f): f is File => f !== null);
+  const copiedCount = Object.values(state.copiedDocuments).reduce((sum, paths) => sum + paths.length, 0);
 
-  const acceptFiles = (incoming: File[]): boolean => {
-    if (allFiles.length + incoming.length > MAX_FILES) {
+  const acceptFiles = (incoming: File[], replacingCopied = 0): boolean => {
+    if (copiedCount - replacingCopied + allFiles.length + incoming.length > MAX_FILES) {
       emitError(`Можно прикрепить не более ${MAX_FILES} файлов`);
       return false;
     }
@@ -50,7 +71,8 @@ export function useCreateOrder(open: boolean, onCreated: () => void) {
   const setFile = (key: FileKey, list: FileList | null) => {
     const file = list?.[0];
     if (!file) return;
-    if (!acceptFiles([file])) return;
+    if (!acceptFiles([file], state.copiedDocuments[key].length)) return;
+    state.copiedDocuments[key].forEach((url) => dispatch({ type: "removeCopied", url }));
     dispatch({ type: "file", key, file });
   };
 
@@ -84,6 +106,8 @@ export function useCreateOrder(open: boolean, onCreated: () => void) {
           requiresExpert: state.requiresExpert,
           requiresLicense: state.requiresLicense,
           badgeCodes,
+          copySourceOrderId: state.copySourceOrderId,
+          copyDocuments: state.copiedDocuments,
         },
         { ...state.files, other: state.otherFiles },
       );

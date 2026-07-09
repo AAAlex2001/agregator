@@ -22,12 +22,14 @@ interface Props {
   order: Order | null;
   onClose: () => void;
   onSaved: () => void;
+  copyTemplate?: Order | null;
+  onCopy: () => void;
 }
 
-export function EditOrderSheet({ order, onClose, onSaved }: Props) {
+export function EditOrderSheet({ order, onClose, onSaved, copyTemplate = null, onCopy }: Props) {
   const [calField, setCalField] = useState<DateField | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const { state, dispatch, canSubmit, submit, remove, keptUrls } = useEditOrder(order, onSaved);
+  const { state, dispatch, canSubmit, submit, remove, keptUrls } = useEditOrder(order, onSaved, copyTemplate);
 
   return (
     <FullSheet
@@ -115,6 +117,9 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
           </Field>
 
           <div className={s.actions}>
+            <Button variant="outline" onClick={onCopy}>
+              Скопировать
+            </Button>
             <Button variant="outline" onClick={onClose}>
               Отмена
             </Button>

@@ -5,29 +5,31 @@ import { parseDateRu, toKopecks, toMoscowDateTimeInput } from "@/shared/lib/form
 import { deleteOrder, updateOrder, type Order } from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 
-export function useEditOrder(order: Order | null, onSaved: () => void) {
+export function useEditOrder(order: Order | null, onSaved: () => void, template: Order | null = null) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     if (!order) return;
+    const source = template ?? order;
     dispatch({
       type: "prefill",
       payload: {
-        title: order.title,
-        sum: order.sum_amount_raw ? String(Math.round(order.sum_amount_raw / 100)) : "",
-        startDate: order.start_date ? parseDateRu(order.start_date) : "",
-        deadline: order.date ? parseDateRu(order.date) : "",
-        responsesDeadline: order.responses_deadline ? toMoscowDateTimeInput(order.responses_deadline) : "",
-        comment: order.comment || "",
+        title: source.title,
+        sum: source.sum_amount_raw ? String(Math.round(source.sum_amount_raw / 100)) : "",
+        startDate: source.start_date ? parseDateRu(source.start_date) : "",
+        deadline: source.date ? parseDateRu(source.date) : "",
+        responsesDeadline: source.responses_deadline ? toMoscowDateTimeInput(source.responses_deadline) : "",
+        comment: source.comment || "",
         keepDocuments: {
-          technical: [...order.documents.technical],
-          contract: [...order.documents.contract],
-          company: [...order.documents.company],
-          other: [...order.documents.other],
+          technical: [...source.documents.technical],
+          contract: [...source.documents.contract],
+          company: [...source.documents.company],
+          other: [...source.documents.other],
         },
+        copySourceOrderId: template?.id ?? null,
       },
     });
-  }, [order]);
+  }, [order, template]);
 
   const canSubmit = state.title.trim() !== "" && toKopecks(state.sum) > 0 && state.deadline !== "";
 
@@ -35,6 +37,7 @@ export function useEditOrder(order: Order | null, onSaved: () => void) {
     if (!order || !canSubmit || state.busy) return;
     dispatch({ type: "busy", value: true });
     try {
+      const source = template ?? order;
       await updateOrder(
         order.id,
         {
@@ -45,9 +48,12 @@ export function useEditOrder(order: Order | null, onSaved: () => void) {
           startDate: state.startDate,
           deadline: state.deadline,
           responsesDeadline: state.responsesDeadline,
-          badgeCodes: order.badges.map((b) => b.text),
+          badgeCodes: source.badges.map((b) => b.text),
           keepDocuments: state.keepDocuments,
           notifyResponders: state.notifyResponders,
+          copySourceOrderId: state.copySourceOrderId,
+          requiresExpert: source.requires_expert,
+          requiresLicense: source.requires_license,
         },
         state.newFiles,
       );

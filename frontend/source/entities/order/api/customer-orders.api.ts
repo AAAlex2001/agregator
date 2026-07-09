@@ -55,12 +55,29 @@ function collectNewFiles(documents: DocumentsFormState): File[] {
 }
 
 function buildKeepDocuments(documents: DocumentsFormState): string {
+  if (documents.copySourceOrderId !== null) return "{}";
   return JSON.stringify({
     technical: documents.technical.existing ? [documents.technical.existing] : [],
     contract: documents.contract.existing ? [documents.contract.existing] : [],
     company: documents.company.existing ? [documents.company.existing] : [],
     other: documents.other.existing,
   });
+}
+
+function buildCopyDocuments(documents: DocumentsFormState): string {
+  if (documents.copySourceOrderId === null) return "{}";
+  return JSON.stringify({
+    technical: documents.technical.existing ? [documents.technical.existing] : [],
+    contract: documents.contract.existing ? [documents.contract.existing] : [],
+    company: documents.company.existing ? [documents.company.existing] : [],
+    other: documents.other.existing,
+  });
+}
+
+function appendCopySource(fd: FormData, documents: DocumentsFormState): void {
+  if (documents.copySourceOrderId === null) return;
+  fd.append("copy_source_order_id", String(documents.copySourceOrderId));
+  fd.append("copy_documents_json", buildCopyDocuments(documents));
 }
 
 export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
@@ -78,6 +95,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     fd.append("requires_expert", String(p.requires_expert));
     fd.append("requires_license", String(p.requires_license));
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
+    appendCopySource(fd, p.documents);
     appendFiles(fd, p.documents, files);
     return fd;
   };
@@ -106,6 +124,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     fd.append("requires_license", String(p.requires_license));
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     fd.append("keep_documents_json", buildKeepDocuments(p.documents));
+    appendCopySource(fd, p.documents);
     fd.append("notify_responders", String(p.notify_responders));
     appendFiles(fd, p.documents, files);
     return fd;

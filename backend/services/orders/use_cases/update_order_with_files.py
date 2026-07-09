@@ -8,6 +8,7 @@ from schemas.order import OrderDocuments, OrderUpdate
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
 from services.orders.documents import OrderDocumentsService
+from services.orders.document_copy import OrderDocumentCopyService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
@@ -24,12 +25,14 @@ class UpdateOrderWithFilesUseCase:
         repo: OrderRepository,
         files: OrderFileStorage,
         send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
+        document_copy: OrderDocumentCopyService | None = None,
     ) -> None:
         self.update_order = update_order
         self.get_order = get_order
         self.repo = repo
         self.files = files
         self.send_updated_email = send_updated_email
+        self.document_copy = document_copy
 
     async def execute(
         self,
@@ -40,6 +43,8 @@ class UpdateOrderWithFilesUseCase:
         company: list[UploadFile],
         other: list[UploadFile],
         current_user_id: int,
+        copy_source_order_id: int | None = None,
+        copy_documents: OrderDocuments | None = None,
     ) -> Order:
         "Запускает основной сценарий use case."
         before = await self.get_order.execute(order_id)
@@ -52,6 +57,20 @@ class UpdateOrderWithFilesUseCase:
             current_user_id=current_user_id,
             notify=False,
         )
+
+        if copy_source_order_id is not None and copy_documents is not None:
+            if self.document_copy is None:
+                raise RuntimeError("Order document copy service is not configured")
+            copied = await self.document_copy.copy_to(
+                copy_source_order_id,
+                order_id,
+                copy_documents,
+                current_user_id,
+            )
+            existing = OrderDocumentsService.from_order(order)
+            OrderDocumentsService.write(order, OrderDocumentsService.merge(existing, copied))
+            await self.repo.flush()
+            order = await self.get_order.execute(order_id)
 
         if technical or contract or company or other:
             order = await self.append_files(

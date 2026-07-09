@@ -39,7 +39,8 @@ from services.orders import (
     UpdateOrderUseCase,
     UpdateOrderWithFilesUseCase,
 )
-from utils.order_forms import build_order_create_data, build_order_update_data
+from services.orders.document_copy import OrderDocumentCopyService
+from utils.order_forms import build_order_create_data, build_order_update_data, parse_keep_documents
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -216,6 +217,8 @@ async def create_order_with_files(
     requires_expert: bool = Form(True),
     requires_license: bool = Form(True),
     badge_codes_json: str = Form("[]"),
+    copy_source_order_id: int | None = Form(None),
+    copy_documents_json: str = Form("{}"),
     technical_files: list[UploadFile] = File(default=[]),
     contract_files: list[UploadFile] = File(default=[]),
     company_files: list[UploadFile] = File(default=[]),
@@ -244,10 +247,12 @@ async def create_order_with_files(
         send_new_order_email=build_send_new_order_email(db, background_tasks),
         create_new_order_notification=build_create_new_order_notification(db),
     )
+    files = OrderFileStorage()
     use_case = CreateOrderWithFilesUseCase(
         create_order=create,
         repo=repo,
-        files=OrderFileStorage(),
+        files=files,
+        document_copy=OrderDocumentCopyService(repo, files),
     )
     order = await use_case.execute(
         data,
@@ -256,6 +261,8 @@ async def create_order_with_files(
         company=company_files,
         other=other_files,
         current_user_id=user_id,
+        copy_source_order_id=copy_source_order_id,
+        copy_documents=parse_keep_documents(copy_documents_json),
     )
     return OrderResponse.from_order(order)
 
@@ -297,6 +304,8 @@ async def update_order_with_files(
     requires_license: bool | None = Form(None),
     badge_codes_json: str = Form("[]"),
     keep_documents_json: str = Form("{}"),
+    copy_source_order_id: int | None = Form(None),
+    copy_documents_json: str = Form("{}"),
     notify_responders: bool = Form(True),
     technical_files: list[UploadFile] = File(default=[]),
     contract_files: list[UploadFile] = File(default=[]),
@@ -329,12 +338,14 @@ async def update_order_with_files(
         get_order=get_order,
         validator=validator,
     )
+    files = OrderFileStorage()
     use_case = UpdateOrderWithFilesUseCase(
         update_order=update,
         get_order=get_order,
         repo=repo,
-        files=OrderFileStorage(),
+        files=files,
         send_updated_email=send_updated,
+        document_copy=OrderDocumentCopyService(repo, files),
     )
     order = await use_case.execute(
         order_id,
@@ -344,6 +355,8 @@ async def update_order_with_files(
         company=company_files,
         other=other_files,
         current_user_id=user_id,
+        copy_source_order_id=copy_source_order_id,
+        copy_documents=parse_keep_documents(copy_documents_json),
     )
     return OrderResponse.from_order(order)
 
