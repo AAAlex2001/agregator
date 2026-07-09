@@ -4,7 +4,7 @@ import { tapHaptic } from "@/shared/services/telegram";
 import { BottomSheet, Button, Field, FilePicker, FullSheet, SheetHero, TextArea, TextField, Toggle } from "@/shared/ui";
 import { CalendarPicker } from "@/shared/ui/calendar-picker";
 import { ChevronDownIcon } from "@/shared/ui/icons/interface";
-import { formatDateRu } from "@/shared/lib/format";
+import { formatDateRu, formatMoscowDateTime } from "@/shared/lib/format";
 import type { Order } from "@/entites/order";
 import { useEditOrder } from "../model/use-edit-order";
 import type { EditOrderField } from "../model/types";
@@ -15,7 +15,7 @@ type DateField = Extract<EditOrderField, "startDate" | "deadline" | "responsesDe
 const DATE_FIELDS: { key: DateField; label: string }[] = [
   { key: "startDate", label: "Срок начала выполнения работ" },
   { key: "deadline", label: "Срок окончания выполнения работ" },
-  { key: "responsesDeadline", label: "Приём откликов до" },
+  { key: "responsesDeadline", label: "Приём откликов до (МСК)" },
 ];
 
 interface Props {
@@ -73,7 +73,11 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
                   setCalField(field.key);
                 }}
               >
-                {state[field.key] ? formatDateRu(state[field.key]) : "Выберите дату"}
+                {state[field.key]
+                  ? field.key === "responsesDeadline"
+                    ? formatMoscowDateTime(state[field.key])
+                    : formatDateRu(state[field.key])
+                  : "Выберите дату"}
                 <ChevronDownIcon className={s.chev} width={18} height={18} />
               </button>
             </Field>
@@ -142,6 +146,7 @@ export function EditOrderSheet({ order, onClose, onSaved }: Props) {
           <CalendarPicker
             open={calField !== null}
             value={calField ? state[calField] : ""}
+            withTime={calField === "responsesDeadline"}
             onClose={() => setCalField(null)}
             onApply={(date) => {
               if (calField) dispatch({ type: "set", key: calField, value: date });

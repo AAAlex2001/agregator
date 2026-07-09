@@ -1,5 +1,6 @@
 import type { Badge, OrderCardData } from "@/source/entities/order";
 import s from "./CustomerBrief.module.scss";
+import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 const BADGE_CLASS: Record<Badge["variant"], string> = {
   blue: s.badgeBlue,
@@ -12,21 +13,6 @@ const BADGE_CLASS: Record<Badge["variant"], string> = {
 
 interface Props {
   order: OrderCardData;
-}
-
-function formatResponsesDeadline(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return date.toLocaleString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 export function CustomerBrief({ order }: Props) {
@@ -64,7 +50,7 @@ export function CustomerBrief({ order }: Props) {
 
       {order.responsesDeadline && (
         <span className={isExpired ? s.responsesDeadlineExpired : s.responsesDeadlineActive}>
-          Приём откликов до: {formatResponsesDeadline(order.responsesDeadline)}
+          Приём откликов до (МСК): {formatMoscowDateTime(order.responsesDeadline)}
         </span>
       )}
 

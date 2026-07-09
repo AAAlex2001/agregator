@@ -36,7 +36,7 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   form.append("sum_amount", String(toKopecks(payload.sumRubles)));
   if (payload.startDate) form.append("start_date", payload.startDate);
   form.append("deadline", payload.deadline);
-  if (payload.responsesDeadline) form.append("responses_deadline", `${payload.responsesDeadline}T23:59`);
+  if (payload.responsesDeadline) form.append("responses_deadline", payload.responsesDeadline);
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
@@ -72,7 +72,7 @@ export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFil
   form.append("sum_amount", String(toKopecks(payload.sumRubles)));
   if (payload.startDate) form.append("start_date", payload.startDate);
   form.append("deadline", payload.deadline);
-  if (payload.responsesDeadline) form.append("responses_deadline", `${payload.responsesDeadline}T23:59`);
+  if (payload.responsesDeadline) form.append("responses_deadline", payload.responsesDeadline);
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
   form.append("keep_documents_json", JSON.stringify(payload.keepDocuments));
   form.append("notify_responders", String(payload.notifyResponders));

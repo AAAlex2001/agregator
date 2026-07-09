@@ -105,6 +105,32 @@
   width: min(520px, calc(100vw - 32px));
 }
 
+.manualField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  color: #383f45;
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1a1a1a;
+    font: inherit;
+
+    &:focus {
+      border-color: #ff8a00;
+      outline: none;
+    }
+  }
+}
+
 .modalWithTime .calendar {
   display: flex !important;
   align-items: flex-start;

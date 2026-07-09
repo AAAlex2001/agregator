@@ -13,6 +13,41 @@ export function formatDateRu(iso: string): string {
   return `${day}.${month}.${year}`;
 }
 
+function moscowParts(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Moscow",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? "";
+  return {
+    year: part("year"),
+    month: part("month"),
+    day: part("day"),
+    hour: part("hour"),
+    minute: part("minute"),
+  };
+}
+
+export function formatMoscowDateTime(iso: string): string {
+  const parts = moscowParts(iso);
+  if (!parts) return "";
+  return `${parts.day}.${parts.month}.${parts.year}, ${parts.hour}:${parts.minute}`;
+}
+
+export function toMoscowDateTimeInput(iso: string): string {
+  const parts = moscowParts(iso);
+  if (!parts) return "";
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:00+03:00`;
+}
+
 export function parseDateRu(display: string): string {
   const [day, month, year] = display.split(".");
   if (!day || !month || !year) return "";
@@ -34,9 +69,9 @@ export function pluralRu(n: number, one: string, few: string, many: string): str
 }
 
 export function formatDeadline(iso: string): string {
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const parts = moscowParts(iso);
+  if (!parts) return "";
+  return `${parts.day}.${parts.month}, ${parts.hour}:${parts.minute} МСК`;
 }
 
 const MONTHS_RU = [

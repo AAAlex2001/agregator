@@ -3,6 +3,7 @@ import { DiffValue } from "@/source/shared/ui/DiffValue";
 import type { Badge } from "../model/types";
 import { RequirementsBadges } from "./RequirementsBadges";
 import s from "./OrderCardBottom.module.scss";
+import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 interface Props {
   id?: number | string;
@@ -31,18 +32,6 @@ function resolveStatusBadge(status?: string): { text: string; color: string; bg:
     return { text: "Архив", color: "#4d4d4d", bg: "#e6e6e6" };
   }
   return { text: "Приём заявок", color: "#0b5723", bg: "#b2dfb6" };
-}
-
-function formatResponsesDeadline(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 export function OrderCard({
@@ -76,8 +65,8 @@ export function OrderCard({
       ? [{ label: "Дата публикации", value: createdAtDisplay }]
       : []),
     {
-      label: "Приём откликов до",
-      value: responsesDeadline ? formatResponsesDeadline(responsesDeadline) : "—",
+      label: "Приём откликов до (МСК)",
+      value: formatMoscowDateTime(responsesDeadline),
       valueOrange: true,
     },
     {

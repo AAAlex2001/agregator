@@ -104,6 +104,7 @@ export function CreateOrderSheet({ open, onClose, onCreated }: Props) {
         <CalendarPicker
           open={calField !== null}
           value={calField ? state[calField] : ""}
+          withTime={calField === "responsesDeadline"}
           onClose={() => setCalField(null)}
           onApply={(date) => {
             if (calField) dispatch({ type: "set", key: calField, value: date });

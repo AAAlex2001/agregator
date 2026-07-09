@@ -1,8 +1,9 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from models.order import BadgeVariant, OrderStatus
 
@@ -23,6 +24,15 @@ ALLOWED_DOCUMENT_EXTENSIONS_LABEL = (
 
 MAX_ORDER_DOCUMENTS = 6
 MAX_ORDER_FILES_TOTAL_BYTES = 100 * 1024 * 1024
+MOSCOW_TIMEZONE = ZoneInfo("Europe/Moscow")
+
+
+def normalize_moscow_datetime(value: datetime | None) -> datetime | None:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=MOSCOW_TIMEZONE)
+    return value.astimezone(UTC)
 
 
 class OrderDocuments(BaseModel):
@@ -77,6 +87,11 @@ class OrderCreate(BaseModel):
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
 
+    @field_validator("responses_deadline")
+    @classmethod
+    def normalize_responses_deadline(cls, value: datetime | None) -> datetime | None:
+        return normalize_moscow_datetime(value)
+
 
 class OrderUpdate(BaseModel):
     "Частичный патч заказа клиентом (все поля опциональны)."
@@ -93,6 +108,11 @@ class OrderUpdate(BaseModel):
     badges: list[BadgeSchema] | None = None
     status: OrderStatus | None = None
     notify_responders: bool = True
+
+    @field_validator("responses_deadline")
+    @classmethod
+    def normalize_responses_deadline(cls, value: datetime | None) -> datetime | None:
+        return normalize_moscow_datetime(value)
 
 
 class OrderResponse(BaseModel):

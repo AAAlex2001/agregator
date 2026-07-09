@@ -1,5 +1,4 @@
 import json
-from datetime import UTC
 from datetime import date as date_type
 from datetime import datetime as datetime_type
 
@@ -28,10 +27,7 @@ def parse_json_list(raw: str) -> list[object]:
 def parse_responses_deadline(raw: str) -> datetime_type | None:
     if not raw:
         return None
-    parsed = datetime_type.fromisoformat(raw)
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=UTC)
-    return parsed
+    return datetime_type.fromisoformat(raw)
 
 
 def code_to_variant(code: str) -> str:

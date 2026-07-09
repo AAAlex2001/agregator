@@ -80,6 +80,7 @@ export function DetailsSection({ form }: Props) {
             onChange={(value) => setValue("responsesDeadline", value, { shouldDirty: true })}
             withTime
           />
+          <span className={s.timezoneHint}>Время указано по МСК</span>
         </div>
       </div>
     </section>

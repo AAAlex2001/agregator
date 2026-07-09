@@ -8,6 +8,7 @@ import { LogoIcon } from "@/source/shared/ui/icons";
 import { documentPaths, fetchPublicOrder, type PublicOrderPreview } from "@/source/entities/order";
 import { fetchProfile } from "@/source/entities/user";
 import styles from "./order-preview.module.scss";
+import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 type PreviewOrder = PublicOrderPreview;
 
@@ -54,13 +55,6 @@ const variantClassMap: Record<string, string> = {
   BLUE: "badgeBlue", GREEN: "badgeGreen", GRAY: "badgeGray",
   ORANGE: "badgeOrange", BROWN: "badgeBrown", PURPLE: "badgePurple",
 };
-
-function formatResponsesDeadline(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 function getFileName(url: string): string {
   const parts = url.split("/");
@@ -126,8 +120,8 @@ export function OrderPreviewContent() {
                 </div>
                 {order.responses_deadline && (
                   <div className={styles.metaItem}>
-                    <span className={styles.metaLabel}>Приём откликов до</span>
-                    <span className={styles.metaValue}>{formatResponsesDeadline(order.responses_deadline)}</span>
+                    <span className={styles.metaLabel}>Приём откликов до (МСК)</span>
+                    <span className={styles.metaValue}>{formatMoscowDateTime(order.responses_deadline)}</span>
                   </div>
                 )}
               </div>

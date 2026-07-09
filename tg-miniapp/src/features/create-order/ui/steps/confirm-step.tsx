@@ -1,5 +1,5 @@
 import { Field, InfoRow } from "@/shared/ui";
-import { formatDateRu } from "@/shared/lib/format";
+import { formatDateRu, formatMoscowDateTime } from "@/shared/lib/format";
 import { type StepProps } from "./types";
 import s from "./confirm-step.module.scss";
 
@@ -29,7 +29,7 @@ export function ConfirmStep({ state, badgeCodes, company, filesCount }: Props) {
           <InfoRow label="Начало работ" value={formatDateRu(state.startDate)} />
           <InfoRow label="Окончание" value={formatDateRu(state.deadline)} />
           {state.responsesDeadline && (
-            <InfoRow label="Приём откликов до" value={formatDateRu(state.responsesDeadline)} />
+            <InfoRow label="Приём откликов до (МСК)" value={formatMoscowDateTime(state.responsesDeadline)} />
           )}
         </div>
       </Field>

@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { tapHaptic } from "@/shared/services/telegram";
-import { formatDateRu } from "@/shared/lib/format";
+import { formatDateRu, formatMoscowDateTime } from "@/shared/lib/format";
 import { Field, TextField } from "@/shared/ui";
 import { ChevronDownIcon } from "@/shared/ui/icons/interface";
 import { type StepProps } from "./types";
@@ -23,7 +23,7 @@ export function DetailsStep({ state, dispatch, company, onOpenDate }: Props) {
         onOpenDate(field);
       }}
     >
-      {value ? formatDateRu(value) : "Выберите дату"}
+      {value ? (field === "responsesDeadline" ? formatMoscowDateTime(value) : formatDateRu(value)) : "Выберите дату"}
       <ChevronDownIcon className={s.chev} />
     </button>
   );
@@ -53,7 +53,7 @@ export function DetailsStep({ state, dispatch, company, onOpenDate }: Props) {
 
       <Field label="Срок начала выполнения работ">{dateButton("startDate", state.startDate)}</Field>
       <Field label="Срок окончания выполнения работ">{dateButton("deadline", state.deadline)}</Field>
-      <Field label="Приём откликов до (необязательно)" hint="Отклики принимаются до конца выбранного дня">
+      <Field label="Приём откликов до (необязательно)" hint="Время указано по МСК">
         {dateButton("responsesDeadline", state.responsesDeadline)}
       </Field>
     </>

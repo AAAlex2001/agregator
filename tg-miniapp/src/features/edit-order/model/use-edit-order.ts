@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
-import { parseDateRu, toKopecks } from "@/shared/lib/format";
+import { parseDateRu, toKopecks, toMoscowDateTimeInput } from "@/shared/lib/format";
 import { deleteOrder, updateOrder, type Order } from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 
@@ -17,7 +17,7 @@ export function useEditOrder(order: Order | null, onSaved: () => void) {
         sum: order.sum_amount_raw ? String(Math.round(order.sum_amount_raw / 100)) : "",
         startDate: order.start_date ? parseDateRu(order.start_date) : "",
         deadline: order.date ? parseDateRu(order.date) : "",
-        responsesDeadline: order.responses_deadline ? order.responses_deadline.slice(0, 10) : "",
+        responsesDeadline: order.responses_deadline ? toMoscowDateTimeInput(order.responses_deadline) : "",
         comment: order.comment || "",
         keepDocuments: {
           technical: [...order.documents.technical],

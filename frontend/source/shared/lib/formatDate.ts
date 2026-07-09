@@ -49,3 +49,17 @@ export function formatWithTime(input: string | Date): string {
     hour: "2-digit", minute: "2-digit",
   });
 }
+
+export function formatMoscowDateTime(input: string | Date | null | undefined): string {
+  if (!input) return "—";
+  const date = input instanceof Date ? input : new Date(input);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleString("ru-RU", {
+    timeZone: "Europe/Moscow",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}

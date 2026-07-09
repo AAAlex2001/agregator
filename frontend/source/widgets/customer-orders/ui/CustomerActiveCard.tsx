@@ -9,22 +9,13 @@ import type { CardAction } from "@/source/entities/response";
 import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import cardBottom from "@/source/entities/order/ui/OrderCardBottom.module.scss";
+import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 interface Props {
   card: OrderCardData;
   isDeleting?: boolean;
   onEdit: () => void;
   onDelete: () => void;
-}
-
-function formatResponsesDeadline(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("ru-RU", {
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
 }
 
 export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props) {
@@ -59,7 +50,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
           valueAccent: true,
         },
         ...(card.createdAtDisplay ? [{ label: "Дата публикации", value: card.createdAtDisplay }] : []),
-        { label: "Приём откликов до", value: formatResponsesDeadline(card.responsesDeadline), valueOrange: true },
+        { label: "Приём откликов до (МСК)", value: formatMoscowDateTime(card.responsesDeadline), valueOrange: true },
         {
           label: "Срок начала выполнения работ",
           value: card.startDate || "—",
