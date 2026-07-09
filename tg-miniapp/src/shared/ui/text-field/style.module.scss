@@ -1,7 +1,11 @@
 .field {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .label {
@@ -12,6 +16,7 @@
 }
 
 .wrap {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -22,6 +27,9 @@
   border-radius: 14px;
   box-shadow: 0 0 0 0 rgba(255, 138, 0, 0);
   transition: box-shadow 0.22s ease;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .focused {

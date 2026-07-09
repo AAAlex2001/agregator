@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import { BottomSheet } from "../bottom-sheet";
 import { Button } from "../button";
+import { TextField } from "../text-field";
 import {
   formatManualDateValue,
   formatMoscowApiValue,
@@ -42,9 +43,9 @@ export function CalendarPicker({ open, value, withTime = false, onClose, onApply
 
   return (
     <BottomSheet open={open} title={withTime ? "Выберите дату и время" : "Выберите дату"} onClose={onClose}>
-      <label className="calendar-manual">
-        <span>{withTime ? "Дата и время (МСК)" : "Дата"}</span>
-        <input
+      <div className="calendar-manual">
+        <TextField
+          label={withTime ? "Дата и время (МСК)" : "Дата"}
           type="text"
           inputMode="numeric"
           autoComplete="off"
@@ -56,7 +57,7 @@ export function CalendarPicker({ open, value, withTime = false, onClose, onApply
             setDate(parseManualDateValue(next, withTime));
           }}
         />
-      </label>
+      </div>
       <Calendar
         value={date}
         onChange={(next) => {
