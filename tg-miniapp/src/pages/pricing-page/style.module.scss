@@ -17,6 +17,18 @@
   box-shadow: 0 8px 26px rgba(255, 138, 0, 0.18);
 }
 
+.single {
+  border-color: #1faa52;
+  background: linear-gradient(135deg, rgba(31, 170, 82, 0.14) 0%, rgba(31, 170, 82, 0.03) 45%, transparent 70%);
+  box-shadow: 0 8px 26px rgba(31, 170, 82, 0.14);
+}
+
+.yearly {
+  border-color: #6c5ce7;
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.14) 0%, rgba(108, 92, 231, 0.03) 45%, transparent 70%);
+  box-shadow: 0 8px 26px rgba(108, 92, 231, 0.14);
+}
+
 .crown {
   position: absolute;
   top: 34px;

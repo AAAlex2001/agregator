@@ -91,6 +91,16 @@
   opacity: 1;
 }
 
+.cardSingle .pillsBlock::before {
+  background: linear-gradient(90deg, #f0fbf2 0%, #9be3b4 69.56%, #1faa52 100%);
+  opacity: 1;
+}
+
+.cardYearly .pillsBlock::before {
+  background: linear-gradient(90deg, #f2f1ff 0%, #b3acf2 69.56%, #6c5ce7 100%);
+  opacity: 1;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;

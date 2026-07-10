@@ -17,7 +17,14 @@ export function PricingPage() {
         <p className={s.empty}>Тарифы пока недоступны</p>
       ) : (
         plans.map((plan) => (
-          <Card key={plan.id} className={cn(s.plan, { [s.hot]: plan.highlighted })}>
+          <Card
+            key={plan.id}
+            className={cn(s.plan, {
+              [s.hot]: plan.highlighted,
+              [s.single]: plan.kind === "SINGLE",
+              [s.yearly]: plan.kind === "YEARLY",
+            })}
+          >
             {plan.highlighted && (
               <span className={s.crown}>
                 <CrownIcon width={118} height={118} />

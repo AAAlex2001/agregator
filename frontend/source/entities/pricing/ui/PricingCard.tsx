@@ -27,6 +27,8 @@ export function PricingCard({
   const cardClass = [
     s.card,
     highlighted ? s.cardHighlighted : "",
+    plan.kind === "SINGLE" ? s.cardSingle : "",
+    plan.kind === "YEARLY" ? s.cardYearly : "",
     isActive ? s.cardActive : "",
     isDisabled ? s.cardDisabled : "",
   ]

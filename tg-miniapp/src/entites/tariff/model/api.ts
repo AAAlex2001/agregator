@@ -2,6 +2,7 @@ import { apiJson } from "@/shared/services/api";
 
 export interface Plan {
   id: number;
+  kind: "SINGLE" | "MONTHLY" | "YEARLY";
   name: string;
   badge: string | null;
   price_display: string;

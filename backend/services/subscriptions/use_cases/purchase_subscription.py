@@ -99,6 +99,12 @@ class PurchaseSubscriptionUseCase:
         await self.repo.add(subscription)
         await self.repo.flush()
 
+        if plan.price_kopecks <= 0:
+            payment.status = PaymentStatus.SUCCEEDED
+            subscription.status = SubscriptionStatus.ACTIVE
+            await self.repo.flush()
+            return PurchaseResult(subscription=subscription, confirmation_url=return_url)
+
         yoo_payment = YooPayment.create(
             self.build_yoo_payload(user, plan, payment, subscription, return_url),
             str(uuid.uuid4()),
