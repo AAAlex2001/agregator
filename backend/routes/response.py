@@ -439,7 +439,6 @@ async def withdraw_response(
         get_response=GetResponseByIdUseCase(repo),
         in_app=build_in_app(db, repo),
         send_rejected_email=send_rejected,
-        subscription_access=build_subscription_access(db),
     )
     await use_case.execute(response_id=response_id, expert_id=user_id)
     return DetailResponse(detail="Отклик отозван")
@@ -456,7 +455,6 @@ async def restore_withdrawn_response(
     use_case = RestoreWithdrawnResponseUseCase(
         repo=repo,
         get_response=GetResponseByIdUseCase(repo),
-        subscription_access=build_subscription_access(db),
     )
     restored = await use_case.execute(response_id=response_id, expert_id=user_id)
     return to_item(restored, UserRole.EXPERT)

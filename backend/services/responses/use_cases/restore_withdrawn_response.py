@@ -5,39 +5,29 @@ from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
-from services.subscriptions import SubscriptionAccess
 
 
 class RestoreWithdrawnResponseUseCase:
-    "Возвращает отозванный экспертом отклик обратно в статус REVIEW и заново списывает слот разового тарифа."
+    "Возвращает отозванный экспертом отклик обратно в статус REVIEW. Бесплатно: слот списан при создании отклика."
 
     def __init__(
         self,
         repo: ResponseRepository,
         get_response: GetResponseByIdUseCase,
-        subscription_access: SubscriptionAccess | None = None,
     ) -> None:
         self.repo = repo
         self.get_response = get_response
-        self.subscription_access = subscription_access
 
     async def execute(self, response_id: int, expert_id: int) -> OrderResponse:
-        "Запускает основной сценарий use case. Возврат отклика повторно расходует слот (как новый отклик)."
+        "Запускает основной сценарий use case."
         response = await self.get_response.execute(response_id)
         self.ensure_owner(response, expert_id)
         self.ensure_withdrawn(response)
         self.ensure_order_open(response)
 
-        subscription = None
-        if self.subscription_access is not None:
-            subscription = await self.subscription_access.require_for_response(expert_id)
-
         response.status = ResponseStatus.REVIEW
         response.auto_rejected = False
         await self.repo.flush()
-
-        if subscription is not None and self.subscription_access is not None:
-            await self.subscription_access.consume_for_response(subscription)
 
         return await self.get_response.execute(response_id)
 

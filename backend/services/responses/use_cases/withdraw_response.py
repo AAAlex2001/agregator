@@ -7,7 +7,6 @@ from services.email import SendExpertRejectedEmailUseCase
 from services.responses.in_app_notifier import ResponseInAppNotifier
 from services.responses.repository import ResponseRepository
 from services.responses.use_cases.get_response_by_id import GetResponseByIdUseCase
-from services.subscriptions import SubscriptionAccess
 
 WITHDRAWABLE_STATUSES = {
     ResponseStatus.REVIEW,
@@ -25,13 +24,11 @@ class WithdrawResponseUseCase:
         get_response: GetResponseByIdUseCase,
         in_app: ResponseInAppNotifier,
         send_rejected_email: SendExpertRejectedEmailUseCase | None = None,
-        subscription_access: SubscriptionAccess | None = None,
     ) -> None:
         self.repo = repo
         self.get_response = get_response
         self.in_app = in_app
         self.send_rejected_email = send_rejected_email
-        self.subscription_access = subscription_access
 
     async def execute(self, response_id: int, expert_id: int) -> int:
         "Запускает основной сценарий use case."
@@ -51,9 +48,6 @@ class WithdrawResponseUseCase:
 
         if was_assigned and self.send_rejected_email is not None:
             await self.send_rejected_email.execute(response_id)
-
-        if self.subscription_access is not None:
-            await self.subscription_access.restore_response_slot(expert_id)
 
         if customer_id is not None:
             await self.in_app.response_withdrawn(order_id, customer_id, order)

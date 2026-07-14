@@ -33,6 +33,22 @@
   text-align: center;
 }
 
+.cert {
+  margin: 4px 0 0;
+  max-width: 720px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: #808080;
+}
+
+.certLink {
+  color: var(--color-orange-primary, #ff8a00);
+  font-weight: 600;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 .contentArea {
   width: 100%;
   display: flex;
