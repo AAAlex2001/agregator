@@ -121,7 +121,7 @@ export function getCabinetNav(role: string | null): NavPlate[] {
     },
     {
       key: "rtn",
-      label: "Ростехнадзор отвечает",
+      label: "РОСТЕХНАДЗОР отвечает",
       color: "greenBlue",
       items: [
         { label: "Задать вопрос в Ростехнадзор", soon: true },
