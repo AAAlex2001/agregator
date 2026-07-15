@@ -7,11 +7,11 @@ import Button from "@/source/shared/ui/Button";
 import { CheckIcon, TelegramIcon } from "@/source/shared/ui/icons";
 import s from "./promo-drawer.module.scss";
 
-export type PromoKind = "bot" | "app" | "rtn";
+export type PromoKind = "bot" | "app";
 
 const BOT_URL = "https://t.me/resursplus_robot";
 
-const CONTENT: Record<PromoKind, { title: string; tab: string; image: string | null; features: string[]; href: string | null }> = {
+const CONTENT: Record<PromoKind, { title: string; tab: string; image: string; features: string[]; href: string | null }> = {
   bot: {
     title: "Telegram-бот Ресурс-Плюс",
     tab: "Telegram бот",
@@ -31,17 +31,6 @@ const CONTENT: Record<PromoKind, { title: string; tab: string; image: string | n
       "Все сделки и документы всегда под рукой",
       "Push-уведомления о каждом движении по заказу",
       "Полный кабинет эксперта и заказчика в кармане",
-    ],
-    href: null,
-  },
-  rtn: {
-    title: "Ростехнадзор отвечает",
-    tab: "Ростехнадзор отвечает",
-    image: null,
-    features: [
-      "Официальные разъяснения по требованиям промышленной безопасности — в одном разделе",
-      "База ответов Ростехнадзора с поиском по темам и нормативным документам",
-      "Уведомим на почту и в Telegram, когда появится ответ на ваш вопрос",
     ],
     href: null,
   },
@@ -107,15 +96,13 @@ export function PromoDrawerPanel({
 
         <div className={s.body}>
           <section className={s.card}>
-            {content.image && (
-              <Image
-                className={`${s.img} ${kind === "bot" ? s.imgBot : ""}`}
-                src={content.image}
-                alt=""
-                width={800}
-                height={800}
-              />
-            )}
+            <Image
+              className={`${s.img} ${kind === "bot" ? s.imgBot : ""}`}
+              src={content.image}
+              alt=""
+              width={800}
+              height={800}
+            />
             <ul className={s.features}>
               {content.features.map((feature) => (
                 <li key={feature}>
@@ -150,12 +137,10 @@ export function PromoNavButtons({
   className,
   botClassName,
   appClassName,
-  rtnClassName,
 }: {
   className?: string;
   botClassName?: string;
   appClassName?: string;
-  rtnClassName?: string;
 }) {
   const [drawer, setDrawer] = useState<PromoDrawerState>({ kind: "bot", open: false });
 
@@ -175,13 +160,6 @@ export function PromoNavButtons({
       >
         Мобильное приложение
       </button>
-      <button
-        type="button"
-        className={[className, rtnClassName].filter(Boolean).join(" ")}
-        onClick={() => setDrawer({ kind: "rtn", open: true })}
-      >
-        Ростехнадзор отвечает
-      </button>
       <PromoDrawerPanel
         kind={drawer.kind}
         open={drawer.open}
@@ -190,12 +168,6 @@ export function PromoNavButtons({
     </>
   );
 }
-
-const TAB_CLASS: Record<PromoKind, string> = {
-  bot: s.tabBot,
-  app: s.tabApp,
-  rtn: s.tabRtn,
-};
 
 const PromoDrawer = () => {
   const [drawer, setDrawer] = useState<PromoDrawerState>({ kind: "bot", open: false });
@@ -207,7 +179,7 @@ const PromoDrawer = () => {
           <button
             key={key}
             type="button"
-            className={`${s.tab} ${TAB_CLASS[key]}`}
+            className={`${s.tab} ${key === "bot" ? s.tabBot : s.tabApp}`}
             onClick={() => setDrawer({ kind: key, open: true })}
           >
             {CONTENT[key].tab}

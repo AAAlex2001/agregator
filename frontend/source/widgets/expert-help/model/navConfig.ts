@@ -1,6 +1,6 @@
 export type CabinetRole = "EXPERT" | "CUSTOMER" | "LICENSE_HOLDER";
 
-export type PlateColor = "indigo" | "amber" | "green" | "red";
+export type PlateColor = "indigo" | "amber" | "green" | "red" | "greenBlue";
 
 export interface NavLink {
   label: string;
@@ -118,6 +118,15 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       roles: ["EXPERT", "LICENSE_HOLDER"],
       href: "/tech-expert",
       logo: true,
+    },
+    {
+      key: "rtn",
+      label: "Ростехнадзор отвечает",
+      color: "greenBlue",
+      items: [
+        { label: "Задать вопрос в Ростехнадзор", soon: true },
+        { label: "База официальных разъяснений и ответов", soon: true },
+      ],
     },
     {
       key: "edu",

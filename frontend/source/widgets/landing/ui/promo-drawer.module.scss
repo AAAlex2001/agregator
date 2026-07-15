@@ -55,14 +55,6 @@
   }
 }
 
-.tabRtn {
-  background: linear-gradient(180deg, #29c063, #1faa52);
-
-  &:hover {
-    background: linear-gradient(180deg, #1faa52, #12813f);
-    box-shadow: -8px 0 24px rgba(31, 170, 82, 0.28);
-  }
-}
 
 .backdrop {
   position: fixed;
