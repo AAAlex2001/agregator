@@ -42,6 +42,7 @@ class ExpertMapItem(BaseModel):
     lng: float
     travels_to_other_regions: bool = False
     certificates: list[str] | None = None
+    certificate_codes: list[str] = Field(default_factory=list)
     phone: str | None = None
     email: str | None = None
 

@@ -2,33 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { fetchExpertsMap, type ExpertMapItemApi } from "@/source/entities/expert";
-import { YandexMarkersMap, type MapMarker } from "@/source/shared/ui/YandexMap";
+import { FilterableExpertsMap } from "@/source/features/expert-map-filter";
 import base from "./sectionBase.module.scss";
 import s from "./expertsMapSection.module.scss";
 
-function toMarker(item: ExpertMapItemApi): MapMarker {
-  return {
-    id: item.public_id,
-    lat: item.lat,
-    lng: item.lng,
-    title: item.full_name,
-    city: item.city,
-    rating: item.rating,
-    travelsToOtherRegions: item.travels_to_other_regions,
-    certificates: item.certificates,
-    phone: item.phone,
-    email: item.email,
-  };
-}
-
 export function ExpertsMapSection() {
-  const [markers, setMarkers] = useState<MapMarker[]>([]);
+  const [items, setItems] = useState<ExpertMapItemApi[]>([]);
 
   useEffect(() => {
     let active = true;
     fetchExpertsMap()
       .then((data) => {
-        if (active) setMarkers(data.items.map(toMarker));
+        if (active) setItems(data.items);
       })
       .catch(() => {});
     return () => {
@@ -43,11 +28,7 @@ export function ExpertsMapSection() {
         Посмотрите, где находятся эксперты площадки, — это поможет выбрать исполнителя ближе к объекту.
         Точки кластеризуются; нажмите на маркер, чтобы увидеть эксперта.
       </p>
-      <YandexMarkersMap
-        markers={markers}
-        height={420}
-        emptyText="Пока нет экспертов с указанной локацией"
-      />
+      <FilterableExpertsMap items={items} height={420} emptyText="Пока нет экспертов с указанной локацией" />
     </section>
   );
 }

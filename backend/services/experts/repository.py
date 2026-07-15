@@ -75,6 +75,7 @@ class ExpertLocationRow:
     lng: float
     travels_to_other_regions: bool
     certificates: list[str] | None
+    certificate_codes: list[str]
     phone: str | None
     email: str | None
 
@@ -207,6 +208,11 @@ class ExpertsRepository:
 
         certificates = [format_cert_for_map(cert, fields) for cert in (user.expert_certificates or [])]
         certificates = [text for text in certificates if text]
+        certificate_codes = [
+            f"{cert['area']} {cert['object']}"
+            for cert in (user.expert_certificates or [])
+            if cert.get("area") and cert.get("object")
+        ]
 
         return ExpertLocationRow(
             public_id=user.public_id,
@@ -218,6 +224,7 @@ class ExpertsRepository:
             lng=float(user.location_lng),
             travels_to_other_regions=bool(user.travels_to_other_regions),
             certificates=certificates or None,
+            certificate_codes=certificate_codes,
             phone=user.phone if show_contacts else None,
             email=user.email if show_contacts else None,
         )

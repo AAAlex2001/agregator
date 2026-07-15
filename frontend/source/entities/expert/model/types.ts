@@ -44,6 +44,7 @@ export interface ExpertMapItemApi {
   lng: number;
   travels_to_other_regions: boolean;
   certificates: string[] | null;
+  certificate_codes: string[];
   phone: string | null;
   email: string | null;
 }
