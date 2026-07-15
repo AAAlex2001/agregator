@@ -135,7 +135,7 @@ export function CabinetBurgerMenu() {
               ) : (
                 <button
                   type="button"
-                  className={`${s.groupHead} ${plate.color === "greenBlue" ? s.greenBlue : ""} ${openKey === plate.key ? `${s.groupOpen} ${s[plate.color]}` : ""}`}
+                  className={`${s.groupHead} ${plate.color === "gold" ? s.gold : ""} ${openKey === plate.key ? `${s.groupOpen} ${s[plate.color]}` : ""}`}
                   onClick={() => toggle(plate.key)}
                   aria-expanded={openKey === plate.key}
                 >
