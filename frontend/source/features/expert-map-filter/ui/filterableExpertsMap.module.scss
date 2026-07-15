@@ -27,18 +27,32 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+@media (min-width: 1024px) {
+  .areasAxis {
+    flex-wrap: nowrap;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .areasAxis::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .chip {
-  min-width: 44px;
-  padding: 7px 10px;
+  flex: none;
+  min-width: 34px;
+  padding: 6px 7px;
   border: 1px solid #e3e6ec;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #ffffff;
   color: #4d5562;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-align: center;
   cursor: pointer;
