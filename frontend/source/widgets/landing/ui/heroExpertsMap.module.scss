@@ -45,3 +45,10 @@
     line-height: 22px;
   }
 }
+
+@media (min-width: 1440px) {
+  .heading,
+  .sub {
+    text-align: center;
+  }
+}
