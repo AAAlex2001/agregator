@@ -1,7 +1,7 @@
 "use client";
 
 import type { ExpertMapItemApi } from "@/source/entities/expert";
-import { AREA_OPTIONS } from "@/source/entities/expertise";
+import { AREA_OPTIONS, TypeBadge } from "@/source/entities/expertise";
 import { YandexMarkersMap, type MapMarker } from "@/source/shared/ui/YandexMap";
 import { FILTER_OBJECTS } from "../model/match";
 import { useExpertMapFilter } from "../model/useExpertMapFilter";
@@ -12,6 +12,8 @@ interface Props {
   height?: number | string;
   emptyText: string;
 }
+
+const NO_MATCH_TEXT = "По выбранным фильтрам экспертов не нашлось — снимите часть фильтров";
 
 function toMarker(item: ExpertMapItemApi): MapMarker {
   return {
@@ -30,24 +32,27 @@ function toMarker(item: ExpertMapItemApi): MapMarker {
 
 export function FilterableExpertsMap({ items, height = "100%", emptyText }: Props) {
   const { areas, objects, toggleArea, toggleObject, filtered } = useExpertMapFilter(items);
+  const noMatch = items.length > 0 && filtered.length === 0;
 
   return (
     <div className={s.layout}>
       <div className={s.objectsAxis} role="group" aria-label="Фильтр по объектам экспертизы">
         {FILTER_OBJECTS.map((object) => (
-          <button
+          <TypeBadge
             key={object}
-            type="button"
-            className={`${s.chip} ${objects.includes(object) ? s.chipActive : ""}`}
+            type={object}
+            active={objects.includes(object)}
             onClick={() => toggleObject(object)}
-          >
-            {object}
-          </button>
+          />
         ))}
       </div>
 
       <div className={s.mapBox}>
-        <YandexMarkersMap markers={filtered.map(toMarker)} height={height} emptyText={emptyText} />
+        <YandexMarkersMap
+          markers={filtered.map(toMarker)}
+          height={height}
+          emptyText={noMatch ? NO_MATCH_TEXT : emptyText}
+        />
       </div>
 
       <div className={s.areasAxis} role="group" aria-label="Фильтр по областям аттестации">

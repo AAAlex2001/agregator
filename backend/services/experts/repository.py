@@ -206,13 +206,14 @@ class ExpertsRepository:
         show_name = "name" in fields
         show_contacts = "contacts" in fields
 
-        certificates = [format_cert_for_map(cert, fields) for cert in (user.expert_certificates or [])]
-        certificates = [text for text in certificates if text]
-        certificate_codes = [
-            f"{cert['area']} {cert['object']}"
-            for cert in (user.expert_certificates or [])
-            if cert.get("area") and cert.get("object")
-        ]
+        certificates = []
+        certificate_codes = []
+        for cert in user.expert_certificates or []:
+            text = format_cert_for_map(cert, fields)
+            if text:
+                certificates.append(text)
+            if cert.get("area") and cert.get("object"):
+                certificate_codes.append(f"{cert['area']} {cert['object']}")
 
         return ExpertLocationRow(
             public_id=user.public_id,
