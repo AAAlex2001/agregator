@@ -1,9 +1,8 @@
 "use client";
 
 import type { ExpertMapItemApi } from "@/source/entities/expert";
-import { AREA_OPTIONS, TypeBadge } from "@/source/entities/expertise";
+import { AREA_OPTIONS, TYPES, TypeBadge } from "@/source/entities/expertise";
 import { YandexMarkersMap, type MapMarker } from "@/source/shared/ui/YandexMap";
-import { FILTER_OBJECTS } from "../model/match";
 import { useExpertMapFilter } from "../model/useExpertMapFilter";
 import s from "./filterableExpertsMap.module.scss";
 
@@ -37,7 +36,7 @@ export function FilterableExpertsMap({ items, height = "100%", emptyText }: Prop
   return (
     <div className={s.layout}>
       <div className={s.objectsAxis} role="group" aria-label="Фильтр по объектам экспертизы">
-        {FILTER_OBJECTS.map((object) => (
+        {TYPES.map((object) => (
           <TypeBadge
             key={object}
             type={object}
