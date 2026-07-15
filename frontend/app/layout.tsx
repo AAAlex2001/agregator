@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import { SITE_URL } from "@/source/shared/api/config";
 import { NotificationProvider } from "@/source/shared/ui/Notifications";
 import { CookiesBanner } from "@/source/widgets/cookies-banner";
+import "@fontsource/montserrat/400.css";
+import "@fontsource/montserrat/500.css";
+import "@fontsource/montserrat/600.css";
+import "@fontsource/montserrat/700.css";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108708847;
 const GOOGLE_TAG_ID = "G-QGC88WQWTJ";
-
-const montserrat = Montserrat({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -76,7 +73,7 @@ export default async function RootLayout({
   const cookiesAccepted = cookieStore.get("cookies_accepted")?.value === "true";
 
   return (
-    <html lang="ru" className={montserrat.className}>
+    <html lang="ru">
       <body className="antialiased">
         <noscript>
           <div>

@@ -52,6 +52,7 @@
 }
 
 html {
+  font-family: "Montserrat";
   scroll-behavior: smooth;
   scroll-padding-top: 90px;
 }
