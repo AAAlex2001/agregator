@@ -120,15 +120,6 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       logo: true,
     },
     {
-      key: "rtn",
-      label: "РОСТЕХНАДЗОР отвечает",
-      color: "greenBlue",
-      items: [
-        { label: "Задать вопрос в Ростехнадзор", soon: true },
-        { label: "База официальных разъяснений и ответов", soon: true },
-      ],
-    },
-    {
       key: "edu",
       label: "Учебный центр",
       color: "indigo",
@@ -198,6 +189,15 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       color: "green",
       roles: ["EXPERT", "CUSTOMER", "LICENSE_HOLDER"],
       items: usefulItems(role),
+    },
+    {
+      key: "rtn",
+      label: "РОСТЕХНАДЗОР отвечает",
+      color: "greenBlue",
+      items: [
+        { label: "Задать вопрос в Ростехнадзор", soon: true },
+        { label: "База официальных разъяснений и ответов", soon: true },
+      ],
     },
     {
       key: "reviews",
