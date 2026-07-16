@@ -11,6 +11,7 @@ export const initialState: CreateOrderState = {
   responsesDeadline: "",
   requiresExpert: false,
   requiresLicense: false,
+  workType: "EXPERTISE",
   types: [],
   opos: [],
   comment: "",
@@ -26,6 +27,13 @@ export function reducer(state: CreateOrderState, action: CreateOrderAction): Cre
       return { ...state, [action.key]: action.value };
     case "flag":
       return { ...state, [action.key]: action.value };
+    case "workType":
+      return {
+        ...state,
+        workType: action.value,
+        types: action.value === "EXPERTISE" ? state.types : [],
+        opos: action.value === "EXPERTISE" ? state.opos : [],
+      };
     case "types":
       return { ...state, types: action.value };
     case "opos":

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { OrderWorkType } from "@/source/entities/order";
 
 export const orderFormSchema = z.object({
   title: z.string().trim().min(1, "Введите название"),
@@ -12,6 +13,7 @@ export const orderFormSchema = z.object({
   comment: z.string(),
   requiresExpert: z.boolean(),
   requiresLicense: z.boolean(),
+  workType: z.custom<OrderWorkType>(),
 }).refine(
   (values) => values.requiresExpert || values.requiresLicense,
   {

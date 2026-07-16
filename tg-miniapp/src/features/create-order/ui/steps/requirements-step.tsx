@@ -1,5 +1,6 @@
 import { Checkbox, Field, Select } from "@/shared/ui";
 import { OPO_KEYS, TABLE, TYPES } from "@/entites/expertise";
+import { ORDER_WORK_OPTIONS } from "@/entites/order";
 import type { ExpertiseType } from "@/entites/expertise";
 import { type StepProps } from "./types";
 import s from "./requirements-step.module.scss";
@@ -14,6 +15,39 @@ interface Props extends StepProps {
 export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
   return (
     <>
+      <Field label="Вид работ">
+        <Select
+          title="Вид работ"
+          options={[
+            { key: "EXPERTISE", label: "Экспертиза" },
+            { key: "OTHER_WORK", label: "Иная инженерная работа" },
+          ]}
+          value={[state.workType === "EXPERTISE" ? "EXPERTISE" : "OTHER_WORK"]}
+          onChange={([value]) => dispatch({
+            type: "workType",
+            value: value === "EXPERTISE" ? "EXPERTISE" : state.workType === "EXPERTISE" ? "DESIGN_SURVEY" : state.workType,
+          })}
+        />
+      </Field>
+
+      {state.workType !== "EXPERTISE" && (
+        <Field label="Категория работ">
+          <div className={s.workOptions}>
+            {ORDER_WORK_OPTIONS.map((option) => (
+              <button
+                key={option.key}
+                type="button"
+                className={`${s.workOption} ${state.workType === option.key ? s.workOptionActive : ""}`}
+                onClick={() => dispatch({ type: "workType", value: option.key })}
+              >
+                <strong>{option.label}</strong>
+                <span>{option.description}</span>
+              </button>
+            ))}
+          </div>
+        </Field>
+      )}
+
       <Field label="Кто требуется для заказа">
         <Checkbox
           checked={state.requiresExpert}
@@ -29,7 +63,7 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
         </Checkbox>
       </Field>
 
-      <Field label="Объекты экспертизы" hint="Основные объекты экспертизы промышленной безопасности">
+      {state.workType === "EXPERTISE" && <Field label="Объекты экспертизы" hint="Основные объекты экспертизы промышленной безопасности">
         <Select
           multi
           title="Объекты экспертизы"
@@ -38,9 +72,9 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
           placeholder="Выберите объекты"
           onChange={(v) => dispatch({ type: "types", value: v as ExpertiseType[] })}
         />
-      </Field>
+      </Field>}
 
-      <Field label="Области аттестации экспертов" hint="Типовые наименования опасных производственных объектов">
+      {state.workType === "EXPERTISE" && <Field label="Области аттестации экспертов" hint="Типовые наименования опасных производственных объектов">
         <Select
           multi
           title="Области аттестации"
@@ -49,9 +83,9 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
           placeholder="Выберите области"
           onChange={(v) => dispatch({ type: "opos", value: v })}
         />
-      </Field>
+      </Field>}
 
-      {badgeCodes.length > 0 && (
+      {state.workType === "EXPERTISE" && badgeCodes.length > 0 && (
         <Field label="Будут добавлены к заказу">
           <div className={s.codes}>
             {badgeCodes.map((code) => (

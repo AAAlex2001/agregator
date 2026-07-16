@@ -1,6 +1,7 @@
 import { Field, InfoRow } from "@/shared/ui";
 import { formatDateRu, formatMoscowDateTime } from "@/shared/lib/format";
 import { type StepProps } from "./types";
+import { getOrderWorkLabel } from "@/entites/order";
 import s from "./confirm-step.module.scss";
 
 interface Props extends StepProps {
@@ -36,6 +37,7 @@ export function ConfirmStep({ state, badgeCodes, company, filesCount }: Props) {
 
       <Field label="Требования">
         <div className={s.block}>
+          <InfoRow label="Вид работ" value={getOrderWorkLabel(state.workType)} />
           <InfoRow label="Требуется" value={requirements} />
           {filesCount > 0 && <InfoRow label="Документы" value={`${filesCount} файл(ов)`} />}
         </div>

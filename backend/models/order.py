@@ -30,6 +30,14 @@ class OrderStatus(str, PyEnum):
     ARCHIVED = "ARCHIVED"
 
 
+class OrderWorkType(str, PyEnum):
+    EXPERTISE = "EXPERTISE"
+    DESIGN_SURVEY = "DESIGN_SURVEY"
+    INSPECTION_TESTING = "INSPECTION_TESTING"
+    RESEARCH_LAB = "RESEARCH_LAB"
+    OTHER = "OTHER"
+
+
 class BadgeVariant(str, PyEnum):
     BLUE = "BLUE"
     GREEN = "GREEN"
@@ -64,6 +72,12 @@ class Order(Base):
     other_files: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     requires_expert: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
     requires_license: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
+    work_type: Mapped[OrderWorkType] = mapped_column(
+        Enum(OrderWorkType),
+        nullable=False,
+        default=OrderWorkType.EXPERTISE,
+        server_default=OrderWorkType.EXPERTISE.value,
+    )
     sum_amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
     start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     deadline: Mapped[date] = mapped_column(Date, nullable=False)

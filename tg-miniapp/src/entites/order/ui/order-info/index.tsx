@@ -1,6 +1,7 @@
 import { Field, InfoRow } from "@/shared/ui";
 import { formatDeadline } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
+import { getOrderWorkLabel } from "../../model/work-types";
 import s from "./style.module.scss";
 
 export function OrderInfo({ order }: { order: Order }) {
@@ -30,6 +31,12 @@ export function OrderInfo({ order }: { order: Order }) {
         <div className={s.block}>
           <InfoRow label="Начало работ" value={order.start_date || "—"} />
           <InfoRow label="Окончание" value={order.date || "—"} />
+        </div>
+      </Field>
+
+      <Field label="Вид работ">
+        <div className={s.block}>
+          <InfoRow label="Категория" value={getOrderWorkLabel(order.work_type ?? "EXPERTISE")} />
         </div>
       </Field>
 

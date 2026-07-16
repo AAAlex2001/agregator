@@ -1,6 +1,7 @@
 import { apiJson } from "@/shared/services/api";
 import { toKopecks } from "@/shared/lib/format";
 import type { OrderDocuments, OrderList } from "./types";
+import type { OrderWorkType } from "./work-types";
 
 export const listOrders = (limit = 10) =>
   apiJson<OrderList>(`/orders/?skip=0&limit=${limit}`);
@@ -18,6 +19,7 @@ export interface CreateOrderPayload {
   responsesDeadline: string;
   requiresExpert: boolean;
   requiresLicense: boolean;
+  workType: OrderWorkType;
   badgeCodes: string[];
   copySourceOrderId?: number | null;
   copyDocuments?: OrderDocuments;
@@ -41,6 +43,7 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   if (payload.responsesDeadline) form.append("responses_deadline", payload.responsesDeadline);
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
+  form.append("work_type", payload.workType);
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
   if (payload.copySourceOrderId && payload.copyDocuments) {
     form.append("copy_source_order_id", String(payload.copySourceOrderId));
@@ -71,6 +74,7 @@ export interface UpdateOrderPayload {
   copySourceOrderId?: number | null;
   requiresExpert: boolean;
   requiresLicense: boolean;
+  workType: OrderWorkType;
 }
 
 export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFiles: File[]): Promise<unknown> {
@@ -85,6 +89,7 @@ export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFil
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
+  form.append("work_type", payload.workType);
   form.append("keep_documents_json", JSON.stringify(payload.copySourceOrderId ? {} : payload.keepDocuments));
   if (payload.copySourceOrderId) {
     form.append("copy_source_order_id", String(payload.copySourceOrderId));

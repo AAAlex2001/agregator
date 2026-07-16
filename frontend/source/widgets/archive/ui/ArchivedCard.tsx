@@ -76,7 +76,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
           </Button>
         ) : undefined
       }
-      leftExtra={<RequirementsBadges badges={card.badges} />}
+      leftExtra={<RequirementsBadges badges={card.badges} workType={card.workType} />}
       details={
         <>
           {card.comment && (

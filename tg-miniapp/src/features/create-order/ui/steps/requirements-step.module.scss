@@ -12,3 +12,35 @@
   font-size: 12px;
   font-weight: 600;
 }
+
+.workOptions {
+  display: grid;
+  gap: 8px;
+}
+
+.workOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.workOption span {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.workOptionActive {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: var(--accent-soft);
+}

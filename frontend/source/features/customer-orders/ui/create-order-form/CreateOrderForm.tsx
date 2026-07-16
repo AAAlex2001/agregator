@@ -42,6 +42,7 @@ const transition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
 export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, copyTemplate, onCopy }: Props) {
   const formState = useCreateOrderForm({ editTarget, copyTemplate, onSubmit });
   const [view, setView] = useState<View>("form");
+  const isExpertise = formState.form.watch("workType") === "EXPERTISE";
 
   const shellClassName = [
     s.shell,
@@ -68,12 +69,14 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
 
               <RequirementsSection form={formState.form} />
 
-              <ExpertsMapSection />
+              {isExpertise && <ExpertsMapSection />}
 
-              <BadgeSection
-                form={formState.form}
-                onShowHelp={() => setView("help")}
-              />
+              {isExpertise && (
+                <BadgeSection
+                  form={formState.form}
+                  onShowHelp={() => setView("help")}
+                />
+              )}
 
               <CommentSection form={formState.form} />
 

@@ -1,7 +1,7 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
-import type { OrdersApiList } from "@/source/entities/order";
+import type { OrderWorkType, OrdersApiList } from "@/source/entities/order";
 import type { DocumentsFormState } from "@/source/features/customer-orders/model/formFiles";
 
 export async function fetchCustomerOrders(skip = 0, limit = 50): Promise<OrdersApiList> {
@@ -16,6 +16,7 @@ interface CreatePayload {
   start_date?: string; deadline: string;
   responses_deadline?: string; badge_codes: string[];
   requires_expert: boolean; requires_license: boolean;
+  work_type: OrderWorkType;
   documents: DocumentsFormState;
 }
 
@@ -25,6 +26,7 @@ interface UpdatePayload {
   responses_deadline?: string;
   badge_codes: string[]; documents: DocumentsFormState;
   requires_expert: boolean; requires_license: boolean;
+  work_type: OrderWorkType;
   notify_responders: boolean;
 }
 
@@ -94,6 +96,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
     fd.append("requires_expert", String(p.requires_expert));
     fd.append("requires_license", String(p.requires_license));
+    fd.append("work_type", p.work_type);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     appendCopySource(fd, p.documents);
     appendFiles(fd, p.documents, files);
@@ -122,6 +125,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     if (p.responses_deadline) fd.append("responses_deadline", p.responses_deadline);
     fd.append("requires_expert", String(p.requires_expert));
     fd.append("requires_license", String(p.requires_license));
+    fd.append("work_type", p.work_type);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
     fd.append("keep_documents_json", buildKeepDocuments(p.documents));
     appendCopySource(fd, p.documents);

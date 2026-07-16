@@ -11,6 +11,8 @@ export { fetchReports, getReportPdfUrl } from "./api/reports.api";
 export { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "./api/customer-orders.api";
 export { fetchOrders, respondToOrder, createPayment } from "./api/expert-orders.api";
 export { usePublicOrdersList } from "./model/usePublicOrdersList";
+export { ORDER_WORK_OPTIONS, getOrderWorkLabel } from "./model/workTypes";
+export type { OrderWorkType } from "./model/workTypes";
 export type {
   Badge, BadgeVariant, OrderApiBadge,
   OrderApiItem, OrdersApiList, OrderCardData,

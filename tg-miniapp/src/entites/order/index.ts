@@ -9,6 +9,8 @@ export {
   type UpdateOrderPayload,
 } from "./model/api";
 export type { Order, OrderBadge, OrderDocuments, OrderList } from "./model/types";
+export type { OrderWorkType } from "./model/work-types";
+export { ORDER_WORK_OPTIONS, getOrderWorkLabel } from "./model/work-types";
 export {
   customerOrderStatus,
   type CustomerOrderStatus,

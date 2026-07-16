@@ -7,3 +7,58 @@
 .title {
   font-weight: 600;
 }
+
+.modeOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.modeButton,
+.workOption {
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  font: inherit;
+  cursor: pointer;
+}
+
+.modeButton {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.modeButtonActive,
+.workOptionActive {
+  border-color: #ff8a00;
+  box-shadow: inset 0 0 0 1px #ff8a00;
+  background: #fff8eb;
+}
+
+.workOptions {
+  display: grid;
+  gap: 8px;
+}
+
+.workOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px;
+  text-align: left;
+}
+
+.workOption span {
+  color: #687181;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+@media (min-width: 768px) {
+  .workOptions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

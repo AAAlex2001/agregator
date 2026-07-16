@@ -1,7 +1,7 @@
 "use client";
 
 import type { ExpertMapItemApi } from "@/source/entities/expert";
-import { AREA_OPTIONS, TYPES, TypeBadge } from "@/source/entities/expertise";
+import { TypeBadge } from "@/source/entities/expertise";
 import { YandexMarkersMap, type MapMarker } from "@/source/shared/ui/YandexMap";
 import { useExpertMapFilter } from "../model/useExpertMapFilter";
 import s from "./filterableExpertsMap.module.scss";
@@ -30,13 +30,13 @@ function toMarker(item: ExpertMapItemApi): MapMarker {
 }
 
 export function FilterableExpertsMap({ items, height = "100%", emptyText }: Props) {
-  const { areas, objects, toggleArea, toggleObject, filtered } = useExpertMapFilter(items);
+  const { areas, objects, availableAreas, availableObjects, toggleArea, toggleObject, filtered } = useExpertMapFilter(items);
   const noMatch = items.length > 0 && filtered.length === 0;
 
   return (
     <div className={s.layout}>
       <div className={s.objectsAxis} role="group" aria-label="Фильтр по объектам экспертизы">
-        {TYPES.map((object) => (
+        {availableObjects.map((object) => (
           <TypeBadge
             key={object}
             type={object}
@@ -55,7 +55,7 @@ export function FilterableExpertsMap({ items, height = "100%", emptyText }: Prop
       </div>
 
       <div className={s.areasAxis} role="group" aria-label="Фильтр по областям аттестации">
-        {AREA_OPTIONS.map((area) => (
+        {availableAreas.map((area) => (
           <button
             key={area.value}
             type="button"

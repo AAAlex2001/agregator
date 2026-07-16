@@ -1,4 +1,5 @@
 import type { Badge } from "../model/types";
+import { getOrderWorkLabel, type OrderWorkType } from "../model/workTypes";
 import s from "./RequirementsBadges.module.scss";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
   label?: string;
   /** Если передан и отличается — над текущими badge'ами рендерим зачёркнутые предыдущие. */
   previousBadges?: Badge[] | null;
+  workType?: OrderWorkType;
 }
 
 function badgesEqual(a: Badge[], b: Badge[]): boolean {
@@ -16,8 +18,8 @@ function badgesEqual(a: Badge[], b: Badge[]): boolean {
   return true;
 }
 
-export function RequirementsBadges({ badges, label = "Требования к эксперту", previousBadges }: Props) {
-  if (badges.length === 0 && (!previousBadges || previousBadges.length === 0)) {
+export function RequirementsBadges({ badges, label = "Требования к эксперту", previousBadges, workType = "EXPERTISE" }: Props) {
+  if (workType === "EXPERTISE" && badges.length === 0 && (!previousBadges || previousBadges.length === 0)) {
     return null;
   }
 
@@ -25,6 +27,16 @@ export function RequirementsBadges({ badges, label = "Требования к э
 
   return (
     <div className={s.requirements}>
+      {workType !== "EXPERTISE" && (
+        <>
+          <span className={s.label}>Вид работ</span>
+          <div className={s.badges}>
+            <span className={`${s.badge} ${s.orange}`}>{getOrderWorkLabel(workType)}</span>
+          </div>
+        </>
+      )}
+      {workType === "EXPERTISE" && (
+        <>
       <span className={s.label}>{label}{changed ? " · ИЗМЕНЕНО:" : ""}</span>
       {changed && previousBadges && previousBadges.length > 0 && (
         <div className={s.previousBadges}>
@@ -42,6 +54,8 @@ export function RequirementsBadges({ badges, label = "Требования к э
           </span>
         ))}
       </div>
+        </>
+      )}
     </div>
   );
 }

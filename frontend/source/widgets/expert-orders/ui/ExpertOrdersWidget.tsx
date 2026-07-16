@@ -57,6 +57,7 @@ export function ExpertOrdersWidget() {
                   key={o.id}
                   id={o.id}
                   badges={o.badges}
+                  workType={o.workType}
                   title={o.title}
                   customer={o.customer}
                   customerInn={o.customerInn}

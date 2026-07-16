@@ -1,6 +1,7 @@
 import { ListCard } from "@/source/shared/ui/ListCard";
 import { DiffValue } from "@/source/shared/ui/DiffValue";
 import type { Badge } from "../model/types";
+import type { OrderWorkType } from "../model/workTypes";
 import { RequirementsBadges } from "./RequirementsBadges";
 import s from "./OrderCardBottom.module.scss";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
@@ -22,6 +23,7 @@ interface Props {
   previousSum?: string | null;
   previousDate?: string | null;
   previousBadges?: Badge[] | null;
+  workType?: OrderWorkType;
   onClick?: () => void;
   children?: React.ReactNode;
   details?: React.ReactNode;
@@ -50,6 +52,7 @@ export function OrderCard({
   previousSum,
   previousDate,
   previousBadges,
+  workType,
   onClick,
   children,
   details,
@@ -102,7 +105,7 @@ export function OrderCard({
       onClick={onClick}
       actions={children}
       details={details}
-      leftExtra={<RequirementsBadges badges={badges} previousBadges={previousBadges} />}
+      leftExtra={<RequirementsBadges badges={badges} previousBadges={previousBadges} workType={workType} />}
     />
   );
 }

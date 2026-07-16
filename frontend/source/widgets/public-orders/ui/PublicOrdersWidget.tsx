@@ -85,6 +85,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
                   id={order.id}
                   status={order.status}
                   badges={order.badges}
+                  workType={order.workType}
                   title={order.title}
                   customer={order.customer}
                   customerInn={order.customerInn}

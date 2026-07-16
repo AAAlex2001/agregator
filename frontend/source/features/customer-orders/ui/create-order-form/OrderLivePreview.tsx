@@ -49,6 +49,7 @@ export function OrderLivePreview({ form, documents }: Props) {
       <span className={s.heading}>Как увидят эксперты:</span>
       <OrderCard
         badges={badges}
+        workType={values.workType}
         title={values.title?.trim() || "Название заказа"}
         customer={values.company?.trim() || "—"}
         customerInn={user?.inn ?? undefined}

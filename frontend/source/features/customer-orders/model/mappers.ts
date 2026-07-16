@@ -65,6 +65,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
       comment: "",
       requiresExpert: false,
       requiresLicense: false,
+      workType: "EXPERTISE",
     };
   }
 
@@ -79,6 +80,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     comment: editTarget.comment,
     requiresExpert: editTarget.requiresExpert,
     requiresLicense: editTarget.requiresLicense,
+    workType: editTarget.workType,
   };
 }
 
@@ -109,6 +111,7 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
     badge_codes: flattenCodes(values.selectionsByType),
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
+    work_type: values.workType,
     comment: values.comment.trim(),
     customer_id: userId,
     documents,
@@ -130,6 +133,7 @@ export function buildUpdatePayload(
     badge_codes: flattenCodes(values.selectionsByType),
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
+    work_type: values.workType,
     comment: values.comment.trim(),
     documents,
     notify_responders: notifyResponders,

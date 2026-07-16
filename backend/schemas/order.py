@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from models.order import BadgeVariant, OrderStatus
+from models.order import BadgeVariant, OrderStatus, OrderWorkType
 
 if TYPE_CHECKING:
     from models.order import Order as OrderModel
@@ -83,6 +83,7 @@ class OrderCreate(BaseModel):
     responses_deadline: datetime | None = None
     requires_expert: bool = True
     requires_license: bool = True
+    work_type: OrderWorkType = OrderWorkType.EXPERTISE
     documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
@@ -104,6 +105,7 @@ class OrderUpdate(BaseModel):
     responses_deadline: datetime | None = None
     requires_expert: bool | None = None
     requires_license: bool | None = None
+    work_type: OrderWorkType | None = None
     documents: OrderDocuments | None = None
     badges: list[BadgeSchema] | None = None
     status: OrderStatus | None = None
@@ -137,6 +139,7 @@ class OrderResponse(BaseModel):
     responses_deadline: str | None = None
     requires_expert: bool
     requires_license: bool
+    work_type: OrderWorkType
     documents: OrderDocuments
     badges: list[BadgeResponse]
     status: OrderStatus
@@ -278,6 +281,7 @@ class OrderResponse(BaseModel):
             responses_deadline=responses_deadline_display,
             requires_expert=order.requires_expert,
             requires_license=order.requires_license,
+            work_type=order.work_type,
             documents=OrderDocumentsService.from_order(order),
             badges=badges,
             status=order.status,

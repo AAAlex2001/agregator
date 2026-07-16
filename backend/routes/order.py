@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.rate_limit import rate_limit
-from models.order import Order, OrderStatus
+from models.order import Order, OrderStatus, OrderWorkType
 from models.user import UserRole
 from schemas.common import OkResponse
 from schemas.order import (
@@ -216,6 +216,7 @@ async def create_order_with_files(
     responses_deadline: str = Form(""),
     requires_expert: bool = Form(True),
     requires_license: bool = Form(True),
+    work_type: OrderWorkType = Form(OrderWorkType.EXPERTISE),
     badge_codes_json: str = Form("[]"),
     copy_source_order_id: int | None = Form(None),
     copy_documents_json: str = Form("{}"),
@@ -239,6 +240,7 @@ async def create_order_with_files(
         badge_codes_json=badge_codes_json,
         requires_expert=requires_expert,
         requires_license=requires_license,
+        work_type=work_type,
     )
     repo = build_repo(db)
     create = CreateOrderUseCase(
@@ -302,6 +304,7 @@ async def update_order_with_files(
     responses_deadline: str = Form(""),
     requires_expert: bool | None = Form(None),
     requires_license: bool | None = Form(None),
+    work_type: OrderWorkType | None = Form(None),
     badge_codes_json: str = Form("[]"),
     keep_documents_json: str = Form("{}"),
     copy_source_order_id: int | None = Form(None),
@@ -327,6 +330,7 @@ async def update_order_with_files(
         keep_documents_json=keep_documents_json,
         requires_expert=requires_expert,
         requires_license=requires_license,
+        work_type=work_type,
         notify_responders=notify_responders,
     )
     repo = build_repo(db)

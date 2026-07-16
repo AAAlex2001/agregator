@@ -1,7 +1,7 @@
 "Use case: update order."
 from typing import Any
 
-from models.order import Order, OrderBadge
+from models.order import Order, OrderBadge, OrderWorkType
 from schemas.order import OrderUpdate
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
@@ -55,6 +55,12 @@ class UpdateOrderUseCase:
             update_data.pop("requires_expert", None)
         if update_data.get("requires_license") is None:
             update_data.pop("requires_license", None)
+        if update_data.get("work_type") is None:
+            update_data.pop("work_type", None)
+
+        effective_work_type = update_data.get("work_type", order.work_type)
+        if effective_work_type != OrderWorkType.EXPERTISE:
+            badges_data = []
 
         if documents is not None:
             current_documents = OrderDocumentsService.from_order(order)

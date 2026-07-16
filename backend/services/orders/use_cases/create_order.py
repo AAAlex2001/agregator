@@ -2,7 +2,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
-from models.order import Order, OrderBadge
+from models.order import Order, OrderBadge, OrderWorkType
 from schemas.order import OrderCreate
 from services.email import SendNewOrderEmailUseCase
 from services.notifications import CreateNewOrderNotificationUseCase
@@ -59,6 +59,7 @@ class CreateOrderUseCase:
             responses_deadline=data.responses_deadline,
             requires_expert=data.requires_expert,
             requires_license=data.requires_license,
+            work_type=data.work_type,
             status=data.status,
         )
         OrderDocumentsService.write(order, data.documents)
@@ -66,6 +67,8 @@ class CreateOrderUseCase:
 
     def build_badges(self, data: OrderCreate) -> list[OrderBadge]:
         "Строит объект из входных данных."
+        if data.work_type != OrderWorkType.EXPERTISE:
+            return []
         return [
             OrderBadge(text=badge.text, variant=badge.variant)
             for badge in data.badges

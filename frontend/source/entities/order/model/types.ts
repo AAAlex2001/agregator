@@ -1,4 +1,5 @@
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
+import type { OrderWorkType } from "./workTypes";
 
 export interface Badge {
   text: string;
@@ -62,6 +63,7 @@ export interface OrderApiItem {
   responses_deadline: string | null;
   requires_expert: boolean;
   requires_license: boolean;
+  work_type: OrderWorkType;
   documents: OrderDocuments;
   badges: OrderApiBadge[];
   status: string;
@@ -111,6 +113,7 @@ export interface OrderCardData {
   responsesDeadline: string | null;
   requiresExpert: boolean;
   requiresLicense: boolean;
+  workType: OrderWorkType;
   documents: OrderDocuments;
   badges: Badge[];
   badgesRaw: OrderApiBadge[];

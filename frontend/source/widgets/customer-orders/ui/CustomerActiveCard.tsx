@@ -61,7 +61,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
         },
       ]}
       actions={<ActionButtons actions={actions} />}
-      leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousBadges} />}
+      leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousBadges} workType={card.workType} />}
       details={
         <>
           {card.comment && (

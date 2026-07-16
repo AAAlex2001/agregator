@@ -2,6 +2,7 @@ import json
 from datetime import date as date_type
 from datetime import datetime as datetime_type
 
+from models.order import OrderWorkType
 from schemas.order import BadgeSchema, OrderCreate, OrderDocuments, OrderUpdate
 
 TYPE_VARIANT = {
@@ -79,6 +80,7 @@ def build_order_create_data(
     badge_codes_json: str,
     requires_expert: bool = True,
     requires_license: bool = True,
+    work_type: OrderWorkType = OrderWorkType.EXPERTISE,
 ) -> OrderCreate:
     return OrderCreate(
         title=title,
@@ -91,6 +93,7 @@ def build_order_create_data(
         responses_deadline=parse_responses_deadline(responses_deadline),
         requires_expert=requires_expert,
         requires_license=requires_license,
+        work_type=work_type,
         badges=parse_badge_codes(badge_codes_json),
     )
 
@@ -107,6 +110,7 @@ def build_order_update_data(
     keep_documents_json: str,
     requires_expert: bool | None = None,
     requires_license: bool | None = None,
+    work_type: OrderWorkType | None = None,
     notify_responders: bool = True,
 ) -> OrderUpdate:
     return OrderUpdate(
@@ -119,6 +123,7 @@ def build_order_update_data(
         responses_deadline=parse_responses_deadline(responses_deadline),
         requires_expert=requires_expert,
         requires_license=requires_license,
+        work_type=work_type,
         badges=parse_badge_codes(badge_codes_json),
         documents=parse_keep_documents(keep_documents_json),
         notify_responders=notify_responders,

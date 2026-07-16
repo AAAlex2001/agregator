@@ -27,6 +27,7 @@ export interface Order {
   responses_deadline: string | null;
   requires_expert: boolean;
   requires_license: boolean;
+  work_type: OrderWorkType;
   customer_id: number;
   assigned_expert_id: number | null;
   documents: OrderDocuments;
@@ -51,3 +52,4 @@ export interface OrderList {
   items: Order[];
   has_more: boolean;
 }
+import type { OrderWorkType } from "./work-types";

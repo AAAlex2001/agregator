@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Card } from "@/shared/ui";
 import { CountdownRing } from "@/shared/ui/countdown-ring";
 import type { Order } from "../../model/types";
+import { getOrderWorkLabel } from "../../model/work-types";
 import s from "./style.module.scss";
 
 interface Props {
@@ -17,6 +18,11 @@ export function OrderCard({ order, onClick, action }: Props) {
         <div className={s.main}>
           <span className={s.title}>{order.title}</span>
           {order.company && <span className={s.company}>{order.company}</span>}
+          {order.work_type !== "EXPERTISE" && (
+            <div className={s.badges}>
+              <span className={s.badge}>{getOrderWorkLabel(order.work_type)}</span>
+            </div>
+          )}
           {order.badges.length > 0 && (
             <div className={s.badges}>
               {order.badges.slice(0, 4).map((b, i) => (
