@@ -57,6 +57,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -106,6 +107,133 @@
 .menuOpen {
   opacity: 1;
   transform: translateY(0);
+}
+
+.capabilities {
+  border: 1px solid #eceef2;
+  border-radius: 16px;
+  background: #fafbfc;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.capabilitiesToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.capabilitiesTitle,
+.capabilitiesHint {
+  display: block;
+}
+
+.capabilitiesTitle {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.capabilitiesHint {
+  margin-top: 2px;
+  color: #7d8490;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.capabilitiesChevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #7d8490;
+  transition: transform 0.2s ease;
+}
+
+.capabilitiesChevronOpen {
+  transform: rotate(180deg);
+}
+
+.capabilitiesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 8px 8px;
+}
+
+.capabilityPlate {
+  --capability-color: #64748b;
+  --capability-bg: #f1f5f9;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 10px 8px 12px;
+  border-radius: 11px;
+  background: var(--capability-bg);
+  color: var(--capability-color);
+}
+
+.capabilityLabel {
+  min-width: 0;
+  color: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+
+  svg {
+    display: block;
+    width: 128px;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.lockedBadge {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #737b88;
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.indigo {
+  --capability-color: #4f46e5;
+  --capability-bg: #ecedfc;
+}
+
+.amber {
+  --capability-color: #b45309;
+  --capability-bg: #fbf0e2;
+}
+
+.green {
+  --capability-color: #2f9b52;
+  --capability-bg: #e8f7ee;
+}
+
+.red {
+  --capability-color: #c0453e;
+  --capability-bg: #fbe9e8;
+}
+
+.gold {
+  --capability-color: #b78e00;
+  --capability-bg: #fff9dc;
 }
 
 .menuLink {

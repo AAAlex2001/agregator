@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LogoIcon } from "@/source/shared/ui/icons";
+import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
+import { getGuestCabinetNav } from "@/source/widgets/expert-help";
 import s from "./burgerMenu.module.scss";
 
 const NAV_PAGES = [
@@ -12,11 +13,16 @@ const NAV_PAGES = [
   { href: "/reviews", label: "Отзывы" },
 ] as const;
 
-const BurgerMenu = () => {
+const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showCapabilities, setShowCapabilities] = useState(false);
+  const capabilities = getGuestCabinetNav();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
-  const closeMenu = () => setIsOpen(false);
+  const closeMenu = () => {
+    setIsOpen(false);
+    setShowCapabilities(false);
+  };
 
   return (
     <>
@@ -38,6 +44,45 @@ const BurgerMenu = () => {
               <LogoIcon />
             </div>
           </div>
+          {showGuestCapabilities && (
+            <div className={s.capabilities}>
+              <button
+                type="button"
+                className={s.capabilitiesToggle}
+                onClick={() => setShowCapabilities((value) => !value)}
+                aria-expanded={showCapabilities}
+              >
+                <span>
+                  <span className={s.capabilitiesTitle}>Возможности платформы</span>
+                  <span className={s.capabilitiesHint}>Доступны после регистрации</span>
+                </span>
+                <ChevronIcon
+                  className={`${s.capabilitiesChevron} ${showCapabilities ? s.capabilitiesChevronOpen : ""}`}
+                  color="currentColor"
+                />
+              </button>
+              {showCapabilities && (
+                <div className={s.capabilitiesList}>
+                  {capabilities.map((plate) => (
+                    <div
+                      key={plate.key}
+                      className={`${s.capabilityPlate} ${s[plate.color]}`}
+                      aria-label={`${plate.label}. Доступно после регистрации`}
+                    >
+                      <span className={s.capabilityLabel}>
+                        {plate.logo ? (
+                          <TechExpertLogoIcon title={plate.label} />
+                        ) : (
+                          plate.label
+                        )}
+                      </span>
+                      <span className={s.lockedBadge}>после регистрации</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {NAV_PAGES.map((page) => (
             <Link
               key={page.href}

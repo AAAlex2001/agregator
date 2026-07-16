@@ -10,6 +10,7 @@ export interface ArticleListItem {
   title: string;
   excerpt: string;
   cover_image: string;
+  tg_cover_image: string;
   tags: string[];
   published_at: string | null;
   likes_count: number;
@@ -29,6 +30,7 @@ export interface ArticleDetail {
   title: string;
   excerpt: string;
   cover_image: string;
+  tg_cover_image: string;
   content_html: string;
   tags: string[];
   meta_title: string;

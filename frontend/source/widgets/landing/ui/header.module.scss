@@ -22,6 +22,20 @@
   }
 }
 
+.guestNav {
+  display: none;
+
+  @media (min-width: 1440px) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1620px;
+    margin: 8px auto 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(230, 230, 230, 0.8);
+  }
+}
+
 .brand {
   display: flex;
   flex-direction: row;

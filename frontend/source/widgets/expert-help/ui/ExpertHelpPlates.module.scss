@@ -22,6 +22,17 @@
   position: relative;
 }
 
+.plateWrapLocked {
+  .plate {
+    cursor: help;
+  }
+
+  .plate:focus-visible {
+    outline: 2px solid var(--plate-color);
+    outline-offset: 2px;
+  }
+}
+
 .plate {
   display: inline-flex;
   align-items: center;

@@ -5,9 +5,17 @@ import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import Loader from "@/source/shared/ui/Loader";
+import ToolTip from "@/source/shared/ui/Tooltip";
 import { ChevronIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
-import { getCabinetNav, type NavItem, type NavPlate } from "../model/navConfig";
+import {
+  getCabinetNav,
+  getGuestCabinetNav,
+  type NavItem,
+  type NavPlate,
+} from "../model/navConfig";
 import s from "./ExpertHelpPlates.module.scss";
+
+const GUEST_TOOLTIP = "Доступно после регистрации";
 
 function ItemRow({ item }: { item: NavItem }) {
   const inner = (
@@ -102,7 +110,38 @@ function LicenseList() {
   );
 }
 
-function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" }) {
+function PlateNode({
+  plate,
+  align,
+  locked = false,
+}: {
+  plate: NavPlate;
+  align: "left" | "right";
+  locked?: boolean;
+}) {
+  if (locked) {
+    return (
+      <ToolTip message={GUEST_TOOLTIP} ariaLabel={`${plate.label}. ${GUEST_TOOLTIP}`} side="bottom">
+        <span className={`${s.plateWrap} ${s[plate.color]} ${s.plateWrapLocked}`}>
+          <button
+            type="button"
+            className={`${s.plate} ${plate.logo ? s.plateLogo : ""}`}
+            aria-disabled="true"
+          >
+            {plate.logo ? (
+              <TechExpertLogoIcon title={plate.label} />
+            ) : (
+              <>
+                <span className={s.plateLabel}>{plate.label}</span>
+                {!plate.href && <ChevronIcon className={s.chevron} color="currentColor" />}
+              </>
+            )}
+          </button>
+        </span>
+      </ToolTip>
+    );
+  }
+
   if (plate.href) {
     return (
       <div className={s.plateWrap}>
@@ -140,12 +179,20 @@ function PlateNode({ plate, align }: { plate: NavPlate; align: "left" | "right" 
   );
 }
 
-export function ExpertHelpPlates() {
+export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" }) {
   const { role } = useSession();
+  const isGuestMode = mode === "guest";
 
-  if (role !== "EXPERT" && role !== "CUSTOMER" && role !== "LICENSE_HOLDER") return null;
+  if (
+    !isGuestMode &&
+    role !== "EXPERT" &&
+    role !== "CUSTOMER" &&
+    role !== "LICENSE_HOLDER"
+  ) {
+    return null;
+  }
 
-  const plates = getCabinetNav(role);
+  const plates = isGuestMode ? getGuestCabinetNav() : getCabinetNav(role);
   const leftPlates = plates.filter((p) => p.key !== "reviews");
   const reviewsPlate = plates.find((p) => p.key === "reviews");
 
@@ -153,12 +200,12 @@ export function ExpertHelpPlates() {
     <>
       <div className={s.plates}>
         {leftPlates.map((plate) => (
-          <PlateNode key={plate.key} plate={plate} align="left" />
+          <PlateNode key={plate.key} plate={plate} align="left" locked={isGuestMode} />
         ))}
       </div>
       {reviewsPlate && (
         <div className={s.platesRight}>
-          <PlateNode plate={reviewsPlate} align="right" />
+          <PlateNode plate={reviewsPlate} align="right" locked={isGuestMode} />
         </div>
       )}
     </>
