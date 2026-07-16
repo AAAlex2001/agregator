@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const title = article.meta_title || article.title;
   const description = article.meta_description || article.excerpt || article.title;
-  const ogImage = article.og_image || article.cover_image || "/hero_svg.webp";
+  const ogImage = article.og_image || article.tg_cover_image || article.cover_image || "/hero_svg.webp";
 
   return {
     title,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       type: "article",
       url: `/news/${article.slug}`,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
+      images: [{ url: ogImage, alt: article.title }],
       publishedTime: article.published_at || undefined,
       modifiedTime: article.updated_at,
       tags: article.tags,

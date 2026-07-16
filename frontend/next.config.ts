@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const UPLOADS_ORIGIN = process.env.UPLOADS_ORIGIN || "http://backend:8000";
 
 const nextConfig: NextConfig = {
+  htmlLimitedBots: /.*/,
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,

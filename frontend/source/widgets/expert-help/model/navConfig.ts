@@ -109,8 +109,8 @@ function usefulItems(role: string | null): NavItem[] {
   ];
 }
 
-export function getCabinetNav(role: string | null): NavPlate[] {
-  const all: NavPlate[] = [
+function createCabinetNav(role: string | null): NavPlate[] {
+  return [
     {
       key: "tech",
       label: "ТехЭксперт",
@@ -206,6 +206,14 @@ export function getCabinetNav(role: string | null): NavPlate[] {
       items: reviewItems(role),
     },
   ];
+}
 
-  return all.filter((p) => !p.roles || (role !== null && p.roles.includes(role as CabinetRole)));
+export function getCabinetNav(role: string | null): NavPlate[] {
+  return createCabinetNav(role).filter(
+    (plate) => !plate.roles || (role !== null && plate.roles.includes(role as CabinetRole)),
+  );
+}
+
+export function getGuestCabinetNav(): NavPlate[] {
+  return createCabinetNav(null);
 }
