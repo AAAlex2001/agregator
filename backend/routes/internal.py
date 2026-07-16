@@ -29,7 +29,8 @@ from tasks.mailing import send_one_batch
 from utils.email_templates import render_email
 
 logger = logging.getLogger(__name__)
-BLOG_ACTION_URL_TEMPLATE = "/landing/blog/{slug}"
+BLOG_ACTION_URL_TEMPLATE = "/blog/{slug}"
+LEGACY_BLOG_ACTION_URL_TEMPLATE = "/landing/blog/{slug}"
 
 router = APIRouter(prefix="/internal", tags=["internal"], dependencies=[Depends(require_internal_token)])
 
@@ -42,11 +43,12 @@ async def notify_blog_published(
 ) -> BroadcastResult:
     "Триггерит in-app рассылку всем и email-рассылку подписанным. Идемпотентно по slug — повторный вызов ничего не делает."
     action_url = BLOG_ACTION_URL_TEMPLATE.format(slug=data.slug)
+    legacy_action_url = LEGACY_BLOG_ACTION_URL_TEMPLATE.format(slug=data.slug)
     already_sent = await db.execute(
         select(Notification.id)
         .where(
             Notification.type == NotificationType.NEW_BLOG_POST,
-            Notification.action_url == action_url,
+            Notification.action_url.in_((action_url, legacy_action_url)),
         )
         .limit(1)
     )

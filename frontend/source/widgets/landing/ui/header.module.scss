@@ -6,6 +6,17 @@
   background: rgba(255, 255, 255, 0.72);
   padding: 15px var(--page-px);
   border-bottom: 1px solid #E6E6E6;
+  transform: translateY(0);
+  transition: transform 0.24s ease;
+  will-change: transform;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.headerHidden {
+  transform: translateY(calc(-100% - 1px));
 }
 
 .container {

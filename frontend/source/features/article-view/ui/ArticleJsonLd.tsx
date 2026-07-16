@@ -17,7 +17,7 @@ function absoluteUrl(path: string): string {
 export function ArticleJsonLd({ article, reactions, commentCount }: Props) {
   const isNews = article.kind === "news";
   const pageUrl = `${SITE_URL}${isNews ? "/news/" : "/blog/"}${article.slug}`;
-  const image = absoluteUrl(article.og_image || article.tg_cover_image || article.cover_image || "/hero_svg.webp");
+  const image = absoluteUrl(article.cover_image || "/hero_svg.webp");
 
   const interactionStatistic = reactions
     ? [

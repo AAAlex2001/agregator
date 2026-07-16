@@ -10,7 +10,7 @@ from services.email.repository import EmailRepository
 logger = logging.getLogger(__name__)
 
 TEMPLATE = "new_blog_post"
-CTA_URL_TEMPLATE = "https://plus-resurs.com/landing/blog/{slug}"
+CTA_URL_TEMPLATE = "https://plus-resurs.com/blog/{slug}"
 BLOG_FROM_EMAIL = "expert@plus-resurs.com"
 TG_CTA = "Чтобы прочитать статью, откройте раздел «Блог» в приложении."
 

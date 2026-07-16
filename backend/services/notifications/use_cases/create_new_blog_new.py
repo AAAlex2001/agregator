@@ -9,7 +9,7 @@ from services.notifications.repository import NotificationRepository
 logger = logging.getLogger(__name__)
 
 PREVIEW_MAX_LENGTH = 240
-BLOG_URL_TEMPLATE = "/landing/blog/{slug}"
+BLOG_URL_TEMPLATE = "/blog/{slug}"
 
 
 def truncate_text(text: str) -> str:

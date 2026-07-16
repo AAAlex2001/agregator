@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { useSession } from "@/source/features/session";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import BurgerMenu from "./BurgerMenu";
+import PublicHeaderShell from "./PublicHeaderShell";
 import s from "./header.module.scss";
 
 const NAV_PAGES = [
@@ -15,12 +13,9 @@ const NAV_PAGES = [
 ] as const;
 
 const Header = () => {
-  const { user, isLoading } = useSession();
-  const isGuest = !isLoading && !user;
-
   return (
     <>
-      <header className={s.header}>
+      <PublicHeaderShell className={s.header} hiddenClassName={s.headerHidden}>
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
             <span className={s.logo}>
@@ -42,15 +37,13 @@ const Header = () => {
           </div>
           <div className={s.mobileActions}>
             <Link href="/login" className={s.mobileLogin}>Войти</Link>
-            <BurgerMenu showGuestCapabilities={isGuest} />
+            <BurgerMenu showGuestCapabilities />
           </div>
         </div>
-        {isGuest && (
-          <nav className={s.guestNav} aria-label="Возможности после регистрации">
-            <ExpertHelpPlates mode="guest" />
-          </nav>
-        )}
-      </header>
+        <nav className={s.guestNav} aria-label="Возможности после регистрации">
+          <ExpertHelpPlates mode="guest" />
+        </nav>
+      </PublicHeaderShell>
     </>
   );
 };

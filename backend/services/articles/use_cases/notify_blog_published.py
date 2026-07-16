@@ -15,7 +15,8 @@ from services.notifications.use_cases.create_new_blog_new import (
 
 logger = logging.getLogger(__name__)
 
-BLOG_ACTION_URL_TEMPLATE = "/landing/blog/{slug}"
+BLOG_ACTION_URL_TEMPLATE = "/blog/{slug}"
+LEGACY_BLOG_ACTION_URL_TEMPLATE = "/landing/blog/{slug}"
 
 
 class NotifyBlogPublishedUseCase:
@@ -28,11 +29,12 @@ class NotifyBlogPublishedUseCase:
     async def execute(self, slug: str, title: str, preview: str) -> tuple[int, int]:
         "Возвращает (отправлено in-app, поставлено в очередь email)."
         action_url = BLOG_ACTION_URL_TEMPLATE.format(slug=slug)
+        legacy_action_url = LEGACY_BLOG_ACTION_URL_TEMPLATE.format(slug=slug)
         already = await self.db.execute(
             select(Notification.id)
             .where(
                 Notification.type == NotificationType.NEW_BLOG_POST,
-                Notification.action_url == action_url,
+                Notification.action_url.in_((action_url, legacy_action_url)),
             )
             .limit(1)
         )
