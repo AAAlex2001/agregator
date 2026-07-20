@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
+import { LandingHeader, LandingHeaderAuthed, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
-import { mapApiToOrderCard } from "@/source/entities/order";
+import {
+  hasPublicOrderSearchCriteria,
+  mapApiToOrderCard,
+  parsePublicOrderSearch,
+} from "@/source/entities/order";
 import { fetchPublicOrdersServer } from "@/source/entities/order/api/public-orders.server";
-import type { OrderWorkType, PublicOrderSearchFilters } from "@/source/entities/order";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 
 export const dynamic = "force-dynamic";
@@ -35,35 +38,23 @@ interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-const WORK_TYPES = new Set<OrderWorkType>([
-  "EXPERTISE",
-  "DESIGN_SURVEY",
-  "INSPECTION_TESTING",
-  "RESEARCH_LAB",
-  "OTHER",
-]);
-
 export default async function PublicOrdersPage({ searchParams }: PageProps) {
-  const role = await getInitialSessionRole();
-  if (role === "EXPERT") redirect("/expert/orders");
-  if (role === "CUSTOMER") redirect("/customer/orders");
-  if (role) redirect("/landing");
+  const filters = parsePublicOrderSearch(await searchParams);
+  const hasSearchCriteria = hasPublicOrderSearchCriteria(filters);
 
-  const params = await searchParams;
-  const query = typeof params.q === "string" ? params.q : undefined;
-  const badgeCode = typeof params.badge_code === "string" ? params.badge_code : undefined;
-  const rawWorkType = typeof params.work_type === "string" ? params.work_type : undefined;
-  const workType = rawWorkType && WORK_TYPES.has(rawWorkType as OrderWorkType)
-    ? rawWorkType as OrderWorkType
-    : undefined;
-  const filters: PublicOrderSearchFilters = { query, workType, badgeCode };
+  const role = await getInitialSessionRole();
+  if (!hasSearchCriteria) {
+    if (role === "EXPERT") redirect("/expert/orders");
+    if (role === "CUSTOMER") redirect("/customer/orders");
+    if (role) redirect("/landing");
+  }
 
   const data = await fetchPublicOrdersServer(0, 50, filters);
   const initial = { items: data.items.map(mapApiToOrderCard), hasMore: data.has_more };
 
   return (
     <>
-      <LandingHeader />
+      {role ? <LandingHeaderAuthed /> : <LandingHeader />}
       <main>
         <PublicOrdersWidget initial={initial} filters={filters} />
       </main>

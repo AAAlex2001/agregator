@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { searchOrdersPublic } from "@/source/entities/order";
+import { searchOrdersPublic, type PublicOrderSearchFilters } from "@/source/entities/order";
 
 export interface OrderSuggestion {
   id: number;
@@ -15,6 +15,7 @@ interface Options {
   minChars?: number;
   limit?: number;
   debounceMs?: number;
+  filters?: PublicOrderSearchFilters;
 }
 
 export interface OrderSearchState {
@@ -28,9 +29,13 @@ export function useOrderSearchSuggestions({
   minChars = 2,
   limit = 6,
   debounceMs = 220,
+  filters = {},
 }: Options): OrderSearchState {
   const trimmed = query.trim();
-  const hasQuery = trimmed.length >= minChars;
+  const workType = filters.workType;
+  const badgeCode = filters.badgeCode;
+  const hasFilter = Boolean(workType || badgeCode);
+  const hasQuery = trimmed.length >= minChars || hasFilter;
 
   const [items, setItems] = useState<OrderSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,14 +43,13 @@ export function useOrderSearchSuggestions({
 
   useEffect(() => {
     if (!hasQuery) {
-      setItems([]);
-      setIsLoading(false);
+      requestIdRef.current += 1;
       return;
     }
-    setIsLoading(true);
     const id = ++requestIdRef.current;
     const timer = window.setTimeout(() => {
-      void searchOrdersPublic({ query: trimmed }, 0, limit)
+      setIsLoading(true);
+      void searchOrdersPublic({ workType, badgeCode, query: trimmed || undefined }, 0, limit)
         .then((data) => {
           if (id !== requestIdRef.current) return;
           setItems(
@@ -66,7 +70,11 @@ export function useOrderSearchSuggestions({
         });
     }, debounceMs);
     return () => window.clearTimeout(timer);
-  }, [trimmed, hasQuery, limit, debounceMs]);
+  }, [trimmed, hasQuery, limit, debounceMs, workType, badgeCode]);
 
-  return { items, isLoading, hasQuery };
+  return {
+    items: hasQuery ? items : [],
+    isLoading: hasQuery && isLoading,
+    hasQuery,
+  };
 }
