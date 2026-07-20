@@ -19,6 +19,12 @@ export const updateProfile = (fields: UpdateProfileInput) =>
 export const updateEmailPreferences = (patch: Partial<EmailPreferences>) =>
   apiJson<Profile>("/settings/email-preferences", { method: "PUT", body: JSON.stringify(patch) });
 
+export const updateOrderNotifications = (orderTypes: string[]) =>
+  apiJson<Profile>("/settings/order-notifications", {
+    method: "PUT",
+    body: JSON.stringify({ order_types: orderTypes }),
+  });
+
 export const requestEmailChange = (newEmail: string) =>
   apiJson<{ detail: string }>("/settings/email/request-change", {
     method: "POST",

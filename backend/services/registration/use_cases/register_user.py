@@ -1,7 +1,7 @@
 "Use case: register user."
 from models.user import User, UserRole
 from schemas.registration import UserRegistration
-from services.experts.badge_codes import ALL_BADGE_CODES
+from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
 from utils.passwords import hash_password
@@ -43,7 +43,7 @@ class RegisterUserUseCase:
             travels_to_other_regions=data.travels_to_other_regions,
         )
         if data.role.value == UserRole.EXPERT.value:
-            user.notify_order_types = list(ALL_BADGE_CODES)
+            user.notify_order_types = list(ALL_ORDER_NOTIFICATION_TYPES)
             user.expert_show_on_map = data.expert_show_on_map
             user.expert_map_fields = data.expert_map_fields
             if data.expert_certificates is not None:

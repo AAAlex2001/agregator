@@ -1,10 +1,11 @@
 "Use case: send new order email."
-from models.order import Order
+from models.order import Order, OrderWorkType
 from models.user import User
 from schemas.email import NewOrderContext, OrderBrief
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import greeting_for
 from services.email.repository import EmailRepository
+from services.order_notification_types import notification_types_for_order
 
 TEMPLATE = "new_order"
 SUBJECT = "Новая заявка на Ресурс-Плюс"
@@ -18,7 +19,7 @@ FALLBACK_NOTICE = (
 
 
 class SendNewOrderEmailUseCase:
-    "Письмо о новой заявке только экспертам, чей фильтр кодов пересекается с бейджами заказа."
+    "Письмо о новой заявке только экспертам с подходящими настройками направлений."
 
     def __init__(self, repo: EmailRepository, dispatcher: EmailDispatcher) -> None:
         self.repo = repo
@@ -30,8 +31,10 @@ class SendNewOrderEmailUseCase:
         if order is None:
             return
 
-        order_codes = {badge.text for badge in order.badges}
-        fallback_to_all = force_all_experts or not order_codes
+        order_types = notification_types_for_order(order)
+        fallback_to_all = force_all_experts or (
+            order.work_type == OrderWorkType.EXPERTISE and not order_types
+        )
 
         experts = (
             await self.repo.list_all_experts()
@@ -46,7 +49,7 @@ class SendNewOrderEmailUseCase:
         )
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
-            if not fallback_to_all and not wanted & order_codes:
+            if not fallback_to_all and not wanted & order_types:
                 continue
             self.dispatcher.notify(
                 expert,

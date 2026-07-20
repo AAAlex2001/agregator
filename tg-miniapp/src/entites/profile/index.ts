@@ -2,6 +2,7 @@ export {
   getProfile,
   updateProfile,
   updateEmailPreferences,
+  updateOrderNotifications,
   requestEmailChange,
   confirmEmailChange,
   getAvailableRoles,

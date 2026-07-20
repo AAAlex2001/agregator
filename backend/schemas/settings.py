@@ -4,7 +4,7 @@ from typing import Any
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
 from schemas.expert import ExpertCertificate
-from services.experts.badge_codes import ALL_BADGE_CODES_SET
+from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES_SET
 
 
 class LicenseRentalKind(str, Enum):
@@ -76,12 +76,16 @@ class UpdateEmailPreferencesRequest(BaseModel):
 
 
 class UpdateOrderNotificationsRequest(BaseModel):
-    "Коды бейджей заказа, по которым эксперт хочет уведомления. Формат: 'Э<номер> <тип>' (например 'Э4 КЛ'). Пустой список — рассылка выключена."
+    "Коды направлений экспертизы и видов инженерных работ, по которым эксперт хочет уведомления. Пустой список — рассылка выключена."
     order_types: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_types(self) -> "UpdateOrderNotificationsRequest":
-        unknown = [t for t in self.order_types if t not in ALL_BADGE_CODES_SET]
+        unknown = [
+            notification_type
+            for notification_type in self.order_types
+            if notification_type not in ALL_ORDER_NOTIFICATION_TYPES_SET
+        ]
         if unknown:
             raise ValueError(f"Недопустимые коды: {', '.join(unknown)}")
         self.order_types = list(dict.fromkeys(self.order_types))

@@ -18,8 +18,7 @@
   gap: 18px;
 }
 
-.expertiseColumn,
-.workColumn { min-width: 0; }
+.expertiseColumn { min-width: 0; }
 
 .expertiseColumn {
   padding-right: 18px;
@@ -113,79 +112,6 @@
   gap: 7px;
 }
 
-.workGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.workButton {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  min-height: 98px;
-  padding: 12px;
-  border: 1px solid #ededed;
-  border-radius: 16px;
-  background: #fafafa;
-  color: #1a1a1a;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-
-  &:focus-visible {
-    border-color: #ffb800;
-    background: #fffaf0;
-    box-shadow: 0 8px 20px rgba(255, 184, 0, 0.12);
-    transform: translateY(-1px);
-    outline: none;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .workButton:hover {
-    border-color: #ffb800;
-    background: #fffaf0;
-    box-shadow: 0 8px 20px rgba(255, 184, 0, 0.12);
-    transform: translateY(-1px);
-    outline: none;
-  }
-}
-
-.workIcon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 52px;
-  width: 52px;
-  height: 52px;
-  border-radius: 15px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(26, 26, 26, 0.08);
-
-  svg { width: 42px; height: 42px; }
-}
-
-.workText {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-
-  strong { font-size: 13px; line-height: 1.35; }
-
-  small {
-    display: -webkit-box;
-    overflow: hidden;
-    color: #777777;
-    font-size: 11px;
-    line-height: 1.35;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-}
-
 .mobileHead,
 .mobileBackdrop,
 .mobileExpertiseDetail { display: none; }
@@ -205,7 +131,6 @@
 @media (max-width: 1023px) and (min-width: 768px) {
   .columns { grid-template-columns: minmax(0, 1fr) 300px; }
   .opoGrid { grid-template-columns: repeat(4, minmax(54px, 1fr)); }
-  .workGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 767px) {
@@ -293,24 +218,6 @@
     > span { color: #666666; font-size: 12px; line-height: 1.4; }
   }
 
-  .workGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-
-  .workButton {
-    flex-direction: column;
-    align-items: flex-start;
-    min-height: 132px;
-    padding: 11px;
-    touch-action: pan-y;
-  }
-
-  .workIcon {
-    flex-basis: 44px;
-    width: 44px;
-    height: 44px;
-    svg { width: 36px; height: 36px; }
-  }
-
-  .workText small { display: none; }
 }
 
 @keyframes panelIn {

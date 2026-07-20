@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { Switch } from "@/source/shared/ui/Switch";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import Button from "@/source/shared/ui/Button";
-import { BadgeCodesPicker } from "@/source/entities/expertise";
 import type { EmailPreferences, UserProfile } from "@/source/entities/user";
 import {
   updateEmailPreferences,
@@ -15,8 +14,8 @@ import { useEmailPreferences } from "../model/useEmailPreferences";
 import type {
   NotificationPreferenceDescriptor,
   NotificationPreferenceKey,
-  UpdateEmailPreferencesPayload,
 } from "../model/types";
+import { OrderNotificationTypesPicker } from "./OrderNotificationTypesPicker";
 import s from "./NotificationPreferencesForm.module.scss";
 
 interface Props {
@@ -55,6 +54,7 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
   const [resetting, setResetting] = useState(false);
   const [pickerResetSeq, setPickerResetSeq] = useState(0);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const persistedOrderCodesRef = useRef<string[]>(profile.notify_order_types ?? []);
 
   const handleToggle = async (key: NotificationPreferenceKey, next: boolean) => {
     const result = await toggle(key, next);
@@ -70,19 +70,22 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
     }
   };
 
-  const persistCodes = async (next: string[], previous: string[]) => {
+  const persistCodes = async (next: string[]) => {
     setSavingTypes(true);
     try {
       const updated = await updateOrderNotifications(next);
+      const savedCodes = updated.notify_order_types ?? [];
+      persistedOrderCodesRef.current = savedCodes;
       onProfileUpdate(updated);
-      setOrderCodes(updated.notify_order_types ?? []);
+      setOrderCodes(savedCodes);
       showSuccess(
         next.length
           ? "Фильтр уведомлений сохранён"
           : "Уведомления о новых заказах отключены",
       );
     } catch (error) {
-      setOrderCodes(previous);
+      setOrderCodes(persistedOrderCodesRef.current);
+      setPickerResetSeq((seq) => seq + 1);
       showError(error instanceof Error ? error.message : "Не удалось сохранить");
     } finally {
       setSavingTypes(false);
@@ -90,20 +93,23 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
   };
 
   const handleCodesChange = (next: string[]) => {
-    const previous = orderCodes;
     setOrderCodes(next);
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
-      void persistCodes(next, previous);
+      saveTimerRef.current = null;
+      void persistCodes(next);
     }, SAVE_DEBOUNCE_MS);
   };
 
   const handleClearAll = async () => {
-    if (resetting) return;
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    if (resetting || savingTypes) return;
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
 
     const previousPreferences = preferences;
-    const previousCodes = orderCodes;
+    const previousCodes = persistedOrderCodesRef.current;
     const allOff = ALL_PREFERENCE_KEYS.reduce(
       (acc, key) => ({ ...acc, [key]: false }),
       {} as EmailPreferences,
@@ -120,6 +126,9 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
         isExpert ? updateOrderNotifications([]) : Promise.resolve(null),
       ]);
       const latest = codesResult ?? prefsResult;
+      if (codesResult) {
+        persistedOrderCodesRef.current = codesResult.notify_order_types ?? [];
+      }
       onProfileUpdate(latest);
       showSuccess("Все почтовые уведомления отключены");
     } catch (error) {
@@ -147,6 +156,7 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
           className={s.clearButton}
           onClick={() => void handleClearAll()}
           isLoading={resetting}
+          disabled={savingTypes || resetting}
         >
           Отключить все
         </Button>
@@ -156,14 +166,15 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
         <section className={s.orderTypes}>
           <h3 className={s.title}>Новые заказы</h3>
           <p className={s.subtitle}>
-            Выберите типы и области экспертизы — письмо придёт только по заказам, попадающим под ваши требования.
-            Пока ничего не выбрано, письма о новых заказах не приходят.
+            Выберите виды работ и направления экспертизы — уведомление придёт только по заказам, попадающим под ваши требования.
+            Пока ничего не выбрано, уведомления о новых заказах не приходят.
           </p>
-          <div className={savingTypes ? s.pickerSaving : ""}>
-            <BadgeCodesPicker
+          <div>
+            <OrderNotificationTypesPicker
               key={pickerResetSeq}
               value={orderCodes}
               onChange={handleCodesChange}
+              disabled={savingTypes || resetting}
             />
           </div>
         </section>

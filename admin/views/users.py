@@ -96,7 +96,7 @@ class UserAdmin(ModelView, model=User):
         User.email_on_chat_message: "Письмо: сообщение в чате",
         User.email_on_question_asked: "Письмо: новый вопрос по заказу",
         User.email_on_question_answered: "Письмо: ответ на вопрос",
-        User.notify_order_types: "Коды бейджей для рассылки о новых заказах",
+        User.notify_order_types: "Направления и виды работ для рассылки о новых заказах",
         User.notifications_introduced: "Прочитал модалку про уведомления",
         User.created_at: "Создан",
         User.updated_at: "Обновлён",

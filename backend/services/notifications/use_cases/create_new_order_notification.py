@@ -1,8 +1,9 @@
 "Use case: in-app уведомление о новой заявке экспертам с пересекающимся фильтром типов."
 from models.notification import Notification, NotificationType
-from models.order import Order
+from models.order import Order, OrderWorkType
 from schemas.notification import NewOrderNotificationPayload
 from services.notifications.repository import NotificationRepository
+from services.order_notification_types import notification_types_for_order
 
 ACTION_URL = "/expert/orders"
 FALLBACK_MESSAGE = (
@@ -12,15 +13,17 @@ FALLBACK_MESSAGE = (
 
 
 class CreateNewOrderNotificationUseCase:
-    "Рассылает in-app уведомление NEW_ORDER экспертам, у которых notify_order_types пересекается с бейджами заказа."
+    "Рассылает NEW_ORDER экспертам, чей фильтр пересекается с направлениями заказа."
 
     def __init__(self, repo: NotificationRepository) -> None:
         self.repo = repo
 
     async def execute(self, order: Order, force_all_experts: bool = False) -> int:
         "Принимает уже загруженный заказ с badges. Возвращает число получателей."
-        order_codes = {badge.text for badge in order.badges}
-        fallback_to_all = force_all_experts or not order_codes
+        order_types = notification_types_for_order(order)
+        fallback_to_all = force_all_experts or (
+            order.work_type == OrderWorkType.EXPERTISE and not order_types
+        )
 
         experts = (
             await self.repo.list_all_experts()
@@ -29,7 +32,7 @@ class CreateNewOrderNotificationUseCase:
         )
         payload = NewOrderNotificationPayload(
             order_title=order.title or f"Заказ #{order.id}",
-            badges=sorted(order_codes),
+            badges=sorted(order_types) if order.work_type == OrderWorkType.EXPERTISE else [],
             message=FALLBACK_MESSAGE if fallback_to_all else "",
         )
         payload_dump = payload.model_dump(mode="json")
@@ -37,7 +40,7 @@ class CreateNewOrderNotificationUseCase:
         sent = 0
         for expert in experts:
             wanted = set(expert.notify_order_types or [])
-            if not fallback_to_all and not wanted & order_codes:
+            if not fallback_to_all and not wanted & order_types:
                 continue
             notification = Notification(
                 user_id=expert.id,

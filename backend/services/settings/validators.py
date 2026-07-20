@@ -31,6 +31,16 @@ class SettingsValidator:
             )
         return user
 
+    async def require_expert(self, user_id: int) -> User:
+        """Разрешает изменять экспертные настройки только эксперту."""
+        user = await self.require_user(user_id)
+        if user.role != UserRole.EXPERT:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Доступно только эксперту",
+            )
+        return user
+
     async def ensure_unique_phone(self, phone: str, user_id: int) -> None:
         "Бросает HTTPException, если условие не выполнено."
         if await self.repo.field_taken_in_same_role(User.phone, phone, user_id):

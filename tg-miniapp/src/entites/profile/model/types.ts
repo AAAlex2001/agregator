@@ -23,6 +23,7 @@ export interface Profile {
   inn: string | null;
   company_data: { value?: string } | null;
   email_preferences: EmailPreferences;
+  notify_order_types: string[];
 }
 
 export interface AvailableRole {

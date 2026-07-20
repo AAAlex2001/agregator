@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "@/features/session";
+import { OrderNotificationSettings } from "@/features/order-notification-settings";
 import { updateEmailPreferences, type EmailPreferences } from "@/entites/profile";
 import { emitError } from "@/shared/services/error-bus";
 import { tapHaptic } from "@/shared/services/telegram";
@@ -62,6 +63,13 @@ export function NotificationsPage() {
         </div>
         <Toggle on={prefs.notify_telegram_enabled} onChange={(v) => void apply("notify_telegram_enabled", v)} />
       </Card>
+
+      {profile?.role === "EXPERT" && (
+        <OrderNotificationSettings
+          value={profile.notify_order_types ?? []}
+          reloadProfile={reloadProfile}
+        />
+      )}
 
       <p className={s.groupTitle}>Что присылать</p>
       <div className={s.group}>
