@@ -27,7 +27,7 @@ export function OrderSearchBar() {
         suggestions={items}
         activeSuggestionIndex={state.activeSuggestion}
         onSuggestionHover={(index) => dispatch({ type: "suggestionHighlighted", index })}
-        onSuggestionPick={search.submit}
+        onSuggestionPick={(suggestion) => search.pickSuggestion(suggestion.id)}
         onKeyDown={search.keyDown}
         onFocus={search.focusInput}
         onBlur={() => dispatch({ type: "suggestionsClosed" })}

@@ -29,36 +29,6 @@
   text-align: center;
 }
 
-.activeFilters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  span,
-  button {
-    padding: 7px 12px;
-    border-radius: 999px;
-    font-family: inherit;
-    font-size: 13px;
-  }
-
-  span {
-    border: 1px solid #ffd58a;
-    background: #fff8e8;
-    color: #8c5700;
-  }
-
-  button {
-    border: none;
-    background: #f1f1f1;
-    color: #555555;
-    cursor: pointer;
-  }
-}
-
-
 .center {
   display: flex;
   align-items: center;

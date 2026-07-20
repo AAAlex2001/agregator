@@ -42,14 +42,12 @@ export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>) {
   }, [state.filtersOpen]);
 
   const submit = () => {
-    dispatch({ type: "closed" });
-    const params = new URLSearchParams();
-    const query = state.query.trim();
-    if (query) params.set("q", query);
-    if (state.filters.workType) params.set("work_type", state.filters.workType);
-    if (state.filters.badgeCode) params.set("badge_code", state.filters.badgeCode);
-    const suffix = params.toString();
-    router.push(suffix ? `/orders?${suffix}` : "/orders");
+    if (state.query.trim()) dispatch({ type: "suggestionsOpened" });
+  };
+
+  const pickSuggestion = (id: string | number) => {
+    const suggestion = suggestionsState.items.find((item) => item.id === Number(id));
+    if (suggestion) router.push(`/order/${suggestion.publicId}`);
   };
 
   const focusInput = (event: FocusEvent<HTMLInputElement>) => {
@@ -92,5 +90,6 @@ export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>) {
     focusInput,
     keyDown,
     selectFilter,
+    pickSuggestion,
   };
 }

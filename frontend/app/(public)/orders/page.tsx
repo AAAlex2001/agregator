@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { LandingHeader, LandingHeaderAuthed, LandingFooter } from "@/source/widgets/landing";
+import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
-import {
-  hasPublicOrderSearchCriteria,
-  mapApiToOrderCard,
-  parsePublicOrderSearch,
-} from "@/source/entities/order";
+import { mapApiToOrderCard } from "@/source/entities/order";
 import { fetchPublicOrdersServer } from "@/source/entities/order/api/public-orders.server";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 
@@ -34,29 +30,20 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-interface PageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}
-
-export default async function PublicOrdersPage({ searchParams }: PageProps) {
-  const filters = parsePublicOrderSearch(await searchParams);
-  const hasSearchCriteria = hasPublicOrderSearchCriteria(filters);
-
+export default async function PublicOrdersPage() {
   const role = await getInitialSessionRole();
-  if (!hasSearchCriteria) {
-    if (role === "EXPERT") redirect("/expert/orders");
-    if (role === "CUSTOMER") redirect("/customer/orders");
-    if (role) redirect("/landing");
-  }
+  if (role === "EXPERT") redirect("/expert/orders");
+  if (role === "CUSTOMER") redirect("/customer/orders");
+  if (role) redirect("/landing");
 
-  const data = await fetchPublicOrdersServer(0, 50, filters);
+  const data = await fetchPublicOrdersServer(0, 50);
   const initial = { items: data.items.map(mapApiToOrderCard), hasMore: data.has_more };
 
   return (
     <>
-      {role ? <LandingHeaderAuthed /> : <LandingHeader />}
+      <LandingHeader />
       <main>
-        <PublicOrdersWidget initial={initial} filters={filters} />
+        <PublicOrdersWidget initial={initial} />
       </main>
       <LandingFooter variant="light" />
     </>
