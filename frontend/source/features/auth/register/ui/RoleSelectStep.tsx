@@ -30,7 +30,7 @@ export function RoleSelectStep({ roles, openedCardId, onToggleCard, onSelectRole
                 </div>
               )}
               <div className={s.roleContent}>
-                <div className={s.roleHeader}>
+                <div className={`${s.roleHeader} ${role.subtitle ? s.roleHeaderWithSubtitle : ""}`}>
                   <div className={s.roleIcon}>{role.icon}</div>
                   <div className={s.roleTitleWrap}>
                     <Title as="h3" text={role.title} className={s.roleTitle} />

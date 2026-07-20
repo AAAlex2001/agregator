@@ -119,8 +119,8 @@
 }
 
 .roleSubtitle {
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: 400;
   color: #4A4A4A;
   text-align: center;
@@ -242,6 +242,12 @@
     opacity: 1;
     transform: none;
     max-height: 72px;
+  }
+
+  .roleHeaderWithSubtitle,
+  .roleCardOpen .roleHeaderWithSubtitle {
+    max-height: none;
+    margin-bottom: 20px;
   }
 
   .roleContent {

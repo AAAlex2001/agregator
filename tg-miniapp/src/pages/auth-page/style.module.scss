@@ -149,69 +149,117 @@
 .regRoles {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   animation: appear 0.28s ease;
 }
 
-.regRoleBtn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px;
-  border: 1px solid var(--hairline);
-  border-radius: 14px;
-  background: var(--card);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.08s ease;
+.regRolesHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
 }
 
-.regRoleBtn:active {
-  transform: scale(0.99);
-  border-color: var(--accent);
+.regRoleSlider {
+  align-items: stretch;
 }
 
-.regRoleText {
-  flex: 1 1 auto;
-  min-width: 0;
+.regRoleCard {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: stretch;
+  min-height: 410px;
+  padding: 18px;
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  background: var(--card);
+  text-align: left;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.regRoleHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .regRoleLabel {
-  font-size: 16px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.25;
   font-weight: 700;
   color: var(--text);
 }
 
 .regRoleSubtitle {
-  font-size: 12.5px;
-  line-height: 1.35;
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
   font-weight: 400;
   color: var(--text);
 }
 
 .regRoleDesc {
-  font-size: 13px;
-  line-height: 1.35;
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 600;
   color: var(--muted);
 }
 
 .regRoleBullets {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin: 4px 0 0;
-  padding-left: 18px;
-  font-size: 12px;
-  line-height: 1.35;
+  gap: 6px;
+  margin: 14px 0 18px;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--muted);
 }
 
-.regRoleChev {
-  flex: 0 0 auto;
-  color: var(--muted);
+.regRoleSelect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.regRoleSelect:active {
+  opacity: 0.82;
+}
+
+.regRoleDots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.regRoleDot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--hairline);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.regRoleDotActive {
+  width: 20px;
+  background: var(--accent);
 }

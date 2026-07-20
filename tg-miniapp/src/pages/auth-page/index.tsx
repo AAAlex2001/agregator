@@ -1,4 +1,6 @@
 import { useState, type ComponentType } from "react";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 import { type Role } from "@/shared/services/api";
 import { tapHaptic } from "@/shared/services/telegram";
 import { useAuthForm } from "@/features/session";
@@ -24,6 +26,18 @@ const REG_ROLES: {
   Icon: ComponentType<{ size?: number }>;
 }[] = [
   {
+    role: "EXPERT",
+    label: "Эксперт",
+    subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
+    desc: "Находите проекты и укрепляйте репутацию, расширяя портфолио",
+    bullets: [
+      "Найдите свой проект и участвуйте в тендере",
+      "Договаривайтесь напрямую",
+      "Выполните заказ, получите отзыв и оценку",
+    ],
+    Icon: ExpertRoleIcon,
+  },
+  {
     role: "CUSTOMER",
     label: "Заказчик",
     desc: "Найдите исполнителя из множества инженерных работ",
@@ -40,16 +54,14 @@ const REG_ROLES: {
     Icon: CustomerRoleIcon,
   },
   {
-    role: "EXPERT",
-    label: "Эксперт",
-    subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
-    desc: "Ищу проекты и участвую в тендерах",
-    Icon: ExpertRoleIcon,
-  },
-  {
     role: "LICENSE_HOLDER",
     label: "Держатель лицензии",
     desc: "Предоставляйте лицензию ЭПБ ОПО и другие разрешительные документы для работы",
+    bullets: [
+      "Подтвердите номер лицензии и объекты экспертизы",
+      "Принимайте заявки на предоставление лицензии",
+      "Договаривайтесь о цене напрямую",
+    ],
     Icon: LicenseRoleIcon,
   },
 ];
@@ -59,6 +71,16 @@ export function AuthPage() {
   const [mode, setMode] = useState<"welcome" | "login" | "register">("welcome");
   const [regRole, setRegRole] = useState<Role | null>(null);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [activeRoleIndex, setActiveRoleIndex] = useState(1);
+  const [roleSliderRef, roleSlider] = useKeenSlider<HTMLDivElement>({
+    initial: 1,
+    mode: "snap",
+    slides: { origin: "center", perView: 1.08, spacing: 12 },
+    slideChanged(slider) {
+      setActiveRoleIndex(slider.track.details.rel);
+      tapHaptic();
+    },
+  });
 
   const pickRegRole = (role: Role) => {
     tapHaptic();
@@ -142,15 +164,18 @@ export function AuthPage() {
 
         {mode === "register" && (
           <div className={s.regRoles}>
-            {REG_ROLES.map((r) => (
-              <button key={r.role} type="button" className={s.regRoleBtn} onClick={() => pickRegRole(r.role)}>
-                <span className={s.roleIcon}>
-                  <r.Icon size={26} />
-                </span>
-                <span className={s.regRoleText}>
-                  <span className={s.regRoleLabel}>{r.label}</span>
-                  {r.subtitle ? <span className={s.regRoleSubtitle}>{r.subtitle}</span> : null}
-                  <span className={s.regRoleDesc}>{r.desc}</span>
+            <p className={s.regRolesHint}>Выберите роль — листайте карточки</p>
+            <div ref={roleSliderRef} className={`keen-slider ${s.regRoleSlider}`}>
+              {REG_ROLES.map((r) => (
+                <article key={r.role} className={`keen-slider__slide ${s.regRoleCard}`}>
+                  <div className={s.regRoleHeader}>
+                    <span className={s.roleIcon}>
+                      <r.Icon size={26} />
+                    </span>
+                    <h2 className={s.regRoleLabel}>{r.label}</h2>
+                  </div>
+                  {r.subtitle ? <p className={s.regRoleSubtitle}>{r.subtitle}</p> : null}
+                  <p className={s.regRoleDesc}>{r.desc}</p>
                   {r.bullets ? (
                     <ul className={s.regRoleBullets}>
                       {r.bullets.map((item) => (
@@ -158,10 +183,24 @@ export function AuthPage() {
                       ))}
                     </ul>
                   ) : null}
-                </span>
-                <ChevronRightIcon className={s.regRoleChev} width={18} height={18} />
-              </button>
-            ))}
+                  <button type="button" className={s.regRoleSelect} onClick={() => pickRegRole(r.role)}>
+                    Выбрать роль
+                    <ChevronRightIcon width={18} height={18} />
+                  </button>
+                </article>
+              ))}
+            </div>
+            <div className={s.regRoleDots} aria-label="Навигация по ролям">
+              {REG_ROLES.map((r, index) => (
+                <button
+                  key={r.role}
+                  type="button"
+                  className={`${s.regRoleDot} ${index === activeRoleIndex ? s.regRoleDotActive : ""}`}
+                  aria-label={`Показать роль «${r.label}»`}
+                  onClick={() => roleSlider.current?.moveToIdx(index)}
+                />
+              ))}
+            </div>
             <button type="button" className={s.back} onClick={() => setMode("welcome")}>
               Назад
             </button>
