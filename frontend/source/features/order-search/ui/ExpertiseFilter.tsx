@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import {
   OPO_ROWS,
@@ -35,7 +35,15 @@ export function ExpertiseFilter({ onSelect }: Props) {
 
   const scheduleClose = () => {
     cancelClose();
-    closeTimerRef.current = window.setTimeout(() => setActiveOpo(null), 220);
+    closeTimerRef.current = window.setTimeout(() => setActiveOpo(null), 300);
+  };
+
+  const openFromPointer = (event: PointerEvent<HTMLElement>, opo: string) => {
+    if (event.pointerType === "mouse") openOpo(opo);
+  };
+
+  const closeFromPointer = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType === "mouse") scheduleClose();
   };
 
   useEffect(() => () => cancelClose(), []);
@@ -52,9 +60,9 @@ export function ExpertiseFilter({ onSelect }: Props) {
         {OPO_CODES.map((opo) => (
           <div
             key={opo}
-            className={s.opoItem}
-            onMouseEnter={() => openOpo(opo)}
-            onMouseLeave={scheduleClose}
+            className={`${s.opoItem} ${activeOpo === opo ? s.opoItemActive : ""}`}
+            onPointerEnter={(event) => openFromPointer(event, opo)}
+            onPointerLeave={closeFromPointer}
           >
             <button
               type="button"
@@ -67,7 +75,13 @@ export function ExpertiseFilter({ onSelect }: Props) {
             </button>
 
             {activeOpo === opo && (
-              <div className={s.expertisePopover} onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
+              <div
+                className={s.expertisePopover}
+                onPointerEnter={(event) => {
+                  if (event.pointerType === "mouse") cancelClose();
+                }}
+                onPointerLeave={closeFromPointer}
+              >
                 <strong>Э{opo}</strong>
                 <span>{TABLE[opo]?.name}</span>
                 <div className={s.typeRow}>

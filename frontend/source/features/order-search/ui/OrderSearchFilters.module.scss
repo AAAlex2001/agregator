@@ -33,6 +33,7 @@
 }
 
 .opoItem { position: relative; }
+.opoItemActive { z-index: 20; }
 
 .opoButton {
   width: 100%;
@@ -61,7 +62,7 @@
 
 .expertisePopover {
   position: absolute;
-  top: calc(100% + 7px);
+  top: calc(100% - 1px);
   left: 50%;
   z-index: 10;
   display: flex;
@@ -74,15 +75,6 @@
   background: #ffffff;
   box-shadow: 0 14px 34px rgba(44, 34, 16, 0.18);
   transform: translateX(-50%);
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -12px;
-    height: 12px;
-  }
 
   &::before {
     content: "";
@@ -257,7 +249,11 @@
   }
 
   .opoGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
-  .opoButton { min-height: 42px; font-size: 14px; }
+  .opoButton {
+    min-height: 42px;
+    font-size: 14px;
+    touch-action: manipulation;
+  }
   .expertisePopover { display: none; }
 
   .mobileExpertiseDetail {
