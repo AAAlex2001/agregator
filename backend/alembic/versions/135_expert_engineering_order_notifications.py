@@ -6,8 +6,8 @@ Revises: 134
 import json
 from collections.abc import Sequence
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
 
 revision: str = "135"
 down_revision: str | None = "134"
@@ -29,22 +29,18 @@ def upgrade() -> None:
     )
     op.execute(
         sa.text(
-            "UPDATE users "
+            "UPDATE users AS target "
             "SET notify_order_types = ("
             "SELECT jsonb_agg(token ORDER BY first_position) FROM ("
-            "SELECT token, MIN(position) AS first_position FROM ("
-            "SELECT token, position FROM jsonb_array_elements_text("
-            "COALESCE(users.notify_order_types, CAST('[]' AS JSONB))"
-            ") WITH ORDINALITY AS existing(token, position) "
-            "UNION ALL "
-            "SELECT token, jsonb_array_length("
-            "COALESCE(users.notify_order_types, CAST('[]' AS JSONB))"
-            ") + position FROM jsonb_array_elements_text("
-            "CAST(:types AS JSONB)"
-            ") WITH ORDINALITY AS added(token, position)"
-            ") AS combined GROUP BY token"
+            "SELECT token, MIN(position) AS first_position "
+            "FROM jsonb_array_elements_text("
+            "(CASE WHEN jsonb_typeof(target.notify_order_types) = 'array' "
+            "THEN target.notify_order_types ELSE CAST('[]' AS JSONB) END) "
+            "|| CAST(:types AS JSONB)"
+            ") WITH ORDINALITY AS combined(token, position) "
+            "GROUP BY token"
             ") AS deduplicated) "
-            "WHERE role = 'EXPERT'"
+            "WHERE target.role = 'EXPERT'"
         ).bindparams(types=payload)
     )
 
@@ -52,10 +48,12 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.execute(
         sa.text(
-            "UPDATE users "
-            "SET notify_order_types = NULLIF("
-            "notify_order_types - 'DESIGN_SURVEY' - 'INSPECTION_TESTING' "
+            "UPDATE users AS target "
+            "SET notify_order_types = CASE "
+            "WHEN jsonb_typeof(target.notify_order_types) = 'array' THEN NULLIF("
+            "target.notify_order_types - 'DESIGN_SURVEY' - 'INSPECTION_TESTING' "
             "- 'RESEARCH_LAB' - 'OTHER', CAST('[]' AS JSONB)) "
-            "WHERE role = 'EXPERT' AND notify_order_types IS NOT NULL"
+            "ELSE target.notify_order_types END "
+            "WHERE target.role = 'EXPERT'"
         )
     )
