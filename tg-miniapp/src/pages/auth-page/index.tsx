@@ -15,8 +15,30 @@ const LOGIN_ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?
   LICENSE_HOLDER: { label: "Вы — держатель лицензии", Icon: LicenseRoleIcon },
 };
 
-const REG_ROLES: { role: Role; label: string; subtitle?: string; desc: string; Icon: ComponentType<{ size?: number }> }[] = [
-  { role: "CUSTOMER", label: "Заказчик", desc: "Размещаю заказы и ищу экспертов", Icon: CustomerRoleIcon },
+const REG_ROLES: {
+  role: Role;
+  label: string;
+  subtitle?: string;
+  desc: string;
+  bullets?: string[];
+  Icon: ComponentType<{ size?: number }>;
+}[] = [
+  {
+    role: "CUSTOMER",
+    label: "Заказчик",
+    desc: "Найдите исполнителя из множества инженерных работ",
+    bullets: [
+      "Экспертиза промышленной безопасности",
+      "Проектно-изыскательские работы",
+      "Геолого-маркшейдерские работы",
+      "Аудит СУПБ",
+      "Дефектоскопия",
+      "Лабораторные и опытно-промышленные испытания",
+      "Кадастровые и судебные экспертизы",
+      "Иные инженерные работы",
+    ],
+    Icon: CustomerRoleIcon,
+  },
   {
     role: "EXPERT",
     label: "Эксперт",
@@ -24,7 +46,12 @@ const REG_ROLES: { role: Role; label: string; subtitle?: string; desc: string; I
     desc: "Ищу проекты и участвую в тендерах",
     Icon: ExpertRoleIcon,
   },
-  { role: "LICENSE_HOLDER", label: "Держатель лицензии", desc: "Предоставляю лицензию ЭПБ ОПО", Icon: LicenseRoleIcon },
+  {
+    role: "LICENSE_HOLDER",
+    label: "Держатель лицензии",
+    desc: "Предоставляйте лицензию ЭПБ ОПО и другие разрешительные документы для работы",
+    Icon: LicenseRoleIcon,
+  },
 ];
 
 export function AuthPage() {
@@ -124,6 +151,13 @@ export function AuthPage() {
                   <span className={s.regRoleLabel}>{r.label}</span>
                   {r.subtitle ? <span className={s.regRoleSubtitle}>{r.subtitle}</span> : null}
                   <span className={s.regRoleDesc}>{r.desc}</span>
+                  {r.bullets ? (
+                    <ul className={s.regRoleBullets}>
+                      {r.bullets.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </span>
                 <ChevronRightIcon className={s.regRoleChev} width={18} height={18} />
               </button>

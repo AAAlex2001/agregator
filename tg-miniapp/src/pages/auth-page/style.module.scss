@@ -200,6 +200,17 @@
   color: var(--muted);
 }
 
+.regRoleBullets {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
 .regRoleChev {
   flex: 0 0 auto;
   color: var(--muted);
