@@ -49,7 +49,6 @@
   cursor: pointer;
   transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
 
-  &:hover,
   &:focus-visible,
   &.opoButtonActive {
     border-color: #ff9d00;
@@ -62,19 +61,24 @@
 
 .expertisePopover {
   position: absolute;
-  top: calc(100% - 1px);
+  top: 100%;
   left: 50%;
   z-index: 10;
+  width: 330px;
+  padding-top: 7px;
+  transform: translateX(-50%);
+}
+
+.expertisePopoverCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 330px;
   padding: 14px;
   border: 1px solid #ffd58a;
   border-radius: 15px;
   background: #ffffff;
   box-shadow: 0 14px 34px rgba(44, 34, 16, 0.18);
-  transform: translateX(-50%);
 
   &::before {
     content: "";
@@ -91,6 +95,16 @@
 
   strong { color: #ff8a00; font-size: 15px; }
   > span { color: #666666; font-size: 12px; line-height: 1.4; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .opoButton:hover {
+    border-color: #ff9d00;
+    background: #ffb800;
+    color: #ffffff;
+    outline: none;
+    transform: translateY(-1px);
+  }
 }
 
 .typeRow {
@@ -121,8 +135,17 @@
   cursor: pointer;
   transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 
-  &:hover,
   &:focus-visible {
+    border-color: #ffb800;
+    background: #fffaf0;
+    box-shadow: 0 8px 20px rgba(255, 184, 0, 0.12);
+    transform: translateY(-1px);
+    outline: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .workButton:hover {
     border-color: #ffb800;
     background: #fffaf0;
     box-shadow: 0 8px 20px rgba(255, 184, 0, 0.12);
@@ -208,6 +231,7 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     border: none;
     border-radius: 24px 24px 0 0;
     box-shadow: 0 -16px 40px rgba(26, 26, 26, 0.2);
@@ -252,7 +276,7 @@
   .opoButton {
     min-height: 42px;
     font-size: 14px;
-    touch-action: manipulation;
+    touch-action: pan-y;
   }
   .expertisePopover { display: none; }
 
@@ -276,6 +300,7 @@
     align-items: flex-start;
     min-height: 132px;
     padding: 11px;
+    touch-action: pan-y;
   }
 
   .workIcon {

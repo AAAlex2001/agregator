@@ -68,7 +68,9 @@ export function ExpertiseFilter({ onSelect }: Props) {
               type="button"
               className={`${s.opoButton} ${activeOpo === opo ? s.opoButtonActive : ""}`}
               aria-expanded={activeOpo === opo}
-              onFocus={() => openOpo(opo)}
+              onFocus={(event) => {
+                if (event.currentTarget.matches(":focus-visible")) openOpo(opo);
+              }}
               onClick={() => openOpo(opo)}
             >
               Э{opo}
@@ -82,12 +84,14 @@ export function ExpertiseFilter({ onSelect }: Props) {
                 }}
                 onPointerLeave={closeFromPointer}
               >
-                <strong>Э{opo}</strong>
-                <span>{TABLE[opo]?.name}</span>
-                <div className={s.typeRow}>
-                  {enabledTypes(opo).map((type) => (
-                    <TypeBadge key={type} type={type} onClick={() => choose(opo, type)} />
-                  ))}
+                <div className={s.expertisePopoverCard}>
+                  <strong>Э{opo}</strong>
+                  <span>{TABLE[opo]?.name}</span>
+                  <div className={s.typeRow}>
+                    {enabledTypes(opo).map((type) => (
+                      <TypeBadge key={type} type={type} onClick={() => choose(opo, type)} />
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
