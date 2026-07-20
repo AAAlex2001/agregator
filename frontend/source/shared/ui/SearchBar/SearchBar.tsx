@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
+import { forwardRef, type FocusEvent, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { LogoMarkIcon } from "@/source/shared/ui/icons";
 import Button from "@/source/shared/ui/Button";
 import Loader from "@/source/shared/ui/Loader";
@@ -23,8 +23,8 @@ interface Props {
   onSuggestionHover?: (index: number) => void;
   onSuggestionPick?: (suggestion: SearchBarSuggestion) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
+  onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
   showDropdown?: boolean;
   isLoading?: boolean;
   emptyLabel?: string;

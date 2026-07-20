@@ -2,3 +2,60 @@
   position: relative;
   width: 100%;
 }
+
+.activeFilter {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 9px 0 0 18px;
+  border: 1px solid #ffb800;
+  border-radius: 999px;
+  background: #fff8e8;
+  overflow: hidden;
+}
+
+.activeFilterValue,
+.clearFilter {
+  border: none;
+  background: transparent;
+  color: #8c5700;
+  font: inherit;
+  cursor: pointer;
+}
+
+.activeFilterValue {
+  max-width: min(460px, calc(100vw - 110px));
+  padding: 7px 10px 7px 13px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clearFilter {
+  align-self: stretch;
+  padding: 4px 10px;
+  border-left: 1px solid #ffd58a;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.filterTrigger {
+  margin: 9px 0 0 18px;
+  padding: 7px 13px;
+  border: 1px dashed #ffb800;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #a86600;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .activeFilter,
+  .filterTrigger { margin-left: 8px; }
+}
