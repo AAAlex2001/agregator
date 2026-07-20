@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import {
   OPO_ROWS,
@@ -21,7 +21,24 @@ const enabledTypes = (opo: string): ExpertiseType[] => TYPES.filter((type) => ce
 
 export function ExpertiseFilter({ onSelect }: Props) {
   const [activeOpo, setActiveOpo] = useState<string | null>(null);
-  const activeTypes = useMemo(() => (activeOpo ? enabledTypes(activeOpo) : []), [activeOpo]);
+  const closeTimerRef = useRef<number | null>(null);
+
+  const cancelClose = () => {
+    if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = null;
+  };
+
+  const openOpo = (opo: string) => {
+    cancelClose();
+    setActiveOpo(opo);
+  };
+
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimerRef.current = window.setTimeout(() => setActiveOpo(null), 220);
+  };
+
+  useEffect(() => () => cancelClose(), []);
 
   const choose = (opo: string, type: ExpertiseType) => {
     const badgeCode = cell(opo, type)[0];
@@ -36,21 +53,21 @@ export function ExpertiseFilter({ onSelect }: Props) {
           <div
             key={opo}
             className={s.opoItem}
-            onMouseEnter={() => setActiveOpo(opo)}
-            onMouseLeave={() => setActiveOpo(null)}
+            onMouseEnter={() => openOpo(opo)}
+            onMouseLeave={scheduleClose}
           >
             <button
               type="button"
               className={`${s.opoButton} ${activeOpo === opo ? s.opoButtonActive : ""}`}
               aria-expanded={activeOpo === opo}
-              onFocus={() => setActiveOpo(opo)}
-              onClick={() => setActiveOpo(opo)}
+              onFocus={() => openOpo(opo)}
+              onClick={() => openOpo(opo)}
             >
               Э{opo}
             </button>
 
             {activeOpo === opo && (
-              <div className={s.expertisePopover}>
+              <div className={s.expertisePopover} onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
                 <strong>Э{opo}</strong>
                 <span>{TABLE[opo]?.name}</span>
                 <div className={s.typeRow}>
@@ -69,7 +86,7 @@ export function ExpertiseFilter({ onSelect }: Props) {
           <strong>Э{activeOpo}</strong>
           <span>{TABLE[activeOpo]?.name}</span>
           <div className={s.typeRow}>
-            {activeTypes.map((type) => (
+            {enabledTypes(activeOpo).map((type) => (
               <TypeBadge key={type} type={type} onClick={() => choose(activeOpo, type)} />
             ))}
           </div>

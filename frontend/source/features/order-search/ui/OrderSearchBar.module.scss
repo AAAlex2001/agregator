@@ -42,20 +42,6 @@
   line-height: 1;
 }
 
-.filterTrigger {
-  margin: 9px 0 0 18px;
-  padding: 7px 13px;
-  border: 1px dashed #ffb800;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #a86600;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 @media (max-width: 767px) {
-  .activeFilter,
-  .filterTrigger { margin-left: 8px; }
+  .activeFilter { margin-left: 8px; }
 }

@@ -50,10 +50,6 @@ export function OrderSearchBar() {
             ×
           </button>
         </div>
-      ) : state.filterPromptDismissed ? (
-        <button type="button" className={s.filterTrigger} onClick={() => dispatch({ type: "filtersOpened" })}>
-          Выбрать направление
-        </button>
       ) : null}
       {state.filtersOpen && (
         <OrderSearchFilters

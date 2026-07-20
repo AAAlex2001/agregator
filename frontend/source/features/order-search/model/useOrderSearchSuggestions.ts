@@ -26,7 +26,7 @@ export interface OrderSearchState {
 
 export function useOrderSearchSuggestions({
   query,
-  minChars = 2,
+  minChars = 1,
   limit = 6,
   debounceMs = 220,
   filters = {},
@@ -34,8 +34,7 @@ export function useOrderSearchSuggestions({
   const trimmed = query.trim();
   const workType = filters.workType;
   const badgeCode = filters.badgeCode;
-  const hasFilter = Boolean(workType || badgeCode);
-  const hasQuery = trimmed.length >= minChars || hasFilter;
+  const hasQuery = trimmed.length >= minChars;
 
   const [items, setItems] = useState<OrderSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);

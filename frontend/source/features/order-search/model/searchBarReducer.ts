@@ -6,7 +6,6 @@ export interface SearchBarState {
   filterLabel: string;
   filtersOpen: boolean;
   suggestionsOpen: boolean;
-  filterPromptDismissed: boolean;
   activeSuggestion: number;
 }
 
@@ -16,7 +15,6 @@ export const initialSearchBarState: SearchBarState = {
   filterLabel: "",
   filtersOpen: false,
   suggestionsOpen: false,
-  filterPromptDismissed: false,
   activeSuggestion: -1,
 };
 
@@ -44,7 +42,7 @@ export function searchBarReducer(state: SearchBarState, action: SearchBarAction)
     case "filtersOpened":
       return { ...state, filtersOpen: true, suggestionsOpen: false };
     case "filtersClosed":
-      return { ...state, filtersOpen: false, filterPromptDismissed: true };
+      return { ...state, filtersOpen: false };
     case "suggestionsOpened":
       return { ...state, suggestionsOpen: true, filtersOpen: false };
     case "suggestionsClosed":
@@ -56,7 +54,6 @@ export function searchBarReducer(state: SearchBarState, action: SearchBarAction)
         filterLabel: action.label,
         filtersOpen: false,
         suggestionsOpen: false,
-        filterPromptDismissed: true,
         activeSuggestion: -1,
       };
     case "filterCleared":
@@ -66,7 +63,6 @@ export function searchBarReducer(state: SearchBarState, action: SearchBarAction)
         filterLabel: "",
         filtersOpen: false,
         suggestionsOpen: false,
-        filterPromptDismissed: false,
         activeSuggestion: -1,
       };
     case "suggestionHighlighted":
