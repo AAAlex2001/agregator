@@ -1,40 +1,59 @@
 "use client";
 
-import { useRef, type MouseEvent, type PointerEvent } from "react";
+import { useRef, type MouseEvent, type TouchEvent } from "react";
 
 export function useTouchScrollGuard() {
   const gestureRef = useRef({
-    pointerId: -1,
+    touchId: -1,
     startX: 0,
     startY: 0,
+    startScrollTop: 0,
     moved: false,
     suppressClick: false,
   });
 
-  const onPointerDownCapture = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "touch") return;
+  const onTouchStartCapture = (event: TouchEvent<HTMLDivElement>) => {
+    if (event.touches.length !== 1) return;
+    const touch = event.touches[0];
     gestureRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
+      touchId: touch.identifier,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startScrollTop: event.currentTarget.scrollTop,
       moved: false,
       suppressClick: false,
     };
   };
 
-  const onPointerMoveCapture = (event: PointerEvent<HTMLDivElement>) => {
+  const onTouchMoveCapture = (event: TouchEvent<HTMLDivElement>) => {
     const gesture = gestureRef.current;
-    if (event.pointerType !== "touch" || event.pointerId !== gesture.pointerId || gesture.moved) return;
-    if (Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY) > 6) {
+    const touch = Array.from(event.touches).find((item) => item.identifier === gesture.touchId);
+    if (!touch || gesture.moved) return;
+    if (
+      Math.hypot(touch.clientX - gesture.startX, touch.clientY - gesture.startY) > 6
+      || Math.abs(event.currentTarget.scrollTop - gesture.startScrollTop) > 1
+    ) {
       gesture.moved = true;
     }
   };
 
-  const finishTouch = (event: PointerEvent<HTMLDivElement>) => {
+  const onTouchEndCapture = (event: TouchEvent<HTMLDivElement>) => {
     const gesture = gestureRef.current;
-    if (event.pointerType !== "touch" || event.pointerId !== gesture.pointerId) return;
-    gesture.suppressClick = gesture.moved;
-    gesture.pointerId = -1;
+    const touch = Array.from(event.changedTouches).find((item) => item.identifier === gesture.touchId);
+    if (!touch) return;
+    gesture.suppressClick = gesture.moved
+      || Math.hypot(touch.clientX - gesture.startX, touch.clientY - gesture.startY) > 6
+      || Math.abs(event.currentTarget.scrollTop - gesture.startScrollTop) > 1;
+    gesture.touchId = -1;
+  };
+
+  const onTouchCancelCapture = () => {
+    gestureRef.current.touchId = -1;
+    gestureRef.current.suppressClick = true;
+  };
+
+  const onScrollCapture = () => {
+    if (gestureRef.current.touchId !== -1) gestureRef.current.moved = true;
   };
 
   const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
@@ -46,10 +65,11 @@ export function useTouchScrollGuard() {
   };
 
   return {
-    onPointerDownCapture,
-    onPointerMoveCapture,
-    onPointerUpCapture: finishTouch,
-    onPointerCancelCapture: finishTouch,
+    onTouchStartCapture,
+    onTouchMoveCapture,
+    onTouchEndCapture,
+    onTouchCancelCapture,
+    onScrollCapture,
     onClickCapture,
   };
 }

@@ -33,17 +33,24 @@ export function ExpertiseFilter({ onSelect }: Props) {
     setActiveOpo(opo);
   };
 
-  const scheduleClose = () => {
+  const scheduleClose = (opo: string) => {
     cancelClose();
-    closeTimerRef.current = window.setTimeout(() => setActiveOpo(null), 300);
+    closeTimerRef.current = window.setTimeout(() => {
+      setActiveOpo((current) => current === opo ? null : current);
+    }, 300);
   };
 
   const openFromPointer = (event: PointerEvent<HTMLElement>, opo: string) => {
-    if (event.pointerType === "mouse") openOpo(opo);
+    if (
+      event.pointerType === "mouse"
+      && window.matchMedia("(min-width: 768px) and (hover: hover) and (pointer: fine)").matches
+    ) {
+      openOpo(opo);
+    }
   };
 
-  const closeFromPointer = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType === "mouse") scheduleClose();
+  const closeFromPointer = (event: PointerEvent<HTMLElement>, opo: string) => {
+    if (event.pointerType === "mouse") scheduleClose(opo);
   };
 
   useEffect(() => () => cancelClose(), []);
@@ -62,15 +69,12 @@ export function ExpertiseFilter({ onSelect }: Props) {
             key={opo}
             className={`${s.opoItem} ${activeOpo === opo ? s.opoItemActive : ""}`}
             onPointerEnter={(event) => openFromPointer(event, opo)}
-            onPointerLeave={closeFromPointer}
+            onPointerLeave={(event) => closeFromPointer(event, opo)}
           >
             <button
               type="button"
               className={`${s.opoButton} ${activeOpo === opo ? s.opoButtonActive : ""}`}
               aria-expanded={activeOpo === opo}
-              onFocus={(event) => {
-                if (event.currentTarget.matches(":focus-visible")) openOpo(opo);
-              }}
               onClick={() => openOpo(opo)}
             >
               Э{opo}
@@ -82,7 +86,7 @@ export function ExpertiseFilter({ onSelect }: Props) {
                 onPointerEnter={(event) => {
                   if (event.pointerType === "mouse") cancelClose();
                 }}
-                onPointerLeave={closeFromPointer}
+                onPointerLeave={(event) => closeFromPointer(event, opo)}
               >
                 <div className={s.expertisePopoverCard}>
                   <strong>Э{opo}</strong>
