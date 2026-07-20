@@ -89,7 +89,10 @@ const EDU: UsefulCategory = {
   links: [
     { label: "Подготовка к аттестации на эксперта", soon: true },
     { label: "Аттестация на дефектоскописта", soon: true },
-    { label: "Дополнительное профессиональное образование", url: "https://nedra-npi.ru/education" },
+    {
+      label: 'Дополнительное профессиональное образование ООО "НПИ "Недрa"',
+      url: "https://nedra-npi.ru/svedeniya/obrazovanie",
+    },
   ],
 };
 

@@ -128,8 +128,8 @@ function createCabinetNav(role: string | null): NavPlate[] {
         { label: "Подготовка к аттестации на эксперта", soon: true },
         { label: "Аттестация на дефектоскописта", soon: true },
         {
-          label: "Дополнительное профессиональное образование",
-          href: "https://nedra-npi.ru/education",
+          label: 'Дополнительное профессиональное образование ООО "НПИ "Недрa"',
+          href: "https://nedra-npi.ru/svedeniya/obrazovanie",
           external: true,
         },
       ],
