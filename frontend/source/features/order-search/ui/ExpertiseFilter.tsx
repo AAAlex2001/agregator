@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useState, type PointerEvent } from "react";
 import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import {
   OPO_ROWS,
@@ -21,39 +21,22 @@ const enabledTypes = (opo: string): ExpertiseType[] => TYPES.filter((type) => ce
 
 export function ExpertiseFilter({ onSelect }: Props) {
   const [activeOpo, setActiveOpo] = useState<string | null>(null);
-  const closeTimerRef = useRef<number | null>(null);
-
-  const cancelClose = () => {
-    if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
-    closeTimerRef.current = null;
-  };
 
   const openOpo = (opo: string) => {
-    cancelClose();
     setActiveOpo(opo);
   };
 
-  const scheduleClose = (opo: string) => {
-    cancelClose();
-    closeTimerRef.current = window.setTimeout(() => {
-      setActiveOpo((current) => current === opo ? null : current);
-    }, 300);
-  };
+  const hasDesktopHover = () =>
+    window.matchMedia("(min-width: 768px) and (hover: hover) and (pointer: fine)").matches;
 
   const openFromPointer = (event: PointerEvent<HTMLElement>, opo: string) => {
-    if (
-      event.pointerType === "mouse"
-      && window.matchMedia("(min-width: 768px) and (hover: hover) and (pointer: fine)").matches
-    ) {
-      openOpo(opo);
-    }
+    if (event.pointerType === "mouse" && hasDesktopHover()) openOpo(opo);
   };
 
   const closeFromPointer = (event: PointerEvent<HTMLElement>, opo: string) => {
-    if (event.pointerType === "mouse") scheduleClose(opo);
+    if (event.pointerType !== "mouse" || !hasDesktopHover()) return;
+    setActiveOpo((current) => current === opo ? null : current);
   };
-
-  useEffect(() => () => cancelClose(), []);
 
   const choose = (opo: string, type: ExpertiseType) => {
     const badgeCode = cell(opo, type)[0];
@@ -81,13 +64,7 @@ export function ExpertiseFilter({ onSelect }: Props) {
             </button>
 
             {activeOpo === opo && (
-              <div
-                className={s.expertisePopover}
-                onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") cancelClose();
-                }}
-                onPointerLeave={(event) => closeFromPointer(event, opo)}
-              >
+              <div className={s.expertisePopover}>
                 <div className={s.expertisePopoverCard}>
                   <strong>Э{opo}</strong>
                   <span>{TABLE[opo]?.name}</span>
