@@ -2,8 +2,11 @@
 
 import { useState, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
+import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import { SearchBar, type SearchBarSuggestion } from "@/source/shared/ui/SearchBar";
 import { useOrderSearchSuggestions } from "../model/useOrderSearchSuggestions";
+import { OrderSearchFilters } from "./OrderSearchFilters";
+import s from "./OrderSearchBar.module.scss";
 
 export function OrderSearchBar() {
   const router = useRouter();
@@ -18,9 +21,15 @@ export function OrderSearchBar() {
     subtitle: s.company || undefined,
   }));
 
-  const goToOrders = () => {
+  const goToOrders = (filters: PublicOrderSearchFilters = {}) => {
     setOpen(false);
-    router.push("/orders");
+    const params = new URLSearchParams();
+    const query = value.trim();
+    if (query) params.set("q", query);
+    if (filters.workType) params.set("work_type", filters.workType);
+    if (filters.badgeCode) params.set("badge_code", filters.badgeCode);
+    const suffix = params.toString();
+    router.push(suffix ? `/orders?${suffix}` : "/orders");
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -38,26 +47,34 @@ export function OrderSearchBar() {
   };
 
   return (
-    <SearchBar
-      value={value}
-      onChange={(v) => {
-        setValue(v);
-        setActiveIndex(-1);
-        setOpen(true);
-      }}
-      onSubmit={goToOrders}
-      placeholder="Поиск по заказам"
-      suggestions={items}
-      activeSuggestionIndex={activeIndex}
-      onSuggestionHover={setActiveIndex}
-      onSuggestionPick={goToOrders}
-      onKeyDown={onKeyDown}
-      onFocus={() => setOpen(true)}
-      onBlur={() => window.setTimeout(() => setOpen(false), 120)}
-      showDropdown={open && hasQuery}
-      isLoading={isLoading}
-      emptyLabel="По вашему запросу ничего не найдено"
-      loadingLabel="Ищем заказы…"
-    />
+    <div className={s.wrap}>
+      <SearchBar
+        value={value}
+        onChange={(v) => {
+          setValue(v);
+          setActiveIndex(-1);
+          setOpen(true);
+        }}
+        onSubmit={() => goToOrders()}
+        placeholder="Найдите заказ или выберите направление"
+        suggestions={items}
+        activeSuggestionIndex={activeIndex}
+        onSuggestionHover={setActiveIndex}
+        onSuggestionPick={() => goToOrders()}
+        onKeyDown={onKeyDown}
+        onFocus={() => setOpen(true)}
+        onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+        showDropdown={open && hasQuery}
+        isLoading={isLoading}
+        emptyLabel="По вашему запросу ничего не найдено"
+        loadingLabel="Ищем заказы…"
+      />
+      {open && value.trim() === "" && (
+        <OrderSearchFilters
+          onClose={() => setOpen(false)}
+          onSelect={(filters) => goToOrders(filters)}
+        />
+      )}
+    </div>
   );
 }

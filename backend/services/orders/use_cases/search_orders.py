@@ -1,5 +1,5 @@
 "Use case: search orders."
-from models.order import Order
+from models.order import Order, OrderWorkType
 from services.orders.repository import OrderRepository
 
 
@@ -9,8 +9,23 @@ class SearchOrdersUseCase:
     def __init__(self, repo: OrderRepository) -> None:
         self.repo = repo
 
-    async def execute(self, query: str, skip: int, limit: int) -> tuple[list[Order], bool]:
+    async def execute(
+        self,
+        query: str | None,
+        skip: int,
+        limit: int,
+        work_type: OrderWorkType | None = None,
+        badge_code: str | None = None,
+    ) -> tuple[list[Order], bool]:
         "Запускает основной сценарий use case."
-        if not query.strip():
+        normalized_query = (query or "").strip()
+        normalized_badge = (badge_code or "").strip()
+        if not normalized_query and work_type is None and not normalized_badge:
             return [], False
-        return await self.repo.search_public(query, skip, limit)
+        return await self.repo.search_public(
+            normalized_query,
+            skip,
+            limit,
+            work_type=work_type,
+            badge_code=normalized_badge or None,
+        )

@@ -6,7 +6,7 @@ export type OrderWorkType =
   | "OTHER";
 
 export const ORDER_WORK_OPTIONS: Array<{
-  value: OrderWorkType;
+  value: Exclude<OrderWorkType, "EXPERTISE">;
   label: string;
   description: string;
 }> = [

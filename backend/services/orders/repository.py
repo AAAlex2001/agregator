@@ -4,7 +4,7 @@ from sqlalchemy import delete, func, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from models.order import Order, OrderBadge, OrderStatus
+from models.order import Order, OrderBadge, OrderStatus, OrderWorkType
 from models.question import OrderQuestion
 from models.response import OrderResponse as OrderResponseModel
 from models.user import User, UserRole
@@ -139,15 +139,26 @@ class OrderRepository:
         query: str,
         skip: int,
         limit: int,
+        work_type: OrderWorkType | None = None,
+        badge_code: str | None = None,
     ) -> tuple[list[Order], bool]:
-        "Поиск по всем заказам платформы (любой статус) для публичного отображения. Ищет по title и company (ILIKE)."
-        pattern = f"%{query.strip()}%"
+        "Поиск по заказам платформы по тексту, виду работ и коду экспертизы."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
-            .where((Order.title.ilike(pattern)) | (Order.company.ilike(pattern)))
             .order_by(Order.created_at.desc())
         )
+        if query:
+            pattern = f"%{query}%"
+            list_query = list_query.where(
+                (Order.title.ilike(pattern)) | (Order.company.ilike(pattern))
+            )
+        if work_type is not None:
+            list_query = list_query.where(Order.work_type == work_type)
+        if badge_code:
+            list_query = list_query.where(
+                Order.badges.any(OrderBadge.text == badge_code)
+            )
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def list_archived(

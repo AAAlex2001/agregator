@@ -8,6 +8,8 @@ import {
   countDocuments,
   usePublicOrdersList,
   type OrderCardData,
+  type PublicOrderSearchFilters,
+  getOrderWorkLabel,
 } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
 import { Loader } from "@/source/shared/ui";
@@ -21,9 +23,10 @@ import s from "./PublicOrdersWidget.module.scss";
 
 interface Props {
   initial?: { items: OrderCardData[]; hasMore: boolean };
+  filters?: PublicOrderSearchFilters;
 }
 
-export function PublicOrdersWidget({ initial }: Props = {}) {
+export function PublicOrdersWidget({ initial, filters = {} }: Props = {}) {
   const router = useRouter();
   const { showError } = useNotifications();
   const { user, role, isLoading: isSessionLoading } = useSession();
@@ -31,7 +34,11 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
   const { items, hasMore, isLoading, isLoadingMore, loadMore } = usePublicOrdersList({
     onError: showError,
     initial,
+    filters,
   });
+
+  const filterLabel = filters.badgeCode
+    ?? (filters.workType ? getOrderWorkLabel(filters.workType) : "");
 
   const sentinelRef = useInfiniteScroll({
     hasMore,
@@ -56,6 +63,14 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
           className={s.pageSubtitle}
         />
       </div>
+
+      {(filters.query || filterLabel) && (
+        <div className={s.activeFilters}>
+          {filters.query && <span>Поиск: {filters.query}</span>}
+          {filterLabel && <span>Направление: {filterLabel}</span>}
+          <button type="button" onClick={() => router.push("/orders")}>Сбросить</button>
+        </div>
+      )}
 
       {isLoading && (
         <div className={s.list}>

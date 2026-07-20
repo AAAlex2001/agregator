@@ -45,7 +45,7 @@ export function useOrderSearchSuggestions({
     setIsLoading(true);
     const id = ++requestIdRef.current;
     const timer = window.setTimeout(() => {
-      void searchOrdersPublic(trimmed, 0, limit)
+      void searchOrdersPublic({ query: trimmed }, 0, limit)
         .then((data) => {
           if (id !== requestIdRef.current) return;
           setItems(

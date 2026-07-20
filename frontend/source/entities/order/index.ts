@@ -5,6 +5,7 @@ export { RequirementsBadges } from "./ui/RequirementsBadges";
 export { DocumentsGallery } from "./ui/DocumentsGallery";
 export { mapApiToOrderCard } from "./model/mapper";
 export { searchOrdersPublic } from "./api/order-search.api";
+export type { PublicOrderSearchFilters } from "./api/order-search.api";
 export { fetchPublicOrder, type PublicOrderBadge, type PublicOrderPreview } from "./api/public-order.api";
 export { fetchArchivedOrders } from "./api/archive.api";
 export { fetchReports, getReportPdfUrl } from "./api/reports.api";

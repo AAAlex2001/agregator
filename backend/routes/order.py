@@ -102,14 +102,16 @@ def build_send_order_updated_email(
     dependencies=[Depends(rate_limit("order_search", max_calls=30, window_seconds=60))],
 )
 async def search_orders_public(
-    q: str = Query(..., min_length=1, max_length=200),
+    q: str | None = Query(None, min_length=1, max_length=200),
+    work_type: OrderWorkType | None = Query(None),
+    badge_code: str | None = Query(None, min_length=1, max_length=50),
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
 ) -> OrderListResponse:
     "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
     use_case = SearchOrdersUseCase(build_repo(db))
-    orders, has_more = await use_case.execute(q, skip, limit)
+    orders, has_more = await use_case.execute(q, skip, limit, work_type, badge_code)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
         has_more=has_more,

@@ -4,6 +4,7 @@ import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PublicOrdersWidget } from "@/source/widgets/public-orders";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import { fetchPublicOrdersServer } from "@/source/entities/order/api/public-orders.server";
+import type { OrderWorkType, PublicOrderSearchFilters } from "@/source/entities/order";
 import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
 
 export const dynamic = "force-dynamic";
@@ -30,20 +31,41 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default async function PublicOrdersPage() {
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+const WORK_TYPES = new Set<OrderWorkType>([
+  "EXPERTISE",
+  "DESIGN_SURVEY",
+  "INSPECTION_TESTING",
+  "RESEARCH_LAB",
+  "OTHER",
+]);
+
+export default async function PublicOrdersPage({ searchParams }: PageProps) {
   const role = await getInitialSessionRole();
   if (role === "EXPERT") redirect("/expert/orders");
   if (role === "CUSTOMER") redirect("/customer/orders");
   if (role) redirect("/landing");
 
-  const data = await fetchPublicOrdersServer(0, 50);
+  const params = await searchParams;
+  const query = typeof params.q === "string" ? params.q : undefined;
+  const badgeCode = typeof params.badge_code === "string" ? params.badge_code : undefined;
+  const rawWorkType = typeof params.work_type === "string" ? params.work_type : undefined;
+  const workType = rawWorkType && WORK_TYPES.has(rawWorkType as OrderWorkType)
+    ? rawWorkType as OrderWorkType
+    : undefined;
+  const filters: PublicOrderSearchFilters = { query, workType, badgeCode };
+
+  const data = await fetchPublicOrdersServer(0, 50, filters);
   const initial = { items: data.items.map(mapApiToOrderCard), hasMore: data.has_more };
 
   return (
     <>
       <LandingHeader />
       <main>
-        <PublicOrdersWidget initial={initial} />
+        <PublicOrdersWidget initial={initial} filters={filters} />
       </main>
       <LandingFooter variant="light" />
     </>
