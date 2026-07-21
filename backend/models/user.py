@@ -16,6 +16,7 @@ from sqlalchemy import (
     Float,
     Numeric,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -108,6 +109,17 @@ class User(Base):
     expert_certificates: Mapped[list[dict[str, str]] | None] = mapped_column(JSONB, nullable=True)
     expert_show_on_map: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     expert_map_fields: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
+    contact_sales_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default="false"
+    )
+    contact_price_kopecks: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    contact_payment_details_encrypted: Mapped[str | None] = mapped_column(Text, nullable=True)
+    contact_disclosure_consent_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    contact_disclosure_consent_version: Mapped[str | None] = mapped_column(
+        String(30), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
@@ -119,6 +131,10 @@ class User(Base):
         CheckConstraint(
             "license_rental_kind IS NULL OR license_rental_kind IN ('PERCENT', 'FIXED', 'NEGOTIABLE')",
             name="user_license_rental_kind_valid",
+        ),
+        CheckConstraint(
+            "contact_price_kopecks IS NULL OR contact_price_kopecks > 0",
+            name="ck_user_contact_price_positive",
         ),
         UniqueConstraint("email", "role", name="uq_users_email_role"),
         UniqueConstraint("phone", "role", name="uq_users_phone_role"),

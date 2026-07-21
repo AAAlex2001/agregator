@@ -11,12 +11,15 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
 
 from routes import (
+    admin_contact_deal,
     admin_content,
     article,
     article_interactions,
     chat,
+    contact_deal,
     email,
     expert,
+    expert_contact,
     forgot_password,
     geo,
     hazard,
@@ -109,6 +112,7 @@ app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")
 app.include_router(landing.router, prefix="/api")
 app.include_router(labor.router, prefix="/api")
+app.include_router(contact_deal.router, prefix="/api")
 app.include_router(question.router, prefix="/api")
 app.include_router(support.router, prefix="/api")
 app.include_router(license_holder.router, prefix="/api")
@@ -118,8 +122,10 @@ app.include_router(lining.router, prefix="/api")
 app.include_router(article.router, prefix="/api")
 app.include_router(article_interactions.router, prefix="/api")
 app.include_router(admin_content.router, prefix="/api")
+app.include_router(admin_contact_deal.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
+app.include_router(expert_contact.router, prefix="/api")
 app.include_router(geo.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")

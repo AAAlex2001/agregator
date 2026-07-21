@@ -106,12 +106,15 @@ services:
       YOOKASSA_SHOP_ID: ${YOOKASSA_SHOP_ID}
       YOOKASSA_SECRET_KEY: ${YOOKASSA_SECRET_KEY}
       INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+      CONTACT_DEAL_ENCRYPTION_KEY: ${CONTACT_DEAL_ENCRYPTION_KEY:-}
+      CONTACT_RECEIPT_STORAGE: /app/private_uploads/contact_receipts
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
       TELEGRAM_PROXY: ${TELEGRAM_PROXY:-}
     expose:
       - "8000"
     volumes:
       - backend_uploads:/app/uploads
+      - backend_private_uploads:/app/private_uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -231,4 +234,5 @@ networks:
 volumes:
   postgres_data:
   backend_uploads:
+  backend_private_uploads:
   nginx_image_cache:

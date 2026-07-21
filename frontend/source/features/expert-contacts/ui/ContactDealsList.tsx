@@ -1,0 +1,41 @@
+import type { ContactDealListItem } from "@/source/entities/expert-contact";
+import { Button } from "@/source/shared/ui";
+import { contactDealStatusLabel, formatDealDate } from "../lib/formatters";
+import s from "./ExpertContacts.module.scss";
+
+interface ContactDealsListProps {
+  deals: ContactDealListItem[];
+  busy: boolean;
+  onOpen: (id: number) => void;
+}
+
+export function ContactDealsList({ deals, busy, onOpen }: ContactDealsListProps) {
+  if (deals.length === 0) return null;
+
+  return (
+    <section className={s.dealsSection} aria-labelledby="contact-deals-title">
+      <h2 id="contact-deals-title">Мои сделки</h2>
+      <div className={s.dealRows}>
+        {deals.map((deal) => (
+          <article className={s.dealRow} key={deal.id}>
+            <div>
+              <strong>
+                {deal.actor_party === "SELLER" ? deal.buyer_name : deal.seller_name}
+              </strong>
+              <span>{formatDealDate(deal.created_at)} · {deal.price_rubles.toLocaleString("ru-RU")} ₽</span>
+            </div>
+            <span className={s.dealStatus}>{contactDealStatusLabel(deal.status)}</span>
+            <Button
+              variant="outlineOrange"
+              size="sm"
+              onClick={() => onOpen(deal.id)}
+              disabled={busy}
+            >
+              Открыть
+            </Button>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}

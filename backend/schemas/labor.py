@@ -11,10 +11,18 @@ from models.labor import (
 
 
 class LaborCertificate(BaseModel):
-    area: str = Field(..., min_length=1, max_length=20)
+    area: str | None = Field(None, max_length=20)
     object: str | None = Field(None, max_length=20)
     category: str | None = Field(None, max_length=5)
     expires_at: str | None = Field(None, max_length=30)
+
+    @model_validator(mode="after")
+    def validate_expertise(self) -> "LaborCertificate":
+        has_area = bool((self.area or "").strip())
+        has_object = bool((self.object or "").strip())
+        if not has_area and not has_object:
+            raise ValueError("Укажите область или вид экспертизы")
+        return self
 
 
 class LaborListingCreate(BaseModel):

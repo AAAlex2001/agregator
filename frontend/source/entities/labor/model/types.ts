@@ -4,7 +4,7 @@ export type EmploymentType = "PRIMARY" | "PART_TIME";
 export type CurrentJobStatus = "NONE" | "EMPLOYED";
 
 export interface LaborCertificate {
-  area: string;
+  area?: string;
   object?: string;
   category?: string;
   expires_at?: string;

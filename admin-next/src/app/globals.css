@@ -56,6 +56,154 @@ a:hover {
   padding: 24px;
 }
 
+.wide-page {
+  max-width: 1380px;
+}
+
+.topbar-subtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.status-filter {
+  width: 260px;
+}
+
+.deals-grid th,
+.deals-grid td {
+  white-space: nowrap;
+}
+
+.deal-payment_reported {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.deal-payment_rejected {
+  background: #fef2f2;
+  color: var(--danger);
+}
+
+.deal-contacts_released {
+  background: #dcfce7;
+  color: var(--ok);
+}
+
+.deal-page {
+  max-width: 1120px;
+}
+
+.deal-page .topbar h1 {
+  margin-top: 8px;
+}
+
+.deal-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.deal-summary > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px;
+  background: #fff;
+}
+
+.deal-summary > div:last-child {
+  grid-column: 1 / -1;
+}
+
+.deal-summary span,
+.receipt-row span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.deal-summary code,
+.receipt-row code {
+  overflow-wrap: anywhere;
+  color: #475569;
+  font-size: 11px;
+}
+
+.admin-section {
+  margin-bottom: 18px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-section h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.admin-section li {
+  margin-bottom: 9px;
+  line-height: 1.5;
+}
+
+.compact-grid {
+  border-radius: 6px;
+}
+
+.receipt-list {
+  display: grid;
+  gap: 1px;
+  border-block: 1px solid var(--line);
+  background: var(--line);
+}
+
+.receipt-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 2fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  background: #fff;
+}
+
+.receipt-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.release-section {
+  border-color: #fed7aa;
+  background: #fffaf5;
+}
+
+.release-section textarea {
+  min-height: 90px;
+  margin: 10px 0 12px;
+  resize: vertical;
+}
+
+.released-section {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+@media (max-width: 800px) {
+  .deal-summary,
+  .receipt-row {
+    grid-template-columns: 1fr;
+  }
+
+  .deals-grid {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 .topbar {
   display: flex;
   align-items: center;

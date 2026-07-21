@@ -129,12 +129,9 @@ async def create_labor_listing(
         for item in payload.certificates
     ]
     if payload.kind == LaborListingKind.EXPERT_AVAILABLE:
-        certificates = list(user.expert_certificates or certificates)
-        if not certificates:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Добавьте удостоверения в профиле",
-            )
+        profile_certificates = list(user.expert_certificates or [])
+        if profile_certificates:
+            certificates = profile_certificates
 
     listing = LaborListing(
         owner_id=user_id,

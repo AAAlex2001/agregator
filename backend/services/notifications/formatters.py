@@ -3,6 +3,8 @@ from models.notification import Notification, NotificationType
 from schemas.notification import (
     ChatMessageNotificationItemResponse,
     ChatMessageNotificationPayload,
+    ContactAccessNotificationItemResponse,
+    ContactAccessNotificationPayload,
     NewBlogPostNotificationItemResponse,
     NewBlogPostNotificationPayload,
     NewOrderNotificationItemResponse,
@@ -85,6 +87,13 @@ def to_response(notification: Notification) -> NotificationItemResponse:
         return NewOrderNotificationItemResponse(
             type=NotificationType.NEW_ORDER,
             payload=NewOrderNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.CONTACT_ACCESS:
+        return ContactAccessNotificationItemResponse(
+            type=NotificationType.CONTACT_ACCESS,
+            payload=ContactAccessNotificationPayload.model_validate(payload),
             **common,
         )
 

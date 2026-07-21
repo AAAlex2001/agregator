@@ -1,0 +1,64 @@
+from sqlalchemy import func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models.contact_deal import ContactAccessDeal
+from models.user import User, UserRole
+
+
+class ExpertContactRepository:
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def list_experts(
+        self,
+        actor_id: int,
+        search: str | None,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[tuple[User, ContactAccessDeal | None]], int]:
+        conditions = [User.role == UserRole.EXPERT, User.is_active.is_(True)]
+        if search and search.strip():
+            term = f"%{search.strip()}%"
+            conditions.append(
+                or_(
+                    User.first_name.ilike(term),
+                    User.last_name.ilike(term),
+                    User.location_city.ilike(term),
+                )
+            )
+
+        total = int(
+            (await self.db.execute(select(func.count(User.id)).where(*conditions))).scalar_one()
+        )
+        query = (
+            select(User, ContactAccessDeal)
+            .outerjoin(
+                ContactAccessDeal,
+                (ContactAccessDeal.seller_id == User.id)
+                & (ContactAccessDeal.buyer_id == actor_id),
+            )
+            .where(*conditions)
+            .order_by(
+                User.contact_sales_enabled.desc(),
+                User.rating.desc().nullslast(),
+                User.id.desc(),
+            )
+            .limit(limit)
+            .offset(offset)
+        )
+        rows = (await self.db.execute(query)).all()
+        return [(row[0], row[1]) for row in rows], total
+
+    async def get_active_expert(self, user_id: int) -> User | None:
+        return (
+            await self.db.execute(
+                select(User).where(
+                    User.id == user_id,
+                    User.role == UserRole.EXPERT,
+                    User.is_active.is_(True),
+                )
+            )
+        ).scalars().first()
+
+    async def flush(self) -> None:
+        await self.db.flush()

@@ -36,9 +36,13 @@ export function LaborForm({
             />
           ) : (
             <LicenseExpertiseFields
-              areas={form.areas}
+              expertiseMode={form.expertiseMode}
+              certificateCodes={form.certificateCodes}
+              expertiseTypes={form.expertiseTypes}
               category={form.category}
-              onToggleArea={form.toggleArea}
+              onExpertiseModeChange={form.setExpertiseMode}
+              onCertificateCodesChange={form.setCertificateCodes}
+              onExpertiseTypesChange={form.setExpertiseTypes}
               onCategoryChange={form.setCategory}
             />
           )}

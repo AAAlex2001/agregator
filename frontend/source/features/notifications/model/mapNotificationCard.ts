@@ -1,5 +1,6 @@
 import type {
   ChatMessageNotificationPayload,
+  ContactAccessNotificationPayload,
   NewBlogPostNotificationPayload,
   NewOrderNotificationPayload,
   NotificationCardModel,
@@ -256,6 +257,19 @@ function mapNewOrder(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapContactAccess(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as ContactAccessNotificationPayload;
+  return {
+    id: item.id,
+    title: payload.title,
+    message: payload.message,
+    actionLabel: item.action_url ? "Открыть сделку" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 function mapSupportReply(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as SupportReplyNotificationPayload;
   const subject = payload.subject || "Обращение";
@@ -304,6 +318,10 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "NEW_ORDER") {
     return mapNewOrder(item);
+  }
+
+  if (item.type === "CONTACT_ACCESS") {
+    return mapContactAccess(item);
   }
 
   return {

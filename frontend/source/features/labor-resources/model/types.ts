@@ -5,9 +5,11 @@ import type {
   LaborListingData,
   LaborListingKind,
 } from "@/source/entities/labor";
+import type { ExpertiseType } from "@/source/entities/expertise";
 
 export type LaborPageMode = "license" | "expert";
 export type LaborListTab = "browse" | "mine";
+export type LaborExpertiseMode = "EXACT" | "GENERAL";
 
 export interface LaborPageCopy {
   title: string;
@@ -19,7 +21,9 @@ export interface LaborPageCopy {
 }
 
 export interface LaborFormState {
-  areas: string[];
+  expertiseMode: LaborExpertiseMode;
+  certificateCodes: string[];
+  expertiseTypes: ExpertiseType[];
   category: string;
   region: string;
   term: EmploymentTerm;

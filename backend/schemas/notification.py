@@ -141,6 +141,16 @@ class NewOrderNotificationItemResponse(NotificationItemBaseResponse):
     payload: NewOrderNotificationPayload
 
 
+class ContactAccessNotificationPayload(NotificationPayloadModel):
+    title: str
+    message: str
+
+
+class ContactAccessNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.CONTACT_ACCESS]
+    payload: ContactAccessNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
@@ -149,6 +159,7 @@ NotificationItemResponse = Annotated[
     | QuestionAnsweredNotificationItemResponse
     | NewBlogPostNotificationItemResponse
     | NewOrderNotificationItemResponse
+    | ContactAccessNotificationItemResponse
     | SupportReplyNotificationItemResponse,
     Field(discriminator="type"),
 ]

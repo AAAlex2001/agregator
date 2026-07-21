@@ -59,7 +59,10 @@ export default function ListPage() {
     <div className="page">
       <header className="topbar">
         <h1>Статьи · Новости и блог</h1>
-        <button className="ghost" onClick={onLogout}>Выйти</button>
+        <div className="topbar-right">
+          <Link className="btn" href="/contact-deals">Чеки и контакты</Link>
+          <button className="ghost" onClick={onLogout}>Выйти</button>
+        </div>
       </header>
 
       <div className="toolbar">

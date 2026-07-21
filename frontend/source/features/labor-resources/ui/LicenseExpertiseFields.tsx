@@ -1,48 +1,62 @@
 import {
-  CATEGORY_OPTIONS,
-  ExpertiseAreasPicker,
+  BadgeCodesPicker,
+  TypesPicker,
+  type ExpertiseType,
 } from "@/source/entities/expertise";
+import type { LaborExpertiseMode } from "../model/types";
+import { ExpertiseCategoryField } from "./ExpertiseCategoryField";
+import { ExpertiseModeField } from "./ExpertiseModeField";
 import s from "./LaborForm.module.scss";
 
 interface LicenseExpertiseFieldsProps {
-  areas: string[];
+  expertiseMode: LaborExpertiseMode;
+  certificateCodes: string[];
+  expertiseTypes: ExpertiseType[];
   category: string;
-  onToggleArea: (area: string, checked: boolean) => void;
+  onExpertiseModeChange: (mode: LaborExpertiseMode) => void;
+  onCertificateCodesChange: (codes: string[]) => void;
+  onExpertiseTypesChange: (types: ExpertiseType[]) => void;
   onCategoryChange: (category: string) => void;
 }
 
 export function LicenseExpertiseFields({
-  areas,
+  expertiseMode,
+  certificateCodes,
+  expertiseTypes,
   category,
-  onToggleArea,
+  onExpertiseModeChange,
+  onCertificateCodesChange,
+  onExpertiseTypesChange,
   onCategoryChange,
 }: LicenseExpertiseFieldsProps) {
   return (
     <div className={s.fieldGroup}>
-      <span className={s.label}>Области аттестации</span>
-
-      <ExpertiseAreasPicker
-        value={areas}
-        onChange={onToggleArea}
-        idPrefix="labor-area"
+      <ExpertiseModeField
+        value={expertiseMode}
+        onChange={onExpertiseModeChange}
       />
 
-      <span className={s.label}>Категория эксперта</span>
+      {expertiseMode === "EXACT" ? (
+        <BadgeCodesPicker
+          value={certificateCodes}
+          onChange={onCertificateCodesChange}
+          typeLabel="Выберите вид удостоверения"
+          areaLabel="Выберите точную область аттестации"
+          resultLabel="Требуемые удостоверения"
+        />
+      ) : (
+        <TypesPicker
+          value={expertiseTypes}
+          onChange={onExpertiseTypesChange}
+          label="Выберите вид экспертизы"
+          hint="Область Э не уточняется — подойдёт любой эксперт выбранного вида"
+        />
+      )}
 
-      <div className={s.categoryRow}>
-        {CATEGORY_OPTIONS.map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={
-              category === value ? s.categoryActive : ""
-            }
-            onClick={() => onCategoryChange(value)}
-          >
-            {value} категория
-          </button>
-        ))}
-      </div>
+      <ExpertiseCategoryField
+        value={category}
+        onChange={onCategoryChange}
+      />
     </div>
   );
 }

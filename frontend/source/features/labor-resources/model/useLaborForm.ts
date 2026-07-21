@@ -13,13 +13,18 @@ import {
   type LaborCertificate,
   type LaborListingPayload,
 } from "@/source/entities/labor";
+import type { ExpertiseType } from "@/source/entities/expertise";
 import { useSession } from "@/source/features/session";
+import { buildExpertiseRequirements } from "../lib/expertiseRequirements";
 import { LABOR_PAGE_COPY } from "./config";
 import {
   initialLaborFormState,
   laborFormReducer,
 } from "./form.reducer";
-import type { LaborPageMode } from "./types";
+import type {
+  LaborExpertiseMode,
+  LaborPageMode,
+} from "./types";
 
 interface UseLaborFormOptions {
   mode: LaborPageMode;
@@ -41,10 +46,12 @@ export function useLaborForm({
   const profileCertificates = (
     user?.expert_certificates ?? []
   ) as LaborCertificate[];
-  const selectedCertificates = state.areas.map((area) => ({
-    area,
+  const selectedCertificates = buildExpertiseRequirements({
+    mode: state.expertiseMode,
+    certificateCodes: state.certificateCodes,
+    expertiseTypes: state.expertiseTypes,
     category: state.category,
-  }));
+  });
   const certificates =
     mode === "expert" && profileCertificates.length > 0
       ? profileCertificates
@@ -56,20 +63,12 @@ export function useLaborForm({
     }
   }, [state.region, user?.location_city]);
 
-  const toggleArea = (area: string, checked: boolean) => {
-    const nextAreas = checked
-      ? [...state.areas, area]
-      : state.areas.filter((currentArea) => currentArea !== area);
-
-    dispatch({ type: "AREAS", value: nextAreas });
-  };
-
   const validate = () => {
     if (!state.region.trim()) {
       return "Укажите регион фактического проживания";
     }
     if (certificates.length === 0) {
-      return "Выберите хотя бы одну область аттестации";
+      return "Выберите удостоверение или вид экспертизы";
     }
     if (state.term === "FIXED" && !state.fixedTerm.trim()) {
       return "Укажите срок срочного договора";
@@ -130,7 +129,12 @@ export function useLaborForm({
     certificates,
     profileCertificates,
     submit,
-    toggleArea,
+    setExpertiseMode: (value: LaborExpertiseMode) =>
+      dispatch({ type: "EXPERTISE_MODE", value }),
+    setCertificateCodes: (value: string[]) =>
+      dispatch({ type: "CERTIFICATE_CODES", value }),
+    setExpertiseTypes: (value: ExpertiseType[]) =>
+      dispatch({ type: "EXPERTISE_TYPES", value }),
     setCategory: (value: string) =>
       dispatch({ type: "CATEGORY", value }),
     setRegion: (value: string) =>

@@ -20,6 +20,7 @@ class NotificationType(str, PyEnum):
     SUPPORT_REPLY = "SUPPORT_REPLY"
     NEW_BLOG_POST = "NEW_BLOG_POST"
     NEW_ORDER = "NEW_ORDER"
+    CONTACT_ACCESS = "CONTACT_ACCESS"
 
 
 class Notification(Base):

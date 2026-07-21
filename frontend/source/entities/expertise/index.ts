@@ -17,4 +17,3 @@ export { TypeBadge } from "./ui/TypeBadge";
 export { BadgeCodesPicker } from "./ui/BadgeCodesPicker";
 export { CertificateBuilder } from "./ui/CertificateBuilder";
 export { ExpertAttestationFields } from "./ui/ExpertAttestationFields";
-export { ExpertiseAreasPicker } from "./ui/ExpertiseAreasPicker";

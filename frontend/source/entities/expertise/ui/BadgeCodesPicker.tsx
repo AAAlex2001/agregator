@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   OPO_ROWS,
   TABLE,
@@ -15,6 +15,9 @@ import s from "./BadgeCodesPicker.module.scss";
 interface Props {
   value: string[];
   onChange: (codes: string[]) => void;
+  typeLabel?: string;
+  areaLabel?: string;
+  resultLabel?: string;
 }
 
 type SelectionsByType = Record<ExpertiseType, string[]>;
@@ -41,13 +44,17 @@ function selectionsFromCodes(codes: string[]): SelectionsByType {
   return result;
 }
 
-export function BadgeCodesPicker({ value, onChange }: Props) {
-  const initialSelections = useMemo(() => selectionsFromCodes(value), [value]);
-  const [selections, setSelections] = useState<SelectionsByType>(initialSelections);
+export function BadgeCodesPicker({
+  value,
+  onChange,
+  typeLabel = "Выберите основной(-ые) объект(-ы) экспертизы",
+  areaLabel = "Выберите область(-и) аттестации эксперта(-ов)",
+  resultLabel = "Получаете уведомления по",
+}: Props) {
   const [activeType, setActiveType] = useState<ExpertiseType | null>(null);
+  const selections = selectionsFromCodes(value);
 
   const apply = (next: SelectionsByType) => {
-    setSelections(next);
     const allCodes = Array.from(
       new Set(
         Object.entries(next).flatMap(([type, opos]) =>
@@ -72,23 +79,12 @@ export function BadgeCodesPicker({ value, onChange }: Props) {
   };
 
   const activeOpos = activeType ? selections[activeType] ?? [] : [];
-
-  const resultCodes = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          Object.entries(selections).flatMap(([type, opos]) =>
-            computeBadgeCodes([type as ExpertiseType], opos),
-          ),
-        ),
-      ),
-    [selections],
-  );
+  const resultCodes = Array.from(new Set(value));
 
   return (
     <div className={s.wrap}>
       <div className={s.block}>
-        <span className={s.subLabel}>Выберите основной(-ые) объект(-ы) экспертизы</span>
+        <span className={s.subLabel}>{typeLabel}</span>
         <div className={s.row}>
           {TYPES.map((type) => {
             const hasSelection = (selections[type]?.length ?? 0) > 0;
@@ -105,7 +101,7 @@ export function BadgeCodesPicker({ value, onChange }: Props) {
       </div>
 
       <div className={s.block}>
-        <span className={s.subLabel}>Выберите область(-и) аттестации эксперта(-ов)</span>
+        <span className={s.subLabel}>{areaLabel}</span>
         <div className={s.opoRows}>
           {OPO_ROWS.map((row, rowIdx) => (
             <div key={rowIdx} className={s.row}>
@@ -131,7 +127,7 @@ export function BadgeCodesPicker({ value, onChange }: Props) {
 
       {resultCodes.length > 0 && (
         <div className={s.block}>
-          <span className={s.subLabel}>Получаете уведомления по</span>
+          <span className={s.subLabel}>{resultLabel}</span>
           <div className={s.resultRow}>
             {resultCodes.map((code) => (
               <span key={code} className={s.resultChip}>

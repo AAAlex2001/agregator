@@ -3,10 +3,16 @@ import type {
   EmploymentTerm,
   EmploymentType,
 } from "@/source/entities/labor";
-import type { LaborFormState } from "./types";
+import type { ExpertiseType } from "@/source/entities/expertise";
+import type {
+  LaborExpertiseMode,
+  LaborFormState,
+} from "./types";
 
 export type LaborFormAction =
-  | { type: "AREAS"; value: string[] }
+  | { type: "EXPERTISE_MODE"; value: LaborExpertiseMode }
+  | { type: "CERTIFICATE_CODES"; value: string[] }
+  | { type: "EXPERTISE_TYPES"; value: ExpertiseType[] }
   | { type: "CATEGORY"; value: string }
   | { type: "REGION"; value: string }
   | { type: "TERM"; value: EmploymentTerm }
@@ -20,8 +26,10 @@ export type LaborFormAction =
 
 export function initialLaborFormState(region = ""): LaborFormState {
   return {
-    areas: [],
-    category: "3",
+    expertiseMode: "EXACT",
+    certificateCodes: [],
+    expertiseTypes: [],
+    category: "",
     region,
     term: "PERMANENT",
     fixedTerm: "",
@@ -38,8 +46,12 @@ export function laborFormReducer(
   action: LaborFormAction,
 ): LaborFormState {
   switch (action.type) {
-    case "AREAS":
-      return { ...state, areas: action.value };
+    case "EXPERTISE_MODE":
+      return { ...state, expertiseMode: action.value };
+    case "CERTIFICATE_CODES":
+      return { ...state, certificateCodes: action.value };
+    case "EXPERTISE_TYPES":
+      return { ...state, expertiseTypes: action.value };
     case "CATEGORY":
       return { ...state, category: action.value };
     case "REGION":
@@ -59,10 +71,7 @@ export function laborFormReducer(
     case "ERROR":
       return { ...state, error: action.value };
     case "RESET":
-      return {
-        ...initialLaborFormState(state.region),
-        category: state.category,
-      };
+      return initialLaborFormState(state.region);
     default:
       return state;
   }
