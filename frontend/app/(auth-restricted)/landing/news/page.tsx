@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { fetchArticleList } from "@/source/entities/article";
+import { getStaticNewsListItems } from "@/source/entities/static-news";
 import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 async function AuthedNewsListContent() {
+  const staticItems = getStaticNewsListItems();
   const [initial, crossBlog] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
@@ -21,6 +23,7 @@ async function AuthedNewsListContent() {
       title="Новости отрасли"
       subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
       initial={initial}
+      staticItems={staticItems}
       homeHref="/landing"
       cross={{
         title: "Читайте также из блога",
