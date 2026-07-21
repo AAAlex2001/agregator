@@ -10,6 +10,7 @@ interface ToolTipProps {
   side?: "right" | "bottom";
   children?: ReactNode;
   hideOnMobile?: boolean;
+  multiline?: boolean;
 }
 
 export default function ToolTip({
@@ -18,11 +19,20 @@ export default function ToolTip({
   side = "right",
   children,
   hideOnMobile = false,
+  multiline = false,
 }: ToolTipProps) {
   const pathname = usePathname();
   const rootRef = useRef<HTMLSpanElement>(null);
   const [openPathname, setOpenPathname] = useState<string | null>(null);
   const isOpen = openPathname === pathname;
+  const rootClass = [
+    styles.toolTip,
+    side === "bottom" ? styles.bottom : styles.right,
+    hideOnMobile ? styles.hideOnMobile : "",
+    multiline ? styles.multiline : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const handleBlur = (event: FocusEvent<HTMLSpanElement>) => {
     if (!rootRef.current?.contains(event.relatedTarget as Node | null)) {
@@ -39,7 +49,7 @@ export default function ToolTip({
   return (
     <span
       ref={rootRef}
-      className={`${styles.toolTip} ${side === "bottom" ? styles.bottom : styles.right} ${hideOnMobile ? styles.hideOnMobile : ""}`.trim()}
+      className={rootClass}
       onPointerEnter={() => setOpenPathname(pathname)}
       onPointerLeave={() => setOpenPathname(null)}
       onFocusCapture={() => setOpenPathname(pathname)}

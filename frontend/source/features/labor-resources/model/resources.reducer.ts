@@ -10,8 +10,6 @@ export type LaborResourcesAction =
   | { type: "DATA"; items: LaborListingData[] }
   | { type: "ERROR"; value: string | null }
   | { type: "BUSY"; id: number | null }
-  | { type: "FORM_OPEN"; value: boolean }
-  | { type: "DESKTOP"; value: boolean }
   | { type: "RELOAD" };
 
 export const initialLaborResourcesState: LaborResourcesState = {
@@ -20,8 +18,6 @@ export const initialLaborResourcesState: LaborResourcesState = {
   loading: true,
   error: null,
   busyId: null,
-  formOpen: false,
-  isDesktop: false,
   reloadKey: 0,
 };
 
@@ -40,10 +36,6 @@ export function laborResourcesReducer(
       return { ...state, error: action.value };
     case "BUSY":
       return { ...state, busyId: action.id };
-    case "FORM_OPEN":
-      return { ...state, formOpen: action.value };
-    case "DESKTOP":
-      return { ...state, isDesktop: action.value };
     case "RELOAD":
       return { ...state, reloadKey: state.reloadKey + 1 };
     default:

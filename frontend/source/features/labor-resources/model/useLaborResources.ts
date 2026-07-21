@@ -78,26 +78,11 @@ export function useLaborResources(mode: LaborPageMode) {
     state.tab,
   ]);
 
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1100px)");
-    const sync = () =>
-      dispatch({ type: "DESKTOP", value: media.matches });
-
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
-
   const setTab = (tab: LaborListTab) => {
     dispatch({ type: "TAB", value: tab });
   };
 
-  const setFormOpen = (value: boolean) => {
-    dispatch({ type: "FORM_OPEN", value });
-  };
-
   const onCreated = () => {
-    setFormOpen(false);
     if (state.tab === "mine") {
       dispatch({ type: "RELOAD" });
       return;
@@ -150,7 +135,6 @@ export function useLaborResources(mode: LaborPageMode) {
     copy,
     role,
     setTab,
-    setFormOpen,
     onCreated,
     contact,
     close,

@@ -28,57 +28,67 @@ export function LaborForm({
     <form className={s.form} onSubmit={form.submit}>
       <h2 className={s.title}>{form.copy.formTitle}</h2>
 
-      {useProfileCertificates ? (
-        <ExpertCertificatesField
-          certificates={form.profileCertificates}
-        />
-      ) : (
-        <LicenseExpertiseFields
-          areas={form.areas}
-          category={form.category}
-          onToggleArea={form.toggleArea}
-          onCategoryChange={form.setCategory}
-        />
-      )}
+      <div className={s.formGrid}>
+        <div className={s.formColumn}>
+          {useProfileCertificates ? (
+            <ExpertCertificatesField
+              certificates={form.profileCertificates}
+            />
+          ) : (
+            <LicenseExpertiseFields
+              areas={form.areas}
+              category={form.category}
+              onToggleArea={form.toggleArea}
+              onCategoryChange={form.setCategory}
+            />
+          )}
+        </div>
 
-      <LaborRegionField
-        value={form.region}
-        onChange={form.setRegion}
-      />
+        <div className={s.formColumn}>
+          <LaborRegionField
+            value={form.region}
+            onChange={form.setRegion}
+          />
 
-      <EmploymentTermFields
-        mode={mode}
-        term={form.term}
-        fixedTerm={form.fixedTerm}
-        onTermChange={form.setTerm}
-        onFixedTermChange={form.setFixedTerm}
-      />
+          <EmploymentTermFields
+            mode={mode}
+            term={form.term}
+            fixedTerm={form.fixedTerm}
+            onTermChange={form.setTerm}
+            onFixedTermChange={form.setFixedTerm}
+          />
+        </div>
 
-      {mode === "license" ? (
-        <LicenseEmploymentFields
-          startDate={form.startDate}
-          employmentType={form.employmentType}
-          onStartDateChange={form.setStartDate}
-          onEmploymentTypeChange={form.setEmploymentType}
-        />
-      ) : (
-        <ExpertEmploymentFields
-          jobStatus={form.jobStatus}
-          onJobStatusChange={form.setJobStatus}
-        />
-      )}
+        <div className={s.formColumn}>
+          {mode === "license" ? (
+            <LicenseEmploymentFields
+              startDate={form.startDate}
+              employmentType={form.employmentType}
+              onStartDateChange={form.setStartDate}
+              onEmploymentTypeChange={form.setEmploymentType}
+            />
+          ) : (
+            <ExpertEmploymentFields
+              jobStatus={form.jobStatus}
+              onJobStatusChange={form.setJobStatus}
+            />
+          )}
+        </div>
+      </div>
 
-      {form.error && <p className={s.error}>{form.error}</p>}
+      <div className={s.formFooter}>
+        {form.error && <p className={s.error}>{form.error}</p>}
 
-      <Button
-        type="submit"
-        variant="primary"
-        size="md"
-        fullWidth
-        isLoading={form.submitting}
-      >
-        Опубликовать заявку
-      </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="md"
+          fullWidth
+          isLoading={form.submitting}
+        >
+          Опубликовать заявку
+        </Button>
+      </div>
     </form>
   );
 }

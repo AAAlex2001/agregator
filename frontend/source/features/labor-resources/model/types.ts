@@ -37,7 +37,5 @@ export interface LaborResourcesState {
   loading: boolean;
   error: string | null;
   busyId: number | null;
-  formOpen: boolean;
-  isDesktop: boolean;
   reloadKey: number;
 }

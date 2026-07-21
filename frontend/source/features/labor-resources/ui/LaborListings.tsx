@@ -5,6 +5,7 @@ import type { SessionRole } from "@/source/features/session";
 import { EmptyStateCard } from "@/source/shared/ui";
 import type { LaborListTab } from "../model/types";
 import { LaborListingCard } from "./LaborListingCard";
+import { LaborListingsSkeleton } from "./LaborListingsSkeleton";
 import s from "./LaborListings.module.scss";
 
 interface LaborListingsProps {
@@ -14,7 +15,6 @@ interface LaborListingsProps {
   loading: boolean;
   error: string | null;
   busyId: number | null;
-  onCreate: () => void;
   onContact: (item: LaborListingData) => void;
   onClose: (item: LaborListingData) => void;
 }
@@ -26,12 +26,11 @@ export function LaborListings({
   loading,
   error,
   busyId,
-  onCreate,
   onContact,
   onClose,
 }: LaborListingsProps) {
   if (loading) {
-    return <div className={s.loading}>Загружаем заявки…</div>;
+    return <LaborListingsSkeleton />;
   }
 
   return (
@@ -50,10 +49,6 @@ export function LaborListings({
               ? "Заполните форму, и заявка появится в этом разделе"
               : "Здесь появятся новые предложения о трудоустройстве"
           }
-          actionLabel={
-            tab === "mine" ? "Создать заявку" : undefined
-          }
-          onAction={tab === "mine" ? onCreate : undefined}
         />
       ) : (
         <div className={s.list}>

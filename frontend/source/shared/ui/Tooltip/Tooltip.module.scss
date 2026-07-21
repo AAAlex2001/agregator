@@ -101,6 +101,12 @@
   transform: translateX(-50%) translateY(-4px);
 }
 
+.multiline.bottom .hintTooltip {
+  width: 260px;
+  max-width: min(280px, calc(100vw - 32px));
+  white-space: normal;
+}
+
 .bottom .hintTooltip::before {
   top: -8px;
   left: 50%;

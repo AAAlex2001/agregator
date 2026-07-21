@@ -7,10 +7,7 @@ import {
   type LaborListTab,
   type LaborPageMode,
 } from "@/source/features/labor-resources";
-import {
-  Accordion,
-  Tabs,
-} from "@/source/shared/ui";
+import { Tabs } from "@/source/shared/ui";
 import {
   Subtitle,
   Title,
@@ -25,12 +22,6 @@ export function LaborResourcesWidget({
   mode,
 }: LaborResourcesWidgetProps) {
   const resources = useLaborResources(mode);
-  const form = (
-    <LaborForm
-      mode={mode}
-      onCreated={resources.onCreated}
-    />
-  );
 
   return (
     <main className={s.wrapper}>
@@ -46,61 +37,43 @@ export function LaborResourcesWidget({
         />
       </header>
 
-      {!resources.isDesktop && (
-        <div className={s.mobileForm}>
-          <Accordion
-            activeId={resources.formOpen ? "form" : null}
-            onToggle={() =>
-              resources.setFormOpen(!resources.formOpen)
-            }
-            items={[
-              {
-                id: "form",
-                question: resources.copy.formTitle,
-                answer: form,
-              },
-            ]}
-          />
-        </div>
-      )}
+      <section className={s.formSection}>
+        <LaborForm
+          mode={mode}
+          onCreated={resources.onCreated}
+        />
+      </section>
 
-      <div className={s.layout}>
-        <section className={s.content}>
-          <Tabs
-            variant="pill"
-            activeTab={resources.tab}
-            onTabChange={(value) =>
-              resources.setTab(value as LaborListTab)
-            }
-            tabs={[
-              {
-                id: "browse",
-                label: resources.copy.browseTab,
-              },
-              {
-                id: "mine",
-                label: "Мои заявки",
-              },
-            ]}
-          />
+      <section className={s.content}>
+        <Tabs
+          variant="pill"
+          activeTab={resources.tab}
+          onTabChange={(value) =>
+            resources.setTab(value as LaborListTab)
+          }
+          tabs={[
+            {
+              id: "browse",
+              label: resources.copy.browseTab,
+            },
+            {
+              id: "mine",
+              label: "Мои заявки",
+            },
+          ]}
+        />
 
-          <LaborListings
-            items={resources.items}
-            tab={resources.tab}
-            role={resources.role}
-            loading={resources.loading}
-            error={resources.error}
-            busyId={resources.busyId}
-            onCreate={() => resources.setFormOpen(true)}
-            onContact={(item) => void resources.contact(item)}
-            onClose={(item) => void resources.close(item)}
-          />
-        </section>
-
-        {resources.isDesktop && (
-          <aside className={s.desktopForm}>{form}</aside>
-        )}
-      </div>
+        <LaborListings
+          items={resources.items}
+          tab={resources.tab}
+          role={resources.role}
+          loading={resources.loading}
+          error={resources.error}
+          busyId={resources.busyId}
+          onContact={(item) => void resources.contact(item)}
+          onClose={(item) => void resources.close(item)}
+        />
+      </section>
     </main>
   );
 }
