@@ -78,11 +78,31 @@ export function useLaborResources(mode: LaborPageMode) {
     state.tab,
   ]);
 
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1100px)");
+    const syncLayout = () => {
+      dispatch({ type: "DESKTOP", value: media.matches });
+    };
+
+    syncLayout();
+    media.addEventListener("change", syncLayout);
+
+    return () => {
+      media.removeEventListener("change", syncLayout);
+    };
+  }, []);
+
   const setTab = (tab: LaborListTab) => {
     dispatch({ type: "TAB", value: tab });
   };
 
+  const setFormOpen = (value: boolean) => {
+    dispatch({ type: "FORM_OPEN", value });
+  };
+
   const onCreated = () => {
+    setFormOpen(false);
+
     if (state.tab === "mine") {
       dispatch({ type: "RELOAD" });
       return;
@@ -135,6 +155,7 @@ export function useLaborResources(mode: LaborPageMode) {
     copy,
     role,
     setTab,
+    setFormOpen,
     onCreated,
     contact,
     close,
