@@ -78,14 +78,16 @@ export function ExpertContactsMarketplace() {
               { id: "CLOSED", label: "Доступ закрыт", count: contacts.accessCounts.CLOSED },
             ]}
           />
-          <SortPills
-            options={RATING_SORT_OPTIONS}
-            sortBy={contacts.ratingSort ? "rating" : null}
-            sortDir={contacts.ratingSort}
-            title="Сортировка:"
-            compact
-            onChange={(_, direction) => contacts.setRatingSort(direction)}
-          />
+          <div className={s.ratingSort}>
+            <SortPills
+              options={RATING_SORT_OPTIONS}
+              sortBy={contacts.ratingSort ? "rating" : null}
+              sortDir={contacts.ratingSort}
+              title="Сортировка:"
+              compact
+              onChange={(_, direction) => contacts.setRatingSort(direction)}
+            />
+          </div>
         </div>
         {contacts.loading ? (
           <div className={s.expertList} aria-label="Загружаем экспертов">

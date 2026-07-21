@@ -1,6 +1,6 @@
 import { ExpertCard } from "@/source/entities/expert";
 import type { ExpertContactCardData } from "@/source/entities/expert-contact";
-import { TypeBadge, TYPES, type ExpertiseType } from "@/source/entities/expertise";
+import { TYPE_COLOR, TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import { Button } from "@/source/shared/ui";
 import { EmailIcon, LockIcon, PhoneIcon } from "@/source/shared/ui/icons";
 import { contactDealStatusLabel } from "../lib/formatters";
@@ -21,19 +21,14 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
         {expert.certificates.slice(0, 8).map((certificate, index) => {
           const type = certificate.object as ExpertiseType;
           const knownType = TYPES.includes(type);
+          const toneClass = knownType ? s[TYPE_COLOR[type]] : s.gray;
           return (
             <span
-              className={s.certificate}
+              className={`${s.certificate} ${toneClass}`}
               key={`${certificate.area}-${certificate.object}-${certificate.category}-${index}`}
             >
               {certificate.area && <strong>{certificate.area}</strong>}
-              {knownType ? (
-                <span className={s.certificateType}>
-                  <TypeBadge type={type} active />
-                </span>
-              ) : certificate.object ? (
-                <span>{certificate.object}</span>
-              ) : null}
+              {certificate.object && <span>{certificate.object}</span>}
               {certificate.category && <span>{certificate.category} кат.</span>}
             </span>
           );

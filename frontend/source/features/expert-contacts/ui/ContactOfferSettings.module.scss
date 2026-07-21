@@ -4,7 +4,7 @@
   gap: 20px;
   width: 100%;
   max-width: 1340px;
-  padding: 20px;
+  padding: 20px 0;
   background: #ffffff;
 }
 
@@ -87,7 +87,7 @@
 
 @media (min-width: 768px) {
   .offerSection {
-    padding: 24px;
+    padding: 24px 0;
   }
 
   .offerIntro {

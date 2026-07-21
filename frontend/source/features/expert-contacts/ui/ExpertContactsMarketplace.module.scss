@@ -82,8 +82,14 @@
   margin-bottom: 16px;
 }
 
-.accessTabs {
+.catalogFilters .accessTabs {
+  width: 100%;
   justify-content: flex-start;
+}
+
+.ratingSort {
+  align-self: flex-end;
+  flex: 0 0 auto;
 }
 
 .expertList {
@@ -122,15 +128,25 @@
     max-width: 500px;
   }
 
-  .catalogFilters {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
 }
 
 @media (min-width: 1440px) {
   .page {
     min-height: 100dvh;
+  }
+
+  .catalogFilters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .catalogFilters .accessTabs {
+    width: auto;
+    min-width: 0;
+  }
+
+  .ratingSort {
+    margin-left: auto;
   }
 }
