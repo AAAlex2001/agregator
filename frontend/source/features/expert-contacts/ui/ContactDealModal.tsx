@@ -6,10 +6,10 @@ import {
 } from "@/source/entities/expert-contact";
 import { Button, Modal, Title } from "@/source/shared/ui";
 import { FileIcon } from "@/source/shared/ui/icons";
-import { contactDealStatusLabel } from "../lib/formatters";
 import { ContactContract } from "./ContactContract";
 import { ContactPaymentPanel } from "./ContactPaymentPanel";
 import { ContactSignatureForm } from "./ContactSignatureForm";
+import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
 import s from "./ContactDealModal.module.scss";
 
 interface ContactDealModalProps {
@@ -53,7 +53,7 @@ export function ContactDealModal({
             <Title text={deal.contract.title} as="h2" className={s.title} />
           </div>
         </div>
-        <span className={s.status}>{contactDealStatusLabel(deal.status)}</span>
+        <ContactDealStatusBadge status={deal.status} actorParty={deal.actor_party} />
       </header>
 
       <ContactContract contract={deal.contract} documentHash={deal.contract_hash} />

@@ -1,6 +1,7 @@
 import type { ContactDealListItem } from "@/source/entities/expert-contact";
 import { Button, Title } from "@/source/shared/ui";
-import { contactDealStatusLabel, formatDealDate } from "../lib/formatters";
+import { formatDealDate } from "../lib/formatters";
+import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
 import s from "./ContactDealsList.module.scss";
 
 interface ContactDealsListProps {
@@ -24,7 +25,7 @@ export function ContactDealsList({ deals, busy, onOpen }: ContactDealsListProps)
               </strong>
               <span>{formatDealDate(deal.created_at)} · {deal.price_rubles.toLocaleString("ru-RU")} ₽</span>
             </div>
-            <span className={s.dealStatus}>{contactDealStatusLabel(deal.status)}</span>
+            <ContactDealStatusBadge status={deal.status} actorParty={deal.actor_party} />
             <Button
               variant="outlineOrange"
               size="sm"

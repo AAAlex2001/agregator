@@ -3,7 +3,7 @@ import type { ExpertContactCardData } from "@/source/entities/expert-contact";
 import { TYPE_COLOR, TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import { Button } from "@/source/shared/ui";
 import { EmailIcon, LockIcon, PhoneIcon } from "@/source/shared/ui/icons";
-import { contactDealStatusLabel } from "../lib/formatters";
+import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
 import s from "./ExpertContactCard.module.scss";
 
 interface ExpertContactCardProps {
@@ -57,7 +57,7 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
         <span className={s.mutedLabel}>Это ваша карточка эксперта</span>
       ) : expert.deal_status ? (
         <>
-          <span className={s.dealStatus}>{contactDealStatusLabel(expert.deal_status)}</span>
+          <ContactDealStatusBadge status={expert.deal_status} actorParty="BUYER" />
           <Button variant="outlineOrange" size="sm" onClick={onOpen} isLoading={busy}>
             Открыть сделку
           </Button>
