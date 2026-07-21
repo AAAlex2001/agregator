@@ -34,7 +34,8 @@
 }
 
 .offerFields {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   align-items: start;
   gap: 16px;
 }
@@ -43,6 +44,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  max-width: 600px;
   color: #1a1a1a;
   font-size: 14px;
   line-height: 18px;
@@ -77,7 +80,7 @@
 }
 
 .consentRow {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .offerActions {
@@ -95,10 +98,6 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 24px;
-  }
-
-  .offerFields {
-    grid-template-columns: minmax(240px, 1fr) minmax(360px, 2fr);
   }
 
   .offerActions > button,

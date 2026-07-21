@@ -88,7 +88,8 @@
 }
 
 .ratingSort {
-  align-self: flex-end;
+  order: -1;
+  align-self: flex-start;
   flex: 0 0 auto;
 }
 
@@ -146,7 +147,4 @@
     min-width: 0;
   }
 
-  .ratingSort {
-    margin-left: auto;
-  }
 }
