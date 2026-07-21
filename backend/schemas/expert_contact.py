@@ -52,4 +52,5 @@ class ExpertContactOfferResponse(BaseModel):
     enabled: bool
     price_rubles: int | None = None
     has_payment_details: bool
+    payment_details: str | None = None
     consent_at: datetime | None = None

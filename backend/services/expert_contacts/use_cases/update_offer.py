@@ -33,7 +33,7 @@ class UpdateExpertContactOfferUseCase:
             expert.contact_price_kopecks = None
             expert.contact_payment_details_encrypted = None
             await self.repository.flush()
-            return to_offer(expert)
+            return to_offer(expert, self.cipher)
 
         if not expert.phone and not expert.email:
             raise HTTPException(
@@ -54,4 +54,4 @@ class UpdateExpertContactOfferUseCase:
         expert.contact_disclosure_consent_at = datetime.now(UTC)
         expert.contact_disclosure_consent_version = CONTACT_CONSENT_VERSION
         await self.repository.flush()
-        return to_offer(expert)
+        return to_offer(expert, self.cipher)

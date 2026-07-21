@@ -21,7 +21,8 @@ def mask_email(value: str | None) -> str | None:
     return f"{first}•••@{domain}"
 
 
-def to_offer(expert: User) -> ExpertContactOfferResponse:
+def to_offer(expert: User, cipher: ContactDealCipher) -> ExpertContactOfferResponse:
+    encrypted_payment_details = expert.contact_payment_details_encrypted
     return ExpertContactOfferResponse(
         enabled=expert.contact_sales_enabled,
         price_rubles=(
@@ -29,7 +30,12 @@ def to_offer(expert: User) -> ExpertContactOfferResponse:
             if expert.contact_price_kopecks is not None
             else None
         ),
-        has_payment_details=bool(expert.contact_payment_details_encrypted),
+        has_payment_details=bool(encrypted_payment_details),
+        payment_details=(
+            cipher.decrypt_text(encrypted_payment_details)
+            if encrypted_payment_details
+            else None
+        ),
         consent_at=expert.contact_disclosure_consent_at,
     )
 

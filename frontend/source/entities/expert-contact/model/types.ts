@@ -38,6 +38,7 @@ export interface ExpertContactOfferData {
   enabled: boolean;
   price_rubles: number | null;
   has_payment_details: boolean;
+  payment_details: string | null;
   consent_at: string | null;
 }
 

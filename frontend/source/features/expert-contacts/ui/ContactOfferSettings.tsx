@@ -21,12 +21,13 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
   const { showSuccess } = useNotifications();
   const [enabled, setEnabled] = useState(offer.enabled);
   const [price, setPrice] = useState(String(offer.price_rubles ?? ""));
-  const [paymentDetails, setPaymentDetails] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState(offer.payment_details ?? "");
   const [consent, setConsent] = useState(false);
 
   useEffect(() => {
     setEnabled(offer.enabled);
     setPrice(String(offer.price_rubles ?? ""));
+    setPaymentDetails(offer.payment_details ?? "");
   }, [offer]);
 
   const submit = async (event: FormEvent) => {
@@ -38,7 +39,6 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
       disclosure_consent: enabled ? consent : undefined,
     });
     if (!saved) return;
-    setPaymentDetails("");
     setConsent(false);
     showSuccess("Настройки продажи контактов сохранены");
   };
@@ -75,11 +75,7 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
               <textarea
                 value={paymentDetails}
                 onChange={(event) => setPaymentDetails(event.target.value)}
-                placeholder={
-                  offer.has_payment_details
-                    ? "Оставьте пустым, чтобы сохранить текущие реквизиты"
-                    : "Например: перевод по СБП на номер +7..."
-                }
+                placeholder="Например: перевод по СБП на номер +7..."
                 maxLength={1000}
               />
             </label>

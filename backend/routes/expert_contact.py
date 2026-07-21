@@ -37,7 +37,9 @@ async def get_expert_contact_offer(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ExpertContactOfferResponse:
-    return await GetExpertContactOfferUseCase(ExpertContactRepository(db)).execute(user_id)
+    return await GetExpertContactOfferUseCase(
+        ExpertContactRepository(db), build_contact_cipher()
+    ).execute(user_id)
 
 
 @router.put("/offer", response_model=ExpertContactOfferResponse)
