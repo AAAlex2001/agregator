@@ -11,7 +11,7 @@ export interface ChatAttachmentData {
 export interface ChatListItemData {
   id: number;
   uuid: string;
-  order_id: number;
+  order_id: number | null;
   counterpart_id: number;
   counterpart_name: string;
   counterpart_avatar_url: string | null;
@@ -40,7 +40,7 @@ export type ChatResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRE
 export interface ChatDetailData {
   id: number;
   uuid: string;
-  order_id: number;
+  order_id: number | null;
   order_public_id: string;
   customer_id: number;
   expert_id: number;

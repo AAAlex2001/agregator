@@ -37,7 +37,7 @@ class ListChatsUseCase:
         unread_counts: dict[int, int],
     ) -> ChatListItemResponse:
         "Строит объект из входных данных."
-        counterpart = ChatFormatter.counterpart(actor.role, chat)
+        counterpart = ChatFormatter.counterpart(actor.id, chat)
         last_message = last_messages.get(chat.id)
         return ChatListItemResponse(
             id=chat.id,

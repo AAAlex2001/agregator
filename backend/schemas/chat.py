@@ -56,7 +56,7 @@ class ChatListItemResponse(BaseModel):
     "Карточка чата в списке для бокового меню."
     id: int
     uuid: str
-    order_id: int
+    order_id: int | None = None
     counterpart_id: int
     counterpart_name: str
     counterpart_avatar_url: str | None = None
@@ -77,7 +77,7 @@ class ChatDetailResponse(BaseModel):
     "Полная карточка чата: данные заказа, контрагент и история сообщений."
     id: int
     uuid: str
-    order_id: int
+    order_id: int | None = None
     order_public_id: str
     customer_id: int
     expert_id: int

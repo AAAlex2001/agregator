@@ -42,4 +42,10 @@ class ChatInAppNotifier:
         "Публичный метод сервисного слоя."
         if chat.order and chat.order.title:
             return chat.order.title
+        if chat.labor_listing:
+            return (
+                "Поиск эксперта в штат"
+                if chat.labor_listing.kind.value == "EXPERT_WANTED"
+                else "Готов к трудовому договору"
+            )
         return f"Заказ #{chat.order_id}"

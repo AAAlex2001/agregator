@@ -34,6 +34,7 @@ const ALL_PREFERENCE_KEYS: NotificationPreferenceKey[] = [
   "email_on_chat_message",
   "email_on_question_asked",
   "email_on_question_answered",
+  "email_on_labor_listing",
 ];
 
 function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
@@ -44,19 +45,47 @@ function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
 }
 
 export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props) {
-  const { preferences, savingKey, toggle, setPreferences } = useEmailPreferences(profile);
+  if (profile.role === "LICENSE_HOLDER") {
+    return <LicenseHolderNotificationPreferences />;
+  }
+
+  return (
+    <EditableNotificationPreferencesForm
+      profile={profile}
+      onProfileUpdate={onProfileUpdate}
+    />
+  );
+}
+
+function EditableNotificationPreferencesForm({
+  profile,
+  onProfileUpdate,
+}: Props) {
+  const {
+    preferences,
+    savingKey,
+    toggle,
+    setPreferences,
+  } = useEmailPreferences(profile);
   const { showError, showSuccess } = useNotifications();
   const descriptors = relevantDescriptors(profile.role);
   const isExpert = profile.role === "EXPERT";
 
-  const [orderCodes, setOrderCodes] = useState<string[]>(profile.notify_order_types ?? []);
+  const [orderCodes, setOrderCodes] = useState<string[]>(
+    profile.notify_order_types ?? [],
+  );
   const [savingTypes, setSavingTypes] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [pickerResetSeq, setPickerResetSeq] = useState(0);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const persistedOrderCodesRef = useRef<string[]>(profile.notify_order_types ?? []);
+  const persistedOrderCodesRef = useRef<string[]>(
+    profile.notify_order_types ?? [],
+  );
 
-  const handleToggle = async (key: NotificationPreferenceKey, next: boolean) => {
+  const handleToggle = async (
+    key: NotificationPreferenceKey,
+    next: boolean,
+  ) => {
     const result = await toggle(key, next);
     if (result.errorMessage) {
       showError(result.errorMessage);
@@ -86,7 +115,11 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
     } catch (error) {
       setOrderCodes(persistedOrderCodesRef.current);
       setPickerResetSeq((seq) => seq + 1);
-      showError(error instanceof Error ? error.message : "Не удалось сохранить");
+      showError(
+        error instanceof Error
+          ? error.message
+          : "Не удалось сохранить",
+      );
     } finally {
       setSavingTypes(false);
     }
@@ -135,7 +168,11 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
       setPreferences(previousPreferences);
       setOrderCodes(previousCodes);
       setPickerResetSeq((seq) => seq + 1);
-      showError(error instanceof Error ? error.message : "Не удалось отключить уведомления");
+      showError(
+        error instanceof Error
+          ? error.message
+          : "Не удалось отключить уведомления",
+      );
     } finally {
       setResetting(false);
     }
@@ -194,6 +231,30 @@ export function NotificationPreferencesForm({ profile, onProfileUpdate }: Props)
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function LicenseHolderNotificationPreferences() {
+  return (
+    <div className={s.form}>
+      <header className={s.headerText}>
+        <h2 className={s.title}>Почтовые уведомления</h2>
+        <p className={s.subtitle}>
+          Уведомления о новых заявках экспертов включены всегда.
+        </p>
+      </header>
+
+      <div className={s.fixedPreference}>
+        <Switch
+          id="pref-email-on-labor-listing"
+          checked
+          onChange={() => undefined}
+          label="Новые заявки экспертов"
+          description="Новые объявления экспертов о готовности к трудоустройству."
+          disabled
+        />
+      </div>
     </div>
   );
 }

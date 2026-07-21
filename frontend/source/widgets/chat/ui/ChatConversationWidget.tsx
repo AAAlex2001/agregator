@@ -36,11 +36,11 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
   const router = useRouter();
   const { user } = useSession();
   const currentUserId = user?.id ?? 0;
-  const isCustomer = user?.role === "CUSTOMER";
   const { chat, messages, loading, error, threadRef, appendMessage, replaceChat } = useChatThread(chatUuid, currentUserId);
   const groups = groupMessages(messages);
-  const canManageChatBlock = isCustomer && chat ? chat.customer_id === currentUserId : false;
-  const blockedText = !isCustomer && chat?.is_manually_blocked
+  const isCustomerParty = chat ? chat.customer_id === currentUserId : false;
+  const canManageChatBlock = isCustomerParty;
+  const blockedText = !isCustomerParty && chat?.is_manually_blocked
     ? "Заказчик вас заблокировал."
     : undefined;
 

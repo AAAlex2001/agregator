@@ -1,12 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { PlusIcon } from "@/source/shared/ui/icons";
 import styles from "./accordion.module.scss";
 
 interface AccordionItem {
   id: string;
   question: string;
-  answer: string;
+  answer: ReactNode;
 }
 
 interface AccordionProps {
@@ -44,7 +45,7 @@ const Accordion = ({ items, activeId, onToggle, className = "" }: AccordionProps
               className={`${styles.answer} ${isOpen ? styles.open : ""}`}
             >
               <div className={styles.answerInner}>
-                <span>{item.answer}</span>
+                <div>{item.answer}</div>
               </div>
             </div>
           </div>

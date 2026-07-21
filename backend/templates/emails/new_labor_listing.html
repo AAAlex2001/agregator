@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block preheader %}Новая заявка в разделе трудовых ресурсов{% endblock %}
+
+{% block content %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Трудовые ресурсы
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A;">
+  Здравствуйте, {{ recipient_greeting }}
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  {{ intro }}
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 22px 24px; background: #F8FAFC; border-radius: 12px;">
+      <p style="margin: 0 0 16px 0; font-size: 18px; line-height: 24px; font-weight: 700; color: #0F172A;">
+        {{ heading }}
+      </p>
+      <p style="margin: 0 0 8px 0; font-size: 14px; line-height: 22px; color: #475569;">
+        <strong>Регион:</strong> {{ region }}
+      </p>
+      <p style="margin: 0; font-size: 14px; line-height: 22px; color: #475569;">
+        <strong>Трудоустройство:</strong> {{ employment_term }}
+      </p>
+      {% if certificates %}
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 16px; color: #94A3B8; font-weight: 600;">
+          Области аттестации
+        </p>
+        {% for certificate in certificates %}
+        <span style="display: inline-block; padding: 4px 10px; margin: 0 6px 6px 0; background: #EEF2F6; color: #0F172A; border-radius: 6px; font-size: 13px; line-height: 18px; font-weight: 600;">
+          {{ certificate }}
+        </span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="height: 32px; line-height: 32px; font-size: 0;" height="32">&nbsp;</td>
+  </tr>
+</table>
+
+<a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #FF8A00; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">
+  Открыть заявку
+</a>
+{% endblock %}

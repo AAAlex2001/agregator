@@ -115,3 +115,13 @@ class NewBlogPostEmailContext(BaseContext):
     blog_title: str
     preview: str
     cta_url: str
+
+
+class NewLaborListingContext(BaseContext):
+    recipient_greeting: str
+    heading: str
+    intro: str
+    region: str
+    employment_term: str
+    certificates: list[str] = []
+    cta_url: str

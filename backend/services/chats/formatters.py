@@ -68,9 +68,9 @@ class ChatFormatter:
         return f"Новое сообщение с {attachments_count} файлами"
 
     @classmethod
-    def counterpart(cls, actor_role: UserRole, chat: Chat) -> CounterpartInfo:
+    def counterpart(cls, actor: UserRole | int, chat: Chat) -> CounterpartInfo:
         "Возвращает данные противоположной стороны чата."
-        if actor_role == UserRole.CUSTOMER:
+        if (isinstance(actor, int) and actor == chat.customer_id) or actor == UserRole.CUSTOMER:
             return cls.counterpart_for_customer(chat)
         return cls.counterpart_for_expert(chat)
 
@@ -102,6 +102,12 @@ class ChatFormatter:
                 avatar_url=None,
             )
         company = chat.order.company if chat.order and chat.order.company else ""
+        if not company and customer.company_data:
+            company = (
+                (((customer.company_data.get("data") or {}).get("name") or {}).get("short_with_opf"))
+                or customer.company_data.get("value")
+                or ""
+            )
         full_name = " ".join(
             part for part in [customer.first_name, customer.last_name] if part
         ).strip()

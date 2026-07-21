@@ -73,6 +73,12 @@ class User(Base):
     email_on_question_asked: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     email_on_question_answered: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     email_on_new_blog_post: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
+    email_on_labor_listing: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+        server_default="true",
+    )
     notify_telegram_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     notifications_introduced: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
     phone: Mapped[str | None] = mapped_column(String, index=True, nullable=True)

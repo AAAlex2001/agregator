@@ -1,0 +1,97 @@
+.form,
+.unavailable {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 24px;
+  border: 2px solid #ff8a00;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.unavailable h2,
+.unavailable p {
+  margin: 0;
+}
+
+.unavailable p {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.hint {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.areaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 10px;
+}
+
+.categoryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoryRow button {
+  padding: 9px 12px;
+  border: 1px solid #ffdda9;
+  border-radius: 10px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.categoryRow .categoryActive {
+  border-color: #ff8a00;
+  background: #fff8ed;
+}
+
+.profileCertificates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profileCertificates span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f2f4f7;
+  color: #344054;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.error {
+  margin: 0;
+  color: #e64646;
+  font-size: 13px;
+  line-height: 18px;
+}

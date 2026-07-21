@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
+import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import {
   AREA_OPTIONS,
   CATEGORY_OPTIONS,
@@ -18,23 +19,28 @@ interface Props {
 }
 
 const sameCert = (a: ExpertCertificate, b: ExpertCertificate) =>
-  a.area === b.area && a.object === b.object && a.category === b.category;
+  a.area === b.area &&
+  a.object === b.object &&
+  a.category === b.category &&
+  a.expires_at === b.expires_at;
 
 export function CertificateBuilder({ value, onChange }: Props) {
   const [area, setArea] = useState("");
   const [object, setObject] = useState("");
   const [category, setCategory] = useState("");
+  const [expiresAt, setExpiresAt] = useState("");
 
-  const canAdd = Boolean(area && object && category);
+  const canAdd = Boolean(area && object && category && expiresAt);
 
   const add = () => {
     if (!canAdd) return;
-    const draft: ExpertCertificate = { area, object, category };
+    const draft: ExpertCertificate = { area, object, category, expires_at: expiresAt.slice(0, 10) };
     if (value.some((cert) => sameCert(cert, draft))) return;
     onChange([...value, draft]);
     setArea("");
     setObject("");
     setCategory("");
+    setExpiresAt("");
   };
 
   const remove = (index: number) => {
@@ -90,6 +96,11 @@ export function CertificateBuilder({ value, onChange }: Props) {
         </div>
       </div>
 
+      <div className={s.group}>
+        <span className={s.groupLabel}>Срок действия удостоверения</span>
+        <CalendarInput value={expiresAt} onChange={setExpiresAt} placeholder="Выберите дату" />
+      </div>
+
       <Button type="button" variant="outlineOrange" size="sm" onClick={add} disabled={!canAdd}>
         Добавить удостоверение
       </Button>
@@ -97,11 +108,12 @@ export function CertificateBuilder({ value, onChange }: Props) {
       {value.length > 0 && (
         <ul className={s.certList}>
           {value.map((cert, index) => (
-            <li key={`${cert.area}-${cert.object}-${cert.category}`} className={s.certRow}>
+            <li key={`${cert.area}-${cert.object}-${cert.category}-${cert.expires_at ?? ""}`} className={s.certRow}>
               <span className={s.certContent}>
                 <span className={s.certArea}>{cert.area}</span>
                 <TypeBadge type={cert.object as ExpertiseType} active />
                 <span className={s.certCat}>· {cert.category} кат.</span>
+                {cert.expires_at && <span className={s.certExpiry}>· до {cert.expires_at}</span>}
               </span>
               <button
                 type="button"

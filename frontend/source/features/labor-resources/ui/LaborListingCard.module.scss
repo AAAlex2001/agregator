@@ -1,0 +1,101 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #eceef2;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 22px rgba(16, 24, 40, 0.06);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
+}
+
+.kind {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.region {
+  align-self: flex-start;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff3e5;
+  color: #9a4d00;
+  font-size: 12px;
+}
+
+.certificates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certificate {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f2f4f7;
+  color: #344054;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(180px, 1fr)
+  );
+  gap: 12px;
+  margin: 0;
+}
+
+.meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta dt {
+  color: #98a2b3;
+  font-size: 12px;
+}
+
+.meta dd {
+  margin: 0;
+  color: #344054;
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .region {
+    align-self: auto;
+  }
+}

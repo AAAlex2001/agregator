@@ -1,0 +1,15 @@
+Новая заявка в разделе трудовых ресурсов
+
+Здравствуйте, {{ recipient_greeting }}.
+
+{{ intro }}
+
+{{ heading }}
+Регион: {{ region }}
+Трудоустройство: {{ employment_term }}
+{% if certificates %}Области аттестации: {{ certificates | join(", ") }}
+{% endif %}
+Открыть заявку: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com

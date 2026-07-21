@@ -65,6 +65,7 @@ class RegisterLicenseHolderUseCase:
             email_on_chat_message=False,
             email_on_question_asked=False,
             email_on_question_answered=False,
+            email_on_labor_listing=True,
         )
         await self.repo.add(user)
         return user

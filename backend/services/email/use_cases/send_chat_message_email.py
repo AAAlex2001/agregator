@@ -53,7 +53,11 @@ class SendChatMessageEmailUseCase:
         "Строит объект из входных данных."
         chat = message.chat
         order = chat.order if chat else None
-        order_title = (order.title if order else None) or "Заявка"
+        labor = chat.labor_listing if chat else None
+        labor_title = None
+        if labor is not None:
+            labor_title = "Поиск эксперта в штат" if labor.kind.value == "EXPERT_WANTED" else "Готов к трудовому договору"
+        order_title = (order.title if order else None) or labor_title or "Заявка"
         sender_name = full_name(message.sender) or "Собеседник"
 
         preview = (message.text or "").strip()

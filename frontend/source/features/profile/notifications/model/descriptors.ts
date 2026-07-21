@@ -3,6 +3,13 @@ import type { NotificationPreferenceDescriptor } from "./types";
 // Описатели всех типов уведомлений. Фильтруются по роли пользователя в UI.
 export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescriptor> = [
   {
+    key: "email_on_labor_listing",
+    label: "Новые заявки в трудовых ресурсах",
+    description:
+      "Новые объявления о поиске экспертов и готовности к трудоустройству.",
+    roles: ["CUSTOMER", "EXPERT"],
+  },
+  {
     key: "email_on_response_created",
     label: "Новый отклик на заявку",
     description: "Когда эксперт откликается на вашу заявку.",

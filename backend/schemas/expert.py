@@ -10,6 +10,7 @@ class ExpertCertificate(BaseModel):
     area: str = Field(..., max_length=20, description="Область аттестации, напр. 'Э12'")
     object: str = Field(..., max_length=20, description="Объект экспертизы, напр. 'ТУ'")
     category: str = Field(..., max_length=5, description="Категория, напр. '3'")
+    expires_at: str | None = Field(None, max_length=30, description="Срок действия удостоверения")
 
 
 class ExpertSummary(BaseModel):

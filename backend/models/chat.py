@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.labor import LaborListing
     from models.order import Order
     from models.user import User
 
@@ -19,11 +20,15 @@ class Chat(Base):
     __tablename__ = "chats"
     __table_args__ = (
         UniqueConstraint("order_id", "customer_id", "expert_id", name="uq_chats_order_customer_expert"),
+        UniqueConstraint("labor_listing_id", "customer_id", "expert_id", name="uq_chats_labor_customer_expert"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     uuid: Mapped[PyUUID] = mapped_column(UUID(as_uuid=True), default=uuid_mod.uuid4, unique=True, nullable=False, index=True)
-    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"), nullable=False, index=True)
+    order_id: Mapped[int | None] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"), nullable=True, index=True)
+    labor_listing_id: Mapped[int | None] = mapped_column(
+        ForeignKey("labor_listings.id", ondelete="CASCADE"), nullable=True, index=True
+    )
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
@@ -35,7 +40,8 @@ class Chat(Base):
     )
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
 
-    order: Mapped["Order"] = relationship(back_populates="chats")
+    order: Mapped["Order | None"] = relationship(back_populates="chats")
+    labor_listing: Mapped["LaborListing | None"] = relationship(back_populates="chats")
     customer: Mapped["User"] = relationship(foreign_keys=[customer_id], back_populates="customer_chats")
     expert: Mapped["User"] = relationship(foreign_keys=[expert_id], back_populates="expert_chats")
     messages: Mapped[list["ChatMessage"]] = relationship(

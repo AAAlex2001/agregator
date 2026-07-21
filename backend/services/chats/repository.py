@@ -41,6 +41,7 @@ class ChatRepository:
             select(Chat)
             .options(
                 selectinload(Chat.order),
+                selectinload(Chat.labor_listing),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )
@@ -59,6 +60,7 @@ class ChatRepository:
             select(Chat)
             .options(
                 selectinload(Chat.order),
+                selectinload(Chat.labor_listing),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )
@@ -75,7 +77,7 @@ class ChatRepository:
         "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
-            .options(selectinload(Chat.order))
+            .options(selectinload(Chat.order), selectinload(Chat.labor_listing))
             .where(
                 Chat.id == chat_id,
                 or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
@@ -122,6 +124,7 @@ class ChatRepository:
             select(Chat)
             .options(
                 selectinload(Chat.order),
+                selectinload(Chat.labor_listing),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )
@@ -176,8 +179,10 @@ class ChatRepository:
         rows = (await self.db.execute(query)).scalars().all()
         return list(reversed(rows))
 
-    async def response_status_for(self, order_id: int, expert_id: int) -> str | None:
+    async def response_status_for(self, order_id: int | None, expert_id: int) -> str | None:
         "Публичный метод сервисного слоя."
+        if order_id is None:
+            return None
         query = select(OrderResponse.status).where(
             OrderResponse.order_id == order_id,
             OrderResponse.expert_id == expert_id,
@@ -216,7 +221,7 @@ class ChatRepository:
         query = (
             select(Chat.is_blocked, Order.status)
             .select_from(Chat)
-            .join(Order, Order.id == Chat.order_id)
+            .outerjoin(Order, Order.id == Chat.order_id)
             .where(Chat.id == chat_id)
         )
         row = (await self.db.execute(query)).first()

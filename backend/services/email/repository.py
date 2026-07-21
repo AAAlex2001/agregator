@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.chat import Chat, ChatMessage
+from models.labor import LaborListing
 from models.order import Order
 from models.question import OrderQuestion
 from models.response import OrderResponse
@@ -48,6 +49,27 @@ class EmailRepository:
         query = select(Order).where(Order.id == order_id)
         return (await self.db.execute(query)).scalars().first()
 
+    async def find_labor_listing(
+        self,
+        listing_id: int,
+    ) -> LaborListing | None:
+        query = (
+            select(LaborListing)
+            .where(LaborListing.id == listing_id)
+            .options(selectinload(LaborListing.owner))
+        )
+        return (await self.db.execute(query)).scalars().first()
+
+    async def list_active_users_by_role(
+        self,
+        role: UserRole,
+    ) -> list[User]:
+        query = select(User).where(
+            User.role == role,
+            User.is_active.is_(True),
+        )
+        return list((await self.db.execute(query)).scalars().all())
+
     async def find_message(self, message_id: int) -> ChatMessage | None:
         "Ищет сущность по заданным параметрам."
         query = (
@@ -58,6 +80,7 @@ class EmailRepository:
                 selectinload(ChatMessage.chat).selectinload(Chat.customer),
                 selectinload(ChatMessage.chat).selectinload(Chat.expert),
                 selectinload(ChatMessage.chat).selectinload(Chat.order),
+                selectinload(ChatMessage.chat).selectinload(Chat.labor_listing),
             )
         )
         return (await self.db.execute(query)).scalars().first()

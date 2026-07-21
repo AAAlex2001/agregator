@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { RoleBadge } from "@/source/shared/ui";
@@ -34,6 +34,7 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
   if (role === "LICENSE_HOLDER") {
     return [
       { id: "license", label: "Лицензия" },
+      { id: "notifications", label: "Уведомления" },
       { id: "personal", label: "Личные данные" },
     ];
   }
@@ -51,14 +52,16 @@ function defaultSection(role: string | null): SettingsSection {
 
 export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
   const { user, role, isLoading, error, setUser } = useSession();
-  const initial = explicitSection ?? defaultSection(role);
-  const [section, setSection] = useState<SettingsSection>(initial);
-
-  useEffect(() => {
-    setSection(explicitSection ?? defaultSection(role));
-  }, [explicitSection, role]);
-
   const tabs = buildTabs(role);
+  const [selectedSection, setSelectedSection] =
+    useState<SettingsSection | null>(null);
+  const requestedSection = explicitSection ?? selectedSection;
+  const hasRequestedSection = tabs.some(
+    (tab) => tab.id === requestedSection,
+  );
+  const section = hasRequestedSection && requestedSection
+    ? requestedSection
+    : defaultSection(role);
 
   return (
     <div className={s.wrapper}>
@@ -76,7 +79,9 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
           variant="pill"
           tabs={tabs}
           activeTab={section}
-          onTabChange={(id) => setSection(id as SettingsSection)}
+          onTabChange={(id) =>
+            setSelectedSection(id as SettingsSection)
+          }
           className={s.tabs}
         />
 

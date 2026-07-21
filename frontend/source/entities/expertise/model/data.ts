@@ -89,6 +89,7 @@ export interface ExpertCertificate {
   area: string;
   object: string;
   category: string;
+  expires_at?: string;
 }
 
 export const AREA_OPTIONS: Array<{ value: string; name: string }> = OPO_ROWS.flat().map((key) => ({
@@ -99,4 +100,4 @@ export const AREA_OPTIONS: Array<{ value: string; name: string }> = OPO_ROWS.fla
 export const CATEGORY_OPTIONS = ["1", "2", "3"];
 
 export const formatCertificate = (cert: ExpertCertificate): string =>
-  `${cert.area} ${cert.object} · ${cert.category} кат.`;
+  `${cert.area} ${cert.object} · ${cert.category} кат.${cert.expires_at ? ` · до ${cert.expires_at}` : ""}`;
