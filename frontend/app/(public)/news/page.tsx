@@ -4,6 +4,7 @@ import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleList } from "@/source/entities/article";
 import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 import { RedirectIfAuthed } from "@/source/features/session";
+import { getStaticNewsListItems } from "@/source/entities/static-news";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ export const metadata: Metadata = {
 };
 
 async function NewsListContent() {
+  const staticItems = getStaticNewsListItems();
   const [initial, crossBlog] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
@@ -48,6 +50,7 @@ async function NewsListContent() {
       title="Новости отрасли"
       subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
       initial={initial}
+      staticItems={staticItems}
       cross={{
         title: "Читайте также из блога",
         href: "/blog",

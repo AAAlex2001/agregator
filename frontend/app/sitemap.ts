@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/source/shared/api/config";
 import { fetchArticleList, type ArticleKind } from "@/source/entities/article";
+import { getStaticNewsListItems } from "@/source/entities/static-news";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 300;
@@ -57,5 +58,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
   const [news, blog] = await Promise.all([loadArticles("news"), loadArticles("blog")]);
-  return [...staticItems, ...news, ...blog];
+  const staticNews = getStaticNewsListItems().map((item) => ({
+    url: `${SITE_URL}/news/${item.slug}`,
+    lastModified: item.published_at ? new Date(item.published_at) : now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+  const staticUrls = new Set(staticNews.map((item) => item.url));
+  return [...staticItems, ...staticNews, ...news.filter((item) => !staticUrls.has(item.url)), ...blog];
 }

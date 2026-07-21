@@ -24,6 +24,7 @@ interface Props {
   sectionHrefPrefix?: string;
   initialReactions?: ReactionState;
   initialComments?: ArticleComment[];
+  interactive?: boolean;
 }
 
 export function ArticleView({
@@ -33,6 +34,7 @@ export function ArticleView({
   sectionHrefPrefix = "",
   initialReactions,
   initialComments,
+  interactive = true,
 }: Props) {
   const isNews = article.kind === "news";
   const sectionTitle = isNews ? "Новости" : "Блог";
@@ -81,12 +83,16 @@ export function ArticleView({
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
-          <ArticleViewTracker articleId={article.id} />
+          {interactive ? <ArticleViewTracker articleId={article.id} /> : null}
           <div className={s.shareRow}>
             <ArticleShareButton url={publicUrl} />
           </div>
-          <ArticleReactions articleId={article.id} initial={initialReactions} views={article.views_count} />
-          <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
+          {interactive ? (
+            <>
+              <ArticleReactions articleId={article.id} initial={initialReactions} views={article.views_count} />
+              <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
+            </>
+          ) : null}
         </div>
       </div>
 

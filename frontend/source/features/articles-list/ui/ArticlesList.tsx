@@ -32,6 +32,7 @@ interface Props {
   title: string;
   subtitle: string;
   initial: ArticleList;
+  staticItems?: ArticleListItem[];
   cross?: CrossPromotion;
   homeHref?: string;
 }
@@ -42,15 +43,21 @@ function collectTags(items: ArticleListItem[]): string[] {
   return Array.from(set);
 }
 
-export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref = "/" }: Props) {
+function mergeUnique(primary: ArticleListItem[], secondary: ArticleListItem[]): ArticleListItem[] {
+  const slugs = new Set(primary.map((item) => item.slug));
+  return [...primary, ...secondary.filter((item) => !slugs.has(item.slug))];
+}
+
+export function ArticlesList({ kind, title, subtitle, initial, staticItems = [], cross, homeHref = "/" }: Props) {
   const { showError } = useNotifications();
-  const [items, setItems] = useState<ArticleListItem[]>(initial.items);
+  const [items, setItems] = useState<ArticleListItem[]>(mergeUnique(staticItems, initial.items));
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
+  const [remoteOffset, setRemoteOffset] = useState(initial.items.length);
   const [activeTag, setActiveTag] = useState<string>("");
   const [isReloading, setIsReloading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const availableTags = collectTags(initial.items);
+  const availableTags = collectTags(mergeUnique(staticItems, initial.items));
 
   const tabItems = [
     { id: "", label: "Все" },
@@ -61,8 +68,10 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
     setIsReloading(true);
     try {
       const page = await fetchArticleList({ kind, limit: PAGE_SIZE, offset: 0, tag: tag || undefined });
-      setItems(page.items);
+      const matchingStatic = tag ? staticItems.filter((item) => item.tags.includes(tag)) : staticItems;
+      setItems(mergeUnique(matchingStatic, page.items));
       setHasMore(page.has_more);
+      setRemoteOffset(page.items.length);
     } catch (error) {
       showError(error instanceof Error ? error.message : "Не удалось обновить список");
     } finally {
@@ -77,11 +86,12 @@ export function ArticlesList({ kind, title, subtitle, initial, cross, homeHref =
       const page = await fetchArticleList({
         kind,
         limit: PAGE_SIZE,
-        offset: items.length,
+        offset: remoteOffset,
         tag: activeTag || undefined,
       });
       setItems((prev) => [...prev, ...page.items]);
       setHasMore(page.has_more);
+      setRemoteOffset((value) => value + page.items.length);
     } catch (error) {
       showError(error instanceof Error ? error.message : "Не удалось подгрузить");
     } finally {
