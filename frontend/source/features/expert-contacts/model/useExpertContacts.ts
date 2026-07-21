@@ -88,11 +88,30 @@ export function useExpertContacts() {
   };
 
   const normalizedSearch = state.search.trim().toLocaleLowerCase("ru-RU");
-  const visibleExperts = normalizedSearch
-    ? state.experts.filter((expert) => (
-        expert.name.toLocaleLowerCase("ru-RU").includes(normalizedSearch)
-      ))
-    : state.experts;
+  let visibleExperts = state.experts.filter((expert) => {
+    const matchesSearch = !normalizedSearch
+      || expert.name.toLocaleLowerCase("ru-RU").includes(normalizedSearch);
+    const matchesAccess = state.accessFilter === "ALL"
+      || (state.accessFilter === "OPEN" && expert.sales_enabled)
+      || (state.accessFilter === "CLOSED" && !expert.sales_enabled);
+    return matchesSearch && matchesAccess;
+  });
+
+  if (state.ratingSort) {
+    visibleExperts = [...visibleExperts].sort((first, second) => {
+      if (first.rating === null) return second.rating === null ? 0 : 1;
+      if (second.rating === null) return -1;
+      return state.ratingSort === "desc"
+        ? second.rating - first.rating
+        : first.rating - second.rating;
+    });
+  }
+
+  const accessCounts = {
+    ALL: state.experts.length,
+    OPEN: state.experts.filter((expert) => expert.sales_enabled).length,
+    CLOSED: state.experts.filter((expert) => !expert.sales_enabled).length,
+  };
 
   return {
     ...state,
@@ -100,6 +119,13 @@ export function useExpertContacts() {
     totalExperts: state.experts.length,
     role,
     setSearch: (value: string) => dispatch({ type: "SEARCH", value }),
+    setAccessFilter: (value: typeof state.accessFilter) => (
+      dispatch({ type: "ACCESS_FILTER", value })
+    ),
+    setRatingSort: (value: typeof state.ratingSort) => (
+      dispatch({ type: "RATING_SORT", value })
+    ),
+    accessCounts,
     openExpert,
     openDeal,
     closeDeal: () => dispatch({ type: "SELECT_DEAL", value: null }),
@@ -109,11 +135,13 @@ export function useExpertContacts() {
       try {
         const offer = await updateContactOffer(payload);
         dispatch({ type: "SYNC_OFFER", value: offer });
+        return true;
       } catch (reason) {
         dispatch({
           type: "ERROR",
           value: reason instanceof Error ? reason.message : "Не удалось сохранить настройки",
         });
+        return false;
       } finally {
         dispatch({ type: "BUSY", value: false });
       }

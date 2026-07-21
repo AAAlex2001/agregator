@@ -26,11 +26,33 @@
   gap: 6px;
 }
 
-.certificates span {
+.certificate,
+.emptyCertificates {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 5px 8px;
   border-radius: 6px;
   background: #f5f5f5;
   color: #555555;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.certificate strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.certificateType {
+  display: inline-flex;
+}
+
+.certificateType > span {
+  min-width: auto;
+  height: 24px;
+  padding-inline: 8px;
+  border-radius: 6px;
   font-size: 12px;
   line-height: 16px;
 }

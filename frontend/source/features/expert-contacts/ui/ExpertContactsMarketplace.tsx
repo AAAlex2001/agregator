@@ -1,14 +1,25 @@
 "use client";
 
 import { ExpertCardSkeleton } from "@/source/entities/expert";
-import { TextInput, Title, Subtitle } from "@/source/shared/ui";
+import { TextInput, Title, Subtitle, Tabs } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
+import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
+import type { ContactAccessFilter } from "../model/types";
 import { useExpertContacts } from "../model/useExpertContacts";
 import { ContactDealModal } from "./ContactDealModal";
 import { ContactDealsList } from "./ContactDealsList";
 import { ContactOfferSettings } from "./ContactOfferSettings";
 import { ExpertContactCard } from "./ExpertContactCard";
 import s from "./ExpertContactsMarketplace.module.scss";
+
+const RATING_SORT_OPTIONS: SortPillSpec<"rating">[] = [
+  {
+    key: "rating",
+    label: "Рейтинг",
+    descLabel: "Сначала с высоким рейтингом",
+    ascLabel: "Сначала с низким рейтингом",
+  },
+];
 
 export function ExpertContactsMarketplace() {
   const contacts = useExpertContacts();
@@ -21,15 +32,6 @@ export function ExpertContactsMarketplace() {
           text="Выберите специалиста и получите контакты после подписания договора и подтверждения прямой оплаты"
           className={s.pageSubtitle}
         />
-        <div className={s.search}>
-          <TextInput
-            value={contacts.search}
-            onChange={(event) => contacts.setSearch(event.target.value)}
-            placeholder="ФИО эксперта"
-            aria-label="Фильтр экспертов по ФИО"
-            suffix={<SearchIcon />}
-          />
-        </div>
       </header>
 
       {contacts.role === "EXPERT" && contacts.offer && (
@@ -50,8 +52,40 @@ export function ExpertContactsMarketplace() {
 
       <section className={s.catalog} aria-label="Эксперты платформы">
         <div className={s.catalogHead}>
-          <Title text="Эксперты платформы" as="h2" className={s.sectionTitle} />
-          <span>{contacts.experts.length}</span>
+          <div className={s.catalogTitleRow}>
+            <Title text="Эксперты платформы" as="h2" className={s.sectionTitle} />
+            <span>{contacts.experts.length}</span>
+          </div>
+          <div className={s.search}>
+            <TextInput
+              value={contacts.search}
+              onChange={(event) => contacts.setSearch(event.target.value)}
+              placeholder="ФИО эксперта"
+              aria-label="Фильтр экспертов по ФИО"
+              suffix={<SearchIcon />}
+            />
+          </div>
+        </div>
+        <div className={s.catalogFilters}>
+          <Tabs
+            variant="pill"
+            activeTab={contacts.accessFilter}
+            onTabChange={(value) => contacts.setAccessFilter(value as ContactAccessFilter)}
+            className={s.accessTabs}
+            tabs={[
+              { id: "ALL", label: "Все", count: contacts.accessCounts.ALL },
+              { id: "OPEN", label: "Доступ открыт", count: contacts.accessCounts.OPEN },
+              { id: "CLOSED", label: "Доступ закрыт", count: contacts.accessCounts.CLOSED },
+            ]}
+          />
+          <SortPills
+            options={RATING_SORT_OPTIONS}
+            sortBy={contacts.ratingSort ? "rating" : null}
+            sortDir={contacts.ratingSort}
+            title="Сортировка:"
+            compact
+            onChange={(_, direction) => contacts.setRatingSort(direction)}
+          />
         </div>
         {contacts.loading ? (
           <div className={s.expertList} aria-label="Загружаем экспертов">

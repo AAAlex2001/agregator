@@ -4,6 +4,9 @@ import type {
   ExpertContactCardData,
   ExpertContactOfferData,
 } from "@/source/entities/expert-contact";
+import type { SortDir } from "@/source/shared/ui/SortPills";
+
+export type ContactAccessFilter = "ALL" | "OPEN" | "CLOSED";
 
 export interface ExpertContactsState {
   experts: ExpertContactCardData[];
@@ -11,6 +14,8 @@ export interface ExpertContactsState {
   offer: ExpertContactOfferData | null;
   selectedDeal: ContactDealDetail | null;
   search: string;
+  accessFilter: ContactAccessFilter;
+  ratingSort: SortDir | null;
   loading: boolean;
   busy: boolean;
   error: string | null;

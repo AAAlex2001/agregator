@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { ExpertContactOfferData } from "@/source/entities/expert-contact";
 import { Button, Checkbox, TextInput, Title, Subtitle } from "@/source/shared/ui";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import s from "./ContactOfferSettings.module.scss";
 
 interface ContactOfferSettingsProps {
@@ -13,10 +14,11 @@ interface ContactOfferSettingsProps {
     price_rubles?: number;
     payment_details?: string;
     disclosure_consent?: boolean;
-  }) => Promise<void>;
+  }) => Promise<boolean>;
 }
 
 export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettingsProps) {
+  const { showSuccess } = useNotifications();
   const [enabled, setEnabled] = useState(offer.enabled);
   const [price, setPrice] = useState(String(offer.price_rubles ?? ""));
   const [paymentDetails, setPaymentDetails] = useState("");
@@ -29,14 +31,16 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    await onSave({
+    const saved = await onSave({
       enabled,
       price_rubles: enabled ? Number(price) : undefined,
       payment_details: enabled ? paymentDetails || undefined : undefined,
       disclosure_consent: enabled ? consent : undefined,
     });
+    if (!saved) return;
     setPaymentDetails("");
     setConsent(false);
+    showSuccess("Настройки продажи контактов сохранены");
   };
 
   return (

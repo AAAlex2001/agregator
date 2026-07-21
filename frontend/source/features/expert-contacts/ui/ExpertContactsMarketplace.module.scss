@@ -32,8 +32,7 @@
 }
 
 .search {
-  width: min(100%, 520px);
-  margin-top: 12px;
+  width: 100%;
 }
 
 .search svg {
@@ -49,12 +48,19 @@
 
 .catalogHead {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
   margin-bottom: 16px;
 }
 
-.catalogHead > span {
+.catalogTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalogTitleRow > span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -66,6 +72,18 @@
   color: #808080;
   font-size: 12px;
   line-height: 16px;
+}
+
+.catalogFilters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.accessTabs {
+  justify-content: flex-start;
 }
 
 .expertList {
@@ -91,6 +109,23 @@
   .page {
     gap: 32px;
     padding-bottom: 64px;
+  }
+
+  .catalogHead {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .search {
+    flex: 0 1 500px;
+    max-width: 500px;
+  }
+
+  .catalogFilters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 

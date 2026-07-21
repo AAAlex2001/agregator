@@ -1,8 +1,9 @@
 import { ExpertCard } from "@/source/entities/expert";
 import type { ExpertContactCardData } from "@/source/entities/expert-contact";
+import { TypeBadge, TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import { Button } from "@/source/shared/ui";
 import { EmailIcon, LockIcon, PhoneIcon } from "@/source/shared/ui/icons";
-import { certificateLabel, contactDealStatusLabel } from "../lib/formatters";
+import { contactDealStatusLabel } from "../lib/formatters";
 import s from "./ExpertContactCard.module.scss";
 
 interface ExpertContactCardProps {
@@ -17,12 +18,29 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
       <span className={s.cardSectionLabel}>Области аттестации и контакты</span>
       <span className={s.expertCity}>{expert.city || "Регион не указан"}</span>
       <div className={s.certificates}>
-        {expert.certificates.slice(0, 8).map((certificate, index) => (
-          <span key={`${certificateLabel(certificate)}-${index}`}>
-            {certificateLabel(certificate)}
-          </span>
-        ))}
-        {expert.certificates.length === 0 && <span>Области аттестации не указаны</span>}
+        {expert.certificates.slice(0, 8).map((certificate, index) => {
+          const type = certificate.object as ExpertiseType;
+          const knownType = TYPES.includes(type);
+          return (
+            <span
+              className={s.certificate}
+              key={`${certificate.area}-${certificate.object}-${certificate.category}-${index}`}
+            >
+              {certificate.area && <strong>{certificate.area}</strong>}
+              {knownType ? (
+                <span className={s.certificateType}>
+                  <TypeBadge type={type} active />
+                </span>
+              ) : certificate.object ? (
+                <span>{certificate.object}</span>
+              ) : null}
+              {certificate.category && <span>{certificate.category} кат.</span>}
+            </span>
+          );
+        })}
+        {expert.certificates.length === 0 && (
+          <span className={s.emptyCertificates}>Области аттестации не указаны</span>
+        )}
       </div>
       <div className={s.contactRows}>
         <div>
