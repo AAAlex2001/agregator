@@ -8,14 +8,12 @@ import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
 import {
   CollapseSidebarIcon,
-  ExpertIcon,
   ExpertRoomIcon,
   FileIcon,
   LogoIcon,
   LogoMarkIcon,
   LogoutIcon,
   ReviewIcon,
-  SearchIcon,
   SwitchRoleIcon,
   TabArchiveIcon,
   TabChatIcon,
@@ -40,22 +38,6 @@ interface SidebarSection {
   items: SidebarItem[];
 }
 
-const LABOR_SECTION: SidebarSection = {
-  label: "Трудовые ресурсы",
-  items: [
-    {
-      href: "/labor/expert-search",
-      label: "Поиск эксперта",
-      icon: SearchIcon,
-    },
-    {
-      href: "/labor/employment",
-      label: "Готов к договору",
-      icon: ExpertIcon,
-    },
-  ],
-};
-
 const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = {
   EXPERT: [
     {
@@ -66,7 +48,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
       ],
     },
-    LABOR_SECTION,
     {
       label: "Общение",
       items: [
@@ -91,7 +72,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
       ],
     },
-    LABOR_SECTION,
     {
       label: "Результаты тендеров",
       items: [
@@ -121,7 +101,6 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
       ],
     },
-    LABOR_SECTION,
     {
       label: "Общение",
       items: [

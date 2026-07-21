@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Checkbox,
-  ToolTip,
-} from "@/source/shared/ui";
+import { Checkbox } from "@/source/shared/ui";
 import { AREA_OPTIONS } from "../model/data";
 import s from "./ExpertiseAreasPicker.module.scss";
 
@@ -32,44 +29,55 @@ export function ExpertiseAreasPicker({
         role="group"
         aria-label="Области аттестации"
       >
-        {AREA_OPTIONS.map((option) => (
-          <div key={option.value} className={s.option}>
-            <Checkbox
-              id={`${idPrefix}-${option.value}`}
-              checked={value.includes(option.value)}
-              onChange={(checked) =>
-                onChange(option.value, checked)
-              }
-            >
-              {option.value}
-            </Checkbox>
+        {AREA_OPTIONS.map((option) => {
+          const tooltipId = `${idPrefix}-${option.value}-description`;
 
-            <span className={s.desktopHelp}>
-              <ToolTip
-                message={option.name}
-                ariaLabel={`Что означает ${option.value}`}
-                side="bottom"
-                multiline
-              />
-            </span>
+          return (
+            <div key={option.value} className={s.option}>
+              <Checkbox
+                id={`${idPrefix}-${option.value}`}
+                checked={value.includes(option.value)}
+                onChange={(checked) =>
+                  onChange(option.value, checked)
+                }
+              >
+                {option.value}
+              </Checkbox>
 
-            <button
-              type="button"
-              className={s.mobileHelpButton}
-              aria-label={`Что означает ${option.value}`}
-              aria-expanded={mobileHelpArea === option.value}
-              onClick={() =>
-                setMobileHelpArea(
-                  mobileHelpArea === option.value
-                    ? null
-                    : option.value,
-                )
-              }
-            >
-              i
-            </button>
-          </div>
-        ))}
+              <span
+                className={s.desktopHelp}
+                aria-label={`Что означает ${option.value}`}
+                aria-describedby={tooltipId}
+                tabIndex={0}
+              >
+                i
+                <span
+                  id={tooltipId}
+                  className={s.desktopTooltip}
+                  role="tooltip"
+                >
+                  {option.name}
+                </span>
+              </span>
+
+              <button
+                type="button"
+                className={s.mobileHelpButton}
+                aria-label={`Что означает ${option.value}`}
+                aria-expanded={mobileHelpArea === option.value}
+                onClick={() =>
+                  setMobileHelpArea(
+                    mobileHelpArea === option.value
+                      ? null
+                      : option.value,
+                  )
+                }
+              >
+                i
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       {mobileHelp && (
