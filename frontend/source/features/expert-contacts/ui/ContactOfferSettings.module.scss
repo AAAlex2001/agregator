@@ -1,0 +1,109 @@
+.offerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 1340px;
+  padding: 20px;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.offerIntro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle,
+.sectionSubtitle {
+  margin: 0;
+}
+
+.sectionSubtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.offerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.offerFields {
+  display: grid;
+  gap: 16px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #1a1a1a;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.paymentField textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 92px;
+  padding: 13px 16px;
+  resize: vertical;
+  border: 2px solid #e6e6e6;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: 14px/1.4 "Montserrat", sans-serif;
+  transition: border-color 0.2s ease;
+}
+
+.paymentField textarea:hover {
+  border-color: #ffdda9;
+}
+
+.paymentField textarea:focus {
+  outline: none;
+  border-color: #ffb800;
+}
+
+.paymentField textarea::placeholder {
+  color: #808080;
+}
+
+.consentRow {
+  grid-column: 1 / -1;
+}
+
+.offerActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 768px) {
+  .offerSection {
+    padding: 24px;
+  }
+
+  .offerIntro {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .offerFields {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .offerActions > button,
+  .offerActions > a {
+    min-width: 220px;
+  }
+}

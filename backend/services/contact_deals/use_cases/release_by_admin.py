@@ -10,7 +10,7 @@ from models.contact_deal import (
 )
 from services.contact_deals.policies import ContactDealPolicy, release_contacts
 from services.contact_deals.repository import ContactDealRepository
-from services.notifications import CreateContactAccessNotificationUseCase
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 
 
 class ReleaseContactByAdminUseCase:
@@ -18,11 +18,11 @@ class ReleaseContactByAdminUseCase:
         self,
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
-        notification: CreateContactAccessNotificationUseCase | None = None,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
-        self.notification = notification
+        self.notifier = notifier
 
     async def execute(self, deal_id: int, note: str) -> ContactAccessDeal:
         deal = await self.policy.require_deal(deal_id)
@@ -40,8 +40,8 @@ class ReleaseContactByAdminUseCase:
         receipt.reviewed_at = now
         release_contacts(deal, ContactDealReleaseActor.ADMIN, note.strip(), now)
         await self.repository.flush()
-        if self.notification is not None:
-            await self.notification.execute(
+        if self.notifier is not None:
+            await self.notifier.execute(
                 deal.buyer_id,
                 "Контакты открыты администратором",
                 "Чек проверен администрацией. Телефон и email эксперта доступны в сделке.",

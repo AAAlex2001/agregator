@@ -1,0 +1,53 @@
+.dealsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 1340px;
+}
+
+.sectionTitle {
+  margin: 0;
+}
+
+.dealRows {
+  border-block: 1px solid #e6e6e6;
+}
+
+.dealRow {
+  display: grid;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dealRow:last-child {
+  border-bottom: none;
+}
+
+.dealRow > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dealRow > div span {
+  color: #808080;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.dealStatus {
+  color: #a95c00;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .dealRow {
+    grid-template-columns: minmax(220px, 1fr) minmax(180px, auto) auto;
+    align-items: center;
+    gap: 20px;
+  }
+}

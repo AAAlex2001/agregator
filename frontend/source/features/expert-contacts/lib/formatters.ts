@@ -1,4 +1,4 @@
-import type { ContactDealStatus } from "@/source/entities/expert-contact";
+import type { ContactDealStatus, ContactReceiptData } from "@/source/entities/expert-contact";
 
 const STATUS_LABELS: Record<ContactDealStatus, string> = {
   AWAITING_BUYER_SIGNATURE: "Ожидает подписи покупателя",
@@ -10,8 +10,19 @@ const STATUS_LABELS: Record<ContactDealStatus, string> = {
   CANCELED: "Отменена",
 };
 
+const RECEIPT_STATUS_LABELS: Record<ContactReceiptData["status"], string> = {
+  PENDING: "На проверке",
+  APPROVED: "Подтверждён",
+  REJECTED: "Отклонён",
+  SUPERSEDED: "Заменён",
+};
+
 export function contactDealStatusLabel(status: ContactDealStatus): string {
   return STATUS_LABELS[status];
+}
+
+export function contactReceiptStatusLabel(status: ContactReceiptData["status"]): string {
+  return RECEIPT_STATUS_LABELS[status];
 }
 
 export function certificateLabel(certificate: {

@@ -7,6 +7,7 @@ from services.contact_deals.use_cases.list_deals import (
     ListAdminContactDealsUseCase,
     ListContactDealsUseCase,
 )
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 from services.contact_deals.use_cases.reject_payment import RejectContactPaymentUseCase
 from services.contact_deals.use_cases.release_by_admin import ReleaseContactByAdminUseCase
 from services.contact_deals.use_cases.sign_deal import SignContactDealUseCase
@@ -20,6 +21,7 @@ __all__ = [
     "GetContactReceiptUseCase",
     "ListAdminContactDealsUseCase",
     "ListContactDealsUseCase",
+    "NotifyContactAccessEventUseCase",
     "RejectContactPaymentUseCase",
     "ReleaseContactByAdminUseCase",
     "SignContactDealUseCase",

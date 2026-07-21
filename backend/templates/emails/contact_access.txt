@@ -1,0 +1,8 @@
+{{ heading }}
+
+Здравствуйте, {{ recipient_greeting }}. {{ message }}
+
+Открыть сделку: {{ cta_url }}
+
+—
+Ресурс-Плюс · plus-resurs.com

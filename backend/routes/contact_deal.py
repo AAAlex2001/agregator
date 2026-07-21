@@ -1,5 +1,6 @@
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     File,
     HTTPException,
@@ -35,9 +36,15 @@ from services.contact_deals.use_cases import (
     GetContactDealUseCase,
     GetContactReceiptUseCase,
     ListContactDealsUseCase,
+    NotifyContactAccessEventUseCase,
     RejectContactPaymentUseCase,
     SignContactDealUseCase,
     UploadContactReceiptUseCase,
+)
+from services.email import (
+    EmailDispatcher,
+    EmailRepository,
+    SendContactAccessEmailUseCase,
 )
 from services.notifications import (
     CreateContactAccessNotificationUseCase,
@@ -64,18 +71,33 @@ def build_contact_dependencies(
     return repository, ContactDealPolicy(repository), build_contact_cipher()
 
 
-def build_contact_notification(db: AsyncSession) -> CreateContactAccessNotificationUseCase:
-    return CreateContactAccessNotificationUseCase(NotificationRepository(db))
+def build_contact_notifier(
+    db: AsyncSession,
+    background_tasks: BackgroundTasks,
+) -> NotifyContactAccessEventUseCase:
+    return NotifyContactAccessEventUseCase(
+        CreateContactAccessNotificationUseCase(NotificationRepository(db)),
+        SendContactAccessEmailUseCase(
+            EmailRepository(db),
+            EmailDispatcher(background_tasks),
+        ),
+    )
 
 
 @router.post("", response_model=ContactDealDetailResponse, status_code=status.HTTP_201_CREATED)
 async def create_contact_deal(
     payload: ContactDealCreateRequest,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ContactDealDetailResponse:
     repository, policy, cipher = build_contact_dependencies(db)
-    deal = await CreateContactDealUseCase(repository, policy, cipher).execute(
+    deal = await CreateContactDealUseCase(
+        repository,
+        policy,
+        cipher,
+        build_contact_notifier(db, background_tasks),
+    ).execute(
         payload.seller_id, user_id
     )
     return to_detail(deal, user_id, cipher)
@@ -105,6 +127,7 @@ async def sign_contact_deal(
     deal_id: int,
     payload: ContactDealSignRequest,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ContactDealDetailResponse:
@@ -115,7 +138,7 @@ async def sign_contact_deal(
         request.cookies.get("session_id"),
     )
     deal = await SignContactDealUseCase(
-        repository, policy, build_contact_notification(db)
+        repository, policy, build_contact_notifier(db, background_tasks)
     ).execute(
         deal_id,
         user_id,
@@ -147,6 +170,7 @@ async def download_contact_contract(
 @router.post("/{deal_id}/receipt", response_model=ContactDealDetailResponse)
 async def upload_contact_receipt(
     deal_id: int,
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
@@ -156,7 +180,7 @@ async def upload_contact_receipt(
         repository,
         policy,
         ContactReceiptStorage(),
-        build_contact_notification(db),
+        build_contact_notifier(db, background_tasks),
     ).execute(deal_id, user_id, file)
     return to_detail(deal, user_id, cipher)
 
@@ -188,12 +212,13 @@ async def download_contact_receipt(
 @router.post("/{deal_id}/confirm-payment", response_model=ContactDealDetailResponse)
 async def confirm_contact_payment(
     deal_id: int,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ContactDealDetailResponse:
     repository, policy, cipher = build_contact_dependencies(db)
     deal = await ConfirmContactPaymentUseCase(
-        repository, policy, build_contact_notification(db)
+        repository, policy, build_contact_notifier(db, background_tasks)
     ).execute(deal_id, user_id)
     return to_detail(deal, user_id, cipher)
 
@@ -202,12 +227,13 @@ async def confirm_contact_payment(
 async def reject_contact_payment(
     deal_id: int,
     payload: ContactReceiptRejectRequest,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> ContactDealDetailResponse:
     repository, policy, cipher = build_contact_dependencies(db)
     deal = await RejectContactPaymentUseCase(
-        repository, policy, build_contact_notification(db)
+        repository, policy, build_contact_notifier(db, background_tasks)
     ).execute(
         deal_id, user_id, payload.reason
     )

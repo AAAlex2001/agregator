@@ -4,10 +4,11 @@ from uuid import uuid4
 from fastapi import HTTPException, status
 
 from models.contact_deal import ContactAccessDeal, ContactDealStatus
-from services.contact_deals.contract import build_contract_snapshot, contract_hash
+from services.contact_deals.contract import build_contract_snapshot, contract_hash, party_name
 from services.contact_deals.crypto import ContactDealCipher
 from services.contact_deals.policies import ContactDealPolicy
 from services.contact_deals.repository import ContactDealRepository
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 
 
 class CreateContactDealUseCase:
@@ -16,10 +17,12 @@ class CreateContactDealUseCase:
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
         cipher: ContactDealCipher,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
         self.cipher = cipher
+        self.notifier = notifier
 
     async def execute(self, seller_id: int, buyer_id: int) -> ContactAccessDeal:
         existing = await self.repository.find_for_seller_and_buyer(seller_id, buyer_id)
@@ -63,4 +66,13 @@ class CreateContactDealUseCase:
         )
         await self.repository.add_deal(deal)
         await self.repository.flush()
+        if self.notifier is not None:
+            await self.notifier.execute(
+                seller.id,
+                "Новый запрос на ваши контакты",
+                (
+                    f"{party_name(buyer)} начал оформление доступа к вашим контактам. "
+                    "После подписи покупателя вы получите отдельное уведомление."
+                ),
+            )
         return await self.policy.require_deal(deal.id)

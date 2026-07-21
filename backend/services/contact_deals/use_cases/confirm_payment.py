@@ -10,7 +10,7 @@ from models.contact_deal import (
 )
 from services.contact_deals.policies import ContactDealPolicy, release_contacts
 from services.contact_deals.repository import ContactDealRepository
-from services.notifications import CreateContactAccessNotificationUseCase
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 
 
 class ConfirmContactPaymentUseCase:
@@ -18,11 +18,11 @@ class ConfirmContactPaymentUseCase:
         self,
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
-        notification: CreateContactAccessNotificationUseCase | None = None,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
-        self.notification = notification
+        self.notifier = notifier
 
     async def execute(self, deal_id: int, seller_id: int) -> ContactAccessDeal:
         deal = await self.policy.require_deal(deal_id)
@@ -42,8 +42,8 @@ class ConfirmContactPaymentUseCase:
             now,
         )
         await self.repository.flush()
-        if self.notification is not None:
-            await self.notification.execute(
+        if self.notifier is not None:
+            await self.notifier.execute(
                 deal.buyer_id,
                 "Оплата подтверждена",
                 "Эксперт подтвердил оплату. Телефон и email открыты в сделке.",

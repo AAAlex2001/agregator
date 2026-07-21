@@ -46,6 +46,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
         { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
         { href: "/archive", label: "Архив", icon: TabArchiveIcon },
+        { href: "/expert-contacts", label: "Контакты экспертов", icon: ReviewIcon },
       ],
     },
     {
@@ -70,6 +71,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       items: [
         { href: "/customer/orders", label: "Мои заказы", icon: TabOrdersIcon },
         { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
+        { href: "/expert-contacts", label: "Контакты экспертов", icon: ReviewIcon },
       ],
     },
     {
@@ -99,6 +101,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       label: "Эксперты",
       items: [
         { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
+        { href: "/expert-contacts", label: "Контакты экспертов", icon: TabProfileIcon },
       ],
     },
     {

@@ -1,13 +1,14 @@
 "use client";
 
-import { Button, TextInput } from "@/source/shared/ui";
+import { ExpertCardSkeleton } from "@/source/entities/expert";
+import { TextInput, Title, Subtitle } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { useExpertContacts } from "../model/useExpertContacts";
 import { ContactDealModal } from "./ContactDealModal";
 import { ContactDealsList } from "./ContactDealsList";
 import { ContactOfferSettings } from "./ContactOfferSettings";
 import { ExpertContactCard } from "./ExpertContactCard";
-import s from "./ExpertContacts.module.scss";
+import s from "./ExpertContactsMarketplace.module.scss";
 
 export function ExpertContactsMarketplace() {
   const contacts = useExpertContacts();
@@ -15,29 +16,20 @@ export function ExpertContactsMarketplace() {
   return (
     <main className={s.page}>
       <header className={s.pageHead}>
-        <div>
-          <h1>Контакты экспертов</h1>
-          <p>
-            Подберите специалиста по областям аттестации. Контактные данные открываются
-            после электронного договора и подтверждения прямой оплаты эксперту.
-          </p>
-        </div>
-        <form
-          className={s.search}
-          onSubmit={(event) => {
-            event.preventDefault();
-            void contacts.searchNow();
-          }}
-        >
+        <Title text="Контакты экспертов" as="h1" className={s.pageTitle} />
+        <Subtitle
+          text="Выберите специалиста и получите контакты после подписания договора и подтверждения прямой оплаты"
+          className={s.pageSubtitle}
+        />
+        <div className={s.search}>
           <TextInput
             value={contacts.search}
             onChange={(event) => contacts.setSearch(event.target.value)}
-            placeholder="ФИО, город"
+            placeholder="ФИО эксперта"
+            aria-label="Фильтр экспертов по ФИО"
+            suffix={<SearchIcon />}
           />
-          <Button type="submit" variant="outlineOrange" size="sm" disabled={contacts.loading}>
-            <SearchIcon /> Найти
-          </Button>
-        </form>
+        </div>
       </header>
 
       {contacts.role === "EXPERT" && contacts.offer && (
@@ -56,17 +48,19 @@ export function ExpertContactsMarketplace() {
 
       {contacts.error && <p className={s.error}>{contacts.error}</p>}
 
-      <section className={s.catalog} aria-labelledby="expert-catalog-title">
+      <section className={s.catalog} aria-label="Эксперты платформы">
         <div className={s.catalogHead}>
-          <h2 id="expert-catalog-title">Эксперты платформы</h2>
+          <Title text="Эксперты платформы" as="h2" className={s.sectionTitle} />
           <span>{contacts.experts.length}</span>
         </div>
         {contacts.loading ? (
-          <div className={s.loading}>Загружаем экспертов…</div>
+          <div className={s.expertList} aria-label="Загружаем экспертов">
+            {Array.from({ length: 3 }, (_, index) => <ExpertCardSkeleton key={index} />)}
+          </div>
         ) : contacts.experts.length === 0 ? (
           <div className={s.empty}>По вашему запросу эксперты не найдены</div>
         ) : (
-          <div className={s.grid}>
+          <div className={s.expertList}>
             {contacts.experts.map((expert) => (
               <ExpertContactCard
                 key={expert.id}

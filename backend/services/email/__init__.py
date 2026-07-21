@@ -2,6 +2,7 @@ from services.email.dispatcher import EmailDispatcher
 from services.email.repository import EmailRepository
 from services.email.use_cases.send_bidding_finished_email import SendBiddingFinishedEmailUseCase
 from services.email.use_cases.send_chat_message_email import SendChatMessageEmailUseCase
+from services.email.use_cases.send_contact_access_email import SendContactAccessEmailUseCase
 from services.email.use_cases.send_expert_rejected_email import SendExpertRejectedEmailUseCase
 from services.email.use_cases.send_new_blog_post_email import SendNewBlogPostEmailUseCase
 from services.email.use_cases.send_new_labor_listing_email import SendNewLaborListingEmailUseCase
@@ -15,6 +16,7 @@ __all__ = [
     "EmailRepository",
     "SendBiddingFinishedEmailUseCase",
     "SendChatMessageEmailUseCase",
+    "SendContactAccessEmailUseCase",
     "SendExpertRejectedEmailUseCase",
     "SendNewBlogPostEmailUseCase",
     "SendNewLaborListingEmailUseCase",

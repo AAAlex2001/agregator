@@ -1,7 +1,7 @@
 import type { ContactDealListItem } from "@/source/entities/expert-contact";
-import { Button } from "@/source/shared/ui";
+import { Button, Title } from "@/source/shared/ui";
 import { contactDealStatusLabel, formatDealDate } from "../lib/formatters";
-import s from "./ExpertContacts.module.scss";
+import s from "./ContactDealsList.module.scss";
 
 interface ContactDealsListProps {
   deals: ContactDealListItem[];
@@ -13,8 +13,8 @@ export function ContactDealsList({ deals, busy, onOpen }: ContactDealsListProps)
   if (deals.length === 0) return null;
 
   return (
-    <section className={s.dealsSection} aria-labelledby="contact-deals-title">
-      <h2 id="contact-deals-title">Мои сделки</h2>
+    <section className={s.dealsSection} aria-label="Мои сделки">
+      <Title text="Мои сделки" as="h2" className={s.sectionTitle} />
       <div className={s.dealRows}>
         {deals.map((deal) => (
           <article className={s.dealRow} key={deal.id}>

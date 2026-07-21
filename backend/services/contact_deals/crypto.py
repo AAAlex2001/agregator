@@ -42,5 +42,5 @@ class ContactDealCipher:
     def decrypt_json(self, value: str) -> dict[str, Any]:
         decoded = json.loads(self.decrypt_text(value))
         if not isinstance(decoded, dict):
-            raise RuntimeError("Invalid encrypted contact deal payload")
+            raise TypeError("Invalid encrypted contact deal payload")
         return decoded

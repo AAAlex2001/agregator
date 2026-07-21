@@ -1,0 +1,65 @@
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: min(900px, 94dvh);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 22px 56px 18px 20px;
+  border-bottom: 1px solid #e6e6e6;
+  background: #ffffff;
+}
+
+.contractNumber {
+  color: #808080;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.title {
+  margin: 4px 0 0;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.status {
+  color: #a95c00;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  max-height: 48dvh;
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  border-top: 1px solid #e6e6e6;
+  background: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px 64px 20px 28px;
+  }
+
+  .actions {
+    padding: 18px 28px 24px;
+  }
+}

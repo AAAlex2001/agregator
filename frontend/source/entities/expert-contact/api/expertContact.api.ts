@@ -15,9 +15,8 @@ async function ensureResponse(response: Response, fallback: string): Promise<Res
   return response;
 }
 
-export async function fetchExpertContacts(search = ""): Promise<ExpertContactCardData[]> {
+export async function fetchExpertContacts(): Promise<ExpertContactCardData[]> {
   const params = new URLSearchParams({ limit: "500" });
-  if (search.trim()) params.set("search", search.trim());
   const response = await fetchWithSession(`${API_URL}/expert-contacts?${params}`, {
     cache: "no-store",
   });

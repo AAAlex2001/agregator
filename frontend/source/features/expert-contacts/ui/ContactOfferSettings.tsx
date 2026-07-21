@@ -2,8 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import type { ExpertContactOfferData } from "@/source/entities/expert-contact";
-import { Button, TextInput } from "@/source/shared/ui";
-import s from "./ExpertContacts.module.scss";
+import { Button, Checkbox, TextInput, Title, Subtitle } from "@/source/shared/ui";
+import s from "./ContactOfferSettings.module.scss";
 
 interface ContactOfferSettingsProps {
   offer: ExpertContactOfferData;
@@ -40,26 +40,24 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
   };
 
   return (
-    <section className={s.offerSection} aria-labelledby="contact-offer-title">
+    <section className={s.offerSection} aria-label="Продажа ваших контактов">
       <div className={s.offerIntro}>
         <div>
-          <h2 id="contact-offer-title">Продажа ваших контактов</h2>
-          <p>Установите цену и реквизиты прямого перевода. Площадка деньги не принимает.</p>
-        </div>
-        <label className={s.switchLabel}>
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(event) => setEnabled(event.target.checked)}
+          <Title text="Продажа ваших контактов" as="h2" className={s.sectionTitle} />
+          <Subtitle
+            text="Укажите стоимость и реквизиты прямого перевода. Деньги поступают сразу вам"
+            className={s.sectionSubtitle}
           />
-          <span>{enabled ? "Доступ включён" : "Доступ выключен"}</span>
-        </label>
+        </div>
+        <Checkbox id="contact-sales-enabled" checked={enabled} onChange={setEnabled}>
+          {enabled ? "Доступ включён" : "Доступ выключен"}
+        </Checkbox>
       </div>
 
       <form className={s.offerForm} onSubmit={submit}>
         {enabled && (
-          <>
-            <label>
+          <div className={s.offerFields}>
+            <label className={s.fieldGroup}>
               <span>Стоимость доступа, ₽</span>
               <TextInput
                 inputMode="numeric"
@@ -68,7 +66,7 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
                 required
               />
             </label>
-            <label className={s.paymentField}>
+            <label className={`${s.fieldGroup} ${s.paymentField}`}>
               <span>Реквизиты прямой оплаты</span>
               <textarea
                 value={paymentDetails}
@@ -81,20 +79,28 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
                 maxLength={1000}
               />
             </label>
-            <label className={s.consentRow}>
-              <input
-                type="checkbox"
+            <div className={s.consentRow}>
+              <Checkbox
+                id="contact-disclosure-consent"
                 checked={consent}
-                onChange={(event) => setConsent(event.target.checked)}
-                required
-              />
-              <span>Согласен передать телефон и email покупателю после подтверждения оплаты</span>
-            </label>
-          </>
+                onChange={setConsent}
+              >
+                Согласен передать телефон и email покупателю после подтверждения оплаты
+              </Checkbox>
+            </div>
+          </div>
         )}
-        <Button type="submit" variant="primary" size="sm" isLoading={busy}>
-          Сохранить настройки
-        </Button>
+        <div className={s.offerActions}>
+          <Button
+            type="submit"
+            variant="primary"
+            size="sm"
+            isLoading={busy}
+            disabled={enabled && !consent}
+          >
+            Сохранить настройки
+          </Button>
+        </div>
       </form>
     </section>
   );

@@ -127,14 +127,14 @@ class NotificationRepository:
             )
             .values(is_read=True, read_at=read_at)
         )
-        return int(result.rowcount or 0)  # type: ignore[attr-defined]
+        return int(result.rowcount or 0)
 
     async def delete_all(self, user_id: int) -> int:
         "Удаляет все уведомления пользователя; возвращает число удалённых строк."
         result = await self.db.execute(
             sa_delete(Notification).where(Notification.user_id == user_id)
         )
-        return int(result.rowcount or 0)  # type: ignore[attr-defined]
+        return int(result.rowcount or 0)
 
     async def reset_unread(self, user_id: int) -> None:
         "Сбрасывает состояние к значению по умолчанию."

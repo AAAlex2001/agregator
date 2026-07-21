@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from models.contact_deal import ContactAccessDeal, ContactDealStatus, ContactReceiptStatus
 from services.contact_deals.policies import ContactDealPolicy
 from services.contact_deals.repository import ContactDealRepository
-from services.notifications import CreateContactAccessNotificationUseCase
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 
 
 class RejectContactPaymentUseCase:
@@ -13,11 +13,11 @@ class RejectContactPaymentUseCase:
         self,
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
-        notification: CreateContactAccessNotificationUseCase | None = None,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
-        self.notification = notification
+        self.notifier = notifier
 
     async def execute(
         self, deal_id: int, seller_id: int, reason: str
@@ -33,8 +33,8 @@ class RejectContactPaymentUseCase:
         receipt.reviewed_at = datetime.now(UTC)
         deal.status = ContactDealStatus.PAYMENT_REJECTED
         await self.repository.flush()
-        if self.notification is not None:
-            await self.notification.execute(
+        if self.notifier is not None:
+            await self.notifier.execute(
                 deal.buyer_id,
                 "Чек отклонён экспертом",
                 f"Причина: {reason.strip()}. Проверьте оплату и загрузите новый чек.",

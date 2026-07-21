@@ -10,7 +10,7 @@ from models.contact_deal import (
 from services.contact_deals.contract import party_name
 from services.contact_deals.policies import ContactDealPolicy
 from services.contact_deals.repository import ContactDealRepository
-from services.notifications import CreateContactAccessNotificationUseCase
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 from utils.passwords import verify_password
 
 
@@ -19,11 +19,11 @@ class SignContactDealUseCase:
         self,
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
-        notification: CreateContactAccessNotificationUseCase | None = None,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
-        self.notification = notification
+        self.notifier = notifier
 
     async def execute(
         self,
@@ -60,7 +60,7 @@ class SignContactDealUseCase:
             else ContactDealStatus.AWAITING_PAYMENT
         )
         await self.repository.flush()
-        if self.notification is not None:
+        if self.notifier is not None:
             recipient_id = deal.seller_id if party == ContactDealParty.BUYER else deal.buyer_id
             title = (
                 "Покупатель подписал договор"
@@ -72,7 +72,7 @@ class SignContactDealUseCase:
                 if party == ContactDealParty.BUYER
                 else "Договор подписан обеими сторонами. Реквизиты для оплаты доступны в сделке."
             )
-            await self.notification.execute(recipient_id, title, message)
+            await self.notifier.execute(recipient_id, title, message)
         return await self.policy.require_deal(deal.id)
 
     @staticmethod

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { UserAvatar } from "@/source/shared/ui/UserAvatar";
@@ -16,9 +17,11 @@ interface ExpertCardProps {
   avatarUrl: string | null;
   rating: number | null;
   reviewCount: number;
-  completedOrdersCount: number;
-  joinedAt: string;
-  lastOrder: OrderCardData | null;
+  completedOrdersCount?: number;
+  joinedAt?: string;
+  lastOrder?: OrderCardData | null;
+  details?: ReactNode;
+  aside?: ReactNode;
 }
 
 function pluralReviews(count: number): string {
@@ -57,8 +60,10 @@ export function ExpertCard({
   rating,
   reviewCount,
   completedOrdersCount,
-  joinedAt,
-  lastOrder,
+  joinedAt = "",
+  lastOrder = null,
+  details,
+  aside,
 }: ExpertCardProps) {
   const ratingFormatted =
     rating !== null
@@ -90,14 +95,16 @@ export function ExpertCard({
                 <span className={s.statNumber}>{ratingFormatted}</span>
               </dd>
             </div>
-            <div className={s.statRow}>
-              <dt className={s.statLabel}>Количество заказов:</dt>
-              <dd className={s.statValue}>
-                <span className={s.statNumber}>
-                  {completedOrdersCount} {pluralOrders(completedOrdersCount)}
-                </span>
-              </dd>
-            </div>
+            {completedOrdersCount !== undefined && (
+              <div className={s.statRow}>
+                <dt className={s.statLabel}>Количество заказов:</dt>
+                <dd className={s.statValue}>
+                  <span className={s.statNumber}>
+                    {completedOrdersCount} {pluralOrders(completedOrdersCount)}
+                  </span>
+                </dd>
+              </div>
+            )}
             <div className={s.statRow}>
               <dt className={s.statLabel}>Количество отзывов:</dt>
               <dd className={s.statValue}>
@@ -123,7 +130,12 @@ export function ExpertCard({
           </div>
         </div>
 
-        {lastOrder ? (
+        {details || aside ? (
+          <>
+            {details && <div className={s.center}>{details}</div>}
+            {aside && <div className={s.side}>{aside}</div>}
+          </>
+        ) : lastOrder ? (
           <>
             <div className={s.center}>
               <span className={s.centerLabel}>Последний выполненный заказ</span>

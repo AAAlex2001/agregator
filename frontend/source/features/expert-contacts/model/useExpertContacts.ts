@@ -27,12 +27,12 @@ export function useExpertContacts() {
     initialExpertContactsState,
   );
 
-  const load = async (search = "") => {
+  const loadInitialData = async () => {
     dispatch({ type: "LOADING", value: true });
     dispatch({ type: "ERROR", value: null });
     try {
       const [experts, deals, offer] = await Promise.all([
-        fetchExpertContacts(search),
+        fetchExpertContacts(),
         fetchContactDeals(),
         role === "EXPERT" ? fetchContactOffer() : Promise.resolve(null),
       ]);
@@ -50,18 +50,21 @@ export function useExpertContacts() {
   };
 
   useEffect(() => {
-    void load();
+    void loadInitialData();
     // Загрузка зависит только от активной роли пользователя.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role]);
 
-  const runDealAction = async (action: () => Promise<Awaited<ReturnType<typeof fetchContactDeal>>>) => {
+  const runDealAction = async (
+    action: () => Promise<Awaited<ReturnType<typeof fetchContactDeal>>>,
+  ) => {
     dispatch({ type: "BUSY", value: true });
     dispatch({ type: "ERROR", value: null });
     try {
       const deal = await action();
       dispatch({ type: "SELECT_DEAL", value: deal });
-      await load(state.search);
+      dispatch({ type: "SYNC_DEAL", value: deal });
+      dispatch({ type: "DEALS", value: await fetchContactDeals() });
     } catch (reason) {
       dispatch({
         type: "ERROR",
@@ -84,20 +87,33 @@ export function useExpertContacts() {
     await runDealAction(() => fetchContactDeal(id));
   };
 
+  const normalizedSearch = state.search.trim().toLocaleLowerCase("ru-RU");
+  const visibleExperts = normalizedSearch
+    ? state.experts.filter((expert) => (
+        expert.name.toLocaleLowerCase("ru-RU").includes(normalizedSearch)
+      ))
+    : state.experts;
+
   return {
     ...state,
+    experts: visibleExperts,
+    totalExperts: state.experts.length,
     role,
     setSearch: (value: string) => dispatch({ type: "SEARCH", value }),
-    searchNow: () => load(state.search),
     openExpert,
     openDeal,
     closeDeal: () => dispatch({ type: "SELECT_DEAL", value: null }),
     saveOffer: async (payload: Parameters<typeof updateContactOffer>[0]) => {
       dispatch({ type: "BUSY", value: true });
+      dispatch({ type: "ERROR", value: null });
       try {
         const offer = await updateContactOffer(payload);
-        dispatch({ type: "OFFER", value: offer });
-        await load(state.search);
+        dispatch({ type: "SYNC_OFFER", value: offer });
+      } catch (reason) {
+        dispatch({
+          type: "ERROR",
+          value: reason instanceof Error ? reason.message : "Не удалось сохранить настройки",
+        });
       } finally {
         dispatch({ type: "BUSY", value: false });
       }

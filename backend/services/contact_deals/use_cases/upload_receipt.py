@@ -6,7 +6,7 @@ from models.contact_deal import ContactAccessDeal, ContactDealStatus, ContactPay
 from services.contact_deals.policies import ContactDealPolicy
 from services.contact_deals.repository import ContactDealRepository
 from services.contact_deals.storage import ContactReceiptStorage
-from services.notifications import CreateContactAccessNotificationUseCase
+from services.contact_deals.use_cases.notify_event import NotifyContactAccessEventUseCase
 
 
 class UploadContactReceiptUseCase:
@@ -15,12 +15,12 @@ class UploadContactReceiptUseCase:
         repository: ContactDealRepository,
         policy: ContactDealPolicy,
         storage: ContactReceiptStorage,
-        notification: CreateContactAccessNotificationUseCase | None = None,
+        notifier: NotifyContactAccessEventUseCase | None = None,
     ) -> None:
         self.repository = repository
         self.policy = policy
         self.storage = storage
-        self.notification = notification
+        self.notifier = notifier
 
     async def execute(
         self, deal_id: int, buyer_id: int, upload: UploadFile
@@ -51,8 +51,8 @@ class UploadContactReceiptUseCase:
         deal.status = ContactDealStatus.PAYMENT_REPORTED
         deal.buyer_reported_paid_at = now
         await self.repository.flush()
-        if self.notification is not None:
-            await self.notification.execute(
+        if self.notifier is not None:
+            await self.notifier.execute(
                 deal.seller_id,
                 "Покупатель загрузил чек",
                 "Проверьте чек и подтвердите оплату, чтобы открыть контакты покупателю.",

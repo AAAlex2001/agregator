@@ -125,3 +125,10 @@ class NewLaborListingContext(BaseContext):
     employment_term: str
     certificates: list[str] = []
     cta_url: str
+
+
+class ContactAccessEmailContext(BaseContext):
+    recipient_greeting: str
+    heading: str
+    message: str
+    cta_url: str

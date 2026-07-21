@@ -1,0 +1,144 @@
+.paymentBlock,
+.receipts,
+.reviewActions,
+.releasedContacts {
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.paymentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paymentSummary {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-left: 3px solid #ff8a00;
+  background: #fff8ee;
+}
+
+.priceSummary,
+.paymentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priceSummary span,
+.paymentDetails span {
+  color: #808080;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.priceSummary strong {
+  color: #1a1a1a;
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 700;
+}
+
+.paymentDetails strong {
+  color: #1a1a1a;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.paymentSummary p {
+  margin: 0;
+  color: #666666;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.receiptUploadRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.receipts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.receiptsTitle {
+  margin: 0;
+  font-size: 17px;
+  line-height: 22px;
+}
+
+.receiptButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.receiptItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.receiptItem > span {
+  color: #808080;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.reviewActions {
+  display: grid;
+  gap: 10px;
+}
+
+.releasedContacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: none;
+  border-left: 3px solid #26a65b;
+  background: #eefaf2;
+}
+
+.releasedContacts > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.releasedContacts a {
+  color: #16733a;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .receiptUploadRow {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .receiptUploadRow > div {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .receiptUploadRow > button {
+    flex: 0 0 200px;
+  }
+
+  .reviewActions {
+    grid-template-columns: auto minmax(240px, 1fr) auto;
+    align-items: center;
+  }
+}

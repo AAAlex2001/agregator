@@ -1,0 +1,38 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.controls {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+
+.passwordField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #1a1a1a;
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 600;
+}
+
+.submitButton {
+  width: 100%;
+  min-height: 46px;
+}
+
+@media (min-width: 768px) {
+  .controls {
+    grid-template-columns: minmax(320px, 500px) 240px;
+    align-items: end;
+    justify-content: end;
+    margin-left: auto;
+  }
+}
