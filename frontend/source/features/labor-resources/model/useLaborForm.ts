@@ -30,7 +30,7 @@ export function useLaborForm({
   mode,
   onCreated,
 }: UseLaborFormOptions) {
-  const { user, role } = useSession();
+  const { user } = useSession();
   const [state, dispatch] = useReducer(
     laborFormReducer,
     user?.location_city ?? "",
@@ -41,15 +41,14 @@ export function useLaborForm({
   const profileCertificates = (
     user?.expert_certificates ?? []
   ) as LaborCertificate[];
-  const certificates = mode === "expert"
-    ? profileCertificates
-    : state.areas.map((area) => ({
-        area,
-        category: state.category,
-      }));
-  const canCreate =
-    (mode === "license" && role === "LICENSE_HOLDER") ||
-    (mode === "expert" && role === "EXPERT");
+  const selectedCertificates = state.areas.map((area) => ({
+    area,
+    category: state.category,
+  }));
+  const certificates =
+    mode === "expert" && profileCertificates.length > 0
+      ? profileCertificates
+      : selectedCertificates;
 
   useEffect(() => {
     if (!state.region && user?.location_city) {
@@ -70,9 +69,7 @@ export function useLaborForm({
       return "Укажите регион фактического проживания";
     }
     if (certificates.length === 0) {
-      return mode === "expert"
-        ? "Добавьте удостоверения в профиле"
-        : "Выберите хотя бы одну область аттестации";
+      return "Выберите хотя бы одну область аттестации";
     }
     if (state.term === "FIXED" && !state.fixedTerm.trim()) {
       return "Укажите срок срочного договора";
@@ -130,7 +127,6 @@ export function useLaborForm({
   return {
     ...state,
     copy,
-    canCreate,
     certificates,
     profileCertificates,
     submit,

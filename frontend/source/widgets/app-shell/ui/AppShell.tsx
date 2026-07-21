@@ -19,6 +19,7 @@ const SIDEBAR_ROUTES = [
   /^\/expert\/room$/,
   /^\/expert-reviews(?:\/.*)?$/,
   /^\/experts\/[^/]+\/orders$/,
+  /^\/labor(?:\/.*)?$/,
   /^\/responses$/,
   /^\/tech-expert$/,
   /^\/zepb-registry$/,

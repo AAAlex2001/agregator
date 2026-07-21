@@ -124,17 +124,6 @@ async def create_labor_listing(
     user_id: int = Depends(get_current_user),
 ) -> LaborListingResponse:
     user = await require_user(db, user_id)
-    required_role = (
-        UserRole.LICENSE_HOLDER
-        if payload.kind == LaborListingKind.EXPERT_WANTED
-        else UserRole.EXPERT
-    )
-    if user.role != required_role:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Эта форма недоступна для текущей роли",
-        )
-
     certificates = [
         item.model_dump(exclude_none=True)
         for item in payload.certificates

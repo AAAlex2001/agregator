@@ -6,7 +6,6 @@ import type { LaborPageMode } from "../model/types";
 import { EmploymentTermFields } from "./EmploymentTermFields";
 import { ExpertCertificatesField } from "./ExpertCertificatesField";
 import { ExpertEmploymentFields } from "./ExpertEmploymentFields";
-import { LaborFormUnavailable } from "./LaborFormUnavailable";
 import { LaborRegionField } from "./LaborRegionField";
 import { LicenseEmploymentFields } from "./LicenseEmploymentFields";
 import { LicenseExpertiseFields } from "./LicenseExpertiseFields";
@@ -22,30 +21,23 @@ export function LaborForm({
   onCreated,
 }: LaborFormProps) {
   const form = useLaborForm({ mode, onCreated });
-
-  if (!form.canCreate) {
-    return (
-      <LaborFormUnavailable
-        mode={mode}
-        title={form.copy.formTitle}
-      />
-    );
-  }
+  const useProfileCertificates =
+    mode === "expert" && form.profileCertificates.length > 0;
 
   return (
     <form className={s.form} onSubmit={form.submit}>
       <h2 className={s.title}>{form.copy.formTitle}</h2>
 
-      {mode === "license" ? (
+      {useProfileCertificates ? (
+        <ExpertCertificatesField
+          certificates={form.profileCertificates}
+        />
+      ) : (
         <LicenseExpertiseFields
           areas={form.areas}
           category={form.category}
           onToggleArea={form.toggleArea}
           onCategoryChange={form.setCategory}
-        />
-      ) : (
-        <ExpertCertificatesField
-          certificates={form.profileCertificates}
         />
       )}
 
