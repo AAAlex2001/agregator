@@ -27,7 +27,8 @@ class LaborCertificate(BaseModel):
 
 class LaborListingCreate(BaseModel):
     kind: LaborListingKind
-    certificates: list[LaborCertificate] = Field(..., min_length=1, max_length=100)
+    certificates: list[LaborCertificate] = Field(default_factory=list, max_length=100)
+    other_profession: str | None = Field(None, max_length=500)
     region: str = Field(..., min_length=2, max_length=300)
     employment_term: EmploymentTerm
     fixed_term: str | None = Field(None, max_length=300)
@@ -37,6 +38,10 @@ class LaborListingCreate(BaseModel):
 
     @model_validator(mode="after")
     def validate_kind_fields(self) -> "LaborListingCreate":
+        has_other_profession = bool((self.other_profession or "").strip())
+        if not has_other_profession and not self.certificates:
+            raise ValueError("Выберите удостоверение, вид экспертизы или опишите иную профессию")
+
         fixed_term_missing = (
             self.employment_term == EmploymentTerm.FIXED
             and not (self.fixed_term or "").strip()
@@ -68,6 +73,7 @@ class LaborListingResponse(BaseModel):
     owner_avatar_url: str | None = None
     kind: LaborListingKind
     certificates: list[LaborCertificate]
+    other_profession: str | None = None
     region: str
     employment_term: EmploymentTerm
     fixed_term: str | None = None

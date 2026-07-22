@@ -40,10 +40,14 @@ export function LaborForm({
               certificateCodes={form.certificateCodes}
               expertiseTypes={form.expertiseTypes}
               category={form.category}
+              otherProfession={form.otherProfession}
+              otherProfessionText={form.otherProfessionText}
               onExpertiseModeChange={form.setExpertiseMode}
               onCertificateCodesChange={form.setCertificateCodes}
               onExpertiseTypesChange={form.setExpertiseTypes}
               onCategoryChange={form.setCategory}
+              onOtherProfessionToggle={form.setOtherProfession}
+              onOtherProfessionTextChange={form.setOtherProfessionText}
             />
           )}
         </div>

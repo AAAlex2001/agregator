@@ -25,6 +25,8 @@ export interface LaborFormState {
   certificateCodes: string[];
   expertiseTypes: ExpertiseType[];
   category: string;
+  otherProfession: boolean;
+  otherProfessionText: string;
   region: string;
   term: EmploymentTerm;
   fixedTerm: string;

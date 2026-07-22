@@ -68,6 +68,7 @@ class LaborListing(Base):
     current_job_status: Mapped[CurrentJobStatus | None] = mapped_column(
         Enum(CurrentJobStatus), nullable=True
     )
+    other_profession: Mapped[str | None] = mapped_column(String(500), nullable=True)
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,

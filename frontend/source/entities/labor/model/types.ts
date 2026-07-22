@@ -18,6 +18,7 @@ export interface LaborListingData {
   owner_avatar_url: string | null;
   kind: LaborListingKind;
   certificates: LaborCertificate[];
+  other_profession: string | null;
   region: string;
   employment_term: EmploymentTerm;
   fixed_term: string | null;
@@ -32,6 +33,7 @@ export interface LaborListingData {
 export interface LaborListingPayload {
   kind: LaborListingKind;
   certificates: LaborCertificate[];
+  other_profession?: string | null;
   region: string;
   employment_term: EmploymentTerm;
   fixed_term?: string | null;

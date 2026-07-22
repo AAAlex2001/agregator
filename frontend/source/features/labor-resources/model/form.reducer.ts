@@ -14,6 +14,8 @@ export type LaborFormAction =
   | { type: "CERTIFICATE_CODES"; value: string[] }
   | { type: "EXPERTISE_TYPES"; value: ExpertiseType[] }
   | { type: "CATEGORY"; value: string }
+  | { type: "OTHER_PROFESSION"; value: boolean }
+  | { type: "OTHER_PROFESSION_TEXT"; value: string }
   | { type: "REGION"; value: string }
   | { type: "TERM"; value: EmploymentTerm }
   | { type: "FIXED_TERM"; value: string }
@@ -30,6 +32,8 @@ export function initialLaborFormState(region = ""): LaborFormState {
     certificateCodes: [],
     expertiseTypes: [],
     category: "",
+    otherProfession: false,
+    otherProfessionText: "",
     region,
     term: "PERMANENT",
     fixedTerm: "",
@@ -54,6 +58,10 @@ export function laborFormReducer(
       return { ...state, expertiseTypes: action.value };
     case "CATEGORY":
       return { ...state, category: action.value };
+    case "OTHER_PROFESSION":
+      return { ...state, otherProfession: action.value };
+    case "OTHER_PROFESSION_TEXT":
+      return { ...state, otherProfessionText: action.value };
     case "REGION":
       return { ...state, region: action.value };
     case "TERM":

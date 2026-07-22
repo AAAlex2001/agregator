@@ -1,0 +1,81 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ffdda9;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    background: #fff8ed;
+  }
+}
+
+.plateActive {
+  border-color: #ff8a00;
+  background: #fff8ed;
+  box-shadow: 0 4px 12px rgba(255, 138, 0, 0.08);
+}
+
+.indicator {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c4994b;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.plateActive .indicator {
+  border-color: #ff8a00;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.plateActive .dot {
+  background: #ff8a00;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.label {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.description {
+  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: #6b6b6b;
+}

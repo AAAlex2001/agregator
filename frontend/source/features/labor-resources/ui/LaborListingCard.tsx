@@ -48,16 +48,23 @@ export function LaborListingCard({
         <span className={s.region}>{item.region}</span>
       </div>
 
-      <div className={s.certificates}>
-        {item.certificates.map((certificate, index) => (
-          <span
-            key={`${certificate.area}-${certificate.object ?? ""}-${certificate.category ?? ""}-${index}`}
-            className={s.certificate}
-          >
-            {formatLaborCertificate(certificate)}
-          </span>
-        ))}
-      </div>
+      {item.other_profession ? (
+        <div className={s.otherProfession}>
+          <span className={s.otherProfessionLabel}>Иная профессия</span>
+          <p className={s.otherProfessionText}>{item.other_profession}</p>
+        </div>
+      ) : (
+        <div className={s.certificates}>
+          {item.certificates.map((certificate, index) => (
+            <span
+              key={`${certificate.area}-${certificate.object ?? ""}-${certificate.category ?? ""}-${index}`}
+              className={s.certificate}
+            >
+              {formatLaborCertificate(certificate)}
+            </span>
+          ))}
+        </div>
+      )}
 
       <dl className={s.meta}>
         <MetaItem label="Формат" value={employmentTerm} />

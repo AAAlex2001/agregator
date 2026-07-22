@@ -20,6 +20,7 @@ def make_listing(kind: LaborListingKind) -> SimpleNamespace:
         region="Москва",
         employment_term=EmploymentTerm.PERMANENT,
         fixed_term=None,
+        other_profession=None,
         certificates=[
             {
                 "area": "Э12",

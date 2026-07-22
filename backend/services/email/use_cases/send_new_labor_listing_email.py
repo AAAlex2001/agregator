@@ -71,10 +71,13 @@ class SendNewLaborListingEmailUseCase:
             if listing.employment_term == EmploymentTerm.PERMANENT
             else f"Срочный договор: {listing.fixed_term}"
         )
-        certificates = [
-            self.format_certificate(certificate)
-            for certificate in listing.certificates
-        ]
+        if listing.other_profession:
+            certificates = [f"Иная профессия: {listing.other_profession}"]
+        else:
+            certificates = [
+                self.format_certificate(certificate)
+                for certificate in listing.certificates
+            ]
 
         return NewLaborListingContext(
             recipient_greeting=greeting_for(recipient),

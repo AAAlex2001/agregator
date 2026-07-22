@@ -53,6 +53,31 @@
   line-height: 16px;
 }
 
+.otherProfession {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid #ffdda9;
+  border-radius: 12px;
+  background: #fff8ed;
+}
+
+.otherProfessionLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff8a00;
+}
+
+.otherProfessionText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #344054;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .meta {
   display: grid;
   grid-template-columns: repeat(

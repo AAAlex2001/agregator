@@ -55,7 +55,9 @@ export function useLaborForm({
   const certificates =
     mode === "expert" && profileCertificates.length > 0
       ? profileCertificates
-      : selectedCertificates;
+      : state.otherProfession
+        ? []
+        : selectedCertificates;
 
   useEffect(() => {
     if (!state.region && user?.location_city) {
@@ -67,7 +69,11 @@ export function useLaborForm({
     if (!state.region.trim()) {
       return "Укажите регион фактического проживания";
     }
-    if (certificates.length === 0) {
+    if (state.otherProfession) {
+      if (!state.otherProfessionText.trim()) {
+        return "Опишите, кого вы ищете";
+      }
+    } else if (certificates.length === 0) {
       return "Выберите удостоверение или вид экспертизы";
     }
     if (state.term === "FIXED" && !state.fixedTerm.trim()) {
@@ -82,6 +88,9 @@ export function useLaborForm({
   const buildPayload = (): LaborListingPayload => ({
     kind: copy.ownKind,
     certificates,
+    other_profession: state.otherProfession
+      ? state.otherProfessionText.trim()
+      : null,
     region: state.region.trim(),
     employment_term: state.term,
     fixed_term:
@@ -137,6 +146,10 @@ export function useLaborForm({
       dispatch({ type: "EXPERTISE_TYPES", value }),
     setCategory: (value: string) =>
       dispatch({ type: "CATEGORY", value }),
+    setOtherProfession: (value: boolean) =>
+      dispatch({ type: "OTHER_PROFESSION", value }),
+    setOtherProfessionText: (value: string) =>
+      dispatch({ type: "OTHER_PROFESSION_TEXT", value }),
     setRegion: (value: string) =>
       dispatch({ type: "REGION", value }),
     setTerm: (value: EmploymentTerm) =>
