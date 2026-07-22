@@ -44,6 +44,7 @@ export function ExpertContactOfferFields({
           id={`${idPrefix}-contact-sales-enabled`}
           checked={enabled}
           onChange={onEnabledChange}
+          className={s.checkbox}
         >
           Готов предоставлять контакты за плату
         </Checkbox>
@@ -84,6 +85,7 @@ export function ExpertContactOfferFields({
             checked={consent}
             onChange={onConsentChange}
             error={consentError}
+            className={s.checkbox}
           >
             Согласен передать телефон и email покупателю после подтверждения оплаты
           </Checkbox>

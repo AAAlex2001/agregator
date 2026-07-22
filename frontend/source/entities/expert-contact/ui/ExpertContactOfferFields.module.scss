@@ -18,14 +18,14 @@
 }
 
 .title {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 15px;
+  line-height: 21px;
 }
 
 .subtitle {
-  margin-top: 6px;
-  font-size: 13px;
-  line-height: 19px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .fields {
@@ -44,7 +44,7 @@
   width: 100%;
   max-width: 600px;
   color: #1a1a1a;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 600;
 }
@@ -59,7 +59,11 @@
   border-radius: 10px;
   background: #ffffff;
   color: #1a1a1a;
-  font: 14px/1.4 "Montserrat", sans-serif;
+  font: 13px/1.4 "Montserrat", sans-serif;
+}
+
+.field input {
+  font-size: 13px;
 }
 
 .field textarea:hover { border-color: #ffdda9; }
@@ -74,8 +78,8 @@
   border-left: 3px solid #ff8a00;
   background: #fff8ed;
   color: #9a4d00;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 17px;
   font-weight: 600;
 }
 
@@ -84,6 +88,11 @@
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
+}
+
+.checkbox {
+  font-size: 12px;
+  line-height: 18px;
 }
 
 @media (min-width: 768px) {

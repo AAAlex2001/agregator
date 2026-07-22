@@ -59,8 +59,6 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
           </div>
         </section>
 
-        <ExpertContactOfferSection />
-
         <section className={s.section}>
           <h2 className={s.subtitle}>Изменить пароль</h2>
           <div className={s.grid}>
@@ -78,6 +76,8 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
         <ExpertCertificatesSection profile={profile} onProfileUpdate={onProfileUpdate} />
 
         <SaveBar isSaving={isSaving} />
+
+        <ExpertContactOfferSection />
       </form>
 
       <ChangeEmailModal

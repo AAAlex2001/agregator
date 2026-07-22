@@ -7,15 +7,24 @@ interface CheckboxProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   error?: string;
+  className?: string;
   children: ReactNode;
 }
 
-export function Checkbox({ id, checked, onChange, disabled, error, children }: CheckboxProps) {
+export function Checkbox({
+  id,
+  checked,
+  onChange,
+  disabled,
+  error,
+  className = "",
+  children,
+}: CheckboxProps) {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
 
-  const labelClass = `${styles.root} ${error ? styles.hasError : ""}`.trim();
+  const labelClass = `${styles.root} ${error ? styles.hasError : ""} ${className}`.trim();
 
   return (
     <label htmlFor={id} className={labelClass}>
