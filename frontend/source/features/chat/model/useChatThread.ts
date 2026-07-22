@@ -3,8 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChatDetailData, ChatMessageData } from "@/source/entities/chat";
 import { fetchChatDetail, markChatMessagesRead } from "@/source/entities/chat";
-import { useChatListContext } from "./chatListContext";
+import { useOptionalChatListContext } from "./chatListContext";
 import { useChatWebSocket } from "./useChatWebSocket";
+
+const noop = () => {};
 
 export function useChatThread(chatUuid: string | null, currentUserId: number) {
   const [chat, setChat] = useState<ChatDetailData | null>(null);
@@ -12,7 +14,9 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
-  const { markChatAsRead, syncChatMessage } = useChatListContext();
+  const listContext = useOptionalChatListContext();
+  const markChatAsRead = listContext?.markChatAsRead ?? noop;
+  const syncChatMessage = listContext?.syncChatMessage ?? noop;
 
   useEffect(() => {
     if (!chatUuid) {

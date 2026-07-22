@@ -105,3 +105,7 @@ export function useChatListContext() {
 
   return value;
 }
+
+export function useOptionalChatListContext() {
+  return useContext(ChatListContext);
+}
