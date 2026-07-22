@@ -15,6 +15,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; pri
   { path: "/blog", changeFrequency: "weekly", priority: 0.9 },
   { path: "/reviews", changeFrequency: "weekly", priority: 0.7 },
   { path: "/zepb-registry", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/expert-contacts", changeFrequency: "weekly", priority: 0.8 },
   { path: "/register", changeFrequency: "monthly", priority: 0.7 },
   { path: "/login", changeFrequency: "monthly", priority: 0.4 },
   { path: "/forgot-password", changeFrequency: "yearly", priority: 0.3 },

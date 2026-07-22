@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { ExpertCardSkeleton } from "@/source/entities/expert";
 import { TextInput, Title, Subtitle, Tabs } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
@@ -21,8 +22,19 @@ const RATING_SORT_OPTIONS: SortPillSpec<"rating">[] = [
   },
 ];
 
-export function ExpertContactsMarketplace() {
-  const contacts = useExpertContacts();
+interface ExpertContactsMarketplaceProps {
+  targetExpertId?: string;
+}
+
+export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
+  const contacts = useExpertContacts(targetExpertId);
+
+  useEffect(() => {
+    if (contacts.loading || !contacts.targetExpertId) return;
+    document
+      .getElementById(`expert-contact-${contacts.targetExpertId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [contacts.loading, contacts.targetExpertId]);
 
   return (
     <main className={s.page}>
@@ -98,12 +110,19 @@ export function ExpertContactsMarketplace() {
         ) : (
           <div className={s.expertList}>
             {contacts.experts.map((expert) => (
-              <ExpertContactCard
+              <div
+                id={`expert-contact-${expert.public_id}`}
                 key={expert.id}
-                expert={expert}
-                busy={contacts.busy}
-                onOpen={() => void contacts.openExpert(expert)}
-              />
+                className={`${s.expertAnchor} ${
+                  contacts.targetExpertId === expert.public_id ? s.expertAnchorTarget : ""
+                }`}
+              >
+                <ExpertContactCard
+                  expert={expert}
+                  busy={contacts.busy}
+                  onOpen={() => void contacts.openExpert(expert)}
+                />
+              </div>
             ))}
           </div>
         )}

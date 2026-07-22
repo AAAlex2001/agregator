@@ -43,10 +43,10 @@ def to_offer(expert: User, cipher: ContactDealCipher) -> ExpertContactOfferRespo
 def to_expert_contact(
     expert: User,
     deal: ContactAccessDeal | None,
-    actor_id: int,
+    actor_id: int | None,
     cipher: ContactDealCipher,
 ) -> ExpertContactCardResponse:
-    is_mine = expert.id == actor_id
+    is_mine = actor_id is not None and expert.id == actor_id
     released = deal is not None and deal.status == ContactDealStatus.CONTACTS_RELEASED
     contacts = (
         {"phone": expert.phone, "email": expert.email}

@@ -112,6 +112,8 @@ function usefulItems(role: string | null): NavItem[] {
 }
 
 function createCabinetNav(role: string | null): NavPlate[] {
+  const expertContactsHref = role ? "/landing/expert-contacts" : "/expert-contacts";
+
   return [
     {
       key: "tech",
@@ -155,7 +157,7 @@ function createCabinetNav(role: string | null): NavPlate[] {
       items: [
         {
           label: "Контакты экспертов",
-          href: "/expert-contacts",
+          href: expertContactsHref,
           description:
             "Каталог экспертов с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
         },

@@ -36,6 +36,9 @@ function balloonBody(marker: MapMarker): string {
     rows.push(
       `<div style="margin-top:8px;padding:8px;border-radius:6px;background:#fff3e0;color:#9a4d00;font-weight:600">` +
         `Контактные данные доступны только после оплаты${price ? ` по тарифу эксперта: ${price} ₽` : ""}.` +
+        `<a href="/expert-contacts?expert=${encodeURIComponent(marker.id)}" ` +
+        `style="display:block;margin-top:8px;color:#9a4d00;text-decoration:underline;font-weight:700">` +
+        `Купить контакты</a>` +
       `</div>`,
     );
   }

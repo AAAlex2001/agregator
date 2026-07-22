@@ -15,7 +15,7 @@ class ListExpertContactsUseCase:
 
     async def execute(
         self,
-        actor_id: int,
+        actor_id: int | None,
         search: str | None,
         limit: int,
         offset: int,

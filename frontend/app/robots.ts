@@ -10,6 +10,7 @@ const INDEXABLE_PATHS: string[] = [
   "/news",
   "/blog",
   "/zepb-registry",
+  "/expert-contacts",
   "/login",
   "/register",
   "/forgot-password",

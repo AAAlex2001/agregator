@@ -1,4 +1,4 @@
-from sqlalchemy import func, or_, select
+from sqlalchemy import false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.contact_deal import ContactAccessDeal
@@ -11,7 +11,7 @@ class ExpertContactRepository:
 
     async def list_experts(
         self,
-        actor_id: int,
+        actor_id: int | None,
         search: str | None,
         limit: int,
         offset: int,
@@ -30,13 +30,15 @@ class ExpertContactRepository:
         total = int(
             (await self.db.execute(select(func.count(User.id)).where(*conditions))).scalar_one()
         )
+        deal_join = (
+            (ContactAccessDeal.seller_id == User.id)
+            & (ContactAccessDeal.buyer_id == actor_id)
+            if actor_id is not None
+            else false()
+        )
         query = (
             select(User, ContactAccessDeal)
-            .outerjoin(
-                ContactAccessDeal,
-                (ContactAccessDeal.seller_id == User.id)
-                & (ContactAccessDeal.buyer_id == actor_id),
-            )
+            .outerjoin(ContactAccessDeal, deal_join)
             .where(*conditions)
             .order_by(
                 User.contact_sales_enabled.desc(),

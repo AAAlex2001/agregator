@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
-from dependencies.auth import get_current_user
+from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.contact_deal import build_contact_cipher
 from schemas.expert_contact import (
     ExpertContactListResponse,
@@ -25,7 +25,7 @@ async def list_expert_contacts(
     limit: int = Query(100, ge=1, le=500),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
+    user_id: int | None = Depends(get_current_user_optional),
 ) -> ExpertContactListResponse:
     return await ListExpertContactsUseCase(
         ExpertContactRepository(db), build_contact_cipher()

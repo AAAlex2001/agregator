@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
+import { useRouter } from "next/navigation";
 import {
   confirmContactPayment,
   createContactDeal,
@@ -20,8 +21,9 @@ import {
   initialExpertContactsState,
 } from "./reducer";
 
-export function useExpertContacts() {
-  const { role } = useSession();
+export function useExpertContacts(targetExpertId?: string) {
+  const router = useRouter();
+  const { role, user, isLoading: sessionLoading } = useSession();
   const [state, dispatch] = useReducer(
     expertContactsReducer,
     initialExpertContactsState,
@@ -33,8 +35,8 @@ export function useExpertContacts() {
     try {
       const [experts, deals, offer] = await Promise.all([
         fetchExpertContacts(),
-        fetchContactDeals(),
-        role === "EXPERT" ? fetchContactOffer() : Promise.resolve(null),
+        user ? fetchContactDeals() : Promise.resolve([]),
+        user && role === "EXPERT" ? fetchContactOffer() : Promise.resolve(null),
       ]);
       dispatch({ type: "EXPERTS", value: experts });
       dispatch({ type: "DEALS", value: deals });
@@ -50,10 +52,11 @@ export function useExpertContacts() {
   };
 
   useEffect(() => {
+    if (sessionLoading) return;
     void loadInitialData();
-    // Загрузка зависит только от активной роли пользователя.
+    // Загрузка зависит только от сессии и активной роли пользователя.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role]);
+  }, [role, sessionLoading, user]);
 
   const runDealAction = async (
     action: () => Promise<Awaited<ReturnType<typeof fetchContactDeal>>>,
@@ -76,6 +79,10 @@ export function useExpertContacts() {
   };
 
   const openExpert = async (expert: ExpertContactCardData) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
     await runDealAction(() => (
       expert.deal_id
         ? fetchContactDeal(expert.deal_id)
@@ -117,6 +124,7 @@ export function useExpertContacts() {
     ...state,
     experts: visibleExperts,
     totalExperts: state.experts.length,
+    targetExpertId: targetExpertId ?? null,
     role,
     setSearch: (value: string) => dispatch({ type: "SEARCH", value }),
     setAccessFilter: (value: typeof state.accessFilter) => (
