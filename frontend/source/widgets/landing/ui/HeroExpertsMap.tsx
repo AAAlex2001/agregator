@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { fetchExpertsMap, type ExpertMapItemApi } from "@/source/entities/expert";
 import { FilterableExpertsMap } from "@/source/features/expert-map-filter";
+import { useSession } from "@/source/features/session";
 import s from "./heroExpertsMap.module.scss";
 
 export function HeroExpertsMap() {
+  const { user } = useSession();
   const [items, setItems] = useState<ExpertMapItemApi[]>([]);
 
   useEffect(() => {
@@ -28,7 +30,12 @@ export function HeroExpertsMap() {
         опасному производственному объекту.
       </p>
       <div className={s.mapArea}>
-        <FilterableExpertsMap items={items} height="100%" emptyText="Загрузка карты экспертов…" />
+        <FilterableExpertsMap
+          items={items}
+          height="100%"
+          emptyText="Загрузка карты экспертов…"
+          contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
+        />
       </div>
     </div>
   );

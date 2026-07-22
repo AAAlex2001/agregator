@@ -1,12 +1,16 @@
-"use client";
-
 import { ExpertContactsMarketplace } from "@/source/features/expert-contacts";
 import { RoleGuard } from "@/source/features/session";
 
-export default function ExpertContactsPage() {
+interface ExpertContactsPageProps {
+  searchParams: Promise<{ expert?: string }>;
+}
+
+export default async function ExpertContactsPage({ searchParams }: ExpertContactsPageProps) {
+  const { expert } = await searchParams;
+
   return (
     <RoleGuard allowed={["EXPERT", "CUSTOMER", "LICENSE_HOLDER"]}>
-      <ExpertContactsMarketplace />
+      <ExpertContactsMarketplace targetExpertId={expert} />
     </RoleGuard>
   );
 }

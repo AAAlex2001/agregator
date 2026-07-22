@@ -28,7 +28,12 @@ export function ExpertsMapSection() {
         Посмотрите, где находятся эксперты площадки, — это поможет выбрать исполнителя ближе к объекту.
         Точки кластеризуются; нажмите на маркер, чтобы увидеть эксперта.
       </p>
-      <FilterableExpertsMap items={items} height={420} emptyText="Пока нет экспертов с указанной локацией" />
+      <FilterableExpertsMap
+        items={items}
+        height={420}
+        emptyText="Пока нет экспертов с указанной локацией"
+        contactsHref="/landing/expert-contacts"
+      />
     </section>
   );
 }

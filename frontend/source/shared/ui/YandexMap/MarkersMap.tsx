@@ -10,6 +10,7 @@ interface Props {
   markers: MapMarker[];
   height?: number | string;
   emptyText?: string;
+  contactsHref?: string;
 }
 
 const RUSSIA_CENTER: [number, number] = [61.524, 105.3188];
@@ -18,7 +19,7 @@ function balloonRow(label: string, value: string): string {
   return `<div style="margin-top:4px"><b>${label}:</b> ${value}</div>`;
 }
 
-function balloonBody(marker: MapMarker): string {
+function balloonBody(marker: MapMarker, contactsHref: string): string {
   const parts: string[] = [];
   if (marker.city) parts.push(marker.city);
   if (marker.rating != null) parts.push(`Рейтинг ${marker.rating.toFixed(1)}`);
@@ -36,7 +37,7 @@ function balloonBody(marker: MapMarker): string {
     rows.push(
       `<div style="margin-top:8px;padding:8px;border-radius:6px;background:#fff3e0;color:#9a4d00;font-weight:600">` +
         `Контактные данные доступны только после оплаты${price ? ` по тарифу эксперта: ${price} ₽` : ""}.` +
-        `<a href="/expert-contacts?expert=${encodeURIComponent(marker.id)}" ` +
+        `<a href="${contactsHref}?expert=${encodeURIComponent(marker.id)}" ` +
         `style="display:block;margin-top:8px;color:#9a4d00;text-decoration:underline;font-weight:700">` +
         `Купить контакты</a>` +
       `</div>`,
@@ -46,7 +47,12 @@ function balloonBody(marker: MapMarker): string {
   return [head, ...rows].filter(Boolean).join("");
 }
 
-export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {
+export function YandexMarkersMap({
+  markers,
+  height = 420,
+  emptyText,
+  contactsHref = "/expert-contacts",
+}: Props) {
   const { ymaps, status } = useYandexMaps();
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<YmapsMap | null>(null);
@@ -81,7 +87,7 @@ export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {
             [marker.lat, marker.lng],
             {
               balloonContentHeader: marker.title,
-              balloonContentBody: balloonBody(marker),
+              balloonContentBody: balloonBody(marker, contactsHref),
               hintContent: marker.title,
             },
             { preset: "islands#orangeIcon" },
@@ -89,7 +95,7 @@ export function YandexMarkersMap({ markers, height = 420, emptyText }: Props) {
       ),
     );
     map.geoObjects.add(clusterer);
-  }, [ymaps, markers]);
+  }, [ymaps, markers, contactsHref]);
 
   return (
     <div className={s.mapBox} style={{ height }}>

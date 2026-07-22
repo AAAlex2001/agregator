@@ -10,6 +10,7 @@ interface Props {
   items: ExpertMapItemApi[];
   height?: number | string;
   emptyText: string;
+  contactsHref?: string;
 }
 
 const NO_MATCH_TEXT = "По выбранным фильтрам экспертов не нашлось — снимите часть фильтров";
@@ -31,7 +32,12 @@ function toMarker(item: ExpertMapItemApi): MapMarker {
   };
 }
 
-export function FilterableExpertsMap({ items, height = "100%", emptyText }: Props) {
+export function FilterableExpertsMap({
+  items,
+  height = "100%",
+  emptyText,
+  contactsHref,
+}: Props) {
   const { areas, objects, availableAreas, availableObjects, toggleArea, toggleObject, filtered } = useExpertMapFilter(items);
   const noMatch = items.length > 0 && filtered.length === 0;
 
@@ -53,6 +59,7 @@ export function FilterableExpertsMap({ items, height = "100%", emptyText }: Prop
           markers={filtered.map(toMarker)}
           height={height}
           emptyText={noMatch ? NO_MATCH_TEXT : emptyText}
+          contactsHref={contactsHref}
         />
       </div>
 
