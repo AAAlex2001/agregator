@@ -12,6 +12,8 @@ export interface ChatListItemData {
   id: number;
   uuid: string;
   order_id: number | null;
+  labor_listing_id: number | null;
+  contact_deal_id: number | null;
   counterpart_id: number;
   counterpart_name: string;
   counterpart_avatar_url: string | null;

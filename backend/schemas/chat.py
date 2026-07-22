@@ -57,6 +57,8 @@ class ChatListItemResponse(BaseModel):
     id: int
     uuid: str
     order_id: int | None = None
+    labor_listing_id: int | None = None
+    contact_deal_id: int | None = None
     counterpart_id: int
     counterpart_name: str
     counterpart_avatar_url: str | None = None

@@ -43,6 +43,8 @@ class ListChatsUseCase:
             id=chat.id,
             uuid=str(chat.uuid),
             order_id=chat.order_id,
+            labor_listing_id=chat.labor_listing_id,
+            contact_deal_id=chat.contact_deal_id,
             counterpart_id=counterpart.id,
             counterpart_name=counterpart.display_name,
             counterpart_avatar_url=counterpart.avatar_url,

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
+import { useOptionalChatListContext } from "@/source/features/chat";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import Loader from "@/source/shared/ui/Loader";
 import ToolTip from "@/source/shared/ui/Tooltip";
@@ -11,6 +12,7 @@ import { ChevronIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import {
   getCabinetNav,
   getGuestCabinetNav,
+  type NavBadge,
   type NavItem,
   type NavPlate,
 } from "../model/navConfig";
@@ -18,7 +20,14 @@ import s from "./ExpertHelpPlates.module.scss";
 
 const GUEST_TOOLTIP = "Доступно после регистрации";
 
-function ItemRow({ item }: { item: NavItem }) {
+type BadgeCounts = Record<NavBadge, number>;
+
+function NavCountBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return <span className={s.navBadge}>{count > 99 ? "99+" : count}</span>;
+}
+
+function ItemRow({ item, badges }: { item: NavItem; badges: BadgeCounts }) {
   const inner = (
     <span className={s.itemRow}>
       {item.logoSrc && (
@@ -33,6 +42,7 @@ function ItemRow({ item }: { item: NavItem }) {
       <span className={s.itemCopy}>
         <span className={s.itemHead}>
           <span className={s.itemLabel}>{item.label}</span>
+          {item.badge && <NavCountBadge count={badges[item.badge]} />}
           {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
         </span>
         {item.description && <span className={s.itemDesc}>{item.description}</span>}
@@ -125,10 +135,12 @@ function LicenseList() {
 function PlateNode({
   plate,
   align,
+  badges,
   locked = false,
 }: {
   plate: NavPlate;
   align: "left" | "right";
+  badges: BadgeCounts;
   locked?: boolean;
 }) {
   if (locked) {
@@ -168,6 +180,7 @@ function PlateNode({
     <div className={`${s.plateWrap} ${s[plate.color]}`}>
       <button type="button" className={s.plate}>
         <span className={s.plateLabel}>{plate.label}</span>
+        {plate.badge && <NavCountBadge count={badges[plate.badge]} />}
         <ChevronIcon className={s.chevron} color="currentColor" />
       </button>
       <div className={`${s.dropdown} ${align === "right" ? s.dropRight : ""}`}>
@@ -180,7 +193,7 @@ function PlateNode({
                 item.regions ? (
                   <RegionsItem key={item.label} item={item} />
                 ) : (
-                  <ItemRow key={item.label} item={item} />
+                  <ItemRow key={item.label} item={item} badges={badges} />
                 ),
               )}
             </div>
@@ -193,6 +206,7 @@ function PlateNode({
 
 export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" }) {
   const { role } = useSession();
+  const chat = useOptionalChatListContext();
   const isGuestMode = mode === "guest";
 
   if (
@@ -204,6 +218,12 @@ export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" })
     return null;
   }
 
+  const dealsUnread = chat?.unreadForDeals ?? 0;
+  const badges: BadgeCounts = {
+    labor: (chat?.unreadForLabor ?? 0) + dealsUnread,
+    deals: dealsUnread,
+  };
+
   const plates = isGuestMode ? getGuestCabinetNav() : getCabinetNav(role);
   const leftPlates = plates.filter((p) => p.key !== "reviews");
   const reviewsPlate = plates.find((p) => p.key === "reviews");
@@ -212,12 +232,12 @@ export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" })
     <>
       <div className={s.plates}>
         {leftPlates.map((plate) => (
-          <PlateNode key={plate.key} plate={plate} align="left" locked={isGuestMode} />
+          <PlateNode key={plate.key} plate={plate} align="left" badges={badges} locked={isGuestMode} />
         ))}
       </div>
       {reviewsPlate && (
         <div className={s.platesRight}>
-          <PlateNode plate={reviewsPlate} align="right" locked={isGuestMode} />
+          <PlateNode plate={reviewsPlate} align="right" badges={badges} locked={isGuestMode} />
         </div>
       )}
     </>

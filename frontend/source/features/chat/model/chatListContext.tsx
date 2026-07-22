@@ -11,6 +11,9 @@ interface ChatListContextValue {
   refresh: () => Promise<void>;
   markChatAsRead: (chatUuid: string) => void;
   syncChatMessage: (chatUuid: string, message: ChatMessageData, currentUserId: number) => void;
+  unreadForLabor: number;
+  unreadForDeals: number;
+  unreadForDeal: (dealId: number) => number;
 }
 
 const ChatListContext = createContext<ChatListContextValue | null>(null);
@@ -89,8 +92,33 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
     });
   }
 
+  const unreadForLabor = chats.reduce(
+    (sum, chat) => (chat.labor_listing_id !== null ? sum + chat.unread_count : sum),
+    0,
+  );
+  const unreadForDeals = chats.reduce(
+    (sum, chat) => (chat.contact_deal_id !== null ? sum + chat.unread_count : sum),
+    0,
+  );
+  const unreadForDeal = (dealId: number) => chats.reduce(
+    (sum, chat) => (chat.contact_deal_id === dealId ? sum + chat.unread_count : sum),
+    0,
+  );
+
   return (
-    <ChatListContext.Provider value={{ chats, loading, error, refresh, markChatAsRead, syncChatMessage }}>
+    <ChatListContext.Provider
+      value={{
+        chats,
+        loading,
+        error,
+        refresh,
+        markChatAsRead,
+        syncChatMessage,
+        unreadForLabor,
+        unreadForDeals,
+        unreadForDeal,
+      }}
+    >
       {children}
     </ChatListContext.Provider>
   );

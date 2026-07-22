@@ -1,4 +1,5 @@
 import type { ContactDealListItem, ContactDealStatus } from "@/source/entities/expert-contact";
+import { useOptionalChatListContext } from "@/source/features/chat";
 import { Button, Title } from "@/source/shared/ui";
 import { formatDealDate } from "../lib/formatters";
 import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
@@ -14,6 +15,7 @@ interface ContactDealsListProps {
 const CLOSED_STATUSES: ContactDealStatus[] = ["CONTACTS_RELEASED", "CANCELED"];
 
 export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDealsListProps) {
+  const chat = useOptionalChatListContext();
   if (deals.length === 0) return null;
 
   return (
@@ -22,6 +24,7 @@ export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDea
       <div className={s.dealRows}>
         {deals.map((deal) => {
           const chatAvailable = !CLOSED_STATUSES.includes(deal.status);
+          const unread = chat?.unreadForDeal(deal.id) ?? 0;
           return (
             <article className={s.dealRow} key={deal.id}>
               <div>
@@ -40,6 +43,7 @@ export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDea
                     disabled={busy}
                   >
                     Открыть чат
+                    {unread > 0 && <span className={s.chatUnread}>{unread > 99 ? "99+" : unread}</span>}
                   </Button>
                 )}
                 <Button

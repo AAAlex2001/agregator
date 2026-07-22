@@ -9,6 +9,7 @@ import {
   LicenseHoldersDrawerProvider,
 } from "@/source/widgets/license-holders-drawer";
 import { UnreadCountProvider } from "@/source/features/notifications";
+import { ChatListProvider } from "@/source/features/chat";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
 import s from "./layout.module.scss";
 
@@ -30,16 +31,18 @@ export default async function AppLayout({
     <SessionProvider initialRole={initialRole}>
       <AuthGuard>
         <UnreadCountProvider>
-          <SidebarMobileProvider>
-            <LicenseHoldersDrawerProvider>
-              <div className={s.root}>
-                <AppShell>{children}</AppShell>
-              </div>
-              <CabinetMenuTabs />
-              <LicenseHoldersDrawer />
-              <NotificationsWelcomeModal />
-            </LicenseHoldersDrawerProvider>
-          </SidebarMobileProvider>
+          <ChatListProvider>
+            <SidebarMobileProvider>
+              <LicenseHoldersDrawerProvider>
+                <div className={s.root}>
+                  <AppShell>{children}</AppShell>
+                </div>
+                <CabinetMenuTabs />
+                <LicenseHoldersDrawer />
+                <NotificationsWelcomeModal />
+              </LicenseHoldersDrawerProvider>
+            </SidebarMobileProvider>
+          </ChatListProvider>
         </UnreadCountProvider>
       </AuthGuard>
     </SessionProvider>

@@ -12,6 +12,8 @@ export interface NavRegion {
   links: NavLink[];
 }
 
+export type NavBadge = "labor" | "deals";
+
 export interface NavItem {
   label: string;
   href?: string;
@@ -21,6 +23,7 @@ export interface NavItem {
   logoSrc?: string;
   logoAlt?: string;
   regions?: NavRegion[];
+  badge?: NavBadge;
 }
 
 export interface NavPlate {
@@ -32,6 +35,7 @@ export interface NavPlate {
   roles?: CabinetRole[];
   href?: string;
   logo?: boolean;
+  badge?: NavBadge;
 }
 
 function reviewItems(role: string | null): NavItem[] {
@@ -161,10 +165,12 @@ function createCabinetNav(role: string | null): NavPlate[] {
       label: "Трудовые ресурсы",
       color: "amber",
       roles: ["EXPERT", "CUSTOMER", "LICENSE_HOLDER"],
+      badge: "labor",
       items: [
         {
           label: "Контакты экспертов",
           href: expertContactsHref,
+          badge: "deals",
           description:
             "Каталог экспертов с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
         },

@@ -1,5 +1,5 @@
 export { openChatByOrder } from "@/source/entities/chat";
-export { ChatListProvider, useChatListContext } from "./model/chatListContext";
+export { ChatListProvider, useChatListContext, useOptionalChatListContext } from "./model/chatListContext";
 export { useChatThread } from "./model/useChatThread";
 export { ChatSidebar } from "./ui/ChatSidebar";
 export { ChatSidebarSkeleton } from "./ui/ChatSidebarSkeleton";
