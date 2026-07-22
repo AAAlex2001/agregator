@@ -16,11 +16,14 @@
   text-align: center;
 }
 
-.eyebrow {
-  color: var(--color-orange-accent);
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
+.partnerLogo {
+  width: 128px;
+  height: auto;
+  object-fit: contain;
+
+  @media (min-width: 768px) {
+    width: 148px;
+  }
 }
 
 .title,
@@ -150,14 +153,29 @@
 .programs {
   display: grid;
   gap: 10px;
+
+  .programButton {
+    width: 100%;
+    max-width: 100%;
+    min-height: 48px;
+    height: auto;
+    max-height: none;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    text-align: left;
+    white-space: normal;
+
+    > span:last-child {
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+  }
 }
 
-.programButton {
-  width: 100%;
-  min-height: 48px;
-  justify-content: space-between;
-  text-align: left;
-  white-space: normal;
+.programButtonLabel {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .contacts {

@@ -18,6 +18,8 @@ export interface NavItem {
   external?: boolean;
   soon?: boolean;
   description?: string;
+  logoSrc?: string;
+  logoAlt?: string;
   regions?: NavRegion[];
 }
 
@@ -134,11 +136,16 @@ function createCabinetNav(role: string | null): NavPlate[] {
           label: "Аттестация на дефектоскописта",
           href: "/training/defectoscopist-certification",
           description: "Подготовка, аттестация и сертификация специалистов неразрушающего контроля в ООО «АРЦ НК».",
+          logoSrc: "/ARC.png",
+          logoAlt: "ООО «АРЦ НК»",
         },
         {
-          label: 'Дополнительное профессиональное образование ООО "НПИ "Недрa"',
+          label: "Дополнительное профессиональное образование ООО «НПИ «Недра»",
           href: "https://nedra-npi.ru/svedeniya/obrazovanie",
           external: true,
+          description: "Повышение квалификации проектных специалистов и дополнительное профессиональное образование.",
+          logoSrc: "/npi-nedra-logo.svg",
+          logoAlt: "ООО «НПИ «Недра»",
         },
       ],
     },

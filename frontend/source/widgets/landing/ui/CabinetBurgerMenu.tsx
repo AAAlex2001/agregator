@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
@@ -9,13 +10,24 @@ import s from "./cabinet-burger.module.scss";
 
 function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
   const inner = (
-    <>
-      <span className={s.subHead}>
-        <span className={s.subLabel}>{item.label}</span>
-        {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+    <span className={s.subRow}>
+      {item.logoSrc && (
+        <Image
+          src={item.logoSrc}
+          alt={item.logoAlt ?? ""}
+          width={90}
+          height={55}
+          className={s.subLogo}
+        />
+      )}
+      <span className={s.subCopy}>
+        <span className={s.subHead}>
+          <span className={s.subLabel}>{item.label}</span>
+          {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+        </span>
+        {item.description && <span className={s.subDesc}>{item.description}</span>}
       </span>
-      {item.description && <span className={s.subDesc}>{item.description}</span>}
-    </>
+    </span>
   );
 
   if (item.soon || !item.href) {

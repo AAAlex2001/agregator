@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
@@ -19,13 +20,24 @@ const GUEST_TOOLTIP = "Доступно после регистрации";
 
 function ItemRow({ item }: { item: NavItem }) {
   const inner = (
-    <>
-      <span className={s.itemHead}>
-        <span className={s.itemLabel}>{item.label}</span>
-        {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+    <span className={s.itemRow}>
+      {item.logoSrc && (
+        <Image
+          src={item.logoSrc}
+          alt={item.logoAlt ?? ""}
+          width={90}
+          height={55}
+          className={s.itemLogo}
+        />
+      )}
+      <span className={s.itemCopy}>
+        <span className={s.itemHead}>
+          <span className={s.itemLabel}>{item.label}</span>
+          {item.soon && <span className={s.soon}>в&nbsp;процессе</span>}
+        </span>
+        {item.description && <span className={s.itemDesc}>{item.description}</span>}
       </span>
-      {item.description && <span className={s.itemDesc}>{item.description}</span>}
-    </>
+    </span>
   );
 
   if (item.soon || !item.href) {

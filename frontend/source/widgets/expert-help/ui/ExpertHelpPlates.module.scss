@@ -176,6 +176,28 @@
   }
 }
 
+.itemRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.itemLogo {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.itemCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
 .itemMuted {
   cursor: default;
 

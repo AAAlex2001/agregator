@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Button, DocToc, Subtitle, Title } from "@/source/shared/ui";
 import {
@@ -32,7 +33,14 @@ export function DefectoscopistCertificationWidget() {
       />
 
       <header className={s.head}>
-        <span className={s.eyebrow}>Учебный центр</span>
+        <Image
+          src="/ARC.png"
+          alt="ООО «АРЦ НК»"
+          width={160}
+          height={105}
+          className={s.partnerLogo}
+          priority
+        />
         <Title as="h1" text="Аттестация и обучение дефектоскопистов" className={s.title} />
         <Subtitle
           text="Подготовка, аттестация и сертификация специалистов неразрушающего контроля на базе ООО «АРЦ НК»"
@@ -101,7 +109,7 @@ export function DefectoscopistCertificationWidget() {
                   showArrow
                   className={s.programButton}
                 >
-                  {link.label}
+                  <span className={s.programButtonLabel}>{link.label}</span>
                 </Button>
               ))}
             </div>
