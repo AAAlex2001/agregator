@@ -26,6 +26,8 @@ function toMarker(item: ExpertMapItemApi): MapMarker {
     certificates: item.certificates,
     phone: item.phone,
     email: item.email,
+    contactsPaid: item.contacts_paid,
+    contactPriceRubles: item.contact_price_rubles,
   };
 }
 

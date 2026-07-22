@@ -5,6 +5,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.contact_deal import build_contact_cipher
 from dependencies.rate_limit import rate_limit
 from schemas.common import DetailResponse
 from schemas.registration import (
@@ -73,7 +74,8 @@ async def register_user(
 ) -> UserResponse:
     "Регистрирует обычного пользователя и отправляет письмо подтверждения почты."
     repo = build_repo(db)
-    user = await RegisterUserUseCase(repo, build_validator(repo)).execute(data)
+    cipher = build_contact_cipher() if data.contact_sales_enabled else None
+    user = await RegisterUserUseCase(repo, build_validator(repo), cipher).execute(data)
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
     return UserResponse.model_validate(user)
 

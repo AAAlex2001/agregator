@@ -46,6 +46,8 @@ class ExpertMapItem(BaseModel):
     certificate_codes: list[str] = Field(default_factory=list)
     phone: str | None = None
     email: str | None = None
+    contacts_paid: bool = False
+    contact_price_rubles: int | None = None
 
 
 class ExpertMapResponse(BaseModel):

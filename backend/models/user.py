@@ -24,6 +24,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
 
+CONTACT_DISCLOSURE_CONSENT_VERSION = "2026-07-21"
+
 if TYPE_CHECKING:
     from models.chat import Chat, ChatMessage
     from models.notification import Notification

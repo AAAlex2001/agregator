@@ -9,6 +9,8 @@ export interface MapMarker {
   certificates?: string[] | null;
   phone?: string | null;
   email?: string | null;
+  contactsPaid?: boolean;
+  contactPriceRubles?: number | null;
 }
 
 export interface SelectedLocation {

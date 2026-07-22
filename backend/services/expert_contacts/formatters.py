@@ -64,8 +64,16 @@ def to_expert_contact(
         certificates=expert.expert_certificates or [],
         rating=float(expert.rating) if expert.rating is not None else None,
         review_count=expert.review_count,
-        masked_phone=mask_phone(expert.phone),
-        masked_email=mask_email(expert.email),
+        masked_phone=(
+            "Телефон доступен после оплаты"
+            if expert.contact_sales_enabled and not released and not is_mine
+            else mask_phone(expert.phone)
+        ),
+        masked_email=(
+            "Email доступен после оплаты"
+            if expert.contact_sales_enabled and not released and not is_mine
+            else mask_email(expert.email)
+        ),
         phone=contacts.get("phone"),
         email=contacts.get("email"),
         sales_enabled=expert.contact_sales_enabled,

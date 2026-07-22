@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from routes.contact_deal import build_contact_cipher
+from dependencies.contact_deal import build_contact_cipher
 from schemas.expert_contact import (
     ExpertContactListResponse,
     ExpertContactOfferResponse,

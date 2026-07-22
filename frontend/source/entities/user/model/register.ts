@@ -20,6 +20,10 @@ export interface RegisterApiPayload {
   expert_certificates?: ExpertCertificate[] | null;
   expert_show_on_map?: boolean;
   expert_map_fields?: string[] | null;
+  contact_sales_enabled?: boolean;
+  contact_price_rubles?: number;
+  contact_payment_details?: string;
+  contact_disclosure_consent?: boolean;
 }
 
 export interface RegisterResponse {

@@ -78,6 +78,8 @@ class ExpertLocationRow:
     certificate_codes: list[str]
     phone: str | None
     email: str | None
+    contacts_paid: bool
+    contact_price_rubles: int | None
 
 
 class ExpertsRepository:
@@ -204,12 +206,14 @@ class ExpertsRepository:
 
         fields = user.expert_map_fields if user.expert_map_fields is not None else list(DEFAULT_MAP_FIELDS)
         show_name = "name" in fields
-        show_contacts = "contacts" in fields
+        contacts_paid = bool(user.contact_sales_enabled)
+        show_contacts = "contacts" in fields and not contacts_paid
+        certificate_fields = ["area", "object", "category"] if contacts_paid else fields
 
         certificates = []
         certificate_codes = []
         for cert in user.expert_certificates or []:
-            text = format_cert_for_map(cert, fields)
+            text = format_cert_for_map(cert, certificate_fields)
             if text:
                 certificates.append(text)
             if cert.get("area") and cert.get("object"):
@@ -228,6 +232,12 @@ class ExpertsRepository:
             certificate_codes=certificate_codes,
             phone=user.phone if show_contacts else None,
             email=user.email if show_contacts else None,
+            contacts_paid=contacts_paid,
+            contact_price_rubles=(
+                user.contact_price_kopecks // 100
+                if contacts_paid and user.contact_price_kopecks is not None
+                else None
+            ),
         )
 
     async def get_expert_id_by_public_id(self, public_id: str) -> int | None:

@@ -65,6 +65,10 @@ export const registerFormSchema = z
     ),
     showOnMap: z.boolean(),
     mapFields: z.array(z.string()),
+    contactSalesEnabled: z.boolean(),
+    contactPriceRubles: z.string().trim(),
+    contactPaymentDetails: z.string().trim().max(1000),
+    contactDisclosureConsent: z.boolean(),
   })
   .superRefine((data, ctx) => {
     if (!data.repeatPassword) {
@@ -87,6 +91,30 @@ export const registerFormSchema = z
       }
       if (!data.lastName) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["lastName"], message: "Укажите фамилию" });
+      }
+      if (data.contactSalesEnabled) {
+        const price = Number(data.contactPriceRubles.replace(/\s/g, ""));
+        if (!Number.isInteger(price) || price < 1 || price > 1_000_000) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["contactPriceRubles"],
+            message: "Укажите стоимость от 1 до 1 000 000 ₽",
+          });
+        }
+        if (!data.contactPaymentDetails) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["contactPaymentDetails"],
+            message: "Укажите реквизиты для прямого перевода",
+          });
+        }
+        if (!data.contactDisclosureConsent) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["contactDisclosureConsent"],
+            message: "Подтвердите согласие на передачу контактов после оплаты",
+          });
+        }
       }
     }
 
@@ -194,6 +222,10 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   expertCertificates: [],
   showOnMap: true,
   mapFields: ["name", "area", "object", "category"],
+  contactSalesEnabled: false,
+  contactPriceRubles: "",
+  contactPaymentDetails: "",
+  contactDisclosureConsent: false,
 };
 
 export const registerConfirmSchema = z.object({

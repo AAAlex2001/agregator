@@ -44,11 +44,29 @@ class UserRegistration(BaseModel):
     expert_map_fields: list[str] | None = Field(
         None, description="Какие поля показывать на карте: name/object/area/category/contacts"
     )
+    contact_sales_enabled: bool = False
+    contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
+    contact_payment_details: str | None = Field(None, max_length=1000)
+    contact_disclosure_consent: bool = False
 
     @field_validator("company_data", mode="before")
     @classmethod
     def _validate_company_data(cls, value: Any) -> Any:
         return validate_company_data(value)
+
+    @model_validator(mode="after")
+    def validate_contact_offer(self) -> "UserRegistration":
+        if not self.contact_sales_enabled:
+            return self
+        if self.role is not UserRole.EXPERT:
+            raise ValueError("Платный доступ к контактам доступен только эксперту")
+        if self.contact_price_rubles is None:
+            raise ValueError("Укажите стоимость доступа к контактам")
+        if not (self.contact_payment_details or "").strip():
+            raise ValueError("Укажите реквизиты для прямого перевода")
+        if not self.contact_disclosure_consent:
+            raise ValueError("Подтвердите согласие на передачу контактов после оплаты")
+        return self
 
 
 class LicenseHolderRegistration(BaseModel):

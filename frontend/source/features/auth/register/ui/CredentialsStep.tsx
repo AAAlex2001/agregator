@@ -1,16 +1,17 @@
+import { useRef } from "react";
 import Link from "next/link";
 import type { UseFormReturn } from "react-hook-form";
+import { ExpertContactOfferFields } from "@/source/entities/expert-contact";
+import { TypesPicker, type ExpertiseType } from "@/source/entities/expertise";
 import Button from "@/source/shared/ui/Button";
 import { TextInput, EmailInput, PhoneInput, PasswordInput } from "@/source/shared/ui/Inputs";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import { Checkbox } from "@/source/shared/ui";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
-import { TypesPicker, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, RentalPriceField } from "@/source/shared/ui";
 import { YandexAddressPicker } from "@/source/shared/ui/YandexMap";
 import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
-import { useRef } from "react";
 import type { RegisterFormValues } from "../model/schema";
 import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
 import { ExpertAttestationBlock } from "./ExpertAttestationBlock";
@@ -290,6 +291,25 @@ export function CredentialsStep({
           />
           {!isLicenseHolder && <p className={s.contactHint}>Номер телефона необязателен</p>}
         </div>
+
+        {isExpert && (
+          <div className={s.fullRow}>
+            <ExpertContactOfferFields
+              idPrefix="registration"
+              enabled={watch("contactSalesEnabled")}
+              price={watch("contactPriceRubles")}
+              paymentDetails={watch("contactPaymentDetails")}
+              consent={watch("contactDisclosureConsent")}
+              priceError={errors.contactPriceRubles?.message}
+              paymentDetailsError={errors.contactPaymentDetails?.message}
+              consentError={errors.contactDisclosureConsent?.message}
+              onEnabledChange={(value) => setValue("contactSalesEnabled", value, { shouldValidate })}
+              onPriceChange={(value) => setValue("contactPriceRubles", value, { shouldValidate })}
+              onPaymentDetailsChange={(value) => setValue("contactPaymentDetails", value, { shouldValidate })}
+              onConsentChange={(value) => setValue("contactDisclosureConsent", value, { shouldValidate })}
+            />
+          </div>
+        )}
 
         <PasswordInput
           id="password"

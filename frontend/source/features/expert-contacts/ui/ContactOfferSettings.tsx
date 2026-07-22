@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import type { ExpertContactOfferData } from "@/source/entities/expert-contact";
-import { Button, Checkbox, TextInput, Title, Subtitle } from "@/source/shared/ui";
+import {
+  ExpertContactOfferFields,
+  type ExpertContactOfferData,
+} from "@/source/entities/expert-contact";
+import { Button } from "@/source/shared/ui";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import s from "./ContactOfferSettings.module.scss";
 
@@ -45,51 +48,18 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
 
   return (
     <section className={s.offerSection} aria-label="Продажа ваших контактов">
-      <div className={s.offerIntro}>
-        <div>
-          <Title text="Продажа ваших контактов" as="h2" className={s.sectionTitle} />
-          <Subtitle
-            text="Укажите стоимость и реквизиты прямого перевода. Деньги поступают сразу вам"
-            className={s.sectionSubtitle}
-          />
-        </div>
-        <Checkbox id="contact-sales-enabled" checked={enabled} onChange={setEnabled}>
-          {enabled ? "Доступ включён" : "Доступ выключен"}
-        </Checkbox>
-      </div>
-
       <form className={s.offerForm} onSubmit={submit}>
-        {enabled && (
-          <div className={s.offerFields}>
-            <label className={s.fieldGroup}>
-              <span>Стоимость доступа, ₽</span>
-              <TextInput
-                inputMode="numeric"
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
-                required
-              />
-            </label>
-            <label className={`${s.fieldGroup} ${s.paymentField}`}>
-              <span>Реквизиты прямой оплаты</span>
-              <textarea
-                value={paymentDetails}
-                onChange={(event) => setPaymentDetails(event.target.value)}
-                placeholder="Например: перевод по СБП на номер +7..."
-                maxLength={1000}
-              />
-            </label>
-            <div className={s.consentRow}>
-              <Checkbox
-                id="contact-disclosure-consent"
-                checked={consent}
-                onChange={setConsent}
-              >
-                Согласен передать телефон и email покупателю после подтверждения оплаты
-              </Checkbox>
-            </div>
-          </div>
-        )}
+        <ExpertContactOfferFields
+          idPrefix="contacts-page"
+          enabled={enabled}
+          price={price}
+          paymentDetails={paymentDetails}
+          consent={consent}
+          onEnabledChange={setEnabled}
+          onPriceChange={setPrice}
+          onPaymentDetailsChange={setPaymentDetails}
+          onConsentChange={setConsent}
+        />
         <div className={s.offerActions}>
           <Button
             type="submit"

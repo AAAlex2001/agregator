@@ -31,6 +31,14 @@ function balloonBody(marker: MapMarker): string {
   }
   if (marker.phone) rows.push(balloonRow("Телефон", marker.phone));
   if (marker.email) rows.push(balloonRow("Email", marker.email));
+  if (marker.contactsPaid) {
+    const price = marker.contactPriceRubles?.toLocaleString("ru-RU");
+    rows.push(
+      `<div style="margin-top:8px;padding:8px;border-radius:6px;background:#fff3e0;color:#9a4d00;font-weight:600">` +
+        `Контактные данные доступны только после оплаты${price ? ` по тарифу эксперта: ${price} ₽` : ""}.` +
+      `</div>`,
+    );
+  }
 
   return [head, ...rows].filter(Boolean).join("");
 }

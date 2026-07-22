@@ -23,6 +23,7 @@ const SIDEBAR_ROUTES = [
   /^\/labor(?:\/.*)?$/,
   /^\/responses$/,
   /^\/tech-expert$/,
+  /^\/training(?:\/.*)?$/,
   /^\/zepb-registry$/,
   /^\/settings$/,
   /^\/chat(?:\/.*)?$/,

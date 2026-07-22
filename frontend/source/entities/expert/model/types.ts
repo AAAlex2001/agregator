@@ -47,6 +47,8 @@ export interface ExpertMapItemApi {
   certificate_codes: string[];
   phone: string | null;
   email: string | null;
+  contacts_paid: boolean;
+  contact_price_rubles: number | null;
 }
 
 export interface ExpertMapApi {

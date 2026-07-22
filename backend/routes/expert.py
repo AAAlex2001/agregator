@@ -97,6 +97,8 @@ async def list_experts_map(
                 certificate_codes=row.certificate_codes,
                 phone=row.phone,
                 email=row.email,
+                contacts_paid=row.contacts_paid,
+                contact_price_rubles=row.contact_price_rubles,
             )
             for row in rows
         ]

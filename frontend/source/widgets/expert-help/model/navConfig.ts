@@ -92,6 +92,8 @@ const VERIFICATION_REGIONS: NavRegion[] = [
 ];
 
 function usefulItems(role: string | null): NavItem[] {
+  const registryHref = role ? "/landing/zepb-registry" : "/zepb-registry";
+
   if (role === "CUSTOMER") {
     return [
       { label: "Реестр экспертов Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
@@ -100,7 +102,7 @@ function usefulItems(role: string | null): NavItem[] {
   }
   return [
     { label: "Реестр экспертов Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
-    { label: "Реестр заключений ЭПБ", href: "/zepb-registry" },
+    { label: "Реестр заключений ЭПБ", href: registryHref },
     { label: "Сервис проверки подлинности протоколов ИС ЕПТ", href: "https://qr.gosnadzor.ru/prombez", external: true },
     { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
     { label: "Поверка приборов", regions: VERIFICATION_REGIONS },
@@ -126,7 +128,11 @@ function createCabinetNav(role: string | null): NavPlate[] {
       roles: ["EXPERT", "LICENSE_HOLDER"],
       items: [
         { label: "Подготовка к аттестации на эксперта", soon: true },
-        { label: "Аттестация на дефектоскописта", soon: true },
+        {
+          label: "Аттестация на дефектоскописта",
+          href: "/training/defectoscopist-certification",
+          description: "Подготовка, аттестация и сертификация специалистов неразрушающего контроля в ООО «АРЦ НК».",
+        },
         {
           label: 'Дополнительное профессиональное образование ООО "НПИ "Недрa"',
           href: "https://nedra-npi.ru/svedeniya/obrazovanie",
@@ -148,6 +154,12 @@ function createCabinetNav(role: string | null): NavPlate[] {
       roles: ["EXPERT", "CUSTOMER", "LICENSE_HOLDER"],
       items: [
         {
+          label: "Контакты экспертов",
+          href: "/expert-contacts",
+          description:
+            "Каталог экспертов с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
+        },
+        {
           label: "Поиск эксперта в штат — для держателя лицензии",
           href: "/labor/expert-search",
           description:
@@ -158,12 +170,6 @@ function createCabinetNav(role: string | null): NavPlate[] {
           href: "/labor/employment",
           description:
             "Объявление эксперта о готовности устроиться по трудовому договору на постоянной основе или на определённый срок. Укажите область аттестации, категорию и регион.",
-        },
-        {
-          label: "Контакты экспертов",
-          href: "/expert-contacts",
-          description:
-            "Каталог экспертов с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
         },
       ],
     },

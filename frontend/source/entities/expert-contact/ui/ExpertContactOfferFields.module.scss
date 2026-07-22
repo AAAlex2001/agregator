@@ -1,0 +1,96 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title,
+.subtitle {
+  margin: 0;
+  text-align: left;
+}
+
+.title {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 600px;
+  color: #1a1a1a;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 47px;
+  padding: 13px 16px;
+  resize: vertical;
+  border: 2px solid #e6e6e6;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: 14px/1.4 "Montserrat", sans-serif;
+}
+
+.field textarea:hover { border-color: #ffdda9; }
+.field textarea:focus { border-color: #ffb800; outline: none; }
+.field textarea[aria-invalid="true"] { border-color: #e64646; }
+.field textarea::placeholder { color: #808080; }
+
+.warning {
+  max-width: 600px;
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid #ff8a00;
+  background: #fff8ed;
+  color: #9a4d00;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.error {
+  color: #e64646;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .intro {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+}

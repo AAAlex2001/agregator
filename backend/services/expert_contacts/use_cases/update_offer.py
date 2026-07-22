@@ -2,13 +2,11 @@ from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
+from models.user import CONTACT_DISCLOSURE_CONSENT_VERSION
 from schemas.expert_contact import ExpertContactOfferResponse, ExpertContactOfferUpdate
 from services.contact_deals.crypto import ContactDealCipher
 from services.expert_contacts.formatters import to_offer
 from services.expert_contacts.repository import ExpertContactRepository
-
-CONTACT_CONSENT_VERSION = "2026-07-21"
-
 
 class UpdateExpertContactOfferUseCase:
     def __init__(
@@ -52,6 +50,6 @@ class UpdateExpertContactOfferUseCase:
         if payment_details:
             expert.contact_payment_details_encrypted = self.cipher.encrypt_text(payment_details)
         expert.contact_disclosure_consent_at = datetime.now(UTC)
-        expert.contact_disclosure_consent_version = CONTACT_CONSENT_VERSION
+        expert.contact_disclosure_consent_version = CONTACT_DISCLOSURE_CONSENT_VERSION
         await self.repository.flush()
         return to_offer(expert, self.cipher)

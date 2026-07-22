@@ -24,6 +24,10 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
       expert_certificates: payload.expert_certificates,
       expert_show_on_map: payload.expert_show_on_map,
       expert_map_fields: payload.expert_map_fields,
+      contact_sales_enabled: payload.contact_sales_enabled,
+      contact_price_rubles: payload.contact_price_rubles,
+      contact_payment_details: payload.contact_payment_details,
+      contact_disclosure_consent: payload.contact_disclosure_consent,
     },
   });
   if (result === null) throw new Error("Empty response");

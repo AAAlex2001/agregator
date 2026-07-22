@@ -30,6 +30,17 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayloa
       role === "EXPERT" && values.expertConfirmed ? values.showOnMap : undefined,
     expert_map_fields:
       role === "EXPERT" && values.expertConfirmed ? values.mapFields : undefined,
+    contact_sales_enabled: role === "EXPERT" ? values.contactSalesEnabled : undefined,
+    contact_price_rubles:
+      role === "EXPERT" && values.contactSalesEnabled
+        ? Number(values.contactPriceRubles.replace(/\s/g, ""))
+        : undefined,
+    contact_payment_details:
+      role === "EXPERT" && values.contactSalesEnabled
+        ? values.contactPaymentDetails.trim()
+        : undefined,
+    contact_disclosure_consent:
+      role === "EXPERT" ? values.contactDisclosureConsent : undefined,
   };
 }
 

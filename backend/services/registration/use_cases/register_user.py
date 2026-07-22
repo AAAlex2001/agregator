@@ -1,6 +1,9 @@
 "Use case: register user."
-from models.user import User, UserRole
+from datetime import UTC, datetime
+
+from models.user import CONTACT_DISCLOSURE_CONSENT_VERSION, User, UserRole
 from schemas.registration import UserRegistration
+from services.contact_deals.crypto import ContactDealCipher
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
@@ -10,9 +13,15 @@ from utils.passwords import hash_password
 class RegisterUserUseCase:
     "Создаёт обычного юзера (CUSTOMER/EXPERT) с email_verified=False."
 
-    def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator) -> None:
+    def __init__(
+        self,
+        repo: RegistrationRepository,
+        validator: RegistrationValidator,
+        cipher: ContactDealCipher | None = None,
+    ) -> None:
         self.repo = repo
         self.validator = validator
+        self.cipher = cipher
 
     async def execute(self, data: UserRegistration) -> User:
         "Запускает основной сценарий use case."
@@ -48,5 +57,15 @@ class RegisterUserUseCase:
             user.expert_map_fields = data.expert_map_fields
             if data.expert_certificates is not None:
                 user.expert_certificates = [cert.model_dump() for cert in data.expert_certificates]
+            if data.contact_sales_enabled:
+                if self.cipher is None:
+                    raise RuntimeError("Contact deal cipher is required")
+                user.contact_sales_enabled = True
+                user.contact_price_kopecks = (data.contact_price_rubles or 0) * 100
+                user.contact_payment_details_encrypted = self.cipher.encrypt_text(
+                    (data.contact_payment_details or "").strip()
+                )
+                user.contact_disclosure_consent_at = datetime.now(UTC)
+                user.contact_disclosure_consent_version = CONTACT_DISCLOSURE_CONSENT_VERSION
         await self.repo.add(user)
         return user
