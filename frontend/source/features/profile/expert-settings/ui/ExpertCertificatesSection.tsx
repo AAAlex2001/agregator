@@ -7,6 +7,7 @@ import { ExpertAttestationFields, type ExpertCertificate } from "@/source/entiti
 import { updateExpertCertificates } from "@/source/entities/user/api/profile.api";
 import type { UserProfile } from "@/source/entities/user";
 import form from "@/source/entities/user/ui/ProfileForm.module.scss";
+import { ExpertContactOfferSection } from "./ExpertContactOfferSection";
 import s from "./ExpertLocationSection.module.scss";
 
 interface Props {
@@ -56,6 +57,7 @@ export function ExpertCertificatesSection({ profile, onProfileUpdate }: Props) {
           onChangeShowOnMap={setShowOnMap}
           onChangeMapFields={setMapFields}
         />
+        <ExpertContactOfferSection />
         <div className={s.actions}>
           <Button type="button" variant="primary" fullWidth onClick={save} isLoading={saving}>
             Сохранить удостоверения
