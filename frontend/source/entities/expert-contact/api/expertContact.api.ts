@@ -124,3 +124,12 @@ export async function rejectContactPayment(
 export function contactContractUrl(id: number): string {
   return `${API_URL}/contact-deals/${id}/contract.pdf`;
 }
+
+export async function openDealChat(dealId: number): Promise<string> {
+  const response = await fetchWithSession(`${API_URL}/chats/deal/${dealId}/open`, {
+    method: "POST",
+  });
+  await ensureResponse(response, "Не удалось открыть чат по сделке");
+  const data = await response.json() as { uuid: string };
+  return data.uuid;
+}

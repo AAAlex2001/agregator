@@ -5,6 +5,7 @@ import { ExpertCardSkeleton } from "@/source/entities/expert";
 import { TextInput, Title, Subtitle, Tabs } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
+import { ChatModal } from "@/source/widgets/chat";
 import type { ContactAccessFilter } from "../model/types";
 import { useExpertContacts } from "../model/useExpertContacts";
 import { ContactDealModal } from "./ContactDealModal";
@@ -58,6 +59,7 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         deals={contacts.deals}
         busy={contacts.busy}
         onOpen={(id) => void contacts.openDeal(id)}
+        onOpenChat={(id) => void contacts.openDealChat(id)}
       />
 
       {contacts.error && <p className={s.error}>{contacts.error}</p>}
@@ -136,6 +138,12 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         onUploadReceipt={contacts.uploadReceipt}
         onConfirmPayment={contacts.confirmPayment}
         onRejectPayment={contacts.rejectPayment}
+      />
+
+      <ChatModal
+        chatUuid={contacts.dealChatUuid}
+        open={contacts.dealChatUuid !== null}
+        onClose={contacts.closeDealChat}
       />
     </main>
   );

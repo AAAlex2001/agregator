@@ -37,6 +37,13 @@
   line-height: 16px;
 }
 
+.dealRow .dealActions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 @media (min-width: 768px) {
   .dealRow {
     grid-template-columns: minmax(220px, 1fr) minmax(180px, auto) auto;

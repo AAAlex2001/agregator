@@ -1,4 +1,4 @@
-import type { ContactDealListItem } from "@/source/entities/expert-contact";
+import type { ContactDealListItem, ContactDealStatus } from "@/source/entities/expert-contact";
 import { Button, Title } from "@/source/shared/ui";
 import { formatDealDate } from "../lib/formatters";
 import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
@@ -8,34 +8,52 @@ interface ContactDealsListProps {
   deals: ContactDealListItem[];
   busy: boolean;
   onOpen: (id: number) => void;
+  onOpenChat: (id: number) => void;
 }
 
-export function ContactDealsList({ deals, busy, onOpen }: ContactDealsListProps) {
+const CLOSED_STATUSES: ContactDealStatus[] = ["CONTACTS_RELEASED", "CANCELED"];
+
+export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDealsListProps) {
   if (deals.length === 0) return null;
 
   return (
     <section className={s.dealsSection} aria-label="Мои сделки">
       <Title text="Мои сделки" as="h2" className={s.sectionTitle} />
       <div className={s.dealRows}>
-        {deals.map((deal) => (
-          <article className={s.dealRow} key={deal.id}>
-            <div>
-              <strong>
-                {deal.actor_party === "SELLER" ? deal.buyer_name : deal.seller_name}
-              </strong>
-              <span>{formatDealDate(deal.created_at)} · {deal.price_rubles.toLocaleString("ru-RU")} ₽</span>
-            </div>
-            <ContactDealStatusBadge status={deal.status} actorParty={deal.actor_party} />
-            <Button
-              variant="outlineOrange"
-              size="sm"
-              onClick={() => onOpen(deal.id)}
-              disabled={busy}
-            >
-              Открыть
-            </Button>
-          </article>
-        ))}
+        {deals.map((deal) => {
+          const chatAvailable = !CLOSED_STATUSES.includes(deal.status);
+          return (
+            <article className={s.dealRow} key={deal.id}>
+              <div>
+                <strong>
+                  {deal.actor_party === "SELLER" ? deal.buyer_name : deal.seller_name}
+                </strong>
+                <span>{formatDealDate(deal.created_at)} · {deal.price_rubles.toLocaleString("ru-RU")} ₽</span>
+              </div>
+              <ContactDealStatusBadge status={deal.status} actorParty={deal.actor_party} />
+              <div className={s.dealActions}>
+                {chatAvailable && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onOpenChat(deal.id)}
+                    disabled={busy}
+                  >
+                    Открыть чат
+                  </Button>
+                )}
+                <Button
+                  variant="outlineOrange"
+                  size="sm"
+                  onClick={() => onOpen(deal.id)}
+                  disabled={busy}
+                >
+                  Открыть
+                </Button>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

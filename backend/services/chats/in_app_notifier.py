@@ -48,4 +48,6 @@ class ChatInAppNotifier:
                 if chat.labor_listing.kind.value == "EXPERT_WANTED"
                 else "Готов к трудовому договору"
             )
+        if chat.contact_deal_id is not None:
+            return "Доступ к контактам эксперта"
         return f"Заказ #{chat.order_id}"

@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { EditResponseModalContainer, useResponses, WithdrawResponseModalContainer } from "@/source/features/responses";
-import { ChatModal } from "@/source/widgets/chat";
 import { ResponsesList } from "./ResponsesList";
 
 export function ExpertResponsesWidget() {
   const { showSuccess } = useNotifications();
-  const [chatUuid, setChatUuid] = useState<string | null>(null);
-  const model = useResponses("expert", setChatUuid);
+  const model = useResponses("expert");
 
   const actionHandlers = {
     onWithdraw: model.onWithdraw,
@@ -47,12 +44,6 @@ export function ExpertResponsesWidget() {
         onCancel={model.closeWithdraw}
         onConfirm={model.onWithdrawConfirm}
         isLoading={model.withdrawTarget ? model.actionLoading[model.withdrawTarget.id] === "withdraw" : false}
-      />
-
-      <ChatModal
-        chatUuid={chatUuid}
-        open={chatUuid !== null}
-        onClose={() => setChatUuid(null)}
       />
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   confirmContactPayment,
@@ -9,6 +9,7 @@ import {
   fetchContactDeals,
   fetchContactOffer,
   fetchExpertContacts,
+  openDealChat as openDealChatApi,
   rejectContactPayment,
   signContactDeal,
   updateContactOffer,
@@ -28,6 +29,7 @@ export function useExpertContacts(targetExpertId?: string) {
     expertContactsReducer,
     initialExpertContactsState,
   );
+  const [dealChatUuid, setDealChatUuid] = useState<string | null>(null);
 
   const loadInitialData = async () => {
     dispatch({ type: "LOADING", value: true });
@@ -94,6 +96,21 @@ export function useExpertContacts(targetExpertId?: string) {
     await runDealAction(() => fetchContactDeal(id));
   };
 
+  const openDealChat = async (dealId: number) => {
+    dispatch({ type: "BUSY", value: true });
+    dispatch({ type: "ERROR", value: null });
+    try {
+      setDealChatUuid(await openDealChatApi(dealId));
+    } catch (reason) {
+      dispatch({
+        type: "ERROR",
+        value: reason instanceof Error ? reason.message : "Не удалось открыть чат",
+      });
+    } finally {
+      dispatch({ type: "BUSY", value: false });
+    }
+  };
+
   const normalizedSearch = state.search.trim().toLocaleLowerCase("ru-RU");
   let visibleExperts = state.experts.filter((expert) => {
     const matchesSearch = !normalizedSearch
@@ -136,6 +153,9 @@ export function useExpertContacts(targetExpertId?: string) {
     accessCounts,
     openExpert,
     openDeal,
+    dealChatUuid,
+    openDealChat,
+    closeDealChat: () => setDealChatUuid(null),
     closeDeal: () => dispatch({ type: "SELECT_DEAL", value: null }),
     saveOffer: async (payload: Parameters<typeof updateContactOffer>[0]) => {
       dispatch({ type: "BUSY", value: true });

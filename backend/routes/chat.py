@@ -1,9 +1,22 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from models.chat import Chat
+from models.contact_deal import ContactAccessDeal
 from schemas.chat import (
     ChatDetailResponse,
     ChatListResponse,
@@ -118,6 +131,37 @@ async def open_chat(
     chat = await open_use_case.execute(
         actor_id=user_id, order_id=payload.order_id, expert_id=payload.expert_id
     )
+    return await detail_use_case.execute(chat_id=chat.id, actor_id=user_id, limit=200)
+
+
+@router.post("/deal/{deal_id}/open", response_model=ChatDetailResponse)
+async def open_deal_chat(
+    deal_id: int,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> ChatDetailResponse:
+    "Открывает (или возвращает) чат по сделке доступа к контактам. Участники — покупатель и продавец."
+    deal = (
+        await db.execute(select(ContactAccessDeal).where(ContactAccessDeal.id == deal_id))
+    ).scalars().first()
+    if deal is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сделка не найдена")
+    if user_id not in {deal.buyer_id, deal.seller_id}:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет доступа к этой сделке")
+
+    chat = (
+        await db.execute(select(Chat).where(Chat.contact_deal_id == deal.id))
+    ).scalars().first()
+    if chat is None:
+        chat = Chat(
+            contact_deal_id=deal.id,
+            customer_id=deal.buyer_id,
+            expert_id=deal.seller_id,
+        )
+        db.add(chat)
+        await db.flush()
+
+    detail_use_case = GetChatDetailUseCase(build_repo(db), ChatValidator(build_repo(db)))
     return await detail_use_case.execute(chat_id=chat.id, actor_id=user_id, limit=200)
 
 

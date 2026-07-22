@@ -42,6 +42,7 @@ class ChatRepository:
             .options(
                 selectinload(Chat.order),
                 selectinload(Chat.labor_listing),
+                selectinload(Chat.contact_deal),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )
@@ -61,6 +62,7 @@ class ChatRepository:
             .options(
                 selectinload(Chat.order),
                 selectinload(Chat.labor_listing),
+                selectinload(Chat.contact_deal),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )

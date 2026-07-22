@@ -45,6 +45,7 @@ class GetChatDetailUseCase:
         "Строит объект из входных данных."
         counterpart = ChatFormatter.counterpart(actor.id, chat)
         labor = chat.labor_listing
+        deal = chat.contact_deal
         is_wanted = labor is not None and labor.kind.value == "EXPERT_WANTED"
         labor_title = "Поиск эксперта в штат" if is_wanted else "Готов к трудовому договору"
         labor_date = labor.start_date.strftime("%d.%m.%Y") if labor and labor.start_date else ""
@@ -59,17 +60,40 @@ class GetChatDetailUseCase:
             )
             for cert in (labor.certificates if labor else [])
         ]
+        deal_closed = deal is not None and deal.status.value in {"CONTACTS_RELEASED", "CANCELED"}
+
+        if deal is not None:
+            context_public_id = deal.public_id
+            context_title = "Доступ к контактам эксперта"
+            context_company = ""
+            context_date = deal.created_at.strftime("%d.%m.%Y")
+            context_sum = ChatFormatter.format_sum(deal.price_kopecks)
+        elif labor is not None:
+            context_public_id = labor.public_id
+            context_title = labor_title
+            context_company = labor.region
+            context_date = labor_date
+            context_sum = ""
+        else:
+            context_public_id = chat.order.public_id if chat.order else ""
+            context_title = chat.order.title if chat.order else f"Заказ #{chat.order_id}"
+            context_company = chat.order.company if chat.order else ""
+            context_date = chat.order.deadline.strftime("%d.%m.%Y") if chat.order else ""
+            context_sum = ChatFormatter.format_sum(chat.order.sum_amount) if chat.order else ""
+
+        order_closed = chat.order.status == OrderStatus.ARCHIVED if chat.order else False
+
         return ChatDetailResponse(
             id=chat.id,
             uuid=str(chat.uuid),
             order_id=chat.order_id,
-            order_public_id=chat.order.public_id if chat.order else (labor.public_id if labor else ""),
+            order_public_id=context_public_id,
             customer_id=chat.customer_id,
             expert_id=chat.expert_id,
-            order_title=chat.order.title if chat.order else labor_title,
-            order_company=chat.order.company if chat.order else (labor.region if labor else ""),
-            order_date=chat.order.deadline.strftime("%d.%m.%Y") if chat.order else labor_date,
-            order_sum=ChatFormatter.format_sum(chat.order.sum_amount) if chat.order else "",
+            order_title=context_title,
+            order_company=context_company,
+            order_date=context_date,
+            order_sum=context_sum,
             order_badges=[
                 ChatBadgeResponse(text=badge.text, variant=badge.variant.value)
                 for badge in (chat.order.badges if chat.order else [])
@@ -78,7 +102,7 @@ class GetChatDetailUseCase:
             counterpart_name=counterpart.display_name,
             counterpart_avatar_url=counterpart.avatar_url,
             response_status=response_status,
-            is_blocked=chat.is_blocked or (chat.order.status == OrderStatus.ARCHIVED if chat.order else False),
+            is_blocked=chat.is_blocked or order_closed or deal_closed,
             is_manually_blocked=chat.is_blocked,
             messages=[
                 GetChatDetailUseCase.message_to_response(chat, message)
