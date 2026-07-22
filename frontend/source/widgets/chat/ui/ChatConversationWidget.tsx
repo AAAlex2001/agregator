@@ -10,6 +10,8 @@ import s from "./ChatConversationWidget.module.scss";
 
 interface ChatConversationWidgetProps {
   chatUuid: string;
+  embedded?: boolean;
+  onClose?: () => void;
 }
 
 function groupMessages(messages: ChatMessageData[]): ChatMessageGroupData[] {
@@ -32,7 +34,7 @@ function groupMessages(messages: ChatMessageData[]): ChatMessageGroupData[] {
   return groups;
 }
 
-export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps) {
+export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: ChatConversationWidgetProps) {
   const router = useRouter();
   const { user } = useSession();
   const currentUserId = user?.id ?? 0;
@@ -49,10 +51,15 @@ export function ChatConversationWidget({ chatUuid }: ChatConversationWidgetProps
   }
 
   return (
-    <div className={s.card}>
+    <div className={`${s.card} ${embedded ? s.cardEmbedded : ""}`}>
       <div className={s.orderNav}>
         <div className={s.backBtnWrap}>
-          <button type="button" className={s.backBtn} aria-label="Назад" onClick={() => router.push("/chat")}>
+          <button
+            type="button"
+            className={s.backBtn}
+            aria-label={embedded ? "Закрыть" : "Назад"}
+            onClick={() => (onClose ? onClose() : router.push("/chat"))}
+          >
             <ArrowIcon color="currentColor" />
           </button>
         </div>

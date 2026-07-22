@@ -91,6 +91,26 @@ async def require_user(db: AsyncSession, user_id: int) -> User:
     return user
 
 
+@router.get("/public/{public_id}", response_model=LaborListingResponse)
+async def get_public_labor_listing(
+    public_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> LaborListingResponse:
+    "Публичная карточка заявки по public_id — для страницы-превью при шеринге. Без авторизации, без контактов."
+    query = (
+        select(LaborListing)
+        .options(selectinload(LaborListing.owner))
+        .where(LaborListing.public_id == public_id, LaborListing.is_active.is_(True))
+    )
+    item = (await db.execute(query)).scalars().first()
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Заявка не найдена",
+        )
+    return serialize(item, actor_id=0)
+
+
 @router.get("/listings", response_model=LaborListingListResponse)
 async def list_labor_listings(
     kind: LaborListingKind,

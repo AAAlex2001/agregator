@@ -12,6 +12,18 @@
   overflow: hidden;
 }
 
+.cardEmbedded {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  gap: 12px;
+}
+
+.cardEmbedded .backBtnWrap,
+.cardEmbedded .backBtn {
+  display: flex;
+}
+
 .orderNav {
   display: flex;
   flex-direction: row;

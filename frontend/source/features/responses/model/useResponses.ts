@@ -39,7 +39,7 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
   ],
 };
 
-export function useResponses(role: UserRole | null) {
+export function useResponses(role: UserRole | null, onOpenChat?: (chatUuid: string) => void) {
   const searchParams = useSearchParams();
   const initialTab = searchParams?.get("tab") as ResponseTabKey | null;
   const [s, d] = useReducer(
@@ -121,7 +121,11 @@ export function useResponses(role: UserRole | null) {
     d({ type: "ACTION_LOADING", id: rid, mode: "chat" });
     try {
       const detail = await openChatByOrder(oid, role === "customer" ? expertId : undefined);
-      router.push(`/chat/${detail.uuid}`);
+      if (onOpenChat) {
+        onOpenChat(detail.uuid);
+      } else {
+        router.push(`/chat/${detail.uuid}`);
+      }
     } catch (e) {
       toast(e, "Не удалось открыть чат");
     } finally {

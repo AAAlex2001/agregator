@@ -1,4 +1,4 @@
-import type { LaborCertificate } from "@/source/entities/labor";
+import type { LaborCertificate, LaborListingData } from "@/source/entities/labor";
 
 export function formatLaborCertificate(
   certificate: LaborCertificate,
@@ -23,4 +23,35 @@ export function formatLaborDate(value: string | null): string {
   }
 
   return new Date(`${value}T00:00:00`).toLocaleDateString("ru-RU");
+}
+
+export function laborKindLabel(kind: LaborListingData["kind"]): string {
+  return kind === "EXPERT_WANTED"
+    ? "Организация ищет эксперта"
+    : "Эксперт готов к трудоустройству";
+}
+
+export function laborRequirementText(item: LaborListingData): string {
+  if (item.other_profession) {
+    return item.other_profession;
+  }
+  return item.certificates.map(formatLaborCertificate).join(", ");
+}
+
+export function laborEmploymentText(item: LaborListingData): string {
+  return item.employment_term === "PERMANENT"
+    ? "Постоянная работа"
+    : `Срочный договор: ${item.fixed_term ?? ""}`.trim();
+}
+
+export function laborShareTitle(item: LaborListingData): string {
+  const requirement = laborRequirementText(item);
+  const base = laborKindLabel(item.kind);
+  return requirement ? `${base} · ${requirement}` : base;
+}
+
+export function laborShareDescription(item: LaborListingData): string {
+  return [item.region, laborEmploymentText(item)]
+    .filter(Boolean)
+    .join(" · ");
 }

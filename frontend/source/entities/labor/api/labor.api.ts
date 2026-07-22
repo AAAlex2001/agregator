@@ -1,4 +1,4 @@
-import { API_URL } from "@/source/shared/api/config";
+import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
 import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { fetchWithSession } from "@/source/shared/api/session";
 import type {
@@ -6,6 +6,19 @@ import type {
   LaborListingKind,
   LaborListingPayload,
 } from "../model/types";
+
+export async function fetchPublicLaborListing(
+  publicId: string,
+  opts: { server?: boolean } = {},
+): Promise<LaborListingData | null> {
+  const base = opts.server ? SERVER_API_URL : API_URL;
+  const res = await fetch(
+    `${base}/labor/public/${encodeURIComponent(publicId)}`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return null;
+  return res.json() as Promise<LaborListingData>;
+}
 
 export async function fetchLaborListings(
   kind: LaborListingKind,

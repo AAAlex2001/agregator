@@ -3,11 +3,25 @@
 import type { LaborListingData } from "@/source/entities/labor";
 import type { SessionRole } from "@/source/features/session";
 import { Button } from "@/source/shared/ui";
+import { useNotifications } from "@/source/shared/ui/Notifications";
+import { SITE_URL } from "@/source/shared/api/config";
 import {
   formatLaborCertificate,
   formatLaborDate,
 } from "../lib/formatters";
 import s from "./LaborListingCard.module.scss";
+
+function copyWithFallback(value: string): void {
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
 
 interface LaborListingCardProps {
   item: LaborListingData;
@@ -24,6 +38,22 @@ export function LaborListingCard({
   onContact,
   onClose,
 }: LaborListingCardProps) {
+  const { showSuccess, showError } = useNotifications();
+
+  const handleShare = async () => {
+    const url = `${SITE_URL}/labor/listing/${item.public_id}`;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        copyWithFallback(url);
+      }
+      showSuccess("Ссылка на заявку скопирована");
+    } catch {
+      showError("Не удалось скопировать ссылку");
+    }
+  };
+
   const canContact =
     !item.is_mine &&
     ((item.kind === "EXPERT_AVAILABLE" &&
@@ -100,6 +130,10 @@ export function LaborListingCard({
       </dl>
 
       <div className={s.actions}>
+        <Button variant="outline" size="sm" onClick={handleShare}>
+          Поделиться
+        </Button>
+
         {canContact && (
           <Button
             variant="chat"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
@@ -9,12 +10,14 @@ import {
   RejectResponseModalContainer,
   useResponses,
 } from "@/source/features/responses";
+import { ChatModal } from "@/source/widgets/chat";
 import { ResponsesList } from "./ResponsesList";
 import { SortPills } from "@/source/features/responses-sort";
 
 export function CustomerResponsesWidget() {
   const { showSuccess } = useNotifications();
-  const model = useResponses("customer");
+  const [chatUuid, setChatUuid] = useState<string | null>(null);
+  const model = useResponses("customer", setChatUuid);
 
   const actionHandlers = {
     onWithdraw: model.onWithdraw,
@@ -90,6 +93,12 @@ export function CustomerResponsesWidget() {
         isLoading={model.isDeletingRejected}
         onCancel={model.closeDeleteRejected}
         onConfirm={model.onDeleteRejectedConfirm}
+      />
+
+      <ChatModal
+        chatUuid={chatUuid}
+        open={chatUuid !== null}
+        onClose={() => setChatUuid(null)}
       />
     </>
   );
