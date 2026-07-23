@@ -2,8 +2,7 @@
 from fastapi import HTTPException, status
 
 from models.chat import Chat, ChatMessage
-from models.order import OrderStatus
-from models.user import User, UserRole
+from models.user import User
 from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatMessageResponse
 from services.chats.formatters import ChatFormatter
 from services.chats.repository import ChatRepository
@@ -60,8 +59,6 @@ class GetChatDetailUseCase:
             )
             for cert in (labor.certificates if labor else [])
         ]
-        deal_closed = deal is not None and deal.status.value in {"CONTACTS_RELEASED", "CANCELED"}
-
         if deal is not None:
             context_public_id = deal.public_id
             context_title = "Доступ к контактам эксперта"
@@ -80,8 +77,6 @@ class GetChatDetailUseCase:
             context_company = chat.order.company if chat.order else ""
             context_date = chat.order.deadline.strftime("%d.%m.%Y") if chat.order else ""
             context_sum = ChatFormatter.format_sum(chat.order.sum_amount) if chat.order else ""
-
-        order_closed = chat.order.status == OrderStatus.ARCHIVED if chat.order else False
 
         return ChatDetailResponse(
             id=chat.id,
@@ -102,7 +97,7 @@ class GetChatDetailUseCase:
             counterpart_name=counterpart.display_name,
             counterpart_avatar_url=counterpart.avatar_url,
             response_status=response_status,
-            is_blocked=chat.is_blocked or order_closed or deal_closed,
+            is_blocked=ChatFormatter.is_chat_blocked(chat),
             is_manually_blocked=chat.is_blocked,
             messages=[
                 GetChatDetailUseCase.message_to_response(chat, message)
@@ -114,9 +109,9 @@ class GetChatDetailUseCase:
     def message_to_response(chat: Chat, message: ChatMessage) -> ChatMessageResponse:
         "Публичный метод сервисного слоя."
         sender_role = (
-            UserRole.CUSTOMER.value
+            chat.customer.role.value
             if message.sender_id == chat.customer_id
-            else UserRole.EXPERT.value
+            else chat.expert.role.value
         )
         return ChatMessageResponse(
             id=message.id,

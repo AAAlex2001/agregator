@@ -10,6 +10,16 @@ export interface LaborCertificate {
   expires_at?: string;
 }
 
+export interface LaborResponder {
+  user_id: number;
+  public_id: string;
+  name: string;
+  avatar_url: string | null;
+  role: "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
+  responded_at: string;
+  chat_uuid: string;
+}
+
 export interface LaborListingData {
   id: number;
   public_id: string;
@@ -28,6 +38,7 @@ export interface LaborListingData {
   is_active: boolean;
   is_mine: boolean;
   created_at: string;
+  responders: LaborResponder[];
 }
 
 export interface LaborListingPayload {

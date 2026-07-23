@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 
 from models.chat import Chat, ChatMessage
+from models.contact_deal import ContactDealStatus
+from models.order import OrderStatus
 from models.user import UserRole
 from schemas.chat import ChatAttachmentResponse
 
@@ -121,5 +123,23 @@ class ChatFormatter:
     def sender_role(chat: Chat, sender_id: int) -> UserRole:
         "Определяет роль отправителя в чате."
         if sender_id == chat.customer_id:
-            return UserRole.CUSTOMER
-        return UserRole.EXPERT
+            return chat.customer.role
+        return chat.expert.role
+
+    @staticmethod
+    def is_chat_blocked(chat: Chat) -> bool:
+        "Определяет, завершён ли связанный с чатом сценарий."
+        if chat.is_blocked:
+            return True
+        if chat.order is not None and chat.order.status == OrderStatus.ARCHIVED:
+            return True
+        if chat.labor_listing is not None and not chat.labor_listing.is_active:
+            return True
+        return (
+            chat.contact_deal is not None
+            and chat.contact_deal.status
+            in {
+                ContactDealStatus.CONTACTS_RELEASED,
+                ContactDealStatus.CANCELED,
+            }
+        )

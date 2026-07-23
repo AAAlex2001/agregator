@@ -2,7 +2,6 @@
 from fastapi import HTTPException, UploadFile, status
 
 from models.chat import Chat, ChatMessage
-from models.order import OrderStatus
 from schemas.chat import ChatAttachmentData, ChatMessageResponse
 from services.chats.file_storage import ChatFileStorage
 from services.chats.formatters import ChatFormatter
@@ -92,16 +91,11 @@ class SendMessageUseCase:
     @staticmethod
     def ensure_chat_not_blocked(chat: Chat) -> None:
         "Бросает HTTPException, если условие не выполнено."
-        if chat.is_blocked:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Заказчик вас заблокировал.",
-            )
-        if chat.order is None or chat.order.status != OrderStatus.ARCHIVED:
+        if not ChatFormatter.is_chat_blocked(chat):
             return
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Чат по этому заказу завершен",
+            detail="Чат завершён или заблокирован",
         )
 
     async def save_attachments(

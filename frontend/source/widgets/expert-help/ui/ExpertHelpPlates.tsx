@@ -222,6 +222,8 @@ export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" })
   const badges: BadgeCounts = {
     labor: (chat?.unreadForLabor ?? 0) + dealsUnread,
     deals: dealsUnread,
+    expertSearch: chat?.unreadForExpertSearch ?? 0,
+    employment: chat?.unreadForEmployment ?? 0,
   };
 
   const plates = isGuestMode ? getGuestCabinetNav() : getCabinetNav(role);

@@ -5,6 +5,7 @@ import { useLaborForm } from "../model/useLaborForm";
 import type { LaborPageMode } from "../model/types";
 import { EmploymentTermFields } from "./EmploymentTermFields";
 import { ExpertCertificatesField } from "./ExpertCertificatesField";
+import { ExpertEditableCertificatesField } from "./ExpertEditableCertificatesField";
 import { ExpertEmploymentFields } from "./ExpertEmploymentFields";
 import { LaborRegionField } from "./LaborRegionField";
 import { LicenseEmploymentFields } from "./LicenseEmploymentFields";
@@ -33,6 +34,17 @@ export function LaborForm({
           {useProfileCertificates ? (
             <ExpertCertificatesField
               certificates={form.profileCertificates}
+            />
+          ) : mode === "expert" ? (
+            <ExpertEditableCertificatesField
+              certificateCodes={form.certificateCodes}
+              category={form.category}
+              otherProfession={form.otherProfession}
+              otherProfessionText={form.otherProfessionText}
+              onCertificateCodesChange={form.setCertificateCodes}
+              onCategoryChange={form.setCategory}
+              onOtherProfessionToggle={form.setOtherProfession}
+              onOtherProfessionTextChange={form.setOtherProfessionText}
             />
           ) : (
             <LicenseExpertiseFields

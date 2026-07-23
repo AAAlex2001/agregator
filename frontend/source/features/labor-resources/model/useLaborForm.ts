@@ -71,10 +71,14 @@ export function useLaborForm({
     }
     if (state.otherProfession) {
       if (!state.otherProfessionText.trim()) {
-        return "Опишите, кого вы ищете";
+        return mode === "expert"
+          ? "Опишите свою профессию"
+          : "Опишите, кого вы ищете";
       }
     } else if (certificates.length === 0) {
-      return "Выберите удостоверение или вид экспертизы";
+      return mode === "expert"
+        ? "Укажите хотя бы одно удостоверение"
+        : "Выберите удостоверение или вид экспертизы";
     }
     if (state.term === "FIXED" && !state.fixedTerm.trim()) {
       return "Укажите срок срочного договора";

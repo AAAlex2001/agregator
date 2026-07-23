@@ -8,6 +8,7 @@ from models.labor import (
     EmploymentType,
     LaborListingKind,
 )
+from models.user import UserRole
 
 
 class LaborCertificate(BaseModel):
@@ -65,6 +66,16 @@ class LaborListingCreate(BaseModel):
         return self
 
 
+class LaborResponderResponse(BaseModel):
+    user_id: int
+    public_id: str
+    name: str
+    avatar_url: str | None = None
+    role: UserRole
+    responded_at: datetime
+    chat_uuid: str
+
+
 class LaborListingResponse(BaseModel):
     id: int
     public_id: str
@@ -83,6 +94,7 @@ class LaborListingResponse(BaseModel):
     is_active: bool
     is_mine: bool
     created_at: datetime
+    responders: list[LaborResponderResponse] = Field(default_factory=list)
 
 
 class LaborListingListResponse(BaseModel):

@@ -12,7 +12,11 @@ export interface NavRegion {
   links: NavLink[];
 }
 
-export type NavBadge = "labor" | "deals";
+export type NavBadge =
+  | "labor"
+  | "deals"
+  | "expertSearch"
+  | "employment";
 
 export interface NavItem {
   label: string;
@@ -177,12 +181,14 @@ function createCabinetNav(role: string | null): NavPlate[] {
         {
           label: "Поиск эксперта в штат — для держателя лицензии",
           href: "/labor/expert-search",
+          badge: "expertSearch",
           description:
             "Объявление о поиске эксперта для постоянной работы, получения лицензии или проверки лицензионных требований. Укажите область аттестации, категорию и регион.",
         },
         {
           label: "Готов к трудовому договору — для эксперта",
           href: "/labor/employment",
+          badge: "employment",
           description:
             "Объявление эксперта о готовности устроиться по трудовому договору на постоянной основе или на определённый срок. Укажите область аттестации, категорию и регион.",
         },

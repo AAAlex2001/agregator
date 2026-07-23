@@ -13,6 +13,7 @@ export interface ChatListItemData {
   uuid: string;
   order_id: number | null;
   labor_listing_id: number | null;
+  labor_listing_kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE" | null;
   contact_deal_id: number | null;
   counterpart_id: number;
   counterpart_name: string;
@@ -21,14 +22,20 @@ export interface ChatListItemData {
   last_message_sender_id: number | null;
   last_message_at: string | null;
   unread_count: number;
+  is_blocked: boolean;
   updated_at: string;
 }
+
+export type ChatParticipantRole =
+  | "CUSTOMER"
+  | "EXPERT"
+  | "LICENSE_HOLDER";
 
 export interface ChatMessageData {
   id: number;
   chat_id: number;
   sender_id: number;
-  sender_role: "CUSTOMER" | "EXPERT";
+  sender_role: ChatParticipantRole;
   text: string;
   file_url: string | null;
   file_name: string | null;

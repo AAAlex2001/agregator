@@ -113,6 +113,78 @@
   padding-top: 4px;
 }
 
+.responders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 14px;
+  border-block: 1px solid #eceef2;
+}
+
+.respondersTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.respondersCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding-inline: 7px;
+  border-radius: 4px;
+  background: #fff3e5;
+  color: #9a4d00;
+  font-size: 12px;
+}
+
+.respondersEmpty {
+  margin: 0;
+  color: #98a2b3;
+  font-size: 13px;
+}
+
+.respondersList {
+  display: flex;
+  flex-direction: column;
+}
+
+.responder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 10px;
+  border-bottom: 1px solid #f2f4f7;
+}
+
+.responder:last-child {
+  border-bottom: 0;
+}
+
+.responderInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.responderInfo strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.responderInfo span {
+  color: #667085;
+  font-size: 12px;
+}
+
 @media (min-width: 640px) {
   .header {
     flex-direction: row;
@@ -122,5 +194,11 @@
 
   .region {
     align-self: auto;
+  }
+
+  .responder {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }

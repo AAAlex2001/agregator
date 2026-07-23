@@ -2,8 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
+import { useOptionalChatListContext } from "@/source/features/chat";
 import { ArrowIcon } from "@/source/shared/ui/icons";
-import { MessageGroup, type ChatMessageData, type ChatMessageGroupData } from "@/source/entities/chat";
+import {
+  MessageGroup,
+  type ChatDetailData,
+  type ChatMessageData,
+  type ChatMessageGroupData,
+} from "@/source/entities/chat";
 import { ChatBlockButton, ChatComposer, ChatOrderBanner, useChatThread } from "@/source/features/chat";
 import { ChatConversationSkeleton } from "./ChatConversationSkeleton";
 import s from "./ChatConversationWidget.module.scss";
@@ -37,6 +43,7 @@ function groupMessages(messages: ChatMessageData[]): ChatMessageGroupData[] {
 export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: ChatConversationWidgetProps) {
   const router = useRouter();
   const { user } = useSession();
+  const chatList = useOptionalChatListContext();
   const currentUserId = user?.id ?? 0;
   const { chat, messages, loading, error, threadRef, appendMessage, replaceChat } = useChatThread(chatUuid, currentUserId);
   const groups = groupMessages(messages);
@@ -45,6 +52,11 @@ export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: 
   const blockedText = !isCustomerParty && chat?.is_manually_blocked
     ? "Заказчик вас заблокировал."
     : undefined;
+
+  const handleChatChanged = (nextChat: ChatDetailData) => {
+    replaceChat(nextChat);
+    chatList?.setChatBlocked(nextChat.uuid, nextChat.is_blocked);
+  };
 
   if (loading) {
     return <ChatConversationSkeleton />;
@@ -79,7 +91,7 @@ export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: 
           <ChatBlockButton
             chatUuid={chat.uuid}
             isBlocked={chat.is_manually_blocked}
-            onChanged={replaceChat}
+            onChanged={handleChatChanged}
           />
         ) : null}
       </div>

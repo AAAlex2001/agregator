@@ -1,7 +1,6 @@
 "use client";
 
 import type { LaborListingData } from "@/source/entities/labor";
-import type { SessionRole } from "@/source/features/session";
 import { EmptyStateCard } from "@/source/shared/ui";
 import type { LaborListTab } from "../model/types";
 import { LaborListingCard } from "./LaborListingCard";
@@ -11,22 +10,22 @@ import s from "./LaborListings.module.scss";
 interface LaborListingsProps {
   items: LaborListingData[];
   tab: LaborListTab;
-  role: SessionRole | null;
   loading: boolean;
   error: string | null;
   busyId: number | null;
   onContact: (item: LaborListingData) => void;
+  onOpenChat: (chatUuid: string) => void;
   onClose: (item: LaborListingData) => void;
 }
 
 export function LaborListings({
   items,
   tab,
-  role,
   loading,
   error,
   busyId,
   onContact,
+  onOpenChat,
   onClose,
 }: LaborListingsProps) {
   if (loading) {
@@ -56,9 +55,9 @@ export function LaborListings({
             <LaborListingCard
               key={item.id}
               item={item}
-              role={role}
               busy={busyId === item.id}
               onContact={() => onContact(item)}
+              onOpenChat={onOpenChat}
               onClose={() => onClose(item)}
             />
           ))}

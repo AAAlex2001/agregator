@@ -1,11 +1,14 @@
-import type { ChatMessageData } from "@/source/entities/chat";
+import type {
+  ChatMessageData,
+  ChatParticipantRole,
+} from "@/source/entities/chat";
 import { ChatAvatar, ChatAvatarSpacer } from "./ChatAvatar";
 import { MessageBubble } from "./MessageBubble";
 import s from "./MessageGroup.module.scss";
 
 export interface ChatMessageGroupData {
   senderId: number;
-  senderRole: "CUSTOMER" | "EXPERT";
+  senderRole: ChatParticipantRole;
   messages: ChatMessageData[];
 }
 
@@ -17,7 +20,11 @@ interface MessageGroupProps {
 }
 
 export function MessageGroup({ group, isMine, currentUserAvatarUrl, counterpartAvatarUrl }: MessageGroupProps) {
-  const senderLabel = group.senderRole === "CUSTOMER" ? "Заказчик" : "Эксперт";
+  const senderLabel = {
+    CUSTOMER: "Заказчик",
+    EXPERT: "Эксперт",
+    LICENSE_HOLDER: "Держатель лицензии",
+  }[group.senderRole];
   const groupClass = isMine ? s.sent : s.received;
   const labelClass = `${s.label} ${isMine ? s.alignRight : ""}`.trim();
 

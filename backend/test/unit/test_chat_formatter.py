@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+from models.contact_deal import ContactDealStatus
 from models.user import UserRole
 from services.chats.formatters import NOTIFICATION_PREVIEW_MAX, ChatFormatter
 
@@ -69,3 +70,37 @@ class TestCounterpart:
         info = ChatFormatter.counterpart(UserRole.CUSTOMER, self.chat)
         assert info.id == 42
         assert info.display_name == "Эксперт #42"
+
+
+class TestChatBlocked:
+    def test_inactive_labor_listing_closes_chat(self):
+        chat = SimpleNamespace(
+            is_blocked=False,
+            order=None,
+            labor_listing=SimpleNamespace(is_active=False),
+            contact_deal=None,
+        )
+
+        assert ChatFormatter.is_chat_blocked(chat) is True
+
+    def test_released_contact_deal_closes_chat(self):
+        chat = SimpleNamespace(
+            is_blocked=False,
+            order=None,
+            labor_listing=None,
+            contact_deal=SimpleNamespace(
+                status=ContactDealStatus.CONTACTS_RELEASED
+            ),
+        )
+
+        assert ChatFormatter.is_chat_blocked(chat) is True
+
+    def test_active_labor_chat_remains_open(self):
+        chat = SimpleNamespace(
+            is_blocked=False,
+            order=None,
+            labor_listing=SimpleNamespace(is_active=True),
+            contact_deal=None,
+        )
+
+        assert ChatFormatter.is_chat_blocked(chat) is False

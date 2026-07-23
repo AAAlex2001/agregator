@@ -10,8 +10,11 @@ interface ChatListContextValue {
   error: string | null;
   refresh: () => Promise<void>;
   markChatAsRead: (chatUuid: string) => void;
+  setChatBlocked: (chatUuid: string, isBlocked: boolean) => void;
   syncChatMessage: (chatUuid: string, message: ChatMessageData, currentUserId: number) => void;
   unreadForLabor: number;
+  unreadForExpertSearch: number;
+  unreadForEmployment: number;
   unreadForDeals: number;
   unreadForDeal: (dealId: number) => number;
 }
@@ -71,6 +74,14 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
     )));
   }
 
+  function setChatBlocked(chatUuid: string, isBlocked: boolean) {
+    setChats((currentChats) => currentChats.map((chat) => (
+      chat.uuid === chatUuid
+        ? { ...chat, is_blocked: isBlocked }
+        : chat
+    )));
+  }
+
   function syncChatMessage(chatUuid: string, message: ChatMessageData, currentUserId: number) {
     setChats((currentChats) => {
       const nextChats = currentChats.map((chat) => {
@@ -93,15 +104,43 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
   }
 
   const unreadForLabor = chats.reduce(
-    (sum, chat) => (chat.labor_listing_id !== null ? sum + chat.unread_count : sum),
+    (sum, chat) => (
+      chat.labor_listing_id !== null && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
+    0,
+  );
+  const unreadForExpertSearch = chats.reduce(
+    (sum, chat) => (
+      chat.labor_listing_kind === "EXPERT_WANTED" && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
+    0,
+  );
+  const unreadForEmployment = chats.reduce(
+    (sum, chat) => (
+      chat.labor_listing_kind === "EXPERT_AVAILABLE" && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
     0,
   );
   const unreadForDeals = chats.reduce(
-    (sum, chat) => (chat.contact_deal_id !== null ? sum + chat.unread_count : sum),
+    (sum, chat) => (
+      chat.contact_deal_id !== null && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
     0,
   );
   const unreadForDeal = (dealId: number) => chats.reduce(
-    (sum, chat) => (chat.contact_deal_id === dealId ? sum + chat.unread_count : sum),
+    (sum, chat) => (
+      chat.contact_deal_id === dealId && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
     0,
   );
 
@@ -113,8 +152,11 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
         error,
         refresh,
         markChatAsRead,
+        setChatBlocked,
         syncChatMessage,
         unreadForLabor,
+        unreadForExpertSearch,
+        unreadForEmployment,
         unreadForDeals,
         unreadForDeal,
       }}

@@ -79,7 +79,13 @@ class ChatRepository:
         "Ищет сущность по заданным параметрам."
         query = (
             select(Chat)
-            .options(selectinload(Chat.order), selectinload(Chat.labor_listing))
+            .options(
+                selectinload(Chat.order),
+                selectinload(Chat.labor_listing),
+                selectinload(Chat.contact_deal),
+                selectinload(Chat.customer),
+                selectinload(Chat.expert),
+            )
             .where(
                 Chat.id == chat_id,
                 or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
@@ -127,6 +133,7 @@ class ChatRepository:
             .options(
                 selectinload(Chat.order),
                 selectinload(Chat.labor_listing),
+                selectinload(Chat.contact_deal),
                 selectinload(Chat.customer),
                 selectinload(Chat.expert),
             )

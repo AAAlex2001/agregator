@@ -45,7 +45,7 @@ export default async function PublicLaborListingPage({ params }: Props) {
   if (!item) notFound();
 
   const inAppHref =
-    item.kind === "EXPERT_WANTED" ? "/labor/employment" : "/labor/expert-search";
+    item.kind === "EXPERT_WANTED" ? "/labor/expert-search" : "/labor/employment";
 
   return (
     <>

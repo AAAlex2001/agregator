@@ -11,6 +11,7 @@ export type LaborResourcesAction =
   | { type: "ERROR"; value: string | null }
   | { type: "BUSY"; id: number | null }
   | { type: "FORM_OPEN"; value: boolean }
+  | { type: "CHAT"; value: string | null }
   | { type: "DESKTOP"; value: boolean }
   | { type: "RELOAD" };
 
@@ -21,6 +22,7 @@ export const initialLaborResourcesState: LaborResourcesState = {
   error: null,
   busyId: null,
   formOpen: false,
+  chatUuid: null,
   isDesktop: false,
   reloadKey: 0,
 };
@@ -42,6 +44,8 @@ export function laborResourcesReducer(
       return { ...state, busyId: action.id };
     case "FORM_OPEN":
       return { ...state, formOpen: action.value };
+    case "CHAT":
+      return { ...state, chatUuid: action.value };
     case "DESKTOP":
       return { ...state, isDesktop: action.value };
     case "RELOAD":

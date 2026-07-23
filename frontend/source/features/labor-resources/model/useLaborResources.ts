@@ -4,14 +4,13 @@ import {
   useEffect,
   useReducer,
 } from "react";
-import { useRouter } from "next/navigation";
 import {
   closeLaborListing,
   contactLaborListing,
   fetchLaborListings,
   type LaborListingData,
 } from "@/source/entities/labor";
-import { useSession } from "@/source/features/session";
+import { useOptionalChatListContext } from "@/source/features/chat";
 import { LABOR_PAGE_COPY } from "./config";
 import {
   initialLaborResourcesState,
@@ -23,8 +22,7 @@ import type {
 } from "./types";
 
 export function useLaborResources(mode: LaborPageMode) {
-  const router = useRouter();
-  const { role } = useSession();
+  const chatList = useOptionalChatListContext();
   const copy = LABOR_PAGE_COPY[mode];
   const [state, dispatch] = useReducer(
     laborResourcesReducer,
@@ -100,6 +98,10 @@ export function useLaborResources(mode: LaborPageMode) {
     dispatch({ type: "FORM_OPEN", value });
   };
 
+  const setChatUuid = (value: string | null) => {
+    dispatch({ type: "CHAT", value });
+  };
+
   const onCreated = () => {
     setFormOpen(false);
 
@@ -116,7 +118,7 @@ export function useLaborResources(mode: LaborPageMode) {
 
     try {
       const uuid = await contactLaborListing(item.id);
-      router.push(`/chat/${uuid}`);
+      setChatUuid(uuid);
     } catch (reason) {
       dispatch({
         type: "ERROR",
@@ -136,6 +138,7 @@ export function useLaborResources(mode: LaborPageMode) {
 
     try {
       await closeLaborListing(item.id);
+      await chatList?.refresh();
       dispatch({ type: "RELOAD" });
     } catch (reason) {
       dispatch({
@@ -153,9 +156,9 @@ export function useLaborResources(mode: LaborPageMode) {
   return {
     ...state,
     copy,
-    role,
     setTab,
     setFormOpen,
+    setChatUuid,
     onCreated,
     contact,
     close,

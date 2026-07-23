@@ -44,6 +44,11 @@ class ListChatsUseCase:
             uuid=str(chat.uuid),
             order_id=chat.order_id,
             labor_listing_id=chat.labor_listing_id,
+            labor_listing_kind=(
+                chat.labor_listing.kind
+                if chat.labor_listing is not None
+                else None
+            ),
             contact_deal_id=chat.contact_deal_id,
             counterpart_id=counterpart.id,
             counterpart_name=counterpart.display_name,
@@ -52,5 +57,6 @@ class ListChatsUseCase:
             last_message_sender_id=last_message.sender_id if last_message else None,
             last_message_at=last_message.created_at if last_message else None,
             unread_count=unread_counts.get(chat.id, 0),
+            is_blocked=ChatFormatter.is_chat_blocked(chat),
             updated_at=chat.updated_at,
         )

@@ -5,18 +5,18 @@ export const LABOR_PAGE_COPY: Record<LaborPageMode, LaborPageCopy> = {
     title: "Поиск эксперта в штат",
     subtitle:
       "Найдите эксперта для постоянной работы, получения лицензии или проверки лицензионных требований",
-    browseTab: "Заявки экспертов",
+    browseTab: "Организации ищут экспертов",
     ownKind: "EXPERT_WANTED",
-    browseKind: "EXPERT_AVAILABLE",
+    browseKind: "EXPERT_WANTED",
     formTitle: "Создать заявку на поиск эксперта",
   },
   expert: {
     title: "Готов к трудовому договору",
     subtitle:
       "Сообщите экспертным организациям, что готовы рассмотреть трудоустройство",
-    browseTab: "Поиск экспертов",
+    browseTab: "Эксперты готовы к трудоустройству",
     ownKind: "EXPERT_AVAILABLE",
-    browseKind: "EXPERT_WANTED",
+    browseKind: "EXPERT_AVAILABLE",
     formTitle: "Опубликовать готовность к трудоустройству",
   },
 };

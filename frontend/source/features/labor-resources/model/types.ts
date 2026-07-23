@@ -44,6 +44,7 @@ export interface LaborResourcesState {
   error: string | null;
   busyId: number | null;
   formOpen: boolean;
+  chatUuid: string | null;
   isDesktop: boolean;
   reloadKey: number;
 }

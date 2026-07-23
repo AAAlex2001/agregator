@@ -52,7 +52,7 @@ async def test_expert_search_is_sent_to_experts() -> None:
         "email_on_labor_listing"
     )
     context = dispatcher.notify.call_args[0][4]
-    assert context.cta_url.endswith("/labor/employment")
+    assert context.cta_url.endswith("/labor/expert-search")
     assert context.certificates == ["Э12 · ТУ · 2 кат."]
 
 
@@ -74,4 +74,4 @@ async def test_expert_listing_is_sent_to_license_holders() -> None:
         UserRole.LICENSE_HOLDER
     )
     context = dispatcher.notify.call_args[0][4]
-    assert context.cta_url.endswith("/labor/expert-search")
+    assert context.cta_url.endswith("/labor/employment")

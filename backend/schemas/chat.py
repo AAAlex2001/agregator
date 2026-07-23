@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from models.chat import ExpertRoomMessage
+from models.labor import LaborListingKind
 from services.email.formatting import full_name
 
 
@@ -58,6 +59,7 @@ class ChatListItemResponse(BaseModel):
     uuid: str
     order_id: int | None = None
     labor_listing_id: int | None = None
+    labor_listing_kind: LaborListingKind | None = None
     contact_deal_id: int | None = None
     counterpart_id: int
     counterpart_name: str
@@ -66,6 +68,7 @@ class ChatListItemResponse(BaseModel):
     last_message_sender_id: int | None = None
     last_message_at: datetime | None = None
     unread_count: int = 0
+    is_blocked: bool = False
     updated_at: datetime
 
 

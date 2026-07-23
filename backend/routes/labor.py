@@ -12,18 +12,26 @@ from sqlalchemy.orm import selectinload
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from models.chat import Chat, ChatMessage
+from models.chat import Chat
 from models.labor import LaborListing, LaborListingKind
-from models.user import User, UserRole
+from models.user import User
 from schemas.labor import (
     LaborContactResponse,
     LaborListingCreate,
     LaborListingListResponse,
     LaborListingResponse,
+    LaborResponderResponse,
+)
+from services.chats import (
+    ChatFileStorage,
+    ChatInAppNotifier,
+    ChatRepository,
+    SendMessageUseCase,
 )
 from services.email import (
     EmailDispatcher,
     EmailRepository,
+    SendChatMessageEmailUseCase,
     SendNewLaborListingEmailUseCase,
 )
 from services.notifications import (
@@ -57,7 +65,31 @@ def display_name(user: User) -> str:
     return company_name or full_name or user.email or f"Пользователь #{user.id}"
 
 
-def serialize(item: LaborListing, actor_id: int) -> LaborListingResponse:
+def serialize(
+    item: LaborListing,
+    actor_id: int,
+    include_responders: bool = False,
+) -> LaborListingResponse:
+    responders = []
+    if include_responders and item.owner_id == actor_id:
+        for chat in sorted(item.chats, key=lambda value: value.created_at, reverse=True):
+            responder = (
+                chat.expert
+                if chat.customer_id == item.owner_id
+                else chat.customer
+            )
+            responders.append(
+                LaborResponderResponse(
+                    user_id=responder.id,
+                    public_id=responder.public_id,
+                    name=display_name(responder),
+                    avatar_url=responder.avatar_url,
+                    role=responder.role,
+                    responded_at=chat.created_at,
+                    chat_uuid=str(chat.uuid),
+                )
+            )
+
     return LaborListingResponse(
         id=item.id,
         public_id=item.public_id,
@@ -76,6 +108,7 @@ def serialize(item: LaborListing, actor_id: int) -> LaborListingResponse:
         is_active=item.is_active,
         is_mine=item.owner_id == actor_id,
         created_at=item.created_at,
+        responders=responders,
     )
 
 
@@ -118,9 +151,18 @@ async def list_labor_listings(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> LaborListingListResponse:
+    load_options = [selectinload(LaborListing.owner)]
+    if mine:
+        load_options.extend(
+            [
+                selectinload(LaborListing.chats).selectinload(Chat.customer),
+                selectinload(LaborListing.chats).selectinload(Chat.expert),
+            ]
+        )
+
     query = (
         select(LaborListing)
-        .options(selectinload(LaborListing.owner))
+        .options(*load_options)
         .where(LaborListing.kind == kind, LaborListing.is_active.is_(True))
     )
     if mine:
@@ -132,7 +174,10 @@ async def list_labor_listings(
     items = list((await db.execute(query)).scalars().all())
 
     return LaborListingListResponse(
-        items=[serialize(item, user_id) for item in items],
+        items=[
+            serialize(item, user_id, include_responders=True)
+            for item in items
+        ],
         total=len(items),
     )
 
@@ -197,10 +242,11 @@ async def close_labor_listing(
 @router.post("/listings/{listing_id}/contact", response_model=LaborContactResponse)
 async def contact_labor_listing(
     listing_id: int,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> LaborContactResponse:
-    actor = await require_user(db, user_id)
+    await require_user(db, user_id)
     listing = (
         await db.execute(
             select(LaborListing)
@@ -224,20 +270,8 @@ async def contact_labor_listing(
         )
 
     if listing.kind == LaborListingKind.EXPERT_WANTED:
-        if actor.role != UserRole.EXPERT:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Откликнуться может только эксперт",
-            )
         customer_id, expert_id, message = listing.owner_id, user_id, RESPONSE_MESSAGE
     else:
-        if actor.role != UserRole.LICENSE_HOLDER:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=(
-                    "Пригласить эксперта может держатель лицензии"
-                ),
-            )
         customer_id, expert_id, message = user_id, listing.owner_id, INVITE_MESSAGE
 
     chat = (
@@ -257,18 +291,24 @@ async def contact_labor_listing(
         )
         db.add(chat)
         await db.flush()
-        db.add(ChatMessage(chat_id=chat.id, sender_id=user_id, text=message))
-        await db.flush()
-        recipient_id = expert_id if user_id == customer_id else customer_id
-        await CreateChatMessageNotificationUseCase(NotificationRepository(db)).execute(
-            user_id=recipient_id,
-            order_title=(
-                "Поиск эксперта в штат"
-                if listing.kind == LaborListingKind.EXPERT_WANTED
-                else "Готов к трудовому договору"
+        chat_repo = ChatRepository(db)
+        await SendMessageUseCase(
+            repo=chat_repo,
+            files=ChatFileStorage(),
+            in_app=ChatInAppNotifier(
+                CreateChatMessageNotificationUseCase(
+                    NotificationRepository(db)
+                )
             ),
-            sender_role=UserRole.CUSTOMER if user_id == customer_id else UserRole.EXPERT,
-            preview=message,
-            action_url=f"/chat/{chat.uuid}",
+            send_email=SendChatMessageEmailUseCase(
+                repo=EmailRepository(db),
+                dispatcher=EmailDispatcher(background_tasks),
+            ),
+        ).execute(
+            chat_id=chat.id,
+            sender_id=user_id,
+            text=message,
+            uploads=[],
+            recipient_online=False,
         )
     return LaborContactResponse(chat_uuid=str(chat.uuid))

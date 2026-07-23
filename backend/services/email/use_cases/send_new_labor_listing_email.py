@@ -87,9 +87,9 @@ class SendNewLaborListingEmailUseCase:
             employment_term=employment_term,
             certificates=certificates,
             cta_url=(
-                "https://plus-resurs.com/labor/employment"
+                "https://plus-resurs.com/labor/expert-search"
                 if expert_wanted
-                else "https://plus-resurs.com/labor/expert-search"
+                else "https://plus-resurs.com/labor/employment"
             ),
         )
 

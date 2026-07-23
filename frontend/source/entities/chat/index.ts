@@ -3,6 +3,7 @@ export type {
   ChatBadge,
   ChatListItemData,
   ChatMessageData,
+  ChatParticipantRole,
   ChatDetailData,
   ChatResponseStatus,
 } from "./model/types";

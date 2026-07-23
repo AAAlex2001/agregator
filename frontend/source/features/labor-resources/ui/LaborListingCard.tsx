@@ -1,10 +1,13 @@
 "use client";
 
-import type { LaborListingData } from "@/source/entities/labor";
-import type { SessionRole } from "@/source/features/session";
+import type {
+  LaborListingData,
+  LaborResponder,
+} from "@/source/entities/labor";
 import { Button } from "@/source/shared/ui";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { SITE_URL } from "@/source/shared/api/config";
+import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 import {
   formatLaborCertificate,
   formatLaborDate,
@@ -25,17 +28,17 @@ function copyWithFallback(value: string): void {
 
 interface LaborListingCardProps {
   item: LaborListingData;
-  role: SessionRole | null;
   busy: boolean;
   onContact: () => void;
+  onOpenChat: (chatUuid: string) => void;
   onClose: () => void;
 }
 
 export function LaborListingCard({
   item,
-  role,
   busy,
   onContact,
+  onOpenChat,
   onClose,
 }: LaborListingCardProps) {
   const { showSuccess, showError } = useNotifications();
@@ -54,11 +57,7 @@ export function LaborListingCard({
     }
   };
 
-  const canContact =
-    !item.is_mine &&
-    ((item.kind === "EXPERT_AVAILABLE" &&
-      role === "LICENSE_HOLDER") ||
-      (item.kind === "EXPERT_WANTED" && role === "EXPERT"));
+  const canContact = !item.is_mine;
   const employmentTerm =
     item.employment_term === "PERMANENT"
       ? "Постоянная работа"
@@ -129,6 +128,13 @@ export function LaborListingCard({
         )}
       </dl>
 
+      {item.is_mine && (
+        <Responders
+          responders={item.responders}
+          onOpenChat={onOpenChat}
+        />
+      )}
+
       <div className={s.actions}>
         <Button variant="outline" size="sm" onClick={handleShare}>
           Поделиться
@@ -159,6 +165,54 @@ export function LaborListingCard({
         )}
       </div>
     </article>
+  );
+}
+
+const ROLE_LABELS: Record<LaborResponder["role"], string> = {
+  CUSTOMER: "Заказчик",
+  EXPERT: "Эксперт",
+  LICENSE_HOLDER: "Держатель лицензии",
+};
+
+function Responders({
+  responders,
+  onOpenChat,
+}: {
+  responders: LaborResponder[];
+  onOpenChat: (chatUuid: string) => void;
+}) {
+  return (
+    <section className={s.responders}>
+      <h3 className={s.respondersTitle}>
+        Откликнувшиеся
+        <span className={s.respondersCount}>{responders.length}</span>
+      </h3>
+
+      {responders.length === 0 ? (
+        <p className={s.respondersEmpty}>Пока никто не откликнулся</p>
+      ) : (
+        <div className={s.respondersList}>
+          {responders.map((responder) => (
+            <div className={s.responder} key={responder.chat_uuid}>
+              <div className={s.responderInfo}>
+                <strong>{responder.name}</strong>
+                <span>
+                  {ROLE_LABELS[responder.role]} ·{" "}
+                  {formatMoscowDateTime(responder.responded_at)} МСК
+                </span>
+              </div>
+              <Button
+                variant="chat"
+                size="sm"
+                onClick={() => onOpenChat(responder.chat_uuid)}
+              >
+                Открыть чат
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
