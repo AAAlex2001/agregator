@@ -16,6 +16,8 @@ interface LaborListingsProps {
   onContact: (item: LaborListingData) => void;
   onOpenChat: (chatUuid: string) => void;
   onClose: (item: LaborListingData) => void;
+  unreadForListing: (listingId: number) => number;
+  unreadForChat: (chatUuid: string) => number;
 }
 
 export function LaborListings({
@@ -27,6 +29,8 @@ export function LaborListings({
   onContact,
   onOpenChat,
   onClose,
+  unreadForListing,
+  unreadForChat,
 }: LaborListingsProps) {
   if (loading) {
     return <LaborListingsSkeleton />;
@@ -56,6 +60,8 @@ export function LaborListings({
               key={item.id}
               item={item}
               busy={busyId === item.id}
+              unreadCount={unreadForListing(item.id)}
+              unreadForChat={unreadForChat}
               onContact={() => onContact(item)}
               onOpenChat={onOpenChat}
               onClose={() => onClose(item)}

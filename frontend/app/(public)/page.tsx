@@ -70,7 +70,7 @@ export const metadata: Metadata = {
 			"Найдите аттестованного эксперта Ростехнадзора или разместите заказ на экспертизу промышленной безопасности (ЭПБ). Тендеры, отзывы, отчёты в PDF.",
 		type: "website",
 		url: "/",
-		images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Платформа экспертизы промышленной безопасности" }],
+		images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
 	},
 	robots: { index: true, follow: true },
 };

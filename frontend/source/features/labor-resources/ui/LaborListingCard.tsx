@@ -29,6 +29,8 @@ function copyWithFallback(value: string): void {
 interface LaborListingCardProps {
   item: LaborListingData;
   busy: boolean;
+  unreadCount: number;
+  unreadForChat: (chatUuid: string) => number;
   onContact: () => void;
   onOpenChat: (chatUuid: string) => void;
   onClose: () => void;
@@ -37,6 +39,8 @@ interface LaborListingCardProps {
 export function LaborListingCard({
   item,
   busy,
+  unreadCount,
+  unreadForChat,
   onContact,
   onOpenChat,
   onClose,
@@ -132,6 +136,7 @@ export function LaborListingCard({
         <Responders
           responders={item.responders}
           onOpenChat={onOpenChat}
+          unreadForChat={unreadForChat}
         />
       )}
 
@@ -147,9 +152,10 @@ export function LaborListingCard({
             onClick={onContact}
             isLoading={busy}
           >
-            {item.kind === "EXPERT_AVAILABLE"
-              ? "Пригласить в чат"
-              : "Откликнуться"}
+            Откликнуться
+            {unreadCount > 0 && (
+              <span className={s.unreadCount}>{unreadCount}</span>
+            )}
           </Button>
         )}
 
@@ -177,9 +183,11 @@ const ROLE_LABELS: Record<LaborResponder["role"], string> = {
 function Responders({
   responders,
   onOpenChat,
+  unreadForChat,
 }: {
   responders: LaborResponder[];
   onOpenChat: (chatUuid: string) => void;
+  unreadForChat: (chatUuid: string) => number;
 }) {
   return (
     <section className={s.responders}>
@@ -207,6 +215,11 @@ function Responders({
                 onClick={() => onOpenChat(responder.chat_uuid)}
               >
                 Открыть чат
+                {unreadForChat(responder.chat_uuid) > 0 && (
+                  <span className={s.unreadCount}>
+                    {unreadForChat(responder.chat_uuid)}
+                  </span>
+                )}
               </Button>
             </div>
           ))}

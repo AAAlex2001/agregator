@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: "Заявка не найдена",
       robots: { index: false, follow: false },
-      openGraph: { images: [] },
-      twitter: { images: [] },
+      openGraph: { images: ["/og-default.png"] },
+      twitter: { images: ["/og-default.png"] },
     };
   }
 
@@ -54,13 +54,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: `/order/${uuid}`,
-      images: [],
+      images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
     },
     twitter: {
       card: "summary",
       title,
       description,
-      images: [],
+      images: ["/og-default.png"],
     },
   };
 }

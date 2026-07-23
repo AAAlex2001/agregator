@@ -15,6 +15,12 @@ interface ChatListContextValue {
   unreadForLabor: number;
   unreadForExpertSearch: number;
   unreadForEmployment: number;
+  unreadForLaborTab: (
+    kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE",
+    isMine: boolean,
+  ) => number;
+  unreadForLaborListing: (listingId: number) => number;
+  unreadForChat: (chatUuid: string) => number;
   unreadForDeals: number;
   unreadForDeal: (dealId: number) => number;
 }
@@ -127,6 +133,31 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
     ),
     0,
   );
+  const unreadForLaborTab = (
+    kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE",
+    isMine: boolean,
+  ) => chats.reduce(
+    (sum, chat) => (
+      chat.labor_listing_kind === kind
+      && chat.labor_listing_is_mine === isMine
+      && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
+    0,
+  );
+  const unreadForLaborListing = (listingId: number) => chats.reduce(
+    (sum, chat) => (
+      chat.labor_listing_id === listingId && !chat.is_blocked
+        ? sum + chat.unread_count
+        : sum
+    ),
+    0,
+  );
+  const unreadForChat = (chatUuid: string) => {
+    const chat = chats.find((item) => item.uuid === chatUuid);
+    return chat && !chat.is_blocked ? chat.unread_count : 0;
+  };
   const unreadForDeals = chats.reduce(
     (sum, chat) => (
       chat.contact_deal_id !== null && !chat.is_blocked
@@ -157,6 +188,9 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
         unreadForLabor,
         unreadForExpertSearch,
         unreadForEmployment,
+        unreadForLaborTab,
+        unreadForLaborListing,
+        unreadForChat,
         unreadForDeals,
         unreadForDeal,
       }}

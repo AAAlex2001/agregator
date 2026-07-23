@@ -49,6 +49,11 @@ class ListChatsUseCase:
                 if chat.labor_listing is not None
                 else None
             ),
+            labor_listing_is_mine=(
+                chat.labor_listing.owner_id == actor.id
+                if chat.labor_listing is not None
+                else None
+            ),
             contact_deal_id=chat.contact_deal_id,
             counterpart_id=counterpart.id,
             counterpart_name=counterpart.display_name,

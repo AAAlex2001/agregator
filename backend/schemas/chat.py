@@ -60,6 +60,7 @@ class ChatListItemResponse(BaseModel):
     order_id: int | None = None
     labor_listing_id: int | None = None
     labor_listing_kind: LaborListingKind | None = None
+    labor_listing_is_mine: bool | None = None
     contact_deal_id: int | None = None
     counterpart_id: int
     counterpart_name: str

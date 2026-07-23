@@ -78,10 +78,12 @@ export function LaborResourcesWidget({
                 {
                   id: "browse",
                   label: resources.copy.browseTab,
+                  count: resources.browseUnread,
                 },
                 {
                   id: "mine",
                   label: "Мои заявки",
+                  count: resources.mineUnread,
                 },
               ]}
             />
@@ -95,6 +97,8 @@ export function LaborResourcesWidget({
               onContact={(item) => void resources.contact(item)}
               onOpenChat={resources.setChatUuid}
               onClose={(item) => void resources.close(item)}
+              unreadForListing={resources.unreadForListing}
+              unreadForChat={resources.unreadForChat}
             />
           </section>
 

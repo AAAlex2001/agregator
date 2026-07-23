@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description: "Отзывы заказчиков о работе экспертов на платформе Ресурс-Плюс.",
     url: "/reviews",
     type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   robots: { index: true, follow: true },
 };

@@ -118,6 +118,7 @@ export function useLaborResources(mode: LaborPageMode) {
 
     try {
       const uuid = await contactLaborListing(item.id);
+      await chatList?.refresh();
       setChatUuid(uuid);
     } catch (reason) {
       dispatch({
@@ -156,6 +157,10 @@ export function useLaborResources(mode: LaborPageMode) {
   return {
     ...state,
     copy,
+    browseUnread: chatList?.unreadForLaborTab(copy.browseKind, false) ?? 0,
+    mineUnread: chatList?.unreadForLaborTab(copy.ownKind, true) ?? 0,
+    unreadForListing: chatList?.unreadForLaborListing ?? (() => 0),
+    unreadForChat: chatList?.unreadForChat ?? (() => 0),
     setTab,
     setFormOpen,
     setChatUuid,

@@ -143,6 +143,21 @@
   font-size: 12px;
 }
 
+.unreadCount {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #e32929;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
 .respondersEmpty {
   margin: 0;
   color: #98a2b3;

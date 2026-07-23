@@ -22,33 +22,13 @@ from schemas.labor import (
     LaborListingResponse,
     LaborResponderResponse,
 )
-from services.chats import (
-    ChatFileStorage,
-    ChatInAppNotifier,
-    ChatRepository,
-    SendMessageUseCase,
-)
 from services.email import (
     EmailDispatcher,
     EmailRepository,
-    SendChatMessageEmailUseCase,
     SendNewLaborListingEmailUseCase,
-)
-from services.notifications import (
-    CreateChatMessageNotificationUseCase,
-    NotificationRepository,
 )
 
 router = APIRouter(prefix="/labor", tags=["labor"])
-
-INVITE_MESSAGE = (
-    "Добрый день! Мы как раз ищем эксперта с такими областями "
-    "аттестации, обсудим возможности сотрудничества?"
-)
-RESPONSE_MESSAGE = (
-    "Добрый день! Готов рассмотреть варианты трудоустройства, "
-    "расскажите подробнее что вам требуется."
-)
 
 
 def display_name(user: User) -> str:
@@ -242,7 +222,6 @@ async def close_labor_listing(
 @router.post("/listings/{listing_id}/contact", response_model=LaborContactResponse)
 async def contact_labor_listing(
     listing_id: int,
-    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> LaborContactResponse:
@@ -270,9 +249,9 @@ async def contact_labor_listing(
         )
 
     if listing.kind == LaborListingKind.EXPERT_WANTED:
-        customer_id, expert_id, message = listing.owner_id, user_id, RESPONSE_MESSAGE
+        customer_id, expert_id = listing.owner_id, user_id
     else:
-        customer_id, expert_id, message = user_id, listing.owner_id, INVITE_MESSAGE
+        customer_id, expert_id = user_id, listing.owner_id
 
     chat = (
         await db.execute(
@@ -291,24 +270,4 @@ async def contact_labor_listing(
         )
         db.add(chat)
         await db.flush()
-        chat_repo = ChatRepository(db)
-        await SendMessageUseCase(
-            repo=chat_repo,
-            files=ChatFileStorage(),
-            in_app=ChatInAppNotifier(
-                CreateChatMessageNotificationUseCase(
-                    NotificationRepository(db)
-                )
-            ),
-            send_email=SendChatMessageEmailUseCase(
-                repo=EmailRepository(db),
-                dispatcher=EmailDispatcher(background_tasks),
-            ),
-        ).execute(
-            chat_id=chat.id,
-            sender_id=user_id,
-            text=message,
-            uploads=[],
-            recipient_online=False,
-        )
     return LaborContactResponse(chat_uuid=str(chat.uuid))

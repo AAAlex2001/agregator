@@ -14,6 +14,7 @@ export interface ChatListItemData {
   order_id: number | null;
   labor_listing_id: number | null;
   labor_listing_kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE" | null;
+  labor_listing_is_mine: boolean | null;
   contact_deal_id: number | null;
   counterpart_id: number;
   counterpart_name: string;

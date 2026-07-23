@@ -17,7 +17,7 @@ function absoluteUrl(path: string): string {
 export function ArticleJsonLd({ article, reactions, commentCount }: Props) {
   const isNews = article.kind === "news";
   const pageUrl = `${SITE_URL}${isNews ? "/news/" : "/blog/"}${article.slug}`;
-  const image = absoluteUrl(article.cover_image || "/hero_svg.webp");
+  const image = absoluteUrl(article.cover_image || "/og-default.png");
 
   const interactionStatistic = reactions
     ? [
@@ -54,7 +54,7 @@ export function ArticleJsonLd({ article, reactions, commentCount }: Props) {
       "@type": "Organization",
       name: "Ресурс-Плюс",
       url: SITE_URL,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/hero_svg.webp` },
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.png` },
     },
     articleSection: isNews ? "Новости" : "Блог",
     commentCount: commentCount ?? undefined,

@@ -12,7 +12,7 @@ export default function StructuredData({ faq = [] }: Props) {
     "@id": `${SITE_URL}/#organization`,
     name: "Ресурс-Плюс",
     url: SITE_URL,
-    logo: `${SITE_URL}/hero_svg.webp`,
+    logo: `${SITE_URL}/og-default.png`,
     description:
       "Тендерная платформа для заказа экспертизы промышленной безопасности опасных производственных объектов. Аттестованные эксперты Ростехнадзора.",
     sameAs: [],

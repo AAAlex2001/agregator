@@ -26,6 +26,7 @@ export const metadata: Metadata = {
       "Открытые тендеры на ЭПБ зданий, сооружений, технических устройств и документации опасных производственных объектов.",
     url: "/orders",
     type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   robots: { index: true, follow: true },
 };

@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     description: "Обновления платформы и советы по работе с экспертизой промышленной безопасности.",
     type: "website",
     url: "/blog",
-    images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Блог Ресурс-Плюс" }],
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Блог платформы | Ресурс-Плюс",
     description: "Обновления платформы и советы по работе с экспертизой.",
-    images: ["/hero_svg.webp"],
+    images: ["/og-default.png"],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };

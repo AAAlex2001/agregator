@@ -27,13 +27,13 @@ export const metadata: Metadata = {
       "Актуальные новости горной, нефтегазовой и других отраслей промышленности.",
     type: "website",
     url: "/news",
-    images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Новости промышленной безопасности" }],
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Новости промышленной безопасности",
     description: "Актуальные новости отрасли и требований Ростехнадзора.",
-    images: ["/hero_svg.webp"],
+    images: ["/og-default.png"],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };

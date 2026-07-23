@@ -52,14 +52,14 @@ export const metadata: Metadata = {
     title: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
     description:
       "Найдите аттестованного эксперта Ростехнадзора или разместите заказ на экспертизу промышленной безопасности. Тендеры, отзывы, отчёты в PDF.",
-    images: [{ url: "/hero_svg.webp", width: 1200, height: 630, alt: "Ресурс-Плюс — платформа экспертизы промышленной безопасности" }],
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
     description:
       "Платформа для тендеров на экспертизу промышленной безопасности. Аттестованные эксперты Ростехнадзора.",
-    images: ["/hero_svg.webp"],
+    images: ["/og-default.png"],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
