@@ -40,6 +40,13 @@
   background: #ffffff;
 }
 
+.reviewPublished {
+  margin: 0;
+  color: #16833b;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 @media (min-width: 768px) {
   .header {
     flex-direction: row;

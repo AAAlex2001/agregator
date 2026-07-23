@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   confirmContactPayment,
   createContactDeal,
+  createContactDealReview,
+  deleteContactDeal,
   fetchContactDeal,
   fetchContactDeals,
   fetchContactOffer,
@@ -14,74 +16,116 @@ import {
   signContactDeal,
   updateContactOffer,
   uploadContactReceipt,
+  type ContactDealDetail,
+  type ContactDealListItem,
   type ExpertContactCardData,
 } from "@/source/entities/expert-contact";
 import { useSession } from "@/source/features/session";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
   expertContactsReducer,
   initialExpertContactsState,
 } from "./reducer";
 
+function errorMessage(reason: unknown, fallback: string): string {
+  return reason instanceof Error ? reason.message : fallback;
+}
+
 export function useExpertContacts(targetExpertId?: string) {
   const router = useRouter();
   const { role, user, isLoading: sessionLoading } = useSession();
+  const { showError, showSuccess } = useNotifications();
   const [state, dispatch] = useReducer(
     expertContactsReducer,
     initialExpertContactsState,
   );
   const [dealChatUuid, setDealChatUuid] = useState<string | null>(null);
-
-  const loadInitialData = async () => {
-    dispatch({ type: "LOADING", value: true });
-    dispatch({ type: "ERROR", value: null });
-    try {
-      const [experts, deals, offer] = await Promise.all([
-        fetchExpertContacts(),
-        user ? fetchContactDeals() : Promise.resolve([]),
-        user && role === "EXPERT" ? fetchContactOffer() : Promise.resolve(null),
-      ]);
-      dispatch({ type: "EXPERTS", value: experts });
-      dispatch({ type: "DEALS", value: deals });
-      dispatch({ type: "OFFER", value: offer });
-    } catch (reason) {
-      dispatch({
-        type: "ERROR",
-        value: reason instanceof Error ? reason.message : "Не удалось загрузить раздел",
-      });
-    } finally {
-      dispatch({ type: "LOADING", value: false });
-    }
-  };
+  const requestInFlightRef = useRef(false);
+  const userId = user?.id ?? null;
 
   useEffect(() => {
     if (sessionLoading) return;
-    void loadInitialData();
-    // Загрузка зависит только от сессии и активной роли пользователя.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role, sessionLoading, user]);
+    let canceled = false;
 
-  const runDealAction = async (
-    action: () => Promise<Awaited<ReturnType<typeof fetchContactDeal>>>,
-  ) => {
+    const load = async () => {
+      dispatch({ type: "LOADING", value: true });
+      dispatch({ type: "ERROR", value: null });
+      try {
+        const [experts, deals, offer] = await Promise.all([
+          fetchExpertContacts(),
+          userId ? fetchContactDeals() : Promise.resolve([]),
+          userId && role === "EXPERT"
+            ? fetchContactOffer()
+            : Promise.resolve(null),
+        ]);
+        if (canceled) return;
+        dispatch({ type: "EXPERTS", value: experts });
+        dispatch({ type: "DEALS", value: deals });
+        dispatch({ type: "OFFER", value: offer });
+      } catch (reason) {
+        if (!canceled) {
+          dispatch({
+            type: "ERROR",
+            value: errorMessage(reason, "Не удалось загрузить раздел"),
+          });
+        }
+      } finally {
+        if (!canceled) dispatch({ type: "LOADING", value: false });
+      }
+    };
+
+    void load();
+    return () => {
+      canceled = true;
+    };
+  }, [role, sessionLoading, userId]);
+
+  const beginRequest = (): boolean => {
+    if (requestInFlightRef.current) return false;
+    requestInFlightRef.current = true;
     dispatch({ type: "BUSY", value: true });
     dispatch({ type: "ERROR", value: null });
+    return true;
+  };
+
+  const finishRequest = () => {
+    requestInFlightRef.current = false;
+    dispatch({ type: "BUSY", value: false });
+  };
+
+  const setRequestError = (reason: unknown, fallback: string): string => {
+    const message = errorMessage(reason, fallback);
+    dispatch({ type: "ERROR", value: message });
+    return message;
+  };
+
+  const refreshMarketplace = async () => {
+    const [experts, deals] = await Promise.all([
+      fetchExpertContacts(),
+      fetchContactDeals(),
+    ]);
+    dispatch({ type: "EXPERTS", value: experts });
+    dispatch({ type: "DEALS", value: deals });
+  };
+
+  const runDealAction = async (
+    request: () => Promise<ContactDealDetail>,
+  ): Promise<void> => {
+    if (!beginRequest()) return;
     try {
-      const deal = await action();
+      const deal = await request();
       dispatch({ type: "SELECT_DEAL", value: deal });
       dispatch({ type: "SYNC_DEAL", value: deal });
       dispatch({ type: "DEALS", value: await fetchContactDeals() });
     } catch (reason) {
-      dispatch({
-        type: "ERROR",
-        value: reason instanceof Error ? reason.message : "Не удалось выполнить действие",
-      });
+      setRequestError(reason, "Не удалось выполнить действие");
     } finally {
-      dispatch({ type: "BUSY", value: false });
+      finishRequest();
     }
   };
 
   const openExpert = async (expert: ExpertContactCardData) => {
-    if (!user) {
+    if (!userId) {
       router.push("/login");
       return;
     }
@@ -92,27 +136,80 @@ export function useExpertContacts(targetExpertId?: string) {
     ));
   };
 
-  const openDeal = async (id: number) => {
-    await runDealAction(() => fetchContactDeal(id));
-  };
-
-  const openDealChat = async (dealId: number) => {
-    dispatch({ type: "BUSY", value: true });
-    dispatch({ type: "ERROR", value: null });
+  const confirmDeleteDeal = async () => {
+    const deal = state.deleteDeal;
+    if (!deal || !beginRequest()) return;
     try {
-      setDealChatUuid(await openDealChatApi(dealId));
+      await deleteContactDeal(deal.id);
+      await refreshMarketplace();
+      dispatch({ type: "DELETE_DEAL", value: null });
+      showSuccess("Заявка на контакты удалена");
     } catch (reason) {
-      dispatch({
-        type: "ERROR",
-        value: reason instanceof Error ? reason.message : "Не удалось открыть чат",
-      });
+      showError(setRequestError(
+        reason,
+        "Не удалось удалить заявку на контакты",
+      ));
     } finally {
-      dispatch({ type: "BUSY", value: false });
+      finishRequest();
     }
   };
 
+  const submitReview = async (
+    payload: { rating: number; comment: string },
+  ): Promise<void> => {
+    const deal = state.reviewDeal;
+    if (!deal || !beginRequest()) return;
+    try {
+      await createContactDealReview(deal.id, payload);
+      await refreshMarketplace();
+      dispatch({ type: "REVIEW_DEAL", value: null });
+      showSuccess("Отзыв опубликован");
+    } catch (reason) {
+      showError(setRequestError(reason, "Не удалось опубликовать отзыв"));
+      throw reason;
+    } finally {
+      finishRequest();
+    }
+  };
+
+  const openDealChat = async (dealId: number) => {
+    if (!beginRequest()) return;
+    try {
+      setDealChatUuid(await openDealChatApi(dealId));
+    } catch (reason) {
+      setRequestError(reason, "Не удалось открыть чат");
+    } finally {
+      finishRequest();
+    }
+  };
+
+  const saveOffer = async (
+    payload: Parameters<typeof updateContactOffer>[0],
+  ): Promise<boolean> => {
+    if (!beginRequest()) return false;
+    try {
+      const offer = await updateContactOffer(payload);
+      dispatch({ type: "SYNC_OFFER", value: offer });
+      return true;
+    } catch (reason) {
+      setRequestError(reason, "Не удалось сохранить настройки");
+      return false;
+    } finally {
+      finishRequest();
+    }
+  };
+
+  const selectedDealAction = (
+    request: (dealId: number) => Promise<ContactDealDetail>,
+  ): Promise<void> => {
+    const deal = state.selectedDeal;
+    return deal
+      ? runDealAction(() => request(deal.id))
+      : Promise.resolve();
+  };
+
   const normalizedSearch = state.search.trim().toLocaleLowerCase("ru-RU");
-  let visibleExperts = state.experts.filter((expert) => {
+  let experts = state.experts.filter((expert) => {
     const matchesSearch = !normalizedSearch
       || expert.name.toLocaleLowerCase("ru-RU").includes(normalizedSearch);
     const matchesAccess = state.accessFilter === "ALL"
@@ -120,9 +217,8 @@ export function useExpertContacts(targetExpertId?: string) {
       || (state.accessFilter === "CLOSED" && !expert.sales_enabled);
     return matchesSearch && matchesAccess;
   });
-
   if (state.ratingSort) {
-    visibleExperts = [...visibleExperts].sort((first, second) => {
+    experts = [...experts].sort((first, second) => {
       if (first.rating === null) return second.rating === null ? 0 : 1;
       if (second.rating === null) return -1;
       return state.ratingSort === "desc"
@@ -131,18 +227,18 @@ export function useExpertContacts(targetExpertId?: string) {
     });
   }
 
-  const accessCounts = {
-    ALL: state.experts.length,
-    OPEN: state.experts.filter((expert) => expert.sales_enabled).length,
-    CLOSED: state.experts.filter((expert) => !expert.sales_enabled).length,
-  };
-
   return {
     ...state,
-    experts: visibleExperts,
+    experts,
     totalExperts: state.experts.length,
     targetExpertId: targetExpertId ?? null,
     role,
+    dealChatUuid,
+    accessCounts: {
+      ALL: state.experts.length,
+      OPEN: state.experts.filter((expert) => expert.sales_enabled).length,
+      CLOSED: state.experts.filter((expert) => !expert.sales_enabled).length,
+    },
     setSearch: (value: string) => dispatch({ type: "SEARCH", value }),
     setAccessFilter: (value: typeof state.accessFilter) => (
       dispatch({ type: "ACCESS_FILTER", value })
@@ -150,41 +246,33 @@ export function useExpertContacts(targetExpertId?: string) {
     setRatingSort: (value: typeof state.ratingSort) => (
       dispatch({ type: "RATING_SORT", value })
     ),
-    accessCounts,
     openExpert,
-    openDeal,
-    dealChatUuid,
+    openDeal: (id: number) => runDealAction(() => fetchContactDeal(id)),
+    closeDeal: () => dispatch({ type: "SELECT_DEAL", value: null }),
+    requestDeleteDeal: (deal: ContactDealListItem) => (
+      dispatch({ type: "DELETE_DEAL", value: deal })
+    ),
+    confirmDeleteDeal,
+    cancelDeleteDeal: () => dispatch({ type: "DELETE_DEAL", value: null }),
+    startReview: () => {
+      if (!state.selectedDeal?.can_review) return;
+      dispatch({ type: "REVIEW_DEAL", value: state.selectedDeal });
+      dispatch({ type: "SELECT_DEAL", value: null });
+    },
+    submitReview,
+    closeReview: () => dispatch({ type: "REVIEW_DEAL", value: null }),
     openDealChat,
     closeDealChat: () => setDealChatUuid(null),
-    closeDeal: () => dispatch({ type: "SELECT_DEAL", value: null }),
-    saveOffer: async (payload: Parameters<typeof updateContactOffer>[0]) => {
-      dispatch({ type: "BUSY", value: true });
-      dispatch({ type: "ERROR", value: null });
-      try {
-        const offer = await updateContactOffer(payload);
-        dispatch({ type: "SYNC_OFFER", value: offer });
-        return true;
-      } catch (reason) {
-        dispatch({
-          type: "ERROR",
-          value: reason instanceof Error ? reason.message : "Не удалось сохранить настройки",
-        });
-        return false;
-      } finally {
-        dispatch({ type: "BUSY", value: false });
-      }
-    },
-    sign: (password: string) => state.selectedDeal
-      ? runDealAction(() => signContactDeal(state.selectedDeal!.id, password))
-      : Promise.resolve(),
-    uploadReceipt: (file: File) => state.selectedDeal
-      ? runDealAction(() => uploadContactReceipt(state.selectedDeal!.id, file))
-      : Promise.resolve(),
-    confirmPayment: () => state.selectedDeal
-      ? runDealAction(() => confirmContactPayment(state.selectedDeal!.id))
-      : Promise.resolve(),
-    rejectPayment: (reason: string) => state.selectedDeal
-      ? runDealAction(() => rejectContactPayment(state.selectedDeal!.id, reason))
-      : Promise.resolve(),
+    saveOffer,
+    sign: (password: string) => selectedDealAction(
+      (dealId) => signContactDeal(dealId, password),
+    ),
+    uploadReceipt: (file: File) => selectedDealAction(
+      (dealId) => uploadContactReceipt(dealId, file),
+    ),
+    confirmPayment: () => selectedDealAction(confirmContactPayment),
+    rejectPayment: (reason: string) => selectedDealAction(
+      (dealId) => rejectContactPayment(dealId, reason),
+    ),
   };
 }

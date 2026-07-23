@@ -14,17 +14,15 @@ interface ReceiptFileFieldProps {
 
 export function ReceiptFileField({ file, onChange }: ReceiptFileFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl] = useState(() => file ? URL.createObjectURL(file) : null);
 
   useEffect(() => {
-    if (!file) {
-      setPreviewUrl(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const items: FileGalleryItem[] = file && previewUrl
     ? [{

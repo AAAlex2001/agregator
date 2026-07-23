@@ -25,8 +25,13 @@ class UploadContactReceiptUseCase:
     async def execute(
         self, deal_id: int, buyer_id: int, upload: UploadFile
     ) -> ContactAccessDeal:
-        deal = await self.policy.require_deal(deal_id)
+        deal = await self.policy.require_deal(deal_id, for_update=True)
         self.policy.require_buyer(deal, buyer_id)
+        if (
+            deal.status == ContactDealStatus.PAYMENT_REPORTED
+            and self.policy.pending_receipt(deal) is not None
+        ):
+            return deal
         self.policy.require_receipt_upload_status(deal)
         if len(deal.receipts) >= 5:
             raise HTTPException(
@@ -35,26 +40,30 @@ class UploadContactReceiptUseCase:
             )
 
         metadata = await self.storage.save(deal.public_id, upload)
-        now = datetime.now(UTC)
-        await self.repository.supersede_pending_receipts(deal.id, now)
-        await self.repository.add_receipt(
-            ContactPaymentReceipt(
-                deal_id=deal.id,
-                uploader_id=buyer_id,
-                storage_key=str(metadata["storage_key"]),
-                original_name=str(metadata["original_name"]),
-                content_type=str(metadata["content_type"]),
-                size_bytes=int(metadata["size_bytes"]),
-                sha256=str(metadata["sha256"]),
+        try:
+            now = datetime.now(UTC)
+            await self.repository.supersede_pending_receipts(deal.id, now)
+            await self.repository.add_receipt(
+                ContactPaymentReceipt(
+                    deal_id=deal.id,
+                    uploader_id=buyer_id,
+                    storage_key=str(metadata["storage_key"]),
+                    original_name=str(metadata["original_name"]),
+                    content_type=str(metadata["content_type"]),
+                    size_bytes=int(metadata["size_bytes"]),
+                    sha256=str(metadata["sha256"]),
+                )
             )
-        )
-        deal.status = ContactDealStatus.PAYMENT_REPORTED
-        deal.buyer_reported_paid_at = now
-        await self.repository.flush()
-        if self.notifier is not None:
-            await self.notifier.execute(
-                deal.seller_id,
-                "Покупатель загрузил чек",
-                "Проверьте чек и подтвердите оплату, чтобы открыть контакты покупателю.",
-            )
-        return await self.policy.require_deal(deal.id)
+            deal.status = ContactDealStatus.PAYMENT_REPORTED
+            deal.buyer_reported_paid_at = now
+            await self.repository.flush()
+            if self.notifier is not None:
+                await self.notifier.execute(
+                    deal.seller_id,
+                    "Покупатель загрузил чек",
+                    "Проверьте чек и подтвердите оплату, чтобы открыть контакты покупателю.",
+                )
+            return await self.policy.require_deal(deal.id)
+        except Exception:
+            self.storage.delete(str(metadata["storage_key"]))
+            raise

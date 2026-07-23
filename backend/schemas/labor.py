@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -27,6 +28,7 @@ class LaborCertificate(BaseModel):
 
 
 class LaborListingCreate(BaseModel):
+    client_request_id: UUID | None = None
     kind: LaborListingKind
     certificates: list[LaborCertificate] = Field(default_factory=list, max_length=100)
     other_profession: str | None = Field(None, max_length=500)

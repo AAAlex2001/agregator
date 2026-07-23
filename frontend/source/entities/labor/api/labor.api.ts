@@ -50,6 +50,7 @@ export async function fetchLaborListings(
 
 export async function createLaborListing(
   payload: LaborListingPayload,
+  clientRequestId: string,
 ): Promise<LaborListingData> {
   const response = await fetchWithSession(
     `${API_URL}/labor/listings`,
@@ -58,7 +59,10 @@ export async function createLaborListing(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...payload,
+        client_request_id: clientRequestId,
+      }),
     },
   );
 

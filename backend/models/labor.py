@@ -1,10 +1,19 @@
 from datetime import UTC, date, datetime
 from enum import Enum as PyEnum
 from typing import TYPE_CHECKING, Any
+from uuid import UUID as PyUUID
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, String
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    String,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -38,6 +47,13 @@ class LaborListing(Base):
     """Объявление в разделе трудовых ресурсов."""
 
     __tablename__ = "labor_listings"
+    __table_args__ = (
+        UniqueConstraint(
+            "owner_id",
+            "client_request_id",
+            name="uq_labor_listings_owner_request",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     public_id: Mapped[str] = mapped_column(
@@ -49,6 +65,10 @@ class LaborListing(Base):
     )
     owner_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    client_request_id: Mapped[PyUUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
     )
     kind: Mapped[LaborListingKind] = mapped_column(
         Enum(LaborListingKind), nullable=False, index=True

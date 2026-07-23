@@ -25,6 +25,11 @@ class ContactReceiptRejectRequest(BaseModel):
     reason: str = Field(..., min_length=3, max_length=1000)
 
 
+class ContactDealReviewRequest(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    comment: str = Field(default="", max_length=5000)
+
+
 class AdminContactDealReleaseRequest(BaseModel):
     note: str = Field(..., min_length=3, max_length=2000)
 
@@ -76,6 +81,8 @@ class ContactDealDetailResponse(ContactDealListItemResponse):
     released_at: datetime | None = None
     released_by: ContactDealReleaseActor | None = None
     release_note: str | None = None
+    can_review: bool = False
+    has_review: bool = False
 
 
 class ContactDealListResponse(BaseModel):

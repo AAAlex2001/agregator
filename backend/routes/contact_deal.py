@@ -19,9 +19,11 @@ from schemas.contact_deal import (
     ContactDealCreateRequest,
     ContactDealDetailResponse,
     ContactDealListResponse,
+    ContactDealReviewRequest,
     ContactDealSignRequest,
     ContactReceiptRejectRequest,
 )
+from schemas.review import CreateReviewResponse
 from services.contact_deals import (
     ContactDealCipher,
     ContactDealPolicy,
@@ -33,12 +35,14 @@ from services.contact_deals.formatters import to_detail
 from services.contact_deals.use_cases import (
     ConfirmContactPaymentUseCase,
     CreateContactDealUseCase,
+    DeleteContactDealUseCase,
     GetContactDealDocumentUseCase,
     GetContactDealUseCase,
     GetContactReceiptUseCase,
     ListContactDealsUseCase,
     NotifyContactAccessEventUseCase,
     RejectContactPaymentUseCase,
+    ReviewContactDealUseCase,
     SignContactDealUseCase,
     UploadContactReceiptUseCase,
 )
@@ -101,6 +105,44 @@ async def list_contact_deals(
 ) -> ContactDealListResponse:
     items = await ListContactDealsUseCase(ContactDealRepository(db)).execute(user_id)
     return ContactDealListResponse(items=items, total=len(items))
+
+
+@router.delete("/{deal_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_contact_deal(
+    deal_id: int,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> Response:
+    repository, policy, _ = build_contact_dependencies(db)
+    await DeleteContactDealUseCase(
+        repository,
+        policy,
+        build_contact_notifier(db, background_tasks),
+    ).execute(deal_id, user_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{deal_id}/review", response_model=CreateReviewResponse)
+async def review_contact_deal(
+    deal_id: int,
+    payload: ContactDealReviewRequest,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> CreateReviewResponse:
+    repository, policy, _ = build_contact_dependencies(db)
+    await ReviewContactDealUseCase(
+        repository,
+        policy,
+        build_contact_notifier(db, background_tasks),
+    ).execute(
+        deal_id,
+        user_id,
+        payload.rating,
+        payload.comment,
+    )
+    return CreateReviewResponse(detail="Отзыв успешно опубликован")
 
 
 @router.get("/{deal_id}", response_model=ContactDealDetailResponse)

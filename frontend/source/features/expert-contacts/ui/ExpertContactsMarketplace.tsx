@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ExpertCardSkeleton } from "@/source/entities/expert";
+import { AddReviewModalContainer } from "@/source/features/reviews";
 import { TextInput, Title, Subtitle, Tabs } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
@@ -10,6 +11,7 @@ import type { ContactAccessFilter } from "../model/types";
 import { useExpertContacts } from "../model/useExpertContacts";
 import { ContactDealModal } from "./ContactDealModal";
 import { ContactDealsList } from "./ContactDealsList";
+import { DeleteContactDealModal } from "./DeleteContactDealModal";
 import { ContactOfferSettings } from "./ContactOfferSettings";
 import { ExpertContactCard } from "./ExpertContactCard";
 import s from "./ExpertContactsMarketplace.module.scss";
@@ -60,6 +62,7 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         busy={contacts.busy}
         onOpen={(id) => void contacts.openDeal(id)}
         onOpenChat={(id) => void contacts.openDealChat(id)}
+        onDelete={contacts.requestDeleteDeal}
       />
 
       {contacts.error && <p className={s.error}>{contacts.error}</p>}
@@ -138,6 +141,26 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         onUploadReceipt={contacts.uploadReceipt}
         onConfirmPayment={contacts.confirmPayment}
         onRejectPayment={contacts.rejectPayment}
+        onReview={contacts.startReview}
+      />
+
+      <DeleteContactDealModal
+        deal={contacts.deleteDeal}
+        busy={contacts.busy}
+        onClose={contacts.cancelDeleteDeal}
+        onConfirm={() => void contacts.confirmDeleteDeal()}
+      />
+
+      <AddReviewModalContainer
+        isOpen={contacts.reviewDeal !== null}
+        customerName={contacts.reviewDeal?.buyer_name ?? ""}
+        orderTitle="Покупка контактов эксперта"
+        expertName={contacts.reviewDeal?.seller_name ?? ""}
+        title="Оставьте отзыв об эксперте"
+        ratingLabel="Оцените взаимодействие с экспертом"
+        commentPlaceholder="Расскажите о взаимодействии и получении контактных данных"
+        onClose={contacts.closeReview}
+        onSubmit={contacts.submitReview}
       />
 
       <ChatModal

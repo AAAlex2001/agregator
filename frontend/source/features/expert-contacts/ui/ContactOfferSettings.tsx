@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import {
   ExpertContactOfferFields,
   type ExpertContactOfferData,
@@ -26,12 +26,6 @@ export function ContactOfferSettings({ offer, busy, onSave }: ContactOfferSettin
   const [price, setPrice] = useState(String(offer.price_rubles ?? ""));
   const [paymentDetails, setPaymentDetails] = useState(offer.payment_details ?? "");
   const [consent, setConsent] = useState(false);
-
-  useEffect(() => {
-    setEnabled(offer.enabled);
-    setPrice(String(offer.price_rubles ?? ""));
-    setPaymentDetails(offer.payment_details ?? "");
-  }, [offer]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();

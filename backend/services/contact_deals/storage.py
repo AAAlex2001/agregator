@@ -75,6 +75,13 @@ class ContactReceiptStorage:
             raise FileNotFoundError(storage_key)
         return candidate
 
+    def delete(self, storage_key: str) -> None:
+        try:
+            path = self.resolve(storage_key)
+        except FileNotFoundError:
+            return
+        path.unlink(missing_ok=True)
+
     @staticmethod
     def validate_signature(extension: str, data: bytes) -> None:
         valid = (

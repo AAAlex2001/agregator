@@ -79,10 +79,12 @@ export async function sendChatMessage(
   chatUuid: string,
   text: string,
   files: File[] = [],
+  clientMessageId: string,
   onProgress?: (percent: number) => void,
 ): Promise<ChatMessageData> {
   const formData = new FormData();
   formData.append("text", text);
+  formData.append("client_message_id", clientMessageId);
   for (const file of files) {
     formData.append("files", file);
   }

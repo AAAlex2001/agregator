@@ -13,6 +13,8 @@ export interface ExpertContactsState {
   deals: ContactDealListItem[];
   offer: ExpertContactOfferData | null;
   selectedDeal: ContactDealDetail | null;
+  reviewDeal: ContactDealDetail | null;
+  deleteDeal: ContactDealListItem | null;
   search: string;
   accessFilter: ContactAccessFilter;
   ratingSort: SortDir | null;

@@ -10,11 +10,18 @@ interface ContactDealsListProps {
   busy: boolean;
   onOpen: (id: number) => void;
   onOpenChat: (id: number) => void;
+  onDelete: (deal: ContactDealListItem) => void;
 }
 
 const CLOSED_STATUSES: ContactDealStatus[] = ["CONTACTS_RELEASED", "CANCELED"];
 
-export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDealsListProps) {
+export function ContactDealsList({
+  deals,
+  busy,
+  onOpen,
+  onOpenChat,
+  onDelete,
+}: ContactDealsListProps) {
   const chat = useOptionalChatListContext();
   if (deals.length === 0) return null;
 
@@ -54,6 +61,16 @@ export function ContactDealsList({ deals, busy, onOpen, onOpenChat }: ContactDea
                 >
                   Открыть
                 </Button>
+                {deal.actor_party === "BUYER" && (
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => onDelete(deal)}
+                    disabled={busy}
+                  >
+                    Удалить
+                  </Button>
+                )}
               </div>
             </article>
           );

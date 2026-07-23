@@ -1,4 +1,9 @@
-from models.contact_deal import ContactAccessDeal, ContactDealParty, ContactPaymentReceipt
+from models.contact_deal import (
+    ContactAccessDeal,
+    ContactDealParty,
+    ContactDealStatus,
+    ContactPaymentReceipt,
+)
 from schemas.contact_deal import (
     AdminContactDealListItemResponse,
     ContactDealDetailResponse,
@@ -70,6 +75,20 @@ def to_detail(
     can_see_contacts = admin or actor_id == deal.seller_id or (
         actor_id == deal.buyer_id and deal.status.value == "CONTACTS_RELEASED"
     )
+    has_review = any(
+        review.customer_id == actor_id
+        for review in deal.reviews
+    )
+    can_review = (
+        actor_id == deal.buyer_id
+        and not has_review
+        and deal.status
+        in {
+            ContactDealStatus.PAYMENT_REPORTED,
+            ContactDealStatus.PAYMENT_REJECTED,
+            ContactDealStatus.CONTACTS_RELEASED,
+        }
+    )
     return ContactDealDetailResponse(
         **base.model_dump(),
         contract=deal.contract_snapshot,
@@ -87,6 +106,8 @@ def to_detail(
         released_at=deal.released_at,
         released_by=deal.released_by,
         release_note=deal.release_note,
+        can_review=can_review,
+        has_review=has_review,
     )
 
 

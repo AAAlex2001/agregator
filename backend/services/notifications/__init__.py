@@ -6,6 +6,9 @@ from services.notifications.use_cases.create_chat_message_notification import (
 from services.notifications.use_cases.create_contact_access_notification import (
     CreateContactAccessNotificationUseCase,
 )
+from services.notifications.use_cases.create_labor_response_notification import (
+    CreateLaborResponseNotificationUseCase,
+)
 from services.notifications.use_cases.create_new_order_notification import (
     CreateNewOrderNotificationUseCase,
 )
@@ -28,6 +31,7 @@ from services.notifications.use_cases.mark_notification_read import (
 __all__ = [
     "CreateChatMessageNotificationUseCase",
     "CreateContactAccessNotificationUseCase",
+    "CreateLaborResponseNotificationUseCase",
     "CreateNewOrderNotificationUseCase",
     "CreateResponseStatusChangedNotificationUseCase",
     "CreateResponseUpdatedNotificationUseCase",

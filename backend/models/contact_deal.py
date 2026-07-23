@@ -18,6 +18,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.review import Review
     from models.user import User
 
 
@@ -88,6 +89,9 @@ class ContactAccessDeal(Base):
         Enum(ContactDealReleaseActor, name="contactdealreleaseactor"), nullable=True
     )
     release_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    buyer_deleted_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC)
     )
@@ -105,6 +109,11 @@ class ContactAccessDeal(Base):
     )
     receipts: Mapped[list["ContactPaymentReceipt"]] = relationship(
         back_populates="deal", cascade="all, delete-orphan", passive_deletes=True
+    )
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="contact_deal",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     __table_args__ = (

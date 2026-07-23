@@ -104,4 +104,6 @@ export interface ContactDealDetail extends ContactDealListItem {
   released_at: string | null;
   released_by: "SELLER" | "ADMIN" | null;
   release_note: string | null;
+  can_review: boolean;
+  has_review: boolean;
 }

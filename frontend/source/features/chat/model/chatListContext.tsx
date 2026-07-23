@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import type { ChatListItemData, ChatMessageData } from "@/source/entities/chat";
 import { fetchChatList } from "@/source/entities/chat";
 
@@ -26,6 +33,7 @@ interface ChatListContextValue {
 }
 
 const ChatListContext = createContext<ChatListContextValue | null>(null);
+const CHAT_LIST_POLL_INTERVAL_MS = 30000;
 
 function sortChats(chats: ChatListItemData[]) {
   return [...chats].sort((left, right) => {
@@ -55,32 +63,52 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
   const [chats, setChats] = useState<ChatListItemData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const refreshSequenceRef = useRef(0);
+  const localChangeSequenceRef = useRef(0);
 
   async function refresh() {
+    const requestSequence = ++refreshSequenceRef.current;
+    const localChangeSequence = localChangeSequenceRef.current;
     setLoading(true);
     setError(null);
 
     try {
       const items = await fetchChatList();
-      setChats(sortChats(items));
+      if (
+        requestSequence === refreshSequenceRef.current
+        && localChangeSequence === localChangeSequenceRef.current
+      ) {
+        setChats(sortChats(items));
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось загрузить чаты");
+      if (requestSequence === refreshSequenceRef.current) {
+        setError(err instanceof Error ? err.message : "Не удалось загрузить чаты");
+      }
     } finally {
-      setLoading(false);
+      if (requestSequence === refreshSequenceRef.current) {
+        setLoading(false);
+      }
     }
   }
 
   useEffect(() => {
     void refresh();
+    const intervalId = window.setInterval(
+      () => void refresh(),
+      CHAT_LIST_POLL_INTERVAL_MS,
+    );
+    return () => window.clearInterval(intervalId);
   }, []);
 
   function markChatAsRead(chatUuid: string) {
+    localChangeSequenceRef.current += 1;
     setChats((currentChats) => currentChats.map((chat) => (
       chat.uuid === chatUuid ? { ...chat, unread_count: 0 } : chat
     )));
   }
 
   function setChatBlocked(chatUuid: string, isBlocked: boolean) {
+    localChangeSequenceRef.current += 1;
     setChats((currentChats) => currentChats.map((chat) => (
       chat.uuid === chatUuid
         ? { ...chat, is_blocked: isBlocked }
@@ -89,6 +117,7 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
   }
 
   function syncChatMessage(chatUuid: string, message: ChatMessageData, currentUserId: number) {
+    localChangeSequenceRef.current += 1;
     setChats((currentChats) => {
       const nextChats = currentChats.map((chat) => {
         if (chat.uuid !== chatUuid) {

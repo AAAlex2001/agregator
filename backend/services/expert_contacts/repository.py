@@ -33,6 +33,7 @@ class ExpertContactRepository:
         deal_join = (
             (ContactAccessDeal.seller_id == User.id)
             & (ContactAccessDeal.buyer_id == actor_id)
+            & (ContactAccessDeal.buyer_deleted_at.is_(None))
             if actor_id is not None
             else false()
         )
@@ -51,16 +52,19 @@ class ExpertContactRepository:
         rows = (await self.db.execute(query)).all()
         return [(row[0], row[1]) for row in rows], total
 
-    async def get_active_expert(self, user_id: int) -> User | None:
-        return (
-            await self.db.execute(
-                select(User).where(
-                    User.id == user_id,
-                    User.role == UserRole.EXPERT,
-                    User.is_active.is_(True),
-                )
-            )
-        ).scalars().first()
+    async def get_active_expert(
+        self,
+        user_id: int,
+        for_update: bool = False,
+    ) -> User | None:
+        query = select(User).where(
+            User.id == user_id,
+            User.role == UserRole.EXPERT,
+            User.is_active.is_(True),
+        )
+        if for_update:
+            query = query.with_for_update()
+        return (await self.db.execute(query)).scalars().first()
 
     async def flush(self) -> None:
         await self.db.flush()

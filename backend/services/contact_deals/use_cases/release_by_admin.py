@@ -25,7 +25,7 @@ class ReleaseContactByAdminUseCase:
         self.notifier = notifier
 
     async def execute(self, deal_id: int, note: str) -> ContactAccessDeal:
-        deal = await self.policy.require_deal(deal_id)
+        deal = await self.policy.require_deal(deal_id, for_update=True)
         if deal.status == ContactDealStatus.CONTACTS_RELEASED:
             return deal
         receipt = self.policy.latest_reviewable_receipt(deal)

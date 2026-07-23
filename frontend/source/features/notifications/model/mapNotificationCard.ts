@@ -1,6 +1,7 @@
 import type {
   ChatMessageNotificationPayload,
   ContactAccessNotificationPayload,
+  LaborResponseNotificationPayload,
   NewBlogPostNotificationPayload,
   NewOrderNotificationPayload,
   NotificationCardModel,
@@ -175,7 +176,11 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
 function mapChatMessage(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as ChatMessageNotificationPayload;
   const orderTitle = getOrderTitle(payload.order_title);
-  const senderTitle = payload.sender_role === "CUSTOMER" ? "заказчика" : "эксперта";
+  const senderTitle = {
+    CUSTOMER: "заказчика",
+    EXPERT: "эксперта",
+    LICENSE_HOLDER: "держателя лицензии",
+  }[payload.sender_role];
   const preview = payload.preview || "Новое сообщение";
 
   return {
@@ -270,6 +275,19 @@ function mapContactAccess(item: NotificationItem): NotificationCardModel {
   };
 }
 
+function mapLaborResponse(item: NotificationItem): NotificationCardModel {
+  const payload = item.payload as LaborResponseNotificationPayload;
+  return {
+    id: item.id,
+    title: "Новый отклик на вашу заявку",
+    message: `${payload.responder_name} откликнулся на объявление «${payload.listing_title}». Откройте вкладку «Мои заявки», чтобы перейти в чат.`,
+    actionLabel: item.action_url ? "Открыть мои заявки" : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 function mapSupportReply(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as SupportReplyNotificationPayload;
   const subject = payload.subject || "Обращение";
@@ -322,6 +340,10 @@ export function mapNotificationCard(item: NotificationItem): NotificationCardMod
 
   if (item.type === "CONTACT_ACCESS") {
     return mapContactAccess(item);
+  }
+
+  if (item.type === "LABOR_RESPONSE") {
+    return mapLaborResponse(item);
   }
 
   return {

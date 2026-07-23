@@ -1,22 +1,19 @@
+from uuid import UUID, uuid4
+
 from fastapi import (
     APIRouter,
     BackgroundTasks,
     Depends,
     File,
     Form,
-    HTTPException,
     Query,
     UploadFile,
-    status,
 )
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
-from models.chat import Chat
-from models.contact_deal import ContactAccessDeal
 from schemas.chat import (
     ChatDetailResponse,
     ChatListResponse,
@@ -42,6 +39,7 @@ from services.chats import (
     ListExpertRoomMessagesUseCase,
     MarkMessagesReadUseCase,
     OpenChatUseCase,
+    OpenContactDealChatUseCase,
     SendExpertRoomMessageUseCase,
     SendMessageUseCase,
     UnblockChatUseCase,
@@ -141,27 +139,15 @@ async def open_deal_chat(
     user_id: int = Depends(get_current_user),
 ) -> ChatDetailResponse:
     "Открывает (или возвращает) чат по сделке доступа к контактам. Участники — покупатель и продавец."
-    deal = (
-        await db.execute(select(ContactAccessDeal).where(ContactAccessDeal.id == deal_id))
-    ).scalars().first()
-    if deal is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сделка не найдена")
-    if user_id not in {deal.buyer_id, deal.seller_id}:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет доступа к этой сделке")
-
-    chat = (
-        await db.execute(select(Chat).where(Chat.contact_deal_id == deal.id))
-    ).scalars().first()
-    if chat is None:
-        chat = Chat(
-            contact_deal_id=deal.id,
-            customer_id=deal.buyer_id,
-            expert_id=deal.seller_id,
-        )
-        db.add(chat)
-        await db.flush()
-
-    detail_use_case = GetChatDetailUseCase(build_repo(db), ChatValidator(build_repo(db)))
+    repository = build_repo(db)
+    chat = await OpenContactDealChatUseCase(repository).execute(
+        deal_id,
+        user_id,
+    )
+    detail_use_case = GetChatDetailUseCase(
+        repository,
+        ChatValidator(repository),
+    )
     return await detail_use_case.execute(chat_id=chat.id, actor_id=user_id, limit=200)
 
 
@@ -256,6 +242,7 @@ async def send_message(
     chat_uuid: str,
     background_tasks: BackgroundTasks,
     text: str = Form(""),
+    client_message_id: UUID | None = Form(None),
     file: UploadFile | None = File(default=None),
     files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
@@ -284,18 +271,23 @@ async def send_message(
         ),
         send_email=send_email,
     )
-    message = await use_case.execute(
+    result = await use_case.execute(
         chat_id=chat.id,
         sender_id=user_id,
         text=text,
         uploads=uploads,
         recipient_online=recipient_online,
+        client_message_id=client_message_id or uuid4(),
     )
-    await chat_manager.broadcast(
-        chat.id,
-        {"event": "chat_message", "data": message.model_dump(mode="json")},
-    )
-    return message
+    if result.created:
+        await chat_manager.broadcast(
+            chat.id,
+            {
+                "event": "chat_message",
+                "data": result.message.model_dump(mode="json"),
+            },
+        )
+    return result.message
 
 
 @expert_room_router.get("/messages", response_model=ExpertRoomHistoryResponse)

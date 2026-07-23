@@ -20,6 +20,7 @@ interface ContactDealModalProps {
   onUploadReceipt: (file: File) => Promise<void>;
   onConfirmPayment: () => Promise<void>;
   onRejectPayment: (reason: string) => Promise<void>;
+  onReview: () => void;
 }
 
 export function ContactDealModal({
@@ -30,6 +31,7 @@ export function ContactDealModal({
   onUploadReceipt,
   onConfirmPayment,
   onRejectPayment,
+  onReview,
 }: ContactDealModalProps) {
   if (!deal) return null;
 
@@ -78,6 +80,20 @@ export function ContactDealModal({
           onConfirmPayment={onConfirmPayment}
           onRejectPayment={onRejectPayment}
         />
+
+        {deal.can_review && (
+          <Button
+            variant="outlineOrange"
+            size="sm"
+            onClick={onReview}
+            disabled={busy}
+          >
+            Оставить отзыв
+          </Button>
+        )}
+        {deal.has_review && (
+          <p className={s.reviewPublished}>Отзыв по этой сделке опубликован</p>
+        )}
       </div>
     </Modal>
   );

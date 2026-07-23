@@ -32,7 +32,7 @@ class SignContactDealUseCase:
         password: str,
         audit: dict[str, str | None],
     ) -> ContactAccessDeal:
-        deal = await self.policy.require_deal(deal_id)
+        deal = await self.policy.require_deal(deal_id, for_update=True)
         party = self.policy.actor_party(deal, user_id)
         user = deal.seller if party == ContactDealParty.SELLER else deal.buyer
 

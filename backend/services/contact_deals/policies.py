@@ -18,20 +18,27 @@ class ContactDealPolicy:
     def __init__(self, repository: ContactDealRepository) -> None:
         self.repository = repository
 
-    async def require_deal(self, deal_id: int) -> ContactAccessDeal:
-        deal = await self.repository.get(deal_id)
+    async def require_deal(
+        self,
+        deal_id: int,
+        for_update: bool = False,
+    ) -> ContactAccessDeal:
+        deal = await self.repository.get(deal_id, for_update=for_update)
         if deal is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сделка не найдена")
         return deal
 
-    async def require_user(self, user_id: int) -> User:
-        user = await self.repository.get_user(user_id)
+    async def require_user(self, user_id: int, for_update: bool = False) -> User:
+        user = await self.repository.get_user(user_id, for_update=for_update)
         if user is None:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет доступа")
         return user
 
-    async def require_expert(self, user_id: int) -> User:
-        expert = await self.repository.get_active_expert(user_id)
+    async def require_expert(self, user_id: int, for_update: bool = False) -> User:
+        expert = await self.repository.get_active_expert(
+            user_id,
+            for_update=for_update,
+        )
         if expert is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Эксперт не найден")
         return expert

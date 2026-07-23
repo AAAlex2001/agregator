@@ -11,6 +11,9 @@ interface Props {
   customerName: string;
   orderTitle: string;
   expertName: string;
+  title?: string;
+  ratingLabel?: string;
+  commentPlaceholder?: string;
   rating: number;
   comment: string;
   isSubmitting: boolean;
@@ -25,6 +28,9 @@ export function AddReviewModal({
   customerName,
   orderTitle,
   expertName,
+  title = "Оставьте отзыв об исполнителе",
+  ratingLabel = "Оцените работу исполнителя",
+  commentPlaceholder = "Опишите качество работы, соблюдение сроков и коммуникацию",
   rating,
   comment,
   isSubmitting,
@@ -36,7 +42,7 @@ export function AddReviewModal({
   return (
     <Modal open={isOpen} onClose={onClose} size="md" isBusy={isSubmitting} ariaLabelledBy="add-review-title">
       <div className={s.titleRow}>
-        <h2 id="add-review-title" className={s.title}>Оставьте отзыв об исполнителе</h2>
+        <h2 id="add-review-title" className={s.title}>{title}</h2>
       </div>
 
       <div className={s.metaWrap}>
@@ -53,7 +59,7 @@ export function AddReviewModal({
       </div>
 
       <div className={s.ratingWrap}>
-        <span className={s.sectionTitle}>Оцените работу исполнителя</span>
+        <span className={s.sectionTitle}>{ratingLabel}</span>
 
         <div className={s.stars}>
           {[1, 2, 3, 4, 5].map((value) => (
@@ -78,7 +84,7 @@ export function AddReviewModal({
           onChange={onCommentChange}
           multiline
           rows={4}
-          placeholder="Опишите качество работы, соблюдение сроков и коммуникацию"
+          placeholder={commentPlaceholder}
           className={s.commentInput}
         />
       </div>

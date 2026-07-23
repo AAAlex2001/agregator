@@ -62,7 +62,7 @@ class OpenChatUseCase:
 
     async def require_order(self, order_id: int) -> Order:
         "Возвращает требуемую сущность или бросает 404."
-        order = await self.repo.find_order(order_id)
+        order = await self.repo.find_order(order_id, for_update=True)
         if order is not None:
             return order
         raise HTTPException(

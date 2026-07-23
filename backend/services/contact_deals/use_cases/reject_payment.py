@@ -22,8 +22,10 @@ class RejectContactPaymentUseCase:
     async def execute(
         self, deal_id: int, seller_id: int, reason: str
     ) -> ContactAccessDeal:
-        deal = await self.policy.require_deal(deal_id)
+        deal = await self.policy.require_deal(deal_id, for_update=True)
         self.policy.require_seller(deal, seller_id)
+        if deal.status == ContactDealStatus.PAYMENT_REJECTED:
+            return deal
         receipt = self.policy.pending_receipt(deal)
         if deal.status != ContactDealStatus.PAYMENT_REPORTED or receipt is None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Нет чека на подтверждении")

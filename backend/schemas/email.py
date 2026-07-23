@@ -127,6 +127,13 @@ class NewLaborListingContext(BaseContext):
     cta_url: str
 
 
+class LaborResponseContext(BaseContext):
+    recipient_greeting: str
+    responder_name: str
+    listing_title: str
+    cta_url: str
+
+
 class ContactAccessEmailContext(BaseContext):
     recipient_greeting: str
     heading: str

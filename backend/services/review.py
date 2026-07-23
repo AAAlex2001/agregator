@@ -49,6 +49,7 @@ class ReviewService:
                 selectinload(OrderResponse.expert),
             )
             .where(OrderResponse.id == response_id)
+            .with_for_update(of=OrderResponse)
         )
         response = response_result.scalars().first()
         if not response:
@@ -63,7 +64,13 @@ class ReviewService:
                 detail="Оставить отзыв можно только после завершения проекта",
             )
 
-        expert = response.expert
+        expert = (
+            await self.db.execute(
+                select(User)
+                .where(User.id == response.expert_id)
+                .with_for_update()
+            )
+        ).scalars().first()
         if not expert:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Исполнитель не найден")
 
@@ -85,21 +92,29 @@ class ReviewService:
                 detail="Отзыв по этому отклику уже оставлен",
             )
 
-        count, avg = (
+        await self.refresh_expert_rating(expert)
+
+        return review
+
+    async def refresh_expert_rating(self, expert: User) -> None:
+        count, average = (
             await self.db.execute(
-                select(func.count(Review.id), func.avg(Review.rating))
-                .where(Review.expert_id == expert.id)
+                select(func.count(Review.id), func.avg(Review.rating)).where(
+                    Review.expert_id == expert.id
+                )
             )
         ).one()
         expert.review_count = int(count or 0)
-        expert.rating = round(float(avg), 1) if avg is not None else None
-
-        return review
+        expert.rating = round(float(average), 1) if average is not None else None
 
     async def get_expert_reviews(self, expert_id: int, skip: int, limit: int) -> tuple[list[dict[str, Any]], bool, int, float]:
         "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей User."
         list_query = (
             select(Review)
+            .options(
+                selectinload(Review.customer),
+                selectinload(Review.contact_deal),
+            )
             .where(Review.expert_id == expert_id)
             .order_by(Review.created_at.desc())
             .offset(skip)
@@ -109,7 +124,13 @@ class ReviewService:
         has_more = len(rows) > limit
         reviews = rows[:limit]
 
-        response_ids = list({r.response_id for r in reviews})
+        response_ids = list(
+            {
+                review.response_id
+                for review in reviews
+                if review.response_id is not None
+            }
+        )
         responses_map = {}
         if response_ids:
             responses_result = await self.db.execute(
@@ -126,17 +147,39 @@ class ReviewService:
         for r in reviews:
             response = responses_map.get(r.response_id)
             order = response.order if response else None
-            company_name = (order.company if order and order.company else "Компания не указана")
+            if r.contact_deal_id is not None:
+                customer_name = " ".join(
+                    part
+                    for part in (r.customer.first_name, r.customer.last_name)
+                    if part
+                ).strip()
+                company_name = customer_name or "Покупатель контактов"
+                order_title = "Покупка контактов эксперта"
+                order_sum = format_sum(
+                    r.contact_deal.price_kopecks if r.contact_deal else None
+                )
+                expert_sum = ""
+            else:
+                company_name = (
+                    order.company
+                    if order and order.company
+                    else "Компания не указана"
+                )
+                order_title = order.title if order else ""
+                order_sum = format_sum(order.sum_amount if order else None)
+                expert_sum = format_sum(
+                    response.proposed_sum_amount if response else None
+                )
             items.append({
                 "id": r.id,
-                "order_title": order.title if order else "",
+                "order_title": order_title,
                 "company_name": company_name,
-                "order_sum": format_sum(order.sum_amount if order else None),
+                "order_sum": order_sum,
                 "order_start_date": order.start_date.strftime("%d.%m.%Y") if order and order.start_date else "",
                 "order_deadline": order.deadline.strftime("%d.%m.%Y") if order and order.deadline else "",
                 "expert_start_date": response.proposed_start_date.strftime("%d.%m.%Y") if response and response.proposed_start_date else "",
                 "expert_deadline": response.proposed_deadline.strftime("%d.%m.%Y") if response and response.proposed_deadline else "",
-                "expert_sum": format_sum(response.proposed_sum_amount if response else None),
+                "expert_sum": expert_sum,
                 "order_documents": (
                     OrderDocumentsService.from_order(order) if order else OrderDocuments()
                 ),

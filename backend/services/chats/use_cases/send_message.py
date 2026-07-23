@@ -1,4 +1,7 @@
 "Use case: send message."
+from dataclasses import dataclass
+from uuid import UUID
+
 from fastapi import HTTPException, UploadFile, status
 
 from models.chat import Chat, ChatMessage
@@ -9,6 +12,12 @@ from services.chats.in_app_notifier import ChatInAppNotifier
 from services.chats.repository import ChatRepository
 from services.email import SendChatMessageEmailUseCase
 from services.file_uploads import remove_uploaded_file
+
+
+@dataclass(frozen=True)
+class SendMessageResult:
+    message: ChatMessageResponse
+    created: bool
 
 
 class SendMessageUseCase:
@@ -33,41 +42,86 @@ class SendMessageUseCase:
         text: str,
         uploads: list[UploadFile],
         recipient_online: bool,
-    ) -> ChatMessageResponse:
+        client_message_id: UUID,
+    ) -> SendMessageResult:
         "Запускает основной сценарий use case."
         normalized_text = text.strip()
         non_empty_uploads = [file for file in uploads if file and file.filename]
         self.ensure_not_empty(normalized_text, non_empty_uploads)
 
         chat = await self.require_chat(chat_id, sender_id)
+        existing = await self.repo.find_message_by_client_id(
+            chat_id,
+            sender_id,
+            client_message_id,
+        )
+        if existing is not None:
+            return SendMessageResult(
+                message=self.build_response(chat, existing, existing.is_read),
+                created=False,
+            )
         self.ensure_chat_not_blocked(chat)
         attachments = await self.save_attachments(chat_id, non_empty_uploads)
 
         mark_as_read = recipient_online
         try:
+            locked_chat = await self.repo.lock_chat_for_message(chat_id, sender_id)
+            if locked_chat is None:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Чат не найден",
+                )
+            self.ensure_chat_not_blocked(locked_chat)
+            existing = await self.repo.find_message_by_client_id(
+                chat_id,
+                sender_id,
+                client_message_id,
+            )
+            if existing is not None:
+                for attachment in attachments:
+                    remove_uploaded_file(attachment.url)
+                return SendMessageResult(
+                    message=self.build_response(
+                        locked_chat,
+                        existing,
+                        existing.is_read,
+                    ),
+                    created=False,
+                )
             message = self.build_message(
-                chat_id, sender_id, normalized_text, attachments, mark_as_read
+                chat_id,
+                sender_id,
+                normalized_text,
+                attachments,
+                mark_as_read,
+                client_message_id,
             )
             await self.repo.add(message)
             await self.repo.flush()
             await self.repo.touch_chat(chat_id)
             await self.repo.flush()
+
+            await self.in_app.new_message(
+                chat=locked_chat,
+                sender_id=sender_id,
+                text=normalized_text,
+                attachments_count=len(attachments),
+            )
+
+            if self.send_email is not None:
+                await self.send_email.execute(
+                    message.id,
+                    recipient_online=recipient_online,
+                )
         except Exception:
             for attachment in attachments:
                 remove_uploaded_file(attachment.url)
             raise
 
-        await self.in_app.new_message(
-            chat=chat,
-            sender_id=sender_id,
-            text=normalized_text,
-            attachments_count=len(attachments),
+        return SendMessageResult(
+            message=self.build_response(locked_chat, message, mark_as_read),
+            created=True,
         )
-
-        if self.send_email is not None:
-            await self.send_email.execute(message.id, recipient_online=recipient_online)
-
-        return self.build_response(chat, message, mark_as_read)
 
     @staticmethod
     def ensure_not_empty(text: str, uploads: list[UploadFile]) -> None:
@@ -113,6 +167,7 @@ class SendMessageUseCase:
         text: str,
         attachments: list[ChatAttachmentData],
         mark_as_read: bool,
+        client_message_id: UUID,
     ) -> ChatMessage:
         "Строит объект из входных данных."
         first_url = attachments[0].url if attachments else None
@@ -120,6 +175,7 @@ class SendMessageUseCase:
         return ChatMessage(
             chat_id=chat_id,
             sender_id=sender_id,
+            client_message_id=client_message_id,
             text=text,
             file_url=first_url,
             file_name=first_name,

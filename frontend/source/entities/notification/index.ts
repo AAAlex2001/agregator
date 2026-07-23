@@ -10,6 +10,7 @@ export type {
   NotificationCardModel,
   NotificationType,
   NotificationItem,
+  LaborResponseNotificationPayload,
   NotificationListResponse,
   NotificationMutationResponse,
   NotificationPayload,

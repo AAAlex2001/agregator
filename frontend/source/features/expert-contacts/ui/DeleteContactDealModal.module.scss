@@ -1,0 +1,29 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 20px 20px;
+}
+
+.title,
+.content p {
+  margin: 0;
+}
+
+.content p {
+  color: #666666;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 32px 28px 24px;
+  }
+}

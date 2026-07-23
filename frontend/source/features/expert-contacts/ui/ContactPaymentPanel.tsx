@@ -51,7 +51,11 @@ export function ContactPaymentPanel({
             <p>Площадка не принимает платёж. Переведите указанную сумму эксперту и приложите чек.</p>
           </div>
           <div className={s.receiptUploadRow}>
-            <ReceiptFileField file={receipt} onChange={setReceipt} />
+            <ReceiptFileField
+              key={receipt ? `${receipt.name}-${receipt.lastModified}` : "empty"}
+              file={receipt}
+              onChange={setReceipt}
+            />
             <Button
               type="submit"
               variant="primary"

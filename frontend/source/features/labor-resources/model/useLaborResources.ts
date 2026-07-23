@@ -4,6 +4,7 @@ import {
   useEffect,
   useReducer,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   closeLaborListing,
   contactLaborListing,
@@ -22,11 +23,15 @@ import type {
 } from "./types";
 
 export function useLaborResources(mode: LaborPageMode) {
+  const searchParams = useSearchParams();
   const chatList = useOptionalChatListContext();
   const copy = LABOR_PAGE_COPY[mode];
   const [state, dispatch] = useReducer(
     laborResourcesReducer,
-    initialLaborResourcesState,
+    {
+      ...initialLaborResourcesState,
+      tab: searchParams.get("tab") === "mine" ? "mine" : "browse",
+    },
   );
 
   useEffect(() => {

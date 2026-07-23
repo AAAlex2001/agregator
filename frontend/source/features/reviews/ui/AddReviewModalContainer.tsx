@@ -8,6 +8,9 @@ interface Props {
   customerName: string;
   orderTitle: string;
   expertName: string;
+  title?: string;
+  ratingLabel?: string;
+  commentPlaceholder?: string;
   onClose: () => void;
   onSubmit: (payload: { rating: number; comment: string }) => Promise<void>;
 }
@@ -17,6 +20,9 @@ export function AddReviewModalContainer({
   customerName,
   orderTitle,
   expertName,
+  title,
+  ratingLabel,
+  commentPlaceholder,
   onClose,
   onSubmit,
 }: Props) {
@@ -62,6 +68,9 @@ export function AddReviewModalContainer({
       customerName={customerName}
       orderTitle={orderTitle}
       expertName={expertName}
+      title={title}
+      ratingLabel={ratingLabel}
+      commentPlaceholder={commentPlaceholder}
       rating={rating}
       comment={comment}
       isSubmitting={isSubmitting}

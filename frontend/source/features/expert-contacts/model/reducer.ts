@@ -12,6 +12,8 @@ export type ExpertContactsAction =
   | { type: "DEALS"; value: ContactDealListItem[] }
   | { type: "OFFER"; value: ExpertContactOfferData | null }
   | { type: "SELECT_DEAL"; value: ContactDealDetail | null }
+  | { type: "REVIEW_DEAL"; value: ContactDealDetail | null }
+  | { type: "DELETE_DEAL"; value: ContactDealListItem | null }
   | { type: "SYNC_DEAL"; value: ContactDealDetail }
   | { type: "SYNC_OFFER"; value: ExpertContactOfferData }
   | { type: "SEARCH"; value: string }
@@ -26,6 +28,8 @@ export const initialExpertContactsState: ExpertContactsState = {
   deals: [],
   offer: null,
   selectedDeal: null,
+  reviewDeal: null,
+  deleteDeal: null,
   search: "",
   accessFilter: "ALL",
   ratingSort: null,
@@ -47,6 +51,10 @@ export function expertContactsReducer(
       return { ...state, offer: action.value };
     case "SELECT_DEAL":
       return { ...state, selectedDeal: action.value };
+    case "REVIEW_DEAL":
+      return { ...state, reviewDeal: action.value };
+    case "DELETE_DEAL":
+      return { ...state, deleteDeal: action.value };
     case "SYNC_DEAL":
       return {
         ...state,

@@ -4,6 +4,7 @@ from services.email.use_cases.send_bidding_finished_email import SendBiddingFini
 from services.email.use_cases.send_chat_message_email import SendChatMessageEmailUseCase
 from services.email.use_cases.send_contact_access_email import SendContactAccessEmailUseCase
 from services.email.use_cases.send_expert_rejected_email import SendExpertRejectedEmailUseCase
+from services.email.use_cases.send_labor_response_email import SendLaborResponseEmailUseCase
 from services.email.use_cases.send_new_blog_post_email import SendNewBlogPostEmailUseCase
 from services.email.use_cases.send_new_labor_listing_email import SendNewLaborListingEmailUseCase
 from services.email.use_cases.send_new_order_email import SendNewOrderEmailUseCase
@@ -17,6 +18,7 @@ __all__ = [
     "SendBiddingFinishedEmailUseCase",
     "SendChatMessageEmailUseCase",
     "SendContactAccessEmailUseCase",
+    "SendLaborResponseEmailUseCase",
     "SendExpertRejectedEmailUseCase",
     "SendNewBlogPostEmailUseCase",
     "SendNewLaborListingEmailUseCase",

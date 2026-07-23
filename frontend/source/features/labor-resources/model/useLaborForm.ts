@@ -3,6 +3,7 @@
 import {
   useEffect,
   useReducer,
+  useRef,
   type FormEvent,
 } from "react";
 import {
@@ -41,6 +42,10 @@ export function useLaborForm({
     user?.location_city ?? "",
     initialLaborFormState,
   );
+  const requestRef = useRef<{
+    fingerprint: string;
+    id: string;
+  } | null>(null);
 
   const copy = LABOR_PAGE_COPY[mode];
   const profileCertificates = (
@@ -120,7 +125,16 @@ export function useLaborForm({
     dispatch({ type: "SUBMITTING", value: true });
 
     try {
-      await createLaborListing(buildPayload());
+      const payload = buildPayload();
+      const fingerprint = JSON.stringify(payload);
+      if (requestRef.current?.fingerprint !== fingerprint) {
+        requestRef.current = {
+          fingerprint,
+          id: crypto.randomUUID(),
+        };
+      }
+      await createLaborListing(payload, requestRef.current.id);
+      requestRef.current = null;
       dispatch({ type: "RESET" });
       onCreated();
     } catch (reason) {

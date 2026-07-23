@@ -8,6 +8,7 @@ from services.contact_deals.crypto import ContactDealCipher
 from services.expert_contacts.formatters import to_offer
 from services.expert_contacts.repository import ExpertContactRepository
 
+
 class UpdateExpertContactOfferUseCase:
     def __init__(
         self,
@@ -20,7 +21,7 @@ class UpdateExpertContactOfferUseCase:
     async def execute(
         self, expert_id: int, data: ExpertContactOfferUpdate
     ) -> ExpertContactOfferResponse:
-        expert = await self.repository.get_active_expert(expert_id)
+        expert = await self.repository.get_active_expert(expert_id, for_update=True)
         if expert is None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

@@ -23,6 +23,12 @@ class ListChatsUseCase:
         chat_ids = [chat.id for chat in chats]
         last_messages = await self.repo.last_messages_for(chat_ids)
         unread_counts = await self.repo.unread_counts_for(chat_ids, actor_id)
+        unread_responses = await self.repo.unread_labor_response_chat_ids(
+            chat_ids,
+            actor_id,
+        )
+        for chat_id in unread_responses:
+            unread_counts[chat_id] = unread_counts.get(chat_id, 0) + 1
 
         return [
             self.build_item(chat, actor, last_messages, unread_counts)

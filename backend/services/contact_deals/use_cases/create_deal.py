@@ -25,12 +25,35 @@ class CreateContactDealUseCase:
         self.notifier = notifier
 
     async def execute(self, seller_id: int, buyer_id: int) -> ContactAccessDeal:
-        existing = await self.repository.find_for_seller_and_buyer(seller_id, buyer_id)
+        existing = await self.repository.find_for_seller_and_buyer(
+            seller_id,
+            buyer_id,
+            for_update=True,
+        )
+        if existing is not None:
+            if existing.buyer_deleted_at is not None:
+                existing.buyer_deleted_at = None
+                await self.repository.flush()
+                if self.notifier is not None:
+                    await self.notifier.execute(
+                        existing.seller_id,
+                        "Покупатель вернулся к заявке на контакты",
+                        (
+                            "Ранее скрытая покупателем сделка снова активна. "
+                            "Продолжить оформление можно в разделе контактов экспертов."
+                        ),
+                    )
+            return existing
+
+        seller = await self.policy.require_expert(seller_id, for_update=True)
+        existing = await self.repository.find_for_seller_and_buyer(
+            seller_id,
+            buyer_id,
+        )
         if existing is not None:
             return existing
 
         buyer = await self.policy.require_user(buyer_id)
-        seller = await self.policy.require_expert(seller_id)
         if seller.id == buyer.id:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Нельзя купить свои контакты")
         if (

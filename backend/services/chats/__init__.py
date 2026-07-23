@@ -23,6 +23,9 @@ from services.chats.use_cases.list_expert_room_messages import (
 )
 from services.chats.use_cases.mark_messages_read import MarkMessagesReadUseCase
 from services.chats.use_cases.open_chat import OpenChatUseCase
+from services.chats.use_cases.open_contact_deal_chat import (
+    OpenContactDealChatUseCase,
+)
 from services.chats.use_cases.send_expert_room_message import (
     SendExpertRoomMessageUseCase,
 )
@@ -43,6 +46,7 @@ __all__ = [
     "ListChatsUseCase",
     "MarkMessagesReadUseCase",
     "OpenChatUseCase",
+    "OpenContactDealChatUseCase",
     "SendMessageUseCase",
     "AuthenticateExpertRoomWsUseCase",
     "ExpertRoomConnectInfo",

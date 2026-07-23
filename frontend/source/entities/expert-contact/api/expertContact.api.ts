@@ -75,6 +75,25 @@ export async function fetchContactDeal(id: number): Promise<ContactDealDetail> {
   return response.json() as Promise<ContactDealDetail>;
 }
 
+export async function deleteContactDeal(id: number): Promise<void> {
+  const response = await fetchWithSession(`${API_URL}/contact-deals/${id}`, {
+    method: "DELETE",
+  });
+  await ensureResponse(response, "Не удалось удалить заявку на контакты");
+}
+
+export async function createContactDealReview(
+  id: number,
+  payload: { rating: number; comment: string },
+): Promise<void> {
+  const response = await fetchWithSession(`${API_URL}/contact-deals/${id}/review`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  await ensureResponse(response, "Не удалось опубликовать отзыв");
+}
+
 export async function signContactDeal(id: number, password: string): Promise<ContactDealDetail> {
   const response = await fetchWithSession(`${API_URL}/contact-deals/${id}/sign`, {
     method: "POST",

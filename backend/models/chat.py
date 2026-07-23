@@ -44,6 +44,12 @@ class Chat(Base):
         nullable=False,
     )
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default="false")
+    labor_response_is_read: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+        server_default="true",
+    )
 
     order: Mapped["Order | None"] = relationship(back_populates="chats")
     labor_listing: Mapped["LaborListing | None"] = relationship(back_populates="chats")
@@ -62,10 +68,22 @@ class Chat(Base):
 class ChatMessage(Base):
     """Сообщение в чате."""
     __tablename__ = "chat_messages"
+    __table_args__ = (
+        UniqueConstraint(
+            "chat_id",
+            "sender_id",
+            "client_message_id",
+            name="uq_chat_messages_sender_request",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     chat_id: Mapped[int] = mapped_column(ForeignKey("chats.id", ondelete="CASCADE"), nullable=False, index=True)
     sender_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    client_message_id: Mapped[PyUUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        nullable=True,
+    )
     text: Mapped[str] = mapped_column(String(5000), nullable=False)
     file_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     file_name: Mapped[str | None] = mapped_column(String(500), nullable=True)

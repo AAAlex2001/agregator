@@ -5,6 +5,8 @@ from schemas.notification import (
     ChatMessageNotificationPayload,
     ContactAccessNotificationItemResponse,
     ContactAccessNotificationPayload,
+    LaborResponseNotificationItemResponse,
+    LaborResponseNotificationPayload,
     NewBlogPostNotificationItemResponse,
     NewBlogPostNotificationPayload,
     NewOrderNotificationItemResponse,
@@ -94,6 +96,13 @@ def to_response(notification: Notification) -> NotificationItemResponse:
         return ContactAccessNotificationItemResponse(
             type=NotificationType.CONTACT_ACCESS,
             payload=ContactAccessNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.LABOR_RESPONSE:
+        return LaborResponseNotificationItemResponse(
+            type=NotificationType.LABOR_RESPONSE,
+            payload=LaborResponseNotificationPayload.model_validate(payload),
             **common,
         )
 

@@ -21,6 +21,7 @@ class NotificationType(str, PyEnum):
     NEW_BLOG_POST = "NEW_BLOG_POST"
     NEW_ORDER = "NEW_ORDER"
     CONTACT_ACCESS = "CONTACT_ACCESS"
+    LABOR_RESPONSE = "LABOR_RESPONSE"
 
 
 class Notification(Base):

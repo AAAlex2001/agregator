@@ -1,5 +1,5 @@
-export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY" | "NEW_BLOG_POST" | "NEW_ORDER" | "CONTACT_ACCESS";
-export type NotificationActorRole = "CUSTOMER" | "EXPERT";
+export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY" | "NEW_BLOG_POST" | "NEW_ORDER" | "CONTACT_ACCESS" | "LABOR_RESPONSE";
+export type NotificationActorRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
 export type NotificationResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type NotificationReason = "DIRECT_CHANGE" | "SELECTED_ANOTHER" | "SELECTED_ANOTHER_REVERTED";
 export type ResponseUpdateKind = "CREATED" | "UPDATED" | "WITHDRAWN";
@@ -57,6 +57,11 @@ export interface ContactAccessNotificationPayload {
   message: string;
 }
 
+export interface LaborResponseNotificationPayload {
+  responder_name: string;
+  listing_title: string;
+}
+
 export type NotificationPayload =
   | ResponseUpdatedNotificationPayload
   | ResponseStatusChangedNotificationPayload
@@ -66,7 +71,8 @@ export type NotificationPayload =
   | SupportReplyNotificationPayload
   | NewBlogPostNotificationPayload
   | NewOrderNotificationPayload
-  | ContactAccessNotificationPayload;
+  | ContactAccessNotificationPayload
+  | LaborResponseNotificationPayload;
 
 export interface NotificationItem {
   id: number;
