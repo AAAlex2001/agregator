@@ -38,6 +38,11 @@ export function useRtnCatalogFilters() {
     });
   }
 
+  function clearSearch() {
+    setSearchInput("");
+    pushParams((params) => params.delete("search"));
+  }
+
   function toggleTaxonomy(dimension: TaxonomyDimension, value: string) {
     const paramKey = DIMENSION_TO_PARAM[dimension];
     pushParams((params) => {
@@ -93,6 +98,7 @@ export function useRtnCatalogFilters() {
     searchInput,
     setSearchInput,
     submitSearch,
+    clearSearch,
     toggleTaxonomy,
     toggleDocumentType,
     toggleStatus,

@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
+import { EmptyStateCard } from "@/source/shared/ui";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
+import { SearchIcon } from "@/source/shared/ui/icons";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
   RtnCard,
@@ -13,9 +15,8 @@ import {
   type RtnTaxonomy,
 } from "@/source/entities/rtn-clarification";
 import { AskRtnQuestionForm } from "@/source/features/rtn-feedback";
-import { useRtnCatalogFilters } from "../model/useRtnCatalogFilters";
-import { RtnFilters } from "./RtnFilters";
-import s from "./RtnCatalog.module.scss";
+import { useRtnCatalogFilters, RtnFilters } from "@/source/features/rtn-catalog";
+import s from "./RtnCatalogWidget.module.scss";
 
 const PAGE_SIZE = 12;
 
@@ -25,13 +26,14 @@ interface Props {
   homeHref?: string;
 }
 
-export function RtnCatalog({ initial, taxonomy, homeHref = "/" }: Props) {
+export function RtnCatalogWidget({ initial, taxonomy, homeHref = "/" }: Props) {
   const { showError } = useNotifications();
   const {
     filters,
     searchInput,
     setSearchInput,
     submitSearch,
+    clearSearch,
     toggleTaxonomy,
     toggleDocumentType,
     toggleStatus,
@@ -82,29 +84,44 @@ export function RtnCatalog({ initial, taxonomy, homeHref = "/" }: Props) {
       </div>
 
       <form
-        className={s.searchRow}
+        className={s.searchWrap}
         role="search"
         onSubmit={(e) => {
           e.preventDefault();
           submitSearch();
         }}
       >
-        <input
-          type="text"
-          className={s.searchInput}
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Поиск по ключевым словам, номеру письма или названию оборудования"
-        />
-        <Button type="submit" variant="primary" className={s.searchButton}>
-          Найти
-        </Button>
+        <div className={s.searchBar}>
+          <SearchIcon className={s.searchIcon} />
+          <input
+            type="text"
+            className={s.searchInput}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Поиск по ключевым словам, номеру письма или названию оборудования"
+          />
+          {searchInput && (
+            <button type="button" className={s.clearBtn} onClick={clearSearch} aria-label="Очистить">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
+          <Button type="submit" variant="primary" size="md">
+            Найти
+          </Button>
+        </div>
       </form>
 
       <div className={s.layout}>
         <div className={s.results}>
           {items.length === 0 ? (
-            <div className={s.empty}>По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</div>
+            <EmptyStateCard
+              title="Ничего не найдено"
+              subtitle="Попробуйте изменить запрос или сбросить фильтры"
+              actionLabel={hasActiveFilters ? "Сбросить фильтры" : undefined}
+              onAction={hasActiveFilters ? resetFilters : undefined}
+            />
           ) : (
             <ul className={s.grid}>
               {items.map((item) => (

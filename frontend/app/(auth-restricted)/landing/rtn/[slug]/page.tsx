@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchRtnBySlug, fetchRelatedRtn } from "@/source/entities/rtn-clarification";
 import { fetchRtnComments } from "@/source/entities/rtn-comment";
-import { RtnClarificationView } from "@/source/features/rtn-clarification-view";
+import { RtnClarificationViewWidget } from "@/source/widgets/rtn-clarification-view";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ export default async function AuthedRtnDetailPage({ params }: Props) {
   ]);
 
   return (
-    <RtnClarificationView
+    <RtnClarificationViewWidget
       clarification={clarification}
       related={related}
       homeHref="/landing"

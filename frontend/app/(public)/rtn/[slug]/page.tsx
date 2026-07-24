@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchRtnBySlug, fetchRelatedRtn } from "@/source/entities/rtn-clarification";
 import { fetchRtnComments } from "@/source/entities/rtn-comment";
-import { RtnClarificationView, RtnJsonLd } from "@/source/features/rtn-clarification-view";
+import { RtnClarificationViewWidget, RtnJsonLd } from "@/source/widgets/rtn-clarification-view";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +55,7 @@ export default async function RtnDetailPage({ params }: Props) {
       <LandingHeader />
       <RtnJsonLd clarification={clarification} commentCount={comments.length} />
       <main>
-        <RtnClarificationView clarification={clarification} related={related} initialComments={comments} />
+        <RtnClarificationViewWidget clarification={clarification} related={related} initialComments={comments} />
       </main>
       <LandingFooter variant="light" />
     </>

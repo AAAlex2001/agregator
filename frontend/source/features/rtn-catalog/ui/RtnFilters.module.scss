@@ -49,6 +49,7 @@
 .sectionTitle {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -59,16 +60,23 @@
   &::-webkit-details-marker {
     display: none;
   }
-
-  &::before {
-    content: "▸";
-    color: #9aa1ad;
-    transition: transform 0.15s ease;
-  }
 }
 
-details[open] > .sectionTitle::before {
-  transform: rotate(90deg);
+.sectionTitleText {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.15s ease;
+}
+
+details[open] > .sectionTitle .chevron {
+  transform: rotate(180deg);
 }
 
 .sectionCount {

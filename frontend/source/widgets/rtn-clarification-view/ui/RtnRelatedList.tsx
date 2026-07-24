@@ -1,5 +1,5 @@
 import { RtnCard, type RtnListItem } from "@/source/entities/rtn-clarification";
-import s from "./RtnClarificationView.module.scss";
+import s from "./RtnClarificationViewWidget.module.scss";
 
 export function RtnRelatedList({ items }: { items: RtnListItem[] }) {
   return (

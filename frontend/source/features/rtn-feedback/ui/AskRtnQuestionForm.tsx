@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Button, Modal } from "@/source/shared/ui";
+import { EmailInput } from "@/source/shared/ui/Inputs";
 import { submitRtnQuestion } from "../api/rtnFeedback.api";
 import s from "./RtnFeedbackModal.module.scss";
 
@@ -78,9 +79,7 @@ export function AskRtnQuestionForm({ open, onClose }: Props) {
           </label>
           <label className={s.label}>
             Email для ответа (необязательно)
-            <input
-              type="email"
-              className={s.input}
+            <EmailInput
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               placeholder="you@company.ru"

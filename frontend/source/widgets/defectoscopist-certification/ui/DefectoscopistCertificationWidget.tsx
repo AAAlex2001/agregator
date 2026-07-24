@@ -21,12 +21,18 @@ function BulletList({ items }: { items: readonly string[] }) {
   );
 }
 
-export function DefectoscopistCertificationWidget() {
+interface DefectoscopistCertificationWidgetProps {
+  homeHref?: string;
+}
+
+export function DefectoscopistCertificationWidget({
+  homeHref = "/",
+}: DefectoscopistCertificationWidgetProps) {
   return (
     <main className={s.wrapper}>
       <Breadcrumbs
         items={[
-          { label: "Главная", href: "/" },
+          { label: "Главная", href: homeHref },
           { label: "Учебный центр" },
           { label: "Аттестация на дефектоскописта" },
         ]}

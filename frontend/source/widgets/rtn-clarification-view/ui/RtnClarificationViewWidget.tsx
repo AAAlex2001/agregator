@@ -16,7 +16,7 @@ import type { RtnComment } from "@/source/entities/rtn-comment";
 import { RtnDiscussion } from "@/source/features/rtn-discussion";
 import { ReportChangeModal } from "@/source/features/rtn-feedback";
 import { RtnRelatedList } from "./RtnRelatedList";
-import s from "./RtnClarificationView.module.scss";
+import s from "./RtnClarificationViewWidget.module.scss";
 
 interface Props {
   clarification: RtnDetail;
@@ -27,7 +27,7 @@ interface Props {
   interactive?: boolean;
 }
 
-export function RtnClarificationView({
+export function RtnClarificationViewWidget({
   clarification,
   related,
   homeHref = "/",

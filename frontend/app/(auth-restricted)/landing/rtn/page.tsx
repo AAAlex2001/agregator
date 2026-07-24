@@ -6,7 +6,7 @@ import {
   parseRtnListFilters,
   toURLSearchParams,
 } from "@/source/entities/rtn-clarification";
-import { RtnCatalog } from "@/source/features/rtn-catalog";
+import { RtnCatalogWidget } from "@/source/widgets/rtn-catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ async function AuthedRtnCatalogContent({ searchParams }: Props) {
     fetchRtnList({ ...filters, limit: 12, offset: 0 }, { server: true }),
     fetchRtnTaxonomy({ server: true }),
   ]);
-  return <RtnCatalog initial={initial} taxonomy={taxonomy} homeHref="/landing" />;
+  return <RtnCatalogWidget initial={initial} taxonomy={taxonomy} homeHref="/landing" />;
 }
 
 export default function AuthedRtnListPage({ searchParams }: Props) {

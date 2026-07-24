@@ -142,7 +142,7 @@ function createCabinetNav(role: string | null): NavPlate[] {
         { label: "Подготовка к аттестации на эксперта", soon: true },
         {
           label: "Аттестация на дефектоскописта",
-          href: "/training/defectoscopist-certification",
+          href: "/landing/training/defectoscopist-certification",
           description: "Подготовка, аттестация и сертификация специалистов неразрушающего контроля в ООО «АРЦ НК».",
           logoSrc: "/ARC.png",
           logoAlt: "ООО «АРЦ НК»",

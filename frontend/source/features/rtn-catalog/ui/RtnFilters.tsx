@@ -2,6 +2,7 @@
 
 import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
+import { ChevronIcon } from "@/source/shared/ui/icons";
 import { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "@/source/entities/rtn-clarification";
 import type {
   RtnDocumentType,
@@ -24,6 +25,18 @@ interface Props {
   hasActiveFilters: boolean;
 }
 
+function SectionSummary({ title, count }: { title: string; count?: number }) {
+  return (
+    <summary className={s.sectionTitle}>
+      <span className={s.sectionTitleText}>
+        {title}
+        {Boolean(count) && <span className={s.sectionCount}>{count}</span>}
+      </span>
+      <ChevronIcon className={s.chevron} color="#9aa1ad" />
+    </summary>
+  );
+}
+
 function TaxonomySection({
   title,
   options,
@@ -38,10 +51,7 @@ function TaxonomySection({
   if (options.length === 0) return null;
   return (
     <details className={s.section} open={selected.length > 0}>
-      <summary className={s.sectionTitle}>
-        {title}
-        {selected.length > 0 && <span className={s.sectionCount}>{selected.length}</span>}
-      </summary>
+      <SectionSummary title={title} count={selected.length} />
       <div className={s.optionsList}>
         {options.map((option) => (
           <Checkbox
@@ -82,7 +92,7 @@ export function RtnFilters({
       </div>
 
       <details className={s.section} open>
-        <summary className={s.sectionTitle}>Тип документа</summary>
+        <SectionSummary title="Тип документа" />
         <div className={s.optionsList}>
           {taxonomy.document_types.map((option) => (
             <Checkbox
@@ -98,7 +108,7 @@ export function RtnFilters({
       </details>
 
       <details className={s.section} open>
-        <summary className={s.sectionTitle}>Актуальность</summary>
+        <SectionSummary title="Актуальность" />
         <div className={s.optionsList}>
           {taxonomy.statuses.map((option) => (
             <Checkbox
@@ -114,7 +124,7 @@ export function RtnFilters({
       </details>
 
       <details className={s.section} open={Boolean(dateFrom || dateTo)}>
-        <summary className={s.sectionTitle}>Период</summary>
+        <SectionSummary title="Период" />
         <div className={s.dateRange}>
           <CalendarInput
             value={dateFrom}
