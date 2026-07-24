@@ -29,6 +29,9 @@
 .banner {
   position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
   width: 100%;
   padding: 24px;
   background: linear-gradient(120deg, #ffd23f 0%, #f2c200 45%, #8a5a00 100%);
@@ -36,37 +39,64 @@
   overflow: hidden;
 
   @media (min-width: 768px) {
-    padding: 32px;
+    gap: 36px;
+    padding: 40px;
   }
 
   @media (min-width: 1024px) {
-    padding: 40px 48px;
+    gap: 48px;
+    padding: 60px;
+  }
+}
+
+.bannerTop {
+  position: relative;
+  z-index: 1;
+}
+
+.bannerTitle {
+  margin: 0;
+  color: #3a2600;
+  font-size: 22px;
+  font-weight: 700;
+
+  @media (min-width: 768px) {
+    font-size: 28px;
+  }
+}
+
+.bannerSub {
+  margin: 6px 0 0;
+  color: #5c4200;
+  font-size: 14px;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
   }
 }
 
 .bannerArt {
   display: none;
 
-  @media (min-width: 900px) {
+  @media (min-width: 768px) {
     display: block;
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-    width: 46%;
+    width: 44%;
     overflow: hidden;
     pointer-events: none;
-    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 100%);
-    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
   }
 }
 
 .bannerArtImg {
   object-fit: contain;
-  object-position: center right;
-  padding: 32px 24px;
-  mix-blend-mode: multiply;
-  opacity: 0.9;
+  object-position: center 40%;
+  padding: 20px;
+  opacity: 0.55;
 }
 
 .searchWrap {

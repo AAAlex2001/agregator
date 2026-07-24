@@ -38,8 +38,13 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
             src="/rtn-emblem.png"
             alt=""
             fill
-            sizes="(max-width: 899px) 0px, 420px"
+            sizes="(max-width: 767px) 0px, 640px"
           />
+        </div>
+
+        <div className={s.bannerTop}>
+          <h2 className={s.bannerTitle}>Официальный источник — Ростехнадзор</h2>
+          <p className={s.bannerSub}>Письма и разъяснения федеральной службы по промышленной, экологической и энергетической безопасности</p>
         </div>
 
         <form
