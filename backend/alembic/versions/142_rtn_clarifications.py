@@ -50,10 +50,10 @@ TAXONOMY_ENUMS = (
 
 
 def upgrade() -> None:
-    bind = op.get_bind()
-    for enum in TAXONOMY_ENUMS:
-        enum.create(bind, checkfirst=True)
-
+    # Каждый ENUM ниже используется ровно в одной таблице — SQLAlchemy создаст тип автоматически
+    # перед созданием этой таблицы (событие before_create). Явный enum.create() здесь не нужен:
+    # он бы создал тип заранее, а автособытие тут же попыталось бы создать его повторно
+    # с checkfirst=False и упало на "type already exists".
     op.create_table(
         "rtn_clarifications",
         sa.Column("id", sa.Integer(), primary_key=True),
