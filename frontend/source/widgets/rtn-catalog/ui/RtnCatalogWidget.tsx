@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Image from "next/image";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
@@ -33,13 +32,8 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
 
       <section className={s.banner}>
         <div className={s.bannerArt} aria-hidden="true">
-          <Image
-            className={s.bannerArtImg}
-            src="/rtn-emblem.png"
-            alt=""
-            fill
-            sizes="(max-width: 767px) 0px, 640px"
-          />
+          {/* eslint-disable-next-line @next/next/no-img-element -- vector emblem, Next's raster pipeline can't optimize/preserve SVG transparency */}
+          <img className={s.bannerArtImg} src="/rtn-emblem.svg" alt="" />
         </div>
 
         <div className={s.bannerTop}>

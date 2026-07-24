@@ -79,12 +79,14 @@
   display: none;
 
   @media (min-width: 768px) {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 44%;
+    top: -10%;
+    right: -4%;
+    bottom: -10%;
+    width: 50%;
     overflow: hidden;
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
@@ -93,10 +95,11 @@
 }
 
 .bannerArtImg {
+  width: auto;
+  height: 130%;
+  max-width: none;
   object-fit: contain;
-  object-position: center 40%;
-  padding: 20px;
-  opacity: 0.55;
+  opacity: 0.6;
 }
 
 .searchWrap {
