@@ -7,7 +7,7 @@ import {
   parseRtnListFilters,
   toURLSearchParams,
 } from "@/source/entities/rtn-clarification";
-import { RtnCatalogWidget } from "@/source/widgets/rtn-catalog";
+import { RtnCatalogWidget, RtnCatalogResults, RtnCatalogSkeleton } from "@/source/widgets/rtn-catalog";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
-async function RtnCatalogContent({ searchParams }: Props) {
+async function RtnCatalogData({ searchParams }: Props) {
   const filters = parseRtnListFilters(toURLSearchParams(await searchParams));
   const [initial, taxonomy] = await Promise.all([
     fetchRtnList({ ...filters, limit: 12, offset: 0 }, { server: true }),
     fetchRtnTaxonomy({ server: true }),
   ]);
-  return <RtnCatalogWidget initial={initial} taxonomy={taxonomy} homeHref="/" />;
+  return <RtnCatalogResults initial={initial} taxonomy={taxonomy} />;
 }
 
 export default function RtnListPage({ searchParams }: Props) {
@@ -56,9 +56,11 @@ export default function RtnListPage({ searchParams }: Props) {
       <RedirectIfAuthed to="/landing/rtn" />
       <LandingHeader />
       <main>
-        <Suspense>
-          <RtnCatalogContent searchParams={searchParams} />
-        </Suspense>
+        <RtnCatalogWidget homeHref="/">
+          <Suspense fallback={<RtnCatalogSkeleton />}>
+            <RtnCatalogData searchParams={searchParams} />
+          </Suspense>
+        </RtnCatalogWidget>
       </main>
       <LandingFooter variant="light" />
     </>

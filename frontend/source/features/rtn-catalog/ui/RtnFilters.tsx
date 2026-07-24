@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, type ReactNode, type SyntheticEvent } from "react";
 import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { ChevronIcon } from "@/source/shared/ui/icons";
@@ -25,15 +26,30 @@ interface Props {
   hasActiveFilters: boolean;
 }
 
-function SectionSummary({ title, count }: { title: string; count?: number }) {
+function CollapsibleSection({
+  title,
+  count,
+  children,
+}: {
+  title: string;
+  count?: number;
+  children: ReactNode;
+}) {
+  "Свёрнуто по умолчанию. Открыт/закрыт — обычный локальный стейт, никак не завязанный на выбранные значения."
+  const [open, setOpen] = useState(false);
+  const onToggle = (event: SyntheticEvent<HTMLDetailsElement>) => setOpen(event.currentTarget.open);
+
   return (
-    <summary className={s.sectionTitle}>
-      <span className={s.sectionTitleText}>
-        {title}
-        {Boolean(count) && <span className={s.sectionCount}>{count}</span>}
-      </span>
-      <ChevronIcon className={s.chevron} color="#9aa1ad" />
-    </summary>
+    <details className={s.section} open={open} onToggle={onToggle}>
+      <summary className={s.sectionTitle}>
+        <span className={s.sectionTitleText}>
+          {title}
+          {Boolean(count) && <span className={s.sectionCount}>{count}</span>}
+        </span>
+        <ChevronIcon className={s.chevron} color="#9aa1ad" />
+      </summary>
+      {children}
+    </details>
   );
 }
 
@@ -50,8 +66,7 @@ function TaxonomySection({
 }) {
   if (options.length === 0) return null;
   return (
-    <details className={s.section} open={selected.length > 0}>
-      <SectionSummary title={title} count={selected.length} />
+    <CollapsibleSection title={title} count={selected.length}>
       <div className={s.optionsList}>
         {options.map((option) => (
           <Checkbox
@@ -64,7 +79,7 @@ function TaxonomySection({
           </Checkbox>
         ))}
       </div>
-    </details>
+    </CollapsibleSection>
   );
 }
 
@@ -91,8 +106,7 @@ export function RtnFilters({
         )}
       </div>
 
-      <details className={s.section} open>
-        <SectionSummary title="Тип документа" />
+      <CollapsibleSection title="Тип документа">
         <div className={s.optionsList}>
           {taxonomy.document_types.map((option) => (
             <Checkbox
@@ -105,10 +119,9 @@ export function RtnFilters({
             </Checkbox>
           ))}
         </div>
-      </details>
+      </CollapsibleSection>
 
-      <details className={s.section} open>
-        <SectionSummary title="Актуальность" />
+      <CollapsibleSection title="Актуальность">
         <div className={s.optionsList}>
           {taxonomy.statuses.map((option) => (
             <Checkbox
@@ -121,10 +134,9 @@ export function RtnFilters({
             </Checkbox>
           ))}
         </div>
-      </details>
+      </CollapsibleSection>
 
-      <details className={s.section} open={Boolean(dateFrom || dateTo)}>
-        <SectionSummary title="Период" />
+      <CollapsibleSection title="Период">
         <div className={s.dateRange}>
           <CalendarInput
             value={dateFrom}
@@ -137,7 +149,7 @@ export function RtnFilters({
             placeholder="По дату"
           />
         </div>
-      </details>
+      </CollapsibleSection>
 
       <TaxonomySection
         title="Область надзора"

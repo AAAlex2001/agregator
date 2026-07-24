@@ -21,3 +21,4 @@ export type {
 export { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "./lib/rtnLabels";
 
 export { RtnCard } from "./ui/RtnCard/RtnCard";
+export { RtnCardSkeleton } from "./ui/RtnCard/RtnCardSkeleton";
