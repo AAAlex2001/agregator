@@ -1,11 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { useRtnCatalogFilters } from "@/source/features/rtn-catalog";
+import { AskRtnQuestionForm } from "@/source/features/rtn-feedback";
 import s from "./RtnCatalogWidget.module.scss";
 
 interface Props {
@@ -17,6 +18,7 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
   "Статичная оболочка (крошки/заголовок/поиск) не зависит от серверных данных и рендерится мгновенно — \
 данные (фильтры + сетка карточек) приходят через children, обёрнутые снаружи в Suspense со скелетоном."
   const { searchInput, setSearchInput, submitSearch, clearSearch } = useRtnCatalogFilters();
+  const [askOpen, setAskOpen] = useState(false);
 
   return (
     <div className={s.wrapper}>
@@ -72,7 +74,19 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
         </form>
       </section>
 
+      <div className={s.askBlock}>
+        <h2 className={s.askTitle}>Не нашли ответ?</h2>
+        <p className={s.askDesc}>
+          Отправьте вопрос — мы официально запросим разъяснение Ростехнадзора и опубликуем ответ в этом разделе.
+        </p>
+        <Button variant="primary" onClick={() => setAskOpen(true)}>
+          Задать вопрос
+        </Button>
+      </div>
+
       <div className={s.layout}>{children}</div>
+
+      <AskRtnQuestionForm open={askOpen} onClose={() => setAskOpen(false)} />
     </div>
   );
 }

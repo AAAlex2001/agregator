@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "@/source/shared/ui/Button";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -11,7 +10,6 @@ import {
   type RtnList,
   type RtnTaxonomy,
 } from "@/source/entities/rtn-clarification";
-import { AskRtnQuestionForm } from "@/source/features/rtn-feedback";
 import { useRtnCatalogFilters, RtnFilters } from "@/source/features/rtn-catalog";
 import s from "./RtnCatalogWidget.module.scss";
 
@@ -38,7 +36,6 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
   const [hasMore, setHasMore] = useState(initial.has_more);
   const [offset, setOffset] = useState(initial.items.length);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [askOpen, setAskOpen] = useState(false);
 
   useEffect(() => {
     setItems(initial.items);
@@ -77,7 +74,7 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
           ) : (
             <EmptyStateCard
               title="Пока нет опубликованных разъяснений"
-              subtitle="Ростехнадзор ещё не опубликовал материалы в этом разделе — загляните позже"
+              subtitle="Ответы Ростехнадзора еще не опубликованы в этом разделе — загляните позже"
             />
           )
         ) : (
@@ -93,16 +90,6 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
             {isLoadingMore && <span className={s.loadingLabel}>Загружаем…</span>}
           </div>
         )}
-
-        <div className={s.askBlock}>
-          <h2 className={s.askTitle}>Не нашли ответ?</h2>
-          <p className={s.askDesc}>
-            Отправьте вопрос — мы официально запросим разъяснение Ростехнадзора и опубликуем ответ в этом разделе.
-          </p>
-          <Button variant="primary" onClick={() => setAskOpen(true)}>
-            Задать вопрос
-          </Button>
-        </div>
       </div>
 
       <RtnFilters
@@ -115,8 +102,6 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
         onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
       />
-
-      <AskRtnQuestionForm open={askOpen} onClose={() => setAskOpen(false)} />
     </>
   );
 }
