@@ -65,6 +65,7 @@ export default function ContactDealsPage() {
         </div>
         <div className="topbar-right">
           <Link className="btn" href="/">Статьи</Link>
+          <Link className="btn" href="/rtn">Ростехнадзор отвечает</Link>
         </div>
       </header>
 

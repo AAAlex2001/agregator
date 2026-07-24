@@ -1,12 +1,11 @@
 "Публичные ручки соц-функций статьи: реакции, просмотры и комментарии."
 
-from uuid import uuid4
-
-from fastapi import APIRouter, Cookie, Depends, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user_optional
+from dependencies.visitor import get_visitor_key, interaction_key
 from models.article_comment import ArticleComment
 from models.article_reaction import ReactionValue
 from schemas.article_interactions import (
@@ -28,30 +27,6 @@ from services.articles.use_cases.react_to_article import ReactToArticleUseCase
 from services.articles.use_cases.record_article_view import RecordArticleViewUseCase
 
 router = APIRouter(tags=["article-interactions"])
-
-ARTICLE_VISITOR_COOKIE = "article_visitor_id"
-ARTICLE_VISITOR_MAX_AGE = 60 * 60 * 24 * 365
-
-
-def get_article_visitor_key(
-    response: Response,
-    article_visitor_id: str | None = Cookie(None),
-) -> str:
-    visitor_id = article_visitor_id if article_visitor_id and len(article_visitor_id) <= 64 else uuid4().hex
-    if visitor_id != article_visitor_id:
-        response.set_cookie(
-            ARTICLE_VISITOR_COOKIE,
-            visitor_id,
-            max_age=ARTICLE_VISITOR_MAX_AGE,
-            httponly=True,
-            samesite="lax",
-            path="/",
-        )
-    return f"anon:{visitor_id}"
-
-
-def interaction_key(user_id: int | None, visitor_key: str) -> str:
-    return f"user:{user_id}" if user_id is not None else visitor_key
 
 
 def author_name(comment: ArticleComment) -> str:
@@ -81,7 +56,7 @@ def to_comment_response(
 async def get_reactions(
     article_id: int,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
@@ -99,7 +74,7 @@ async def react(
     article_id: int,
     data: ReactionRequest,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
@@ -116,7 +91,7 @@ async def react(
 async def record_view(
     article_id: int,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> ViewResponse:
     current_key = interaction_key(user_id, visitor_key)
@@ -129,7 +104,7 @@ async def record_view(
 async def list_comments(
     article_id: int,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> CommentListResponse:
     current_key = interaction_key(user_id, visitor_key)
@@ -147,7 +122,7 @@ async def add_comment(
     article_id: int,
     data: CommentCreate,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> CommentResponse:
     current_key = interaction_key(user_id, visitor_key)
@@ -160,7 +135,7 @@ async def add_comment(
 async def delete_comment(
     comment_id: int,
     user_id: int | None = Depends(get_current_user_optional),
-    visitor_key: str = Depends(get_article_visitor_key),
+    visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> Response:
     current_key = interaction_key(user_id, visitor_key)

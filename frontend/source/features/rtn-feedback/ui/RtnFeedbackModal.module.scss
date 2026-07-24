@@ -1,0 +1,48 @@
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: #171923;
+}
+
+.desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5c6273;
+  margin: 0 0 16px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #171923;
+}
+
+.textarea,
+.input {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid #e0e2e9;
+  border-radius: 10px;
+  resize: vertical;
+  color: #171923;
+
+  &:focus {
+    outline: none;
+    border-color: #ff8a00;
+  }
+}
+
+.error {
+  font-size: 13px;
+  color: #c62828;
+}

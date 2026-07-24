@@ -28,7 +28,7 @@ from schemas.admin_article import (
     UploadOut,
 )
 from services.articles import ArticleRepository
-from services.articles.tag_repository import TagRepository
+from services.tags import TagRepository
 from services.articles.use_cases.notify_blog_published import NotifyBlogPublishedUseCase
 from services.articles.use_cases.save_article import SaveArticleUseCase, SlugTakenError
 from services.file_uploads import save_uploaded_file

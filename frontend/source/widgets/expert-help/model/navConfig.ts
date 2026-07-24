@@ -227,10 +227,7 @@ function createCabinetNav(role: string | null): NavPlate[] {
       key: "rtn",
       label: "РОСТЕХНАДЗОР отвечает",
       color: "gold",
-      items: [
-        { label: "Задать вопрос в Ростехнадзор", soon: true },
-        { label: "База официальных разъяснений и ответов", soon: true },
-      ],
+      href: role ? "/landing/rtn" : "/rtn",
     },
     {
       key: "reviews",

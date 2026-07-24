@@ -168,8 +168,12 @@ function PlateNode({
 
   if (plate.href) {
     return (
-      <div className={s.plateWrap}>
-        <Link href={plate.href} className={`${s.plate} ${s.plateLogo}`} aria-label={plate.label}>
+      <div className={`${s.plateWrap} ${plate.logo ? "" : s[plate.color]}`}>
+        <Link
+          href={plate.href}
+          className={`${s.plate} ${plate.logo ? s.plateLogo : ""}`}
+          aria-label={plate.label}
+        >
           {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <span className={s.plateLabel}>{plate.label}</span>}
         </Link>
       </div>

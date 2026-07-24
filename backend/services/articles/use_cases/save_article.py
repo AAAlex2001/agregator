@@ -6,7 +6,7 @@ from typing import Any
 from models.article import Article, ArticleKind, ArticleStatus
 from schemas.admin_article import ArticleWrite
 from services.articles.repository import ArticleRepository
-from services.articles.tag_repository import TagRepository
+from services.tags import TagRepository
 
 
 class SlugTakenError(Exception):

@@ -26,7 +26,7 @@ export function DefectoscopistCertificationWidget() {
     <main className={s.wrapper}>
       <Breadcrumbs
         items={[
-          { label: "Главная", href: "/landing" },
+          { label: "Главная", href: "/" },
           { label: "Учебный центр" },
           { label: "Аттестация на дефектоскописта" },
         ]}

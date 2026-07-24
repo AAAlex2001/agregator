@@ -11,6 +11,7 @@ const INDEXABLE_PATHS: string[] = [
   "/blog",
   "/zepb-registry",
   "/expert-contacts",
+  "/training/defectoscopist-certification",
   "/login",
   "/register",
   "/forgot-password",

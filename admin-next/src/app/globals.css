@@ -582,3 +582,57 @@ label {
 .editor .ProseMirror h2 {
   color: var(--accent-dark);
 }
+
+.pdf-preview {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
+.taxonomy-group {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.taxonomy-group legend {
+  color: var(--accent-dark);
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px 16px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.checkbox-item input {
+  margin-top: 3px;
+}
+
+.regulations-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.regulation-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.regulation-row input {
+  flex: 1;
+}

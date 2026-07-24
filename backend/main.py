@@ -13,6 +13,7 @@ from starlette.responses import Response
 from routes import (
     admin_contact_deal,
     admin_content,
+    admin_rtn,
     article,
     article_interactions,
     chat,
@@ -38,6 +39,8 @@ from routes import (
     report,
     response,
     review,
+    rtn,
+    rtn_interactions,
     settings,
     support,
     telegram_auth,
@@ -122,6 +125,9 @@ app.include_router(lining.router, prefix="/api")
 app.include_router(article.router, prefix="/api")
 app.include_router(article_interactions.router, prefix="/api")
 app.include_router(admin_content.router, prefix="/api")
+app.include_router(rtn.router, prefix="/api")
+app.include_router(rtn_interactions.router, prefix="/api")
+app.include_router(admin_rtn.router, prefix="/api")
 app.include_router(admin_contact_deal.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
