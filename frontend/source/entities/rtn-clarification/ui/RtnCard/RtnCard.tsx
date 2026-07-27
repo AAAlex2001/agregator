@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileIcon } from "@/source/shared/ui/icons";
 import { formatDateRu } from "@/source/shared/lib/formatDate";
+import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
+import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "../../lib/rtnLabels";
 import type { RtnListItem } from "../../api/rtnClarification.api";
 import s from "./RtnCard.module.scss";
@@ -12,6 +13,13 @@ export function RtnCard({ item }: { item: RtnListItem }) {
   const pathname = usePathname();
   const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
   const href = `${prefix}/rtn/${item.slug}`;
+  const documentItems: FileGalleryItem[] = item.pdf_url
+    ? [{
+        id: `rtn-card-letter-${item.id}`,
+        name: "Скан-копия официального письма.pdf",
+        url: resolveFileUrl(item.pdf_url),
+      }]
+    : [];
 
   return (
     <li className={s.card}>
@@ -45,11 +53,14 @@ export function RtnCard({ item }: { item: RtnListItem }) {
         ) : null}
       </Link>
 
-      {item.pdf_url ? (
-        <a href={item.pdf_url} target="_blank" rel="noreferrer" className={s.pdfLink}>
-          <FileIcon className={s.pdfIcon} />
-          Скан письма (PDF)
-        </a>
+      {documentItems.length > 0 ? (
+        <div className={s.documentRow}>
+          <FileGallery
+            items={documentItems}
+            label="Документ"
+            blockClassName={s.documentGallery}
+          />
+        </div>
       ) : null}
     </li>
   );

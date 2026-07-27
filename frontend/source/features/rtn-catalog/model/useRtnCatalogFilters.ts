@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { parseRtnListFilters, type RtnDocumentType, type RtnStatus } from "@/source/entities/rtn-clarification";
 
@@ -17,7 +17,11 @@ function toggleInList(current: string[], value: string): string[] {
   return current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
 }
 
-export function useRtnCatalogFilters() {
+interface Options {
+  liveSearch?: boolean;
+}
+
+export function useRtnCatalogFilters({ liveSearch = false }: Options = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,12 +35,24 @@ export function useRtnCatalogFilters() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
-  function submitSearch() {
-    pushParams((params) => {
-      if (searchInput.trim()) params.set("search", searchInput.trim());
+  useEffect(() => {
+    if (!liveSearch) return;
+
+    const search = searchInput.trim();
+    const currentSearch = searchParams.get("search") ?? "";
+    if (search === currentSearch) return;
+
+    const timeoutId = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (search) params.set("search", search);
       else params.delete("search");
-    });
-  }
+
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [liveSearch, pathname, router, searchInput, searchParams]);
 
   function clearSearch() {
     setSearchInput("");
@@ -97,7 +113,6 @@ export function useRtnCatalogFilters() {
     filters,
     searchInput,
     setSearchInput,
-    submitSearch,
     clearSearch,
     toggleTaxonomy,
     toggleDocumentType,

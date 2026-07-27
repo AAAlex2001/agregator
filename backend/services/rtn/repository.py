@@ -102,7 +102,6 @@ class RtnRepository:
             query = query.where(
                 RtnClarification.title.ilike(pattern)
                 | RtnClarification.letter_number.ilike(pattern)
-                | RtnClarification.excerpt.ilike(pattern)
             )
         if filters.document_types:
             query = query.where(RtnClarification.document_type.in_(filters.document_types))

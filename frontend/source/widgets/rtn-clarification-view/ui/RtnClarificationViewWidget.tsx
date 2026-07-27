@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
+import { DocToc } from "@/source/shared/ui/DocToc";
+import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
-import { FileIcon } from "@/source/shared/ui/icons";
 import { formatDateRu } from "@/source/shared/lib/formatDate";
+import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import {
   DOCUMENT_TYPE_LABELS,
   STATUS_LABELS,
@@ -15,6 +17,7 @@ import {
 import type { RtnComment } from "@/source/entities/rtn-comment";
 import { RtnDiscussion } from "@/source/features/rtn-discussion";
 import { ReportChangeModal } from "@/source/features/rtn-feedback";
+import { extractToc } from "@/source/features/article-view";
 import { RtnRelatedList } from "./RtnRelatedList";
 import s from "./RtnClarificationViewWidget.module.scss";
 
@@ -44,6 +47,23 @@ export function RtnClarificationViewWidget({
     ...clarification.activities,
     ...clarification.object_types,
   ];
+  const parsedAnswer = extractToc(
+    `<h2>Ответ Ростехнадзора</h2>${clarification.answer_html}`,
+  );
+  const toc = [
+    { id: "question", num: "01", label: "Вопрос" },
+    ...parsedAnswer.toc.map((item, index) => ({
+      ...item,
+      num: String(index + 2).padStart(2, "0"),
+    })),
+  ];
+  const documentItems: FileGalleryItem[] = clarification.pdf_url
+    ? [{
+        id: `rtn-letter-${clarification.id}`,
+        name: "Скан-копия официального письма.pdf",
+        url: resolveFileUrl(clarification.pdf_url),
+      }]
+    : [];
 
   return (
     <article className={s.wrapper}>
@@ -84,57 +104,70 @@ export function RtnClarificationViewWidget({
         )}
       </header>
 
-      <div className={s.body}>
-        {clarification.question_text ? (
-          <section className={s.questionBlock}>
-            <h2 className={s.blockTitle}>Вопрос</h2>
-            <p className={s.questionText}>{clarification.question_text}</p>
-          </section>
-        ) : null}
+      <div className={s.layout}>
+        {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
 
-        <section className={s.answerBlock}>
-          <h2 className={s.blockTitle}>Ответ Ростехнадзора</h2>
-          <div className={s.answerContent} dangerouslySetInnerHTML={{ __html: clarification.answer_html }} />
-        </section>
-
-        <div className={s.sourceLinks}>
-          {clarification.source_url ? (
-            <a href={clarification.source_url} target="_blank" rel="noreferrer" className={s.sourceLink}>
-              Источник на сайте Ростехнадзора
-            </a>
+        <div className={s.body}>
+          {clarification.question_text ? (
+            <blockquote id="question" className={s.questionBlock}>
+              <h2 className={s.questionTitle}>Вопрос</h2>
+              <p className={s.questionText}>{clarification.question_text}</p>
+            </blockquote>
           ) : null}
-          {clarification.pdf_url ? (
-            <a href={clarification.pdf_url} target="_blank" rel="noreferrer" className={s.sourceLink}>
-              <FileIcon className={s.sourceIcon} />
-              Скан-копия письма (PDF)
-            </a>
+
+          <div
+            className={s.answerContent}
+            dangerouslySetInnerHTML={{ __html: parsedAnswer.html }}
+          />
+
+          {(clarification.source_url || documentItems.length > 0) ? (
+            <section className={s.documents}>
+              <h2 className={s.sectionTitle}>Источник и документы</h2>
+              {clarification.source_url ? (
+                <a
+                  href={clarification.source_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={s.sourceLink}
+                >
+                  Источник на сайте Ростехнадзора
+                </a>
+              ) : null}
+              {documentItems.length > 0 ? (
+                <FileGallery
+                  items={documentItems}
+                  label="Скан-копия официального письма"
+                  blockClassName={s.documentGallery}
+                />
+              ) : null}
+            </section>
+          ) : null}
+
+          {clarification.referenced_regulations.length > 0 && (
+            <section className={s.regulations}>
+              <h2 className={s.sectionTitle}>Упомянутые нормативные документы</h2>
+              <ul className={s.regulationsList}>
+                {clarification.referenced_regulations.map((regulation) => (
+                  <li key={regulation.url}>
+                    <a href={regulation.url} target="_blank" rel="noreferrer">
+                      {regulation.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <div className={s.reportRow}>
+            <Button variant="transparent" size="sm" onClick={() => setReportOpen(true)}>
+              Сообщить об изменении
+            </Button>
+          </div>
+
+          {interactive ? (
+            <RtnDiscussion clarificationId={clarification.id} initialComments={initialComments} />
           ) : null}
         </div>
-
-        {clarification.referenced_regulations.length > 0 && (
-          <section className={s.regulations}>
-            <h2 className={s.blockTitle}>Упомянутые нормативные документы</h2>
-            <ul className={s.regulationsList}>
-              {clarification.referenced_regulations.map((regulation) => (
-                <li key={regulation.url}>
-                  <a href={regulation.url} target="_blank" rel="noreferrer">
-                    {regulation.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <div className={s.reportRow}>
-          <Button variant="transparent" size="sm" onClick={() => setReportOpen(true)}>
-            Сообщить об изменении
-          </Button>
-        </div>
-
-        {interactive ? (
-          <RtnDiscussion clarificationId={clarification.id} initialComments={initialComments} />
-        ) : null}
       </div>
 
       {related.length > 0 ? <RtnRelatedList items={related} /> : null}

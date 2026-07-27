@@ -17,7 +17,7 @@ interface Props {
 export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
   "Статичная оболочка (крошки/заголовок/поиск) не зависит от серверных данных и рендерится мгновенно — \
 данные (фильтры + сетка карточек) приходят через children, обёрнутые снаружи в Suspense со скелетоном."
-  const { searchInput, setSearchInput, submitSearch, clearSearch } = useRtnCatalogFilters();
+  const { searchInput, setSearchInput, clearSearch } = useRtnCatalogFilters({ liveSearch: true });
   const [askOpen, setAskOpen] = useState(false);
 
   return (
@@ -43,14 +43,7 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
           <p className={s.bannerSub}>Письма и разъяснения федеральной службы по промышленной, экологической и энергетической безопасности</p>
         </div>
 
-        <form
-          className={s.searchWrap}
-          role="search"
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitSearch();
-          }}
-        >
+        <div className={s.searchWrap} role="search">
           <div className={s.searchBar}>
             <SearchIcon className={s.searchIcon} />
             <input
@@ -58,7 +51,7 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
               className={s.searchInput}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Поиск по ключевым словам, номеру письма или названию оборудования"
+              placeholder="Поиск по заголовку или номеру документа"
             />
             {searchInput && (
               <button type="button" className={s.clearBtn} onClick={clearSearch} aria-label="Очистить">
@@ -67,11 +60,8 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
                 </svg>
               </button>
             )}
-            <Button type="submit" variant="primary" size="md">
-              Найти
-            </Button>
           </div>
-        </form>
+        </div>
       </section>
 
       <div className={s.askBlock}>
