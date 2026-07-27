@@ -44,6 +44,12 @@ export interface ArticleDetail {
   views_count: number;
 }
 
+export interface ArticleMetrics {
+  likes_count: number;
+  dislikes_count: number;
+  views_count: number;
+}
+
 function base(server: boolean): string {
   return server ? SERVER_API_URL : API_URL;
 }
@@ -98,4 +104,27 @@ export async function fetchRelatedArticles(
   );
   if (!res.ok) return [];
   return res.json();
+}
+
+export async function fetchStaticNewsMetrics(
+  newsIds: number[],
+  opts: { server?: boolean } = {},
+): Promise<Record<number, ArticleMetrics>> {
+  if (newsIds.length === 0) return {};
+  const params = new URLSearchParams();
+  newsIds.forEach((newsId) => params.append("news_ids", String(newsId)));
+  const response = await fetch(
+    `${base(Boolean(opts.server))}/public/static-news/metrics?${params}`,
+    { cache: "no-store" },
+  );
+  if (!response.ok) return {};
+  const items = await response.json() as Array<ArticleMetrics & { news_id: number }>;
+  return Object.fromEntries(items.map(({ news_id, ...metrics }) => [news_id, metrics]));
+}
+
+export function applyArticleMetrics(
+  items: ArticleListItem[],
+  metrics: Record<number, ArticleMetrics>,
+): ArticleListItem[] {
+  return items.map((item) => ({ ...item, ...metrics[item.id] }));
 }

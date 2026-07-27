@@ -183,6 +183,12 @@ class StaticNewsInteractionRepository:
             query = query.with_for_update()
         return (await self.db.execute(query)).scalar_one()
 
+    async def list_metrics(self, news_ids: list[int]) -> list[StaticNewsMetric]:
+        if not news_ids:
+            return []
+        query = select(StaticNewsMetric).where(StaticNewsMetric.news_id.in_(news_ids))
+        return list((await self.db.execute(query)).scalars().all())
+
     async def get_reaction(
         self,
         news_id: int,

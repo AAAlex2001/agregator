@@ -3,12 +3,15 @@ export {
   fetchArticleBySlug,
   fetchRelatedArticles,
   recordArticleView,
+  fetchStaticNewsMetrics,
+  applyArticleMetrics,
 } from "./api/article.api";
 export type {
   ArticleKind,
   ArticleListItem,
   ArticleList,
   ArticleDetail,
+  ArticleMetrics,
 } from "./api/article.api";
 
 export { formatArticleDate } from "./lib/formatArticleDate";

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
+import {
+  applyArticleMetrics,
+  fetchArticleBySlug,
+  fetchRelatedArticles,
+  fetchStaticNewsMetrics,
+} from "@/source/entities/article";
 import { fetchReactions } from "@/source/entities/article-reaction";
 import { fetchComments, type ArticleComment } from "@/source/entities/article-comment";
 import {
@@ -35,17 +40,21 @@ export default async function AuthedNewsArticlePage({ params }: Props) {
   const staticArticle = await getStaticNewsArticle(slug);
   const article = staticArticle ?? await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "news") notFound();
-  const [related, reactions, comments] = staticArticle
+  const staticRelated = staticArticle ? getStaticRelatedNews(slug, 10) : [];
+  const [relatedSource, reactions, comments, staticMetrics] = staticArticle
     ? await Promise.all([
-        Promise.resolve(getStaticRelatedNews(slug, 10)),
+        Promise.resolve(staticRelated),
         fetchReactions(article.id, { server: true }).catch(() => undefined),
         Promise.resolve([] as ArticleComment[]),
+        fetchStaticNewsMetrics(staticRelated.map((item) => item.id), { server: true }),
       ])
     : await Promise.all([
         fetchRelatedArticles(slug, { limit: 10, server: true }),
         fetchReactions(article.id, { server: true }).catch(() => undefined),
         fetchComments(article.id, { server: true }).catch(() => []),
+        Promise.resolve({}),
       ]);
+  const related = applyArticleMetrics(relatedSource, staticMetrics);
 
   return (
     <>

@@ -1,7 +1,11 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
-import { fetchArticleList } from "@/source/entities/article";
+import {
+  applyArticleMetrics,
+  fetchArticleList,
+  fetchStaticNewsMetrics,
+} from "@/source/entities/article";
 import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 import { RedirectIfAuthed } from "@/source/features/session";
 import { getStaticNewsListItems } from "@/source/entities/static-news";
@@ -39,11 +43,13 @@ export const metadata: Metadata = {
 };
 
 async function NewsListContent() {
-  const staticItems = getStaticNewsListItems();
-  const [initial, crossBlog] = await Promise.all([
+  const staticItemsSource = getStaticNewsListItems();
+  const [initial, crossBlog, staticMetrics] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
+    fetchStaticNewsMetrics(staticItemsSource.map((item) => item.id), { server: true }),
   ]);
+  const staticItems = applyArticleMetrics(staticItemsSource, staticMetrics);
   return (
     <ArticlesList
       kind="news"

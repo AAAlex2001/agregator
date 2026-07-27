@@ -1,6 +1,6 @@
 "Публичные ручки соц-функций статьи: реакции, просмотры и комментарии."
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -14,6 +14,7 @@ from schemas.article_interactions import (
     CommentResponse,
     ReactionRequest,
     ReactionResponse,
+    StaticNewsMetricResponse,
     ViewResponse,
 )
 from services.articles.repository import (
@@ -29,6 +30,24 @@ from services.articles.use_cases.record_article_view import RecordArticleViewUse
 from services.articles.use_cases.static_news_interactions import StaticNewsInteractionsUseCase
 
 router = APIRouter(tags=["article-interactions"])
+
+
+@router.get("/public/static-news/metrics", response_model=list[StaticNewsMetricResponse])
+async def get_static_news_metrics(
+    news_ids: list[int] = Query(default=[]),
+    db: AsyncSession = Depends(get_db),
+) -> list[StaticNewsMetricResponse]:
+    ids = list(dict.fromkeys(news_id for news_id in news_ids if news_id < 0))[:200]
+    metrics = await StaticNewsInteractionRepository(db).list_metrics(ids)
+    return [
+        StaticNewsMetricResponse(
+            news_id=item.news_id,
+            likes_count=item.likes_count,
+            dislikes_count=item.dislikes_count,
+            views_count=item.views_count,
+        )
+        for item in metrics
+    ]
 
 
 def author_name(comment: ArticleComment) -> str:

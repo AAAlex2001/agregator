@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { fetchArticleList } from "@/source/entities/article";
+import {
+  applyArticleMetrics,
+  fetchArticleList,
+  fetchStaticNewsMetrics,
+} from "@/source/entities/article";
 import { getStaticNewsListItems } from "@/source/entities/static-news";
 import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 
@@ -12,11 +16,13 @@ export const metadata: Metadata = {
 };
 
 async function AuthedBlogListContent() {
-  const staticNews = getStaticNewsListItems();
-  const [initial, crossNews] = await Promise.all([
+  const staticNewsSource = getStaticNewsListItems();
+  const [initial, crossNews, staticMetrics] = await Promise.all([
     fetchArticleList({ kind: "blog", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
+    fetchStaticNewsMetrics(staticNewsSource.map((item) => item.id), { server: true }),
   ]);
+  const staticNews = applyArticleMetrics(staticNewsSource, staticMetrics);
   const staticSlugs = new Set(staticNews.map((item) => item.slug));
   const crossNewsItems = [
     ...staticNews,
