@@ -183,10 +183,13 @@
 }
 
 .horizontal {
-  border-color: #ff9b3f;
-
   .link {
     padding: 22px;
+  }
+
+  &:hover {
+    border-color: #ff9b3f;
+    box-shadow: 0 8px 24px rgba(20, 24, 38, 0.06);
   }
 }
 

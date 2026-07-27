@@ -18,21 +18,23 @@ export function RtnCard({ item, horizontal = false }: Props) {
   const pathname = usePathname();
   const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
   const href = `${prefix}/rtn/${item.slug}`;
-  const documentItems: FileGalleryItem[] = [];
+  const requestDocumentItems: FileGalleryItem[] = [];
+  const responseDocumentItems: FileGalleryItem[] = [];
   if (item.pdf_url) {
-    documentItems.push({
+    requestDocumentItems.push({
       id: `rtn-card-request-${item.id}`,
       name: "Обращение в Ростехнадзор.pdf",
       url: resolveFileUrl(item.pdf_url),
     });
   }
   if (item.response_pdf_url) {
-    documentItems.push({
+    responseDocumentItems.push({
       id: `rtn-card-response-${item.id}`,
       name: "Ответ Ростехнадзора.pdf",
       url: resolveFileUrl(item.response_pdf_url),
     });
   }
+  const documentItems = [...requestDocumentItems, ...responseDocumentItems];
   const hasAside = documentItems.length > 0 || Boolean(item.source_url);
 
   return (
@@ -110,8 +112,19 @@ export function RtnCard({ item, horizontal = false }: Props) {
       {horizontal && hasAside ? (
         <div className={s.aside}>
           <h4 className={s.asideTitle}>Документы и источник</h4>
-          {documentItems.length > 0 ? (
-            <FileGallery items={documentItems} blockClassName={s.documentGallery} />
+          {requestDocumentItems.length > 0 ? (
+            <FileGallery
+              items={requestDocumentItems}
+              label="Официальное письмо"
+              blockClassName={s.documentGallery}
+            />
+          ) : null}
+          {responseDocumentItems.length > 0 ? (
+            <FileGallery
+              items={responseDocumentItems}
+              label="Ответ Ростехнадзора"
+              blockClassName={s.documentGallery}
+            />
           ) : null}
           {item.source_url ? (
             <a
