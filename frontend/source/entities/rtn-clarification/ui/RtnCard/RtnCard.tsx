@@ -111,7 +111,7 @@ export function RtnCard({ item, horizontal = false }: Props) {
 
       {horizontal && hasAside ? (
         <div className={s.aside}>
-          <h4 className={s.asideTitle}>Документы и источник</h4>
+          <h4 className={s.asideTitle}>Документы</h4>
           {requestDocumentItems.length > 0 ? (
             <FileGallery
               items={requestDocumentItems}

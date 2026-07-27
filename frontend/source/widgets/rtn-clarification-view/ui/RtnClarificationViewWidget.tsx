@@ -57,21 +57,23 @@ export function RtnClarificationViewWidget({
       num: String(index + 2).padStart(2, "0"),
     })),
   ];
-  const documentItems: FileGalleryItem[] = [];
+  const requestDocumentItems: FileGalleryItem[] = [];
+  const responseDocumentItems: FileGalleryItem[] = [];
   if (clarification.pdf_url) {
-    documentItems.push({
+    requestDocumentItems.push({
       id: `rtn-request-${clarification.id}`,
       name: "Обращение в Ростехнадзор.pdf",
       url: resolveFileUrl(clarification.pdf_url),
     });
   }
   if (clarification.response_pdf_url) {
-    documentItems.push({
+    responseDocumentItems.push({
       id: `rtn-response-${clarification.id}`,
       name: "Ответ Ростехнадзора.pdf",
       url: resolveFileUrl(clarification.response_pdf_url),
     });
   }
+  const hasDocuments = requestDocumentItems.length > 0 || responseDocumentItems.length > 0;
 
   return (
     <article className={s.wrapper}>
@@ -128,9 +130,9 @@ export function RtnClarificationViewWidget({
             dangerouslySetInnerHTML={{ __html: parsedAnswer.html }}
           />
 
-          {(clarification.source_url || documentItems.length > 0) ? (
+          {(clarification.source_url || hasDocuments) ? (
             <section className={s.documents}>
-              <h2 className={s.sectionTitle}>Источник и документы</h2>
+              <h2 className={s.sectionTitle}>Документы</h2>
               {clarification.source_url ? (
                 <a
                   href={clarification.source_url}
@@ -141,10 +143,17 @@ export function RtnClarificationViewWidget({
                   Источник на сайте Ростехнадзора
                 </a>
               ) : null}
-              {documentItems.length > 0 ? (
+              {requestDocumentItems.length > 0 ? (
                 <FileGallery
-                  items={documentItems}
-                  label="Документы"
+                  items={requestDocumentItems}
+                  label="Официальное письмо"
+                  blockClassName={s.documentGallery}
+                />
+              ) : null}
+              {responseDocumentItems.length > 0 ? (
+                <FileGallery
+                  items={responseDocumentItems}
+                  label="Ответ Ростехнадзора"
                   blockClassName={s.documentGallery}
                 />
               ) : null}
