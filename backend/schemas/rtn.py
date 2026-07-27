@@ -88,6 +88,23 @@ class RtnDetailDto(BaseModel):
     published_at: datetime | None
     updated_at: datetime
     views_count: int
+    likes_count: int
+    dislikes_count: int
+
+
+class RtnClarificationReactionRequest(BaseModel):
+    value: Literal["LIKE", "DISLIKE"]
+
+
+class RtnClarificationReactionResponse(BaseModel):
+    likes_count: int
+    dislikes_count: int
+    views_count: int
+    my_reaction: Literal["LIKE", "DISLIKE"] | None
+
+
+class RtnClarificationViewResponse(BaseModel):
+    views_count: int
 
 
 class RtnCommentAuthorDto(BaseModel):

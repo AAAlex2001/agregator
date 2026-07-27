@@ -43,6 +43,8 @@ class GetRtnClarificationUseCase:
             published_at=clarification.published_at,
             updated_at=clarification.updated_at,
             views_count=clarification.views_count,
+            likes_count=clarification.likes_count,
+            dislikes_count=clarification.dislikes_count,
         )
 
     def to_options(

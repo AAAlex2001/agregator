@@ -54,10 +54,10 @@ export function ArticleReactions({ articleId, initial, views }: Props) {
 
       {hint && <span className={s.hint}>{hint}</span>}
 
-      {views !== undefined && (
+      {(views !== undefined || state.views_count !== undefined) && (
         <span className={s.views} title="Просмотры">
           <EyeIcon className={s.viewsIcon} />
-          {views}
+          {state.views_count ?? views}
         </span>
       )}
     </section>

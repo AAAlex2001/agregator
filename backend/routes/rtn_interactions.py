@@ -12,6 +12,9 @@ from models.user import UserRole
 from schemas.rtn import (
     AttachmentDto,
     RtnChangeReportCreate,
+    RtnClarificationReactionRequest,
+    RtnClarificationReactionResponse,
+    RtnClarificationViewResponse,
     RtnCommentCreate,
     RtnCommentDto,
     RtnCommentListResponse,
@@ -22,11 +25,14 @@ from schemas.rtn import (
 from services.file_uploads import save_uploaded_file
 from services.rtn import (
     RtnChangeReportRepository,
+    RtnClarificationReactionRepository,
+    RtnClarificationViewRepository,
     RtnCommentReactionRepository,
     RtnCommentRepository,
     RtnQuestionRepository,
     RtnRepository,
 )
+from services.rtn.use_cases.clarification_interactions import RtnClarificationInteractionsUseCase
 from services.rtn.use_cases.react_to_comment import ReactToRtnCommentUseCase
 from services.rtn.use_cases.report_change import ReportRtnChangeUseCase
 from services.rtn.use_cases.rtn_comments import RtnCommentsUseCase
@@ -37,6 +43,14 @@ router = APIRouter(tags=["rtn-interactions"])
 ATTACHMENT_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".pdf"}
 ATTACHMENT_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "application/pdf"}
 MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024
+
+
+def clarification_interactions(db: AsyncSession) -> RtnClarificationInteractionsUseCase:
+    return RtnClarificationInteractionsUseCase(
+        RtnRepository(db),
+        RtnClarificationReactionRepository(db),
+        RtnClarificationViewRepository(db),
+    )
 
 
 def author_name(comment: RtnComment) -> str:
@@ -65,6 +79,74 @@ def to_comment_dto(comment: RtnComment, current_user_id: int | None, visitor_key
         agree_count=comment.agree_count,
         my_reaction=None,
     )
+
+
+@router.get(
+    "/public/rtn/clarifications/{clarification_id}/reactions",
+    response_model=RtnClarificationReactionResponse,
+)
+async def get_clarification_reactions(
+    clarification_id: int,
+    user_id: int | None = Depends(get_current_user_optional),
+    visitor_key: str = Depends(get_visitor_key),
+    db: AsyncSession = Depends(get_db),
+) -> RtnClarificationReactionResponse:
+    current_key = interaction_key(user_id, visitor_key)
+    clarification, my_reaction = await clarification_interactions(db).read(
+        clarification_id,
+        current_key,
+    )
+    return RtnClarificationReactionResponse(
+        likes_count=clarification.likes_count,
+        dislikes_count=clarification.dislikes_count,
+        views_count=clarification.views_count,
+        my_reaction=my_reaction,
+    )
+
+
+@router.post(
+    "/public/rtn/clarifications/{clarification_id}/reaction",
+    response_model=RtnClarificationReactionResponse,
+)
+async def react_to_clarification(
+    clarification_id: int,
+    data: RtnClarificationReactionRequest,
+    user_id: int | None = Depends(get_current_user_optional),
+    visitor_key: str = Depends(get_visitor_key),
+    db: AsyncSession = Depends(get_db),
+) -> RtnClarificationReactionResponse:
+    current_key = interaction_key(user_id, visitor_key)
+    clarification, my_reaction = await clarification_interactions(db).react(
+        clarification_id,
+        user_id,
+        current_key,
+        data.value,
+    )
+    return RtnClarificationReactionResponse(
+        likes_count=clarification.likes_count,
+        dislikes_count=clarification.dislikes_count,
+        views_count=clarification.views_count,
+        my_reaction=my_reaction,
+    )
+
+
+@router.post(
+    "/public/rtn/clarifications/{clarification_id}/view",
+    response_model=RtnClarificationViewResponse,
+)
+async def record_clarification_view(
+    clarification_id: int,
+    user_id: int | None = Depends(get_current_user_optional),
+    visitor_key: str = Depends(get_visitor_key),
+    db: AsyncSession = Depends(get_db),
+) -> RtnClarificationViewResponse:
+    current_key = interaction_key(user_id, visitor_key)
+    clarification = await clarification_interactions(db).record_view(
+        clarification_id,
+        user_id,
+        current_key,
+    )
+    return RtnClarificationViewResponse(views_count=clarification.views_count)
 
 
 @router.get(

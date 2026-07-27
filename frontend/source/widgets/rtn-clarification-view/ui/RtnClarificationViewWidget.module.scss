@@ -103,6 +103,23 @@
   padding: 4px 12px;
 }
 
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: #fff4e6;
+  color: #e96f00;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .layout {
   display: flex;
   flex-direction: column;

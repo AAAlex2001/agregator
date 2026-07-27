@@ -16,6 +16,7 @@ import {
 } from "@/source/entities/rtn-clarification";
 import type { RtnComment } from "@/source/entities/rtn-comment";
 import { RtnDiscussion } from "@/source/features/rtn-discussion";
+import { RtnClarificationReactions } from "@/source/features/rtn-clarification-reactions";
 import { ReportChangeModal } from "@/source/features/rtn-feedback";
 import { extractToc } from "@/source/features/article-view";
 import { RtnRelatedList } from "./RtnRelatedList";
@@ -112,6 +113,15 @@ export function RtnClarificationViewWidget({
             ))}
           </div>
         )}
+        {clarification.tags.length > 0 ? (
+          <div className={s.tags}>
+            {clarification.tags.map((tag) => (
+              <span key={tag} className={s.tag}>
+                #{tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </header>
 
       <div className={s.layout}>
@@ -182,7 +192,18 @@ export function RtnClarificationViewWidget({
           </div>
 
           {interactive ? (
-            <RtnDiscussion clarificationId={clarification.id} initialComments={initialComments} />
+            <>
+              <RtnClarificationReactions
+                clarificationId={clarification.id}
+                initial={{
+                  likes_count: clarification.likes_count,
+                  dislikes_count: clarification.dislikes_count,
+                  views_count: clarification.views_count,
+                  my_reaction: null,
+                }}
+              />
+              <RtnDiscussion clarificationId={clarification.id} initialComments={initialComments} />
+            </>
           ) : null}
         </div>
       </div>

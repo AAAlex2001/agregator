@@ -21,10 +21,12 @@ from services.articles.repository import (
     ArticleReactionRepository,
     ArticleRepository,
     ArticleViewRepository,
+    StaticNewsInteractionRepository,
 )
 from services.articles.use_cases.article_comments import ArticleCommentsUseCase
 from services.articles.use_cases.react_to_article import ReactToArticleUseCase
 from services.articles.use_cases.record_article_view import RecordArticleViewUseCase
+from services.articles.use_cases.static_news_interactions import StaticNewsInteractionsUseCase
 
 router = APIRouter(tags=["article-interactions"])
 
@@ -60,11 +62,22 @@ async def get_reactions(
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
+    if article_id < 0:
+        metrics, my_reaction = await StaticNewsInteractionsUseCase(
+            StaticNewsInteractionRepository(db)
+        ).read(article_id, current_key)
+        return ReactionResponse(
+            likes_count=metrics.likes_count,
+            dislikes_count=metrics.dislikes_count,
+            views_count=metrics.views_count,
+            my_reaction=my_reaction,
+        )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
     article, my_reaction = await use_case.read(article_id, user_id, current_key)
     return ReactionResponse(
         likes_count=article.likes_count,
         dislikes_count=article.dislikes_count,
+        views_count=article.views_count,
         my_reaction=my_reaction.value if my_reaction else None,
     )
 
@@ -78,11 +91,22 @@ async def react(
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
+    if article_id < 0:
+        metrics, my_reaction = await StaticNewsInteractionsUseCase(
+            StaticNewsInteractionRepository(db)
+        ).react(article_id, user_id, current_key, data.value)
+        return ReactionResponse(
+            likes_count=metrics.likes_count,
+            dislikes_count=metrics.dislikes_count,
+            views_count=metrics.views_count,
+            my_reaction=my_reaction,
+        )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
     article, my_reaction = await use_case.react(article_id, user_id, current_key, ReactionValue(data.value))
     return ReactionResponse(
         likes_count=article.likes_count,
         dislikes_count=article.dislikes_count,
+        views_count=article.views_count,
         my_reaction=my_reaction.value if my_reaction else None,
     )
 
@@ -95,6 +119,11 @@ async def record_view(
     db: AsyncSession = Depends(get_db),
 ) -> ViewResponse:
     current_key = interaction_key(user_id, visitor_key)
+    if article_id < 0:
+        metrics = await StaticNewsInteractionsUseCase(
+            StaticNewsInteractionRepository(db)
+        ).record_view(article_id, user_id, current_key)
+        return ViewResponse(views_count=metrics.views_count)
     use_case = RecordArticleViewUseCase(ArticleRepository(db), ArticleViewRepository(db))
     article = await use_case.record(article_id, user_id, current_key)
     return ViewResponse(views_count=article.views_count)

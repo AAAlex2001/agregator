@@ -1,15 +1,17 @@
 
 "Repository: доступ к БД для articles."
-from datetime import datetime
+from datetime import UTC, date, datetime
 from typing import Any
 
-from sqlalchemy import and_, delete, select
+from sqlalchemy import and_, delete, select, update
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.article import Article, ArticleKind, ArticleStatus
 from models.article_comment import ArticleComment
 from models.article_reaction import ArticleReaction, ReactionValue
 from models.article_view import ArticleView
+from models.static_news_interaction import StaticNewsMetric, StaticNewsReaction, StaticNewsView
 from models.tag import Tag
 
 
@@ -164,6 +166,83 @@ class ArticleViewRepository:
     async def add(self, article_id: int, user_id: int | None, visitor_key: str) -> None:
         self.db.add(ArticleView(article_id=article_id, user_id=user_id, visitor_key=visitor_key))
         await self.db.flush()
+
+
+class StaticNewsInteractionRepository:
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def get_metrics(self, news_id: int, for_update: bool = False) -> StaticNewsMetric:
+        await self.db.execute(
+            pg_insert(StaticNewsMetric)
+            .values(news_id=news_id, likes_count=0, dislikes_count=0, views_count=0)
+            .on_conflict_do_nothing(index_elements=["news_id"])
+        )
+        query = select(StaticNewsMetric).where(StaticNewsMetric.news_id == news_id)
+        if for_update:
+            query = query.with_for_update()
+        return (await self.db.execute(query)).scalar_one()
+
+    async def get_reaction(
+        self,
+        news_id: int,
+        visitor_key: str,
+    ) -> StaticNewsReaction | None:
+        query = select(StaticNewsReaction).where(
+            StaticNewsReaction.news_id == news_id,
+            StaticNewsReaction.visitor_key == visitor_key,
+        )
+        return (await self.db.execute(query)).scalar_one_or_none()
+
+    async def add_reaction(
+        self,
+        news_id: int,
+        user_id: int | None,
+        visitor_key: str,
+        value: str,
+    ) -> StaticNewsReaction:
+        reaction = StaticNewsReaction(
+            news_id=news_id,
+            user_id=user_id,
+            visitor_key=visitor_key,
+            value=value,
+        )
+        self.db.add(reaction)
+        await self.db.flush()
+        return reaction
+
+    async def remove_reaction(self, reaction: StaticNewsReaction) -> None:
+        await self.db.delete(reaction)
+
+    async def add_view_once(
+        self,
+        news_id: int,
+        user_id: int | None,
+        visitor_key: str,
+        viewed_on: date,
+    ) -> bool:
+        query = (
+            pg_insert(StaticNewsView)
+            .values(
+                news_id=news_id,
+                user_id=user_id,
+                visitor_key=visitor_key,
+                viewed_on=viewed_on,
+                created_at=datetime.now(UTC),
+            )
+            .on_conflict_do_nothing(index_elements=["news_id", "visitor_key", "viewed_on"])
+            .returning(StaticNewsView.id)
+        )
+        return (await self.db.execute(query)).scalar_one_or_none() is not None
+
+    async def increment_views(self, news_id: int) -> int:
+        query = (
+            update(StaticNewsMetric)
+            .where(StaticNewsMetric.news_id == news_id)
+            .values(views_count=StaticNewsMetric.views_count + 1)
+            .returning(StaticNewsMetric.views_count)
+        )
+        return (await self.db.execute(query)).scalar_one()
 
 
 class ArticleCommentRepository:

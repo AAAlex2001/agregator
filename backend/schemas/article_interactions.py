@@ -13,6 +13,7 @@ class ReactionRequest(BaseModel):
 class ReactionResponse(BaseModel):
     likes_count: int
     dislikes_count: int
+    views_count: int
     my_reaction: ReactionValueDto | None
 
 

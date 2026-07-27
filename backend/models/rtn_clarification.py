@@ -162,6 +162,8 @@ class RtnClarification(Base):
     meta_keywords: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     views_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    likes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    dislikes_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(

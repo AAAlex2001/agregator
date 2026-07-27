@@ -25,6 +25,7 @@ interface Props {
   initialReactions?: ReactionState;
   initialComments?: ArticleComment[];
   interactive?: boolean;
+  discussionEnabled?: boolean;
 }
 
 export function ArticleView({
@@ -35,6 +36,7 @@ export function ArticleView({
   initialReactions,
   initialComments,
   interactive = true,
+  discussionEnabled = true,
 }: Props) {
   const isNews = article.kind === "news";
   const sectionTitle = isNews ? "Новости" : "Блог";
@@ -90,7 +92,9 @@ export function ArticleView({
           {interactive ? (
             <>
               <ArticleReactions articleId={article.id} initial={initialReactions} views={article.views_count} />
-              <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
+              {discussionEnabled ? (
+                <ArticleDiscussion articleId={article.id} initialComments={initialComments} />
+              ) : null}
             </>
           ) : null}
         </div>

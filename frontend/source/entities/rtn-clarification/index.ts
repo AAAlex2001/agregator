@@ -3,6 +3,9 @@ export {
   fetchRtnList,
   fetchRtnBySlug,
   fetchRelatedRtn,
+  fetchRtnReactions,
+  sendRtnReaction,
+  recordRtnView,
   parseRtnListFilters,
   toURLSearchParams,
 } from "./api/rtnClarification.api";
@@ -16,7 +19,10 @@ export type {
   RtnRegulationLink,
   RtnDetail,
   RtnListFilters,
+  RtnReactionState,
+  RtnReactionValue,
 } from "./api/rtnClarification.api";
+export { useRtnReactions } from "./model/useRtnReactions";
 
 export { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "./lib/rtnLabels";
 

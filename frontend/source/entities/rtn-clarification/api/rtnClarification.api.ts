@@ -1,4 +1,6 @@
 import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
+import { fetchWithSession } from "@/source/shared/api/session";
 
 export type RtnDocumentType = "OFFICIAL_CLARIFICATION" | "INFO_LETTER" | "RESPONSE_TO_REQUEST";
 export type RtnStatus = "ACTIVE" | "EXPIRED";
@@ -69,6 +71,17 @@ export interface RtnDetail {
   published_at: string | null;
   updated_at: string;
   views_count: number;
+  likes_count: number;
+  dislikes_count: number;
+}
+
+export type RtnReactionValue = "LIKE" | "DISLIKE";
+
+export interface RtnReactionState {
+  likes_count: number;
+  dislikes_count: number;
+  views_count: number;
+  my_reaction: RtnReactionValue | null;
 }
 
 export interface RtnListFilters {
@@ -174,4 +187,48 @@ export async function fetchRelatedRtn(
   );
   if (!res.ok) return [];
   return res.json();
+}
+
+export async function fetchRtnReactions(
+  clarificationId: number,
+): Promise<RtnReactionState> {
+  const response = await fetchWithSession(
+    `${API_URL}/public/rtn/clarifications/${clarificationId}/reactions`,
+  );
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Не удалось загрузить оценки"));
+  }
+  return response.json();
+}
+
+export async function sendRtnReaction(
+  clarificationId: number,
+  value: RtnReactionValue,
+): Promise<RtnReactionState> {
+  const response = await fetchWithSession(
+    `${API_URL}/public/rtn/clarifications/${clarificationId}/reaction`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ value }),
+    },
+  );
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Не удалось сохранить оценку"));
+  }
+  return response.json();
+}
+
+export async function recordRtnView(clarificationId: number): Promise<number | null> {
+  try {
+    const response = await fetchWithSession(
+      `${API_URL}/public/rtn/clarifications/${clarificationId}/view`,
+      { method: "POST" },
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.views_count as number;
+  } catch {
+    return null;
+  }
 }

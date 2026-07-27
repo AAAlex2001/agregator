@@ -1,10 +1,10 @@
 "Repository: доступ к БД для разъяснений РТН, их таксономии, комментариев и реакций."
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import Any
 
-from sqlalchemy import Select, Table, case, delete, select
+from sqlalchemy import Select, Table, case, delete, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,6 +23,8 @@ from models.rtn_clarification import (
     rtn_clarification_object_types,
     rtn_clarification_oversight_areas,
 )
+from models.rtn_clarification_reaction import RtnClarificationReaction
+from models.rtn_clarification_view import RtnClarificationView
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue, RtnCommentReaction
 from models.rtn_question import RtnQuestion, RtnQuestionStatus
@@ -157,6 +159,29 @@ class RtnRepository:
         result = await self.db.execute(query)
         return result.scalars().first()
 
+    async def get_published_by_id_for_update(
+        self,
+        clarification_id: int,
+    ) -> RtnClarification | None:
+        query = (
+            select(RtnClarification)
+            .where(
+                RtnClarification.id == clarification_id,
+                RtnClarification.publication_status == PublicationStatus.PUBLISHED,
+            )
+            .with_for_update()
+        )
+        return (await self.db.execute(query)).scalars().first()
+
+    async def increment_views(self, clarification_id: int) -> int:
+        query = (
+            update(RtnClarification)
+            .where(RtnClarification.id == clarification_id)
+            .values(views_count=RtnClarification.views_count + 1)
+            .returning(RtnClarification.views_count)
+        )
+        return (await self.db.execute(query)).scalar_one()
+
     async def list_related(self, clarification: RtnClarification, limit: int) -> list[RtnClarification]:
         "«Смотрите также»: опубликованные карточки с пересечением по тегам или отрасли."
         tag_ids = [tag.id for tag in clarification.tags]
@@ -249,6 +274,70 @@ class RtnRepository:
             [{"clarification_id": clarification_id, column_name: value} for value in values]
         )
         await self.db.execute(insert_query)
+
+
+class RtnClarificationReactionRepository:
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def get(
+        self,
+        clarification_id: int,
+        visitor_key: str,
+    ) -> RtnClarificationReaction | None:
+        query = select(RtnClarificationReaction).where(
+            RtnClarificationReaction.clarification_id == clarification_id,
+            RtnClarificationReaction.visitor_key == visitor_key,
+        )
+        return (await self.db.execute(query)).scalar_one_or_none()
+
+    async def add(
+        self,
+        clarification_id: int,
+        user_id: int | None,
+        visitor_key: str,
+        value: str,
+    ) -> RtnClarificationReaction:
+        reaction = RtnClarificationReaction(
+            clarification_id=clarification_id,
+            user_id=user_id,
+            visitor_key=visitor_key,
+            value=value,
+        )
+        self.db.add(reaction)
+        await self.db.flush()
+        return reaction
+
+    async def remove(self, reaction: RtnClarificationReaction) -> None:
+        await self.db.delete(reaction)
+
+
+class RtnClarificationViewRepository:
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def add_once(
+        self,
+        clarification_id: int,
+        user_id: int | None,
+        visitor_key: str,
+        viewed_on: date,
+    ) -> bool:
+        query = (
+            pg_insert(RtnClarificationView)
+            .values(
+                clarification_id=clarification_id,
+                user_id=user_id,
+                visitor_key=visitor_key,
+                viewed_on=viewed_on,
+                created_at=datetime.now(UTC),
+            )
+            .on_conflict_do_nothing(
+                index_elements=["clarification_id", "visitor_key", "viewed_on"],
+            )
+            .returning(RtnClarificationView.id)
+        )
+        return (await self.db.execute(query)).scalar_one_or_none() is not None
 
 
 class RtnCommentRepository:

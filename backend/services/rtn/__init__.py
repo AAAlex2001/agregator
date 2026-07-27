@@ -1,5 +1,7 @@
 from services.rtn.repository import (
     RtnChangeReportRepository,
+    RtnClarificationReactionRepository,
+    RtnClarificationViewRepository,
     RtnCommentReactionRepository,
     RtnCommentRepository,
     RtnListFilters,
@@ -10,6 +12,8 @@ from services.rtn.repository import (
 
 __all__ = [
     "RtnChangeReportRepository",
+    "RtnClarificationReactionRepository",
+    "RtnClarificationViewRepository",
     "RtnCommentReactionRepository",
     "RtnCommentRepository",
     "RtnListFilters",

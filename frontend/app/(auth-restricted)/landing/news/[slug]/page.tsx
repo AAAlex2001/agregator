@@ -36,7 +36,11 @@ export default async function AuthedNewsArticlePage({ params }: Props) {
   const article = staticArticle ?? await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "news") notFound();
   const [related, reactions, comments] = staticArticle
-    ? [getStaticRelatedNews(slug, 10), undefined, [] as ArticleComment[]] as const
+    ? await Promise.all([
+        Promise.resolve(getStaticRelatedNews(slug, 10)),
+        fetchReactions(article.id, { server: true }).catch(() => undefined),
+        Promise.resolve([] as ArticleComment[]),
+      ])
     : await Promise.all([
         fetchRelatedArticles(slug, { limit: 10, server: true }),
         fetchReactions(article.id, { server: true }).catch(() => undefined),
@@ -54,7 +58,8 @@ export default async function AuthedNewsArticlePage({ params }: Props) {
         sectionHrefPrefix="/landing"
         initialReactions={reactions}
         initialComments={comments}
-        interactive={!staticArticle}
+        interactive
+        discussionEnabled={!staticArticle}
       />
     </>
   );

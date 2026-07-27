@@ -1,0 +1,70 @@
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.caption {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid #e2e2e2;
+  border-radius: 999px;
+  background: #fff;
+  color: #4d4d4d;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: #ff8a00;
+    color: #ff8a00;
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+}
+
+.likeActive {
+  background: #fff4e6;
+  border-color: #ff8a00;
+  color: #ff8a00;
+}
+
+.dislikeActive {
+  background: #fdecec;
+  border-color: #e23b3b;
+  color: #e23b3b;
+}
+
+.views {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #8a8f9c;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.viewsIcon {
+  width: 20px;
+  height: 20px;
+}
