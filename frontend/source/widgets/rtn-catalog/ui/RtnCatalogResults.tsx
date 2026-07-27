@@ -80,7 +80,7 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
         ) : (
           <ul className={s.grid}>
             {items.map((item) => (
-              <RtnCard key={item.id} item={item} />
+              <RtnCard key={item.id} item={item} horizontal />
             ))}
           </ul>
         )}

@@ -64,6 +64,8 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
         </div>
       </section>
 
+      <div className={s.layout}>{children}</div>
+
       <div className={s.askBlock}>
         <h2 className={s.askTitle}>Не нашли ответ?</h2>
         <p className={s.askDesc}>
@@ -73,8 +75,6 @@ export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
           Задать вопрос
         </Button>
       </div>
-
-      <div className={s.layout}>{children}</div>
 
       <AskRtnQuestionForm open={askOpen} onClose={() => setAskOpen(false)} />
     </div>

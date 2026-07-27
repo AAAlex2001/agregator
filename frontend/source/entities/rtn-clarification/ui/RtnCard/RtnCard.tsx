@@ -9,7 +9,12 @@ import { DOCUMENT_TYPE_LABELS, STATUS_LABELS } from "../../lib/rtnLabels";
 import type { RtnListItem } from "../../api/rtnClarification.api";
 import s from "./RtnCard.module.scss";
 
-export function RtnCard({ item }: { item: RtnListItem }) {
+interface Props {
+  item: RtnListItem;
+  horizontal?: boolean;
+}
+
+export function RtnCard({ item, horizontal = false }: Props) {
   const pathname = usePathname();
   const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
   const href = `${prefix}/rtn/${item.slug}`;
@@ -28,9 +33,14 @@ export function RtnCard({ item }: { item: RtnListItem }) {
       url: resolveFileUrl(item.response_pdf_url),
     });
   }
+  const hasAside = documentItems.length > 0 || Boolean(item.source_url);
 
   return (
-    <li className={s.card}>
+    <li
+      className={`${s.card}${horizontal ? ` ${s.horizontal}` : ""}${
+        horizontal && hasAside ? ` ${s.withAside}` : ""
+      }`}
+    >
       <Link href={href} className={s.link}>
         <div className={s.top}>
           <span className={s.docType}>{DOCUMENT_TYPE_LABELS[item.document_type]}</span>
@@ -42,27 +52,80 @@ export function RtnCard({ item }: { item: RtnListItem }) {
         <h3 className={s.title}>{item.title}</h3>
         {item.excerpt ? <p className={s.excerpt}>{item.excerpt}</p> : null}
 
-        <div className={s.meta}>
-          {item.letter_number ? <span className={s.letter}>№ {item.letter_number}</span> : null}
-          {item.department ? <span className={s.department}>{item.department}</span> : null}
-          <time className={s.date} dateTime={item.published_at || undefined}>
-            {formatDateRu(item.published_at)}
-          </time>
-        </div>
+        {horizontal ? (
+          <>
+            {item.tags.length > 0 ? (
+              <div className={s.tags}>
+                {item.tags.map((tag) => (
+                  <span key={tag} className={s.tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            ) : null}
 
-        {item.tags.length > 0 ? (
-          <div className={s.tags}>
-            {item.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className={s.tag}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        ) : null}
+            <div className={s.meta}>
+              {item.letter_number ? (
+                <div className={s.metaItem}>
+                  <span className={s.metaLabel}>Номер документа</span>
+                  <span className={s.metaValue}>№ {item.letter_number}</span>
+                </div>
+              ) : null}
+              {item.department ? (
+                <div className={`${s.metaItem} ${s.departmentItem}`}>
+                  <span className={s.metaLabel}>Подразделение Ростехнадзора</span>
+                  <span className={s.metaValue}>{item.department}</span>
+                </div>
+              ) : null}
+              <div className={s.metaItem}>
+                <span className={s.metaLabel}>Дата публикации</span>
+                <time className={s.metaValue} dateTime={item.published_at || undefined}>
+                  {formatDateRu(item.published_at)}
+                </time>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={s.compactMeta}>
+              {item.letter_number ? <span>№ {item.letter_number}</span> : null}
+              {item.department ? <span className={s.compactDepartment}>{item.department}</span> : null}
+              <time dateTime={item.published_at || undefined}>
+                {formatDateRu(item.published_at)}
+              </time>
+            </div>
+            {item.tags.length > 0 ? (
+              <div className={s.tags}>
+                {item.tags.slice(0, 3).map((tag) => (
+                  <span key={tag} className={s.tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </>
+        )}
       </Link>
 
-      {documentItems.length > 0 ? (
-        <div className={s.documentRow}>
+      {horizontal && hasAside ? (
+        <div className={s.aside}>
+          <h4 className={s.asideTitle}>Документы и источник</h4>
+          {documentItems.length > 0 ? (
+            <FileGallery items={documentItems} blockClassName={s.documentGallery} />
+          ) : null}
+          {item.source_url ? (
+            <a
+              className={s.sourceLink}
+              href={item.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Открыть источник на сайте Ростехнадзора
+            </a>
+          ) : null}
+        </div>
+      ) : documentItems.length > 0 ? (
+        <div className={s.compactDocuments}>
           <FileGallery
             items={documentItems}
             label="Документ"
