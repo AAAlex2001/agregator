@@ -28,6 +28,7 @@ export interface RtnListItem {
   department: string;
   source_url: string;
   pdf_url: string;
+  response_pdf_url: string;
   tags: string[];
   published_at: string | null;
 }
@@ -55,6 +56,7 @@ export interface RtnDetail {
   department: string;
   source_url: string;
   pdf_url: string;
+  response_pdf_url: string;
   referenced_regulations: RtnRegulationLink[];
   tags: string[];
   oversight_areas: RtnTaxonomyOption[];

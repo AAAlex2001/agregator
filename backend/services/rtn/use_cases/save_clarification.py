@@ -65,6 +65,7 @@ class SaveRtnClarificationUseCase:
             "department": data.department.strip(),
             "source_url": data.source_url.strip(),
             "pdf_url": data.pdf_url.strip(),
+            "response_pdf_url": data.response_pdf_url.strip(),
             "referenced_regulations": [item.model_dump() for item in data.referenced_regulations],
             "meta_title": data.meta_title.strip(),
             "meta_description": data.meta_description,

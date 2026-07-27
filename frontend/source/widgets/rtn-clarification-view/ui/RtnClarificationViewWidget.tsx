@@ -57,13 +57,21 @@ export function RtnClarificationViewWidget({
       num: String(index + 2).padStart(2, "0"),
     })),
   ];
-  const documentItems: FileGalleryItem[] = clarification.pdf_url
-    ? [{
-        id: `rtn-letter-${clarification.id}`,
-        name: "Скан-копия официального письма.pdf",
-        url: resolveFileUrl(clarification.pdf_url),
-      }]
-    : [];
+  const documentItems: FileGalleryItem[] = [];
+  if (clarification.pdf_url) {
+    documentItems.push({
+      id: `rtn-request-${clarification.id}`,
+      name: "Обращение в Ростехнадзор.pdf",
+      url: resolveFileUrl(clarification.pdf_url),
+    });
+  }
+  if (clarification.response_pdf_url) {
+    documentItems.push({
+      id: `rtn-response-${clarification.id}`,
+      name: "Ответ Ростехнадзора.pdf",
+      url: resolveFileUrl(clarification.response_pdf_url),
+    });
+  }
 
   return (
     <article className={s.wrapper}>
@@ -136,7 +144,7 @@ export function RtnClarificationViewWidget({
               {documentItems.length > 0 ? (
                 <FileGallery
                   items={documentItems}
-                  label="Скан-копия официального письма"
+                  label="Документы"
                   blockClassName={s.documentGallery}
                 />
               ) : null}

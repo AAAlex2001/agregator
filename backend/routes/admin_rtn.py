@@ -51,6 +51,7 @@ async def to_out(clarification: RtnClarification, repo: RtnRepository) -> RtnCla
         department=clarification.department,
         source_url=clarification.source_url,
         pdf_url=clarification.pdf_url,
+        response_pdf_url=clarification.response_pdf_url,
         referenced_regulations=clarification.referenced_regulations,
         tags=[tag.name for tag in clarification.tags],
         oversight_areas=[value.value for value in selection.oversight_areas],

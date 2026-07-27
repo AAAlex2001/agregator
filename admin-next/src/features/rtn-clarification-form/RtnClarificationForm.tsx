@@ -201,8 +201,15 @@ export function RtnClarificationForm({
           <input value={f.sourceUrl} onChange={(e) => setField("sourceUrl", e.target.value)} />
         </label>
         <label>
-          Скан-копия письма (PDF)
+          Обращение в Ростехнадзор (PDF)
           <PdfUpload value={f.pdfUrl} onChange={(url) => setField("pdfUrl", url)} />
+        </label>
+        <label>
+          Ответ Ростехнадзора (PDF)
+          <PdfUpload
+            value={f.responsePdfUrl}
+            onChange={(url) => setField("responsePdfUrl", url)}
+          />
         </label>
 
         <label>

@@ -13,13 +13,21 @@ export function RtnCard({ item }: { item: RtnListItem }) {
   const pathname = usePathname();
   const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
   const href = `${prefix}/rtn/${item.slug}`;
-  const documentItems: FileGalleryItem[] = item.pdf_url
-    ? [{
-        id: `rtn-card-letter-${item.id}`,
-        name: "Скан-копия официального письма.pdf",
-        url: resolveFileUrl(item.pdf_url),
-      }]
-    : [];
+  const documentItems: FileGalleryItem[] = [];
+  if (item.pdf_url) {
+    documentItems.push({
+      id: `rtn-card-request-${item.id}`,
+      name: "Обращение в Ростехнадзор.pdf",
+      url: resolveFileUrl(item.pdf_url),
+    });
+  }
+  if (item.response_pdf_url) {
+    documentItems.push({
+      id: `rtn-card-response-${item.id}`,
+      name: "Ответ Ростехнадзора.pdf",
+      url: resolveFileUrl(item.response_pdf_url),
+    });
+  }
 
   return (
     <li className={s.card}>

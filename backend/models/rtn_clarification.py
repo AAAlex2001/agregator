@@ -154,6 +154,7 @@ class RtnClarification(Base):
     department: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     source_url: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     pdf_url: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    response_pdf_url: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     referenced_regulations: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
 
     meta_title: Mapped[str] = mapped_column(String(300), nullable=False, default="")

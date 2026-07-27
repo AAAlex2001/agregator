@@ -19,6 +19,7 @@ export type RtnClarificationIn = {
   department: string;
   sourceUrl: string;
   pdfUrl: string;
+  responsePdfUrl: string;
   referencedRegulations: RegulationLink[];
   tags: string[];
   oversightAreas: string[];
@@ -60,6 +61,7 @@ export const EMPTY_CLARIFICATION: RtnClarificationOut = {
   department: "",
   sourceUrl: "",
   pdfUrl: "",
+  responsePdfUrl: "",
   referencedRegulations: [],
   tags: [],
   oversightAreas: [],
@@ -85,6 +87,7 @@ export const toOut = (c: RtnClarificationIn): RtnClarificationOut => ({
   department: c.department,
   sourceUrl: c.sourceUrl,
   pdfUrl: c.pdfUrl,
+  responsePdfUrl: c.responsePdfUrl,
   referencedRegulations: c.referencedRegulations,
   tags: c.tags,
   oversightAreas: c.oversightAreas,

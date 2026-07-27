@@ -25,6 +25,7 @@ class RtnClarificationWrite(BaseModel):
     department: str = Field(default="", max_length=300)
     source_url: str = Field(default="", max_length=500)
     pdf_url: str = Field(default="", max_length=500)
+    response_pdf_url: str = Field(default="", max_length=500)
     referenced_regulations: list[RegulationLinkDto] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     oversight_areas: list[str] = Field(default_factory=list)

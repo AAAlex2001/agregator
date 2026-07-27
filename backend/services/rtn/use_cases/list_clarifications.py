@@ -32,6 +32,7 @@ def to_list_item_dto(row: RtnClarification) -> RtnListItemDto:
         department=row.department,
         source_url=row.source_url,
         pdf_url=row.pdf_url,
+        response_pdf_url=row.response_pdf_url,
         tags=[tag.name for tag in row.tags],
         published_at=row.published_at,
     )
