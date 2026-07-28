@@ -161,11 +161,12 @@ class RtnQuestionDto(BaseModel):
     "Вопрос текущего пользователя и состояние его обработки."
     id: int
     question_text: str
+    contact_email: str
     status: RtnQuestionStatus
     answered_clarification_id: int | None
+    answer_title: str | None
+    answer_slug: str | None
     created_at: datetime
-
-    model_config = {"from_attributes": True}
 
 
 class RtnChangeReportCreate(BaseModel):

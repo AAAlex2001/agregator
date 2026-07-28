@@ -292,4 +292,16 @@ async def list_my_questions(
     "Вопросы текущего пользователя для личной страницы обращений."
     use_case = ListUserRtnQuestionsUseCase(RtnQuestionRepository(db))
     questions = await use_case.execute(user_id)
-    return [RtnQuestionDto.model_validate(question) for question in questions]
+    return [
+        RtnQuestionDto(
+            id=item.question.id,
+            question_text=item.question.question_text,
+            contact_email=item.contact_email,
+            status=item.question.status,
+            answered_clarification_id=item.question.answered_clarification_id,
+            answer_title=item.answer_title,
+            answer_slug=item.answer_slug,
+            created_at=item.question.created_at,
+        )
+        for item in questions
+    ]

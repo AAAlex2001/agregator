@@ -1,4 +1,5 @@
 import { useReducer, type FormEvent } from "react";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import { submitRtnQuestion } from "../api/rtnFeedback.api";
 import {
   initialRtnQuestionFormState,
@@ -6,6 +7,7 @@ import {
 } from "./rtnQuestionForm.reducer";
 
 export function useRtnQuestionSubmit(onSubmitted: () => void) {
+  const { showError, showSuccess } = useNotifications();
   const [state, dispatch] = useReducer(
     rtnQuestionFormReducer,
     initialRtnQuestionFormState,
@@ -19,7 +21,7 @@ export function useRtnQuestionSubmit(onSubmitted: () => void) {
     event.preventDefault();
     const value = state.questionText.trim();
     if (!value) {
-      dispatch({ type: "error", message: "Опишите ваш вопрос" });
+      showError("Опишите ваш вопрос");
       return;
     }
 
@@ -27,14 +29,15 @@ export function useRtnQuestionSubmit(onSubmitted: () => void) {
     try {
       await submitRtnQuestion(value, "");
       dispatch({ type: "success" });
+      showSuccess("Вопрос отправлен");
       onSubmitted();
     } catch (submitError) {
-      dispatch({
-        type: "error",
-        message: submitError instanceof Error
+      dispatch({ type: "error" });
+      showError(
+        submitError instanceof Error
           ? submitError.message
           : "Не удалось отправить вопрос",
-      });
+      );
     }
   };
 

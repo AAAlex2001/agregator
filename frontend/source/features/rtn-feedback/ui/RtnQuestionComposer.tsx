@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function RtnQuestionComposer({ onSubmitted }: Props) {
-  const { questionText, busy, error, sent, changeQuestion, submit } =
+  const { questionText, busy, changeQuestion, submit } =
     useRtnQuestionSubmit(onSubmitted);
 
   return (
@@ -38,8 +38,6 @@ export function RtnQuestionComposer({ onSubmitted }: Props) {
           Отправить вопрос
         </Button>
       </div>
-      {error && <p className={s.error}>{error}</p>}
-      {sent && <p className={s.success}>Вопрос принят. Его статус появился в списке ниже.</p>}
     </form>
   );
 }

@@ -70,6 +70,14 @@ class RtnTaxonomySelection:
     object_types: list[ObjectType] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class UserRtnQuestion:
+    question: RtnQuestion
+    contact_email: str
+    answer_title: str | None
+    answer_slug: str | None
+
+
 class RtnRepository:
     "Все SQL-запросы по разъяснениям РТН. Никакой бизнес-логики."
 
@@ -490,14 +498,32 @@ class RtnQuestionRepository:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
-    async def list_by_user(self, user_id: int) -> list[RtnQuestion]:
+    async def list_by_user(self, user_id: int) -> list[UserRtnQuestion]:
         query = (
-            select(RtnQuestion)
+            select(
+                RtnQuestion,
+                User.email,
+                RtnClarification.title,
+                RtnClarification.slug,
+            )
+            .outerjoin(User, User.id == RtnQuestion.user_id)
+            .outerjoin(
+                RtnClarification,
+                RtnClarification.id == RtnQuestion.answered_clarification_id,
+            )
             .where(RtnQuestion.user_id == user_id)
             .order_by(RtnQuestion.created_at.desc())
         )
         result = await self.db.execute(query)
-        return list(result.scalars().all())
+        return [
+            UserRtnQuestion(
+                question=question,
+                contact_email=question.contact_email or account_email or "",
+                answer_title=answer_title,
+                answer_slug=answer_slug,
+            )
+            for question, account_email, answer_title, answer_slug in result.all()
+        ]
 
     async def get_by_id(self, question_id: int) -> RtnQuestion | None:
         query = select(RtnQuestion).where(RtnQuestion.id == question_id)

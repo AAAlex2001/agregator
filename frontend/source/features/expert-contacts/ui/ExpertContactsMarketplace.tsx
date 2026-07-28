@@ -65,8 +65,6 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         onDelete={contacts.requestDeleteDeal}
       />
 
-      {contacts.error && <p className={s.error}>{contacts.error}</p>}
-
       <section className={s.catalog} aria-label="Эксперты платформы">
         <div className={s.catalogHead}>
           <div className={s.catalogTitleRow}>

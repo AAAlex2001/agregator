@@ -27,13 +27,16 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const push = useCallback((type: ToastType, message: string) => {
     setItem({ id: `${Date.now()}-${Math.random()}`, type, message });
   }, []);
+  const showSuccess = useCallback((message: string) => {
+    push("success", message);
+  }, [push]);
+  const showError = useCallback((message: string) => {
+    push("error", message);
+  }, [push]);
 
   return (
     <Ctx.Provider
-      value={{
-        showSuccess: (message) => push("success", message),
-        showError: (message) => push("error", message),
-      }}
+      value={{ showSuccess, showError }}
     >
       {children}
       <div className={s.stack}>

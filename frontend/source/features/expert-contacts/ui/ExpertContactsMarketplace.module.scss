@@ -100,16 +100,11 @@
   width: 100%;
 }
 
-.empty,
-.error {
+.empty {
   width: 100%;
   padding: 28px 0;
   color: #808080;
   text-align: center;
-}
-
-.error {
-  color: #e64646;
 }
 
 @media (min-width: 768px) {

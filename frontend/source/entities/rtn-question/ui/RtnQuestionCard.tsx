@@ -1,4 +1,8 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import type { RtnQuestion, RtnQuestionStatus } from "../model/types";
+import Button from "@/source/shared/ui/Button";
 import { ListCard } from "@/source/shared/ui/ListCard";
 
 const STATUS: Record<RtnQuestionStatus, { label: string; color: string; background: string }> = {
@@ -17,6 +21,10 @@ function formatDate(value: string): string {
 
 export function RtnQuestionCard({ question }: { question: RtnQuestion }) {
   const status = STATUS[question.status];
+  const pathname = usePathname();
+  const answerHref = question.answer_slug
+    ? `${pathname.startsWith("/landing") ? "/landing" : ""}/rtn/${question.answer_slug}`
+    : null;
 
   return (
     <ListCard
@@ -25,10 +33,29 @@ export function RtnQuestionCard({ question }: { question: RtnQuestion }) {
       statusColor={status.color}
       statusBg={status.background}
       title={question.question_text}
-      bottomLeftLabel="Дата отправки"
-      bottomLeftValue={
-        <time dateTime={question.created_at}>{formatDate(question.created_at)}</time>
-      }
+      bottomLeftLabel="Email для ответа"
+      bottomLeftValue={question.contact_email || "Не указан"}
+      rightItems={[
+        {
+          label: "Дата отправки",
+          value: (
+            <time dateTime={question.created_at}>
+              {formatDate(question.created_at)}
+            </time>
+          ),
+        },
+        {
+          label: "Официальный ответ",
+          value: question.answer_title ?? (
+            question.status === "NEW" ? "Ожидает рассмотрения" : "Не опубликован"
+          ),
+        },
+      ]}
+      actions={answerHref && (
+        <Button href={answerHref} variant="outlineOrange">
+          Читать официальный ответ
+        </Button>
+      )}
     />
   );
 }

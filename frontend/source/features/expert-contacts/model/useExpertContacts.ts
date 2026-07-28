@@ -64,10 +64,7 @@ export function useExpertContacts(targetExpertId?: string) {
         dispatch({ type: "OFFER", value: offer });
       } catch (reason) {
         if (!canceled) {
-          dispatch({
-            type: "ERROR",
-            value: errorMessage(reason, "Не удалось загрузить раздел"),
-          });
+          showError(errorMessage(reason, "Не удалось загрузить раздел"));
         }
       } finally {
         if (!canceled) dispatch({ type: "LOADING", value: false });
@@ -78,7 +75,7 @@ export function useExpertContacts(targetExpertId?: string) {
     return () => {
       canceled = true;
     };
-  }, [role, sessionLoading, userId]);
+  }, [role, sessionLoading, showError, userId]);
 
   const beginRequest = (): boolean => {
     if (requestInFlightRef.current) return false;
@@ -110,6 +107,7 @@ export function useExpertContacts(targetExpertId?: string) {
 
   const runDealAction = async (
     request: () => Promise<ContactDealDetail>,
+    successMessage?: string,
   ): Promise<void> => {
     if (!beginRequest()) return;
     try {
@@ -117,8 +115,9 @@ export function useExpertContacts(targetExpertId?: string) {
       dispatch({ type: "SELECT_DEAL", value: deal });
       dispatch({ type: "SYNC_DEAL", value: deal });
       dispatch({ type: "DEALS", value: await fetchContactDeals() });
+      if (successMessage) showSuccess(successMessage);
     } catch (reason) {
-      setRequestError(reason, "Не удалось выполнить действие");
+      showError(setRequestError(reason, "Не удалось выполнить действие"));
     } finally {
       finishRequest();
     }
@@ -129,11 +128,14 @@ export function useExpertContacts(targetExpertId?: string) {
       router.push("/login");
       return;
     }
-    await runDealAction(() => (
-      expert.deal_id
-        ? fetchContactDeal(expert.deal_id)
-        : createContactDeal(expert.id)
-    ));
+    await runDealAction(
+      () => (
+        expert.deal_id
+          ? fetchContactDeal(expert.deal_id)
+          : createContactDeal(expert.id)
+      ),
+      expert.deal_id ? undefined : "Заявка на покупку контактов создана",
+    );
   };
 
   const confirmDeleteDeal = async () => {
@@ -177,7 +179,7 @@ export function useExpertContacts(targetExpertId?: string) {
     try {
       setDealChatUuid(await openDealChatApi(dealId));
     } catch (reason) {
-      setRequestError(reason, "Не удалось открыть чат");
+      showError(setRequestError(reason, "Не удалось открыть чат"));
     } finally {
       finishRequest();
     }
@@ -192,7 +194,7 @@ export function useExpertContacts(targetExpertId?: string) {
       dispatch({ type: "SYNC_OFFER", value: offer });
       return true;
     } catch (reason) {
-      setRequestError(reason, "Не удалось сохранить настройки");
+      showError(setRequestError(reason, "Не удалось сохранить настройки"));
       return false;
     } finally {
       finishRequest();
@@ -201,10 +203,11 @@ export function useExpertContacts(targetExpertId?: string) {
 
   const selectedDealAction = (
     request: (dealId: number) => Promise<ContactDealDetail>,
+    successMessage: string,
   ): Promise<void> => {
     const deal = state.selectedDeal;
     return deal
-      ? runDealAction(() => request(deal.id))
+      ? runDealAction(() => request(deal.id), successMessage)
       : Promise.resolve();
   };
 
@@ -266,13 +269,19 @@ export function useExpertContacts(targetExpertId?: string) {
     saveOffer,
     sign: (password: string) => selectedDealAction(
       (dealId) => signContactDeal(dealId, password),
+      "Договор подписан",
     ),
     uploadReceipt: (file: File) => selectedDealAction(
       (dealId) => uploadContactReceipt(dealId, file),
+      "Чек отправлен",
     ),
-    confirmPayment: () => selectedDealAction(confirmContactPayment),
+    confirmPayment: () => selectedDealAction(
+      confirmContactPayment,
+      "Оплата подтверждена, контакты открыты",
+    ),
     rejectPayment: (reason: string) => selectedDealAction(
       (dealId) => rejectContactPayment(dealId, reason),
+      "Чек отклонен",
     ),
   };
 }

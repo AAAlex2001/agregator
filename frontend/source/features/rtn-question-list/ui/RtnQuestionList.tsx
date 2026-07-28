@@ -7,6 +7,7 @@ import {
   RtnQuestionCardSkeleton,
 } from "@/source/entities/rtn-question";
 import Button from "@/source/shared/ui/Button";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
   initialRtnQuestionListState,
   rtnQuestionListReducer,
@@ -14,6 +15,7 @@ import {
 import s from "./RtnQuestionList.module.scss";
 
 export function RtnQuestionList({ refreshKey }: { refreshKey: number }) {
+  const { showError } = useNotifications();
   const [{ questions, loading, error, retryVersion }, dispatch] = useReducer(
     rtnQuestionListReducer,
     initialRtnQuestionListState,
@@ -29,19 +31,21 @@ export function RtnQuestionList({ refreshKey }: { refreshKey: number }) {
       })
       .catch((loadError: unknown) => {
         if (active) {
+          const message = loadError instanceof Error
+            ? loadError.message
+            : "Не удалось загрузить вопросы";
           dispatch({
             type: "error",
-            message: loadError instanceof Error
-              ? loadError.message
-              : "Не удалось загрузить вопросы",
+            message,
           });
+          showError(message);
         }
       });
 
     return () => {
       active = false;
     };
-  }, [refreshKey, retryVersion]);
+  }, [refreshKey, retryVersion, showError]);
 
   if (loading) {
     return (
@@ -55,9 +59,8 @@ export function RtnQuestionList({ refreshKey }: { refreshKey: number }) {
   if (error) {
     return (
       <div className={s.message}>
-        <p>{error}</p>
         <Button variant="outlineOrange" onClick={() => dispatch({ type: "retry" })}>
-          Повторить
+          Обновить список
         </Button>
       </div>
     );
