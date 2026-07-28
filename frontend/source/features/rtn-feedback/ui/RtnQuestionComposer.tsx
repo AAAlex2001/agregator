@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/source/shared/ui/Button";
+import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import { useRtnQuestionSubmit } from "../model/useRtnQuestionSubmit";
 import s from "./RtnQuestionComposer.module.scss";
 
@@ -15,10 +16,11 @@ export function RtnQuestionComposer({ onSubmitted }: Props) {
   return (
     <form className={s.form} onSubmit={submit}>
       <div className={s.formHead}>
-        <h2 className={s.title}>Новый вопрос</h2>
-        <p className={s.description}>
-          Опишите ситуацию и укажите нормы или оборудование, по которым требуется официальное разъяснение.
-        </p>
+        <Title text="Задать вопрос" as="h2" className={s.title} />
+        <Subtitle
+          text="Опишите ситуацию и укажите нормы или оборудование, по которым требуется официальное разъяснение."
+          className={s.description}
+        />
       </div>
       <label className={s.field}>
         <span>Текст вопроса</span>

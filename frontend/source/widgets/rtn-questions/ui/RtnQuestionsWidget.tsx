@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RtnQuestionComposer } from "@/source/features/rtn-feedback";
 import { RtnQuestionList } from "@/source/features/rtn-question-list";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
+import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import { RtnGuestPrompt } from "./RtnGuestPrompt";
 import s from "./RtnQuestionsWidget.module.scss";
 
@@ -26,32 +27,37 @@ export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Pro
         ]}
       />
 
-      <section className={s.hero}>
-        <div className={s.heroCopy}>
-          <span className={s.eyebrow}>Официальное обращение</span>
-          <h1>Задать вопрос в Ростехнадзор</h1>
-          <p>
-            Передайте сложный вопрос по промышленной, энергетической или строительной безопасности.
-            Мы подготовим обращение, направим его в Ростехнадзор и опубликуем официальный ответ.
-          </p>
+      <div className={s.head}>
+        <Title text="Задать вопрос в Ростехнадзор" as="h1" className={s.pageTitle} />
+        <Subtitle
+          text="Передайте сложный вопрос по промышленной, энергетической или строительной безопасности. Мы подготовим обращение, направим его в Ростехнадзор и опубликуем официальный ответ."
+          className={s.pageSubtitle}
+        />
+      </div>
+
+      <section className={s.questionPanel}>
+        <div className={s.questionImage} aria-hidden="true" />
+        <div className={s.questionContent}>
+          {authenticated ? (
+          <RtnQuestionComposer onSubmitted={() => setRefreshKey((value) => value + 1)} />
+          ) : (
+            <RtnGuestPrompt />
+          )}
         </div>
       </section>
 
       {authenticated ? (
-        <>
-          <RtnQuestionComposer onSubmitted={() => setRefreshKey((value) => value + 1)} />
           <section className={s.questionsSection}>
             <div className={s.sectionHead}>
               <div>
-                <h2>Ваши вопросы</h2>
-                <p>Следите за рассмотрением обращений и публикацией официальных ответов.</p>
+                <Title text="Ваши вопросы" as="h2" />
+                <Subtitle text="Следите за рассмотрением обращений и публикацией официальных ответов." />
               </div>
             </div>
             <RtnQuestionList refreshKey={refreshKey} />
           </section>
-        </>
       ) : (
-        <RtnGuestPrompt />
+        null
       )}
     </div>
   );

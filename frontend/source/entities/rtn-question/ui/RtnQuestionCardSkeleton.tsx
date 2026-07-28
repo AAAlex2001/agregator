@@ -1,15 +1,14 @@
 import Skeleton from "@/source/shared/ui/Skeleton";
-import s from "./RtnQuestionCard.module.scss";
+import { ListCard } from "@/source/shared/ui/ListCard";
+import s from "./RtnQuestionCardSkeleton.module.scss";
 
 export function RtnQuestionCardSkeleton() {
   return (
-    <div className={s.card}>
-      <div className={s.main}>
-        <Skeleton className={s.skeletonDate} rounded="pill" />
-        <Skeleton className={s.skeletonText} rounded="md" />
-        <Skeleton className={s.skeletonTextShort} rounded="md" />
-      </div>
-      <Skeleton className={s.skeletonStatus} rounded="md" />
-    </div>
+    <ListCard
+      meta={<Skeleton className={s.meta} rounded="pill" />}
+      title={<Skeleton className={s.title} rounded="md" />}
+      bottomLeftLabel="Дата отправки"
+      bottomLeftValue={<Skeleton className={s.date} rounded="pill" />}
+    />
   );
 }

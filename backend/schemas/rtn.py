@@ -5,6 +5,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from models.rtn_question import RtnQuestionStatus
+
 DocumentTypeDto = Literal["OFFICIAL_CLARIFICATION", "INFO_LETTER", "RESPONSE_TO_REQUEST"]
 ClarificationStatusDto = Literal["ACTIVE", "EXPIRED"]
 CommentReactionValueDto = Literal["USEFUL", "CLARIFICATION", "AGREE"]
@@ -159,7 +161,7 @@ class RtnQuestionDto(BaseModel):
     "Вопрос текущего пользователя и состояние его обработки."
     id: int
     question_text: str
-    status: Literal["NEW", "PUBLISHED", "DISMISSED"]
+    status: RtnQuestionStatus
     answered_clarification_id: int | None
     created_at: datetime
 
