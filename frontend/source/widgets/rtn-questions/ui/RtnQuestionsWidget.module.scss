@@ -26,13 +26,13 @@
 
 .questionPanel {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   overflow: hidden;
   width: 100%;
-  min-height: 520px;
-  padding: 20px;
+  min-height: 0;
+  padding: 60% 0 0;
   border-radius: 20px;
-  background: url("/rtn-question-hero.webp") center / cover no-repeat;
+  background: url("/rtn-question-hero.webp") center top / cover no-repeat;
 }
 
 .questionContent {
@@ -85,6 +85,13 @@
 }
 
 @media (min-width: 768px) {
+  .questionPanel {
+    align-items: center;
+    min-height: 520px;
+    padding: 20px;
+    background-position: center;
+  }
+
   .questionContent {
     padding: 32px;
   }
