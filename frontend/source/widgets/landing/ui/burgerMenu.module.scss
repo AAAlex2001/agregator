@@ -180,6 +180,48 @@
   color: var(--capability-color);
 }
 
+.capabilityButton {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.publicCapability {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.publicCapabilityLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 10px;
+}
+
+.publicCapabilityLink {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-left: 2px solid #e3b421;
+  color: #252932;
+  text-decoration: none;
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  small {
+    color: #7a808c;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+}
+
 .capabilityLabel {
   min-width: 0;
   color: inherit;

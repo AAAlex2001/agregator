@@ -16,12 +16,14 @@ const NAV_PAGES = [
 const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showCapabilities, setShowCapabilities] = useState(false);
+  const [openCapability, setOpenCapability] = useState<string | null>(null);
   const capabilities = getGuestCabinetNav();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => {
     setIsOpen(false);
     setShowCapabilities(false);
+    setOpenCapability(null);
   };
 
   return (
@@ -52,10 +54,10 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
                 onClick={() => setShowCapabilities((value) => !value)}
                 aria-expanded={showCapabilities}
               >
-                <span>
-                  <span className={s.capabilitiesTitle}>Возможности платформы</span>
-                  <span className={s.capabilitiesHint}>Доступны после регистрации</span>
-                </span>
+                  <span>
+                    <span className={s.capabilitiesTitle}>Возможности платформы</span>
+                    <span className={s.capabilitiesHint}>Сервисы и полезные материалы</span>
+                  </span>
                 <ChevronIcon
                   className={`${s.capabilitiesChevron} ${showCapabilities ? s.capabilitiesChevronOpen : ""}`}
                   color="currentColor"
@@ -63,22 +65,58 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
               </button>
               {showCapabilities && (
                 <div className={s.capabilitiesList}>
-                  {capabilities.map((plate) => (
-                    <div
-                      key={plate.key}
-                      className={`${s.capabilityPlate} ${s[plate.color]}`}
-                      aria-label={`${plate.label}. Доступно после регистрации`}
-                    >
-                      <span className={s.capabilityLabel}>
-                        {plate.logo ? (
-                          <TechExpertLogoIcon title={plate.label} />
-                        ) : (
-                          plate.label
+                  {capabilities.map((plate) =>
+                    plate.key === "rtn" ? (
+                      <div key={plate.key} className={s.publicCapability}>
+                        <button
+                          type="button"
+                          className={`${s.capabilityPlate} ${s.capabilityButton} ${s[plate.color]}`}
+                          onClick={() =>
+                            setOpenCapability((current) => current === plate.key ? null : plate.key)
+                          }
+                          aria-expanded={openCapability === plate.key}
+                        >
+                          <span className={s.capabilityLabel}>{plate.label}</span>
+                          <ChevronIcon
+                            className={`${s.capabilitiesChevron} ${
+                              openCapability === plate.key ? s.capabilitiesChevronOpen : ""
+                            }`}
+                            color="currentColor"
+                          />
+                        </button>
+                        {openCapability === plate.key && (
+                          <div className={s.publicCapabilityLinks}>
+                            {(plate.items ?? []).map((item) => (
+                              <Link
+                                key={item.label}
+                                href={item.href ?? "/rtn"}
+                                className={s.publicCapabilityLink}
+                                onClick={closeMenu}
+                              >
+                                <span>{item.label}</span>
+                                {item.description && <small>{item.description}</small>}
+                              </Link>
+                            ))}
+                          </div>
                         )}
-                      </span>
-                      <span className={s.lockedBadge}>после регистрации</span>
-                    </div>
-                  ))}
+                      </div>
+                    ) : (
+                      <div
+                        key={plate.key}
+                        className={`${s.capabilityPlate} ${s[plate.color]}`}
+                        aria-label={`${plate.label}. Доступно после регистрации`}
+                      >
+                        <span className={s.capabilityLabel}>
+                          {plate.logo ? (
+                            <TechExpertLogoIcon title={plate.label} />
+                          ) : (
+                            plate.label
+                          )}
+                        </span>
+                        <span className={s.lockedBadge}>после регистрации</span>
+                      </div>
+                    ),
+                  )}
                 </div>
               )}
             </div>

@@ -155,6 +155,17 @@ class RtnQuestionCreate(BaseModel):
     contact_email: str = Field(default="", max_length=255)
 
 
+class RtnQuestionDto(BaseModel):
+    "Вопрос текущего пользователя и состояние его обработки."
+    id: int
+    question_text: str
+    status: Literal["NEW", "PUBLISHED", "DISMISSED"]
+    answered_clarification_id: int | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 class RtnChangeReportCreate(BaseModel):
     "Форма «Сообщить об изменении»."
     description: str = Field(min_length=1, max_length=4000)

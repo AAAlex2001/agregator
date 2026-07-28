@@ -227,7 +227,20 @@ function createCabinetNav(role: string | null): NavPlate[] {
       key: "rtn",
       label: "РОСТЕХНАДЗОР отвечает",
       color: "gold",
-      href: role ? "/landing/rtn" : "/rtn",
+      items: [
+        {
+          label: "База официальных ответов",
+          href: role ? "/landing/rtn" : "/rtn",
+          description:
+            "Письма и разъяснения Ростехнадзора с поиском по заголовку, номеру документа и направлениям надзора.",
+        },
+        {
+          label: "Задать вопрос в Ростехнадзор",
+          href: role ? "/landing/rtn/ask" : "/rtn/ask",
+          description:
+            "Передайте вопрос для подготовки официального обращения и отслеживайте его рассмотрение.",
+        },
+      ],
     },
     {
       key: "reviews",

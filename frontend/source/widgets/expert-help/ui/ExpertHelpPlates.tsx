@@ -238,7 +238,13 @@ export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" })
     <>
       <div className={s.plates}>
         {leftPlates.map((plate) => (
-          <PlateNode key={plate.key} plate={plate} align="left" badges={badges} locked={isGuestMode} />
+          <PlateNode
+            key={plate.key}
+            plate={plate}
+            align="left"
+            badges={badges}
+            locked={isGuestMode && plate.key !== "rtn"}
+          />
         ))}
       </div>
       {reviewsPlate && (

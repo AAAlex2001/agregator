@@ -490,6 +490,15 @@ class RtnQuestionRepository:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
+    async def list_by_user(self, user_id: int) -> list[RtnQuestion]:
+        query = (
+            select(RtnQuestion)
+            .where(RtnQuestion.user_id == user_id)
+            .order_by(RtnQuestion.created_at.desc())
+        )
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
     async def get_by_id(self, question_id: int) -> RtnQuestion | None:
         query = select(RtnQuestion).where(RtnQuestion.id == question_id)
         result = await self.db.execute(query)

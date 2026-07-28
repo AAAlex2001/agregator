@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, statu
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
-from dependencies.auth import get_current_user_optional
+from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.visitor import get_visitor_key, interaction_key
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue
@@ -21,6 +21,7 @@ from schemas.rtn import (
     RtnCommentReactionRequest,
     RtnCommentReactionResponse,
     RtnQuestionCreate,
+    RtnQuestionDto,
 )
 from services.file_uploads import save_uploaded_file
 from services.rtn import (
@@ -33,6 +34,7 @@ from services.rtn import (
     RtnRepository,
 )
 from services.rtn.use_cases.clarification_interactions import RtnClarificationInteractionsUseCase
+from services.rtn.use_cases.list_user_questions import ListUserRtnQuestionsUseCase
 from services.rtn.use_cases.react_to_comment import ReactToRtnCommentUseCase
 from services.rtn.use_cases.report_change import ReportRtnChangeUseCase
 from services.rtn.use_cases.rtn_comments import RtnCommentsUseCase
@@ -280,3 +282,14 @@ async def submit_question(
     use_case = SubmitRtnQuestionUseCase(RtnQuestionRepository(db))
     await use_case.execute(user_id, current_key, data.question_text, data.contact_email)
     return Response(status_code=status.HTTP_201_CREATED)
+
+
+@router.get("/rtn/questions/mine", response_model=list[RtnQuestionDto])
+async def list_my_questions(
+    user_id: int = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[RtnQuestionDto]:
+    "Вопросы текущего пользователя для личной страницы обращений."
+    use_case = ListUserRtnQuestionsUseCase(RtnQuestionRepository(db))
+    questions = await use_case.execute(user_id)
+    return [RtnQuestionDto.model_validate(question) for question in questions]

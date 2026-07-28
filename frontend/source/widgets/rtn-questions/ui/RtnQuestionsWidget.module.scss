@@ -1,0 +1,153 @@
+.wrapper {
+  width: 100%;
+  max-width: var(--page-maxw);
+  margin: 0 auto;
+  padding: var(--page-pt) var(--page-px) var(--page-pb);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.hero {
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: 28px 24px;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgb(12 23 34 / 92%) 0%, rgb(12 23 34 / 72%) 58%, rgb(12 23 34 / 18%) 100%),
+    url("/rtn-question-hero.webp") center / cover no-repeat;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  max-width: 740px;
+  color: #fff;
+
+  h1 {
+    margin: 8px 0 12px;
+    font-size: 30px;
+    line-height: 1.15;
+  }
+
+  p {
+    margin: 0;
+    max-width: 680px;
+    color: rgb(255 255 255 / 86%);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+}
+
+.eyebrow {
+  color: #ffb238;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.questionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  p {
+    margin-top: 6px;
+    color: #777e8b;
+    font-size: 14px;
+  }
+}
+
+.guestBlock {
+  display: grid;
+  gap: 20px;
+  padding: 26px;
+  border: 1px solid #ffd18f;
+  border-radius: 8px;
+  background: #fff9ef;
+}
+
+.guestMark {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--color-orange-primary);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.guestCopy {
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  p {
+    max-width: 720px;
+    margin-top: 8px;
+    color: #626977;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
+
+.guestActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 360px;
+    padding: 42px;
+  }
+
+  .heroCopy h1 {
+    font-size: 40px;
+  }
+
+  .guestBlock {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    padding: 32px;
+  }
+
+  .guestActions {
+    grid-column: 2;
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    min-height: 390px;
+    padding: 52px;
+  }
+}

@@ -1,2 +1,2 @@
-export { AskRtnQuestionForm } from "./ui/AskRtnQuestionForm";
+export { RtnQuestionComposer } from "./ui/RtnQuestionComposer";
 export { ReportChangeModal } from "./ui/ReportChangeModal";
