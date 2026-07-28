@@ -36,7 +36,6 @@ export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Pro
       </div>
 
       <section className={s.questionPanel}>
-        <div className={s.questionImage} aria-hidden="true" />
         <div className={s.questionContent}>
           {authenticated ? (
           <RtnQuestionComposer onSubmitted={() => setRefreshKey((value) => value + 1)} />
