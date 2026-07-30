@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/source/shared/ui/Button";
 import { ServicesAccordion } from "../../shared/ui/ServicesAccordion";
 import { SERVICES_SHOWCASE } from "../../shared/model/servicesShowcase";
