@@ -11,7 +11,7 @@ import {
 
 const STATUS_LABELS: Record<ContactDealStatus, string> = {
   AWAITING_BUYER_SIGNATURE: "Подпись покупателя",
-  AWAITING_SELLER_SIGNATURE: "Подпись эксперта",
+  AWAITING_SELLER_SIGNATURE: "Подпись исполнителя",
   AWAITING_PAYMENT: "Ожидает оплаты",
   PAYMENT_REPORTED: "Чек на проверке",
   PAYMENT_REJECTED: "Чек отклонён",
@@ -60,7 +60,7 @@ export default function ContactDealsPage() {
     <div className="page wide-page">
       <header className="topbar">
         <div>
-          <h1>Покупка контактов экспертов</h1>
+          <h1>Покупка контактов исполнителей</h1>
           <p className="muted topbar-subtitle">Чеки, электронные договоры и ручная выдача контактов</p>
         </div>
         <div className="topbar-right">
@@ -92,7 +92,7 @@ export default function ContactDealsPage() {
           <thead>
             <tr>
               <th>Договор</th>
-              <th>Эксперт</th>
+              <th>Исполнитель</th>
               <th>Покупатель</th>
               <th>Сумма</th>
               <th>Статус</th>

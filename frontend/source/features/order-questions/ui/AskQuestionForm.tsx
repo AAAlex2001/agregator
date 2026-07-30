@@ -31,7 +31,7 @@ export function AskQuestionForm({ isSubmitting, onSubmit }: Props) {
         placeholder={
           isAnonymous
             ? "Задайте вопрос — его увидит только заказчик…"
-            : "Задайте публичный вопрос — его увидят все эксперты…"
+            : "Задайте публичный вопрос — его увидят все исполнители…"
         }
         value={text}
         onChange={(e) => setText(e.target.value.slice(0, MAX))}

@@ -40,7 +40,7 @@ export function ExpertEditableCertificatesField({
             onChange={onCertificateCodesChange}
             typeLabel="Выберите вид удостоверения"
             areaLabel="Выберите область аттестации"
-            resultLabel="Удостоверения эксперта"
+            resultLabel="Удостоверения исполнителя"
           />
 
           <ExpertiseCategoryField

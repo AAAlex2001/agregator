@@ -37,7 +37,7 @@ export function OrderSection({ title, customer, date, badges, sum }: Props) {
           </div>
           {badges.length > 0 && (
             <div className={s.row}>
-              <span className={s.label}>Требования к эксперту:</span>
+              <span className={s.label}>Требования к исполнителю:</span>
               <div className={s.badges}>
                 {badges.map((b, i) => (
                   <span key={i} className={`${s.badge} ${s[b.variant]}`}>{b.text}</span>

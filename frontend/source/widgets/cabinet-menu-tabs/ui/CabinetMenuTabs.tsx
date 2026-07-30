@@ -46,7 +46,7 @@ export function CabinetMenuTabs() {
   ];
 
   if (licenseDrawerAvailable) {
-    items.push({ key: "license-holders", label: "Держатели лицензии", onClick: () => openLicenseDrawer() });
+    items.push({ key: "license-holders", label: "Держатели разрешительных документов", onClick: () => openLicenseDrawer() });
   }
 
   return <CabinetMenuTabsView items={items} activeKey={activeKey} withSpacer={!fullScreen} />;

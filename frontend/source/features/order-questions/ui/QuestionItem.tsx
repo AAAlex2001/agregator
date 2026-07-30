@@ -49,7 +49,7 @@ export function QuestionItem({
       <header className={s.head}>
         <UserAvatar src={item.expert_avatar_url} alt={item.expert_name} className={s.avatar} />
         <div className={s.headText}>
-          <span className={s.name}>{item.expert_name || "Эксперт"}</span>
+          <span className={s.name}>{item.expert_name || "Исполнитель"}</span>
           <span className={s.date}>{formatWithTime(item.asked_at)}</span>
         </div>
         {item.is_anonymous && (
@@ -104,7 +104,7 @@ export function QuestionItem({
         <div className={f.form}>
           <textarea
             className={f.textarea}
-            placeholder={item.is_anonymous ? "Ваш ответ (виден только этому эксперту)…" : "Ваш ответ (виден всем экспертам)…"}
+            placeholder={item.is_anonymous ? "Ваш ответ (виден только этому исполнителю)…" : "Ваш ответ (виден всем исполнителям)…"}
             value={answerDraft}
             onChange={(e) => setAnswerDraft(e.target.value.slice(0, MAX))}
             rows={3}

@@ -19,7 +19,7 @@ const META: Record<StepKey, StepMeta> = {
   confirm: { image: "step-4", title: "Проверка", desc: "Всё верно — публикуем" },
 };
 
-const SUCCESS_META: StepMeta = { image: "success", title: "Заказ опубликован", desc: "Эксперты уже видят его в ленте" };
+const SUCCESS_META: StepMeta = { image: "success", title: "Заказ опубликован", desc: "Исполнители уже видят его в ленте" };
 
 interface Props {
   open: boolean;
@@ -66,7 +66,7 @@ export function CreateOrderSheet({ open, onClose, onCreated, template = null }: 
           <div className={s.success}>
             <p className={s.successTitle}>Заказ опубликован!</p>
             <p className={s.successSub}>
-              Эксперты увидят заявку «{state.title.trim()}» и смогут откликнуться. Отклики придут в бота
+              Исполнители увидят заявку «{state.title.trim()}» и смогут откликнуться. Отклики придут в бота
             </p>
           </div>
         ) : (

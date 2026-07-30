@@ -28,7 +28,7 @@ export function OtherProfessionField({
         <span className={s.text}>
           <span className={s.label}>Иная профессия</span>
           <span className={s.description}>
-            Ищу не эксперта, а другого специалиста — опишу требования сам
+            Ищу не исполнителя, а другого специалиста — опишу требования сам
           </span>
         </span>
       </button>

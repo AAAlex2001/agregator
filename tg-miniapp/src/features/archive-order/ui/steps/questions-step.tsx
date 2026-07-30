@@ -24,7 +24,7 @@ export function QuestionsStep({ questions, canAnswer, drafts, answeringId, onDra
             {canAnswer && !q.answer && (
               <div className={s.answerForm}>
                 <TextArea
-                  placeholder="Ваш ответ эксперту…"
+                  placeholder="Ваш ответ исполнителю…"
                   value={drafts[q.id] ?? ""}
                   onChange={(e) => onDraft(q.id, e.target.value)}
                 />

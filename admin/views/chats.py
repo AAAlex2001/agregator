@@ -1,4 +1,4 @@
-"Админ-вьюшки чатов: чаты по заказам и публичный чат экспертов с модерацией."
+"Админ-вьюшки чатов: чаты по заказам и публичный чат исполнителей с модерацией."
 
 from typing import Any
 
@@ -11,7 +11,7 @@ from models import Chat, ChatMessage, ExpertRoomBan, ExpertRoomMessage
 
 
 class ChatAdmin(ModelView, model=Chat):
-    "Чаты между заказчиком и экспертом по заказу: просмотр истории сообщений."
+    "Чаты между заказчиком и исполнителем по заказу: просмотр истории сообщений."
 
     name = "Чат"
     name_plural = "Чаты"
@@ -37,7 +37,7 @@ class ChatAdmin(ModelView, model=Chat):
         Chat.uuid: "UUID",
         Chat.order: "Заказ",
         Chat.customer: "Заказчик",
-        Chat.expert: "Эксперт",
+        Chat.expert: "Исполнитель",
         Chat.created_at: "Создан",
         Chat.updated_at: "Обновлён",
     }
@@ -54,11 +54,11 @@ class ChatAdmin(ModelView, model=Chat):
 
 
 class ExpertRoomChatView(BaseView):
-    "Лента публичного чата экспертов с модерацией (удаление сообщений, баны)."
+    "Лента публичного чата исполнителей с модерацией (удаление сообщений, баны)."
 
-    name = "Чат экспертов · лента"
+    name = "Чат исполнителей · лента"
     icon = "fa-solid fa-message"
-    category = "Чат экспертов"
+    category = "Чат исполнителей"
 
     @expose("/expert-room-chat", methods=["GET"])
     async def chat_view(self, request: Request) -> Any:
@@ -76,12 +76,12 @@ class ExpertRoomChatView(BaseView):
 
 
 class ExpertRoomMessageAdmin(ModelView, model=ExpertRoomMessage):
-    "Сообщения чата экспертов: только просмотр и удаление, создание/редактирование запрещено."
+    "Сообщения чата исполнителей: только просмотр и удаление, создание/редактирование запрещено."
 
-    name = "Сообщение чата экспертов"
-    name_plural = "Чат экспертов: сообщения"
+    name = "Сообщение чата исполнителей"
+    name_plural = "Чат исполнителей: сообщения"
     icon = "fa-solid fa-comments"
-    category = "Чат экспертов"
+    category = "Чат исполнителей"
 
     can_create = False
     can_edit = False
@@ -113,12 +113,12 @@ class ExpertRoomMessageAdmin(ModelView, model=ExpertRoomMessage):
 
 
 class ExpertRoomBanAdmin(ModelView, model=ExpertRoomBan):
-    "Баны экспертов в общем чате: запись хранит автора и публичную причину."
+    "Баны исполнителей в общем чате: запись хранит автора и публичную причину."
 
-    name = "Бан в чате экспертов"
-    name_plural = "Чат экспертов: баны"
+    name = "Бан в чате исполнителей"
+    name_plural = "Чат исполнителей: баны"
     icon = "fa-solid fa-ban"
-    category = "Чат экспертов"
+    category = "Чат исполнителей"
 
     can_create = True
     can_edit = True
@@ -144,7 +144,7 @@ class ExpertRoomBanAdmin(ModelView, model=ExpertRoomBan):
 
     column_labels = {
         ExpertRoomBan.id: "ID",
-        ExpertRoomBan.user: "Эксперт",
+        ExpertRoomBan.user: "Исполнитель",
         ExpertRoomBan.reason: "Причина (видна юзеру)",
         ExpertRoomBan.created_at: "Создан",
     }

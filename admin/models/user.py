@@ -37,8 +37,8 @@ class UserRole(str, PyEnum):
     def __str__(self) -> str:
         labels = {
             "CUSTOMER": "Заказчик",
-            "EXPERT": "Эксперт",
-            "LICENSE_HOLDER": "Держатель лицензии",
+            "EXPERT": "Исполнитель",
+            "LICENSE_HOLDER": "Держатель разрешительных документов",
         }
         return labels.get(self.value, self.value)
 

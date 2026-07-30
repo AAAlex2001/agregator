@@ -101,12 +101,12 @@ class UserAdmin(ModelView, model=User):
         User.created_at: "Создан",
         User.updated_at: "Обновлён",
         User.orders: "Заказы (заказчик)",
-        User.assigned_orders: "Заказы (эксперт)",
+        User.assigned_orders: "Заказы (исполнитель)",
         User.responses: "Отклики",
         User.payments: "Платежи",
         User.subscriptions: "Подписки",
         User.customer_reviews: "Отзывы (заказчик)",
-        User.expert_reviews: "Отзывы (эксперт)",
+        User.expert_reviews: "Отзывы (исполнитель)",
     }
 
     def render_company_data(self, company_data: Any) -> Any:

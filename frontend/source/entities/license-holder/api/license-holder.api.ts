@@ -9,6 +9,6 @@ export async function fetchLicenseHolders(skip = 0, limit = 20): Promise<License
   const target = `${API_URL}/license-holders/?${url.searchParams.toString()}`;
 
   const res = await fetchWithSession(target);
-  if (!res.ok) throw new Error("Не удалось загрузить лицензиатов");
+  if (!res.ok) throw new Error("Не удалось загрузить держателей разрешительных документов");
   return res.json();
 }

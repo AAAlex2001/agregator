@@ -41,7 +41,7 @@ export function EditOrderSheet({ order, onClose, onSaved, copyTemplate = null, o
           dark="/create-order/step-1-dark.webp"
           label="Редактирование"
           title="Изменить заказ"
-          desc="Обновите условия — эксперты увидят изменения"
+          desc="Обновите условия — исполнители увидят изменения"
           onClose={onClose}
         />
       }
@@ -107,7 +107,7 @@ export function EditOrderSheet({ order, onClose, onSaved, copyTemplate = null, o
             <div className={s.notifyRow}>
               <div className={s.notifyText}>
                 <span className={s.notifyTitle}>Сообщить откликнувшимся об изменениях</span>
-                <span className={s.notifyHint}>Эксперты с откликами получат уведомление</span>
+                <span className={s.notifyHint}>Исполнители с откликами получат уведомление</span>
               </div>
               <Toggle
                 on={state.notifyResponders}

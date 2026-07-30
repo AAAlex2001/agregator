@@ -15,8 +15,8 @@ type Role = "customer" | "expert" | "license_holder";
 
 const ROLE_TABS = [
   { id: "customer", label: "Я заказчик" },
-  { id: "expert", label: "Я эксперт" },
-  { id: "license_holder", label: "Я держатель лицензии" },
+  { id: "expert", label: "Я исполнитель" },
+  { id: "license_holder", label: "Я держатель разрешительных документов" },
 ];
 
 interface CtaConfig {

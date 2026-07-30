@@ -121,7 +121,7 @@ function LicenseList() {
     return <p className={s.message}>{error}</p>;
   }
   if (items.length === 0) {
-    return <p className={s.message}>Пока нет зарегистрированных держателей лицензии.</p>;
+    return <p className={s.message}>Пока нет зарегистрированных держателей разрешительных документов.</p>;
   }
   return (
     <div className={s.list}>

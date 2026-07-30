@@ -22,7 +22,7 @@ export function LicenseHolderSheet({ holder, onClose }: { holder: LicenseHolder 
           <SheetHero
             light="/profile-hero/license-light.webp"
             dark="/profile-hero/license-dark.webp"
-            label="Держатель лицензии"
+            label="Держатель разрешительных документов"
             title={licenseHolderName(holder)}
             desc="Компания, предоставляющая лицензию"
             onClose={onClose}

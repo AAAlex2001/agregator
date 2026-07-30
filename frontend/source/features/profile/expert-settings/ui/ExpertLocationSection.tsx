@@ -60,7 +60,7 @@ export function ExpertLocationSection({ profile, onProfileUpdate }: Props) {
       <h2 className={form.subtitle}>Местоположение на карте</h2>
       <div className={s.body}>
         <p className={s.hint}>
-          Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать эксперта
+          Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать исполнителя
           рядом. Это не личный адрес: достаточно города или района.
         </p>
         <YandexAddressPicker value={location} onChange={(next) => setLocation(next)} />

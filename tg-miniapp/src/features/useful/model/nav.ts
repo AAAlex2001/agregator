@@ -87,7 +87,7 @@ const EDU: UsefulCategory = {
   key: "edu",
   label: "Учебный центр",
   links: [
-    { label: "Подготовка к аттестации на эксперта", soon: true },
+    { label: "Подготовка к аттестации на исполнителя", soon: true },
     { label: "Аттестация на дефектоскописта", soon: true },
     {
       label: 'Дополнительное профессиональное образование ООО "НПИ "Недрa"',
@@ -98,7 +98,7 @@ const EDU: UsefulCategory = {
 
 const LICENSE: UsefulCategory = {
   key: "license",
-  label: "Держатели лицензии",
+  label: "Держатели разрешительных документов",
   links: [],
 };
 
@@ -107,13 +107,13 @@ const LABOR: UsefulCategory = {
   label: "Трудовые ресурсы",
   links: [
     {
-      label: "Поиск эксперта в штат — для держателя лицензии",
-      hint: "Объявление о поиске эксперта в штат для срочного договора на период проверки лицензионных требований. Укажите область аттестации, категорию и регион.",
+      label: "Поиск исполнителя в штат — для держателя разрешительных документов",
+      hint: "Объявление о поиске исполнителя в штат для срочного договора на период проверки лицензионных требований. Укажите область аттестации, категорию и регион.",
       soon: true,
     },
     {
-      label: "Готов к срочному договору — для эксперта",
-      hint: "Объявление эксперта о готовности устроиться по срочному трудовому договору в штат ЭО. Укажите область аттестации, категорию и регион.",
+      label: "Готов к срочному договору — для исполнителя",
+      hint: "Объявление исполнителя о готовности устроиться по срочному трудовому договору в штат ЭО. Укажите область аттестации, категорию и регион.",
       soon: true,
     },
   ],
@@ -121,7 +121,7 @@ const LABOR: UsefulCategory = {
 
 const HELP_EXPERT: UsefulCategory = {
   key: "help",
-  label: "Помощь эксперту",
+  label: "Помощь исполнителю",
   links: [
     { label: "Расчёт анализа риска аварий", hint: "Программа на сайте Ресурс-Плюс", url: `${SITE}/expert/hazard` },
     { label: "Расчёт остаточного ресурса", hint: "Программа на сайте Ресурс-Плюс", url: `${SITE}/expert/lining` },
@@ -143,7 +143,7 @@ const LINKS_FULL: UsefulCategory = {
   key: "links",
   label: "Полезные ссылки",
   links: [
-    { label: "Реестр экспертов Ростехнадзора", url: "https://www.gosnadzor.ru/service/list/certification%20experts/" },
+    { label: "Реестр исполнителей Ростехнадзора", url: "https://www.gosnadzor.ru/service/list/certification%20experts/" },
     { label: "Реестр заключений ЭПБ", hint: "На сайте Ресурс-Плюс", url: `${SITE}/zepb-registry` },
     { label: "Сервис проверки подлинности протоколов ИС ЕПТ", url: "https://qr.gosnadzor.ru/prombez" },
     { label: "Реестр средств измерений", url: "https://all-pribors.ru/grsilist" },
@@ -157,7 +157,7 @@ const LINKS_CUSTOMER: UsefulCategory = {
   key: "links",
   label: "Полезные ссылки",
   links: [
-    { label: "Реестр экспертов Ростехнадзора", url: "https://www.gosnadzor.ru/service/list/certification%20experts/" },
+    { label: "Реестр исполнителей Ростехнадзора", url: "https://www.gosnadzor.ru/service/list/certification%20experts/" },
     { label: "Проверки прокуратуры", url: "https://proverki.gov.ru/portal" },
   ],
 };

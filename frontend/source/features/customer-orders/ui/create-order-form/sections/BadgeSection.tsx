@@ -59,7 +59,7 @@ export function BadgeSection({ form, onShowHelp }: Props) {
   return (
     <>
       <div className={s.requirementsGroup}>
-        <h3 className={s.requirementsTitle}>Буквенно-цифровые обозначения областей аттестации экспертов в области промышленной безопасности</h3>
+        <h3 className={s.requirementsTitle}>Буквенно-цифровые обозначения областей аттестации исполнителей в области промышленной безопасности</h3>
 
         <section className={base.section}>
           <span className={base.label}>
@@ -81,7 +81,7 @@ export function BadgeSection({ form, onShowHelp }: Props) {
 
         <section className={base.section}>
           <span className={base.label}>
-            Выберите область(-и) аттестации эксперта(-ов)
+            Выберите область(-и) аттестации исполнителя(-ов)
             {HelpTrigger}
           </span>
 

@@ -11,7 +11,7 @@ interface Props extends StepProps {
 }
 
 export function ConfirmStep({ state, badgeCodes, company, filesCount }: Props) {
-  const requirements = [state.requiresExpert ? "эксперт" : "", state.requiresLicense ? "лицензия" : ""]
+  const requirements = [state.requiresExpert ? "исполнитель" : "", state.requiresLicense ? "лицензия" : ""]
     .filter(Boolean)
     .join(" и ");
 

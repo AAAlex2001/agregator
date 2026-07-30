@@ -40,7 +40,7 @@ export function ExpertReviewsSheet({ expert, onClose }: Props) {
           <SheetHero
             light="/profile-hero/expert-light.webp"
             dark="/profile-hero/expert-dark.webp"
-            label="Отзывы об эксперте"
+            label="Отзывы об исполнителе"
             title={expert.full_name}
             desc={desc}
             onClose={onClose}

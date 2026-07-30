@@ -23,10 +23,10 @@ export function ExpertsReviewsPage() {
   const { items } = useExpertsList(sort.key as ExpertSortBy, sort.dir);
 
   return (
-    <Screen bare heading="Отзывы экспертов" panel>
+    <Screen bare heading="Отзывы исполнителей" panel>
       <div className={s.wrap}>
         <div className={s.head}>
-          <p className={s.sub}>Аттестованные эксперты платформы — отзывы заказчиков по завершённым заказам</p>
+          <p className={s.sub}>Аттестованные исполнители платформы — отзывы заказчиков по завершённым заказам</p>
           <button
             className={s.sortBtn}
             aria-label="Сортировка"
@@ -44,7 +44,7 @@ export function ExpertsReviewsPage() {
             <Spinner />
           </div>
         ) : items.length === 0 ? (
-          <p className={s.empty}>Пока нет экспертов с отзывами</p>
+          <p className={s.empty}>Пока нет исполнителей с отзывами</p>
         ) : (
           <div className={s.list}>
             {items.map((expert) => (

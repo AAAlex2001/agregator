@@ -22,7 +22,7 @@ interface UseExpertsListResult {
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Не удалось загрузить экспертов";
+  return error instanceof Error ? error.message : "Не удалось загрузить исполнителей";
 }
 
 export function useExpertsList(): UseExpertsListResult {

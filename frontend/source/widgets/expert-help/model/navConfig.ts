@@ -47,7 +47,7 @@ function reviewItems(role: string | null): NavItem[] {
   if (role === "EXPERT") {
     items.push({ label: "Мои отзывы", href: "/expert/reviews" });
   }
-  items.push({ label: "Отзывы экспертов", href: "/expert-reviews" });
+  items.push({ label: "Отзывы исполнителей", href: "/expert-reviews" });
   return items;
 }
 
@@ -106,12 +106,12 @@ function usefulItems(role: string | null): NavItem[] {
 
   if (role === "CUSTOMER") {
     return [
-      { label: "Реестр экспертов Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
+      { label: "Реестр исполнителей Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
       { label: "Проверки прокуратуры", href: "https://proverki.gov.ru/portal", external: true },
     ];
   }
   return [
-    { label: "Реестр экспертов Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
+    { label: "Реестр исполнителей Ростехнадзора", href: "https://www.gosnadzor.ru/service/list/certification%20experts/", external: true },
     { label: "Реестр заключений ЭПБ", href: registryHref },
     { label: "Сервис проверки подлинности протоколов ИС ЕПТ", href: "https://qr.gosnadzor.ru/prombez", external: true },
     { label: "Реестр средств измерений", href: "https://all-pribors.ru/grsilist", external: true },
@@ -139,7 +139,7 @@ function createCabinetNav(role: string | null): NavPlate[] {
       color: "indigo",
       roles: ["EXPERT", "LICENSE_HOLDER"],
       items: [
-        { label: "Подготовка к аттестации на эксперта", soon: true },
+        { label: "Подготовка к аттестации на исполнителя", soon: true },
         {
           label: "Аттестация на дефектоскописта",
           href: "/landing/training/defectoscopist-certification",
@@ -159,7 +159,7 @@ function createCabinetNav(role: string | null): NavPlate[] {
     },
     {
       key: "license",
-      label: "Держатели лицензии",
+      label: "Держатели разрешительных документов",
       color: "amber",
       dynamic: "license",
       roles: ["EXPERT"],
@@ -172,31 +172,31 @@ function createCabinetNav(role: string | null): NavPlate[] {
       badge: "labor",
       items: [
         {
-          label: "Контакты экспертов",
+          label: "Контакты исполнителей",
           href: expertContactsHref,
           badge: "deals",
           description:
-            "Каталог экспертов с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
+            "Каталог исполнителей с областями аттестации и защищённой покупкой контактных данных по электронному договору.",
         },
         {
-          label: "Поиск эксперта в штат — для держателя лицензии",
+          label: "Поиск исполнителя в штат — для держателя разрешительных документов",
           href: "/labor/expert-search",
           badge: "expertSearch",
           description:
-            "Объявление о поиске эксперта для постоянной работы, получения лицензии или проверки лицензионных требований. Укажите область аттестации, категорию и регион.",
+            "Объявление о поиске исполнителя для постоянной работы, получения лицензии или проверки лицензионных требований. Укажите область аттестации, категорию и регион.",
         },
         {
-          label: "Готов к трудовому договору — для эксперта",
+          label: "Готов к трудовому договору — для исполнителя",
           href: "/labor/employment",
           badge: "employment",
           description:
-            "Объявление эксперта о готовности устроиться по трудовому договору на постоянной основе или на определённый срок. Укажите область аттестации, категорию и регион.",
+            "Объявление исполнителя о готовности устроиться по трудовому договору на постоянной основе или на определённый срок. Укажите область аттестации, категорию и регион.",
         },
       ],
     },
     {
       key: "help-expert",
-      label: "Помощь эксперту",
+      label: "Помощь исполнителю",
       color: "green",
       roles: ["EXPERT"],
       items: [

@@ -27,8 +27,8 @@ export function formatLaborDate(value: string | null): string {
 
 export function laborKindLabel(kind: LaborListingData["kind"]): string {
   return kind === "EXPERT_WANTED"
-    ? "Организация ищет эксперта"
-    : "Эксперт готов к трудоустройству";
+    ? "Организация ищет исполнителя"
+    : "Исполнитель готов к трудоустройству";
 }
 
 export function laborRequirementText(item: LaborListingData): string {

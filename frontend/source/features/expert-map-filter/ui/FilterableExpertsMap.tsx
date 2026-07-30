@@ -13,7 +13,7 @@ interface Props {
   contactsHref?: string;
 }
 
-const NO_MATCH_TEXT = "По выбранным фильтрам экспертов не нашлось — снимите часть фильтров";
+const NO_MATCH_TEXT = "По выбранным фильтрам исполнителей не нашлось — снимите часть фильтров";
 
 function toMarker(item: ExpertMapItemApi): MapMarker {
   return {

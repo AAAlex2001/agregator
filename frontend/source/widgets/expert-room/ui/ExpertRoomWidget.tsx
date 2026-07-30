@@ -34,8 +34,8 @@ export function ExpertRoomWidget() {
   } = useExpertRoomThread(currentUserId);
 
   const blockedText = banReason
-    ? `Вы заблокированы в чате экспертов. ${banReason}`
-    : "Вы заблокированы в чате экспертов";
+    ? `Вы заблокированы в чате исполнителей. ${banReason}`
+    : "Вы заблокированы в чате исполнителей";
 
   const groups = groupExpertRoomMessages(messages);
 

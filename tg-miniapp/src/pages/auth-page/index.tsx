@@ -13,8 +13,8 @@ import s from "./style.module.scss";
 
 const LOGIN_ROLE_META: Record<Role, { label: string; Icon: ComponentType<{ size?: number }> }> = {
   CUSTOMER: { label: "Вы — заказчик", Icon: CustomerRoleIcon },
-  EXPERT: { label: "Вы — эксперт", Icon: ExpertRoleIcon },
-  LICENSE_HOLDER: { label: "Вы — держатель лицензии", Icon: LicenseRoleIcon },
+  EXPERT: { label: "Вы — исполнитель", Icon: ExpertRoleIcon },
+  LICENSE_HOLDER: { label: "Вы — держатель разрешительных документов", Icon: LicenseRoleIcon },
 };
 
 const REG_ROLES: {
@@ -27,7 +27,7 @@ const REG_ROLES: {
 }[] = [
   {
     role: "EXPERT",
-    label: "Эксперт",
+    label: "Исполнитель",
     subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
     desc: "Находите проекты и укрепляйте репутацию, расширяя портфолио",
     bullets: [
@@ -55,7 +55,7 @@ const REG_ROLES: {
   },
   {
     role: "LICENSE_HOLDER",
-    label: "Держатель лицензии",
+    label: "Держатель разрешительных документов",
     desc: "Предоставляйте лицензию ЭПБ ОПО и другие разрешительные документы для работы",
     bullets: [
       "Подтвердите номер лицензии и объекты экспертизы",

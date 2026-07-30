@@ -19,7 +19,7 @@ export function ExpertRoomComposer({ disabled = false, disabledText, onSent, onT
       onTextChange={(next) => {
         if (next.length > 0) onTyping();
       }}
-      placeholder="Сообщение всем экспертам..."
+      placeholder="Сообщение всем исполнителям..."
       disabled={disabled}
       disabledText={disabledText ?? "Отправка недоступна"}
     />

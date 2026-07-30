@@ -62,7 +62,7 @@ class LandingSectionHeaderAdmin(ModelView, model=LandingSectionHeader):
 
 
 class LandingStepAdmin(ModelView, model=LandingStep):
-    "Шаги в блоках лендинга «как работает» / «преимущества» по ролям заказчик/эксперт."
+    "Шаги в блоках лендинга «как работает» / «преимущества» по ролям заказчик/исполнитель."
 
     name = "Шаг"
     name_plural = "Лендинг · Шаги (как работает / преимущества)"
@@ -244,9 +244,9 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
 
     column_labels = {
         LandingPricingContent.id: "ID",
-        LandingPricingContent.expert_title: "Эксперт · Заголовок",
-        LandingPricingContent.expert_subtitle: "Эксперт · Подзаголовок",
-        LandingPricingContent.expert_footnote: "Эксперт · Сноска под карточками",
+        LandingPricingContent.expert_title: "Исполнитель · Заголовок",
+        LandingPricingContent.expert_subtitle: "Исполнитель · Подзаголовок",
+        LandingPricingContent.expert_footnote: "Исполнитель · Сноска под карточками",
         LandingPricingContent.customer_title: "Заказчик · Заголовок",
         LandingPricingContent.customer_subtitle: "Заказчик · Подзаголовок",
         LandingPricingContent.customer_headline: "Заказчик · Большой текст по центру",
@@ -254,11 +254,11 @@ class LandingPricingContentAdmin(ModelView, model=LandingPricingContent):
         LandingPricingContent.customer_footnote: "Заказчик · Сноска",
         LandingPricingContent.customer_cta_label: "Заказчик · Текст кнопки",
         LandingPricingContent.customer_cta_href: "Заказчик · Ссылка кнопки",
-        LandingPricingContent.license_holder_title: "Лицензиат · Заголовок",
-        LandingPricingContent.license_holder_subtitle: "Лицензиат · Подзаголовок",
-        LandingPricingContent.license_holder_headline: "Лицензиат · Большой текст по центру",
-        LandingPricingContent.license_holder_features: "Лицензиат · Список преимуществ (JSON-массив строк)",
-        LandingPricingContent.license_holder_footnote: "Лицензиат · Сноска",
-        LandingPricingContent.license_holder_cta_label: "Лицензиат · Текст кнопки",
-        LandingPricingContent.license_holder_cta_href: "Лицензиат · Ссылка кнопки",
+        LandingPricingContent.license_holder_title: "Держатель разрешительных документов · Заголовок",
+        LandingPricingContent.license_holder_subtitle: "Держатель разрешительных документов · Подзаголовок",
+        LandingPricingContent.license_holder_headline: "Держатель разрешительных документов · Большой текст по центру",
+        LandingPricingContent.license_holder_features: "Держатель разрешительных документов · Список преимуществ (JSON-массив строк)",
+        LandingPricingContent.license_holder_footnote: "Держатель разрешительных документов · Сноска",
+        LandingPricingContent.license_holder_cta_label: "Держатель разрешительных документов · Текст кнопки",
+        LandingPricingContent.license_holder_cta_href: "Держатель разрешительных документов · Ссылка кнопки",
     }

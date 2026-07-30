@@ -60,7 +60,7 @@ export function LicenseExpertiseFields({
               value={expertiseTypes}
               onChange={onExpertiseTypesChange}
               label="Выберите вид экспертизы"
-              hint="Область Э не уточняется — подойдёт любой эксперт выбранного вида"
+              hint="Область Э не уточняется — подойдёт любой исполнитель выбранного вида"
             />
           )}
 

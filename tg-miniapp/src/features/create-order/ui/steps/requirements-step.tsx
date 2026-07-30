@@ -53,7 +53,7 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
           checked={state.requiresExpert}
           onChange={(v) => dispatch({ type: "flag", key: "requiresExpert", value: v })}
         >
-          Требуется эксперт
+          Требуется исполнитель
         </Checkbox>
         <Checkbox
           checked={state.requiresLicense}
@@ -74,7 +74,7 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
         />
       </Field>}
 
-      {state.workType === "EXPERTISE" && <Field label="Области аттестации экспертов" hint="Типовые наименования опасных производственных объектов">
+      {state.workType === "EXPERTISE" && <Field label="Области аттестации исполнителей" hint="Типовые наименования опасных производственных объектов">
         <Select
           multi
           title="Области аттестации"

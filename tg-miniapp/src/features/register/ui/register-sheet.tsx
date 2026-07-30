@@ -18,13 +18,13 @@ const ROLE_META: Record<Role, { light: string; dark: string; title: string; subt
   EXPERT: {
     light: "/profile-hero/expert-light.webp",
     dark: "/profile-hero/expert-dark.webp",
-    title: "Эксперт",
+    title: "Исполнитель",
     subtitle: "исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
   },
   LICENSE_HOLDER: {
     light: "/profile-hero/license-light.webp",
     dark: "/profile-hero/license-dark.webp",
-    title: "Держатель лицензии",
+    title: "Держатель разрешительных документов",
   },
 };
 

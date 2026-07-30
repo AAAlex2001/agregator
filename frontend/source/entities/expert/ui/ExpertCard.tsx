@@ -177,19 +177,19 @@ export function ExpertCard({
               </div>
               {lastOrder.executorProposedSum && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Цена эксперта</span>
+                  <span className={s.fieldLabel}>Цена исполнителя</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedSum}</span>
                 </div>
               )}
               {lastOrder.executorProposedStartDate && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок начала выполнения работ эксперта</span>
+                  <span className={s.fieldLabel}>Срок начала выполнения работ исполнителя</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedStartDate}</span>
                 </div>
               )}
               {lastOrder.executorProposedDeadline && (
                 <div className={s.field}>
-                  <span className={s.fieldLabel}>Срок окончания выполнения работ эксперта</span>
+                  <span className={s.fieldLabel}>Срок окончания выполнения работ исполнителя</span>
                   <span className={s.fieldValue}>{lastOrder.executorProposedDeadline}</span>
                 </div>
               )}

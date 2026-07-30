@@ -24,7 +24,7 @@ export function HeaderActions({ unread, onOpenChat }: Props) {
         <ChatIcon width={22} height={22} />
         {unread > 0 && <span className={s.chatBadge}>{unread > 99 ? "99+" : unread}</span>}
       </button>
-      <button className={s.iconBtn} aria-label="Отзывы экспертов" onClick={action(() => navigate("/experts-reviews"))}>
+      <button className={s.iconBtn} aria-label="Отзывы исполнителей" onClick={action(() => navigate("/experts-reviews"))}>
         <ReviewsIcon width={22} height={22} />
       </button>
       <button className={s.iconBtn} aria-label="Профиль" onClick={action(() => navigate("/profile"))}>

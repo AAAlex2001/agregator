@@ -49,9 +49,9 @@ export function ReviewCard({
     ...(orderSum
       ? [{ label: "Начальная максимальная цена", value: orderSum, valueAccent: true }]
       : []),
-    ...(expertSum ? [{ label: "Цена эксперта", value: expertSum }] : []),
-    ...(expertStartDate ? [{ label: "Срок начала выполнения работ эксперта", value: expertStartDate }] : []),
-    ...(expertDeadline ? [{ label: "Срок окончания выполнения работ эксперта", value: expertDeadline }] : []),
+    ...(expertSum ? [{ label: "Цена исполнителя", value: expertSum }] : []),
+    ...(expertStartDate ? [{ label: "Срок начала выполнения работ исполнителя", value: expertStartDate }] : []),
+    ...(expertDeadline ? [{ label: "Срок окончания выполнения работ исполнителя", value: expertDeadline }] : []),
     ...(orderStartDate ? [{ label: "Срок начала выполнения работ", value: orderStartDate }] : []),
     ...(orderDeadline ? [{ label: "Срок окончания выполнения работ", value: orderDeadline }] : []),
   ];

@@ -52,7 +52,7 @@ export function useLogin() {
     }
     if (pendingUuid) {
       sessionStorage.removeItem("pendingOrderUuid");
-      showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт эксперта");
+      showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт исполнителя");
     }
     if (user.role === "EXPERT") router.push("/expert/orders");
     else if (user.role === "LICENSE_HOLDER") router.push("/settings");

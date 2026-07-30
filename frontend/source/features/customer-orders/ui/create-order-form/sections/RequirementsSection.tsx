@@ -64,7 +64,7 @@ export function RequirementsSection({ form }: Props) {
           onChange={(checked) => setValue("requiresExpert", checked, { shouldDirty: true, shouldValidate: true })}
           error={error}
         >
-          Требуется эксперт?
+          Требуется исполнитель?
         </Checkbox>
         <Checkbox
           id="order-requires-license"

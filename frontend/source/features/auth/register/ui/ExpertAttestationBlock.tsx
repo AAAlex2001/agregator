@@ -28,7 +28,7 @@ export function ExpertAttestationBlock({
   return (
     <div className={s.block}>
       <Checkbox id="expert-confirmed" checked={confirmed} onChange={onToggleConfirmed}>
-        <span className={s.title}>Я являюсь аттестованным экспертом</span>
+        <span className={s.title}>Я являюсь аттестованным исполнителем</span>
         <span className={s.hint}>
           Укажите аттестацию — она поможет заказчикам найти вас на карте России
         </span>

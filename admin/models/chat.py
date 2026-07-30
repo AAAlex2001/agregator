@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class Chat(Base):
-    "Чат по заказу между заказчиком и экспертом."
+    "Чат по заказу между заказчиком и исполнителем."
     __tablename__ = "chats"
     __table_args__ = (
         UniqueConstraint("order_id", "customer_id", "expert_id", name="uq_chats_order_customer_expert"),
@@ -59,7 +59,7 @@ class ChatMessage(Base):
 
 
 class ExpertRoomMessage(Base):
-    "Сообщение в общей комнате экспертов."
+    "Сообщение в общей комнате исполнителей."
     __tablename__ = "expert_room_messages"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -74,7 +74,7 @@ class ExpertRoomMessage(Base):
 
 
 class ExpertRoomBan(Base):
-    "Бан пользователя в комнате экспертов."
+    "Бан пользователя в комнате исполнителей."
     __tablename__ = "expert_room_bans"
     __table_args__ = (UniqueConstraint("user_id", name="uq_expert_room_bans_user"),)
 

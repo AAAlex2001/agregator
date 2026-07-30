@@ -48,7 +48,7 @@ export function BadgeCodesPicker({
   value,
   onChange,
   typeLabel = "Выберите основной(-ые) объект(-ы) экспертизы",
-  areaLabel = "Выберите область(-и) аттестации эксперта(-ов)",
+  areaLabel = "Выберите область(-и) аттестации исполнителя(-ов)",
   resultLabel = "Получаете уведомления по",
 }: Props) {
   const [activeType, setActiveType] = useState<ExpertiseType | null>(null);

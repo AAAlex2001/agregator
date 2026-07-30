@@ -11,9 +11,9 @@ const STATUS_LABELS: Record<ContactDealStatus, Record<"BUYER" | "SELLER" | "DEFA
     DEFAULT: "Ожидается подпись покупателя",
   },
   AWAITING_SELLER_SIGNATURE: {
-    BUYER: "Ожидайте подписи эксперта",
+    BUYER: "Ожидайте подписи исполнителя",
     SELLER: "Подпишите договор",
-    DEFAULT: "Ожидается подпись эксперта",
+    DEFAULT: "Ожидается подпись исполнителя",
   },
   AWAITING_PAYMENT: {
     BUYER: "Оплатите и приложите чек",
@@ -31,7 +31,7 @@ const STATUS_LABELS: Record<ContactDealStatus, Record<"BUYER" | "SELLER" | "DEFA
     DEFAULT: "Чек отклонён",
   },
   CONTACTS_RELEASED: {
-    BUYER: "Контакты эксперта доступны",
+    BUYER: "Контакты исполнителя доступны",
     SELLER: "Контакты переданы покупателю",
     DEFAULT: "Контакты открыты",
   },

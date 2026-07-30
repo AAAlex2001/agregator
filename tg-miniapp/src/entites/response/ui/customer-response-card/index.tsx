@@ -85,7 +85,7 @@ export function CustomerResponseCard({
         )}
         {customerCanChat(response.status) && (
           <Button className={s.actionBtn} variant="outline" loading={busy} onClick={() => onChat(response)}>
-            {response.status === "IN_PROGRESS" ? "Чат с экспертом" : "Перейти в чат"}
+            {response.status === "IN_PROGRESS" ? "Чат с исполнителем" : "Перейти в чат"}
           </Button>
         )}
         {customerCanComplete(response.status) && (

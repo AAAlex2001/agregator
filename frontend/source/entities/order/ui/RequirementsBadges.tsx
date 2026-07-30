@@ -18,7 +18,7 @@ function badgesEqual(a: Badge[], b: Badge[]): boolean {
   return true;
 }
 
-export function RequirementsBadges({ badges, label = "Требования к эксперту", previousBadges, workType = "EXPERTISE" }: Props) {
+export function RequirementsBadges({ badges, label = "Требования к исполнителю", previousBadges, workType = "EXPERTISE" }: Props) {
   if (workType === "EXPERTISE" && badges.length === 0 && (!previousBadges || previousBadges.length === 0)) {
     return null;
   }

@@ -128,7 +128,7 @@ export function OrderPreviewContent() {
 
               {order.badges.length > 0 && (
                 <div className={styles.infoBlock}>
-                  <span className={styles.infoLabel}>Требования к эксперту:</span>
+                  <span className={styles.infoLabel}>Требования к исполнителю:</span>
                   <div className={styles.badges}>
                     {order.badges.map((badge) => (
                       <span key={badge.text} className={`${styles.badge} ${styles[variantClassMap[badge.variant] || "badgeGray"]}`}>
@@ -162,7 +162,7 @@ export function OrderPreviewContent() {
               )}
 
               <div className={styles.divider} />
-              <p className={styles.ctaText}>Войдите или зарегистрируйтесь как эксперт, чтобы откликнуться на заказ</p>
+              <p className={styles.ctaText}>Войдите или зарегистрируйтесь как исполнитель, чтобы откликнуться на заказ</p>
               <div className={styles.actions}>
                 <Link href="/login" className={styles.actionLink}>
                   <Button variant="chat" size="lg" fullWidth>Войти</Button>

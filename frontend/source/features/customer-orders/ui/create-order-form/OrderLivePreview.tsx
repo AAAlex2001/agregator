@@ -46,7 +46,7 @@ export function OrderLivePreview({ form, documents }: Props) {
 
   return (
     <aside className={s.wrap}>
-      <span className={s.heading}>Как увидят эксперты:</span>
+      <span className={s.heading}>Как увидят исполнители:</span>
       <OrderCard
         badges={badges}
         workType={values.workType}

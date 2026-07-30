@@ -32,7 +32,7 @@ export function RtnCommentItem({ comment, all, depth, onReply, onDelete, onReact
       <div className={s.commentHead}>
         <span className={s.author}>
           {comment.author.name}
-          {comment.author.is_expert && <span className={s.expertBadge}>Эксперт</span>}
+          {comment.author.is_expert && <span className={s.expertBadge}>Исполнитель</span>}
         </span>
         <time className={s.date} dateTime={comment.created_at}>
           {new Date(comment.created_at).toLocaleString("ru-RU")}

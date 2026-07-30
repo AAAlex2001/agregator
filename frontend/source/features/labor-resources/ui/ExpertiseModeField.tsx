@@ -12,8 +12,8 @@ const OPTIONS: RadioOption<LaborExpertiseMode>[] = [
   },
   {
     value: "GENERAL",
-    label: "Подойдёт любой эксперт этого вида",
-    description: "Например, любой эксперт КЛ",
+    label: "Подойдёт любой исполнитель этого вида",
+    description: "Например, любой исполнитель КЛ",
   },
 ];
 
@@ -29,7 +29,7 @@ export function ExpertiseModeField({
   return (
     <RadioGroup
       name="labor-expertise-mode"
-      legend="Требования к эксперту"
+      legend="Требования к исполнителю"
       value={value}
       options={OPTIONS}
       onChange={onChange}

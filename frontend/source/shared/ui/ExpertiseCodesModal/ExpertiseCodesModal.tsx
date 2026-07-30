@@ -14,7 +14,7 @@ export function ExpertiseCodesView({ onBack }: Props) {
   return (
     <div className={s.view}>
       <h3 className={s.title}>
-        Буквенно-цифровые обозначения областей аттестации экспертов в области промышленной безопасности
+        Буквенно-цифровые обозначения областей аттестации исполнителей в области промышленной безопасности
       </h3>
 
       <div className={s.scroll}>

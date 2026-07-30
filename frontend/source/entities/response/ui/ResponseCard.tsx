@@ -66,7 +66,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
       valueAccent: true,
     },
     {
-      label: isExpert ? "Ваша цена" : "Цена эксперта",
+      label: isExpert ? "Ваша цена" : "Цена исполнителя",
       value: <DiffValue previous={card.previousCostEstimate} current={card.costEstimate || "—"} />,
     },
     ...(card.orderStartDate
@@ -78,12 +78,12 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     },
     ...(card.startDate
       ? [{
-          label: isExpert ? "Ваш срок начала выполнения работ" : "Срок начала выполнения работ эксперта",
+          label: isExpert ? "Ваш срок начала выполнения работ" : "Срок начала выполнения работ исполнителя",
           value: <DiffValue previous={card.previousStartDate} current={card.startDate} />,
         }]
       : []),
     {
-      label: isExpert ? "Ваш срок окончания выполнения работ" : "Срок окончания выполнения работ эксперта",
+      label: isExpert ? "Ваш срок окончания выполнения работ" : "Срок окончания выполнения работ исполнителя",
       value: <DiffValue previous={card.previousDeadline} current={card.deadline || "—"} />,
     },
     {
@@ -96,7 +96,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     <>
       {card.expertCompanyName && (
         <CommentSection
-          title="Организация эксперта:"
+          title="Организация исполнителя:"
           text={card.expertInn ? `${card.expertCompanyName} (ИНН ${card.expertInn})` : card.expertCompanyName}
         />
       )}
@@ -149,7 +149,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     </>
   ) : showCustomerExpertInfo ? (
     <div className={s.expertBlock}>
-      <span className={s.label}>Эксперт:</span>
+      <span className={s.label}>Исполнитель:</span>
       <ExpertInfo
         name={card.expertName}
         avatarUrl={card.expertAvatarUrl}
@@ -162,7 +162,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
     </div>
   ) : (
     <>
-      <span className={s.label}>Эксперт:</span>
+      <span className={s.label}>Исполнитель:</span>
       <span className={s.value}>{card.expertName || "—"}</span>
     </>
   );

@@ -1,4 +1,4 @@
-"Роуты модерации чата экспертов: удаление сообщения и бан пользователя."
+"Роуты модерации чата исполнителей: удаление сообщения и бан пользователя."
 
 from fastapi import FastAPI, Form
 from starlette.requests import Request
@@ -9,7 +9,7 @@ from models import ExpertRoomBan, ExpertRoomMessage
 
 
 def setup(app: FastAPI) -> None:
-    "Регистрирует роуты модерации чата экспертов в переданном приложении FastAPI."
+    "Регистрирует роуты модерации чата исполнителей в переданном приложении FastAPI."
 
     @app.post(
         "/admin-actions/expert-room/messages/{message_id}/delete",

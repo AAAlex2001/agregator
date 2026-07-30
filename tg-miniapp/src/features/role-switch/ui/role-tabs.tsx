@@ -6,8 +6,8 @@ import s from "./role-tabs.module.scss";
 
 const LABEL: Record<Role, string> = {
   CUSTOMER: "Заказчик",
-  EXPERT: "Эксперт",
-  LICENSE_HOLDER: "Лицензиат",
+  EXPERT: "Исполнитель",
+  LICENSE_HOLDER: "Держатель разрешительных документов",
 };
 
 export function RoleTabs() {

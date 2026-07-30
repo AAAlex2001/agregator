@@ -27,12 +27,12 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
   });
 
   const isEmpty = !isLoading && !error && items.length === 0;
-  const expertName = expert?.fullName ?? "эксперт";
+  const expertName = expert?.fullName ?? "исполнитель";
 
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="История заказов эксперта" as="h1" className={s.pageTitle} />
+        <Title text="История заказов исполнителя" as="h1" className={s.pageTitle} />
         {isLoading ? (
           <Skeleton className={s.expertNameSkeleton} rounded="pill" />
         ) : (
@@ -59,7 +59,7 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
         <div className={s.empty}>
           <EmptyStateCard
             title="Пока нет выполненных заказов"
-            subtitle="Здесь появятся завершённые тендеры с участием эксперта"
+            subtitle="Здесь появятся завершённые тендеры с участием исполнителя"
           />
         </div>
       ) : (

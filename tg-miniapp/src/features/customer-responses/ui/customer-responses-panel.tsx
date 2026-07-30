@@ -30,12 +30,12 @@ const EMPTY_META: Record<string, { icon: ReactNode; title: string; subtitle: str
   all: {
     icon: <EmptyResponsesIcon />,
     title: "Пока нет откликов",
-    subtitle: "Отклики экспертов на ваши заказы появятся здесь",
+    subtitle: "Отклики исполнителей на ваши заказы появятся здесь",
   },
   review: {
     icon: <EmptyNewResponsesIcon />,
     title: "Новых откликов нет",
-    subtitle: "Когда эксперт откликнется на заказ, вы увидите его здесь",
+    subtitle: "Когда исполнитель откликнется на заказ, вы увидите его здесь",
   },
   in_progress: {
     icon: <EmptyInWorkIcon />,
@@ -50,7 +50,7 @@ const EMPTY_META: Record<string, { icon: ReactNode; title: string; subtitle: str
   accepted: {
     icon: <EmptyAcceptedIcon />,
     title: "Переговоры не ведутся",
-    subtitle: "Примите отклик, чтобы обсудить детали с экспертом",
+    subtitle: "Примите отклик, чтобы обсудить детали с исполнителем",
   },
 };
 
@@ -123,7 +123,7 @@ export function CustomerResponsesPanel({ sortBy, sortDir, onOpenChat, onComplete
       <BottomSheet open={rejectTarget !== null} title="Отклонить отклик" onClose={() => setRejectTarget(null)}>
         <div className={s.reject}>
           <p className={s.rejectHint}>
-            Эксперт {rejectTarget?.expert_name} получит уведомление. Можно указать причину — она видна эксперту.
+            Исполнитель {rejectTarget?.expert_name} получит уведомление. Можно указать причину — она видна исполнителю.
           </p>
           <TextArea
             placeholder="Причина отклонения (необязательно)…"

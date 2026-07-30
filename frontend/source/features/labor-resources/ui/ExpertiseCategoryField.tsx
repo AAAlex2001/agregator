@@ -20,7 +20,7 @@ export function ExpertiseCategoryField({
 }: ExpertiseCategoryFieldProps) {
   return (
     <div className={s.fieldGroup}>
-      <span className={s.label}>Категория эксперта</span>
+      <span className={s.label}>Категория исполнителя</span>
 
       <div className={s.categoryRow}>
         {OPTIONS.map((option) => (

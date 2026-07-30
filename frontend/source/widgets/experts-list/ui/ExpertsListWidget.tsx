@@ -47,9 +47,9 @@ export function ExpertsListWidget() {
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Отзывы экспертов" as="h1" className={s.pageTitle} />
+        <Title text="Отзывы исполнителей" as="h1" className={s.pageTitle} />
         <Subtitle
-          text="Карточки аттестованных экспертов платформы. Посмотрите отзывы заказчиков и историю выполненных заказов."
+          text="Карточки аттестованных исполнителей платформы. Посмотрите отзывы заказчиков и историю выполненных заказов."
           className={s.pageSubtitle}
         />
       </div>
@@ -73,7 +73,7 @@ export function ExpertsListWidget() {
       ) : error ? (
         <div className={s.statusState}>
           <EmptyStateCard
-            title="Не удалось загрузить экспертов"
+            title="Не удалось загрузить исполнителей"
             subtitle={error}
             actionLabel="Повторить"
             onAction={() => void reload()}
@@ -82,8 +82,8 @@ export function ExpertsListWidget() {
       ) : isEmpty ? (
         <div className={s.statusState}>
           <EmptyStateCard
-            title="Пока нет экспертов с отзывами"
-            subtitle="Здесь появятся аттестованные эксперты, получившие отзывы от заказчиков"
+            title="Пока нет исполнителей с отзывами"
+            subtitle="Здесь появятся аттестованные исполнители, получившие отзывы от заказчиков"
           />
         </div>
       ) : (

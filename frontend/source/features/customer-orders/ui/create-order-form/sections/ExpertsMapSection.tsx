@@ -23,15 +23,15 @@ export function ExpertsMapSection() {
 
   return (
     <section className={base.section}>
-      <span className={base.label}>Эксперты на карте</span>
+      <span className={base.label}>Исполнители на карте</span>
       <p className={s.hint}>
-        Посмотрите, где находятся эксперты площадки, — это поможет выбрать исполнителя ближе к объекту.
-        Точки кластеризуются; нажмите на маркер, чтобы увидеть эксперта.
+        Посмотрите, где находятся исполнители площадки, — это поможет выбрать исполнителя ближе к объекту.
+        Точки кластеризуются; нажмите на маркер, чтобы увидеть исполнителя.
       </p>
       <FilterableExpertsMap
         items={items}
         height={420}
-        emptyText="Пока нет экспертов с указанной локацией"
+        emptyText="Пока нет исполнителей с указанной локацией"
         contactsHref="/landing/expert-contacts"
       />
     </section>

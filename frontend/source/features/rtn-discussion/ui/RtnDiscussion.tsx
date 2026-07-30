@@ -10,7 +10,7 @@ import s from "./RtnDiscussion.module.scss";
 const SORT_PILLS: SortPillSpec<RtnCommentSortBy>[] = [
   { key: "useful_count", label: "Полезность", descLabel: "Сначала полезные", ascLabel: "Сначала менее полезные" },
   { key: "created_at", label: "Дата", descLabel: "Сначала новые", ascLabel: "Сначала старые" },
-  { key: "is_expert", label: "Эксперты", descLabel: "Сначала эксперты", ascLabel: "Сначала не эксперты" },
+  { key: "is_expert", label: "Исполнители", descLabel: "Сначала исполнители", ascLabel: "Сначала не исполнители" },
 ];
 
 interface Props {

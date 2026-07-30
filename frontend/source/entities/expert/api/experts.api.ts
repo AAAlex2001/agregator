@@ -28,7 +28,7 @@ export async function fetchExperts(params: {
   if (params.sortDir) searchParams.set("sort_dir", params.sortDir);
   const response = await fetchWithSession(`${API_URL}/experts?${searchParams.toString()}`);
   if (!response.ok) {
-    throw new Error(await buildErrorMessage(response, "Не удалось загрузить экспертов"));
+    throw new Error(await buildErrorMessage(response, "Не удалось загрузить исполнителей"));
   }
   return response.json();
 }
@@ -36,7 +36,7 @@ export async function fetchExperts(params: {
 export async function fetchExpertsMap(): Promise<ExpertMapApi> {
   const response = await fetchWithSession(`${API_URL}/experts/map`);
   if (!response.ok) {
-    throw new Error(await buildErrorMessage(response, "Не удалось загрузить экспертов на карте"));
+    throw new Error(await buildErrorMessage(response, "Не удалось загрузить исполнителей на карте"));
   }
   return response.json();
 }
@@ -44,7 +44,7 @@ export async function fetchExpertsMap(): Promise<ExpertMapApi> {
 export async function fetchExpertSummary(publicId: string): Promise<ExpertSummaryApi> {
   const response = await fetchWithSession(`${API_URL}/experts/${publicId}/summary`);
   if (!response.ok) {
-    throw new Error(await buildErrorMessage(response, "Не удалось загрузить эксперта"));
+    throw new Error(await buildErrorMessage(response, "Не удалось загрузить исполнителя"));
   }
   return response.json();
 }

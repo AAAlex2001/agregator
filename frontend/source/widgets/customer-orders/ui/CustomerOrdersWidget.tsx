@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/source/shared/ui";
@@ -116,7 +116,7 @@ export function CustomerOrdersWidget() {
         <div className={s.emptyState}>
           <EmptyStateCard
             title="Вы ещё не создали ни одного заказа"
-            subtitle="Опубликуйте заказ, чтобы получить отклики от экспертов по промышленной безопасности"
+            subtitle="Опубликуйте заказ, чтобы получить отклики от исполнителей по промышленной безопасности"
             actionLabel="Добавить заказ"
             onAction={h.openCreate}
           />

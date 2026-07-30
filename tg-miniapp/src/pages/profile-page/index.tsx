@@ -24,9 +24,9 @@ import { SettingRow } from "./ui/setting-row";
 import s from "./style.module.scss";
 
 const ROLE_META = {
-  EXPERT: { kind: "expert", noun: "Эксперт" },
+  EXPERT: { kind: "expert", noun: "Исполнитель" },
   CUSTOMER: { kind: "customer", noun: "Заказчик" },
-  LICENSE_HOLDER: { kind: "license", noun: "Лицензиат" },
+  LICENSE_HOLDER: { kind: "license", noun: "Держатель разрешительных документов" },
 } as const;
 
 const SITE_URL = "https://plus-resurs.com/";

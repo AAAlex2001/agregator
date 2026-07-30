@@ -32,7 +32,7 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
   });
   const showRatingInfo = model.isLoading || (!model.error && model.totalReviews > 0);
   const showPublicExpertTitle = Boolean(publicId);
-  const title = publicId ? "Отзывы об эксперте" : "Отзывы наших клиентов";
+  const title = publicId ? "Отзывы об исполнителе" : "Отзывы наших клиентов";
   const subtitle = publicId
     ? "Оценки и комментарии заказчиков по завершённым заказам"
     : "Смотрите оценки и комментарии по завершённым заказам";

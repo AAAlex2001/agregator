@@ -52,7 +52,7 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
       label: "Общение",
       items: [
         { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
-        { href: "/expert/room", label: "Чат экспертов", icon: ExpertRoomIcon },
+        { href: "/expert/room", label: "Чат исполнителей", icon: ExpertRoomIcon },
         { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],
@@ -96,9 +96,9 @@ const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = 
   ],
   LICENSE_HOLDER: [
     {
-      label: "Эксперты",
+      label: "Исполнители",
       items: [
-        { href: "/expert-reviews", label: "Отзывы экспертов", icon: ReviewIcon },
+        { href: "/expert-reviews", label: "Отзывы исполнителей", icon: ReviewIcon },
       ],
     },
     {

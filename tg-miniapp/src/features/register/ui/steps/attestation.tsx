@@ -23,7 +23,7 @@ export function Attestation({ state, dispatch }: StepProps) {
   return (
     <>
       <Checkbox checked={state.attested} onChange={(v) => dispatch({ type: "attested", value: v })}>
-        Я являюсь аттестованным экспертом
+        Я являюсь аттестованным исполнителем
       </Checkbox>
 
       {state.attested ? (

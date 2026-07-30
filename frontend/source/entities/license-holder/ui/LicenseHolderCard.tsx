@@ -42,7 +42,7 @@ function getCompanyName(item: LicenseHolderListItem): string {
     item.company_data?.value ??
     item.company_data?.unrestricted_value ??
     item.company_data?.data?.name?.short_with_opf ??
-    "Лицензиат"
+    "Держатель разрешительных документов"
   );
 }
 

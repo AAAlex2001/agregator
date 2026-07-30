@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -79,7 +79,7 @@ export function OrderModal({
     setFiles([]);
   }, [order?.id, initialStep, requiresCompany, useDraft, form]);
 
-  // Сохраняем черновик при изменении формы или шага — только если эксперт реально что-то ввёл
+  // Сохраняем черновик при изменении формы или шага — только если исполнитель реально что-то ввёл
   useEffect(() => {
     if (!order?.id) return;
     const persist = () => {

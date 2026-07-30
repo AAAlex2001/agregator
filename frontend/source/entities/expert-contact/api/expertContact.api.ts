@@ -20,7 +20,7 @@ export async function fetchExpertContacts(): Promise<ExpertContactCardData[]> {
   const response = await fetchWithSession(`${API_URL}/expert-contacts?${params}`, {
     cache: "no-store",
   });
-  await ensureResponse(response, "Не удалось загрузить контакты экспертов");
+  await ensureResponse(response, "Не удалось загрузить контакты исполнителей");
   const data = await response.json() as { items: ExpertContactCardData[] };
   return data.items;
 }

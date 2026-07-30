@@ -54,7 +54,7 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
     <div className={s.contactAction}>
       <span className={s.cardSectionLabel}>Доступ к контактам</span>
       {expert.is_mine ? (
-        <span className={s.mutedLabel}>Это ваша карточка эксперта</span>
+        <span className={s.mutedLabel}>Это ваша карточка исполнителя</span>
       ) : expert.deal_status ? (
         <>
           <ContactDealStatusBadge status={expert.deal_status} actorParty="BUYER" />
@@ -73,7 +73,7 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
           </Button>
         </>
       ) : (
-        <span className={s.mutedLabel}>Эксперт пока не открыл доступ к контактам</span>
+        <span className={s.mutedLabel}>Исполнитель пока не открыл доступ к контактам</span>
       )}
     </div>
   );

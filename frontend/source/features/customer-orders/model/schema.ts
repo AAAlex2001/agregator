@@ -18,7 +18,7 @@ export const orderFormSchema = z.object({
   (values) => values.requiresExpert || values.requiresLicense,
   {
     path: ["requiresExpert"],
-    message: "Выберите, что требуется: эксперт и/или лицензия",
+    message: "Выберите, что требуется: исполнитель и/или лицензия",
   },
 );
 

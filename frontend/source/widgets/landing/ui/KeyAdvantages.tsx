@@ -70,8 +70,8 @@ const KeyAdvantages = ({
           <Tabs
             tabs={[
               { id: "client", label: "Я заказчик" },
-              { id: "expert", label: "Я эксперт" },
-              { id: "license_holder", label: "Я держатель лицензии" },
+              { id: "expert", label: "Я исполнитель" },
+              { id: "license_holder", label: "Я держатель разрешительных документов" },
             ]}
             activeTab={role}
             onTabChange={(tabId) => setRole(tabId as Role)}

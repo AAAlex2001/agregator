@@ -35,7 +35,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
           <LogoIcon title="Ресурс-Плюс" />
         </span>
 
-          <p>Площадка для аттестованных экспертов промышленной безопасности</p>
+          <p>Площадка для аттестованных исполнителей промышленной безопасности</p>
           </div>
               <div className={s.links}>
                 <div>
@@ -50,12 +50,12 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <h2>Заказчикам</h2>
                   <Link href="/register">Разместить заказ на экспертизу промышленной безопасности</Link>
                   <Link href="/orders">Тендеры на экспертизу ОПО</Link>
-                  <Link href="/register">Найти аттестованного эксперта Ростехнадзора</Link>
+                  <Link href="/register">Найти аттестованного исполнителя Ростехнадзора</Link>
                 </div>
                 <div>
                   <h2>Специалистам</h2>
                   <Link href="/zepb-registry">Реестр заключений ЭПБ</Link>
-                  <Link href="/register">Создать профиль эксперта</Link>
+                  <Link href="/register">Создать профиль исполнителя</Link>
                   <Link href="/register">Портфолио и отзывы</Link>
                 </div>
                 <div>
@@ -76,7 +76,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
       </div>
       <div className={s.bottom}>
         <div className={s.bottomLinks}>
-            <span>*Все эксперты имеют аттестацию Ростехнадзора согласно
+            <span>*Все исполнители имеют аттестацию Ростехнадзора согласно
             <a href="https://www.gosnadzor.ru/service/list/certification%20experts/%D0%9F%D1%80-287%20%D0%BE%D1%82%2031.08.2022.pdf?ysclid=mi265psds810889564"
                target="_blank"
                rel="noopener noreferrer"

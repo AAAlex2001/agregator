@@ -38,13 +38,13 @@ class ResponseStatus(str, PyEnum):
             "ACCEPTED": "Принят",
             "IN_PROGRESS": "В работе",
             "COMPLETED": "Завершён",
-            "WITHDRAWN_BY_EXPERT": "Отозван экспертом",
+            "WITHDRAWN_BY_EXPERT": "Отозван исполнителем",
         }
         return labels.get(self.value, self.value)
 
 
 class OrderResponse(Base):
-    "Отклик эксперта на заказ."
+    "Отклик исполнителя на заказ."
     __tablename__ = "order_responses"
     __table_args__ = (
         UniqueConstraint("order_id", "expert_id", name="uq_order_responses_order_expert"),

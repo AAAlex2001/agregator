@@ -9,8 +9,8 @@ import s from "./RoleSwitcher.module.scss";
 
 const LABEL_BY_ROLE: Record<SessionRoleValue, string> = {
   CUSTOMER: "Заказчик",
-  EXPERT: "Эксперт",
-  LICENSE_HOLDER: "Лицензиат",
+  EXPERT: "Исполнитель",
+  LICENSE_HOLDER: "Держатель разрешительных документов",
 };
 
 const HOMEPAGE_BY_ROLE: Record<SessionRoleValue, string> = {

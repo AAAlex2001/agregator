@@ -42,7 +42,7 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
   return (
     <main className={s.page}>
       <header className={s.pageHead}>
-        <Title text="Контакты экспертов" as="h1" className={s.pageTitle} />
+        <Title text="Контакты исполнителей" as="h1" className={s.pageTitle} />
         <Subtitle
           text="Выберите специалиста и получите контакты после подписания договора и подтверждения прямой оплаты"
           className={s.pageSubtitle}
@@ -65,18 +65,18 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         onDelete={contacts.requestDeleteDeal}
       />
 
-      <section className={s.catalog} aria-label="Эксперты платформы">
+      <section className={s.catalog} aria-label="Исполнители платформы">
         <div className={s.catalogHead}>
           <div className={s.catalogTitleRow}>
-            <Title text="Эксперты платформы" as="h2" className={s.sectionTitle} />
+            <Title text="Исполнители платформы" as="h2" className={s.sectionTitle} />
             <span>{contacts.experts.length}</span>
           </div>
           <div className={s.search}>
             <TextInput
               value={contacts.search}
               onChange={(event) => contacts.setSearch(event.target.value)}
-              placeholder="ФИО эксперта"
-              aria-label="Фильтр экспертов по ФИО"
+              placeholder="ФИО исполнителя"
+              aria-label="Фильтр исполнителей по ФИО"
               suffix={<SearchIcon />}
             />
           </div>
@@ -105,11 +105,11 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
           </div>
         </div>
         {contacts.loading ? (
-          <div className={s.expertList} aria-label="Загружаем экспертов">
+          <div className={s.expertList} aria-label="Загружаем исполнителей">
             {Array.from({ length: 3 }, (_, index) => <ExpertCardSkeleton key={index} />)}
           </div>
         ) : contacts.experts.length === 0 ? (
-          <div className={s.empty}>По вашему запросу эксперты не найдены</div>
+          <div className={s.empty}>По вашему запросу исполнители не найдены</div>
         ) : (
           <div className={s.expertList}>
             {contacts.experts.map((expert) => (
@@ -152,10 +152,10 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
       <AddReviewModalContainer
         isOpen={contacts.reviewDeal !== null}
         customerName={contacts.reviewDeal?.buyer_name ?? ""}
-        orderTitle="Покупка контактов эксперта"
+        orderTitle="Покупка контактов исполнителя"
         expertName={contacts.reviewDeal?.seller_name ?? ""}
-        title="Оставьте отзыв об эксперте"
-        ratingLabel="Оцените взаимодействие с экспертом"
+        title="Оставьте отзыв об исполнителе"
+        ratingLabel="Оцените взаимодействие с исполнителем"
         commentPlaceholder="Расскажите о взаимодействии и получении контактных данных"
         onClose={contacts.closeReview}
         onSubmit={contacts.submitReview}

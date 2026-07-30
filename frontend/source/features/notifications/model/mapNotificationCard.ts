@@ -26,7 +26,7 @@ function mapResponseUpdated(item: NotificationItem): NotificationCardModel {
     return {
       id: item.id,
       title: "Новый отклик на заказ",
-      message: `Эксперт откликнулся на заказ «${orderTitle}».`,
+      message: `Исполнитель откликнулся на заказ «${orderTitle}».`,
       actionLabel: item.action_url ? "Открыть отклики" : null,
       actionUrl: item.action_url,
       isRead: item.is_read,
@@ -37,8 +37,8 @@ function mapResponseUpdated(item: NotificationItem): NotificationCardModel {
   if (kind === "WITHDRAWN") {
     return {
       id: item.id,
-      title: "Эксперт отозвал отклик",
-      message: `Эксперт отозвал отклик по заказу «${orderTitle}».`,
+      title: "Исполнитель отозвал отклик",
+      message: `Исполнитель отозвал отклик по заказу «${orderTitle}».`,
       actionLabel: item.action_url ? "Открыть отклики" : null,
       actionUrl: item.action_url,
       isRead: item.is_read,
@@ -48,8 +48,8 @@ function mapResponseUpdated(item: NotificationItem): NotificationCardModel {
 
   return {
     id: item.id,
-    title: "Эксперт обновил предложение",
-    message: `Эксперт обновил отклик по заказу «${orderTitle}». Проверьте новые условия, сроки и файлы.`,
+    title: "Исполнитель обновил предложение",
+    message: `Исполнитель обновил отклик по заказу «${orderTitle}». Проверьте новые условия, сроки и файлы.`,
     actionLabel: item.action_url ? "Открыть отклики" : null,
     actionUrl: item.action_url,
     isRead: item.is_read,
@@ -141,8 +141,8 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
   if (actorRole === "EXPERT" && statusTo === "IN_PROGRESS") {
     return {
       id: item.id,
-      title: "Эксперт принял проект",
-      message: `Эксперт подтвердил начало работ по заказу «${orderTitle}».`,
+      title: "Исполнитель принял проект",
+      message: `Исполнитель подтвердил начало работ по заказу «${orderTitle}».`,
       actionLabel: item.action_url ? "Открыть чат" : null,
       actionUrl: item.action_url,
       isRead: item.is_read,
@@ -153,8 +153,8 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
   if (actorRole === "EXPERT" && statusTo === "COMPLETED") {
     return {
       id: item.id,
-      title: "Эксперт завершил проект",
-      message: `Эксперт отметил проект по заказу «${orderTitle}» как завершённый.`,
+      title: "Исполнитель завершил проект",
+      message: `Исполнитель отметил проект по заказу «${orderTitle}» как завершённый.`,
       actionLabel: item.action_url ? "Открыть отклики" : null,
       actionUrl: item.action_url,
       isRead: item.is_read,
@@ -178,8 +178,8 @@ function mapChatMessage(item: NotificationItem): NotificationCardModel {
   const orderTitle = getOrderTitle(payload.order_title);
   const senderTitle = {
     CUSTOMER: "заказчика",
-    EXPERT: "эксперта",
-    LICENSE_HOLDER: "держателя лицензии",
+    EXPERT: "исполнителя",
+    LICENSE_HOLDER: "держателя разрешительных документов",
   }[payload.sender_role];
   const preview = payload.preview || "Новое сообщение";
 
@@ -197,7 +197,7 @@ function mapChatMessage(item: NotificationItem): NotificationCardModel {
 function mapQuestionAsked(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as QuestionAskedNotificationPayload;
   const orderTitle = getOrderTitle(payload.order_title);
-  const expertName = payload.expert_name || "Эксперт";
+  const expertName = payload.expert_name || "Исполнитель";
   const preview = payload.preview || "Новый вопрос";
 
   return {

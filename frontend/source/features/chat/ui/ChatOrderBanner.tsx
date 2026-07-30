@@ -48,7 +48,7 @@ export function ChatOrderBanner({ title, customer, date, sum, badges, responseSt
           </div>
           {badges.length > 0 ? (
             <div className={s.requirements}>
-              <span className={s.requirementsLabel}>Требования к эксперту:</span>
+              <span className={s.requirementsLabel}>Требования к исполнителю:</span>
               <div className={s.badges}>
                 {badges.map((badge, index) => (
                   <span key={`${badge.text}-${index}`} className={s.badge} data-variant={badge.variant}>

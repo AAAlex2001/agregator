@@ -241,7 +241,7 @@ function LicenseHolderNotificationPreferences() {
       <header className={s.headerText}>
         <h2 className={s.title}>Почтовые уведомления</h2>
         <p className={s.subtitle}>
-          Уведомления о новых заявках экспертов включены всегда.
+          Уведомления о новых заявках исполнителей включены всегда.
         </p>
       </header>
 
@@ -250,8 +250,8 @@ function LicenseHolderNotificationPreferences() {
           id="pref-email-on-labor-listing"
           checked
           onChange={() => undefined}
-          label="Новые заявки экспертов"
-          description="Новые объявления экспертов о готовности к трудоустройству."
+          label="Новые заявки исполнителей"
+          description="Новые объявления исполнителей о готовности к трудоустройству."
           disabled
         />
       </div>

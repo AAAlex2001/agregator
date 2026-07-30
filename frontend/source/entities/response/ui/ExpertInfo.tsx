@@ -38,7 +38,7 @@ export function ExpertInfo({
 
   return (
     <div className={s.row}>
-      <UserAvatar src={avatarUrl} alt={`Фото ${name || "эксперта"}`} className={s.avatar} />
+      <UserAvatar src={avatarUrl} alt={`Фото ${name || "исполнителя"}`} className={s.avatar} />
       <div className={s.details}>
         <span className={s.name}>{name}</span>
         {(companyName || inn) && (
@@ -68,7 +68,7 @@ export function ExpertInfo({
         )}
         {expertPublicId && !hideHistoryLink && hasHistory && (
           <Link href={`/experts/${expertPublicId}/orders`} className={s.historyLink}>
-            История заказов эксперта
+            История заказов исполнителя
           </Link>
         )}
       </div>

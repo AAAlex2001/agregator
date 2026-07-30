@@ -74,8 +74,8 @@ export function LaborListingCard({
           <h2 className={s.title}>{item.owner_name}</h2>
           <p className={s.kind}>
             {item.kind === "EXPERT_AVAILABLE"
-              ? "Эксперт готов к трудоустройству"
-              : "Организация ищет эксперта"}
+              ? "Исполнитель готов к трудоустройству"
+              : "Организация ищет исполнителя"}
           </p>
         </div>
         <span className={s.region}>{item.region}</span>
@@ -176,8 +176,8 @@ export function LaborListingCard({
 
 const ROLE_LABELS: Record<LaborResponder["role"], string> = {
   CUSTOMER: "Заказчик",
-  EXPERT: "Эксперт",
-  LICENSE_HOLDER: "Держатель лицензии",
+  EXPERT: "Исполнитель",
+  LICENSE_HOLDER: "Держатель разрешительных документов",
 };
 
 function Responders({

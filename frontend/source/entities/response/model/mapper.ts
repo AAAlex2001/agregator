@@ -23,7 +23,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   ACCEPTED:    { label: "В переговорах",   color: "#ffffff", bg: "#ff8a00" },
   IN_PROGRESS: { label: "Принято",         color: "#0b5723", bg: "#b2dfb6" },
   COMPLETED:   { label: "Завершен",        color: "#2e2e2e", bg: "#dcdcdc" },
-  WITHDRAWN_BY_EXPERT: { label: "Отозван экспертом", color: "#4d4d4d", bg: "#e6e6e6" },
+  WITHDRAWN_BY_EXPERT: { label: "Отозван исполнителем", color: "#4d4d4d", bg: "#e6e6e6" },
 };
 
 export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCardData {

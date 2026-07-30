@@ -22,8 +22,8 @@ interface MessageGroupProps {
 export function MessageGroup({ group, isMine, currentUserAvatarUrl, counterpartAvatarUrl }: MessageGroupProps) {
   const senderLabel = {
     CUSTOMER: "Заказчик",
-    EXPERT: "Эксперт",
-    LICENSE_HOLDER: "Держатель лицензии",
+    EXPERT: "Исполнитель",
+    LICENSE_HOLDER: "Держатель разрешительных документов",
   }[group.senderRole];
   const groupClass = isMine ? s.sent : s.received;
   const labelClass = `${s.label} ${isMine ? s.alignRight : ""}`.trim();

@@ -36,7 +36,7 @@ function balloonBody(marker: MapMarker, contactsHref: string): string {
     const price = marker.contactPriceRubles?.toLocaleString("ru-RU");
     rows.push(
       `<div style="margin-top:8px;padding:8px;border-radius:6px;background:#fff3e0;color:#9a4d00;font-weight:600">` +
-        `Контактные данные доступны только после оплаты${price ? ` по тарифу эксперта: ${price} ₽` : ""}.` +
+        `Контактные данные доступны только после оплаты${price ? ` по тарифу исполнителя: ${price} ₽` : ""}.` +
         `<a href="${contactsHref}?expert=${encodeURIComponent(marker.id)}" ` +
         `style="display:block;margin-top:8px;color:#9a4d00;text-decoration:underline;font-weight:700">` +
         `Купить контакты</a>` +

@@ -35,7 +35,7 @@ const roles: Role[] = [
   },
   {
     id: ROLE_ID_EXPERT,
-    title: "Эксперт",
+    title: "Исполнитель",
     subtitle: "Исполнитель экспертиз, проектов, обследований, дефектоскопии и других инженерных работ",
     icon: <ExpertIcon />,
     expandedTitle: "Находите проекты и укрепляйте репутацию, расширяя портфолио",
@@ -48,7 +48,7 @@ const roles: Role[] = [
   },
   {
     id: ROLE_ID_LICENSE_HOLDER,
-    title: "Держатель лицензии",
+    title: "Держатель разрешительных документов",
     icon: <DiplomaIcon size={24} />,
     expandedTitle: "Предоставляйте лицензию ЭПБ ОПО и другие разрешительные документы для работы",
     description: [

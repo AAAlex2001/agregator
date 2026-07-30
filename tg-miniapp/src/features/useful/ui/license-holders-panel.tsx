@@ -19,7 +19,7 @@ export function LicenseHoldersPanel() {
       ) : items.length === 0 ? (
         <EmptyState
           icon={<EmptyAcceptedIcon />}
-          title="Пока нет держателей лицензии"
+          title="Пока нет держателей разрешительных документов"
           subtitle="Компании, предоставляющие лицензии, появятся здесь"
         />
       ) : (

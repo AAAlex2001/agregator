@@ -148,7 +148,7 @@ export function ChatSheet({ open, onClose, initialUuid = null }: Props) {
           <EmptyState
             icon={<EmptyAcceptedIcon />}
             title="Пока нет чатов"
-            subtitle="Чат появится, когда по заказу начнётся общение с экспертом или заказчиком"
+            subtitle="Чат появится, когда по заказу начнётся общение с исполнителем или заказчиком"
           />
         ) : (
           <div className={s.list}>

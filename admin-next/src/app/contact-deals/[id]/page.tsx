@@ -69,7 +69,7 @@ export default function ContactDealPage({ params }: { params: { id: string } }) 
       {error && <div className="error">{error}</div>}
 
       <section className="deal-summary">
-        <div><span>Эксперт</span><strong>{deal.seller_name}</strong></div>
+        <div><span>Исполнитель</span><strong>{deal.seller_name}</strong></div>
         <div><span>Покупатель</span><strong>{deal.buyer_name}</strong></div>
         <div><span>Сумма</span><strong>{deal.price_rubles.toLocaleString("ru-RU")} ₽</strong></div>
         <div><span>SHA-256</span><code>{deal.contract_hash}</code></div>
@@ -116,7 +116,7 @@ export default function ContactDealPage({ params }: { params: { id: string } }) 
       {deal.status !== "CONTACTS_RELEASED" ? (
         <section className="admin-section release-section">
           <h2>Ручная выдача контактов</h2>
-          <p className="muted">Администратор может выдать контакты при наличии чека, не дожидаясь подтверждения эксперта.</p>
+          <p className="muted">Администратор может выдать контакты при наличии чека, не дожидаясь подтверждения исполнителя.</p>
           <textarea
             value={note}
             onChange={(event) => setNote(event.target.value)}

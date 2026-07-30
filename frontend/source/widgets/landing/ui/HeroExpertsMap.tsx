@@ -24,16 +24,16 @@ export function HeroExpertsMap() {
 
   return (
     <div className={s.wrap}>
-      <h2 className={s.heading}>Эксперты промышленной безопасности на карте России</h2>
+      <h2 className={s.heading}>Исполнители промышленной безопасности на карте России</h2>
       <p className={s.sub}>
-        Аттестованные эксперты Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему
+        Аттестованные исполнители Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему
         опасному производственному объекту.
       </p>
       <div className={s.mapArea}>
         <FilterableExpertsMap
           items={items}
           height="100%"
-          emptyText="Загрузка карты экспертов…"
+          emptyText="Загрузка карты исполнителей…"
           contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
         />
       </div>

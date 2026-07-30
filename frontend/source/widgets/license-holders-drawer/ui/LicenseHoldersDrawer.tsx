@@ -23,7 +23,7 @@ export function LicenseHoldersDrawer() {
       <aside
         className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
         style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
-        aria-label="Держатели лицензии"
+        aria-label="Держатели разрешительных документов"
         aria-hidden={!isOpen}
       >
         <header className={s.head}>
@@ -32,7 +32,7 @@ export function LicenseHoldersDrawer() {
               <ExpertIcon />
             </span>
             <div>
-              <h2 className={s.title}>Держатели лицензии</h2>
+              <h2 className={s.title}>Держатели разрешительных документов</h2>
               <p className={s.subtitle}>Компании, предоставляющие лицензии</p>
             </div>
           </div>
@@ -49,7 +49,7 @@ export function LicenseHoldersDrawer() {
           ) : error ? (
             <p className={s.message}>{error}</p>
           ) : items.length === 0 ? (
-            <p className={s.message}>Пока нет зарегистрированных держателей лицензии.</p>
+            <p className={s.message}>Пока нет зарегистрированных держателей разрешительных документов.</p>
           ) : (
             <div className={s.list}>
               {items.map((item) => (

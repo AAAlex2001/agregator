@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class Review(Base):
-    "Отзыв заказчика на эксперта по выполненному заказу."
+    "Отзыв заказчика на исполнителя по выполненному заказу."
     __tablename__ = "reviews"
     __table_args__ = (
         UniqueConstraint("response_id", "customer_id", name="uq_reviews_response_customer"),

@@ -45,10 +45,10 @@ export function ContactPaymentPanel({
               <strong>{deal.price_rubles.toLocaleString("ru-RU")} ₽</strong>
             </div>
             <div className={s.paymentDetails}>
-              <span>Реквизиты эксперта для прямого перевода</span>
+              <span>Реквизиты исполнителя для прямого перевода</span>
               <strong>{deal.payment_details}</strong>
             </div>
-            <p>Площадка не принимает платёж. Переведите указанную сумму эксперту и приложите чек.</p>
+            <p>Площадка не принимает платёж. Переведите указанную сумму исполнителю и приложите чек.</p>
           </div>
           <div className={s.receiptUploadRow}>
             <ReceiptFileField
@@ -119,8 +119,8 @@ export function ContactPaymentPanel({
       )}
 
       {deal.status === "CONTACTS_RELEASED" && deal.seller_contacts && (
-        <section className={s.releasedContacts} aria-label="Открытые контакты эксперта">
-          <strong>Контакты эксперта открыты</strong>
+        <section className={s.releasedContacts} aria-label="Открытые контакты исполнителя">
+          <strong>Контакты исполнителя открыты</strong>
           <div>
             {deal.seller_contacts.phone && (
               <a href={`tel:${deal.seller_contacts.phone}`}>{deal.seller_contacts.phone}</a>

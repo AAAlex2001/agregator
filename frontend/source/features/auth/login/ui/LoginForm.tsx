@@ -26,7 +26,7 @@ export function LoginForm({ form, isLoading, fromOrder, onSubmit }: Props) {
       <AutofillGuard idPrefix="login" />
 
       {fromOrder && (
-        <p className={s.orderHint}>Войдите как эксперт, чтобы откликнуться на заказ</p>
+        <p className={s.orderHint}>Войдите как исполнитель, чтобы откликнуться на заказ</p>
       )}
 
       <EmailInput

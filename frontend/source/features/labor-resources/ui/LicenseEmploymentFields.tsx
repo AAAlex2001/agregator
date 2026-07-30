@@ -44,7 +44,7 @@ export function LicenseEmploymentFields({
             value: "PART_TIME",
             label: "По совместительству",
             description:
-              "Дополнительные эксперты для выполнения работ",
+              "Дополнительные исполнители для выполнения работ",
           },
         ]}
       />

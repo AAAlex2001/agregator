@@ -4,7 +4,7 @@ import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import { useRulesCollapse } from "../model/useRulesCollapse";
 import s from "./RulesBanner.module.scss";
 
-const TITLE = "Чат экспертов · правила";
+const TITLE = "Чат исполнителей · правила";
 
 const RULES = [
   "Без оскорблений и нецензурной лексики — за это бан без предупреждения.",

@@ -1,4 +1,4 @@
-"Админ-вьюшки раздела заказов: сами заказы, отклики экспертов и отзывы по сделкам."
+"Админ-вьюшки раздела заказов: сами заказы, отклики исполнителей и отзывы по сделкам."
 
 from sqladmin import ModelView
 
@@ -53,7 +53,7 @@ class OrderAdmin(ModelView, model=Order):
         Order.company: "Компания",
         Order.comment: "Описание",
         Order.customer: "Заказчик",
-        Order.assigned_expert: "Назначенный эксперт",
+        Order.assigned_expert: "Назначенный исполнитель",
         Order.technical_files: "Тех. файлы",
         Order.sum_amount: "Сумма",
         Order.deadline: "Дедлайн",
@@ -67,7 +67,7 @@ class OrderAdmin(ModelView, model=Order):
 
 
 class OrderResponseAdmin(ModelView, model=OrderResponse):
-    "Отклики экспертов на заказы: суммы, дедлайны, подтверждения, файлы."
+    "Отклики исполнителей на заказы: суммы, дедлайны, подтверждения, файлы."
 
     name = "Отклик"
     name_plural = "Отклики"
@@ -113,12 +113,12 @@ class OrderResponseAdmin(ModelView, model=OrderResponse):
     column_labels = {
         OrderResponse.id: "ID",
         OrderResponse.order: "Заказ",
-        OrderResponse.expert: "Эксперт",
+        OrderResponse.expert: "Исполнитель",
         OrderResponse.comment: "Комментарий",
         OrderResponse.proposed_sum_amount: "Предложенная сумма",
         OrderResponse.proposed_deadline: "Предложенный дедлайн",
         OrderResponse.technical_files: "Тех. файлы",
-        OrderResponse.expert_confirmed: "Эксперт подтвердил",
+        OrderResponse.expert_confirmed: "Исполнитель подтвердил",
         OrderResponse.status: "Статус",
         OrderResponse.created_at: "Создан",
         OrderResponse.updated_at: "Обновлён",
@@ -127,7 +127,7 @@ class OrderResponseAdmin(ModelView, model=OrderResponse):
 
 
 class ReviewAdmin(ModelView, model=Review):
-    "Отзывы по завершённым сделкам: оценка от заказчика эксперту."
+    "Отзывы по завершённым сделкам: оценка от заказчика исполнителю."
 
     name = "Отзыв"
     name_plural = "Отзывы"
@@ -157,7 +157,7 @@ class ReviewAdmin(ModelView, model=Review):
         Review.order_id: "ID заказа",
         Review.response: "Отклик",
         Review.customer: "Заказчик",
-        Review.expert: "Эксперт",
+        Review.expert: "Исполнитель",
         Review.rating: "Оценка",
         Review.comment: "Комментарий",
         Review.created_at: "Создан",

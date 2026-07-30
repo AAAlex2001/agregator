@@ -38,7 +38,7 @@ export function licenseHolderName(holder: LicenseHolder): string {
     holder.company_data?.value ??
     holder.company_data?.unrestricted_value ??
     holder.company_data?.data?.name?.short_with_opf ??
-    "Лицензиат"
+    "Держатель разрешительных документов"
   );
 }
 

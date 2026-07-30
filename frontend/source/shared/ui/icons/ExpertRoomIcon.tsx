@@ -3,7 +3,7 @@ interface Props {
   size?: number;
 }
 
-/** Тонкая stroke-иконка «чат-бабл с силуэтом человека» — для пункта «Чат экспертов» в сайдбаре. */
+/** Тонкая stroke-иконка «чат-бабл с силуэтом человека» — для пункта «Чат исполнителей» в сайдбаре. */
 const ExpertRoomIcon = ({ className, size = 24 }: Props) => (
   <svg
     className={className}

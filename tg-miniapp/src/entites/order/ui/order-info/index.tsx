@@ -48,7 +48,7 @@ export function OrderInfo({ order }: { order: Order }) {
       </Field>
 
       {order.badges.length > 0 && (
-        <Field label="Требования к эксперту">
+        <Field label="Требования к исполнителю">
           <div className={s.block}>
             <div className={s.chips}>
               {order.badges.map((b, i) => (

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/source/shared/ui";
@@ -29,7 +29,7 @@ export function RejectResponseModal({
       <h2 id="reject-modal-title" className={s.title}>Отклонить отклик</h2>
 
       <p className={s.desc}>
-        {expertName ? <>Эксперт <b>{expertName}</b> не подойдёт по заявке </> : <>Эксперт не подойдёт по заявке </>}
+        {expertName ? <>Исполнитель <b>{expertName}</b> не подойдёт по заявке </> : <>Исполнитель не подойдёт по заявке </>}
         <b>«{orderTitle}»</b>?
       </p>
 

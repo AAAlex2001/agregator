@@ -48,7 +48,7 @@ const CtaFooter = () => {
             </div>
           <div className={s.ctaLeft}>
             <Link href="/register" className={s.ctaChip}>Действуйте прямо сейчас</Link>
-            <h2>Найдите эксперта по промышленной безопасности или заявите о своей специализации</h2>
+            <h2>Найдите исполнителя по промышленной безопасности или заявите о своей специализации</h2>
           </div>
           <div className={s.ctaRight}>
             <h2>После регистрации вы сможете:</h2>
@@ -80,10 +80,10 @@ const CtaFooter = () => {
             </ul>
             <div className={s.ctaActions}>
               <Button href="/register" variant="primary" size="sm" fullWidth>
-                Найти эксперта
+                Найти исполнителя
               </Button>
               <Button href="/register" variant="secondary" size="sm" fullWidth>
-                Стать экспертом на платформе
+                Стать исполнителем на платформе
               </Button>
             </div>
           </div>

@@ -55,7 +55,7 @@ export function OrderSummaryPanel({ order }: Props) {
 
             {order.badges.length > 0 && (
               <div className={s.requirements}>
-                <span className={s.metaLabel}>Требования к эксперту:</span>
+                <span className={s.metaLabel}>Требования к исполнителю:</span>
                 <div className={s.badges}>
                   {order.badges.map((badge, index) => (
                     <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>

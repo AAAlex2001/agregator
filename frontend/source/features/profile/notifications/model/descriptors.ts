@@ -6,24 +6,24 @@ export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescr
     key: "email_on_labor_listing",
     label: "Новые заявки в трудовых ресурсах",
     description:
-      "Новые объявления о поиске экспертов и готовности к трудоустройству.",
+      "Новые объявления о поиске исполнителей и готовности к трудоустройству.",
     roles: ["CUSTOMER", "EXPERT"],
   },
   {
     key: "email_on_response_created",
     label: "Новый отклик на заявку",
-    description: "Когда эксперт откликается на вашу заявку.",
+    description: "Когда исполнитель откликается на вашу заявку.",
     roles: ["CUSTOMER"],
   },
   {
     key: "email_on_response_updated",
     label: "Изменения отклика",
-    description: "Эксперт обновил стоимость, комментарий или файлы своего отклика.",
+    description: "Исполнитель обновил стоимость, комментарий или файлы своего отклика.",
     roles: ["CUSTOMER"],
   },
   {
     key: "email_on_expert_rejected",
-    label: "Эксперт отказался",
+    label: "Исполнитель отказался",
     description: "Ранее выбранный исполнитель отказался от выполнения.",
     roles: ["CUSTOMER"],
   },
@@ -48,7 +48,7 @@ export const NOTIFICATION_DESCRIPTORS: ReadonlyArray<NotificationPreferenceDescr
   {
     key: "email_on_question_asked",
     label: "Новый вопрос по заказу",
-    description: "Эксперт задал публичный вопрос по вашей заявке — ответ увидят все эксперты.",
+    description: "Исполнитель задал публичный вопрос по вашей заявке — ответ увидят все исполнители.",
     roles: ["CUSTOMER"],
   },
   {
