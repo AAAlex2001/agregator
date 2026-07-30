@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchExpertsMap, type ExpertMapItemApi } from "@/source/entities/expert";
 import { FilterableExpertsMap } from "@/source/features/expert-map-filter";
 import { useSession } from "@/source/features/session";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./heroExpertsMap.module.scss";
 
 export function HeroExpertsMap() {
@@ -24,11 +25,10 @@ export function HeroExpertsMap() {
 
   return (
     <div className={s.wrap}>
-      <h2 className={s.heading}>Исполнители промышленной безопасности на карте России</h2>
-      <p className={s.sub}>
-        Аттестованные исполнители Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему
-        опасному производственному объекту.
-      </p>
+      <div className={s.head}>
+        <Title text="Исполнители промышленной безопасности на карте России" />
+        <Subtitle text="Аттестованные исполнители Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему опасному производственному объекту." />
+      </div>
       <div className={s.mapArea}>
         <FilterableExpertsMap
           items={items}

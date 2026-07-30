@@ -126,38 +126,6 @@ function createCabinetNav(role: string | null): NavPlate[] {
 
   return [
     {
-      key: "tech",
-      label: "ТехЭксперт",
-      color: "indigo",
-      roles: ["EXPERT", "LICENSE_HOLDER"],
-      href: "/tech-expert",
-      logo: true,
-    },
-    {
-      key: "edu",
-      label: "Учебный центр",
-      color: "indigo",
-      roles: ["EXPERT", "LICENSE_HOLDER"],
-      items: [
-        { label: "Подготовка к аттестации на исполнителя", soon: true },
-        {
-          label: "Аттестация на дефектоскописта",
-          href: "/landing/training/defectoscopist-certification",
-          description: "Подготовка, аттестация и сертификация специалистов неразрушающего контроля в ООО «АРЦ НК».",
-          logoSrc: "/ARC.png",
-          logoAlt: "ООО «АРЦ НК»",
-        },
-        {
-          label: "Дополнительное профессиональное образование ООО «НПИ «Недра»",
-          href: "https://nedra-npi.ru/svedeniya/obrazovanie",
-          external: true,
-          description: "Повышение квалификации проектных специалистов и дополнительное профессиональное образование.",
-          logoSrc: "/npi-nedra-logo.svg",
-          logoAlt: "ООО «НПИ «Недра»",
-        },
-      ],
-    },
-    {
       key: "license",
       label: "Держатели разрешительных документов",
       color: "amber",
@@ -195,6 +163,64 @@ function createCabinetNav(role: string | null): NavPlate[] {
       ],
     },
     {
+      key: "edu",
+      label: "Учебный центр",
+      color: "indigo",
+      roles: ["EXPERT", "LICENSE_HOLDER"],
+      items: [
+        { label: "Подготовка к аттестации на исполнителя", soon: true },
+        {
+          label: "Аттестация на дефектоскописта",
+          href: "/landing/training/defectoscopist-certification",
+          description: "Подготовка, аттестация и сертификация специалистов неразрушающего контроля в ООО «АРЦ НК».",
+          logoSrc: "/ARC.png",
+          logoAlt: "ООО «АРЦ НК»",
+        },
+        {
+          label: "Дополнительное профессиональное образование ООО «НПИ «Недра»",
+          href: "https://nedra-npi.ru/svedeniya/obrazovanie",
+          external: true,
+          description: "Повышение квалификации проектных специалистов и дополнительное профессиональное образование.",
+          logoSrc: "/npi-nedra-logo.svg",
+          logoAlt: "ООО «НПИ «Недра»",
+        },
+      ],
+    },
+    {
+      key: "useful",
+      label: "Полезные ссылки",
+      color: "green",
+      roles: ["EXPERT", "CUSTOMER", "LICENSE_HOLDER"],
+      items: usefulItems(role),
+    },
+    {
+      key: "tech",
+      label: "ТехЭксперт",
+      color: "indigo",
+      roles: ["EXPERT", "LICENSE_HOLDER"],
+      href: "/tech-expert",
+      logo: true,
+    },
+    {
+      key: "rtn",
+      label: "РОСТЕХНАДЗОР отвечает",
+      color: "gold",
+      items: [
+        {
+          label: "База официальных ответов",
+          href: role ? "/landing/rtn" : "/rtn",
+          description:
+            "Письма и разъяснения Ростехнадзора с поиском по заголовку, номеру документа и направлениям надзора.",
+        },
+        {
+          label: "Задать вопрос в Ростехнадзор",
+          href: role ? "/landing/rtn/ask" : "/rtn/ask",
+          description:
+            "Передайте вопрос для подготовки официального обращения и отслеживайте его рассмотрение.",
+        },
+      ],
+    },
+    {
       key: "help-expert",
       label: "Помощь исполнителю",
       color: "green",
@@ -214,32 +240,6 @@ function createCabinetNav(role: string | null): NavPlate[] {
         { label: "Проверка ЭО", href: "https://pb.nalog.ru/search.html#search-ul", external: true },
         { label: "Рейтинг ЭО", href: "https://экг-рейтинг.рф", external: true },
         { label: "Шаблоны ТЗ", soon: true },
-      ],
-    },
-    {
-      key: "useful",
-      label: "Полезные ссылки",
-      color: "green",
-      roles: ["EXPERT", "CUSTOMER", "LICENSE_HOLDER"],
-      items: usefulItems(role),
-    },
-    {
-      key: "rtn",
-      label: "РОСТЕХНАДЗОР отвечает",
-      color: "gold",
-      items: [
-        {
-          label: "База официальных ответов",
-          href: role ? "/landing/rtn" : "/rtn",
-          description:
-            "Письма и разъяснения Ростехнадзора с поиском по заголовку, номеру документа и направлениям надзора.",
-        },
-        {
-          label: "Задать вопрос в Ростехнадзор",
-          href: role ? "/landing/rtn/ask" : "/rtn/ask",
-          description:
-            "Передайте вопрос для подготовки официального обращения и отслеживайте его рассмотрение.",
-        },
       ],
     },
     {

@@ -59,7 +59,7 @@
   text-decoration: none;
   color: #1a1a1a;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 500;
   white-space: nowrap;
@@ -70,6 +70,39 @@
 .plateLabel {
   display: inline-flex;
   align-items: center;
+}
+
+.plateLabelMultiline {
+  flex-direction: column;
+  align-items: center;
+  line-height: 16px;
+  text-align: center;
+  white-space: normal;
+}
+
+.platesCompact {
+  .plate {
+    gap: 4px;
+    padding: 8px 5px;
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .plateLabelMultiline {
+    line-height: 16px;
+  }
+
+  .plateLogo svg {
+    width: 126px;
+  }
+}
+
+.plates.platesCompact {
+  margin-right: 0;
+}
+
+.plates.platesCompact.platesSpread {
+  margin-right: auto;
 }
 
 .chevron {
@@ -148,8 +181,8 @@
 }
 
 .gold {
-  --plate-color: #f2c200;
-  --plate-bg: #e8f7ee;
+  --plate-color: #FFC205;
+  --plate-bg: #009734;
 }
 
 .gold .plate {

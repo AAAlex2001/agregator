@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import {
 	LandingAdvantages,
 	LandingArticlesPreview,
-	LandingComingSoon,
+	// LandingComingSoon,
 	LandingCtaFooter,
 	LandingFaq,
 	LandingFooter,
@@ -16,7 +16,6 @@ import {
 	LandingOrders,
 	LandingReviews,
 	LandingSearchBlock,
-	LandingSeoText,
 	LandingStructuredData,
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
@@ -103,7 +102,7 @@ export default async function LandingPage() {
 						buttonText={hero.buttonText}
 						bullets={hero.bullets}
 					/>
-					<LandingComingSoon />
+					{/* <LandingComingSoon /> */}
 					<LandingSearchBlock />
 					<LandingNotificationsCta />
 					<LandingHowItWorks
@@ -185,7 +184,6 @@ export default async function LandingPage() {
 						title={sectionHeaders.faq.title}
 						subtitle={sectionHeaders.faq.subtitle}
 					/>
-					<LandingSeoText />
 				</main>
 				<LandingCtaFooter />
 				<LandingFooter />

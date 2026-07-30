@@ -4,7 +4,7 @@
   z-index: 90;
   background: #ffffff;
   border-bottom: 1px solid #E6E6E6;
-  padding: 10px 16px;
+  padding: 10px 8px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -22,7 +22,8 @@
   padding-right: 48px;
 
   @media (min-width: 1440px) {
-    justify-content: flex-end;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     padding-right: 0;
   }
 }
@@ -35,6 +36,7 @@
 
   @media (min-width: 1440px) {
     display: flex;
+    flex-shrink: 0;
   }
 }
 
@@ -80,6 +82,12 @@
     padding: 10px 16px;
     border-radius: 12px;
   }
+
+  @media (min-width: 1440px) {
+    padding: 8px 5px;
+    font-size: 14px;
+    line-height: 17px;
+  }
 }
 
 .navLinkPromo {
@@ -123,4 +131,3 @@
     color: #ffffff;
   }
 }
-

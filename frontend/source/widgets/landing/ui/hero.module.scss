@@ -19,6 +19,25 @@
   margin: 0 auto 40px auto;
 }
 
+.heroLead {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto 32px auto;
+  text-align: center;
+}
+
+.mapSection {
+  width: 100%;
+  margin-top: 48px;
+}
+
+@media (min-width: 1440px) {
+  .mapSection {
+    height: 680px;
+    margin-top: 64px;
+  }
+}
+
 .heroTitleText {
   max-width: 1000px;
   margin: 0 auto;

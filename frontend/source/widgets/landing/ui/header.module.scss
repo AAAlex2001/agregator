@@ -1,22 +1,10 @@
 .header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1302;
   backdrop-filter: blur(16px);
   background: rgba(255, 255, 255, 0.72);
   padding: 15px var(--page-px);
   border-bottom: 1px solid #E6E6E6;
-  transform: translateY(0);
-  transition: transform 0.24s ease;
-  will-change: transform;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-.headerHidden {
-  transform: translateY(calc(-100% - 1px));
 }
 
 .container {
@@ -39,6 +27,7 @@
   @media (min-width: 1440px) {
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 100%;
     max-width: 1620px;
     margin: 8px auto 0;

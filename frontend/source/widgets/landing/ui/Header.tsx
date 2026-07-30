@@ -2,7 +2,6 @@ import Link from "next/link";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import BurgerMenu from "./BurgerMenu";
-import PublicHeaderShell from "./PublicHeaderShell";
 import s from "./header.module.scss";
 
 const NAV_PAGES = [
@@ -15,7 +14,7 @@ const NAV_PAGES = [
 const Header = () => {
   return (
     <>
-      <PublicHeaderShell className={s.header} hiddenClassName={s.headerHidden}>
+      <header className={s.header}>
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
             <span className={s.logo}>
@@ -41,9 +40,9 @@ const Header = () => {
           </div>
         </div>
         <nav className={s.guestNav} aria-label="Возможности после регистрации">
-          <ExpertHelpPlates mode="guest" />
+          <ExpertHelpPlates mode="guest" compact />
         </nav>
-      </PublicHeaderShell>
+      </header>
     </>
   );
 };

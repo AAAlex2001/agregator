@@ -1,7 +1,7 @@
 import {
   LandingAdvantages,
   LandingArticlesPreview,
-  LandingComingSoon,
+  // LandingComingSoon,
   LandingCtaFooter,
   LandingFaq,
   LandingFooter,
@@ -55,9 +55,9 @@ export default async function AuthRestrictedLandingPage() {
         bullets={hero.bullets}
         compact
       />
-      <div className={s.comingSoonOffset}>
+      {/* <div className={s.comingSoonOffset}>
         <LandingComingSoon />
-      </div>
+      </div> */}
       <LandingSearchBlock />
       <LandingNotificationsCta />
       <LandingHowItWorks

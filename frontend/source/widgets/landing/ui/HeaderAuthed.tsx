@@ -14,7 +14,7 @@ const HeaderAuthed = () => (
     <PromoDrawer />
     <header className={s.header}>
       <nav className={s.nav} aria-label="Основная навигация">
-        <ExpertHelpPlates />
+        <ExpertHelpPlates compact spread />
         <div className={s.menuLinks}>
           {NAV_PAGES.map((page) => (
             <Link key={page.href} href={page.href} className={s.navLink}>

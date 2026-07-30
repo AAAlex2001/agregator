@@ -27,6 +27,19 @@ function NavCountBadge({ count }: { count: number }) {
   return <span className={s.navBadge}>{count > 99 ? "99+" : count}</span>;
 }
 
+function PlateLabel({ plate }: { plate: NavPlate }) {
+  if (plate.key === "license") {
+    return (
+      <span className={`${s.plateLabel} ${s.plateLabelMultiline}`}>
+        <span>Держатели</span>
+        <span>разрешительных документов</span>
+      </span>
+    );
+  }
+
+  return <span className={s.plateLabel}>{plate.label}</span>;
+}
+
 function ItemRow({ item, badges }: { item: NavItem; badges: BadgeCounts }) {
   const inner = (
     <span className={s.itemRow}>
@@ -156,7 +169,7 @@ function PlateNode({
               <TechExpertLogoIcon title={plate.label} />
             ) : (
               <>
-                <span className={s.plateLabel}>{plate.label}</span>
+                <PlateLabel plate={plate} />
                 {!plate.href && <ChevronIcon className={s.chevron} color="currentColor" />}
               </>
             )}
@@ -174,7 +187,7 @@ function PlateNode({
           className={`${s.plate} ${plate.logo ? s.plateLogo : ""}`}
           aria-label={plate.label}
         >
-          {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <span className={s.plateLabel}>{plate.label}</span>}
+          {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <PlateLabel plate={plate} />}
         </Link>
       </div>
     );
@@ -183,7 +196,7 @@ function PlateNode({
   return (
     <div className={`${s.plateWrap} ${s[plate.color]}`}>
       <button type="button" className={s.plate}>
-        <span className={s.plateLabel}>{plate.label}</span>
+        <PlateLabel plate={plate} />
         {plate.badge && <NavCountBadge count={badges[plate.badge]} />}
         <ChevronIcon className={s.chevron} color="currentColor" />
       </button>
@@ -208,7 +221,15 @@ function PlateNode({
   );
 }
 
-export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" }) {
+export function ExpertHelpPlates({
+  mode = "role",
+  compact = false,
+  spread = false,
+}: {
+  mode?: "role" | "guest";
+  compact?: boolean;
+  spread?: boolean;
+}) {
   const { role } = useSession();
   const chat = useOptionalChatListContext();
   const isGuestMode = mode === "guest";
@@ -236,19 +257,19 @@ export function ExpertHelpPlates({ mode = "role" }: { mode?: "role" | "guest" })
 
   return (
     <>
-      <div className={s.plates}>
+      <div className={`${s.plates} ${compact ? s.platesCompact : ""} ${spread ? s.platesSpread : ""}`}>
         {leftPlates.map((plate) => (
           <PlateNode
             key={plate.key}
             plate={plate}
             align="left"
             badges={badges}
-            locked={isGuestMode && plate.key !== "rtn"}
+            locked={isGuestMode}
           />
         ))}
       </div>
       {reviewsPlate && (
-        <div className={s.platesRight}>
+        <div className={`${s.platesRight} ${compact ? s.platesCompact : ""}`}>
           <PlateNode plate={reviewsPlate} align="right" badges={badges} locked={isGuestMode} />
         </div>
       )}
