@@ -12,11 +12,28 @@ interface TabsProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
-  variant?: "default" | "pill";
+  variant?: "default" | "pill" | "squared";
   className?: string;
 }
 
 const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "" }: TabsProps) => {
+  if (variant === "squared") {
+    return (
+      <div className={`${styles.squaredBar} ${className}`}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={`${styles.squared} ${activeTab === tab.id ? styles.squaredActive : ""}`}
+            onClick={() => onTabChange(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   if (variant === "pill") {
     return (
       <div className={`${styles.pillBar} ${className}`}>

@@ -6,7 +6,7 @@ const SearchBlock = () => (
   <section className={s.section} id="search">
     <div className={s.content}>
       <header className={s.header}>
-        <Title text="Все заказы по экспертизе промышленной безопасности на одной площадке" />
+        <Title text="Все заказы на одной площадке" />
         <Subtitle text="Найдите проект по наименованию работы или наименованию организации(заказчика) — покажем все актуальные и архивные заказы платформы" />
       </header>
       <div className={s.bar}>

@@ -42,6 +42,36 @@
   }
 }
 
+.squaredBar {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: #f2f4f7;
+  border-radius: 12px;
+}
+
+.squared {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: #4a5460;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.squaredActive {
+  background: #ffffff;
+  color: var(--landing-accent, #ff8a00);
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.08);
+}
+
 .pillBar {
   display: flex;
   justify-content: flex-start;
