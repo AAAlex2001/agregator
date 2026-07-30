@@ -1,0 +1,7 @@
+.wrap {
+  margin-bottom: 120px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 200px;
+  }
+}

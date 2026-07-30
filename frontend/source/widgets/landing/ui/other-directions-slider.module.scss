@@ -11,6 +11,18 @@
   box-sizing: border-box;
 }
 
+/* Единая серая подложка — как у блоков с видами работ. */
+.panel {
+  padding: 24px;
+  border-radius: 24px;
+  background: #f4f7fb;
+  box-shadow: 0 6px 28px rgba(16, 24, 40, 0.08);
+
+  @media (min-width: 1024px) {
+    padding: 32px;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -25,14 +37,6 @@
 
 .arrows {
   flex-shrink: 0;
-}
-
-.slider {
-  width: 100%;
-  max-width: 1620px;
-  margin: 0 auto;
-  padding: 0 var(--page-px);
-  box-sizing: border-box;
 }
 
 .swiper {

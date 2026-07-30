@@ -6,58 +6,60 @@ import {
   LandingOtherDirections,
   LandingExpertsMap,
   LandingFooter,
-  type ServiceLandingBullet,
 } from "@/source/widgets/landing";
+import {
+  NirSeoText,
+  NIR_BULLETS,
+  NIR_COVER,
+  NIR_KEYWORDS,
+  NIR_META_DESCRIPTION,
+  NIR_SUBTITLE,
+  NIR_TITLE,
+} from "@/source/widgets/landing/nir";
 import { ServiceRequestForm } from "@/source/features/service-request";
 import s from "./page.module.scss";
 
 export const metadata: Metadata = {
-  title: "Проведение НИР и лабораторные исследования — подбор специалистов",
-  description:
-    "Помощь в проведении научно-исследовательских работ (НИР) и лабораторных исследований: подбор специалистов, дефектоскопия, неразрушающий контроль, лаборатория неразрушающего контроля. Разместите заявку и получите отклики исполнителей.",
-  keywords: [
-    "проведение НИР",
-    "научно исследовательская работа",
-    "выполнение научно исследовательской работы",
-    "подбор специалистов",
-    "лабораторные исследования",
-    "дефектоскопист",
-    "неразрушающий контроль",
-    "лаборатория неразрушающего контроля",
-  ],
+  title: NIR_TITLE,
+  description: NIR_META_DESCRIPTION,
+  keywords: NIR_KEYWORDS,
   alternates: { canonical: "/nir" },
+  openGraph: {
+    title: NIR_TITLE,
+    description: NIR_META_DESCRIPTION,
+    type: "website",
+    url: "/nir",
+    siteName: "Ресурс-Плюс",
+    locale: "ru_RU",
+    images: [
+      {
+        url: NIR_COVER,
+        width: 1200,
+        height: 630,
+        alt: "НИРы и лабораторные исследования — Ресурс-Плюс",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: NIR_TITLE,
+    description: NIR_META_DESCRIPTION,
+    images: [NIR_COVER],
+  },
   robots: { index: true, follow: true },
 };
-
-const BULLETS: ServiceLandingBullet[] = [
-  {
-    title: "Опишите задачу",
-    text: "Укажите тему НИР или нужные лабораторные исследования и требования к исполнителю.",
-  },
-  {
-    title: "Получите отклики",
-    text: "Аттестованные специалисты и лаборатории неразрушающего контроля откликнутся с ценой и сроками.",
-  },
-  {
-    title: "Выберите исполнителя",
-    text: "Сравните опыт и предложения, выберите подходящего исполнителя — напрямую, без посредников.",
-  },
-];
 
 export default function NirLandingPage() {
   return (
     <div className={s.page}>
       <LandingHeader />
       <main>
-        <LandingServiceHero
-          title="Помощь в проведении НИР, подбор специалистов"
-          subtitle="Проведение научно-исследовательских работ и лабораторных исследований: дефектоскопия, неразрушающий контроль и подбор специалистов под вашу задачу."
-          bullets={BULLETS}
-        >
+        <LandingServiceHero title={NIR_TITLE} subtitle={NIR_SUBTITLE} bullets={NIR_BULLETS}>
           <ServiceRequestForm />
         </LandingServiceHero>
         <LandingSearchBlock />
         <LandingExpertsMap />
+        <NirSeoText />
         <LandingOtherDirections currentSlug="nir" />
       </main>
       <LandingFooter variant="light" />

@@ -1,0 +1,42 @@
+.page {
+  --landing-accent: #ff8a00;
+  /* Нежный сине-лавандовый градиент — строгость без глубокой темноты. */
+  --hero-bg: linear-gradient(90deg, #eef1fb 0%, #dae1f6 100%);
+  --hero-fg: #1f2750;
+  --hero-fg-muted: #5a6285;
+  --hero-num-bg: #ffffff;
+  --hero-num-fg: #ff8a00;
+  background: #ffffff;
+}
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 34px rgba(16, 24, 40, 0.16);
+}
+
+.coverImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.coverImg {
+  object-fit: cover;
+}
+
+.coverClaim {
+  margin: 0;
+  padding: 0 4px 4px;
+  font-size: 18px;
+  line-height: 25px;
+  font-weight: 700;
+  color: #101828;
+  text-align: center;
+}

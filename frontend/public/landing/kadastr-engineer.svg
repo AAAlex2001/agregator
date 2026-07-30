@@ -1,0 +1,43 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Профиль кадастрового инженера">
+  <rect width="640" height="480" rx="28" fill="#EEF4FC"/>
+  <circle cx="548" cy="92" r="118" fill="#E1EBF9"/>
+  <circle cx="74" cy="412" r="86" fill="#E1EBF9"/>
+
+  <g>
+    <rect x="80" y="88" width="332" height="304" rx="24" fill="#FFFFFF"/>
+    <rect x="80" y="88" width="332" height="304" rx="24" stroke="#E4EBF5" stroke-width="2"/>
+
+    <circle cx="146" cy="152" r="32" fill="#DCE8F7"/>
+    <circle cx="146" cy="143" r="12" fill="#24406E"/>
+    <path d="M125 176c4-11 11-17 21-17s17 6 21 17z" fill="#24406E"/>
+
+    <rect x="196" y="134" width="156" height="14" rx="7" fill="#16264F"/>
+    <rect x="196" y="159" width="104" height="10" rx="5" fill="#C7D4E6"/>
+
+    <rect x="112" y="210" width="268" height="1.5" fill="#EAF0F8"/>
+
+    <rect x="112" y="234" width="268" height="46" rx="10" fill="#F4F7FC"/>
+    <rect x="128" y="246" width="86" height="9" rx="4.5" fill="#C7D4E6"/>
+    <rect x="128" y="262" width="140" height="9" rx="4.5" fill="#D9E2EE"/>
+
+    <rect x="112" y="292" width="268" height="46" rx="10" fill="#F4F7FC"/>
+    <rect x="128" y="304" width="110" height="9" rx="4.5" fill="#C7D4E6"/>
+    <rect x="128" y="320" width="168" height="9" rx="4.5" fill="#D9E2EE"/>
+
+    <g>
+      <rect x="112" y="352" width="24" height="24" rx="7" fill="#FF8A00"/>
+      <path d="M118 364l4 4 8-8.5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="148" y="358" width="180" height="12" rx="6" fill="#DDE5F0"/>
+    </g>
+  </g>
+
+  <g>
+    <path d="M498 214v186" stroke="#16264F" stroke-width="9" stroke-linecap="round"/>
+    <path d="M498 400l-46 44" stroke="#16264F" stroke-width="9" stroke-linecap="round"/>
+    <path d="M498 400l46 44" stroke="#16264F" stroke-width="9" stroke-linecap="round"/>
+    <rect x="456" y="164" width="86" height="60" rx="12" fill="#24406E"/>
+    <rect x="474" y="184" width="50" height="22" rx="6" fill="#9EC2EE"/>
+    <circle cx="499" cy="195" r="9" fill="#FF8A00"/>
+    <rect x="536" y="180" width="34" height="12" rx="6" fill="#FF8A00"/>
+  </g>
+</svg>

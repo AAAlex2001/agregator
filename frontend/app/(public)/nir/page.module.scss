@@ -1,5 +1,10 @@
 .page {
   --landing-accent: #ff8a00;
-  --landing-accent-soft: #e8f1ff;
+  /* Ваниль: тёплый кремовый градиент — оранжевый акцент на нём звучит мягко и дорого. */
+  --hero-bg: linear-gradient(90deg, #fff9ee 0%, #ffe7bf 100%);
+  --hero-fg: #2c2113;
+  --hero-fg-muted: #6f5c3c;
+  --hero-num-bg: #ffffff;
+  --hero-num-fg: #ff8a00;
   background: #ffffff;
 }

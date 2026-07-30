@@ -1,15 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import s from "./seo-text.module.scss";
+import { SeoCollapsible } from "./SeoCollapsible";
 
 export default function SeoText() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <section className={s.section} aria-label="Об экспертизе промышленной безопасности">
-      <div className={s.inner}>
-        <div className={`${s.content} ${open ? s.open : ""}`.trim()}>
+    <SeoCollapsible ariaLabel="Об экспертизе промышленной безопасности">
           <h2>Экспертиза промышленной безопасности — тендерная площадка «Ресурс-Плюс»</h2>
           <p>
             «Ресурс-Плюс» — тендерная площадка-агрегатор экспертизы промышленной безопасности (ЭПБ)
@@ -104,12 +97,6 @@ export default function SeoText() {
             или создайте профиль исполнителя на площадке-агрегаторе «Ресурс-Плюс» — найдите исполнителя или
             заказ на экспертизу ОПО уже сегодня.
           </p>
-        </div>
-
-        <button type="button" className={s.toggle} onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-          {open ? "Свернуть" : "Читать далее"}
-        </button>
-      </div>
-    </section>
+    </SeoCollapsible>
   );
 }

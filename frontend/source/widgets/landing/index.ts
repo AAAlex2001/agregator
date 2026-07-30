@@ -4,6 +4,8 @@ export { ExpertsMapSection as LandingExpertsMap } from "./ui/ExpertsMapSection";
 export { default as LandingServiceHero } from "./ui/ServiceLandingHero";
 export type { ServiceLandingBullet } from "./ui/ServiceLandingHero";
 export { OtherDirectionsSlider as LandingOtherDirections } from "./ui/OtherDirectionsSlider";
+export { AudienceSection as LandingAudience } from "./ui/AudienceSection";
+export type { AudienceBlock } from "./ui/AudienceSection";
 export { default as LandingHero } from "./ui/Hero";
 export { default as LandingComingSoon } from "./ui/ComingSoon";
 export { default as LandingHowItWorks } from "./ui/HowItWorks";

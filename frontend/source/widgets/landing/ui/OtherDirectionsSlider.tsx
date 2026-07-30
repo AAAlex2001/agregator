@@ -25,45 +25,45 @@ export function OtherDirectionsSlider({
   return (
     <section className={s.section}>
       <div className={s.content}>
-        <header className={s.header}>
-          <Title text={title} className={s.title} />
-          <div className={s.arrows}>
-            <SwiperNavigation prevClassName="dir-nav--prev" nextClassName="dir-nav--next" />
-          </div>
-        </header>
-      </div>
+        <div className={s.panel}>
+          <header className={s.header}>
+            <Title text={title} className={s.title} />
+            <div className={s.arrows}>
+              <SwiperNavigation prevClassName="dir-nav--prev" nextClassName="dir-nav--next" />
+            </div>
+          </header>
 
-      <div className={s.slider}>
-        <Swiper
-          modules={[Navigation]}
-          slidesPerView="auto"
-          spaceBetween={16}
-          navigation={{ prevEl: ".dir-nav--prev", nextEl: ".dir-nav--next" }}
-          className={`${s.swiper} dir-swiper`}
-        >
-          {items.map((item) => (
-            <SwiperSlide key={item.id} className={s.slide}>
-              <div className={s.cardItem}>
-                <div className={s.image}>
-                  <Image src={item.image} alt={item.title} fill sizes="340px" className={s.img} />
+          <Swiper
+            modules={[Navigation]}
+            slidesPerView="auto"
+            spaceBetween={16}
+            navigation={{ prevEl: ".dir-nav--prev", nextEl: ".dir-nav--next" }}
+            className={`${s.swiper} dir-swiper`}
+          >
+            {items.map((item) => (
+              <SwiperSlide key={item.id} className={s.slide}>
+                <div className={s.cardItem}>
+                  <div className={s.image}>
+                    <Image src={item.image} alt={item.title} fill sizes="340px" className={s.img} />
+                  </div>
+                  <div className={s.body}>
+                    <h3 className={s.cardTitle}>{item.title}</h3>
+                    <p className={s.cardDesc}>{item.description}</p>
+                    <Button
+                      href={`/${item.slug}`}
+                      variant="primary"
+                      fullWidth
+                      showArrow
+                      className={s.cardBtn}
+                    >
+                      Начать работать
+                    </Button>
+                  </div>
                 </div>
-                <div className={s.body}>
-                  <h3 className={s.cardTitle}>{item.title}</h3>
-                  <p className={s.cardDesc}>{item.description}</p>
-                  <Button
-                    href={`/${item.slug}`}
-                    variant="primary"
-                    fullWidth
-                    showArrow
-                    className={s.cardBtn}
-                  >
-                    Начать работать
-                  </Button>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </div>
     </section>
   );
