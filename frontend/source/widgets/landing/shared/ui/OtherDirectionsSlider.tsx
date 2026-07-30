@@ -48,7 +48,7 @@ export function OtherDirectionsSlider({
                   </div>
                   <div className={s.body}>
                     <h3 className={s.cardTitle}>{item.title}</h3>
-                    <p className={s.cardDesc}>{item.description}</p>
+                    <p className={s.cardDesc}>{item.text}</p>
                     <Button
                       href={`/${item.slug}`}
                       variant="primary"

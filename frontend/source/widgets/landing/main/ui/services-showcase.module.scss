@@ -1,0 +1,10 @@
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.button {
+  min-height: 55px;
+  flex: 1 1 auto;
+}

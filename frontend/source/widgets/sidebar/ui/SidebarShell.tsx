@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
+import LandingHeaderAuthed from "@/source/widgets/landing/shared/ui/HeaderAuthed";
 import { Sidebar } from "./Sidebar";
 import s from "./SidebarShell.module.scss";
 

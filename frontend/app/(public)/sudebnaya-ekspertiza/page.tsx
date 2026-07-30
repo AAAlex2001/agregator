@@ -7,6 +7,8 @@ import {
   LandingOtherDirections,
   LandingExpertsMap,
   LandingAudience,
+  LandingServiceFaq,
+  LandingServiceSchema,
   LandingFooter,
 } from "@/source/widgets/landing";
 import {
@@ -16,6 +18,7 @@ import {
   FORENSIC_BULLETS,
   FORENSIC_CLAIM,
   FORENSIC_COVER,
+  FORENSIC_FAQ,
   FORENSIC_KEYWORDS,
   FORENSIC_META_DESCRIPTION,
   FORENSIC_SUBTITLE,
@@ -82,10 +85,21 @@ export default function ForensicExpertiseLandingPage() {
         <LandingAudience blocks={FORENSIC_AUDIENCE} />
         <LandingSearchBlock />
         <LandingExpertsMap />
+        <LandingServiceFaq
+          items={FORENSIC_FAQ}
+          subtitle="Кто вправе давать заключение для суда, кто оплачивает экспертизу и как оспорить её выводы."
+        />
         <ForensicSeoText />
         <LandingOtherDirections currentSlug="sudebnaya-ekspertiza" />
       </main>
       <LandingFooter variant="light" />
+      <LandingServiceSchema
+        name={FORENSIC_TITLE}
+        description={FORENSIC_META_DESCRIPTION}
+        path="/sudebnaya-ekspertiza"
+        serviceType="Судебная экспертиза"
+        faq={FORENSIC_FAQ}
+      />
     </div>
   );
 }

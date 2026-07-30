@@ -5,12 +5,15 @@ import {
   LandingSearchBlock,
   LandingOtherDirections,
   LandingExpertsMap,
+  LandingServiceFaq,
+  LandingServiceSchema,
   LandingFooter,
 } from "@/source/widgets/landing";
 import {
   NirSeoText,
   NIR_BULLETS,
   NIR_COVER,
+  NIR_FAQ,
   NIR_KEYWORDS,
   NIR_META_DESCRIPTION,
   NIR_SUBTITLE,
@@ -59,10 +62,21 @@ export default function NirLandingPage() {
         </LandingServiceHero>
         <LandingSearchBlock />
         <LandingExpertsMap />
+        <LandingServiceFaq
+          items={NIR_FAQ}
+          subtitle="Какая лаборатория вправе выполнять неразрушающий контроль, как проверить дефектоскописта и что входит в НИР."
+        />
         <NirSeoText />
         <LandingOtherDirections currentSlug="nir" />
       </main>
       <LandingFooter variant="light" />
+      <LandingServiceSchema
+        name={NIR_TITLE}
+        description={NIR_META_DESCRIPTION}
+        path="/nir"
+        serviceType="Научно-исследовательские работы и лабораторные исследования"
+        faq={NIR_FAQ}
+      />
     </div>
   );
 }

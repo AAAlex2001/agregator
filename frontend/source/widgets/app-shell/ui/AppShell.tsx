@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { SidebarShell } from "@/source/widgets/sidebar";
-import LandingHeaderAuthed from "@/source/widgets/landing/ui/HeaderAuthed";
+import LandingHeaderAuthed from "@/source/widgets/landing/shared/ui/HeaderAuthed";
 
 interface AppShellProps {
   children: React.ReactNode;

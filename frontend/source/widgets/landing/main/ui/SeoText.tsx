@@ -1,4 +1,4 @@
-import { SeoCollapsible } from "./SeoCollapsible";
+import { SeoCollapsible } from "../../shared/ui/SeoCollapsible";
 
 export default function SeoText() {
   return (

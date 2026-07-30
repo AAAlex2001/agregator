@@ -1,4 +1,4 @@
-import { SeoCollapsible } from "../../ui/SeoCollapsible";
+import { SeoCollapsible } from "../../shared/ui/SeoCollapsible";
 import s from "./seo.module.scss";
 
 export function KadastrSeoText() {

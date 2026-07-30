@@ -6,4 +6,5 @@ export {
   NIR_KEYWORDS,
   NIR_COVER,
   NIR_BULLETS,
+  NIR_FAQ,
 } from "./model/content";

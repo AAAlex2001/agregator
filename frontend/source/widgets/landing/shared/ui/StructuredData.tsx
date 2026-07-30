@@ -1,8 +1,8 @@
 import { SITE_URL } from "@/source/shared/api/config";
-import type { LandingFaqItem } from "../model/landing.data";
+import type { ServiceLandingFaqItem } from "./ServiceLandingFaq";
 
 interface Props {
-  faq?: LandingFaqItem[];
+  faq?: ServiceLandingFaqItem[];
 }
 
 export default function StructuredData({ faq = [] }: Props) {

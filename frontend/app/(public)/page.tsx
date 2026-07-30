@@ -5,7 +5,6 @@ import {
 	LandingArticlesPreview,
 	// LandingComingSoon,
 	LandingCtaFooter,
-	LandingFaq,
 	LandingFooter,
 	LandingHeader,
 	LandingHero,
@@ -16,6 +15,8 @@ import {
 	LandingOrders,
 	LandingReviews,
 	LandingSearchBlock,
+	LandingSeoText,
+	LandingServiceFaq,
 	LandingStructuredData,
 	loadLandingSnapshot,
 } from "@/source/widgets/landing";
@@ -179,11 +180,13 @@ export default async function LandingPage() {
 							redirectOnSelect="/register"
 						/>
 					) : null}
-					<LandingFaq
+					<LandingServiceFaq
 						items={faq}
 						title={sectionHeaders.faq.title}
 						subtitle={sectionHeaders.faq.subtitle}
+						decoration
 					/>
+					<LandingSeoText />
 				</main>
 				<LandingCtaFooter />
 				<LandingFooter />

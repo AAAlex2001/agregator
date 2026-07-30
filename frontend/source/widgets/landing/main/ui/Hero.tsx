@@ -1,6 +1,6 @@
 import s from "./hero.module.scss";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { HeroExpertsMap } from "./HeroExpertsMap";
+import { HeroExpertsMap } from "../../shared/ui/HeroExpertsMap";
 import ServicesShowcase from "./ServicesShowcase";
 
 type HeroProps = {

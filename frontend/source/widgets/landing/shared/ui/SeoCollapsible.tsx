@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import s from "./seo-text.module.scss";
+import s from "./seo-collapsible.module.scss";
 
 interface SeoCollapsibleProps {
   ariaLabel: string;

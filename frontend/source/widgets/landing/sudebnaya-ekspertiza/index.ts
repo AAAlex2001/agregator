@@ -9,4 +9,5 @@ export {
   FORENSIC_KEYWORDS,
   FORENSIC_COVER,
   FORENSIC_BULLETS,
+  FORENSIC_FAQ,
 } from "./model/content";

@@ -3,7 +3,6 @@ import {
   LandingArticlesPreview,
   // LandingComingSoon,
   LandingCtaFooter,
-  LandingFaq,
   LandingFooter,
   LandingHero,
   LandingHowItWorks,
@@ -13,6 +12,8 @@ import {
   LandingOrders,
   LandingReviews,
   LandingSearchBlock,
+  LandingSeoText,
+  LandingServiceFaq,
   loadLandingSnapshot,
 } from "@/source/widgets/landing";
 import { PricingSection } from "@/source/widgets/pricing-section";
@@ -137,11 +138,13 @@ export default async function AuthRestrictedLandingPage() {
           redirectOnSelect="/register"
         />
       ) : null}
-      <LandingFaq
+      <LandingServiceFaq
         items={faq}
         title={sectionHeaders.faq.title}
         subtitle={sectionHeaders.faq.subtitle}
+        decoration
       />
+      <LandingSeoText />
       <LandingCtaFooter />
       <LandingFooter variant="light" />
     </div>

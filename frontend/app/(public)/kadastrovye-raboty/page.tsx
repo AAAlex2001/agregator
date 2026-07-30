@@ -7,6 +7,8 @@ import {
   LandingOtherDirections,
   LandingExpertsMap,
   LandingAudience,
+  LandingServiceFaq,
+  LandingServiceSchema,
   LandingFooter,
 } from "@/source/widgets/landing";
 import {
@@ -15,6 +17,7 @@ import {
   KADASTR_AUDIENCE,
   KADASTR_BULLETS,
   KADASTR_COVER,
+  KADASTR_FAQ,
   KADASTR_KEYWORDS,
   KADASTR_META_DESCRIPTION,
   KADASTR_SUBTITLE,
@@ -81,10 +84,21 @@ export default function KadastrLandingPage() {
         <LandingAudience blocks={KADASTR_AUDIENCE} />
         <LandingSearchBlock />
         <LandingExpertsMap />
+        <LandingServiceFaq
+          items={KADASTR_FAQ}
+          subtitle="Кто выполняет кадастровые работы, сколько они занимают и что делать с ошибками в ЕГРН."
+        />
         <KadastrSeoText />
         <LandingOtherDirections currentSlug="kadastrovye-raboty" />
       </main>
       <LandingFooter variant="light" />
+      <LandingServiceSchema
+        name={KADASTR_TITLE}
+        description={KADASTR_META_DESCRIPTION}
+        path="/kadastrovye-raboty"
+        serviceType="Кадастровые работы"
+        faq={KADASTR_FAQ}
+      />
     </div>
   );
 }
