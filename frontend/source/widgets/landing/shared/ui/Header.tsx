@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Button from "@/source/shared/ui/Button";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import BurgerMenu from "./BurgerMenu";
@@ -29,13 +30,17 @@ const Header = () => {
             ))}
           </nav>
           <div className={s.actions}>
-            <Link href="/login" className={s.login}> Войти
-            </Link>
-            <Link href="/register" className={s.signUp}>  Зарегистрироваться
-            </Link>
+            <Button href="/login" variant="outline" className={s.login}>
+              Войти
+            </Button>
+            <Button href="/register" variant="primary" className={s.signUp}>
+              Зарегистрироваться
+            </Button>
           </div>
           <div className={s.mobileActions}>
-            <Link href="/login" className={s.mobileLogin}>Войти</Link>
+            <Button href="/login" variant="outline" size="sm" className={s.mobileLogin}>
+              Войти
+            </Button>
             <BurgerMenu showGuestCapabilities />
           </div>
         </div>

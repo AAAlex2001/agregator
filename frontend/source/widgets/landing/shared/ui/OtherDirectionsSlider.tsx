@@ -49,15 +49,21 @@ export function OtherDirectionsSlider({
                   <div className={s.body}>
                     <h3 className={s.cardTitle}>{item.title}</h3>
                     <p className={s.cardDesc}>{item.text}</p>
-                    <Button
-                      href={`/${item.slug}`}
-                      variant="primary"
-                      fullWidth
-                      showArrow
-                      className={s.cardBtn}
-                    >
-                      Начать работать
-                    </Button>
+                    {item.href ? (
+                      <Button
+                        href={item.href}
+                        variant="primary"
+                        fullWidth
+                        showArrow
+                        className={s.cardBtn}
+                      >
+                        Начать работать
+                      </Button>
+                    ) : (
+                      <Button variant="primary" fullWidth className={s.cardBtn}>
+                        Скоро
+                      </Button>
+                    )}
                   </div>
                 </div>
               </SwiperSlide>

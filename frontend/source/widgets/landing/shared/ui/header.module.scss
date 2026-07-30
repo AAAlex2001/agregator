@@ -124,84 +124,25 @@
 }
 
 .mobileLogin {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   width: 78px;
   height: 32px;
-  border-radius: 10px;
   padding: 8px 16px;
-  border: 2px solid #FFB800;
-  background: transparent;
-  transition: background-color 0.5s ease, border-color 0.3s ease;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 14px;
-  line-height: 16px;
-  font-weight: 500;
-  color: #1A1A1A;
 
   @media (min-width: 768px) {
-    max-width: 120px;
     width: auto;
     height: 44px;
     padding: 14px 22.5px;
-    font-size: 16px;
-  }
-
-  &:hover,
-  &:focus-visible {
-    background-color: #FFDDA9;
-    border-color: transparent;
   }
 }
 
 .login {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  max-width: 120px;
   height: 44px;
-  border-radius: 10px;
   padding: 14px 22.5px;
-  border: 2px solid #FFB800;
-  background: transparent;
-  transition: background-color 0.5s ease, border-color 0.3s ease;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 16px;
-  line-height: 16px;
-  font-weight: 500;
-  color: #1A1A1A;
-
-  &:hover,
-  &:focus-visible {
-    background-color: #FFDDA9;
-    border-color: transparent;
-  }
 }
 
 .signUp {
-  display: flex;
   width: 216px;
   height: 44px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
   padding: 14px 22.5px;
-  background: linear-gradient(90deg, #FFB800 0%, #FF8A00 100%);
-  transition: background 0.4s ease;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 16px;
-  line-height: 16px;
-  font-weight: 500;
   color: #1A1A1A;
-
-  &:hover,
-  &:focus-visible {
-    background: linear-gradient(90deg, #FF8A00 0%, #FFB800 100%);
-  }
 }

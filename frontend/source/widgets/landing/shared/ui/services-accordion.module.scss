@@ -41,7 +41,7 @@
 .head {
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 16px 18px;
   border: none;
@@ -53,6 +53,7 @@
 .num {
   flex-shrink: 0;
   font-size: 14px;
+  line-height: 22px;
   font-weight: 700;
   color: #9aa2ad;
   transition: color 0.2s ease;
@@ -75,6 +76,7 @@
   flex-shrink: 0;
   width: 16px;
   height: 16px;
+  margin-top: 3px;
   color: #9aa2ad;
   transition: transform 0.2s ease, color 0.2s ease;
 }
@@ -130,6 +132,9 @@
 }
 
 .slideBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
   padding: 14px 16px 18px 16px;
 }
 
@@ -148,8 +153,9 @@
   color: #4a5460;
 }
 
-.mobileActions {
-  margin-top: 16px;
+.slideActions {
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -175,10 +181,6 @@
   }
 
   .slider {
-    display: none;
-  }
-
-  .mobileActions {
     display: none;
   }
 }

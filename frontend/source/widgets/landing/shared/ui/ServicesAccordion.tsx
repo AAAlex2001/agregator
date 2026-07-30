@@ -11,14 +11,15 @@ export interface ServicesAccordionItem {
   title: string;
   text: string;
   image: string;
+  href?: string;
 }
 
 type ServicesAccordionProps = {
   items: ServicesAccordionItem[];
-  actions?: ReactNode;
+  renderActions?: (item: ServicesAccordionItem) => ReactNode;
 };
 
-export function ServicesAccordion({ items, actions }: ServicesAccordionProps) {
+export function ServicesAccordion({ items, renderActions }: ServicesAccordionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = items[activeIndex];
 
@@ -61,7 +62,7 @@ export function ServicesAccordion({ items, actions }: ServicesAccordionProps) {
               className={s.visualImg}
             />
           </div>
-          {actions}
+          {renderActions?.(active)}
         </div>
       </div>
 
@@ -74,12 +75,11 @@ export function ServicesAccordion({ items, actions }: ServicesAccordionProps) {
             <div className={s.slideBody}>
               <h3 className={s.slideTitle}>{item.title}</h3>
               <p className={s.slideDesc}>{item.text}</p>
+              {renderActions && <div className={s.slideActions}>{renderActions(item)}</div>}
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {actions && <div className={s.mobileActions}>{actions}</div>}
     </div>
   );
 }
