@@ -2,6 +2,7 @@
 
 import { useSession } from "@/source/features/session";
 import Button from "@/source/shared/ui/Button";
+import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import { TabNotificationIcon } from "@/source/shared/ui/icons";
 import s from "./notifications-cta.module.scss";
 
@@ -12,9 +13,7 @@ const AUTHED_SUBTITLE =
 
 const NotificationsCta = () => {
   const { user } = useSession();
-  const href = user ? "/settings" : "/register";
   const subtitle = user ? AUTHED_SUBTITLE : GUEST_SUBTITLE;
-  const ctaLabel = user ? "Перейти в профиль" : "Зарегистрироваться";
 
   return (
     <section className={s.section} id="notifications-cta">
@@ -30,9 +29,15 @@ const NotificationsCta = () => {
             <h2 className={s.title}>Настройка уведомлений о новых заказах</h2>
             <p className={s.subtitle}>{subtitle}</p>
           </div>
-          <Button href={href} variant="primary" showArrow className={s.ctaButton}>
-            {ctaLabel}
-          </Button>
+          {user ? (
+            <Button href="/settings" variant="primary" showArrow className={s.ctaButton}>
+              Перейти в профиль
+            </Button>
+          ) : (
+            <AuthTrigger tab="register" variant="primary" showArrow className={s.ctaButton}>
+              Зарегистрироваться
+            </AuthTrigger>
+          )}
         </div>
       </div>
     </section>

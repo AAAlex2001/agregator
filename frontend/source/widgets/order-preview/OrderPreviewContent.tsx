@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Loader } from "@/source/shared/ui";
+import { Loader } from "@/source/shared/ui";
+import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import { LogoIcon } from "@/source/shared/ui/icons";
 import { documentPaths, fetchPublicOrder, type PublicOrderPreview } from "@/source/entities/order";
 import { fetchProfile } from "@/source/entities/user";
@@ -164,12 +165,12 @@ export function OrderPreviewContent() {
               <div className={styles.divider} />
               <p className={styles.ctaText}>Войдите или зарегистрируйтесь как исполнитель, чтобы откликнуться на заказ</p>
               <div className={styles.actions}>
-                <Link href="/login" className={styles.actionLink}>
-                  <Button variant="chat" size="lg" fullWidth>Войти</Button>
-                </Link>
-                <Link href="/register" className={styles.actionLink}>
-                  <Button variant="outlineOrange" size="lg" fullWidth>Зарегистрироваться</Button>
-                </Link>
+                <div className={styles.actionLink}>
+                  <AuthTrigger tab="login" variant="chat" size="lg" fullWidth>Войти</AuthTrigger>
+                </div>
+                <div className={styles.actionLink}>
+                  <AuthTrigger tab="register" variant="outlineOrange" size="lg" fullWidth>Зарегистрироваться</AuthTrigger>
+                </div>
               </div>
             </>
           )}

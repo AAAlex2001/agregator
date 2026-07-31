@@ -22,7 +22,6 @@
   }
 }
 
-// Review variant
 .review {
   transform: scale(1);
   opacity: 1;
@@ -88,7 +87,6 @@
   font-weight: 500;
 }
 
-// Industry variant
 .industry {
   align-items: flex-start;
   gap: 8px;
@@ -159,7 +157,6 @@
   }
 }
 
-// Advantage variant
 .advantage {
   align-items: flex-start;
   gap: 8px;
@@ -226,7 +223,6 @@
   }
 }
 
-// Order variant
 .order {
   transform: scale(1);
   opacity: 1;
@@ -293,7 +289,6 @@
   }
 }
 
-// Shared styles
 .image {
   position: absolute;
   top: 0;

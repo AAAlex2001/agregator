@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   confirmContactPayment,
   createContactDeal,
@@ -22,6 +21,7 @@ import {
 } from "@/source/entities/expert-contact";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
+import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import {
   expertContactsReducer,
   initialExpertContactsState,
@@ -32,7 +32,7 @@ function errorMessage(reason: unknown, fallback: string): string {
 }
 
 export function useExpertContacts(targetExpertId?: string) {
-  const router = useRouter();
+  const { openAuth } = useAuthModal();
   const { role, user, isLoading: sessionLoading } = useSession();
   const { showError, showSuccess } = useNotifications();
   const [state, dispatch] = useReducer(
@@ -125,7 +125,7 @@ export function useExpertContacts(targetExpertId?: string) {
 
   const openExpert = async (expert: ExpertContactCardData) => {
     if (!userId) {
-      router.push("/login");
+      openAuth("login");
       return;
     }
     await runDealAction(

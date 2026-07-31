@@ -42,7 +42,7 @@ export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>) {
   }, [state.filtersOpen]);
 
   const submit = () => {
-    if (state.query.trim()) dispatch({ type: "suggestionsOpened" });
+    router.push("/orders");
   };
 
   const pickSuggestion = (id: string | number) => {

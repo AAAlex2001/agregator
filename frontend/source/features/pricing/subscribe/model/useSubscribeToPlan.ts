@@ -24,7 +24,7 @@ export function useSubscribeToPlan({ returnPath = "/settings?section=subscriptio
     } catch (e) {
       const message = e instanceof Error ? e.message : "Не удалось оформить подписку";
       if (message.toLowerCase().includes("unauthor") || message.includes("401")) {
-        router.push("/login");
+        router.push("/");
         return;
       }
       showError(message);

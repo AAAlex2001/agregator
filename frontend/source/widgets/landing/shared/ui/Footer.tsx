@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import LogoIcon from "@/source/shared/ui/icons/LogoIcon";
+import { AuthLinkButton } from "@/source/shared/ui/AuthTrigger";
 import s from "./footer.module.scss";
 
 type FooterVariant = "dark" | "light";
@@ -31,9 +32,9 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
               <Image src="/copper.webp" alt="" aria-hidden="true" fill sizes="390px" style={{ objectFit: "contain" }} />
             </div>
           <div className={s.primaryLogo}>
-        <span className={s.logo}>
+        <Link href="/" className={s.logo} aria-label="На главную">
           <LogoIcon title="Ресурс-Плюс" />
-        </span>
+        </Link>
 
           <p>Площадка для аттестованных исполнителей промышленной безопасности</p>
           </div>
@@ -48,15 +49,15 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                 </div>
                 <div>
                   <h2>Заказчикам</h2>
-                  <Link href="/register">Разместить заказ на экспертизу промышленной безопасности</Link>
+                  <AuthLinkButton tab="register">Разместить заказ на экспертизу промышленной безопасности</AuthLinkButton>
                   <Link href="/orders">Тендеры на экспертизу ОПО</Link>
-                  <Link href="/register">Найти аттестованного исполнителя Ростехнадзора</Link>
+                  <AuthLinkButton tab="register">Найти аттестованного исполнителя Ростехнадзора</AuthLinkButton>
                 </div>
                 <div>
                   <h2>Специалистам</h2>
                   <Link href="/zepb-registry">Реестр заключений ЭПБ</Link>
-                  <Link href="/register">Создать профиль исполнителя</Link>
-                  <Link href="/register">Портфолио и отзывы</Link>
+                  <AuthLinkButton tab="register">Создать профиль исполнителя</AuthLinkButton>
+                  <AuthLinkButton tab="register">Портфолио и отзывы</AuthLinkButton>
                 </div>
                 <div>
                   <h2>Документы</h2>

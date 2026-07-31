@@ -56,7 +56,6 @@
   }
 }
 
-/* Чётная секция — картинка слева, текст справа. */
 .rowReversed .text {
   @media (min-width: 1024px) {
     order: 2;

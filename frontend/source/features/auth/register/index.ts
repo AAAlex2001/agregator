@@ -1,5 +1,7 @@
 export { useRegister } from "./model/useRegister";
-export { RoleSelectStep, CredentialsStep, EmailConfirmStep } from "./ui";
+export { CredentialsStep, EmailConfirmStep } from "./ui";
+export { RoleSwiper } from "./ui/RoleSwiper";
+export { REGISTER_ROLES } from "./ui/roles";
 export {
   ROLE_ID_CUSTOMER,
   ROLE_ID_EXPERT,

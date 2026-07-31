@@ -1,4 +1,4 @@
-import Button from "@/source/shared/ui/Button";
+import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "./RtnQuestionsWidget.module.scss";
 
@@ -13,8 +13,8 @@ export function RtnGuestPrompt() {
         />
       </div>
       <div className={s.guestActions}>
-        <Button href="/register" variant="primary">Зарегистрироваться</Button>
-        <Button href="/login" variant="outlineOrange">Войти</Button>
+        <AuthTrigger tab="register" variant="primary">Зарегистрироваться</AuthTrigger>
+        <AuthTrigger tab="login" variant="outlineOrange">Войти</AuthTrigger>
       </div>
     </div>
   );

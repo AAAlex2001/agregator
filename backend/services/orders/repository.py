@@ -10,6 +10,23 @@ from models.response import OrderResponse as OrderResponseModel
 from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
+SORT_DIR_ASC = "asc"
+SORT_DIR_DESC = "desc"
+
+SORT_COLUMNS = {
+    "created_at": Order.created_at,
+    "sum_amount": Order.sum_amount,
+    "responses_deadline": Order.responses_deadline,
+}
+
+
+def apply_order_sort(query, sort_by: str | None, sort_dir: str | None):
+    "Сортировка списка заказов; по умолчанию — новые сверху. Заказы без значения — в конце."
+    column = SORT_COLUMNS.get(sort_by or "", Order.created_at)
+    is_desc = (sort_dir or SORT_DIR_DESC) != SORT_DIR_ASC
+    ordering = column.desc().nullslast() if is_desc else column.asc().nullslast()
+    return query.order_by(ordering, Order.created_at.desc())
+
 
 class OrderRepository:
     "Все обращения к БД по сущности Order. Никакой бизнес-логики — только данные."
@@ -73,6 +90,8 @@ class OrderRepository:
         skip: int,
         limit: int,
         status_filter: OrderStatus | None,
+        sort_by: str | None = None,
+        sort_dir: str | None = None,
     ) -> tuple[list[Order], bool]:
         "ACTIVE заказы без назначенного эксперта, на которые данный эксперт ещё не откликался."
         responded = (
@@ -91,10 +110,10 @@ class OrderRepository:
                 Order.assigned_expert_id.is_(None),
                 not_(responded),
             )
-            .order_by(Order.created_at.desc())
         )
         if status_filter is not None:
             list_query = list_query.where(Order.status == status_filter)
+        list_query = apply_order_sort(list_query, sort_by, sort_dir)
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def list_for_customer(
@@ -103,6 +122,8 @@ class OrderRepository:
         skip: int,
         limit: int,
         status_filter: OrderStatus | None,
+        sort_by: str | None = None,
+        sort_dir: str | None = None,
     ) -> tuple[list[Order], bool]:
         "Заказы, принадлежащие customer'у (кроме архивных)."
         list_query = (
@@ -112,10 +133,10 @@ class OrderRepository:
                 Order.customer_id == customer_id,
                 Order.status != OrderStatus.ARCHIVED,
             )
-            .order_by(Order.created_at.desc())
         )
         if status_filter is not None:
             list_query = list_query.where(Order.status == status_filter)
+        list_query = apply_order_sort(list_query, sort_by, sort_dir)
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def list_public_all(
@@ -123,15 +144,17 @@ class OrderRepository:
         skip: int,
         limit: int,
         status_filter: OrderStatus | None,
+        sort_by: str | None = None,
+        sort_dir: str | None = None,
     ) -> tuple[list[Order], bool]:
         "Публичный список всех заказов платформы (для неавторизованных гостей)."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
-            .order_by(Order.created_at.desc())
         )
         if status_filter is not None:
             list_query = list_query.where(Order.status == status_filter)
+        list_query = apply_order_sort(list_query, sort_by, sort_dir)
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
     async def search_public(

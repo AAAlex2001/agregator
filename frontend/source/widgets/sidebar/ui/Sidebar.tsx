@@ -147,7 +147,7 @@ export function Sidebar() {
     } catch {
       /* ignore */
     }
-    router.push("/login");
+    router.push("/");
   };
 
   const HIDDEN_ON_MOBILE = new Set([

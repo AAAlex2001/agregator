@@ -123,13 +123,15 @@ async def get_orders(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     status: OrderStatus | None = None,
+    sort_by: str | None = Query(None),
+    sort_dir: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
     user_id: int | None = Depends(get_current_user_optional),
 ) -> OrderListResponse:
     "Список заказов. Публичный: для гостя — все ACTIVE без assignment; для авторизованного — фильтрация по роли."
     repo = build_repo(db)
     use_case = ListOrdersUseCase(repo)
-    orders, has_more = await use_case.execute(skip, limit, status, user_id)
+    orders, has_more = await use_case.execute(skip, limit, status, user_id, sort_by, sort_dir)
     items = [OrderResponse.from_order(o) for o in orders]
     await apply_question_badges(repo, orders, items, user_id)
     return OrderListResponse(items=items, has_more=has_more)

@@ -85,7 +85,7 @@ export function useProfileShell({ profile, onProfileUpdate }: Options) {
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("token");
     onProfileUpdate(null);
-    router.push("/login");
+    router.push("/");
   };
 
   return {

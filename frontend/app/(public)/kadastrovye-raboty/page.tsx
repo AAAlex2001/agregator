@@ -1,29 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { LandingHeader, LandingFooter, LandingServiceSchema } from "@/source/widgets/landing";
 import {
-  LandingHeader,
-  LandingServiceHero,
-  LandingSearchBlock,
-  LandingOtherDirections,
-  LandingExpertsMap,
-  LandingAudience,
-  LandingServiceFaq,
-  LandingServiceSchema,
-  LandingFooter,
-} from "@/source/widgets/landing";
-import {
-  KadastrSeoText,
-  KadastrServices,
-  KADASTR_AUDIENCE,
-  KADASTR_BULLETS,
+  KadastrLandingContent,
   KADASTR_COVER,
   KADASTR_FAQ,
   KADASTR_KEYWORDS,
   KADASTR_META_DESCRIPTION,
-  KADASTR_SUBTITLE,
   KADASTR_TITLE,
 } from "@/source/widgets/landing/kadastrovye-raboty";
-import s from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: KADASTR_TITLE,
@@ -57,41 +41,11 @@ export const metadata: Metadata = {
 
 export default function KadastrLandingPage() {
   return (
-    <div className={s.page}>
-      <LandingHeader />
-      <main>
-        <LandingServiceHero
-          title={KADASTR_TITLE}
-          subtitle={KADASTR_SUBTITLE}
-          bullets={KADASTR_BULLETS}
-        >
-          <div className={s.cover}>
-            <div className={s.coverImage}>
-              <Image
-                src={KADASTR_COVER}
-                alt="Кадастровые работы"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
-              />
-            </div>
-            <p className={s.coverClaim}>Кадастровые инженеры из СРО — по всей России</p>
-          </div>
-        </LandingServiceHero>
-
-        <KadastrServices />
-        <LandingAudience blocks={KADASTR_AUDIENCE} />
-        <LandingSearchBlock />
-        <LandingExpertsMap />
-        <LandingServiceFaq
-          items={KADASTR_FAQ}
-          subtitle="Кто выполняет кадастровые работы, сколько они занимают и что делать с ошибками в ЕГРН."
-        />
-        <KadastrSeoText />
-        <LandingOtherDirections currentSlug="kadastrovye-raboty" />
-      </main>
-      <LandingFooter variant="light" />
+    <>
+      <KadastrLandingContent
+        header={<LandingHeader />}
+        footer={<LandingFooter variant="light" />}
+      />
       <LandingServiceSchema
         name={KADASTR_TITLE}
         description={KADASTR_META_DESCRIPTION}
@@ -99,6 +53,6 @@ export default function KadastrLandingPage() {
         serviceType="Кадастровые работы"
         faq={KADASTR_FAQ}
       />
-    </div>
+    </>
   );
 }

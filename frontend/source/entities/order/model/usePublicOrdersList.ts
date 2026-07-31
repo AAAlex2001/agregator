@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { fetchOrders } from "@/source/features/expert-orders";
+import type { SortDir } from "@/source/shared/ui/SortPills";
+import { fetchOrders } from "../api/expert-orders.api";
 import { mapApiToOrderCard } from "./mapper";
-import type { OrderCardData } from "./types";
+import type { OrderCardData, OrderSortBy } from "./types";
 
 interface Args {
   pageSize?: number;
@@ -16,6 +17,9 @@ interface Result {
   hasMore: boolean;
   isLoading: boolean;
   isLoadingMore: boolean;
+  sortBy: OrderSortBy | null;
+  sortDir: SortDir | null;
+  setSort: (sortBy: OrderSortBy | null, sortDir: SortDir | null) => void;
   loadMore: () => Promise<void>;
 }
 
@@ -24,38 +28,44 @@ export function usePublicOrdersList({ pageSize = 50, onError, initial }: Args = 
   const [hasMore, setHasMore] = useState<boolean>(initial?.hasMore ?? false);
   const [isLoading, setIsLoading] = useState(!initial);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [sortBy, setSortBy] = useState<OrderSortBy | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir | null>(null);
   const inflightRef = useRef(false);
+
+  const load = async (sb: OrderSortBy | null, sd: SortDir | null) => {
+    setIsLoading(true);
+    try {
+      const data = await fetchOrders(0, pageSize, { sortBy: sb ?? undefined, sortDir: sd ?? undefined });
+      setItems(data.items.map(mapApiToOrderCard));
+      setHasMore(data.has_more);
+    } catch (err) {
+      onError?.(err instanceof Error ? err.message : "Не удалось загрузить заказы");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (initial) return;
-    let cancelled = false;
-    setIsLoading(true);
-    fetchOrders(0, pageSize)
-      .then((data) => {
-        if (cancelled) return;
-        setItems(data.items.map(mapApiToOrderCard));
-        setHasMore(data.has_more);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        onError?.(err instanceof Error ? err.message : "Не удалось загрузить заказы");
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    void load(null, null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize]);
 
+  const setSort = (sb: OrderSortBy | null, sd: SortDir | null) => {
+    setSortBy(sb);
+    setSortDir(sd);
+    void load(sb, sd);
+  };
+
   const loadMore = async () => {
-    if (isLoading || isLoadingMore || inflightRef.current) return;
-    if (!hasMore) return;
+    if (isLoading || isLoadingMore || inflightRef.current || !hasMore) return;
     inflightRef.current = true;
     setIsLoadingMore(true);
     try {
-      const data = await fetchOrders(items.length, pageSize);
+      const data = await fetchOrders(items.length, pageSize, {
+        sortBy: sortBy ?? undefined,
+        sortDir: sortDir ?? undefined,
+      });
       setItems((prev) => [...prev, ...data.items.map(mapApiToOrderCard)]);
       setHasMore(data.has_more);
     } catch (err) {
@@ -66,5 +76,5 @@ export function usePublicOrdersList({ pageSize = 50, onError, initial }: Args = 
     }
   };
 
-  return { items, hasMore, isLoading, isLoadingMore, loadMore };
+  return { items, hasMore, isLoading, isLoadingMore, sortBy, sortDir, setSort, loadMore };
 }

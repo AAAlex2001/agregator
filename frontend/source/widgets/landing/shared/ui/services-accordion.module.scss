@@ -176,7 +176,7 @@
 @media (min-width: 1024px) {
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 32fr) minmax(0, 68fr);
     align-items: start;
     gap: 28px;
   }

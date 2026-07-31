@@ -20,7 +20,7 @@ export function RoleGuard({ allowed, children }: Props) {
 
   useEffect(() => {
     if (isLoading) return;
-    if (!user) return; // AuthGuard уже редиректнет на /login
+    if (!user) return; // AuthGuard уже редиректнет на главную
     if (!role || !allowed.includes(role)) {
       router.replace("/settings");
     }

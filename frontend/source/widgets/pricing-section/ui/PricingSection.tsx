@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Button from "@/source/shared/ui/Button";
@@ -49,7 +49,7 @@ interface Props {
   customerFootnote?: string;
   customerCta?: CtaConfig;
   licenseHolder: RoleTextBlock;
-  redirectOnSelect?: string;
+  openAuthOnSelect?: boolean;
 }
 
 export function PricingSection({
@@ -63,9 +63,9 @@ export function PricingSection({
   customerFootnote,
   customerCta,
   licenseHolder,
-  redirectOnSelect,
+  openAuthOnSelect,
 }: Props) {
-  const router = useRouter();
+  const { openAuth } = useAuthModal();
   const { select, pendingPlanId } = useSubscribeToPlan();
   const [role, setRole] = useState<Role>(defaultRole);
 
@@ -73,15 +73,15 @@ export function PricingSection({
     role === "expert" ? expert : role === "customer" ? customer : licenseHolder;
 
   const handleSelect = (plan: PricingPlan) => {
-    if (redirectOnSelect) {
-      router.push(redirectOnSelect);
+    if (openAuthOnSelect) {
+      openAuth("register");
       return;
     }
     select(plan);
   };
-  const isPending = (planId: number) => !redirectOnSelect && pendingPlanId === planId;
+  const isPending = (planId: number) => !openAuthOnSelect && pendingPlanId === planId;
   const isCardDisabled = (planId: number) =>
-    !redirectOnSelect && pendingPlanId !== null && pendingPlanId !== planId;
+    !openAuthOnSelect && pendingPlanId !== null && pendingPlanId !== planId;
 
   return (
     <section className={s.section} id="pricing">

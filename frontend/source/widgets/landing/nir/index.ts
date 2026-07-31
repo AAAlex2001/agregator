@@ -1,4 +1,5 @@
 export { NirSeoText } from "./ui/SeoText";
+export { NirLandingContent } from "./ui/NirLandingContent";
 export {
   NIR_TITLE,
   NIR_SUBTITLE,

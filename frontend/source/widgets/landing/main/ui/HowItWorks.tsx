@@ -2,7 +2,7 @@
 
 import s from "./how-it-works.module.scss";
 import { useState } from "react";
-import Button from "@/source/shared/ui/Button";
+import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
@@ -64,9 +64,9 @@ const HowItWorks = ({
               </div>
             ))}
           </div>
-          <Button href="/register" variant="secondary" className={s.ctaButton}>
+          <AuthTrigger tab="register" variant="secondary" className={s.ctaButton}>
             Зарегистрироваться
-          </Button>
+          </AuthTrigger>
         </div>
       </div>
     </section>

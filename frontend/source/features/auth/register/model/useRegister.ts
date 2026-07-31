@@ -37,7 +37,12 @@ const ROLE_BY_ID: Record<number, UserRole> = {
   [ROLE_ID_LICENSE_HOLDER]: "LICENSE_HOLDER",
 };
 
-export function useRegister() {
+interface UseRegisterOptions {
+  /** Если задан — вызывается после успешного подтверждения почты (напр. чтобы закрыть модалку). Редирект выполняется как обычно. */
+  onSuccess?: () => void;
+}
+
+export function useRegister(options?: UseRegisterOptions) {
   const router = useRouter();
   const { showError, showSuccess } = useNotifications();
   const { reload } = useSession();
@@ -115,6 +120,7 @@ export function useRegister() {
         await confirmRegistrationEmail(wizard.pendingEmail, values.code, role);
         await reload();
         showSuccess("Почта подтверждена");
+        options?.onSuccess?.();
         if (role === "CUSTOMER" || role === "EXPERT") {
           router.push("/landing");
         } else {

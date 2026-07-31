@@ -14,13 +14,16 @@ import s from "./other-directions-slider.module.scss";
 interface OtherDirectionsSliderProps {
   currentSlug?: string;
   title?: string;
+  basePath?: string;
 }
 
 export function OtherDirectionsSlider({
   currentSlug,
   title = "Смотрите также другие направления",
+  basePath = "",
 }: OtherDirectionsSliderProps) {
   const items = SERVICES_SHOWCASE.filter((item) => item.slug !== currentSlug);
+  const buildHref = (href: string) => (href === "/" ? basePath || "/" : `${basePath}${href}`);
 
   return (
     <section className={s.section}>
@@ -51,7 +54,7 @@ export function OtherDirectionsSlider({
                     <p className={s.cardDesc}>{item.text}</p>
                     {item.href ? (
                       <Button
-                        href={item.href}
+                        href={buildHref(item.href)}
                         variant="primary"
                         fullWidth
                         showArrow

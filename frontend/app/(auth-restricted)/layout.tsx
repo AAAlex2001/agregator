@@ -11,6 +11,8 @@ import {
 import { UnreadCountProvider } from "@/source/features/notifications";
 import { ChatListProvider } from "@/source/features/chat";
 import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
+import { AuthModalProvider } from "@/source/shared/lib/auth-modal";
+import { AuthModalHost } from "@/source/widgets/auth/auth-modal";
 import s from "./layout.module.scss";
 
 export const metadata: Metadata = {
@@ -30,20 +32,23 @@ export default async function AppLayout({
   return (
     <SessionProvider initialRole={initialRole}>
       <AuthGuard>
-        <UnreadCountProvider>
-          <ChatListProvider>
-            <SidebarMobileProvider>
-              <LicenseHoldersDrawerProvider>
-                <div className={s.root}>
-                  <AppShell>{children}</AppShell>
-                </div>
-                <CabinetMenuTabs />
-                <LicenseHoldersDrawer />
-                <NotificationsWelcomeModal />
-              </LicenseHoldersDrawerProvider>
-            </SidebarMobileProvider>
-          </ChatListProvider>
-        </UnreadCountProvider>
+        <AuthModalProvider>
+          <UnreadCountProvider>
+            <ChatListProvider>
+              <SidebarMobileProvider>
+                <LicenseHoldersDrawerProvider>
+                  <div className={s.root}>
+                    <AppShell>{children}</AppShell>
+                  </div>
+                  <CabinetMenuTabs />
+                  <LicenseHoldersDrawer />
+                  <NotificationsWelcomeModal />
+                  <AuthModalHost />
+                </LicenseHoldersDrawerProvider>
+              </SidebarMobileProvider>
+            </ChatListProvider>
+          </UnreadCountProvider>
+        </AuthModalProvider>
       </AuthGuard>
     </SessionProvider>
   );

@@ -1,7 +1,6 @@
 import s from "./cta-footer.module.scss";
 import Image from "next/image";
-import Link from "next/link";
-import Button from "@/source/shared/ui/Button";
+import { AuthTrigger, AuthLinkButton } from "@/source/shared/ui/AuthTrigger";
 import { BulletIcon } from "@/source/shared/ui/icons";
 
 const CtaFooter = () => {
@@ -47,7 +46,7 @@ const CtaFooter = () => {
               <Image src="/gold.webp" alt="" aria-hidden="true" fill sizes="486px" style={{ objectFit: "contain" }} />
             </div>
           <div className={s.ctaLeft}>
-            <Link href="/register" className={s.ctaChip}>Действуйте прямо сейчас</Link>
+            <AuthLinkButton tab="register" className={s.ctaChip}>Действуйте прямо сейчас</AuthLinkButton>
             <h2>Найдите исполнителя по промышленной безопасности или заявите о своей специализации</h2>
           </div>
           <div className={s.ctaRight}>
@@ -79,12 +78,12 @@ const CtaFooter = () => {
               </li>
             </ul>
             <div className={s.ctaActions}>
-              <Button href="/register" variant="primary" size="sm" fullWidth>
+              <AuthTrigger tab="register" variant="primary" size="sm" fullWidth>
                 Найти исполнителя
-              </Button>
-              <Button href="/register" variant="secondary" size="sm" fullWidth>
+              </AuthTrigger>
+              <AuthTrigger tab="register" variant="secondary" size="sm" fullWidth>
                 Стать исполнителем на платформе
-              </Button>
+              </AuthTrigger>
             </div>
           </div>
         </div>

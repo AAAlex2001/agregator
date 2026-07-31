@@ -1,0 +1,58 @@
+.dialog {
+  width: 100%;
+}
+
+.tabs {
+  width: 100%;
+  padding-top: 4px;
+}
+
+.scrollArea {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+  padding: 4px 2px 2px;
+}
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+
+  .stepNav {
+    margin: 0;
+  }
+}
+
+.centerLink {
+  align-self: center;
+}
+
+.startLink {
+  align-self: flex-start;
+}
+
+.flowTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.stepIndicator {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9aa2ad;
+}

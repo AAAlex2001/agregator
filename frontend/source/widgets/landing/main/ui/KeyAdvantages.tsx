@@ -3,7 +3,7 @@
 import s from "./key-advantages.module.scss";
 import { useState } from "react";
 import Image from "next/image";
-import Button from "@/source/shared/ui/Button";
+import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
@@ -92,9 +92,9 @@ const KeyAdvantages = ({
               </div>
             ))}
           </div>
-          <Button href="/register" variant="secondary" className={s.ctaButton}>
+          <AuthTrigger tab="register" variant="secondary" className={s.ctaButton}>
             Смотреть все преимущества
-          </Button>
+          </AuthTrigger>
         </div>
       </div>
       <div className={s.backgroundImage}>

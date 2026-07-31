@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AuthLinkButton } from "@/source/shared/ui/AuthTrigger";
 import type { LaborListingData } from "@/source/entities/labor";
 import {
   laborEmploymentText,
@@ -51,9 +51,9 @@ export function PublicLaborListingView({ item }: PublicLaborListingViewProps) {
           <p className={s.ctaHint}>
             Чтобы связаться и обсудить сотрудничество, войдите в личный кабинет Ресурс-Плюс.
           </p>
-          <Link href="/login" className={s.ctaButton}>
+          <AuthLinkButton tab="login" className={s.ctaButton}>
             Войти и откликнуться
-          </Link>
+          </AuthLinkButton>
         </div>
       </article>
     </section>

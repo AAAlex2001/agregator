@@ -21,7 +21,12 @@ interface PendingConfirm {
   role: UserRole | null;
 }
 
-export function useLogin() {
+interface UseLoginOptions {
+  /** Если задан — вызывается после успешного входа (напр. чтобы закрыть модалку). Редирект в кабинет/заказ выполняется как обычно. */
+  onSuccess?: () => void;
+}
+
+export function useLogin(options?: UseLoginOptions) {
   const router = useRouter();
   const { reload } = useSession();
   const { showError } = useNotifications();
@@ -44,6 +49,7 @@ export function useLogin() {
 
   const finishLogin = async (user: LoginResponse) => {
     await reload();
+    options?.onSuccess?.();
     const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
     if (user.role === "EXPERT" && pendingUuid) {
       sessionStorage.removeItem("pendingOrderUuid");
@@ -107,6 +113,7 @@ export function useLogin() {
   const handleConfirmed = async () => {
     setPendingConfirm(null);
     await reload();
+    options?.onSuccess?.();
     router.push("/settings");
   };
 

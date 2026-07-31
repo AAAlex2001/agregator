@@ -13,6 +13,17 @@ function getFocusable(root: HTMLElement): HTMLElement[] {
   );
 }
 
+/**
+ * Только самая верхняя (последняя открытая) модалка реагирует на Escape / Tab-trap —
+ * иначе при вложенных модалках их обработчики дерутся между собой.
+ * Порталы добавляются в body в порядке монтирования, поэтому последний диалог — верхний.
+ */
+function isTopmostDialog(dialog: HTMLElement | null): boolean {
+  if (!dialog) return false;
+  const dialogs = document.querySelectorAll<HTMLElement>('[role="dialog"][aria-modal="true"]');
+  return dialogs.length === 0 || dialogs[dialogs.length - 1] === dialog;
+}
+
 interface ModalProps {
   open: boolean;
   onClose: () => void;
@@ -59,7 +70,7 @@ export function Modal({
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !isBusy) onClose();
+      if (e.key === "Escape" && !isBusy && isTopmostDialog(dialogRef.current)) onClose();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -76,6 +87,7 @@ export function Modal({
     }
     const trap = (e: KeyboardEvent) => {
       if (e.key !== "Tab" || !dialogRef.current) return;
+      if (!isTopmostDialog(dialogRef.current)) return;
       const focusables = getFocusable(dialogRef.current);
       if (focusables.length === 0) {
         e.preventDefault();

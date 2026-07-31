@@ -92,12 +92,15 @@
 .ctaButton {
   align-self: flex-start;
   padding: 12px 22px;
+  border: none;
   border-radius: 12px;
   background: #ff8a00;
   color: #ffffff;
+  font-family: "Montserrat";
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
   transition: background 0.15s ease;
 
   &:hover {

@@ -9,7 +9,8 @@ interface AuthGuardProps {
 }
 
 /**
- * Если после загрузки сессии нет user — редиректит на /login.
+ * Если после загрузки сессии нет user — редиректит на главную,
+ * откуда можно войти через модальное окно авторизации.
  * Используется внутри auth-restricted layout.
  */
 export function AuthGuard({ children }: AuthGuardProps) {
@@ -18,7 +19,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace("/login");
+      router.replace("/");
     }
   }, [isLoading, user, router]);
 

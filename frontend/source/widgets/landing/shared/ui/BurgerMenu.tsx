@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import { getGuestCabinetNav } from "@/source/widgets/expert-help";
+import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import s from "./burgerMenu.module.scss";
 
 const NAV_PAGES = [
@@ -17,6 +18,7 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
   const [isOpen, setIsOpen] = useState(false);
   const [showCapabilities, setShowCapabilities] = useState(false);
   const capabilities = getGuestCabinetNav();
+  const { openAuth } = useAuthModal();
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
   const closeMenu = () => {
@@ -90,7 +92,26 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
             </Link>
           ))}
           <div className={s.menuActions}>
-            <Link href="/register" className={s.menuSignUp} onClick={closeMenu}>Зарегистрироваться</Link>
+            <button
+              type="button"
+              className={s.menuSignUp}
+              onClick={() => {
+                closeMenu();
+                openAuth("register");
+              }}
+            >
+              Зарегистрироваться
+            </button>
+            <button
+              type="button"
+              className={s.menuLogin}
+              onClick={() => {
+                closeMenu();
+                openAuth("login");
+              }}
+            >
+              Войти
+            </button>
           </div>
         </nav>
       )}

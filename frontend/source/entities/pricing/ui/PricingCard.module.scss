@@ -8,7 +8,6 @@
   overflow: hidden;
 }
 
-/* Disabled — заблокирована старшим тарифом, ховер не работает, всё серое */
 .cardDisabled {
   pointer-events: none;
 }
@@ -74,15 +73,12 @@
   width: 100%;
 }
 
-/* Между блоком пилюль+цена и описанием — 20px (Frame 1321317753 в Figma) */
 .infoBlock {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Подсветка highlighted-карточки контролируется CSS-переменной,
-   которую виджет сбрасывает в 0, когда другая карточка под ховером. */
 .pillsHighlighted::before {
   opacity: var(--pricing-highlight-opacity, 1);
 }
@@ -125,9 +121,7 @@
   transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* На градиентной (highlighted) карточке бейдж без подложки, текст чёрный */
 .cardHighlighted .pillBadge,
-/* При ховере любой карточки — то же самое */
 .card:hover .pillBadge {
   background: transparent;
   color: #000000;

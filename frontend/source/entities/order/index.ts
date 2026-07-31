@@ -16,7 +16,7 @@ export { ORDER_WORK_OPTIONS, getOrderWorkLabel } from "./model/workTypes";
 export type { OrderWorkType } from "./model/workTypes";
 export type {
   Badge, BadgeVariant, OrderApiBadge,
-  OrderApiItem, OrdersApiList, OrderCardData,
+  OrderApiItem, OrdersApiList, OrderCardData, OrderSortBy,
   OrderDocuments, DocumentCategory, SingleDocumentCategory,
 } from "./model/types";
 export {

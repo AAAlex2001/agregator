@@ -1,6 +1,8 @@
 export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 import type { OrderWorkType } from "./workTypes";
 
+export type OrderSortBy = "created_at" | "sum_amount" | "responses_deadline";
+
 export interface Badge {
   text: string;
   variant: BadgeVariant;

@@ -94,12 +94,3 @@
   font-size: 12px;
   line-height: 18px;
 }
-
-@media (min-width: 768px) {
-  .intro {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 24px;
-  }
-}

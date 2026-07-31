@@ -1,10 +1,18 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
-import type { OrdersApiList } from "@/source/entities/order";
+import type { SortDir } from "@/source/shared/ui/SortPills";
+import type { OrdersApiList, OrderSortBy } from "@/source/entities/order";
 
-export async function fetchOrders(skip = 0, limit = 50): Promise<OrdersApiList> {
-  const res = await fetchWithSession(`${API_URL}/orders/?skip=${skip}&limit=${limit}`);
+export async function fetchOrders(
+  skip = 0,
+  limit = 50,
+  sort?: { sortBy?: OrderSortBy; sortDir?: SortDir },
+): Promise<OrdersApiList> {
+  const params = new URLSearchParams({ skip: String(skip), limit: String(limit) });
+  if (sort?.sortBy) params.set("sort_by", sort.sortBy);
+  if (sort?.sortDir) params.set("sort_dir", sort.sortDir);
+  const res = await fetchWithSession(`${API_URL}/orders/?${params.toString()}`);
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить заказы");
   return res.json();
 }

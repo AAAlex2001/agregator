@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   DocumentsGallery,
@@ -8,28 +9,36 @@ import {
   countDocuments,
   usePublicOrdersList,
   type OrderCardData,
+  type OrderSortBy,
 } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
 import { Loader } from "@/source/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
+import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import { useSession } from "@/source/features/session";
 import s from "./PublicOrdersWidget.module.scss";
+
+const SORT_OPTIONS: SortPillSpec<OrderSortBy>[] = [
+  { key: "created_at", label: "Дата публикации", descLabel: "Сначала новые", ascLabel: "Сначала старые" },
+  { key: "sum_amount", label: "Начальная цена", descLabel: "Сначала дороже", ascLabel: "Сначала дешевле" },
+  { key: "responses_deadline", label: "Приём откликов", ascLabel: "Скоро закрытие", descLabel: "Позже закрытие" },
+];
 
 interface Props { initial?: { items: OrderCardData[]; hasMore: boolean } }
 
 export function PublicOrdersWidget({ initial }: Props = {}) {
   const router = useRouter();
+  const { openAuth } = useAuthModal();
   const { showError } = useNotifications();
   const { user, role, isLoading: isSessionLoading } = useSession();
 
-  const { items, hasMore, isLoading, isLoadingMore, loadMore } = usePublicOrdersList({
-    onError: showError,
-    initial,
-  });
+  const { items, hasMore, isLoading, isLoadingMore, sortBy, sortDir, setSort, loadMore } =
+    usePublicOrdersList({ onError: showError, initial });
 
   const sentinelRef = useInfiniteScroll({
     hasMore,
@@ -37,9 +46,13 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
     onLoadMore: () => void loadMore(),
   });
 
+  useEffect(() => {
+    sessionStorage.removeItem("pendingOrderUuid");
+  }, []);
+
   const onCardClick = (order: OrderCardData) => {
     if (isSessionLoading) return;
-    if (!user) return router.push("/register");
+    if (!user) return openAuth("register");
     if (role === "EXPERT") return router.push(`/expert/orders?orderId=${order.id}`);
     router.push("/customer/orders");
   };
@@ -52,6 +65,16 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
         <Subtitle
           text="Просматривайте задачи на платформе. Чтобы откликнуться, войдите или зарегистрируйтесь."
           className={s.pageSubtitle}
+        />
+      </div>
+
+      <div className={s.sortRow}>
+        <SortPills
+          options={SORT_OPTIONS}
+          sortBy={sortBy}
+          sortDir={sortDir}
+          isLoading={isLoading}
+          onChange={setSort}
         />
       </div>
 

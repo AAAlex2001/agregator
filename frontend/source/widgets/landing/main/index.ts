@@ -10,8 +10,11 @@ export { default as LandingCtaFooter } from "./ui/CtaFooter";
 export { default as LandingNotificationsCta } from "./ui/NotificationsCta";
 export { default as LandingArticlesPreview } from "./ui/ArticlesPreview";
 export { default as LandingSeoText } from "./ui/SeoText";
+export { LandingSections } from "./ui/LandingSections";
 
 export { loadLandingSnapshot } from "./model/landing.data";
+export { loadLandingPageData } from "./model/loadLandingPageData";
+export type { LandingPageData } from "./model/loadLandingPageData";
 
 export type {
   AdvantageIconKey,

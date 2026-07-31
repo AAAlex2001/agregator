@@ -1,30 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { LandingHeader, LandingFooter, LandingServiceSchema } from "@/source/widgets/landing";
 import {
-  LandingHeader,
-  LandingServiceHero,
-  LandingSearchBlock,
-  LandingOtherDirections,
-  LandingExpertsMap,
-  LandingAudience,
-  LandingServiceFaq,
-  LandingServiceSchema,
-  LandingFooter,
-} from "@/source/widgets/landing";
-import {
-  ForensicCatalog,
-  ForensicSeoText,
-  FORENSIC_AUDIENCE,
-  FORENSIC_BULLETS,
-  FORENSIC_CLAIM,
+  ForensicLandingContent,
   FORENSIC_COVER,
   FORENSIC_FAQ,
   FORENSIC_KEYWORDS,
   FORENSIC_META_DESCRIPTION,
-  FORENSIC_SUBTITLE,
   FORENSIC_TITLE,
 } from "@/source/widgets/landing/sudebnaya-ekspertiza";
-import s from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: FORENSIC_TITLE,
@@ -58,41 +41,11 @@ export const metadata: Metadata = {
 
 export default function ForensicExpertiseLandingPage() {
   return (
-    <div className={s.page}>
-      <LandingHeader />
-      <main>
-        <LandingServiceHero
-          title={FORENSIC_TITLE}
-          subtitle={FORENSIC_SUBTITLE}
-          bullets={FORENSIC_BULLETS}
-        >
-          <div className={s.cover}>
-            <div className={s.coverImage}>
-              <Image
-                src={FORENSIC_COVER}
-                alt="Судебная экспертиза"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
-              />
-            </div>
-            <p className={s.coverClaim}>{FORENSIC_CLAIM}</p>
-          </div>
-        </LandingServiceHero>
-
-        <ForensicCatalog />
-        <LandingAudience blocks={FORENSIC_AUDIENCE} />
-        <LandingSearchBlock />
-        <LandingExpertsMap />
-        <LandingServiceFaq
-          items={FORENSIC_FAQ}
-          subtitle="Кто вправе давать заключение для суда, кто оплачивает экспертизу и как оспорить её выводы."
-        />
-        <ForensicSeoText />
-        <LandingOtherDirections currentSlug="sudebnaya-ekspertiza" />
-      </main>
-      <LandingFooter variant="light" />
+    <>
+      <ForensicLandingContent
+        header={<LandingHeader />}
+        footer={<LandingFooter variant="light" />}
+      />
       <LandingServiceSchema
         name={FORENSIC_TITLE}
         description={FORENSIC_META_DESCRIPTION}
@@ -100,6 +53,6 @@ export default function ForensicExpertiseLandingPage() {
         serviceType="Судебная экспертиза"
         faq={FORENSIC_FAQ}
       />
-    </div>
+    </>
   );
 }

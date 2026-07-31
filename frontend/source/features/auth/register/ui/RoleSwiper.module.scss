@@ -1,0 +1,112 @@
+.wrap {
+  width: 100%;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.slide {
+  height: auto;
+  display: flex;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid #ffb800;
+  background: #ffffff;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.titleWrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card .title {
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  font-size: 14px;
+  line-height: 20px;
+  color: #4a4a4a;
+}
+
+.card .expandedTitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 22px;
+  color: #000000;
+}
+
+.bullet {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.selectButton {
+  margin-top: auto;
+}

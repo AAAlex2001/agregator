@@ -53,7 +53,6 @@
   order: 0;
 }
 
-/* Когда ховер на любой не-highlighted карточке — у highlighted убираем градиент */
 .grid:has(.gridItem:not(.gridItemHighlighted):hover) .gridItemHighlighted {
   --pricing-highlight-opacity: 0;
 }
@@ -89,8 +88,6 @@
   }
 }
 
-/* Когда контейнер достаточно широкий — три карточки в одну строку.
-   Если уже — наследуется раскладка 768 (highlighted сверху, две снизу). */
 @container (min-width: 1340px) {
   .gridItem,
   .gridItemHighlighted {

@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { LogoMarkIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
+import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import BurgerMenu from "./BurgerMenu";
 import s from "./header.module.scss";
 
@@ -13,6 +16,7 @@ const NAV_PAGES = [
 ] as const;
 
 const Header = () => {
+  const { openAuth } = useAuthModal();
   return (
     <>
       <header className={s.header}>
@@ -30,15 +34,20 @@ const Header = () => {
             ))}
           </nav>
           <div className={s.actions}>
-            <Button href="/login" variant="outline" className={s.login}>
+            <Button variant="outline" className={s.login} onClick={() => openAuth("login")}>
               Войти
             </Button>
-            <Button href="/register" variant="primary" className={s.signUp}>
+            <Button variant="primary" className={s.signUp} onClick={() => openAuth("register")}>
               Зарегистрироваться
             </Button>
           </div>
           <div className={s.mobileActions}>
-            <Button href="/login" variant="outline" size="sm" className={s.mobileLogin}>
+            <Button
+              variant="outline"
+              size="sm"
+              className={s.mobileLogin}
+              onClick={() => openAuth("login")}
+            >
               Войти
             </Button>
             <BurgerMenu showGuestCapabilities />

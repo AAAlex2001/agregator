@@ -1,26 +1,13 @@
 import type { Metadata } from "next";
+import { LandingHeader, LandingFooter, LandingServiceSchema } from "@/source/widgets/landing";
 import {
-  LandingHeader,
-  LandingServiceHero,
-  LandingSearchBlock,
-  LandingOtherDirections,
-  LandingExpertsMap,
-  LandingServiceFaq,
-  LandingServiceSchema,
-  LandingFooter,
-} from "@/source/widgets/landing";
-import {
-  NirSeoText,
-  NIR_BULLETS,
+  NirLandingContent,
   NIR_COVER,
   NIR_FAQ,
   NIR_KEYWORDS,
   NIR_META_DESCRIPTION,
-  NIR_SUBTITLE,
   NIR_TITLE,
 } from "@/source/widgets/landing/nir";
-import { ServiceRequestForm } from "@/source/features/service-request";
-import s from "./page.module.scss";
 
 export const metadata: Metadata = {
   title: NIR_TITLE,
@@ -54,22 +41,11 @@ export const metadata: Metadata = {
 
 export default function NirLandingPage() {
   return (
-    <div className={s.page}>
-      <LandingHeader />
-      <main>
-        <LandingServiceHero title={NIR_TITLE} subtitle={NIR_SUBTITLE} bullets={NIR_BULLETS}>
-          <ServiceRequestForm />
-        </LandingServiceHero>
-        <LandingSearchBlock />
-        <LandingExpertsMap />
-        <LandingServiceFaq
-          items={NIR_FAQ}
-          subtitle="Какая лаборатория вправе выполнять неразрушающий контроль, как проверить дефектоскописта и что входит в НИР."
-        />
-        <NirSeoText />
-        <LandingOtherDirections currentSlug="nir" />
-      </main>
-      <LandingFooter variant="light" />
+    <>
+      <NirLandingContent
+        header={<LandingHeader />}
+        footer={<LandingFooter variant="light" />}
+      />
       <LandingServiceSchema
         name={NIR_TITLE}
         description={NIR_META_DESCRIPTION}
@@ -77,6 +53,6 @@ export default function NirLandingPage() {
         serviceType="Научно-исследовательские работы и лабораторные исследования"
         faq={NIR_FAQ}
       />
-    </div>
+    </>
   );
 }

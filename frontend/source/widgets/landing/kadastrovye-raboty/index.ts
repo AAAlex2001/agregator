@@ -1,5 +1,6 @@
 export { KadastrServices } from "./ui/Services";
 export { KadastrSeoText } from "./ui/SeoText";
+export { KadastrLandingContent } from "./ui/KadastrLandingContent";
 export {
   KADASTR_AUDIENCE,
   KADASTR_BULLETS,
