@@ -44,6 +44,7 @@ export function LandingSections({ data, articleBasePath = "" }: Props) {
           subtitle={hero.subtitle}
           buttonText={hero.buttonText}
           bullets={hero.bullets}
+          basePath={articleBasePath}
         />
         <LandingSearchBlock />
         <LandingNotificationsCta />

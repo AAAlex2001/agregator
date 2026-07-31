@@ -13,9 +13,10 @@ type HeroProps = {
   buttonText: string;
   bullets: string[];
   compact?: boolean;
+  basePath?: string;
 };
 
-const Hero = ({ buttonText }: HeroProps) => {
+const Hero = ({ buttonText, basePath }: HeroProps) => {
   return (
     <section className={s.hero} id="about">
       <header className={s.heroHead}>
@@ -25,7 +26,7 @@ const Hero = ({ buttonText }: HeroProps) => {
         </div>
         <Title text={HEADLINE} as="h1" className={s.heroTitleText} />
       </header>
-      <ServicesShowcase buttonText={buttonText} />
+      <ServicesShowcase buttonText={buttonText} basePath={basePath} />
     </section>
   );
 };
