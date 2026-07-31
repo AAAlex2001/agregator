@@ -49,6 +49,7 @@ RENAMED_INDEXES = (
 RENAMED_CONSTRAINTS = (
     ("uq_users_email_role", "uq_accounts_email_role"),
     ("uq_users_phone_role", "uq_accounts_phone_role"),
+    ("uq_users_inn_role", "uq_accounts_inn_role"),
     ("user_email_or_phone_required", "account_email_or_phone_required"),
 )
 
@@ -122,6 +123,16 @@ LICENSE_HOLDER_TRANSFER = (
 )
 
 
+def rename_constraint_if_exists(old_name: str, new_name: str) -> str:
+    "Переименование constraint без падения, если его нет: состав ограничений мог разойтись."
+    return (
+        "DO $$ BEGIN "
+        f"IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '{old_name}') THEN "
+        f"ALTER TABLE accounts RENAME CONSTRAINT {old_name} TO {new_name}; "
+        "END IF; END $$;"
+    )
+
+
 def toggle_column(name: str) -> sa.Column:
     return sa.Column(name, sa.Boolean(), nullable=False, server_default="true")
 
@@ -157,7 +168,7 @@ def upgrade() -> None:
     for old_name, new_name in RENAMED_INDEXES:
         op.execute(f"ALTER INDEX IF EXISTS {old_name} RENAME TO {new_name}")
     for old_name, new_name in RENAMED_CONSTRAINTS:
-        op.execute(f"ALTER TABLE accounts RENAME CONSTRAINT {old_name} TO {new_name}")
+        op.execute(rename_constraint_if_exists(old_name, new_name))
     op.execute("ALTER TABLE accounts DROP CONSTRAINT IF EXISTS user_license_rental_kind_valid")
     op.execute("ALTER TABLE accounts DROP CONSTRAINT IF EXISTS ck_user_contact_price_positive")
 
@@ -298,7 +309,7 @@ def upgrade() -> None:
     op.execute(transfer_sql("license_holders", "LICENSE_HOLDER", LICENSE_HOLDER_TRANSFER))
 
     for column in dict.fromkeys(DROPPED_ACCOUNT_COLUMNS):
-        op.drop_column("accounts", column)
+        op.execute(f"ALTER TABLE accounts DROP COLUMN IF EXISTS {column}")
 
 
 def downgrade() -> None:
@@ -359,7 +370,7 @@ def downgrade() -> None:
     op.execute("DROP TYPE forensicworkplacekind")
 
     for old_name, new_name in RENAMED_CONSTRAINTS:
-        op.execute(f"ALTER TABLE accounts RENAME CONSTRAINT {new_name} TO {old_name}")
+        op.execute(rename_constraint_if_exists(new_name, old_name))
     for old_name, new_name in RENAMED_INDEXES:
         op.execute(f"ALTER INDEX IF EXISTS {new_name} RENAME TO {old_name}")
     op.execute("ALTER SEQUENCE IF EXISTS accounts_id_seq RENAME TO users_id_seq")
