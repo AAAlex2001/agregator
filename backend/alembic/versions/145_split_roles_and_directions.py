@@ -1,7 +1,7 @@
 """users -> accounts + профили ролей + направления (кадастр, судебная экспертиза)
 
-Revision ID: 141
-Revises: 140
+Revision ID: 145
+Revises: 144
 """
 from collections.abc import Sequence
 
@@ -10,8 +10,8 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "141"
-down_revision: str | None = "140"
+revision: str = "145"
+down_revision: str | None = "144"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
