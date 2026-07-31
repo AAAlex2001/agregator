@@ -1,5 +1,8 @@
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -8,6 +11,7 @@ from dependencies.rate_limit import rate_limit
 from models.account import UserRole
 from models.order import Order, OrderStatus, OrderWorkType
 from schemas.common import OkResponse
+from schemas.guest_order import GuestOrderRequest, GuestOrderResponse
 from schemas.order import (
     OrderCreate,
     OrderListResponse,
@@ -20,11 +24,17 @@ from services.email import (
     SendNewOrderEmailUseCase,
     SendOrderUpdatedEmailUseCase,
 )
+from services.login import (
+    SESSION_COOKIE_MAX_AGE_SECONDS,
+    CreateSessionUseCase,
+    LoginRepository,
+)
 from services.notifications import (
     CreateNewOrderNotificationUseCase,
     NotificationRepository,
 )
 from services.orders import (
+    CreateGuestOrderUseCase,
     CreateOrderUseCase,
     CreateOrderWithFilesUseCase,
     DeleteOrderUseCase,
@@ -40,6 +50,13 @@ from services.orders import (
     UpdateOrderWithFilesUseCase,
 )
 from services.orders.document_copy import OrderDocumentCopyService
+from services.registration import (
+    RegisterGuestCustomerUseCase,
+    RegistrationNotifier,
+    RegistrationRepository,
+    RegistrationValidator,
+)
+from services.verification import VerificationService
 from utils.order_forms import build_order_create_data, build_order_update_data, parse_keep_documents
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -94,6 +111,72 @@ def build_send_order_updated_email(
         repo=EmailRepository(db),
         dispatcher=EmailDispatcher(background_tasks),
     )
+
+
+def parse_guest_order_payload(payload: str = Form(...)) -> GuestOrderRequest:
+    "Парсит JSON-строку формы в pydantic-модель; ошибки идут как стандартный 422."
+    try:
+        return GuestOrderRequest.model_validate_json(payload)
+    except ValidationError as exc:
+        raise RequestValidationError(exc.errors()) from exc
+
+
+@router.post(
+    "/guest",
+    response_model=GuestOrderResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("guest_order", max_calls=3, window_seconds=300))],
+)
+async def create_guest_order(
+    background_tasks: BackgroundTasks,
+    data: GuestOrderRequest = Depends(parse_guest_order_payload),
+    documents: list[UploadFile] = File(default=[]),
+    db: AsyncSession = Depends(get_db),
+) -> JSONResponse:
+    "Заявка с лендинга: заводит заказчика без пароля, публикует заказ и сразу выдаёт сессию."
+    registration_repo = RegistrationRepository(db)
+    repo = build_repo(db)
+    create_order = CreateOrderUseCase(
+        repo=repo,
+        validator=OrderValidator(repo),
+        send_new_order_email=build_send_new_order_email(db, background_tasks),
+        create_new_order_notification=build_create_new_order_notification(db),
+    )
+    use_case = CreateGuestOrderUseCase(
+        register_customer=RegisterGuestCustomerUseCase(
+            registration_repo, RegistrationValidator(registration_repo)
+        ),
+        create_order=CreateOrderWithFilesUseCase(
+            create_order=create_order,
+            repo=repo,
+            files=OrderFileStorage(),
+        ),
+        notifier=RegistrationNotifier(VerificationService(db)),
+    )
+    account, order = await use_case.execute(data, documents, background_tasks)
+    session = await CreateSessionUseCase(LoginRepository(db)).execute(account.id)
+    await db.commit()
+
+    payload = GuestOrderResponse(
+        order_public_id=order.public_id,
+        email=account.email,
+        role=account.role.value,
+    )
+    response = JSONResponse(
+        content=payload.model_dump(mode="json"),
+        status_code=status.HTTP_201_CREATED,
+    )
+    for key, value in (("session_id", session.session_id), ("user_role", account.role.value)):
+        response.set_cookie(
+            key=key,
+            value=value,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
+            path="/",
+        )
+    return response
 
 
 @router.get(

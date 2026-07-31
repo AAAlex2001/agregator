@@ -9,6 +9,7 @@ import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import { useServiceRequest } from "../model/useServiceRequest";
+import { useSubmitServiceRequest } from "../model/useSubmitServiceRequest";
 import type { ServiceRequestVariant } from "../model/types";
 import s from "./service-request-form.module.scss";
 
@@ -49,9 +50,11 @@ const ServiceRequestForm = () => {
   }));
 
   const isNir = state.variant === "nir";
+  const { submit, isSubmitting } = useSubmitServiceRequest();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    void submit(state);
   };
 
   return (
@@ -230,11 +233,19 @@ const ServiceRequestForm = () => {
         }
       />
 
-      <Button type="submit" variant="primary" fullWidth showArrow className={s.submit}>
+      <Button
+        type="submit"
+        variant="primary"
+        fullWidth
+        showArrow
+        className={s.submit}
+        isLoading={isSubmitting}
+      >
         Оставить заявку
       </Button>
       <p className={s.consent}>
-        Нажимая на кнопку, вы даёте согласие на{" "}
+        Мы создадим кабинет по указанной почте — в нём вы увидите отклики и сможете
+        общаться с исполнителями. Нажимая на кнопку, вы даёте согласие на{" "}
         <a href="/personal-data-consent">обработку персональных данных</a>
       </p>
     </form>

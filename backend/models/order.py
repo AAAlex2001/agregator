@@ -21,7 +21,12 @@ from models.base import Base
 if TYPE_CHECKING:
     from models.account import Account
     from models.chat import Chat
-    from models.order_details import OrderCadastralDetails, OrderForensicDetails
+    from models.order_details import (
+        OrderCadastralDetails,
+        OrderForensicDetails,
+        OrderLaboratoryDetails,
+        OrderResearchDetails,
+    )
     from models.question import OrderQuestion
     from models.response import OrderResponse
 
@@ -38,6 +43,8 @@ class OrderWorkType(str, PyEnum):
     RESEARCH_LAB = "RESEARCH_LAB"
     CADASTRAL = "CADASTRAL"
     FORENSIC = "FORENSIC"
+    RESEARCH = "RESEARCH"
+    LABORATORY = "LABORATORY"
     OTHER = "OTHER"
 
 
@@ -151,6 +158,20 @@ class Order(Base):
         lazy="selectin",
     )
     forensic_details: Mapped["OrderForensicDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    research_details: Mapped["OrderResearchDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    laboratory_details: Mapped["OrderLaboratoryDetails | None"] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,

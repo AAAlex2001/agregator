@@ -22,6 +22,16 @@ class DirectionsValidator:
             )
         return direction
 
+    def require_direction_with_profile(self, key: str) -> Direction:
+        "Возвращает направление с анкетой исполнителя или бросает 404."
+        direction = self.require_direction(key)
+        if not direction.has_profile:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="У направления нет анкеты исполнителя",
+            )
+        return direction
+
     async def require_expert(self, account_id: int) -> Expert:
         "Возвращает профиль исполнителя или бросает 403."
         expert = await self.repo.find_expert_by_account(account_id)

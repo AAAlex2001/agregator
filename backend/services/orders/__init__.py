@@ -1,6 +1,7 @@
 from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
+from services.orders.use_cases.create_guest_order import CreateGuestOrderUseCase
 from services.orders.use_cases.create_order import CreateOrderUseCase
 from services.orders.use_cases.create_order_with_files import CreateOrderWithFilesUseCase
 from services.orders.use_cases.delete_order import DeleteOrderUseCase
@@ -14,6 +15,7 @@ from services.orders.use_cases.update_order_with_files import UpdateOrderWithFil
 from services.orders.validators import OrderValidator
 
 __all__ = [
+    "CreateGuestOrderUseCase",
     "CreateOrderUseCase",
     "CreateOrderWithFilesUseCase",
     "DeleteOrderUseCase",

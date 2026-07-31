@@ -12,7 +12,7 @@ class GetDirectionProfileUseCase:
 
     async def execute(self, account_id: int, direction_key: str) -> BaseModel:
         "Запускает основной сценарий use case."
-        direction = self.validator.require_direction(direction_key)
+        direction = self.validator.require_direction_with_profile(direction_key)
         expert = await self.validator.require_expert(account_id)
         profile = getattr(expert, direction.profile_attribute)
         if profile is None:

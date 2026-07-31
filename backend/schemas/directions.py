@@ -1,7 +1,7 @@
 """DTO направлений: профили исполнителя и детали заявок."""
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from models.direction_profile import ForensicWorkplaceKind
 
@@ -67,6 +67,40 @@ class ForensicOrderDetailsInput(BaseModel):
 
 class ForensicOrderDetailsResponse(ForensicOrderDetailsInput):
     "Детали судебной заявки в ответе API."
+
+    class Config:
+        from_attributes = True
+
+
+EXECUTOR_REQUIREMENT_HINTS: tuple[str, ...] = ("Звание", "Должность", "Стаж")
+
+
+class ResearchOrderDetailsInput(BaseModel):
+    "Дополнительные поля заявки на проведение НИР."
+    executor_requirements: list[str] = Field(default_factory=list, max_length=20)
+    needs_site_visit: bool = False
+
+    @field_validator("executor_requirements")
+    @classmethod
+    def drop_blank_requirements(cls, value: list[str]) -> list[str]:
+        "Пустые строки из динамического списка «добавить поле» не сохраняются."
+        return [item.strip() for item in value if item.strip()]
+
+
+class ResearchOrderDetailsResponse(ResearchOrderDetailsInput):
+    "Детали заявки на НИР в ответе API."
+
+    class Config:
+        from_attributes = True
+
+
+class LaboratoryOrderDetailsInput(BaseModel):
+    "Дополнительные поля заявки на проведение лабораторных исследований."
+    equipment_requirements: str = Field("", max_length=5000)
+
+
+class LaboratoryOrderDetailsResponse(LaboratoryOrderDetailsInput):
+    "Детали лабораторной заявки в ответе API."
 
     class Config:
         from_attributes = True

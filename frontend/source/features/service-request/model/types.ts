@@ -9,6 +9,7 @@ export interface ServiceAttachment {
   name: string;
   url: string;
   isImage: boolean;
+  file: File;
 }
 
 export interface ServiceRequestState {

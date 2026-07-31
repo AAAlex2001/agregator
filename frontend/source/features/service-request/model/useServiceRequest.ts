@@ -19,6 +19,7 @@ export function useServiceRequest() {
       name: file.name,
       url: URL.createObjectURL(file),
       isImage: isImageFileName(file.name),
+      file,
     }));
     dispatch({ type: "ADD_FILES", attachments });
   };

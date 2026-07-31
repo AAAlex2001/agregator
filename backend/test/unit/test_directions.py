@@ -5,8 +5,13 @@ import pytest
 from fastapi import HTTPException
 
 from models.order import OrderWorkType
-from schemas.directions import CadastralProfileInput, ForensicProfileInput
-from services.directions.registry import DIRECTIONS, get_direction
+from schemas.directions import (
+    CadastralProfileInput,
+    ForensicProfileInput,
+    LaboratoryOrderDetailsInput,
+    ResearchOrderDetailsInput,
+)
+from services.directions.registry import DIRECTIONS, PROFILE_DIRECTIONS, get_direction
 from services.directions.use_cases.get_direction_profile import GetDirectionProfileUseCase
 from services.directions.use_cases.list_expert_directions import ListExpertDirectionsUseCase
 from services.directions.use_cases.upsert_direction_profile import UpsertDirectionProfileUseCase
@@ -24,9 +29,14 @@ def build_validator(expert: SimpleNamespace | None) -> DirectionsValidator:
 
 
 class TestRegistry:
-    def test_contains_cadastral_and_forensic(self):
+    def test_contains_all_directions(self):
         keys = {direction.key for direction in DIRECTIONS}
-        assert keys == {OrderWorkType.CADASTRAL.value, OrderWorkType.FORENSIC.value}
+        assert keys == {
+            OrderWorkType.CADASTRAL.value,
+            OrderWorkType.FORENSIC.value,
+            OrderWorkType.RESEARCH.value,
+            OrderWorkType.LABORATORY.value,
+        }
 
     def test_keys_are_unique(self):
         keys = [direction.key for direction in DIRECTIONS]
@@ -35,9 +45,38 @@ class TestRegistry:
     def test_get_direction_unknown_returns_none(self):
         assert get_direction("UNKNOWN") is None
 
-    def test_direction_attributes_point_to_expert_relationships(self):
-        attributes = {direction.profile_attribute for direction in DIRECTIONS}
+    def test_only_cadastral_and_forensic_have_profile(self):
+        "У НИР и лабораторных анкеты нет — квалификация подтверждается сертификатами эксперта."
+        with_profile = {direction.key for direction in PROFILE_DIRECTIONS}
+        assert with_profile == {OrderWorkType.CADASTRAL.value, OrderWorkType.FORENSIC.value}
+
+    def test_profile_attributes_point_to_expert_relationships(self):
+        attributes = {direction.profile_attribute for direction in PROFILE_DIRECTIONS}
         assert attributes == {"cadastral_profile", "forensic_profile"}
+
+    def test_details_attributes_are_unique(self):
+        attributes = [direction.details_attribute for direction in DIRECTIONS]
+        assert len(attributes) == len(set(attributes))
+
+
+class TestOrderDetailsSchemas:
+    def test_research_drops_blank_requirements(self):
+        "Пустые поля динамического списка «добавить поле» не сохраняются."
+        payload = ResearchOrderDetailsInput(
+            executor_requirements=["Кандидат наук", "  ", "", "Стаж от 5 лет"],
+            needs_site_visit=True,
+        )
+        assert payload.executor_requirements == ["Кандидат наук", "Стаж от 5 лет"]
+        assert payload.needs_site_visit is True
+
+    def test_research_defaults_are_empty(self):
+        payload = ResearchOrderDetailsInput()
+        assert payload.executor_requirements == []
+        assert payload.needs_site_visit is False
+
+    def test_laboratory_equipment_requirements(self):
+        payload = LaboratoryOrderDetailsInput(equipment_requirements="УЗК-дефектоскоп")
+        assert payload.equipment_requirements == "УЗК-дефектоскоп"
 
 
 class TestValidators:
