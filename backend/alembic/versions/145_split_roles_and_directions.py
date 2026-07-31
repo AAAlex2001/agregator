@@ -161,7 +161,12 @@ def restore_sql(alias: str, table: str, mapping: tuple[tuple[str, str], ...]) ->
 def upgrade() -> None:
     op.execute("ALTER TYPE orderworktype ADD VALUE IF NOT EXISTS 'CADASTRAL'")
     op.execute("ALTER TYPE orderworktype ADD VALUE IF NOT EXISTS 'FORENSIC'")
-    op.execute("CREATE TYPE forensicworkplacekind AS ENUM ('ORGANIZATION', 'INDIVIDUAL')")
+    op.execute(
+        "DO $$ BEGIN "
+        "IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'forensicworkplacekind') THEN "
+        "CREATE TYPE forensicworkplacekind AS ENUM ('ORGANIZATION', 'INDIVIDUAL'); "
+        "END IF; END $$;"
+    )
 
     op.rename_table("users", "accounts")
     op.execute("ALTER SEQUENCE IF EXISTS users_id_seq RENAME TO accounts_id_seq")
