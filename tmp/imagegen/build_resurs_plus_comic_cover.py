@@ -13,15 +13,29 @@ LOGO_SOURCE = ROOT / "frontend" / "public" / "og-default.png"
 HEADER_ART_SOURCE = ROOT / "tmp" / "imagegen" / "resurs-plus-header-anime.png"
 OUTPUT = ROOT / "output" / "imagegen" / "resurs-plus-engineering-collage.png"
 OUTPUT_JPEG = ROOT / "output" / "imagegen" / "resurs-plus-engineering-collage-a4-300dpi.jpg"
+OUTPUT_PDF = ROOT / "output" / "imagegen" / "resurs-plus-engineering-collage-print-cmyk.pdf"
 
-WIDTH = 2480
-HEIGHT = 3508
+DPI = 300
+TRIM_WIDTH_MM = 203
+TRIM_HEIGHT_MM = 288
+BLEED_MM = 3
+SAFE_MM = 10
+WIDTH = round((TRIM_WIDTH_MM + BLEED_MM * 2) / 25.4 * DPI)
+HEIGHT = round((TRIM_HEIGHT_MM + BLEED_MM * 2) / 25.4 * DPI)
+BLEED_PX = round(BLEED_MM / 25.4 * DPI)
+SAFE_PX = round(SAFE_MM / 25.4 * DPI)
+SAFE_LEFT = BLEED_PX + SAFE_PX
+SAFE_RIGHT = WIDTH - BLEED_PX - SAFE_PX
+SAFE_TOP = BLEED_PX + SAFE_PX
+SAFE_BOTTOM = HEIGHT - BLEED_PX - SAFE_PX
+HEADER_HEIGHT = 500
+FOOTER_TOP = 3010
 
 ORANGE = "#FF9800"
 ORANGE_DARK = "#E77900"
 NAVY = "#0D2037"
-INK = "#15191F"
-TEXT = "#3E4650"
+INK = "#000000"
+TEXT = "#000000"
 MUTED = "#727A84"
 PAPER = "#FBFAF7"
 WHITE = "#FFFFFF"
@@ -83,17 +97,34 @@ def draw_wrapped(
     fill: str,
     line_gap: int = 8,
     anchor: str = "la",
+    black_mask_draw: ImageDraw.ImageDraw | None = None,
 ) -> int:
     x, y = xy
     lines = wrapped_lines(draw, text, selected_font, max_width)
     line_height = selected_font.size + line_gap
     for index, line in enumerate(lines):
-        draw.text((x, y + index * line_height), line, font=selected_font, fill=fill, anchor=anchor)
+        line_xy = (x, y + index * line_height)
+        draw.text(line_xy, line, font=selected_font, fill=fill, anchor=anchor)
+        if black_mask_draw is not None:
+            black_mask_draw.text(line_xy, line, font=selected_font, fill=255, anchor=anchor)
     return len(lines) * line_height
+
+
+def draw_black_text(
+    draw: ImageDraw.ImageDraw,
+    black_mask_draw: ImageDraw.ImageDraw,
+    xy: tuple[int, int],
+    text: str,
+    selected_font: ImageFont.FreeTypeFont,
+    anchor: str = "la",
+) -> None:
+    draw.text(xy, text, font=selected_font, fill=INK, anchor=anchor)
+    black_mask_draw.text(xy, text, font=selected_font, fill=255, anchor=anchor)
 
 
 def draw_category(
     draw: ImageDraw.ImageDraw,
+    black_mask_draw: ImageDraw.ImageDraw,
     layer: Image.Image,
     y: int,
     number: int,
@@ -101,37 +132,42 @@ def draw_category(
     body: str,
     height: int,
 ) -> None:
-    box = (62, y, 842, y + height)
+    box = (SAFE_LEFT, y, 900, y + height)
     rounded_panel(layer, box, (255, 255, 255, 235), outline="#DADDE2", width=3, radius=24)
-    draw.rounded_rectangle((80, y + 22, 140, y + 82), radius=18, fill=ORANGE)
+    number_left = SAFE_LEFT + 18
+    draw.rounded_rectangle((number_left, y + 22, number_left + 60, y + 82), radius=18, fill=ORANGE)
     draw.text(
-        (110, y + 52),
+        (number_left + 30, y + 52),
         str(number),
         font=heading_font(28),
         fill=WHITE,
         anchor="mm",
     )
     if height > 122:
-        draw.rounded_rectangle((82, y + 98, 96, y + height - 24), radius=7, fill=ORANGE)
+        draw.rounded_rectangle((number_left + 2, y + 98, number_left + 16, y + height - 24), radius=7, fill=ORANGE)
     title_y = y + 24
+    text_x = SAFE_LEFT + 96
+    text_width = 900 - text_x - 24
     title_height = draw_wrapped(
         draw,
         title.upper(),
-        (158, title_y),
-        630,
-        heading_font(31),
-        NAVY,
+        (text_x, title_y),
+        text_width,
+        heading_font(33),
+        INK,
         line_gap=5,
+        black_mask_draw=black_mask_draw,
     )
     if body:
         draw_wrapped(
             draw,
             body,
-            (158, title_y + title_height + 8),
-            630,
-            font(29),
+            (text_x, title_y + title_height + 8),
+            text_width,
+            font(31),
             TEXT,
             line_gap=6,
+            black_mask_draw=black_mask_draw,
         )
 
 
@@ -162,15 +198,24 @@ def make_logo(height: int) -> Image.Image:
 def paste_header_art(canvas: Image.Image) -> None:
     source = Image.open(HEADER_ART_SOURCE).convert("RGBA")
     source = source.crop((260, 0, source.width, source.height))
-    art = ImageOps.fit(source, (1160, 520), method=Image.Resampling.LANCZOS, centering=(0.65, 0.48))
+    art_width = WIDTH - 1310
+    art = ImageOps.fit(
+        source,
+        (art_width, HEADER_HEIGHT),
+        method=Image.Resampling.LANCZOS,
+        centering=(0.65, 0.48),
+    )
     layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
-    layer.paste(art, (1320, 0))
+    layer.paste(art, (1310, 0))
     mask = Image.new("L", canvas.size, 0)
     mask_draw = ImageDraw.Draw(mask)
-    mask_draw.polygon(((1480, 0), (2480, 0), (2480, 520), (1320, 520)), fill=255)
+    mask_draw.polygon(
+        ((1470, 0), (WIDTH, 0), (WIDTH, HEADER_HEIGHT), (1310, HEADER_HEIGHT)),
+        fill=255,
+    )
     canvas.alpha_composite(Image.composite(layer, Image.new("RGBA", canvas.size), mask))
     divider = ImageDraw.Draw(canvas)
-    divider.line((1476, 0, 1316, 520), fill=ORANGE, width=10)
+    divider.line((1466, 0, 1306, HEADER_HEIGHT), fill=ORANGE, width=10)
 
 
 def draw_bullet_column(
@@ -181,7 +226,7 @@ def draw_bullet_column(
     heading: str,
     bullets: list[str],
 ) -> None:
-    draw_wrapped(draw, heading, (x, y), width, heading_font(33), WHITE, line_gap=3)
+    draw_wrapped(draw, heading, (x, y), width, heading_font(36), WHITE, line_gap=3)
     cursor = y + 60
     for bullet in bullets:
         draw.line(
@@ -195,44 +240,59 @@ def draw_bullet_column(
             bullet,
             (x + 25, cursor),
             width - 25,
-            font(24),
+            font(28),
             "#E7ECF2",
             line_gap=4,
         )
         cursor += used + 8
 
 
+def to_print_cmyk(image: Image.Image, black_mask: Image.Image) -> Image.Image:
+    cyan, magenta, yellow, black = image.convert("CMYK").split()
+    zero = Image.new("L", image.size, 0)
+    full_black = Image.new("L", image.size, 255)
+    cyan = Image.composite(zero, cyan, black_mask)
+    magenta = Image.composite(zero, magenta, black_mask)
+    yellow = Image.composite(zero, yellow, black_mask)
+    black = Image.composite(full_black, black, black_mask)
+    return Image.merge("CMYK", (cyan, magenta, yellow, black))
+
+
 def build() -> None:
     source = Image.open(SOURCE).convert("RGB")
     fitted_background = ImageOps.fit(source, (WIDTH, HEIGHT), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
     background = Image.new("RGB", (WIDTH, HEIGHT), PAPER)
-    middle = fitted_background.crop((0, 315, WIDTH, 3070))
-    middle = middle.resize((WIDTH, 2595), Image.Resampling.LANCZOS)
-    background.paste(middle, (0, 520))
+    middle = fitted_background.crop((0, 315, WIDTH, 3050))
+    middle = middle.resize((WIDTH, FOOTER_TOP - HEADER_HEIGHT), Image.Resampling.LANCZOS)
+    background.paste(middle, (0, HEADER_HEIGHT))
     canvas = background.convert("RGBA")
     overlay = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
 
-    rounded_panel(overlay, (0, 0, WIDTH, 520), (251, 250, 247, 248), radius=0)
-    rounded_panel(overlay, (0, 3115, WIDTH, HEIGHT), (8, 24, 43, 255), radius=0)
+    rounded_panel(overlay, (0, 0, WIDTH, HEADER_HEIGHT), (251, 250, 247, 248), radius=0)
+    rounded_panel(overlay, (0, FOOTER_TOP, WIDTH, HEIGHT), (8, 24, 43, 255), radius=0)
     canvas = Image.alpha_composite(canvas, overlay)
     paste_header_art(canvas)
     draw = ImageDraw.Draw(canvas)
+    black_mask = Image.new("L", canvas.size, 0)
+    black_mask_draw = ImageDraw.Draw(black_mask)
 
     logo = make_logo(205)
-    canvas.paste(logo, (56, 144), logo)
-    draw.text((260, 113), "ЕДИНАЯ ЦИФРОВАЯ ПЛОЩАДКА", font=heading_font(30), fill=ORANGE_DARK)
-    draw.text((260, 168), "РЕСУРС-ПЛЮС", font=heading_font(78), fill=INK)
-    draw.text(
-        (263, 284),
+    canvas.paste(logo, (SAFE_LEFT, 142), logo)
+    draw.text((350, 110), "ЕДИНАЯ ЦИФРОВАЯ ПЛОЩАДКА", font=heading_font(30), fill=ORANGE_DARK)
+    draw_black_text(draw, black_mask_draw, (350, 165), "РЕСУРС-ПЛЮС", heading_font(78))
+    draw_black_text(
+        draw,
+        black_mask_draw,
+        (353, 281),
         "Инженерные проекты, экспертиза",
-        font=heading_font(34),
-        fill=TEXT,
+        heading_font(34),
     )
-    draw.text(
-        (263, 333),
+    draw_black_text(
+        draw,
+        black_mask_draw,
+        (353, 330),
         "и проверенные специалисты по всей России",
-        font=font(34),
-        fill=TEXT,
+        font(34),
     )
     categories = [
         (
@@ -245,7 +305,7 @@ def build() -> None:
             2,
             "Проектирование промышленных и гражданских объектов",
             "Аттестованные члены НОПРИЗ, включенные в НРС.",
-            220,
+            245,
         ),
         (
             3,
@@ -257,7 +317,7 @@ def build() -> None:
             4,
             "Строительный контроль",
             "Аттестованные члены НОСТРОЙ, включенные в НРС.",
-            200,
+            185,
         ),
         (
             5,
@@ -275,7 +335,7 @@ def build() -> None:
             7,
             "НИРы и лабораторные исследования",
             "Научно-исследовательские работы и лабораторные испытания для инженерных задач.",
-            210,
+            230,
         ),
         (
             8,
@@ -287,25 +347,25 @@ def build() -> None:
             9,
             "Кадастровые работы",
             "Специалисты, состоящие в СРО кадастровых инженеров.",
-            205,
+            190,
         ),
         (
             10,
             "Судебная экспертиза",
             "Профессиональные исследования и заключения по вопросам, имеющим значение для судебного дела.",
-            245,
+            230,
         ),
     ]
 
-    y = 538
+    y = 505
     for number, title, body, height in categories:
-        draw_category(draw, canvas, y, number, title, body, height)
-        y += height + 12
+        draw_category(draw, black_mask_draw, canvas, y, number, title, body, height)
+        y += height + 8
 
-    qr_size = 300
-    qr_center_x = 1615
-    qr_label_x = 1595
-    qr_center_y = 1958
+    qr_size = 260
+    qr_center_x = 1605
+    qr_label_x = qr_center_x
+    qr_center_y = 1900
     qr_x = qr_center_x - qr_size // 2
     qr_y = qr_center_y - qr_size // 2
     qr = make_qr(qr_size)
@@ -324,33 +384,36 @@ def build() -> None:
     )
 
     customer = [
-        "Создание задачи: заказчик публикует проект, максимально подробно описывая техническое задание.",
+        "Публикация проекта с подробным техническим заданием.",
         "Поиск или ожидание откликов.",
-        "Выбор специалиста.",
+        "Сравнение и выбор специалиста.",
         "Управление проектом.",
     ]
     specialist = [
-        "Создание детального цифрового профиля, который заменяет классическое резюме.",
-        "Просмотр ленты актуальных заказов или получение автоматических приглашений.",
-        "Подача заявок с коммерческим предложением и планом решения задачи.",
+        "Цифровой профиль вместо классического резюме.",
+        "Лента актуальных заказов и автоматические приглашения.",
+        "Заявка с коммерческим предложением и планом решения.",
         "Выполнение проекта и получение оплаты.",
     ]
-    draw_bullet_column(draw, 80, 3150, 1050, "Для заказчика:", customer)
-    draw_bullet_column(draw, 1280, 3150, 1110, "Для специалиста:", specialist)
+    draw_bullet_column(draw, SAFE_LEFT, FOOTER_TOP + 55, 1010, "Для заказчика:", customer)
+    draw_bullet_column(draw, 1270, FOOTER_TOP + 55, SAFE_RIGHT - 1270, "Для специалиста:", specialist)
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     result = canvas.convert("RGB")
-    result.save(OUTPUT, format="PNG", optimize=True, dpi=(300, 300))
-    result.save(
+    print_result = to_print_cmyk(result, black_mask)
+    result.save(OUTPUT, format="PNG", optimize=True, dpi=(DPI, DPI))
+    print_result.save(
         OUTPUT_JPEG,
         format="JPEG",
         quality=96,
         subsampling=0,
         optimize=True,
-        dpi=(300, 300),
+        dpi=(DPI, DPI),
     )
+    print_result.save(OUTPUT_PDF, format="PDF", resolution=DPI, quality=96)
     print(OUTPUT)
     print(OUTPUT_JPEG)
+    print(OUTPUT_PDF)
 
 
 if __name__ == "__main__":
