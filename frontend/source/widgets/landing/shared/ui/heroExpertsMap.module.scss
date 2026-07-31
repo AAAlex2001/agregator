@@ -18,7 +18,12 @@
 }
 
 .mapArea {
-  height: 360px;
+  min-width: 0;
+  height: 440px;
+
+  @media (min-width: 1024px) {
+    height: 360px;
+  }
 
   @media (min-width: 1440px) {
     flex: 1 1 0;

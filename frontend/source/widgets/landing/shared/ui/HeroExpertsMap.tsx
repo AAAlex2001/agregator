@@ -7,7 +7,10 @@ import { useSession } from "@/source/features/session";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./heroExpertsMap.module.scss";
 
-export function HeroExpertsMap() {
+export function HeroExpertsMap({
+  hideHead = false,
+  mapOnly = false,
+}: { hideHead?: boolean; mapOnly?: boolean } = {}) {
   const { user } = useSession();
   const [items, setItems] = useState<ExpertMapItemApi[]>([]);
 
@@ -25,16 +28,19 @@ export function HeroExpertsMap() {
 
   return (
     <div className={s.wrap}>
-      <div className={s.head}>
-        <Title text="Исполнители промышленной безопасности на карте России" />
-        <Subtitle text="Аттестованные исполнители Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему опасному производственному объекту." />
-      </div>
+      {!hideHead && (
+        <div className={s.head}>
+          <Title text="Исполнители промышленной безопасности на карте России" />
+          <Subtitle text="Аттестованные исполнители Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему опасному производственному объекту." />
+        </div>
+      )}
       <div className={s.mapArea}>
         <FilterableExpertsMap
           items={items}
           height="100%"
           emptyText="Загрузка карты исполнителей…"
           contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
+          mapOnly={mapOnly}
         />
       </div>
     </div>

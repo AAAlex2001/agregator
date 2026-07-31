@@ -1,7 +1,11 @@
 import s from "./hero.module.scss";
-import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { HeroExpertsMap } from "../../shared/ui/HeroExpertsMap";
+import { Title } from "@/source/shared/ui/Typography";
+import { LogoIcon } from "@/source/shared/ui/icons";
 import ServicesShowcase from "./ServicesShowcase";
+
+const TAGLINE =
+  "Какая бы перед Вами не стояла проблема, наши специалисты превратят её в задачу, у которой есть решение!";
+const HEADLINE = "Первая единая площадка для специалистов и промышленников России";
 
 type HeroProps = {
   title: string;
@@ -11,21 +15,17 @@ type HeroProps = {
   compact?: boolean;
 };
 
-const Hero = ({ title, subtitle, buttonText }: HeroProps) => {
+const Hero = ({ buttonText }: HeroProps) => {
   return (
     <section className={s.hero} id="about">
-      <header className={s.heroTitle}>
-        <Title text={title} as="h1" className={s.heroTitleText} />
-      </header>
-      {subtitle && (
-        <div className={s.heroLead}>
-          <Subtitle text={subtitle} />
+      <header className={s.heroHead}>
+        <div className={s.brand}>
+          <LogoIcon className={s.brandLogo} />
+          <p className={s.tagline}>{TAGLINE}</p>
         </div>
-      )}
+        <Title text={HEADLINE} as="h1" className={s.heroTitleText} />
+      </header>
       <ServicesShowcase buttonText={buttonText} />
-      <div className={s.mapSection}>
-        <HeroExpertsMap />
-      </div>
     </section>
   );
 };

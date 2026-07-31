@@ -11,6 +11,7 @@ interface Props {
   height?: number | string;
   emptyText: string;
   contactsHref?: string;
+  mapOnly?: boolean;
 }
 
 const NO_MATCH_TEXT = "По выбранным фильтрам исполнителей не нашлось — снимите часть фильтров";
@@ -37,9 +38,23 @@ export function FilterableExpertsMap({
   height = "100%",
   emptyText,
   contactsHref,
+  mapOnly = false,
 }: Props) {
   const { areas, objects, availableAreas, availableObjects, toggleArea, toggleObject, filtered } = useExpertMapFilter(items);
   const noMatch = items.length > 0 && filtered.length === 0;
+
+  if (mapOnly) {
+    return (
+      <div className={s.mapOnly}>
+        <YandexMarkersMap
+          markers={filtered.map(toMarker)}
+          height={height}
+          emptyText={noMatch ? NO_MATCH_TEXT : emptyText}
+          contactsHref={contactsHref}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={s.layout}>

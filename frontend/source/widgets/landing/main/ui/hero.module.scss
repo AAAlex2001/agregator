@@ -12,11 +12,40 @@
   margin: 16px auto 32px auto;
 }
 
-.heroTitle {
+.heroHead {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
   width: 100%;
   margin: 0 auto 40px auto;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.brandLogo {
+  width: 300px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: #4a5460;
+}
+
+.heroHead h1 {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 600;
 }
 
 .heroLead {
@@ -39,9 +68,31 @@
 }
 
 .heroTitleText {
-  max-width: 1000px;
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .heroHead {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .brand {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .tagline {
+    max-width: 360px;
+  }
+
+  .heroTitleText {
+    text-align: center;
+    min-width: 0;
+  }
 }
 
 .heroBody {
@@ -133,7 +184,7 @@
     margin: 24px auto 56px auto;
   }
 
-  .heroTitle h1 {
+  .heroHead h1 {
     font-size: 30px;
     line-height: 37px;
     font-weight: 600;
@@ -182,8 +233,8 @@
     margin-bottom: 0;
   }
 
-  .heroTitle h1 {
-    font-size: 30px;
+  .heroHead h1 {
+    font-size: 32px;
     line-height: 42px;
     font-weight: 600;
   }
@@ -225,7 +276,7 @@
     margin: 40px auto 72px auto;
   }
 
-  .heroTitle h1 {
+  .heroHead h1 {
     font-size: 34px;
     line-height: 41px;
   }

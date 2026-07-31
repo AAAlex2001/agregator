@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
-import { LogoIcon } from "@/source/shared/ui/icons";
+import { LogoMarkIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import BurgerMenu from "./BurgerMenu";
 import s from "./header.module.scss";
@@ -19,7 +19,7 @@ const Header = () => {
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
             <span className={s.logo}>
-              <LogoIcon />
+              <LogoMarkIcon />
             </span>
           </Link>
           <nav className={s.nav}>

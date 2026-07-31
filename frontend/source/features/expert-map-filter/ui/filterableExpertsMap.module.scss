@@ -1,9 +1,14 @@
 .layout {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: 1fr auto;
   gap: 10px;
   height: 100%;
+}
+
+.mapOnly {
+  height: 100%;
+  min-height: 0;
 }
 
 .objectsAxis {
@@ -18,12 +23,14 @@
 .mapBox {
   grid-column: 2;
   grid-row: 1;
+  min-width: 0;
   min-height: 0;
 }
 
 .areasAxis {
   grid-column: 2;
   grid-row: 2;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -32,14 +39,7 @@
 
 @media (min-width: 1024px) {
   .areasAxis {
-    flex-wrap: nowrap;
     gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .areasAxis::-webkit-scrollbar {
-    display: none;
   }
 }
 
