@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
+from models.account import Account, UserRole
 from models.question import OrderQuestion
-from models.user import User, UserRole
 from schemas.question import (
     QuestionAnswer,
     QuestionAsk,
@@ -55,7 +55,7 @@ def to_response(question: OrderQuestion) -> QuestionResponse:
 
 
 async def get_user_role(db: AsyncSession, user_id: int) -> UserRole | None:
-    return (await db.execute(select(User.role).where(User.id == user_id))).scalar_one_or_none()
+    return (await db.execute(select(Account.role).where(Account.id == user_id))).scalar_one_or_none()
 
 
 @router.get("/orders/{order_id}/questions", response_model=QuestionListResponse)

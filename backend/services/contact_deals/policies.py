@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import HTTPException, status
 
+from models.account import Account
 from models.contact_deal import (
     ContactAccessDeal,
     ContactDealParty,
@@ -10,7 +11,6 @@ from models.contact_deal import (
     ContactPaymentReceipt,
     ContactReceiptStatus,
 )
-from models.user import User
 from services.contact_deals.repository import ContactDealRepository
 
 
@@ -28,13 +28,13 @@ class ContactDealPolicy:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сделка не найдена")
         return deal
 
-    async def require_user(self, user_id: int, for_update: bool = False) -> User:
+    async def require_user(self, user_id: int, for_update: bool = False) -> Account:
         user = await self.repository.get_user(user_id, for_update=for_update)
         if user is None:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет доступа")
         return user
 
-    async def require_expert(self, user_id: int, for_update: bool = False) -> User:
+    async def require_expert(self, user_id: int, for_update: bool = False) -> Account:
         expert = await self.repository.get_active_expert(
             user_id,
             for_update=for_update,

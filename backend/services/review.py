@@ -8,10 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
+from models.expert import Expert
 from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
-from models.user import User, UserRole
 from schemas.order import OrderDocuments
 from services.orders.documents import OrderDocumentsService
 
@@ -35,7 +36,7 @@ class ReviewService:
 
     async def create_review(self, actor_id: int, response_id: int, rating: int, comment: str) -> Review:
         "Создаёт новую сущность."
-        actor_result = await self.db.execute(select(User).where(User.id == actor_id))
+        actor_result = await self.db.execute(select(Account).where(Account.id == actor_id))
         actor = actor_result.scalars().first()
         if not actor:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
@@ -64,14 +65,14 @@ class ReviewService:
                 detail="Оставить отзыв можно только после завершения проекта",
             )
 
-        expert = (
+        expert_profile = (
             await self.db.execute(
-                select(User)
-                .where(User.id == response.expert_id)
+                select(Expert)
+                .where(Expert.account_id == response.expert_id)
                 .with_for_update()
             )
         ).scalars().first()
-        if not expert:
+        if not expert_profile:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Исполнитель не найден")
 
         review = Review(
@@ -92,23 +93,24 @@ class ReviewService:
                 detail="Отзыв по этому отклику уже оставлен",
             )
 
-        await self.refresh_expert_rating(expert)
+        await self.refresh_expert_rating(expert_profile)
 
         return review
 
-    async def refresh_expert_rating(self, expert: User) -> None:
+    async def refresh_expert_rating(self, expert_profile: Expert) -> None:
+        "Пересчитывает агрегаты rating/review_count в профиле исполнителя."
         count, average = (
             await self.db.execute(
                 select(func.count(Review.id), func.avg(Review.rating)).where(
-                    Review.expert_id == expert.id
+                    Review.expert_id == expert_profile.account_id
                 )
             )
         ).one()
-        expert.review_count = int(count or 0)
-        expert.rating = round(float(average), 1) if average is not None else None
+        expert_profile.review_count = int(count or 0)
+        expert_profile.rating = round(float(average), 1) if average is not None else None
 
     async def get_expert_reviews(self, expert_id: int, skip: int, limit: int) -> tuple[list[dict[str, Any]], bool, int, float]:
-        "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей User."
+        "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей профиля исполнителя."
         list_query = (
             select(Review)
             .options(
@@ -192,16 +194,18 @@ class ReviewService:
                 "created_at": r.created_at,
             })
 
-        expert = (await self.db.execute(select(User).where(User.id == expert_id))).scalars().first()
-        total_reviews = int(expert.review_count or 0) if expert else 0
-        avg_rating = float(expert.rating or 0) if expert else 0.0
+        expert_profile = (
+            await self.db.execute(select(Expert).where(Expert.account_id == expert_id))
+        ).scalars().first()
+        total_reviews = int(expert_profile.review_count or 0) if expert_profile else 0
+        avg_rating = float(expert_profile.rating or 0) if expert_profile else 0.0
 
         return items, has_more, total_reviews, avg_rating
 
     async def get_expert_reviews_by_public_id(self, public_id: str, skip: int, limit: int) -> dict[str, Any]:
         "Публичный доступ к отзывам исполнителя по UUID."
         result = await self.db.execute(
-            select(User).where(User.public_id == public_id, User.role == UserRole.EXPERT)
+            select(Account).where(Account.public_id == public_id, Account.role == UserRole.EXPERT)
         )
         expert = result.scalars().first()
         if not expert:

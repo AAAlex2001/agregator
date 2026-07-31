@@ -6,13 +6,27 @@ import re
 from fastapi import BackgroundTasks
 from pydantic import BaseModel
 
-from models.user import User
+from models.account import Account
 from services.telegram_notify import send_telegram_message
 from utils.email import send_email
 from utils.email_templates import render_email
 from utils.request_context import request_id_var
 
 logger = logging.getLogger(__name__)
+
+
+def preference_enabled(account: Account, preference_field: str) -> bool:
+    "Тумблер события: ищется в аккаунте, затем в профиле роли — у каждой роли свой набор."
+    sources = (
+        account,
+        account.customer_profile,
+        account.expert_profile,
+        account.license_holder_profile,
+    )
+    for source in sources:
+        if source is not None and hasattr(source, preference_field):
+            return bool(getattr(source, preference_field))
+    return False
 
 UNSUBSCRIBE_MARKER = "\nВы получили это письмо"
 SIGNATURE = "—\nС уважением,\nкоманда «Ресурс-Плюс»\nplus-resurs.com"
@@ -86,7 +100,7 @@ class EmailDispatcher:
 
     def notify(
         self,
-        user: User | None,
+        account: Account | None,
         preference_field: str | None,
         template_name: str,
         subject: str,
@@ -96,34 +110,34 @@ class EmailDispatcher:
         reply_to: str | None = None,
     ) -> None:
         "Одно событие — один текст: в Telegram уходит текст того же письма, что и на почту."
-        if user is None:
+        if account is None:
             return
         rendered = render_email(template_name, subject, context.model_dump())
-        self.send_telegram(user, None, telegram_text(rendered.text, tg_cta))
-        if self.can_send(user, preference_field):
-            self.dispatch(user.email, template_name, subject, context, from_email, reply_to)
+        self.send_telegram(account, None, telegram_text(rendered.text, tg_cta))
+        if self.can_send(account, preference_field):
+            self.dispatch(account.email, template_name, subject, context, from_email, reply_to)
 
     @staticmethod
-    def can_send(user: User | None, preference_field: str | None) -> bool:
+    def can_send(account: Account | None, preference_field: str | None) -> bool:
         "Проверка: есть ли email у пользователя и включено ли именно это уведомление."
-        if user is None:
+        if account is None:
             return False
-        if not user.email:
+        if not account.email:
             return False
         if preference_field is None:
             return True
-        return bool(getattr(user, preference_field, False))
+        return preference_enabled(account, preference_field)
 
-    def send_telegram(self, user: User | None, preference_field: str | None, text: str) -> None:
+    def send_telegram(self, account: Account | None, preference_field: str | None, text: str) -> None:
         "TG-уведомление: если привязан Telegram, включены TG-уведомления и (если задан) тип уведомления."
-        if user is None or not user.telegram_id:
-            logger.info("TG пропущен: user=%s без telegram_id", getattr(user, "id", None))
+        if account is None or not account.telegram_id:
+            logger.info("TG пропущен: account=%s без telegram_id", getattr(account, "id", None))
             return
-        if not getattr(user, "notify_telegram_enabled", True):
-            logger.info("TG пропущен: user=%s выключил Telegram-уведомления", user.id)
+        if not account.notify_telegram_enabled:
+            logger.info("TG пропущен: account=%s выключил Telegram-уведомления", account.id)
             return
-        if preference_field and not getattr(user, preference_field, False):
-            logger.info("TG пропущен: user=%s выключен тумблер %s", user.id, preference_field)
+        if preference_field and not preference_enabled(account, preference_field):
+            logger.info("TG пропущен: account=%s выключен тумблер %s", account.id, preference_field)
             return
-        logger.info("TG-уведомление в очереди: user=%s chat_id=%s", user.id, user.telegram_id)
-        self.background_tasks.add_task(send_telegram_message, int(user.telegram_id), text)
+        logger.info("TG-уведомление в очереди: account=%s chat_id=%s", account.id, account.telegram_id)
+        self.background_tasks.add_task(send_telegram_message, int(account.telegram_id), text)

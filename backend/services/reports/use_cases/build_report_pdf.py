@@ -103,13 +103,14 @@ def customer_with_inn(order: Order) -> str:
 
 
 def expert_rating(response: OrderResponse) -> dict[str, Any] | None:
-    "Публичный метод сервисного слоя."
+    "Рейтинг и число отзывов из профиля исполнителя; None, если рейтинга нет."
     expert = response.expert
-    if expert is None or expert.rating is None:
+    profile = expert.expert_profile if expert is not None else None
+    if profile is None or profile.rating is None:
         return None
     return {
-        "rating": float(expert.rating),
-        "review_count": expert.review_count or 0,
+        "rating": float(profile.rating),
+        "review_count": profile.review_count or 0,
     }
 
 

@@ -1,7 +1,7 @@
 "Use case: authenticate expert room ws."
 from dataclasses import dataclass
 
-from models.user import UserRole
+from models.account import UserRole
 from services.chats.expert_room_repository import ExpertRoomRepository
 from services.email.formatting import full_name
 

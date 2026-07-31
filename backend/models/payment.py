@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
-    from models.user import User
+    from models.account import Account
 
 
 class PaymentStatus(str, PyEnum):
@@ -30,7 +30,7 @@ class Payment(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -56,4 +56,4 @@ class Payment(Base):
         nullable=False,
     )
 
-    user: Mapped["User"] = relationship(back_populates="payments")
+    account: Mapped["Account"] = relationship(back_populates="payments")

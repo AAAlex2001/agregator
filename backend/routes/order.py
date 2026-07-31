@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.rate_limit import rate_limit
+from models.account import UserRole
 from models.order import Order, OrderStatus, OrderWorkType
-from models.user import UserRole
 from schemas.common import OkResponse
 from schemas.order import (
     OrderCreate,

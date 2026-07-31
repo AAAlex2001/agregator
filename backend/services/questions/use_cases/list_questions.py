@@ -1,8 +1,8 @@
 "Use case: list questions."
 from fastapi import HTTPException, status
 
+from models.account import UserRole
 from models.question import OrderQuestion
-from models.user import UserRole
 from services.questions.repository import QuestionRepository
 
 

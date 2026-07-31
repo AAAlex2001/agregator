@@ -1,6 +1,6 @@
 "Use case: send order updated email."
+from models.account import Account
 from models.order import Order
-from models.user import User
 from schemas.email import OrderBrief, OrderUpdatedContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import greeting_for
@@ -37,7 +37,7 @@ class SendOrderUpdatedEmailUseCase:
     def build_context(
         self,
         order: Order,
-        expert: User,
+        expert: Account,
         changes_summary: str,
     ) -> OrderUpdatedContext:
         "Строит объект из входных данных."

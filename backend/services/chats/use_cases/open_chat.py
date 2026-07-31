@@ -1,9 +1,9 @@
 "Use case: open chat."
 from fastapi import HTTPException, status
 
+from models.account import Account, UserRole
 from models.chat import Chat
 from models.order import Order
-from models.user import User, UserRole
 from services.chats.repository import ChatRepository
 from services.chats.validators import ChatValidator
 
@@ -45,7 +45,7 @@ class OpenChatUseCase:
         await self.repo.flush()
         return chat
 
-    async def require_pair_chat(self, order: Order, actor: User, expert_id: int) -> Chat:
+    async def require_pair_chat(self, order: Order, actor: Account, expert_id: int) -> Chat:
         "Чат заказчика с конкретным экспертом. Создаётся при принятии отклика — здесь только ищем."
         if order.customer_id != actor.id:
             raise HTTPException(
@@ -69,7 +69,7 @@ class OpenChatUseCase:
             status_code=status.HTTP_404_NOT_FOUND, detail="Заказ не найден"
         )
 
-    async def find_existing_for_actor(self, actor: User, order: Order) -> Chat | None:
+    async def find_existing_for_actor(self, actor: Account, order: Order) -> Chat | None:
         "Ищет сущность по заданным параметрам."
         if actor.role == UserRole.CUSTOMER:
             return await self.repo.find_latest_chat_for_customer(order.id, actor.id)

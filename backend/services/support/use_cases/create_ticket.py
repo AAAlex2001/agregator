@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
 
+from models.account import Account
 from models.support_ticket import (
     SupportTicket,
     SupportTicketMessage,
@@ -10,7 +11,6 @@ from models.support_ticket import (
     TicketMessageAuthor,
     TicketStatus,
 )
-from models.user import User
 from schemas.support import CreateTicketRequest
 from services.file_uploads import remove_uploaded_file
 
@@ -25,11 +25,11 @@ def build_ticket_number(ticket_id: int) -> str:
     return f"T-{ticket_id + TICKET_NUMBER_OFFSET}"
 
 
-def author_name_from_user(user: User) -> str:
+def author_name_from_user(user: Account) -> str:
     "Публичный метод сервисного слоя."
     parts = [user.first_name or "", user.last_name or ""]
     name = " ".join(part for part in parts if part).strip()
-    return name or user.email or f"User #{user.id}"
+    return name or user.email or f"Account #{user.id}"
 
 
 class CreateTicketUseCase:
@@ -40,7 +40,7 @@ class CreateTicketUseCase:
 
     async def execute(
         self,
-        user: User,
+        user: Account,
         data: CreateTicketRequest,
         uploads: list[UploadFile],
     ) -> SupportTicket:

@@ -19,9 +19,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.order import Order
     from models.review import Review
-    from models.user import User
 
 
 class ResponseStatus(str, PyEnum):
@@ -55,7 +55,7 @@ class OrderResponse(Base):
         index=True,
     )
     expert_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -103,5 +103,5 @@ class OrderResponse(Base):
     )
 
     order: Mapped["Order"] = relationship(back_populates="responses")
-    expert: Mapped["User"] = relationship(back_populates="responses")
+    expert: Mapped["Account"] = relationship(back_populates="responses")
     reviews: Mapped[list["Review"]] = relationship(back_populates="response", lazy="select")

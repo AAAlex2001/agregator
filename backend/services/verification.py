@@ -6,8 +6,8 @@ from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from models.account import Account
 from models.password_reset_code import PasswordResetCode
-from models.user import User
 from utils.code import generate_numeric_code
 from utils.email import send_email
 from utils.email_templates import RenderedEmail, render_email
@@ -109,7 +109,7 @@ class VerificationService:
             )
         return active
 
-    async def confirm_email(self, user: User, code: str) -> User:
+    async def confirm_email(self, user: Account, code: str) -> Account:
         "Подтверждает действие пользователя."
         await self.consume_code(user.id, code)
         user.email_verified = True

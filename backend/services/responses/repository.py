@@ -3,11 +3,12 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.chat import Chat
+from models.expert import Expert
 from models.order import Order
 from models.response import OrderResponse, ResponseStatus
 from models.review import Review
-from models.user import User
 from utils.pagination import paginate_with_has_more
 
 
@@ -45,10 +46,10 @@ class ResponseRepository:
         )
         return (await self.db.execute(query)).scalars().first()
 
-    async def find_user(self, user_id: int) -> User | None:
+    async def find_user(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
     async def find_existing_response(
@@ -127,7 +128,7 @@ class ResponseRepository:
     CUSTOMER_SORT_COLUMNS = {
         "created_at": OrderResponse.created_at,
         "proposed_sum_amount": OrderResponse.proposed_sum_amount,
-        "expert_rating": User.rating,
+        "expert_rating": Expert.rating,
     }
 
     async def list_customer_responses(
@@ -158,7 +159,7 @@ class ResponseRepository:
         if status_filters:
             list_query = list_query.where(OrderResponse.status.in_(status_filters))
         if sort_by == "expert_rating":
-            list_query = list_query.join(User, User.id == OrderResponse.expert_id)
+            list_query = list_query.join(Expert, Expert.account_id == OrderResponse.expert_id)
         list_query = list_query.order_by(column.asc() if sort_dir == "asc" else column.desc())
 
         return await paginate_with_has_more(self.db, list_query, skip, limit)

@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 from models.contact_deal import ContactDealStatus
-from models.user import UserRole
+from models.account import UserRole
 from services.chats.formatters import NOTIFICATION_PREVIEW_MAX, ChatFormatter
 
 
@@ -35,7 +35,7 @@ class TestCounterpart:
             id=42, first_name="Иван", last_name="Петров", avatar_url="/avatar.png"
         )
         self.customer = SimpleNamespace(
-            id=1, first_name="Ольга", last_name="Смирнова", avatar_url=None
+            id=1, first_name="Ольга", last_name="Смирнова", avatar_url=None, company_data=None
         )
         self.order = SimpleNamespace(company="ООО Компания")
         self.chat = SimpleNamespace(

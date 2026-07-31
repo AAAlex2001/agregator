@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from models.user import UserRole
+from models.account import UserRole
 from services.platform_settings import PlatformSettingsService
 from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 

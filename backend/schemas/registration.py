@@ -1,11 +1,14 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 from schemas.company import validate_company_data
 from schemas.expert import ExpertCertificate
+
+if TYPE_CHECKING:
+    from models.account import Account
 
 
 class UserRole(str, Enum):
@@ -153,5 +156,41 @@ class UserResponse(BaseModel):
     location_city: str | None = None
     travels_to_other_regions: bool = False
 
-    class Config:
-        from_attributes = True
+    @classmethod
+    def from_account(cls, account: "Account") -> "UserResponse":
+        "Собирает ответ из аккаунта и профилей роли: старые имена полей — из новых мест."
+        expert = account.expert_profile
+        holder = account.license_holder_profile
+        return cls(
+            id=account.id,
+            role=UserRole(account.role.value),
+            inn=account.inn,
+            company_data=account.company_data,
+            email=account.email,
+            phone=account.phone,
+            created_at=account.created_at,
+            license_number=holder.license_number if holder else None,
+            license_file_url=holder.license_file_url if holder else None,
+            license_areas=holder.license_areas if holder else None,
+            license_rental_kind=(
+                LicenseRentalKind(holder.license_rental_kind)
+                if holder and holder.license_rental_kind
+                else None
+            ),
+            license_rental_percent=(
+                float(holder.license_rental_percent)
+                if holder and holder.license_rental_percent is not None
+                else None
+            ),
+            license_rental_fixed_amount=holder.license_rental_fixed_amount if holder else None,
+            mining_license_number=holder.mining_license_number if holder else None,
+            mining_license_file_url=holder.mining_license_file_url if holder else None,
+            sro_design_file_url=holder.sro_design_file_url if holder else None,
+            lab_accreditation_number=holder.lab_accreditation_number if holder else None,
+            lab_accreditation_file_url=holder.lab_accreditation_file_url if holder else None,
+            location_lat=expert.location_lat if expert else None,
+            location_lng=expert.location_lng if expert else None,
+            location_address=expert.location_address if expert else None,
+            location_city=expert.location_city if expert else None,
+            travels_to_other_regions=expert.travels_to_other_regions if expert else False,
+        )

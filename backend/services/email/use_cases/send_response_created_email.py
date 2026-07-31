@@ -1,6 +1,6 @@
 "Use case: send response created email."
+from models.account import Account
 from models.response import OrderResponse
-from models.user import User
 from schemas.email import (
     ExpertBrief,
     OrderBrief,
@@ -39,7 +39,7 @@ class SendResponseCreatedEmailUseCase:
     def build_context(
         self,
         response: OrderResponse,
-        customer: User,
+        customer: Account,
         stats: ExpertStats,
     ) -> ResponseCreatedContext:
         "Строит объект из входных данных."

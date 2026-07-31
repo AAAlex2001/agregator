@@ -5,8 +5,8 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
+from models.account import Account
 from models.pricing import PricingPlan
-from models.user import User
 from services.subscriptions.constants import (
     DEFAULT_VAT_CODE_FALLBACK,
     KOPECKS_PER_RUBLE,
@@ -20,7 +20,7 @@ from services.subscriptions.constants import (
 DEFAULT_VAT_CODE = int(os.getenv("YOOKASSA_VAT_CODE", DEFAULT_VAT_CODE_FALLBACK))
 
 
-def build_receipt(user: User, plan: PricingPlan) -> dict[str, Any]:
+def build_receipt(user: Account, plan: PricingPlan) -> dict[str, Any]:
     "Чек 54-ФЗ для YooKassa: один товар-услуга на сумму тарифа."
     return {
         "customer": build_customer(user),
@@ -40,7 +40,7 @@ def build_receipt(user: User, plan: PricingPlan) -> dict[str, Any]:
     }
 
 
-def build_customer(user: User) -> dict[str, Any]:
+def build_customer(user: Account) -> dict[str, Any]:
     "Строит объект из входных данных."
     if user.email:
         return {"email": user.email}

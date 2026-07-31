@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
 
-from models.user import CONTACT_DISCLOSURE_CONSENT_VERSION
+from models.expert import CONTACT_DISCLOSURE_CONSENT_VERSION
 from schemas.expert_contact import ExpertContactOfferResponse, ExpertContactOfferUpdate
 from services.contact_deals.crypto import ContactDealCipher
 from services.expert_contacts.formatters import to_offer
@@ -27,10 +27,11 @@ class UpdateExpertContactOfferUseCase:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Настроить продажу контактов может только эксперт",
             )
+        profile = expert.expert_profile
         if not data.enabled:
-            expert.contact_sales_enabled = False
-            expert.contact_price_kopecks = None
-            expert.contact_payment_details_encrypted = None
+            profile.contact_sales_enabled = False
+            profile.contact_price_kopecks = None
+            profile.contact_payment_details_encrypted = None
             await self.repository.flush()
             return to_offer(expert, self.cipher)
 
@@ -40,17 +41,17 @@ class UpdateExpertContactOfferUseCase:
                 detail="Добавьте телефон или email в профиле",
             )
         payment_details = (data.payment_details or "").strip()
-        if not payment_details and not expert.contact_payment_details_encrypted:
+        if not payment_details and not profile.contact_payment_details_encrypted:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Укажите реквизиты для прямой оплаты",
             )
 
-        expert.contact_sales_enabled = True
-        expert.contact_price_kopecks = (data.price_rubles or 0) * 100
+        profile.contact_sales_enabled = True
+        profile.contact_price_kopecks = (data.price_rubles or 0) * 100
         if payment_details:
-            expert.contact_payment_details_encrypted = self.cipher.encrypt_text(payment_details)
-        expert.contact_disclosure_consent_at = datetime.now(UTC)
-        expert.contact_disclosure_consent_version = CONTACT_DISCLOSURE_CONSENT_VERSION
+            profile.contact_payment_details_encrypted = self.cipher.encrypt_text(payment_details)
+        profile.contact_disclosure_consent_at = datetime.now(UTC)
+        profile.contact_disclosure_consent_version = CONTACT_DISCLOSURE_CONSENT_VERSION
         await self.repository.flush()
         return to_offer(expert, self.cipher)

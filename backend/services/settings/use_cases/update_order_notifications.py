@@ -1,5 +1,5 @@
 "Use case: update order notifications."
-from models.user import User
+from models.account import Account
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
 
@@ -11,9 +11,10 @@ class UpdateOrderNotificationsUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, order_types: list[str]) -> User:
+    async def execute(self, user_id: int, order_types: list[str]) -> Account:
         "Запускает основной сценарий use case."
-        user = await self.validator.require_expert(user_id)
-        user.notify_order_types = order_types or None
+        account = await self.validator.require_expert(user_id)
+        expert = self.validator.require_expert_profile(account)
+        expert.notify_order_types = order_types or None
         await self.repo.flush()
-        return user
+        return account

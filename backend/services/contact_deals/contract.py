@@ -7,8 +7,8 @@ from zoneinfo import ZoneInfo
 
 from weasyprint import HTML
 
+from models.account import Account
 from models.contact_deal import ContactDealSignature
-from models.user import User
 
 CONTRACT_VERSION = "2026-07-21"
 MOSCOW_TIMEZONE = ZoneInfo("Europe/Moscow")
@@ -27,23 +27,23 @@ CLAUSES = [
 ]
 
 
-def party_name(user: User) -> str:
+def party_name(user: Account) -> str:
     full_name = " ".join(filter(None, (user.last_name, user.first_name))).strip()
     company = user.company_data or {}
     company_name = (((company.get("data") or {}).get("name") or {}).get("short_with_opf"))
     return full_name or company_name or user.email or f"Пользователь #{user.id}"
 
 
-def party_requisites(user: User) -> dict[str, str]:
+def party_requisites(user: Account) -> dict[str, str]:
     requisites = {"Наименование": party_name(user)}
     if user.inn:
         requisites["ИНН"] = user.inn
     return requisites
 
 
-def specialist_areas(seller: User) -> str:
+def specialist_areas(seller: Account) -> str:
     values: list[str] = []
-    for certificate in seller.expert_certificates or []:
+    for certificate in seller.expert_profile.certificates or []:
         area = str(certificate.get("area") or "").strip()
         category = str(certificate.get("category") or "").strip()
         value = " ".join(filter(None, (area, category)))
@@ -55,8 +55,8 @@ def specialist_areas(seller: User) -> str:
 def build_contract_snapshot(
     public_id: str,
     contract_date: date,
-    seller: User,
-    buyer: User,
+    seller: Account,
+    buyer: Account,
     price_kopecks: int,
 ) -> dict[str, Any]:
     price_rubles = price_kopecks // 100

@@ -1,10 +1,10 @@
 "Форматирование сущностей в API-структуры."
 from dataclasses import dataclass
 
+from models.account import UserRole
 from models.chat import Chat, ChatMessage
 from models.contact_deal import ContactDealStatus
 from models.order import OrderStatus
-from models.user import UserRole
 from schemas.chat import ChatAttachmentResponse
 
 NOTIFICATION_PREVIEW_MAX = 140

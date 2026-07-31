@@ -1,5 +1,5 @@
+from models.account import Account
 from models.contact_deal import ContactAccessDeal, ContactDealStatus
-from models.user import User
 from schemas.expert_contact import ExpertContactCardResponse, ExpertContactOfferResponse
 from services.contact_deals.contract import party_name
 from services.contact_deals.crypto import ContactDealCipher
@@ -21,13 +21,14 @@ def mask_email(value: str | None) -> str | None:
     return f"{first}•••@{domain}"
 
 
-def to_offer(expert: User, cipher: ContactDealCipher) -> ExpertContactOfferResponse:
-    encrypted_payment_details = expert.contact_payment_details_encrypted
+def to_offer(expert: Account, cipher: ContactDealCipher) -> ExpertContactOfferResponse:
+    profile = expert.expert_profile
+    encrypted_payment_details = profile.contact_payment_details_encrypted
     return ExpertContactOfferResponse(
-        enabled=expert.contact_sales_enabled,
+        enabled=profile.contact_sales_enabled,
         price_rubles=(
-            expert.contact_price_kopecks // 100
-            if expert.contact_price_kopecks is not None
+            profile.contact_price_kopecks // 100
+            if profile.contact_price_kopecks is not None
             else None
         ),
         has_payment_details=bool(encrypted_payment_details),
@@ -36,16 +37,17 @@ def to_offer(expert: User, cipher: ContactDealCipher) -> ExpertContactOfferRespo
             if encrypted_payment_details
             else None
         ),
-        consent_at=expert.contact_disclosure_consent_at,
+        consent_at=profile.contact_disclosure_consent_at,
     )
 
 
 def to_expert_contact(
-    expert: User,
+    expert: Account,
     deal: ContactAccessDeal | None,
     actor_id: int | None,
     cipher: ContactDealCipher,
 ) -> ExpertContactCardResponse:
+    profile = expert.expert_profile
     is_mine = actor_id is not None and expert.id == actor_id
     released = deal is not None and deal.status == ContactDealStatus.CONTACTS_RELEASED
     contacts = (
@@ -60,26 +62,26 @@ def to_expert_contact(
         public_id=expert.public_id,
         name=party_name(expert),
         avatar_url=expert.avatar_url,
-        city=expert.location_city,
-        certificates=expert.expert_certificates or [],
-        rating=float(expert.rating) if expert.rating is not None else None,
-        review_count=expert.review_count,
+        city=profile.location_city,
+        certificates=profile.certificates or [],
+        rating=float(profile.rating) if profile.rating is not None else None,
+        review_count=profile.review_count,
         masked_phone=(
             "Телефон доступен после оплаты"
-            if expert.contact_sales_enabled and not released and not is_mine
+            if profile.contact_sales_enabled and not released and not is_mine
             else mask_phone(expert.phone)
         ),
         masked_email=(
             "Email доступен после оплаты"
-            if expert.contact_sales_enabled and not released and not is_mine
+            if profile.contact_sales_enabled and not released and not is_mine
             else mask_email(expert.email)
         ),
         phone=contacts.get("phone"),
         email=contacts.get("email"),
-        sales_enabled=expert.contact_sales_enabled,
+        sales_enabled=profile.contact_sales_enabled,
         price_rubles=(
-            expert.contact_price_kopecks // 100
-            if expert.contact_price_kopecks is not None
+            profile.contact_price_kopecks // 100
+            if profile.contact_price_kopecks is not None
             else None
         ),
         is_mine=is_mine,

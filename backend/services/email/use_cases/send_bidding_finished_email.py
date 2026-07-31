@@ -1,7 +1,7 @@
 "Use case: send bidding finished email."
+from models.account import Account
 from models.order import Order
 from models.response import OrderResponse
-from models.user import User
 from schemas.email import BiddingFinishedContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import format_price, full_name, greeting_for
@@ -68,11 +68,11 @@ class SendBiddingFinishedEmailUseCase:
 
     def build_context(
         self,
-        expert: User,
+        expert: Account,
         order: Order,
         outcome: str,
         response: OrderResponse | None,
-        customer: User | None,
+        customer: Account | None,
     ) -> BiddingFinishedContext:
         "Строит объект из входных данных."
         winning_price = (

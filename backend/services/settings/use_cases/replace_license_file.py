@@ -1,7 +1,7 @@
 "Use case: replace license file."
 from fastapi import UploadFile
 
-from models.user import User
+from models.account import Account
 from services.license_holders import remove_license_file, save_license_file
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -14,14 +14,15 @@ class ReplaceLicenseFileUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, file: UploadFile) -> User:
+    async def execute(self, user_id: int, file: UploadFile) -> Account:
         "Запускает основной сценарий use case."
-        user = await self.validator.require_license_holder(user_id)
-        owner_key = user.inn or user.public_id
+        account = await self.validator.require_license_holder(user_id)
+        holder = self.validator.require_license_holder_profile(account)
+        owner_key = account.inn or account.public_id
         new_url = await save_license_file(owner_key, file)
 
-        previous_url = user.license_file_url
-        user.license_file_url = new_url
+        previous_url = holder.license_file_url
+        holder.license_file_url = new_url
         try:
             await self.repo.flush()
         except Exception:
@@ -30,4 +31,4 @@ class ReplaceLicenseFileUseCase:
 
         if previous_url and previous_url != new_url:
             remove_license_file(previous_url)
-        return user
+        return account

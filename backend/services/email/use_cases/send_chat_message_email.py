@@ -1,6 +1,6 @@
 "Use case: send chat message email."
+from models.account import Account
 from models.chat import ChatMessage
-from models.user import User
 from schemas.email import ChatMessageContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import full_name, greeting_for
@@ -38,7 +38,7 @@ class SendChatMessageEmailUseCase:
         self.dispatcher.notify(recipient, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
     @staticmethod
-    def resolve_recipient(message: ChatMessage) -> User | None:
+    def resolve_recipient(message: ChatMessage) -> Account | None:
         "Публичный метод сервисного слоя."
         chat = message.chat
         if chat is None:
@@ -49,7 +49,7 @@ class SendChatMessageEmailUseCase:
             return chat.customer
         return None
 
-    def build_context(self, message: ChatMessage, recipient: User) -> ChatMessageContext:
+    def build_context(self, message: ChatMessage, recipient: Account) -> ChatMessageContext:
         "Строит объект из входных данных."
         chat = message.chat
         order = chat.order if chat else None

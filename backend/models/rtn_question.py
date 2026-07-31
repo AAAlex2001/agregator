@@ -20,7 +20,7 @@ class RtnQuestion(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+        ForeignKey("accounts.id", ondelete="SET NULL"), nullable=True, index=True
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     contact_email: Mapped[str] = mapped_column(String(255), nullable=False, default="")

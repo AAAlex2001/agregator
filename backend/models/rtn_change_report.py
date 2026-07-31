@@ -23,7 +23,7 @@ class RtnChangeReport(Base):
         ForeignKey("rtn_clarifications.id", ondelete="CASCADE"), nullable=False, index=True
     )
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+        ForeignKey("accounts.id", ondelete="SET NULL"), nullable=True, index=True
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")

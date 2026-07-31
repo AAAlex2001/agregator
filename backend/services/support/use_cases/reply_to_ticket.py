@@ -3,13 +3,13 @@ from datetime import UTC, datetime
 
 from fastapi import HTTPException, UploadFile, status
 
+from models.account import Account
 from models.support_ticket import (
     SupportTicket,
     SupportTicketMessage,
     TicketMessageAuthor,
     TicketStatus,
 )
-from models.user import User
 
 from ..file_storage import SupportFileStorage
 from ..repository import SupportRepository
@@ -26,7 +26,7 @@ class ReplyToTicketUseCase:
     async def execute(
         self,
         ticket_id: int,
-        user: User,
+        user: Account,
         text: str,
         uploads: list[UploadFile],
     ) -> SupportTicket:

@@ -1,11 +1,11 @@
 """Рассылка новой заявки из раздела трудовых ресурсов."""
 
+from models.account import Account, UserRole
 from models.labor import (
     EmploymentTerm,
     LaborListing,
     LaborListingKind,
 )
-from models.user import User, UserRole
 from schemas.email import NewLaborListingContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import greeting_for
@@ -53,7 +53,7 @@ class SendNewLaborListingEmailUseCase:
     def build_context(
         self,
         listing: LaborListing,
-        recipient: User,
+        recipient: Account,
     ) -> NewLaborListingContext:
         expert_wanted = listing.kind == LaborListingKind.EXPERT_WANTED
         heading = (

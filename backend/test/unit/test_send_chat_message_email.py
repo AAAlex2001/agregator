@@ -30,6 +30,7 @@ def make_chat_message(customer_id=10, expert_id=20, sender_id=10, text="прив
         customer=customer,
         expert=expert,
         order=order,
+        labor_listing=None,
     )
     sender = customer if sender_id == customer_id else expert
     return SimpleNamespace(

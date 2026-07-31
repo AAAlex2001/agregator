@@ -3,8 +3,8 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from models.account import Account
 from models.order import Order
-from models.user import User
 from services.chats.repository import ChatRepository
 
 
@@ -14,7 +14,7 @@ class ChatValidator:
     def __init__(self, repo: ChatRepository) -> None:
         self.repo = repo
 
-    async def require_active_user(self, user_id: int) -> User:
+    async def require_active_user(self, user_id: int) -> Account:
         "Возвращает требуемую сущность или бросает 404/403."
         user = await self.repo.find_user(user_id)
         if user is None:
@@ -47,7 +47,7 @@ class ChatValidator:
             )
 
     @staticmethod
-    def ensure_actor_belongs_to_order(actor: User, order: Order) -> None:
+    def ensure_actor_belongs_to_order(actor: Account, order: Order) -> None:
         "Бросает HTTPException, если условие не выполнено."
         if actor.id in {order.customer_id, order.assigned_expert_id}:
             return

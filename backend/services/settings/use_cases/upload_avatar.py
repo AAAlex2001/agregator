@@ -1,7 +1,7 @@
 "Use case: upload avatar."
 from fastapi import UploadFile
 
-from models.user import User
+from models.account import Account
 from services.settings.avatar_storage import AvatarStorage
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -14,7 +14,7 @@ class UploadAvatarUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, file: UploadFile) -> User:
+    async def execute(self, user_id: int, file: UploadFile) -> Account:
         "Запускает основной сценарий use case."
         user = await self.validator.require_user(user_id)
         new_url = await AvatarStorage.save(user, file)

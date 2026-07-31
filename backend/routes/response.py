@@ -9,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from models.account import UserRole
 from models.order import OrderStatus
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus, VatKind
-from models.user import UserRole
 from schemas.common import DeletedCountResponse, DetailResponse
 from schemas.order import OrderDocuments
 from schemas.response import (
@@ -131,8 +131,10 @@ def to_item(
         parts = [expert.first_name or "", expert.last_name or ""]
         expert_name = " ".join(p for p in parts if p)
         expert_avatar_url = expert.avatar_url
-        expert_rating = float(expert.rating) if expert.rating is not None else None
-        expert_review_count = expert.review_count or 0
+        profile = expert.expert_profile
+        if profile is not None:
+            expert_rating = float(profile.rating) if profile.rating is not None else None
+            expert_review_count = profile.review_count or 0
         expert_public_id = expert.public_id or ""
 
     has_review = bool(getattr(entity, "has_review_for_customer", False)) if actor_role == UserRole.CUSTOMER else False

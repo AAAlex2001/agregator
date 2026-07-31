@@ -5,13 +5,14 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
 from models.chat import Chat, ChatMessage
+from models.expert import Expert
 from models.labor import LaborListing
 from models.order import Order
 from models.question import OrderQuestion
 from models.response import OrderResponse
 from models.review import Review
-from models.user import User, UserRole
 
 
 @dataclass(frozen=True)
@@ -27,9 +28,9 @@ class EmailRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_user(self, user_id: int) -> User | None:
+    async def find_user(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
-        query = select(User).where(User.id == user_id)
+        query = select(Account).where(Account.id == user_id)
         return (await self.db.execute(query)).scalars().first()
 
     async def find_response(self, response_id: int) -> OrderResponse | None:
@@ -63,10 +64,10 @@ class EmailRepository:
     async def list_active_users_by_role(
         self,
         role: UserRole,
-    ) -> list[User]:
-        query = select(User).where(
-            User.role == role,
-            User.is_active.is_(True),
+    ) -> list[Account]:
+        query = select(Account).where(
+            Account.role == role,
+            Account.is_active.is_(True),
         )
         return list((await self.db.execute(query)).scalars().all())
 
@@ -85,37 +86,38 @@ class EmailRepository:
         )
         return (await self.db.execute(query)).scalars().first()
 
-    async def list_users_for_new_blog_post_email(self) -> list[User]:
+    async def list_users_for_new_blog_post_email(self) -> list[Account]:
         "Получатели письма о новой статье: подтверждённый email + включенный тогглер email_on_new_blog_post. Дедуп по email (один ящик может быть в users под разными ролями)."
         query = (
-            select(User)
+            select(Account)
             .where(
-                User.email.isnot(None),
-                User.email_verified.is_(True),
-                User.email_on_new_blog_post.is_(True),
+                Account.email.isnot(None),
+                Account.email_verified.is_(True),
+                Account.email_on_new_blog_post.is_(True),
             )
-            .distinct(User.email)
-            .order_by(User.email, User.id)
+            .distinct(Account.email)
+            .order_by(Account.email, Account.id)
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_experts_subscribed_to_order_types(self) -> list[User]:
+    async def list_experts_subscribed_to_order_types(self) -> list[Account]:
         "Эксперты с непустым фильтром типов заказов. Пересечение проверяем в use case."
-        query = select(User).where(
-            User.role == UserRole.EXPERT,
-            User.notify_order_types.isnot(None),
+        query = (
+            select(Account)
+            .join(Expert, Expert.account_id == Account.id)
+            .where(Expert.notify_order_types.isnot(None))
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_all_experts(self) -> list[User]:
-        query = select(User).where(User.role == UserRole.EXPERT)
+    async def list_all_experts(self) -> list[Account]:
+        query = select(Account).where(Account.role == UserRole.EXPERT)
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_responders(self, order_id: int) -> list[User]:
+    async def list_responders(self, order_id: int) -> list[Account]:
         "Эксперты, откликнувшиеся на заявку. Кому и куда слать — решает диспетчер."
         query = (
-            select(User)
-            .join(OrderResponse, OrderResponse.expert_id == User.id)
+            select(Account)
+            .join(OrderResponse, OrderResponse.expert_id == Account.id)
             .where(OrderResponse.order_id == order_id)
         )
         return list((await self.db.execute(query)).scalars().all())

@@ -1,7 +1,7 @@
 "Бизнес-валидации для responses."
 from fastapi import HTTPException, status
 
-from models.user import User, UserRole
+from models.account import Account, UserRole
 from services.responses.repository import ResponseRepository
 
 
@@ -11,7 +11,7 @@ class ResponseValidator:
     def __init__(self, repo: ResponseRepository) -> None:
         self.repo = repo
 
-    async def ensure_expert(self, expert_id: int) -> User:
+    async def ensure_expert(self, expert_id: int) -> Account:
         "Бросает HTTPException, если условие не выполнено."
         user = await self.require_user(expert_id)
         if user.is_active and user.role == UserRole.EXPERT:
@@ -21,7 +21,7 @@ class ResponseValidator:
             detail="Недостаточно прав для откликов",
         )
 
-    async def ensure_customer(self, customer_id: int) -> User:
+    async def ensure_customer(self, customer_id: int) -> Account:
         "Бросает HTTPException, если условие не выполнено."
         user = await self.require_user(customer_id)
         if user.is_active and user.role == UserRole.CUSTOMER:
@@ -31,7 +31,7 @@ class ResponseValidator:
             detail="Недостаточно прав для откликов",
         )
 
-    async def require_active_user(self, user_id: int) -> User:
+    async def require_active_user(self, user_id: int) -> Account:
         "Возвращает требуемую сущность или бросает 404/403."
         user = await self.require_user(user_id)
         if user.is_active:
@@ -41,7 +41,7 @@ class ResponseValidator:
             detail="Пользователь неактивен",
         )
 
-    async def require_user(self, user_id: int) -> User:
+    async def require_user(self, user_id: int) -> Account:
         "Возвращает требуемую сущность или бросает 404."
         user = await self.repo.find_user(user_id)
         if user is not None:

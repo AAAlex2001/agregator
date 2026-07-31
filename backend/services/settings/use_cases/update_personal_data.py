@@ -1,5 +1,5 @@
 "Use case: update personal data."
-from models.user import User
+from models.account import Account
 from schemas.settings import UpdatePersonalDataRequest
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -12,7 +12,7 @@ class UpdatePersonalDataUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, data: UpdatePersonalDataRequest) -> User:
+    async def execute(self, user_id: int, data: UpdatePersonalDataRequest) -> Account:
         "Запускает основной сценарий use case."
         user = await self.validator.require_user(user_id)
 

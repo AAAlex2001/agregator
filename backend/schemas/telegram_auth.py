@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 
-from models.user import UserRole
+from models.account import UserRole
 
 
 class TelegramAuthRequest(BaseModel):

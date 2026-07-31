@@ -6,8 +6,9 @@ from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.account import Account, UserRole
+from models.expert import Expert
 from models.notification import Notification
-from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 
@@ -25,28 +26,29 @@ class NotificationRepository:
         "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
 
-    async def list_experts_subscribed_to_order_types(self) -> list[User]:
+    async def list_experts_subscribed_to_order_types(self) -> list[Account]:
         "Эксперты с непустым фильтром типов заказов — получатели in-app по новой заявке (без проверки email — нотификация в кабинете)."
-        query = select(User).where(
-            User.role == UserRole.EXPERT,
-            User.notify_order_types.isnot(None),
+        query = (
+            select(Account)
+            .join(Expert, Expert.account_id == Account.id)
+            .where(Expert.notify_order_types.isnot(None))
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_all_experts(self) -> list[User]:
-        query = select(User).where(User.role == UserRole.EXPERT)
+    async def list_all_experts(self) -> list[Account]:
+        query = select(Account).where(Account.role == UserRole.EXPERT)
         return list((await self.db.execute(query)).scalars().all())
 
     async def iter_all_user_ids_in_batches(
         self, batch_size: int = 500
     ) -> AsyncIterator[list[int]]:
-        "Итерирует ID всех пользователей батчами через keyset-пагинацию по User.id."
+        "Итерирует ID всех пользователей батчами через keyset-пагинацию по Account.id."
         last_id = 0
         while True:
             result = await self.db.execute(
-                select(User.id)
-                .where(User.id > last_id)
-                .order_by(User.id)
+                select(Account.id)
+                .where(Account.id > last_id)
+                .order_by(Account.id)
                 .limit(batch_size)
             )
             batch = list(result.scalars().all())
@@ -76,15 +78,15 @@ class NotificationRepository:
 
     async def get_unread_count(self, user_id: int) -> int:
         "Возвращает запрошенную сущность."
-        query = select(User.notification_unread_count).where(User.id == user_id)
+        query = select(Account.notification_unread_count).where(Account.id == user_id)
         return int((await self.db.execute(query)).scalar_one_or_none() or 0)
 
     async def increment_unread(self, user_id: int) -> None:
         "Публичный метод сервисного слоя."
         await self.db.execute(
-            update(User)
-            .where(User.id == user_id)
-            .values(notification_unread_count=User.notification_unread_count + 1)
+            update(Account)
+            .where(Account.id == user_id)
+            .values(notification_unread_count=Account.notification_unread_count + 1)
         )
 
     async def decrement_unread(self, user_id: int, amount: int = 1) -> None:
@@ -92,11 +94,11 @@ class NotificationRepository:
         if amount <= 0:
             return
         await self.db.execute(
-            update(User)
-            .where(User.id == user_id)
+            update(Account)
+            .where(Account.id == user_id)
             .values(
                 notification_unread_count=func.greatest(
-                    User.notification_unread_count - amount, 0
+                    Account.notification_unread_count - amount, 0
                 )
             )
         )
@@ -139,7 +141,7 @@ class NotificationRepository:
     async def reset_unread(self, user_id: int) -> None:
         "Сбрасывает состояние к значению по умолчанию."
         await self.db.execute(
-            update(User).where(User.id == user_id).values(notification_unread_count=0)
+            update(Account).where(Account.id == user_id).values(notification_unread_count=0)
         )
 
     async def delete(self, notification_id: int, user_id: int) -> bool | None:

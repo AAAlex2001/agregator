@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import HTTPException
 
 from models.order import OrderWorkType
-from models.user import UserRole
+from models.account import UserRole
 from schemas.settings import UpdateOrderNotificationsRequest
 from services.email.use_cases.send_new_order_email import SendNewOrderEmailUseCase
 from services.notifications.use_cases.create_new_order_notification import (
@@ -40,7 +40,7 @@ def make_expert(user_id: int, subscriptions: list[str]) -> SimpleNamespace:
         id=user_id,
         first_name="Эксперт",
         last_name=None,
-        notify_order_types=subscriptions,
+        expert_profile=SimpleNamespace(notify_order_types=subscriptions),
     )
 
 
@@ -121,19 +121,21 @@ class OrderNotificationUseCasesTest(IsolatedAsyncioTestCase):
         assert dispatcher.notify.call_args.args[0].id == matching.id
 
     async def test_order_notification_settings_require_expert_role(self) -> None:
-        expert = make_expert(1, [])
+        account = make_expert(1, [])
         repo = MagicMock()
         repo.flush = AsyncMock()
         validator = MagicMock()
-        validator.require_expert = AsyncMock(return_value=expert)
+        validator.require_expert = AsyncMock(return_value=account)
+        validator.require_expert_profile = MagicMock(return_value=account.expert_profile)
 
         result = await UpdateOrderNotificationsUseCase(repo, validator).execute(
-            expert.id,
+            account.id,
             [OrderWorkType.OTHER.value],
         )
 
-        validator.require_expert.assert_awaited_once_with(expert.id)
-        assert result.notify_order_types == [OrderWorkType.OTHER.value]
+        validator.require_expert.assert_awaited_once_with(account.id)
+        assert result is account
+        assert account.expert_profile.notify_order_types == [OrderWorkType.OTHER.value]
         repo.flush.assert_awaited_once()
 
     async def test_customer_cannot_update_order_notification_settings(self) -> None:

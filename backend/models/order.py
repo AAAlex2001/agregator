@@ -19,10 +19,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.chat import Chat
+    from models.order_details import OrderCadastralDetails, OrderForensicDetails
     from models.question import OrderQuestion
     from models.response import OrderResponse
-    from models.user import User
 
 
 class OrderStatus(str, PyEnum):
@@ -35,6 +36,8 @@ class OrderWorkType(str, PyEnum):
     DESIGN_SURVEY = "DESIGN_SURVEY"
     INSPECTION_TESTING = "INSPECTION_TESTING"
     RESEARCH_LAB = "RESEARCH_LAB"
+    CADASTRAL = "CADASTRAL"
+    FORENSIC = "FORENSIC"
     OTHER = "OTHER"
 
 
@@ -57,12 +60,12 @@ class Order(Base):
     company: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     comment: Mapped[str] = mapped_column(Text, nullable=False, default="")
     customer_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     assigned_expert_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"),
+        ForeignKey("accounts.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
     )
@@ -109,11 +112,11 @@ class Order(Base):
         nullable=False,
     )
 
-    customer: Mapped["User"] = relationship(
+    customer: Mapped["Account"] = relationship(
         foreign_keys=[customer_id],
         back_populates="orders",
     )
-    assigned_expert: Mapped["User | None"] = relationship(
+    assigned_expert: Mapped["Account | None"] = relationship(
         foreign_keys=[assigned_expert_id],
         back_populates="assigned_orders",
     )
@@ -139,6 +142,20 @@ class Order(Base):
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+    cadastral_details: Mapped["OrderCadastralDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    forensic_details: Mapped["OrderForensicDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
     )
 
 

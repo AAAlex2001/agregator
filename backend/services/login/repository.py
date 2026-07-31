@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
 from models.session import Session
-from models.user import User, UserRole
 
 SESSION_TTL_DAYS = 7
 SESSION_MAX_DAYS = 14
@@ -21,51 +21,51 @@ class LoginRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_user_by_id(self, user_id: int) -> User | None:
+    async def find_user_by_id(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
-    async def find_users_by_email(self, email: str) -> list[User]:
+    async def find_users_by_email(self, email: str) -> list[Account]:
         "Ищет сущность по заданным параметрам."
-        result = await self.db.execute(select(User).where(User.email == email))
+        result = await self.db.execute(select(Account).where(Account.email == email))
         return list(result.scalars().all())
 
-    async def find_users_by_phone(self, phone: str) -> list[User]:
+    async def find_users_by_phone(self, phone: str) -> list[Account]:
         "Ищет сущность по заданным параметрам."
-        result = await self.db.execute(select(User).where(User.phone == phone))
+        result = await self.db.execute(select(Account).where(Account.phone == phone))
         return list(result.scalars().all())
 
-    async def find_users_by_inn(self, inn: str) -> list[User]:
+    async def find_users_by_inn(self, inn: str) -> list[Account]:
         "Ищет сущность по заданным параметрам."
-        result = await self.db.execute(select(User).where(User.inn == inn))
+        result = await self.db.execute(select(Account).where(Account.inn == inn))
         return list(result.scalars().all())
 
-    async def find_user_by_telegram_id(self, telegram_id: int) -> User | None:
+    async def find_user_by_telegram_id(self, telegram_id: int) -> Account | None:
         "Ищет пользователя по привязанному Telegram ID; при нескольких ролях — последнего активного."
         return (
             await self.db.execute(
-                select(User)
-                .where(User.telegram_id == telegram_id)
-                .order_by(User.updated_at.desc())
+                select(Account)
+                .where(Account.telegram_id == telegram_id)
+                .order_by(Account.updated_at.desc())
             )
         ).scalars().first()
 
     async def set_telegram_id(self, user_id: int, telegram_id: int) -> None:
-        "Привязывает Telegram ко всем ролям пользователя (User-записи одного email); у другого пользователя привязка снимается."
+        "Привязывает Telegram ко всем ролям пользователя (Account-записи одного email); у другого пользователя привязка снимается."
         user = await self.find_user_by_id(user_id)
         if user is None:
             return
         owners = (
-            await self.db.execute(select(User).where(User.telegram_id == telegram_id))
+            await self.db.execute(select(Account).where(Account.telegram_id == telegram_id))
         ).scalars().all()
         for owner in owners:
             if owner.email is None or user.email is None or owner.email != user.email:
                 owner.telegram_id = None
         if user.email:
             siblings = (
-                await self.db.execute(select(User).where(User.email == user.email))
+                await self.db.execute(select(Account).where(Account.email == user.email))
             ).scalars().all()
             for sibling in siblings:
                 sibling.telegram_id = telegram_id
@@ -73,20 +73,20 @@ class LoginRepository:
             user.telegram_id = telegram_id
         await self.db.flush()
 
-    async def find_user_by_email_and_role(self, email: str, role: UserRole) -> User | None:
+    async def find_user_by_email_and_role(self, email: str, role: UserRole) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
             await self.db.execute(
-                select(User).where(User.email == email, User.role == role)
+                select(Account).where(Account.email == email, Account.role == role)
             )
         ).scalars().first()
 
-    async def list_other_role_users_by_email(self, email: str, exclude_user_id: int) -> list[User]:
+    async def list_other_role_users_by_email(self, email: str, exclude_user_id: int) -> list[Account]:
         "Возвращает список сущностей с пагинацией/фильтрами."
         if not email:
             return []
         result = await self.db.execute(
-            select(User).where(User.email == email, User.id != exclude_user_id)
+            select(Account).where(Account.email == email, Account.id != exclude_user_id)
         )
         return list(result.scalars().all())
 

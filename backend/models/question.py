@@ -7,8 +7,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.order import Order
-    from models.user import User
 
 
 class OrderQuestion(Base):
@@ -25,7 +25,7 @@ class OrderQuestion(Base):
         index=True,
     )
     expert_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -40,4 +40,4 @@ class OrderQuestion(Base):
     is_anonymous: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
 
     order: Mapped["Order"] = relationship(back_populates="questions")
-    expert: Mapped["User"] = relationship()
+    expert: Mapped["Account"] = relationship()

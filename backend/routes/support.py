@@ -5,13 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from models.account import Account
 from models.support_ticket import (
     SupportTicket,
     SupportTicketMessage,
     TicketCategory,
     TicketMessageAuthor,
 )
-from models.user import User
 from schemas.support import (
     SupportTicketDetail,
     SupportTicketList,
@@ -69,8 +69,8 @@ def ticket_to_detail(ticket: SupportTicket) -> SupportTicketDetail:
     )
 
 
-async def get_user_or_404(db: AsyncSession, user_id: int) -> User:
-    user = (await db.execute(select(User).where(User.id == user_id))).scalars().first()
+async def get_user_or_404(db: AsyncSession, user_id: int) -> Account:
+    user = (await db.execute(select(Account).where(Account.id == user_id))).scalars().first()
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
     return user

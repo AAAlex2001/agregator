@@ -7,6 +7,7 @@ from typing import Any, TypedDict
 from fastapi import HTTPException, status
 from yookassa import Payment as YooPayment
 
+from models.account import Account
 from models.payment import Payment, PaymentStatus, PaymentType
 from models.pricing import (
     PricingPlan,
@@ -14,7 +15,6 @@ from models.pricing import (
     SubscriptionStatus,
     UserSubscription,
 )
-from models.user import User
 from services.subscriptions.constants import (
     KOPECKS_PER_RUBLE,
     SINGLE_RESPONSES,
@@ -118,7 +118,7 @@ class PurchaseSubscriptionUseCase:
         )
 
     @staticmethod
-    def build_payment(user: User, plan: PricingPlan) -> Payment:
+    def build_payment(user: Account, plan: PricingPlan) -> Payment:
         "Строит объект из входных данных."
         return Payment(
             user_id=user.id,
@@ -130,7 +130,7 @@ class PurchaseSubscriptionUseCase:
 
     @classmethod
     def build_subscription(
-        cls, user: User, plan: PricingPlan, payment: Payment
+        cls, user: Account, plan: PricingPlan, payment: Payment
     ) -> UserSubscription:
         "Строит объект из входных данных."
         now = datetime.now(UTC)
@@ -147,7 +147,7 @@ class PurchaseSubscriptionUseCase:
 
     @staticmethod
     def build_yoo_payload(
-        user: User,
+        user: Account,
         plan: PricingPlan,
         payment: Payment,
         subscription: UserSubscription,

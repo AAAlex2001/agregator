@@ -4,10 +4,10 @@ from sqlalchemy import delete, func, not_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
 from models.order import Order, OrderBadge, OrderStatus, OrderWorkType
 from models.question import OrderQuestion
 from models.response import OrderResponse as OrderResponseModel
-from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 SORT_DIR_ASC = "asc"
@@ -222,17 +222,21 @@ class OrderRepository:
 
     async def get_user_role(self, user_id: int) -> UserRole | None:
         "Возвращает запрошенную сущность."
-        query = select(User.role).where(User.id == user_id)
+        query = select(Account.role).where(Account.id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none()
 
     async def user_exists(self, user_id: int) -> bool:
         "Публичный метод сервисного слоя."
-        query = select(User.id).where(User.id == user_id)
+        query = select(Account.id).where(Account.id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none() is not None
 
     async def add(self, order: Order) -> None:
         "Добавляет сущность в сессию."
         self.db.add(order)
+
+    async def add_details(self, details: object) -> None:
+        "Добавляет детали направления заказа в сессию."
+        self.db.add(details)
 
     async def add_badges(self, badges: list[OrderBadge]) -> None:
         "Добавляет связанные данные."

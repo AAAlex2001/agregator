@@ -1,6 +1,6 @@
 "Use case: list chats."
+from models.account import Account
 from models.chat import Chat, ChatMessage
-from models.user import User
 from schemas.chat import ChatListItemResponse
 from services.chats.formatters import ChatFormatter
 from services.chats.repository import ChatRepository
@@ -38,7 +38,7 @@ class ListChatsUseCase:
     @staticmethod
     def build_item(
         chat: Chat,
-        actor: User,
+        actor: Account,
         last_messages: dict[int, ChatMessage],
         unread_counts: dict[int, int],
     ) -> ChatListItemResponse:

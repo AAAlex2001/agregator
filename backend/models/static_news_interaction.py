@@ -27,7 +27,7 @@ class StaticNewsReaction(Base):
     )
     user_id: Mapped[int | None] = mapped_column(
         Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=True,
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -53,7 +53,7 @@ class StaticNewsView(Base):
     )
     user_id: Mapped[int | None] = mapped_column(
         Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=True,
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False)

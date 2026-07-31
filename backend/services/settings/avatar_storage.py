@@ -7,7 +7,7 @@ from uuid import uuid4
 import aiofiles
 from fastapi import HTTPException, UploadFile, status
 
-from models.user import User
+from models.account import Account
 from utils.image_validation import extension_matches_image_bytes
 
 AVATAR_ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
@@ -40,7 +40,7 @@ class AvatarStorage:
         return extension
 
     @classmethod
-    async def save(cls, user: User, file: UploadFile) -> str:
+    async def save(cls, user: Account, file: UploadFile) -> str:
         "Сохраняет файл/сущность."
         extension = cls.validate_upload(file.filename or "", file.content_type or "")
 

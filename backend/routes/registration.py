@@ -77,7 +77,7 @@ async def register_user(
     cipher = build_contact_cipher() if data.contact_sales_enabled else None
     user = await RegisterUserUseCase(repo, build_validator(repo), cipher).execute(data)
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
-    return UserResponse.model_validate(user)
+    return UserResponse.from_account(user)
 
 
 @router.post(
@@ -95,7 +95,7 @@ async def confirm_email(
     )
     session = await CreateSessionUseCase(LoginRepository(db)).execute(user.id)
 
-    response = JSONResponse(content=UserResponse.model_validate(user).model_dump(mode="json"))
+    response = JSONResponse(content=UserResponse.from_account(user).model_dump(mode="json"))
     response.set_cookie(
         key="session_id",
         value=session.session_id,
@@ -173,7 +173,7 @@ async def register_license_holder(
         raise
 
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
-    return UserResponse.model_validate(user)
+    return UserResponse.from_account(user)
 
 
 @router.post(

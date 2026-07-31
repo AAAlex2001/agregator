@@ -19,8 +19,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.chat import Chat
-    from models.user import User
 
 
 class LaborListingKind(str, PyEnum):
@@ -64,7 +64,7 @@ class LaborListing(Base):
         index=True,
     )
     owner_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True
     )
     client_request_id: Mapped[PyUUID | None] = mapped_column(
         UUID(as_uuid=True),
@@ -106,7 +106,7 @@ class LaborListing(Base):
         onupdate=lambda: datetime.now(UTC),
     )
 
-    owner: Mapped["User"] = relationship()
+    owner: Mapped["Account"] = relationship()
     chats: Mapped[list["Chat"]] = relationship(
         back_populates="labor_listing",
         cascade="all, delete-orphan",

@@ -1,5 +1,5 @@
 "Use case: update expert certificates."
-from models.user import User
+from models.account import Account
 from schemas.settings import UpdateExpertCertificatesRequest
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -12,11 +12,12 @@ class UpdateExpertCertificatesUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, data: UpdateExpertCertificatesRequest) -> User:
+    async def execute(self, user_id: int, data: UpdateExpertCertificatesRequest) -> Account:
         "Запускает основной сценарий use case."
-        user = await self.validator.require_user(user_id)
-        user.expert_certificates = [cert.model_dump() for cert in data.certificates]
-        user.expert_show_on_map = data.show_on_map
-        user.expert_map_fields = data.map_fields
+        account = await self.validator.require_expert(user_id)
+        expert = self.validator.require_expert_profile(account)
+        expert.certificates = [cert.model_dump() for cert in data.certificates]
+        expert.show_on_map = data.show_on_map
+        expert.map_fields = data.map_fields
         await self.repo.flush()
-        return user
+        return account

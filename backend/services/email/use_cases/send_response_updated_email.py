@@ -1,6 +1,6 @@
 "Use case: send response updated email."
+from models.account import Account
 from models.response import OrderResponse
-from models.user import User
 from schemas.email import ExpertBrief, ResponseBrief, ResponseUpdatedContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import contact_line, full_name, greeting_for
@@ -36,7 +36,7 @@ class SendResponseUpdatedEmailUseCase:
     def build_context(
         self,
         response: OrderResponse,
-        customer: User,
+        customer: Account,
         changes_summary: str,
     ) -> ResponseUpdatedContext:
         "Строит объект из входных данных."

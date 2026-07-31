@@ -4,9 +4,9 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field
 
+from models.account import UserRole
 from models.notification import NotificationType
 from models.response import ResponseStatus
-from models.user import UserRole
 
 
 class ResponseStatusChangeReason(str, PyEnum):

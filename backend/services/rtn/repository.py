@@ -8,6 +8,7 @@ from sqlalchemy import Select, Table, case, delete, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.account import Account, UserRole
 from models.rtn_change_report import RtnChangeReport, RtnChangeReportStatus
 from models.rtn_clarification import (
     Activity,
@@ -29,7 +30,6 @@ from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue, RtnCommentReaction
 from models.rtn_question import RtnQuestion, RtnQuestionStatus
 from models.tag import Tag
-from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 # Значение одного из 4 таксономических измерений карточки.
@@ -383,8 +383,8 @@ class RtnCommentRepository:
             return query.order_by(score_order, RtnComment.created_at.desc())
 
         if sort_by == "is_expert":
-            query = query.outerjoin(User, User.id == RtnComment.user_id)
-            expert_flag = case((User.role == UserRole.EXPERT, 1), else_=0)
+            query = query.outerjoin(Account, Account.id == RtnComment.user_id)
+            expert_flag = case((Account.role == UserRole.EXPERT, 1), else_=0)
             expert_order = expert_flag.desc() if is_desc else expert_flag.asc()
             return query.order_by(expert_order, RtnComment.created_at.desc())
 
@@ -502,11 +502,11 @@ class RtnQuestionRepository:
         query = (
             select(
                 RtnQuestion,
-                User.email,
+                Account.email,
                 RtnClarification.title,
                 RtnClarification.slug,
             )
-            .outerjoin(User, User.id == RtnQuestion.user_id)
+            .outerjoin(Account, Account.id == RtnQuestion.user_id)
             .outerjoin(
                 RtnClarification,
                 RtnClarification.id == RtnQuestion.answered_clarification_id,

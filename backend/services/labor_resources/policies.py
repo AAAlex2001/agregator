@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 
-from models.user import User
+from models.account import Account
 from services.labor_resources.repository import LaborRepository
 
 
@@ -12,7 +12,7 @@ class LaborPolicy:
         self,
         user_id: int,
         for_update: bool = False,
-    ) -> User:
+    ) -> Account:
         user = await self.repository.get_user(user_id, for_update=for_update)
         if user is None or not user.is_active:
             raise HTTPException(

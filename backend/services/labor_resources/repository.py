@@ -4,9 +4,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.chat import Chat
 from models.labor import LaborListing, LaborListingKind
-from models.user import User
 
 
 class LaborRepository:
@@ -17,8 +17,8 @@ class LaborRepository:
         self,
         user_id: int,
         for_update: bool = False,
-    ) -> User | None:
-        query = select(User).where(User.id == user_id)
+    ) -> Account | None:
+        query = select(Account).where(Account.id == user_id)
         if for_update:
             query = query.with_for_update()
         return (await self.db.execute(query)).scalars().first()

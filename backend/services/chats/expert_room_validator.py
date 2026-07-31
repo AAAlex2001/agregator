@@ -1,7 +1,7 @@
 "Сервисный модуль: expert room validator."
 from fastapi import HTTPException, status
 
-from models.user import User, UserRole
+from models.account import Account, UserRole
 from services.chats.expert_room_repository import ExpertRoomRepository
 
 
@@ -11,7 +11,7 @@ class ExpertRoomValidator:
     def __init__(self, repo: ExpertRoomRepository) -> None:
         self.repo = repo
 
-    async def require_expert(self, user_id: int) -> User:
+    async def require_expert(self, user_id: int) -> Account:
         "Возвращает требуемую сущность или бросает 404."
         user = await self.repo.find_user(user_id)
         if user is None:

@@ -10,10 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.contact_deal import ContactAccessDeal
     from models.labor import LaborListing
     from models.order import Order
-    from models.user import User
 
 
 class Chat(Base):
@@ -34,8 +34,8 @@ class Chat(Base):
     contact_deal_id: Mapped[int | None] = mapped_column(
         ForeignKey("contact_access_deals.id", ondelete="CASCADE"), nullable=True, index=True
     )
-    customer_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    customer_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
+    expert_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -54,8 +54,8 @@ class Chat(Base):
     order: Mapped["Order | None"] = relationship(back_populates="chats")
     labor_listing: Mapped["LaborListing | None"] = relationship(back_populates="chats")
     contact_deal: Mapped["ContactAccessDeal | None"] = relationship()
-    customer: Mapped["User"] = relationship(foreign_keys=[customer_id], back_populates="customer_chats")
-    expert: Mapped["User"] = relationship(foreign_keys=[expert_id], back_populates="expert_chats")
+    customer: Mapped["Account"] = relationship(foreign_keys=[customer_id], back_populates="customer_chats")
+    expert: Mapped["Account"] = relationship(foreign_keys=[expert_id], back_populates="expert_chats")
     messages: Mapped[list["ChatMessage"]] = relationship(
         back_populates="chat",
         cascade="all, delete-orphan",
@@ -79,7 +79,7 @@ class ChatMessage(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     chat_id: Mapped[int] = mapped_column(ForeignKey("chats.id", ondelete="CASCADE"), nullable=False, index=True)
-    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    sender_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     client_message_id: Mapped[PyUUID | None] = mapped_column(
         UUID(as_uuid=True),
         nullable=True,
@@ -92,7 +92,7 @@ class ChatMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
     chat: Mapped["Chat"] = relationship(back_populates="messages")
-    sender: Mapped["User"] = relationship(back_populates="chat_messages")
+    sender: Mapped["Account"] = relationship(back_populates="chat_messages")
 
 
 class ExpertRoomMessage(Base):
@@ -101,7 +101,7 @@ class ExpertRoomMessage(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     sender_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -114,7 +114,7 @@ class ExpertRoomMessage(Base):
         index=True,
     )
 
-    sender: Mapped["User"] = relationship()
+    sender: Mapped["Account"] = relationship()
 
 
 class ExpertRoomBan(Base):
@@ -124,7 +124,7 @@ class ExpertRoomBan(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("accounts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
@@ -135,4 +135,4 @@ class ExpertRoomBan(Base):
         nullable=False,
     )
 
-    user: Mapped["User"] = relationship()
+    user: Mapped["Account"] = relationship()

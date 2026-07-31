@@ -1,5 +1,5 @@
 "Use case: mark notifications introduced."
-from models.user import User
+from models.account import Account
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
 
@@ -11,7 +11,7 @@ class MarkNotificationsIntroducedUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int) -> User:
+    async def execute(self, user_id: int) -> Account:
         "Запускает основной сценарий use case."
         user = await self.validator.require_user(user_id)
         user.notifications_introduced = True

@@ -4,6 +4,7 @@ from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
 from models.contact_deal import (
     ContactAccessDeal,
     ContactDealSignature,
@@ -12,7 +13,6 @@ from models.contact_deal import (
     ContactReceiptStatus,
 )
 from models.review import Review
-from models.user import User, UserRole
 
 
 class ContactDealRepository:
@@ -55,8 +55,8 @@ class ContactDealRepository:
         )
         return (await self.db.execute(query)).scalars().first()
 
-    async def get_user(self, user_id: int, for_update: bool = False) -> User | None:
-        query = select(User).where(User.id == user_id, User.is_active.is_(True))
+    async def get_user(self, user_id: int, for_update: bool = False) -> Account | None:
+        query = select(Account).where(Account.id == user_id, Account.is_active.is_(True))
         if for_update:
             query = query.with_for_update()
         return (await self.db.execute(query)).scalars().first()
@@ -65,11 +65,11 @@ class ContactDealRepository:
         self,
         user_id: int,
         for_update: bool = False,
-    ) -> User | None:
-        query = select(User).where(
-            User.id == user_id,
-            User.role == UserRole.EXPERT,
-            User.is_active.is_(True),
+    ) -> Account | None:
+        query = select(Account).where(
+            Account.id == user_id,
+            Account.role == UserRole.EXPERT,
+            Account.is_active.is_(True),
         )
         if for_update:
             query = query.with_for_update()

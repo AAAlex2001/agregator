@@ -4,9 +4,9 @@ from datetime import UTC, datetime
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
+from models.account import UserRole
 from models.order import OrderStatus
 from models.question import OrderQuestion
-from models.user import UserRole
 from services.email.use_cases.send_question_asked_email import SendQuestionAskedEmailUseCase
 from services.notifications.use_cases.create_question_notifications import (
     CreateQuestionAskedNotificationUseCase,

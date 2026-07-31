@@ -56,10 +56,11 @@ class CreateContactDealUseCase:
         buyer = await self.policy.require_user(buyer_id)
         if seller.id == buyer.id:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Нельзя купить свои контакты")
+        profile = seller.expert_profile
         if (
-            not seller.contact_sales_enabled
-            or not seller.contact_price_kopecks
-            or not seller.contact_payment_details_encrypted
+            not profile.contact_sales_enabled
+            or not profile.contact_price_kopecks
+            or not profile.contact_payment_details_encrypted
         ):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -72,15 +73,15 @@ class CreateContactDealUseCase:
             contract_date=datetime.now(UTC).date(),
             seller=seller,
             buyer=buyer,
-            price_kopecks=seller.contact_price_kopecks,
+            price_kopecks=profile.contact_price_kopecks,
         )
         deal = ContactAccessDeal(
             public_id=public_id,
             seller_id=seller.id,
             buyer_id=buyer.id,
             status=ContactDealStatus.AWAITING_BUYER_SIGNATURE,
-            price_kopecks=seller.contact_price_kopecks,
-            payment_details_encrypted=seller.contact_payment_details_encrypted,
+            price_kopecks=profile.contact_price_kopecks,
+            payment_details_encrypted=profile.contact_payment_details_encrypted,
             seller_contacts_encrypted=self.cipher.encrypt_json(
                 {"phone": seller.phone, "email": seller.email}
             ),

@@ -1,5 +1,5 @@
 "Use case: update expert location."
-from models.user import User
+from models.account import Account
 from schemas.settings import UpdateExpertLocationRequest
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -12,13 +12,14 @@ class UpdateExpertLocationUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, data: UpdateExpertLocationRequest) -> User:
+    async def execute(self, user_id: int, data: UpdateExpertLocationRequest) -> Account:
         "Запускает основной сценарий use case."
-        user = await self.validator.require_user(user_id)
-        user.location_lat = data.location_lat
-        user.location_lng = data.location_lng
-        user.location_address = data.location_address
-        user.location_city = data.location_city
-        user.travels_to_other_regions = data.travels_to_other_regions
+        account = await self.validator.require_expert(user_id)
+        expert = self.validator.require_expert_profile(account)
+        expert.location_lat = data.location_lat
+        expert.location_lng = data.location_lng
+        expert.location_address = data.location_address
+        expert.location_city = data.location_city
+        expert.travels_to_other_regions = data.travels_to_other_regions
         await self.repo.flush()
-        return user
+        return account

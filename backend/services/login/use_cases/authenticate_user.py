@@ -1,7 +1,7 @@
 "Use case: authenticate user."
 from fastapi import HTTPException, status
 
-from models.user import User
+from models.account import Account
 from schemas.login import UserLogin
 from services.login.repository import LoginRepository
 from services.login.validators import LoginValidator
@@ -15,7 +15,7 @@ class AuthenticateUserUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, data: UserLogin) -> User:
+    async def execute(self, data: UserLogin) -> Account:
         "Запускает основной сценарий use case."
         self.validator.ensure_contact_provided(data.email, data.phone, data.inn)
         self.validator.ensure_inn_format(data.inn)
@@ -73,7 +73,7 @@ class AuthenticateUserUseCase:
 
         return user
 
-    async def find_candidates(self, data: UserLogin) -> list[User]:
+    async def find_candidates(self, data: UserLogin) -> list[Account]:
         "Ищет сущность по заданным параметрам."
         if data.email:
             return await self.repo.find_users_by_email(data.email)

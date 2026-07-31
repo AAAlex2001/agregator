@@ -3,13 +3,13 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
 
+from models.account import UserRole
 from models.labor import (
     CurrentJobStatus,
     EmploymentTerm,
     EmploymentType,
     LaborListingKind,
 )
-from models.user import UserRole
 
 
 class LaborCertificate(BaseModel):

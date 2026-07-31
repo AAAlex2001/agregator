@@ -1,7 +1,7 @@
 "Сервисный модуль: notifier."
 from fastapi import BackgroundTasks
 
-from models.user import User
+from models.account import Account
 from services.verification import VerificationService
 
 EMAIL_CONFIRMATION_SUBJECT = "Подтверждение почты на Ресурс-Плюс"
@@ -13,7 +13,7 @@ class RegistrationNotifier:
     def __init__(self, verification: VerificationService) -> None:
         self.verification = verification
 
-    async def schedule_confirmation_email(self, user: User, background_tasks: BackgroundTasks) -> None:
+    async def schedule_confirmation_email(self, user: Account, background_tasks: BackgroundTasks) -> None:
         "Публичный метод сервисного слоя."
         if not user.email:
             return
@@ -24,7 +24,7 @@ class RegistrationNotifier:
             background_tasks,
         )
 
-    async def send_confirmation_email(self, user: User) -> None:
+    async def send_confirmation_email(self, user: Account) -> None:
         "Отправляет уведомление получателю."
         if not user.email:
             return

@@ -1,10 +1,10 @@
+from models.account import Account
 from models.chat import Chat
 from models.labor import LaborListing
-from models.user import User
 from schemas.labor import LaborListingResponse, LaborResponderResponse
 
 
-def display_name(user: User) -> str:
+def display_name(user: Account) -> str:
     company = user.company_data or {}
     company_data = company.get("data") or {}
     company_name = (company_data.get("name") or {}).get("short_with_opf")
@@ -63,5 +63,5 @@ def listing_to_response(
     )
 
 
-def responder_for(chat: Chat, owner_id: int) -> User:
+def responder_for(chat: Chat, owner_id: int) -> Account:
     return chat.expert if chat.customer_id == owner_id else chat.customer

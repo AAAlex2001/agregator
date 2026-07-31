@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
-    from models.user import User
+    from models.account import Account
 
 
 class RtnComment(Base):
@@ -19,7 +19,7 @@ class RtnComment(Base):
         ForeignKey("rtn_clarifications.id", ondelete="CASCADE"), nullable=False, index=True
     )
     user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True
+        ForeignKey("accounts.id", ondelete="CASCADE"), nullable=True, index=True
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     parent_id: Mapped[int | None] = mapped_column(
@@ -42,7 +42,7 @@ class RtnComment(Base):
         nullable=False,
     )
 
-    user: Mapped["User"] = relationship("User", lazy="selectin")
+    user: Mapped["Account"] = relationship("Account", lazy="selectin")
 
     def __str__(self) -> str:
         return f"RtnComment #{self.id}"

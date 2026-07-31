@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from models.user import User
+from models.account import Account
 
 
 class ForgotPasswordRepository:
@@ -11,24 +11,24 @@ class ForgotPasswordRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_user_by_email(self, email: str) -> User | None:
+    async def find_user_by_email(self, email: str) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.email == email))
+            await self.db.execute(select(Account).where(Account.email == email))
         ).scalars().first()
 
-    async def find_user_by_phone(self, phone: str) -> User | None:
+    async def find_user_by_phone(self, phone: str) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.phone == phone))
+            await self.db.execute(select(Account).where(Account.phone == phone))
         ).scalars().first()
 
-    async def list_users_by_email(self, email: str) -> list[User]:
+    async def list_users_by_email(self, email: str) -> list[Account]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        result = await self.db.execute(select(User).where(User.email == email))
+        result = await self.db.execute(select(Account).where(Account.email == email))
         return list(result.scalars().all())
 
-    async def list_users_by_phone(self, phone: str) -> list[User]:
+    async def list_users_by_phone(self, phone: str) -> list[Account]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        result = await self.db.execute(select(User).where(User.phone == phone))
+        result = await self.db.execute(select(Account).where(Account.phone == phone))
         return list(result.scalars().all())

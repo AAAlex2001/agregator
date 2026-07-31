@@ -1,5 +1,5 @@
 "Use case: update license terms."
-from models.user import User
+from models.account import Account
 from schemas.settings import LicenseRentalKind, UpdateLicenseHolderRequest
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
@@ -12,19 +12,20 @@ class UpdateLicenseTermsUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, data: UpdateLicenseHolderRequest) -> User:
+    async def execute(self, user_id: int, data: UpdateLicenseHolderRequest) -> Account:
         "Запускает основной сценарий use case."
-        user = await self.validator.require_license_holder(user_id)
-        user.license_number = data.license_number
-        user.license_areas = data.license_areas
-        user.license_rental_kind = data.license_rental_kind.value
-        user.license_rental_percent = (
+        account = await self.validator.require_license_holder(user_id)
+        holder = self.validator.require_license_holder_profile(account)
+        holder.license_number = data.license_number
+        holder.license_areas = data.license_areas
+        holder.license_rental_kind = data.license_rental_kind.value
+        holder.license_rental_percent = (
             data.license_rental_percent if data.license_rental_kind is LicenseRentalKind.PERCENT else None
         )
-        user.license_rental_fixed_amount = (
+        holder.license_rental_fixed_amount = (
             data.license_rental_fixed_amount if data.license_rental_kind is LicenseRentalKind.FIXED else None
         )
-        user.mining_license_number = data.mining_license_number
-        user.lab_accreditation_number = data.lab_accreditation_number
+        holder.mining_license_number = data.mining_license_number
+        holder.lab_accreditation_number = data.lab_accreditation_number
         await self.repo.flush()
-        return user
+        return account

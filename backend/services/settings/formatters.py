@@ -1,51 +1,87 @@
 "Форматирование сущностей в API-структуры."
-from models.user import User
+from models.account import Account
 from schemas.settings import EmailPreferences, UserSettingsResponse
 
 
-def to_response(user: User) -> UserSettingsResponse:
-    "Публичный метод сервисного слоя."
-    license_areas = user.license_areas if isinstance(user.license_areas, list) else None
+def preference_value(account: Account, field: str) -> bool:
+    "Читает тумблер уведомления из аккаунта или профиля роли; если поля у роли нет — считается включённым."
+    sources = (
+        account,
+        account.customer_profile,
+        account.expert_profile,
+        account.license_holder_profile,
+    )
+    for source in sources:
+        if source is not None and hasattr(source, field):
+            return bool(getattr(source, field))
+    return True
+
+
+def build_email_preferences(account: Account) -> EmailPreferences:
+    "Собирает все флаги email-уведомлений из аккаунта и профилей ролей."
+    return EmailPreferences(
+        **{field: preference_value(account, field) for field in EmailPreferences.model_fields}
+    )
+
+
+def to_response(account: Account) -> UserSettingsResponse:
+    "Собирает ответ настроек личного кабинета из аккаунта и профилей ролей."
+    expert = account.expert_profile
+    holder = account.license_holder_profile
     return UserSettingsResponse(
-        id=user.id,
-        inn=user.inn,
-        company_data=user.company_data if isinstance(user.company_data, dict) else None,
-        email=user.email,
-        email_verified=bool(user.email_verified),
-        phone=user.phone,
-        avatar_url=user.avatar_url,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        rating=float(user.rating) if user.rating is not None else None,
-        review_count=user.review_count or 0,
-        role=user.role.value,
-        email_preferences=EmailPreferences.model_validate(user),
-        notify_order_types=user.notify_order_types if isinstance(user.notify_order_types, list) else [],
-        notifications_introduced=bool(user.notifications_introduced),
-        license_number=user.license_number,
-        license_file_url=user.license_file_url,
-        license_areas=license_areas,
-        license_rental_kind=user.license_rental_kind,
+        id=account.id,
+        inn=account.inn,
+        company_data=account.company_data if isinstance(account.company_data, dict) else None,
+        email=account.email,
+        email_verified=bool(account.email_verified),
+        phone=account.phone,
+        avatar_url=account.avatar_url,
+        first_name=account.first_name,
+        last_name=account.last_name,
+        rating=float(expert.rating) if expert is not None and expert.rating is not None else None,
+        review_count=(expert.review_count or 0) if expert is not None else 0,
+        role=account.role.value,
+        email_preferences=build_email_preferences(account),
+        notify_order_types=(
+            expert.notify_order_types
+            if expert is not None and isinstance(expert.notify_order_types, list)
+            else []
+        ),
+        notifications_introduced=bool(account.notifications_introduced),
+        license_number=holder.license_number if holder is not None else None,
+        license_file_url=holder.license_file_url if holder is not None else None,
+        license_areas=(
+            holder.license_areas
+            if holder is not None and isinstance(holder.license_areas, list)
+            else None
+        ),
+        license_rental_kind=holder.license_rental_kind if holder is not None else None,
         license_rental_percent=(
-            float(user.license_rental_percent) if user.license_rental_percent is not None else None
+            float(holder.license_rental_percent)
+            if holder is not None and holder.license_rental_percent is not None
+            else None
         ),
-        license_rental_fixed_amount=user.license_rental_fixed_amount,
-        mining_license_number=user.mining_license_number,
-        mining_license_file_url=user.mining_license_file_url,
-        sro_design_file_url=user.sro_design_file_url,
-        lab_accreditation_number=user.lab_accreditation_number,
-        lab_accreditation_file_url=user.lab_accreditation_file_url,
-        company_card_url=user.company_card_url,
-        location_lat=user.location_lat,
-        location_lng=user.location_lng,
-        location_address=user.location_address,
-        location_city=user.location_city,
-        travels_to_other_regions=bool(user.travels_to_other_regions),
+        license_rental_fixed_amount=holder.license_rental_fixed_amount if holder is not None else None,
+        mining_license_number=holder.mining_license_number if holder is not None else None,
+        mining_license_file_url=holder.mining_license_file_url if holder is not None else None,
+        sro_design_file_url=holder.sro_design_file_url if holder is not None else None,
+        lab_accreditation_number=holder.lab_accreditation_number if holder is not None else None,
+        lab_accreditation_file_url=holder.lab_accreditation_file_url if holder is not None else None,
+        company_card_url=holder.company_card_url if holder is not None else None,
+        location_lat=expert.location_lat if expert is not None else None,
+        location_lng=expert.location_lng if expert is not None else None,
+        location_address=expert.location_address if expert is not None else None,
+        location_city=expert.location_city if expert is not None else None,
+        travels_to_other_regions=bool(expert.travels_to_other_regions) if expert is not None else False,
         expert_certificates=(
-            user.expert_certificates if isinstance(user.expert_certificates, list) else None
+            expert.certificates
+            if expert is not None and isinstance(expert.certificates, list)
+            else None
         ),
-        expert_show_on_map=bool(user.expert_show_on_map),
+        expert_show_on_map=bool(expert.show_on_map) if expert is not None else True,
         expert_map_fields=(
-            user.expert_map_fields if isinstance(user.expert_map_fields, list) else None
+            expert.map_fields
+            if expert is not None and isinstance(expert.map_fields, list)
+            else None
         ),
     )

@@ -1,8 +1,8 @@
 "Use case: switch role."
 from fastapi import HTTPException, status
 
+from models.account import UserRole
 from models.session import Session
-from models.user import UserRole
 from services.login.repository import LoginRepository
 from services.login.validators import LoginValidator
 

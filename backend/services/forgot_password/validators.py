@@ -3,7 +3,7 @@ import re
 
 from fastapi import HTTPException, status
 
-from models.user import User
+from models.account import Account
 from services.forgot_password.repository import ForgotPasswordRepository
 
 
@@ -41,10 +41,10 @@ class ForgotPasswordValidator:
                 detail="Пароль не соответствует требованиям: " + "; ".join(errors),
             )
 
-    async def require_user(self, email: str | None, phone: str | None) -> User:
+    async def require_user(self, email: str | None, phone: str | None) -> Account:
         "Возвращает требуемую сущность или бросает 404."
         self.ensure_contact_provided(email, phone)
-        user: User | None = None
+        user: Account | None = None
         if email:
             user = await self.repo.find_user_by_email(email)
         elif phone:

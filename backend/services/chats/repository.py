@@ -6,12 +6,12 @@ from sqlalchemy import and_, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.chat import Chat, ChatMessage
 from models.contact_deal import ContactAccessDeal
 from models.labor import LaborListing
 from models.order import Order, OrderStatus
 from models.response import OrderResponse
-from models.user import User
 
 
 class ChatRepository:
@@ -20,10 +20,10 @@ class ChatRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_user(self, user_id: int) -> User | None:
+    async def find_user(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
     async def find_order(

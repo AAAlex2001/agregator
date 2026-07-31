@@ -7,7 +7,7 @@ from models.labor import (
     EmploymentTerm,
     LaborListingKind,
 )
-from models.user import UserRole
+from models.account import UserRole
 from services.email.use_cases.send_new_labor_listing_email import (
     SendNewLaborListingEmailUseCase,
 )

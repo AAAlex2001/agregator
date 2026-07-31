@@ -1,7 +1,7 @@
 "In-app уведомления: рассылка событий потребителям."
+from models.account import Account, UserRole
 from models.order import Order
 from models.response import OrderResponse, ResponseStatus
-from models.user import User, UserRole
 from schemas.notification import ResponseStatusChangeReason, ResponseUpdateKind
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import escape_html
@@ -85,7 +85,7 @@ class ResponseInAppNotifier:
     async def status_changed(
         self,
         response: OrderResponse,
-        actor: User,
+        actor: Account,
         old_status: ResponseStatus,
         new_status: ResponseStatus,
         expert_was_confirmed: bool,
@@ -118,7 +118,7 @@ class ResponseInAppNotifier:
         self,
         response: OrderResponse,
         order: Order,
-        actor: User,
+        actor: Account,
         old_status: ResponseStatus,
         new_status: ResponseStatus,
         auto_rejected_expert_ids: list[int],
@@ -225,7 +225,7 @@ class ResponseInAppNotifier:
         self,
         response: OrderResponse,
         order: Order,
-        actor: User,
+        actor: Account,
         old_status: ResponseStatus,
         new_status: ResponseStatus,
         expert_was_confirmed: bool,

@@ -1,8 +1,9 @@
 from sqlalchemy import false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.account import Account, UserRole
 from models.contact_deal import ContactAccessDeal
-from models.user import User, UserRole
+from models.expert import Expert
 
 
 class ExpertContactRepository:
@@ -15,36 +16,43 @@ class ExpertContactRepository:
         search: str | None,
         limit: int,
         offset: int,
-    ) -> tuple[list[tuple[User, ContactAccessDeal | None]], int]:
-        conditions = [User.role == UserRole.EXPERT, User.is_active.is_(True)]
+    ) -> tuple[list[tuple[Account, ContactAccessDeal | None]], int]:
+        conditions = [Account.role == UserRole.EXPERT, Account.is_active.is_(True)]
         if search and search.strip():
             term = f"%{search.strip()}%"
             conditions.append(
                 or_(
-                    User.first_name.ilike(term),
-                    User.last_name.ilike(term),
-                    User.location_city.ilike(term),
+                    Account.first_name.ilike(term),
+                    Account.last_name.ilike(term),
+                    Expert.location_city.ilike(term),
                 )
             )
 
         total = int(
-            (await self.db.execute(select(func.count(User.id)).where(*conditions))).scalar_one()
+            (
+                await self.db.execute(
+                    select(func.count(Account.id))
+                    .join(Expert, Expert.account_id == Account.id)
+                    .where(*conditions)
+                )
+            ).scalar_one()
         )
         deal_join = (
-            (ContactAccessDeal.seller_id == User.id)
+            (ContactAccessDeal.seller_id == Account.id)
             & (ContactAccessDeal.buyer_id == actor_id)
             & (ContactAccessDeal.buyer_deleted_at.is_(None))
             if actor_id is not None
             else false()
         )
         query = (
-            select(User, ContactAccessDeal)
+            select(Account, ContactAccessDeal)
+            .join(Expert, Expert.account_id == Account.id)
             .outerjoin(ContactAccessDeal, deal_join)
             .where(*conditions)
             .order_by(
-                User.contact_sales_enabled.desc(),
-                User.rating.desc().nullslast(),
-                User.id.desc(),
+                Expert.contact_sales_enabled.desc(),
+                Expert.rating.desc().nullslast(),
+                Account.id.desc(),
             )
             .limit(limit)
             .offset(offset)
@@ -56,11 +64,11 @@ class ExpertContactRepository:
         self,
         user_id: int,
         for_update: bool = False,
-    ) -> User | None:
-        query = select(User).where(
-            User.id == user_id,
-            User.role == UserRole.EXPERT,
-            User.is_active.is_(True),
+    ) -> Account | None:
+        query = select(Account).where(
+            Account.id == user_id,
+            Account.role == UserRole.EXPERT,
+            Account.is_active.is_(True),
         )
         if for_update:
             query = query.with_for_update()

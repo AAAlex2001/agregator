@@ -28,10 +28,10 @@ from schemas.admin_article import (
     UploadOut,
 )
 from services.articles import ArticleRepository
-from services.tags import TagRepository
 from services.articles.use_cases.notify_blog_published import NotifyBlogPublishedUseCase
 from services.articles.use_cases.save_article import SaveArticleUseCase, SlugTakenError
 from services.file_uploads import save_uploaded_file
+from services.tags import TagRepository
 
 router = APIRouter(
     prefix="/internal/content",

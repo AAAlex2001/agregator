@@ -15,7 +15,7 @@ class ArticleView(Base):
         Integer, ForeignKey("articles.id", ondelete="CASCADE"), nullable=False, index=True
     )
     user_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True
+        Integer, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=True
     )
     visitor_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(

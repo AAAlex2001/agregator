@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
 
+from models.account import Account
 from models.email_change import EmailChangeRequest
-from models.user import User
 
 
 class SettingsRepository:
@@ -16,19 +16,19 @@ class SettingsRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_user_by_id(self, user_id: int) -> User | None:
+    async def find_user_by_id(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
     async def field_taken_in_same_role(
         self, column: InstrumentedAttribute[str | None], value: str, user_id: int
     ) -> bool:
         "Публичный метод сервисного слоя."
-        own_role = select(User.role).where(User.id == user_id).scalar_subquery()
+        own_role = select(Account.role).where(Account.id == user_id).scalar_subquery()
         result = await self.db.execute(
-            select(User.id).where(column == value, User.id != user_id, User.role == own_role)
+            select(Account.id).where(column == value, Account.id != user_id, Account.role == own_role)
         )
         return result.first() is not None
 

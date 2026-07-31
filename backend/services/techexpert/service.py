@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field, field_validator
 
 from dependencies.auth import get_current_user
 
-
 router = APIRouter(
     prefix="/tech-expert",
     tags=["TechExpert"],
@@ -409,7 +408,7 @@ async def autocomplete(
     q: str = Query(..., description="Поисковая строка"),
     user_id: int = Depends(get_current_user),
 ):
-    if user_id is None: 
+    if user_id is None:
         raise HTTPException(status_code=401, detail="Пользователь не авторизован")
 
     service = TechExpertService(

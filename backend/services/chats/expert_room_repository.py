@@ -5,9 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.chat import ExpertRoomBan, ExpertRoomMessage
 from models.session import Session
-from models.user import User
 
 
 class ExpertRoomRepository:
@@ -30,10 +30,10 @@ class ExpertRoomRepository:
             return None
         return session
 
-    async def find_user(self, user_id: int) -> User | None:
+    async def find_user(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
     async def is_banned(self, user_id: int) -> bool:

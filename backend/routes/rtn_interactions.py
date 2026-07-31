@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.visitor import get_visitor_key, interaction_key
+from models.account import UserRole
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue
-from models.user import UserRole
 from schemas.rtn import (
     AttachmentDto,
     RtnChangeReportCreate,

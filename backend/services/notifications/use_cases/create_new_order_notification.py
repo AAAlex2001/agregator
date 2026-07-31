@@ -39,7 +39,8 @@ class CreateNewOrderNotificationUseCase:
 
         sent = 0
         for expert in experts:
-            wanted = set(expert.notify_order_types or [])
+            profile = expert.expert_profile
+            wanted = set(profile.notify_order_types or []) if profile else set()
             if not fallback_to_all and not wanted & order_types:
                 continue
             notification = Notification(

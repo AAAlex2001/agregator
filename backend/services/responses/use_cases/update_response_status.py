@@ -1,8 +1,8 @@
 "Use case: update response status."
+from models.account import Account, UserRole
 from models.chat import Chat
 from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
-from models.user import User, UserRole
 from services.email import SendBiddingFinishedEmailUseCase
 from services.email.use_cases.send_bidding_finished_email import OUTCOME_LOST, OUTCOME_WON
 from services.responses.in_app_notifier import ResponseInAppNotifier
@@ -86,7 +86,7 @@ class UpdateResponseStatusUseCase:
 
     async def send_bidding_emails_on_selection(
         self,
-        actor: User,
+        actor: Account,
         response: OrderResponse,
         new_status: ResponseStatus,
         auto_rejected_ids: list[int],

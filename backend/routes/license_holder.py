@@ -4,9 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from models.user import User, UserRole
-from schemas.license_holder import LicenseHolderListItem, LicenseHolderListResponse
-from services.license_holders import LicenseHoldersRepository, ListLicenseHoldersUseCase
+from models.account import Account, UserRole
+from schemas.license_holder import LicenseHolderListResponse
+from services.license_holders import (
+    LicenseHoldersRepository,
+    ListLicenseHoldersUseCase,
+    license_holder_to_list_item,
+)
 
 router = APIRouter(prefix="/license-holders", tags=["license-holders"])
 
@@ -14,7 +18,7 @@ router = APIRouter(prefix="/license-holders", tags=["license-holders"])
 async def require_expert(db: AsyncSession, user_id: int) -> None:
     "Каталог лицензиатов доступен только эксперту. 403 для остальных ролей."
     role = (
-        await db.execute(select(User.role).where(User.id == user_id))
+        await db.execute(select(Account.role).where(Account.id == user_id))
     ).scalar_one_or_none()
     if role != UserRole.EXPERT:
         raise HTTPException(
@@ -39,6 +43,6 @@ async def list_license_holders(
     use_case = ListLicenseHoldersUseCase(build_repo(db))
     items, total = await use_case.execute(skip, limit)
     return LicenseHolderListResponse(
-        items=[LicenseHolderListItem.model_validate(user) for user in items],
+        items=[license_holder_to_list_item(account, profile) for account, profile in items],
         total=total,
     )

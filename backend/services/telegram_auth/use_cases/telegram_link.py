@@ -1,5 +1,5 @@
 "Use case: привязка Telegram к существующему аккаунту по email+паролю."
-from models.user import User, UserRole
+from models.account import Account, UserRole
 from schemas.login import UserLogin
 from services.login.repository import LoginRepository
 from services.login.use_cases.authenticate_user import AuthenticateUserUseCase
@@ -20,7 +20,7 @@ class TelegramLinkUseCase:
         email: str,
         password: str,
         role: UserRole | None,
-    ) -> User:
+    ) -> Account:
         tg_id = telegram_user_id(init_data)
         login = UserLogin(email=email, password=password, role=role)
         user = await AuthenticateUserUseCase(self.repo, self.validator).execute(login)

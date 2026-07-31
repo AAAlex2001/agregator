@@ -36,7 +36,12 @@ class CreateLaborListingUseCase:
             for item in payload.certificates
         ]
         if payload.kind == LaborListingKind.EXPERT_AVAILABLE:
-            profile_certificates = list(owner.expert_certificates or [])
+            expert_profile = owner.expert_profile
+            profile_certificates = (
+                list(expert_profile.certificates or [])
+                if expert_profile is not None
+                else []
+            )
             if profile_certificates:
                 certificates = profile_certificates
 

@@ -1,6 +1,6 @@
 "Use case: create chat message notification."
+from models.account import UserRole
 from models.notification import Notification, NotificationType
-from models.user import UserRole
 from schemas.notification import ChatMessageNotificationPayload
 from services.notifications.repository import NotificationRepository
 

@@ -1,8 +1,8 @@
 "Use case: get chat detail."
 from fastapi import HTTPException, status
 
+from models.account import Account
 from models.chat import Chat, ChatMessage
-from models.user import User
 from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatMessageResponse
 from services.chats.formatters import ChatFormatter
 from services.chats.repository import ChatRepository
@@ -37,7 +37,7 @@ class GetChatDetailUseCase:
     @staticmethod
     def build_response(
         chat: Chat,
-        actor: User,
+        actor: Account,
         messages: list[ChatMessage],
         response_status: str | None,
     ) -> ChatDetailResponse:

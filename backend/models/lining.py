@@ -32,7 +32,7 @@ class LiningReport(Base):
     __tablename__ = "lining_reports"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    expert_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     selections: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
     element_categories: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)

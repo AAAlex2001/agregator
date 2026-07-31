@@ -1,7 +1,7 @@
 "Use case: confirm email change."
 from fastapi import HTTPException, status
 
-from models.user import User
+from models.account import Account
 from services.settings.repository import SettingsRepository
 from services.settings.validators import SettingsValidator
 
@@ -13,7 +13,7 @@ class ConfirmEmailChangeUseCase:
         self.repo = repo
         self.validator = validator
 
-    async def execute(self, user_id: int, code: str) -> User:
+    async def execute(self, user_id: int, code: str) -> Account:
         "Запускает основной сценарий use case."
         user = await self.validator.require_user(user_id)
         request = await self.repo.find_email_change(user_id)

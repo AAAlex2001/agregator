@@ -59,8 +59,9 @@ class ReviewContactDealUseCase:
         await self.repository.flush()
 
         count, average = await self.repository.review_stats(expert.id)
-        expert.review_count = count
-        expert.rating = round(average, 1) if average is not None else None
+        profile = expert.expert_profile
+        profile.review_count = count
+        profile.rating = round(average, 1) if average is not None else None
         await self.repository.flush()
         if self.notifier is not None:
             await self.notifier.execute(

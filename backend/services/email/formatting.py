@@ -1,7 +1,7 @@
 "Сервисный модуль: formatting."
 import html
 
-from models.user import User
+from models.account import Account
 
 
 def format_price(amount_kopecks: int | None) -> str:
@@ -20,7 +20,7 @@ def escape_html(value: str | None) -> str:
     return html.escape(value or "", quote=False)
 
 
-def greeting_for(user: User | None) -> str:
+def greeting_for(user: Account | None) -> str:
     "Публичный метод сервисного слоя."
     if user is None:
         return "клиент Ресурс-Плюс"
@@ -31,7 +31,7 @@ def greeting_for(user: User | None) -> str:
     return "клиент Ресурс-Плюс"
 
 
-def full_name(user: User | None) -> str:
+def full_name(user: Account | None) -> str:
     "Публичный метод сервисного слоя."
     if user is None:
         return ""
@@ -39,7 +39,7 @@ def full_name(user: User | None) -> str:
     return " ".join(parts)
 
 
-def contact_line(user: User | None) -> str:
+def contact_line(user: Account | None) -> str:
     "Публичный метод сервисного слоя."
     if user is None:
         return ""

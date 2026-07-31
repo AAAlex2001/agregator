@@ -1,7 +1,7 @@
 "Use case: create response status changed notification."
+from models.account import UserRole
 from models.notification import Notification, NotificationType
 from models.response import ResponseStatus
-from models.user import UserRole
 from schemas.notification import (
     ResponseStatusChangedNotificationPayload,
     ResponseStatusChangeReason,

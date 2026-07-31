@@ -1,7 +1,7 @@
 
 "Use case: list orders."
+from models.account import UserRole
 from models.order import Order, OrderStatus
-from models.user import UserRole
 from services.orders.repository import OrderRepository
 
 

@@ -1,6 +1,6 @@
 "Use case: send expert rejected email."
+from models.account import Account
 from models.response import OrderResponse
-from models.user import User
 from schemas.email import ExpertRejectedContext
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import full_name, greeting_for
@@ -30,7 +30,7 @@ class SendExpertRejectedEmailUseCase:
         context = self.build_context(response, customer)
         self.dispatcher.notify(customer, PREFERENCE_FIELD, TEMPLATE, SUBJECT, context, TG_CTA)
 
-    def build_context(self, response: OrderResponse, customer: User) -> ExpertRejectedContext:
+    def build_context(self, response: OrderResponse, customer: Account) -> ExpertRejectedContext:
         "Строит объект из входных данных."
         order = response.order
         order_title = (order.title if order else None) or f"Заказ #{response.order_id}"

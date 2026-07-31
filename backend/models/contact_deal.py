@@ -18,8 +18,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.review import Review
-    from models.user import User
 
 
 class ContactDealStatus(str, PyEnum):
@@ -62,10 +62,10 @@ class ContactAccessDeal(Base):
         String(36), unique=True, nullable=False, default=lambda: str(uuid4()), index=True
     )
     seller_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
+        ForeignKey("accounts.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     buyer_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
+        ForeignKey("accounts.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     status: Mapped[ContactDealStatus] = mapped_column(
         Enum(ContactDealStatus, name="contactdealstatus"),
@@ -102,8 +102,8 @@ class ContactAccessDeal(Base):
         onupdate=lambda: datetime.now(UTC),
     )
 
-    seller: Mapped["User"] = relationship(foreign_keys=[seller_id])
-    buyer: Mapped["User"] = relationship(foreign_keys=[buyer_id])
+    seller: Mapped["Account"] = relationship(foreign_keys=[seller_id])
+    buyer: Mapped["Account"] = relationship(foreign_keys=[buyer_id])
     signatures: Mapped[list["ContactDealSignature"]] = relationship(
         back_populates="deal", cascade="all, delete-orphan", passive_deletes=True
     )
@@ -129,7 +129,7 @@ class ContactDealSignature(Base):
         ForeignKey("contact_access_deals.id", ondelete="CASCADE"), nullable=False, index=True
     )
     signer_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
+        ForeignKey("accounts.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     party: Mapped[ContactDealParty] = mapped_column(
         Enum(ContactDealParty, name="contactdealparty"), nullable=False
@@ -147,7 +147,7 @@ class ContactDealSignature(Base):
     )
 
     deal: Mapped["ContactAccessDeal"] = relationship(back_populates="signatures")
-    signer: Mapped["User"] = relationship()
+    signer: Mapped["Account"] = relationship()
 
     __table_args__ = (
         UniqueConstraint("deal_id", "party", name="uq_contact_deal_signature_party"),
@@ -165,7 +165,7 @@ class ContactPaymentReceipt(Base):
         ForeignKey("contact_access_deals.id", ondelete="CASCADE"), nullable=False, index=True
     )
     uploader_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("accounts.id", ondelete="RESTRICT"), nullable=False
     )
     storage_key: Mapped[str] = mapped_column(String(500), nullable=False, unique=True)
     original_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -185,4 +185,4 @@ class ContactPaymentReceipt(Base):
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     deal: Mapped["ContactAccessDeal"] = relationship(back_populates="receipts")
-    uploader: Mapped["User"] = relationship()
+    uploader: Mapped["Account"] = relationship()

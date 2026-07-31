@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from models.order import Order, OrderBadge, OrderWorkType
 from schemas.order import OrderCreate
+from services.directions.registry import get_direction
 from services.email import SendNewOrderEmailUseCase
 from services.notifications import CreateNewOrderNotificationUseCase
 from services.orders.documents import OrderDocumentsService
@@ -31,11 +32,19 @@ class CreateOrderUseCase:
         await self.validator.ensure_user_can_create_order(data.customer_id, current_user_id)
         self.validator.ensure_requirements_selected(data.requires_expert, data.requires_license)
         await self.validator.ensure_customer_exists(data.customer_id)
+        validated_details = self.validator.validate_direction_details(data.work_type, data.details)
 
         order = self.build_entity(data)
         order.badges = self.build_badges(data)
         await self.repo.add(order)
         await self.flush_or_reject()
+
+        direction = get_direction(data.work_type.value)
+        if direction is not None and validated_details is not None:
+            await self.repo.add_details(
+                direction.details_model(order_id=order.id, **validated_details.model_dump())
+            )
+            await self.flush_or_reject()
 
         created = await self.repo.get_by_id(order.id)
         if created is None:

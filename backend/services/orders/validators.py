@@ -1,10 +1,12 @@
 "Бизнес-валидации для orders."
 from fastapi import HTTPException, status
+from pydantic import BaseModel, ValidationError
 from sqlalchemy import select
 
-from models.order import OrderStatus
+from models.account import UserRole
+from models.order import OrderStatus, OrderWorkType
 from models.response import OrderResponse as OrderResponseModel
-from models.user import UserRole
+from services.directions.registry import get_direction
 from services.orders.repository import OrderRepository
 
 
@@ -93,6 +95,27 @@ class OrderValidator:
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Нет прав на просмотр этого заказа",
         )
+
+    @staticmethod
+    def validate_direction_details(
+        work_type: OrderWorkType, details: dict | None
+    ) -> BaseModel | None:
+        "Валидирует поля направления заказа; для видов работ без направления возвращает None."
+        direction = get_direction(work_type.value)
+        if direction is None:
+            return None
+        if details is None:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Заполните поля направления",
+            )
+        try:
+            return direction.details_input_schema.model_validate(details)
+        except ValidationError:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Некорректные поля направления",
+            )
 
     @staticmethod
     def ensure_files_present(files: list[object] | None) -> None:

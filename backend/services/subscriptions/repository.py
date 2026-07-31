@@ -5,6 +5,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.payment import Payment
 from models.pricing import (
     PricingPlan,
@@ -12,7 +13,6 @@ from models.pricing import (
     SubscriptionStatus,
     UserSubscription,
 )
-from models.user import User
 
 
 class SubscriptionRepository:
@@ -29,10 +29,10 @@ class SubscriptionRepository:
         "Сбрасывает накопленные изменения в БД."
         await self.db.flush()
 
-    async def find_user(self, user_id: int) -> User | None:
+    async def find_user(self, user_id: int) -> Account | None:
         "Ищет сущность по заданным параметрам."
         return (
-            await self.db.execute(select(User).where(User.id == user_id))
+            await self.db.execute(select(Account).where(Account.id == user_id))
         ).scalars().first()
 
     async def find_plan(self, plan_id: int) -> PricingPlan | None:

@@ -1,6 +1,6 @@
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -84,6 +84,7 @@ class OrderCreate(BaseModel):
     requires_expert: bool = True
     requires_license: bool = True
     work_type: OrderWorkType = OrderWorkType.EXPERTISE
+    details: dict[str, Any] | None = None
     documents: OrderDocuments = Field(default_factory=OrderDocuments)
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
@@ -140,6 +141,7 @@ class OrderResponse(BaseModel):
     requires_expert: bool
     requires_license: bool
     work_type: OrderWorkType
+    details: dict | None = None
     documents: OrderDocuments
     badges: list[BadgeResponse]
     status: OrderStatus
@@ -198,11 +200,16 @@ class OrderResponse(BaseModel):
         expert = order.assigned_expert
         if expert is not None:
             full_name = " ".join(part for part in [expert.first_name or "", expert.last_name or ""] if part)
+            profile = expert.expert_profile
             update["assigned_expert_name"] = full_name
             update["executor_name"] = full_name
             update["executor_avatar_url"] = expert.avatar_url
-            update["executor_rating"] = float(expert.rating) if expert.rating is not None else None
-            update["executor_review_count"] = expert.review_count or 0
+            update["executor_rating"] = (
+                float(profile.rating)
+                if profile is not None and profile.rating is not None
+                else None
+            )
+            update["executor_review_count"] = (profile.review_count or 0) if profile is not None else 0
             update["executor_public_id"] = expert.public_id or ""
 
         if accepted_response is not None:
@@ -219,6 +226,19 @@ class OrderResponse(BaseModel):
 
         update["customer_has_review"] = has_review
         return base.model_copy(update=update)
+
+    @staticmethod
+    def format_details(order: "OrderModel") -> dict | None:
+        "Детали направления заказа через реестр направлений; None для заказов без направления."
+        from services.directions.registry import get_direction
+
+        direction = get_direction(order.work_type.value)
+        if direction is None:
+            return None
+        entity = getattr(order, direction.details_attribute)
+        if entity is None:
+            return None
+        return direction.details_response_schema.model_validate(entity).model_dump()
 
     @classmethod
     def from_order(cls, order: "OrderModel") -> "OrderResponse":
@@ -282,6 +302,7 @@ class OrderResponse(BaseModel):
             requires_expert=order.requires_expert,
             requires_license=order.requires_license,
             work_type=order.work_type,
+            details=cls.format_details(order),
             documents=OrderDocumentsService.from_order(order),
             badges=badges,
             status=order.status,

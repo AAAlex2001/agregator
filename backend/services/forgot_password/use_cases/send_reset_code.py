@@ -1,7 +1,7 @@
 "Use case: send reset code."
 from fastapi import BackgroundTasks
 
-from models.user import User
+from models.account import Account
 from services.forgot_password.validators import ForgotPasswordValidator
 from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.verification import VerificationService
@@ -21,7 +21,7 @@ class SendResetCodeUseCase:
         email: str | None,
         phone: str | None,
         background_tasks: BackgroundTasks,
-    ) -> User:
+    ) -> Account:
         "Запускает основной сценарий use case."
         ensure_email_not_disposable(email)
         user = await self.validator.require_user(email, phone)

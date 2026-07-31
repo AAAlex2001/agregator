@@ -1,6 +1,6 @@
 "Use case: send new order email."
+from models.account import Account
 from models.order import Order, OrderWorkType
-from models.user import User
 from schemas.email import NewOrderContext, OrderBrief
 from services.email.dispatcher import EmailDispatcher
 from services.email.formatting import greeting_for
@@ -48,7 +48,8 @@ class SendNewOrderEmailUseCase:
             else SUBJECT
         )
         for expert in experts:
-            wanted = set(expert.notify_order_types or [])
+            profile = expert.expert_profile
+            wanted = set(profile.notify_order_types or []) if profile else set()
             if not fallback_to_all and not wanted & order_types:
                 continue
             self.dispatcher.notify(
@@ -63,7 +64,7 @@ class SendNewOrderEmailUseCase:
     def build_context(
         self,
         order: Order,
-        expert: User,
+        expert: Account,
         fallback_to_all: bool = False,
     ) -> NewOrderContext:
         "Строит объект из входных данных."

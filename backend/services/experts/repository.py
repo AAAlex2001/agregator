@@ -7,10 +7,11 @@ from sqlalchemy import ColumnElement, Float, Select, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, selectinload
 
+from models.account import Account, UserRole
+from models.expert import Expert
 from models.order import Order, OrderStatus
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus
-from models.user import User, UserRole
 from utils.pagination import paginate_with_has_more
 
 SORT_BY_RATING = "rating"
@@ -100,52 +101,57 @@ class ExpertsRepository:
         completed_orders_expr = (
             select(func.count(Order.id))
             .where(
-                Order.assigned_expert_id == User.id,
+                Order.assigned_expert_id == Account.id,
                 Order.status == OrderStatus.ARCHIVED,
             )
-            .correlate(User)
+            .correlate(Account)
             .scalar_subquery()
             .label("completed_orders_count")
         )
 
-        base_query: Select[tuple[User, int]] = (
-            select(User, completed_orders_expr)
+        base_query: Select[tuple[Account, Expert, int]] = (
+            select(Account, Expert, completed_orders_expr)
+            .join(Expert, Expert.account_id == Account.id)
             .where(
-                User.role == UserRole.EXPERT,
-                User.is_active.is_(True),
-                User.review_count > 0,
+                Account.role == UserRole.EXPERT,
+                Account.is_active.is_(True),
+                Expert.review_count > 0,
             )
         )
 
         if query and query.strip():
             pattern = f"%{query.strip()}%"
             base_query = base_query.where(
-                User.first_name.ilike(pattern) | User.last_name.ilike(pattern)
+                Account.first_name.ilike(pattern) | Account.last_name.ilike(pattern)
             )
 
         sort_column = self.resolve_sort_column(sort_by, completed_orders_expr)
         is_desc = sort_dir != SORT_DIR_ASC
         primary = sort_column.desc().nullslast() if is_desc else sort_column.asc().nullsfirst()
         review_secondary = (
-            User.review_count.desc() if is_desc else User.review_count.asc()
+            Expert.review_count.desc() if is_desc else Expert.review_count.asc()
         )
-        base_query = base_query.order_by(primary, review_secondary, User.created_at.desc())
+        base_query = base_query.order_by(primary, review_secondary, Account.created_at.desc())
 
         rows = (await self.db.execute(base_query.offset(skip).limit(limit + 1))).all()
         has_more = len(rows) > limit
         rows = rows[:limit]
 
-        expert_ids = [user.id for user, _ in rows]
+        expert_ids = [account.id for account, _, _ in rows]
         last_orders_by_expert = await self.fetch_last_orders(expert_ids)
 
         summaries: list[ExpertSummaryRow] = []
-        for user, completed_orders_count in rows:
-            last_order = last_orders_by_expert.get(user.id)
+        for account, expert, completed_orders_count in rows:
+            last_order = last_orders_by_expert.get(account.id)
             last_response = (
-                self.find_accepted_response(last_order, user.id) if last_order is not None else None
+                self.find_accepted_response(last_order, account.id)
+                if last_order is not None
+                else None
             )
             summaries.append(
-                self.build_summary_row(user, completed_orders_count, last_order, last_response)
+                self.build_summary_row(
+                    account, expert, completed_orders_count, last_order, last_response
+                )
             )
         return summaries, has_more
 
@@ -154,65 +160,70 @@ class ExpertsRepository:
         completed_orders_expr = (
             select(func.count(Order.id))
             .where(
-                Order.assigned_expert_id == User.id,
+                Order.assigned_expert_id == Account.id,
                 Order.status == OrderStatus.ARCHIVED,
             )
-            .correlate(User)
+            .correlate(Account)
             .scalar_subquery()
             .label("completed_orders_count")
         )
 
         row = (
             await self.db.execute(
-                select(User, completed_orders_expr).where(
-                    User.public_id == public_id,
-                    User.role == UserRole.EXPERT,
+                select(Account, Expert, completed_orders_expr)
+                .join(Expert, Expert.account_id == Account.id)
+                .where(
+                    Account.public_id == public_id,
+                    Account.role == UserRole.EXPERT,
                 )
             )
         ).one_or_none()
 
         if row is None:
             return None
-        user, completed_orders_count = row
-        last_orders_by_expert = await self.fetch_last_orders([user.id])
-        last_order = last_orders_by_expert.get(user.id)
+        account, expert, completed_orders_count = row
+        last_orders_by_expert = await self.fetch_last_orders([account.id])
+        last_order = last_orders_by_expert.get(account.id)
         last_response = (
-            self.find_accepted_response(last_order, user.id) if last_order is not None else None
+            self.find_accepted_response(last_order, account.id) if last_order is not None else None
         )
-        return self.build_summary_row(user, completed_orders_count, last_order, last_response)
+        return self.build_summary_row(
+            account, expert, completed_orders_count, last_order, last_response
+        )
 
     async def list_with_location(self, limit: int = 1000) -> list[ExpertLocationRow]:
         "Активные эксперты с заданными координатами базирования — для карты."
-        query: Select[tuple[User]] = (
-            select(User)
+        query: Select[tuple[Account, Expert]] = (
+            select(Account, Expert)
+            .join(Expert, Expert.account_id == Account.id)
             .where(
-                User.role == UserRole.EXPERT,
-                User.is_active.is_(True),
-                User.location_lat.is_not(None),
-                User.location_lng.is_not(None),
-                User.expert_show_on_map.is_(True),
+                Account.role == UserRole.EXPERT,
+                Account.is_active.is_(True),
+                Expert.location_lat.is_not(None),
+                Expert.location_lng.is_not(None),
+                Expert.show_on_map.is_(True),
             )
-            .order_by(User.created_at.desc())
+            .order_by(Account.created_at.desc())
             .limit(limit)
         )
-        users = (await self.db.execute(query)).scalars().all()
-        return [self.build_location_row(user) for user in users]
+        rows = (await self.db.execute(query)).all()
+        return [self.build_location_row(account, expert) for account, expert in rows]
 
-    def build_location_row(self, user: User) -> ExpertLocationRow:
-        "Строит точку карты из эксперта — показывает только те поля, что эксперт сам выбрал (expert_map_fields)."
-        first = user.first_name or ""
-        last = user.last_name or ""
+    def build_location_row(self, account: Account, expert: Expert) -> ExpertLocationRow:
+        "Строит точку карты из аккаунта и профиля — показывает только те поля, что эксперт сам выбрал (map_fields)."
+        first = account.first_name or ""
+        last = account.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
 
-        fields = user.expert_map_fields if user.expert_map_fields is not None else list(DEFAULT_MAP_FIELDS)
+        fields = expert.map_fields if expert.map_fields is not None else list(DEFAULT_MAP_FIELDS)
         show_name = "name" in fields
-        contacts_paid = bool(user.contact_sales_enabled)
+        contacts_paid = bool(expert.contact_sales_enabled)
         show_contacts = "contacts" in fields and not contacts_paid
         certificate_fields = ["area", "object", "category"] if contacts_paid else fields
 
         certificates = []
         certificate_codes = []
-        for cert in user.expert_certificates or []:
+        for cert in expert.certificates or []:
             text = format_cert_for_map(cert, certificate_fields)
             if text:
                 certificates.append(text)
@@ -220,22 +231,22 @@ class ExpertsRepository:
                 certificate_codes.append(f"{cert['area']} {cert['object']}")
 
         return ExpertLocationRow(
-            public_id=user.public_id,
+            public_id=account.public_id,
             full_name=full_name if show_name else "Эксперт",
-            avatar_url=user.avatar_url,
-            rating=float(user.rating) if user.rating is not None else None,
-            city=user.location_city,
-            lat=float(user.location_lat),
-            lng=float(user.location_lng),
-            travels_to_other_regions=bool(user.travels_to_other_regions),
+            avatar_url=account.avatar_url,
+            rating=float(expert.rating) if expert.rating is not None else None,
+            city=expert.location_city,
+            lat=float(expert.location_lat),
+            lng=float(expert.location_lng),
+            travels_to_other_regions=bool(expert.travels_to_other_regions),
             certificates=certificates or None,
             certificate_codes=certificate_codes,
-            phone=user.phone if show_contacts else None,
-            email=user.email if show_contacts else None,
+            phone=account.phone if show_contacts else None,
+            email=account.email if show_contacts else None,
             contacts_paid=contacts_paid,
             contact_price_rubles=(
-                user.contact_price_kopecks // 100
-                if contacts_paid and user.contact_price_kopecks is not None
+                expert.contact_price_kopecks // 100
+                if contacts_paid and expert.contact_price_kopecks is not None
                 else None
             ),
         )
@@ -244,9 +255,9 @@ class ExpertsRepository:
         "Возвращает запрошенную сущность."
         return (
             await self.db.execute(
-                select(User.id).where(
-                    User.public_id == public_id,
-                    User.role == UserRole.EXPERT,
+                select(Account.id).where(
+                    Account.public_id == public_id,
+                    Account.role == UserRole.EXPERT,
                 )
             )
         ).scalar_one_or_none()
@@ -316,31 +327,32 @@ class ExpertsRepository:
         if sort_by == SORT_BY_COMPLETED_ORDERS:
             return completed_orders_expr
         if sort_by == SORT_BY_REVIEW_COUNT:
-            return User.review_count
-        rating_f = func.coalesce(cast(User.rating, Float), cast(0.0, Float))
+            return Expert.review_count
+        rating_f = func.coalesce(cast(Expert.rating, Float), cast(0.0, Float))
         prior = cast(RATING_PRIOR_WEIGHT * RATING_PRIOR_MEAN, Float)
         weight = cast(RATING_PRIOR_WEIGHT, Float)
-        return (User.review_count * rating_f + prior) / (User.review_count + weight)
+        return (Expert.review_count * rating_f + prior) / (Expert.review_count + weight)
 
     def build_summary_row(
         self,
-        user: User,
+        account: Account,
+        expert: Expert,
         completed_orders_count: int | None,
         last_order: Order | None,
         last_response: OrderResponseModel | None,
     ) -> ExpertSummaryRow:
         "Строит объект из входных данных."
-        first = user.first_name or ""
-        last = user.last_name or ""
+        first = account.first_name or ""
+        last = account.last_name or ""
         full_name = " ".join(part for part in (first, last) if part).strip() or "Эксперт"
         return ExpertSummaryRow(
-            public_id=user.public_id,
+            public_id=account.public_id,
             full_name=full_name,
-            avatar_url=user.avatar_url,
-            rating=float(user.rating) if user.rating is not None else None,
-            review_count=int(user.review_count or 0),
+            avatar_url=account.avatar_url,
+            rating=float(expert.rating) if expert.rating is not None else None,
+            review_count=int(expert.review_count or 0),
             completed_orders_count=int(completed_orders_count or 0),
-            joined_at=user.created_at,
+            joined_at=account.created_at,
             last_order=last_order,
             last_order_response=last_response,
         )

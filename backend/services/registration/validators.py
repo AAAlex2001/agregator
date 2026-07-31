@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from models.user import User
+from models.account import Account
 from schemas.registration import UserRegistration, UserRole
 from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.registration.repository import RegistrationRepository
@@ -72,7 +72,7 @@ class RegistrationValidator:
 
     async def ensure_email_is_free(self, email: str, role: UserRole) -> None:
         "Бросает HTTPException, если условие не выполнено."
-        if await self.repo.is_field_taken(User.email, email, role):
+        if await self.repo.is_field_taken(Account.email, email, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Этот email уже используется для роли",
@@ -82,7 +82,7 @@ class RegistrationValidator:
         "Бросает HTTPException, если условие не выполнено."
         if not phone:
             return
-        if await self.repo.is_field_taken(User.phone, phone, role):
+        if await self.repo.is_field_taken(Account.phone, phone, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Этот номер уже используется для роли",
@@ -92,7 +92,7 @@ class RegistrationValidator:
         "Бросает HTTPException, если условие не выполнено."
         if not inn:
             return
-        if await self.repo.is_field_taken(User.inn, inn, role):
+        if await self.repo.is_field_taken(Account.inn, inn, role):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Этот ИНН уже используется для роли",

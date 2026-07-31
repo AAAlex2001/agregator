@@ -2,9 +2,9 @@
 from fastapi import HTTPException
 from fastapi import status as http_status
 
+from models.account import Account, UserRole
 from models.order import OrderStatus
 from models.response import OrderResponse, ResponseStatus
-from models.user import User, UserRole
 
 EXPERT_ALLOWED_TARGETS = {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}
 CUSTOMER_ALLOWED_TARGETS = {
@@ -31,7 +31,7 @@ class ResponseStatusRules:
 
     def check(
         self,
-        actor: User,
+        actor: Account,
         response: OrderResponse,
         new_status: ResponseStatus,
     ) -> None:
@@ -49,7 +49,7 @@ class ResponseStatusRules:
 
     def check_expert(
         self,
-        actor: User,
+        actor: Account,
         response: OrderResponse,
         new_status: ResponseStatus,
     ) -> None:
@@ -63,14 +63,14 @@ class ResponseStatusRules:
         if new_status == ResponseStatus.COMPLETED:
             self.check_expert_completed(actor, response)
 
-    def check_expert_in_progress(self, actor: User, response: OrderResponse) -> None:
+    def check_expert_in_progress(self, actor: Account, response: OrderResponse) -> None:
         "Проверяет условие и возвращает результат."
         if response.status not in EXPERT_IN_PROGRESS_FROM:
             raise self.conflict("В работу можно перевести только принятый отклик")
         if not response.order or response.order.assigned_expert_id != actor.id:
             raise self.conflict("Нельзя начать работу по незакрепленному заказу")
 
-    def check_expert_completed(self, actor: User, response: OrderResponse) -> None:
+    def check_expert_completed(self, actor: Account, response: OrderResponse) -> None:
         "Проверяет условие и возвращает результат."
         if response.status not in EXPERT_COMPLETED_FROM:
             raise self.conflict("Завершить можно только отклик со статусом в работе")
@@ -79,7 +79,7 @@ class ResponseStatusRules:
 
     def check_customer(
         self,
-        actor: User,
+        actor: Account,
         response: OrderResponse,
         new_status: ResponseStatus,
     ) -> None:
