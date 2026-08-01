@@ -4,23 +4,9 @@
   gap: 6px;
 }
 
-.title {
-  font-size: var(--profile-title-size);
-  line-height: var(--profile-title-line);
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.hint {
-  font-size: var(--profile-hint-size);
-  line-height: var(--profile-hint-line);
-  font-weight: 400;
-  color: var(--color-text-secondary);
-}
-
 .list {
   list-style: none;
-  margin: 6px 0 0 0;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;

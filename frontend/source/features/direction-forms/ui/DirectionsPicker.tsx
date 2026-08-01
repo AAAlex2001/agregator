@@ -28,11 +28,6 @@ export function DirectionsPicker({
 
   return (
     <div className={s.root}>
-      <span className={s.title}>Направления работы</span>
-      <span className={s.hint}>
-        Отметьте направления, по которым работаете. Остальные можно добавить позже в кабинете.
-      </span>
-
       <ul className={s.list}>
         {options.map((option) => {
           const value = selected[option.key];

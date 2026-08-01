@@ -14,6 +14,7 @@ export function ExpertContactOffer({ form }: Props) {
   return (
     <ExpertContactOfferFields
       idPrefix="registration"
+      withHeading={false}
       enabled={watch("contactSalesEnabled")}
       price={watch("contactPriceRubles")}
       paymentDetails={watch("contactPaymentDetails")}

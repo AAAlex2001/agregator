@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Switch } from "@/source/shared/ui/Switch";
+import { FormSection } from "@/source/shared/ui";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import Button from "@/source/shared/ui/Button";
 import type { EmailPreferences, UserProfile } from "@/source/entities/user";
@@ -200,37 +201,40 @@ function EditableNotificationPreferencesForm({
       </header>
 
       {isExpert && (
-        <section className={s.orderTypes}>
-          <h3 className={s.title}>Новые заказы</h3>
-          <p className={s.subtitle}>
-            Выберите виды работ и направления экспертизы — уведомление придёт только по заказам, попадающим под ваши требования.
-            Пока ничего не выбрано, уведомления о новых заказах не приходят.
-          </p>
-          <div>
-            <OrderNotificationTypesPicker
-              key={pickerResetSeq}
-              value={orderCodes}
-              onChange={handleCodesChange}
-              disabled={savingTypes || resetting}
-            />
-          </div>
-        </section>
+        <FormSection
+          title="Новые заказы"
+          hint="Уведомление придёт только по заказам, попадающим под ваши требования. Пока ничего не выбрано, уведомления о новых заказах не приходят."
+          collapsible
+        >
+          <OrderNotificationTypesPicker
+            key={pickerResetSeq}
+            value={orderCodes}
+            onChange={handleCodesChange}
+            disabled={savingTypes || resetting}
+          />
+        </FormSection>
       )}
 
-      <ul className={s.list}>
-        {descriptors.map((item) => (
-          <li key={item.key} className={s.row}>
-            <Switch
-              id={`pref-${item.key}`}
-              checked={preferences[item.key]}
-              onChange={(next) => void handleToggle(item.key, next)}
-              label={item.label}
-              description={item.description}
-              disabled={savingKey === item.key || resetting}
-            />
-          </li>
-        ))}
-      </ul>
+      <FormSection
+        title="События по заявкам"
+        hint="Отклики, изменения, сообщения и другие письма по вашим заявкам."
+        collapsible
+      >
+        <ul className={s.list}>
+          {descriptors.map((item) => (
+            <li key={item.key} className={s.row}>
+              <Switch
+                id={`pref-${item.key}`}
+                checked={preferences[item.key]}
+                onChange={(next) => void handleToggle(item.key, next)}
+                label={item.label}
+                description={item.description}
+                disabled={savingKey === item.key || resetting}
+              />
+            </li>
+          ))}
+        </ul>
+      </FormSection>
     </div>
   );
 }

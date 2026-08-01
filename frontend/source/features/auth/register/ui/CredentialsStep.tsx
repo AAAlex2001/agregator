@@ -1,6 +1,7 @@
 import type { UseFormReturn } from "react-hook-form";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import { FormSection } from "@/source/shared/ui";
 import { DirectionsPicker } from "@/source/features/direction-forms";
 import type { DirectionCatalogs, DirectionKey, DirectionProfile } from "@/source/entities/direction";
 import type { RegisterFormValues } from "../model/schema";
@@ -78,16 +79,22 @@ export function CredentialsStep({
         {(isCustomer || isLicenseHolder) && <OrganizationField form={form} />}
 
         {!isLicenseHolder && (
-          <DirectionsPicker
-            role={role}
-            selected={form.watch("directions")}
-            catalogs={catalogs}
-            errors={Object.fromEntries(
-              Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
-            )}
-            onToggle={onDirectionToggle}
-            onChange={onDirectionChange}
-          />
+          <FormSection
+            title="Направления работы"
+            hint="Отметьте направления, по которым работаете. Остальные можно добавить позже в кабинете."
+            collapsible
+          >
+            <DirectionsPicker
+              role={role}
+              selected={form.watch("directions")}
+              catalogs={catalogs}
+              errors={Object.fromEntries(
+                Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
+              )}
+              onToggle={onDirectionToggle}
+              onChange={onDirectionChange}
+            />
+          </FormSection>
         )}
 
         {isLicenseHolder && (
@@ -106,7 +113,15 @@ export function CredentialsStep({
 
         <ContactFields form={form} onPhoneChange={onPhoneChange} showPhoneHint={!isLicenseHolder} />
 
-        {isExpert && <ExpertContactOffer form={form} />}
+        {isExpert && (
+          <FormSection
+            title="Платный доступ к контактам"
+            hint="Телефон и email будут скрыты до подтверждения оплаты по установленной вами цене"
+            collapsible
+          >
+            <ExpertContactOffer form={form} />
+          </FormSection>
+        )}
 
         <PasswordFields form={form} />
 

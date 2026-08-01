@@ -20,14 +20,6 @@ export function ExpertLocationField({ form }: Props) {
 
   return (
     <div className={s.block}>
-      <div className={s.head}>
-        <span className={s.title}>Где вы находитесь</span>
-        <span className={s.hint}>
-          Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать исполнителя
-          рядом. Это не ваш личный адрес: достаточно города или района, где вам удобно работать. Можно
-          заполнить позже в профиле.
-        </span>
-      </div>
       <YandexAddressPicker
         value={locationValue}
         onChange={(location) => {

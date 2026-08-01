@@ -7,10 +7,12 @@
 Новое направление = модели + схемы + одна запись здесь.
 """
 from dataclasses import dataclass, field
+from typing import Any
 
 from pydantic import BaseModel
 
 from models.account import UserRole
+from models.base import Base
 from models.direction_profile import (
     CustomerAuditProfile,
     ExpertAuditProfile,
@@ -57,7 +59,7 @@ class RoleForm:
     owner_attribute — путь от профиля роли к анкете. Пустая строка означает, что
     поля направления живут в самом профиле роли (так устроена экспертиза ОПО).
     """
-    model: type
+    model: type[Base]
     owner_attribute: str
     input_schema: type[BaseModel]
     response_schema: type[BaseModel]
@@ -72,6 +74,35 @@ class RoleForm:
         "Можно ли прикладывать к анкете документы — выводится из её схемы, отдельного флага нет."
         return "documents" in self.input_schema.model_fields
 
+    def save(self, profile: Base, payload: dict[str, Any]) -> Base:
+        """Проверяет поля анкеты своей схемой и записывает их в профиль роли.
+
+        payload — сырое тело запроса: его форма зависит от направления, поэтому
+        конкретной схемой он типизирован быть не может, её выбирает сам реестр.
+        Возвращает ORM-модель, в которой поля осели: для направлений с
+        owner_attribute="" это сам профиль роли, иначе — отдельная анкета,
+        при необходимости созданная. Конкретный класс тоже зависит от направления.
+
+        Документы из payload выбрасываются: их кладёт только загрузка файла, иначе
+        через тело запроса можно было бы записать в анкету ссылку на чужой файл.
+        ValidationError наружу не перехватывается — код ответа выбирает вызывающий
+        слой: 422 в кабинете, 400 при регистрации.
+        """
+        data = self.input_schema.model_validate(payload).model_dump()
+        data.pop("documents", None)
+
+        target = getattr(profile, self.owner_attribute) if self.is_separate_table else profile
+        if target is None:
+            target = self.model(**data)
+            if self.supports_documents:
+                target.documents = []
+            setattr(profile, self.owner_attribute, target)
+            return target
+
+        for name, value in data.items():
+            setattr(target, name, value)
+        return target
+
 
 @dataclass(frozen=True)
 class Direction:
@@ -79,7 +110,7 @@ class Direction:
     key: str
     title: str
     role_forms: dict[UserRole, RoleForm] = field(default_factory=dict)
-    details_model: type | None = None
+    details_model: type[Base] | None = None
     details_attribute: str | None = None
     details_input_schema: type[BaseModel] | None = None
     details_response_schema: type[BaseModel] | None = None
