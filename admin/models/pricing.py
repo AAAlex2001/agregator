@@ -17,8 +17,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.payment import Payment
-    from models.user import User
 
 
 class SubscriptionKind(str, PyEnum):
@@ -78,7 +78,7 @@ class UserSubscription(Base):
     __tablename__ = "user_subscriptions"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     plan_id: Mapped[int] = mapped_column(ForeignKey("pricing_plans.id", ondelete="RESTRICT"), nullable=False)
     kind: Mapped[SubscriptionKind] = mapped_column(Enum(SubscriptionKind, name="subscriptionkind"), nullable=False)
     status: Mapped[SubscriptionStatus] = mapped_column(Enum(SubscriptionStatus, name="subscriptionstatus"), nullable=False, default=SubscriptionStatus.ACTIVE, index=True)
@@ -89,7 +89,7 @@ class UserSubscription(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
-    user: Mapped["User"] = relationship(back_populates="subscriptions")
+    account: Mapped["Account"] = relationship(back_populates="subscriptions")
     plan: Mapped["PricingPlan"] = relationship()
     payment: Mapped["Payment | None"] = relationship()
 

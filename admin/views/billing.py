@@ -13,7 +13,7 @@ class PaymentAdmin(ModelView, model=Payment):
     icon = "fa-solid fa-credit-card"
 
     column_list = [
-        Payment.id, Payment.user, Payment.amount,
+        Payment.id, Payment.account, Payment.amount,
         Payment.payment_type, Payment.status,
         Payment.yookassa_id, Payment.created_at,
     ]
@@ -22,13 +22,13 @@ class PaymentAdmin(ModelView, model=Payment):
     column_default_sort = (Payment.id, True)
 
     column_details_list = [
-        Payment.id, Payment.user, Payment.yookassa_id,
+        Payment.id, Payment.account, Payment.yookassa_id,
         Payment.amount, Payment.payment_type, Payment.status,
         Payment.description, Payment.created_at, Payment.updated_at,
     ]
 
     form_columns = [
-        Payment.user, Payment.yookassa_id, Payment.amount,
+        Payment.account, Payment.yookassa_id, Payment.amount,
         Payment.payment_type, Payment.status, Payment.description,
     ]
 
@@ -45,7 +45,7 @@ class PaymentAdmin(ModelView, model=Payment):
 
     column_labels = {
         Payment.id: "ID",
-        Payment.user: "Пользователь",
+        Payment.account: "Аккаунт",
         Payment.yookassa_id: "YooKassa ID",
         Payment.amount: "Сумма",
         Payment.payment_type: "Тип",
@@ -126,7 +126,7 @@ class UserSubscriptionAdmin(ModelView, model=UserSubscription):
     category = "Тарифы"
 
     column_list = [
-        UserSubscription.id, UserSubscription.user, UserSubscription.plan,
+        UserSubscription.id, UserSubscription.account, UserSubscription.plan,
         UserSubscription.kind, UserSubscription.status,
         UserSubscription.activated_at, UserSubscription.expires_at,
         UserSubscription.responses_remaining,
@@ -137,7 +137,7 @@ class UserSubscriptionAdmin(ModelView, model=UserSubscription):
     column_default_sort = (UserSubscription.id, True)
 
     column_details_list = [
-        UserSubscription.id, UserSubscription.user, UserSubscription.plan,
+        UserSubscription.id, UserSubscription.account, UserSubscription.plan,
         UserSubscription.kind, UserSubscription.status,
         UserSubscription.activated_at, UserSubscription.expires_at,
         UserSubscription.responses_remaining, UserSubscription.payment,
@@ -145,7 +145,7 @@ class UserSubscriptionAdmin(ModelView, model=UserSubscription):
     ]
 
     form_columns = [
-        UserSubscription.user, UserSubscription.plan,
+        UserSubscription.account, UserSubscription.plan,
         UserSubscription.kind, UserSubscription.status,
         UserSubscription.activated_at, UserSubscription.expires_at,
         UserSubscription.responses_remaining, UserSubscription.payment,
@@ -162,7 +162,7 @@ class UserSubscriptionAdmin(ModelView, model=UserSubscription):
 
     column_labels = {
         UserSubscription.id: "ID",
-        UserSubscription.user: "Пользователь",
+        UserSubscription.account: "Аккаунт",
         UserSubscription.plan: "Тариф",
         UserSubscription.kind: "Тип",
         UserSubscription.status: "Статус",

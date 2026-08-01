@@ -9,13 +9,13 @@ from starlette.responses import RedirectResponse
 from db import SessionLocal
 from helpers.support_files import save_support_attachments_sync
 from models import (
+    Account,
     Notification,
     NotificationType,
     SupportTicket,
     SupportTicketMessage,
     TicketMessageAuthor,
     TicketStatus,
-    User,
 )
 
 
@@ -78,8 +78,8 @@ def setup(app: FastAPI) -> None:
                 created_at=now,
             )
             db.add(notification)
-            db.query(User).filter(User.id == ticket.user_id).update(
-                {User.notification_unread_count: User.notification_unread_count + 1},
+            db.query(Account).filter(Account.id == ticket.user_id).update(
+                {Account.notification_unread_count: Account.notification_unread_count + 1},
                 synchronize_session=False,
             )
 

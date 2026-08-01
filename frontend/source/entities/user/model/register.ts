@@ -1,10 +1,11 @@
 import type { CompanyData } from "./types";
+import type { DirectionProfile } from "@/source/entities/direction";
 
 export type UserRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
 
 export interface DirectionRegistration {
   key: string;
-  data: Record<string, unknown>;
+  data: DirectionProfile;
 }
 
 export interface RegisterApiPayload {

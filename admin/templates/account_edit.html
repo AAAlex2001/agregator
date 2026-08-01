@@ -4,14 +4,14 @@
 <div class="col-12">
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Редактирование пользователя</h3>
+      <h3 class="card-title">Редактирование аккаунта</h3>
     </div>
     <div class="card-body border-bottom py-3">
       <div class="mb-4">
         <h3 class="card-title mb-3">Данные компании из DaData</h3>
         {{ model_view.render_company_data(obj.company_data) }}
         <div class="alert alert-info mt-3" style="font-size:13px">
-          <strong>Как сменить компанию у пользователя:</strong>
+          <strong>Как сменить компанию у аккаунта:</strong>
           измените значение в поле «ИНН» ниже и нажмите Save —
           данные компании автоматически подтянутся из DaData по новому ИНН
           (название, ОГРН, адрес и пр.). Поле «Данные компании» хранится в JSON

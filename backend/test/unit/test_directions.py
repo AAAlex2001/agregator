@@ -76,9 +76,10 @@ class TestRegistry:
     def test_get_direction_unknown_returns_none(self):
         assert get_direction("UNKNOWN") is None
 
-    def test_expertise_available_to_expert_and_license_holder(self):
+    def test_expertise_available_to_expert_only(self):
+        "Анкету держателя ведёт /settings/license, в реестре направлений её нет."
         expertise = get_direction(EXPERTISE)
-        assert set(expertise.roles) == {UserRole.EXPERT, UserRole.LICENSE_HOLDER}
+        assert set(expertise.roles) == {UserRole.EXPERT}
 
     def test_audit_available_to_customer_and_expert(self):
         audit = get_direction(AUDIT)
@@ -98,9 +99,9 @@ class TestRegistry:
         keys = {direction.key for direction in directions_for_role(UserRole.CUSTOMER)}
         assert keys == {AUDIT}
 
-    def test_license_holder_sees_only_expertise(self):
-        keys = {direction.key for direction in directions_for_role(UserRole.LICENSE_HOLDER)}
-        assert keys == {EXPERTISE}
+    def test_license_holder_has_no_directions(self):
+        "У держателя разрешительных документов свой раздел настроек, не направления."
+        assert directions_for_role(UserRole.LICENSE_HOLDER) == ()
 
     def test_details_attributes_are_unique(self):
         attributes = [d.details_attribute for d in DIRECTIONS if d.has_details]
@@ -246,7 +247,6 @@ class TestDocumentsSupport:
         assert support[(OrderWorkType.FORENSIC.value, "EXPERT")] is True
         assert support[(AUDIT, "CUSTOMER")] is False
         assert support[(EXPERTISE, "EXPERT")] is False
-        assert support[(EXPERTISE, "LICENSE_HOLDER")] is False
 
     @pytest.mark.asyncio
     async def test_upsert_never_touches_documents(self):

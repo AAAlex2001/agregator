@@ -1,4 +1,4 @@
-"POST-роут выдачи подписки пользователю через админку (создаёт новую активную, гасит старые)."
+"POST-роут выдачи подписки аккаунту через админку (создаёт новую активную, гасит старые)."
 
 from datetime import UTC, datetime
 
@@ -11,25 +11,25 @@ from helpers.subscription import (
     compute_subscription_expires_at,
     compute_subscription_responses_remaining,
 )
-from models import PricingPlan, SubscriptionStatus, User, UserSubscription
+from models import Account, PricingPlan, SubscriptionStatus, UserSubscription
 
 
 def setup(app: FastAPI) -> None:
-    "Регистрирует роуты раздела пользователей в переданном приложении FastAPI."
+    "Регистрирует роуты раздела учётных записей в переданном приложении FastAPI."
 
-    @app.post("/admin-actions/users/{user_id}/grant-subscription", name="grant_user_subscription")
-    async def grant_user_subscription(
+    @app.post("/admin-actions/accounts/{account_id}/grant-subscription", name="grant_account_subscription")
+    async def grant_account_subscription(
         request: Request,
-        user_id: int,
+        account_id: int,
         plan_id: int = Form(...),
     ) -> RedirectResponse:
         if not request.session.get("authenticated", False):
             return RedirectResponse("/admin/login", status_code=303)
 
         with SessionLocal() as db:
-            user = db.get(User, user_id)
-            if user is None:
-                raise HTTPException(status_code=404, detail="Пользователь не найден")
+            account = db.get(Account, account_id)
+            if account is None:
+                raise HTTPException(status_code=404, detail="Аккаунт не найден")
 
             plan = db.get(PricingPlan, plan_id)
             if plan is None or not plan.is_active:
@@ -39,7 +39,7 @@ def setup(app: FastAPI) -> None:
             (
                 db.query(UserSubscription)
                 .filter(
-                    UserSubscription.user_id == user_id,
+                    UserSubscription.user_id == account_id,
                     UserSubscription.status.in_(
                         [SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING]
                     ),
@@ -54,7 +54,7 @@ def setup(app: FastAPI) -> None:
             )
             db.add(
                 UserSubscription(
-                    user_id=user_id,
+                    user_id=account_id,
                     plan_id=plan.id,
                     kind=plan.kind,
                     status=SubscriptionStatus.ACTIVE,
@@ -67,6 +67,6 @@ def setup(app: FastAPI) -> None:
             db.commit()
 
         return RedirectResponse(
-            request.headers.get("referer") or f"/admin/user/details/{user_id}",
+            request.headers.get("referer") or f"/admin/account/details/{account_id}",
             status_code=303,
         )

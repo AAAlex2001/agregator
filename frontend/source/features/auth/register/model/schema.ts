@@ -2,7 +2,7 @@ import { z } from "zod";
 import { isValidRussianPhone } from "@/source/shared/lib/phone";
 import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import { validateDirection } from "@/source/features/direction-forms";
-import type { DirectionKey } from "@/source/entities/direction";
+import type { DirectionKey, DirectionProfile } from "@/source/entities/direction";
 
 const passwordSchema = z
   .string()
@@ -32,7 +32,7 @@ export const registerFormSchema = z
     agreeTerms: z.boolean(),
     agreeConsent: z.boolean(),
     companyName: z.string().trim(),
-    directions: z.record(z.string(), z.record(z.string(), z.unknown())),
+    directions: z.record(z.string(), z.custom<DirectionProfile>()),
     companyData: z
       .object({
         value: z.string(),

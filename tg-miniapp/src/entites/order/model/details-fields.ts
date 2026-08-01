@@ -7,7 +7,6 @@ export interface OrderDetailField {
   label: string;
   kind: "text" | "textarea" | "list" | "flag";
   placeholder?: string;
-  /** Совпадает с max_length в backend/schemas/directions.py. */
   maxLength?: number;
   required?: boolean;
 }

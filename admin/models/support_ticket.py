@@ -16,7 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
-    from models.user import User
+    from models.account import Account
 
 
 class TicketStatus(str, PyEnum):
@@ -71,7 +71,7 @@ class SupportTicket(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     subject: Mapped[str] = mapped_column(String(200), nullable=False)
     category: Mapped[TicketCategory] = mapped_column(Enum(TicketCategory, name="ticketcategory"), nullable=False, index=True)
     status: Mapped[TicketStatus] = mapped_column(Enum(TicketStatus, name="ticketstatus"), nullable=False, default=TicketStatus.REVIEW, index=True)
@@ -80,7 +80,7 @@ class SupportTicket(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
-    user: Mapped["User"] = relationship(
+    account: Mapped["Account"] = relationship(
         back_populates="support_tickets",
         passive_deletes=True,
         lazy="joined",
@@ -104,7 +104,7 @@ class SupportTicketMessage(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     ticket_id: Mapped[int] = mapped_column(ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False, index=True)
     author_kind: Mapped[TicketMessageAuthor] = mapped_column(Enum(TicketMessageAuthor, name="ticketmessageauthor"), nullable=False)
-    author_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    author_user_id: Mapped[int | None] = mapped_column(ForeignKey("accounts.id", ondelete="SET NULL"), nullable=True)
     author_name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     text: Mapped[str] = mapped_column(Text, nullable=False, default="")
     attachments: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)

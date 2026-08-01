@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from views.accounts import AccountAdmin, PasswordResetCodeAdmin, SessionAdmin
 from views.billing import PaymentAdmin, PricingPlanAdmin, UserSubscriptionAdmin
 from views.campaigns import CompanyAdmin, MailingView
 from views.chats import (
@@ -24,12 +25,15 @@ from views.landing import (
 )
 from views.orders import OrderAdmin, OrderResponseAdmin, ReviewAdmin
 from views.platform import PlatformSettingsAdmin
+from views.role_profiles import CustomerAdmin, ExpertAdmin, LicenseHolderAdmin
 from views.support import SupportTicketAdmin, SupportTicketMessageAdmin
-from views.users import PasswordResetCodeAdmin, SessionAdmin, UserAdmin
 
 ALL_VIEWS: list[Any] = [
     DashboardView,
-    UserAdmin,
+    AccountAdmin,
+    CustomerAdmin,
+    ExpertAdmin,
+    LicenseHolderAdmin,
     OrderAdmin,
     OrderResponseAdmin,
     ChatAdmin,

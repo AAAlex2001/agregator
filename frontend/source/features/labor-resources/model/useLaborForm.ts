@@ -4,6 +4,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
   type FormEvent,
 } from "react";
 import {
@@ -15,7 +16,7 @@ import {
   type LaborListingPayload,
 } from "@/source/entities/labor";
 import type { ExpertiseType } from "@/source/entities/expertise";
-import { useDirectionProfile } from "@/source/entities/direction";
+import { fetchExpertiseProfile } from "@/source/entities/direction";
 import { useSession } from "@/source/features/session";
 import { buildExpertiseRequirements } from "../lib/expertiseRequirements";
 import { LABOR_PAGE_COPY } from "./config";
@@ -38,7 +39,7 @@ export function useLaborForm({
   onCreated,
 }: UseLaborFormOptions) {
   const { user } = useSession();
-  const expertiseProfile = useDirectionProfile(mode === "expert" ? "EXPERTISE" : null);
+  const [profileCertificates, setProfileCertificates] = useState<LaborCertificate[]>([]);
   const homeCity = user?.expert?.location_city ?? "";
   const [state, dispatch] = useReducer(
     laborFormReducer,
@@ -50,9 +51,20 @@ export function useLaborForm({
     id: string;
   } | null>(null);
 
+  useEffect(() => {
+    if (mode !== "expert") return;
+    let alive = true;
+    fetchExpertiseProfile()
+      .then((profile) => {
+        if (alive) setProfileCertificates(profile.certificates);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [mode]);
+
   const copy = LABOR_PAGE_COPY[mode];
-  const profileCertificates =
-    (expertiseProfile?.certificates as LaborCertificate[] | undefined) ?? [];
   const selectedCertificates = buildExpertiseRequirements({
     mode: state.expertiseMode,
     certificateCodes: state.certificateCodes,

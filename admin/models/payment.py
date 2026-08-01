@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
-    from models.user import User
+    from models.account import Account
 
 
 class PaymentStatus(str, PyEnum):
@@ -43,7 +43,7 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     yookassa_id: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True)
     amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
     payment_type: Mapped[PaymentType] = mapped_column(Enum(PaymentType), nullable=False)
@@ -52,7 +52,7 @@ class Payment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
-    user: Mapped["User"] = relationship(back_populates="payments")
+    account: Mapped["Account"] = relationship(back_populates="payments")
 
     def __str__(self) -> str:
         return f"Платёж #{self.id} {self.amount / 100:.2f} ₽ [{str(self.status)}]"

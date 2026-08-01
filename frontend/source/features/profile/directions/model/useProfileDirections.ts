@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
-  fetchDirectionProfile,
   fetchMyDirections,
-  saveDirectionProfile,
   useDirectionCatalogs,
   type DirectionDocument,
   type DirectionKey,
@@ -16,13 +14,12 @@ import { useRegisterProfileSave, type UserRole } from "@/source/entities/user";
 import {
   getDirectionForm,
   validateDirection,
-  type DirectionFormComponent,
+  type ErasedDirectionRoleForm,
 } from "@/source/features/direction-forms";
 
 interface DirectionDraft {
   direction: DirectionSummary;
-  Form: DirectionFormComponent;
-  supportsDocuments: boolean;
+  entry: ErasedDirectionRoleForm;
   documents: DirectionDocument[];
   saved: DirectionProfile;
   value: DirectionProfile;
@@ -53,7 +50,7 @@ export function useProfileDirections(role: UserRole) {
     for (const draft of drafts.filter(isChanged)) {
       const message = validateDirection(draft.direction.key, role, draft.value);
       if (message) throw new Error(`${draft.direction.title}: ${message}`);
-      persisted.set(draft.direction.key, await saveDirectionProfile(draft.direction.key, draft.value));
+      persisted.set(draft.direction.key, await draft.entry.save(draft.value));
     }
     setDrafts((current) =>
       current.map((draft) => {
@@ -90,20 +87,19 @@ function isChanged(draft: DirectionDraft): boolean {
   return draft.value !== draft.saved;
 }
 
+function profileDocuments(profile: DirectionProfile): DirectionDocument[] {
+  return "documents" in profile ? profile.documents : [];
+}
+
 async function loadDrafts(role: UserRole): Promise<DirectionDraft[]> {
   const supported = (await fetchMyDirections()).flatMap((direction) => {
-    const form = getDirectionForm(direction.key, role);
-    if (!form) return [];
-    return [
-      { direction, Form: form.Form, supportsDocuments: Boolean(form.supportsDocuments) },
-    ];
+    const entry = getDirectionForm(direction.key, role);
+    return entry ? [{ direction, entry }] : [];
   });
-  const profiles = await Promise.all(
-    supported.map((item) => fetchDirectionProfile(item.direction.key)),
-  );
+  const profiles = await Promise.all(supported.map((item) => item.entry.load()));
   return supported.map((item, index) => ({
     ...item,
-    documents: (profiles[index].documents as DirectionDocument[] | undefined) ?? [],
+    documents: profileDocuments(profiles[index]),
     saved: profiles[index],
     value: profiles[index],
   }));

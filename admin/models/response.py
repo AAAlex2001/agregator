@@ -18,9 +18,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from models.account import Account
     from models.order import Order
     from models.review import Review
-    from models.user import User
 
 
 class ResponseStatus(str, PyEnum):
@@ -52,7 +52,7 @@ class OrderResponse(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id", ondelete="CASCADE"), nullable=False, index=True)
-    expert_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    expert_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     comment: Mapped[str] = mapped_column(Text, nullable=False, default="")
     proposed_sum_amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
     proposed_deadline: Mapped[date] = mapped_column(Date, nullable=False)
@@ -63,7 +63,7 @@ class OrderResponse(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     order: Mapped["Order"] = relationship(back_populates="responses")
-    expert: Mapped["User"] = relationship(back_populates="responses")
+    expert: Mapped["Account"] = relationship(back_populates="responses")
     reviews: Mapped[list["Review"]] = relationship(back_populates="response")
 
     def __str__(self) -> str:

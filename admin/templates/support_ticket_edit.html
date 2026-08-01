@@ -33,12 +33,12 @@
           <div class="col-md-3">Категория: <span class="text-body">{{ obj.category }}</span></div>
           <div class="col-md-3">Создан: <span class="text-body">{{ obj.created_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
           <div class="col-md-3">Обновлён: <span class="text-body">{{ obj.updated_at.strftime("%d.%m.%Y %H:%M") }}</span></div>
-          {% if obj.user %}
+          {% if obj.account %}
           <div class="col-md-3">
             Пользователь:
-            <a href="/admin/user/edit/{{ obj.user.id }}">
-              {% set full_name = ((obj.user.first_name or "") ~ " " ~ (obj.user.last_name or "")) | trim %}
-              {{ full_name or obj.user.email }} (id={{ obj.user.id }})
+            <a href="/admin/account/edit/{{ obj.account.id }}">
+              {% set full_name = ((obj.account.first_name or "") ~ " " ~ (obj.account.last_name or "")) | trim %}
+              {{ full_name or obj.account.email }} (id={{ obj.account.id }})
             </a>
           </div>
           {% endif %}

@@ -3,7 +3,7 @@
 <div class="col-12">
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">Пользователь #{{ model.id }}</h3>
+      <h3 class="card-title">Аккаунт #{{ model.id }}</h3>
     </div>
     <div class="card-body border-bottom py-3">
       <div class="table-responsive">
@@ -73,7 +73,7 @@
             {% endif %}
 
             {% if pricing_plans %}
-              <form action="{{ url_for('grant_user_subscription', user_id=model.id) }}" method="POST" class="row g-2 align-items-end">
+              <form action="{{ url_for('grant_account_subscription', account_id=model.id) }}" method="POST" class="row g-2 align-items-end">
                 <div class="col-md-8">
                   <label class="form-label" for="plan_id">Выдать тариф</label>
                   <select id="plan_id" name="plan_id" class="form-select" required>

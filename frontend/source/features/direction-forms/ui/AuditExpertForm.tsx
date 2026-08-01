@@ -4,6 +4,7 @@ import Tabs from "@/source/shared/ui/Tabs";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { MultiSelect } from "@/source/shared/ui/MultiSelect";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
+import type { AuditExpertProfile, AuditParticipantKind } from "@/source/entities/direction";
 import type { DirectionFormProps } from "../model/types";
 import s from "./DirectionForm.module.scss";
 
@@ -21,30 +22,27 @@ function fromSuggestion(query: string, picked: PartySuggestion | null) {
   };
 }
 
-export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProps) {
-  const kind = String(value.participant_kind ?? "AUDITOR");
-  const list = (field: string) => (Array.isArray(value[field]) ? (value[field] as string[]) : []);
-  const text = (field: string) => String(value[field] ?? "");
-  const set = (field: string, next: unknown) => onChange({ ...value, [field]: next });
-
+export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProps<AuditExpertProfile>) {
   return (
     <div className={s.form}>
       <Tabs
         tabs={PARTICIPANT_TABS}
-        activeTab={kind}
-        onTabChange={(id) => set("participant_kind", id)}
+        activeTab={value.participant_kind}
+        onTabChange={(id) =>
+          onChange({ ...value, participant_kind: id as AuditParticipantKind })
+        }
         variant="squared"
       />
 
-      {kind === "AUDITOR" ? (
+      {value.participant_kind === "AUDITOR" ? (
         <>
           <div className={s.field}>
             <span className={s.label}>Области аттестации по промышленной безопасности</span>
             <MultiSelect
               id="audit-safety"
               options={catalogs.industrial_safety_areas}
-              value={list("industrial_safety_areas")}
-              onChange={(next) => set("industrial_safety_areas", next)}
+              value={value.industrial_safety_areas}
+              onChange={(next) => onChange({ ...value, industrial_safety_areas: next })}
             />
           </div>
 
@@ -53,8 +51,8 @@ export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProp
             <MultiSelect
               id="audit-expert-areas"
               options={catalogs.expert_attestation_areas}
-              value={list("expert_attestation_areas")}
-              onChange={(next) => set("expert_attestation_areas", next)}
+              value={value.expert_attestation_areas}
+              onChange={(next) => onChange({ ...value, expert_attestation_areas: next })}
             />
           </div>
 
@@ -63,8 +61,8 @@ export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProp
             <MultiSelect
               id="audit-nok"
               options={catalogs.audit_qualifications}
-              value={list("audit_qualifications")}
-              onChange={(next) => set("audit_qualifications", next)}
+              value={value.audit_qualifications}
+              onChange={(next) => onChange({ ...value, audit_qualifications: next })}
             />
           </div>
         </>
@@ -73,13 +71,13 @@ export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProp
           <div className={s.field}>
             <span className={s.label}>Инспекционный орган</span>
             <PartySuggestInput
-              value={text("full_name")}
+              value={value.full_name}
               onChange={(query, picked) => onChange({ ...value, ...fromSuggestion(query, picked) })}
               placeholder="ИНН или название организации"
             />
             <span className={s.hint}>
-              {text("inn")
-                ? `ИНН ${text("inn")}${text("short_name") ? ` · ${text("short_name")}` : ""}`
+              {value.inn
+                ? `ИНН ${value.inn}${value.short_name ? ` · ${value.short_name}` : ""}`
                 : "Выберите организацию из подсказок — ИНН и сокращённое наименование подставятся сами"}
             </span>
           </div>
@@ -87,8 +85,8 @@ export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProp
           <label className={s.field}>
             <span className={s.label}>№ свидетельства об аккредитации (тип А)</span>
             <TextInput
-              value={text("certificate_number")}
-              onChange={(event) => set("certificate_number", event.target.value)}
+              value={value.certificate_number}
+              onChange={(event) => onChange({ ...value, certificate_number: event.target.value })}
               placeholder="RA.RU.А-000"
             />
           </label>
@@ -98,8 +96,8 @@ export function AuditExpertForm({ value, onChange, catalogs }: DirectionFormProp
             <MultiSelect
               id="audit-accreditation"
               options={catalogs.accreditation_areas}
-              value={list("accreditation_areas")}
-              onChange={(next) => set("accreditation_areas", next)}
+              value={value.accreditation_areas}
+              onChange={(next) => onChange({ ...value, accreditation_areas: next })}
             />
           </div>
         </>

@@ -1,10 +1,12 @@
-import type { DirectionCatalogs, DirectionProfile } from "@/source/entities/direction";
+import type { ReactElement } from "react";
+import type { DirectionCatalogs } from "@/source/entities/direction";
 
-/** Контракт любой анкеты направления: значение, обработчик и справочники. */
-export interface DirectionFormProps {
-  value: DirectionProfile;
-  onChange: (value: DirectionProfile) => void;
+export interface DirectionFormProps<TProfile> {
+  value: TProfile;
+  onChange: (value: TProfile) => void;
   catalogs: DirectionCatalogs;
 }
 
-export type DirectionFormComponent = (props: DirectionFormProps) => React.ReactElement | null;
+export type DirectionFormComponent<TProfile> = (
+  props: DirectionFormProps<TProfile>,
+) => ReactElement | null;

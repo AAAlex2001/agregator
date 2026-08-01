@@ -6,7 +6,6 @@ export type DirectionKey =
   | "RESEARCH"
   | "LABORATORY";
 
-/** Направление, доступное текущей роли, и признак заполненности его анкеты. */
 export interface DirectionSummary {
   key: DirectionKey;
   title: string;
@@ -25,10 +24,4 @@ export interface DirectionCatalogs {
   accreditation_areas: CatalogOption[];
 }
 
-/** Анкета направления: набор полей зависит от направления и роли, поэтому тип открытый. */
-export type DirectionProfile = Record<string, unknown>;
-
-export interface DirectionDocument {
-  name: string;
-  url: string;
-}
+export type DirectionKeyWithProfile = "EXPERTISE" | "AUDIT_SUPB" | "CADASTRAL" | "FORENSIC";

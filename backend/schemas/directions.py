@@ -5,7 +5,6 @@ from datetime import date
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from models.direction_profile import AuditParticipantKind, ForensicWorkplaceKind
-from models.license_holder import LicenseRentalKind
 from schemas.expert import ExpertCertificate
 from services.audit_catalogs import (
     ACCREDITATION_AREA_CODES,
@@ -110,33 +109,6 @@ class ExpertiseExpertProfileInput(BaseModel):
 
 class ExpertiseExpertProfileResponse(ExpertiseExpertProfileInput):
     "Анкета исполнителя по ЭПБ в ответе API."
-
-    class Config:
-        from_attributes = True
-
-
-class ExpertiseLicenseHolderProfileInput(BaseModel):
-    "Анкета держателя разрешительных документов по экспертизе промышленной безопасности."
-    license_number: str = Field(..., min_length=1, max_length=100)
-    license_areas: list[str] = Field(..., min_length=1, max_length=20)
-    license_rental_kind: LicenseRentalKind
-    license_rental_percent: float | None = Field(None, gt=0, le=100)
-    license_rental_fixed_amount: int | None = Field(None, gt=0)
-    mining_license_number: str = Field("", max_length=100)
-    lab_accreditation_number: str = Field("", max_length=100)
-
-    @model_validator(mode="after")
-    def check_rental_amount(self) -> "ExpertiseLicenseHolderProfileInput":
-        "Способ расчёта аренды требует соответствующей суммы."
-        if self.license_rental_kind is LicenseRentalKind.PERCENT and self.license_rental_percent is None:
-            raise ValueError("Укажите процент от суммы договора")
-        if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:
-            raise ValueError("Укажите минимальную фиксированную цену предоставления лицензии")
-        return self
-
-
-class ExpertiseLicenseHolderProfileResponse(ExpertiseLicenseHolderProfileInput):
-    "Анкета держателя по ЭПБ в ответе API."
 
     class Config:
         from_attributes = True

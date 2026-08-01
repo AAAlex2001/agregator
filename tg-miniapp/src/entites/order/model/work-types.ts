@@ -39,7 +39,6 @@ export function orderWorkOptionsOf(group: OrderWorkGroup): OrderWorkOption[] {
   return ORDER_WORK_OPTIONS.filter((option) => option.group === group);
 }
 
-/** Типы, выведенные из списка выбора, но живущие в ранее созданных заявках. */
 const LEGACY_WORK_LABELS: Record<string, string> = {
   RESEARCH_LAB: "НИРы и лабораторные исследования",
 };

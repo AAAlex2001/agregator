@@ -7,7 +7,7 @@ from typing import Literal
 from sqlalchemy import Column, func, select
 from sqlalchemy.orm import Session as DbSession
 
-from models import Order, OrderResponse, User
+from models import Account, Order, OrderResponse
 
 Period = Literal["day", "week", "month"]
 PERIOD_DAYS: dict[Period, int] = {"day": 1, "week": 7, "month": 30}
@@ -88,7 +88,7 @@ def timeseries_for_column(db: DbSession, created_at_column: Column[datetime], da
 
 def users_by_role(db: DbSession) -> list[RoleBreakdown]:
     "Распределение пользователей по ролям. Один SELECT с GROUP BY."
-    stmt = select(User.role, func.count()).group_by(User.role)
+    stmt = select(Account.role, func.count()).group_by(Account.role)
     rows = db.execute(stmt).all()
     return [RoleBreakdown(role=enum_to_str(row[0]), count=int(row[1])) for row in rows]
 
@@ -110,10 +110,10 @@ def responses_by_status(db: DbSession) -> list[StatusBreakdown]:
 def collect_dashboard(db: DbSession, timeseries_days: int = 30) -> DashboardMetrics:
     "Собирает весь срез метрик одним вызовом — каунтеры за 3 окна + графики за месяц + пироги по ролям/статусам."
     return DashboardMetrics(
-        users=counter_for_column(db, User.created_at),
+        users=counter_for_column(db, Account.created_at),
         orders=counter_for_column(db, Order.created_at),
         responses=counter_for_column(db, OrderResponse.created_at),
-        users_timeseries=timeseries_for_column(db, User.created_at, timeseries_days),
+        users_timeseries=timeseries_for_column(db, Account.created_at, timeseries_days),
         orders_timeseries=timeseries_for_column(db, Order.created_at, timeseries_days),
         responses_timeseries=timeseries_for_column(db, OrderResponse.created_at, timeseries_days),
         users_by_role=users_by_role(db),

@@ -1,8 +1,11 @@
-"Re-export всех моделей для коротких импортов из main.py: `from models import User, Order, ...`."
+"Re-export всех моделей для коротких импортов из main.py: `from models import Account, Order, ...`."
 
+from models.account import Account, UserRole
 from models.base import Base
 from models.chat import Chat, ChatMessage, ExpertRoomBan, ExpertRoomMessage
 from models.company import Company
+from models.customer import Customer
+from models.expert import Expert
 from models.landing import (
     LandingAdvantage,
     LandingFaq,
@@ -14,6 +17,7 @@ from models.landing import (
     LandingSectionHeader,
     LandingStep,
 )
+from models.license_holder import LicenseHolder
 from models.notification import Notification, NotificationType
 from models.order import BadgeVariant, Order, OrderBadge, OrderStatus
 from models.password_reset_code import PasswordResetCode
@@ -30,13 +34,15 @@ from models.support_ticket import (
     TicketMessageAuthor,
     TicketStatus,
 )
-from models.user import User, UserRole
 
 __all__ = [
+    "Account",
     "BadgeVariant",
     "Base",
-    "Company",
+    "Company", "Customer",
     "Chat", "ChatMessage",
+    "Expert",
+    "LicenseHolder",
     "ExpertRoomBan", "ExpertRoomMessage",
     "LandingAdvantage", "LandingFaq", "LandingHero", "LandingIndustry",
     "LandingOrderExample", "LandingPricingContent", "LandingReview",
@@ -53,6 +59,6 @@ __all__ = [
     "SubscriptionKind", "SubscriptionStatus",
     "SupportTicket", "SupportTicketMessage",
     "TicketCategory", "TicketMessageAuthor", "TicketStatus",
-    "User", "UserRole",
+    "UserRole",
     "UserSubscription",
 ]

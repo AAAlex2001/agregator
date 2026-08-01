@@ -1,5 +1,23 @@
 import type { ZodTypeAny } from "zod";
-import type { DirectionKey, DirectionProfile } from "@/source/entities/direction";
+import {
+  fetchAuditCustomerProfile,
+  fetchAuditExpertProfile,
+  fetchCadastralProfile,
+  fetchExpertiseProfile,
+  fetchForensicProfile,
+  saveAuditCustomerProfile,
+  saveAuditExpertProfile,
+  saveCadastralProfile,
+  saveExpertiseProfile,
+  saveForensicProfile,
+  type AuditCustomerProfile,
+  type AuditExpertProfile,
+  type CadastralExpertProfile,
+  type DirectionKey,
+  type DirectionProfile,
+  type ExpertiseExpertProfile,
+  type ForensicExpertProfile,
+} from "@/source/entities/direction";
 import type { UserRole } from "@/source/entities/user";
 import { AuditCustomerForm } from "../ui/AuditCustomerForm";
 import { AuditExpertForm } from "../ui/AuditExpertForm";
@@ -15,18 +33,28 @@ import {
 } from "./schemas";
 import type { DirectionFormComponent } from "./types";
 
-export interface DirectionRoleForm {
+export interface DirectionRoleForm<TProfile> {
   description: string;
-  Form: DirectionFormComponent;
-  emptyValue: DirectionProfile;
+  Form: DirectionFormComponent<TProfile>;
+  emptyValue: TProfile;
   schema: ZodTypeAny;
+  load: () => Promise<TProfile>;
+  save: (profile: TProfile) => Promise<TProfile>;
   supportsDocuments?: boolean;
+}
+
+export type ErasedDirectionRoleForm = DirectionRoleForm<DirectionProfile>;
+
+function form<TProfile extends DirectionProfile>(
+  entry: DirectionRoleForm<TProfile>,
+): ErasedDirectionRoleForm {
+  return entry as unknown as ErasedDirectionRoleForm;
 }
 
 export interface DirectionEntry {
   key: DirectionKey;
   title: string;
-  forms: Partial<Record<UserRole, DirectionRoleForm>>;
+  forms: Partial<Record<UserRole, ErasedDirectionRoleForm>>;
 }
 
 export interface DirectionOption {
@@ -40,25 +68,29 @@ const DIRECTIONS: DirectionEntry[] = [
     key: "EXPERTISE",
     title: "Экспертиза промышленной безопасности",
     forms: {
-      EXPERT: {
+      EXPERT: form<ExpertiseExpertProfile>({
         description: "Удостоверения: область аттестации, объект экспертизы и категория",
         Form: ExpertiseExpertForm,
         emptyValue: { certificates: [] },
         schema: expertiseExpertSchema,
-      },
+        load: fetchExpertiseProfile,
+        save: saveExpertiseProfile,
+      }),
     },
   },
   {
     key: "AUDIT_SUPB",
     title: "Аудит СУПБ",
     forms: {
-      CUSTOMER: {
+      CUSTOMER: form<AuditCustomerProfile>({
         description: "Независимая оценка системы управления промышленной безопасностью",
         Form: AuditCustomerForm,
         emptyValue: { position: "", opo_license_number: "" },
         schema: auditCustomerSchema,
-      },
-      EXPERT: {
+        load: fetchAuditCustomerProfile,
+        save: saveAuditCustomerProfile,
+      }),
+      EXPERT: form<AuditExpertProfile>({
         description: "Аудитор с независимой оценкой квалификации или инспекционный орган типа А",
         Form: AuditExpertForm,
         emptyValue: {
@@ -71,17 +103,20 @@ const DIRECTIONS: DirectionEntry[] = [
           inn: "",
           certificate_number: "",
           accreditation_areas: [],
+          documents: [],
         },
         schema: auditExpertSchema,
+        load: fetchAuditExpertProfile,
+        save: saveAuditExpertProfile,
         supportsDocuments: true,
-      },
+      }),
     },
   },
   {
     key: "CADASTRAL",
     title: "Кадастровые работы",
     forms: {
-      EXPERT: {
+      EXPERT: form<CadastralExpertProfile>({
         description: "Аттестат кадастрового инженера, оборудование и место работы",
         Form: CadastralExpertForm,
         emptyValue: {
@@ -91,17 +126,20 @@ const DIRECTIONS: DirectionEntry[] = [
           registry_number: "",
           equipment: "",
           workplace: "",
+          documents: [],
         },
         schema: cadastralExpertSchema,
+        load: fetchCadastralProfile,
+        save: saveCadastralProfile,
         supportsDocuments: true,
-      },
+      }),
     },
   },
   {
     key: "FORENSIC",
     title: "Судебная экспертиза",
     forms: {
-      EXPERT: {
+      EXPERT: form<ForensicExpertProfile>({
         description: "Образование, опыт аналогичных экспертиз и кто выдаёт заключение",
         Form: ForensicExpertForm,
         emptyValue: {
@@ -109,17 +147,23 @@ const DIRECTIONS: DirectionEntry[] = [
           similar_cases_experience: "",
           workplace_kind: "INDIVIDUAL",
           workplace_name: "",
+          documents: [],
         },
         schema: forensicExpertSchema,
+        load: fetchForensicProfile,
+        save: saveForensicProfile,
         supportsDocuments: true,
-      },
+      }),
     },
   },
 ];
 
 const BY_KEY = new Map(DIRECTIONS.map((direction) => [direction.key, direction]));
 
-export function getDirectionForm(key: DirectionKey, role: UserRole): DirectionRoleForm | null {
+export function getDirectionForm(
+  key: DirectionKey,
+  role: UserRole,
+): ErasedDirectionRoleForm | null {
   return BY_KEY.get(key)?.forms[role] ?? null;
 }
 
@@ -132,7 +176,7 @@ export function directionOptionsForRole(role: UserRole): DirectionOption[] {
 }
 
 export function emptyDirectionValue(key: DirectionKey, role: UserRole): DirectionProfile {
-  return { ...(getDirectionForm(key, role)?.emptyValue ?? {}) };
+  return { ...(getDirectionForm(key, role)?.emptyValue ?? {}) } as DirectionProfile;
 }
 
 export function validateDirection(
@@ -140,8 +184,8 @@ export function validateDirection(
   role: UserRole,
   value: DirectionProfile,
 ): string | null {
-  const form = getDirectionForm(key, role);
-  if (!form) return null;
-  const result = form.schema.safeParse(value);
+  const entry = getDirectionForm(key, role);
+  if (!entry) return null;
+  const result = entry.schema.safeParse(value);
   return result.success ? null : result.error.issues[0].message;
 }

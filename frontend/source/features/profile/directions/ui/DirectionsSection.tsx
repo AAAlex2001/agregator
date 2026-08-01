@@ -32,9 +32,9 @@ export function DirectionsSection({ role }: Props) {
           variant="squared"
         />
 
-        <active.Form value={active.value} onChange={changeProfile} catalogs={catalogs} />
+        <active.entry.Form value={active.value} onChange={changeProfile} catalogs={catalogs} />
 
-        {active.supportsDocuments && (
+        {active.entry.supportsDocuments && (
           <DirectionDocumentsField
             directionKey={activeKey}
             documents={active.documents}

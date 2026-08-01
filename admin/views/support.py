@@ -57,7 +57,7 @@ class SupportTicketAdmin(ModelView, model=SupportTicket):
     column_details_list = [
         SupportTicket.id,
         SupportTicket.number,
-        SupportTicket.user,
+        SupportTicket.account,
         SupportTicket.subject,
         SupportTicket.category,
         SupportTicket.status,
@@ -79,8 +79,8 @@ class SupportTicketAdmin(ModelView, model=SupportTicket):
     column_labels = {
         SupportTicket.id: "ID",
         SupportTicket.number: "Номер",
-        SupportTicket.user_id: "ID пользователя",
-        SupportTicket.user: "Пользователь",
+        SupportTicket.user_id: "ID аккаунта",
+        SupportTicket.account: "Аккаунт",
         SupportTicket.subject: "Тема",
         SupportTicket.category: "Категория",
         SupportTicket.status: "Статус",

@@ -20,7 +20,6 @@ from models.direction_profile import (
     ExpertForensicProfile,
 )
 from models.expert import Expert
-from models.license_holder import LicenseHolder
 from models.order import OrderWorkType
 from models.order_details import (
     OrderCadastralDetails,
@@ -39,8 +38,6 @@ from schemas.directions import (
     CustomerAuditProfileResponse,
     ExpertiseExpertProfileInput,
     ExpertiseExpertProfileResponse,
-    ExpertiseLicenseHolderProfileInput,
-    ExpertiseLicenseHolderProfileResponse,
     ForensicOrderDetailsInput,
     ForensicOrderDetailsResponse,
     ForensicProfileInput,
@@ -140,12 +137,6 @@ DIRECTIONS: tuple[Direction, ...] = (
                 owner_attribute="",
                 input_schema=ExpertiseExpertProfileInput,
                 response_schema=ExpertiseExpertProfileResponse,
-            ),
-            UserRole.LICENSE_HOLDER: RoleForm(
-                model=LicenseHolder,
-                owner_attribute="",
-                input_schema=ExpertiseLicenseHolderProfileInput,
-                response_schema=ExpertiseLicenseHolderProfileResponse,
             ),
         },
     ),
