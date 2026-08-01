@@ -11,7 +11,11 @@ from services.registration.use_cases.register_guest_customer import RegisterGues
 
 
 class CreateGuestOrderUseCase:
-    "Заявка с лендинга: заводит заказчика без пароля, публикует заказ с файлами и шлёт код на почту."
+    """Заявка с лендинга: заводит заказчика без пароля, публикует заказ с файлами и шлёт код на почту.
+
+    Документы формы (проект договора, ТЗ) кладутся в категорию «иное»: остальные категории
+    рассчитаны на один файл, а в форме одна общая корзина вложений.
+    """
 
     def __init__(
         self,
@@ -33,10 +37,10 @@ class CreateGuestOrderUseCase:
         account = await self.register_customer.execute(data.customer)
         order = await self.create_order.execute(
             self.build_order_data(data, account.id),
-            technical=documents,
+            technical=[],
             contract=[],
             company=[],
-            other=[],
+            other=documents,
             current_user_id=account.id,
         )
         await self.notifier.schedule_confirmation_email(account, background_tasks)

@@ -18,6 +18,9 @@ export const initialServiceRequestState: ServiceRequestState = {
   nextRequirementId: 2,
   researchName: "",
   equipmentRequirements: "",
+  agreePrivacy: false,
+  agreeTerms: false,
+  agreeConsent: false,
 };
 
 export function serviceRequestReducer(
@@ -38,6 +41,8 @@ export function serviceRequestReducer(
       };
     case "TOGGLE_SITE_VISIT":
       return { ...state, needsSiteVisit: !state.needsSiteVisit };
+    case "TOGGLE_AGREEMENT":
+      return { ...state, [action.agreement]: !state[action.agreement] };
     case "ADD_REQUIREMENT":
       return {
         ...state,

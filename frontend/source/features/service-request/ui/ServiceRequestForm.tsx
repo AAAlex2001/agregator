@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type FormEvent, type ReactNode } from "react";
+import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { TextInput, EmailInput, PhoneInput } from "@/source/shared/ui/Inputs";
@@ -35,6 +36,7 @@ const ServiceRequestForm = () => {
     addFiles,
     removeFile,
     toggleSiteVisit,
+    toggleAgreement,
     addRequirement,
     setRequirement,
     removeRequirement,
@@ -50,7 +52,7 @@ const ServiceRequestForm = () => {
   }));
 
   const isNir = state.variant === "nir";
-  const { submit, isSubmitting } = useSubmitServiceRequest();
+  const { submit, isSubmitting, errors } = useSubmitServiceRequest();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -85,6 +87,7 @@ const ServiceRequestForm = () => {
               value={state.topic}
               onChange={(e) => setField("topic", e.target.value)}
               placeholder="Тема научно-исследовательской работы"
+              error={errors.topic}
             />
           </Field>
 
@@ -123,12 +126,13 @@ const ServiceRequestForm = () => {
         <>
           <Field label="Наименование исследований">
             <textarea
-              className={s.textarea}
+              className={errors.researchName ? `${s.textarea} ${s.textareaError}` : s.textarea}
               value={state.researchName}
               onChange={(e) => setField("researchName", e.target.value)}
               placeholder="Что требуется исследовать"
               rows={3}
             />
+            {errors.researchName && <span className={s.error}>{errors.researchName}</span>}
           </Field>
           <Field label="Требования к оборудованию">
             <TextInput
@@ -146,6 +150,7 @@ const ServiceRequestForm = () => {
             value={state.firstName}
             onChange={(e) => setField("firstName", e.target.value)}
             placeholder="Ваше имя"
+            error={errors.firstName}
           />
         </Field>
         <Field label="Фамилия">
@@ -153,6 +158,7 @@ const ServiceRequestForm = () => {
             value={state.lastName}
             onChange={(e) => setField("lastName", e.target.value)}
             placeholder="Ваша фамилия"
+            error={errors.lastName}
           />
         </Field>
       </div>
@@ -163,6 +169,7 @@ const ServiceRequestForm = () => {
             value={state.phone}
             onChange={(e) => setField("phone", e.target.value)}
             placeholder="+7 (999) 999-99-99"
+            error={errors.phone}
           />
         </Field>
         <Field label="Почта">
@@ -170,18 +177,20 @@ const ServiceRequestForm = () => {
             value={state.email}
             onChange={(e) => setField("email", e.target.value)}
             placeholder="mail@example.com"
+            error={errors.email}
           />
         </Field>
       </div>
 
       <Field label="Краткое описание, задачи">
         <textarea
-          className={s.textarea}
+          className={errors.description ? `${s.textarea} ${s.textareaError}` : s.textarea}
           value={state.description}
           onChange={(e) => setField("description", e.target.value)}
           placeholder="Что нужно сделать"
           rows={3}
         />
+        {errors.description && <span className={s.error}>{errors.description}</span>}
       </Field>
 
       <div className={s.row3}>
@@ -189,16 +198,22 @@ const ServiceRequestForm = () => {
           <CalendarInput
             value={state.responsesDeadline}
             onChange={(value) => setField("responsesDeadline", value)}
+            error={errors.responsesDeadline}
           />
         </Field>
         <Field label="Начать работу">
           <CalendarInput
             value={state.startDate}
             onChange={(value) => setField("startDate", value)}
+            error={errors.startDate}
           />
         </Field>
         <Field label="Сдать работу">
-          <CalendarInput value={state.dueDate} onChange={(value) => setField("dueDate", value)} />
+          <CalendarInput
+            value={state.dueDate}
+            onChange={(value) => setField("dueDate", value)}
+            error={errors.dueDate}
+          />
         </Field>
       </div>
 
@@ -209,6 +224,7 @@ const ServiceRequestForm = () => {
           placeholder="0"
           inputMode="numeric"
           suffix="₽"
+          error={errors.maxPrice}
         />
       </Field>
 
@@ -233,6 +249,47 @@ const ServiceRequestForm = () => {
         }
       />
 
+      <div className={s.agreements}>
+        <Checkbox
+          id="request-privacy"
+          checked={state.agreePrivacy}
+          onChange={() => toggleAgreement("agreePrivacy")}
+          error={errors.agreePrivacy}
+        >
+          Я соглашаюсь с{" "}
+          <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer" className={s.link}>
+            Политикой конфиденциальности
+          </Link>
+        </Checkbox>
+        <Checkbox
+          id="request-terms"
+          checked={state.agreeTerms}
+          onChange={() => toggleAgreement("agreeTerms")}
+          error={errors.agreeTerms}
+        >
+          Я соглашаюсь с{" "}
+          <Link href="/user-agreement" target="_blank" rel="noopener noreferrer" className={s.link}>
+            Пользовательским соглашением
+          </Link>
+        </Checkbox>
+        <Checkbox
+          id="request-consent"
+          checked={state.agreeConsent}
+          onChange={() => toggleAgreement("agreeConsent")}
+          error={errors.agreeConsent}
+        >
+          Я даю{" "}
+          <Link
+            href="/personal-data-consent"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={s.link}
+          >
+            Согласие на обработку персональных данных
+          </Link>
+        </Checkbox>
+      </div>
+
       <Button
         type="submit"
         variant="primary"
@@ -244,9 +301,8 @@ const ServiceRequestForm = () => {
         Оставить заявку
       </Button>
       <p className={s.consent}>
-        Мы создадим кабинет по указанной почте — в нём вы увидите отклики и сможете
-        общаться с исполнителями. Нажимая на кнопку, вы даёте согласие на{" "}
-        <a href="/personal-data-consent">обработку персональных данных</a>
+        Мы создадим кабинет по указанной почте — в нём вы увидите отклики и сможете общаться
+        с исполнителями
       </p>
     </form>
   );

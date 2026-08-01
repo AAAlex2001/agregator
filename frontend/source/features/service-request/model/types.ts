@@ -32,7 +32,15 @@ export interface ServiceRequestState {
   // Лабораторные исследования
   researchName: string;
   equipmentRequirements: string;
+  // Согласия
+  agreePrivacy: boolean;
+  agreeTerms: boolean;
+  agreeConsent: boolean;
 }
+
+export type ServiceRequestAgreement = "agreePrivacy" | "agreeTerms" | "agreeConsent";
+
+export type ServiceRequestErrors = Partial<Record<keyof ServiceRequestState, string>>;
 
 export type ServiceRequestField =
   | "firstName"
@@ -54,6 +62,7 @@ export type ServiceRequestAction =
   | { type: "ADD_FILES"; attachments: ServiceAttachment[] }
   | { type: "REMOVE_FILE"; index: number }
   | { type: "TOGGLE_SITE_VISIT" }
+  | { type: "TOGGLE_AGREEMENT"; agreement: ServiceRequestAgreement }
   | { type: "ADD_REQUIREMENT" }
   | { type: "SET_REQUIREMENT"; id: number; value: string }
   | { type: "REMOVE_REQUIREMENT"; id: number };

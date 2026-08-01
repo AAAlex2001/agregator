@@ -103,6 +103,27 @@
   margin-top: 4px;
 }
 
+.textareaError {
+  border-color: #e5484d;
+}
+
+.error {
+  font-size: 12px;
+  line-height: 16px;
+  color: #e5484d;
+}
+
+.agreements {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link {
+  color: #ff8a00;
+  text-decoration: underline;
+}
+
 .consent {
   margin: 0;
   font-size: 12px;

@@ -6,24 +6,37 @@ import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { createGuestOrder } from "../api/guestOrder.api";
 import { serviceRequestSchema } from "./schema";
-import type { ServiceRequestState } from "./types";
+import type { ServiceRequestErrors, ServiceRequestState } from "./types";
 
 const SUCCESS_MESSAGE =
   "Заявка опубликована. Вы вошли в кабинет — там появятся отклики исполнителей";
+const INVALID_FORM_MESSAGE = "Заполните обязательные поля";
+
+export function collectErrors(issues: { path: PropertyKey[]; message: string }[]): ServiceRequestErrors {
+  const errors: ServiceRequestErrors = {};
+  issues.forEach((issue) => {
+    const field = issue.path[0] as keyof ServiceRequestState | undefined;
+    if (field && !errors[field]) errors[field] = issue.message;
+  });
+  return errors;
+}
 
 export function useSubmitServiceRequest() {
   const router = useRouter();
   const { reload } = useSession();
   const { showSuccess, showError } = useNotifications();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<ServiceRequestErrors>({});
 
   const submit = async (state: ServiceRequestState) => {
     const parsed = serviceRequestSchema.safeParse(state);
     if (!parsed.success) {
-      showError(parsed.error.issues[0]?.message ?? "Проверьте заполнение формы");
+      setErrors(collectErrors(parsed.error.issues));
+      showError(INVALID_FORM_MESSAGE);
       return;
     }
 
+    setErrors({});
     const values = parsed.data;
     const isNir = values.variant === "nir";
     setIsSubmitting(true);
@@ -64,5 +77,5 @@ export function useSubmitServiceRequest() {
     }
   };
 
-  return { submit, isSubmitting };
+  return { submit, isSubmitting, errors };
 }

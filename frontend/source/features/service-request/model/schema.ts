@@ -19,6 +19,15 @@ const baseSchema = z.object({
     .trim()
     .min(1, "Укажите начальную максимальную цену")
     .refine((value) => Number(value.replace(/\s/g, "")) > 0, "Цена должна быть больше нуля"),
+  agreePrivacy: z.literal(true, {
+    error: "Требуется согласие с Политикой конфиденциальности",
+  }),
+  agreeTerms: z.literal(true, {
+    error: "Требуется согласие с Пользовательским соглашением",
+  }),
+  agreeConsent: z.literal(true, {
+    error: "Требуется согласие на обработку персональных данных",
+  }),
 });
 
 export const nirRequestSchema = baseSchema.extend({

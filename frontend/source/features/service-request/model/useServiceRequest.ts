@@ -3,7 +3,11 @@
 import { useReducer } from "react";
 import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { initialServiceRequestState, serviceRequestReducer } from "./reducer";
-import type { ServiceRequestField, ServiceRequestVariant } from "./types";
+import type {
+  ServiceRequestAgreement,
+  ServiceRequestField,
+  ServiceRequestVariant,
+} from "./types";
 
 export function useServiceRequest() {
   const [state, dispatch] = useReducer(serviceRequestReducer, initialServiceRequestState);
@@ -32,6 +36,9 @@ export function useServiceRequest() {
 
   const toggleSiteVisit = () => dispatch({ type: "TOGGLE_SITE_VISIT" });
 
+  const toggleAgreement = (agreement: ServiceRequestAgreement) =>
+    dispatch({ type: "TOGGLE_AGREEMENT", agreement });
+
   const addRequirement = () => dispatch({ type: "ADD_REQUIREMENT" });
 
   const setRequirement = (id: number, value: string) =>
@@ -46,6 +53,7 @@ export function useServiceRequest() {
     addFiles,
     removeFile,
     toggleSiteVisit,
+    toggleAgreement,
     addRequirement,
     setRequirement,
     removeRequirement,

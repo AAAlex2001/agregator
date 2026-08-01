@@ -93,13 +93,14 @@ class TestCreateGuestOrder:
         assert order_data.sum_amount == 150000
 
     @pytest.mark.asyncio
-    async def test_documents_go_to_technical_category(self):
-        "Документы формы (проект договора, ТЗ) прикрепляются к заявке."
+    async def test_documents_go_to_other_category(self):
+        "Категории ТЗ/договор/карточка держат по одному файлу — общая корзина формы идёт в «иное»."
         use_case, _, create_order, _ = build_use_case()
-        documents = [SimpleNamespace(filename="tz.pdf")]
+        documents = [SimpleNamespace(filename="tz.pdf"), SimpleNamespace(filename="dogovor.docx")]
 
         await use_case.execute(build_request(), documents, MagicMock())
 
         kwargs = create_order.execute.await_args.kwargs
-        assert kwargs["technical"] == documents
+        assert kwargs["other"] == documents
+        assert kwargs["technical"] == []
         assert kwargs["contract"] == []
