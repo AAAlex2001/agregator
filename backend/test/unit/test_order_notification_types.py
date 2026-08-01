@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi import HTTPException
 
-from models.order import OrderWorkType
 from models.account import UserRole
+from models.order import OrderWorkType
 from schemas.settings import UpdateOrderNotificationsRequest
 from services.email.use_cases.send_new_order_email import SendNewOrderEmailUseCase
 from services.notifications.use_cases.create_new_order_notification import (

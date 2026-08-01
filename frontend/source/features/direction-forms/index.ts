@@ -1,14 +1,14 @@
 export {
-  directionOptionsForRole,
   emptyDirectionValue,
   getDirectionForm,
+  servicesForRole,
   validateDirection,
 } from "./model/registry";
-export { DirectionsPicker } from "./ui/DirectionsPicker";
+export { ServicesPicker } from "./ui/ServicesPicker";
 export type {
   DirectionEntry,
-  DirectionOption,
   DirectionRoleForm,
   ErasedDirectionRoleForm,
+  ServiceOption,
 } from "./model/registry";
 export type { DirectionFormComponent, DirectionFormProps } from "./model/types";

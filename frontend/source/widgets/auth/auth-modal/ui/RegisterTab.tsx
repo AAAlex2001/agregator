@@ -1,24 +1,15 @@
 "use client";
 
-import {
-  useRegister,
-  RoleSwiper,
-  CredentialsStep,
-  EmailConfirmStep,
-  REGISTER_ROLES,
-} from "@/source/features/auth/register";
-import Button from "@/source/shared/ui/Button";
-import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
+import { useRegister, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
 import s from "./auth-modal.module.scss";
 
 interface Props {
   onSuccess: () => void;
 }
 
-const STEP_LABELS: Record<1 | 2 | 3, string> = {
-  1: "Шаг 1. Выбор роли",
-  2: "Шаг 2. Данные",
-  3: "Шаг 3. Код",
+const STEP_LABELS: Record<1 | 2, string> = {
+  1: "Шаг 1. Данные",
+  2: "Шаг 2. Код",
 };
 
 export function RegisterTab({ onSuccess }: Props) {
@@ -28,23 +19,9 @@ export function RegisterTab({ onSuccess }: Props) {
     <div className={s.flow}>
       <div className={s.stepHeader}>
         <span className={s.stepIndicator}>{STEP_LABELS[reg.step]}</span>
-        {reg.step === 1 && (
-          <SwiperNavigation
-            className={s.stepNav}
-            prevClassName="role-nav--prev"
-            nextClassName="role-nav--next"
-          />
-        )}
-        {reg.step === 2 && (
-          <Button variant="transparent" size="sm" onClick={reg.backToRoles}>
-            Назад
-          </Button>
-        )}
       </div>
 
-      {reg.step === 1 && <RoleSwiper roles={REGISTER_ROLES} onSelectRole={reg.selectRole} />}
-
-      {reg.step === 2 && (
+      {reg.step === 1 && (
         <CredentialsStep
           form={reg.form}
           isLoading={reg.isLoading}
@@ -55,7 +32,8 @@ export function RegisterTab({ onSuccess }: Props) {
           sroDesignFile={reg.sroDesignFile}
           labAccreditationFile={reg.labAccreditationFile}
           onPhoneChange={reg.setPhone}
-          onDirectionToggle={reg.toggleDirection}
+          onRoleSelect={reg.selectRole}
+          onServiceToggle={reg.toggleService}
           onDirectionChange={reg.changeDirection}
           onDirectionDocumentsAdd={reg.addDirectionDocuments}
           onDirectionDocumentRemove={reg.removeDirectionDocument}
@@ -67,7 +45,7 @@ export function RegisterTab({ onSuccess }: Props) {
         />
       )}
 
-      {reg.step === 3 && (
+      {reg.step === 2 && (
         <EmailConfirmStep
           form={reg.confirmForm}
           email={reg.pendingEmail}

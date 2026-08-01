@@ -1,9 +1,11 @@
 import type { UseFormReturn } from "react-hook-form";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import Tabs from "@/source/shared/ui/Tabs";
 import { FormSection } from "@/source/shared/ui";
-import { DirectionsPicker } from "@/source/features/direction-forms";
+import { ServicesPicker } from "@/source/features/direction-forms";
 import type { DirectionCatalogs, DirectionKey, DirectionProfile } from "@/source/entities/direction";
+import type { UserRole } from "@/source/entities/user";
 import type { RegisterFormValues } from "../model/schema";
 import { ExpertProfileFields } from "./credentials/ExpertProfileFields";
 import { OrganizationField } from "./credentials/OrganizationField";
@@ -13,6 +15,12 @@ import { ExpertContactOffer } from "./credentials/ExpertContactOffer";
 import { PasswordFields } from "./credentials/PasswordFields";
 import { AgreementsFields } from "./credentials/AgreementsFields";
 import s from "./CredentialsStep.module.scss";
+
+const ROLE_TABS = [
+  { id: "CUSTOMER", label: "Заказчик" },
+  { id: "EXPERT", label: "Исполнитель" },
+  { id: "LICENSE_HOLDER", label: "Держатель разрешительных документов" },
+];
 
 interface Props {
   form: UseFormReturn<RegisterFormValues>;
@@ -24,7 +32,8 @@ interface Props {
   sroDesignFile?: File | null;
   labAccreditationFile?: File | null;
   onPhoneChange: (v: string) => void;
-  onDirectionToggle: (key: DirectionKey) => void;
+  onRoleSelect: (role: UserRole) => void;
+  onServiceToggle: (key: DirectionKey) => void;
   onDirectionChange: (key: DirectionKey, value: DirectionProfile) => void;
   onDirectionDocumentsAdd: (key: DirectionKey, files: File[]) => void;
   onDirectionDocumentRemove: (key: DirectionKey, index: number) => void;
@@ -45,7 +54,8 @@ export function CredentialsStep({
   sroDesignFile = null,
   labAccreditationFile = null,
   onPhoneChange,
-  onDirectionToggle,
+  onRoleSelect,
+  onServiceToggle,
   onDirectionChange,
   onDirectionDocumentsAdd,
   onDirectionDocumentRemove,
@@ -80,31 +90,32 @@ export function CredentialsStep({
       >
         <AutofillGuard idPrefix="register" />
 
+        <Tabs
+          tabs={ROLE_TABS}
+          activeTab={role}
+          onTabChange={(id) => onRoleSelect(id as UserRole)}
+          variant="squared"
+        />
+
+        {!isLicenseHolder && (
+          <ServicesPicker
+            role={role}
+            selected={form.watch("directions")}
+            documents={directionDocuments}
+            catalogs={catalogs}
+            errors={Object.fromEntries(
+              Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
+            )}
+            onToggle={onServiceToggle}
+            onChange={onDirectionChange}
+            onDocumentsAdd={onDirectionDocumentsAdd}
+            onDocumentsRemove={onDirectionDocumentRemove}
+          />
+        )}
+
         {isExpert && <ExpertProfileFields form={form} />}
 
         {(isCustomer || isLicenseHolder) && <OrganizationField form={form} />}
-
-        {!isLicenseHolder && (
-          <FormSection
-            title="Направления работы"
-            hint="Отметьте направления, по которым работаете. Остальные можно добавить позже в кабинете."
-            collapsible
-          >
-            <DirectionsPicker
-              role={role}
-              selected={form.watch("directions")}
-              catalogs={catalogs}
-              documents={directionDocuments}
-              errors={Object.fromEntries(
-                Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
-              )}
-              onToggle={onDirectionToggle}
-              onChange={onDirectionChange}
-              onDocumentsAdd={onDirectionDocumentsAdd}
-              onDocumentsRemove={onDirectionDocumentRemove}
-            />
-          </FormSection>
-        )}
 
         {isLicenseHolder && (
           <LicenseDetailsFields

@@ -57,7 +57,7 @@ export interface DirectionEntry {
   forms: Partial<Record<UserRole, ErasedDirectionRoleForm>>;
 }
 
-export interface DirectionOption {
+export interface ServiceOption {
   key: DirectionKey;
   title: string;
   description: string;
@@ -167,7 +167,7 @@ export function getDirectionForm(
   return BY_KEY.get(key)?.forms[role] ?? null;
 }
 
-export function directionOptionsForRole(role: UserRole): DirectionOption[] {
+export function servicesForRole(role: UserRole): ServiceOption[] {
   return DIRECTIONS.filter((direction) => direction.forms[role]).map((direction) => ({
     key: direction.key,
     title: direction.title,

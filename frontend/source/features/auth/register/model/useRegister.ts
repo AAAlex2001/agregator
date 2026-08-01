@@ -27,18 +27,7 @@ import {
   initialRegisterWizardState,
   registerWizardReducer,
 } from "./reducer";
-import {
-  ROLE_ID_CUSTOMER,
-  ROLE_ID_EXPERT,
-  ROLE_ID_LICENSE_HOLDER,
-  type UserRole,
-} from "./types";
-
-const ROLE_BY_ID: Record<number, UserRole> = {
-  [ROLE_ID_CUSTOMER]: "CUSTOMER",
-  [ROLE_ID_EXPERT]: "EXPERT",
-  [ROLE_ID_LICENSE_HOLDER]: "LICENSE_HOLDER",
-};
+import type { UserRole } from "./types";
 
 interface UseRegisterOptions {
   /** Если задан — вызывается после успешного подтверждения почты (напр. чтобы закрыть модалку). Редирект выполняется как обычно. */
@@ -70,19 +59,15 @@ export function useRegister(options?: UseRegisterOptions) {
     mode: "onBlur",
   });
 
-  const catalogs = useDirectionCatalogs(wizard.step === 2);
+  const catalogs = useDirectionCatalogs(wizard.step === 1);
 
-  const selectRole = (id: number) => {
-    const role = ROLE_BY_ID[id];
-    if (role) {
-      form.setValue("role", role);
-      form.setValue("directions", {});
-      setDirectionDocuments({});
-    }
-    dispatch({ type: "SELECT_ROLE", payload: id });
+  const selectRole = (role: UserRole) => {
+    form.setValue("role", role);
+    form.setValue("directions", {});
+    setDirectionDocuments({});
   };
 
-  const toggleDirection = (key: DirectionKey) => {
+  const toggleService = (key: DirectionKey) => {
     const directions = { ...form.getValues("directions") };
     if (key in directions) {
       delete directions[key];
@@ -111,9 +96,6 @@ export function useRegister(options?: UseRegisterOptions) {
       { shouldValidate: form.formState.isSubmitted },
     );
   };
-
-  const toggleCard = (id: number) => dispatch({ type: "TOGGLE_CARD", payload: id });
-  const backToRoles = () => dispatch({ type: "BACK_TO_ROLES" });
 
   const setPhone = (raw: string) => {
     form.setValue("phone", formatRussianPhone(raw), {
@@ -185,8 +167,6 @@ export function useRegister(options?: UseRegisterOptions) {
 
   return {
     step: wizard.step,
-    selectedRole: wizard.selectedRole,
-    openedCardId: wizard.openedCardId,
     pendingEmail: wizard.pendingEmail,
     form,
     confirmForm,
@@ -199,12 +179,10 @@ export function useRegister(options?: UseRegisterOptions) {
     isLoading: form.formState.isSubmitting,
     isConfirmLoading: confirmForm.formState.isSubmitting,
     selectRole,
-    toggleCard,
-    toggleDirection,
+    toggleService,
     changeDirection,
     addDirectionDocuments,
     removeDirectionDocument,
-    backToRoles,
     submit,
     confirmSubmit,
     setPhone,
