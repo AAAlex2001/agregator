@@ -5,8 +5,6 @@ Revises: 148
 """
 from collections.abc import Sequence
 
-import sqlalchemy as sa
-
 from alembic import op
 
 revision: str = "149"
@@ -16,11 +14,11 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "expert_audit_profiles",
-        sa.Column("inn", sa.String(12), nullable=False, server_default=""),
+    op.execute(
+        "ALTER TABLE expert_audit_profiles "
+        "ADD COLUMN IF NOT EXISTS inn VARCHAR(12) NOT NULL DEFAULT ''"
     )
 
 
 def downgrade() -> None:
-    op.drop_column("expert_audit_profiles", "inn")
+    op.execute("ALTER TABLE expert_audit_profiles DROP COLUMN IF EXISTS inn")
