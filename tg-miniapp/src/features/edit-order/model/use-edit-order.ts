@@ -55,6 +55,7 @@ export function useEditOrder(order: Order | null, onSaved: () => void, template:
           requiresExpert: source.requires_expert,
           requiresLicense: source.requires_license,
           workType: source.work_type ?? "EXPERTISE",
+          details: source.details ?? undefined,
         },
         state.newFiles,
       );

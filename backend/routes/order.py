@@ -303,6 +303,7 @@ async def create_order_with_files(
     requires_expert: bool = Form(True),
     requires_license: bool = Form(True),
     work_type: OrderWorkType = Form(OrderWorkType.EXPERTISE),
+    details_json: str = Form(""),
     badge_codes_json: str = Form("[]"),
     copy_source_order_id: int | None = Form(None),
     copy_documents_json: str = Form("{}"),
@@ -327,6 +328,7 @@ async def create_order_with_files(
         requires_expert=requires_expert,
         requires_license=requires_license,
         work_type=work_type,
+        details_json=details_json,
     )
     repo = build_repo(db)
     create = CreateOrderUseCase(
@@ -391,6 +393,7 @@ async def update_order_with_files(
     requires_expert: bool | None = Form(None),
     requires_license: bool | None = Form(None),
     work_type: OrderWorkType | None = Form(None),
+    details_json: str = Form(""),
     badge_codes_json: str = Form("[]"),
     keep_documents_json: str = Form("{}"),
     copy_source_order_id: int | None = Form(None),
@@ -417,6 +420,7 @@ async def update_order_with_files(
         requires_expert=requires_expert,
         requires_license=requires_license,
         work_type=work_type,
+        details_json=details_json,
         notify_responders=notify_responders,
     )
     repo = build_repo(db)

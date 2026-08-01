@@ -21,6 +21,8 @@ export async function registerUser(payload: RegisterApiPayload): Promise<Registe
       location_address: payload.location_address,
       location_city: payload.location_city,
       travels_to_other_regions: payload.travels_to_other_regions,
+      show_on_map: payload.show_on_map,
+      map_fields: payload.map_fields,
       directions: payload.directions,
       contact_sales_enabled: payload.contact_sales_enabled,
       contact_price_rubles: payload.contact_price_rubles,

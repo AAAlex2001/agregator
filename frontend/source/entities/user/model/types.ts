@@ -57,6 +57,8 @@ export interface ExpertProfileData {
   location_address: string | null;
   location_city: string | null;
   travels_to_other_regions: boolean;
+  show_on_map: boolean;
+  map_fields: string[];
 }
 
 export interface LicenseHolderProfileData {

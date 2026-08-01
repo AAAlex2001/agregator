@@ -41,9 +41,9 @@ class CreateOrderUseCase:
 
         direction = get_direction(data.work_type.value)
         if direction is not None and validated_details is not None:
-            await self.repo.add_details(
-                direction.details_model(order_id=order.id, **validated_details.model_dump())
-            )
+            details = direction.details_model(**validated_details.model_dump())
+            setattr(order, direction.details_attribute, details)
+            await self.repo.add_details(details)
             await self.flush_or_reject()
 
         created = await self.repo.get_by_id(order.id)

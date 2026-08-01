@@ -3,6 +3,7 @@ from typing import Any
 
 from models.order import Order, OrderBadge, OrderWorkType
 from schemas.order import OrderUpdate
+from services.directions.registry import DIRECTIONS, get_direction
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
 from services.orders.documents import OrderDocumentsService
@@ -51,6 +52,7 @@ class UpdateOrderUseCase:
         badges_data = update_data.pop("badges", None)
         documents = data.documents if "documents" in update_data else None
         update_data.pop("documents", None)
+        details_payload = update_data.pop("details", None)
         if update_data.get("requires_expert") is None:
             update_data.pop("requires_expert", None)
         if update_data.get("requires_license") is None:
@@ -58,6 +60,7 @@ class UpdateOrderUseCase:
         if update_data.get("work_type") is None:
             update_data.pop("work_type", None)
 
+        order_work_type_before = order.work_type
         effective_work_type = update_data.get("work_type", order.work_type)
         if effective_work_type != OrderWorkType.EXPERTISE:
             badges_data = []
@@ -81,6 +84,12 @@ class UpdateOrderUseCase:
             data.requires_license if data.requires_license is not None else order.requires_license,
         )
         self.apply_scalar_updates(order, update_data)
+        await self.sync_details(
+            order,
+            effective_work_type,
+            details_payload,
+            work_type_changed=effective_work_type != order_work_type_before,
+        )
 
         if badges_data is not None:
             await self.replace_badges(order_id, badges_data)
@@ -91,6 +100,53 @@ class UpdateOrderUseCase:
         if notify and data.notify_responders:
             await self.send_email_if_changed(updated, snapshot)
         return updated
+
+    async def sync_details(
+        self,
+        order: Order,
+        work_type: OrderWorkType,
+        payload: dict[str, Any] | None,
+        work_type_changed: bool,
+    ) -> None:
+        """Приводит детали направления в соответствие с видом работ.
+
+        При смене направления детали прежнего удаляются, иначе они всплывут,
+        если заказчик вернёт прежний вид работ. Частичный патч без details
+        детали не трогает.
+        """
+        if work_type_changed:
+            await self.drop_foreign_details(order, work_type)
+
+        direction = get_direction(work_type.value)
+        if direction is None or not direction.has_details:
+            return
+        if payload is None and not work_type_changed:
+            return
+
+        validated = self.validator.validate_direction_details(work_type, payload)
+        if validated is None:
+            return
+
+        data = validated.model_dump()
+        current = getattr(order, direction.details_attribute)
+        if current is None:
+            entity = direction.details_model(**data)
+            setattr(order, direction.details_attribute, entity)
+            await self.repo.add_details(entity)
+            return
+        for field, value in data.items():
+            setattr(current, field, value)
+
+    async def drop_foreign_details(self, order: Order, work_type: OrderWorkType) -> None:
+        "Удаляет детали направлений, которые заказу больше не соответствуют."
+        keep = get_direction(work_type.value)
+        keep_attribute = keep.details_attribute if keep is not None else None
+        for direction in DIRECTIONS:
+            if not direction.has_details or direction.details_attribute == keep_attribute:
+                continue
+            existing = getattr(order, direction.details_attribute)
+            if existing is not None:
+                await self.repo.delete_details(existing)
 
     @staticmethod
     def snapshot(order: Order) -> dict[str, Any]:

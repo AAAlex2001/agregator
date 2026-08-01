@@ -68,6 +68,17 @@ def parse_optional_date(raw: str) -> date_type | None:
     return date_type.fromisoformat(raw)
 
 
+def parse_details(raw: str) -> dict[str, object] | None:
+    "Парсит поля направления из multipart. Пустая строка и мусор означают «деталей нет»."
+    if not raw:
+        return None
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def build_order_create_data(
     title: str,
     company: str,
@@ -81,6 +92,7 @@ def build_order_create_data(
     requires_expert: bool = True,
     requires_license: bool = True,
     work_type: OrderWorkType = OrderWorkType.EXPERTISE,
+    details_json: str = "",
 ) -> OrderCreate:
     return OrderCreate(
         title=title,
@@ -94,6 +106,7 @@ def build_order_create_data(
         requires_expert=requires_expert,
         requires_license=requires_license,
         work_type=work_type,
+        details=parse_details(details_json),
         badges=parse_badge_codes(badge_codes_json),
     )
 
@@ -112,6 +125,7 @@ def build_order_update_data(
     requires_license: bool | None = None,
     work_type: OrderWorkType | None = None,
     notify_responders: bool = True,
+    details_json: str = "",
 ) -> OrderUpdate:
     return OrderUpdate(
         title=title,
@@ -124,6 +138,7 @@ def build_order_update_data(
         requires_expert=requires_expert,
         requires_license=requires_license,
         work_type=work_type,
+        details=parse_details(details_json),
         badges=parse_badge_codes(badge_codes_json),
         documents=parse_keep_documents(keep_documents_json),
         notify_responders=notify_responders,

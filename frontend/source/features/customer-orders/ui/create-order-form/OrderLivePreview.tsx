@@ -5,8 +5,10 @@ import { useWatch, type UseFormReturn } from "react-hook-form";
 import {
   DocumentsGallery,
   OrderCard,
+  OrderDetailsList,
   countDocuments,
   emptyDocuments,
+  orderDetailsFields,
   type OrderDocuments,
 } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
@@ -42,7 +44,11 @@ export function OrderLivePreview({ form, documents }: Props) {
   const badges = buildPreviewBadges(values.selectionsByType ?? {});
   const comment = values.comment?.trim() ?? "";
   const hasDocuments = countDocuments(previewDocuments) > 0;
-  const hasDetails = Boolean(comment) || hasDocuments;
+  const workType = values.workType ?? "EXPERTISE";
+  const directionDetails = values.details ?? null;
+  const hasDirectionFields =
+    orderDetailsFields(workType).length > 0 && Boolean(directionDetails);
+  const hasDetails = Boolean(comment) || hasDocuments || hasDirectionFields;
 
   return (
     <aside className={s.wrap}>
@@ -59,6 +65,7 @@ export function OrderLivePreview({ form, documents }: Props) {
         responsesDeadline={values.responsesDeadline || null}
         details={hasDetails ? (
           <>
+            <OrderDetailsList workType={workType} details={directionDetails} />
             {comment && (
               <div className={s.comment}>
                 <span className={s.commentLabel}>Комментарий заказчика:</span>

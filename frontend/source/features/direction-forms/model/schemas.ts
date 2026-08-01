@@ -1,17 +1,37 @@
 import { z } from "zod";
 
+const nullableText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max, `Не более ${max} символов`)
+    .nullable()
+    .transform((value) => value ?? "");
+
 export const expertiseExpertSchema = z.object({
-  certificates: z
-    .array(
-      z.object({
-        area: z.string().trim().min(1),
-        object: z.string().trim().min(1),
-        category: z.string().trim().min(1),
-      }),
-    )
-    .min(1, "Добавьте хотя бы одну область аттестации"),
-  show_on_map: z.boolean(),
-  map_fields: z.array(z.string()),
+  certificates: z.array(
+    z.object({
+      area: z.string(),
+      object: z.string(),
+      category: z.string(),
+    }),
+  ),
+});
+
+export const cadastralExpertSchema = z.object({
+  education: z.string().trim().max(5000, "Не более 5000 символов"),
+  registry_joined_at: z.string().nullable(),
+  certificate_number: nullableText(100),
+  registry_number: nullableText(100),
+  equipment: z.string().trim().max(5000, "Не более 5000 символов"),
+  workplace: z.string().trim().max(500, "Не более 500 символов"),
+});
+
+export const forensicExpertSchema = z.object({
+  education: z.string().trim().max(5000, "Не более 5000 символов"),
+  similar_cases_experience: z.string().trim().max(5000, "Не более 5000 символов"),
+  workplace_kind: z.enum(["INDIVIDUAL", "ORGANIZATION"]),
+  workplace_name: z.string().trim().max(500, "Не более 500 символов"),
 });
 
 export const auditCustomerSchema = z.object({
@@ -32,20 +52,7 @@ export const auditExpertSchema = z
     accreditation_areas: z.array(z.string()),
   })
   .superRefine((data, ctx) => {
-    if (data.participant_kind === "AUDITOR") {
-      const hasAttestation =
-        data.industrial_safety_areas.length ||
-        data.expert_attestation_areas.length ||
-        data.audit_qualifications.length;
-      if (!hasAttestation) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["audit_qualifications"],
-          message: "Укажите хотя бы одну аттестацию или независимую оценку квалификации",
-        });
-      }
-      return;
-    }
+    if (data.participant_kind !== "INSPECTION_BODY") return;
 
     if (!data.full_name) {
       ctx.addIssue({
@@ -66,13 +73,6 @@ export const auditExpertSchema = z
         code: z.ZodIssueCode.custom,
         path: ["certificate_number"],
         message: "Укажите номер свидетельства об аккредитации",
-      });
-    }
-    if (!data.accreditation_areas.length) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["accreditation_areas"],
-        message: "Выберите хотя бы одну область аккредитации",
       });
     }
   });

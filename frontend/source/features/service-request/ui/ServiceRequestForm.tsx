@@ -9,6 +9,7 @@ import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
+import { EXECUTOR_REQUIREMENT_HINTS } from "@/source/entities/order";
 import { useServiceRequest } from "../model/useServiceRequest";
 import { useSubmitServiceRequest } from "../model/useSubmitServiceRequest";
 import type { ServiceRequestVariant } from "../model/types";
@@ -67,7 +68,7 @@ const ServiceRequestForm = () => {
           text={
             isNir
               ? "Создать заявку на проведение НИР"
-              : "Создать заявку на лабораторные исследования"
+              : "Создать заявку на проведение лабораторных исследований"
           }
         />
         <Subtitle text="Заполните заявку — подберём специалистов под вашу задачу." />
@@ -99,7 +100,7 @@ const ServiceRequestForm = () => {
                   className={s.reqInput}
                   value={item.value}
                   onChange={(e) => setRequirement(item.id, e.target.value)}
-                  placeholder="звание, должность, стаж"
+                  placeholder={EXECUTOR_REQUIREMENT_HINTS.join(", ").toLowerCase()}
                 />
                 {state.executorRequirements.length > 1 && (
                   <button

@@ -1,3 +1,4 @@
+import { OrderDetailsList } from "@/source/entities/order";
 import type { Badge, OrderCardData } from "@/source/entities/order";
 import s from "./CustomerBrief.module.scss";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
@@ -70,6 +71,8 @@ export function CustomerBrief({ order }: Props) {
           </div>
         )}
       </div>
+
+      <OrderDetailsList workType={order.workType} details={order.details} />
 
       <div className={s.commentBlock}>
         <span className={s.commentLabel}>Комментарий к заказу</span>

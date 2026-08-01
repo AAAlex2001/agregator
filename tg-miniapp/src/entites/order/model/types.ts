@@ -28,6 +28,7 @@ export interface Order {
   requires_expert: boolean;
   requires_license: boolean;
   work_type: OrderWorkType;
+  details?: Record<string, unknown> | null;
   customer_id: number;
   assigned_expert_id: number | null;
   documents: OrderDocuments;

@@ -131,6 +131,16 @@
   border: 1px solid #ffb800;
 }
 
+.areaWrapper {
+  align-items: stretch;
+}
+
+.area {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.5;
+}
+
 .input.hasLeftIcon {
   padding-left: 46px;
 }

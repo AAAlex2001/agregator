@@ -22,3 +22,34 @@
   line-height: var(--profile-hint-line);
   color: var(--color-text-secondary);
 }
+
+.link {
+  align-self: flex-start;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: #ff8a00;
+  text-decoration: underline;
+
+  &:hover {
+    color: #e65100;
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cellLabel {
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
+}

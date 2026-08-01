@@ -235,6 +235,10 @@ class OrderRepository:
         "Добавляет детали направления заказа в сессию."
         self.db.add(details)
 
+    async def delete_details(self, details: object) -> None:
+        "Удаляет детали направления заказа — при смене вида работ."
+        await self.db.delete(details)
+
     async def add_badges(self, badges: list[OrderBadge]) -> None:
         "Добавляет связанные данные."
         self.db.add_all(badges)

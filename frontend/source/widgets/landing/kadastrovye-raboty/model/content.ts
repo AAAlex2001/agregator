@@ -1,3 +1,4 @@
+import { KADASTR_SRO_REGISTRY_URL } from "@/source/shared/config/externalLinks";
 import type { AudienceBlock } from "../../shared/ui/AudienceSection";
 import type { ServiceLandingFaqItem } from "../../shared/ui/ServiceLandingFaq";
 import type { ServiceLandingBullet } from "../../shared/ui/ServiceLandingHero";
@@ -136,7 +137,7 @@ export const KADASTR_AUDIENCE: AudienceBlock[] = [
     imageAlt: "Заявка на кадастровые работы с планом участка",
     link: {
       label: "Проверить по реестру СРО",
-      href: "https://kadastrsro.ru/reestr",
+      href: KADASTR_SRO_REGISTRY_URL,
     },
   },
 ];

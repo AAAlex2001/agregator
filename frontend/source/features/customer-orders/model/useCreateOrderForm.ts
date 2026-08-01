@@ -15,8 +15,14 @@ import {
   type DocumentsFormState,
 } from "./formFiles";
 import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES } from "@/source/entities/order";
+import { normalizeDetails } from "./detailsRegistry";
 import { getDefaultValues } from "./mappers";
 import { orderFormSchema, type OrderFormValues } from "./schema";
+
+function restoreDraft(): OrderFormValues {
+  const values = { ...getDefaultValues(), ...(loadDraft() ?? {}) };
+  return { ...values, details: normalizeDetails(values.workType, values.details ?? {}) };
+}
 
 const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
 
@@ -42,9 +48,7 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
 
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: source
-      ? getDefaultValues(source)
-      : { ...getDefaultValues(), ...(loadDraft() ?? {}) },
+    defaultValues: source ? getDefaultValues(source) : restoreDraft(),
   });
 
   useEffect(() => {

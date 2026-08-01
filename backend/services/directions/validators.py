@@ -43,6 +43,21 @@ class DirectionsValidator:
             )
         return form
 
+    def require_documents_support(self, form: RoleForm) -> None:
+        "Бросает 409, если к анкете направления нельзя приложить документы."
+        if not form.supports_documents:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Направление не поддерживает загрузку документов",
+            )
+
+    @staticmethod
+    def documents_holder(profile: Base, form: RoleForm) -> Base | None:
+        "Сущность, в которой лежат документы: сам профиль роли или отдельная анкета."
+        if not form.is_separate_table:
+            return profile
+        return getattr(profile, form.owner_attribute)
+
     def require_role_profile(self, account: Account) -> Base:
         "Возвращает профиль роли аккаунта или бросает 409."
         profile = self.role_profile(account)

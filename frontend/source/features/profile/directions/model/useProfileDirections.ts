@@ -7,6 +7,7 @@ import {
   fetchMyDirections,
   saveDirectionProfile,
   useDirectionCatalogs,
+  type DirectionDocument,
   type DirectionKey,
   type DirectionProfile,
   type DirectionSummary,
@@ -21,6 +22,8 @@ import {
 interface DirectionDraft {
   direction: DirectionSummary;
   Form: DirectionFormComponent;
+  supportsDocuments: boolean;
+  documents: DirectionDocument[];
   saved: DirectionProfile;
   value: DirectionProfile;
 }
@@ -66,6 +69,12 @@ export function useProfileDirections(role: UserRole) {
     );
   };
 
+  const changeDocuments = (key: DirectionKey, documents: DirectionDocument[]) => {
+    setDrafts((current) =>
+      current.map((draft) => (draft.direction.key === key ? { ...draft, documents } : draft)),
+    );
+  };
+
   return {
     catalogs,
     tabs: drafts.map((draft) => ({ id: draft.direction.key, label: draft.direction.title })),
@@ -73,6 +82,7 @@ export function useProfileDirections(role: UserRole) {
     active: drafts.find((draft) => draft.direction.key === activeKey) ?? null,
     selectDirection: setActiveKey,
     changeProfile,
+    changeDocuments,
   };
 }
 
@@ -83,13 +93,17 @@ function isChanged(draft: DirectionDraft): boolean {
 async function loadDrafts(role: UserRole): Promise<DirectionDraft[]> {
   const supported = (await fetchMyDirections()).flatMap((direction) => {
     const form = getDirectionForm(direction.key, role);
-    return form ? [{ direction, Form: form.Form }] : [];
+    if (!form) return [];
+    return [
+      { direction, Form: form.Form, supportsDocuments: Boolean(form.supportsDocuments) },
+    ];
   });
   const profiles = await Promise.all(
     supported.map((item) => fetchDirectionProfile(item.direction.key)),
   );
   return supported.map((item, index) => ({
     ...item,
+    documents: (profiles[index].documents as DirectionDocument[] | undefined) ?? [],
     saved: profiles[index],
     value: profiles[index],
   }));

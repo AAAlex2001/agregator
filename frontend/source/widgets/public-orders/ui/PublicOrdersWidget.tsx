@@ -7,7 +7,9 @@ import {
   OrderCard,
   OrderCardSkeleton,
   countDocuments,
+  orderDetailsFields,
   usePublicOrdersList,
+  OrderDetailsList,
   type OrderCardData,
   type OrderSortBy,
 } from "@/source/entities/order";
@@ -99,7 +101,11 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
         <>
           <ul className={s.list}>
             {items.map((order) => {
-              const hasDetails = Boolean(order.comment) || countDocuments(order.documents) > 0;
+              const directionFields = orderDetailsFields(order.workType).length > 0 && order.details;
+              const hasDetails =
+                Boolean(order.comment) ||
+                countDocuments(order.documents) > 0 ||
+                Boolean(directionFields);
               return (
                 <li key={order.id}>
                 <OrderCard
@@ -122,6 +128,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
                   onClick={() => onCardClick(order)}
                   details={hasDetails ? (
                     <>
+                      <OrderDetailsList workType={order.workType} details={order.details} />
                       {order.comment && (
                         <CommentSection
                           title="Комментарий заказчика:"

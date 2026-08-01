@@ -11,6 +11,11 @@ export { useExpertOrdersHistory } from "./model/useExpertOrdersHistory";
 
 export { ExpertCard } from "./ui/ExpertCard";
 export { ExpertCardSkeleton } from "./ui/ExpertCardSkeleton";
+export {
+  DEFAULT_MAP_FIELDS,
+  ExpertMapVisibilityFields,
+  MAP_FIELD_OPTIONS,
+} from "./ui/ExpertMapVisibilityFields";
 
 export type {
   ExpertList,

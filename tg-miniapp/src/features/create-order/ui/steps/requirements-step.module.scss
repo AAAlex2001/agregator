@@ -13,6 +13,30 @@
   font-weight: 600;
 }
 
+.requirementRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.requirementInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.requirementRemove {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--hint);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .workOptions {
   display: grid;
   gap: 8px;

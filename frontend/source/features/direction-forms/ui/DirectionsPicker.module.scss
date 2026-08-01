@@ -5,8 +5,8 @@
 }
 
 .title {
-  font-size: var(--profile-label-size);
-  line-height: var(--profile-label-line);
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
   font-weight: 700;
   color: var(--color-text-primary);
 }
@@ -14,6 +14,7 @@
 .hint {
   font-size: var(--profile-hint-size);
   line-height: var(--profile-hint-line);
+  font-weight: 400;
   color: var(--color-text-secondary);
 }
 

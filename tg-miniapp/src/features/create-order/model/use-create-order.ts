@@ -3,7 +3,14 @@ import { useSession } from "@/features/session";
 import { emitError } from "@/shared/services/error-bus";
 import { notifyHaptic } from "@/shared/services/telegram";
 import { computeBadgeCodes, parseBadgeCodes } from "@/entites/expertise";
-import { createOrder, type Order } from "@/entites/order";
+import {
+  createOrder,
+  hasOrderDetails,
+  normalizeOrderDetails,
+  serializeOrderDetails,
+  validateOrderDetails,
+  type Order,
+} from "@/entites/order";
 import { initialState, reducer } from "./reducer";
 import type { FileKey } from "./types";
 
@@ -37,6 +44,7 @@ export function useCreateOrder(open: boolean, onCreated: () => void, template: O
       requiresExpert: template.requires_expert,
       requiresLicense: template.requires_license,
       workType: template.work_type ?? "EXPERTISE",
+      details: normalizeOrderDetails(template.work_type ?? "EXPERTISE", template.details ?? {}),
       types: selection.types,
       opos: selection.opos,
       comment: template.comment,
@@ -84,9 +92,11 @@ export function useCreateOrder(open: boolean, onCreated: () => void, template: O
     dispatch({ type: "addOther", files });
   };
 
+  const detailsError = validateOrderDetails(state.workType, state.details);
+
   const stepReady: Record<StepKey, boolean> = {
     details: state.title.trim() !== "" && state.startDate !== "" && state.deadline !== "",
-    requirements: state.requiresExpert || state.requiresLicense,
+    requirements: (state.requiresExpert || state.requiresLicense) && detailsError === null,
     docs: true,
     confirm: true,
   };
@@ -107,6 +117,9 @@ export function useCreateOrder(open: boolean, onCreated: () => void, template: O
           requiresExpert: state.requiresExpert,
           requiresLicense: state.requiresLicense,
           workType: state.workType,
+          details: hasOrderDetails(state.workType)
+            ? serializeOrderDetails(state.workType, state.details)
+            : undefined,
           badgeCodes,
           copySourceOrderId: state.copySourceOrderId,
           copyDocuments: state.copiedDocuments,

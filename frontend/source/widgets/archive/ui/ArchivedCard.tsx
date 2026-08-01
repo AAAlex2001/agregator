@@ -9,7 +9,12 @@ import {
   CommentSection,
   TechSpecFiles,
 } from "@/source/entities/response";
-import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
+import {
+  DocumentsGallery,
+  OrderDetailsList,
+  RequirementsBadges,
+  countDocuments,
+} from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
 import s from "./ArchivedCard.module.scss";
 
@@ -79,6 +84,7 @@ export function ArchivedCard({ card, canLeaveReview, onLeaveReview, hideExpertHi
       leftExtra={<RequirementsBadges badges={card.badges} workType={card.workType} />}
       details={
         <>
+          <OrderDetailsList workType={card.workType} details={card.details} />
           {card.comment && (
             <CommentSection title="Комментарий заказчика:" text={card.comment} />
           )}

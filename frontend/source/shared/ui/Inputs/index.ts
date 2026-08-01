@@ -1,5 +1,7 @@
 export { TextInput } from "./TextInput";
 export type { TextInputProps } from "./TextInput";
+export { TextArea } from "./TextArea";
+export type { TextAreaProps } from "./TextArea";
 export { EmailInput } from "./EmailInput";
 export type { EmailInputProps } from "./EmailInput";
 export { PhoneInput } from "./PhoneInput";

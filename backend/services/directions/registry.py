@@ -67,6 +67,11 @@ class RoleForm:
         "Хранится ли анкета отдельной таблицей, а не полями профиля роли."
         return bool(self.owner_attribute)
 
+    @property
+    def supports_documents(self) -> bool:
+        "Можно ли прикладывать к анкете документы — выводится из её схемы, отдельного флага нет."
+        return "documents" in self.input_schema.model_fields
+
 
 @dataclass(frozen=True)
 class Direction:

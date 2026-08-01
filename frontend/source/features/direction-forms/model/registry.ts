@@ -3,8 +3,16 @@ import type { DirectionKey, DirectionProfile } from "@/source/entities/direction
 import type { UserRole } from "@/source/entities/user";
 import { AuditCustomerForm } from "../ui/AuditCustomerForm";
 import { AuditExpertForm } from "../ui/AuditExpertForm";
+import { CadastralExpertForm } from "../ui/CadastralExpertForm";
 import { ExpertiseExpertForm } from "../ui/ExpertiseExpertForm";
-import { auditCustomerSchema, auditExpertSchema, expertiseExpertSchema } from "./schemas";
+import { ForensicExpertForm } from "../ui/ForensicExpertForm";
+import {
+  auditCustomerSchema,
+  auditExpertSchema,
+  cadastralExpertSchema,
+  expertiseExpertSchema,
+  forensicExpertSchema,
+} from "./schemas";
 import type { DirectionFormComponent } from "./types";
 
 export interface DirectionRoleForm {
@@ -12,6 +20,7 @@ export interface DirectionRoleForm {
   Form: DirectionFormComponent;
   emptyValue: DirectionProfile;
   schema: ZodTypeAny;
+  supportsDocuments?: boolean;
 }
 
 export interface DirectionEntry {
@@ -32,13 +41,9 @@ const DIRECTIONS: DirectionEntry[] = [
     title: "Экспертиза промышленной безопасности",
     forms: {
       EXPERT: {
-        description: "Области аттестации эксперта и отображение на карте России",
+        description: "Удостоверения: область аттестации, объект экспертизы и категория",
         Form: ExpertiseExpertForm,
-        emptyValue: {
-          certificates: [],
-          show_on_map: true,
-          map_fields: ["name", "area", "object", "category"],
-        },
+        emptyValue: { certificates: [] },
         schema: expertiseExpertSchema,
       },
     },
@@ -68,6 +73,45 @@ const DIRECTIONS: DirectionEntry[] = [
           accreditation_areas: [],
         },
         schema: auditExpertSchema,
+        supportsDocuments: true,
+      },
+    },
+  },
+  {
+    key: "CADASTRAL",
+    title: "Кадастровые работы",
+    forms: {
+      EXPERT: {
+        description: "Аттестат кадастрового инженера, оборудование и место работы",
+        Form: CadastralExpertForm,
+        emptyValue: {
+          education: "",
+          registry_joined_at: null,
+          certificate_number: "",
+          registry_number: "",
+          equipment: "",
+          workplace: "",
+        },
+        schema: cadastralExpertSchema,
+        supportsDocuments: true,
+      },
+    },
+  },
+  {
+    key: "FORENSIC",
+    title: "Судебная экспертиза",
+    forms: {
+      EXPERT: {
+        description: "Образование, опыт аналогичных экспертиз и кто выдаёт заключение",
+        Form: ForensicExpertForm,
+        emptyValue: {
+          education: "",
+          similar_cases_experience: "",
+          workplace_kind: "INDIVIDUAL",
+          workplace_name: "",
+        },
+        schema: forensicExpertSchema,
+        supportsDocuments: true,
       },
     },
   },

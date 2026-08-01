@@ -1,5 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import { TextInput } from "@/source/shared/ui/Inputs";
+import { ExpertMapVisibilityFields } from "@/source/entities/expert";
 import type { RegisterFormValues } from "../../model/schema";
 import { ExpertLocationField } from "./ExpertLocationField";
 
@@ -32,6 +33,13 @@ export function ExpertProfileFields({ form }: Props) {
       />
 
       <ExpertLocationField form={form} />
+
+      <ExpertMapVisibilityFields
+        showOnMap={watch("showOnMap")}
+        mapFields={watch("mapFields")}
+        onChangeShowOnMap={(next) => setValue("showOnMap", next)}
+        onChangeMapFields={(next) => setValue("mapFields", next)}
+      />
     </>
   );
 }

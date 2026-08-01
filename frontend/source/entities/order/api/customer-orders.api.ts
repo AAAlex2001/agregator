@@ -17,6 +17,7 @@ interface CreatePayload {
   responses_deadline?: string; badge_codes: string[];
   requires_expert: boolean; requires_license: boolean;
   work_type: OrderWorkType;
+  details?: Record<string, unknown>;
   documents: DocumentsFormState;
 }
 
@@ -27,6 +28,7 @@ interface UpdatePayload {
   badge_codes: string[]; documents: DocumentsFormState;
   requires_expert: boolean; requires_license: boolean;
   work_type: OrderWorkType;
+  details?: Record<string, unknown>;
   notify_responders: boolean;
 }
 
@@ -98,6 +100,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     fd.append("requires_license", String(p.requires_license));
     fd.append("work_type", p.work_type);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
+    if (p.details) fd.append("details_json", JSON.stringify(p.details));
     appendCopySource(fd, p.documents);
     appendFiles(fd, p.documents, files);
     return fd;
@@ -127,6 +130,7 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     fd.append("requires_license", String(p.requires_license));
     fd.append("work_type", p.work_type);
     fd.append("badge_codes_json", JSON.stringify(p.badge_codes));
+    if (p.details) fd.append("details_json", JSON.stringify(p.details));
     fd.append("keep_documents_json", buildKeepDocuments(p.documents));
     appendCopySource(fd, p.documents);
     fd.append("notify_responders", String(p.notify_responders));

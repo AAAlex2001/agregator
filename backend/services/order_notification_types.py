@@ -11,8 +11,9 @@ ENGINEERING_ORDER_NOTIFICATION_TYPES: tuple[str, ...] = (
 )
 
 DIRECTION_ORDER_NOTIFICATION_TYPES: tuple[str, ...] = tuple(
-    direction.key for direction in DIRECTIONS
+    direction.key for direction in DIRECTIONS if direction.key != OrderWorkType.EXPERTISE.value
 )
+"""Экспертиза сюда не входит: на её заказы подписываются кодами аттестации, а не ключом направления."""
 
 ALL_ORDER_NOTIFICATION_TYPES: tuple[str, ...] = (
     *ALL_BADGE_CODES,

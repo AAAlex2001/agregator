@@ -21,6 +21,8 @@ export interface RegisterApiPayload {
   location_address?: string | null;
   location_city?: string | null;
   travels_to_other_regions?: boolean;
+  show_on_map?: boolean;
+  map_fields?: string[];
   directions?: DirectionRegistration[];
   contact_sales_enabled?: boolean;
   contact_price_rubles?: number;

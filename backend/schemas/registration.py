@@ -45,6 +45,10 @@ class UserRegistration(BaseModel):
     location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
     location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
+    show_on_map: bool = Field(True, description="Показывать исполнителя на карте России")
+    map_fields: list[str] = Field(
+        default_factory=list, description="Что показывать в метке на карте", max_length=10
+    )
     directions: list[DirectionRegistration] = Field(
         default_factory=list, description="Направления, по которым работает пользователь"
     )

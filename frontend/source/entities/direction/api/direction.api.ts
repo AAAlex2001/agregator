@@ -1,7 +1,9 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type {
   DirectionCatalogs,
+  DirectionDocument,
   DirectionKey,
   DirectionProfile,
   DirectionSummary,
@@ -44,4 +46,35 @@ export async function saveDirectionProfile(
   });
   if (!res.ok) await raise(res, "Не удалось сохранить анкету направления");
   return res.json();
+}
+
+export async function uploadDirectionDocument(
+  key: DirectionKey,
+  file: File,
+): Promise<DirectionDocument[]> {
+  const res = await stableMultipartFetch({
+    input: `${API_URL}/directions/${key}/documents`,
+    method: "POST",
+    files: [file],
+    buildBody: (files) => {
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      return formData;
+    },
+  });
+  if (!res.ok) await raise(res, "Не удалось загрузить документ");
+  return (await res.json()).documents;
+}
+
+export async function deleteDirectionDocument(
+  key: DirectionKey,
+  url: string,
+): Promise<DirectionDocument[]> {
+  const res = await fetchWithSession(`${API_URL}/directions/${key}/documents`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+  if (!res.ok) await raise(res, "Не удалось удалить документ");
+  return (await res.json()).documents;
 }

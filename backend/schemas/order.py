@@ -107,6 +107,7 @@ class OrderUpdate(BaseModel):
     requires_expert: bool | None = None
     requires_license: bool | None = None
     work_type: OrderWorkType | None = None
+    details: dict[str, Any] | None = None
     documents: OrderDocuments | None = None
     badges: list[BadgeSchema] | None = None
     status: OrderStatus | None = None

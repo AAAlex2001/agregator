@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Checkbox, FormSection } from "@/source/shared/ui";
 import { YandexAddressPicker, type SelectedLocation } from "@/source/shared/ui/YandexMap";
+import { DEFAULT_MAP_FIELDS, ExpertMapVisibilityFields } from "@/source/entities/expert";
 import { updateExpertLocation } from "@/source/entities/user/api/profile.api";
 import { useRegisterProfileSave, type UserProfile } from "@/source/entities/user";
 import s from "./ExpertLocationSection.module.scss";
@@ -24,6 +25,8 @@ export function ExpertLocationSection({ profile }: Props) {
       : null,
   );
   const [travels, setTravels] = useState(expert?.travels_to_other_regions ?? false);
+  const [showOnMap, setShowOnMap] = useState(expert?.show_on_map ?? true);
+  const [mapFields, setMapFields] = useState<string[]>(expert?.map_fields ?? DEFAULT_MAP_FIELDS);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
@@ -40,6 +43,8 @@ export function ExpertLocationSection({ profile }: Props) {
       location_address: location?.address ?? null,
       location_city: location?.city ?? null,
       travels_to_other_regions: travels,
+      show_on_map: showOnMap,
+      map_fields: mapFields,
     });
     setIsDirty(false);
   });
@@ -47,8 +52,9 @@ export function ExpertLocationSection({ profile }: Props) {
   return (
     <FormSection
       id="location-map"
-      title="Местоположение на карте"
-      hint="Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать исполнителя рядом. Это не личный адрес: достаточно города или района."
+      title="Где вы находитесь"
+      hint="Город и район базирования — заказчикам проще выбрать исполнителя рядом. Это не личный адрес."
+      collapsible
     >
       <div className={s.body}>
         <YandexAddressPicker
@@ -68,6 +74,19 @@ export function ExpertLocationSection({ profile }: Props) {
         >
           Готов выезжать на объекты в другие регионы
         </Checkbox>
+
+        <ExpertMapVisibilityFields
+          showOnMap={showOnMap}
+          mapFields={mapFields}
+          onChangeShowOnMap={(next) => {
+            setShowOnMap(next);
+            setIsDirty(true);
+          }}
+          onChangeMapFields={(next) => {
+            setMapFields(next);
+            setIsDirty(true);
+          }}
+        />
       </div>
     </FormSection>
   );

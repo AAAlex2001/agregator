@@ -1,0 +1,41 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heading {
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  margin: 0;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
+}
+
+.value {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+  white-space: pre-wrap;
+}

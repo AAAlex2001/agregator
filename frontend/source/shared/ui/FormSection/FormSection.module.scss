@@ -29,6 +29,49 @@
   color: var(--color-text-secondary);
 }
 
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--profile-block-gap);
+}
+
+.bodyHidden {
+  display: none;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.toggleText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.chevron {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: #ff8a00;
+  transition: transform 0.18s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
 .grid {
   display: flex;
   flex-direction: column;

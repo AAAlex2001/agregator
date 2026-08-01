@@ -81,7 +81,11 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
 
           <DirectionsSection role="EXPERT" />
 
-          <FormSection>
+          <FormSection
+            title="Платный доступ к контактам"
+            hint="Телефон и email будут скрыты до подтверждения оплаты по установленной вами цене"
+            collapsible
+          >
             <ExpertContactOfferSection />
           </FormSection>
         </ProfileSaveProvider>

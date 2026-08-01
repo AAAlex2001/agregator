@@ -27,3 +27,8 @@ export interface DirectionCatalogs {
 
 /** Анкета направления: набор полей зависит от направления и роли, поэтому тип открытый. */
 export type DirectionProfile = Record<string, unknown>;
+
+export interface DirectionDocument {
+  name: string;
+  url: string;
+}

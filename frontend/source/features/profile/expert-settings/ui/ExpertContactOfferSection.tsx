@@ -75,6 +75,7 @@ export function ExpertContactOfferSection() {
   return (
     <ExpertContactOfferFields
       idPrefix="profile"
+      withHeading={false}
       enabled={enabled}
       price={price}
       paymentDetails={paymentDetails}

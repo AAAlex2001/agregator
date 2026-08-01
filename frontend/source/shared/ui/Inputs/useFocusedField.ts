@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, type FocusEvent } from "react";
+import { useState } from "react";
 
 export function useFocusedField() {
   const [isFocused, setIsFocused] = useState(false);
-  const onFocus = (_: FocusEvent<HTMLInputElement>) => setIsFocused(true);
-  const onBlur = (_: FocusEvent<HTMLInputElement>) => setIsFocused(false);
+  const onFocus = () => setIsFocused(true);
+  const onBlur = () => setIsFocused(false);
   return { isFocused, onFocus, onBlur };
 }

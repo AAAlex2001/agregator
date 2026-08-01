@@ -1,6 +1,12 @@
 ﻿"use client";
 
-import { DocumentsGallery, OrderCard, countDocuments } from "@/source/entities/order";
+import {
+  DocumentsGallery,
+  OrderCard,
+  OrderDetailsList,
+  countDocuments,
+  orderDetailsFields,
+} from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
 import { Button, Loader } from "@/source/shared/ui";
 import { EmptyStateCard } from "@/source/shared/ui";
@@ -51,7 +57,9 @@ export function ExpertOrdersWidget() {
           <>
             <div className={s.list}>
               {h.items.map((o) => {
-                const hasDetails = Boolean(o.comment) || countDocuments(o.documents) > 0;
+                const directionFields = orderDetailsFields(o.workType).length > 0 && o.details;
+                const hasDetails =
+                  Boolean(o.comment) || countDocuments(o.documents) > 0 || Boolean(directionFields);
                 return (
                 <OrderCard
                   key={o.id}
@@ -73,6 +81,7 @@ export function ExpertOrdersWidget() {
                   onClick={() => h.openDetails(o)}
                   details={hasDetails ? (
                     <>
+                      <OrderDetailsList workType={o.workType} details={o.details} />
                       {o.comment && (
                         <CommentSection
                           title="Комментарий заказчика:"

@@ -66,6 +66,7 @@ export interface OrderApiItem {
   requires_expert: boolean;
   requires_license: boolean;
   work_type: OrderWorkType;
+  details?: Record<string, unknown> | null;
   documents: OrderDocuments;
   badges: OrderApiBadge[];
   status: string;
@@ -116,6 +117,7 @@ export interface OrderCardData {
   requiresExpert: boolean;
   requiresLicense: boolean;
   workType: OrderWorkType;
+  details: Record<string, unknown> | null;
   documents: OrderDocuments;
   badges: Badge[];
   badgesRaw: OrderApiBadge[];

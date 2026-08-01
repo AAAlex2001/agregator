@@ -6,7 +6,7 @@ from services.settings.validators import SettingsValidator
 
 
 class UpdateExpertLocationUseCase:
-    "Сохраняет место базирования эксперта и готовность к выездам в другие регионы."
+    "Сохраняет присутствие исполнителя на карте: место, выезды и состав метки."
 
     def __init__(self, repo: SettingsRepository, validator: SettingsValidator) -> None:
         self.repo = repo
@@ -21,5 +21,7 @@ class UpdateExpertLocationUseCase:
         expert.location_address = data.location_address
         expert.location_city = data.location_city
         expert.travels_to_other_regions = data.travels_to_other_regions
+        expert.show_on_map = data.show_on_map
+        expert.map_fields = data.map_fields
         await self.repo.flush()
         return account

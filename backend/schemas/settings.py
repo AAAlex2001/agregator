@@ -94,12 +94,17 @@ class UpdateOrderNotificationsRequest(BaseModel):
 
 
 class UpdateExpertLocationRequest(BaseModel):
-    "Место базирования эксперта на карте и готовность к выездам в другие регионы."
+    """Присутствие исполнителя на карте: где базируется, выезжает ли и что показывать в метке.
+
+    Настройка общая для всех направлений — не зависит от того, какие анкеты заполнены.
+    """
     location_lat: float | None = Field(None, ge=-90, le=90)
     location_lng: float | None = Field(None, ge=-180, le=180)
     location_address: str | None = Field(None, max_length=500)
     location_city: str | None = Field(None, max_length=200)
     travels_to_other_regions: bool = False
+    show_on_map: bool = True
+    map_fields: list[str] = Field(default_factory=list, max_length=10)
 
 
 class ChangePasswordRequest(BaseModel):
@@ -143,6 +148,8 @@ class ExpertProfileData(BaseModel):
     location_address: str | None = None
     location_city: str | None = None
     travels_to_other_regions: bool = False
+    show_on_map: bool = True
+    map_fields: list[str] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

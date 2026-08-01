@@ -1,7 +1,15 @@
 export { OrderCard } from "./ui/OrderCard";
 export { OrderCardSkeleton } from "./ui/OrderCardSkeleton";
 export { OrderDetailCardSkeleton } from "./ui/OrderDetailCardSkeleton";
+export { OrderDetailsList } from "./ui/OrderDetailsList";
 export { OrderOrganizer } from "./ui/OrderOrganizer";
+export {
+  EXECUTOR_REQUIREMENT_HINTS,
+  ORDER_DETAILS_TITLES,
+  formatOrderDetailValue,
+  orderDetailsFields,
+} from "./model/detailsFields";
+export type { OrderDetailField, OrderDetailKind } from "./model/detailsFields";
 export { RequirementsBadges } from "./ui/RequirementsBadges";
 export { DocumentsGallery } from "./ui/DocumentsGallery";
 export { mapApiToOrderCard } from "./model/mapper";

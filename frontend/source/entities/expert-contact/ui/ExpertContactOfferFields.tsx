@@ -3,6 +3,7 @@ import s from "./ExpertContactOfferFields.module.scss";
 
 interface ExpertContactOfferFieldsProps {
   idPrefix: string;
+  withHeading?: boolean;
   enabled: boolean;
   price: string;
   paymentDetails: string;
@@ -18,6 +19,7 @@ interface ExpertContactOfferFieldsProps {
 
 export function ExpertContactOfferFields({
   idPrefix,
+  withHeading = true,
   enabled,
   price,
   paymentDetails,
@@ -33,13 +35,15 @@ export function ExpertContactOfferFields({
   return (
     <section className={s.section} aria-label="Платный доступ к контактам">
       <div className={s.intro}>
-        <div>
-          <Title text="Платный доступ к контактам" as="h2" className={s.title} />
-          <Subtitle
-            text="Телефон и email будут скрыты до подтверждения оплаты по установленной вами цене"
-            className={s.subtitle}
-          />
-        </div>
+        {withHeading && (
+          <div>
+            <Title text="Платный доступ к контактам" as="h2" className={s.title} />
+            <Subtitle
+              text="Телефон и email будут скрыты до подтверждения оплаты по установленной вами цене"
+              className={s.subtitle}
+            />
+          </div>
+        )}
         <Checkbox
           id={`${idPrefix}-contact-sales-enabled`}
           checked={enabled}

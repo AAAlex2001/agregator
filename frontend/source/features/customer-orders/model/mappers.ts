@@ -3,6 +3,7 @@ import {
   cell,
   type ExpertiseType,
 } from "@/source/entities/expertise";
+import { hasOrderDetails, normalizeDetails } from "./detailsRegistry";
 import type { DocumentsFormState } from "./formFiles";
 import type { OrderFormValues } from "./schema";
 
@@ -66,6 +67,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
       requiresExpert: false,
       requiresLicense: false,
       workType: "EXPERTISE",
+      details: {},
     };
   }
 
@@ -81,6 +83,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     requiresExpert: editTarget.requiresExpert,
     requiresLicense: editTarget.requiresLicense,
     workType: editTarget.workType,
+    details: normalizeDetails(editTarget.workType, editTarget.details ?? {}),
   };
 }
 
@@ -112,6 +115,7 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
     work_type: values.workType,
+    details: hasOrderDetails(values.workType) ? values.details : undefined,
     comment: values.comment.trim(),
     customer_id: userId,
     documents,
@@ -134,6 +138,7 @@ export function buildUpdatePayload(
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
     work_type: values.workType,
+    details: hasOrderDetails(values.workType) ? values.details : undefined,
     comment: values.comment.trim(),
     documents,
     notify_responders: notifyResponders,

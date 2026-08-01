@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { OrderWorkType } from "@/source/entities/order";
+import { validateOrderDetails } from "./detailsRegistry";
 
 export const orderFormSchema = z.object({
   title: z.string().trim().min(1, "Введите название"),
@@ -14,12 +15,20 @@ export const orderFormSchema = z.object({
   requiresExpert: z.boolean(),
   requiresLicense: z.boolean(),
   workType: z.custom<OrderWorkType>(),
-}).refine(
-  (values) => values.requiresExpert || values.requiresLicense,
-  {
-    path: ["requiresExpert"],
-    message: "Выберите, что требуется: исполнитель и/или лицензия",
-  },
-);
+  details: z.record(z.string(), z.unknown()),
+})
+  .refine(
+    (values) => values.requiresExpert || values.requiresLicense,
+    {
+      path: ["requiresExpert"],
+      message: "Выберите, что требуется: исполнитель и/или лицензия",
+    },
+  )
+  .superRefine((values, ctx) => {
+    const message = validateOrderDetails(values.workType, values.details);
+    if (message) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["details"], message });
+    }
+  });
 
 export type OrderFormValues = z.infer<typeof orderFormSchema>;

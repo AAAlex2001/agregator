@@ -8,6 +8,7 @@ import { ActionButtons, CommentSection } from "@/source/entities/response";
 import type { CardAction } from "@/source/entities/response";
 import {
   DocumentsGallery,
+  OrderDetailsList,
   OrderOrganizer,
   RequirementsBadges,
   countDocuments,
@@ -65,6 +66,7 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
       leftExtra={<RequirementsBadges badges={card.badges} previousBadges={card.previousBadges} workType={card.workType} />}
       details={
         <>
+          <OrderDetailsList workType={card.workType} details={card.details} />
           {card.comment && (
             <CommentSection
               title="Комментарий заказчика:"

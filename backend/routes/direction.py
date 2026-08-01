@@ -5,17 +5,25 @@
 """
 from typing import Any
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.directions import DirectionCatalogsResponse, DirectionSummary
+from dependencies.rate_limit import rate_limit
+from schemas.directions import (
+    DirectionCatalogsResponse,
+    DirectionDocumentDelete,
+    DirectionDocumentsResponse,
+    DirectionSummary,
+)
 from services.directions import (
+    DeleteDirectionDocumentUseCase,
     DirectionsRepository,
     DirectionsValidator,
     GetDirectionProfileUseCase,
     ListRoleDirectionsUseCase,
+    UploadDirectionDocumentUseCase,
     UpsertDirectionProfileUseCase,
 )
 from services.directions.catalogs import build_direction_catalogs
@@ -64,5 +72,36 @@ async def update_direction_profile(
     repo = DirectionsRepository(db)
     use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
     profile = await use_case.execute(user_id, direction_key, payload)
-    await db.commit()
     return profile.model_dump(mode="json")
+
+
+@router.post(
+    "/{direction_key}/documents",
+    response_model=DirectionDocumentsResponse,
+    dependencies=[Depends(rate_limit("direction_documents", max_calls=10, window_seconds=60))],
+)
+async def upload_direction_document(
+    direction_key: str,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> DirectionDocumentsResponse:
+    "Прикладывает документ к анкете направления и возвращает обновлённый список."
+    repo = DirectionsRepository(db)
+    use_case = UploadDirectionDocumentUseCase(repo, DirectionsValidator(repo))
+    documents = await use_case.execute(user_id, direction_key, file)
+    return DirectionDocumentsResponse(documents=documents)
+
+
+@router.delete("/{direction_key}/documents", response_model=DirectionDocumentsResponse)
+async def delete_direction_document(
+    direction_key: str,
+    payload: DirectionDocumentDelete = Body(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> DirectionDocumentsResponse:
+    "Убирает документ из анкеты направления и возвращает обновлённый список."
+    repo = DirectionsRepository(db)
+    use_case = DeleteDirectionDocumentUseCase(repo, DirectionsValidator(repo))
+    documents = await use_case.execute(user_id, direction_key, payload.url)
+    return DirectionDocumentsResponse(documents=documents)

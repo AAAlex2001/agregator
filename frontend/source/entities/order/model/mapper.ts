@@ -51,6 +51,7 @@ export function mapApiToOrderCard(item: OrderApiItem): OrderCardData {
     requiresExpert:      item.requires_expert ?? true,
     requiresLicense:     item.requires_license ?? true,
     workType:            item.work_type ?? "EXPERTISE",
+    details:             item.details ?? null,
     documents:           resolveDocuments(item.documents),
     badges:              item.badges.map((b) => ({
       text: b.text,

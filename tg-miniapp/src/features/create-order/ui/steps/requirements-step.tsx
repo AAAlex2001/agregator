@@ -1,6 +1,11 @@
-import { Checkbox, Field, Select } from "@/shared/ui";
+import { Button, Checkbox, Field, Select, TextArea, TextField } from "@/shared/ui";
 import { OPO_KEYS, TABLE, TYPES } from "@/entites/expertise";
-import { ORDER_WORK_OPTIONS } from "@/entites/order";
+import {
+  EXECUTOR_REQUIREMENT_HINTS,
+  ORDER_WORK_GROUPS,
+  orderDetailsFields,
+  orderWorkOptionsOf,
+} from "@/entites/order";
 import type { ExpertiseType } from "@/entites/expertise";
 import { type StepProps } from "./types";
 import s from "./requirements-step.module.scss";
@@ -30,23 +35,116 @@ export function RequirementsStep({ state, dispatch, badgeCodes }: Props) {
         />
       </Field>
 
-      {state.workType !== "EXPERTISE" && (
-        <Field label="Категория работ">
-          <div className={s.workOptions}>
-            {ORDER_WORK_OPTIONS.map((option) => (
-              <button
-                key={option.key}
-                type="button"
-                className={`${s.workOption} ${state.workType === option.key ? s.workOptionActive : ""}`}
-                onClick={() => dispatch({ type: "workType", value: option.key })}
+      {state.workType !== "EXPERTISE" &&
+        ORDER_WORK_GROUPS.map((group) => (
+          <Field key={group.key} label={group.title}>
+            <div className={s.workOptions}>
+              {orderWorkOptionsOf(group.key).map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  className={`${s.workOption} ${state.workType === option.key ? s.workOptionActive : ""}`}
+                  onClick={() => {
+                    if (state.workType !== option.key) {
+                      dispatch({ type: "workType", value: option.key });
+                    }
+                  }}
+                >
+                  <strong>{option.label}</strong>
+                  <span>{option.description}</span>
+                </button>
+              ))}
+            </div>
+          </Field>
+        ))}
+
+      {orderDetailsFields(state.workType).map((field) => {
+        if (field.kind === "flag") {
+          return (
+            <Field key={field.key} label={field.label}>
+              <Checkbox
+                checked={Boolean(state.details[field.key])}
+                onChange={(v) => dispatch({ type: "detail", key: field.key, value: v })}
               >
-                <strong>{option.label}</strong>
-                <span>{option.description}</span>
-              </button>
-            ))}
-          </div>
-        </Field>
-      )}
+                {field.label}
+              </Checkbox>
+            </Field>
+          );
+        }
+
+        if (field.kind === "list") {
+          const items = Array.isArray(state.details[field.key])
+            ? (state.details[field.key] as string[])
+            : [""];
+          return (
+            <Field key={field.key} label={field.label} hint={EXECUTOR_REQUIREMENT_HINTS.join(", ")}>
+              {items.map((item, index) => (
+                <div key={index} className={s.requirementRow}>
+                  <TextField
+                    className={s.requirementInput}
+                    value={item}
+                    placeholder={field.placeholder}
+                    onChange={(event) =>
+                      dispatch({
+                        type: "detail",
+                        key: field.key,
+                        value: items.map((prev, i) => (i === index ? event.target.value : prev)),
+                      })
+                    }
+                  />
+                  {items.length > 1 && (
+                    <button
+                      type="button"
+                      className={s.requirementRemove}
+                      aria-label="Убрать требование"
+                      onClick={() =>
+                        dispatch({
+                          type: "detail",
+                          key: field.key,
+                          value: items.filter((_, i) => i !== index),
+                        })
+                      }
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  dispatch({ type: "detail", key: field.key, value: [...items, ""] })
+                }
+              >
+                + Добавить поле
+              </Button>
+            </Field>
+          );
+        }
+
+        const value = String(state.details[field.key] ?? "");
+        return (
+          <Field key={field.key} label={field.label}>
+            {field.kind === "textarea" ? (
+              <TextArea
+                value={value}
+                placeholder={field.placeholder}
+                onChange={(event) =>
+                  dispatch({ type: "detail", key: field.key, value: event.target.value })
+                }
+              />
+            ) : (
+              <TextField
+                value={value}
+                placeholder={field.placeholder}
+                onChange={(event) =>
+                  dispatch({ type: "detail", key: field.key, value: event.target.value })
+                }
+              />
+            )}
+          </Field>
+        );
+      })}
 
       <Field label="Кто требуется для заказа">
         <Checkbox

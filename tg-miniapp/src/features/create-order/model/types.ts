@@ -1,5 +1,5 @@
 import type { ExpertiseType } from "@/entites/expertise";
-import type { OrderDocuments, OrderWorkType } from "@/entites/order";
+import type { OrderDetails, OrderDocuments, OrderWorkType } from "@/entites/order";
 
 export type StringField = "title" | "sum" | "startDate" | "deadline" | "responsesDeadline" | "comment";
 export type FileKey = "technical" | "contract" | "company";
@@ -17,6 +17,7 @@ export interface CreateOrderState {
   requiresExpert: boolean;
   requiresLicense: boolean;
   workType: OrderWorkType;
+  details: OrderDetails;
   types: ExpertiseType[];
   opos: string[];
   comment: string;
@@ -30,12 +31,13 @@ export type CreateOrderAction =
   | { type: "set"; key: StringField; value: string }
   | { type: "flag"; key: FlagKey; value: boolean }
   | { type: "workType"; value: OrderWorkType }
+  | { type: "detail"; key: string; value: unknown }
   | { type: "types"; value: ExpertiseType[] }
   | { type: "opos"; value: string[] }
   | { type: "file"; key: FileKey; file: File | null }
   | { type: "addOther"; files: File[] }
   | { type: "removeOther"; index: number }
-  | { type: "copy"; sourceOrderId: number; documents: OrderDocuments; title: string; sum: string; startDate: string; deadline: string; responsesDeadline: string; requiresExpert: boolean; requiresLicense: boolean; workType: OrderWorkType; types: ExpertiseType[]; opos: string[]; comment: string }
+  | { type: "copy"; sourceOrderId: number; documents: OrderDocuments; title: string; sum: string; startDate: string; deadline: string; responsesDeadline: string; requiresExpert: boolean; requiresLicense: boolean; workType: OrderWorkType; details: OrderDetails; types: ExpertiseType[]; opos: string[]; comment: string }
   | { type: "removeCopied"; url: string }
   | { type: "step"; value: number }
   | { type: "busy"; value: boolean }

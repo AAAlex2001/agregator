@@ -20,6 +20,7 @@ export interface CreateOrderPayload {
   requiresExpert: boolean;
   requiresLicense: boolean;
   workType: OrderWorkType;
+  details?: Record<string, unknown>;
   badgeCodes: string[];
   copySourceOrderId?: number | null;
   copyDocuments?: OrderDocuments;
@@ -44,6 +45,7 @@ export function createOrder(payload: CreateOrderPayload, files: CreateOrderFiles
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
   form.append("work_type", payload.workType);
+  if (payload.details) form.append("details_json", JSON.stringify(payload.details));
   form.append("badge_codes_json", JSON.stringify(payload.badgeCodes));
   if (payload.copySourceOrderId && payload.copyDocuments) {
     form.append("copy_source_order_id", String(payload.copySourceOrderId));
@@ -75,6 +77,7 @@ export interface UpdateOrderPayload {
   requiresExpert: boolean;
   requiresLicense: boolean;
   workType: OrderWorkType;
+  details?: Record<string, unknown>;
 }
 
 export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFiles: File[]): Promise<unknown> {
@@ -90,6 +93,7 @@ export function updateOrder(orderId: number, payload: UpdateOrderPayload, newFil
   form.append("requires_expert", String(payload.requiresExpert));
   form.append("requires_license", String(payload.requiresLicense));
   form.append("work_type", payload.workType);
+  if (payload.details) form.append("details_json", JSON.stringify(payload.details));
   form.append("keep_documents_json", JSON.stringify(payload.copySourceOrderId ? {} : payload.keepDocuments));
   if (payload.copySourceOrderId) {
     form.append("copy_source_order_id", String(payload.copySourceOrderId));

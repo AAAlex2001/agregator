@@ -50,6 +50,7 @@ function buildOrder(response: ResponseCardData): OrderCardData {
     requiresExpert: true,
     requiresLicense: true,
     workType: "EXPERTISE",
+    details: null,
     documents: response.orderDocuments,
     badges: response.badges,
     badgesRaw: response.badges.map((badge) => ({ text: badge.text, variant: badge.variant })),

@@ -29,6 +29,16 @@ class DirectionDocument(BaseModel):
     url: str = Field(..., min_length=1, max_length=500)
 
 
+class DirectionDocumentsResponse(BaseModel):
+    "Актуальный список документов анкеты направления."
+    documents: list[DirectionDocument]
+
+
+class DirectionDocumentDelete(BaseModel):
+    "Ссылка на удаляемый документ анкеты."
+    url: str = Field(..., min_length=1, max_length=500)
+
+
 class CadastralProfileInput(BaseModel):
     "Анкета кадастрового инженера."
     education: str = Field("", max_length=5000)
@@ -90,10 +100,12 @@ class ForensicOrderDetailsResponse(ForensicOrderDetailsInput):
 
 
 class ExpertiseExpertProfileInput(BaseModel):
-    "Анкета исполнителя по экспертизе промышленной безопасности."
+    """Анкета исполнителя по экспертизе промышленной безопасности.
+
+    Присутствие на карте сюда не входит: это настройка исполнителя, общая для всех
+    направлений, и живёт в PUT /settings/expert-location.
+    """
     certificates: list[ExpertCertificate] = Field(default_factory=list, max_length=200)
-    show_on_map: bool = True
-    map_fields: list[str] = Field(default_factory=list, max_length=10)
 
 
 class ExpertiseExpertProfileResponse(ExpertiseExpertProfileInput):
@@ -208,9 +220,6 @@ class AuditProfileResponse(AuditProfileInput):
 
     class Config:
         from_attributes = True
-
-
-EXECUTOR_REQUIREMENT_HINTS: tuple[str, ...] = ("Звание", "Должность", "Стаж")
 
 
 class ResearchOrderDetailsInput(BaseModel):

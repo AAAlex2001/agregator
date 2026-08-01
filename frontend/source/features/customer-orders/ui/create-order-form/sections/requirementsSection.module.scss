@@ -37,6 +37,21 @@
   background: #fff8eb;
 }
 
+.workGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.workGroupTitle {
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .workOptions {
   display: grid;
   gap: 8px;

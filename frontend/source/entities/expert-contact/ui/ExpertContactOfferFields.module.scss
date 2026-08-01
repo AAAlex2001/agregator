@@ -28,6 +28,7 @@
   margin-top: 4px;
   font-size: var(--profile-hint-size);
   line-height: var(--profile-hint-line);
+  font-weight: 400;
   color: var(--color-text-secondary);
 }
 
@@ -94,6 +95,6 @@
 }
 
 .checkbox {
-  font-size: 12px;
-  line-height: 18px;
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
 }

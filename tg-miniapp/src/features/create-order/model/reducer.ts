@@ -1,3 +1,4 @@
+import { emptyOrderDetails } from "@/entites/order";
 import type { CreateOrderAction, CreateOrderState } from "./types";
 
 export const initialState: CreateOrderState = {
@@ -12,6 +13,7 @@ export const initialState: CreateOrderState = {
   requiresExpert: false,
   requiresLicense: false,
   workType: "EXPERTISE",
+  details: {},
   types: [],
   opos: [],
   comment: "",
@@ -31,9 +33,12 @@ export function reducer(state: CreateOrderState, action: CreateOrderAction): Cre
       return {
         ...state,
         workType: action.value,
+        details: emptyOrderDetails(action.value),
         types: action.value === "EXPERTISE" ? state.types : [],
         opos: action.value === "EXPERTISE" ? state.opos : [],
       };
+    case "detail":
+      return { ...state, details: { ...state.details, [action.key]: action.value } };
     case "types":
       return { ...state, types: action.value };
     case "opos":

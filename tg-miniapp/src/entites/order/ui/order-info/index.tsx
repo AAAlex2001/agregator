@@ -2,6 +2,7 @@ import { Field, InfoRow } from "@/shared/ui";
 import { formatDeadline } from "@/shared/lib/format";
 import type { Order } from "../../model/types";
 import { getOrderWorkLabel } from "../../model/work-types";
+import { formatOrderDetailValue, orderDetailsFields } from "../../model/details-fields";
 import s from "./style.module.scss";
 
 export function OrderInfo({ order }: { order: Order }) {
@@ -37,6 +38,13 @@ export function OrderInfo({ order }: { order: Order }) {
       <Field label="Вид работ">
         <div className={s.block}>
           <InfoRow label="Категория" value={getOrderWorkLabel(order.work_type ?? "EXPERTISE")} />
+          {order.details &&
+            orderDetailsFields(order.work_type ?? "EXPERTISE").map((field) => {
+              const value = formatOrderDetailValue(order.details?.[field.key]);
+              return value ? (
+                <InfoRow key={field.key} label={field.label} value={value} />
+              ) : null;
+            })}
         </div>
       </Field>
 

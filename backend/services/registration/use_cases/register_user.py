@@ -76,6 +76,8 @@ class RegisterUserUseCase:
             location_address=data.location_address,
             location_city=data.location_city,
             travels_to_other_regions=data.travels_to_other_regions,
+            show_on_map=data.show_on_map,
+            map_fields=data.map_fields,
             notify_order_types=list(ALL_ORDER_NOTIFICATION_TYPES),
         )
         if not data.contact_sales_enabled:

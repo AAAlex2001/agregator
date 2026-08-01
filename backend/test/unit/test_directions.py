@@ -15,6 +15,7 @@ from schemas.directions import (
     ResearchOrderDetailsInput,
 )
 from schemas.registration import DirectionRegistration
+from services.directions.document_storage import owns_direction_document
 from services.directions.registry import DIRECTIONS, directions_for_role, get_direction
 from services.directions.use_cases.get_direction_profile import GetDirectionProfileUseCase
 from services.directions.use_cases.list_expert_directions import ListRoleDirectionsUseCase
@@ -194,10 +195,28 @@ class TestUpsertDirectionProfile:
         repo.add = AsyncMock()
         use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
 
+        await use_case.execute(
+            1, EXPERTISE, {"certificates": [{"area": "Э1", "object": "ТУ", "category": "3"}]}
+        )
+
+        stored = account.expert_profile.certificates
+        assert len(stored) == 1
+        assert stored[0]["area"] == "Э1"
+        assert stored[0]["object"] == "ТУ"
+
+    @pytest.mark.asyncio
+    async def test_expertise_form_cannot_touch_map_settings(self):
+        "Присутствие на карте — настройка исполнителя, анкета ЭПБ её не меняет."
+        account = build_expert_account()
+        repo = MagicMock()
+        repo.find_account = AsyncMock(return_value=account)
+        repo.add = AsyncMock()
+        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
+
         await use_case.execute(1, EXPERTISE, {"show_on_map": False, "map_fields": ["name"]})
 
-        assert account.expert_profile.show_on_map is False
-        assert account.expert_profile.map_fields == ["name"]
+        assert account.expert_profile.show_on_map is True
+        assert account.expert_profile.map_fields == []
 
     @pytest.mark.asyncio
     async def test_invalid_payload_raises_422(self):
@@ -210,6 +229,73 @@ class TestUpsertDirectionProfile:
         with pytest.raises(HTTPException) as error:
             await use_case.execute(1, AUDIT, {"audit_qualifications": ["40.20900.999"]})
         assert error.value.status_code == 422
+
+
+class TestDocumentsSupport:
+    "Документы поддерживают только анкеты, у которых поле documents есть в схеме."
+
+    def test_matrix(self):
+        support = {
+            (direction.key, role.value): form.supports_documents
+            for direction in DIRECTIONS
+            for role, form in direction.role_forms.items()
+        }
+
+        assert support[(AUDIT, "EXPERT")] is True
+        assert support[(OrderWorkType.CADASTRAL.value, "EXPERT")] is True
+        assert support[(OrderWorkType.FORENSIC.value, "EXPERT")] is True
+        assert support[(AUDIT, "CUSTOMER")] is False
+        assert support[(EXPERTISE, "EXPERT")] is False
+        assert support[(EXPERTISE, "LICENSE_HOLDER")] is False
+
+    @pytest.mark.asyncio
+    async def test_upsert_never_touches_documents(self):
+        "Сохранение анкеты не должно затирать уже загруженные файлы."
+        account = build_expert_account(audit=SimpleNamespace(documents=[{"name": "d", "url": "/u/d"}]))
+        repo = MagicMock()
+        repo.find_account = AsyncMock(return_value=account)
+        repo.add = AsyncMock()
+        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
+
+        await use_case.execute(
+            1, AUDIT, {"participant_kind": "AUDITOR", "documents": [], "audit_qualifications": []}
+        )
+
+        assert account.expert_profile.audit_profile.documents == [{"name": "d", "url": "/u/d"}]
+
+
+class TestDocumentOwnership:
+    "Ссылка в documents не даёт права на файл: путь сверяется с каталогом владельца."
+
+    def test_own_document_is_removable(self):
+        assert owns_direction_document("me", "/uploads/direction-documents/me/a.pdf") is True
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "/uploads/direction-documents/other/a.pdf",
+            "/uploads/avatars/other/a.jpg",
+            "/uploads/licenses/other/a.pdf",
+            "",
+        ],
+    )
+    def test_foreign_paths_are_rejected(self, url):
+        assert owns_direction_document("me", url) is False
+
+    def test_registration_drops_documents(self):
+        "Через регистрацию нельзя положить в анкету ссылку на чужой файл."
+        account = build_expert_account()
+        created = build_profiles(
+            account,
+            [
+                DirectionRegistration(
+                    key=OrderWorkType.CADASTRAL.value,
+                    data={"documents": [{"name": "чужой.pdf", "url": "/uploads/avatars/x/y.jpg"}]},
+                )
+            ],
+        )
+
+        assert created[0].documents in (None, [])
 
 
 class TestRegistrationDirectionForms:
@@ -229,12 +315,17 @@ class TestRegistrationDirectionForms:
         account = build_expert_account()
         created = build_profiles(
             account,
-            [DirectionRegistration(key=EXPERTISE, data={"show_on_map": False, "map_fields": ["name"]})],
+            [
+                DirectionRegistration(
+                    key=EXPERTISE,
+                    data={"certificates": [{"area": "Э1", "object": "ТУ", "category": "3"}]},
+                )
+            ],
         )
 
         assert created == []
-        assert account.expert_profile.show_on_map is False
-        assert account.expert_profile.map_fields == ["name"]
+        assert len(account.expert_profile.certificates) == 1
+        assert account.expert_profile.certificates[0]["area"] == "Э1"
 
     def test_unknown_direction_raises_400(self):
         with pytest.raises(HTTPException) as error:

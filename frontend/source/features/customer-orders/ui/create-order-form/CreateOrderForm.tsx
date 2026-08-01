@@ -5,12 +5,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
+import { hasOrderDetails } from "../../model/detailsRegistry";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { DocumentsFormState } from "../../model/formFiles";
 import type { OrderFormValues } from "../../model/schema";
 import { BadgeSection } from "./sections/BadgeSection";
 import { CommentSection } from "./sections/CommentSection";
 import { DetailsSection } from "./sections/DetailsSection";
+import { DirectionDetailsSection } from "./sections/DirectionDetailsSection";
 import { ExpertsMapSection } from "./sections/ExpertsMapSection";
 import { FilesSection } from "./sections/FilesSection";
 import { FormActions } from "./sections/FormActions";
@@ -42,7 +44,8 @@ const transition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
 export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, copyTemplate, onCopy }: Props) {
   const formState = useCreateOrderForm({ editTarget, copyTemplate, onSubmit });
   const [view, setView] = useState<View>("form");
-  const isExpertise = formState.form.watch("workType") === "EXPERTISE";
+  const workType = formState.form.watch("workType");
+  const isExpertise = workType === "EXPERTISE";
 
   const shellClassName = [
     s.shell,
@@ -68,6 +71,8 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
               <DetailsSection form={formState.form} />
 
               <RequirementsSection form={formState.form} />
+
+              {hasOrderDetails(workType) && <DirectionDetailsSection form={formState.form} />}
 
               {isExpertise && <ExpertsMapSection />}
 
