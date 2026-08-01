@@ -1,97 +1,68 @@
-from fastapi import APIRouter, Depends
+"""Направления: список доступных роли, анкеты и справочники.
+
+Роуты универсальные — новое направление добавляется записью в реестре,
+без единого нового эндпоинта.
+"""
+from typing import Any
+
+from fastapi import APIRouter, Body, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from models.order import OrderWorkType
-from schemas.directions import (
-    CadastralProfileInput,
-    CadastralProfileResponse,
-    DirectionSummary,
-    ForensicProfileInput,
-    ForensicProfileResponse,
-)
+from schemas.directions import DirectionCatalogsResponse, DirectionSummary
 from services.directions import (
     DirectionsRepository,
     DirectionsValidator,
     GetDirectionProfileUseCase,
-    ListExpertDirectionsUseCase,
+    ListRoleDirectionsUseCase,
     UpsertDirectionProfileUseCase,
 )
+from services.directions.catalogs import build_direction_catalogs
 
-router = APIRouter(tags=["directions"])
+router = APIRouter(prefix="/directions", tags=["directions"])
 
 
 def build_validator(db: AsyncSession) -> DirectionsValidator:
     return DirectionsValidator(DirectionsRepository(db))
 
 
-@router.get("/expert/directions", response_model=list[DirectionSummary])
+@router.get("/catalogs", response_model=DirectionCatalogsResponse)
+async def get_catalogs() -> DirectionCatalogsResponse:
+    "Справочники анкет направлений: аттестации, НОК, области аккредитации."
+    return build_direction_catalogs()
+
+
+@router.get("", response_model=list[DirectionSummary])
 async def list_directions(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> list[DirectionSummary]:
-    "Направления исполнителя: какие есть и какие анкеты заполнены."
-    return await ListExpertDirectionsUseCase(build_validator(db)).execute(user_id)
+    "Направления, доступные роли текущего пользователя, и заполненность анкет."
+    return await ListRoleDirectionsUseCase(build_validator(db)).execute(user_id)
 
 
-@router.get(
-    "/expert/directions/cadastral/profile",
-    response_model=CadastralProfileResponse,
-)
-async def get_cadastral_profile(
+@router.get("/{direction_key}/profile")
+async def get_direction_profile(
+    direction_key: str,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> CadastralProfileResponse:
-    "Анкета кадастрового инженера текущего исполнителя."
-    return await GetDirectionProfileUseCase(build_validator(db)).execute(
-        user_id, OrderWorkType.CADASTRAL.value
-    )
+) -> dict[str, Any]:
+    "Анкета направления для роли текущего пользователя."
+    profile = await GetDirectionProfileUseCase(build_validator(db)).execute(user_id, direction_key)
+    return profile.model_dump(mode="json")
 
 
-@router.put(
-    "/expert/directions/cadastral/profile",
-    response_model=CadastralProfileResponse,
-)
-async def update_cadastral_profile(
-    data: CadastralProfileInput,
+@router.put("/{direction_key}/profile")
+async def update_direction_profile(
+    direction_key: str,
+    payload: dict[str, Any] = Body(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> CadastralProfileResponse:
-    "Создаёт или обновляет анкету кадастрового инженера."
+) -> dict[str, Any]:
+    "Создаёт или обновляет анкету направления; поля проверяются схемой из реестра."
     repo = DirectionsRepository(db)
     use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-    profile = await use_case.execute(user_id, OrderWorkType.CADASTRAL.value, data)
+    profile = await use_case.execute(user_id, direction_key, payload)
     await db.commit()
-    return profile
-
-
-@router.get(
-    "/expert/directions/forensic/profile",
-    response_model=ForensicProfileResponse,
-)
-async def get_forensic_profile(
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
-) -> ForensicProfileResponse:
-    "Анкета судебного эксперта текущего исполнителя."
-    return await GetDirectionProfileUseCase(build_validator(db)).execute(
-        user_id, OrderWorkType.FORENSIC.value
-    )
-
-
-@router.put(
-    "/expert/directions/forensic/profile",
-    response_model=ForensicProfileResponse,
-)
-async def update_forensic_profile(
-    data: ForensicProfileInput,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
-) -> ForensicProfileResponse:
-    "Создаёт или обновляет анкету судебного эксперта."
-    repo = DirectionsRepository(db)
-    use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-    profile = await use_case.execute(user_id, OrderWorkType.FORENSIC.value, data)
-    await db.commit()
-    return profile
+    return profile.model_dump(mode="json")

@@ -9,6 +9,7 @@ from models.base import Base
 
 if TYPE_CHECKING:
     from models.account import Account
+    from models.direction_profile import CustomerAuditProfile
 
 
 class Customer(Base):
@@ -30,3 +31,11 @@ class Customer(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     account: Mapped["Account"] = relationship(back_populates="customer_profile")
+
+    audit_profile: Mapped["CustomerAuditProfile | None"] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )

@@ -233,7 +233,7 @@ class OrderResponse(BaseModel):
         from services.directions.registry import get_direction
 
         direction = get_direction(order.work_type.value)
-        if direction is None:
+        if direction is None or not direction.has_details:
             return None
         entity = getattr(order, direction.details_attribute)
         if entity is None:

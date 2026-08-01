@@ -48,11 +48,14 @@ export function RegisterTab({ onSuccess }: Props) {
         <CredentialsStep
           form={reg.form}
           isLoading={reg.isLoading}
+          catalogs={reg.catalogs}
           licenseFile={reg.licenseFile}
           miningLicenseFile={reg.miningLicenseFile}
           sroDesignFile={reg.sroDesignFile}
           labAccreditationFile={reg.labAccreditationFile}
           onPhoneChange={reg.setPhone}
+          onDirectionToggle={reg.toggleDirection}
+          onDirectionChange={reg.changeDirection}
           onLicenseFileSelect={reg.selectLicenseFile}
           onMiningLicenseFileSelect={reg.setMiningLicenseFile}
           onSroDesignFileSelect={reg.setSroDesignFile}

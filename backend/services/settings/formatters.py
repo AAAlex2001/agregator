@@ -28,8 +28,11 @@ def to_response(account: Account) -> UserSettingsResponse:
     "Собирает ответ настроек личного кабинета из аккаунта и профилей ролей."
     expert = account.expert_profile
     holder = account.license_holder_profile
+    customer = account.customer_profile
     return UserSettingsResponse(
         id=account.id,
+        position=customer.position if customer is not None else "",
+        opo_license_number=customer.opo_license_number if customer is not None else None,
         inn=account.inn,
         company_data=account.company_data if isinstance(account.company_data, dict) else None,
         email=account.email,

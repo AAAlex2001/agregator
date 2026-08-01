@@ -32,7 +32,6 @@ export function useOrderSearchSuggestions({
   filters = {},
 }: Options): OrderSearchState {
   const trimmed = query.trim();
-  const workType = filters.workType;
   const badgeCode = filters.badgeCode;
   const hasQuery = trimmed.length >= minChars;
 
@@ -48,7 +47,7 @@ export function useOrderSearchSuggestions({
     const id = ++requestIdRef.current;
     const timer = window.setTimeout(() => {
       setIsLoading(true);
-      void searchOrdersPublic({ workType, badgeCode, query: trimmed || undefined }, 0, limit)
+      void searchOrdersPublic({ badgeCode, query: trimmed || undefined }, 0, limit)
         .then((data) => {
           if (id !== requestIdRef.current) return;
           setItems(
@@ -69,7 +68,7 @@ export function useOrderSearchSuggestions({
         });
     }, debounceMs);
     return () => window.clearTimeout(timer);
-  }, [trimmed, hasQuery, limit, debounceMs, workType, badgeCode]);
+  }, [trimmed, hasQuery, limit, debounceMs, badgeCode]);
 
   return {
     items: hasQuery ? items : [],

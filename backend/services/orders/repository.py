@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from models.account import Account, UserRole
-from models.order import Order, OrderBadge, OrderStatus, OrderWorkType
+from models.order import Order, OrderBadge, OrderStatus
 from models.question import OrderQuestion
 from models.response import OrderResponse as OrderResponseModel
 from utils.pagination import paginate_with_has_more
@@ -162,10 +162,9 @@ class OrderRepository:
         query: str,
         skip: int,
         limit: int,
-        work_type: OrderWorkType | None = None,
         badge_code: str | None = None,
     ) -> tuple[list[Order], bool]:
-        "Поиск по заказам платформы по тексту, виду работ и коду экспертизы."
+        "Поиск по заказам платформы по тексту и коду экспертизы."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
@@ -176,8 +175,6 @@ class OrderRepository:
             list_query = list_query.where(
                 (Order.title.ilike(pattern)) | (Order.company.ilike(pattern))
             )
-        if work_type is not None:
-            list_query = list_query.where(Order.work_type == work_type)
         if badge_code:
             list_query = list_query.where(
                 Order.badges.any(OrderBadge.text == badge_code)

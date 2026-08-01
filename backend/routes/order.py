@@ -186,7 +186,6 @@ async def create_guest_order(
 )
 async def search_orders_public(
     q: str | None = Query(None, min_length=1, max_length=200),
-    work_type: OrderWorkType | None = Query(None),
     badge_code: str | None = Query(None, min_length=1, max_length=50),
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=50),
@@ -194,7 +193,7 @@ async def search_orders_public(
 ) -> OrderListResponse:
     "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
     use_case = SearchOrdersUseCase(build_repo(db))
-    orders, has_more = await use_case.execute(q, skip, limit, work_type, badge_code)
+    orders, has_more = await use_case.execute(q, skip, limit, badge_code)
     return OrderListResponse(
         items=[OrderResponse.from_order(o) for o in orders],
         has_more=has_more,

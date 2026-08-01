@@ -2,7 +2,6 @@
 
 import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import { useTouchScrollGuard } from "../model/useTouchScrollGuard";
-import { EngineeringWorkFilter } from "./EngineeringWorkFilter";
 import { ExpertiseFilter } from "./ExpertiseFilter";
 import s from "./OrderSearchFilters.module.scss";
 
@@ -26,10 +25,7 @@ export function OrderSearchFilters({ onClose, onSelect }: Props) {
           <button type="button" onClick={onClose} aria-label="Закрыть">×</button>
         </div>
 
-        <div className={s.columns}>
-          <ExpertiseFilter onSelect={onSelect} />
-          <EngineeringWorkFilter onSelect={onSelect} />
-        </div>
+        <ExpertiseFilter onSelect={onSelect} />
       </div>
     </>
   );

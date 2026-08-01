@@ -1,7 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import type { RegisterFormValues } from "../../model/schema";
-import { ExpertAttestationBlock } from "../ExpertAttestationBlock";
 import { ExpertLocationField } from "./ExpertLocationField";
 
 interface Props {
@@ -33,17 +32,6 @@ export function ExpertProfileFields({ form }: Props) {
       />
 
       <ExpertLocationField form={form} />
-
-      <ExpertAttestationBlock
-        confirmed={watch("expertConfirmed")}
-        certificates={watch("expertCertificates")}
-        showOnMap={watch("showOnMap")}
-        mapFields={watch("mapFields")}
-        onToggleConfirmed={(v) => setValue("expertConfirmed", v)}
-        onChangeCertificates={(v) => setValue("expertCertificates", v)}
-        onChangeShowOnMap={(v) => setValue("showOnMap", v)}
-        onChangeMapFields={(v) => setValue("mapFields", v)}
-      />
     </>
   );
 }

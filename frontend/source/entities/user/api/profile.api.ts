@@ -53,23 +53,6 @@ export async function updateExpertLocation(data: {
   return res.json();
 }
 
-export async function updateExpertCertificates(data: {
-  certificates: Array<{ area: string; object: string; category: string }>;
-  show_on_map: boolean;
-  map_fields: string[];
-}): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/expert-certificates`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сохранить удостоверения");
-  }
-  return res.json();
-}
-
 export async function changePassword(
   newPassword: string,
   newPasswordConfirm: string,

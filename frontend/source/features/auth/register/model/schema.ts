@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { isValidRussianPhone } from "@/source/shared/lib/phone";
 import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
+import { validateDirection } from "@/source/features/direction-forms";
+import type { DirectionKey } from "@/source/entities/direction";
 
 const passwordSchema = z
   .string()
@@ -30,6 +32,7 @@ export const registerFormSchema = z
     agreeTerms: z.boolean(),
     agreeConsent: z.boolean(),
     companyName: z.string().trim(),
+    directions: z.record(z.string(), z.record(z.string(), z.unknown())),
     companyData: z
       .object({
         value: z.string(),
@@ -55,16 +58,6 @@ export const registerFormSchema = z
     locationAddress: z.string(),
     locationCity: z.string().nullable(),
     travelsToOtherRegions: z.boolean(),
-    expertConfirmed: z.boolean(),
-    expertCertificates: z.array(
-      z.object({
-        area: z.string(),
-        object: z.string(),
-        category: z.string(),
-      }),
-    ),
-    showOnMap: z.boolean(),
-    mapFields: z.array(z.string()),
     contactSalesEnabled: z.boolean(),
     contactPriceRubles: z.string().trim(),
     contactPaymentDetails: z.string().trim().max(1000),
@@ -167,6 +160,13 @@ export const registerFormSchema = z
       }
     }
 
+    for (const [key, profile] of Object.entries(data.directions)) {
+      const message = validateDirection(key as DirectionKey, data.role, profile);
+      if (message) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["directions", key], message });
+      }
+    }
+
     if (!data.agreePrivacy) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -205,6 +205,7 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   agreeConsent: false,
   companyName: "",
   companyData: null,
+  directions: {},
   licenseNumber: "",
   licenseAreas: [],
   licenseFileName: "",
@@ -218,10 +219,6 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   locationAddress: "",
   locationCity: null,
   travelsToOtherRegions: false,
-  expertConfirmed: false,
-  expertCertificates: [],
-  showOnMap: true,
-  mapFields: ["name", "area", "object", "category"],
   contactSalesEnabled: false,
   contactPriceRubles: "",
   contactPaymentDetails: "",

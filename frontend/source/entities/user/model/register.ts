@@ -1,7 +1,11 @@
 import type { CompanyData } from "./types";
-import type { ExpertCertificate } from "@/source/entities/expertise";
 
 export type UserRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
+
+export interface DirectionRegistration {
+  key: string;
+  data: Record<string, unknown>;
+}
 
 export interface RegisterApiPayload {
   role: UserRole;
@@ -17,9 +21,7 @@ export interface RegisterApiPayload {
   location_address?: string | null;
   location_city?: string | null;
   travels_to_other_regions?: boolean;
-  expert_certificates?: ExpertCertificate[] | null;
-  expert_show_on_map?: boolean;
-  expert_map_fields?: string[] | null;
+  directions?: DirectionRegistration[];
   contact_sales_enabled?: boolean;
   contact_price_rubles?: number;
   contact_payment_details?: string;

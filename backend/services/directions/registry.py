@@ -1,13 +1,24 @@
-"""Реестр направлений: единственное место, где перечислено, какие направления есть.
+"""Реестр направлений — единственное место, где описано, какие направления есть.
 
-Новое направление = модели профиля/деталей + схемы + одна запись здесь.
-Анкета исполнителя опциональна: направление может состоять только из полей заявки.
+У направления две независимые части, обе опциональны:
+- анкеты по ролям: что заполняет заказчик, исполнитель и держатель документов;
+- поля заявки: чем дополняется заказ этого направления.
+
+Новое направление = модели + схемы + одна запись здесь.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from pydantic import BaseModel
 
-from models.direction_profile import ExpertCadastralProfile, ExpertForensicProfile
+from models.account import UserRole
+from models.direction_profile import (
+    CustomerAuditProfile,
+    ExpertAuditProfile,
+    ExpertCadastralProfile,
+    ExpertForensicProfile,
+)
+from models.expert import Expert
+from models.license_holder import LicenseHolder
 from models.order import OrderWorkType
 from models.order_details import (
     OrderCadastralDetails,
@@ -16,10 +27,18 @@ from models.order_details import (
     OrderResearchDetails,
 )
 from schemas.directions import (
+    AuditProfileInput,
+    AuditProfileResponse,
     CadastralOrderDetailsInput,
     CadastralOrderDetailsResponse,
     CadastralProfileInput,
     CadastralProfileResponse,
+    CustomerAuditProfileInput,
+    CustomerAuditProfileResponse,
+    ExpertiseExpertProfileInput,
+    ExpertiseExpertProfileResponse,
+    ExpertiseLicenseHolderProfileInput,
+    ExpertiseLicenseHolderProfileResponse,
     ForensicOrderDetailsInput,
     ForensicOrderDetailsResponse,
     ForensicProfileInput,
@@ -32,49 +51,117 @@ from schemas.directions import (
 
 
 @dataclass(frozen=True)
-class Direction:
-    "Описание направления: модели и схемы деталей заявки и (опционально) анкеты исполнителя."
-    key: str
-    title: str
-    details_model: type
-    details_attribute: str
-    details_input_schema: type[BaseModel]
-    details_response_schema: type[BaseModel]
-    profile_model: type | None = None
-    profile_attribute: str | None = None
-    profile_input_schema: type[BaseModel] | None = None
-    profile_response_schema: type[BaseModel] | None = None
+class RoleForm:
+    """Анкета одной роли в одном направлении.
+
+    owner_attribute — путь от профиля роли к анкете. Пустая строка означает, что
+    поля направления живут в самом профиле роли (так устроена экспертиза ОПО).
+    """
+    model: type
+    owner_attribute: str
+    input_schema: type[BaseModel]
+    response_schema: type[BaseModel]
 
     @property
-    def has_profile(self) -> bool:
-        "Заполняет ли исполнитель анкету по этому направлению."
-        return self.profile_model is not None
+    def is_separate_table(self) -> bool:
+        "Хранится ли анкета отдельной таблицей, а не полями профиля роли."
+        return bool(self.owner_attribute)
+
+
+@dataclass(frozen=True)
+class Direction:
+    "Направление: анкеты по ролям и дополнительные поля заявки."
+    key: str
+    title: str
+    role_forms: dict[UserRole, RoleForm] = field(default_factory=dict)
+    details_model: type | None = None
+    details_attribute: str | None = None
+    details_input_schema: type[BaseModel] | None = None
+    details_response_schema: type[BaseModel] | None = None
+
+    @property
+    def has_details(self) -> bool:
+        "Есть ли у направления дополнительные поля заявки."
+        return self.details_model is not None
+
+    @property
+    def roles(self) -> tuple[UserRole, ...]:
+        "Роли, которым доступно направление."
+        return tuple(self.role_forms)
+
+    def form_for(self, role: UserRole) -> RoleForm | None:
+        "Анкета роли в этом направлении или None, если роли направление недоступно."
+        return self.role_forms.get(role)
 
 
 DIRECTIONS: tuple[Direction, ...] = (
     Direction(
+        key=OrderWorkType.EXPERTISE.value,
+        title="Экспертиза промышленной безопасности",
+        role_forms={
+            UserRole.EXPERT: RoleForm(
+                model=Expert,
+                owner_attribute="",
+                input_schema=ExpertiseExpertProfileInput,
+                response_schema=ExpertiseExpertProfileResponse,
+            ),
+            UserRole.LICENSE_HOLDER: RoleForm(
+                model=LicenseHolder,
+                owner_attribute="",
+                input_schema=ExpertiseLicenseHolderProfileInput,
+                response_schema=ExpertiseLicenseHolderProfileResponse,
+            ),
+        },
+    ),
+    Direction(
+        key=OrderWorkType.AUDIT_SUPB.value,
+        title="Аудит СУПБ",
+        role_forms={
+            UserRole.CUSTOMER: RoleForm(
+                model=CustomerAuditProfile,
+                owner_attribute="audit_profile",
+                input_schema=CustomerAuditProfileInput,
+                response_schema=CustomerAuditProfileResponse,
+            ),
+            UserRole.EXPERT: RoleForm(
+                model=ExpertAuditProfile,
+                owner_attribute="audit_profile",
+                input_schema=AuditProfileInput,
+                response_schema=AuditProfileResponse,
+            ),
+        },
+    ),
+    Direction(
         key=OrderWorkType.CADASTRAL.value,
         title="Кадастровые работы",
+        role_forms={
+            UserRole.EXPERT: RoleForm(
+                model=ExpertCadastralProfile,
+                owner_attribute="cadastral_profile",
+                input_schema=CadastralProfileInput,
+                response_schema=CadastralProfileResponse,
+            ),
+        },
         details_model=OrderCadastralDetails,
         details_attribute="cadastral_details",
         details_input_schema=CadastralOrderDetailsInput,
         details_response_schema=CadastralOrderDetailsResponse,
-        profile_model=ExpertCadastralProfile,
-        profile_attribute="cadastral_profile",
-        profile_input_schema=CadastralProfileInput,
-        profile_response_schema=CadastralProfileResponse,
     ),
     Direction(
         key=OrderWorkType.FORENSIC.value,
         title="Судебная экспертиза",
+        role_forms={
+            UserRole.EXPERT: RoleForm(
+                model=ExpertForensicProfile,
+                owner_attribute="forensic_profile",
+                input_schema=ForensicProfileInput,
+                response_schema=ForensicProfileResponse,
+            ),
+        },
         details_model=OrderForensicDetails,
         details_attribute="forensic_details",
         details_input_schema=ForensicOrderDetailsInput,
         details_response_schema=ForensicOrderDetailsResponse,
-        profile_model=ExpertForensicProfile,
-        profile_attribute="forensic_profile",
-        profile_input_schema=ForensicProfileInput,
-        profile_response_schema=ForensicProfileResponse,
     ),
     Direction(
         key=OrderWorkType.RESEARCH.value,
@@ -96,11 +183,12 @@ DIRECTIONS: tuple[Direction, ...] = (
 
 DIRECTIONS_BY_KEY: dict[str, Direction] = {direction.key: direction for direction in DIRECTIONS}
 
-PROFILE_DIRECTIONS: tuple[Direction, ...] = tuple(
-    direction for direction in DIRECTIONS if direction.has_profile
-)
-
 
 def get_direction(key: str) -> Direction | None:
     "Возвращает направление по ключу (значению OrderWorkType) или None."
     return DIRECTIONS_BY_KEY.get(key)
+
+
+def directions_for_role(role: UserRole) -> tuple[Direction, ...]:
+    "Направления, у которых есть анкета для этой роли."
+    return tuple(direction for direction in DIRECTIONS if direction.form_for(role) is not None)

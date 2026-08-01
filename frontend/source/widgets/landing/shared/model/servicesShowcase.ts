@@ -48,6 +48,7 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
     text:
       "Аудит системы управления промышленной безопасностью, оценка добросовестности, обязательный мониторинг, технический и финансовый аудит промышленных объектов.",
     image: "/services/5.webp",
+    href: "/audit-supb",
   },
   {
     id: 6,

@@ -12,17 +12,8 @@
   animation: panelIn 0.18s ease-out;
 }
 
-.columns {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
-  gap: 18px;
-}
-
-.expertiseColumn { min-width: 0; }
-
 .expertiseColumn {
-  padding-right: 18px;
-  border-right: 1px solid #e8e8e8;
+  min-width: 0;
 }
 
 .opoGrid {
@@ -129,7 +120,6 @@
 }
 
 @media (max-width: 1023px) and (min-width: 768px) {
-  .columns { grid-template-columns: minmax(0, 1fr) 300px; }
   .opoGrid { grid-template-columns: repeat(4, minmax(54px, 1fr)); }
 }
 
@@ -187,14 +177,6 @@
       font-size: 25px;
       line-height: 1;
     }
-  }
-
-  .columns { display: flex; flex-direction: column; gap: 16px; }
-
-  .expertiseColumn {
-    padding: 0 0 16px;
-    border-right: none;
-    border-bottom: 1px solid #e8e8e8;
   }
 
   .opoGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }

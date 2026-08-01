@@ -40,7 +40,7 @@ export function ExpertiseFilter({ onSelect }: Props) {
 
   const choose = (opo: string, type: ExpertiseType) => {
     const badgeCode = cell(opo, type)[0];
-    if (badgeCode) onSelect({ workType: "EXPERTISE", badgeCode }, badgeCode);
+    if (badgeCode) onSelect({ badgeCode }, badgeCode);
   };
 
   return (

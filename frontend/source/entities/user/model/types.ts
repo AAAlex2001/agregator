@@ -61,6 +61,8 @@ export interface UserProfile {
   avatar_url: string | null;
   first_name: string | null;
   last_name: string | null;
+  position: string;
+  opo_license_number: string | null;
   rating: number | null;
   review_count: number;
   role: string;

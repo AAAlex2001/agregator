@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 from schemas.company import validate_company_data
-from schemas.expert import ExpertCertificate
 
 if TYPE_CHECKING:
     from models.account import Account
@@ -25,6 +24,12 @@ class LicenseRentalKind(str, Enum):
     NEGOTIABLE = "NEGOTIABLE"
 
 
+class DirectionRegistration(BaseModel):
+    "Одно направление, выбранное при регистрации: ключ и поля его анкеты."
+    key: str = Field(..., max_length=50, description="Ключ направления, напр. EXPERTISE")
+    data: dict[str, Any] = Field(default_factory=dict, description="Поля анкеты направления")
+
+
 class UserRegistration(BaseModel):
     "модель валидации пользователя"
     role: UserRole = Field(..., description="Роль пользователя")
@@ -40,12 +45,8 @@ class UserRegistration(BaseModel):
     location_address: str | None = Field(None, description="Адрес базирования эксперта", max_length=500)
     location_city: str | None = Field(None, description="Город базирования эксперта", max_length=200)
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
-    expert_certificates: list[ExpertCertificate] | None = Field(
-        None, description="Удостоверения эксперта: область + объект + категория"
-    )
-    expert_show_on_map: bool = Field(True, description="Показывать эксперта на карте России")
-    expert_map_fields: list[str] | None = Field(
-        None, description="Какие поля показывать на карте: name/object/area/category/contacts"
+    directions: list[DirectionRegistration] = Field(
+        default_factory=list, description="Направления, по которым работает пользователь"
     )
     contact_sales_enabled: bool = False
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)

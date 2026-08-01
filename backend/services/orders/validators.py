@@ -100,9 +100,9 @@ class OrderValidator:
     def validate_direction_details(
         work_type: OrderWorkType, details: dict | None
     ) -> BaseModel | None:
-        "Валидирует поля направления заказа; для видов работ без направления возвращает None."
+        "Валидирует поля направления заказа; без направления или без своих полей возвращает None."
         direction = get_direction(work_type.value)
-        if direction is None:
+        if direction is None or not direction.has_details:
             return None
         if details is None:
             raise HTTPException(

@@ -13,7 +13,6 @@ from services.settings.use_cases.replace_mining_license_file import ReplaceMinin
 from services.settings.use_cases.replace_sro_design_file import ReplaceSroDesignFileUseCase
 from services.settings.use_cases.request_email_change import RequestEmailChangeUseCase
 from services.settings.use_cases.update_email_preferences import UpdateEmailPreferencesUseCase
-from services.settings.use_cases.update_expert_certificates import UpdateExpertCertificatesUseCase
 from services.settings.use_cases.update_expert_location import UpdateExpertLocationUseCase
 from services.settings.use_cases.update_license_terms import UpdateLicenseTermsUseCase
 from services.settings.use_cases.update_order_notifications import UpdateOrderNotificationsUseCase
@@ -36,7 +35,6 @@ __all__ = [
     "SettingsRepository",
     "SettingsValidator",
     "UpdateEmailPreferencesUseCase",
-    "UpdateExpertCertificatesUseCase",
     "UpdateExpertLocationUseCase",
     "UpdateOrderNotificationsUseCase",
     "UpdateLicenseTermsUseCase",

@@ -23,7 +23,11 @@ CONTACT_DISCLOSURE_CONSENT_VERSION = "2026-07-21"
 
 if TYPE_CHECKING:
     from models.account import Account
-    from models.direction_profile import ExpertCadastralProfile, ExpertForensicProfile
+    from models.direction_profile import (
+        ExpertAuditProfile,
+        ExpertCadastralProfile,
+        ExpertForensicProfile,
+    )
 
 
 class Expert(Base):
@@ -78,6 +82,14 @@ class Expert(Base):
     )
 
     forensic_profile: Mapped["ExpertForensicProfile | None"] = relationship(
+        back_populates="expert",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+
+    audit_profile: Mapped["ExpertAuditProfile | None"] = relationship(
         back_populates="expert",
         cascade="all, delete-orphan",
         passive_deletes=True,

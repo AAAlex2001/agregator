@@ -27,5 +27,12 @@ class UpdatePersonalDataUseCase:
             await self.validator.ensure_unique_inn(data.inn, user_id)
             user.inn = data.inn
 
+        customer = user.customer_profile
+        if customer is not None:
+            if data.position is not None:
+                customer.position = data.position
+            if data.opo_license_number is not None:
+                customer.opo_license_number = data.opo_license_number or None
+
         await self.repo.flush()
         return user

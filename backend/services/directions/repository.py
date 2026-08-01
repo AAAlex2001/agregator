@@ -2,19 +2,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from models.account import Account
 from models.base import Base
-from models.expert import Expert
 
 
 class DirectionsRepository:
-    "Все обращения к БД для профилей направлений исполнителя."
+    "Все обращения к БД для анкет направлений."
 
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def find_expert_by_account(self, account_id: int) -> Expert | None:
-        "Ищет профиль исполнителя по id аккаунта."
-        query = select(Expert).where(Expert.account_id == account_id)
+    async def find_account(self, account_id: int) -> Account | None:
+        "Ищет аккаунт вместе с профилями ролей."
+        query = select(Account).where(Account.id == account_id)
         return (await self.db.execute(query)).scalars().first()
 
     async def add(self, entity: Base) -> None:

@@ -13,6 +13,7 @@ import {
   type UserProfile,
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
+import { DirectionsSection } from "@/source/features/profile/directions";
 import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
@@ -71,6 +72,8 @@ export function CustomerSettingsForm({ profile, onProfileUpdate }: Props) {
             />
           </div>
         </section>
+
+        <DirectionsSection role="CUSTOMER" />
 
         <SaveBar isSaving={isSaving} />
       </form>

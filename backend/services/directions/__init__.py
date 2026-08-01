@@ -1,8 +1,14 @@
-from services.directions.registry import DIRECTIONS, Direction, get_direction
+from services.directions.registry import (
+    DIRECTIONS,
+    Direction,
+    RoleForm,
+    directions_for_role,
+    get_direction,
+)
 from services.directions.repository import DirectionsRepository
 from services.directions.use_cases import (
     GetDirectionProfileUseCase,
-    ListExpertDirectionsUseCase,
+    ListRoleDirectionsUseCase,
     UpsertDirectionProfileUseCase,
 )
 from services.directions.validators import DirectionsValidator
@@ -13,7 +19,9 @@ __all__ = [
     "DirectionsRepository",
     "DirectionsValidator",
     "GetDirectionProfileUseCase",
-    "ListExpertDirectionsUseCase",
+    "ListRoleDirectionsUseCase",
+    "RoleForm",
     "UpsertDirectionProfileUseCase",
+    "directions_for_role",
     "get_direction",
 ]

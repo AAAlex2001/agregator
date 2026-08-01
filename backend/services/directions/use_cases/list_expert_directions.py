@@ -1,23 +1,25 @@
-"Use case: список направлений исполнителя с признаком заполненности профиля."
+"Use case: список направлений роли с признаком заполненности анкеты."
+from models.account import UserRole
 from schemas.directions import DirectionSummary
-from services.directions.registry import PROFILE_DIRECTIONS
+from services.directions.registry import directions_for_role
 from services.directions.validators import DirectionsValidator
 
 
-class ListExpertDirectionsUseCase:
-    "Отдаёт направления с анкетой исполнителя и отмечает, какие из них заполнены."
+class ListRoleDirectionsUseCase:
+    "Отдаёт направления, доступные роли аккаунта, и отмечает заполненные анкеты."
 
     def __init__(self, validator: DirectionsValidator) -> None:
         self.validator = validator
 
     async def execute(self, account_id: int) -> list[DirectionSummary]:
         "Запускает основной сценарий use case."
-        expert = await self.validator.require_expert(account_id)
+        account = await self.validator.require_account(account_id)
+        role: UserRole = account.role
         return [
             DirectionSummary(
                 key=direction.key,
                 title=direction.title,
-                profile_filled=getattr(expert, direction.profile_attribute) is not None,
+                profile_filled=self.validator.is_form_filled(account, direction),
             )
-            for direction in PROFILE_DIRECTIONS
+            for direction in directions_for_role(role)
         ]

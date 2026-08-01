@@ -12,6 +12,9 @@ import {
   registerLicenseHolder,
   registerUser,
 } from "@/source/entities/user";
+import { useDirectionCatalogs } from "@/source/entities/direction";
+import type { DirectionKey, DirectionProfile } from "@/source/entities/direction";
+import { emptyDirectionValue } from "@/source/features/direction-forms";
 import {
   emptyRegisterFormValues,
   registerConfirmSchema,
@@ -64,10 +67,33 @@ export function useRegister(options?: UseRegisterOptions) {
     mode: "onBlur",
   });
 
+  const catalogs = useDirectionCatalogs(wizard.step === 2);
+
   const selectRole = (id: number) => {
     const role = ROLE_BY_ID[id];
-    if (role) form.setValue("role", role);
+    if (role) {
+      form.setValue("role", role);
+      form.setValue("directions", {});
+    }
     dispatch({ type: "SELECT_ROLE", payload: id });
+  };
+
+  const toggleDirection = (key: DirectionKey) => {
+    const directions = { ...form.getValues("directions") };
+    if (key in directions) {
+      delete directions[key];
+    } else {
+      directions[key] = emptyDirectionValue(key, form.getValues("role"));
+    }
+    form.setValue("directions", directions, { shouldValidate: form.formState.isSubmitted });
+  };
+
+  const changeDirection = (key: DirectionKey, value: DirectionProfile) => {
+    form.setValue(
+      "directions",
+      { ...form.getValues("directions"), [key]: value },
+      { shouldValidate: form.formState.isSubmitted },
+    );
   };
 
   const toggleCard = (id: number) => dispatch({ type: "TOGGLE_CARD", payload: id });
@@ -145,6 +171,7 @@ export function useRegister(options?: UseRegisterOptions) {
     pendingEmail: wizard.pendingEmail,
     form,
     confirmForm,
+    catalogs,
     licenseFile,
     miningLicenseFile,
     sroDesignFile,
@@ -153,6 +180,8 @@ export function useRegister(options?: UseRegisterOptions) {
     isConfirmLoading: confirmForm.formState.isSubmitting,
     selectRole,
     toggleCard,
+    toggleDirection,
+    changeDirection,
     backToRoles,
     submit,
     confirmSubmit,

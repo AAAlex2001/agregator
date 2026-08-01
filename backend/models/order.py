@@ -45,6 +45,7 @@ class OrderWorkType(str, PyEnum):
     FORENSIC = "FORENSIC"
     RESEARCH = "RESEARCH"
     LABORATORY = "LABORATORY"
+    AUDIT_SUPB = "AUDIT_SUPB"
     OTHER = "OTHER"
 
 

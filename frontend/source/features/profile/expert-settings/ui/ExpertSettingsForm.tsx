@@ -12,8 +12,9 @@ import {
   type UserProfile,
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
+import { DirectionsSection } from "@/source/features/profile/directions";
 import { ExpertLocationSection } from "./ExpertLocationSection";
-import { ExpertCertificatesSection } from "./ExpertCertificatesSection";
+import { ExpertContactOfferSection } from "./ExpertContactOfferSection";
 import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
@@ -72,7 +73,12 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
 
         <ExpertLocationSection profile={profile} onProfileUpdate={onProfileUpdate} />
 
-        <ExpertCertificatesSection profile={profile} onProfileUpdate={onProfileUpdate} />
+        <DirectionsSection role="EXPERT" />
+
+        <section className={s.section}>
+          <h2 className={s.subtitle}>Платный доступ к контактам</h2>
+          <ExpertContactOfferSection />
+        </section>
 
         <SaveBar isSaving={isSaving} />
       </form>
