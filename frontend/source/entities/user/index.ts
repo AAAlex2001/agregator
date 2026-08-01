@@ -7,7 +7,12 @@ export type {
   LicenseHolderUpdatePayload,
 } from "./model/types";
 export type { UpdateProfilePayload } from "./model/profilePayload";
-export type { UserRole, RegisterApiPayload, RegisterResponse } from "./model/register";
+export type {
+  UserRole,
+  RegisterApiPayload,
+  RegisterDocument,
+  RegisterResponse,
+} from "./model/register";
 export type { UpdateEmailPreferencesPayload } from "./model/email-preferences";
 export {
   fetchProfile,

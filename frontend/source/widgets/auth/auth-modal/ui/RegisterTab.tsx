@@ -49,6 +49,7 @@ export function RegisterTab({ onSuccess }: Props) {
           form={reg.form}
           isLoading={reg.isLoading}
           catalogs={reg.catalogs}
+          directionDocuments={reg.directionDocuments}
           licenseFile={reg.licenseFile}
           miningLicenseFile={reg.miningLicenseFile}
           sroDesignFile={reg.sroDesignFile}
@@ -56,6 +57,8 @@ export function RegisterTab({ onSuccess }: Props) {
           onPhoneChange={reg.setPhone}
           onDirectionToggle={reg.toggleDirection}
           onDirectionChange={reg.changeDirection}
+          onDirectionDocumentsAdd={reg.addDirectionDocuments}
+          onDirectionDocumentRemove={reg.removeDirectionDocument}
           onLicenseFileSelect={reg.selectLicenseFile}
           onMiningLicenseFileSelect={reg.setMiningLicenseFile}
           onSroDesignFileSelect={reg.setSroDesignFile}

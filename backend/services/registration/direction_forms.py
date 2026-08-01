@@ -4,14 +4,19 @@
 реестр, он же умеет записать анкету в профиль роли. Здесь только маршрутизация
 и свой код ответа: у регистрации это 400.
 """
-from fastapi import HTTPException, status
+from fastapi import HTTPException, UploadFile, status
 from pydantic import ValidationError
 
 from models.account import Account
 from models.base import Base
 from schemas.registration import DirectionRegistration
 from services.directions.registry import RoleForm, get_direction
+from services.directions.use_cases.upload_direction_document import (
+    UploadDirectionDocumentUseCase,
+)
 from services.directions.validators import DirectionsValidator
+
+MAX_REGISTRATION_DOCUMENTS = 20
 
 
 def require_form(account: Account, key: str) -> RoleForm:
@@ -56,3 +61,29 @@ def build_profiles(account: Account, directions: list[DirectionRegistration]) ->
         if form.is_separate_table:
             created.append(target)
     return created
+
+
+async def attach_documents(
+    use_case: UploadDirectionDocumentUseCase,
+    account_id: int,
+    keys: list[str],
+    files: list[UploadFile],
+) -> None:
+    """Кладёт приложенные при регистрации дипломы и аттестаты в анкеты своих направлений.
+
+    Ключ направления и файл приходят параллельными списками одной формы, поэтому их
+    длины обязаны совпадать. Сохраняет тот же use case, что и загрузка из кабинета:
+    проверка типа, размера и владельца файла одна на оба сценария.
+    """
+    if len(keys) != len(files):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Каждому документу должно соответствовать направление",
+        )
+    if len(files) > MAX_REGISTRATION_DOCUMENTS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"При регистрации можно приложить не более {MAX_REGISTRATION_DOCUMENTS} документов",
+        )
+    for key, file in zip(keys, files, strict=True):
+        await use_case.execute(account_id, key, file)

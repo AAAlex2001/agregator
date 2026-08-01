@@ -22,7 +22,7 @@ import {
   type RegisterConfirmValues,
   type RegisterFormValues,
 } from "./schema";
-import { toLicenseHolderPayload, toRegisterPayload } from "./mappers";
+import { toLicenseHolderPayload, toRegisterDocuments, toRegisterPayload } from "./mappers";
 import {
   initialRegisterWizardState,
   registerWizardReducer,
@@ -50,6 +50,9 @@ export function useRegister(options?: UseRegisterOptions) {
   const { showError, showSuccess } = useNotifications();
   const { reload } = useSession();
   const [wizard, dispatch] = useReducer(registerWizardReducer, initialRegisterWizardState);
+  const [directionDocuments, setDirectionDocuments] = useState<
+    Partial<Record<DirectionKey, File[]>>
+  >({});
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [miningLicenseFile, setMiningLicenseFile] = useState<File | null>(null);
   const [sroDesignFile, setSroDesignFile] = useState<File | null>(null);
@@ -74,6 +77,7 @@ export function useRegister(options?: UseRegisterOptions) {
     if (role) {
       form.setValue("role", role);
       form.setValue("directions", {});
+      setDirectionDocuments({});
     }
     dispatch({ type: "SELECT_ROLE", payload: id });
   };
@@ -82,10 +86,22 @@ export function useRegister(options?: UseRegisterOptions) {
     const directions = { ...form.getValues("directions") };
     if (key in directions) {
       delete directions[key];
+      setDirectionDocuments((current) => ({ ...current, [key]: [] }));
     } else {
       directions[key] = emptyDirectionValue(key, form.getValues("role"));
     }
     form.setValue("directions", directions, { shouldValidate: form.formState.isSubmitted });
+  };
+
+  const addDirectionDocuments = (key: DirectionKey, files: File[]) => {
+    setDirectionDocuments((current) => ({ ...current, [key]: [...(current[key] ?? []), ...files] }));
+  };
+
+  const removeDirectionDocument = (key: DirectionKey, index: number) => {
+    setDirectionDocuments((current) => ({
+      ...current,
+      [key]: (current[key] ?? []).filter((_, position) => position !== index),
+    }));
   };
 
   const changeDirection = (key: DirectionKey, value: DirectionProfile) => {
@@ -124,7 +140,10 @@ export function useRegister(options?: UseRegisterOptions) {
             labAccreditationFile,
           );
         } else {
-          await registerUser(toRegisterPayload(values));
+          await registerUser(
+            toRegisterPayload(values),
+            toRegisterDocuments(values, directionDocuments),
+          );
         }
         dispatch({ type: "GO_TO_CONFIRM", payload: values.email.trim() });
       } catch (err) {
@@ -172,6 +191,7 @@ export function useRegister(options?: UseRegisterOptions) {
     form,
     confirmForm,
     catalogs,
+    directionDocuments,
     licenseFile,
     miningLicenseFile,
     sroDesignFile,
@@ -182,6 +202,8 @@ export function useRegister(options?: UseRegisterOptions) {
     toggleCard,
     toggleDirection,
     changeDirection,
+    addDirectionDocuments,
+    removeDirectionDocument,
     backToRoles,
     submit,
     confirmSubmit,

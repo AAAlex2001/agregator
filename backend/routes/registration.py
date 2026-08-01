@@ -18,6 +18,10 @@ from schemas.registration import (
     UserResponse,
 )
 from services.dadata import DaDataService
+from services.directions import DirectionsRepository, DirectionsValidator
+from services.directions.use_cases.upload_direction_document import (
+    UploadDirectionDocumentUseCase,
+)
 from services.license_holders import (
     remove_license_file,
     remove_regulatory_document_file,
@@ -36,9 +40,18 @@ from services.registration import (
     RegistrationValidator,
     ResendConfirmationUseCase,
 )
+from services.registration.direction_forms import attach_documents
 from services.verification import VerificationService
 
 router = APIRouter(prefix="/register", tags=["auth"])
+
+
+def parse_user_payload(payload: str = Form(...)) -> UserRegistration:
+    "Парсит JSON-строку формы в pydantic-модель; ошибки идут как стандартный 422."
+    try:
+        return UserRegistration.model_validate_json(payload)
+    except ValidationError as exc:
+        raise RequestValidationError(exc.errors()) from exc
 
 
 def parse_license_holder_payload(payload: str = Form(...)) -> LicenseHolderRegistration:
@@ -61,6 +74,11 @@ def build_notifier(db: AsyncSession) -> RegistrationNotifier:
     return RegistrationNotifier(VerificationService(db))
 
 
+def build_document_use_case(db: AsyncSession) -> UploadDirectionDocumentUseCase:
+    repo = DirectionsRepository(db)
+    return UploadDirectionDocumentUseCase(repo, DirectionsValidator(repo))
+
+
 @router.post(
     "/",
     response_model=UserResponse,
@@ -68,14 +86,19 @@ def build_notifier(db: AsyncSession) -> RegistrationNotifier:
     dependencies=[Depends(rate_limit("register", max_calls=3, window_seconds=60))],
 )
 async def register_user(
-    data: UserRegistration,
     background_tasks: BackgroundTasks,
+    data: UserRegistration = Depends(parse_user_payload),
+    documents: list[UploadFile] = File(default=[]),
+    document_directions: list[str] = Form(default=[]),
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-    "Регистрирует обычного пользователя и отправляет письмо подтверждения почты."
+    "Регистрирует обычного пользователя, прикладывает дипломы направлений и шлёт письмо подтверждения."
     repo = build_repo(db)
     cipher = build_contact_cipher() if data.contact_sales_enabled else None
     user = await RegisterUserUseCase(repo, build_validator(repo), cipher).execute(data)
+    await attach_documents(
+        build_document_use_case(db), user.id, document_directions, documents
+    )
     await build_notifier(db).schedule_confirmation_email(user, background_tasks)
     return UserResponse.from_account(user)
 

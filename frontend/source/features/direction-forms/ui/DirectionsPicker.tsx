@@ -4,24 +4,31 @@ import { Checkbox } from "@/source/shared/ui";
 import type { DirectionCatalogs, DirectionKey, DirectionProfile } from "@/source/entities/direction";
 import type { UserRole } from "@/source/entities/user";
 import { directionOptionsForRole, getDirectionForm } from "../model/registry";
+import { DirectionDocumentsPicker } from "./DirectionDocumentsPicker";
 import s from "./DirectionsPicker.module.scss";
 
 interface Props {
   role: UserRole;
   selected: Partial<Record<DirectionKey, DirectionProfile>>;
   catalogs: DirectionCatalogs;
+  documents: Partial<Record<DirectionKey, File[]>>;
   errors?: Partial<Record<DirectionKey, string>>;
   onToggle: (key: DirectionKey) => void;
   onChange: (key: DirectionKey, value: DirectionProfile) => void;
+  onDocumentsAdd: (key: DirectionKey, files: File[]) => void;
+  onDocumentsRemove: (key: DirectionKey, index: number) => void;
 }
 
 export function DirectionsPicker({
   role,
   selected,
   catalogs,
+  documents,
   errors,
   onToggle,
   onChange,
+  onDocumentsAdd,
+  onDocumentsRemove,
 }: Props) {
   const options = directionOptionsForRole(role);
   if (!options.length) return null;
@@ -57,6 +64,13 @@ export function DirectionsPicker({
                     onChange={(next) => onChange(option.key, next)}
                     catalogs={catalogs}
                   />
+                  {form.supportsDocuments && (
+                    <DirectionDocumentsPicker
+                      files={documents[option.key] ?? []}
+                      onAdd={(files) => onDocumentsAdd(option.key, files)}
+                      onRemove={(index) => onDocumentsRemove(option.key, index)}
+                    />
+                  )}
                   {error && <span className={s.error}>{error}</span>}
                 </div>
               )}

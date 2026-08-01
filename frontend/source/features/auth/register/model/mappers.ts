@@ -3,8 +3,19 @@ import type {
   CompanyData,
   LicenseHolderRegisterPayload,
   RegisterApiPayload,
+  RegisterDocument,
 } from "@/source/entities/user";
+import type { DirectionKey } from "@/source/entities/direction";
 import type { RegisterFormValues } from "./schema";
+
+export function toRegisterDocuments(
+  values: RegisterFormValues,
+  documents: Partial<Record<DirectionKey, File[]>>,
+): RegisterDocument[] {
+  return Object.keys(values.directions).flatMap((key) =>
+    (documents[key as DirectionKey] ?? []).map((file) => ({ directionKey: key, file })),
+  );
+}
 
 export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayload {
   const role = values.role;

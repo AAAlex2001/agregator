@@ -51,7 +51,9 @@ export interface LicenseFiles {
 }
 
 export function registerUser(payload: RegisterPayload): Promise<{ id: number }> {
-  return apiJson("/register/", { method: "POST", body: JSON.stringify(payload) });
+  const form = new FormData();
+  form.append("payload", JSON.stringify(payload));
+  return apiJson("/register/", { method: "POST", body: form });
 }
 
 export function registerLicenseHolder(payload: LicensePayload, files: LicenseFiles): Promise<{ id: number }> {

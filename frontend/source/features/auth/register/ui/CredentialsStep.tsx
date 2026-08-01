@@ -18,6 +18,7 @@ interface Props {
   form: UseFormReturn<RegisterFormValues>;
   isLoading: boolean;
   catalogs: DirectionCatalogs;
+  directionDocuments: Partial<Record<DirectionKey, File[]>>;
   licenseFile: File | null;
   miningLicenseFile?: File | null;
   sroDesignFile?: File | null;
@@ -25,6 +26,8 @@ interface Props {
   onPhoneChange: (v: string) => void;
   onDirectionToggle: (key: DirectionKey) => void;
   onDirectionChange: (key: DirectionKey, value: DirectionProfile) => void;
+  onDirectionDocumentsAdd: (key: DirectionKey, files: File[]) => void;
+  onDirectionDocumentRemove: (key: DirectionKey, index: number) => void;
   onLicenseFileSelect: (file: File | null) => void;
   onMiningLicenseFileSelect?: (file: File | null) => void;
   onSroDesignFileSelect?: (file: File | null) => void;
@@ -36,6 +39,7 @@ export function CredentialsStep({
   form,
   isLoading,
   catalogs,
+  directionDocuments,
   licenseFile,
   miningLicenseFile = null,
   sroDesignFile = null,
@@ -43,6 +47,8 @@ export function CredentialsStep({
   onPhoneChange,
   onDirectionToggle,
   onDirectionChange,
+  onDirectionDocumentsAdd,
+  onDirectionDocumentRemove,
   onLicenseFileSelect,
   onMiningLicenseFileSelect,
   onSroDesignFileSelect,
@@ -88,11 +94,14 @@ export function CredentialsStep({
               role={role}
               selected={form.watch("directions")}
               catalogs={catalogs}
+              documents={directionDocuments}
               errors={Object.fromEntries(
                 Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
               )}
               onToggle={onDirectionToggle}
               onChange={onDirectionChange}
+              onDocumentsAdd={onDirectionDocumentsAdd}
+              onDocumentsRemove={onDirectionDocumentRemove}
             />
           </FormSection>
         )}

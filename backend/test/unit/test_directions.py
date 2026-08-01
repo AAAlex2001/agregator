@@ -21,9 +21,14 @@ from services.directions.use_cases.get_direction_profile import GetDirectionProf
 from services.directions.use_cases.list_expert_directions import ListRoleDirectionsUseCase
 from services.directions.use_cases.upsert_direction_profile import UpsertDirectionProfileUseCase
 from services.directions.validators import DirectionsValidator
-from services.registration.direction_forms import build_profiles
+from services.registration.direction_forms import (
+    MAX_REGISTRATION_DOCUMENTS,
+    attach_documents,
+    build_profiles,
+)
 
 AUDIT = OrderWorkType.AUDIT_SUPB.value
+CADASTRAL = OrderWorkType.CADASTRAL.value
 EXPERTISE = OrderWorkType.EXPERTISE.value
 
 
@@ -348,6 +353,39 @@ class TestRegistrationDirectionForms:
                 [DirectionRegistration(key=AUDIT, data={"audit_qualifications": ["40.20900.999"]})],
             )
         assert error.value.status_code == 400
+
+
+class TestRegistrationDocuments:
+    "Дипломы, приложенные в форме регистрации, идут через тот же use case, что и кабинет."
+
+    @pytest.mark.asyncio
+    async def test_each_file_goes_to_its_direction(self):
+        use_case = AsyncMock()
+        await attach_documents(use_case, 7, [AUDIT, CADASTRAL], ["diploma", "certificate"])
+
+        assert [call.args for call in use_case.execute.await_args_list] == [
+            (7, AUDIT, "diploma"),
+            (7, CADASTRAL, "certificate"),
+        ]
+
+    @pytest.mark.asyncio
+    async def test_count_mismatch_raises_400(self):
+        use_case = AsyncMock()
+        with pytest.raises(HTTPException) as error:
+            await attach_documents(use_case, 7, [AUDIT], ["diploma", "certificate"])
+
+        assert error.value.status_code == 400
+        use_case.execute.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_too_many_documents_rejected(self):
+        use_case = AsyncMock()
+        count = MAX_REGISTRATION_DOCUMENTS + 1
+        with pytest.raises(HTTPException) as error:
+            await attach_documents(use_case, 7, [AUDIT] * count, ["diploma"] * count)
+
+        assert error.value.status_code == 400
+        use_case.execute.assert_not_awaited()
 
 
 class TestAuditProfileSchemas:

@@ -1,37 +1,63 @@
-import { fetchBase } from "@/source/shared/api/base";
 import { API_URL } from "@/source/shared/api/config";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { LicenseHolderRegisterPayload } from "@/source/entities/user";
-import type { RegisterApiPayload, RegisterResponse } from "@/source/entities/user/model/register";
+import type {
+  RegisterApiPayload,
+  RegisterDocument,
+  RegisterResponse,
+} from "@/source/entities/user/model/register";
 
-export async function registerUser(payload: RegisterApiPayload): Promise<RegisterResponse> {
-  const result = await fetchBase<RegisterResponse>("/register/", {
+export async function registerUser(
+  payload: RegisterApiPayload,
+  documents: RegisterDocument[] = [],
+): Promise<RegisterResponse> {
+  const res = await stableMultipartFetch({
+    input: `${API_URL}/register/`,
     method: "POST",
-    body: {
-      role: payload.role,
-      email: payload.email,
-      password: payload.password,
-      phone: payload.phone,
-      first_name: payload.first_name,
-      last_name: payload.last_name,
-      inn: payload.inn,
-      company_data: payload.company_data,
-      location_lat: payload.location_lat,
-      location_lng: payload.location_lng,
-      location_address: payload.location_address,
-      location_city: payload.location_city,
-      travels_to_other_regions: payload.travels_to_other_regions,
-      show_on_map: payload.show_on_map,
-      map_fields: payload.map_fields,
-      directions: payload.directions,
-      contact_sales_enabled: payload.contact_sales_enabled,
-      contact_price_rubles: payload.contact_price_rubles,
-      contact_payment_details: payload.contact_payment_details,
-      contact_disclosure_consent: payload.contact_disclosure_consent,
+    files: documents.map((document) => document.file),
+    buildBody: () => {
+      const formData = new FormData();
+      formData.append(
+        "payload",
+        JSON.stringify({
+          role: payload.role,
+          email: payload.email,
+          password: payload.password,
+          phone: payload.phone,
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          inn: payload.inn,
+          company_data: payload.company_data,
+          location_lat: payload.location_lat,
+          location_lng: payload.location_lng,
+          location_address: payload.location_address,
+          location_city: payload.location_city,
+          travels_to_other_regions: payload.travels_to_other_regions,
+          show_on_map: payload.show_on_map,
+          map_fields: payload.map_fields,
+          directions: payload.directions,
+          contact_sales_enabled: payload.contact_sales_enabled,
+          contact_price_rubles: payload.contact_price_rubles,
+          contact_payment_details: payload.contact_payment_details,
+          contact_disclosure_consent: payload.contact_disclosure_consent,
+        }),
+      );
+      for (const document of documents) {
+        formData.append("documents", document.file);
+        formData.append("document_directions", document.directionKey);
+      }
+      return formData;
     },
   });
-  if (result === null) throw new Error("Empty response");
-  return result;
+  if (!res.ok) throw new Error(await registerErrorMessage(res));
+  return res.json();
+}
+
+async function registerErrorMessage(res: Response): Promise<string> {
+  const body = await res.json().catch(() => null);
+  if (typeof body?.detail === "string") return body.detail;
+  if (Array.isArray(body?.detail) && body.detail[0]?.msg) return String(body.detail[0].msg);
+  return "Не удалось зарегистрироваться";
 }
 
 export async function registerLicenseHolder(
@@ -58,16 +84,7 @@ export async function registerLicenseHolder(
       return formData;
     },
   });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    const detail =
-      typeof body?.detail === "string"
-        ? body.detail
-        : Array.isArray(body?.detail) && body.detail[0]?.msg
-          ? String(body.detail[0].msg)
-          : "Не удалось зарегистрироваться";
-    throw new Error(detail);
-  }
+  if (!res.ok) throw new Error(await registerErrorMessage(res));
   return res.json();
 }
 

@@ -31,6 +31,11 @@ export interface RegisterApiPayload {
   contact_disclosure_consent?: boolean;
 }
 
+export interface RegisterDocument {
+  directionKey: string;
+  file: File;
+}
+
 export interface RegisterResponse {
   id: number;
   role: UserRole;
