@@ -3,7 +3,7 @@ import { DiffValue } from "@/source/shared/ui/DiffValue";
 import type { Badge } from "../model/types";
 import type { OrderWorkType } from "../model/workTypes";
 import { RequirementsBadges } from "./RequirementsBadges";
-import s from "./OrderCardBottom.module.scss";
+import { OrderOrganizer } from "./OrderOrganizer";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 interface Props {
@@ -94,13 +94,7 @@ export function OrderCard({
       statusBg={statusBadge.bg}
       titleLabel="Название заказа"
       title={titleNode}
-      bottomLeftCustom={
-        <div className={s.bottom}>
-          <span className={s.label}>Организатор</span>
-          <span className={s.value}>{customer || "—"}</span>
-          {customerInn && <span className={s.inn}>ИНН {customerInn}</span>}
-        </div>
-      }
+      bottomLeftCustom={<OrderOrganizer customer={customer} customerInn={customerInn} />}
       rightItems={rightItems}
       onClick={onClick}
       actions={children}

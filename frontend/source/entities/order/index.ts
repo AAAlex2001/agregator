@@ -1,6 +1,7 @@
 export { OrderCard } from "./ui/OrderCard";
 export { OrderCardSkeleton } from "./ui/OrderCardSkeleton";
 export { OrderDetailCardSkeleton } from "./ui/OrderDetailCardSkeleton";
+export { OrderOrganizer } from "./ui/OrderOrganizer";
 export { RequirementsBadges } from "./ui/RequirementsBadges";
 export { DocumentsGallery } from "./ui/DocumentsGallery";
 export { mapApiToOrderCard } from "./model/mapper";

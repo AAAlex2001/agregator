@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
   fetchDirectionProfile,
   fetchMyDirections,
@@ -12,80 +13,84 @@ import {
 } from "@/source/entities/direction";
 import { useRegisterProfileSave, type UserRole } from "@/source/entities/user";
 import {
-  emptyDirectionValue,
   getDirectionForm,
   validateDirection,
+  type DirectionFormComponent,
 } from "@/source/features/direction-forms";
 
+interface DirectionDraft {
+  direction: DirectionSummary;
+  Form: DirectionFormComponent;
+  saved: DirectionProfile;
+  value: DirectionProfile;
+}
+
 export function useProfileDirections(role: UserRole) {
+  const { showError } = useNotifications();
   const catalogs = useDirectionCatalogs();
-  const requested = useRef<Set<DirectionKey>>(new Set());
-  const [directions, setDirections] = useState<DirectionSummary[]>([]);
+  const [drafts, setDrafts] = useState<DirectionDraft[]>([]);
   const [activeKey, setActiveKey] = useState<DirectionKey | null>(null);
-  const [profiles, setProfiles] = useState<Partial<Record<DirectionKey, DirectionProfile>>>({});
-  const [dirty, setDirty] = useState<DirectionKey[]>([]);
 
   useEffect(() => {
     let alive = true;
-    fetchMyDirections()
-      .then((list) => {
-        if (!alive) return;
-        const supported = list.filter((item) => getDirectionForm(item.key, role));
-        setDirections(supported);
-        setActiveKey(supported[0]?.key ?? null);
-      })
-      .catch(() => undefined);
-    return () => {
-      alive = false;
-    };
-  }, [role]);
-
-  useEffect(() => {
-    const key = activeKey;
-    if (!key || requested.current.has(key)) return;
-    requested.current.add(key);
-
-    let alive = true;
-    fetchDirectionProfile(key)
+    loadDrafts(role)
       .then((loaded) => {
-        if (alive) setProfiles((current) => ({ ...current, [key]: loaded }));
+        if (!alive) return;
+        setDrafts(loaded);
+        setActiveKey(loaded[0]?.direction.key ?? null);
       })
-      .catch(() => {
-        if (alive) setProfiles((current) => ({ ...current, [key]: emptyDirectionValue(key, role) }));
-      });
+      .catch(() => showError("Не удалось загрузить направления"));
     return () => {
       alive = false;
     };
-  }, [activeKey, role]);
+  }, [role, showError]);
 
   useRegisterProfileSave(async () => {
-    for (const key of dirty) {
-      const value = profiles[key];
-      if (!value) continue;
-      const message = validateDirection(key, role, value);
-      if (message) throw new Error(`${titleOf(directions, key)}: ${message}`);
-      await saveDirectionProfile(key, value);
+    const persisted = new Map<DirectionKey, DirectionProfile>();
+    for (const draft of drafts.filter(isChanged)) {
+      const message = validateDirection(draft.direction.key, role, draft.value);
+      if (message) throw new Error(`${draft.direction.title}: ${message}`);
+      persisted.set(draft.direction.key, await saveDirectionProfile(draft.direction.key, draft.value));
     }
-    setDirty([]);
+    setDrafts((current) =>
+      current.map((draft) => {
+        const saved = persisted.get(draft.direction.key);
+        return saved ? { ...draft, saved, value: saved } : draft;
+      }),
+    );
   });
 
   const changeProfile = (value: DirectionProfile) => {
-    const key = activeKey;
-    if (!key) return;
-    setProfiles((current) => ({ ...current, [key]: value }));
-    setDirty((current) => (current.includes(key) ? current : [...current, key]));
+    setDrafts((current) =>
+      current.map((draft) => (draft.direction.key === activeKey ? { ...draft, value } : draft)),
+    );
   };
 
   return {
     catalogs,
-    directions,
+    tabs: drafts.map((draft) => ({ id: draft.direction.key, label: draft.direction.title })),
     activeKey,
-    profile: activeKey ? (profiles[activeKey] ?? null) : null,
+    active: drafts.find((draft) => draft.direction.key === activeKey) ?? null,
     selectDirection: setActiveKey,
     changeProfile,
   };
 }
 
-function titleOf(directions: DirectionSummary[], key: DirectionKey): string {
-  return directions.find((item) => item.key === key)?.title ?? key;
+function isChanged(draft: DirectionDraft): boolean {
+  return draft.value !== draft.saved;
+}
+
+async function loadDrafts(role: UserRole): Promise<DirectionDraft[]> {
+  const supported = (await fetchMyDirections()).flatMap((direction) => {
+    const form = getDirectionForm(direction.key, role);
+    return form ? [{ direction, Form: form.Form }] : [];
+  });
+  const profiles = await Promise.all(
+    supported.map((item) => fetchDirectionProfile(item.direction.key)),
+  );
+  return supported.map((item, index) => ({
+    ...item,
+    saved: profiles[index],
+    value: profiles[index],
+  }));
 }

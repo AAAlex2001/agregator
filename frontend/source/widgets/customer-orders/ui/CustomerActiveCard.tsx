@@ -6,9 +6,13 @@ import { useSession } from "@/source/features/session";
 import { OrderQuestionsBlock } from "@/source/features/order-questions";
 import { ActionButtons, CommentSection } from "@/source/entities/response";
 import type { CardAction } from "@/source/entities/response";
-import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
+import {
+  DocumentsGallery,
+  OrderOrganizer,
+  RequirementsBadges,
+  countDocuments,
+} from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
-import cardBottom from "@/source/entities/order/ui/OrderCardBottom.module.scss";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
 
 interface Props {
@@ -35,13 +39,10 @@ export function CustomerActiveCard({ card, isDeleting, onEdit, onDelete }: Props
       titleLabel="Название заказа"
       title={<DiffValue previous={card.previousTitle} current={card.title} />}
       bottomLeftCustom={
-        <div className={cardBottom.bottom}>
-          <span className={cardBottom.label}>Организатор</span>
-          <span className={cardBottom.value}>{card.customer || card.company || "—"}</span>
-          {(card.customerInn || user?.inn) && (
-            <span className={cardBottom.inn}>ИНН {card.customerInn || user?.inn}</span>
-          )}
-        </div>
+        <OrderOrganizer
+          customer={card.customer || card.company || ""}
+          customerInn={card.customerInn || user?.inn}
+        />
       }
       rightItems={[
         {

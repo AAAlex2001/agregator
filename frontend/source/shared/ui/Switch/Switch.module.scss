@@ -20,7 +20,7 @@
 }
 
 .label {
-  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-family: "Montserrat";
   font-size: var(--profile-label-size);
   line-height: var(--profile-label-line);
   font-weight: 600;
@@ -28,7 +28,7 @@
 }
 
 .description {
-  font-family: var(--font-base, "Montserrat", sans-serif);
+  font-family: "Montserrat";
   font-size: var(--profile-hint-size);
   line-height: var(--profile-hint-line);
   color: var(--color-text-secondary);

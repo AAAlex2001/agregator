@@ -44,7 +44,7 @@
 }
 
 .errorMessage {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat";
   font-size: 14px;
   font-weight: 500;
   line-height: 125%;
@@ -53,7 +53,7 @@
 
 .value,
 .placeholder {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat";
   font-size: 14px;
   line-height: 125%;
   text-align: left;
@@ -112,7 +112,7 @@
   gap: 6px;
   width: 100%;
   min-width: 0;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat";
   font-size: 13px;
   color: #383f45;
 
@@ -160,7 +160,7 @@
   width: 100% !important;
   border: 0 !important;
   background: transparent !important;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: "Montserrat" !important;
 
   :global(.react-datepicker__month-container) {
     flex: 1 1 auto;
@@ -175,7 +175,7 @@
   }
 
   :global(.react-datepicker__current-month) {
-    font-family: "Montserrat", sans-serif;
+    font-family: "Montserrat";
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
@@ -215,7 +215,7 @@
     padding: 8px 2px;
     margin: 0;
     width: auto;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Montserrat";
     font-weight: 500;
     font-size: 12px;
     line-height: 16px;
@@ -246,7 +246,7 @@
     width: auto;
     padding: 8px;
     border-radius: 50px;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Montserrat";
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
@@ -309,14 +309,14 @@
 
   :global(.react-datepicker__header--time) {
     padding: 8px 0 !important;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Montserrat";
     font-size: 13px;
     font-weight: 500;
     color: #383f45;
   }
 
   :global(.react-datepicker__time-list-item) {
-    font-family: "Montserrat", sans-serif !important;
+    font-family: "Montserrat" !important;
     font-size: 13px !important;
     padding: 6px 10px !important;
     height: auto !important;
