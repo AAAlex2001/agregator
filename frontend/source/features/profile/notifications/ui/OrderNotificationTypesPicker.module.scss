@@ -17,15 +17,22 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--profile-divider);
+
+  &:last-of-type {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
 }
 
 .heading {
   margin: 0;
-  color: #1a1a1a;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 22px;
+  color: var(--color-text-primary);
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
+  font-weight: 700;
 }
 
 .engineeringList {

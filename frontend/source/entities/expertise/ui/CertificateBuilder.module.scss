@@ -13,10 +13,10 @@
 }
 
 .groupLabel {
-  font-family: "Montserrat";
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 .options {

@@ -13,19 +13,17 @@
 
 .title {
   margin: 0;
-  font-family: "Montserrat", sans-serif;
   font-weight: 700;
-  font-size: 18px;
-  line-height: 22px;
-  color: #1a1a1a;
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
+  color: var(--color-text-primary);
 }
 
 .subtitle {
   margin: 0;
-  font-family: "Montserrat", sans-serif;
-  font-size: 13px;
-  line-height: 18px;
-  color: #4d4d4d;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }
 
 .save {
@@ -36,25 +34,23 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #f0d8b3;
+  padding-top: 28px;
+  border-top: 1px solid var(--profile-divider);
 }
 
 .extrasTitle {
   margin: 0;
-  font-family: "Montserrat";
   font-weight: 700;
-  font-size: 16px;
-  line-height: 20px;
-  color: #1a1a1a;
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
+  color: var(--color-text-primary);
 }
 
 .extrasHint {
   margin: -8px 0 0;
-  font-family: "Montserrat";
-  font-size: 13px;
-  line-height: 18px;
-  color: #808080;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }
 
 .extrasItem {

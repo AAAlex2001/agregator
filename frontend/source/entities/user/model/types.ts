@@ -1,5 +1,3 @@
-import type { ExpertCertificate } from "@/source/entities/expertise";
-
 export interface EmailPreferences {
   email_on_response_created: boolean;
   email_on_response_updated: boolean;
@@ -51,22 +49,17 @@ export interface LicenseHolderUpdatePayload {
   lab_accreditation_number?: string | null;
 }
 
-export interface UserProfile {
-  id: number;
-  inn: string | null;
-  company_data: CompanyData | null;
-  email: string | null;
-  email_verified: boolean;
-  phone: string | null;
-  avatar_url: string | null;
-  first_name: string | null;
-  last_name: string | null;
+export interface ExpertProfileData {
   rating: number | null;
   review_count: number;
-  role: string;
-  email_preferences: EmailPreferences;
-  notify_order_types: string[];
-  notifications_introduced: boolean;
+  location_lat: number | null;
+  location_lng: number | null;
+  location_address: string | null;
+  location_city: string | null;
+  travels_to_other_regions: boolean;
+}
+
+export interface LicenseHolderProfileData {
   license_number: string | null;
   license_file_url: string | null;
   license_areas: string[] | null;
@@ -79,12 +72,22 @@ export interface UserProfile {
   lab_accreditation_number: string | null;
   lab_accreditation_file_url: string | null;
   company_card_url: string | null;
-  location_lat: number | null;
-  location_lng: number | null;
-  location_address: string | null;
-  location_city: string | null;
-  travels_to_other_regions: boolean;
-  expert_certificates: ExpertCertificate[] | null;
-  expert_show_on_map: boolean;
-  expert_map_fields: string[] | null;
+}
+
+export interface UserProfile {
+  id: number;
+  role: string;
+  email: string | null;
+  email_verified: boolean;
+  phone: string | null;
+  avatar_url: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  inn: string | null;
+  company_data: CompanyData | null;
+  email_preferences: EmailPreferences;
+  notify_order_types: string[];
+  notifications_introduced: boolean;
+  expert: ExpertProfileData | null;
+  license_holder: LicenseHolderProfileData | null;
 }

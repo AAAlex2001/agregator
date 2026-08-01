@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Checkbox } from "@/source/shared/ui";
+import { Checkbox, FormSection } from "@/source/shared/ui";
 import { YandexAddressPicker, type SelectedLocation } from "@/source/shared/ui/YandexMap";
 import { updateExpertLocation } from "@/source/entities/user/api/profile.api";
 import { useRegisterProfileSave, type UserProfile } from "@/source/entities/user";
-import form from "@/source/entities/user/ui/ProfileForm.module.scss";
 import s from "./ExpertLocationSection.module.scss";
 
 interface Props {
@@ -13,17 +12,18 @@ interface Props {
 }
 
 export function ExpertLocationSection({ profile }: Props) {
+  const expert = profile.expert;
   const [location, setLocation] = useState<SelectedLocation | null>(
-    profile.location_lat != null && profile.location_lng != null
+    expert?.location_lat != null && expert.location_lng != null
       ? {
-          lat: profile.location_lat,
-          lng: profile.location_lng,
-          address: profile.location_address ?? "",
-          city: profile.location_city,
+          lat: expert.location_lat,
+          lng: expert.location_lng,
+          address: expert.location_address ?? "",
+          city: expert.location_city,
         }
       : null,
   );
-  const [travels, setTravels] = useState(profile.travels_to_other_regions);
+  const [travels, setTravels] = useState(expert?.travels_to_other_regions ?? false);
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
@@ -45,13 +45,12 @@ export function ExpertLocationSection({ profile }: Props) {
   });
 
   return (
-    <section id="location-map" className={form.section} style={{ scrollMarginTop: 100 }}>
-      <h2 className={form.subtitle}>Местоположение на карте</h2>
+    <FormSection
+      id="location-map"
+      title="Местоположение на карте"
+      hint="Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать исполнителя рядом. Это не личный адрес: достаточно города или района."
+    >
       <div className={s.body}>
-        <p className={s.hint}>
-          Укажите город (и район), где вы базируетесь, — заказчикам будет проще выбрать исполнителя
-          рядом. Это не личный адрес: достаточно города или района.
-        </p>
         <YandexAddressPicker
           value={location}
           onChange={(next) => {
@@ -70,6 +69,6 @@ export function ExpertLocationSection({ profile }: Props) {
           Готов выезжать на объекты в другие регионы
         </Checkbox>
       </div>
-    </section>
+    </FormSection>
   );
 }

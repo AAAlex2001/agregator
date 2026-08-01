@@ -18,14 +18,17 @@
 }
 
 .title {
-  font-size: 15px;
-  line-height: 21px;
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 .subtitle {
   margin-top: 4px;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }
 
 .fields {

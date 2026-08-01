@@ -15,6 +15,7 @@ import {
   type LaborListingPayload,
 } from "@/source/entities/labor";
 import type { ExpertiseType } from "@/source/entities/expertise";
+import { useDirectionProfile } from "@/source/entities/direction";
 import { useSession } from "@/source/features/session";
 import { buildExpertiseRequirements } from "../lib/expertiseRequirements";
 import { LABOR_PAGE_COPY } from "./config";
@@ -37,9 +38,11 @@ export function useLaborForm({
   onCreated,
 }: UseLaborFormOptions) {
   const { user } = useSession();
+  const expertiseProfile = useDirectionProfile(mode === "expert" ? "EXPERTISE" : null);
+  const homeCity = user?.expert?.location_city ?? "";
   const [state, dispatch] = useReducer(
     laborFormReducer,
-    user?.location_city ?? "",
+    homeCity,
     initialLaborFormState,
   );
   const requestRef = useRef<{
@@ -48,9 +51,8 @@ export function useLaborForm({
   } | null>(null);
 
   const copy = LABOR_PAGE_COPY[mode];
-  const profileCertificates = (
-    user?.expert_certificates ?? []
-  ) as LaborCertificate[];
+  const profileCertificates =
+    (expertiseProfile?.certificates as LaborCertificate[] | undefined) ?? [];
   const selectedCertificates = buildExpertiseRequirements({
     mode: state.expertiseMode,
     certificateCodes: state.certificateCodes,
@@ -65,10 +67,10 @@ export function useLaborForm({
         : selectedCertificates;
 
   useEffect(() => {
-    if (!state.region && user?.location_city) {
-      dispatch({ type: "REGION", value: user.location_city });
+    if (!state.region && homeCity) {
+      dispatch({ type: "REGION", value: homeCity });
     }
-  }, [state.region, user?.location_city]);
+  }, [state.region, homeCity]);
 
   const validate = () => {
     if (!state.region.trim()) {

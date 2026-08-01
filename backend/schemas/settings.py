@@ -3,7 +3,6 @@ from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field, model_validator
 
-from schemas.expert import ExpertCertificate
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES_SET
 
 
@@ -135,23 +134,22 @@ class UpdateLicenseHolderRequest(BaseModel):
         return self
 
 
-class UserSettingsResponse(BaseModel):
-    "Полные настройки личного кабинета пользователя: профиль, нотификации, лицензия."
-    id: int
-    inn: str | None = None
-    company_data: dict[str, Any] | None = None
-    email: EmailStr | None = None
-    email_verified: bool = False
-    phone: str | None = None
-    avatar_url: str | None = None
-    first_name: str | None = None
-    last_name: str | None = None
+class ExpertProfileData(BaseModel):
+    "Профиль роли «исполнитель»: репутация и место базирования. Анкеты направлений — в /directions."
     rating: float | None = None
     review_count: int = 0
-    role: str
-    email_preferences: EmailPreferences
-    notify_order_types: list[str] = Field(default_factory=list)
-    notifications_introduced: bool = False
+    location_lat: float | None = None
+    location_lng: float | None = None
+    location_address: str | None = None
+    location_city: str | None = None
+    travels_to_other_regions: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class LicenseHolderProfileData(BaseModel):
+    "Профиль роли «держатель разрешительных документов»: лицензия и условия её предоставления."
     license_number: str | None = None
     license_file_url: str | None = None
     license_areas: list[str] | None = None
@@ -164,14 +162,29 @@ class UserSettingsResponse(BaseModel):
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None
     company_card_url: str | None = None
-    location_lat: float | None = None
-    location_lng: float | None = None
-    location_address: str | None = None
-    location_city: str | None = None
-    travels_to_other_regions: bool = False
-    expert_certificates: list[ExpertCertificate] | None = None
-    expert_show_on_map: bool = True
-    expert_map_fields: list[str] | None = None
 
     class Config:
         from_attributes = True
+
+
+class UserSettingsResponse(BaseModel):
+    """Личный кабинет: общие данные аккаунта, настройки уведомлений и профиль его роли.
+
+    Заполнен ровно один из expert / license_holder — по роли аккаунта; у заказчика оба пустые.
+    Анкеты направлений сюда не попадают, их отдаёт /directions/{key}/profile.
+    """
+    id: int
+    role: str
+    email: EmailStr | None = None
+    email_verified: bool = False
+    phone: str | None = None
+    avatar_url: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    inn: str | None = None
+    company_data: dict[str, Any] | None = None
+    email_preferences: EmailPreferences
+    notify_order_types: list[str] = Field(default_factory=list)
+    notifications_introduced: bool = False
+    expert: ExpertProfileData | None = None
+    license_holder: LicenseHolderProfileData | None = None

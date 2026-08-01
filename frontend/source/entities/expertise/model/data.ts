@@ -79,6 +79,9 @@ export const computeBadgeCodes = (types: ExpertiseType[], opos: string[]): strin
   return result;
 };
 
+export const ALL_BADGE_CODES: string[] = computeBadgeCodes(TYPES, Object.keys(TABLE));
+export const ALL_BADGE_CODES_SET: ReadonlySet<string> = new Set(ALL_BADGE_CODES);
+
 export const isOpoEnabled = (opo: string, types: ExpertiseType[]) =>
   !types.length || types.some((t) => cell(opo, t).length > 0);
 

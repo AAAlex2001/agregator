@@ -13,3 +13,4 @@ export type {
 } from "./model/types";
 export { EMPTY_CATALOGS } from "./model/catalogs";
 export { useDirectionCatalogs } from "./model/useDirectionCatalogs";
+export { useDirectionProfile } from "./model/useDirectionProfile";

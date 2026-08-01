@@ -2,7 +2,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
 }
 
 .header {
@@ -10,6 +10,8 @@
   flex-direction: column;
   align-items: stretch;
   gap: 12px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--profile-divider);
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -28,17 +30,17 @@
 
 .title {
   margin: 0;
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: 600;
-  color: #1A1A1A;
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 .subtitle {
   margin: 0;
-  font-size: 13px;
-  line-height: 20px;
-  color: #64748B;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }
 
 .clearButton {
@@ -65,6 +67,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--profile-divider);
 }
 
 .fixedPreference {

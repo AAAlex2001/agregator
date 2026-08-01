@@ -2,11 +2,11 @@
 
 import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
+import { FormSection } from "@/source/shared/ui";
 import type { DirectionKey } from "@/source/entities/direction";
 import type { UserRole } from "@/source/entities/user";
 import { getDirectionForm } from "@/source/features/direction-forms";
 import { useProfileDirections } from "../model/useProfileDirections";
-import form from "@/source/entities/user/ui/ProfileForm.module.scss";
 import s from "./DirectionsSection.module.scss";
 
 interface Props {
@@ -22,13 +22,11 @@ export function DirectionsSection({ role }: Props) {
   const entry = getDirectionForm(activeKey, role);
 
   return (
-    <section className={form.section}>
-      <h2 className={form.subtitle}>Направления работы</h2>
+    <FormSection
+      title="Направления работы"
+      hint="Заполните анкету по каждому направлению, по которому готовы работать."
+    >
       <div className={s.body}>
-        <span className={s.hint}>
-          Заполните анкету по каждому направлению, по которому готовы работать.
-        </span>
-
         <Tabs
           tabs={directions.map((direction) => ({ id: direction.key, label: direction.title }))}
           activeTab={activeKey}
@@ -42,6 +40,6 @@ export function DirectionsSection({ role }: Props) {
           <entry.Form value={profile} onChange={changeProfile} catalogs={catalogs} />
         )}
       </div>
-    </section>
+    </FormSection>
   );
 }

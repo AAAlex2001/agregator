@@ -27,6 +27,15 @@
   --color-border-soft: #E2E8F0;
   --color-success: #047857;
   --color-error: #CF2C2C;
+
+  --profile-divider: #EEF1F5;
+  --profile-block-gap: 20px;
+  --profile-title-size: 15px;
+  --profile-title-line: 22px;
+  --profile-label-size: 14px;
+  --profile-label-line: 20px;
+  --profile-hint-size: 13px;
+  --profile-hint-line: 18px;
 }
 
 @media (min-width: 768px) {
@@ -34,6 +43,8 @@
     --page-px: 24px;
     --page-pt: 25px;
     --page-pb: 60px;
+    --profile-title-size: 16px;
+    --profile-title-line: 24px;
   }
 }
 

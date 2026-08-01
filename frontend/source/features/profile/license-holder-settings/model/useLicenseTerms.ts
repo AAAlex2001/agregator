@@ -29,20 +29,21 @@ const isExpertiseType = (v: unknown): v is ExpertiseType =>
   typeof v === "string" && (TYPES as readonly string[]).includes(v);
 
 function profileToValues(profile: UserProfile): LicenseTermsValues {
+  const holder = profile.license_holder;
   return {
-    licenseNumber: profile.license_number ?? "",
-    licenseAreas: (profile.license_areas ?? []).filter(isExpertiseType),
-    rentalKind: profile.license_rental_kind ?? "PERCENT",
+    licenseNumber: holder?.license_number ?? "",
+    licenseAreas: (holder?.license_areas ?? []).filter(isExpertiseType),
+    rentalKind: holder?.license_rental_kind ?? "PERCENT",
     rentalPercent:
-      profile.license_rental_kind === "PERCENT" && profile.license_rental_percent !== null
-        ? String(profile.license_rental_percent)
+      holder?.license_rental_kind === "PERCENT" && holder.license_rental_percent !== null
+        ? String(holder.license_rental_percent)
         : "",
     rentalFixedAmount:
-      profile.license_rental_kind === "FIXED" && profile.license_rental_fixed_amount !== null
-        ? String(profile.license_rental_fixed_amount)
+      holder?.license_rental_kind === "FIXED" && holder.license_rental_fixed_amount !== null
+        ? String(holder.license_rental_fixed_amount)
         : "",
-    miningLicenseNumber: profile.mining_license_number ?? "",
-    labAccreditationNumber: profile.lab_accreditation_number ?? "",
+    miningLicenseNumber: holder?.mining_license_number ?? "",
+    labAccreditationNumber: holder?.lab_accreditation_number ?? "",
   };
 }
 

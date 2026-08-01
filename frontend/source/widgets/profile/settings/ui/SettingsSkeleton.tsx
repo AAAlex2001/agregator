@@ -1,8 +1,7 @@
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
+import { FormGrid, FormSection } from "@/source/shared/ui";
 import { LogoutIcon } from "@/source/shared/ui/icons";
-import avatarStyles from "@/source/entities/user/ui/ProfileAvatarUpload.module.scss";
-import formStyles from "@/source/entities/user/ui/ProfileForm.module.scss";
 import s from "./SettingsSkeleton.module.scss";
 
 type SettingsSection = "personal" | "notifications" | "subscription" | "license";
@@ -98,20 +97,17 @@ function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
   return (
     <div className={s.form} aria-hidden="true">
       <div className={s.avatarSection}>
-        <div className={avatarStyles.heading}>
-          <h2 className={avatarStyles.title}>Фото профиля</h2>
-        </div>
-        <div className={avatarStyles.content}>
+        <h2 className={s.avatarTitle}>Фото профиля</h2>
+        <div className={s.avatarContent}>
           <div className={s.avatarTriggerWrap}>
             <Skeleton className={s.avatarCircle} rounded="pill" />
           </div>
-          <span className={avatarStyles.hint}>JPG, PNG до 5 МБ</span>
+          <span className={s.avatarHint}>JPG, PNG до 5 МБ</span>
         </div>
       </div>
 
-      <div className={formStyles.section}>
-        <h2 className={formStyles.subtitle}>Персональные данные</h2>
-        <div className={formStyles.grid}>
+      <FormSection title="Персональные данные">
+        <FormGrid>
           <Skeleton className={s.input} rounded="lg" />
           <Skeleton className={s.input} rounded="lg" />
           <Skeleton className={s.input} rounded="lg" />
@@ -119,7 +115,7 @@ function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
             <Skeleton className={s.input} rounded="lg" />
             <Skeleton className={s.verifiedBadge} rounded="pill" />
           </div>
-        </div>
+        </FormGrid>
 
         {isCustomer && (
           <div className={s.companyBlock}>
@@ -134,24 +130,23 @@ function PersonalSkeleton({ isCustomer }: { isCustomer: boolean }) {
             <Skeleton className={s.companyHint} rounded="pill" />
           </div>
         )}
-      </div>
+      </FormSection>
 
-      <div className={formStyles.section}>
-        <h2 className={formStyles.subtitle}>Изменить пароль</h2>
-        <div className={formStyles.grid}>
+      <FormSection title="Изменить пароль">
+        <FormGrid>
           {Array.from({ length: 2 }, (_, index) => (
             <Skeleton key={index} className={s.input} rounded="lg" />
           ))}
-        </div>
-      </div>
+        </FormGrid>
+      </FormSection>
 
-      <div className={formStyles.saveWrapper}>
-        <Button variant="chat" size="md" className={formStyles.saveButton} disabled>
+      <div className={s.saveWrapper}>
+        <Button variant="chat" size="md" className={s.saveButton} disabled>
           Сохранить изменения
         </Button>
-        <Button variant="transparent" size="md" className={formStyles.logoutButton} disabled>
-          <span className={formStyles.logoutContent}>
-            <LogoutIcon className={formStyles.logoutIcon} />
+        <Button variant="transparent" size="md" className={s.logoutButton} disabled>
+          <span className={s.logoutContent}>
+            <LogoutIcon className={s.logoutIcon} />
             <span>Выйти из профиля</span>
           </span>
         </Button>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import { FormGrid, FormSection } from "@/source/shared/ui";
 import {
   ContactFields,
   NameFields,
   PasswordFields,
   ProfileAvatarUpload,
+  ProfileForm,
   ProfileSaveProvider,
   SaveBar,
   useProfileShell,
@@ -16,7 +17,6 @@ import { ChangeEmailModal } from "@/source/features/profile/change-email";
 import { DirectionsSection } from "@/source/features/profile/directions";
 import { ExpertLocationSection } from "./ExpertLocationSection";
 import { ExpertContactOfferSection } from "./ExpertContactOfferSection";
-import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
   profile: UserProfile;
@@ -45,12 +45,9 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
         error={avatarError}
         onSelect={handleAvatarSelect}
       />
-      <form className={s.form} onSubmit={submit} autoComplete="off">
-        <AutofillGuard idPrefix="profile" />
-
-        <section className={s.section}>
-          <h2 className={s.subtitle}>Персональные данные</h2>
-          <div className={s.grid}>
+      <ProfileForm onSubmit={submit}>
+        <FormSection title="Персональные данные">
+          <FormGrid>
             <NameFields
               firstName={form.firstName}
               lastName={form.lastName}
@@ -65,34 +62,32 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
               onChangeEmail={form.setEmail}
               onRequestEmailChange={() => setEmailModalOpen(true)}
             />
-          </div>
-        </section>
+          </FormGrid>
+        </FormSection>
 
-        <section className={s.section}>
-          <h2 className={s.subtitle}>Изменить пароль</h2>
-          <div className={s.grid}>
+        <FormSection title="Изменить пароль">
+          <FormGrid>
             <PasswordFields
               password={form.password}
               repeatPassword={form.repeatPassword}
               onChangePassword={form.setPassword}
               onChangeRepeatPassword={form.setRepeatPassword}
             />
-          </div>
-        </section>
+          </FormGrid>
+        </FormSection>
 
         <ProfileSaveProvider register={registerSave}>
           <ExpertLocationSection profile={profile} />
 
           <DirectionsSection role="EXPERT" />
 
-          <section className={s.section}>
-            <h2 className={s.subtitle}>Платный доступ к контактам</h2>
+          <FormSection>
             <ExpertContactOfferSection />
-          </section>
+          </FormSection>
         </ProfileSaveProvider>
 
         <SaveBar isSaving={isSaving} />
-      </form>
+      </ProfileForm>
 
       <ChangeEmailModal
         open={emailModalOpen}

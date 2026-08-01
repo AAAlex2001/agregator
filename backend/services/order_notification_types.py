@@ -7,7 +7,6 @@ from services.experts.badge_codes import ALL_BADGE_CODES
 ENGINEERING_ORDER_NOTIFICATION_TYPES: tuple[str, ...] = (
     OrderWorkType.DESIGN_SURVEY.value,
     OrderWorkType.INSPECTION_TESTING.value,
-    OrderWorkType.RESEARCH_LAB.value,
     OrderWorkType.OTHER.value,
 )
 

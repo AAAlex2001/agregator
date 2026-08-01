@@ -21,17 +21,17 @@
 
 .label {
   font-family: var(--font-base, "Montserrat", sans-serif);
-  font-size: 15px;
-  line-height: 22px;
-  font-weight: 500;
-  color: #1A1A1A;
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .description {
   font-family: var(--font-base, "Montserrat", sans-serif);
-  font-size: 13px;
-  line-height: 20px;
-  color: #64748B;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
 }
 
 .track {

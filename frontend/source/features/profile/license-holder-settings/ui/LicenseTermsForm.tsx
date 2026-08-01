@@ -57,18 +57,19 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
   const sroInputRef = useRef<HTMLInputElement>(null);
   const labInputRef = useRef<HTMLInputElement>(null);
 
-  const fileItems = profile.license_file_url ? [remoteFileItem(profile.license_file_url)] : [];
-  const cardItems = profile.company_card_url
-    ? [remoteFileItem(profile.company_card_url, "card-remote", "Карточка предприятия", removeCompanyCardFile)]
+  const holder = profile.license_holder;
+  const fileItems = holder?.license_file_url ? [remoteFileItem(holder.license_file_url)] : [];
+  const cardItems = holder?.company_card_url
+    ? [remoteFileItem(holder.company_card_url, "card-remote", "Карточка предприятия", removeCompanyCardFile)]
     : [];
-  const miningItems = profile.mining_license_file_url
-    ? [remoteFileItem(profile.mining_license_file_url, "mining-remote", "Лицензия маркшейдера")]
+  const miningItems = holder?.mining_license_file_url
+    ? [remoteFileItem(holder.mining_license_file_url, "mining-remote", "Лицензия маркшейдера")]
     : [];
-  const sroItems = profile.sro_design_file_url
-    ? [remoteFileItem(profile.sro_design_file_url, "sro-remote", "Выписка из реестра членов СРО в области проектирования")]
+  const sroItems = holder?.sro_design_file_url
+    ? [remoteFileItem(holder.sro_design_file_url, "sro-remote", "Выписка из реестра членов СРО в области проектирования")]
     : [];
-  const labItems = profile.lab_accreditation_file_url
-    ? [remoteFileItem(profile.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
+  const labItems = holder?.lab_accreditation_file_url
+    ? [remoteFileItem(holder.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
     : [];
 
   const handleSubmit = (e: React.FormEvent) => {

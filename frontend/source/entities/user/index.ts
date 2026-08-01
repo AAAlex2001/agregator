@@ -46,6 +46,7 @@ export { useProfileForm } from "./model/useProfileForm";
 export { useProfileShell } from "./model/useProfileShell";
 export { ProfileSaveProvider, useRegisterProfileSave } from "./model/profileSave";
 export { ProfileAvatarUpload } from "./ui/ProfileAvatarUpload";
+export { ProfileForm } from "./ui/ProfileForm";
 export { NameFields } from "./ui/NameFields";
 export { ContactFields } from "./ui/ContactFields";
 export { PasswordFields } from "./ui/PasswordFields";

@@ -1,5 +1,6 @@
 ﻿export { default as Button } from "./Button";
 export { Checkbox } from "./Checkbox";
+export { FormGrid, FormSection } from "./FormSection";
 export { Switch } from "./Switch";
 export { RadioGroup } from "./RadioGroup";
 export type { RadioOption } from "./RadioGroup";

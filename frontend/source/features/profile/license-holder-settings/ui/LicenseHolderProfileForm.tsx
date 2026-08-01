@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import AutofillGuard from "@/source/shared/ui/AutofillGuard";
+import { FormGrid, FormSection } from "@/source/shared/ui";
 import {
   CompanyReadonly,
   ContactFields,
   PasswordFields,
   ProfileAvatarUpload,
+  ProfileForm,
   SaveBar,
   useProfileShell,
   type UserProfile,
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
-import s from "@/source/entities/user/ui/ProfileForm.module.scss";
 
 interface Props {
   profile: UserProfile;
@@ -33,12 +33,9 @@ export function LicenseHolderProfileForm({ profile, onProfileUpdate }: Props) {
         error={avatarError}
         onSelect={handleAvatarSelect}
       />
-      <form className={s.form} onSubmit={submit} autoComplete="off">
-        <AutofillGuard idPrefix="profile" />
-
-        <section className={s.section}>
-          <h2 className={s.subtitle}>Контактные данные</h2>
-          <div className={s.grid}>
+      <ProfileForm onSubmit={submit}>
+        <FormSection title="Контактные данные">
+          <FormGrid>
             <ContactFields
               phone={form.phone}
               email={form.email}
@@ -47,26 +44,25 @@ export function LicenseHolderProfileForm({ profile, onProfileUpdate }: Props) {
               onChangeEmail={form.setEmail}
               onRequestEmailChange={() => setEmailModalOpen(true)}
             />
-          </div>
+          </FormGrid>
           {profile.inn && profile.company_data && (
             <CompanyReadonly companyName={profile.company_data.value ?? ""} inn={profile.inn} />
           )}
-        </section>
+        </FormSection>
 
-        <section className={s.section}>
-          <h2 className={s.subtitle}>Изменить пароль</h2>
-          <div className={s.grid}>
+        <FormSection title="Изменить пароль">
+          <FormGrid>
             <PasswordFields
               password={form.password}
               repeatPassword={form.repeatPassword}
               onChangePassword={form.setPassword}
               onChangeRepeatPassword={form.setRepeatPassword}
             />
-          </div>
-        </section>
+          </FormGrid>
+        </FormSection>
 
         <SaveBar isSaving={isSaving} />
-      </form>
+      </ProfileForm>
 
       <ChangeEmailModal
         open={emailModalOpen}
