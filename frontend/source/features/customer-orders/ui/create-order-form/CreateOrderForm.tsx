@@ -17,6 +17,7 @@ import { ExpertsMapSection } from "./sections/ExpertsMapSection";
 import { FilesSection } from "./sections/FilesSection";
 import { FormActions } from "./sections/FormActions";
 import { RequirementsSection } from "./sections/RequirementsSection";
+import { WorkTypeSection } from "./sections/WorkTypeSection";
 import { OrderLivePreview } from "./OrderLivePreview";
 import s from "./CreateOrderForm.module.scss";
 
@@ -70,7 +71,9 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
 
               <DetailsSection form={formState.form} />
 
-              <RequirementsSection form={formState.form} />
+              <WorkTypeSection form={formState.form} />
+
+              {isExpertise && <RequirementsSection form={formState.form} />}
 
               {hasOrderDetails(workType) && <DirectionDetailsSection form={formState.form} />}
 

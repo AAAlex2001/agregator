@@ -13,8 +13,9 @@ export type OrderWorkType =
 export type OrderWorkGroup = "direction" | "engineering";
 
 export interface OrderWorkOption {
-  value: Exclude<OrderWorkType, "EXPERTISE" | "RESEARCH_LAB">;
+  value: Exclude<OrderWorkType, "RESEARCH_LAB">;
   label: string;
+  shortLabel?: string;
   description: string;
   group: OrderWorkGroup;
 }
@@ -25,6 +26,7 @@ export const ORDER_WORK_GROUPS: Array<{ key: OrderWorkGroup; title: string }> = 
 ];
 
 export const ORDER_WORK_OPTIONS: OrderWorkOption[] = [
+  { value: "EXPERTISE", label: "Экспертиза промышленной безопасности", shortLabel: "Экспертиза", description: "Технические устройства, здания и сооружения, документация ОПО", group: "direction" },
   { value: "AUDIT_SUPB", label: "Аудит СУПБ", description: "Независимая оценка системы управления промышленной безопасностью", group: "direction" },
   { value: "RESEARCH", label: "НИРы", description: "Научно-исследовательские работы: тема, требования к исполнителю, выезд на объект", group: "direction" },
   { value: "LABORATORY", label: "Лабораторные исследования", description: "Наименование исследований и требования к оборудованию", group: "direction" },
@@ -35,8 +37,20 @@ export const ORDER_WORK_OPTIONS: OrderWorkOption[] = [
   { value: "OTHER", label: "Прочие", description: "Другие инженерные работы", group: "engineering" },
 ];
 
+export const SUBSCRIPTION_WORK_OPTIONS: OrderWorkOption[] = ORDER_WORK_OPTIONS.filter(
+  (option) => option.value !== "EXPERTISE",
+);
+
 export function orderWorkOptionsOf(group: OrderWorkGroup): OrderWorkOption[] {
   return ORDER_WORK_OPTIONS.filter((option) => option.group === group);
+}
+
+export function subscriptionWorkOptionsOf(group: OrderWorkGroup): OrderWorkOption[] {
+  return SUBSCRIPTION_WORK_OPTIONS.filter((option) => option.group === group);
+}
+
+export function orderWorkGroupOf(value: OrderWorkType): OrderWorkGroup {
+  return ORDER_WORK_OPTIONS.find((option) => option.value === value)?.group ?? "direction";
 }
 
 const LEGACY_WORK_LABELS: Record<string, string> = {
@@ -44,8 +58,7 @@ const LEGACY_WORK_LABELS: Record<string, string> = {
 };
 
 export function getOrderWorkLabel(value: OrderWorkType): string {
-  if (value === "EXPERTISE") return "Экспертиза";
   const option = ORDER_WORK_OPTIONS.find((item) => item.value === value);
-  if (option) return option.label;
+  if (option) return option.shortLabel ?? option.label;
   return LEGACY_WORK_LABELS[value] ?? "Экспертиза";
 }

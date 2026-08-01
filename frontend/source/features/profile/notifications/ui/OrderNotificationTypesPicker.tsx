@@ -1,12 +1,16 @@
 "use client";
 
 import { ALL_BADGE_CODES_SET, BadgeCodesPicker } from "@/source/entities/expertise";
-import { ORDER_WORK_GROUPS, ORDER_WORK_OPTIONS, orderWorkOptionsOf } from "@/source/entities/order";
+import {
+  ORDER_WORK_GROUPS,
+  SUBSCRIPTION_WORK_OPTIONS,
+  subscriptionWorkOptionsOf,
+} from "@/source/entities/order";
 import { Switch } from "@/source/shared/ui/Switch";
 import s from "./OrderNotificationTypesPicker.module.scss";
 
 const WORK_TYPE_CODES: ReadonlySet<string> = new Set(
-  ORDER_WORK_OPTIONS.map((option) => option.value),
+  SUBSCRIPTION_WORK_OPTIONS.map((option) => option.value),
 );
 
 interface Props {
@@ -45,7 +49,7 @@ export function OrderNotificationTypesPicker({
         <section key={group.key} className={s.section}>
           <h4 className={s.heading}>{group.title}</h4>
           <ul className={s.engineeringList}>
-            {orderWorkOptionsOf(group.key).map((option) => (
+            {subscriptionWorkOptionsOf(group.key).map((option) => (
               <li key={option.value} className={s.engineeringItem}>
                 <Switch
                   id={`order-notification-${option.value.toLowerCase()}`}

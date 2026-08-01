@@ -24,8 +24,11 @@ export { usePublicOrdersList } from "./model/usePublicOrdersList";
 export {
   ORDER_WORK_GROUPS,
   ORDER_WORK_OPTIONS,
+  SUBSCRIPTION_WORK_OPTIONS,
   getOrderWorkLabel,
+  orderWorkGroupOf,
   orderWorkOptionsOf,
+  subscriptionWorkOptionsOf,
 } from "./model/workTypes";
 export type { OrderWorkGroup, OrderWorkOption, OrderWorkType } from "./model/workTypes";
 export type {
