@@ -8,6 +8,7 @@ import type { DirectionCatalogs, DirectionKey, DirectionProfile } from "@/source
 import type { UserRole } from "@/source/entities/user";
 import type { RegisterFormValues } from "../model/schema";
 import { ExpertProfileFields } from "./credentials/ExpertProfileFields";
+import { NameFields } from "./credentials/NameFields";
 import { OrganizationField } from "./credentials/OrganizationField";
 import { LicenseDetailsFields } from "./credentials/LicenseDetailsFields";
 import { ContactFields } from "./credentials/ContactFields";
@@ -114,6 +115,8 @@ export function CredentialsStep({
         )}
 
         {isExpert && <ExpertProfileFields form={form} />}
+
+        {isCustomer && <NameFields form={form} />}
 
         {(isCustomer || isLicenseHolder) && <OrganizationField form={form} />}
 

@@ -80,13 +80,16 @@ export const registerFormSchema = z
       });
     }
 
-    if (data.role === "EXPERT") {
+    if (data.role === "EXPERT" || data.role === "CUSTOMER") {
       if (!data.firstName) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["firstName"], message: "Укажите имя" });
       }
       if (!data.lastName) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["lastName"], message: "Укажите фамилию" });
       }
+    }
+
+    if (data.role === "EXPERT") {
       if (data.contactSalesEnabled) {
         const price = Number(data.contactPriceRubles.replace(/\s/g, ""));
         if (!Number.isInteger(price) || price < 1 || price > 1_000_000) {
