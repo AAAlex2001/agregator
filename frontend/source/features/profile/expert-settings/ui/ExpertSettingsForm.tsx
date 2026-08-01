@@ -7,6 +7,7 @@ import {
   NameFields,
   PasswordFields,
   ProfileAvatarUpload,
+  ProfileSaveProvider,
   SaveBar,
   useProfileShell,
   type UserProfile,
@@ -23,8 +24,16 @@ interface Props {
 }
 
 export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
-  const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit } =
-    useProfileShell({ profile, onProfileUpdate });
+  const {
+    form,
+    avatarPreviewUrl,
+    avatarError,
+    isLoggingOut,
+    isSaving,
+    registerSave,
+    handleAvatarSelect,
+    submit,
+  } = useProfileShell({ profile, onProfileUpdate });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
@@ -71,14 +80,16 @@ export function ExpertSettingsForm({ profile, onProfileUpdate }: Props) {
           </div>
         </section>
 
-        <ExpertLocationSection profile={profile} onProfileUpdate={onProfileUpdate} />
+        <ProfileSaveProvider register={registerSave}>
+          <ExpertLocationSection profile={profile} />
 
-        <DirectionsSection role="EXPERT" />
+          <DirectionsSection role="EXPERT" />
 
-        <section className={s.section}>
-          <h2 className={s.subtitle}>Платный доступ к контактам</h2>
-          <ExpertContactOfferSection />
-        </section>
+          <section className={s.section}>
+            <h2 className={s.subtitle}>Платный доступ к контактам</h2>
+            <ExpertContactOfferSection />
+          </section>
+        </ProfileSaveProvider>
 
         <SaveBar isSaving={isSaving} />
       </form>

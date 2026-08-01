@@ -8,6 +8,7 @@ import {
   NameFields,
   PasswordFields,
   ProfileAvatarUpload,
+  ProfileSaveProvider,
   SaveBar,
   useProfileShell,
   type UserProfile,
@@ -22,8 +23,16 @@ interface Props {
 }
 
 export function CustomerSettingsForm({ profile, onProfileUpdate }: Props) {
-  const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit } =
-    useProfileShell({ profile, onProfileUpdate });
+  const {
+    form,
+    avatarPreviewUrl,
+    avatarError,
+    isLoggingOut,
+    isSaving,
+    registerSave,
+    handleAvatarSelect,
+    submit,
+  } = useProfileShell({ profile, onProfileUpdate });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
@@ -73,7 +82,9 @@ export function CustomerSettingsForm({ profile, onProfileUpdate }: Props) {
           </div>
         </section>
 
-        <DirectionsSection role="CUSTOMER" />
+        <ProfileSaveProvider register={registerSave}>
+          <DirectionsSection role="CUSTOMER" />
+        </ProfileSaveProvider>
 
         <SaveBar isSaving={isSaving} />
       </form>

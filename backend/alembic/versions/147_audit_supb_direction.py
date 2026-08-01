@@ -38,7 +38,6 @@ def upgrade() -> None:
         sa.Column("audit_qualifications", postgresql.JSONB(), nullable=False, server_default="[]"),
         sa.Column("full_name", sa.String(500), nullable=False, server_default=""),
         sa.Column("short_name", sa.String(300), nullable=False, server_default=""),
-        sa.Column("inn", sa.String(12), nullable=False, server_default=""),
         sa.Column("certificate_number", sa.String(100), nullable=False, server_default=""),
         sa.Column("accreditation_areas", postgresql.JSONB(), nullable=False, server_default="[]"),
         sa.Column("documents", postgresql.JSONB(), nullable=False, server_default="[]"),

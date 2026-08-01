@@ -7,18 +7,17 @@ import {
   updateContactOffer,
   type ExpertContactOfferData,
 } from "@/source/entities/expert-contact";
-import { Button, Loader } from "@/source/shared/ui";
-import { useNotifications } from "@/source/shared/ui/Notifications";
+import { Loader } from "@/source/shared/ui";
+import { useRegisterProfileSave } from "@/source/entities/user";
 import s from "./ExpertContactOfferSection.module.scss";
 
 export function ExpertContactOfferSection() {
-  const { showError, showSuccess } = useNotifications();
   const [offer, setOffer] = useState<ExpertContactOfferData | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [price, setPrice] = useState("");
   const [paymentDetails, setPaymentDetails] = useState("");
   const [consent, setConsent] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,27 +37,29 @@ export function ExpertContactOfferSection() {
     void load();
   }, []);
 
-  const submit = async () => {
-    setSaving(true);
-    try {
-      const updated = await updateContactOffer({
-        enabled,
-        price_rubles: enabled ? Number(price) : undefined,
-        payment_details: enabled ? paymentDetails.trim() : undefined,
-        disclosure_consent: enabled ? consent : undefined,
-      });
-      setOffer(updated);
-      setEnabled(updated.enabled);
-      setPrice(String(updated.price_rubles ?? ""));
-      setPaymentDetails(updated.payment_details ?? "");
-      setConsent(false);
-      showSuccess("Настройки платного доступа сохранены");
-    } catch (reason) {
-      showError(reason instanceof Error ? reason.message : "Не удалось сохранить настройки контактов");
-    } finally {
-      setSaving(false);
+  useRegisterProfileSave(async () => {
+    if (!isDirty) return;
+    if (enabled) {
+      if (!price || !paymentDetails.trim()) {
+        throw new Error("Укажите стоимость и реквизиты для платного доступа к контактам");
+      }
+      if (!consent) {
+        throw new Error("Подтвердите согласие на передачу контактов после оплаты");
+      }
     }
-  };
+    const updated = await updateContactOffer({
+      enabled,
+      price_rubles: enabled ? Number(price) : undefined,
+      payment_details: enabled ? paymentDetails.trim() : undefined,
+      disclosure_consent: enabled ? consent : undefined,
+    });
+    setOffer(updated);
+    setEnabled(updated.enabled);
+    setPrice(String(updated.price_rubles ?? ""));
+    setPaymentDetails(updated.payment_details ?? "");
+    setConsent(false);
+    setIsDirty(false);
+  });
 
   if (!offer) {
     return loadError
@@ -66,31 +67,22 @@ export function ExpertContactOfferSection() {
       : <Loader size="sm" label="Загружаем настройки контактов" />;
   }
 
+  const change = <Value,>(setter: (value: Value) => void) => (value: Value) => {
+    setter(value);
+    setIsDirty(true);
+  };
+
   return (
-    <section className={s.form}>
-      <ExpertContactOfferFields
-        idPrefix="profile"
-        enabled={enabled}
-        price={price}
-        paymentDetails={paymentDetails}
-        consent={consent}
-        onEnabledChange={setEnabled}
-        onPriceChange={setPrice}
-        onPaymentDetailsChange={setPaymentDetails}
-        onConsentChange={setConsent}
-      />
-      <div className={s.actions}>
-        <Button
-          type="button"
-          variant="primary"
-          size="sm"
-          isLoading={saving}
-          disabled={enabled && (!consent || !price || !paymentDetails.trim())}
-          onClick={() => void submit()}
-        >
-          Сохранить настройки контактов
-        </Button>
-      </div>
-    </section>
+    <ExpertContactOfferFields
+      idPrefix="profile"
+      enabled={enabled}
+      price={price}
+      paymentDetails={paymentDetails}
+      consent={consent}
+      onEnabledChange={change(setEnabled)}
+      onPriceChange={change(setPrice)}
+      onPaymentDetailsChange={change(setPaymentDetails)}
+      onConsentChange={change(setConsent)}
+    />
   );
 }

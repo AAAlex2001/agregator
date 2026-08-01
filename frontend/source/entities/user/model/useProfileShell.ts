@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { UserProfile } from "./types";
-import { logout as logoutRequest } from "../api/profile.api";
+import { fetchProfile, logout as logoutRequest } from "../api/profile.api";
 import { useProfileForm } from "./useProfileForm";
+import { useProfileSavers } from "./profileSave";
 
 const AVATAR_MAX_SIZE = 5 * 1024 * 1024;
 const AVATAR_INVALID_TYPE = "Можно загрузить только JPG или PNG размером до 5 МБ";
@@ -20,10 +21,12 @@ export function useProfileShell({ profile, onProfileUpdate }: Options) {
   const router = useRouter();
   const { showError, showSuccess } = useNotifications();
   const form = useProfileForm(profile);
+  const { register, runSavers } = useProfileSavers();
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [isSavingSections, setIsSavingSections] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
@@ -74,7 +77,18 @@ export function useProfileShell({ profile, onProfileUpdate }: Options) {
         return null;
       });
     }
-    if (result.successMessage) showSuccess(result.successMessage);
+
+    setIsSavingSections(true);
+    try {
+      if (await runSavers()) onProfileUpdate(await fetchProfile());
+    } catch (error) {
+      showError(error instanceof Error ? error.message : "Не удалось сохранить изменения");
+      return;
+    } finally {
+      setIsSavingSections(false);
+    }
+
+    showSuccess("Изменения сохранены");
   };
 
   const logout = async () => {
@@ -93,7 +107,8 @@ export function useProfileShell({ profile, onProfileUpdate }: Options) {
     avatarPreviewUrl,
     avatarError,
     isLoggingOut,
-    isSaving: form.isSaving,
+    isSaving: form.isSaving || isSavingSections,
+    registerSave: register,
     handleAvatarSelect,
     submit,
     logout,

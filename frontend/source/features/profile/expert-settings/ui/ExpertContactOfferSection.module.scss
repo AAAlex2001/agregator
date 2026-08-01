@@ -1,32 +1,6 @@
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  width: 100%;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.actions > button {
-  width: 100%;
-  font-size: 14px;
-}
-
 .error {
   margin: 0;
   color: #e64646;
   font-size: 13px;
   line-height: 18px;
-}
-
-@media (min-width: 768px) {
-  .actions > button {
-    width: auto;
-    min-width: 260px;
-  }
 }

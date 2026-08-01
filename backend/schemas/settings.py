@@ -38,10 +38,6 @@ class UpdatePersonalDataRequest(BaseModel):
     first_name: str | None = Field(None, description="Имя", max_length=100)
     phone: str | None = Field(None, description="Номер телефона", max_length=20)
     inn: str | None = Field(None, description="ИНН", min_length=10, max_length=12)
-    position: str | None = Field(None, description="Должность представителя", max_length=200)
-    opo_license_number: str | None = Field(
-        None, description="Номер лицензии на эксплуатацию ОПО", max_length=100
-    )
 
     @model_validator(mode="after")
     def validate_phone_format(self) -> "UpdatePersonalDataRequest":
@@ -150,8 +146,6 @@ class UserSettingsResponse(BaseModel):
     avatar_url: str | None = None
     first_name: str | None = None
     last_name: str | None = None
-    position: str = ""
-    opo_license_number: str | None = None
     rating: float | None = None
     review_count: int = 0
     role: str

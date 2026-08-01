@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useNotifications } from "@/source/shared/ui/Notifications";
+import { useEffect, useRef, useState } from "react";
 import {
   fetchDirectionProfile,
   fetchMyDirections,
@@ -11,18 +10,20 @@ import {
   type DirectionProfile,
   type DirectionSummary,
 } from "@/source/entities/direction";
-import type { UserRole } from "@/source/entities/user";
-import { useSession } from "@/source/features/session";
-import { emptyDirectionValue, getDirectionForm, validateDirection } from "@/source/features/direction-forms";
+import { useRegisterProfileSave, type UserRole } from "@/source/entities/user";
+import {
+  emptyDirectionValue,
+  getDirectionForm,
+  validateDirection,
+} from "@/source/features/direction-forms";
 
 export function useProfileDirections(role: UserRole) {
-  const { showSuccess, showError } = useNotifications();
-  const { reload } = useSession();
   const catalogs = useDirectionCatalogs();
+  const requested = useRef<Set<DirectionKey>>(new Set());
   const [directions, setDirections] = useState<DirectionSummary[]>([]);
   const [activeKey, setActiveKey] = useState<DirectionKey | null>(null);
-  const [profile, setProfile] = useState<DirectionProfile | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [profiles, setProfiles] = useState<Partial<Record<DirectionKey, DirectionProfile>>>({});
+  const [dirty, setDirty] = useState<DirectionKey[]>([]);
 
   useEffect(() => {
     let alive = true;
@@ -40,48 +41,51 @@ export function useProfileDirections(role: UserRole) {
   }, [role]);
 
   useEffect(() => {
-    if (!activeKey) return;
+    const key = activeKey;
+    if (!key || requested.current.has(key)) return;
+    requested.current.add(key);
+
     let alive = true;
-    setProfile(null);
-    fetchDirectionProfile(activeKey)
+    fetchDirectionProfile(key)
       .then((loaded) => {
-        if (alive) setProfile({ ...emptyDirectionValue(activeKey, role), ...loaded });
+        if (alive) setProfiles((current) => ({ ...current, [key]: loaded }));
       })
       .catch(() => {
-        if (alive) setProfile(emptyDirectionValue(activeKey, role));
+        if (alive) setProfiles((current) => ({ ...current, [key]: emptyDirectionValue(key, role) }));
       });
     return () => {
       alive = false;
     };
   }, [activeKey, role]);
 
-  const save = async () => {
-    if (!activeKey || !profile) return;
-    const message = validateDirection(activeKey, role, profile);
-    if (message) {
-      showError(message);
-      return;
+  useRegisterProfileSave(async () => {
+    for (const key of dirty) {
+      const value = profiles[key];
+      if (!value) continue;
+      const message = validateDirection(key, role, value);
+      if (message) throw new Error(`${titleOf(directions, key)}: ${message}`);
+      await saveDirectionProfile(key, value);
     }
-    setIsSaving(true);
-    try {
-      setProfile(await saveDirectionProfile(activeKey, profile));
-      await reload();
-      showSuccess("Анкета направления сохранена");
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось сохранить анкету");
-    } finally {
-      setIsSaving(false);
-    }
+    setDirty([]);
+  });
+
+  const changeProfile = (value: DirectionProfile) => {
+    const key = activeKey;
+    if (!key) return;
+    setProfiles((current) => ({ ...current, [key]: value }));
+    setDirty((current) => (current.includes(key) ? current : [...current, key]));
   };
 
   return {
     catalogs,
     directions,
     activeKey,
-    profile,
-    isSaving,
+    profile: activeKey ? (profiles[activeKey] ?? null) : null,
     selectDirection: setActiveKey,
-    changeProfile: setProfile,
-    save,
+    changeProfile,
   };
+}
+
+function titleOf(directions: DirectionSummary[], key: DirectionKey): string {
+  return directions.find((item) => item.key === key)?.title ?? key;
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import Loader from "@/source/shared/ui/Loader";
 import type { DirectionKey } from "@/source/entities/direction";
@@ -15,7 +14,7 @@ interface Props {
 }
 
 export function DirectionsSection({ role }: Props) {
-  const { catalogs, directions, activeKey, profile, isSaving, selectDirection, changeProfile, save } =
+  const { catalogs, directions, activeKey, profile, selectDirection, changeProfile } =
     useProfileDirections(role);
 
   if (!directions.length || !activeKey) return null;
@@ -40,14 +39,7 @@ export function DirectionsSection({ role }: Props) {
         {!profile || !entry ? (
           <Loader />
         ) : (
-          <>
-            <entry.Form value={profile} onChange={changeProfile} catalogs={catalogs} />
-            <div className={s.actions}>
-              <Button type="button" variant="primary" fullWidth onClick={save} isLoading={isSaving}>
-                Сохранить анкету
-              </Button>
-            </div>
-          </>
+          <entry.Form value={profile} onChange={changeProfile} catalogs={catalogs} />
         )}
       </div>
     </section>
