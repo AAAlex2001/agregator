@@ -43,7 +43,7 @@ class RegisterUserUseCase:
         await self.validator.ensure_phone_is_free(data.phone, data.role)
 
         account = Account(
-            role=data.role,
+            role=UserRole(data.role.value),
             phone=data.phone,
             email=data.email,
             email_verified=False,
