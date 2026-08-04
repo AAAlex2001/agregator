@@ -4,15 +4,16 @@ import s from "./OrderDetailsList.module.scss";
 
 interface Props {
   workType: OrderWorkType;
-  details: Record<string, unknown> | null | undefined;
+  details: object | null | undefined;
   heading?: string;
 }
 
 export function OrderDetailsList({ workType, details, heading = "Поля направления" }: Props) {
   if (!details) return null;
 
+  const data = new Map<string, unknown>(Object.entries(details));
   const rows = orderDetailsFields(workType)
-    .map((field) => ({ label: field.label, value: formatOrderDetailValue(details[field.key]) }))
+    .map((field) => ({ label: field.label, value: formatOrderDetailValue(field, data.get(field.key)) }))
     .filter((row) => row.value !== "");
 
   if (!rows.length) return null;

@@ -16,7 +16,7 @@ import {
   type LaborListingPayload,
 } from "@/source/entities/labor";
 import type { ExpertiseType } from "@/source/entities/expertise";
-import { fetchExpertiseProfile } from "@/source/entities/direction";
+import { fetchExpertiseProfile } from "@/source/features/directions/expertise";
 import { useSession } from "@/source/features/session";
 import { buildExpertiseRequirements } from "../lib/expertiseRequirements";
 import { LABOR_PAGE_COPY } from "./config";

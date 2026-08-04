@@ -3,7 +3,11 @@ import {
   cell,
   type ExpertiseType,
 } from "@/source/entities/expertise";
-import { hasOrderDetails, normalizeDetails } from "./detailsRegistry";
+import {
+  activeDirectionDetails,
+  directionDetailsFromServer,
+  emptyDirectionDetails,
+} from "./orderDetails";
 import type { DocumentsFormState } from "./formFiles";
 import type { OrderFormValues } from "./schema";
 
@@ -67,7 +71,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
       requiresExpert: false,
       requiresLicense: false,
       workType: "EXPERTISE",
-      details: {},
+      ...emptyDirectionDetails(),
     };
   }
 
@@ -83,7 +87,7 @@ export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
     requiresExpert: editTarget.requiresExpert,
     requiresLicense: editTarget.requiresLicense,
     workType: editTarget.workType,
-    details: normalizeDetails(editTarget.workType, editTarget.details ?? {}),
+    ...directionDetailsFromServer(editTarget.workType, editTarget.details),
   };
 }
 
@@ -115,7 +119,7 @@ export function buildCreatePayload(values: OrderFormValues, documents: Documents
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
     work_type: values.workType,
-    details: hasOrderDetails(values.workType) ? values.details : undefined,
+    details: activeDirectionDetails(values.workType, values),
     comment: values.comment.trim(),
     customer_id: userId,
     documents,
@@ -138,7 +142,7 @@ export function buildUpdatePayload(
     requires_expert: values.requiresExpert,
     requires_license: values.requiresLicense,
     work_type: values.workType,
-    details: hasOrderDetails(values.workType) ? values.details : undefined,
+    details: activeDirectionDetails(values.workType, values),
     comment: values.comment.trim(),
     documents,
     notify_responders: notifyResponders,

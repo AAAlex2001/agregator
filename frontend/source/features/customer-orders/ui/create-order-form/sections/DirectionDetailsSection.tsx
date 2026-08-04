@@ -1,19 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import Button from "@/source/shared/ui/Button";
-import { Checkbox } from "@/source/shared/ui/Checkbox";
-import { TextArea, TextInput } from "@/source/shared/ui/Inputs";
+import type { OrderWorkType } from "@/source/entities/order";
 import {
-  EXECUTOR_REQUIREMENT_HINTS,
-  ORDER_DETAILS_TITLES,
-  orderDetailsFields,
-  type OrderDetailField,
-} from "@/source/entities/order";
-import { KADASTR_SRO_REGISTRY_URL } from "@/source/shared/config/externalLinks";
+  AuditOrderFields,
+  emptyAuditCatalogs,
+  fetchAuditCatalogs,
+  type AuditCatalogs,
+} from "@/source/features/directions/audit";
+import { CadastralOrderFields } from "@/source/features/directions/cadastral";
+import { ForensicOrderFields } from "@/source/features/directions/forensic";
+import { LaboratoryOrderFields } from "@/source/features/directions/laboratory";
+import { ResearchOrderFields } from "@/source/features/directions/research";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./directionDetailsSection.module.scss";
+
+const SECTION_TITLES: Partial<Record<OrderWorkType, string>> = {
+  CADASTRAL: "Кадастровые работы",
+  FORENSIC: "Судебная экспертиза",
+  RESEARCH: "Создать заявку на проведение НИР",
+  LABORATORY: "Создать заявку на проведение лабораторных исследований",
+  AUDIT_SUPB: "Заявка на аудит СУПБ",
+};
 
 interface Props {
   form: UseFormReturn<OrderFormValues>;
@@ -22,117 +32,70 @@ interface Props {
 export function DirectionDetailsSection({ form }: Props) {
   const { watch, setValue, formState } = form;
   const workType = watch("workType");
-  const details = watch("details");
-  const error = formState.errors.details?.message as string | undefined;
+  const [auditCatalogs, setAuditCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
 
-  const set = (field: string, value: unknown) =>
-    setValue(
-      "details",
-      { ...details, [field]: value },
-      { shouldDirty: true, shouldValidate: formState.isSubmitted },
-    );
+  useEffect(() => {
+    if (workType !== "AUDIT_SUPB") return;
+    let alive = true;
+    fetchAuditCatalogs()
+      .then((loaded) => alive && setAuditCatalogs(loaded))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [workType]);
 
-  const renderField = (field: OrderDetailField) => {
-    if (field.kind === "flag") {
-      return (
-        <Checkbox
-          key={field.key}
-          id={`order-details-${field.key}`}
-          checked={Boolean(details[field.key])}
-          onChange={(checked) => set(field.key, checked)}
-        >
-          {field.label}
-        </Checkbox>
-      );
-    }
-
-    if (field.kind === "list") {
-      const items = Array.isArray(details[field.key]) ? (details[field.key] as string[]) : [""];
-      return (
-        <div key={field.key} className={s.field}>
-          <span className={s.label}>{field.label}</span>
-          <span className={s.hint}>
-            Например: {EXECUTOR_REQUIREMENT_HINTS.join(", ").toLowerCase()}
-          </span>
-          {items.map((item, index) => (
-            <div key={index} className={s.requirementRow}>
-              <TextInput
-                value={item}
-                onChange={(event) =>
-                  set(
-                    field.key,
-                    items.map((prev, i) => (i === index ? event.target.value : prev)),
-                  )
-                }
-                placeholder={EXECUTOR_REQUIREMENT_HINTS[index] ?? field.placeholder}
-                className={s.requirementInput}
-              />
-              {items.length > 1 && (
-                <button
-                  type="button"
-                  className={s.removeRequirement}
-                  aria-label="Убрать требование"
-                  onClick={() => set(field.key, items.filter((_, i) => i !== index))}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            variant="transparent"
-            size="sm"
-            className={s.addRequirement}
-            onClick={() => set(field.key, [...items, ""])}
-          >
-            + Добавить поле
-          </Button>
-        </div>
-      );
-    }
-
-    const value = String(details[field.key] ?? "");
-    return (
-      <label key={field.key} className={s.field}>
-        <span className={s.label}>{field.label}</span>
-        {field.kind === "textarea" ? (
-          <TextArea
-            value={value}
-            onChange={(event) => set(field.key, event.target.value)}
-            placeholder={field.placeholder}
-            maxLength={5000}
-          />
-        ) : (
-          <TextInput
-            value={value}
-            onChange={(event) => set(field.key, event.target.value)}
-            placeholder={field.placeholder}
-          />
-        )}
-        {workType === "CADASTRAL" && field.key === "work_location" && (
-          <a
-            className={s.registryLink}
-            href={KADASTR_SRO_REGISTRY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Проверить кадастрового инженера по реестру СРО
-          </a>
-        )}
-      </label>
-    );
-  };
+  const changeOptions = { shouldDirty: true, shouldValidate: formState.isSubmitted };
+  const errorMessage =
+    formState.errors.cadastralDetails?.message ??
+    formState.errors.forensicDetails?.message ??
+    formState.errors.researchDetails?.message ??
+    formState.errors.laboratoryDetails?.message ??
+    formState.errors.auditDetails?.message;
 
   return (
     <section className={base.section}>
       <span className={`${base.label} ${s.title}`}>
-        {ORDER_DETAILS_TITLES[workType] ?? "Поля направления"}
+        {SECTION_TITLES[workType] ?? "Поля направления"}
       </span>
 
-      {orderDetailsFields(workType).map(renderField)}
+      {workType === "CADASTRAL" && (
+        <CadastralOrderFields
+          value={watch("cadastralDetails")}
+          onChange={(next) => setValue("cadastralDetails", next, changeOptions)}
+        />
+      )}
 
-      {error && <span className={base.error}>{error}</span>}
+      {workType === "FORENSIC" && (
+        <ForensicOrderFields
+          value={watch("forensicDetails")}
+          onChange={(next) => setValue("forensicDetails", next, changeOptions)}
+        />
+      )}
+
+      {workType === "RESEARCH" && (
+        <ResearchOrderFields
+          value={watch("researchDetails")}
+          onChange={(next) => setValue("researchDetails", next, changeOptions)}
+        />
+      )}
+
+      {workType === "LABORATORY" && (
+        <LaboratoryOrderFields
+          value={watch("laboratoryDetails")}
+          onChange={(next) => setValue("laboratoryDetails", next, changeOptions)}
+        />
+      )}
+
+      {workType === "AUDIT_SUPB" && (
+        <AuditOrderFields
+          value={watch("auditDetails")}
+          onChange={(next) => setValue("auditDetails", next, changeOptions)}
+          catalogs={auditCatalogs}
+        />
+      )}
+
+      {typeof errorMessage === "string" && <span className={base.error}>{errorMessage}</span>}
     </section>
   );
 }

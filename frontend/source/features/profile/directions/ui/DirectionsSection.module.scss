@@ -3,3 +3,18 @@
   flex-direction: column;
   gap: 18px;
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.skeleton {
+  height: 160px;
+  width: 100%;
+}

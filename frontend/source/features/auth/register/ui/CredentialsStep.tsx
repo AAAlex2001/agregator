@@ -3,10 +3,10 @@ import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
 import Tabs from "@/source/shared/ui/Tabs";
 import { FormSection } from "@/source/shared/ui";
-import { ServicesPicker } from "@/source/features/direction-forms";
-import type { DirectionCatalogs, DirectionKey, DirectionProfile } from "@/source/entities/direction";
 import type { UserRole } from "@/source/entities/user";
+import type { DirectionFilesState } from "../model/directionFiles";
 import type { RegisterFormValues } from "../model/schema";
+import { DirectionsPicker } from "./directions/DirectionsPicker";
 import { ExpertProfileFields } from "./credentials/ExpertProfileFields";
 import { NameFields } from "./credentials/NameFields";
 import { OrganizationField } from "./credentials/OrganizationField";
@@ -26,18 +26,14 @@ const ROLE_TABS = [
 interface Props {
   form: UseFormReturn<RegisterFormValues>;
   isLoading: boolean;
-  catalogs: DirectionCatalogs;
-  directionDocuments: Partial<Record<DirectionKey, File[]>>;
+  directionFiles: DirectionFilesState;
   licenseFile: File | null;
   miningLicenseFile?: File | null;
   sroDesignFile?: File | null;
   labAccreditationFile?: File | null;
   onPhoneChange: (v: string) => void;
   onRoleSelect: (role: UserRole) => void;
-  onServiceToggle: (key: DirectionKey) => void;
-  onDirectionChange: (key: DirectionKey, value: DirectionProfile) => void;
-  onDirectionDocumentsAdd: (key: DirectionKey, files: File[]) => void;
-  onDirectionDocumentRemove: (key: DirectionKey, index: number) => void;
+  onDirectionFilesChange: (files: DirectionFilesState) => void;
   onLicenseFileSelect: (file: File | null) => void;
   onMiningLicenseFileSelect?: (file: File | null) => void;
   onSroDesignFileSelect?: (file: File | null) => void;
@@ -48,18 +44,14 @@ interface Props {
 export function CredentialsStep({
   form,
   isLoading,
-  catalogs,
-  directionDocuments,
+  directionFiles,
   licenseFile,
   miningLicenseFile = null,
   sroDesignFile = null,
   labAccreditationFile = null,
   onPhoneChange,
   onRoleSelect,
-  onServiceToggle,
-  onDirectionChange,
-  onDirectionDocumentsAdd,
-  onDirectionDocumentRemove,
+  onDirectionFilesChange,
   onLicenseFileSelect,
   onMiningLicenseFileSelect,
   onSroDesignFileSelect,
@@ -70,10 +62,6 @@ export function CredentialsStep({
   const isExpert = role === "EXPERT";
   const isCustomer = role === "CUSTOMER";
   const isLicenseHolder = role === "LICENSE_HOLDER";
-
-  const directionErrors = form.formState.errors.directions as
-    | Record<string, { message?: string }>
-    | undefined;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,19 +87,7 @@ export function CredentialsStep({
         />
 
         {!isLicenseHolder && (
-          <ServicesPicker
-            role={role}
-            selected={form.watch("directions")}
-            documents={directionDocuments}
-            catalogs={catalogs}
-            errors={Object.fromEntries(
-              Object.entries(directionErrors ?? {}).map(([key, error]) => [key, error?.message]),
-            )}
-            onToggle={onServiceToggle}
-            onChange={onDirectionChange}
-            onDocumentsAdd={onDirectionDocumentsAdd}
-            onDocumentsRemove={onDirectionDocumentRemove}
-          />
+          <DirectionsPicker form={form} files={directionFiles} onFilesChange={onDirectionFilesChange} />
         )}
 
         {isExpert && <ExpertProfileFields form={form} />}

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
-import { hasOrderDetails } from "../../model/detailsRegistry";
+import { hasOrderDetails } from "../../model/orderDetails";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { DocumentsFormState } from "../../model/formFiles";
 import type { OrderFormValues } from "../../model/schema";

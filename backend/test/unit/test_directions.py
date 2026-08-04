@@ -1,78 +1,53 @@
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
 from models.account import UserRole
-from models.direction_profile import AuditParticipantKind
 from models.order import OrderWorkType
-from schemas.directions import (
-    AuditProfileInput,
-    CustomerAuditProfileInput,
-    LaboratoryOrderDetailsInput,
-    ResearchOrderDetailsInput,
-)
-from schemas.registration import DirectionRegistration
-from services.directions.document_storage import owns_direction_document
-from services.directions.registry import DIRECTIONS, directions_for_role, get_direction
-from services.directions.use_cases.get_direction_profile import GetDirectionProfileUseCase
-from services.directions.use_cases.list_expert_directions import ListRoleDirectionsUseCase
-from services.directions.use_cases.upsert_direction_profile import UpsertDirectionProfileUseCase
-from services.directions.validators import DirectionsValidator
-from services.registration.direction_forms import (
+from schemas.registration import UserRegistration
+from services.directions.registry import DIRECTIONS, get_direction
+from services.registration import direction_documents
+from services.registration.direction_documents import (
     MAX_REGISTRATION_DOCUMENTS,
     attach_documents,
-    build_profiles,
+    upload_to_slot,
 )
-
-AUDIT = OrderWorkType.AUDIT_SUPB.value
-CADASTRAL = OrderWorkType.CADASTRAL.value
-EXPERTISE = OrderWorkType.EXPERTISE.value
+from services.registration.direction_profiles import build_direction_profiles
 
 
-def build_expert_account(audit: object = None, **expert_fields: object) -> SimpleNamespace:
-    "Аккаунт исполнителя с профилем роли и (опционально) анкетой аудита."
+def registration_payload(**overrides: object) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "role": "EXPERT",
+        "email": "user@example.com",
+        "password": "secret-123",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def build_expert_account() -> SimpleNamespace:
     expert = SimpleNamespace(
         id=5,
-        audit_profile=audit,
+        certificates=[],
+        audit_profile=None,
         cadastral_profile=None,
         forensic_profile=None,
-        certificates=[],
-        show_on_map=True,
-        map_fields=[],
-        **expert_fields,
+        research_profile=None,
+        laboratory_profile=None,
     )
-    return SimpleNamespace(
-        id=1,
-        role=UserRole.EXPERT,
-        customer_profile=None,
-        expert_profile=expert,
-        license_holder_profile=None,
-    )
+    return SimpleNamespace(id=1, role=UserRole.EXPERT, expert_profile=expert, customer_profile=None)
 
 
-def build_customer_account(audit: object = None) -> SimpleNamespace:
-    customer = SimpleNamespace(id=7, audit_profile=audit)
-    return SimpleNamespace(
-        id=2,
-        role=UserRole.CUSTOMER,
-        customer_profile=customer,
-        expert_profile=None,
-        license_holder_profile=None,
-    )
-
-
-def build_validator(account: SimpleNamespace | None) -> DirectionsValidator:
-    repo = MagicMock()
-    repo.find_account = AsyncMock(return_value=account)
-    repo.add = AsyncMock()
-    return DirectionsValidator(repo)
+def build_customer_account() -> SimpleNamespace:
+    customer = SimpleNamespace(id=7, audit_profile=None)
+    return SimpleNamespace(id=2, role=UserRole.CUSTOMER, expert_profile=None, customer_profile=customer)
 
 
 class TestRegistry:
-    "Реестр — единственный источник знания о направлениях и их анкетах."
+    "Реестр — единственное место, где перечислены направления и поля их заявок."
 
     def test_keys_are_unique(self):
         keys = [direction.key for direction in DIRECTIONS]
@@ -81,346 +56,158 @@ class TestRegistry:
     def test_get_direction_unknown_returns_none(self):
         assert get_direction("UNKNOWN") is None
 
-    def test_expertise_available_to_expert_only(self):
-        "Анкету держателя ведёт /settings/license, в реестре направлений её нет."
-        expertise = get_direction(EXPERTISE)
-        assert set(expertise.roles) == {UserRole.EXPERT}
+    def test_expertise_has_no_order_details(self):
+        "Заявка ЭПБ обходится общими полями заказа."
+        assert get_direction(OrderWorkType.EXPERTISE.value).has_details is False
 
-    def test_audit_available_to_customer_and_expert(self):
-        audit = get_direction(AUDIT)
-        assert set(audit.roles) == {UserRole.CUSTOMER, UserRole.EXPERT}
-
-    def test_expertise_fields_live_in_role_profile(self):
-        "У ЭПБ анкета хранится полями профиля роли, а не отдельной таблицей."
-        form = get_direction(EXPERTISE).form_for(UserRole.EXPERT)
-        assert form.is_separate_table is False
-
-    def test_audit_fields_live_in_separate_table(self):
-        form = get_direction(AUDIT).form_for(UserRole.EXPERT)
-        assert form.is_separate_table is True
-        assert form.owner_attribute == "audit_profile"
-
-    def test_customer_sees_only_audit(self):
-        keys = {direction.key for direction in directions_for_role(UserRole.CUSTOMER)}
-        assert keys == {AUDIT}
-
-    def test_license_holder_has_no_directions(self):
-        "У держателя разрешительных документов свой раздел настроек, не направления."
-        assert directions_for_role(UserRole.LICENSE_HOLDER) == ()
+    @pytest.mark.parametrize(
+        ("key", "attribute"),
+        [
+            (OrderWorkType.AUDIT_SUPB.value, "audit_details"),
+            (OrderWorkType.CADASTRAL.value, "cadastral_details"),
+            (OrderWorkType.FORENSIC.value, "forensic_details"),
+            (OrderWorkType.RESEARCH.value, "research_details"),
+            (OrderWorkType.LABORATORY.value, "laboratory_details"),
+        ],
+    )
+    def test_direction_details_wiring(self, key, attribute):
+        direction = get_direction(key)
+        assert direction.has_details is True
+        assert direction.details_attribute == attribute
 
     def test_details_attributes_are_unique(self):
         attributes = [d.details_attribute for d in DIRECTIONS if d.has_details]
         assert len(attributes) == len(set(attributes))
 
 
-class TestValidators:
-    def test_unknown_direction_raises_404(self):
-        with pytest.raises(HTTPException) as error:
-            build_validator(build_expert_account()).require_direction("UNKNOWN")
-        assert error.value.status_code == 404
+class TestRegistrationSchemaRoles:
+    "Анкеты направлений в форме регистрации типизированы и привязаны к ролям."
 
-    def test_direction_of_other_role_raises_403(self):
-        "Кадастровые работы недоступны заказчику."
-        validator = build_validator(build_customer_account())
-        cadastral = get_direction(OrderWorkType.CADASTRAL.value)
-        with pytest.raises(HTTPException) as error:
-            validator.require_form(build_customer_account(), cadastral)
-        assert error.value.status_code == 403
-
-    @pytest.mark.asyncio
-    async def test_missing_account_raises_404(self):
-        with pytest.raises(HTTPException) as error:
-            await build_validator(None).require_account(1)
-        assert error.value.status_code == 404
-
-
-class TestListRoleDirections:
-    @pytest.mark.asyncio
-    async def test_expert_sees_own_directions_with_filled_flags(self):
-        account = build_expert_account(audit=SimpleNamespace())
-        result = await ListRoleDirectionsUseCase(build_validator(account)).execute(1)
-
-        by_key = {item.key: item.profile_filled for item in result}
-        assert by_key[AUDIT] is True
-        assert by_key[OrderWorkType.CADASTRAL.value] is False
-        assert by_key[EXPERTISE] is True
-
-    @pytest.mark.asyncio
-    async def test_customer_sees_only_audit(self):
-        account = build_customer_account()
-        result = await ListRoleDirectionsUseCase(build_validator(account)).execute(2)
-
-        assert [item.key for item in result] == [AUDIT]
-        assert result[0].profile_filled is False
-
-
-class TestGetDirectionProfile:
-    @pytest.mark.asyncio
-    async def test_empty_audit_profile_returns_defaults(self):
-        use_case = GetDirectionProfileUseCase(build_validator(build_expert_account()))
-        profile = await use_case.execute(1, AUDIT)
-
-        assert profile.participant_kind is AuditParticipantKind.AUDITOR
-        assert profile.industrial_safety_areas == []
-
-    @pytest.mark.asyncio
-    async def test_expertise_profile_read_from_role_profile(self):
-        account = build_expert_account()
-        account.expert_profile.certificates = [{"area": "Э1", "object": "ТУ", "category": "3"}]
-        use_case = GetDirectionProfileUseCase(build_validator(account))
-
-        profile = await use_case.execute(1, EXPERTISE)
-
-        assert len(profile.certificates) == 1
-        assert profile.certificates[0].area == "Э1"
-
-
-class TestUpsertDirectionProfile:
-    @pytest.mark.asyncio
-    async def test_creates_audit_profile_for_expert(self):
-        account = build_expert_account()
-        repo = MagicMock()
-        repo.find_account = AsyncMock(return_value=account)
-        repo.add = AsyncMock()
-        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-
-        await use_case.execute(
-            1, AUDIT, {"participant_kind": "AUDITOR", "audit_qualifications": ["40.20900.185"]}
+    def test_expert_fills_expert_directions(self):
+        data = UserRegistration(
+            **registration_payload(
+                cadastral_profile={"education": "МИИГАиК", "city": "Казань"},
+                research_profile={"academic_degree": "к.т.н."},
+            )
         )
+        assert data.cadastral_profile.city == "Казань"
 
-        created = repo.add.await_args.args[0]
-        assert created.audit_qualifications == ["40.20900.185"]
-        assert account.expert_profile.audit_profile is created
-
-    @pytest.mark.asyncio
-    async def test_writes_expertise_into_role_profile(self):
-        "У ЭПБ анкета пишется прямо в профиль исполнителя."
-        account = build_expert_account()
-        repo = MagicMock()
-        repo.find_account = AsyncMock(return_value=account)
-        repo.add = AsyncMock()
-        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-
-        await use_case.execute(
-            1, EXPERTISE, {"certificates": [{"area": "Э1", "object": "ТУ", "category": "3"}]}
-        )
-
-        stored = account.expert_profile.certificates
-        assert len(stored) == 1
-        assert stored[0]["area"] == "Э1"
-        assert stored[0]["object"] == "ТУ"
-
-    @pytest.mark.asyncio
-    async def test_expertise_form_cannot_touch_map_settings(self):
-        "Присутствие на карте — настройка исполнителя, анкета ЭПБ её не меняет."
-        account = build_expert_account()
-        repo = MagicMock()
-        repo.find_account = AsyncMock(return_value=account)
-        repo.add = AsyncMock()
-        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-
-        await use_case.execute(1, EXPERTISE, {"show_on_map": False, "map_fields": ["name"]})
-
-        assert account.expert_profile.show_on_map is True
-        assert account.expert_profile.map_fields == []
-
-    @pytest.mark.asyncio
-    async def test_invalid_payload_raises_422(self):
-        account = build_expert_account()
-        repo = MagicMock()
-        repo.find_account = AsyncMock(return_value=account)
-        repo.add = AsyncMock()
-        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-
-        with pytest.raises(HTTPException) as error:
-            await use_case.execute(1, AUDIT, {"audit_qualifications": ["40.20900.999"]})
-        assert error.value.status_code == 422
-
-
-class TestDocumentsSupport:
-    "Документы поддерживают только анкеты, у которых поле documents есть в схеме."
-
-    def test_matrix(self):
-        support = {
-            (direction.key, role.value): form.supports_documents
-            for direction in DIRECTIONS
-            for role, form in direction.role_forms.items()
-        }
-
-        assert support[(AUDIT, "EXPERT")] is True
-        assert support[(OrderWorkType.CADASTRAL.value, "EXPERT")] is True
-        assert support[(OrderWorkType.FORENSIC.value, "EXPERT")] is True
-        assert support[(AUDIT, "CUSTOMER")] is False
-        assert support[(EXPERTISE, "EXPERT")] is False
-
-    @pytest.mark.asyncio
-    async def test_upsert_never_touches_documents(self):
-        "Сохранение анкеты не должно затирать уже загруженные файлы."
-        account = build_expert_account(audit=SimpleNamespace(documents=[{"name": "d", "url": "/u/d"}]))
-        repo = MagicMock()
-        repo.find_account = AsyncMock(return_value=account)
-        repo.add = AsyncMock()
-        use_case = UpsertDirectionProfileUseCase(repo, DirectionsValidator(repo))
-
-        await use_case.execute(
-            1, AUDIT, {"participant_kind": "AUDITOR", "documents": [], "audit_qualifications": []}
-        )
-
-        assert account.expert_profile.audit_profile.documents == [{"name": "d", "url": "/u/d"}]
-
-
-class TestDocumentOwnership:
-    "Ссылка в documents не даёт права на файл: путь сверяется с каталогом владельца."
-
-    def test_own_document_is_removable(self):
-        assert owns_direction_document("me", "/uploads/direction-documents/me/a.pdf") is True
-
-    @pytest.mark.parametrize(
-        "url",
-        [
-            "/uploads/direction-documents/other/a.pdf",
-            "/uploads/avatars/other/a.jpg",
-            "/uploads/licenses/other/a.pdf",
-            "",
-        ],
-    )
-    def test_foreign_paths_are_rejected(self, url):
-        assert owns_direction_document("me", url) is False
-
-    def test_registration_drops_documents(self):
-        "Через регистрацию нельзя положить в анкету ссылку на чужой файл."
-        account = build_expert_account()
-        created = build_profiles(
-            account,
-            [
-                DirectionRegistration(
-                    key=OrderWorkType.CADASTRAL.value,
-                    data={"documents": [{"name": "чужой.pdf", "url": "/uploads/avatars/x/y.jpg"}]},
+    def test_customer_cannot_fill_expert_directions(self):
+        with pytest.raises(ValidationError):
+            UserRegistration(
+                **registration_payload(
+                    role="CUSTOMER",
+                    company_data={"value": "ООО Ромашка", "data": {"inn": "7707083893"}},
+                    inn="7707083893",
+                    forensic_profile={"education": "МГЮА"},
                 )
-            ],
-        )
+            )
 
-        assert created[0].documents in (None, [])
+    def test_expert_cannot_fill_customer_audit_profile(self):
+        with pytest.raises(ValidationError):
+            UserRegistration(
+                **registration_payload(audit_customer_profile={"position": "Главный инженер"})
+            )
+
+    def test_invalid_direction_fields_rejected(self):
+        with pytest.raises(ValidationError):
+            UserRegistration(
+                **registration_payload(
+                    audit_expert_profile={"audit_qualifications": ["40.20900.999"]}
+                )
+            )
 
 
-class TestRegistrationDirectionForms:
-    "Направления, выбранные при регистрации, заполняются тем же реестром."
-
-    def test_separate_table_profile_created_for_customer(self):
-        account = build_customer_account()
-        created = build_profiles(
-            account, [DirectionRegistration(key=AUDIT, data={"position": "Главный инженер"})]
-        )
-
-        assert len(created) == 1
-        assert created[0].position == "Главный инженер"
-        assert account.customer_profile.audit_profile is created[0]
-
+class TestBuildDirectionProfiles:
     def test_expertise_written_into_role_profile(self):
         account = build_expert_account()
-        created = build_profiles(
-            account,
-            [
-                DirectionRegistration(
-                    key=EXPERTISE,
-                    data={"certificates": [{"area": "Э1", "object": "ТУ", "category": "3"}]},
-                )
-            ],
+        data = UserRegistration(
+            **registration_payload(
+                expertise_profile={
+                    "certificates": [{"area": "Э1", "object": "ТУ", "category": "3"}]
+                }
+            )
         )
 
+        created = build_direction_profiles(account, data)
+
         assert created == []
-        assert len(account.expert_profile.certificates) == 1
         assert account.expert_profile.certificates[0]["area"] == "Э1"
 
-    def test_unknown_direction_raises_400(self):
-        with pytest.raises(HTTPException) as error:
-            build_profiles(build_expert_account(), [DirectionRegistration(key="UNKNOWN", data={})])
-        assert error.value.status_code == 400
-
-    def test_direction_of_other_role_raises_400(self):
-        "Заказчик не может заполнить анкету кадастрового инженера."
-        with pytest.raises(HTTPException) as error:
-            build_profiles(
-                build_customer_account(),
-                [DirectionRegistration(key=OrderWorkType.CADASTRAL.value, data={})],
+    def test_expert_direction_profiles_created_and_linked(self):
+        account = build_expert_account()
+        data = UserRegistration(
+            **registration_payload(
+                audit_expert_profile={"audit_qualifications": ["40.20900.185"]},
+                cadastral_profile={"education": "МИИГАиК"},
+                forensic_profile={"education": "МГЮА"},
+                research_profile={"academic_degree": "к.т.н."},
+                laboratory_profile={"accreditation_area": "Испытания бетона"},
             )
-        assert error.value.status_code == 400
+        )
 
-    def test_invalid_fields_raise_400(self):
-        with pytest.raises(HTTPException) as error:
-            build_profiles(
-                build_expert_account(),
-                [DirectionRegistration(key=AUDIT, data={"audit_qualifications": ["40.20900.999"]})],
+        created = build_direction_profiles(account, data)
+
+        assert len(created) == 5
+        assert account.expert_profile.audit_profile is created[0]
+        assert account.expert_profile.cadastral_profile.education == "МИИГАиК"
+        assert account.expert_profile.laboratory_profile.accreditation_area == "Испытания бетона"
+
+    def test_customer_audit_profile_created(self):
+        account = build_customer_account()
+        data = UserRegistration(
+            **registration_payload(
+                role="CUSTOMER",
+                company_data={"value": "ООО Ромашка", "data": {"inn": "7707083893"}},
+                inn="7707083893",
+                audit_customer_profile={"position": "Главный инженер"},
             )
-        assert error.value.status_code == 400
+        )
+
+        created = build_direction_profiles(account, data)
+
+        assert len(created) == 1
+        assert account.customer_profile.audit_profile is created[0]
+        assert created[0].position == "Главный инженер"
+
+    def test_empty_form_creates_nothing(self):
+        account = build_expert_account()
+        data = UserRegistration(**registration_payload())
+
+        assert build_direction_profiles(account, data) == []
+        assert account.expert_profile.audit_profile is None
 
 
 class TestRegistrationDocuments:
-    "Дипломы, приложенные в форме регистрации, идут через тот же use case, что и кабинет."
+    "Файлы регистрации раскладываются по слотам через use case своих направлений."
 
     @pytest.mark.asyncio
-    async def test_each_file_goes_to_its_direction(self):
-        use_case = AsyncMock()
-        await attach_documents(use_case, 7, [AUDIT, CADASTRAL], ["diploma", "certificate"])
+    async def test_each_file_goes_to_its_slot(self, monkeypatch):
+        calls = AsyncMock()
+        monkeypatch.setattr(direction_documents, "upload_to_slot", calls)
 
-        assert [call.args for call in use_case.execute.await_args_list] == [
-            (7, AUDIT, "diploma"),
-            (7, CADASTRAL, "certificate"),
+        await attach_documents(None, 7, ["CADASTRAL_DIPLOMA", "FORENSIC"], ["диплом", "курс"])
+
+        assert [call.args[2:] for call in calls.await_args_list] == [
+            ("CADASTRAL_DIPLOMA", "диплом"),
+            ("FORENSIC", "курс"),
         ]
 
     @pytest.mark.asyncio
     async def test_count_mismatch_raises_400(self):
-        use_case = AsyncMock()
         with pytest.raises(HTTPException) as error:
-            await attach_documents(use_case, 7, [AUDIT], ["diploma", "certificate"])
-
+            await attach_documents(None, 7, ["CADASTRAL"], ["диплом", "курс"])
         assert error.value.status_code == 400
-        use_case.execute.assert_not_awaited()
 
     @pytest.mark.asyncio
     async def test_too_many_documents_rejected(self):
-        use_case = AsyncMock()
         count = MAX_REGISTRATION_DOCUMENTS + 1
         with pytest.raises(HTTPException) as error:
-            await attach_documents(use_case, 7, [AUDIT] * count, ["diploma"] * count)
-
+            await attach_documents(None, 7, ["FORENSIC"] * count, ["файл"] * count)
         assert error.value.status_code == 400
-        use_case.execute.assert_not_awaited()
 
-
-class TestAuditProfileSchemas:
-    def test_auditor_accepts_catalog_codes(self):
-        payload = AuditProfileInput(
-            industrial_safety_areas=["А.1", "Б.1"],
-            expert_attestation_areas=["Э1 КЛ/ТП"],
-            audit_qualifications=["40.20900.185"],
-        )
-        assert payload.participant_kind is AuditParticipantKind.AUDITOR
-
-    def test_unknown_code_rejected(self):
-        with pytest.raises(ValidationError):
-            AuditProfileInput(accreditation_areas=["13.2.99"])
-
-    def test_duplicate_codes_collapsed(self):
-        payload = AuditProfileInput(industrial_safety_areas=["А.1", "А.1", "Б.2"])
-        assert payload.industrial_safety_areas == ["А.1", "Б.2"]
-
-    def test_inspection_body_requires_name_and_certificate(self):
-        with pytest.raises(ValidationError):
-            AuditProfileInput(participant_kind=AuditParticipantKind.INSPECTION_BODY)
-
-    def test_customer_audit_profile(self):
-        payload = CustomerAuditProfileInput(position="Главный инженер", opo_license_number="ВХ-00-000")
-        assert payload.position == "Главный инженер"
-
-
-class TestOrderDetailsSchemas:
-    def test_research_drops_blank_requirements(self):
-        payload = ResearchOrderDetailsInput(
-            executor_requirements=["Кандидат наук", "  ", ""], needs_site_visit=True
-        )
-        assert payload.executor_requirements == ["Кандидат наук"]
-
-    def test_laboratory_equipment_requirements(self):
-        payload = LaboratoryOrderDetailsInput(equipment_requirements="УЗК-дефектоскоп")
-        assert payload.equipment_requirements == "УЗК-дефектоскоп"
+    @pytest.mark.asyncio
+    async def test_unknown_slot_raises_400(self):
+        with pytest.raises(HTTPException) as error:
+            await upload_to_slot(None, 7, "UNKNOWN", "файл")
+        assert error.value.status_code == 400

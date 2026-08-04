@@ -2,9 +2,17 @@ import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { TextInput, CalendarInput } from "@/source/shared/ui";
 import { useSession } from "@/source/features/session";
+import type { OrderWorkType } from "@/source/entities/order";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./detailsSection.module.scss";
+
+const TITLE_LABELS: Partial<Record<OrderWorkType, string>> = {
+  RESEARCH: "Тема",
+  CADASTRAL: "Наименование работы",
+  FORENSIC: "Наименование экспертизы",
+  LABORATORY: "Наименование исследований",
+};
 
 interface Props {
   form: UseFormReturn<OrderFormValues>;
@@ -14,6 +22,7 @@ export function DetailsSection({ form }: Props) {
   const { watch, setValue } = form;
   const { user } = useSession();
   const companyFromProfile = user?.company_data?.value ?? "";
+  const titleLabel = TITLE_LABELS[watch("workType")] ?? "Название заказа";
 
   useEffect(() => {
     if (companyFromProfile && watch("company") !== companyFromProfile) {
@@ -25,7 +34,7 @@ export function DetailsSection({ form }: Props) {
     <section className={base.section}>
       <div className={s.grid}>
         <div className={s.field}>
-          <span className={base.label}>Название заказа</span>
+          <span className={base.label}>{titleLabel}</span>
           <TextInput
             active
             placeholder="Введите название"

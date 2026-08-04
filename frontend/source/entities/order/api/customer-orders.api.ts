@@ -17,7 +17,7 @@ interface CreatePayload {
   responses_deadline?: string; badge_codes: string[];
   requires_expert: boolean; requires_license: boolean;
   work_type: OrderWorkType;
-  details?: Record<string, unknown>;
+  details?: object;
   documents: DocumentsFormState;
 }
 
@@ -28,7 +28,7 @@ interface UpdatePayload {
   badge_codes: string[]; documents: DocumentsFormState;
   requires_expert: boolean; requires_license: boolean;
   work_type: OrderWorkType;
-  details?: Record<string, unknown>;
+  details?: object;
   notify_responders: boolean;
 }
 

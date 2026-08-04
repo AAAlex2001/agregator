@@ -10,6 +10,7 @@ import {
   emptyDocuments,
   orderDetailsFields,
   type OrderDocuments,
+  type OrderWorkType,
 } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import type { DocumentsFormState } from "../../model/formFiles";
@@ -36,6 +37,23 @@ function formatDeadline(iso: string): string {
   return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function previewDetails(workType: OrderWorkType, values: Partial<OrderFormValues>): object | null {
+  switch (workType) {
+    case "CADASTRAL":
+      return values.cadastralDetails ?? null;
+    case "FORENSIC":
+      return values.forensicDetails ?? null;
+    case "RESEARCH":
+      return values.researchDetails ?? null;
+    case "LABORATORY":
+      return values.laboratoryDetails ?? null;
+    case "AUDIT_SUPB":
+      return values.auditDetails ?? null;
+    default:
+      return null;
+  }
+}
+
 export function OrderLivePreview({ form, documents }: Props) {
   const values = useWatch({ control: form.control }) as Partial<OrderFormValues>;
   const previewDocuments = usePreviewDocuments(documents);
@@ -45,7 +63,7 @@ export function OrderLivePreview({ form, documents }: Props) {
   const comment = values.comment?.trim() ?? "";
   const hasDocuments = countDocuments(previewDocuments) > 0;
   const workType = values.workType ?? "EXPERTISE";
-  const directionDetails = values.details ?? null;
+  const directionDetails = previewDetails(workType, values);
   const hasDirectionFields =
     orderDetailsFields(workType).length > 0 && Boolean(directionDetails);
   const hasDetails = Boolean(comment) || hasDocuments || hasDirectionFields;

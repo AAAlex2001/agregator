@@ -6,6 +6,7 @@ from schemas.order import OrderUpdate
 from services.directions.registry import DIRECTIONS, get_direction
 from services.email import SendOrderUpdatedEmailUseCase
 from services.email.changes import summarize_order_changes
+from services.orders.direction_details import apply_details, build_details
 from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.use_cases.get_order_by_id import GetOrderByIdUseCase
@@ -127,15 +128,13 @@ class UpdateOrderUseCase:
         if validated is None:
             return
 
-        data = validated.model_dump()
         current = getattr(order, direction.details_attribute)
         if current is None:
-            entity = direction.details_model(**data)
+            entity = build_details(direction, validated)
             setattr(order, direction.details_attribute, entity)
             await self.repo.add_details(entity)
             return
-        for field, value in data.items():
-            setattr(current, field, value)
+        apply_details(current, validated)
 
     async def drop_foreign_details(self, order: Order, work_type: OrderWorkType) -> None:
         "Удаляет детали направлений, которые заказу больше не соответствуют."

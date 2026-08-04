@@ -20,14 +20,13 @@ from models.base import Base
 
 if TYPE_CHECKING:
     from models.account import Account
+    from models.audit import OrderAuditDetails
+    from models.cadastral import OrderCadastralDetails
     from models.chat import Chat
-    from models.order_details import (
-        OrderCadastralDetails,
-        OrderForensicDetails,
-        OrderLaboratoryDetails,
-        OrderResearchDetails,
-    )
+    from models.forensic import OrderForensicDetails
+    from models.laboratory import OrderLaboratoryDetails
     from models.question import OrderQuestion
+    from models.research import OrderResearchDetails
     from models.response import OrderResponse
 
 
@@ -173,6 +172,13 @@ class Order(Base):
         lazy="selectin",
     )
     laboratory_details: Mapped["OrderLaboratoryDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    audit_details: Mapped["OrderAuditDetails | None"] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,

@@ -1,0 +1,31 @@
+.requirementRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requirementInput {
+  flex: 1;
+}
+
+.removeRequirement {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-bg-secondary, #f5f5f5);
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: #ffe4cc;
+    color: #e65100;
+  }
+}
+
+.addRequirement {
+  align-self: flex-start;
+}

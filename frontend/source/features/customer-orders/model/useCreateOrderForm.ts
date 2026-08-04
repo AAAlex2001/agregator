@@ -15,13 +15,11 @@ import {
   type DocumentsFormState,
 } from "./formFiles";
 import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES } from "@/source/entities/order";
-import { normalizeDetails } from "./detailsRegistry";
 import { getDefaultValues } from "./mappers";
 import { orderFormSchema, type OrderFormValues } from "./schema";
 
 function restoreDraft(): OrderFormValues {
-  const values = { ...getDefaultValues(), ...(loadDraft() ?? {}) };
-  return { ...values, details: normalizeDetails(values.workType, values.details ?? {}) };
+  return { ...getDefaultValues(), ...(loadDraft() ?? {}) };
 }
 
 const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);

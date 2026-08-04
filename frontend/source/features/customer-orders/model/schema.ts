@@ -1,6 +1,11 @@
 import { z } from "zod";
 import type { OrderWorkType } from "@/source/entities/order";
-import { validateOrderDetails } from "./detailsRegistry";
+import type { AuditOrderDetails } from "@/source/features/directions/audit";
+import type { CadastralOrderDetails } from "@/source/features/directions/cadastral";
+import type { ForensicOrderDetails } from "@/source/features/directions/forensic";
+import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
+import type { ResearchOrderDetails } from "@/source/features/directions/research";
+import { validateDirectionDetails } from "./orderDetails";
 
 export const orderFormSchema = z.object({
   title: z.string().trim().min(1, "Введите название"),
@@ -15,7 +20,11 @@ export const orderFormSchema = z.object({
   requiresExpert: z.boolean(),
   requiresLicense: z.boolean(),
   workType: z.custom<OrderWorkType>(),
-  details: z.record(z.string(), z.unknown()),
+  cadastralDetails: z.custom<CadastralOrderDetails>(),
+  forensicDetails: z.custom<ForensicOrderDetails>(),
+  researchDetails: z.custom<ResearchOrderDetails>(),
+  laboratoryDetails: z.custom<LaboratoryOrderDetails>(),
+  auditDetails: z.custom<AuditOrderDetails>(),
 })
   .refine(
     (values) => values.requiresExpert || values.requiresLicense,
@@ -25,9 +34,9 @@ export const orderFormSchema = z.object({
     },
   )
   .superRefine((values, ctx) => {
-    const message = validateOrderDetails(values.workType, values.details);
-    if (message) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["details"], message });
+    const issue = validateDirectionDetails(values.workType, values);
+    if (issue) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [issue.path], message: issue.message });
     }
   });
 

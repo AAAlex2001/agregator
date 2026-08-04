@@ -7,6 +7,7 @@ from schemas.order import OrderCreate
 from services.directions.registry import get_direction
 from services.email import SendNewOrderEmailUseCase
 from services.notifications import CreateNewOrderNotificationUseCase
+from services.orders.direction_details import build_details
 from services.orders.documents import OrderDocumentsService
 from services.orders.repository import OrderRepository
 from services.orders.validators import OrderValidator
@@ -41,7 +42,7 @@ class CreateOrderUseCase:
 
         direction = get_direction(data.work_type.value)
         if direction is not None and validated_details is not None:
-            details = direction.details_model(**validated_details.model_dump())
+            details = build_details(direction, validated_details)
             setattr(order, direction.details_attribute, details)
             await self.repo.add_details(details)
             await self.flush_or_reject()

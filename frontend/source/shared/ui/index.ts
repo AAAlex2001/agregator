@@ -37,6 +37,8 @@ export { DiffValue } from "./DiffValue";
 export { default as ToolTip } from "./Tooltip";
 export { default as ScrollHintTooltip } from "./Tooltip";
 export { FileGallery } from "./FileGallery";
+export { GeoSuggestInput } from "./GeoSuggestInput";
+export { YesNoField } from "./YesNoField";
 export { EmptyStateCard } from "./EmptyStateCard/EmptyStateCard";
 export { ListCard } from "./ListCard";
 export type { ListCardProps, ListCardItem } from "./ListCard";

@@ -7,7 +7,7 @@ from models.expert import CONTACT_DISCLOSURE_CONSENT_VERSION, Expert
 from schemas.registration import UserRegistration
 from services.contact_deals.crypto import ContactDealCipher
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES
-from services.registration.direction_forms import build_profiles
+from services.registration.direction_profiles import build_direction_profiles
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
 from utils.passwords import hash_password
@@ -63,7 +63,7 @@ class RegisterUserUseCase:
             account.customer_profile = profile
         await self.repo.add(profile)
 
-        for entity in build_profiles(account, data.directions):
+        for entity in build_direction_profiles(account, data):
             await self.repo.add(entity)
         return account
 

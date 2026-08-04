@@ -1,1 +1,2 @@
-export type { UserRole, RegisterApiPayload, RegisterResponse } from "@/source/entities/user";
+export type { RegisterResponse, UserRole } from "@/source/entities/user";
+export type { RegisterPayload } from "./api";

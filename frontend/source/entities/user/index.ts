@@ -7,12 +7,7 @@ export type {
   LicenseHolderUpdatePayload,
 } from "./model/types";
 export type { UpdateProfilePayload } from "./model/profilePayload";
-export type {
-  UserRole,
-  RegisterApiPayload,
-  RegisterDocument,
-  RegisterResponse,
-} from "./model/register";
+export type { RegisterResponse, UserRole } from "./model/register";
 export type { UpdateEmailPreferencesPayload } from "./model/email-preferences";
 export {
   fetchProfile,
@@ -28,11 +23,6 @@ export {
   confirmResetCode,
   resetPassword,
 } from "./api/forgot-password.api";
-export {
-  registerUser,
-  registerLicenseHolder,
-  confirmRegistrationEmail,
-} from "./api/register.api";
 export {
   updateEmailPreferences,
   updateOrderNotifications,

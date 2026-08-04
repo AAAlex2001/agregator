@@ -7,14 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
-import {
-  confirmRegistrationEmail,
-  registerLicenseHolder,
-  registerUser,
-} from "@/source/entities/user";
-import { useDirectionCatalogs } from "@/source/entities/direction";
-import type { DirectionKey, DirectionProfile } from "@/source/entities/direction";
-import { emptyDirectionValue } from "@/source/features/direction-forms";
+import { confirmRegistrationEmail, registerLicenseHolder, registerUser } from "./api";
+import { emptyDirectionFiles, toRegisterDocuments, type DirectionFilesState } from "./directionFiles";
 import {
   emptyRegisterFormValues,
   registerConfirmSchema,
@@ -22,11 +16,8 @@ import {
   type RegisterConfirmValues,
   type RegisterFormValues,
 } from "./schema";
-import { toLicenseHolderPayload, toRegisterDocuments, toRegisterPayload } from "./mappers";
-import {
-  initialRegisterWizardState,
-  registerWizardReducer,
-} from "./reducer";
+import { toLicenseHolderPayload, toRegisterPayload } from "./mappers";
+import { initialRegisterWizardState, registerWizardReducer } from "./reducer";
 import type { UserRole } from "./types";
 
 interface UseRegisterOptions {
@@ -39,9 +30,7 @@ export function useRegister(options?: UseRegisterOptions) {
   const { showError, showSuccess } = useNotifications();
   const { reload } = useSession();
   const [wizard, dispatch] = useReducer(registerWizardReducer, initialRegisterWizardState);
-  const [directionDocuments, setDirectionDocuments] = useState<
-    Partial<Record<DirectionKey, File[]>>
-  >({});
+  const [directionFiles, setDirectionFiles] = useState<DirectionFilesState>(emptyDirectionFiles);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [miningLicenseFile, setMiningLicenseFile] = useState<File | null>(null);
   const [sroDesignFile, setSroDesignFile] = useState<File | null>(null);
@@ -59,42 +48,16 @@ export function useRegister(options?: UseRegisterOptions) {
     mode: "onBlur",
   });
 
-  const catalogs = useDirectionCatalogs(wizard.step === 1);
-
   const selectRole = (role: UserRole) => {
     form.setValue("role", role);
-    form.setValue("directions", {});
-    setDirectionDocuments({});
-  };
-
-  const toggleService = (key: DirectionKey) => {
-    const directions = { ...form.getValues("directions") };
-    if (key in directions) {
-      delete directions[key];
-      setDirectionDocuments((current) => ({ ...current, [key]: [] }));
-    } else {
-      directions[key] = emptyDirectionValue(key, form.getValues("role"));
-    }
-    form.setValue("directions", directions, { shouldValidate: form.formState.isSubmitted });
-  };
-
-  const addDirectionDocuments = (key: DirectionKey, files: File[]) => {
-    setDirectionDocuments((current) => ({ ...current, [key]: [...(current[key] ?? []), ...files] }));
-  };
-
-  const removeDirectionDocument = (key: DirectionKey, index: number) => {
-    setDirectionDocuments((current) => ({
-      ...current,
-      [key]: (current[key] ?? []).filter((_, position) => position !== index),
-    }));
-  };
-
-  const changeDirection = (key: DirectionKey, value: DirectionProfile) => {
-    form.setValue(
-      "directions",
-      { ...form.getValues("directions"), [key]: value },
-      { shouldValidate: form.formState.isSubmitted },
-    );
+    form.setValue("expertiseProfile", null);
+    form.setValue("auditExpertProfile", null);
+    form.setValue("auditCustomerProfile", null);
+    form.setValue("cadastralProfile", null);
+    form.setValue("forensicProfile", null);
+    form.setValue("researchProfile", null);
+    form.setValue("laboratoryProfile", null);
+    setDirectionFiles(emptyDirectionFiles);
   };
 
   const setPhone = (raw: string) => {
@@ -122,10 +85,7 @@ export function useRegister(options?: UseRegisterOptions) {
             labAccreditationFile,
           );
         } else {
-          await registerUser(
-            toRegisterPayload(values),
-            toRegisterDocuments(values, directionDocuments),
-          );
+          await registerUser(toRegisterPayload(values), toRegisterDocuments(directionFiles));
         }
         dispatch({ type: "GO_TO_CONFIRM", payload: values.email.trim() });
       } catch (err) {
@@ -170,8 +130,8 @@ export function useRegister(options?: UseRegisterOptions) {
     pendingEmail: wizard.pendingEmail,
     form,
     confirmForm,
-    catalogs,
-    directionDocuments,
+    directionFiles,
+    setDirectionFiles,
     licenseFile,
     miningLicenseFile,
     sroDesignFile,
@@ -179,10 +139,6 @@ export function useRegister(options?: UseRegisterOptions) {
     isLoading: form.formState.isSubmitting,
     isConfirmLoading: confirmForm.formState.isSubmitting,
     selectRole,
-    toggleService,
-    changeDirection,
-    addDirectionDocuments,
-    removeDirectionDocument,
     submit,
     confirmSubmit,
     setPhone,

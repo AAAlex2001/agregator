@@ -1,8 +1,18 @@
 import { z } from "zod";
 import { isValidRussianPhone } from "@/source/shared/lib/phone";
 import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
-import { validateDirection } from "@/source/features/direction-forms";
-import type { DirectionKey, DirectionProfile } from "@/source/entities/direction";
+import {
+  auditCustomerProfileSchema,
+  auditExpertProfileSchema,
+  type AuditCustomerProfile,
+  type AuditExpertProfile,
+} from "@/source/features/directions/audit";
+import { cadastralProfileSchema, type CadastralProfile } from "@/source/features/directions/cadastral";
+import { expertiseProfileSchema, type ExpertiseProfile } from "@/source/features/directions/expertise";
+import { forensicProfileSchema, type ForensicProfile } from "@/source/features/directions/forensic";
+import { laboratoryProfileSchema, type LaboratoryProfile } from "@/source/features/directions/laboratory";
+import { researchProfileSchema, type ResearchProfile } from "@/source/features/directions/research";
+import { firstSchemaError } from "@/source/features/directions/shared/model/validate";
 
 const passwordSchema = z
   .string()
@@ -32,7 +42,13 @@ export const registerFormSchema = z
     agreeTerms: z.boolean(),
     agreeConsent: z.boolean(),
     companyName: z.string().trim(),
-    directions: z.record(z.string(), z.custom<DirectionProfile>()),
+    expertiseProfile: z.custom<ExpertiseProfile | null>(),
+    auditExpertProfile: z.custom<AuditExpertProfile | null>(),
+    auditCustomerProfile: z.custom<AuditCustomerProfile | null>(),
+    cadastralProfile: z.custom<CadastralProfile | null>(),
+    forensicProfile: z.custom<ForensicProfile | null>(),
+    researchProfile: z.custom<ResearchProfile | null>(),
+    laboratoryProfile: z.custom<LaboratoryProfile | null>(),
     companyData: z
       .object({
         value: z.string(),
@@ -165,10 +181,18 @@ export const registerFormSchema = z
       }
     }
 
-    for (const [key, profile] of Object.entries(data.directions)) {
-      const message = validateDirection(key as DirectionKey, data.role, profile);
-      if (message) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["directions", key], message });
+    const directionChecks = [
+      { path: "expertiseProfile", message: data.expertiseProfile && firstSchemaError(expertiseProfileSchema, data.expertiseProfile) },
+      { path: "auditExpertProfile", message: data.auditExpertProfile && firstSchemaError(auditExpertProfileSchema, data.auditExpertProfile) },
+      { path: "auditCustomerProfile", message: data.auditCustomerProfile && firstSchemaError(auditCustomerProfileSchema, data.auditCustomerProfile) },
+      { path: "cadastralProfile", message: data.cadastralProfile && firstSchemaError(cadastralProfileSchema, data.cadastralProfile) },
+      { path: "forensicProfile", message: data.forensicProfile && firstSchemaError(forensicProfileSchema, data.forensicProfile) },
+      { path: "researchProfile", message: data.researchProfile && firstSchemaError(researchProfileSchema, data.researchProfile) },
+      { path: "laboratoryProfile", message: data.laboratoryProfile && firstSchemaError(laboratoryProfileSchema, data.laboratoryProfile) },
+    ];
+    for (const check of directionChecks) {
+      if (check.message) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: [check.path], message: check.message });
       }
     }
 
@@ -210,7 +234,13 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   agreeConsent: false,
   companyName: "",
   companyData: null,
-  directions: {},
+  expertiseProfile: null,
+  auditExpertProfile: null,
+  auditCustomerProfile: null,
+  cadastralProfile: null,
+  forensicProfile: null,
+  researchProfile: null,
+  laboratoryProfile: null,
   licenseNumber: "",
   licenseAreas: [],
   licenseFileName: "",

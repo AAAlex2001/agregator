@@ -16,17 +16,21 @@ from routes import (
     admin_rtn,
     article,
     article_interactions,
+    audit,
+    cadastral,
     chat,
     contact_deal,
-    direction,
     email,
     expert,
     expert_contact,
+    expertise,
+    forensic,
     forgot_password,
     geo,
     hazard,
     internal,
     labor,
+    laboratory,
     landing,
     license_holder,
     lining,
@@ -38,6 +42,7 @@ from routes import (
     question,
     registration,
     report,
+    research,
     response,
     review,
     rtn,
@@ -133,7 +138,12 @@ app.include_router(admin_contact_deal.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")
 app.include_router(expert_contact.router, prefix="/api")
-app.include_router(direction.router, prefix="/api")
+app.include_router(expertise.router, prefix="/api")
+app.include_router(audit.router, prefix="/api")
+app.include_router(cadastral.router, prefix="/api")
+app.include_router(forensic.router, prefix="/api")
+app.include_router(research.router, prefix="/api")
+app.include_router(laboratory.router, prefix="/api")
 app.include_router(geo.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")

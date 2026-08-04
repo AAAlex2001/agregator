@@ -9,7 +9,7 @@ from models.base import Base
 
 if TYPE_CHECKING:
     from models.account import Account
-    from models.direction_profile import CustomerAuditProfile
+    from models.audit import CustomerAuditProfile
 
 
 class Customer(Base):

@@ -4,7 +4,13 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
+from schemas.audit import AuditCustomerProfileInput, AuditExpertProfileInput
+from schemas.cadastral import CadastralProfileInput
 from schemas.company import validate_company_data
+from schemas.expertise import ExpertiseProfileInput
+from schemas.forensic import ForensicProfileInput
+from schemas.laboratory import LaboratoryProfileInput
+from schemas.research import ResearchProfileInput
 
 if TYPE_CHECKING:
     from models.account import Account
@@ -22,12 +28,6 @@ class LicenseRentalKind(str, Enum):
     PERCENT = "PERCENT"
     FIXED = "FIXED"
     NEGOTIABLE = "NEGOTIABLE"
-
-
-class DirectionRegistration(BaseModel):
-    "Одно направление, выбранное при регистрации: ключ и поля его анкеты."
-    key: str = Field(..., max_length=50, description="Ключ направления, напр. EXPERTISE")
-    data: dict[str, Any] = Field(default_factory=dict, description="Поля анкеты направления")
 
 
 class UserRegistration(BaseModel):
@@ -49,9 +49,13 @@ class UserRegistration(BaseModel):
     map_fields: list[str] = Field(
         default_factory=list, description="Что показывать в метке на карте", max_length=10
     )
-    directions: list[DirectionRegistration] = Field(
-        default_factory=list, description="Направления, по которым работает пользователь"
-    )
+    expertise_profile: ExpertiseProfileInput | None = None
+    audit_expert_profile: AuditExpertProfileInput | None = None
+    audit_customer_profile: AuditCustomerProfileInput | None = None
+    cadastral_profile: CadastralProfileInput | None = None
+    forensic_profile: ForensicProfileInput | None = None
+    research_profile: ResearchProfileInput | None = None
+    laboratory_profile: LaboratoryProfileInput | None = None
     contact_sales_enabled: bool = False
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
     contact_payment_details: str | None = Field(None, max_length=1000)
@@ -61,6 +65,23 @@ class UserRegistration(BaseModel):
     @classmethod
     def _validate_company_data(cls, value: Any) -> Any:
         return validate_company_data(value)
+
+    @model_validator(mode="after")
+    def validate_direction_roles(self) -> "UserRegistration":
+        """Анкеты направлений заполняет только та роль, которой они принадлежат."""
+        expert_forms = (
+            self.expertise_profile,
+            self.audit_expert_profile,
+            self.cadastral_profile,
+            self.forensic_profile,
+            self.research_profile,
+            self.laboratory_profile,
+        )
+        if self.role is not UserRole.EXPERT and any(form is not None for form in expert_forms):
+            raise ValueError("Анкеты направлений исполнителя доступны только исполнителю")
+        if self.role is not UserRole.CUSTOMER and self.audit_customer_profile is not None:
+            raise ValueError("Анкета заказчика по аудиту доступна только заказчику")
+        return self
 
     @model_validator(mode="after")
     def validate_contact_offer(self) -> "UserRegistration":

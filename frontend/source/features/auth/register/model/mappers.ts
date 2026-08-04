@@ -1,24 +1,11 @@
 import { toRussianPhoneApiValue } from "@/source/shared/lib/phone";
-import type {
-  CompanyData,
-  LicenseHolderRegisterPayload,
-  RegisterApiPayload,
-  RegisterDocument,
-} from "@/source/entities/user";
-import type { DirectionKey } from "@/source/entities/direction";
+import type { CompanyData, LicenseHolderRegisterPayload } from "@/source/entities/user";
+import type { RegisterPayload } from "./api";
 import type { RegisterFormValues } from "./schema";
 
-export function toRegisterDocuments(
-  values: RegisterFormValues,
-  documents: Partial<Record<DirectionKey, File[]>>,
-): RegisterDocument[] {
-  return Object.keys(values.directions).flatMap((key) =>
-    (documents[key as DirectionKey] ?? []).map((file) => ({ directionKey: key, file })),
-  );
-}
-
-export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayload {
+export function toRegisterPayload(values: RegisterFormValues): RegisterPayload {
   const role = values.role;
+  const isExpert = role === "EXPERT";
   return {
     role,
     email: values.email.trim(),
@@ -30,25 +17,30 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterApiPayloa
     company_data: role === "CUSTOMER"
       ? (values.companyData as CompanyData | null)
       : null,
-    location_lat: role === "EXPERT" ? values.locationLat : undefined,
-    location_lng: role === "EXPERT" ? values.locationLng : undefined,
-    location_address: role === "EXPERT" ? (values.locationAddress || null) : undefined,
-    location_city: role === "EXPERT" ? values.locationCity : undefined,
-    travels_to_other_regions: role === "EXPERT" ? values.travelsToOtherRegions : undefined,
-    show_on_map: role === "EXPERT" ? values.showOnMap : undefined,
-    map_fields: role === "EXPERT" ? values.mapFields : undefined,
-    directions: Object.entries(values.directions).map(([key, data]) => ({ key, data })),
-    contact_sales_enabled: role === "EXPERT" ? values.contactSalesEnabled : undefined,
+    location_lat: isExpert ? values.locationLat : undefined,
+    location_lng: isExpert ? values.locationLng : undefined,
+    location_address: isExpert ? (values.locationAddress || null) : undefined,
+    location_city: isExpert ? values.locationCity : undefined,
+    travels_to_other_regions: isExpert ? values.travelsToOtherRegions : undefined,
+    show_on_map: isExpert ? values.showOnMap : undefined,
+    map_fields: isExpert ? values.mapFields : undefined,
+    expertise_profile: isExpert ? values.expertiseProfile : null,
+    audit_expert_profile: isExpert ? values.auditExpertProfile : null,
+    audit_customer_profile: role === "CUSTOMER" ? values.auditCustomerProfile : null,
+    cadastral_profile: isExpert ? values.cadastralProfile : null,
+    forensic_profile: isExpert ? values.forensicProfile : null,
+    research_profile: isExpert ? values.researchProfile : null,
+    laboratory_profile: isExpert ? values.laboratoryProfile : null,
+    contact_sales_enabled: isExpert ? values.contactSalesEnabled : undefined,
     contact_price_rubles:
-      role === "EXPERT" && values.contactSalesEnabled
+      isExpert && values.contactSalesEnabled
         ? Number(values.contactPriceRubles.replace(/\s/g, ""))
         : undefined,
     contact_payment_details:
-      role === "EXPERT" && values.contactSalesEnabled
+      isExpert && values.contactSalesEnabled
         ? values.contactPaymentDetails.trim()
         : undefined,
-    contact_disclosure_consent:
-      role === "EXPERT" ? values.contactDisclosureConsent : undefined,
+    contact_disclosure_consent: isExpert ? values.contactDisclosureConsent : undefined,
   };
 }
 

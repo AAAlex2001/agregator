@@ -9,7 +9,7 @@ import {
   type OrderWorkGroup,
   type OrderWorkType,
 } from "@/source/entities/order";
-import { emptyDetailsFor } from "../../../model/detailsRegistry";
+import { emptyDirectionDetails } from "../../../model/orderDetails";
 import type { OrderFormValues } from "../../../model/schema";
 import base from "./sectionBase.module.scss";
 import s from "./workTypeSection.module.scss";
@@ -28,7 +28,12 @@ export function WorkTypeSection({ form }: Props) {
   const choose = (value: OrderWorkType) => {
     if (value === workType) return;
     setValue("workType", value, { shouldDirty: true, shouldValidate: true });
-    setValue("details", emptyDetailsFor(value), { shouldDirty: true });
+    const empties = emptyDirectionDetails();
+    setValue("cadastralDetails", empties.cadastralDetails, { shouldDirty: true });
+    setValue("forensicDetails", empties.forensicDetails, { shouldDirty: true });
+    setValue("researchDetails", empties.researchDetails, { shouldDirty: true });
+    setValue("laboratoryDetails", empties.laboratoryDetails, { shouldDirty: true });
+    setValue("auditDetails", empties.auditDetails, { shouldDirty: true });
     if (value === "EXPERTISE") return;
     setValue("selectionsByType", {}, { shouldDirty: true });
     setValue("requiresExpert", true, { shouldDirty: true, shouldValidate: true });
