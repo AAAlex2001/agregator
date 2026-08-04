@@ -29,14 +29,14 @@ export function CadastralProfileFields({ value, onChange }: Props) {
       <div className={s.field}>
         <span className={s.label}>Сведения из реестра кадастровых инженеров</span>
         <div className={s.row}>
-          <label className={s.cell}>
+          <div className={s.cell}>
             <span className={s.cellLabel}>Дата вступления</span>
             <CalendarInput
               value={value.registry_joined_at ?? ""}
               onChange={(next) => onChange({ ...value, registry_joined_at: next || null })}
               placeholder="Выберите дату"
             />
-          </label>
+          </div>
           <label className={s.cell}>
             <span className={s.cellLabel}>Номер аттестата</span>
             <TextInput

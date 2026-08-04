@@ -3,6 +3,11 @@
 Каждое направление — свой типизированный блок формы, роли проверены схемой
 регистрации. Удостоверения ЭПБ пишутся прямо в профиль исполнителя, остальные
 анкеты создаются отдельными таблицами и возвращаются для добавления в сессию.
+
+Профили ролей к этому моменту уже созданы и сброшены flush'ем, поэтому анкеты
+привязываются по явному внешнему ключу, а не через relationship: обращение
+к незагруженной relationship на persistent-объекте запускает ленивую загрузку,
+которая в async-сессии падает с MissingGreenlet.
 """
 from models.account import Account
 from models.audit import CustomerAuditProfile, ExpertAuditProfile
@@ -25,42 +30,61 @@ DirectionProfile = (
 def build_direction_profiles(account: Account, data: UserRegistration) -> list[DirectionProfile]:
     """Создаёт анкеты направлений из типизированных полей формы регистрации."""
     created: list[DirectionProfile] = []
-    expert = account.expert_profile
-    customer = account.customer_profile
 
     if data.expertise_profile is not None:
-        expert.certificates = [
+        account.expert_profile.certificates = [
             certificate.model_dump() for certificate in data.expertise_profile.certificates
         ]
 
     if data.audit_expert_profile is not None:
-        profile = ExpertAuditProfile(documents=[], **data.audit_expert_profile.model_dump())
-        expert.audit_profile = profile
-        created.append(profile)
+        created.append(
+            ExpertAuditProfile(
+                expert_id=account.expert_profile.id,
+                documents=[],
+                **data.audit_expert_profile.model_dump(),
+            )
+        )
 
     if data.audit_customer_profile is not None:
-        profile = CustomerAuditProfile(**data.audit_customer_profile.model_dump())
-        customer.audit_profile = profile
-        created.append(profile)
+        created.append(
+            CustomerAuditProfile(
+                customer_id=account.customer_profile.id,
+                **data.audit_customer_profile.model_dump(),
+            )
+        )
 
     if data.cadastral_profile is not None:
-        profile = ExpertCadastralProfile(documents=[], **data.cadastral_profile.model_dump())
-        expert.cadastral_profile = profile
-        created.append(profile)
+        created.append(
+            ExpertCadastralProfile(
+                expert_id=account.expert_profile.id,
+                documents=[],
+                **data.cadastral_profile.model_dump(),
+            )
+        )
 
     if data.forensic_profile is not None:
-        profile = ExpertForensicProfile(documents=[], **data.forensic_profile.model_dump())
-        expert.forensic_profile = profile
-        created.append(profile)
+        created.append(
+            ExpertForensicProfile(
+                expert_id=account.expert_profile.id,
+                documents=[],
+                **data.forensic_profile.model_dump(),
+            )
+        )
 
     if data.research_profile is not None:
-        profile = ExpertResearchProfile(**data.research_profile.model_dump())
-        expert.research_profile = profile
-        created.append(profile)
+        created.append(
+            ExpertResearchProfile(
+                expert_id=account.expert_profile.id,
+                **data.research_profile.model_dump(),
+            )
+        )
 
     if data.laboratory_profile is not None:
-        profile = ExpertLaboratoryProfile(**data.laboratory_profile.model_dump())
-        expert.laboratory_profile = profile
-        created.append(profile)
+        created.append(
+            ExpertLaboratoryProfile(
+                expert_id=account.expert_profile.id,
+                **data.laboratory_profile.model_dump(),
+            )
+        )
 
     return created

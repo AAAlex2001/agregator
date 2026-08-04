@@ -134,7 +134,7 @@ class TestBuildDirectionProfiles:
         assert created == []
         assert account.expert_profile.certificates[0]["area"] == "Э1"
 
-    def test_expert_direction_profiles_created_and_linked(self):
+    def test_expert_direction_profiles_created_with_expert_fk(self):
         account = build_expert_account()
         data = UserRegistration(
             **registration_payload(
@@ -149,11 +149,12 @@ class TestBuildDirectionProfiles:
         created = build_direction_profiles(account, data)
 
         assert len(created) == 5
-        assert account.expert_profile.audit_profile is created[0]
-        assert account.expert_profile.cadastral_profile.education == "МИИГАиК"
-        assert account.expert_profile.laboratory_profile.accreditation_area == "Испытания бетона"
+        assert all(profile.expert_id == account.expert_profile.id for profile in created)
+        assert created[0].audit_qualifications == ["40.20900.185"]
+        assert created[1].education == "МИИГАиК"
+        assert created[4].accreditation_area == "Испытания бетона"
 
-    def test_customer_audit_profile_created(self):
+    def test_customer_audit_profile_created_with_customer_fk(self):
         account = build_customer_account()
         data = UserRegistration(
             **registration_payload(
@@ -167,7 +168,7 @@ class TestBuildDirectionProfiles:
         created = build_direction_profiles(account, data)
 
         assert len(created) == 1
-        assert account.customer_profile.audit_profile is created[0]
+        assert created[0].customer_id == account.customer_profile.id
         assert created[0].position == "Главный инженер"
 
     def test_empty_form_creates_nothing(self):
@@ -175,7 +176,7 @@ class TestBuildDirectionProfiles:
         data = UserRegistration(**registration_payload())
 
         assert build_direction_profiles(account, data) == []
-        assert account.expert_profile.audit_profile is None
+        assert account.expert_profile.certificates == []
 
 
 class TestRegistrationDocuments:
