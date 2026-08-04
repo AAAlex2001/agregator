@@ -70,4 +70,6 @@ class RegisterLicenseHolderUseCase:
         )
         account.license_holder_profile = profile
         await self.repo.add(profile)
-        return account
+
+        loaded = await self.repo.find_account(account.id)
+        return loaded if loaded is not None else account

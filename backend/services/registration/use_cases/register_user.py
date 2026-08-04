@@ -65,7 +65,9 @@ class RegisterUserUseCase:
 
         for entity in build_direction_profiles(account, data):
             await self.repo.add(entity)
-        return account
+
+        loaded = await self.repo.find_account(account.id)
+        return loaded if loaded is not None else account
 
     def build_expert_profile(self, account: Account, data: UserRegistration) -> Expert:
         "Собирает профиль исполнителя: место работы на карте и условия продажи контактов."

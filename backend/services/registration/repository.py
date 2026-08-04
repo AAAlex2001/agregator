@@ -48,3 +48,13 @@ class RegistrationRepository:
         "Добавляет сущность (аккаунт или профиль роли) в сессию и делает flush."
         self.db.add(entity)
         await self.db.flush()
+
+    async def find_account(self, account_id: int) -> Account | None:
+        """Перечитывает аккаунт запросом, чтобы профили ролей загрузились заранее.
+
+        У свежесозданного аккаунта незаполненные relationship не загружены, и любое
+        обращение к ним из синхронного кода запускает ленивую загрузку — в async-сессии
+        это MissingGreenlet. SELECT догружает их через selectin.
+        """
+        result = await self.db.execute(select(Account).where(Account.id == account_id))
+        return result.scalars().first()
