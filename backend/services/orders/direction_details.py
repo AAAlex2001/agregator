@@ -8,11 +8,23 @@ from pydantic import BaseModel
 
 from models.audit import OrderAuditDetails, OrderAuditOpoItem
 from models.base import Base
+from models.cadastral import OrderCadastralDetails
+from models.forensic import OrderForensicDetails
+from models.laboratory import OrderLaboratoryDetails
+from models.research import OrderResearchDetails
 from schemas.audit import AuditOrderDetailsInput
 from services.directions.registry import Direction
 
+OrderDirectionDetails = (
+    OrderAuditDetails
+    | OrderCadastralDetails
+    | OrderForensicDetails
+    | OrderLaboratoryDetails
+    | OrderResearchDetails
+)
 
-def build_details(direction: Direction, validated: BaseModel) -> Base:
+
+def build_details(direction: Direction, validated: BaseModel) -> OrderDirectionDetails:
     """Создаёт детали заявки; конкретный класс задаёт реестр направлений."""
     if isinstance(validated, AuditOrderDetailsInput):
         return build_audit_details(validated)

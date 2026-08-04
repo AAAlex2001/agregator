@@ -24,15 +24,6 @@ from services.forensic import (
 
 MAX_REGISTRATION_DOCUMENTS = 20
 
-DOCUMENT_SLOTS = (
-    "AUDIT_SUPB",
-    "CADASTRAL_DIPLOMA",
-    "CADASTRAL_CERTIFICATE",
-    "CADASTRAL",
-    "FORENSIC_DIPLOMA",
-    "FORENSIC",
-)
-
 
 async def attach_documents(
     db: AsyncSession,

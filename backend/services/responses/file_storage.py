@@ -16,6 +16,7 @@ ALLOWED_EXTENSIONS = {
     ".xlsx",
 }
 UPLOAD_CHUNK_SIZE = 1024 * 1024
+MAX_FILE_BYTES = 25 * 1024 * 1024
 
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 
@@ -39,9 +40,19 @@ class ResponseFileStorage:
 
         generated_name = f"{uuid4().hex}{extension}"
         full_path = upload_dir / generated_name
+        written = 0
         async with aiofiles.open(full_path, "wb") as handle:
             while chunk := await file.read(UPLOAD_CHUNK_SIZE):
+                written += len(chunk)
+                if written > MAX_FILE_BYTES:
+                    break
                 await handle.write(chunk)
+        if written > MAX_FILE_BYTES:
+            full_path.unlink(missing_ok=True)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Размер файла не должен превышать {MAX_FILE_BYTES // (1024 * 1024)} МБ",
+            )
 
         return f"/uploads/responses/{response_id}/{generated_name}"
 

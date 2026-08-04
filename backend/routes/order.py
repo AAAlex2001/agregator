@@ -8,16 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
 from dependencies.rate_limit import rate_limit
-from models.account import UserRole
-from models.order import Order, OrderStatus, OrderWorkType
+from models.order import OrderStatus, OrderWorkType
 from schemas.common import OkResponse
 from schemas.guest_order import GuestOrderRequest, GuestOrderResponse
-from schemas.order import (
-    OrderCreate,
-    OrderListResponse,
-    OrderResponse,
-    OrderUpdate,
-)
+from schemas.order import OrderCard, OrderListResponse
 from services.email import (
     EmailDispatcher,
     EmailRepository,
@@ -48,8 +42,14 @@ from services.orders import (
     SearchOrdersUseCase,
     UpdateOrderUseCase,
     UpdateOrderWithFilesUseCase,
+    apply_question_badges,
 )
 from services.orders.document_copy import OrderDocumentCopyService
+from services.orders.forms import (
+    build_order_create_data,
+    build_order_update_data,
+    parse_keep_documents,
+)
 from services.registration import (
     RegisterGuestCustomerUseCase,
     RegistrationNotifier,
@@ -57,7 +57,6 @@ from services.registration import (
     RegistrationValidator,
 )
 from services.verification import VerificationService
-from utils.order_forms import build_order_create_data, build_order_update_data, parse_keep_documents
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -68,27 +67,6 @@ def build_repo(db: AsyncSession) -> OrderRepository:
 
 def build_get_order(db: AsyncSession) -> GetOrderByIdUseCase:
     return GetOrderByIdUseCase(build_repo(db))
-
-
-async def apply_question_badges(
-    repo: OrderRepository,
-    orders: list[Order],
-    items: list[OrderResponse],
-    user_id: int | None,
-) -> None:
-    "Проставляет карточкам счётчики вопросов: заказчику — без ответа, эксперту — отвеченные ему."
-    if user_id is None or not orders:
-        return
-    role = await repo.get_user_role(user_id)
-    order_ids = [order.id for order in orders]
-    if role == UserRole.CUSTOMER:
-        counts = await repo.count_unanswered_questions(order_ids)
-        for item in items:
-            item.unanswered_questions = counts.get(item.id, 0)
-    if role == UserRole.EXPERT:
-        counts = await repo.count_expert_answered_questions(order_ids, user_id)
-        for item in items:
-            item.my_answered_questions = counts.get(item.id, 0)
 
 
 def build_send_new_order_email(
@@ -191,11 +169,11 @@ async def search_orders_public(
     limit: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db),
 ) -> OrderListResponse:
-    "Публичный поиск по всем заказам платформы (любого статуса). Доступен без авторизации."
+    "Публичный поиск по активным заказам без назначенного исполнителя. Доступен без авторизации."
     use_case = SearchOrdersUseCase(build_repo(db))
     orders, has_more = await use_case.execute(q, skip, limit, badge_code)
     return OrderListResponse(
-        items=[OrderResponse.from_order(o) for o in orders],
+        items=[OrderCard.from_order(o) for o in orders],
         has_more=has_more,
     )
 
@@ -214,7 +192,7 @@ async def get_orders(
     repo = build_repo(db)
     use_case = ListOrdersUseCase(repo)
     orders, has_more = await use_case.execute(skip, limit, status, user_id, sort_by, sort_dir)
-    items = [OrderResponse.from_order(o) for o in orders]
+    items = [OrderCard.from_order(o) for o in orders]
     await apply_question_badges(repo, orders, items, user_id)
     return OrderListResponse(items=items, has_more=has_more)
 
@@ -231,64 +209,40 @@ async def get_archived_orders(
     use_case = ListArchivedOrdersUseCase(repo)
     archived, has_more = await use_case.execute(skip, limit, current_user_id=user_id)
     items = [
-        OrderResponse.from_archived_order(it.order, it.accepted_response, it.has_review)
+        OrderCard.from_archived_order(it.order, it.accepted_response, it.has_review)
         for it in archived
     ]
     await apply_question_badges(repo, [it.order for it in archived], items, user_id)
     return OrderListResponse(items=items, has_more=has_more)
 
 
-@router.get("/public/{public_id}", response_model=OrderResponse)
+@router.get("/public/{public_id}", response_model=OrderCard)
 async def get_order_public(
     public_id: str,
     db: AsyncSession = Depends(get_db),
-) -> OrderResponse:
+) -> OrderCard:
     "Возвращает публичный заказ по public_id без авторизации."
     use_case = GetOrderByPublicIdUseCase(build_repo(db))
     order = await use_case.execute(public_id)
-    return OrderResponse.from_order(order)
+    return OrderCard.from_order(order)
 
 
-@router.get("/{order_id}", response_model=OrderResponse)
+@router.get("/{order_id}", response_model=OrderCard)
 async def get_order(
     order_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> OrderResponse:
+) -> OrderCard:
     "Возвращает заказ по id; 403 если у пользователя нет доступа."
     repo = build_repo(db)
     await OrderValidator(repo).ensure_user_can_view_order(order_id, user_id)
     order = await build_get_order(db).execute(order_id)
-    return OrderResponse.from_order(order)
-
-
-@router.post(
-    "/",
-    response_model=OrderResponse,
-    dependencies=[Depends(rate_limit("order_create", max_calls=10, window_seconds=60))],
-)
-async def create_order(
-    data: OrderCreate,
-    background_tasks: BackgroundTasks,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
-) -> OrderResponse:
-    "Создаёт заказ от имени текущего пользователя и рассылает уведомления."
-    data.customer_id = user_id
-    repo = build_repo(db)
-    use_case = CreateOrderUseCase(
-        repo=repo,
-        validator=OrderValidator(repo),
-        send_new_order_email=build_send_new_order_email(db, background_tasks),
-        create_new_order_notification=build_create_new_order_notification(db),
-    )
-    order = await use_case.execute(data, current_user_id=user_id)
-    return OrderResponse.from_order(order)
+    return OrderCard.from_order(order)
 
 
 @router.post(
     "/create-with-files",
-    response_model=OrderResponse,
+    response_model=OrderCard,
     dependencies=[Depends(rate_limit("order_create", max_calls=10, window_seconds=60))],
 )
 async def create_order_with_files(
@@ -313,7 +267,7 @@ async def create_order_with_files(
     other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> OrderResponse:
+) -> OrderCard:
     "Создаёт заказ с прикреплёнными файлами через multipart/form-data."
     data = build_order_create_data(
         title=title,
@@ -354,32 +308,10 @@ async def create_order_with_files(
         copy_source_order_id=copy_source_order_id,
         copy_documents=parse_keep_documents(copy_documents_json),
     )
-    return OrderResponse.from_order(order)
+    return OrderCard.from_order(order)
 
 
-@router.patch("/{order_id}", response_model=OrderResponse)
-async def update_order(
-    order_id: int,
-    data: OrderUpdate,
-    background_tasks: BackgroundTasks,
-    db: AsyncSession = Depends(get_db),
-    user_id: int = Depends(get_current_user),
-) -> OrderResponse:
-    "Частично обновляет заказ; уведомляет откликнувшихся об изменениях."
-    repo = build_repo(db)
-    get_order = GetOrderByIdUseCase(repo)
-    validator = OrderValidator(repo)
-    use_case = UpdateOrderUseCase(
-        repo=repo,
-        get_order=get_order,
-        validator=validator,
-        send_updated_email=build_send_order_updated_email(db, background_tasks),
-    )
-    order = await use_case.execute(order_id, data, current_user_id=user_id)
-    return OrderResponse.from_order(order)
-
-
-@router.patch("/{order_id}/update-with-files", response_model=OrderResponse)
+@router.patch("/{order_id}/update-with-files", response_model=OrderCard)
 async def update_order_with_files(
     order_id: int,
     background_tasks: BackgroundTasks,
@@ -405,7 +337,7 @@ async def update_order_with_files(
     other_files: list[UploadFile] = File(default=[]),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> OrderResponse:
+) -> OrderCard:
     "Обновляет заказ с заменой/добавлением файлов через multipart/form-data."
     data = build_order_update_data(
         title=title,
@@ -426,11 +358,11 @@ async def update_order_with_files(
     repo = build_repo(db)
     get_order = GetOrderByIdUseCase(repo)
     validator = OrderValidator(repo)
-    send_updated = build_send_order_updated_email(db, background_tasks)
     update = UpdateOrderUseCase(
         repo=repo,
         get_order=get_order,
         validator=validator,
+        send_updated_email=build_send_order_updated_email(db, background_tasks),
     )
     files = OrderFileStorage()
     use_case = UpdateOrderWithFilesUseCase(
@@ -438,7 +370,6 @@ async def update_order_with_files(
         get_order=get_order,
         repo=repo,
         files=files,
-        send_updated_email=send_updated,
         document_copy=OrderDocumentCopyService(repo, files),
     )
     order = await use_case.execute(
@@ -452,7 +383,7 @@ async def update_order_with_files(
         copy_source_order_id=copy_source_order_id,
         copy_documents=parse_keep_documents(copy_documents_json),
     )
-    return OrderResponse.from_order(order)
+    return OrderCard.from_order(order)
 
 
 @router.delete("/{order_id}", response_model=OkResponse)
@@ -467,6 +398,7 @@ async def delete_order(
         repo=repo,
         get_order=GetOrderByIdUseCase(repo),
         validator=OrderValidator(repo),
+        files=OrderFileStorage(),
     )
     await use_case.execute(order_id, current_user_id=user_id)
     return OkResponse()

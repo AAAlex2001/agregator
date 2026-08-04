@@ -1,13 +1,9 @@
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
-
-if TYPE_CHECKING:
-    from models.account import Account
 
 CODE_TTL_MINUTES = 15
 
@@ -43,5 +39,3 @@ class EmailChangeRequest(Base):
         default=default_expires_at,
         nullable=False,
     )
-
-    user: Mapped["Account"] = relationship()

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from schemas.order import OrderDocuments
 
@@ -10,11 +10,6 @@ class CreateReviewRequest(BaseModel):
     response_id: int = Field(..., gt=0)
     rating: int = Field(..., ge=1, le=5)
     comment: str = Field(default="", max_length=5000)
-
-
-class CreateReviewResponse(BaseModel):
-    "Ответ на создание отзыва (сообщение о результате)."
-    detail: str
 
 
 class ReviewBadgeItem(BaseModel):
@@ -40,8 +35,7 @@ class ReviewItem(BaseModel):
     comment: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReviewListResponse(BaseModel):

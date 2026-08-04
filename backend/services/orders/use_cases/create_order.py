@@ -32,7 +32,6 @@ class CreateOrderUseCase:
         "Запускает основной сценарий use case."
         await self.validator.ensure_user_can_create_order(data.customer_id, current_user_id)
         self.validator.ensure_requirements_selected(data.requires_expert, data.requires_license)
-        await self.validator.ensure_customer_exists(data.customer_id)
         validated_details = self.validator.validate_direction_details(data.work_type, data.details)
 
         order = self.build_entity(data)

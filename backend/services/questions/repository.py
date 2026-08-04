@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account, UserRole
 from models.order import Order
 from models.question import OrderQuestion
 from models.response import OrderResponse
@@ -61,6 +62,11 @@ class QuestionRepository:
             .order_by(OrderQuestion.asked_at.asc())
         )
         return list((await self.db.execute(query)).scalars().all())
+
+    async def get_user_role(self, user_id: int) -> UserRole | None:
+        "Возвращает роль пользователя по идентификатору аккаунта."
+        query = select(Account.role).where(Account.id == user_id)
+        return (await self.db.execute(query)).scalar_one_or_none()
 
     async def get_order(self, order_id: int) -> Order | None:
         "Возвращает запрошенную сущность."

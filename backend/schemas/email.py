@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -81,7 +82,7 @@ class ChatMessageContext(BaseContext):
 class BiddingFinishedContext(BaseContext):
     expert_greeting: str
     order_title: str
-    outcome: str  # "won" либо "lost"
+    outcome: Literal["won", "lost"]
     cta_url: str
     badges: list[str] = []
     order_number: str = ""

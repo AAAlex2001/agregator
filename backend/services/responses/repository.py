@@ -202,7 +202,7 @@ class ResponseRepository:
         )
         return set((await self.db.execute(query)).scalars().all())
 
-    async def add(self, entity: OrderResponse) -> None:
+    async def add(self, entity: OrderResponse | Chat) -> None:
         "Добавляет сущность в сессию."
         self.db.add(entity)
 

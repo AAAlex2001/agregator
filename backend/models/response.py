@@ -104,4 +104,6 @@ class OrderResponse(Base):
 
     order: Mapped["Order"] = relationship(back_populates="responses")
     expert: Mapped["Account"] = relationship(back_populates="responses")
-    reviews: Mapped[list["Review"]] = relationship(back_populates="response", lazy="select")
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="response", lazy="select", passive_deletes=True
+    )

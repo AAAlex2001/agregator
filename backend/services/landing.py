@@ -1,4 +1,5 @@
 "Сервисный модуль: landing."
+from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -96,7 +97,14 @@ class LandingService:
 
     async def get_hero(self) -> LandingHeroDto:
         "Возвращает запрошенную сущность."
-        row = (await self.db.execute(select(LandingHero).where(LandingHero.id == 1))).scalar_one()
+        row = (
+            await self.db.execute(select(LandingHero).where(LandingHero.id == 1))
+        ).scalar_one_or_none()
+        if row is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Контент лендинга не заполнен",
+            )
         return LandingHeroDto(
             title=row.title,
             subtitle=row.subtitle,
@@ -111,6 +119,20 @@ class LandingService:
             row.block_key: LandingSectionHeaderDto(title=row.title, subtitle=row.subtitle)
             for row in rows
         }
+        required = (
+            "how_it_works",
+            "key_advantages",
+            "orders",
+            "advantages",
+            "industries",
+            "reviews",
+            "faq",
+        )
+        if any(key not in by_key for key in required):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Контент лендинга не заполнен",
+            )
         return LandingSectionHeadersDto(
             how_it_works=by_key["how_it_works"],
             key_advantages=by_key["key_advantages"],

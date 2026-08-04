@@ -13,6 +13,8 @@ class ExpertiseProfileInput(BaseModel):
     certificates: list[ExpertCertificate] = Field(default_factory=list, max_length=200)
 
 
-class ExpertiseProfileResponse(ExpertiseProfileInput):
+class ExpertiseProfileResponse(BaseModel):
     """Анкета исполнителя по ЭПБ в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    certificates: list[ExpertCertificate] = Field(default_factory=list)

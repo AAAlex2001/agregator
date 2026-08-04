@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue
+from services.articles.use_cases.react_to_article import toggle_reaction
 from services.rtn.repository import RtnCommentReactionRepository, RtnCommentRepository
 
 COUNTER_FIELDS: dict[CommentReactionValue, str] = {
@@ -28,21 +29,14 @@ class ReactToRtnCommentUseCase:
         "Нет реакции → ставим; та же → снимаем; другая → меняем. Возвращает комментарий и текущую реакцию."
         comment = await self.get_comment(comment_id)
         existing = await self.reactions.get(comment_id, visitor_key)
-
-        if existing is None:
-            await self.reactions.add(comment_id, user_id, visitor_key, value)
-            self.apply_delta(comment, value, 1)
-            return comment, value
-
-        if existing.value == value:
-            await self.reactions.remove(comment_id, visitor_key)
-            self.apply_delta(comment, value, -1)
-            return comment, None
-
-        self.apply_delta(comment, existing.value, -1)
-        existing.value = value
-        self.apply_delta(comment, value, 1)
-        return comment, value
+        current = await toggle_reaction(
+            existing,
+            value,
+            add=lambda v: self.reactions.add(comment_id, user_id, visitor_key, v),
+            remove=lambda: self.reactions.remove(comment_id, visitor_key),
+            apply_delta=lambda v, delta: self.apply_delta(comment, v, delta),
+        )
+        return comment, current
 
     async def read(self, comment_id: int, visitor_key: str) -> tuple[RtnComment, CommentReactionValue | None]:
         comment = await self.get_comment(comment_id)

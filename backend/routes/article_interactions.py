@@ -7,7 +7,6 @@ from database.database import get_db
 from dependencies.auth import get_current_user_optional
 from dependencies.visitor import get_visitor_key, interaction_key
 from models.article_comment import ArticleComment
-from models.article_reaction import ReactionValue
 from schemas.article_interactions import (
     CommentCreate,
     CommentListResponse,
@@ -92,7 +91,7 @@ async def get_reactions(
             my_reaction=my_reaction,
         )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
-    article, my_reaction = await use_case.read(article_id, user_id, current_key)
+    article, my_reaction = await use_case.read(article_id, current_key)
     return ReactionResponse(
         likes_count=article.likes_count,
         dislikes_count=article.dislikes_count,
@@ -121,7 +120,7 @@ async def react(
             my_reaction=my_reaction,
         )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
-    article, my_reaction = await use_case.react(article_id, user_id, current_key, ReactionValue(data.value))
+    article, my_reaction = await use_case.react(article_id, user_id, current_key, data.value)
     return ReactionResponse(
         likes_count=article.likes_count,
         dislikes_count=article.dislikes_count,

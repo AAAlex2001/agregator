@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from schemas.order import OrderResponse
+from schemas.order import OrderCard
 
 
 class ExpertCertificate(BaseModel):
@@ -23,7 +23,7 @@ class ExpertSummary(BaseModel):
     review_count: int = 0
     completed_orders_count: int = 0
     joined_at: datetime
-    last_order: OrderResponse | None = None
+    last_order: OrderCard | None = None
 
 
 class ExpertListResponse(BaseModel):

@@ -1,22 +1,16 @@
-"""
-Настройка подключения к базе данных
-"""
+"Настройка подключения к базе данных."
 import os
 from collections.abc import AsyncGenerator
 
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-# Загружаем переменные окружения
 load_dotenv()
 
-# URL подключения к базе данных из переменных окружения
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL must be set in .env file")
 
-# Создание движка базы данных
-# Логирование SQL запросов (только в режиме разработки)
 ECHO_SQL = os.getenv("ECHO_SQL", "False").lower() == "true"
 DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "20"))
 DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", "20"))
@@ -37,7 +31,6 @@ engine = create_async_engine(
     connect_args={"command_timeout": DB_COMMAND_TIMEOUT},
 )
 
-# Создание фабрики сессий
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -48,10 +41,7 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """
-    Dependency для получения сессии базы данных
-    Используется в FastAPI через Depends(get_db)
-    """
+    "Dependency сессии БД для FastAPI: коммит при успехе, откат при ошибке."
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -59,6 +49,3 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         except Exception:
             await session.rollback()
             raise
-        finally:
-            await session.close()
-

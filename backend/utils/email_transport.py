@@ -5,7 +5,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from config import email_config
-from utils.email import EmailAttachment, EmailMessage
+from utils.email_message import EmailAttachment, EmailMessage
 
 
 class UnisenderGoBody(BaseModel):
@@ -18,9 +18,10 @@ class UnisenderGoRecipient(BaseModel):
 
 
 class UnisenderGoAttachment(BaseModel):
+    "Вложение в формате Unisender Go: content — base64."
     type: str
     name: str
-    content: str  # base64
+    content: str
 
 
 class UnisenderGoMessage(BaseModel):
@@ -78,10 +79,10 @@ class UnisenderGoTransport:
 
         try:
             parsed = UnisenderGoResponse.model_validate_json(response.content)
-        except ValueError:
+        except ValueError as error:
             raise RuntimeError(
                 f"Unisender Go непонятный ответ ({response.status_code}): {response.text[:300]}"
-            )
+            ) from error
 
         if response.status_code >= 400 or parsed.status != "success":
             raise RuntimeError(

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class QuestionAsk(BaseModel):
@@ -33,7 +33,7 @@ class QuestionResponse(BaseModel):
     answered_at: datetime | None = None
     is_anonymous: bool = True
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class QuestionListResponse(BaseModel):

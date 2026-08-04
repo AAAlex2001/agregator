@@ -73,7 +73,7 @@ def to_detail(
         actor_id == deal.buyer_id and both_signed
     )
     can_see_contacts = admin or actor_id == deal.seller_id or (
-        actor_id == deal.buyer_id and deal.status.value == "CONTACTS_RELEASED"
+        actor_id == deal.buyer_id and deal.status == ContactDealStatus.CONTACTS_RELEASED
     )
     has_review = any(
         review.customer_id == actor_id

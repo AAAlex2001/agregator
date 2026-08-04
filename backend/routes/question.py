@@ -1,10 +1,9 @@
 from fastapi import APIRouter, BackgroundTasks, Depends
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user, get_current_user_optional
-from models.account import Account, UserRole
+from models.account import UserRole
 from models.question import OrderQuestion
 from schemas.question import (
     QuestionAnswer,
@@ -55,7 +54,7 @@ def to_response(question: OrderQuestion) -> QuestionResponse:
 
 
 async def get_user_role(db: AsyncSession, user_id: int) -> UserRole | None:
-    return (await db.execute(select(Account.role).where(Account.id == user_id))).scalar_one_or_none()
+    return await build_repo(db).get_user_role(user_id)
 
 
 @router.get("/orders/{order_id}/questions", response_model=QuestionListResponse)

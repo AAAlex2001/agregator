@@ -1,6 +1,5 @@
 "Repository: глобальный стоп-лист адресов (отписки/жалобы). Любая рассылка обязана его исключать."
 
-from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,7 +22,3 @@ class SuppressionRepository:
             .on_conflict_do_nothing(index_elements=[EmailSuppression.email])
         )
         await self.db.execute(stmt)
-
-    async def is_suppressed(self, email: str) -> bool:
-        stmt = select(EmailSuppression.id).where(EmailSuppression.email == normalize_email(email)).limit(1)
-        return (await self.db.execute(stmt)).scalar_one_or_none() is not None

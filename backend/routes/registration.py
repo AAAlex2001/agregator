@@ -26,7 +26,7 @@ from services.license_holders import (
     save_mining_license_file,
     save_sro_design_file,
 )
-from services.login import SESSION_COOKIE_MAX_AGE_SECONDS, CreateSessionUseCase, LoginRepository
+from services.login import CreateSessionUseCase, LoginRepository, set_session_cookies
 from services.registration import (
     ConfirmEmailUseCase,
     RegisterLicenseHolderUseCase,
@@ -108,24 +108,7 @@ async def confirm_email(
     session = await CreateSessionUseCase(LoginRepository(db)).execute(user.id)
 
     response = JSONResponse(content=UserResponse.from_account(user).model_dump(mode="json"))
-    response.set_cookie(
-        key="session_id",
-        value=session.session_id,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
-    response.set_cookie(
-        key="user_role",
-        value=user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
+    set_session_cookies(response, session.session_id, user.role.value)
     return response
 
 

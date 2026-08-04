@@ -1,6 +1,6 @@
 import json
+import logging
 import os
-from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -8,15 +8,17 @@ from sqlalchemy import or_, select
 
 from database.database import AsyncSessionLocal
 from models.chat import Chat
-from models.session import Session
 from schemas.chat import ExpertRoomTypingPayload, WsExpertRoomTyping
 from services.chats import (
     AuthenticateExpertRoomWsUseCase,
+    ChatRepository,
     ExpertRoomRepository,
     WsCloseError,
 )
 from ws.expert_room_manager import expert_room_manager
 from ws.manager import chat_manager
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/ws")
 
@@ -53,14 +55,8 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
     chat_id: int
 
     async with AsyncSessionLocal() as db:
-        sess = await db.execute(select(Session).where(Session.session_id == session_id))
-        session = sess.scalars().first()
-        if not session:
-            await websocket.close(code=4001)
-            return
-
-        now = datetime.now(UTC)
-        if now > session.max_expires_at or now > session.expires_at:
+        session = await ChatRepository(db).find_active_session(session_id)
+        if session is None:
             await websocket.close(code=4001)
             return
 
@@ -96,20 +92,14 @@ async def chat_websocket(websocket: WebSocket, chat_uuid: str) -> None:
             message_count += 1
             if message_count % SESSION_RECHECK_INTERVAL == 0:
                 async with AsyncSessionLocal() as db:
-                    sess = await db.execute(
-                        select(Session).where(Session.session_id == session_id)
-                    )
-                    session = sess.scalars().first()
-                    now = datetime.now(UTC)
-                    if (
-                        session is None
-                        or now > session.max_expires_at
-                        or now > session.expires_at
-                    ):
-                        await websocket.close(code=4001)
-                        break
-    except (WebSocketDisconnect, Exception):
+                    session = await ChatRepository(db).find_active_session(session_id)
+                if session is None:
+                    await websocket.close(code=4001)
+                    break
+    except WebSocketDisconnect:
         pass
+    except Exception:
+        logger.exception("Ошибка в websocket чата %s", chat_uuid)
     finally:
         chat_manager.disconnect(chat_id, user_id, websocket)
         await chat_manager.broadcast(chat_id, {

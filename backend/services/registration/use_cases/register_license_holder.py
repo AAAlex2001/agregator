@@ -1,8 +1,7 @@
 "Use case: register license holder."
-from models.account import Account
-from models.account import UserRole as ModelUserRole
-from models.license_holder import LicenseHolder
-from schemas.registration import LicenseHolderRegistration, LicenseRentalKind, UserRole
+from models.account import Account, UserRole
+from models.license_holder import LicenseHolder, LicenseRentalKind
+from schemas.registration import LicenseHolderRegistration
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
 from utils.passwords import hash_password
@@ -32,7 +31,7 @@ class RegisterLicenseHolderUseCase:
         await self.validator.ensure_inn_is_free(data.inn, UserRole.LICENSE_HOLDER)
 
         account = Account(
-            role=ModelUserRole.LICENSE_HOLDER,
+            role=UserRole.LICENSE_HOLDER,
             email=data.email,
             email_verified=False,
             phone=data.phone,

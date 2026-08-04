@@ -2,11 +2,30 @@
 import hashlib
 import hmac
 import json
+import time
 from urllib.parse import parse_qsl
 
 from fastapi import HTTPException, status
 
 from config import telegram_config
+
+MAX_INIT_DATA_AGE_SECONDS = 24 * 60 * 60
+
+
+def _ensure_fresh(pairs: dict[str, str]) -> None:
+    "Отклоняет initData старше суток: подпись валидна, но данные могли утечь."
+    try:
+        auth_date = int(pairs.get("auth_date", ""))
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Некорректные данные Telegram",
+        ) from exc
+    if time.time() - auth_date > MAX_INIT_DATA_AGE_SECONDS:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Данные Telegram устарели",
+        )
 
 
 def _verify(init_data: str) -> dict[str, str]:
@@ -31,6 +50,7 @@ def _verify(init_data: str) -> dict[str, str]:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Подпись Telegram неверна",
         )
+    _ensure_fresh(pairs)
     return pairs
 
 

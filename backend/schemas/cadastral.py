@@ -3,11 +3,7 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class CadastralFile(BaseModel):
-    """Приложенный к анкете файл: имя для показа и ссылка на хранилище."""
-    name: str = Field(..., min_length=1, max_length=300)
-    url: str = Field(..., min_length=1, max_length=500)
+from schemas.common import DirectionFileSchema
 
 
 class CadastralProfileInput(BaseModel):
@@ -21,13 +17,20 @@ class CadastralProfileInput(BaseModel):
     workplace: str = Field("", max_length=500)
 
 
-class CadastralProfileResponse(CadastralProfileInput):
+class CadastralProfileResponse(BaseModel):
     """Анкета кадастрового инженера в ответе API: с приложенными файлами."""
     model_config = ConfigDict(from_attributes=True)
 
-    education_diploma: CadastralFile | None = None
-    certificate_file: CadastralFile | None = None
-    documents: list[CadastralFile] = Field(default_factory=list)
+    education: str = ""
+    registry_joined_at: date | None = None
+    certificate_number: str | None = None
+    registry_number: str | None = None
+    has_equipment: bool = False
+    city: str = ""
+    workplace: str = ""
+    education_diploma: DirectionFileSchema | None = None
+    certificate_file: DirectionFileSchema | None = None
+    documents: list[DirectionFileSchema] = Field(default_factory=list)
 
 
 class CadastralOrderDetailsInput(BaseModel):
@@ -45,6 +48,18 @@ class CadastralOrderDetailsInput(BaseModel):
     duration: str = Field("", max_length=200)
 
 
-class CadastralOrderDetailsResponse(CadastralOrderDetailsInput):
+class CadastralOrderDetailsResponse(BaseModel):
     """Поля кадастровой заявки в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    applicant_full_name: str
+    applicant_position: str
+    applicant_organization: str
+    applicant_inn: str
+    applicant_phone: str
+    applicant_email: str
+    work_purpose: str
+    city: str
+    education_requirement: str
+    sro_required: bool = False
+    duration: str

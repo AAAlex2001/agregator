@@ -32,5 +32,5 @@ async def payment_webhook(
         )
 
     service = PaymentWebhookService(db)
-    await service.handle_webhook(event_type, yookassa_id)
+    await service.handle_webhook(yookassa_id)
     return WebhookAck(status="ok")

@@ -7,6 +7,7 @@ from schemas.chat import ChatBadgeResponse, ChatDetailResponse, ChatMessageRespo
 from services.chats.formatters import ChatFormatter
 from services.chats.repository import ChatRepository
 from services.chats.validators import ChatValidator
+from services.email.formatting import labor_listing_title
 
 
 class GetChatDetailUseCase:
@@ -45,8 +46,6 @@ class GetChatDetailUseCase:
         counterpart = ChatFormatter.counterpart(actor.id, chat)
         labor = chat.labor_listing
         deal = chat.contact_deal
-        is_wanted = labor is not None and labor.kind.value == "EXPERT_WANTED"
-        labor_title = "Поиск эксперта в штат" if is_wanted else "Готов к трудовому договору"
         labor_date = labor.start_date.strftime("%d.%m.%Y") if labor and labor.start_date else ""
         labor_badges = [
             ChatBadgeResponse(
@@ -67,7 +66,7 @@ class GetChatDetailUseCase:
             context_sum = ChatFormatter.format_sum(deal.price_kopecks)
         elif labor is not None:
             context_public_id = labor.public_id
-            context_title = labor_title
+            context_title = labor_listing_title(labor.kind)
             context_company = labor.region
             context_date = labor_date
             context_sum = ""

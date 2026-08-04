@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.account import Account, UserRole
 from models.expert import Expert
-from models.notification import Notification
+from models.notification import Notification, NotificationType
 from utils.pagination import paginate_with_has_more
 
 
@@ -56,6 +56,18 @@ class NotificationRepository:
                 return
             yield batch
             last_id = batch[-1]
+
+    async def new_blog_post_notification_exists(self, action_urls: tuple[str, ...]) -> bool:
+        "Признак: уведомление о статье с одним из action_url уже рассылалось."
+        query = (
+            select(Notification.id)
+            .where(
+                Notification.type == NotificationType.NEW_BLOG_POST,
+                Notification.action_url.in_(action_urls),
+            )
+            .limit(1)
+        )
+        return (await self.db.execute(query)).scalar_one_or_none() is not None
 
     async def find_by_id_for_user(self, notification_id: int, user_id: int) -> Notification | None:
         "Ищет сущность по заданным параметрам."

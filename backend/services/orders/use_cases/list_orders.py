@@ -21,7 +21,7 @@ class ListOrdersUseCase:
     ) -> tuple[list[Order], bool]:
         "Запускает основной сценарий use case."
         if user_id is None:
-            return await self.repo.list_public_all(skip, limit, status_filter, sort_by, sort_dir)
+            return await self.repo.list_public_all(skip, limit, sort_by, sort_dir)
 
         role = await self.repo.get_user_role(user_id)
         if role == UserRole.EXPERT:

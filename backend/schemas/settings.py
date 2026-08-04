@@ -1,16 +1,9 @@
-from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
+from models.license_holder import LicenseRentalKind
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES_SET
-
-
-class LicenseRentalKind(str, Enum):
-    "Способ расчёта стоимости предоставления лицензии."
-    PERCENT = "PERCENT"
-    FIXED = "FIXED"
-    NEGOTIABLE = "NEGOTIABLE"
 
 
 class EmailPreferences(BaseModel):
@@ -27,8 +20,7 @@ class EmailPreferences(BaseModel):
     email_on_labor_listing: bool = True
     notify_telegram_enabled: bool = True
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UpdatePersonalDataRequest(BaseModel):
@@ -151,8 +143,13 @@ class ExpertProfileData(BaseModel):
     show_on_map: bool = True
     map_fields: list[str] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("map_fields", mode="before")
+    @classmethod
+    def default_map_fields(cls, value: list[str] | None) -> list[str]:
+        "Колонка map_fields nullable: NULL из БД отдаётся пустым списком, а не ломает ответ."
+        return value if value is not None else []
 
 
 class LicenseHolderProfileData(BaseModel):
@@ -170,8 +167,7 @@ class LicenseHolderProfileData(BaseModel):
     lab_accreditation_file_url: str | None = None
     company_card_url: str | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserSettingsResponse(BaseModel):

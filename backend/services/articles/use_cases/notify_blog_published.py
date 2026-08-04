@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.notification import Notification, NotificationType
 from services.email import EmailDispatcher, EmailRepository, SendNewBlogPostEmailUseCase
 from services.notifications.repository import NotificationRepository
-from services.notifications.use_cases.create_new_blog_new import (
+from services.notifications.use_cases.create_new_blog_post_notification import (
     CreateNewBlogPostNotificationUseCase,
 )
 

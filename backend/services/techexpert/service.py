@@ -12,22 +12,18 @@ router = APIRouter(
     tags=["TechExpert"],
 )
 
+TECHEXPERT_API_URL = "https://docs.cntd.ru/api"
 
-# ---------- входной query ----------
 
 class TechExpertInput(BaseModel):
     q: str = Field(..., description="Поисковая строка")
 
-
-# ---------- ответ для фронта ----------
 
 class TechExpertOutput(BaseModel):
     id: int | None = None
     value: str
     type: Literal["string", "document", "number", "type", "department"]
 
-
-# ---------- Модели внешнего API /search/intellectual/tips ----------
 
 class TechExpertTip(BaseModel):
     id: int | None = None
@@ -51,8 +47,6 @@ class TechExpertTipsData(BaseModel):
 class TechExpertTipsResponse(BaseModel):
     data: TechExpertTipsData
 
-
-# ---------- Модели внешнего API /search/intellectual/documents ----------
 
 class TechExpertNamed(BaseModel):
     name: str = ""
@@ -106,8 +100,6 @@ class TechExpertDocumentsOutput(BaseModel):
     items: list[TechExpertDocumentItem]
     total: int
 
-
-# ---------- Модели внешнего API /document/{id} ----------
 
 class TechExpertPdfSources(BaseModel):
     scan: bool = False
@@ -199,8 +191,6 @@ class TechExpertContentResponse(BaseModel):
     content: str
 
 
-# ---------- Сервис ----------
-
 class TechExpertService:
     def __init__(self, url: str):
         self.client = httpx.AsyncClient(
@@ -245,17 +235,17 @@ class TechExpertService:
 
             return response.json()
 
-        except httpx.TimeoutException:
+        except httpx.TimeoutException as error:
             raise HTTPException(
                 status_code=504,
                 detail="TechExpert API timeout",
-            )
+            ) from error
 
-        except httpx.RequestError:
+        except httpx.RequestError as error:
             raise HTTPException(
                 status_code=502,
                 detail="TechExpert API connection error",
-            )
+            ) from error
 
     async def get_tech_autocomplete(
         self,
@@ -269,27 +259,19 @@ class TechExpertService:
 
         parsed = TechExpertTipsResponse.model_validate(data)
 
-        result: list[TechExpertOutput] = []
-
-        for tip in parsed.data.groups.tips:
-            result.append(
-                TechExpertOutput(
-                    id=tip.id,
-                    value=tip.q,
-                    type="string",
-                )
+        tips = [
+            TechExpertOutput(id=tip.id, value=tip.q, type="string")
+            for tip in parsed.data.groups.tips
+        ]
+        documents = [
+            TechExpertOutput(
+                id=document.id,
+                value=document.names[0] if document.names else "",
+                type="document",
             )
-
-        for document in parsed.data.groups.documents:
-            result.append(
-                TechExpertOutput(
-                    id=document.id,
-                    value=document.names[0] if document.names else "",
-                    type="document",
-                )
-            )
-
-        return result
+            for document in parsed.data.groups.documents
+        ]
+        return [*tips, *documents]
 
     async def search_documents(
         self,
@@ -398,28 +380,19 @@ class TechExpertService:
         await self.client.aclose()
 
 
-# ---------- Роут ----------
-
 @router.get(
     "/autocomplete",
     response_model=list[TechExpertOutput],
+    dependencies=[Depends(get_current_user)],
 )
 async def autocomplete(
     q: str = Query(..., description="Поисковая строка"),
-    user_id: int = Depends(get_current_user),
 ):
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
-
-    service = TechExpertService(
-        url="https://docs.cntd.ru/api",
-    )
+    service = TechExpertService(url=TECHEXPERT_API_URL)
 
     try:
         payload = TechExpertInput(q=q)
-        result = await service.get_tech_autocomplete(payload)
-
-        return result
+        return await service.get_tech_autocomplete(payload)
 
     finally:
         await service.close()
@@ -428,23 +401,16 @@ async def autocomplete(
 @router.get(
     "/documents",
     response_model=TechExpertDocumentsOutput,
+    dependencies=[Depends(get_current_user)],
 )
 async def documents(
     q: str = Query(..., description="Поисковая строка"),
-    user_id: int = Depends(get_current_user),
 ):
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
-
-    service = TechExpertService(
-        url="https://docs.cntd.ru/api",
-    )
+    service = TechExpertService(url=TECHEXPERT_API_URL)
 
     try:
         payload = TechExpertInput(q=q)
-        result = await service.search_documents(payload)
-
-        return result
+        return await service.search_documents(payload)
 
     finally:
         await service.close()
@@ -453,22 +419,15 @@ async def documents(
 @router.get(
     "/document/{document_id}",
     response_model=TechExpertDocumentCard,
+    dependencies=[Depends(get_current_user)],
 )
 async def document(
     document_id: int,
-    user_id: int = Depends(get_current_user),
 ):
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
-
-    service = TechExpertService(
-        url="https://docs.cntd.ru/api",
-    )
+    service = TechExpertService(url=TECHEXPERT_API_URL)
 
     try:
-        result = await service.get_document(document_id)
-
-        return result
+        return await service.get_document(document_id)
 
     finally:
         await service.close()
@@ -477,19 +436,14 @@ async def document(
 @router.get(
     "/document/{document_id}/content",
     response_model=TechExpertContentResponse,
+    dependencies=[Depends(get_current_user)],
 )
 async def document_content(
     document_id: int,
     block: int = Query(1, ge=1),
     strict: bool = Query(False),
-    user_id: int = Depends(get_current_user),
 ):
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Пользователь не авторизован")
-
-    service = TechExpertService(
-        url="https://docs.cntd.ru/api",
-    )
+    service = TechExpertService(url=TECHEXPERT_API_URL)
 
     try:
         content = await service.get_document_content(document_id, block, strict)

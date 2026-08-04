@@ -1,5 +1,7 @@
 "Тонкий CRUD разъяснений РТН для admin-next. За X-Internal-Token; логин держит сама админка."
 
+from enum import Enum
+
 from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,6 +35,17 @@ router = APIRouter(
 PDF_EXTENSIONS = {".pdf"}
 PDF_CONTENT_TYPES = {"application/pdf"}
 MAX_PDF_SIZE = 20 * 1024 * 1024
+
+
+def parse_enum[E: Enum](enum_cls: type[E], raw: str) -> E:
+    "Преобразует строку query-параметра в enum, при неверном значении отдаёт 422."
+    try:
+        return enum_cls(raw)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Недопустимое значение: {raw}",
+        )
 
 
 async def to_out(clarification: RtnClarification, repo: RtnRepository) -> RtnClarificationOut:
@@ -74,7 +87,9 @@ async def list_clarifications(
     db: AsyncSession = Depends(get_db),
 ) -> RtnClarificationListOut:
     repo = RtnRepository(db)
-    rows = await repo.list_all(PublicationStatus(publication_status) if publication_status else None)
+    rows = await repo.list_all(
+        parse_enum(PublicationStatus, publication_status) if publication_status else None
+    )
     items = [
         RtnClarificationListItem(
             id=row.id,
@@ -163,7 +178,9 @@ async def list_questions(
     db: AsyncSession = Depends(get_db),
 ) -> RtnQuestionListOut:
     "Очередь вопросов из формы «Не нашли ответ?»."
-    rows = await RtnQuestionRepository(db).list_all(RtnQuestionStatus(status_filter) if status_filter else None)
+    rows = await RtnQuestionRepository(db).list_all(
+        parse_enum(RtnQuestionStatus, status_filter) if status_filter else None
+    )
     items = [to_question_out(row) for row in rows]
     return RtnQuestionListOut(items=items)
 
@@ -186,7 +203,7 @@ async def update_question_status(
     question = await repo.get_by_id(question_id)
     if question is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
-    question.status = RtnQuestionStatus(status_value)
+    question.status = parse_enum(RtnQuestionStatus, status_value)
     return to_question_out(question)
 
 
@@ -197,7 +214,7 @@ async def list_change_reports(
 ) -> RtnChangeReportListOut:
     "Очередь сообщений «Сообщить об изменении»."
     rows = await RtnChangeReportRepository(db).list_all(
-        RtnChangeReportStatus(status_filter) if status_filter else None
+        parse_enum(RtnChangeReportStatus, status_filter) if status_filter else None
     )
     items = [to_change_report_out(row) for row in rows]
     return RtnChangeReportListOut(items=items)
@@ -213,7 +230,7 @@ async def update_change_report_status(
     report = await repo.get_by_id(report_id)
     if report is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Сообщение не найдено")
-    report.status = RtnChangeReportStatus(status_value)
+    report.status = parse_enum(RtnChangeReportStatus, status_value)
     return to_change_report_out(report)
 
 

@@ -4,7 +4,6 @@ from secrets import token_urlsafe
 from models.account import Account, UserRole
 from models.customer import Customer
 from schemas.guest_order import GuestOrderCustomer
-from schemas.registration import UserRole as SchemaUserRole
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
 from utils.passwords import hash_password
@@ -25,9 +24,9 @@ class RegisterGuestCustomerUseCase:
         "Запускает основной сценарий use case."
         self.validator.ensure_email_not_disposable(data.email)
 
-        await self.repo.delete_unverified(data.email, SchemaUserRole.CUSTOMER)
-        await self.validator.ensure_email_is_free(data.email, SchemaUserRole.CUSTOMER)
-        await self.validator.ensure_phone_is_free(data.phone, SchemaUserRole.CUSTOMER)
+        await self.repo.delete_unverified(data.email, UserRole.CUSTOMER)
+        await self.validator.ensure_email_is_free(data.email, UserRole.CUSTOMER)
+        await self.validator.ensure_phone_is_free(data.phone, UserRole.CUSTOMER)
 
         account = Account(
             role=UserRole.CUSTOMER,

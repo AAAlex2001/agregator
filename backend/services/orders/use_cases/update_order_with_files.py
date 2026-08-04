@@ -1,12 +1,8 @@
 "Use case: update order with files."
-from typing import Any
-
 from fastapi import UploadFile
 
 from models.order import Order
 from schemas.order import OrderDocuments, OrderUpdate
-from services.email import SendOrderUpdatedEmailUseCase
-from services.email.changes import summarize_order_changes
 from services.orders.document_copy import OrderDocumentCopyService
 from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
@@ -24,14 +20,12 @@ class UpdateOrderWithFilesUseCase:
         get_order: GetOrderByIdUseCase,
         repo: OrderRepository,
         files: OrderFileStorage,
-        send_updated_email: SendOrderUpdatedEmailUseCase | None = None,
         document_copy: OrderDocumentCopyService | None = None,
     ) -> None:
         self.update_order = update_order
         self.get_order = get_order
         self.repo = repo
         self.files = files
-        self.send_updated_email = send_updated_email
         self.document_copy = document_copy
 
     async def execute(
@@ -48,7 +42,7 @@ class UpdateOrderWithFilesUseCase:
     ) -> Order:
         "Запускает основной сценарий use case."
         before = await self.get_order.execute(order_id)
-        snapshot = self.snapshot(before)
+        snapshot = self.update_order.snapshot(before)
         before_documents = OrderDocumentsService.from_order(before)
 
         order = await self.update_order.execute(
@@ -80,36 +74,8 @@ class UpdateOrderWithFilesUseCase:
             )
 
         if data.notify_responders:
-            await self.send_email_if_changed(order, snapshot)
+            await self.update_order.send_email_if_changed(order, snapshot)
         return order
-
-    @staticmethod
-    def snapshot(order: Order) -> dict[str, Any]:
-        "Публичный метод сервисного слоя."
-        return {
-            "sum_amount": order.sum_amount,
-            "deadline": order.deadline,
-            "comment": order.comment or "",
-            "files_count": OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
-        }
-
-    async def send_email_if_changed(self, order: Order, before: dict[str, Any]) -> None:
-        "Отправляет уведомление получателю."
-        if self.send_updated_email is None:
-            return
-        summary = summarize_order_changes(
-            before["sum_amount"],
-            order.sum_amount,
-            before["deadline"],
-            order.deadline,
-            before["comment"],
-            order.comment or "",
-            before["files_count"],
-            OrderDocumentsService.count(OrderDocumentsService.from_order(order)),
-        )
-        if not summary:
-            return
-        await self.send_updated_email.execute(order.id, summary)
 
     async def append_files(
         self,

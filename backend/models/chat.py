@@ -134,5 +134,3 @@ class ExpertRoomBan(Base):
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
-
-    user: Mapped["Account"] = relationship()

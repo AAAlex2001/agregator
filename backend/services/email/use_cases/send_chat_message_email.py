@@ -3,7 +3,7 @@ from models.account import Account
 from models.chat import ChatMessage
 from schemas.email import ChatMessageContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import full_name, greeting_for
+from services.email.formatting import full_name, greeting_for, labor_listing_title
 from services.email.repository import EmailRepository
 
 TEMPLATE = "chat_message"
@@ -56,7 +56,7 @@ class SendChatMessageEmailUseCase:
         labor = chat.labor_listing if chat else None
         labor_title = None
         if labor is not None:
-            labor_title = "Поиск эксперта в штат" if labor.kind.value == "EXPERT_WANTED" else "Готов к трудовому договору"
+            labor_title = labor_listing_title(labor.kind)
         order_title = (order.title if order else None) or labor_title or "Заявка"
         sender_name = full_name(message.sender) or "Собеседник"
 

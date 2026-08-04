@@ -23,13 +23,3 @@ class RegistrationNotifier:
             EMAIL_CONFIRMATION_SUBJECT,
             background_tasks,
         )
-
-    async def send_confirmation_email(self, user: Account) -> None:
-        "Отправляет уведомление получателю."
-        if not user.email:
-            return
-        await self.verification.send_code_to_email(
-            user.id,
-            user.email,
-            EMAIL_CONFIRMATION_SUBJECT,
-        )

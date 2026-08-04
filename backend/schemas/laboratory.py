@@ -8,9 +8,12 @@ class LaboratoryProfileInput(BaseModel):
     comment: str = Field("", max_length=5000)
 
 
-class LaboratoryProfileResponse(LaboratoryProfileInput):
+class LaboratoryProfileResponse(BaseModel):
     """Анкета исполнителя лабораторных исследований в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    accreditation_area: str = ""
+    comment: str = ""
 
 
 class LaboratoryOrderDetailsInput(BaseModel):
@@ -18,6 +21,8 @@ class LaboratoryOrderDetailsInput(BaseModel):
     equipment_requirements: str = Field("", max_length=5000)
 
 
-class LaboratoryOrderDetailsResponse(LaboratoryOrderDetailsInput):
+class LaboratoryOrderDetailsResponse(BaseModel):
     """Поля лабораторной заявки в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    equipment_requirements: str = ""

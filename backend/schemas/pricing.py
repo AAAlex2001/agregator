@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from models.pricing import SubscriptionKind, SubscriptionStatus
 
@@ -21,7 +21,7 @@ class PricingPlanResponse(BaseModel):
     highlighted: bool
     sort_order: int
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PricingPlansResponse(BaseModel):

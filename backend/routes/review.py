@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from schemas.common import DetailResponse
 from schemas.review import (
     CreateReviewRequest,
-    CreateReviewResponse,
     PublicExpertReviewsResponse,
     ReviewItem,
     ReviewListResponse,
@@ -15,12 +15,12 @@ from services.review import ReviewService
 router = APIRouter(tags=["reviews"])
 
 
-@router.post("/reviews", response_model=CreateReviewResponse)
+@router.post("/reviews", response_model=DetailResponse)
 async def create_review(
     payload: CreateReviewRequest,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> CreateReviewResponse:
+) -> DetailResponse:
     "Заказчик создаёт отзыв об эксперте по завершённому отклику."
     service = ReviewService(db)
     await service.create_review(
@@ -29,7 +29,7 @@ async def create_review(
         rating=payload.rating,
         comment=payload.comment,
     )
-    return CreateReviewResponse(detail="Отзыв успешно оставлен")
+    return DetailResponse(detail="Отзыв успешно оставлен")
 
 
 @router.get("/reviews/my", response_model=ReviewListResponse)

@@ -9,7 +9,7 @@ from schemas.expert import (
     ExpertMapResponse,
     ExpertSummary,
 )
-from schemas.order import OrderListResponse, OrderResponse
+from schemas.order import OrderCard, OrderListResponse
 from services.experts import (
     ExpertsRepository,
     GetExpertSummaryUseCase,
@@ -40,7 +40,7 @@ def build_repo(db: AsyncSession) -> ExpertsRepository:
 def build_expert_summary(item: ExpertSummaryRow) -> ExpertSummary:
     last_order_payload = None
     if item.last_order is not None:
-        last_order_payload = OrderResponse.from_archived_order(
+        last_order_payload = OrderCard.from_archived_order(
             item.last_order, item.last_order_response, has_review=False
         )
     return ExpertSummary(
@@ -132,7 +132,7 @@ async def list_expert_orders_history(
     items, has_more = await use_case.execute(public_id, skip, limit)
     return OrderListResponse(
         items=[
-            OrderResponse.from_archived_order(item.order, item.accepted_response, has_review=False)
+            OrderCard.from_archived_order(item.order, item.accepted_response, has_review=False)
             for item in items
         ],
         has_more=has_more,

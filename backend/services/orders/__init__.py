@@ -1,6 +1,7 @@
 from services.orders.documents import OrderDocumentsService
 from services.orders.files import OrderFileStorage
 from services.orders.repository import OrderRepository
+from services.orders.use_cases.apply_question_badges import apply_question_badges
 from services.orders.use_cases.create_guest_order import CreateGuestOrderUseCase
 from services.orders.use_cases.create_order import CreateOrderUseCase
 from services.orders.use_cases.create_order_with_files import CreateOrderWithFilesUseCase
@@ -30,4 +31,5 @@ __all__ = [
     "OrderValidator",
     "UpdateOrderUseCase",
     "UpdateOrderWithFilesUseCase",
+    "apply_question_badges",
 ]

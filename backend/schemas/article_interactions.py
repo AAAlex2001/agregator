@@ -1,20 +1,19 @@
 from datetime import datetime
-from typing import Literal
 
 from pydantic import BaseModel, Field
 
-ReactionValueDto = Literal["LIKE", "DISLIKE"]
+from models.article_reaction import ReactionValue
 
 
 class ReactionRequest(BaseModel):
-    value: ReactionValueDto
+    value: ReactionValue
 
 
 class ReactionResponse(BaseModel):
     likes_count: int
     dislikes_count: int
     views_count: int
-    my_reaction: ReactionValueDto | None
+    my_reaction: ReactionValue | None
 
 
 class ViewResponse(BaseModel):

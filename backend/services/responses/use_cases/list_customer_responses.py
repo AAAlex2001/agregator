@@ -1,9 +1,17 @@
 "Use case: list customer responses."
+from typing import NamedTuple
+
 from models.response import OrderResponse, ResponseStatus
 from schemas.response import ResponseCounters, ResponseTab
 from services.responses.repository import ResponseRepository
 from services.responses.tabs import statuses_for_tab
 from services.responses.validators import ResponseValidator
+
+
+class CustomerResponseRow(NamedTuple):
+    "Строка выдачи откликов заказчика: отклик и отметка об оставленном отзыве."
+    response: OrderResponse
+    has_review: bool
 
 
 class ListCustomerResponsesUseCase:
@@ -20,24 +28,25 @@ class ListCustomerResponsesUseCase:
         limit: int,
         sort_by: str = "created_at",
         sort_dir: str = "desc",
-    ) -> tuple[list[OrderResponse], bool, ResponseCounters]:
+    ) -> tuple[list[CustomerResponseRow], bool, ResponseCounters]:
         "Запускает основной сценарий use case."
         await self.validator.ensure_customer(customer_id)
         status_filters = statuses_for_tab(tab)
         items, has_more = await self.repo.list_customer_responses(
             customer_id, status_filters, skip, limit, sort_by, sort_dir
         )
-        if items:
-            await self.mark_reviewed(customer_id, items)
+        rows = await self.build_rows(customer_id, items)
         counters_map = await self.repo.customer_counters(customer_id)
-        return items, has_more, self.build_counters(counters_map)
+        return rows, has_more, self.build_counters(counters_map)
 
-    async def mark_reviewed(self, customer_id: int, items: list[OrderResponse]) -> None:
-        "Отмечает сущность соответствующим состоянием."
-        response_ids = [item.id for item in items]
-        reviewed_ids = await self.repo.reviewed_response_ids(customer_id, response_ids)
-        for item in items:
-            item.has_review_for_customer = item.id in reviewed_ids  # type: ignore[attr-defined]
+    async def build_rows(
+        self, customer_id: int, items: list[OrderResponse]
+    ) -> list[CustomerResponseRow]:
+        "Дополняет отклики отметкой, оставлен ли по ним отзыв заказчика."
+        reviewed_ids = await self.repo.reviewed_response_ids(
+            customer_id, [item.id for item in items]
+        )
+        return [CustomerResponseRow(item, item.id in reviewed_ids) for item in items]
 
     @staticmethod
     def build_counters(counters_map: dict[ResponseStatus, int]) -> ResponseCounters:

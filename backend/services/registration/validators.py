@@ -1,13 +1,25 @@
 "Бизнес-валидации для registration."
-import re
 from typing import Any
 
 from fastapi import HTTPException, status
 
-from models.account import Account
-from schemas.registration import UserRegistration, UserRole
+from models.account import Account, UserRole
+from schemas.registration import UserRegistration
 from services.registration.disposable_email_domains import ensure_email_not_disposable
 from services.registration.repository import RegistrationRepository
+from utils.inn import is_valid_inn
+from utils.passwords import ensure_password_strong
+
+
+def ensure_inn_format(inn: str | None) -> None:
+    "Бросает HTTPException, если заполненный ИНН не из 10 или 12 цифр."
+    if not inn:
+        return
+    if not is_valid_inn(inn):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="ИНН должен содержать 10 или 12 цифр",
+        )
 
 
 class RegistrationValidator:
@@ -17,35 +29,8 @@ class RegistrationValidator:
         self.repo = repo
 
     ensure_email_not_disposable = staticmethod(ensure_email_not_disposable)
-
-    @staticmethod
-    def ensure_password_strong(password: str) -> None:
-        "Бросает HTTPException, если условие не выполнено."
-        errors = []
-        if len(password) < 6:
-            errors.append("Не менее 6 символов")
-        if not re.search(r"[A-Z]", password):
-            errors.append("Хотя бы одна заглавная буква")
-        if not re.search(r"[a-z]", password):
-            errors.append("Хотя бы одна строчная буква")
-        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~ ]+$', password):
-            errors.append("Только латинские буквы, цифры и спецсимволы")
-        if errors:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль не соответствует требованиям: " + "; ".join(errors),
-            )
-
-    @staticmethod
-    def ensure_inn_format(inn: str | None) -> None:
-        "Бросает HTTPException, если условие не выполнено."
-        if not inn:
-            return
-        if not inn.isdigit() or len(inn) not in {10, 12}:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="ИНН должен содержать 10 или 12 цифр",
-            )
+    ensure_password_strong = staticmethod(ensure_password_strong)
+    ensure_inn_format = staticmethod(ensure_inn_format)
 
     @staticmethod
     def ensure_customer_has_company(data: UserRegistration) -> None:

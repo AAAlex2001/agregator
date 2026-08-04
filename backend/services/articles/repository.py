@@ -13,6 +13,7 @@ from models.article_reaction import ArticleReaction, ReactionValue
 from models.article_view import ArticleView
 from models.static_news_interaction import StaticNewsMetric, StaticNewsReaction, StaticNewsView
 from models.tag import Tag
+from utils.pagination import paginate_with_has_more
 
 
 class ArticleRepository:
@@ -34,11 +35,8 @@ class ArticleRepository:
         )
         if tag:
             query = query.where(Article.tags.any(Tag.name == tag))
-        query = query.order_by(Article.published_at.desc(), Article.id.desc()).offset(skip).limit(limit + 1)
-
-        rows = list((await self.db.execute(query)).scalars().all())
-        has_more = len(rows) > limit
-        return rows[:limit], has_more
+        query = query.order_by(Article.published_at.desc(), Article.id.desc())
+        return await paginate_with_has_more(self.db, query, skip, limit)
 
     async def get_published_by_slug(self, slug: str) -> Article | None:
         "Возвращает запрошенную сущность."
@@ -88,6 +86,14 @@ class ArticleRepository:
         query = select(Article).where(Article.id == article_id, Article.status == ArticleStatus.PUBLISHED)
         return (await self.db.execute(query)).scalars().first()
 
+    async def get_published_by_id_for_update(self, article_id: int) -> Article | None:
+        query = (
+            select(Article)
+            .where(Article.id == article_id, Article.status == ArticleStatus.PUBLISHED)
+            .with_for_update()
+        )
+        return (await self.db.execute(query)).scalars().first()
+
     async def slug_exists(self, slug: str, exclude_id: int | None = None) -> bool:
         query = select(Article.id).where(Article.slug == slug)
         if exclude_id is not None:
@@ -118,14 +124,11 @@ class ArticleReactionRepository:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def get(self, article_id: int, user_id: int | None, visitor_key: str | None) -> ArticleReaction | None:
+    async def get(self, article_id: int, visitor_key: str) -> ArticleReaction | None:
         query = select(ArticleReaction).where(
             ArticleReaction.article_id == article_id,
+            ArticleReaction.visitor_key == visitor_key,
         )
-        if visitor_key:
-            query = query.where(ArticleReaction.visitor_key == visitor_key)
-        else:
-            query = query.where(ArticleReaction.user_id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none()
 
     async def add(
@@ -140,12 +143,11 @@ class ArticleReactionRepository:
         await self.db.flush()
         return reaction
 
-    async def remove(self, article_id: int, user_id: int | None, visitor_key: str | None) -> None:
-        query = delete(ArticleReaction).where(ArticleReaction.article_id == article_id)
-        if visitor_key:
-            query = query.where(ArticleReaction.visitor_key == visitor_key)
-        else:
-            query = query.where(ArticleReaction.user_id == user_id)
+    async def remove(self, article_id: int, visitor_key: str) -> None:
+        query = delete(ArticleReaction).where(
+            ArticleReaction.article_id == article_id,
+            ArticleReaction.visitor_key == visitor_key,
+        )
         await self.db.execute(query)
 
 

@@ -5,7 +5,7 @@ from models.account import UserRole
 from models.chat import Chat, ChatMessage
 from models.contact_deal import ContactDealStatus
 from models.order import OrderStatus
-from schemas.chat import ChatAttachmentResponse
+from schemas.chat import ChatAttachmentData
 
 NOTIFICATION_PREVIEW_MAX = 140
 
@@ -31,13 +31,13 @@ class ChatFormatter:
         return f"{formatted} ₽"
 
     @staticmethod
-    def build_attachments(message: ChatMessage) -> list[ChatAttachmentResponse]:
+    def build_attachments(message: ChatMessage) -> list[ChatAttachmentData]:
         "Строит объект из входных данных."
         raw = list(message.attachments or [])
         if not raw and message.file_url and message.file_name:
             raw = [{"url": message.file_url, "name": message.file_name}]
         return [
-            ChatAttachmentResponse(url=item["url"], name=item["name"])
+            ChatAttachmentData(url=item["url"], name=item["name"])
             for item in raw
             if item.get("url") and item.get("name")
         ]
@@ -70,9 +70,9 @@ class ChatFormatter:
         return f"Новое сообщение с {attachments_count} файлами"
 
     @classmethod
-    def counterpart(cls, actor: UserRole | int, chat: Chat) -> CounterpartInfo:
+    def counterpart(cls, actor_id: int, chat: Chat) -> CounterpartInfo:
         "Возвращает данные противоположной стороны чата."
-        if (isinstance(actor, int) and actor == chat.customer_id) or actor == UserRole.CUSTOMER:
+        if actor_id == chat.customer_id:
             return cls.counterpart_for_customer(chat)
         return cls.counterpart_for_expert(chat)
 

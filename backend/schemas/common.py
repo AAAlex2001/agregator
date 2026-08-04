@@ -1,6 +1,19 @@
 "Общие схемы ответов для эндпоинтов, не возвращающих доменный объект."
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class DirectionFileSchema(BaseModel):
+    "Приложенный файл: имя для показа и ссылка на хранилище."
+
+    name: str = Field(..., min_length=1, max_length=300)
+    url: str = Field(..., min_length=1, max_length=500)
+
+
+class DocumentUrl(BaseModel):
+    "Ссылка на удаляемый документ анкеты."
+
+    url: str = Field(..., min_length=1, max_length=500)
 
 
 class DetailResponse(BaseModel):

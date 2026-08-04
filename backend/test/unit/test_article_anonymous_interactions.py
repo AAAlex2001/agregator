@@ -16,6 +16,9 @@ class FakeArticleRepo:
     async def get_published_by_id(self, article_id: int):
         return self.article if article_id == self.article.id else None
 
+    async def get_published_by_id_for_update(self, article_id: int):
+        return await self.get_published_by_id(article_id)
+
 
 class FakeViewRepo:
     def __init__(self):
@@ -33,16 +36,16 @@ class FakeReactionRepo:
     def __init__(self):
         self.items = {}
 
-    async def get(self, article_id: int, user_id: int | None, visitor_key: str | None):
-        return self.items.get((article_id, user_id, visitor_key))
+    async def get(self, article_id: int, visitor_key: str):
+        return self.items.get((article_id, visitor_key))
 
     async def add(self, article_id: int, user_id: int | None, visitor_key: str | None, value: ReactionValue):
         reaction = SimpleNamespace(article_id=article_id, user_id=user_id, visitor_key=visitor_key, value=value)
-        self.items[(article_id, user_id, visitor_key)] = reaction
+        self.items[(article_id, visitor_key)] = reaction
         return reaction
 
-    async def remove(self, article_id: int, user_id: int | None, visitor_key: str | None) -> None:
-        self.items.pop((article_id, user_id, visitor_key), None)
+    async def remove(self, article_id: int, visitor_key: str) -> None:
+        self.items.pop((article_id, visitor_key), None)
 
 
 class FakeCommentRepo:

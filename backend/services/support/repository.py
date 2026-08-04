@@ -1,8 +1,9 @@
 "Repository: доступ к БД для support."
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from models.account import Account
 from models.support_ticket import SupportTicket, SupportTicketMessage
 from utils.pagination import paginate_with_has_more
 
@@ -42,10 +43,10 @@ class SupportRepository:
         )
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
-    async def latest_number_int(self) -> int:
-        "Публичный метод сервисного слоя."
-        query = select(func.max(SupportTicket.id))
-        return (await self.db.execute(query)).scalar() or 0
+    async def get_user(self, user_id: int) -> Account | None:
+        "Возвращает аккаунт автора тикета."
+        query = select(Account).where(Account.id == user_id)
+        return (await self.db.execute(query)).scalars().first()
 
     async def add(self, entity: SupportTicket) -> None:
         "Добавляет сущность в сессию."

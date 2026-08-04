@@ -1,6 +1,8 @@
 "Сервисный модуль: changes."
 from datetime import date
 
+from utils.money import format_kopecks
+
 
 def summarize_order_changes(
     before_sum_amount: int,
@@ -17,7 +19,7 @@ def summarize_order_changes(
 
     if before_sum_amount != after_sum_amount:
         lines.append(
-            f"Бюджет: {format_rubles(before_sum_amount)} → {format_rubles(after_sum_amount)}"
+            f"Бюджет: {format_kopecks(before_sum_amount)} → {format_kopecks(after_sum_amount)}"
         )
     if before_deadline != after_deadline:
         lines.append(
@@ -31,39 +33,6 @@ def summarize_order_changes(
         )
 
     return "\n".join(lines)
-
-
-def summarize_response_changes(
-    before_sum_amount: int,
-    after_sum_amount: int,
-    before_deadline: date,
-    after_deadline: date,
-    before_comment: str,
-    after_comment: str,
-    before_files_count: int,
-    after_files_count: int,
-) -> str:
-    "Публичный метод сервисного слоя."
-    return summarize_order_changes(
-        before_sum_amount,
-        after_sum_amount,
-        before_deadline,
-        after_deadline,
-        before_comment,
-        after_comment,
-        before_files_count,
-        after_files_count,
-    )
-
-
-def format_rubles(sum_amount: int) -> str:
-    "Форматирует значение для отображения."
-    roubles = sum_amount // 100
-    kopeks = sum_amount % 100
-    formatted = f"{roubles:,}".replace(",", " ")
-    if kopeks:
-        return f"{formatted},{kopeks:02d} ₽"
-    return f"{formatted} ₽"
 
 
 def format_date(value: date | None) -> str:

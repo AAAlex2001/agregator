@@ -135,7 +135,7 @@ class SendMessageUseCase:
 
     async def require_chat(self, chat_id: int, sender_id: int) -> Chat:
         "Возвращает требуемую сущность или бросает 404."
-        chat = await self.repo.find_chat_by_id_with_order(chat_id, sender_id)
+        chat = await self.repo.find_chat_by_id_for_actor(chat_id, sender_id)
         if chat is not None:
             return chat
         raise HTTPException(

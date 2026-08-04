@@ -34,7 +34,7 @@ class PaymentWebhookService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def handle_webhook(self, event_type: str, yookassa_id: str) -> None:
+    async def handle_webhook(self, yookassa_id: str) -> None:
         "Публичный метод сервисного слоя."
         result = await self.db.execute(
             select(Payment).where(Payment.yookassa_id == yookassa_id)

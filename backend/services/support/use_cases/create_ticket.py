@@ -1,7 +1,7 @@
 "Use case: create ticket."
 from datetime import UTC, datetime
 
-from fastapi import HTTPException, UploadFile, status
+from fastapi import UploadFile
 
 from models.account import Account
 from models.support_ticket import (
@@ -45,12 +45,6 @@ class CreateTicketUseCase:
         uploads: list[UploadFile],
     ) -> SupportTicket:
         "Запускает основной сценарий use case."
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь не найден",
-            )
-
         message = SupportTicketMessage(
             author_kind=TicketMessageAuthor.USER,
             author_user_id=user.id,

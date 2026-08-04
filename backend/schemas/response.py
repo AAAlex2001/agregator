@@ -2,11 +2,11 @@ import json
 from datetime import date, datetime
 from enum import Enum as PyEnum
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from models.response import ResponseStatus, VatKind
 from schemas.company import validate_company_data
-from schemas.order import OrderDocuments
+from schemas.order import BadgeResponse, OrderDocuments
 
 
 class ResponseTab(str, PyEnum):
@@ -84,7 +84,7 @@ class ExpertResponseItem(BaseModel):
     customer_inn: str = ""
     order_documents: OrderDocuments = Field(default_factory=OrderDocuments)
     response_files: list[str] = []
-    badges: list[dict[str, str]]
+    badges: list[BadgeResponse]
     created_at: datetime
     proposed_sum_amount_raw: int = 0
     proposed_start_date_raw: str = ""
@@ -100,7 +100,7 @@ class ExpertResponseItem(BaseModel):
     order_previous_sum: str | None = None
     order_previous_date: str | None = None
     order_previous_documents: OrderDocuments | None = None
-    order_previous_badges: list[dict[str, str]] | None = None
+    order_previous_badges: list[BadgeResponse] | None = None
     expert_name: str = ""
     expert_avatar_url: str | None = None
     expert_rating: float | None = None
@@ -115,7 +115,7 @@ class ExpertResponseItem(BaseModel):
     vat_kind: VatKind = VatKind.NONE
     order_locked: bool = False
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ExpertResponseList(BaseModel):

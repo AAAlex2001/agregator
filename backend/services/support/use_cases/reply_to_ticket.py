@@ -10,6 +10,7 @@ from models.support_ticket import (
     TicketMessageAuthor,
     TicketStatus,
 )
+from services.file_uploads import remove_uploaded_file
 
 from ..file_storage import SupportFileStorage
 from ..repository import SupportRepository
@@ -69,5 +70,10 @@ class ReplyToTicketUseCase:
         ticket.last_message_at = message.created_at
         ticket.updated_at = datetime.now(UTC)
 
-        await self.repo.flush()
+        try:
+            await self.repo.flush()
+        except Exception:
+            for attachment in attachments:
+                remove_uploaded_file(attachment.get("url"))
+            raise
         return ticket

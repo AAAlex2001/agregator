@@ -1,5 +1,5 @@
 "Repository: доступ к БД для subscriptions."
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -61,25 +61,17 @@ class SubscriptionRepository:
         return None
 
     async def find_active_for_user(self, user_id: int) -> UserSubscription | None:
-        "Самая свежая ACTIVE-подписка пользователя."
+        "Самая свежая действующая ACTIVE-подписка: срочная считается активной только до expires_at."
         query = (
             select(UserSubscription)
             .where(
                 UserSubscription.user_id == user_id,
                 UserSubscription.status == SubscriptionStatus.ACTIVE,
+                (UserSubscription.expires_at.is_(None))
+                | (UserSubscription.expires_at > datetime.now(UTC)),
             )
             .options(selectinload(UserSubscription.plan), selectinload(UserSubscription.payment))
             .order_by(UserSubscription.activated_at.desc())
-        )
-        return (await self.db.execute(query)).scalars().first()
-
-    async def find_by_payment_yookassa(self, yookassa_id: str) -> UserSubscription | None:
-        "Ищет сущность по заданным параметрам."
-        query = (
-            select(UserSubscription)
-            .join(Payment, Payment.id == UserSubscription.payment_id)
-            .where(Payment.yookassa_id == yookassa_id)
-            .options(selectinload(UserSubscription.payment))
         )
         return (await self.db.execute(query)).scalars().first()
 

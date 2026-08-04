@@ -4,10 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import InstrumentedAttribute
 
-from models.account import Account
-from models.account import UserRole as ModelUserRole
-from models.base import Base
-from schemas.registration import UserRole
+from models.account import Account, UserRole
+from models.customer import Customer
+from models.expert import Expert
+from models.license_holder import LicenseHolder
+from services.registration.direction_profiles import DirectionProfile
 
 
 class RegistrationRepository:
@@ -21,15 +22,19 @@ class RegistrationRepository:
     ) -> bool:
         "Признак: соответствует ли сущность условию."
         result = await self.db.execute(
-            select(Account.id).where(column == value, Account.role == ModelUserRole(role.value))
+            select(Account.id).where(column == value, Account.role == role)
         )
         return result.first() is not None
 
     async def find_users_by_email(self, email: str, role: UserRole | None = None) -> list[Account]:
-        "Ищет сущность по заданным параметрам."
-        query = select(Account).where(Account.email == email)
+        "Ищет аккаунты по email; свежесозданные — первыми, порядок детерминирован."
+        query = (
+            select(Account)
+            .where(Account.email == email)
+            .order_by(Account.created_at.desc(), Account.id.desc())
+        )
         if role is not None:
-            query = query.where(Account.role == ModelUserRole(role.value))
+            query = query.where(Account.role == role)
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
@@ -38,13 +43,13 @@ class RegistrationRepository:
         await self.db.execute(
             delete(Account).where(
                 Account.email == email,
-                Account.role == ModelUserRole(role.value),
+                Account.role == role,
                 Account.email_verified.is_(False),
             )
         )
         await self.db.flush()
 
-    async def add(self, entity: Base) -> None:
+    async def add(self, entity: Account | Customer | Expert | LicenseHolder | DirectionProfile) -> None:
         "Добавляет сущность (аккаунт или профиль роли) в сессию и делает flush."
         self.db.add(entity)
         await self.db.flush()

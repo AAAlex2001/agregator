@@ -1,7 +1,7 @@
 from models.labor import LaborListingKind
 from schemas.email import LaborResponseContext
 from services.email.dispatcher import EmailDispatcher
-from services.email.formatting import full_name, greeting_for
+from services.email.formatting import full_name, greeting_for, labor_listing_title
 from services.email.repository import EmailRepository
 
 TEMPLATE = "labor_response"
@@ -34,11 +34,7 @@ class SendLaborResponseEmailUseCase:
         context = LaborResponseContext(
             recipient_greeting=greeting_for(recipient),
             responder_name=full_name(responder) or responder.email,
-            listing_title=(
-                "Поиск эксперта в штат"
-                if expert_wanted
-                else "Готов к трудовому договору"
-            ),
+            listing_title=labor_listing_title(listing.kind),
             cta_url=(
                 "https://plus-resurs.com/labor/expert-search?tab=mine"
                 if expert_wanted

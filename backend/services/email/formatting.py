@@ -2,6 +2,14 @@
 import html
 
 from models.account import Account
+from models.labor import LaborListingKind
+
+
+def labor_listing_title(kind: LaborListingKind) -> str:
+    "Заголовок labor-объявления для чатов, писем и уведомлений."
+    if kind == LaborListingKind.EXPERT_WANTED:
+        return "Поиск эксперта в штат"
+    return "Готов к трудовому договору"
 
 
 def format_price(amount_kopecks: int | None) -> str:

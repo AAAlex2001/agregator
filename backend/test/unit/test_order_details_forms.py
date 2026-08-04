@@ -1,7 +1,7 @@
 import pytest
 
 from models.order import OrderWorkType
-from utils.order_forms import build_order_create_data, build_order_update_data, parse_details
+from services.orders.forms import build_order_create_data, build_order_update_data, parse_details
 
 
 class TestParseDetails:

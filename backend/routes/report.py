@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.order import OrderListResponse, OrderResponse
+from schemas.order import OrderCard, OrderListResponse
 from services.reports import (
     BuildReportPdfUseCase,
     ListReportsUseCase,
@@ -29,7 +29,7 @@ async def list_reports(
     items, has_more = await use_case.execute(user_id, skip, limit)
     return OrderListResponse(
         items=[
-            OrderResponse.from_archived_order(item.order, item.accepted_response, False)
+            OrderCard.from_archived_order(item.order, item.accepted_response, False)
             for item in items
         ],
         has_more=has_more,

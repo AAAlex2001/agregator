@@ -43,7 +43,7 @@ class RegisterUserUseCase:
         await self.validator.ensure_phone_is_free(data.phone, data.role)
 
         account = Account(
-            role=UserRole(data.role.value),
+            role=data.role,
             phone=data.phone,
             email=data.email,
             email_verified=False,
@@ -55,7 +55,7 @@ class RegisterUserUseCase:
         )
         await self.repo.add(account)
 
-        if data.role.value == UserRole.EXPERT.value:
+        if data.role is UserRole.EXPERT:
             profile = self.build_expert_profile(account, data)
             account.expert_profile = profile
         else:

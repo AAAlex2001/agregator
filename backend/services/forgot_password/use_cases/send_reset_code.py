@@ -22,11 +22,11 @@ class SendResetCodeUseCase:
         phone: str | None,
         background_tasks: BackgroundTasks,
     ) -> Account:
-        "Запускает основной сценарий use case."
+        "Шлёт код на email найденного аккаунта — и при поиске по телефону тоже."
         ensure_email_not_disposable(email)
         user = await self.validator.require_user(email, phone)
-        if email:
+        if user.email:
             await self.verification.schedule_code_email(
-                user.id, email, RESET_CODE_SUBJECT, background_tasks
+                user.id, user.email, RESET_CODE_SUBJECT, background_tasks
             )
         return user

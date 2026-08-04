@@ -113,7 +113,7 @@ class EmailDispatcher:
         if account is None:
             return
         rendered = render_email(template_name, subject, context.model_dump())
-        self.send_telegram(account, None, telegram_text(rendered.text, tg_cta))
+        self.send_telegram(account, telegram_text(rendered.text, tg_cta))
         if self.can_send(account, preference_field):
             self.dispatch(account.email, template_name, subject, context, from_email, reply_to)
 
@@ -128,16 +128,13 @@ class EmailDispatcher:
             return True
         return preference_enabled(account, preference_field)
 
-    def send_telegram(self, account: Account | None, preference_field: str | None, text: str) -> None:
-        "TG-уведомление: если привязан Telegram, включены TG-уведомления и (если задан) тип уведомления."
+    def send_telegram(self, account: Account | None, text: str) -> None:
+        "TG-уведомление: если привязан Telegram и включены TG-уведомления."
         if account is None or not account.telegram_id:
             logger.info("TG пропущен: account=%s без telegram_id", getattr(account, "id", None))
             return
         if not account.notify_telegram_enabled:
             logger.info("TG пропущен: account=%s выключил Telegram-уведомления", account.id)
-            return
-        if preference_field and not preference_enabled(account, preference_field):
-            logger.info("TG пропущен: account=%s выключен тумблер %s", account.id, preference_field)
             return
         logger.info("TG-уведомление в очереди: account=%s chat_id=%s", account.id, account.telegram_id)
         self.background_tasks.add_task(send_telegram_message, int(account.telegram_id), text)

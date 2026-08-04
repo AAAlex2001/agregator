@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.platform_settings import PlatformSettings
 
-#123
 
 class PlatformSettingsService:
     "Читает singleton-строку настроек. Если её нет, считаем что платный режим включён (бэк-совместимо)."

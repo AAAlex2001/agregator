@@ -2,7 +2,8 @@
 from fastapi import HTTPException, UploadFile, status
 
 from models.audit import ExpertAuditProfile
-from schemas.audit import AuditExpertProfileResponse, AuditFile
+from schemas.audit import AuditExpertProfileResponse
+from schemas.common import DirectionFileSchema
 from services.audit.repository import AuditRepository
 from services.audit.validators import AuditValidator
 from services.direction_files import (
@@ -83,9 +84,9 @@ class UploadAuditOrderFileUseCase:
     def __init__(self, validator: AuditValidator) -> None:
         self.validator = validator
 
-    async def execute(self, account_id: int, file: UploadFile) -> AuditFile:
+    async def execute(self, account_id: int, file: UploadFile) -> DirectionFileSchema:
         """Запускает основной сценарий use case."""
         account = await self.validator.require_account(account_id)
         self.validator.require_customer(account)
         saved = await save_direction_file(account.public_id, file)
-        return AuditFile(name=saved["name"], url=saved["url"])
+        return DirectionFileSchema(name=saved["name"], url=saved["url"])

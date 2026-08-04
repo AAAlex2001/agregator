@@ -1,4 +1,5 @@
 "Сервисный модуль: files."
+import shutil
 from pathlib import Path
 from uuid import uuid4
 
@@ -8,6 +9,7 @@ from fastapi import HTTPException, UploadFile, status
 from schemas.order import (
     ALLOWED_DOCUMENT_EXTENSIONS,
     ALLOWED_DOCUMENT_EXTENSIONS_LABEL,
+    MAX_ORDER_DOCUMENTS,
     MAX_ORDER_FILES_TOTAL_BYTES,
     OrderDocuments,
 )
@@ -46,6 +48,7 @@ class OrderFileStorage:
     ) -> OrderDocuments:
         "Публичный метод сервисного слоя."
         ensure_total_size_within_limit(technical, contract, company, other)
+        self.ensure_documents_acceptable(technical, contract, company, other)
         upload_dir = self.dir_for(order_id)
         upload_dir.mkdir(parents=True, exist_ok=True)
         return OrderDocuments(
@@ -55,9 +58,37 @@ class OrderFileStorage:
             other=[await self.save_one(upload_dir, f, order_id) for f in other],
         )
 
+    @classmethod
+    def ensure_documents_acceptable(
+        cls,
+        technical: list[UploadFile],
+        contract: list[UploadFile],
+        company: list[UploadFile],
+        other: list[UploadFile],
+    ) -> None:
+        "Проверяет количество и расширения всех файлов до записи на диск."
+        for files in (technical, contract, company):
+            if len(files) > 1:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="В категории допустим только один файл",
+                )
+        total = len(technical) + len(contract) + len(company) + len(other)
+        if total > MAX_ORDER_DOCUMENTS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Не более {MAX_ORDER_DOCUMENTS} файлов на заказ",
+            )
+        for file in (*technical, *contract, *company, *other):
+            cls.ensure_extension_allowed(Path(file.filename or "").suffix.lower())
+
     def dir_for(self, order_id: int) -> Path:
         "Публичный метод сервисного слоя."
         return BACKEND_ROOT / "uploads" / "orders" / str(order_id)
+
+    def remove_dir(self, order_id: int) -> None:
+        "Удаляет каталог файлов заказа с диска."
+        shutil.rmtree(self.dir_for(order_id), ignore_errors=True)
 
     async def save_one(self, upload_dir: Path, file: UploadFile, order_id: int) -> str:
         "Публичный метод сервисного слоя."
@@ -113,10 +144,12 @@ class OrderFileStorage:
         self.ensure_extension_allowed(extension)
         generated_name = f"{uuid4().hex}{extension}"
         target_path = target_dir / generated_name
-        async with aiofiles.open(source_path, "rb") as source:
-            async with aiofiles.open(target_path, "wb") as target:
-                while chunk := await source.read(UPLOAD_CHUNK_SIZE):
-                    await target.write(chunk)
+        async with (
+            aiofiles.open(source_path, "rb") as source,
+            aiofiles.open(target_path, "wb") as target,
+        ):
+            while chunk := await source.read(UPLOAD_CHUNK_SIZE):
+                await target.write(chunk)
         return f"/uploads/orders/{target_order_id}/{generated_name}"
 
     @staticmethod

@@ -2,12 +2,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from models.forensic import ForensicWorkplaceKind
-
-
-class ForensicFile(BaseModel):
-    """Приложенный к анкете файл: имя для показа и ссылка на хранилище."""
-    name: str = Field(..., min_length=1, max_length=300)
-    url: str = Field(..., min_length=1, max_length=500)
+from schemas.common import DirectionFileSchema
 
 
 class ForensicProfileInput(BaseModel):
@@ -31,12 +26,20 @@ class ForensicProfileInput(BaseModel):
         return self
 
 
-class ForensicProfileResponse(ForensicProfileInput):
+class ForensicProfileResponse(BaseModel):
     """Анкета судебного эксперта в ответе API: с приложенными файлами."""
     model_config = ConfigDict(from_attributes=True)
 
-    education_diploma: ForensicFile | None = None
-    documents: list[ForensicFile] = Field(default_factory=list)
+    education: str = ""
+    extra_education: str = ""
+    has_similar_experience: bool = False
+    has_degree: bool = False
+    degree: str = ""
+    city: str = ""
+    workplace_kind: ForensicWorkplaceKind = ForensicWorkplaceKind.INDIVIDUAL
+    workplace_name: str = ""
+    education_diploma: DirectionFileSchema | None = None
+    documents: list[DirectionFileSchema] = Field(default_factory=list)
 
 
 class ForensicOrderDetailsInput(BaseModel):
@@ -56,6 +59,20 @@ class ForensicOrderDetailsInput(BaseModel):
     duration: str = Field("", max_length=200)
 
 
-class ForensicOrderDetailsResponse(ForensicOrderDetailsInput):
+class ForensicOrderDetailsResponse(BaseModel):
     """Поля судебной заявки в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    applicant_full_name: str
+    applicant_position: str
+    applicant_organization: str
+    applicant_inn: str
+    applicant_phone: str
+    applicant_email: str
+    expertise_purpose: str
+    government_body: str
+    city: str
+    education_requirement: str
+    extra_requirements: str
+    similar_experience_required: bool = False
+    duration: str

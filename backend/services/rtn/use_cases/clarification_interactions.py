@@ -4,6 +4,7 @@ from typing import Literal, cast
 from fastapi import HTTPException, status
 
 from models.rtn_clarification import RtnClarification
+from services.articles.use_cases.react_to_article import toggle_reaction
 from services.rtn.repository import (
     RtnClarificationReactionRepository,
     RtnClarificationViewRepository,
@@ -44,21 +45,14 @@ class RtnClarificationInteractionsUseCase:
     ) -> tuple[RtnClarification, ReactionValue | None]:
         clarification = await self.get_for_update(clarification_id)
         reaction = await self.reactions.get(clarification_id, visitor_key)
-
-        if reaction is None:
-            await self.reactions.add(clarification_id, user_id, visitor_key, value)
-            self.apply_delta(clarification, value, 1)
-            return clarification, value
-
-        if reaction.value == value:
-            await self.reactions.remove(reaction)
-            self.apply_delta(clarification, value, -1)
-            return clarification, None
-
-        self.apply_delta(clarification, reaction.value, -1)
-        reaction.value = value
-        self.apply_delta(clarification, value, 1)
-        return clarification, value
+        current = await toggle_reaction(
+            reaction,
+            value,
+            add=lambda v: self.reactions.add(clarification_id, user_id, visitor_key, v),
+            remove=lambda: self.reactions.remove(reaction),
+            apply_delta=lambda v, delta: self.apply_delta(clarification, v, delta),
+        )
+        return clarification, current
 
     async def record_view(
         self,

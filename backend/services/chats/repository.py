@@ -10,8 +10,9 @@ from models.account import Account
 from models.chat import Chat, ChatMessage
 from models.contact_deal import ContactAccessDeal
 from models.labor import LaborListing
-from models.order import Order, OrderStatus
+from models.order import Order
 from models.response import OrderResponse
+from models.session import Session
 
 
 class ChatRepository:
@@ -76,26 +77,6 @@ class ChatRepository:
         return (await self.db.execute(query)).scalars().first()
 
     async def find_chat_by_id_for_actor(
-        self, chat_id: int, actor_id: int
-    ) -> Chat | None:
-        "Ищет сущность по заданным параметрам."
-        query = (
-            select(Chat)
-            .options(
-                selectinload(Chat.order),
-                selectinload(Chat.labor_listing),
-                selectinload(Chat.contact_deal),
-                selectinload(Chat.customer),
-                selectinload(Chat.expert),
-            )
-            .where(
-                Chat.id == chat_id,
-                or_(Chat.customer_id == actor_id, Chat.expert_id == actor_id),
-            )
-        )
-        return (await self.db.execute(query)).scalars().first()
-
-    async def find_chat_by_id_with_order(
         self, chat_id: int, actor_id: int
     ) -> Chat | None:
         "Ищет сущность по заданным параметрам."
@@ -353,19 +334,19 @@ class ChatRepository:
             update(Chat).where(Chat.id == chat_id).values(updated_at=datetime.now(UTC))
         )
 
-    async def is_chat_blocked(self, chat_id: int) -> bool:
-        "Признак: соответствует ли сущность условию."
-        query = (
-            select(Chat.is_blocked, Order.status)
-            .select_from(Chat)
-            .outerjoin(Order, Order.id == Chat.order_id)
-            .where(Chat.id == chat_id)
-        )
-        row = (await self.db.execute(query)).first()
-        if row is None:
-            return False
-        is_blocked, order_status = row
-        return is_blocked or order_status == OrderStatus.ARCHIVED
+    async def find_active_session(self, session_id: str) -> Session | None:
+        "Возвращает сессию, если она существует и не истекла."
+        session = (
+            await self.db.execute(
+                select(Session).where(Session.session_id == session_id)
+            )
+        ).scalars().first()
+        if session is None:
+            return None
+        now = datetime.now(UTC)
+        if now > session.max_expires_at or now > session.expires_at:
+            return None
+        return session
 
     async def block_chat(self, chat_id: int) -> None:
         "Блокирует сущность."

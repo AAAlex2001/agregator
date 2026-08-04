@@ -10,8 +10,10 @@ from weasyprint import HTML
 
 from models.order import Order
 from models.question import OrderQuestion
-from models.response import OrderResponse, ResponseStatus, VatKind
+from models.response import OrderResponse, VatKind
 from services.reports.repository import ReportRepository
+from services.reports.use_cases.list_reports import find_accepted_response
+from utils.money import format_kopecks
 
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "https://plus-resurs.com").rstrip("/")
 
@@ -39,11 +41,7 @@ def format_sum(amount_kopecks: int | None) -> str:
     "Форматирует значение для отображения."
     if not amount_kopecks:
         return "Не определено"
-    roubles = amount_kopecks // 100
-    formatted = f"{roubles:,}".replace(",", " ")
-    if amount_kopecks % 100:
-        return f"{formatted},{amount_kopecks % 100:02d} ₽"
-    return f"{formatted} ₽"
+    return format_kopecks(amount_kopecks)
 
 
 def format_date(value: date | None) -> str:
@@ -207,7 +205,7 @@ class BuildReportPdfUseCase:
     def render_html(self, order: Order) -> str:
         "Рендерит шаблон/представление."
         responses = list(order.responses or [])
-        winner_response = self.find_winner(order, responses)
+        winner_response = find_accepted_response(order)
         other_responses = [r for r in responses if r is not winner_response]
         badges = build_badges(order)
         questions = visible_questions(order)
@@ -228,19 +226,6 @@ class BuildReportPdfUseCase:
             questions=questions,
             generated_at=datetime.now(UTC).strftime("%d.%m.%Y"),
         )
-
-    @staticmethod
-    def find_winner(order: Order, responses: list[OrderResponse]) -> OrderResponse | None:
-        "Ищет сущность по заданным параметрам."
-        if order.assigned_expert_id is None:
-            return None
-        for response in responses:
-            if response.expert_id != order.assigned_expert_id:
-                continue
-            if response.status not in {ResponseStatus.IN_PROGRESS, ResponseStatus.COMPLETED}:
-                continue
-            return response
-        return None
 
     @staticmethod
     def build_card(response: OrderResponse, order: Order) -> dict[str, Any]:

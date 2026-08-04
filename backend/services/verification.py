@@ -1,6 +1,6 @@
 "Сервисный модуль: verification."
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,17 +32,16 @@ class VerificationService:
         self.db = db
 
     async def issue_code(self, user_id: int) -> str:
-        "Выпускает одноразовый код/токен."
+        "Выпускает одноразовый код/токен со сроком жизни из константы сервиса."
         code = generate_numeric_code()
-        self.db.add(PasswordResetCode(user_id=user_id, code=code))
+        self.db.add(
+            PasswordResetCode(
+                user_id=user_id,
+                code=code,
+                expires_at=datetime.now(UTC) + timedelta(minutes=VERIFICATION_CODE_TTL_MINUTES),
+            )
+        )
         await self.db.flush()
-        return code
-
-    async def send_code_to_email(self, user_id: int, email: str, subject: str) -> str:
-        "Отправляет уведомление получателю."
-        code = await self.issue_code(user_id)
-        rendered = self.render_code_email(subject, code)
-        await send_email(email, rendered.subject, rendered.text, rendered.html)
         return code
 
     async def schedule_code_email(

@@ -26,6 +26,20 @@ RATING_PRIOR_MEAN = 4.5
 DEFAULT_MAP_FIELDS = ("name", "area", "object", "category")
 
 
+def build_completed_orders_expr() -> ColumnElement[int]:
+    "Подзапрос числа завершённых заказов эксперта, коррелированный с Account."
+    return (
+        select(func.count(Order.id))
+        .where(
+            Order.assigned_expert_id == Account.id,
+            Order.status == OrderStatus.ARCHIVED,
+        )
+        .correlate(Account)
+        .scalar_subquery()
+        .label("completed_orders_count")
+    )
+
+
 def format_cert_for_map(cert: dict[str, str], fields: list[str]) -> str:
     "Строка удостоверения для карты — только те части, что эксперт разрешил показывать."
     head = []
@@ -98,16 +112,7 @@ class ExpertsRepository:
         sort_dir: str = SORT_DIR_DESC,
     ) -> tuple[list[ExpertSummaryRow], bool]:
         "Карточки экспертов с агрегатами. Только эксперты с отзывами (review_count > 0)."
-        completed_orders_expr = (
-            select(func.count(Order.id))
-            .where(
-                Order.assigned_expert_id == Account.id,
-                Order.status == OrderStatus.ARCHIVED,
-            )
-            .correlate(Account)
-            .scalar_subquery()
-            .label("completed_orders_count")
-        )
+        completed_orders_expr = build_completed_orders_expr()
 
         base_query: Select[tuple[Account, Expert, int]] = (
             select(Account, Expert, completed_orders_expr)
@@ -157,20 +162,9 @@ class ExpertsRepository:
 
     async def get_summary(self, public_id: str) -> ExpertSummaryRow | None:
         "Возвращает запрошенную сущность."
-        completed_orders_expr = (
-            select(func.count(Order.id))
-            .where(
-                Order.assigned_expert_id == Account.id,
-                Order.status == OrderStatus.ARCHIVED,
-            )
-            .correlate(Account)
-            .scalar_subquery()
-            .label("completed_orders_count")
-        )
-
         row = (
             await self.db.execute(
-                select(Account, Expert, completed_orders_expr)
+                select(Account, Expert, build_completed_orders_expr())
                 .join(Expert, Expert.account_id == Account.id)
                 .where(
                     Account.public_id == public_id,

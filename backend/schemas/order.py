@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from models.order import BadgeVariant, OrderStatus, OrderWorkType
+from utils.money import format_kopecks
 
 if TYPE_CHECKING:
     from models.order import Order as OrderModel
@@ -119,7 +120,7 @@ class OrderUpdate(BaseModel):
         return normalize_moscow_datetime(value)
 
 
-class OrderResponse(BaseModel):
+class OrderCard(BaseModel):
     "Полная карточка заказа для UI: данные заказа, исполнитель, диффы предыдущих значений."
     id: int
     public_id: str
@@ -173,12 +174,8 @@ class OrderResponse(BaseModel):
 
     @staticmethod
     def format_sum(amount_kopecks: int) -> str:
-        roubles = amount_kopecks // 100
-        formatted = f"{roubles:,}".replace(",", " ")
-        if amount_kopecks % 100:
-            kopecks = amount_kopecks % 100
-            return f"{formatted},{kopecks:02d} ₽"
-        return f"{formatted} ₽"
+        "Сумма заказа в копейках как строка для UI."
+        return format_kopecks(amount_kopecks)
 
     @classmethod
     def from_archived_order(
@@ -186,7 +183,7 @@ class OrderResponse(BaseModel):
         order: "OrderModel",
         accepted_response: "OrderResponseModel | None" = None,
         has_review: bool = False,
-    ) -> "OrderResponse":
+    ) -> "OrderCard":
         "Архивная карточка: данные заказа + исполнитель + его отклик + отметка об отзыве."
         base = cls.from_order(order)
         update: dict[str, object] = {
@@ -242,7 +239,7 @@ class OrderResponse(BaseModel):
         return direction.details_response_schema.model_validate(entity).model_dump()
 
     @classmethod
-    def from_order(cls, order: "OrderModel") -> "OrderResponse":
+    def from_order(cls, order: "OrderModel") -> "OrderCard":
         from services.orders.documents import OrderDocumentsService
 
         amount = order.sum_amount
@@ -318,5 +315,5 @@ class OrderResponse(BaseModel):
 
 class OrderListResponse(BaseModel):
     "Постраничный ответ со списком заказов."
-    items: list[OrderResponse]
+    items: list[OrderCard]
     has_more: bool

@@ -1,6 +1,9 @@
+"Разбор multipart-полей формы заказа в pydantic-схемы."
 import json
 from datetime import date as date_type
 from datetime import datetime as datetime_type
+
+from fastapi import HTTPException, status
 
 from models.order import OrderWorkType
 from schemas.order import BadgeSchema, OrderCreate, OrderDocuments, OrderUpdate
@@ -17,6 +20,7 @@ TYPE_VARIANT = {
 
 
 def parse_json_list(raw: str) -> list[object]:
+    "Парсит JSON-список из строки формы; мусор означает пустой список."
     try:
         value = json.loads(raw)
     except json.JSONDecodeError:
@@ -25,13 +29,39 @@ def parse_json_list(raw: str) -> list[object]:
     return value if isinstance(value, list) else []
 
 
-def parse_responses_deadline(raw: str) -> datetime_type | None:
+def parse_required_date(raw: str) -> date_type:
+    "Парсит обязательную дату формы; невалидное значение — 422."
+    try:
+        return date_type.fromisoformat(raw)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Некорректная дата",
+        )
+
+
+def parse_optional_date(raw: str) -> date_type | None:
+    "Парсит необязательную дату формы; невалидное значение — 422."
     if not raw:
         return None
-    return datetime_type.fromisoformat(raw)
+    return parse_required_date(raw)
+
+
+def parse_responses_deadline(raw: str) -> datetime_type | None:
+    "Парсит срок приёма откликов; невалидное значение — 422."
+    if not raw:
+        return None
+    try:
+        return datetime_type.fromisoformat(raw)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Некорректная дата приёма откликов",
+        )
 
 
 def code_to_variant(code: str) -> str:
+    "Определяет цвет бейджа по типу объекта из кода экспертизы."
     parts = code.split(" ", 1)
     if len(parts) < 2:
         return "ORANGE"
@@ -39,6 +69,7 @@ def code_to_variant(code: str) -> str:
 
 
 def parse_badge_codes(raw: str) -> list[BadgeSchema]:
+    "Строит бейджи заказа из JSON-списка кодов экспертизы."
     return [
         BadgeSchema(text=str(code).strip(), variant=code_to_variant(str(code)))
         for code in parse_json_list(raw)
@@ -60,12 +91,6 @@ def parse_keep_documents(raw: str) -> OrderDocuments:
         company=list(value.get("company") or []),
         other=list(value.get("other") or []),
     )
-
-
-def parse_optional_date(raw: str) -> date_type | None:
-    if not raw:
-        return None
-    return date_type.fromisoformat(raw)
 
 
 def parse_details(raw: str) -> dict[str, object] | None:
@@ -94,6 +119,7 @@ def build_order_create_data(
     work_type: OrderWorkType = OrderWorkType.EXPERTISE,
     details_json: str = "",
 ) -> OrderCreate:
+    "Собирает OrderCreate из multipart-полей формы."
     return OrderCreate(
         title=title,
         company=company,
@@ -101,7 +127,7 @@ def build_order_create_data(
         customer_id=customer_id,
         sum_amount=sum_amount,
         start_date=parse_optional_date(start_date),
-        deadline=date_type.fromisoformat(deadline),
+        deadline=parse_required_date(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
         requires_expert=requires_expert,
         requires_license=requires_license,
@@ -127,13 +153,14 @@ def build_order_update_data(
     notify_responders: bool = True,
     details_json: str = "",
 ) -> OrderUpdate:
+    "Собирает OrderUpdate из multipart-полей формы."
     return OrderUpdate(
         title=title,
         company=company,
         comment=comment,
         sum_amount=sum_amount,
         start_date=parse_optional_date(start_date),
-        deadline=date_type.fromisoformat(deadline),
+        deadline=parse_required_date(deadline),
         responses_deadline=parse_responses_deadline(responses_deadline),
         requires_expert=requires_expert,
         requires_license=requires_license,

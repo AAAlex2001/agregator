@@ -74,7 +74,7 @@ class UpdateOrderUseCase:
 
         if badges_data is not None:
             current_badges = [
-                {"text": b.text, "variant": b.variant.value if hasattr(b.variant, "value") else b.variant}
+                {"text": b.text, "variant": b.variant.value}
                 for b in (order.badges or [])
             ]
             if [{"text": x["text"], "variant": x["variant"]} for x in badges_data] != current_badges:

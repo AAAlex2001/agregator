@@ -3,8 +3,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from models.response import ResponseStatus
 from models.account import UserRole
+from models.response import ResponseStatus
 from services.email.use_cases.send_bidding_finished_email import OUTCOME_LOST, OUTCOME_WON
 from services.responses.use_cases.update_response_status import UpdateResponseStatusUseCase
 

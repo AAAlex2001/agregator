@@ -3,12 +3,13 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
+from dependencies.rate_limit import rate_limit
 from schemas.telegram_auth import TelegramAuthRequest, TelegramLinkRequest
 from services.login import (
-    SESSION_COOKIE_MAX_AGE_SECONDS,
     CreateSessionUseCase,
     LoginRepository,
     LoginValidator,
+    set_session_cookies,
 )
 from services.telegram_auth import TelegramLinkUseCase, TelegramLoginUseCase
 
@@ -18,20 +19,14 @@ router = APIRouter(prefix="/tg-auth", tags=["telegram_auth"])
 def build_session_response(content: dict, session_id: str, role: str) -> JSONResponse:
     "Отдаёт ответ с cookie сессии и роли — те же параметры, что у обычного входа."
     response = JSONResponse(content=content)
-    for key, value in (("session_id", session_id), ("user_role", role)):
-        response.set_cookie(
-            key=key,
-            value=value,
-            httponly=True,
-            secure=True,
-            samesite="none",
-            max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-            path="/",
-        )
+    set_session_cookies(response, session_id, role)
     return response
 
 
-@router.post("/telegram")
+@router.post(
+    "/telegram",
+    dependencies=[Depends(rate_limit("tg_login", max_calls=10, window_seconds=60))],
+)
 async def telegram_login(
     body: TelegramAuthRequest,
     db: AsyncSession = Depends(get_db),
@@ -47,7 +42,10 @@ async def telegram_login(
     )
 
 
-@router.post("/telegram/link")
+@router.post(
+    "/telegram/link",
+    dependencies=[Depends(rate_limit("tg_link", max_calls=5, window_seconds=60))],
+)
 async def telegram_link(
     body: TelegramLinkRequest,
     db: AsyncSession = Depends(get_db),

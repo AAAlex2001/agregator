@@ -4,6 +4,7 @@ import re
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from models.audit import AuditKind, AuditParticipantKind, AuditScale, AuditTimeline
+from schemas.common import DirectionFileSchema
 from services.audit_catalogs import (
     ACCREDITATION_AREA_CODES,
     AUDIT_AREA_P17_CODES,
@@ -19,12 +20,6 @@ def validate_catalog_codes(value: list[str], allowed: frozenset[str], label: str
     if unknown:
         raise ValueError(f"Недопустимые коды {label}: {', '.join(unknown)}")
     return list(dict.fromkeys(value))
-
-
-class AuditFile(BaseModel):
-    """Приложенный файл: имя для показа и ссылка на хранилище."""
-    name: str = Field(..., min_length=1, max_length=300)
-    url: str = Field(..., min_length=1, max_length=500)
 
 
 class CatalogOption(BaseModel):
@@ -50,9 +45,12 @@ class AuditCustomerProfileInput(BaseModel):
     opo_license_number: str = Field("", max_length=100)
 
 
-class AuditCustomerProfileResponse(AuditCustomerProfileInput):
+class AuditCustomerProfileResponse(BaseModel):
     """Анкета заказчика по аудиту СУПБ в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    position: str = ""
+    opo_license_number: str = ""
 
 
 class AuditExpertProfileInput(BaseModel):
@@ -114,11 +112,20 @@ class AuditExpertProfileInput(BaseModel):
         return self
 
 
-class AuditExpertProfileResponse(AuditExpertProfileInput):
+class AuditExpertProfileResponse(BaseModel):
     """Анкета исполнителя по аудиту СУПБ в ответе API."""
     model_config = ConfigDict(from_attributes=True)
 
-    documents: list[AuditFile] = Field(default_factory=list)
+    participant_kind: AuditParticipantKind = AuditParticipantKind.AUDITOR
+    industrial_safety_areas: list[str] = Field(default_factory=list)
+    expert_attestation_areas: list[str] = Field(default_factory=list)
+    audit_qualifications: list[str] = Field(default_factory=list)
+    full_name: str = ""
+    short_name: str = ""
+    inn: str = ""
+    certificate_number: str = ""
+    accreditation_areas: list[str] = Field(default_factory=list)
+    documents: list[DirectionFileSchema] = Field(default_factory=list)
 
 
 class AuditOpoItemInput(BaseModel):
@@ -153,11 +160,11 @@ class AuditOrderDetailsInput(BaseModel):
     opo_class_4: int | None = Field(None, ge=0, le=10_000)
     main_industry: str = Field("", max_length=500)
     multiple_regions: bool | None = None
-    registration_certificate: AuditFile | None = None
+    registration_certificate: DirectionFileSchema | None = None
     audit_kind: AuditKind
     considers_sto: bool | None = None
     sto_name: str = Field("", max_length=500)
-    sto_file: AuditFile | None = None
+    sto_file: DirectionFileSchema | None = None
     audit_areas: list[str] = Field(default_factory=list, max_length=18)
     desired_timeline: AuditTimeline
     comments: str = Field("", max_length=5000)
@@ -220,11 +227,11 @@ class AuditOrderDetailsResponse(BaseModel):
     opo_class_4: int | None = None
     main_industry: str
     multiple_regions: bool | None = None
-    registration_certificate: AuditFile | None = None
+    registration_certificate: DirectionFileSchema | None = None
     audit_kind: AuditKind
     considers_sto: bool | None = None
     sto_name: str
-    sto_file: AuditFile | None = None
+    sto_file: DirectionFileSchema | None = None
     audit_areas: list[str] = Field(default_factory=list)
     desired_timeline: AuditTimeline
     comments: str

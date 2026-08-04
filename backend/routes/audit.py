@@ -1,6 +1,5 @@
 """Аудит СУПБ: анкеты заказчика и исполнителя, файлы заявки."""
 from fastapi import APIRouter, Body, Depends, File, UploadFile
-from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -12,8 +11,8 @@ from schemas.audit import (
     AuditCustomerProfileResponse,
     AuditExpertProfileInput,
     AuditExpertProfileResponse,
-    AuditFile,
 )
+from schemas.common import DirectionFileSchema, DocumentUrl
 from services.audit import (
     AuditRepository,
     AuditValidator,
@@ -30,11 +29,6 @@ from services.audit.catalogs import build_audit_catalogs
 router = APIRouter(prefix="/directions/audit", tags=["directions"])
 
 UPLOAD_LIMIT = Depends(rate_limit("direction_documents", max_calls=10, window_seconds=60))
-
-
-class DocumentUrl(BaseModel):
-    """Ссылка на удаляемый документ анкеты."""
-    url: str = Field(..., min_length=1, max_length=500)
 
 
 def build_validator(db: AsyncSession) -> AuditValidator:
@@ -113,11 +107,11 @@ async def delete_document(
     return await use_case.execute(user_id, data.url)
 
 
-@router.post("/order-files", response_model=AuditFile, dependencies=[UPLOAD_LIMIT])
+@router.post("/order-files", response_model=DirectionFileSchema, dependencies=[UPLOAD_LIMIT])
 async def upload_order_file(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> AuditFile:
+) -> DirectionFileSchema:
     """Файл для заявки на аудит: СТО или свидетельство о регистрации ОПО."""
     return await UploadAuditOrderFileUseCase(build_validator(db)).execute(user_id, file)

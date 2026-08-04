@@ -51,7 +51,7 @@ async def save_uploaded_file(
                         detail=too_large_message,
                     )
                 await handle.write(chunk)
-    except HTTPException:
+    except BaseException:
         full_path.unlink(missing_ok=True)
         raise
     finally:

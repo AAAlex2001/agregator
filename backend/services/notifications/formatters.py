@@ -24,6 +24,16 @@ from schemas.notification import (
     SupportReplyNotificationPayload,
 )
 
+PREVIEW_MAX_LENGTH = 240
+
+
+def truncate_preview(text: str) -> str:
+    "Обрезает превью до 240 символов с многоточием; пустой текст заменяет на «(пусто)»."
+    text = (text or "").strip()
+    if len(text) > PREVIEW_MAX_LENGTH:
+        return text[:PREVIEW_MAX_LENGTH] + "…"
+    return text or "(пусто)"
+
 
 def to_response(notification: Notification) -> NotificationItemResponse:
     "Маппит ORM-уведомление в дискриминированный union Pydantic-схемы по type."

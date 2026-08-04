@@ -16,6 +16,7 @@ from schemas.settings import (
     UpdatePersonalDataRequest,
     UserSettingsResponse,
 )
+from services.login import set_role_cookie
 from services.settings import (
     ClearCompanyCardUseCase,
     ConfirmEmailChangeUseCase,
@@ -59,14 +60,7 @@ async def get_profile(
     "Возвращает профиль текущего пользователя и синхронизирует cookie роли."
     repo = build_repo(db)
     user = await GetProfileUseCase(build_validator(repo)).execute(user_id)
-    response.set_cookie(
-        key="user_role",
-        value=user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-    )
+    set_role_cookie(response, user.role.value)
     return to_response(user)
 
 
@@ -80,14 +74,7 @@ async def update_profile(
     "Обновляет личные данные пользователя и обновляет cookie роли."
     repo = build_repo(db)
     user = await UpdatePersonalDataUseCase(repo, build_validator(repo)).execute(user_id, data)
-    response.set_cookie(
-        key="user_role",
-        value=user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-    )
+    set_role_cookie(response, user.role.value)
     return to_response(user)
 
 
@@ -198,14 +185,7 @@ async def upload_avatar(
     "Загружает аватар пользователя и обновляет cookie роли."
     repo = build_repo(db)
     user = await UploadAvatarUseCase(repo, build_validator(repo)).execute(user_id, file)
-    response.set_cookie(
-        key="user_role",
-        value=user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-    )
+    set_role_cookie(response, user.role.value)
     return to_response(user)
 
 

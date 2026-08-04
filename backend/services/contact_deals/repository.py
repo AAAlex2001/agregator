@@ -41,20 +41,6 @@ class ContactDealRepository:
             )
         return (await self.db.execute(query)).scalars().first()
 
-    async def get_by_public_id(self, public_id: str) -> ContactAccessDeal | None:
-        query = (
-            select(ContactAccessDeal)
-            .options(
-                selectinload(ContactAccessDeal.seller),
-                selectinload(ContactAccessDeal.buyer),
-                selectinload(ContactAccessDeal.signatures),
-                selectinload(ContactAccessDeal.receipts),
-                selectinload(ContactAccessDeal.reviews),
-            )
-            .where(ContactAccessDeal.public_id == public_id)
-        )
-        return (await self.db.execute(query)).scalars().first()
-
     async def get_user(self, user_id: int, for_update: bool = False) -> Account | None:
         query = select(Account).where(Account.id == user_id, Account.is_active.is_(True))
         if for_update:
@@ -155,16 +141,6 @@ class ContactDealRepository:
             Review.customer_id == buyer_id,
         )
         return (await self.db.execute(query)).scalars().first()
-
-    async def review_stats(self, expert_id: int) -> tuple[int, float | None]:
-        count, average = (
-            await self.db.execute(
-                select(func.count(Review.id), func.avg(Review.rating)).where(
-                    Review.expert_id == expert_id
-                )
-            )
-        ).one()
-        return int(count or 0), float(average) if average is not None else None
 
     async def supersede_pending_receipts(self, deal_id: int, reviewed_at: datetime) -> None:
         await self.db.execute(

@@ -22,7 +22,6 @@ class Company(Base):
     okved_code: Mapped[str | None] = mapped_column(String(20), nullable=True)
     okved_name: Mapped[str | None] = mapped_column(String(500), nullable=True)
     status: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
-    # Когда компании ушло письмо рассылки. NULL — ещё не слали (попадёт в следующую пачку).
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(

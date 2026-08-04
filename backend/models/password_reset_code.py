@@ -1,7 +1,7 @@
 """
 Модель для кодов сброса пароля
 """
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
@@ -22,6 +22,6 @@ class PasswordResetCode(Base):
     code: Mapped[str] = mapped_column(String, nullable=False, index=True)
     is_used: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC) + timedelta(minutes=15), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     account: Mapped["Account"] = relationship(back_populates="password_reset_codes")

@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
-from models.support_ticket import TicketCategory, TicketMessageAuthor, TicketStatus
+from models.support_ticket import TicketCategory, TicketStatus
 
 
 class SupportTicketAttachment(BaseModel):
@@ -21,7 +21,7 @@ class SupportTicketMessageItem(BaseModel):
     created_at: datetime
     attachments: list[SupportTicketAttachment] = []
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SupportTicketSummary(BaseModel):
@@ -36,7 +36,7 @@ class SupportTicketSummary(BaseModel):
     has_unread: bool = False
     last_message_preview: str = ""
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SupportTicketDetail(SupportTicketSummary):
@@ -57,20 +57,11 @@ class CreateTicketRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=5000)
 
 
-class ReplyTicketRequest(BaseModel):
-    "Payload ответа пользователя в существующий тикет."
-    text: str = Field(default="", max_length=5000)
-
-
 __all__ = [
-    "TicketCategory",
-    "TicketStatus",
-    "TicketMessageAuthor",
     "SupportTicketAttachment",
     "SupportTicketMessageItem",
     "SupportTicketSummary",
     "SupportTicketDetail",
     "SupportTicketList",
     "CreateTicketRequest",
-    "ReplyTicketRequest",
 ]

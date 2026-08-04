@@ -10,7 +10,7 @@ from services.tags import TagRepository
 
 
 class SlugTakenError(Exception):
-    "Slug уже занят другой статьёй."
+    "Slug уже занят другой записью."
 
 
 class SaveArticleUseCase:

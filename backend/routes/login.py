@@ -10,12 +10,11 @@ from dependencies.rate_limit import rate_limit
 from schemas.common import DetailResponse
 from schemas.login import (
     AvailableRolesResponse,
+    LoginUserResponse,
     SwitchRoleRequest,
     UserLogin,
-    UserResponse,
 )
 from services.login import (
-    SESSION_COOKIE_MAX_AGE_SECONDS,
     AuthenticateUserUseCase,
     CreateSessionUseCase,
     ListAvailableRolesUseCase,
@@ -24,6 +23,9 @@ from services.login import (
     LogoutSessionUseCase,
     RefreshSessionUseCase,
     SwitchRoleUseCase,
+    set_role_cookie,
+    set_session_cookie,
+    set_session_cookies,
 )
 
 router = APIRouter(prefix="/login", tags=["auth"])
@@ -35,7 +37,7 @@ def build_repo(db: AsyncSession) -> LoginRepository:
 
 @router.post(
     "/",
-    response_model=UserResponse,
+    response_model=LoginUserResponse,
     dependencies=[Depends(rate_limit("login", max_calls=5, window_seconds=60))],
 )
 async def login_user(
@@ -47,25 +49,8 @@ async def login_user(
     user = await AuthenticateUserUseCase(repo, LoginValidator()).execute(data)
     new_session = await CreateSessionUseCase(repo).execute(user.id)
 
-    response = JSONResponse(content=UserResponse.model_validate(user).model_dump(mode="json"))
-    response.set_cookie(
-        key="session_id",
-        value=new_session.session_id,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
-    response.set_cookie(
-        key="user_role",
-        value=user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
+    response = JSONResponse(content=LoginUserResponse.model_validate(user).model_dump(mode="json"))
+    set_session_cookies(response, new_session.session_id, user.role.value)
     return response
 
 
@@ -80,25 +65,9 @@ async def refresh_session(
     now = datetime.now(UTC)
     response = JSONResponse(content={"detail": "ok"})
     remaining_seconds = max(int((session.max_expires_at - now).total_seconds()), 0)
-    response.set_cookie(
-        key="session_id",
-        value=session.session_id,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=remaining_seconds,
-        path="/",
-    )
+    set_session_cookie(response, session.session_id, remaining_seconds)
     if session.user is not None:
-        response.set_cookie(
-            key="user_role",
-            value=session.user.role.value,
-            httponly=True,
-            secure=True,
-            samesite="none",
-            max_age=remaining_seconds,
-            path="/",
-        )
+        set_role_cookie(response, session.user.role.value, remaining_seconds)
     return response
 
 
@@ -127,7 +96,7 @@ async def list_available_roles(
 
 @router.post(
     "/switch-role",
-    response_model=UserResponse,
+    response_model=LoginUserResponse,
     dependencies=[Depends(rate_limit("switch_role", max_calls=5, window_seconds=60))],
 )
 async def switch_role(
@@ -148,23 +117,6 @@ async def switch_role(
     if target_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
 
-    response = JSONResponse(content=UserResponse.model_validate(target_user).model_dump(mode="json"))
-    response.set_cookie(
-        key="session_id",
-        value=new_session.session_id,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
-    response.set_cookie(
-        key="user_role",
-        value=target_user.role.value,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=SESSION_COOKIE_MAX_AGE_SECONDS,
-        path="/",
-    )
+    response = JSONResponse(content=LoginUserResponse.model_validate(target_user).model_dump(mode="json"))
+    set_session_cookies(response, new_session.session_id, target_user.role.value)
     return response

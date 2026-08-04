@@ -1,6 +1,6 @@
 "Таксономия РТН: подписи enum-справочников для фильтров каталога разъяснений."
 
-from typing import Any
+from enum import Enum
 
 from models.rtn_clarification import (
     Activity,
@@ -97,12 +97,9 @@ STATUS_LABELS: dict[ClarificationStatus, str] = {
 }
 
 
-def serialize_options(labels: dict[Any, str]) -> list[dict[str, str]]:
+def serialize_options[E: Enum](labels: dict[E, str]) -> list[dict[str, str]]:
     "Enum-подписи -> список {value, label} в порядке объявления enum, для отдачи в API фильтров."
-    options = []
-    for member, label in labels.items():
-        options.append({"value": member.value, "label": label})
-    return options
+    return [{"value": member.value, "label": label} for member, label in labels.items()]
 
 
 def build_taxonomy() -> dict[str, list[dict[str, str]]]:

@@ -4,7 +4,7 @@ from typing import Any
 from models.response import OrderResponse
 from schemas.notification import ResponseUpdateKind
 from services.email import SendResponseUpdatedEmailUseCase
-from services.email.changes import summarize_response_changes
+from services.email.changes import summarize_order_changes
 from services.responses.in_app_notifier import ResponseInAppNotifier
 
 
@@ -40,7 +40,7 @@ class ResponseUpdateNotifier:
         "Отправляет уведомление получателю."
         if self.send_updated_email is None:
             return
-        summary = summarize_response_changes(
+        summary = summarize_order_changes(
             before["sum_amount"],
             updated.proposed_sum_amount,
             before["deadline"],

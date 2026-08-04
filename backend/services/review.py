@@ -29,6 +29,19 @@ def format_sum(sum_amount: int | None) -> str:
     return f"{formatted} ₽"
 
 
+async def refresh_expert_rating(db: AsyncSession, expert_profile: Expert) -> None:
+    "Пересчитывает агрегаты rating/review_count в профиле исполнителя."
+    count, average = (
+        await db.execute(
+            select(func.count(Review.id), func.avg(Review.rating)).where(
+                Review.expert_id == expert_profile.account_id
+            )
+        )
+    ).one()
+    expert_profile.review_count = int(count or 0)
+    expert_profile.rating = round(float(average), 1) if average is not None else None
+
+
 class ReviewService:
     "Сервис домена: инкапсулирует операции и зависимости."
     def __init__(self, db: AsyncSession) -> None:
@@ -93,21 +106,9 @@ class ReviewService:
                 detail="Отзыв по этому отклику уже оставлен",
             )
 
-        await self.refresh_expert_rating(expert_profile)
+        await refresh_expert_rating(self.db, expert_profile)
 
         return review
-
-    async def refresh_expert_rating(self, expert_profile: Expert) -> None:
-        "Пересчитывает агрегаты rating/review_count в профиле исполнителя."
-        count, average = (
-            await self.db.execute(
-                select(func.count(Review.id), func.avg(Review.rating)).where(
-                    Review.expert_id == expert_profile.account_id
-                )
-            )
-        ).one()
-        expert_profile.review_count = int(count or 0)
-        expert_profile.rating = round(float(average), 1) if average is not None else None
 
     async def get_expert_reviews(self, expert_id: int, skip: int, limit: int) -> tuple[list[dict[str, Any]], bool, int, float]:
         "Постраничная выдача отзывов эксперта. total/avg_rating берём из агрегированных полей профиля исполнителя."

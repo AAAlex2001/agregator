@@ -7,6 +7,7 @@ from sqlalchemy.orm import selectinload
 
 from models.account import Account, UserRole
 from models.chat import Chat, ChatMessage
+from models.email_suppression import EmailSuppression
 from models.expert import Expert
 from models.labor import LaborListing
 from models.order import Order
@@ -87,13 +88,14 @@ class EmailRepository:
         return (await self.db.execute(query)).scalars().first()
 
     async def list_users_for_new_blog_post_email(self) -> list[Account]:
-        "Получатели письма о новой статье: подтверждённый email + включенный тогглер email_on_new_blog_post. Дедуп по email (один ящик может быть в users под разными ролями)."
+        "Получатели письма о новой статье: подтверждённый email, включенный тогглер email_on_new_blog_post, вне стоп-листа. Дедуп по email (один ящик может быть в users под разными ролями)."
         query = (
             select(Account)
             .where(
                 Account.email.isnot(None),
                 Account.email_verified.is_(True),
                 Account.email_on_new_blog_post.is_(True),
+                func.lower(Account.email).notin_(select(EmailSuppression.email)),
             )
             .distinct(Account.email)
             .order_by(Account.email, Account.id)

@@ -9,9 +9,13 @@ class ResearchProfileInput(BaseModel):
     research_field: str = Field("", max_length=5000)
 
 
-class ResearchProfileResponse(ResearchProfileInput):
+class ResearchProfileResponse(BaseModel):
     """Анкета исполнителя НИР в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    academic_degree: str = ""
+    academic_title: str = ""
+    research_field: str = ""
 
 
 class ResearchOrderDetailsInput(BaseModel):
@@ -26,6 +30,9 @@ class ResearchOrderDetailsInput(BaseModel):
         return [item.strip() for item in value if item.strip()]
 
 
-class ResearchOrderDetailsResponse(ResearchOrderDetailsInput):
+class ResearchOrderDetailsResponse(BaseModel):
     """Поля заявки на НИР в ответе API."""
     model_config = ConfigDict(from_attributes=True)
+
+    executor_requirements: list[str] = Field(default_factory=list)
+    needs_site_visit: bool = False

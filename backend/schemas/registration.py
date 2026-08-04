@@ -1,9 +1,10 @@
 from datetime import datetime
-from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
+from models.account import Account, UserRole
+from models.license_holder import LicenseRentalKind
 from schemas.audit import AuditCustomerProfileInput, AuditExpertProfileInput
 from schemas.cadastral import CadastralProfileInput
 from schemas.company import validate_company_data
@@ -11,23 +12,6 @@ from schemas.expertise import ExpertiseProfileInput
 from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
 from schemas.research import ResearchProfileInput
-
-if TYPE_CHECKING:
-    from models.account import Account
-
-
-class UserRole(str, Enum):
-    "Роль пользователя в системе."
-    CUSTOMER = "CUSTOMER"
-    EXPERT = "EXPERT"
-    LICENSE_HOLDER = "LICENSE_HOLDER"
-
-
-class LicenseRentalKind(str, Enum):
-    "Способ расчёта стоимости предоставления лицензии."
-    PERCENT = "PERCENT"
-    FIXED = "FIXED"
-    NEGOTIABLE = "NEGOTIABLE"
 
 
 class UserRegistration(BaseModel):
@@ -183,13 +167,13 @@ class UserResponse(BaseModel):
     travels_to_other_regions: bool = False
 
     @classmethod
-    def from_account(cls, account: "Account") -> "UserResponse":
+    def from_account(cls, account: Account) -> "UserResponse":
         "Собирает ответ из аккаунта и профилей роли: старые имена полей — из новых мест."
         expert = account.expert_profile
         holder = account.license_holder_profile
         return cls(
             id=account.id,
-            role=UserRole(account.role.value),
+            role=account.role,
             inn=account.inn,
             company_data=account.company_data,
             email=account.email,

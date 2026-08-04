@@ -1,4 +1,6 @@
 "Use case: send bidding finished email."
+from typing import Literal
+
 from models.account import Account
 from models.order import Order
 from models.response import OrderResponse
@@ -11,8 +13,9 @@ TEMPLATE = "bidding_finished"
 CTA_URL = "https://plus-resurs.com/expert/orders"
 PREFERENCE_FIELD = "email_on_bidding_finished"
 
-OUTCOME_WON = "won"
-OUTCOME_LOST = "lost"
+BiddingOutcome = Literal["won", "lost"]
+OUTCOME_WON: BiddingOutcome = "won"
+OUTCOME_LOST: BiddingOutcome = "lost"
 
 LOST_SUBJECT = "Заказчик выбрал другого исполнителя — Ресурс-Плюс"
 WON_TG_CTA = "Чтобы перейти к работе, откройте «Мои отклики» в приложении."
@@ -38,12 +41,12 @@ class SendBiddingFinishedEmailUseCase:
         self,
         expert_id: int,
         order_id: int,
-        outcome: str,
+        outcome: BiddingOutcome,
         response_id: int | None = None,
     ) -> None:
         "Запускает основной сценарий use case."
         if outcome not in {OUTCOME_WON, OUTCOME_LOST}:
-            return
+            raise ValueError(f"Недопустимый outcome торгов: {outcome!r}")
 
         expert = await self.repo.find_user(expert_id)
         if expert is None:
@@ -70,7 +73,7 @@ class SendBiddingFinishedEmailUseCase:
         self,
         expert: Account,
         order: Order,
-        outcome: str,
+        outcome: BiddingOutcome,
         response: OrderResponse | None,
         customer: Account | None,
     ) -> BiddingFinishedContext:

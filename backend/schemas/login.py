@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from models.account import UserRole
 
@@ -17,7 +17,7 @@ class UserLogin(BaseModel):
     )
 
 
-class UserResponse(BaseModel):
+class LoginUserResponse(BaseModel):
     "Минимальная карточка пользователя после входа."
     id: int
     role: str
@@ -26,14 +26,7 @@ class UserResponse(BaseModel):
     phone: str | None = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
-
-class RoleChoiceResponse(BaseModel):
-    "Возвращается когда пользователь имеет несколько подходящих ролей и нужно выбрать."
-    detail: str = "Выберите роль для входа"
-    available_roles: list[UserRole]
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AvailableRoleItem(BaseModel):

@@ -106,6 +106,10 @@ class CompanyRepository:
         )
         return list((await self.db.execute(stmt)).scalars().all())
 
+    async def commit(self) -> None:
+        "Фиксирует транзакцию."
+        await self.db.commit()
+
     async def mark_sent(self, company_ids: list[int]) -> None:
         "Проставляет время отправки компаниям. Коммит — на стороне use case."
         if not company_ids:

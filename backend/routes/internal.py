@@ -4,12 +4,10 @@ import logging
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import HTMLResponse
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.internal_auth import require_internal_token
-from models.notification import Notification, NotificationType
 from schemas.internal import (
     BlogPublishedRequest,
     BroadcastResult,
@@ -22,7 +20,7 @@ from services.campaigns import CompanyRepository, import_companies_from_file
 from services.campaigns.storage import companies_json_path
 from services.email import EmailDispatcher, EmailRepository, SendNewBlogPostEmailUseCase
 from services.notifications.repository import NotificationRepository
-from services.notifications.use_cases.create_new_blog_new import (
+from services.notifications.use_cases.create_new_blog_post_notification import (
     CreateNewBlogPostNotificationUseCase,
 )
 from tasks.mailing import send_one_batch
@@ -44,19 +42,12 @@ async def notify_blog_published(
     "Триггерит in-app рассылку всем и email-рассылку подписанным. Идемпотентно по slug — повторный вызов ничего не делает."
     action_url = BLOG_ACTION_URL_TEMPLATE.format(slug=data.slug)
     legacy_action_url = LEGACY_BLOG_ACTION_URL_TEMPLATE.format(slug=data.slug)
-    already_sent = await db.execute(
-        select(Notification.id)
-        .where(
-            Notification.type == NotificationType.NEW_BLOG_POST,
-            Notification.action_url.in_((action_url, legacy_action_url)),
-        )
-        .limit(1)
-    )
-    if already_sent.scalar_one_or_none() is not None:
+    repo = NotificationRepository(db)
+    if await repo.new_blog_post_notification_exists((action_url, legacy_action_url)):
         logger.info("Blog notification for slug=%s already sent, skipping", data.slug)
         return BroadcastResult(notifications_sent=0, emails_queued=0)
 
-    in_app = await CreateNewBlogPostNotificationUseCase(NotificationRepository(db)).send_notification_to_all_users(
+    in_app = await CreateNewBlogPostNotificationUseCase(repo).send_notification_to_all_users(
         blog_title=data.title,
         preview=data.preview,
         slug=data.slug,

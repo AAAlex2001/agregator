@@ -11,22 +11,6 @@ from services.platform_settings import PlatformSettingsService
 from services.subscriptions import SubscriptionAccess, SubscriptionRepository
 
 
-async def require_active_subscription(
-    user_id: int = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-) -> int:
-    "Пускает только при активной (не истёкшей) подписке, иначе 402."
-    repo = SubscriptionRepository(db)
-    await repo.expire_stale(user_id, datetime.now(UTC))
-    await repo.flush()
-    if await repo.find_active_for_user(user_id) is None:
-        raise HTTPException(
-            status_code=status.HTTP_402_PAYMENT_REQUIRED,
-            detail="Нужна активная подписка для доступа к инструменту.",
-        )
-    return user_id
-
-
 async def require_expert_tool_access(
     user_id: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),

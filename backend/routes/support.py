@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -13,6 +12,7 @@ from models.support_ticket import (
     TicketMessageAuthor,
 )
 from schemas.support import (
+    CreateTicketRequest,
     SupportTicketDetail,
     SupportTicketList,
     SupportTicketMessageItem,
@@ -70,7 +70,7 @@ def ticket_to_detail(ticket: SupportTicket) -> SupportTicketDetail:
 
 
 async def get_user_or_404(db: AsyncSession, user_id: int) -> Account:
-    user = (await db.execute(select(Account).where(Account.id == user_id))).scalars().first()
+    user = await SupportRepository(db).get_user(user_id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
     return user
@@ -111,8 +111,6 @@ async def create_my_ticket(
     storage = SupportFileStorage()
     use_case = CreateTicketUseCase(repo=repo, files=storage)
     uploads = [f for f in files if f and f.filename]
-
-    from schemas.support import CreateTicketRequest
     payload = CreateTicketRequest(subject=subject, category=category, message=message)
     ticket = await use_case.execute(user=user, data=payload, uploads=uploads)
     return ticket_to_detail(ticket)

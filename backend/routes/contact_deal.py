@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.contact_deal import build_contact_cipher
+from schemas.common import DetailResponse
 from schemas.contact_deal import (
     ContactDealCreateRequest,
     ContactDealDetailResponse,
@@ -23,7 +24,6 @@ from schemas.contact_deal import (
     ContactDealSignRequest,
     ContactReceiptRejectRequest,
 )
-from schemas.review import CreateReviewResponse
 from services.contact_deals import (
     ContactDealCipher,
     ContactDealPolicy,
@@ -123,14 +123,14 @@ async def delete_contact_deal(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.post("/{deal_id}/review", response_model=CreateReviewResponse)
+@router.post("/{deal_id}/review", response_model=DetailResponse)
 async def review_contact_deal(
     deal_id: int,
     payload: ContactDealReviewRequest,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
-) -> CreateReviewResponse:
+) -> DetailResponse:
     repository, policy, _ = build_contact_dependencies(db)
     await ReviewContactDealUseCase(
         repository,
@@ -142,7 +142,7 @@ async def review_contact_deal(
         payload.rating,
         payload.comment,
     )
-    return CreateReviewResponse(detail="Отзыв успешно опубликован")
+    return DetailResponse(detail="Отзыв успешно опубликован")
 
 
 @router.get("/{deal_id}", response_model=ContactDealDetailResponse)

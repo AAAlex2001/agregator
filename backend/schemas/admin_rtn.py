@@ -5,11 +5,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from schemas.rtn import AttachmentDto, RegulationLinkDto
-
-DocumentType = Literal["OFFICIAL_CLARIFICATION", "INFO_LETTER", "RESPONSE_TO_REQUEST"]
-ClarificationStatus = Literal["ACTIVE", "EXPIRED"]
-PublicationStatus = Literal["DRAFT", "PUBLISHED"]
+from models.rtn_clarification import ClarificationStatus, DocumentType, PublicationStatus
+from schemas.rtn import RegulationLinkDto
 
 
 class RtnClarificationWrite(BaseModel):
@@ -94,7 +91,6 @@ class RtnAttachmentUploadOut(BaseModel):
 
 
 __all__ = [
-    "AttachmentDto",
     "RtnAttachmentUploadOut",
     "RtnChangeReportListOut",
     "RtnChangeReportOut",

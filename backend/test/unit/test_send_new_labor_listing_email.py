@@ -3,11 +3,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from models.account import UserRole
 from models.labor import (
     EmploymentTerm,
     LaborListingKind,
 )
-from models.account import UserRole
 from services.email.use_cases.send_new_labor_listing_email import (
     SendNewLaborListingEmailUseCase,
 )

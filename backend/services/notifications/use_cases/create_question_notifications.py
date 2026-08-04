@@ -4,17 +4,8 @@ from schemas.notification import (
     QuestionAnsweredNotificationPayload,
     QuestionAskedNotificationPayload,
 )
+from services.notifications.formatters import truncate_preview
 from services.notifications.repository import NotificationRepository
-
-PREVIEW_MAX_LENGTH = 240
-
-
-def truncate(text: str) -> str:
-    "Публичный метод сервисного слоя."
-    text = (text or "").strip()
-    if len(text) > PREVIEW_MAX_LENGTH:
-        return text[:PREVIEW_MAX_LENGTH] + "…"
-    return text or "(пусто)"
 
 
 class CreateQuestionAskedNotificationUseCase:
@@ -35,7 +26,7 @@ class CreateQuestionAskedNotificationUseCase:
         payload = QuestionAskedNotificationPayload(
             order_title=order_title,
             expert_name=expert_name or "Эксперт",
-            preview=truncate(question_text),
+            preview=truncate_preview(question_text),
         )
         notification = Notification(
             user_id=customer_id,
@@ -66,7 +57,7 @@ class CreateQuestionAnsweredNotificationUseCase:
         "Запускает основной сценарий use case."
         payload = QuestionAnsweredNotificationPayload(
             order_title=order_title,
-            preview=truncate(answer_text),
+            preview=truncate_preview(answer_text),
         )
         notification = Notification(
             user_id=expert_id,

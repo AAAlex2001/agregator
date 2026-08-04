@@ -1,6 +1,7 @@
 "In-app уведомления: рассылка событий потребителям."
 from models.chat import Chat
 from services.chats.formatters import ChatFormatter
+from services.email.formatting import labor_listing_title
 from services.notifications import CreateChatMessageNotificationUseCase
 
 
@@ -43,11 +44,7 @@ class ChatInAppNotifier:
         if chat.order and chat.order.title:
             return chat.order.title
         if chat.labor_listing:
-            return (
-                "Поиск эксперта в штат"
-                if chat.labor_listing.kind.value == "EXPERT_WANTED"
-                else "Готов к трудовому договору"
-            )
+            return labor_listing_title(chat.labor_listing.kind)
         if chat.contact_deal_id is not None:
             return "Доступ к контактам эксперта"
         return f"Заказ #{chat.order_id}"

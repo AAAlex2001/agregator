@@ -8,14 +8,8 @@ from models.labor import LaborListingKind
 from services.email.formatting import full_name
 
 
-class ChatAttachmentResponse(BaseModel):
-    "Вложение чата для возврата клиенту (имя + url)."
-    url: str
-    name: str
-
-
 class ChatAttachmentData(BaseModel):
-    "Вложение чата после сохранения на диск (внутренняя модель между FileStorage и use case)."
+    "Вложение чата (имя + url) — и в ответах API, и между FileStorage и use case."
     url: str
     name: str
 
@@ -26,13 +20,10 @@ class ChatOpenRequest(BaseModel):
     expert_id: int | None = Field(None, ge=1)
 
 
-class ChatSendMessageRequest(BaseModel):
-    "Payload отправки текстового сообщения в чат заказа."
-    text: str = Field(..., min_length=1, max_length=5000)
-
-
 class ChatMessageResponse(BaseModel):
     "Сообщение чата заказа в ответе API."
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     chat_id: int
     sender_id: int
@@ -40,11 +31,9 @@ class ChatMessageResponse(BaseModel):
     text: str
     file_url: str | None = None
     file_name: str | None = None
-    attachments: list[ChatAttachmentResponse] = Field(default_factory=list)
+    attachments: list[ChatAttachmentData] = Field(default_factory=list)
     is_read: bool = False
     created_at: datetime
-
-    model_config = {"from_attributes": True}
 
 
 class ChatBadgeResponse(BaseModel):
@@ -146,11 +135,6 @@ class ExpertRoomHistoryResponse(BaseModel):
     has_more: bool
     banned: bool = False
     ban_reason: str | None = None
-
-
-class SendExpertRoomMessageRequest(BaseModel):
-    "Payload отправки сообщения в общий чат экспертов."
-    text: str = Field(..., min_length=1, max_length=2000)
 
 
 class ExpertRoomTypingPayload(BaseModel):

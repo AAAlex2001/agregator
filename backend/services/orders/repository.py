@@ -8,6 +8,7 @@ from models.account import Account, UserRole
 from models.order import Order, OrderBadge, OrderStatus
 from models.question import OrderQuestion
 from models.response import OrderResponse as OrderResponseModel
+from services.orders.direction_details import OrderDirectionDetails
 from utils.pagination import paginate_with_has_more
 
 SORT_DIR_ASC = "asc"
@@ -143,17 +144,18 @@ class OrderRepository:
         self,
         skip: int,
         limit: int,
-        status_filter: OrderStatus | None,
         sort_by: str | None = None,
         sort_dir: str | None = None,
     ) -> tuple[list[Order], bool]:
-        "Публичный список всех заказов платформы (для неавторизованных гостей)."
+        "Публичный список для гостей: только активные заказы без назначенного исполнителя."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(
+                Order.status == OrderStatus.ACTIVE,
+                Order.assigned_expert_id.is_(None),
+            )
         )
-        if status_filter is not None:
-            list_query = list_query.where(Order.status == status_filter)
         list_query = apply_order_sort(list_query, sort_by, sort_dir)
         return await paginate_with_has_more(self.db, list_query, skip, limit)
 
@@ -164,10 +166,14 @@ class OrderRepository:
         limit: int,
         badge_code: str | None = None,
     ) -> tuple[list[Order], bool]:
-        "Поиск по заказам платформы по тексту и коду экспертизы."
+        "Поиск по активным заказам без назначенного исполнителя, по тексту и коду экспертизы."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
+            .where(
+                Order.status == OrderStatus.ACTIVE,
+                Order.assigned_expert_id.is_(None),
+            )
             .order_by(Order.created_at.desc())
         )
         if query:
@@ -222,20 +228,23 @@ class OrderRepository:
         query = select(Account.role).where(Account.id == user_id)
         return (await self.db.execute(query)).scalar_one_or_none()
 
-    async def user_exists(self, user_id: int) -> bool:
-        "Публичный метод сервисного слоя."
-        query = select(Account.id).where(Account.id == user_id)
-        return (await self.db.execute(query)).scalar_one_or_none() is not None
+    async def expert_has_response(self, order_id: int, expert_id: int) -> bool:
+        "Откликался ли эксперт на данный заказ."
+        query = select(OrderResponseModel.id).where(
+            OrderResponseModel.order_id == order_id,
+            OrderResponseModel.expert_id == expert_id,
+        )
+        return (await self.db.execute(query)).first() is not None
 
     async def add(self, order: Order) -> None:
         "Добавляет сущность в сессию."
         self.db.add(order)
 
-    async def add_details(self, details: object) -> None:
+    async def add_details(self, details: OrderDirectionDetails) -> None:
         "Добавляет детали направления заказа в сессию."
         self.db.add(details)
 
-    async def delete_details(self, details: object) -> None:
+    async def delete_details(self, details: OrderDirectionDetails) -> None:
         "Удаляет детали направления заказа — при смене вида работ."
         await self.db.delete(details)
 

@@ -1,10 +1,9 @@
 "Бизнес-валидации для forgot_password."
-import re
-
 from fastapi import HTTPException, status
 
 from models.account import Account
 from services.forgot_password.repository import ForgotPasswordRepository
+from utils.passwords import ensure_password_strong
 
 
 class ForgotPasswordValidator:
@@ -12,6 +11,8 @@ class ForgotPasswordValidator:
 
     def __init__(self, repo: ForgotPasswordRepository) -> None:
         self.repo = repo
+
+    ensure_password_strong = staticmethod(ensure_password_strong)
 
     @staticmethod
     def ensure_contact_provided(email: str | None, phone: str | None) -> None:
@@ -22,24 +23,6 @@ class ForgotPasswordValidator:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Необходимо указать email или телефон",
         )
-
-    @staticmethod
-    def ensure_password_strong(password: str) -> None:
-        "Бросает HTTPException, если условие не выполнено."
-        errors = []
-        if len(password) < 6:
-            errors.append("Не менее 6 символов")
-        if not re.search(r"[A-Z]", password):
-            errors.append("Хотя бы одна заглавная буква")
-        if not re.search(r"[a-z]", password):
-            errors.append("Хотя бы одна строчная буква")
-        if not re.match(r'^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?`~ ]+$', password):
-            errors.append("Только латинские буквы, цифры и спецсимволы")
-        if errors:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Пароль не соответствует требованиям: " + "; ".join(errors),
-            )
 
     async def require_user(self, email: str | None, phone: str | None) -> Account:
         "Возвращает требуемую сущность или бросает 404."

@@ -1,8 +1,6 @@
 from .file_storage import SupportFileStorage
 from .repository import SupportRepository
 from .use_cases import (
-    AdminReplyUseCase,
-    CloseTicketUseCase,
     CreateTicketUseCase,
     GetTicketForUserUseCase,
     ListUserTicketsUseCase,
@@ -14,8 +12,6 @@ from .use_cases import (
 __all__ = [
     "SupportFileStorage",
     "SupportRepository",
-    "AdminReplyUseCase",
-    "CloseTicketUseCase",
     "CreateTicketUseCase",
     "GetTicketForUserUseCase",
     "ListUserTicketsUseCase",

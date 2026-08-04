@@ -1,3 +1,4 @@
+from services.login.cookies import set_role_cookie, set_session_cookie, set_session_cookies
 from services.login.repository import (
     SESSION_COOKIE_MAX_AGE_SECONDS,
     SESSION_MAX_DAYS,
@@ -24,4 +25,7 @@ __all__ = [
     "SESSION_MAX_DAYS",
     "SESSION_TTL_DAYS",
     "SwitchRoleUseCase",
+    "set_role_cookie",
+    "set_session_cookie",
+    "set_session_cookies",
 ]

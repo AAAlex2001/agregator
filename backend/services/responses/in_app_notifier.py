@@ -34,7 +34,7 @@ class ResponseInAppNotifier:
         if self.dispatcher is None:
             return
         user = await self.repo.find_user(user_id)
-        self.dispatcher.send_telegram(user, None, text)
+        self.dispatcher.send_telegram(user, text)
 
     @staticmethod
     def order_title(order: Order | None, order_id: int) -> str:

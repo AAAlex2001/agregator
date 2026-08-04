@@ -51,7 +51,7 @@ class SendBatchUseCase:
             companies = await self.repo.take_unsent_batch(batch_size)
 
         targets = [(c.id, c.email or "", c.name or "") for c in companies]
-        await self.repo.db.commit()
+        await self.repo.commit()
 
         targets = await self.apply_daily_cap(targets)
 
@@ -65,7 +65,7 @@ class SendBatchUseCase:
                 await asyncio.sleep(email_config.mailing_chunk_pause_seconds)
 
         await self.repo.mark_sent(sent_ids)
-        await self.repo.db.commit()
+        await self.repo.commit()
         await self.send_seed_copies(subject, body_text, presentation_url)
         logger.info("Mailing: processed, %d of %d companies sent", len(sent_ids), len(targets))
         return len(sent_ids)

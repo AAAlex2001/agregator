@@ -14,12 +14,11 @@ from models.rtn_clarification import (
     RtnClarification,
 )
 from schemas.admin_rtn import RtnClarificationWrite
+from services.articles.use_cases.save_article import SlugTakenError
 from services.rtn.repository import RtnRepository, RtnTaxonomySelection
 from services.tags import TagRepository
 
-
-class SlugTakenError(Exception):
-    "Slug уже занят другим разъяснением."
+__all__ = ["SaveRtnClarificationUseCase", "SlugTakenError"]
 
 
 class SaveRtnClarificationUseCase:

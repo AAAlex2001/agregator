@@ -147,7 +147,6 @@ class ContactDealSignature(Base):
     )
 
     deal: Mapped["ContactAccessDeal"] = relationship(back_populates="signatures")
-    signer: Mapped["Account"] = relationship()
 
     __table_args__ = (
         UniqueConstraint("deal_id", "party", name="uq_contact_deal_signature_party"),
@@ -185,4 +184,3 @@ class ContactPaymentReceipt(Base):
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     deal: Mapped["ContactAccessDeal"] = relationship(back_populates="receipts")
-    uploader: Mapped["Account"] = relationship()

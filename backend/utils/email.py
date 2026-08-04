@@ -1,28 +1,6 @@
-from dataclasses import dataclass, field
-from pathlib import Path
-
 from config import email_config
-
-
-@dataclass(frozen=True)
-class EmailAttachment:
-    "Файл для прикрепления к письму."
-    path: Path
-    filename: str
-
-
-@dataclass(frozen=True)
-class EmailMessage:
-    "Нейтральная модель письма. Транспорт её отправляет."
-    to: str
-    subject: str
-    text: str
-    html: str | None
-    attachments: tuple[EmailAttachment, ...]
-    from_email: str
-    from_name: str
-    reply_to: str
-    headers: dict[str, str] = field(default_factory=dict)
+from utils.email_message import EmailAttachment, EmailMessage
+from utils.email_transport import email_transport
 
 
 async def send_email(
@@ -36,8 +14,6 @@ async def send_email(
     headers: dict[str, str] | None = None,
 ) -> None:
     "Отправляет письмо. from_email/reply_to по умолчанию из конфига; кампании их переопределяют."
-    from utils.email_transport import email_transport
-
     sender = from_email or email_config.email_from
     message = EmailMessage(
         to=email,

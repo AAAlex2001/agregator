@@ -1,12 +1,12 @@
 """Кадастровые работы: анкета кадастрового инженера."""
 from fastapi import APIRouter, Body, Depends, File, UploadFile
-from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
 from schemas.cadastral import CadastralProfileInput, CadastralProfileResponse
+from schemas.common import DocumentUrl
 from services.cadastral import (
     CadastralFileKind,
     CadastralRepository,
@@ -21,11 +21,6 @@ from services.cadastral import (
 router = APIRouter(prefix="/directions/cadastral", tags=["directions"])
 
 UPLOAD_LIMIT = Depends(rate_limit("direction_documents", max_calls=10, window_seconds=60))
-
-
-class DocumentUrl(BaseModel):
-    """Ссылка на удаляемый документ анкеты."""
-    url: str = Field(..., min_length=1, max_length=500)
 
 
 def build_validator(db: AsyncSession) -> CadastralValidator:
