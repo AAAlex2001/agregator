@@ -65,6 +65,7 @@ export const registerFormSchema = z
       })
       .passthrough()
       .nullable(),
+    licenseEnabled: z.boolean(),
     licenseNumber: z.string().trim(),
     licenseAreas: z.array(expertiseTypeSchema),
     licenseFileName: z.string(),
@@ -149,7 +150,14 @@ export const registerFormSchema = z
     }
 
     if (data.role === "LICENSE_HOLDER") {
-      const licenseRequired = data.auditLicenseHolderProfile === null;
+      if (!data.licenseEnabled && data.auditLicenseHolderProfile === null) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["licenseEnabled"],
+          message: "Выберите хотя бы один разрешительный документ",
+        });
+      }
+      const licenseRequired = data.licenseEnabled;
       if (licenseRequired && !data.licenseNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -164,7 +172,7 @@ export const registerFormSchema = z
           message: "Выберите хотя бы один объект экспертизы",
         });
       }
-      const hasLicense = licenseRequired || data.licenseNumber.length > 0;
+      const hasLicense = licenseRequired;
       if (hasLicense && data.rentalKind === "PERCENT") {
         const num = Number(data.rentalPercent.replace(",", "."));
         if (!data.rentalPercent || !Number.isFinite(num) || num <= 0 || num > 100) {
@@ -241,6 +249,7 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   agreeConsent: false,
   companyName: "",
   companyData: null,
+  licenseEnabled: true,
   expertiseProfile: null,
   auditExpertProfile: null,
   auditCustomerProfile: null,
@@ -284,6 +293,7 @@ export function presetRegisterFormValues(preset: AuthPreset): RegisterFormValues
   }
   if (preset.role === "LICENSE_HOLDER") {
     values.auditLicenseHolderProfile = { certificate_number: "", accreditation_areas: [] };
+    values.licenseEnabled = false;
   }
   return values;
 }

@@ -6,6 +6,7 @@ import type { RegisterFormValues } from "../../model/schema";
 import { AuditCustomerBlock } from "./AuditCustomerBlock";
 import { AuditExpertBlock } from "./AuditExpertBlock";
 import { AuditHolderBlock } from "./AuditHolderBlock";
+import { EpbLicenseBlock, type HolderLicenseFiles } from "./EpbLicenseBlock";
 import { CadastralBlock } from "./CadastralBlock";
 import { ExpertiseBlock } from "./ExpertiseBlock";
 import { ForensicBlock } from "./ForensicBlock";
@@ -17,9 +18,10 @@ interface Props {
   form: UseFormReturn<RegisterFormValues>;
   files: DirectionFilesState;
   onFilesChange: (files: DirectionFilesState) => void;
+  holderLicense: HolderLicenseFiles;
 }
 
-export function DirectionsPicker({ form, files, onFilesChange }: Props) {
+export function DirectionsPicker({ form, files, onFilesChange, holderLicense }: Props) {
   const role = form.watch("role");
 
   if (role === "CUSTOMER") {
@@ -33,6 +35,7 @@ export function DirectionsPicker({ form, files, onFilesChange }: Props) {
   if (role === "LICENSE_HOLDER") {
     return (
       <ul className={s.list}>
+        <EpbLicenseBlock form={form} files={holderLicense} />
         <AuditHolderBlock form={form} />
       </ul>
     );

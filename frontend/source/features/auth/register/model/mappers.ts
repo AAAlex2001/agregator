@@ -45,15 +45,15 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterPayload {
 }
 
 export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolderRegisterPayload {
-  const hasLicense = values.auditLicenseHolderProfile === null || values.licenseNumber.trim() !== "";
+  const hasLicense = values.licenseEnabled;
   return {
     email: values.email.trim(),
     password: values.password,
     phone: toRussianPhoneApiValue(values.phone),
     inn: values.companyData?.data?.inn ?? "",
     company_data: values.companyData as CompanyData,
-    license_number: values.licenseNumber.trim(),
-    license_areas: values.licenseAreas,
+    license_number: hasLicense ? values.licenseNumber.trim() : "",
+    license_areas: hasLicense ? values.licenseAreas : [],
     license_rental_kind: hasLicense ? values.rentalKind : null,
     audit_profile: values.auditLicenseHolderProfile,
     license_rental_percent:

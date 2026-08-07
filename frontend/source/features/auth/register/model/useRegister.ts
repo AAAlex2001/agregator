@@ -55,6 +55,7 @@ export function useRegister(options?: UseRegisterOptions) {
 
   const selectRole = (role: UserRole) => {
     form.setValue("role", role);
+    form.setValue("licenseEnabled", true);
     form.setValue("expertiseProfile", null);
     form.setValue("auditExpertProfile", null);
     form.setValue("auditCustomerProfile", null);

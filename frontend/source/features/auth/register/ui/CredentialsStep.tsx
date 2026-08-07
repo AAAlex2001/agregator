@@ -10,7 +10,6 @@ import { DirectionsPicker } from "./directions/DirectionsPicker";
 import { ExpertProfileFields } from "./credentials/ExpertProfileFields";
 import { NameFields } from "./credentials/NameFields";
 import { OrganizationField } from "./credentials/OrganizationField";
-import { LicenseDetailsFields } from "./credentials/LicenseDetailsFields";
 import { ContactFields } from "./credentials/ContactFields";
 import { ExpertContactOffer } from "./credentials/ExpertContactOffer";
 import { PasswordFields } from "./credentials/PasswordFields";
@@ -90,27 +89,27 @@ export function CredentialsStep({
           />
         )}
 
-        <DirectionsPicker form={form} files={directionFiles} onFilesChange={onDirectionFilesChange} />
+        <DirectionsPicker
+          form={form}
+          files={directionFiles}
+          onFilesChange={onDirectionFilesChange}
+          holderLicense={{
+            licenseFile,
+            miningLicenseFile,
+            sroDesignFile,
+            labAccreditationFile,
+            onLicenseFileSelect,
+            onMiningLicenseFileSelect,
+            onSroDesignFileSelect,
+            onLabAccreditationFileSelect,
+          }}
+        />
 
         {isExpert && <ExpertProfileFields form={form} />}
 
         {isCustomer && <NameFields form={form} />}
 
         {(isCustomer || isLicenseHolder) && <OrganizationField form={form} />}
-
-        {isLicenseHolder && (
-          <LicenseDetailsFields
-            form={form}
-            licenseFile={licenseFile}
-            miningLicenseFile={miningLicenseFile}
-            sroDesignFile={sroDesignFile}
-            labAccreditationFile={labAccreditationFile}
-            onLicenseFileSelect={onLicenseFileSelect}
-            onMiningLicenseFileSelect={onMiningLicenseFileSelect}
-            onSroDesignFileSelect={onSroDesignFileSelect}
-            onLabAccreditationFileSelect={onLabAccreditationFileSelect}
-          />
-        )}
 
         <ContactFields form={form} onPhoneChange={onPhoneChange} showPhoneHint={!isLicenseHolder} />
 
