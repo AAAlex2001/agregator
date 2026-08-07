@@ -6,6 +6,8 @@ export interface OrderDetailField {
   key: string;
   label: string;
   kind: OrderDetailKind;
+  group?: string;
+  wide?: boolean;
   valueLabels?: Record<string, string>;
 }
 
@@ -19,40 +21,70 @@ export const ORDER_DETAILS_TITLES: Partial<Record<OrderWorkType, string>> = {
   AUDIT_SUPB: "Аудит СУПБ",
 };
 
+const APPLICANT_GROUP = "Заявитель";
+
 const APPLICANT_FIELDS: OrderDetailField[] = [
-  { key: "applicant_full_name", label: "ФИО представителя заявителя", kind: "text" },
-  { key: "applicant_position", label: "Должность", kind: "text" },
-  { key: "applicant_organization", label: "Организация", kind: "text" },
-  { key: "applicant_inn", label: "ИНН", kind: "text" },
-  { key: "applicant_phone", label: "Телефон", kind: "text" },
-  { key: "applicant_email", label: "Email", kind: "text" },
+  { key: "applicant_full_name", label: "ФИО представителя", kind: "text", group: APPLICANT_GROUP },
+  { key: "applicant_position", label: "Должность", kind: "text", group: APPLICANT_GROUP },
+  { key: "applicant_organization", label: "Организация", kind: "text", group: APPLICANT_GROUP },
+  { key: "applicant_inn", label: "ИНН", kind: "text", group: APPLICANT_GROUP },
+  { key: "applicant_phone", label: "Телефон", kind: "text", group: APPLICANT_GROUP },
+  { key: "applicant_email", label: "Email", kind: "text", group: APPLICANT_GROUP },
 ];
 
 const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
   CADASTRAL: [
     ...APPLICANT_FIELDS,
-    { key: "work_purpose", label: "Цель работ", kind: "text" },
-    { key: "city", label: "Где находится объект", kind: "text" },
-    { key: "education_requirement", label: "Требования к образованию", kind: "text" },
-    { key: "sro_required", label: "Обязательное членство в СРО", kind: "flag" },
-    { key: "duration", label: "Срок проведения работ", kind: "text" },
+    { key: "work_purpose", label: "Цель работ", kind: "text", group: "Работы", wide: true },
+    { key: "city", label: "Где находится объект", kind: "text", group: "Работы" },
+    { key: "duration", label: "Срок проведения работ", kind: "text", group: "Работы" },
+    {
+      key: "education_requirement",
+      label: "Требования к образованию",
+      kind: "text",
+      group: "Требования к исполнителю",
+      wide: true,
+    },
+    {
+      key: "sro_required",
+      label: "Обязательное членство в СРО",
+      kind: "flag",
+      group: "Требования к исполнителю",
+    },
   ],
   FORENSIC: [
     ...APPLICANT_FIELDS,
-    { key: "expertise_purpose", label: "Цель экспертизы", kind: "text" },
-    { key: "government_body", label: "Государственный орган", kind: "text" },
-    { key: "city", label: "Где находится предмет экспертизы", kind: "text" },
-    { key: "education_requirement", label: "Требования к образованию", kind: "text" },
-    { key: "extra_requirements", label: "Дополнительные требования", kind: "text" },
-    { key: "similar_experience_required", label: "Обязателен опыт аналогичных экспертиз", kind: "flag" },
-    { key: "duration", label: "Срок проведения экспертизы", kind: "text" },
+    { key: "expertise_purpose", label: "Цель экспертизы", kind: "text", group: "Экспертиза", wide: true },
+    { key: "government_body", label: "Государственный орган", kind: "text", group: "Экспертиза" },
+    { key: "city", label: "Где находится предмет экспертизы", kind: "text", group: "Экспертиза" },
+    { key: "duration", label: "Срок проведения экспертизы", kind: "text", group: "Экспертиза" },
+    {
+      key: "education_requirement",
+      label: "Требования к образованию",
+      kind: "text",
+      group: "Требования к эксперту",
+      wide: true,
+    },
+    {
+      key: "extra_requirements",
+      label: "Дополнительные требования",
+      kind: "text",
+      group: "Требования к эксперту",
+      wide: true,
+    },
+    {
+      key: "similar_experience_required",
+      label: "Обязателен опыт аналогичных экспертиз",
+      kind: "flag",
+      group: "Требования к эксперту",
+    },
   ],
   RESEARCH: [
-    { key: "executor_requirements", label: "Требования к исполнителю", kind: "list" },
+    { key: "executor_requirements", label: "Требования к исполнителю", kind: "list", wide: true },
     { key: "needs_site_visit", label: "Необходимость выезда на объект исследований", kind: "flag" },
   ],
   LABORATORY: [
-    { key: "equipment_requirements", label: "Требования к оборудованию", kind: "text" },
+    { key: "equipment_requirements", label: "Требования к оборудованию", kind: "text", wide: true },
   ],
   AUDIT_SUPB: [
     ...APPLICANT_FIELDS,
@@ -60,25 +92,32 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
       key: "audit_scale",
       label: "Что нужно аудировать",
       kind: "text",
+      group: "Объект аудита",
       valueLabels: {
         SINGLE_OPO: "Один ОПО",
         ALL_OPO: "Все ОПО организации",
         SELECTED_OPO: "Выборочные ОПО",
       },
     },
-    { key: "opo_items", label: "Объекты", kind: "opo_list" },
-    { key: "opo_total", label: "Общее количество ОПО", kind: "text" },
-    { key: "opo_class_1", label: "ОПО I класса", kind: "text" },
-    { key: "opo_class_2", label: "ОПО II класса", kind: "text" },
-    { key: "opo_class_3", label: "ОПО III класса", kind: "text" },
-    { key: "opo_class_4", label: "ОПО IV класса", kind: "text" },
-    { key: "main_industry", label: "Основной отраслевой профиль", kind: "text" },
-    { key: "multiple_regions", label: "ОПО в разных субъектах РФ", kind: "flag" },
-    { key: "registration_certificate", label: "Свидетельство о регистрации ОПО", kind: "file" },
+    { key: "opo_total", label: "Общее количество ОПО", kind: "text", group: "Объект аудита" },
+    { key: "opo_class_1", label: "ОПО I класса", kind: "text", group: "Объект аудита" },
+    { key: "opo_class_2", label: "ОПО II класса", kind: "text", group: "Объект аудита" },
+    { key: "opo_class_3", label: "ОПО III класса", kind: "text", group: "Объект аудита" },
+    { key: "opo_class_4", label: "ОПО IV класса", kind: "text", group: "Объект аудита" },
+    { key: "main_industry", label: "Основной отраслевой профиль", kind: "text", group: "Объект аудита" },
+    { key: "multiple_regions", label: "ОПО в разных субъектах РФ", kind: "flag", group: "Объект аудита" },
+    { key: "opo_items", label: "Объекты", kind: "opo_list", group: "Объект аудита", wide: true },
+    {
+      key: "registration_certificate",
+      label: "Свидетельство о регистрации ОПО",
+      kind: "file",
+      group: "Объект аудита",
+    },
     {
       key: "audit_kind",
       label: "Тип аудита",
       kind: "text",
+      group: "Параметры аудита",
       valueLabels: {
         BASIC: "Базовый",
         INTERIM: "Промежуточный",
@@ -86,14 +125,21 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
         CONSULTATION: "Консультация",
       },
     },
-    { key: "considers_sto", label: "Учитывать СТО организации", kind: "flag" },
-    { key: "sto_name", label: "СТО", kind: "text" },
-    { key: "sto_file", label: "Файл СТО", kind: "file" },
-    { key: "audit_areas", label: "Направления аудита (п.17 Приказа 318)", kind: "list" },
+    { key: "considers_sto", label: "Учитывать СТО организации", kind: "flag", group: "Параметры аудита" },
+    { key: "sto_name", label: "СТО", kind: "text", group: "Параметры аудита" },
+    { key: "sto_file", label: "Файл СТО", kind: "file", group: "Параметры аудита" },
+    {
+      key: "audit_areas",
+      label: "Направления аудита (п.17 Приказа 318)",
+      kind: "list",
+      group: "Параметры аудита",
+      wide: true,
+    },
     {
       key: "desired_timeline",
       label: "Желаемые сроки",
       kind: "text",
+      group: "Сроки и комментарии",
       valueLabels: {
         MONTH_URGENT: "В течение месяца (срочно)",
         CURRENT_QUARTER: "Текущий квартал",
@@ -101,7 +147,7 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
         CONSULTATION: "Консультация",
       },
     },
-    { key: "comments", label: "Комментарии", kind: "text" },
+    { key: "comments", label: "Комментарии", kind: "text", group: "Сроки и комментарии", wide: true },
   ],
 };
 
@@ -137,7 +183,7 @@ export function formatOrderDetailValue(field: OrderDetailField, value: unknown):
     return isOrderFile(value) ? value.name : "";
   }
   if (field.kind === "opo_list") {
-    return Array.isArray(value) ? value.map(formatOpoItem).filter(Boolean).join("; ") : "";
+    return Array.isArray(value) ? value.map(formatOpoItem).filter(Boolean).join("\n") : "";
   }
   const text = String(value);
   return field.valueLabels?.[text] ?? text;
