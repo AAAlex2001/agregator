@@ -5,6 +5,7 @@ import type { DirectionFilesState } from "../../model/directionFiles";
 import type { RegisterFormValues } from "../../model/schema";
 import { AuditCustomerBlock } from "./AuditCustomerBlock";
 import { AuditExpertBlock } from "./AuditExpertBlock";
+import { AuditHolderBlock } from "./AuditHolderBlock";
 import { CadastralBlock } from "./CadastralBlock";
 import { ExpertiseBlock } from "./ExpertiseBlock";
 import { ForensicBlock } from "./ForensicBlock";
@@ -25,6 +26,14 @@ export function DirectionsPicker({ form, files, onFilesChange }: Props) {
     return (
       <ul className={s.list}>
         <AuditCustomerBlock form={form} />
+      </ul>
+    );
+  }
+
+  if (role === "LICENSE_HOLDER") {
+    return (
+      <ul className={s.list}>
+        <AuditHolderBlock form={form} />
       </ul>
     );
   }

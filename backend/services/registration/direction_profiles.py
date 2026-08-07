@@ -10,7 +10,7 @@
 которая в async-сессии падает с MissingGreenlet.
 """
 from models.account import Account
-from models.audit import CustomerAuditProfile, ExpertAuditProfile
+from models.audit import CustomerAuditProfile, ExpertAuditProfile, LicenseHolderAuditProfile
 from models.cadastral import ExpertCadastralProfile
 from models.forensic import ExpertForensicProfile
 from models.laboratory import ExpertLaboratoryProfile
@@ -24,6 +24,7 @@ DirectionProfile = (
     | ExpertForensicProfile
     | ExpertLaboratoryProfile
     | ExpertResearchProfile
+    | LicenseHolderAuditProfile
 )
 
 

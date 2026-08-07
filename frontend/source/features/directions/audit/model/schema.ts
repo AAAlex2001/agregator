@@ -6,42 +6,20 @@ export const auditCustomerProfileSchema = z.object({
   opo_license_number: z.string().trim().max(100, "Не более 100 символов"),
 });
 
-export const auditExpertProfileSchema = z
-  .object({
-    participant_kind: z.enum(["AUDITOR", "INSPECTION_BODY"]),
-    industrial_safety_areas: z.array(z.string()),
-    expert_attestation_areas: z.array(z.string()),
-    audit_qualifications: z.array(z.string()),
-    full_name: z.string().trim().max(500, "Не более 500 символов"),
-    short_name: z.string().trim().max(300, "Не более 300 символов"),
-    inn: z.string().trim().regex(/^$|^\d{10}$|^\d{12}$/, "ИНН должен содержать 10 или 12 цифр"),
-    certificate_number: z.string().trim().max(100, "Не более 100 символов"),
-    accreditation_areas: z.array(z.string()),
-  })
-  .superRefine((data, ctx) => {
-    if (data.participant_kind !== "INSPECTION_BODY") return;
-    if (!data.full_name) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["full_name"],
-        message: "Укажите полное наименование инспекционного органа",
-      });
-    }
-    if (!data.inn) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["inn"],
-        message: "Выберите организацию из подсказок, чтобы подставился ИНН",
-      });
-    }
-    if (!data.certificate_number) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["certificate_number"],
-        message: "Укажите номер свидетельства об аккредитации",
-      });
-    }
-  });
+export const auditExpertProfileSchema = z.object({
+  industrial_safety_areas: z.array(z.string()),
+  expert_attestation_areas: z.array(z.string()),
+  audit_qualifications: z.array(z.string()),
+});
+
+export const auditLicenseHolderProfileSchema = z.object({
+  certificate_number: z
+    .string()
+    .trim()
+    .min(1, "Укажите номер свидетельства об аккредитации")
+    .max(100, "Не более 100 символов"),
+  accreditation_areas: z.array(z.string()).max(20, "Не более 20 областей"),
+});
 
 const opoItemSchema = z.object({
   registration_number: z.string().trim().min(1, "Укажите регистрационный номер ОПО"),

@@ -26,6 +26,7 @@ const ROLE_TABS = [
 interface Props {
   form: UseFormReturn<RegisterFormValues>;
   isLoading: boolean;
+  lockRole?: boolean;
   directionFiles: DirectionFilesState;
   licenseFile: File | null;
   miningLicenseFile?: File | null;
@@ -44,6 +45,7 @@ interface Props {
 export function CredentialsStep({
   form,
   isLoading,
+  lockRole = false,
   directionFiles,
   licenseFile,
   miningLicenseFile = null,
@@ -79,16 +81,16 @@ export function CredentialsStep({
       >
         <AutofillGuard idPrefix="register" />
 
-        <Tabs
-          tabs={ROLE_TABS}
-          activeTab={role}
-          onTabChange={(id) => onRoleSelect(id as UserRole)}
-          variant="squared"
-        />
-
-        {!isLicenseHolder && (
-          <DirectionsPicker form={form} files={directionFiles} onFilesChange={onDirectionFilesChange} />
+        {!lockRole && (
+          <Tabs
+            tabs={ROLE_TABS}
+            activeTab={role}
+            onTabChange={(id) => onRoleSelect(id as UserRole)}
+            variant="squared"
+          />
         )}
+
+        <DirectionsPicker form={form} files={directionFiles} onFilesChange={onDirectionFilesChange} />
 
         {isExpert && <ExpertProfileFields form={form} />}
 

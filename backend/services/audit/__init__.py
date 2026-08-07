@@ -3,8 +3,10 @@ from services.audit.use_cases import (
     DeleteAuditDocumentUseCase,
     GetAuditCustomerProfileUseCase,
     GetAuditExpertProfileUseCase,
+    GetAuditLicenseHolderProfileUseCase,
     SaveAuditCustomerProfileUseCase,
     SaveAuditExpertProfileUseCase,
+    SaveAuditLicenseHolderProfileUseCase,
     UploadAuditDocumentUseCase,
     UploadAuditOrderFileUseCase,
 )
@@ -16,8 +18,10 @@ __all__ = [
     "DeleteAuditDocumentUseCase",
     "GetAuditCustomerProfileUseCase",
     "GetAuditExpertProfileUseCase",
+    "GetAuditLicenseHolderProfileUseCase",
     "SaveAuditCustomerProfileUseCase",
     "SaveAuditExpertProfileUseCase",
+    "SaveAuditLicenseHolderProfileUseCase",
     "UploadAuditDocumentUseCase",
     "UploadAuditOrderFileUseCase",
 ]

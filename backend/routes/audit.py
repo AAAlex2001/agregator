@@ -1,4 +1,4 @@
-"""Аудит СУПБ: анкеты заказчика и исполнителя, файлы заявки."""
+"""Аудит СУПБ: анкеты заказчика, аудитора и инспекционного органа, файлы заявки."""
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,6 +11,8 @@ from schemas.audit import (
     AuditCustomerProfileResponse,
     AuditExpertProfileInput,
     AuditExpertProfileResponse,
+    AuditLicenseHolderProfileInput,
+    AuditLicenseHolderProfileResponse,
 )
 from schemas.common import DirectionFileSchema, DocumentUrl
 from services.audit import (
@@ -19,8 +21,10 @@ from services.audit import (
     DeleteAuditDocumentUseCase,
     GetAuditCustomerProfileUseCase,
     GetAuditExpertProfileUseCase,
+    GetAuditLicenseHolderProfileUseCase,
     SaveAuditCustomerProfileUseCase,
     SaveAuditExpertProfileUseCase,
+    SaveAuditLicenseHolderProfileUseCase,
     UploadAuditDocumentUseCase,
     UploadAuditOrderFileUseCase,
 )
@@ -67,7 +71,7 @@ async def get_expert_profile(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> AuditExpertProfileResponse:
-    """Анкета исполнителя по аудиту СУПБ: аудитор или инспекционный орган."""
+    """Анкета исполнителя-аудитора по аудиту СУПБ."""
     return await GetAuditExpertProfileUseCase(build_validator(db)).execute(user_id)
 
 
@@ -77,9 +81,30 @@ async def save_expert_profile(
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
 ) -> AuditExpertProfileResponse:
-    """Сохраняет анкету исполнителя по аудиту СУПБ."""
+    """Сохраняет анкету исполнителя-аудитора: аттестации и НОК."""
     repo = AuditRepository(db)
     use_case = SaveAuditExpertProfileUseCase(repo, AuditValidator(repo))
+    return await use_case.execute(user_id, data)
+
+
+@router.get("/license-holder-profile", response_model=AuditLicenseHolderProfileResponse)
+async def get_license_holder_profile(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> AuditLicenseHolderProfileResponse:
+    """Анкета инспекционного органа — держателя разрешительных документов."""
+    return await GetAuditLicenseHolderProfileUseCase(build_validator(db)).execute(user_id)
+
+
+@router.put("/license-holder-profile", response_model=AuditLicenseHolderProfileResponse)
+async def save_license_holder_profile(
+    data: AuditLicenseHolderProfileInput,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> AuditLicenseHolderProfileResponse:
+    """Сохраняет анкету инспекционного органа: свидетельство и области аккредитации."""
+    repo = AuditRepository(db)
+    use_case = SaveAuditLicenseHolderProfileUseCase(repo, AuditValidator(repo))
     return await use_case.execute(user_id, data)
 
 

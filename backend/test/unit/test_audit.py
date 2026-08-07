@@ -8,7 +8,6 @@ from pydantic import ValidationError
 from models.account import UserRole
 from models.audit import (
     AuditKind,
-    AuditParticipantKind,
     AuditScale,
     AuditTimeline,
     OrderAuditDetails,
@@ -18,6 +17,7 @@ from models.order import OrderWorkType
 from schemas.audit import (
     AuditCustomerProfileInput,
     AuditExpertProfileInput,
+    AuditLicenseHolderProfileInput,
     AuditOrderDetailsInput,
 )
 from services.audit import (
@@ -25,8 +25,10 @@ from services.audit import (
     DeleteAuditDocumentUseCase,
     GetAuditCustomerProfileUseCase,
     GetAuditExpertProfileUseCase,
+    GetAuditLicenseHolderProfileUseCase,
     SaveAuditCustomerProfileUseCase,
     SaveAuditExpertProfileUseCase,
+    SaveAuditLicenseHolderProfileUseCase,
     UploadAuditDocumentUseCase,
 )
 from services.directions.registry import get_direction
@@ -53,6 +55,17 @@ def build_customer_account(profile: object = None) -> SimpleNamespace:
         expert_profile=None,
         customer_profile=SimpleNamespace(id=7, audit_profile=profile),
         license_holder_profile=None,
+    )
+
+
+def build_license_holder_account(profile: object = None) -> SimpleNamespace:
+    return SimpleNamespace(
+        id=3,
+        public_id="holder-public",
+        role=UserRole.LICENSE_HOLDER,
+        expert_profile=None,
+        customer_profile=None,
+        license_holder_profile=SimpleNamespace(id=9, audit_profile=profile),
     )
 
 
@@ -100,30 +113,34 @@ class TestExpertProfileSchema:
             expert_attestation_areas=["Э1 КЛ/ТП"],
             audit_qualifications=["40.20900.185"],
         )
-        assert payload.participant_kind is AuditParticipantKind.AUDITOR
+        assert payload.audit_qualifications == ["40.20900.185"]
 
     def test_unknown_code_rejected(self):
         with pytest.raises(ValidationError):
-            AuditExpertProfileInput(accreditation_areas=["13.2.99"])
+            AuditExpertProfileInput(industrial_safety_areas=["Я.9"])
 
     def test_duplicate_codes_collapsed(self):
         payload = AuditExpertProfileInput(industrial_safety_areas=["А.1", "А.1", "Б.2"])
         assert payload.industrial_safety_areas == ["А.1", "Б.2"]
 
-    def test_inspection_body_requires_name_inn_and_certificate(self):
-        with pytest.raises(ValidationError):
-            AuditExpertProfileInput(participant_kind=AuditParticipantKind.INSPECTION_BODY)
 
-    def test_inspection_body_full_form_accepted(self):
-        payload = AuditExpertProfileInput(
-            participant_kind=AuditParticipantKind.INSPECTION_BODY,
-            full_name="ООО Инспекция промышленной безопасности",
-            short_name="ООО ИПБ",
-            inn="7707083893",
+class TestLicenseHolderProfileSchema:
+    def test_certificate_number_required(self):
+        with pytest.raises(ValidationError):
+            AuditLicenseHolderProfileInput(certificate_number="")
+
+    def test_unknown_accreditation_code_rejected(self):
+        with pytest.raises(ValidationError):
+            AuditLicenseHolderProfileInput(
+                certificate_number="RA.RU.010001", accreditation_areas=["13.2.99"]
+            )
+
+    def test_full_form_accepted(self):
+        payload = AuditLicenseHolderProfileInput(
             certificate_number="RA.RU.010001",
-            accreditation_areas=["13.2.1"],
+            accreditation_areas=["13.2.1", "13.2.19"],
         )
-        assert payload.inn == "7707083893"
+        assert payload.accreditation_areas == ["13.2.1", "13.2.19"]
 
 
 class TestOrderSchemaScaleBranch:
@@ -224,7 +241,7 @@ class TestProfileUseCases:
         repo = build_repo(build_expert_account())
         profile = await GetAuditExpertProfileUseCase(AuditValidator(repo)).execute(1)
 
-        assert profile.participant_kind is AuditParticipantKind.AUDITOR
+        assert profile.industrial_safety_areas == []
         assert profile.documents == []
 
     @pytest.mark.asyncio
@@ -267,6 +284,37 @@ class TestProfileUseCases:
 
         assert result.position == "Главный инженер"
         assert account.customer_profile.audit_profile is not None
+
+    @pytest.mark.asyncio
+    async def test_empty_license_holder_profile_returns_defaults(self):
+        repo = build_repo(build_license_holder_account())
+        profile = await GetAuditLicenseHolderProfileUseCase(AuditValidator(repo)).execute(3)
+
+        assert profile.certificate_number == ""
+        assert profile.accreditation_areas == []
+
+    @pytest.mark.asyncio
+    async def test_save_creates_license_holder_profile(self):
+        account = build_license_holder_account()
+        repo = build_repo(account)
+        use_case = SaveAuditLicenseHolderProfileUseCase(repo, AuditValidator(repo))
+
+        result = await use_case.execute(
+            3,
+            AuditLicenseHolderProfileInput(
+                certificate_number="RA.RU.010001", accreditation_areas=["13.2.1"]
+            ),
+        )
+
+        assert result.certificate_number == "RA.RU.010001"
+        assert account.license_holder_profile.audit_profile is not None
+
+    @pytest.mark.asyncio
+    async def test_expert_cannot_open_license_holder_profile(self):
+        repo = build_repo(build_expert_account())
+        with pytest.raises(HTTPException) as error:
+            await GetAuditLicenseHolderProfileUseCase(AuditValidator(repo)).execute(1)
+        assert error.value.status_code == 403
 
     @pytest.mark.asyncio
     async def test_document_limit_enforced(self):

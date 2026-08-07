@@ -7,10 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
+import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import { confirmRegistrationEmail, registerLicenseHolder, registerUser } from "./api";
 import { emptyDirectionFiles, toRegisterDocuments, type DirectionFilesState } from "./directionFiles";
 import {
   emptyRegisterFormValues,
+  presetRegisterFormValues,
   registerConfirmSchema,
   registerFormSchema,
   type RegisterConfirmValues,
@@ -23,6 +25,8 @@ import type { UserRole } from "./types";
 interface UseRegisterOptions {
   /** Если задан — вызывается после успешного подтверждения почты (напр. чтобы закрыть модалку). Редирект выполняется как обычно. */
   onSuccess?: () => void;
+  /** Фиксированная роль с лендинга: переключатель ролей скрыт, направление предвыбрано. */
+  preset?: AuthPreset | null;
 }
 
 export function useRegister(options?: UseRegisterOptions) {
@@ -36,9 +40,10 @@ export function useRegister(options?: UseRegisterOptions) {
   const [sroDesignFile, setSroDesignFile] = useState<File | null>(null);
   const [labAccreditationFile, setLabAccreditationFile] = useState<File | null>(null);
 
+  const preset = options?.preset ?? null;
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
-    defaultValues: emptyRegisterFormValues,
+    defaultValues: preset ? presetRegisterFormValues(preset) : emptyRegisterFormValues,
     mode: "onBlur",
   });
 
@@ -53,6 +58,7 @@ export function useRegister(options?: UseRegisterOptions) {
     form.setValue("expertiseProfile", null);
     form.setValue("auditExpertProfile", null);
     form.setValue("auditCustomerProfile", null);
+    form.setValue("auditLicenseHolderProfile", null);
     form.setValue("cadastralProfile", null);
     form.setValue("forensicProfile", null);
     form.setValue("researchProfile", null);
@@ -130,6 +136,7 @@ export function useRegister(options?: UseRegisterOptions) {
     pendingEmail: wizard.pendingEmail,
     form,
     confirmForm,
+    lockRole: preset !== null,
     directionFiles,
     setDirectionFiles,
     licenseFile,

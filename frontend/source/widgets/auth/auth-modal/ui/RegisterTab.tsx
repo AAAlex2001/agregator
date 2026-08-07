@@ -1,10 +1,12 @@
 "use client";
 
+import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import { useRegister, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
 import s from "./auth-modal.module.scss";
 
 interface Props {
   onSuccess: () => void;
+  preset?: AuthPreset | null;
 }
 
 const STEP_LABELS: Record<1 | 2, string> = {
@@ -12,8 +14,8 @@ const STEP_LABELS: Record<1 | 2, string> = {
   2: "Шаг 2. Код",
 };
 
-export function RegisterTab({ onSuccess }: Props) {
-  const reg = useRegister({ onSuccess });
+export function RegisterTab({ onSuccess, preset = null }: Props) {
+  const reg = useRegister({ onSuccess, preset });
 
   return (
     <div className={s.flow}>
@@ -25,6 +27,7 @@ export function RegisterTab({ onSuccess }: Props) {
         <CredentialsStep
           form={reg.form}
           isLoading={reg.isLoading}
+          lockRole={reg.lockRole}
           directionFiles={reg.directionFiles}
           licenseFile={reg.licenseFile}
           miningLicenseFile={reg.miningLicenseFile}

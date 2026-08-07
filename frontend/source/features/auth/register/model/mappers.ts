@@ -45,6 +45,7 @@ export function toRegisterPayload(values: RegisterFormValues): RegisterPayload {
 }
 
 export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolderRegisterPayload {
+  const hasLicense = values.auditLicenseHolderProfile === null || values.licenseNumber.trim() !== "";
   return {
     email: values.email.trim(),
     password: values.password,
@@ -53,11 +54,16 @@ export function toLicenseHolderPayload(values: RegisterFormValues): LicenseHolde
     company_data: values.companyData as CompanyData,
     license_number: values.licenseNumber.trim(),
     license_areas: values.licenseAreas,
-    license_rental_kind: values.rentalKind,
+    license_rental_kind: hasLicense ? values.rentalKind : null,
+    audit_profile: values.auditLicenseHolderProfile,
     license_rental_percent:
-      values.rentalKind === "PERCENT" ? Number(values.rentalPercent.replace(",", ".")) : undefined,
+      hasLicense && values.rentalKind === "PERCENT"
+        ? Number(values.rentalPercent.replace(",", "."))
+        : undefined,
     license_rental_fixed_amount:
-      values.rentalKind === "FIXED" ? Number(values.rentalFixedAmount.replace(/\s/g, "")) : undefined,
+      hasLicense && values.rentalKind === "FIXED"
+        ? Number(values.rentalFixedAmount.replace(/\s/g, ""))
+        : undefined,
     mining_license_number: values.miningLicenseNumber?.trim() || null,
     lab_accreditation_number: values.labAccreditationNumber?.trim() || null,
   };

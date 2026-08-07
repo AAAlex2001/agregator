@@ -6,6 +6,7 @@ import { FormSection } from "@/source/shared/ui";
 import type { UserRole } from "@/source/entities/user";
 import { AuditCustomerProfileCard } from "./AuditCustomerProfileCard";
 import { AuditExpertProfileCard } from "./AuditExpertProfileCard";
+import { AuditLicenseHolderProfileCard } from "./AuditLicenseHolderProfileCard";
 import { CadastralProfileCard } from "./CadastralProfileCard";
 import { ExpertiseProfileCard } from "./ExpertiseProfileCard";
 import { ForensicProfileCard } from "./ForensicProfileCard";
@@ -24,12 +25,19 @@ const EXPERT_TABS = [
 
 const CUSTOMER_TABS = [{ id: "AUDIT_SUPB", label: "Аудит СУПБ" }];
 
+const LICENSE_HOLDER_TABS = [{ id: "AUDIT_SUPB", label: "Аудит СУПБ" }];
+
 interface Props {
   role: UserRole;
 }
 
 export function DirectionsSection({ role }: Props) {
-  const tabs = role === "EXPERT" ? EXPERT_TABS : role === "CUSTOMER" ? CUSTOMER_TABS : [];
+  const tabs =
+    role === "EXPERT"
+      ? EXPERT_TABS
+      : role === "CUSTOMER"
+        ? CUSTOMER_TABS
+        : LICENSE_HOLDER_TABS;
   const [activeKey, setActiveKey] = useState(tabs[0]?.id ?? "");
 
   if (!tabs.length) return null;
@@ -44,7 +52,9 @@ export function DirectionsSection({ role }: Props) {
           { id: "RESEARCH", card: <ResearchProfileCard /> },
           { id: "LABORATORY", card: <LaboratoryProfileCard /> },
         ]
-      : [{ id: "AUDIT_SUPB", card: <AuditCustomerProfileCard /> }];
+      : role === "CUSTOMER"
+        ? [{ id: "AUDIT_SUPB", card: <AuditCustomerProfileCard /> }]
+        : [{ id: "AUDIT_SUPB", card: <AuditLicenseHolderProfileCard /> }];
 
   return (
     <FormSection

@@ -24,6 +24,11 @@ export interface CompanyData {
 
 export type LicenseRentalKind = "PERCENT" | "FIXED" | "NEGOTIABLE";
 
+export interface LicenseHolderAuditRegisterPayload {
+  certificate_number: string;
+  accreditation_areas: string[];
+}
+
 export interface LicenseHolderRegisterPayload {
   email: string;
   password: string;
@@ -32,11 +37,12 @@ export interface LicenseHolderRegisterPayload {
   company_data: CompanyData;
   license_number: string;
   license_areas: string[];
-  license_rental_kind: LicenseRentalKind;
+  license_rental_kind: LicenseRentalKind | null;
   license_rental_percent?: number;
   license_rental_fixed_amount?: number;
   mining_license_number?: string | null;
   lab_accreditation_number?: string | null;
+  audit_profile?: LicenseHolderAuditRegisterPayload | null;
 }
 
 export interface LicenseHolderUpdatePayload {

@@ -21,6 +21,7 @@ export function AuditRoleChoice() {
           {AUDIT_ROLES.map((role) => (
             <li key={role.id} className={s.card}>
               <h3 className={s.cardTitle}>{role.title}</h3>
+              <p className={s.cardSubtitle}>{role.subtitle}</p>
               <p className={s.cardText}>{role.description}</p>
               <ul className={s.fields}>
                 {role.fields.map((field) => (
@@ -31,7 +32,7 @@ export function AuditRoleChoice() {
                 variant="primary"
                 fullWidth
                 className={s.cardButton}
-                onClick={() => openAuth("register")}
+                onClick={() => openAuth("register", { role: role.role, direction: "AUDIT_SUPB" })}
               >
                 Выбрать
               </Button>

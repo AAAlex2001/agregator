@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from models.account import Account, UserRole
 from models.customer import Customer
 from models.expert import Expert
+from models.license_holder import LicenseHolder
 from services.audit.repository import AuditRepository
 
 
@@ -42,3 +43,13 @@ class AuditValidator:
                 detail="Анкета заказчика по аудиту доступна только заказчику",
             )
         return account.customer_profile
+
+    @staticmethod
+    def require_license_holder(account: Account) -> LicenseHolder:
+        """Возвращает профиль держателя разрешительных документов или бросает 403."""
+        if account.role is not UserRole.LICENSE_HOLDER or account.license_holder_profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Анкета инспекционного органа доступна только держателю разрешительных документов",
+            )
+        return account.license_holder_profile

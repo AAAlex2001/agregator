@@ -1,7 +1,6 @@
 import { emptyApplicant, type ApplicantBlock } from "../../shared/model/applicant";
 import type { DirectionFile } from "../../shared/model/files";
 
-export type AuditParticipantKind = "AUDITOR" | "INSPECTION_BODY";
 export type AuditScale = "SINGLE_OPO" | "ALL_OPO" | "SELECTED_OPO";
 export type AuditKind = "BASIC" | "INTERIM" | "SELECTIVE" | "CONSULTATION";
 export type AuditTimeline = "MONTH_URGENT" | "CURRENT_QUARTER" | "NEXT_QUARTER" | "CONSULTATION";
@@ -12,16 +11,15 @@ export interface AuditCustomerProfile {
 }
 
 export interface AuditExpertProfile {
-  participant_kind: AuditParticipantKind;
   industrial_safety_areas: string[];
   expert_attestation_areas: string[];
   audit_qualifications: string[];
-  full_name: string;
-  short_name: string;
-  inn: string;
+  documents: DirectionFile[];
+}
+
+export interface AuditLicenseHolderProfile {
   certificate_number: string;
   accreditation_areas: string[];
-  documents: DirectionFile[];
 }
 
 export interface CatalogOption {
@@ -72,16 +70,15 @@ export const emptyAuditCustomerProfile: AuditCustomerProfile = {
 };
 
 export const emptyAuditExpertProfile: AuditExpertProfile = {
-  participant_kind: "AUDITOR",
   industrial_safety_areas: [],
   expert_attestation_areas: [],
   audit_qualifications: [],
-  full_name: "",
-  short_name: "",
-  inn: "",
+  documents: [],
+};
+
+export const emptyAuditLicenseHolderProfile: AuditLicenseHolderProfile = {
   certificate_number: "",
   accreditation_areas: [],
-  documents: [],
 };
 
 export const emptyAuditCatalogs: AuditCatalogs = {

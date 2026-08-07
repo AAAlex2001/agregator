@@ -1,5 +1,6 @@
 "Use case: register license holder."
 from models.account import Account, UserRole
+from models.audit import LicenseHolderAuditProfile
 from models.license_holder import LicenseHolder, LicenseRentalKind
 from schemas.registration import LicenseHolderRegistration
 from services.registration.repository import RegistrationRepository
@@ -8,7 +9,7 @@ from utils.passwords import hash_password
 
 
 class RegisterLicenseHolderUseCase:
-    "Создаёт аккаунт держателя лицензии с профилем LicenseHolder."
+    "Создаёт аккаунт держателя разрешительных документов с профилем LicenseHolder."
 
     def __init__(self, repo: RegistrationRepository, validator: RegistrationValidator) -> None:
         self.repo = repo
@@ -47,7 +48,9 @@ class RegisterLicenseHolderUseCase:
             license_number=data.license_number,
             license_file_url=license_file_url,
             license_areas=data.license_areas,
-            license_rental_kind=data.license_rental_kind.value,
+            license_rental_kind=(
+                data.license_rental_kind.value if data.license_rental_kind is not None else None
+            ),
             license_rental_percent=(
                 data.license_rental_percent
                 if data.license_rental_kind is LicenseRentalKind.PERCENT
@@ -69,6 +72,14 @@ class RegisterLicenseHolderUseCase:
         )
         account.license_holder_profile = profile
         await self.repo.add(profile)
+
+        if data.audit_profile is not None:
+            await self.repo.add(
+                LicenseHolderAuditProfile(
+                    license_holder_id=profile.id,
+                    **data.audit_profile.model_dump(),
+                )
+            )
 
         loaded = await self.repo.find_account(account.id)
         return loaded if loaded is not None else account

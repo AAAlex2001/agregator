@@ -5,7 +5,11 @@ from pydantic import BaseModel, EmailStr, Field, field_validator, model_validato
 
 from models.account import Account, UserRole
 from models.license_holder import LicenseRentalKind
-from schemas.audit import AuditCustomerProfileInput, AuditExpertProfileInput
+from schemas.audit import (
+    AuditCustomerProfileInput,
+    AuditExpertProfileInput,
+    AuditLicenseHolderProfileInput,
+)
 from schemas.cadastral import CadastralProfileInput
 from schemas.company import validate_company_data
 from schemas.expertise import ExpertiseProfileInput
@@ -83,19 +87,25 @@ class UserRegistration(BaseModel):
 
 
 class LicenseHolderRegistration(BaseModel):
-    "Регистрация держателя лицензии. Файл лицензии передаётся отдельным multipart-полем."
+    """Регистрация держателя разрешительных документов.
+
+    Обычный держатель приходит с лицензией ЭПБ; инспекционный орган по аудиту СУПБ —
+    со свидетельством об аккредитации (audit_profile), лицензия ему не обязательна.
+    Файл лицензии передаётся отдельным multipart-полем.
+    """
     email: EmailStr
     password: str = Field(..., min_length=6)
     phone: str = Field(..., min_length=10)
     inn: str = Field(..., min_length=10, max_length=12, pattern=r"^\d{10}(\d{2})?$")
     company_data: dict[str, Any]
-    license_number: str = Field(..., min_length=1, max_length=100)
-    license_areas: list[str] = Field(..., min_length=1)
-    license_rental_kind: LicenseRentalKind
+    license_number: str | None = Field(None, max_length=100)
+    license_areas: list[str] = Field(default_factory=list)
+    license_rental_kind: LicenseRentalKind | None = None
     license_rental_percent: float | None = Field(None, gt=0, le=100)
     license_rental_fixed_amount: int | None = Field(None, gt=0)
     mining_license_number: str | None = Field(None, max_length=100)
     lab_accreditation_number: str | None = Field(None, max_length=100)
+    audit_profile: AuditLicenseHolderProfileInput | None = None
 
     @field_validator("company_data", mode="before")
     @classmethod
@@ -107,6 +117,13 @@ class LicenseHolderRegistration(BaseModel):
         company_inn = (self.company_data.get("data") or {}).get("inn")
         if company_inn and company_inn != self.inn:
             raise ValueError("Выбранная компания не соответствует указанному ИНН")
+        if self.audit_profile is None:
+            if not (self.license_number or "").strip():
+                raise ValueError("Укажите номер лицензии")
+            if not self.license_areas:
+                raise ValueError("Выберите хотя бы один объект экспертизы")
+            if self.license_rental_kind is None:
+                raise ValueError("Выберите способ расчёта стоимости предоставления лицензии")
         if self.license_rental_kind is LicenseRentalKind.PERCENT and self.license_rental_percent is None:
             raise ValueError("Укажите процент от суммы договора")
         if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:

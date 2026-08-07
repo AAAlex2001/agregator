@@ -12,13 +12,8 @@ from models.base import Base
 if TYPE_CHECKING:
     from models.customer import Customer
     from models.expert import Expert
+    from models.license_holder import LicenseHolder
     from models.order import Order
-
-
-class AuditParticipantKind(str, PyEnum):
-    """Кто выполняет аудит СУПБ: специалист или аккредитованный орган инспекции"""
-    AUDITOR = "AUDITOR"
-    INSPECTION_BODY = "INSPECTION_BODY"
 
 
 class AuditScale(str, PyEnum):
@@ -64,12 +59,7 @@ class CustomerAuditProfile(Base):
 
 
 class ExpertAuditProfile(Base):
-    """Анкета исполнителя по аудиту СУПБ.
-
-    Аудитор-специалист заполняет аттестации и НОК, аккредитованный орган типа А —
-    наименования, свидетельство и области аккредитации. Вид участника определяет,
-    какие поля обязательны — проверку делает схема направления.
-    """
+    """Анкета исполнителя-аудитора по аудиту СУПБ: аттестации, НОК и документы."""
     __tablename__ = "expert_audit_profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -79,24 +69,37 @@ class ExpertAuditProfile(Base):
         unique=True,
         index=True,
     )
-    participant_kind: Mapped[AuditParticipantKind] = mapped_column(
-        Enum(AuditParticipantKind),
-        nullable=False,
-        default=AuditParticipantKind.AUDITOR,
-    )
     industrial_safety_areas: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     expert_attestation_areas: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     audit_qualifications: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
-    full_name: Mapped[str] = mapped_column(String(500), nullable=False, default="")
-    short_name: Mapped[str] = mapped_column(String(300), nullable=False, default="")
-    inn: Mapped[str] = mapped_column(String(12), nullable=False, default="")
-    certificate_number: Mapped[str] = mapped_column(String(100), nullable=False, default="")
-    accreditation_areas: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     documents: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     expert: Mapped["Expert"] = relationship(back_populates="audit_profile")
+
+
+class LicenseHolderAuditProfile(Base):
+    """Анкета аккредитованного инспекционного органа — держателя разрешительных документов.
+
+    Наименования, ИНН и контакты живут в общей регистрации держателя; здесь только
+    свидетельство об аккредитации и области аккредитации по аудиту СУПБ.
+    """
+    __tablename__ = "license_holder_audit_profiles"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    license_holder_id: Mapped[int] = mapped_column(
+        ForeignKey("license_holders.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    certificate_number: Mapped[str] = mapped_column(String(100), nullable=False, default="")
+    accreditation_areas: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
+
+    license_holder: Mapped["LicenseHolder"] = relationship(back_populates="audit_profile")
 
 
 class OrderAuditDetails(Base):

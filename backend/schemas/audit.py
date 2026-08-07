@@ -1,9 +1,7 @@
-"""DTO аудита СУПБ: анкеты заказчика и исполнителя, поля заявки с ветками формы."""
-import re
-
+"""DTO аудита СУПБ: анкеты заказчика, аудитора и инспекционного органа, поля заявки."""
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from models.audit import AuditKind, AuditParticipantKind, AuditScale, AuditTimeline
+from models.audit import AuditKind, AuditScale, AuditTimeline
 from schemas.common import DirectionFileSchema
 from services.audit_catalogs import (
     ACCREDITATION_AREA_CODES,
@@ -54,25 +52,10 @@ class AuditCustomerProfileResponse(BaseModel):
 
 
 class AuditExpertProfileInput(BaseModel):
-    """Анкета исполнителя по аудиту СУПБ: специалист или аккредитованный орган типа А."""
-    participant_kind: AuditParticipantKind = AuditParticipantKind.AUDITOR
+    """Анкета исполнителя-аудитора по аудиту СУПБ: аттестации и НОК."""
     industrial_safety_areas: list[str] = Field(default_factory=list, max_length=40)
     expert_attestation_areas: list[str] = Field(default_factory=list, max_length=60)
     audit_qualifications: list[str] = Field(default_factory=list, max_length=10)
-    full_name: str = Field("", max_length=500)
-    short_name: str = Field("", max_length=300)
-    inn: str = Field("", max_length=12)
-    certificate_number: str = Field("", max_length=100)
-    accreditation_areas: list[str] = Field(default_factory=list, max_length=20)
-
-    @field_validator("inn")
-    @classmethod
-    def check_inn(cls, value: str) -> str:
-        """ИНН либо пустой, либо из 10 (юрлицо) или 12 (ИП) цифр."""
-        inn = value.strip()
-        if inn and not re.fullmatch(r"\d{10}|\d{12}", inn):
-            raise ValueError("ИНН должен содержать 10 или 12 цифр")
-        return inn
 
     @field_validator("industrial_safety_areas")
     @classmethod
@@ -92,40 +75,39 @@ class AuditExpertProfileInput(BaseModel):
         """Коды НОК сверяются со справочником."""
         return validate_catalog_codes(value, AUDIT_QUALIFICATION_CODES, "НОК")
 
+
+class AuditExpertProfileResponse(BaseModel):
+    """Анкета исполнителя-аудитора в ответе API."""
+    model_config = ConfigDict(from_attributes=True)
+
+    industrial_safety_areas: list[str] = Field(default_factory=list)
+    expert_attestation_areas: list[str] = Field(default_factory=list)
+    audit_qualifications: list[str] = Field(default_factory=list)
+    documents: list[DirectionFileSchema] = Field(default_factory=list)
+
+
+class AuditLicenseHolderProfileInput(BaseModel):
+    """Анкета инспекционного органа: свидетельство об аккредитации и области аккредитации.
+
+    Наименования, ИНН и контакты орган указывает в общей регистрации держателя
+    разрешительных документов.
+    """
+    certificate_number: str = Field(..., min_length=1, max_length=100)
+    accreditation_areas: list[str] = Field(default_factory=list, max_length=20)
+
     @field_validator("accreditation_areas")
     @classmethod
     def check_accreditation_areas(cls, value: list[str]) -> list[str]:
         """Коды областей аккредитации сверяются со справочником."""
         return validate_catalog_codes(value, ACCREDITATION_AREA_CODES, "аккредитации")
 
-    @model_validator(mode="after")
-    def check_required_by_kind(self) -> "AuditExpertProfileInput":
-        """У органа инспекции обязательны наименование, ИНН и свидетельство типа А."""
-        if self.participant_kind is not AuditParticipantKind.INSPECTION_BODY:
-            return self
-        if not self.full_name.strip():
-            raise ValueError("Укажите полное наименование инспекционного органа")
-        if not self.inn:
-            raise ValueError("Укажите ИНН инспекционного органа")
-        if not self.certificate_number.strip():
-            raise ValueError("Укажите номер свидетельства об аккредитации")
-        return self
 
-
-class AuditExpertProfileResponse(BaseModel):
-    """Анкета исполнителя по аудиту СУПБ в ответе API."""
+class AuditLicenseHolderProfileResponse(BaseModel):
+    """Анкета инспекционного органа в ответе API."""
     model_config = ConfigDict(from_attributes=True)
 
-    participant_kind: AuditParticipantKind = AuditParticipantKind.AUDITOR
-    industrial_safety_areas: list[str] = Field(default_factory=list)
-    expert_attestation_areas: list[str] = Field(default_factory=list)
-    audit_qualifications: list[str] = Field(default_factory=list)
-    full_name: str = ""
-    short_name: str = ""
-    inn: str = ""
     certificate_number: str = ""
     accreditation_areas: list[str] = Field(default_factory=list)
-    documents: list[DirectionFileSchema] = Field(default_factory=list)
 
 
 class AuditOpoItemInput(BaseModel):

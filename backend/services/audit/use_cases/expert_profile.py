@@ -39,15 +39,9 @@ class SaveAuditExpertProfileUseCase:
             profile = ExpertAuditProfile(expert_id=expert.id, documents=[])
             expert.audit_profile = profile
 
-        profile.participant_kind = data.participant_kind
         profile.industrial_safety_areas = data.industrial_safety_areas
         profile.expert_attestation_areas = data.expert_attestation_areas
         profile.audit_qualifications = data.audit_qualifications
-        profile.full_name = data.full_name
-        profile.short_name = data.short_name
-        profile.inn = data.inn
-        profile.certificate_number = data.certificate_number
-        profile.accreditation_areas = data.accreditation_areas
 
         await self.repo.add(profile)
         return AuditExpertProfileResponse.model_validate(profile)

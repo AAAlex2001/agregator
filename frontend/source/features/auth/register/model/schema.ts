@@ -1,11 +1,14 @@
 import { z } from "zod";
+import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import { isValidRussianPhone } from "@/source/shared/lib/phone";
 import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
 import {
   auditCustomerProfileSchema,
   auditExpertProfileSchema,
+  auditLicenseHolderProfileSchema,
   type AuditCustomerProfile,
   type AuditExpertProfile,
+  type AuditLicenseHolderProfile,
 } from "@/source/features/directions/audit";
 import { cadastralProfileSchema, type CadastralProfile } from "@/source/features/directions/cadastral";
 import { expertiseProfileSchema, type ExpertiseProfile } from "@/source/features/directions/expertise";
@@ -45,6 +48,7 @@ export const registerFormSchema = z
     expertiseProfile: z.custom<ExpertiseProfile | null>(),
     auditExpertProfile: z.custom<AuditExpertProfile | null>(),
     auditCustomerProfile: z.custom<AuditCustomerProfile | null>(),
+    auditLicenseHolderProfile: z.custom<AuditLicenseHolderProfile | null>(),
     cadastralProfile: z.custom<CadastralProfile | null>(),
     forensicProfile: z.custom<ForensicProfile | null>(),
     researchProfile: z.custom<ResearchProfile | null>(),
@@ -145,21 +149,23 @@ export const registerFormSchema = z
     }
 
     if (data.role === "LICENSE_HOLDER") {
-      if (!data.licenseNumber) {
+      const licenseRequired = data.auditLicenseHolderProfile === null;
+      if (licenseRequired && !data.licenseNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["licenseNumber"],
           message: "Укажите номер лицензии",
         });
       }
-      if (!data.licenseAreas.length) {
+      if (licenseRequired && !data.licenseAreas.length) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["licenseAreas"],
           message: "Выберите хотя бы один объект экспертизы",
         });
       }
-      if (data.rentalKind === "PERCENT") {
+      const hasLicense = licenseRequired || data.licenseNumber.length > 0;
+      if (hasLicense && data.rentalKind === "PERCENT") {
         const num = Number(data.rentalPercent.replace(",", "."));
         if (!data.rentalPercent || !Number.isFinite(num) || num <= 0 || num > 100) {
           ctx.addIssue({
@@ -169,7 +175,7 @@ export const registerFormSchema = z
           });
         }
       }
-      if (data.rentalKind === "FIXED") {
+      if (hasLicense && data.rentalKind === "FIXED") {
         const num = Number(data.rentalFixedAmount.replace(/\s/g, ""));
         if (!data.rentalFixedAmount || !Number.isFinite(num) || num <= 0) {
           ctx.addIssue({
@@ -185,6 +191,7 @@ export const registerFormSchema = z
       { path: "expertiseProfile", message: data.expertiseProfile && firstSchemaError(expertiseProfileSchema, data.expertiseProfile) },
       { path: "auditExpertProfile", message: data.auditExpertProfile && firstSchemaError(auditExpertProfileSchema, data.auditExpertProfile) },
       { path: "auditCustomerProfile", message: data.auditCustomerProfile && firstSchemaError(auditCustomerProfileSchema, data.auditCustomerProfile) },
+      { path: "auditLicenseHolderProfile", message: data.auditLicenseHolderProfile && firstSchemaError(auditLicenseHolderProfileSchema, data.auditLicenseHolderProfile) },
       { path: "cadastralProfile", message: data.cadastralProfile && firstSchemaError(cadastralProfileSchema, data.cadastralProfile) },
       { path: "forensicProfile", message: data.forensicProfile && firstSchemaError(forensicProfileSchema, data.forensicProfile) },
       { path: "researchProfile", message: data.researchProfile && firstSchemaError(researchProfileSchema, data.researchProfile) },
@@ -237,6 +244,7 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   expertiseProfile: null,
   auditExpertProfile: null,
   auditCustomerProfile: null,
+  auditLicenseHolderProfile: null,
   cadastralProfile: null,
   forensicProfile: null,
   researchProfile: null,
@@ -261,6 +269,24 @@ export const emptyRegisterFormValues: RegisterFormValues = {
   contactPaymentDetails: "",
   contactDisclosureConsent: false,
 };
+
+export function presetRegisterFormValues(preset: AuthPreset): RegisterFormValues {
+  const values: RegisterFormValues = { ...emptyRegisterFormValues, role: preset.role };
+  if (preset.direction !== "AUDIT_SUPB") return values;
+  if (preset.role === "CUSTOMER") values.auditCustomerProfile = { position: "", opo_license_number: "" };
+  if (preset.role === "EXPERT") {
+    values.auditExpertProfile = {
+      industrial_safety_areas: [],
+      expert_attestation_areas: [],
+      audit_qualifications: [],
+      documents: [],
+    };
+  }
+  if (preset.role === "LICENSE_HOLDER") {
+    values.auditLicenseHolderProfile = { certificate_number: "", accreditation_areas: [] };
+  }
+  return values;
+}
 
 export const registerConfirmSchema = z.object({
   code: z.string().regex(/^\d{6}$/u, "Введите 6-значный код"),
