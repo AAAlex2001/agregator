@@ -8,15 +8,11 @@ const TAGLINE =
 const HEADLINE = "Первая единая площадка для специалистов и промышленников России";
 
 type HeroProps = {
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  bullets: string[];
-  compact?: boolean;
   basePath?: string;
+  activeHref?: string;
 };
 
-const Hero = ({ buttonText, basePath }: HeroProps) => {
+const Hero = ({ basePath, activeHref = "/" }: HeroProps) => {
   return (
     <section className={s.hero} id="about">
       <header className={s.heroHead}>
@@ -24,9 +20,9 @@ const Hero = ({ buttonText, basePath }: HeroProps) => {
           <LogoIcon className={s.brandLogo} />
           <p className={s.tagline}>{TAGLINE}</p>
         </div>
-        <Title text={HEADLINE} as="h1" className={s.heroTitleText} />
+        <Title text={HEADLINE} as={activeHref === "/" ? "h1" : "h2"} className={s.heroTitleText} />
       </header>
-      <ServicesShowcase buttonText={buttonText} basePath={basePath} />
+      <ServicesShowcase basePath={basePath} activeHref={activeHref} />
     </section>
   );
 };

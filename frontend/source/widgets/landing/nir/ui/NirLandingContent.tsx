@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import {
+  LandingHero,
   LandingServiceHero,
   LandingSearchBlock,
-  LandingExpertsMap,
   LandingServiceFaq,
   LandingOtherDirections,
 } from "@/source/widgets/landing";
@@ -23,11 +23,11 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
     <div className={s.page}>
       {header}
       <main>
+        <LandingHero basePath={basePath} activeHref="/nir" />
         <LandingServiceHero title={NIR_TITLE} subtitle={NIR_SUBTITLE} bullets={NIR_BULLETS}>
           <ServiceRequestForm />
         </LandingServiceHero>
         <LandingSearchBlock />
-        <LandingExpertsMap />
         <LandingServiceFaq
           items={NIR_FAQ}
           subtitle="Какая лаборатория вправе выполнять неразрушающий контроль, как проверить дефектоскописта и что входит в НИР."

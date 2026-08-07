@@ -2,7 +2,6 @@ export { default as LandingHeader } from "./ui/Header";
 export { default as LandingHeaderAuthed } from "./ui/HeaderAuthed";
 export { default as LandingFooter } from "./ui/Footer";
 export { default as LandingSearchBlock } from "./ui/SearchBlock";
-export { ExpertsMapSection as LandingExpertsMap } from "./ui/ExpertsMapSection";
 export { default as LandingServiceHero } from "./ui/ServiceLandingHero";
 export type { ServiceLandingBullet } from "./ui/ServiceLandingHero";
 export { ServiceLandingFaq as LandingServiceFaq } from "./ui/ServiceLandingFaq";

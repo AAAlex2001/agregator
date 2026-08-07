@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import {
+  LandingHero,
   LandingServiceHero,
   LandingSearchBlock,
-  LandingExpertsMap,
   LandingAudience,
   LandingServiceFaq,
   LandingOtherDirections,
@@ -31,6 +31,7 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
     <div className={s.page}>
       {header}
       <main>
+        <LandingHero basePath={basePath} activeHref="/kadastrovye-raboty" />
         <LandingServiceHero
           title={KADASTR_TITLE}
           subtitle={KADASTR_SUBTITLE}
@@ -54,7 +55,6 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
         <KadastrServices />
         <LandingAudience blocks={KADASTR_AUDIENCE} />
         <LandingSearchBlock />
-        <LandingExpertsMap />
         <LandingServiceFaq
           items={KADASTR_FAQ}
           subtitle="Кто выполняет кадастровые работы, сколько они занимают и что делать с ошибками в ЕГРН."

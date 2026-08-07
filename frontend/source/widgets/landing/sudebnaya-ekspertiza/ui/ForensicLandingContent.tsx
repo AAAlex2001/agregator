@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import {
+  LandingHero,
   LandingServiceHero,
   LandingSearchBlock,
-  LandingExpertsMap,
   LandingAudience,
   LandingServiceFaq,
   LandingOtherDirections,
@@ -32,6 +32,7 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
     <div className={s.page}>
       {header}
       <main>
+        <LandingHero basePath={basePath} activeHref="/sudebnaya-ekspertiza" />
         <LandingServiceHero
           title={FORENSIC_TITLE}
           subtitle={FORENSIC_SUBTITLE}
@@ -55,7 +56,6 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
         <ForensicCatalog />
         <LandingAudience blocks={FORENSIC_AUDIENCE} />
         <LandingSearchBlock />
-        <LandingExpertsMap />
         <LandingServiceFaq
           items={FORENSIC_FAQ}
           subtitle="Кто вправе давать заключение для суда, кто оплачивает экспертизу и как оспорить её выводы."

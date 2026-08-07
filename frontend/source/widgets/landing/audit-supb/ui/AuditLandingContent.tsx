@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import {
+  LandingHero,
   LandingServiceHero,
   LandingSearchBlock,
-  LandingExpertsMap,
   LandingServiceFaq,
   LandingOtherDirections,
 } from "@/source/widgets/landing";
@@ -33,6 +33,7 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
     <div className={s.page}>
       {header}
       <main>
+        <LandingHero basePath={basePath} activeHref="/audit-supb" />
         <LandingServiceHero title={AUDIT_TITLE} subtitle={AUDIT_SUBTITLE} bullets={AUDIT_BULLETS}>
           <div className={s.cover}>
             <div className={s.coverImage}>
@@ -54,7 +55,6 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
         <AuditAudience />
         <AuditRoleChoice />
         <LandingSearchBlock />
-        <LandingExpertsMap />
         <LandingServiceFaq
           items={AUDIT_FAQ}
           subtitle="Кому аудит обязателен, как он влияет на категорию риска и кто вправе его проводить."

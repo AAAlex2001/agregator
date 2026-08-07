@@ -20,6 +20,8 @@ type ServicesAccordionProps = {
   renderVisual?: (item: ServicesAccordionItem) => ReactNode;
   hideItemText?: boolean;
   mobileStack?: boolean;
+  initialActiveIndex?: number;
+  onSelect?: (item: ServicesAccordionItem, index: number) => void;
 };
 
 export function ServicesAccordion({
@@ -28,8 +30,10 @@ export function ServicesAccordion({
   renderVisual,
   hideItemText,
   mobileStack,
+  initialActiveIndex = 0,
+  onSelect,
 }: ServicesAccordionProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const [isDesktop, setIsDesktop] = useState(true);
   const active = items[activeIndex];
 
@@ -55,7 +59,10 @@ export function ServicesAccordion({
                 <button
                   type="button"
                   className={s.head}
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() => {
+                    setActiveIndex(index);
+                    onSelect?.(item, index);
+                  }}
                   aria-expanded={isActive}
                 >
                   <span className={s.num}>{String(index + 1).padStart(2, "0")}</span>

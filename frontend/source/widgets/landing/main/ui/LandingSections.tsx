@@ -24,7 +24,6 @@ interface Props {
 export function LandingSections({ data, articleBasePath = "" }: Props) {
   const { snapshot, pricingPlans, newsPage, blogPage } = data;
   const {
-    hero,
     sectionHeaders,
     howItWorks,
     keyAdvantages,
@@ -39,13 +38,7 @@ export function LandingSections({ data, articleBasePath = "" }: Props) {
   return (
     <div className={s.page}>
       <main>
-        <LandingHero
-          title={hero.title}
-          subtitle={hero.subtitle}
-          buttonText={hero.buttonText}
-          bullets={hero.bullets}
-          basePath={articleBasePath}
-        />
+        <LandingHero basePath={articleBasePath} />
         <LandingSearchBlock />
         <LandingNotificationsCta />
         <LandingHowItWorks
