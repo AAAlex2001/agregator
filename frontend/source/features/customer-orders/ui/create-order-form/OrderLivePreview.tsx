@@ -14,7 +14,7 @@ import {
 } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import type { DocumentsFormState } from "../../model/formFiles";
-import { buildPreviewBadges } from "../../model/mappers";
+import { buildPreviewBadges } from "../../model/expertiseBadges";
 import type { OrderFormValues } from "../../model/schema";
 import s from "./OrderLivePreview.module.scss";
 

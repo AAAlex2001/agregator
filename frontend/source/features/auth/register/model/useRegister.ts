@@ -8,7 +8,8 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
 import type { AuthPreset } from "@/source/shared/lib/auth-modal";
-import { confirmRegistrationEmail, registerLicenseHolder, registerUser } from "./api";
+import { confirmEmailCode } from "@/source/shared/api/emailVerification";
+import { registerLicenseHolder, registerUser } from "./api";
 import { emptyDirectionFiles, toRegisterDocuments, type DirectionFilesState } from "./directionFiles";
 import {
   emptyRegisterFormValues,
@@ -111,7 +112,7 @@ export function useRegister(options?: UseRegisterOptions) {
     async (values) => {
       try {
         const role = form.getValues("role");
-        await confirmRegistrationEmail(wizard.pendingEmail, values.code, role);
+        await confirmEmailCode(wizard.pendingEmail, values.code, role);
         await reload();
         showSuccess("Почта подтверждена");
         options?.onSuccess?.();

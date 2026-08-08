@@ -111,5 +111,3 @@ export async function registerLicenseHolder(
   if (!res.ok) throw new Error(await registerErrorMessage(res));
   return res.json();
 }
-
-export { confirmEmailCode as confirmRegistrationEmail } from "@/source/shared/api/emailVerification";

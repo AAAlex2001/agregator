@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type FormEvent, type ReactNode } from "react";
+import { useRef, type FormEvent } from "react";
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
@@ -9,20 +9,13 @@ import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { CalendarInput } from "@/source/shared/ui/CalendarInput";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
-import { EXECUTOR_REQUIREMENT_HINTS } from "@/source/entities/order";
 import { useServiceRequest } from "../model/useServiceRequest";
 import { useSubmitServiceRequest } from "../model/useSubmitServiceRequest";
 import type { ServiceRequestVariant } from "../model/types";
+import { Field } from "./Field";
+import { LabRequestFields } from "./LabRequestFields";
+import { NirRequestFields } from "./NirRequestFields";
 import s from "./service-request-form.module.scss";
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className={s.field}>
-      <span className={s.label}>{label}</span>
-      {children}
-    </div>
-  );
-}
 
 const TABS = [
   { id: "nir", label: "Проведение НИР" },
@@ -82,67 +75,22 @@ const ServiceRequestForm = () => {
       />
 
       {isNir ? (
-        <>
-          <Field label="Тема">
-            <TextInput
-              value={state.topic}
-              onChange={(e) => setField("topic", e.target.value)}
-              placeholder="Тема научно-исследовательской работы"
-              error={errors.topic}
-            />
-          </Field>
-
-          <div className={s.field}>
-            <span className={s.label}>Требования к исполнителю</span>
-            {state.executorRequirements.map((item) => (
-              <div key={item.id} className={s.reqRow}>
-                <TextInput
-                  className={s.reqInput}
-                  value={item.value}
-                  onChange={(e) => setRequirement(item.id, e.target.value)}
-                  placeholder={EXECUTOR_REQUIREMENT_HINTS.join(", ").toLowerCase()}
-                />
-                {state.executorRequirements.length > 1 && (
-                  <button
-                    type="button"
-                    className={s.reqRemove}
-                    onClick={() => removeRequirement(item.id)}
-                    aria-label="Удалить требование"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-            ))}
-            <Button type="button" variant="transparent" size="sm" onClick={addRequirement}>
-              + Добавить поле
-            </Button>
-          </div>
-
-          <Checkbox id="site-visit" checked={state.needsSiteVisit} onChange={toggleSiteVisit}>
-            Необходимость выезда на объект исследований
-          </Checkbox>
-        </>
+        <NirRequestFields
+          state={state}
+          errors={errors}
+          onTopicChange={(value) => setField("topic", value)}
+          onToggleSiteVisit={toggleSiteVisit}
+          onAddRequirement={addRequirement}
+          onSetRequirement={setRequirement}
+          onRemoveRequirement={removeRequirement}
+        />
       ) : (
-        <>
-          <Field label="Наименование исследований">
-            <textarea
-              className={errors.researchName ? `${s.textarea} ${s.textareaError}` : s.textarea}
-              value={state.researchName}
-              onChange={(e) => setField("researchName", e.target.value)}
-              placeholder="Что требуется исследовать"
-              rows={3}
-            />
-            {errors.researchName && <span className={s.error}>{errors.researchName}</span>}
-          </Field>
-          <Field label="Требования к оборудованию">
-            <TextInput
-              value={state.equipmentRequirements}
-              onChange={(e) => setField("equipmentRequirements", e.target.value)}
-              placeholder="Необходимое оборудование, методики"
-            />
-          </Field>
-        </>
+        <LabRequestFields
+          state={state}
+          errors={errors}
+          onResearchNameChange={(value) => setField("researchName", value)}
+          onEquipmentChange={(value) => setField("equipmentRequirements", value)}
+        />
       )}
 
       <div className={s.row2}>
