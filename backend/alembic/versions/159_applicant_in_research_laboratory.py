@@ -1,4 +1,4 @@
-"""Блок «Сведения о заявителе» в заявках НИР и лабораторных исследований
+"""Блок «Сведения о заявителе» в заявках НИР, лабораторных исследований и техдиагностирования
 
 Revision ID: 159
 Revises: 158
@@ -12,7 +12,11 @@ down_revision: str | None = "158"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-TABLES = ("order_research_details", "order_laboratory_details")
+TABLES = (
+    "order_research_details",
+    "order_laboratory_details",
+    "order_tech_diag_details",
+)
 
 APPLICANT_COLUMNS = (
     ("applicant_full_name", "VARCHAR(300)"),
