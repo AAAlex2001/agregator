@@ -2,11 +2,24 @@
 
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { useAuthModal } from "@/source/shared/lib/auth-modal";
-import { AUDIT_ROLES } from "../model/content";
-import s from "./role-choice.module.scss";
+import { useAuthModal, type AuthPreset } from "@/source/shared/lib/auth-modal";
+import s from "./service-roles.module.scss";
 
-export function AuditRoleChoice() {
+export interface ServiceLandingRole {
+  id: string;
+  role: AuthPreset["role"];
+  title: string;
+  subtitle: string;
+  description: string;
+  fields: string[];
+}
+
+interface Props {
+  roles: ServiceLandingRole[];
+  direction?: AuthPreset["direction"];
+}
+
+export function ServiceRoles({ roles, direction }: Props) {
   const { openAuth } = useAuthModal();
 
   return (
@@ -18,7 +31,7 @@ export function AuditRoleChoice() {
         </header>
 
         <ul className={s.grid}>
-          {AUDIT_ROLES.map((role) => (
+          {roles.map((role) => (
             <li key={role.id} className={s.card}>
               <h3 className={s.cardTitle}>{role.title}</h3>
               <p className={s.cardSubtitle}>{role.subtitle}</p>
@@ -32,7 +45,7 @@ export function AuditRoleChoice() {
                 variant="primary"
                 fullWidth
                 className={s.cardButton}
-                onClick={() => openAuth("register", { role: role.role, direction: "AUDIT_SUPB" })}
+                onClick={() => openAuth("register", { role: role.role, direction })}
               >
                 Выбрать
               </Button>

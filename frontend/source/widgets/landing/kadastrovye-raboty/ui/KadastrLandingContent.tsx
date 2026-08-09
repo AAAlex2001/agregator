@@ -7,6 +7,7 @@ import {
   LandingAudience,
   LandingServiceFaq,
   LandingOtherDirections,
+  StartWorkingButton,
 } from "@/source/widgets/landing";
 import { KadastrServices } from "./Services";
 import { KadastrSeoText } from "./SeoText";
@@ -49,6 +50,7 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
               />
             </div>
             <p className={s.coverClaim}>Кадастровые инженеры из СРО — по всей России</p>
+            <StartWorkingButton className={s.coverButton} />
           </div>
         </LandingServiceHero>
 

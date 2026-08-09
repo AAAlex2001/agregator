@@ -1,14 +1,24 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
   LandingSearchBlock,
   LandingServiceFaq,
+  LandingServiceRoles,
   LandingOtherDirections,
+  StartWorkingButton,
 } from "@/source/widgets/landing";
-import { ServiceRequestForm } from "@/source/features/service-request";
 import { NirSeoText } from "./SeoText";
-import { NIR_BULLETS, NIR_FAQ, NIR_SUBTITLE, NIR_TITLE } from "../model/content";
+import {
+  NIR_BULLETS,
+  NIR_CLAIM,
+  NIR_COVER,
+  NIR_FAQ,
+  NIR_ROLES,
+  NIR_SUBTITLE,
+  NIR_TITLE,
+} from "../model/content";
 import s from "./nir-landing-content.module.scss";
 
 interface Props {
@@ -25,8 +35,22 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
       <main>
         <LandingHero basePath={basePath} activeHref="/nir" />
         <LandingServiceHero title={NIR_TITLE} subtitle={NIR_SUBTITLE} bullets={NIR_BULLETS}>
-          <ServiceRequestForm />
+          <div className={s.cover}>
+            <div className={s.coverImage}>
+              <Image
+                src={NIR_COVER}
+                alt="Проведение НИР и лабораторных исследований"
+                fill
+                sizes="(min-width: 1024px) 480px, 100vw"
+                className={s.coverImg}
+                priority
+              />
+            </div>
+            <p className={s.coverClaim}>{NIR_CLAIM}</p>
+            <StartWorkingButton className={s.coverButton} />
+          </div>
         </LandingServiceHero>
+        <LandingServiceRoles roles={NIR_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq
           items={NIR_FAQ}

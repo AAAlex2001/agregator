@@ -1,5 +1,6 @@
 import type { ServiceLandingFaqItem } from "../../shared/ui/ServiceLandingFaq";
 import type { ServiceLandingBullet } from "../../shared/ui/ServiceLandingHero";
+import type { ServiceLandingRole } from "../../shared/ui/ServiceRoles";
 import type { ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
 
 export const AUDIT_TITLE = "Аудит системы управления промышленной безопасностью (СУПБ)";
@@ -63,16 +64,7 @@ export const AUDIT_AUDIENCE: ServicesAccordionItem[] = [
   },
 ];
 
-export interface AuditRole {
-  id: string;
-  role: "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
-  title: string;
-  subtitle: string;
-  description: string;
-  fields: string[];
-}
-
-export const AUDIT_ROLES: AuditRole[] = [
+export const AUDIT_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",

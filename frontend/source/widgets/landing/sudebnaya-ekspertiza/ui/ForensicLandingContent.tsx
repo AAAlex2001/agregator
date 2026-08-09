@@ -7,6 +7,7 @@ import {
   LandingAudience,
   LandingServiceFaq,
   LandingOtherDirections,
+  StartWorkingButton,
 } from "@/source/widgets/landing";
 import { ForensicCatalog } from "./Catalog";
 import { ForensicSeoText } from "./SeoText";
@@ -50,6 +51,7 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
               />
             </div>
             <p className={s.coverClaim}>{FORENSIC_CLAIM}</p>
+            <StartWorkingButton className={s.coverButton} />
           </div>
         </LandingServiceHero>
 

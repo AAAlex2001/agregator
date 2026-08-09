@@ -5,18 +5,19 @@ import {
   LandingServiceHero,
   LandingSearchBlock,
   LandingServiceFaq,
+  LandingServiceRoles,
   LandingOtherDirections,
+  StartWorkingButton,
 } from "@/source/widgets/landing";
 import { AuditAudience } from "./Audience";
 import { AuditPurpose } from "./Purpose";
-import { AuditRoleChoice } from "./RoleChoice";
 import { AuditSeoText } from "./SeoText";
-import { StartWorkingButton } from "./StartWorkingButton";
 import {
   AUDIT_BULLETS,
   AUDIT_CLAIM,
   AUDIT_COVER,
   AUDIT_FAQ,
+  AUDIT_ROLES,
   AUDIT_SUBTITLE,
   AUDIT_TITLE,
 } from "../model/content";
@@ -53,7 +54,7 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
 
         <AuditPurpose />
         <AuditAudience />
-        <AuditRoleChoice />
+        <LandingServiceRoles roles={AUDIT_ROLES} direction="AUDIT_SUPB" />
         <LandingSearchBlock />
         <LandingServiceFaq
           items={AUDIT_FAQ}
