@@ -1,5 +1,4 @@
-import type { OrderDocuments } from "@/source/entities/order";
-import { MAX_ORDER_DOCUMENTS } from "@/source/entities/order";
+import { MAX_ORDER_DOCUMENTS, type OrderDocuments } from "./types";
 
 export interface SingleFileSlot {
   newFile: File | null;

@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAvailableRoles, useSession, type SessionRoleValue } from "@/source/features/session";
+import { useRoleSwitch, type SessionRoleValue } from "@/source/features/session";
 import { CustomerIcon, DiplomaIcon, ExpertIcon } from "@/source/shared/ui/icons";
 import { RoleSwitchPasswordModal } from "./RoleSwitchPasswordModal";
 import s from "./RoleSwitcher.module.scss";
@@ -13,12 +11,6 @@ const LABEL_BY_ROLE: Record<SessionRoleValue, string> = {
   LICENSE_HOLDER: "Держатель разрешительных документов",
 };
 
-const HOMEPAGE_BY_ROLE: Record<SessionRoleValue, string> = {
-  CUSTOMER: "/customer/orders",
-  EXPERT: "/expert/orders",
-  LICENSE_HOLDER: "/settings",
-};
-
 function renderIcon(role: SessionRoleValue) {
   if (role === "CUSTOMER") return <CustomerIcon size={20} />;
   if (role === "EXPERT") return <ExpertIcon size={20} />;
@@ -26,19 +18,11 @@ function renderIcon(role: SessionRoleValue) {
 }
 
 export function RoleSwitcher() {
-  const { role, reload } = useSession();
-  const { roles } = useAvailableRoles(role);
-  const router = useRouter();
-  const [target, setTarget] = useState<SessionRoleValue | null>(null);
+  const { roles, target, password, setPassword, submitting, error, pick, cancel, submit } =
+    useRoleSwitch();
 
   if (roles.length === 0) {
     return null;
-  }
-
-  async function handleSwitched(newRole: SessionRoleValue) {
-    setTarget(null);
-    await reload();
-    router.push(HOMEPAGE_BY_ROLE[newRole]);
   }
 
   return (
@@ -53,7 +37,7 @@ export function RoleSwitcher() {
               key={item.role}
               type="button"
               className={s.item}
-              onClick={() => setTarget(item.role)}
+              onClick={() => pick(item.role)}
               disabled={disabled}
               title={disabled ? "Сначала подтвердите почту для этой роли" : undefined}
             >
@@ -65,10 +49,13 @@ export function RoleSwitcher() {
       </div>
 
       <RoleSwitchPasswordModal
-        open={target !== null}
         targetRole={target}
-        onClose={() => setTarget(null)}
-        onSwitched={handleSwitched}
+        password={password}
+        onPasswordChange={setPassword}
+        submitting={submitting}
+        error={error}
+        onClose={cancel}
+        onSubmit={() => void submit()}
       />
     </>
   );

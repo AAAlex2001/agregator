@@ -12,7 +12,7 @@ import {
   type OrderWorkType,
 } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
-import type { DocumentsFormState } from "../../model/formFiles";
+import type { DocumentsFormState } from "@/source/entities/order";
 import { buildPreviewBadges } from "../../model/expertiseBadges";
 import type { OrderFormState } from "../../model/orderForm";
 import s from "./OrderLivePreview.module.scss";

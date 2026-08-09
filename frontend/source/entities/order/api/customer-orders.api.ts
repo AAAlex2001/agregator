@@ -3,7 +3,7 @@ import { fetchWithSession } from "@/source/shared/api/session";
 import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { OrderWorkType, OrdersApiList } from "@/source/entities/order";
-import type { DocumentsFormState } from "@/source/features/customer-orders/model/formFiles";
+import type { DocumentsFormState } from "../model/formFiles";
 
 export async function fetchCustomerOrders(skip = 0, limit = 50): Promise<OrdersApiList> {
   const res = await fetchWithSession(`${API_URL}/orders/?skip=${skip}&limit=${limit}`);

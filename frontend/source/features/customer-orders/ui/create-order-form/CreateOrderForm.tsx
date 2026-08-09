@@ -7,7 +7,7 @@ import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { hasOrderDetails } from "../../model/orderDetails";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
-import type { DocumentsFormState } from "../../model/formFiles";
+import type { DocumentsFormState } from "@/source/entities/order";
 import type { OrderFormValues } from "../../model/orderForm";
 import { BadgeSection } from "./sections/BadgeSection";
 import { CommentSection } from "./sections/CommentSection";

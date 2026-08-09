@@ -1,7 +1,7 @@
 "use client";
 
 import { useArchive } from "@/source/features/archive-orders";
-import { ResponsesSkeleton } from "@/source/widgets/responses/ui/ResponsesSkeleton";
+import { ResponsesSkeleton } from "@/source/widgets/responses";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";

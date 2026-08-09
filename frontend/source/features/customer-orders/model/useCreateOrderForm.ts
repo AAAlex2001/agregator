@@ -6,7 +6,7 @@ import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES } from "@/source/entit
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { clearDraft, saveDraft } from "./orderDraft";
-import { freeSlots, singleSlotIsFilled, totalNewFilesBytes, type DocumentsFormState } from "./formFiles";
+import { freeSlots, singleSlotIsFilled, totalNewFilesBytes, type DocumentsFormState } from "@/source/entities/order";
 import { initOrderForm, orderFormValues, reducer, type OrderFormValues, type SingleCategory } from "./orderForm";
 
 const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);

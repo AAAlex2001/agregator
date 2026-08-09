@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { MessageComposer } from "@/source/shared/ui/MessageComposer";
 import { ChatClipIcon } from "@/source/shared/ui/icons";
-import { FilePending, UploadProgress } from "@/source/features/chat/ui/FilePending";
+import { FilePending, UploadProgress } from "@/source/shared/ui/FilePending";
 import s from "./AttachmentComposer.module.scss";
 
 const ACCEPT = ".pdf,.jpeg,.jpg,.png,.doc,.docx,.xls,.xlsx";

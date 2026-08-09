@@ -40,3 +40,8 @@ export {
   MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES, PENDING_ORDER_UUID_KEY,
   emptyDocuments, documentPaths, countDocuments,
 } from "./model/types";
+export {
+  initialDocumentsFormState, singleSlotIsFilled, totalDocumentsCount,
+  freeSlots, canAddMoreOther, totalNewFilesBytes,
+} from "./model/formFiles";
+export type { DocumentsFormState, SingleFileSlot, OtherFilesSlot } from "./model/formFiles";

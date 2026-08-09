@@ -5,7 +5,7 @@ import type { ForensicOrderDetails } from "@/source/features/directions/forensic
 import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
 import type { ResearchOrderDetails } from "@/source/features/directions/research";
 import { emptyDirectionDetails } from "./orderDetails";
-import { initialDocumentsFormState, type DocumentsFormState } from "./formFiles";
+import { initialDocumentsFormState, type DocumentsFormState } from "@/source/entities/order";
 import { getDefaultValues } from "./mappers";
 import { loadDraft } from "./orderDraft";
 

@@ -5,8 +5,7 @@ import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
-import { ArchivedCard } from "@/source/widgets/archive/ui/ArchivedCard";
-import { ArchivedCardSkeleton } from "@/source/widgets/archive/ui/ArchivedCardSkeleton";
+import { ArchivedCard, ArchivedCardSkeleton } from "@/source/widgets/archive";
 import { useExpertOrdersHistory } from "@/source/entities/expert";
 import s from "./ExpertOrdersHistoryWidget.module.scss";
 

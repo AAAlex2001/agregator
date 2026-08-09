@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { OrderCardData } from "@/source/entities/order";
-import { ResponsesSkeleton } from "@/source/widgets/responses/ui/ResponsesSkeleton";
+import { ResponsesSkeleton } from "@/source/widgets/responses";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";

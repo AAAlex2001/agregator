@@ -23,7 +23,7 @@ import {
   type DocumentsFormState,
   type OtherFilesSlot,
   type SingleFileSlot,
-} from "../../../model/formFiles";
+} from "@/source/entities/order";
 import base from "./sectionBase.module.scss";
 import s from "./filesSection.module.scss";
 

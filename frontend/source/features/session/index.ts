@@ -4,6 +4,7 @@ export { RoleGuard } from "./ui/RoleGuard";
 export { RedirectIfAuthed } from "./ui/RedirectIfAuthed";
 export { useSession } from "./model/useSession";
 export { useAvailableRoles } from "./model/useAvailableRoles";
+export { useRoleSwitch } from "./model/useRoleSwitch";
 export { switchSessionRole, fetchAvailableRoles } from "@/source/entities/session";
 export type { AvailableRole, SessionRoleValue } from "@/source/entities/session";
 export type { SessionRole } from "./model/types";

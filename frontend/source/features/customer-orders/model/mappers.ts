@@ -5,7 +5,7 @@ import {
   directionDetailsFromServer,
   emptyDirectionDetails,
 } from "./orderDetails";
-import type { DocumentsFormState } from "./formFiles";
+import type { DocumentsFormState } from "@/source/entities/order";
 import type { OrderFormValues } from "./orderForm";
 
 export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {

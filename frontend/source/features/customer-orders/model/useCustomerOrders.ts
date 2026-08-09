@@ -9,7 +9,7 @@ import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "@/so
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
 import type { OrderFormValues } from "./orderForm";
-import type { DocumentsFormState } from "./formFiles";
+import type { DocumentsFormState } from "@/source/entities/order";
 import { clearDraft, loadDraft } from "./orderDraft";
 
 export function useCustomerOrders() {
