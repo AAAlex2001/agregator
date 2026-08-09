@@ -39,7 +39,10 @@ export function ExpertMapVisibilityFields({
 
       {showOnMap && (
         <div className={s.fields}>
-          <span className={s.hint}>Что отразить на карте — отметьте нужное</span>
+          <span className={s.hint}>
+            Что отразить на карте — отметьте нужное. Область, объект и категория относятся к
+            удостоверениям экспертизы ОПО; на картах других направлений показываются данные их анкет.
+          </span>
           <div className={s.options}>
             {MAP_FIELD_OPTIONS.map((option) => (
               <button

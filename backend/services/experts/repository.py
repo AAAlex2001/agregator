@@ -3,15 +3,21 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import ColumnElement, Float, Select, cast, func, select
+from sqlalchemy import ColumnElement, Float, Select, cast, exists, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, selectinload
 
 from models.account import Account, UserRole
+from models.audit import ExpertAuditProfile
+from models.cadastral import ExpertCadastralProfile
 from models.expert import Expert
-from models.order import Order, OrderStatus
+from models.forensic import ExpertForensicProfile
+from models.laboratory import ExpertLaboratoryProfile
+from models.order import Order, OrderStatus, OrderWorkType
+from models.research import ExpertResearchProfile
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus
+from models.tech_diag import ExpertTechDiagProfile
 from utils.pagination import paginate_with_has_more
 
 SORT_BY_RATING = "rating"
@@ -24,6 +30,55 @@ RATING_PRIOR_WEIGHT = 5.0
 RATING_PRIOR_MEAN = 4.5
 
 DEFAULT_MAP_FIELDS = ("name", "area", "object", "category")
+
+EXPERT_DIRECTION_PROFILES = {
+    OrderWorkType.AUDIT_SUPB.value: ExpertAuditProfile,
+    OrderWorkType.CADASTRAL.value: ExpertCadastralProfile,
+    OrderWorkType.FORENSIC.value: ExpertForensicProfile,
+    OrderWorkType.RESEARCH.value: ExpertResearchProfile,
+    OrderWorkType.LABORATORY.value: ExpertLaboratoryProfile,
+    OrderWorkType.TECH_DIAG.value: ExpertTechDiagProfile,
+}
+
+
+def build_direction_summary(expert: Expert, direction: str) -> list[str]:
+    "Сводка анкеты направления для метки на карте — вместо удостоверений экспертизы."
+    if direction == OrderWorkType.AUDIT_SUPB.value:
+        profile = expert.audit_profile
+        qualifications = list(profile.audit_qualifications or []) if profile else []
+        return qualifications or ["Аудитор СУПБ"]
+    if direction == OrderWorkType.CADASTRAL.value:
+        profile = expert.cadastral_profile
+        parts = ["Кадастровый инженер"]
+        if profile is not None and profile.registry_number:
+            parts.append(f"Реестровый № {profile.registry_number}")
+        return parts
+    if direction == OrderWorkType.FORENSIC.value:
+        profile = expert.forensic_profile
+        parts = ["Судебный эксперт"]
+        if profile is not None and profile.degree:
+            parts.append(profile.degree)
+        return parts
+    if direction == OrderWorkType.RESEARCH.value:
+        profile = expert.research_profile
+        parts = [
+            part
+            for part in (
+                profile.academic_degree if profile else "",
+                profile.academic_title if profile else "",
+            )
+            if part
+        ]
+        return parts or ["Исполнитель НИР"]
+    if direction == OrderWorkType.LABORATORY.value:
+        profile = expert.laboratory_profile
+        area = (profile.accreditation_area or "").strip() if profile else ""
+        return [area[:200]] if area else ["Лабораторные исследования"]
+    if direction == OrderWorkType.TECH_DIAG.value:
+        profile = expert.tech_diag_profile
+        methods = list(profile.methods or []) if profile else []
+        return [f"Виды НК: {', '.join(methods)}"] if methods else ["Специалист НК"]
+    return []
 
 
 def build_completed_orders_expr() -> ColumnElement[int]:
@@ -185,7 +240,9 @@ class ExpertsRepository:
             account, expert, completed_orders_count, last_order, last_response
         )
 
-    async def list_with_location(self, limit: int = 1000) -> list[ExpertLocationRow]:
+    async def list_with_location(
+        self, direction: str | None = None, limit: int = 1000
+    ) -> list[ExpertLocationRow]:
         "Активные эксперты с заданными координатами базирования — для карты."
         query: Select[tuple[Account, Expert]] = (
             select(Account, Expert)
@@ -200,10 +257,17 @@ class ExpertsRepository:
             .order_by(Account.created_at.desc())
             .limit(limit)
         )
+        profile_model = EXPERT_DIRECTION_PROFILES.get(direction or "")
+        if profile_model is not None:
+            query = query.where(
+                exists(select(profile_model.id).where(profile_model.expert_id == Expert.id))
+            )
         rows = (await self.db.execute(query)).all()
-        return [self.build_location_row(account, expert) for account, expert in rows]
+        return [self.build_location_row(account, expert, direction) for account, expert in rows]
 
-    def build_location_row(self, account: Account, expert: Expert) -> ExpertLocationRow:
+    def build_location_row(
+        self, account: Account, expert: Expert, direction: str | None = None
+    ) -> ExpertLocationRow:
         "Строит точку карты из аккаунта и профиля — показывает только те поля, что эксперт сам выбрал (map_fields)."
         first = account.first_name or ""
         last = account.last_name or ""
@@ -217,12 +281,15 @@ class ExpertsRepository:
 
         certificates = []
         certificate_codes = []
-        for cert in expert.certificates or []:
-            text = format_cert_for_map(cert, certificate_fields)
-            if text:
-                certificates.append(text)
-            if cert.get("area") and cert.get("object"):
-                certificate_codes.append(f"{cert['area']} {cert['object']}")
+        if direction in EXPERT_DIRECTION_PROFILES:
+            certificates = build_direction_summary(expert, direction)
+        else:
+            for cert in expert.certificates or []:
+                text = format_cert_for_map(cert, certificate_fields)
+                if text:
+                    certificates.append(text)
+                if cert.get("area") and cert.get("object"):
+                    certificate_codes.append(f"{cert['area']} {cert['object']}")
 
         return ExpertLocationRow(
             public_id=account.public_id,

@@ -9,9 +9,10 @@ import s from "./heroExpertsMap.module.scss";
 export function HeroExpertsMap({
   hideHead = false,
   mapOnly = false,
-}: { hideHead?: boolean; mapOnly?: boolean } = {}) {
+  direction,
+}: { hideHead?: boolean; mapOnly?: boolean; direction?: string } = {}) {
   const { user } = useSession();
-  const { items } = useExpertsMap();
+  const { items } = useExpertsMap(direction);
 
   return (
     <div className={s.wrap}>

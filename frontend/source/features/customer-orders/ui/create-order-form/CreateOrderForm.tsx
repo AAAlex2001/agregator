@@ -82,7 +82,7 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
                 <DirectionDetailsSection state={state} dispatch={dispatch} />
               )}
 
-              {isExpertise && <ExpertsMapSection />}
+              <ExpertsMapSection workType={state.workType} />
 
               {isExpertise && (
                 <BadgeSection state={state} dispatch={dispatch} onShowHelp={() => setView("help")} />

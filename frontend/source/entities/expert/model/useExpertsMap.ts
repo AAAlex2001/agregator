@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { fetchExpertsMap } from "../api/experts.api";
 import type { ExpertMapItemApi } from "./types";
 
-export function useExpertsMap() {
+export function useExpertsMap(direction?: string) {
   const [items, setItems] = useState<ExpertMapItemApi[]>([]);
 
   useEffect(() => {
     let active = true;
-    fetchExpertsMap()
+    fetchExpertsMap(direction)
       .then((data) => {
         if (active) setItems(data.items);
       })
@@ -17,7 +17,7 @@ export function useExpertsMap() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [direction]);
 
   return { items };
 }

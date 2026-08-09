@@ -18,6 +18,7 @@ from services.experts import (
     ListExpertsUseCase,
 )
 from services.experts.repository import (
+    EXPERT_DIRECTION_PROFILES,
     SORT_BY_COMPLETED_ORDERS,
     SORT_BY_RATING,
     SORT_BY_REVIEW_COUNT,
@@ -78,10 +79,12 @@ async def list_experts(
 
 @router.get("/experts/map", response_model=ExpertMapResponse)
 async def list_experts_map(
+    direction: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
 ) -> ExpertMapResponse:
     "Активные эксперты с координатами базирования — публичные точки на карте (лендинг и создание заказа)."
-    rows = await ListExpertsMapUseCase(build_repo(db)).execute()
+    direction_key = direction if direction in EXPERT_DIRECTION_PROFILES else None
+    rows = await ListExpertsMapUseCase(build_repo(db)).execute(direction_key)
     return ExpertMapResponse(
         items=[
             ExpertMapItem(

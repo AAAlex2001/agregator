@@ -14,17 +14,17 @@ export interface ServicesAccordionItem {
   href?: string;
 }
 
-type ServicesAccordionProps = {
-  items: ServicesAccordionItem[];
-  renderActions?: (item: ServicesAccordionItem) => ReactNode;
-  renderVisual?: (item: ServicesAccordionItem) => ReactNode;
+type ServicesAccordionProps<T extends ServicesAccordionItem> = {
+  items: T[];
+  renderActions?: (item: T) => ReactNode;
+  renderVisual?: (item: T) => ReactNode;
   hideItemText?: boolean;
   mobileStack?: boolean;
   initialActiveIndex?: number;
-  onSelect?: (item: ServicesAccordionItem, index: number) => void;
+  onSelect?: (item: T, index: number) => void;
 };
 
-export function ServicesAccordion({
+export function ServicesAccordion<T extends ServicesAccordionItem>({
   items,
   renderActions,
   renderVisual,
@@ -32,7 +32,7 @@ export function ServicesAccordion({
   mobileStack,
   initialActiveIndex = 0,
   onSelect,
-}: ServicesAccordionProps) {
+}: ServicesAccordionProps<T>) {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const [isDesktop, setIsDesktop] = useState(true);
   const active = items[activeIndex];

@@ -27,8 +27,9 @@ export async function fetchExperts(params: {
   return response.json();
 }
 
-export async function fetchExpertsMap(): Promise<ExpertMapApi> {
-  const response = await fetchWithSession(`${API_URL}/experts/map`);
+export async function fetchExpertsMap(direction?: string): Promise<ExpertMapApi> {
+  const params = direction ? `?direction=${encodeURIComponent(direction)}` : "";
+  const response = await fetchWithSession(`${API_URL}/experts/map${params}`);
   if (!response.ok) {
     throw new Error(await readErrorMessage(response, "Не удалось загрузить исполнителей на карте"));
   }

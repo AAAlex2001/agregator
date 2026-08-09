@@ -1,25 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { fetchExpertsMap, type ExpertMapItemApi } from "@/source/entities/expert";
+import { useExpertsMap } from "@/source/entities/expert";
+import type { OrderWorkType } from "@/source/entities/order";
 import { FilterableExpertsMap } from "@/source/features/expert-map-filter";
 import base from "./sectionBase.module.scss";
 import s from "./expertsMapSection.module.scss";
 
-export function ExpertsMapSection() {
-  const [items, setItems] = useState<ExpertMapItemApi[]>([]);
-
-  useEffect(() => {
-    let active = true;
-    fetchExpertsMap()
-      .then((data) => {
-        if (active) setItems(data.items);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
+export function ExpertsMapSection({ workType }: { workType: OrderWorkType }) {
+  const { items } = useExpertsMap(workType === "EXPERTISE" ? undefined : workType);
 
   return (
     <section className={base.section}>

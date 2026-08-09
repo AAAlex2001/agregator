@@ -5,6 +5,7 @@ export interface ServiceShowcaseItem {
   text: string;
   image: string;
   href?: string;
+  direction?: string;
 }
 
 export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
@@ -49,6 +50,7 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
       "Аудит системы управления промышленной безопасностью, оценка добросовестности, обязательный мониторинг, технический и финансовый аудит промышленных объектов.",
     image: "/services/5.webp",
     href: "/audit-supb",
+    direction: "AUDIT_SUPB",
   },
   {
     id: 6,
@@ -66,6 +68,7 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
       "Комплекс мероприятий: теоретических (анализ литературы, построение моделей, формулировка гипотез) и экспериментальных (собственно исследования). Цель НИР — получить новые знания, выявить закономерности, а в прикладных задачах — найти пути создания или модернизации продукта, технологии, метода.",
     image: "/services/7.webp",
     href: "/nir",
+    direction: "RESEARCH",
   },
   {
     id: 8,
@@ -75,6 +78,7 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
       "Комплекс мероприятий, цель которого — получить полную картину технического состояния объекта. Специалисты изучают не только сами конструкции (несущие элементы, стены, фундаменты), но и грунты основания, а иногда и системы инженерного обеспечения (электрику, отопление).",
     image: "/services/8.webp",
     href: "/tehnicheskoe-diagnostirovanie",
+    direction: "TECH_DIAG",
   },
   {
     id: 9,
@@ -84,6 +88,7 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
       "Специалисты, состоящие в СРО кадастровых инженеров. Их цель — собрать, обработать и зафиксировать точные сведения об объекте, чтобы на их основе подготовить документы для государственного кадастрового учёта и внесения данных в Единый государственный реестр недвижимости (ЕГРН).",
     image: "/services/9.webp",
     href: "/kadastrovye-raboty",
+    direction: "CADASTRAL",
   },
   {
     id: 10,
@@ -93,5 +98,6 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
       "Процессуальное действие, состоящее из проведения исследований и дачи заключения экспертом по вопросам, разрешение которых требует специальных знаний в области науки, техники, искусства или ремесла. Специалисты дают профессиональные заключения по вопросам, имеющим значение для дела.",
     image: "/services/10.webp",
     href: "/sudebnaya-ekspertiza",
+    direction: "FORENSIC",
   },
 ];
