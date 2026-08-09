@@ -39,6 +39,8 @@ const TAB_LABELS: Record<UserRole, Array<{ key: ResponseTabKey; label: string }>
   ],
 };
 
+type ActionMode = "withdraw" | "start" | "complete" | "chat" | "reject" | "accept" | "select" | "restore";
+
 export function useResponses(role: UserRole | null) {
   const searchParams = useSearchParams();
   const initialTab = searchParams?.get("tab") as ResponseTabKey | null;
@@ -98,17 +100,14 @@ export function useResponses(role: UserRole | null) {
     void reload();
   }, [role, s.activeTab, s.sortBy, s.sortDir]);
 
-  const setTab = (tab: ResponseTabKey) => d({ type: "TAB", tab });
   const tabs = role
     ? TAB_LABELS[role].map((t) => ({ id: t.key, label: t.label, count: s.counters[t.key] }))
     : [];
 
-  const statusAction = async (id: number, mode: string, status: string, after?: () => void) => {
-    d({ type: "ACTION_LOADING", id, mode: mode as never });
+  const runAction = async (id: number, mode: ActionMode, action: () => Promise<void>) => {
+    d({ type: "ACTION_LOADING", id, mode });
     try {
-      await updateStatus(id, status);
-      after?.();
-      void reload();
+      await action();
     } catch (e) {
       toast(e);
     } finally {
@@ -116,32 +115,27 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onChat = async (rid: number, oid: number, expertId?: number) => {
-    if (!role) return;
-    d({ type: "ACTION_LOADING", id: rid, mode: "chat" });
-    try {
+  const statusAction = (id: number, mode: ActionMode, status: string) =>
+    runAction(id, mode, async () => {
+      await updateStatus(id, status);
+      void reload();
+    });
+
+  const onChat = (rid: number, oid: number, expertId?: number) =>
+    runAction(rid, "chat", async () => {
+      if (!role) return;
       const detail = await openChatByOrder(oid, role === "customer" ? expertId : undefined);
       router.push(`/chat/${detail.uuid}`);
-    } catch (e) {
-      toast(e, "Не удалось открыть чат");
-    } finally {
-      d({ type: "ACTION_LOADING", id: rid, mode: null });
-    }
-  };
+    });
 
-  const onWithdrawConfirm = async () => {
-    if (!s.withdrawTarget) return;
-    const id = s.withdrawTarget.id;
-    d({ type: "ACTION_LOADING", id, mode: "withdraw" });
-    try {
-      await deleteResponse(id);
+  const onWithdrawConfirm = () => {
+    const target = s.withdrawTarget;
+    if (!target) return;
+    return runAction(target.id, "withdraw", async () => {
+      await deleteResponse(target.id);
       d({ type: "WITHDRAW_TARGET", value: null });
       void reload();
-    } catch (e) {
-      toast(e);
-    } finally {
-      d({ type: "ACTION_LOADING", id, mode: null });
-    }
+    });
   };
 
   const onEditSubmit = async (formData: { comment: string; costEstimate: number; startDate: string; deadline: string; vatKind: string; files?: File[]; keepFiles?: string[] }) => {
@@ -166,33 +160,21 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onAccept = async (id: number, oid: number, expertId?: number) => {
-    d({ type: "ACTION_LOADING", id, mode: "accept" });
-    try {
+  const onAccept = (id: number, oid: number, expertId?: number) =>
+    runAction(id, "accept", async () => {
       await updateStatus(id, "ACCEPTED");
       void onChat(id, oid, expertId);
-    } catch (e) {
-      toast(e);
-    } finally {
-      d({ type: "ACTION_LOADING", id, mode: null });
-    }
-  };
+    });
 
-  const onComplete = async (id: number) => {
-    d({ type: "ACTION_LOADING", id, mode: "complete" });
-    try {
+  const onComplete = (id: number) =>
+    runAction(id, "complete", async () => {
       await updateStatus(id, "COMPLETED");
       if (role === "customer") {
         d({ type: "REVIEW_TARGET", value: s.items.find((i) => i.id === id) ?? null });
         d({ type: "COMPLETION_MODAL", value: true });
       }
       void reload();
-    } catch (e) {
-      toast(e);
-    } finally {
-      d({ type: "ACTION_LOADING", id, mode: null });
-    }
-  };
+    });
 
   const onSubmitReview = async (payload: { rating: number; comment: string }) => {
     if (!s.reviewTarget) return;
@@ -206,23 +188,38 @@ export function useResponses(role: UserRole | null) {
     }
   };
 
-  const onRejectConfirm = async (reason: string) => {
-    if (!s.rejectTarget) return;
-    const id = s.rejectTarget.id;
-    d({ type: "ACTION_LOADING", id, mode: "reject" });
-    try {
-      await updateStatus(id, "REJECTED", reason || undefined);
+  const onRejectConfirm = (reason: string) => {
+    const target = s.rejectTarget;
+    if (!target) return;
+    return runAction(target.id, "reject", async () => {
+      await updateStatus(target.id, "REJECTED", reason || undefined);
       d({ type: "REJECT_TARGET", value: null });
+      void reload();
+    });
+  };
+
+  const onDeleteRejectedConfirm = async () => {
+    const target = s.deleteRejectedTarget;
+    if (target === null) return;
+    d({ type: "DELETE_REJECTED_LOADING", value: true });
+    try {
+      if (target === "all") {
+        await deleteAllRejectedResponses();
+      } else {
+        await deleteRejectedResponse(target.id);
+      }
+      d({ type: "DELETE_REJECTED_TARGET", value: null });
       void reload();
     } catch (e) {
       toast(e);
     } finally {
-      d({ type: "ACTION_LOADING", id, mode: null });
+      d({ type: "DELETE_REJECTED_LOADING", value: false });
     }
   };
 
   return {
-    ...s, role, tabs, setTab, reload, loadMore, onChat, onComplete,
+    ...s, role, tabs, reload, loadMore, onChat, onComplete,
+    setTab: (tab: ResponseTabKey) => d({ type: "TAB", tab }),
     onShare: (pid: string, cb: () => void) => copyOrderLink(pid, cb),
     onWithdraw: (r: ResponseCardData) => d({ type: "WITHDRAW_TARGET", value: r }),
     onEdit: (r: ResponseCardData) => d({ type: "EDITING", value: r }),
@@ -235,43 +232,16 @@ export function useResponses(role: UserRole | null) {
     onRejectConfirm,
     onSelect: (id: number) => statusAction(id, "select", "IN_PROGRESS"),
     onRestore: (id: number) => statusAction(id, "restore", "REVIEW"),
-    onRestoreWithdrawn: async (id: number) => {
-      d({ type: "ACTION_LOADING", id, mode: "restore" });
-      try {
+    onRestoreWithdrawn: (id: number) =>
+      runAction(id, "restore", async () => {
         await restoreWithdrawnResponse(id);
         void reload();
-      } catch (e) {
-        toast(e);
-      } finally {
-        d({ type: "ACTION_LOADING", id, mode: null });
-      }
-    },
-    onDeleteRejected: (id: number) => {
-      const card = s.items.find((item) => item.id === id) ?? null;
-      d({ type: "DELETE_REJECTED_TARGET", value: card });
-    },
-    onDeleteAllRejected: () => {
-      d({ type: "DELETE_REJECTED_TARGET", value: "all" });
-    },
+      }),
+    onDeleteRejected: (id: number) =>
+      d({ type: "DELETE_REJECTED_TARGET", value: s.items.find((item) => item.id === id) ?? null }),
+    onDeleteAllRejected: () => d({ type: "DELETE_REJECTED_TARGET", value: "all" }),
     closeDeleteRejected: () => d({ type: "DELETE_REJECTED_TARGET", value: null }),
-    onDeleteRejectedConfirm: async () => {
-      const target = s.deleteRejectedTarget;
-      if (target === null) return;
-      d({ type: "DELETE_REJECTED_LOADING", value: true });
-      try {
-        if (target === "all") {
-          await deleteAllRejectedResponses();
-        } else {
-          await deleteRejectedResponse(target.id);
-        }
-        d({ type: "DELETE_REJECTED_TARGET", value: null });
-        void reload();
-      } catch (e) {
-        toast(e);
-      } finally {
-        d({ type: "DELETE_REJECTED_LOADING", value: false });
-      }
-    },
+    onDeleteRejectedConfirm,
     onAccept,
     onLeaveReview: (r: ResponseCardData) => { d({ type: "REVIEW_TARGET", value: r }); d({ type: "REVIEW_MODAL", value: true }); },
     closeCompletion: () => d({ type: "COMPLETION_MODAL", value: false }),

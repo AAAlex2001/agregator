@@ -1,11 +1,10 @@
-export {
+﻿export {
   deleteForensicDocument,
   fetchForensicProfile,
   saveForensicProfile,
   uploadForensicDiploma,
   uploadForensicDocument,
 } from "./model/api";
-export { forensicOrderSchema, forensicProfileSchema } from "./model/schema";
 export {
   emptyForensicOrderDetails,
   emptyForensicProfile,

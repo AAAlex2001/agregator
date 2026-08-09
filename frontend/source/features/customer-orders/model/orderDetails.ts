@@ -1,30 +1,21 @@
 import type { OrderWorkType } from "@/source/entities/order";
+import { emptyAuditOrderDetails, type AuditOrderDetails } from "@/source/features/directions/audit";
 import {
-  auditOrderSchema,
-  emptyAuditOrderDetails,
-  type AuditOrderDetails,
-} from "@/source/features/directions/audit";
-import {
-  cadastralOrderSchema,
   emptyCadastralOrderDetails,
   type CadastralOrderDetails,
 } from "@/source/features/directions/cadastral";
 import {
   emptyForensicOrderDetails,
-  forensicOrderSchema,
   type ForensicOrderDetails,
 } from "@/source/features/directions/forensic";
 import {
   emptyLaboratoryOrderDetails,
-  laboratoryOrderSchema,
   type LaboratoryOrderDetails,
 } from "@/source/features/directions/laboratory";
 import {
   emptyResearchOrderDetails,
-  researchOrderSchema,
   type ResearchOrderDetails,
 } from "@/source/features/directions/research";
-import { firstSchemaError } from "@/source/features/directions/shared/model/validate";
 
 const DIRECTIONS_WITH_DETAILS: OrderWorkType[] = [
   "CADASTRAL",
@@ -91,40 +82,5 @@ export function activeDirectionDetails(
       return values.auditDetails;
     default:
       return undefined;
-  }
-}
-
-export interface DirectionDetailsIssue {
-  path: keyof DirectionDetailsValues;
-  message: string;
-}
-
-export function validateDirectionDetails(
-  workType: OrderWorkType,
-  values: DirectionDetailsValues,
-): DirectionDetailsIssue | null {
-  switch (workType) {
-    case "CADASTRAL": {
-      const message = firstSchemaError(cadastralOrderSchema, values.cadastralDetails);
-      return message ? { path: "cadastralDetails", message } : null;
-    }
-    case "FORENSIC": {
-      const message = firstSchemaError(forensicOrderSchema, values.forensicDetails);
-      return message ? { path: "forensicDetails", message } : null;
-    }
-    case "RESEARCH": {
-      const message = firstSchemaError(researchOrderSchema, values.researchDetails);
-      return message ? { path: "researchDetails", message } : null;
-    }
-    case "LABORATORY": {
-      const message = firstSchemaError(laboratoryOrderSchema, values.laboratoryDetails);
-      return message ? { path: "laboratoryDetails", message } : null;
-    }
-    case "AUDIT_SUPB": {
-      const message = firstSchemaError(auditOrderSchema, values.auditDetails);
-      return message ? { path: "auditDetails", message } : null;
-    }
-    default:
-      return null;
   }
 }

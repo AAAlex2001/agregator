@@ -1,5 +1,5 @@
 import { createDraftStorage } from "@/source/entities/draft";
-import type { OrderFormValues } from "./schema";
+import type { OrderFormValues } from "./orderForm";
 
 const FIXED_ID = 0;
 const storage = createDraftStorage<OrderFormValues>("create-order-draft");

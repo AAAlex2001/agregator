@@ -4,13 +4,12 @@ import Button from "@/source/shared/ui/Button";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { EXECUTOR_REQUIREMENT_HINTS } from "@/source/entities/order";
-import type { ServiceRequestErrors, ServiceRequestState } from "../model/types";
+import type { ServiceRequestState } from "../model/types";
 import { Field } from "./Field";
 import s from "./service-request-form.module.scss";
 
 interface Props {
   state: ServiceRequestState;
-  errors: ServiceRequestErrors;
   onTopicChange: (value: string) => void;
   onToggleSiteVisit: () => void;
   onAddRequirement: () => void;
@@ -20,7 +19,6 @@ interface Props {
 
 export function NirRequestFields({
   state,
-  errors,
   onTopicChange,
   onToggleSiteVisit,
   onAddRequirement,
@@ -32,9 +30,9 @@ export function NirRequestFields({
       <Field label="Тема">
         <TextInput
           value={state.topic}
+          required
           onChange={(e) => onTopicChange(e.target.value)}
           placeholder="Тема научно-исследовательской работы"
-          error={errors.topic}
         />
       </Field>
 

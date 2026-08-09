@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import {
   AuditExpertProfileFields,
-  auditExpertProfileSchema,
   deleteAuditDocument,
   emptyAuditCatalogs,
   fetchAuditCatalogs,
@@ -14,14 +13,9 @@ import {
   type AuditCatalogs,
   type AuditExpertProfile,
 } from "@/source/features/directions/audit";
-import { firstSchemaError } from "@/source/features/directions/shared/model/validate";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
-
-function validate(profile: AuditExpertProfile): string | null {
-  return firstSchemaError(auditExpertProfileSchema, profile);
-}
 
 function mergeDocuments(current: AuditExpertProfile, server: AuditExpertProfile): AuditExpertProfile {
   return { ...current, documents: server.documents };
@@ -33,7 +27,6 @@ export function AuditExpertProfileCard() {
     title: "Аудит СУПБ",
     load: fetchAuditExpertProfile,
     save: saveAuditExpertProfile,
-    validate,
   });
 
   useEffect(() => {

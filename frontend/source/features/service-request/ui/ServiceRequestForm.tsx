@@ -46,7 +46,7 @@ const ServiceRequestForm = () => {
   }));
 
   const isNir = state.variant === "nir";
-  const { submit, isSubmitting, errors } = useSubmitServiceRequest();
+  const { submit, isSubmitting } = useSubmitServiceRequest();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -77,7 +77,6 @@ const ServiceRequestForm = () => {
       {isNir ? (
         <NirRequestFields
           state={state}
-          errors={errors}
           onTopicChange={(value) => setField("topic", value)}
           onToggleSiteVisit={toggleSiteVisit}
           onAddRequirement={addRequirement}
@@ -87,7 +86,6 @@ const ServiceRequestForm = () => {
       ) : (
         <LabRequestFields
           state={state}
-          errors={errors}
           onResearchNameChange={(value) => setField("researchName", value)}
           onEquipmentChange={(value) => setField("equipmentRequirements", value)}
         />
@@ -97,17 +95,17 @@ const ServiceRequestForm = () => {
         <Field label="Имя">
           <TextInput
             value={state.firstName}
+            required
             onChange={(e) => setField("firstName", e.target.value)}
             placeholder="Ваше имя"
-            error={errors.firstName}
           />
         </Field>
         <Field label="Фамилия">
           <TextInput
             value={state.lastName}
+            required
             onChange={(e) => setField("lastName", e.target.value)}
             placeholder="Ваша фамилия"
-            error={errors.lastName}
           />
         </Field>
       </div>
@@ -116,30 +114,30 @@ const ServiceRequestForm = () => {
         <Field label="Телефон">
           <PhoneInput
             value={state.phone}
+            required
             onChange={(e) => setField("phone", e.target.value)}
             placeholder="+7 (999) 999-99-99"
-            error={errors.phone}
           />
         </Field>
         <Field label="Почта">
           <EmailInput
             value={state.email}
+            required
             onChange={(e) => setField("email", e.target.value)}
             placeholder="mail@example.com"
-            error={errors.email}
           />
         </Field>
       </div>
 
       <Field label="Краткое описание, задачи">
         <textarea
-          className={errors.description ? `${s.textarea} ${s.textareaError}` : s.textarea}
+          className={s.textarea}
           value={state.description}
+          required
           onChange={(e) => setField("description", e.target.value)}
           placeholder="Что нужно сделать"
           rows={3}
         />
-        {errors.description && <span className={s.error}>{errors.description}</span>}
       </Field>
 
       <div className={s.row3}>
@@ -147,21 +145,18 @@ const ServiceRequestForm = () => {
           <CalendarInput
             value={state.responsesDeadline}
             onChange={(value) => setField("responsesDeadline", value)}
-            error={errors.responsesDeadline}
           />
         </Field>
         <Field label="Начать работу">
           <CalendarInput
             value={state.startDate}
             onChange={(value) => setField("startDate", value)}
-            error={errors.startDate}
           />
         </Field>
         <Field label="Сдать работу">
           <CalendarInput
             value={state.dueDate}
             onChange={(value) => setField("dueDate", value)}
-            error={errors.dueDate}
           />
         </Field>
       </div>
@@ -169,11 +164,11 @@ const ServiceRequestForm = () => {
       <Field label="Начальная максимальная цена">
         <TextInput
           value={state.maxPrice}
+          required
           onChange={(e) => setField("maxPrice", e.target.value)}
           placeholder="0"
           inputMode="numeric"
           suffix="₽"
-          error={errors.maxPrice}
         />
       </Field>
 
@@ -201,9 +196,9 @@ const ServiceRequestForm = () => {
       <div className={s.agreements}>
         <Checkbox
           id="request-privacy"
+          required
           checked={state.agreePrivacy}
           onChange={() => toggleAgreement("agreePrivacy")}
-          error={errors.agreePrivacy}
         >
           Я соглашаюсь с{" "}
           <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer" className={s.link}>
@@ -212,9 +207,9 @@ const ServiceRequestForm = () => {
         </Checkbox>
         <Checkbox
           id="request-terms"
+          required
           checked={state.agreeTerms}
           onChange={() => toggleAgreement("agreeTerms")}
-          error={errors.agreeTerms}
         >
           Я соглашаюсь с{" "}
           <Link href="/user-agreement" target="_blank" rel="noopener noreferrer" className={s.link}>
@@ -223,9 +218,9 @@ const ServiceRequestForm = () => {
         </Checkbox>
         <Checkbox
           id="request-consent"
+          required
           checked={state.agreeConsent}
           onChange={() => toggleAgreement("agreeConsent")}
-          error={errors.agreeConsent}
         >
           Я даю{" "}
           <Link

@@ -8,7 +8,7 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
 import { fetchCustomerOrders, createOrder, updateOrder, deleteOrder } from "@/source/entities/order";
 import { buildCreatePayload, buildUpdatePayload } from "./mappers";
 import { reducer, initial } from "./reducer";
-import type { OrderFormValues } from "./schema";
+import type { OrderFormValues } from "./orderForm";
 import type { DocumentsFormState } from "./formFiles";
 import { clearDraft, loadDraft } from "./orderDraft";
 

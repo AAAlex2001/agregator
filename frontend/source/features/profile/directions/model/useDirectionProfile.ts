@@ -8,10 +8,9 @@ interface Options<TProfile> {
   title: string;
   load: () => Promise<TProfile>;
   save: (profile: TProfile) => Promise<TProfile>;
-  validate: (profile: TProfile) => string | null;
 }
 
-export function useDirectionProfile<TProfile>({ title, load, save, validate }: Options<TProfile>) {
+export function useDirectionProfile<TProfile>({ title, load, save }: Options<TProfile>) {
   const { showError } = useNotifications();
   const [value, setValue] = useState<TProfile | null>(null);
   const [saved, setSaved] = useState<TProfile | null>(null);
@@ -33,8 +32,6 @@ export function useDirectionProfile<TProfile>({ title, load, save, validate }: O
 
   useRegisterProfileSave(async () => {
     if (value === null || value === saved) return;
-    const message = validate(value);
-    if (message) throw new Error(`${title}: ${message}`);
     const persisted = await save(value);
     setValue(persisted);
     setSaved(persisted);

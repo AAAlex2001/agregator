@@ -1,34 +1,24 @@
-import type { UseFormReturn } from "react-hook-form";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
-import type { OrderFormValues } from "../../../model/schema";
+import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
 import s from "./requirementsSection.module.scss";
 
-interface Props {
-  form: UseFormReturn<OrderFormValues>;
-}
-
-export function RequirementsSection({ form }: Props) {
-  const { watch, setValue, formState } = form;
-  const error = formState.errors.requiresExpert?.message ?? formState.errors.requiresLicense?.message;
-
+export function RequirementsSection({ state, dispatch }: StepProps) {
   return (
     <section className={base.section}>
       <span className={`${base.label} ${s.title}`}>Требования к исполнителю</span>
       <div className={s.options}>
         <Checkbox
           id="order-requires-expert"
-          checked={watch("requiresExpert")}
-          onChange={(checked) => setValue("requiresExpert", checked, { shouldDirty: true, shouldValidate: true })}
-          error={error}
+          checked={state.requiresExpert}
+          onChange={(value) => dispatch({ type: "requiresExpert", value })}
         >
           Требуется исполнитель?
         </Checkbox>
         <Checkbox
           id="order-requires-license"
-          checked={watch("requiresLicense")}
-          onChange={(checked) => setValue("requiresLicense", checked, { shouldDirty: true, shouldValidate: true })}
-          error={error}
+          checked={state.requiresLicense}
+          onChange={(value) => dispatch({ type: "requiresLicense", value })}
         >
           Требуется лицензия?
         </Checkbox>

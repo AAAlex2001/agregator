@@ -1,37 +1,29 @@
-import type { UseFormReturn } from "react-hook-form";
+import type { FormEvent } from "react";
 import { EmailInput } from "@/source/shared/ui/Inputs";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
-import type { ForgotEmailValues } from "../model/schema";
 import s from "./EmailStep.module.scss";
 
 interface Props {
-  form: UseFormReturn<ForgotEmailValues>;
+  email: string;
+  onEmailChange: (value: string) => void;
   isLoading: boolean;
-  onSubmit: () => void;
+  onSubmit: (event: FormEvent) => void;
 }
 
-export function EmailStep({ form, isLoading, onSubmit }: Props) {
-  const { watch, setValue, formState } = form;
-  const shouldValidate = formState.isSubmitted;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
+export function EmailStep({ email, onEmailChange, isLoading, onSubmit }: Props) {
   return (
     <>
       <p className={s.stepText}>Шаг 1. Введите электронную почту</p>
-      <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="forgot-password-email" />
         <EmailInput
           id="email"
-          value={watch("email")}
+          value={email}
+          required
           autoComplete="off"
-          onChange={(e) => setValue("email", e.target.value, { shouldValidate })}
+          onChange={(e) => onEmailChange(e.target.value)}
           placeholder="Электронная почта"
-          error={formState.errors.email?.message}
         />
         <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
           Подтвердить

@@ -1,5 +1,7 @@
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
+
+from schemas.registration import validate_password_complexity
 
 
 class SendResetCodeRequest(BaseModel):
@@ -20,7 +22,12 @@ class ForgotPasswordRequest(BaseModel):
     email: EmailStr | None = Field(None, description="Почта пользователя")
     phone: str | None = Field(None, description="Номер телефона пользователя")
     code: str = Field(..., description="Код для восстановления пароля")
-    new_password: str = Field(..., description="Новый пароль пользователя")
+    new_password: str = Field(..., description="Новый пароль пользователя", min_length=6)
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        return validate_password_complexity(value)
 
 
 class ForgotPasswordResponse(BaseModel):

@@ -1,45 +1,47 @@
-import type { UseFormReturn } from "react-hook-form";
+import type { FormEvent } from "react";
 import { PasswordInput } from "@/source/shared/ui/Inputs";
 import Button from "@/source/shared/ui/Button";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
-import type { ForgotNewPasswordValues } from "../model/schema";
 import s from "./NewPasswordStep.module.scss";
 
 interface Props {
-  form: UseFormReturn<ForgotNewPasswordValues>;
+  password: string;
+  repeatPassword: string;
+  onPasswordChange: (value: string) => void;
+  onRepeatPasswordChange: (value: string) => void;
   isLoading: boolean;
-  onSubmit: () => void;
+  onSubmit: (event: FormEvent) => void;
 }
 
-export function NewPasswordStep({ form, isLoading, onSubmit }: Props) {
-  const { watch, setValue, formState } = form;
-  const shouldValidate = formState.isSubmitted;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
+export function NewPasswordStep({
+  password,
+  repeatPassword,
+  onPasswordChange,
+  onRepeatPasswordChange,
+  isLoading,
+  onSubmit,
+}: Props) {
   return (
     <>
       <p className={s.stepText}>Шаг 3. Создание нового пароля</p>
-      <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+      <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
         <AutofillGuard idPrefix="forgot-password-new-password" />
         <PasswordInput
           id="password"
-          value={watch("password")}
+          value={password}
+          required
+          minLength={6}
           autoComplete="new-password"
-          onChange={(e) => setValue("password", e.target.value, { shouldValidate })}
+          onChange={(e) => onPasswordChange(e.target.value)}
           placeholder="Пароль"
-          error={formState.errors.password?.message}
         />
         <PasswordInput
           id="repeatPassword"
-          value={watch("repeatPassword")}
+          value={repeatPassword}
+          required
           autoComplete="new-password"
-          onChange={(e) => setValue("repeatPassword", e.target.value, { shouldValidate })}
+          onChange={(e) => onRepeatPasswordChange(e.target.value)}
           placeholder="Повторите пароль"
-          error={formState.errors.repeatPassword?.message}
         />
         <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
           Сохранить изменения

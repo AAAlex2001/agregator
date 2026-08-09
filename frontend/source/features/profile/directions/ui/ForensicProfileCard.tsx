@@ -5,21 +5,15 @@ import {
   deleteForensicDocument,
   fetchForensicProfile,
   ForensicProfileFields,
-  forensicProfileSchema,
   saveForensicProfile,
   uploadForensicDiploma,
   uploadForensicDocument,
   type ForensicProfile,
 } from "@/source/features/directions/forensic";
-import { firstSchemaError } from "@/source/features/directions/shared/model/validate";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
 import { SavedFileField } from "@/source/features/directions/shared/ui/SavedFileField";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
-
-function validate(profile: ForensicProfile): string | null {
-  return firstSchemaError(forensicProfileSchema, profile);
-}
 
 function mergeFiles(current: ForensicProfile, server: ForensicProfile): ForensicProfile {
   return {
@@ -34,7 +28,6 @@ export function ForensicProfileCard() {
     title: "Судебная экспертиза",
     load: fetchForensicProfile,
     save: saveForensicProfile,
-    validate,
   });
 
   if (value === null) return <Skeleton className={s.skeleton} rounded="md" />;

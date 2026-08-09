@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
 import type { OrderWorkType } from "@/source/entities/order";
 import {
   AuditOrderFields,
@@ -13,7 +12,7 @@ import { CadastralOrderFields } from "@/source/features/directions/cadastral";
 import { ForensicOrderFields } from "@/source/features/directions/forensic";
 import { LaboratoryOrderFields } from "@/source/features/directions/laboratory";
 import { ResearchOrderFields } from "@/source/features/directions/research";
-import type { OrderFormValues } from "../../../model/schema";
+import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
 import s from "./directionDetailsSection.module.scss";
 
@@ -25,33 +24,14 @@ const SECTION_TITLES: Partial<Record<OrderWorkType, string>> = {
   AUDIT_SUPB: "Заявка на аудит СУПБ",
 };
 
-interface Props {
-  form: UseFormReturn<OrderFormValues>;
-}
-
-export function DirectionDetailsSection({ form }: Props) {
-  const { watch, setValue, formState } = form;
-  const workType = watch("workType");
+export function DirectionDetailsSection({ state, dispatch }: StepProps) {
+  const { workType } = state;
   const [auditCatalogs, setAuditCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
 
   useEffect(() => {
     if (workType !== "AUDIT_SUPB") return;
-    let alive = true;
-    fetchAuditCatalogs()
-      .then((loaded) => alive && setAuditCatalogs(loaded))
-      .catch(() => undefined);
-    return () => {
-      alive = false;
-    };
+    fetchAuditCatalogs().then(setAuditCatalogs).catch(() => undefined);
   }, [workType]);
-
-  const changeOptions = { shouldDirty: true, shouldValidate: formState.isSubmitted };
-  const errorMessage =
-    formState.errors.cadastralDetails?.message ??
-    formState.errors.forensicDetails?.message ??
-    formState.errors.researchDetails?.message ??
-    formState.errors.laboratoryDetails?.message ??
-    formState.errors.auditDetails?.message;
 
   return (
     <section className={base.section}>
@@ -61,41 +41,39 @@ export function DirectionDetailsSection({ form }: Props) {
 
       {workType === "CADASTRAL" && (
         <CadastralOrderFields
-          value={watch("cadastralDetails")}
-          onChange={(next) => setValue("cadastralDetails", next, changeOptions)}
+          value={state.cadastralDetails}
+          onChange={(value) => dispatch({ type: "cadastral", value })}
         />
       )}
 
       {workType === "FORENSIC" && (
         <ForensicOrderFields
-          value={watch("forensicDetails")}
-          onChange={(next) => setValue("forensicDetails", next, changeOptions)}
+          value={state.forensicDetails}
+          onChange={(value) => dispatch({ type: "forensic", value })}
         />
       )}
 
       {workType === "RESEARCH" && (
         <ResearchOrderFields
-          value={watch("researchDetails")}
-          onChange={(next) => setValue("researchDetails", next, changeOptions)}
+          value={state.researchDetails}
+          onChange={(value) => dispatch({ type: "research", value })}
         />
       )}
 
       {workType === "LABORATORY" && (
         <LaboratoryOrderFields
-          value={watch("laboratoryDetails")}
-          onChange={(next) => setValue("laboratoryDetails", next, changeOptions)}
+          value={state.laboratoryDetails}
+          onChange={(value) => dispatch({ type: "laboratory", value })}
         />
       )}
 
       {workType === "AUDIT_SUPB" && (
         <AuditOrderFields
-          value={watch("auditDetails")}
-          onChange={(next) => setValue("auditDetails", next, changeOptions)}
+          value={state.auditDetails}
+          onChange={(value) => dispatch({ type: "audit", value })}
           catalogs={auditCatalogs}
         />
       )}
-
-      {typeof errorMessage === "string" && <span className={base.error}>{errorMessage}</span>}
     </section>
   );
 }

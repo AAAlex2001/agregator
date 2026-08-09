@@ -5,57 +5,49 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { createGuestOrder } from "../api/guestOrder.api";
-import { serviceRequestSchema } from "./schema";
-import type { ServiceRequestErrors, ServiceRequestState } from "./types";
+import type { ServiceRequestState } from "./types";
 
 const SUCCESS_MESSAGE =
   "Заявка опубликована. Вы вошли в кабинет — там появятся отклики исполнителей";
-const INVALID_FORM_MESSAGE = "Заполните обязательные поля";
-
-export function collectErrors(issues: { path: PropertyKey[]; message: string }[]): ServiceRequestErrors {
-  const errors: ServiceRequestErrors = {};
-  issues.forEach((issue) => {
-    const field = issue.path[0] as keyof ServiceRequestState | undefined;
-    if (field && !errors[field]) errors[field] = issue.message;
-  });
-  return errors;
-}
 
 export function useSubmitServiceRequest() {
   const router = useRouter();
   const { reload } = useSession();
   const { showSuccess, showError } = useNotifications();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<ServiceRequestErrors>({});
 
   const submit = async (state: ServiceRequestState) => {
-    const parsed = serviceRequestSchema.safeParse(state);
-    if (!parsed.success) {
-      setErrors(collectErrors(parsed.error.issues));
-      showError(INVALID_FORM_MESSAGE);
+    if (!state.responsesDeadline) {
+      showError("Укажите срок приёма откликов");
+      return;
+    }
+    if (!state.startDate) {
+      showError("Укажите срок начала работ");
+      return;
+    }
+    if (!state.dueDate) {
+      showError("Укажите срок сдачи работ");
       return;
     }
 
-    setErrors({});
-    const values = parsed.data;
-    const isNir = values.variant === "nir";
+    const isNir = state.variant === "nir";
     setIsSubmitting(true);
     try {
       await createGuestOrder(
         {
           customer: {
-            first_name: values.firstName,
-            last_name: values.lastName,
-            phone: values.phone,
-            email: values.email,
+            first_name: state.firstName.trim(),
+            last_name: state.lastName.trim(),
+            phone: state.phone.trim(),
+            email: state.email.trim(),
           },
           work_type: isNir ? "RESEARCH" : "LABORATORY",
-          title: isNir ? values.topic : values.researchName,
-          comment: values.description,
-          sum_amount: Number(values.maxPrice.replace(/\s/g, "")),
-          start_date: values.startDate,
-          deadline: values.dueDate,
-          responses_deadline: `${values.responsesDeadline}T23:59:59+03:00`,
+          title: isNir ? state.topic.trim() : state.researchName.trim(),
+          comment: state.description.trim(),
+          sum_amount: Number(state.maxPrice.replace(/\s/g, "")),
+          start_date: state.startDate,
+          deadline: state.dueDate,
+          responses_deadline: `${state.responsesDeadline}T23:59:59+03:00`,
           details: isNir
             ? {
                 executor_requirements: state.executorRequirements
@@ -77,5 +69,5 @@ export function useSubmitServiceRequest() {
     }
   };
 
-  return { submit, isSubmitting, errors };
+  return { submit, isSubmitting };
 }

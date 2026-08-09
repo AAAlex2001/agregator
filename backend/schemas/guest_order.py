@@ -2,7 +2,7 @@
 from datetime import date, datetime
 from typing import Any
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from models.order import OrderWorkType
 
@@ -26,6 +26,13 @@ class GuestOrderRequest(BaseModel):
     deadline: date
     responses_deadline: datetime | None = None
     details: dict[str, Any] | None = None
+
+    @field_validator("sum_amount")
+    @classmethod
+    def validate_sum_amount(cls, value: int) -> int:
+        if value <= 0:
+            raise ValueError("Укажите начальную максимальную цену")
+        return value
 
 
 class GuestOrderResponse(BaseModel):

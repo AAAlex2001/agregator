@@ -1,28 +1,22 @@
-import type { UseFormReturn } from "react-hook-form";
+import type { FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import { EmailInput, PasswordInput } from "@/source/shared/ui/Inputs";
 import AutofillGuard from "@/source/shared/ui/AutofillGuard";
-import type { LoginFormValues } from "../model/schema";
 import s from "./LoginForm.module.scss";
 
 interface Props {
-  form: UseFormReturn<LoginFormValues>;
+  email: string;
+  password: string;
+  onEmailChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
   isLoading: boolean;
   fromOrder: boolean;
-  onSubmit: () => void;
+  onSubmit: (event: FormEvent) => void;
 }
 
-export function LoginForm({ form, isLoading, fromOrder, onSubmit }: Props) {
-  const { watch, setValue, formState } = form;
-  const shouldValidate = formState.isSubmitted;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
-
+export function LoginForm({ email, password, onEmailChange, onPasswordChange, isLoading, fromOrder, onSubmit }: Props) {
   return (
-    <form onSubmit={handleSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
+    <form onSubmit={onSubmit} className={s.form} autoComplete="off" data-lpignore="true" data-1p-ignore="true">
       <AutofillGuard idPrefix="login" />
 
       {fromOrder && (
@@ -31,19 +25,19 @@ export function LoginForm({ form, isLoading, fromOrder, onSubmit }: Props) {
 
       <EmailInput
         id="email"
-        value={watch("email")}
+        value={email}
+        required
         autoComplete="off"
-        onChange={(e) => setValue("email", e.target.value, { shouldValidate })}
+        onChange={(e) => onEmailChange(e.target.value)}
         placeholder="Электронная почта"
-        error={formState.errors.email?.message}
       />
       <PasswordInput
         id="password"
-        value={watch("password")}
+        value={password}
+        required
         autoComplete="new-password"
-        onChange={(e) => setValue("password", e.target.value, { shouldValidate })}
+        onChange={(e) => onPasswordChange(e.target.value)}
         placeholder="Введите пароль"
-        error={formState.errors.password?.message}
       />
 
       <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>

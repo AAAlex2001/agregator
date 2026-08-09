@@ -1,4 +1,4 @@
-export {
+﻿export {
   deleteCadastralDocument,
   fetchCadastralProfile,
   saveCadastralProfile,
@@ -6,7 +6,6 @@ export {
   uploadCadastralDiploma,
   uploadCadastralDocument,
 } from "./model/api";
-export { cadastralOrderSchema, cadastralProfileSchema } from "./model/schema";
 export {
   emptyCadastralOrderDetails,
   emptyCadastralProfile,

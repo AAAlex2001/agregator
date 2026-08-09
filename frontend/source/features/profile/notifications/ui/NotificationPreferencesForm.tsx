@@ -26,17 +26,9 @@ interface Props {
 
 const SAVE_DEBOUNCE_MS = 400;
 
-const ALL_PREFERENCE_KEYS: NotificationPreferenceKey[] = [
-  "email_on_response_created",
-  "email_on_response_updated",
-  "email_on_expert_rejected",
-  "email_on_order_updated",
-  "email_on_bidding_finished",
-  "email_on_chat_message",
-  "email_on_question_asked",
-  "email_on_question_answered",
-  "email_on_labor_listing",
-];
+const ALL_PREFERENCE_KEYS: NotificationPreferenceKey[] = NOTIFICATION_DESCRIPTORS.map(
+  (item) => item.key,
+);
 
 function relevantDescriptors(role: string): NotificationPreferenceDescriptor[] {
   if (role !== "CUSTOMER" && role !== "EXPERT") {

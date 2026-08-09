@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import {
@@ -11,10 +9,7 @@ import {
   RoleChoiceRequiredError,
   loginUser,
 } from "@/source/entities/session";
-import { loginFormSchema, type LoginFormValues } from "./schema";
 import type { LoginResponse, UserRole } from "./types";
-
-const emptyValues: LoginFormValues = { email: "", password: "" };
 
 interface PendingConfirm {
   email: string;
@@ -30,16 +25,13 @@ export function useLogin(options?: UseLoginOptions) {
   const router = useRouter();
   const { reload } = useSession();
   const { showError } = useNotifications();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [waiting, setWaiting] = useState(false);
   const [fromOrder, setFromOrder] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<UserRole[] | null>(null);
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: emptyValues,
-    mode: "onBlur",
-  });
 
   useEffect(() => {
     if (sessionStorage.getItem("pendingOrderUuid")) {
@@ -65,13 +57,9 @@ export function useLogin(options?: UseLoginOptions) {
     else router.push("/customer/orders");
   };
 
-  const submitWithRole = async (values: LoginFormValues, role?: UserRole) => {
+  const submitWithRole = async (role?: UserRole) => {
     try {
-      const user = await loginUser({
-        email: values.email.trim(),
-        password: values.password,
-        role,
-      });
+      const user = await loginUser({ email: email.trim(), password, role });
       await finishLogin(user);
     } catch (err) {
       if (err instanceof RoleChoiceRequiredError) {
@@ -86,22 +74,20 @@ export function useLogin(options?: UseLoginOptions) {
     }
   };
 
-  const submit = form.handleSubmit(
-    async (values) => {
-      await submitWithRole(values);
-    },
-    (errors) => {
-      const first = Object.values(errors)[0];
-      if (first && "message" in first && typeof first.message === "string") {
-        showError(first.message);
-      }
-    },
-  );
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setWaiting(true);
+    try {
+      await submitWithRole();
+    } finally {
+      setWaiting(false);
+    }
+  };
 
   const chooseRole = async (role: UserRole) => {
     setIsFinalizing(true);
     try {
-      await submitWithRole(form.getValues(), role);
+      await submitWithRole(role);
     } finally {
       setIsFinalizing(false);
     }
@@ -118,9 +104,12 @@ export function useLogin(options?: UseLoginOptions) {
   };
 
   return {
-    form,
+    email,
+    setEmail,
+    password,
+    setPassword,
     fromOrder,
-    isLoading: form.formState.isSubmitting,
+    waiting,
     availableRoles,
     isFinalizing,
     pendingConfirm,

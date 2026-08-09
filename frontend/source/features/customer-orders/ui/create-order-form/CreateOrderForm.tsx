@@ -8,7 +8,7 @@ import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { hasOrderDetails } from "../../model/orderDetails";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { DocumentsFormState } from "../../model/formFiles";
-import type { OrderFormValues } from "../../model/schema";
+import type { OrderFormValues } from "../../model/orderForm";
 import { BadgeSection } from "./sections/BadgeSection";
 import { CommentSection } from "./sections/CommentSection";
 import { DetailsSection } from "./sections/DetailsSection";
@@ -43,10 +43,13 @@ type View = "form" | "help";
 const transition = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
 
 export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, copyTemplate, onCopy }: Props) {
-  const formState = useCreateOrderForm({ editTarget, copyTemplate, onSubmit });
+  const { isEdit, state, dispatch, submit, setSingle, addOther } = useCreateOrderForm({
+    editTarget,
+    copyTemplate,
+    onSubmit,
+  });
   const [view, setView] = useState<View>("form");
-  const workType = formState.form.watch("workType");
-  const isExpertise = workType === "EXPERTISE";
+  const isExpertise = state.workType === "EXPERTISE";
 
   const shellClassName = [
     s.shell,
@@ -66,47 +69,46 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
             exit={{ opacity: 0, x: -16 }}
             transition={transition}
           >
-            <form className={s.form} onSubmit={formState.submit}>
-              <h2 className={s.title}>{formState.isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
+            <form className={s.form} onSubmit={submit}>
+              <h2 className={s.title}>{isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
 
-              <DetailsSection form={formState.form} />
+              <DetailsSection state={state} dispatch={dispatch} />
 
-              <WorkTypeSection form={formState.form} />
+              <WorkTypeSection state={state} dispatch={dispatch} />
 
-              {isExpertise && <RequirementsSection form={formState.form} />}
+              {isExpertise && <RequirementsSection state={state} dispatch={dispatch} />}
 
-              {hasOrderDetails(workType) && <DirectionDetailsSection form={formState.form} />}
+              {hasOrderDetails(state.workType) && (
+                <DirectionDetailsSection state={state} dispatch={dispatch} />
+              )}
 
               {isExpertise && <ExpertsMapSection />}
 
               {isExpertise && (
-                <BadgeSection
-                  form={formState.form}
-                  onShowHelp={() => setView("help")}
-                />
+                <BadgeSection state={state} dispatch={dispatch} onShowHelp={() => setView("help")} />
               )}
 
-              <CommentSection form={formState.form} />
+              <CommentSection state={state} dispatch={dispatch} />
 
               <FilesSection
-                documents={formState.documents}
-                onSetSingle={formState.setSingle}
-                onRemoveSingleExisting={formState.removeSingleExisting}
-                onAddOther={formState.addOther}
-                onRemoveOtherNew={formState.removeOtherNew}
-                onRemoveOtherExisting={formState.removeOtherExisting}
+                documents={state.documents}
+                onSetSingle={setSingle}
+                onRemoveSingleExisting={(category) => dispatch({ type: "docRemoveSingleExisting", category })}
+                onAddOther={addOther}
+                onRemoveOtherNew={(index) => dispatch({ type: "docRemoveOtherNew", index })}
+                onRemoveOtherExisting={(index) => dispatch({ type: "docRemoveOtherExisting", index })}
               />
 
               <div className={s.previewInline}>
-                <OrderLivePreview form={formState.form} documents={formState.documents} />
+                <OrderLivePreview state={state} />
               </div>
 
-              {formState.isEdit && (
+              {isEdit && (
                 <div className={s.notifyRow}>
                   <Checkbox
                     id="order-notify-responders"
-                    checked={formState.notifyResponders}
-                    onChange={formState.setNotifyResponders}
+                    checked={state.notifyResponders}
+                    onChange={(value) => dispatch({ type: "notifyResponders", value })}
                   >
                     Оповестить участников тендера об изменениях
                   </Checkbox>
@@ -114,14 +116,14 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
               )}
 
               <FormActions
-                isEdit={formState.isEdit}
+                isEdit={isEdit}
                 isSubmitting={isSubmitting}
                 onCancel={onCancel}
                 onCopy={onCopy}
               />
             </form>
             <div className={s.previewSide}>
-              <OrderLivePreview form={formState.form} documents={formState.documents} />
+              <OrderLivePreview state={state} />
             </div>
           </motion.div>
         ) : (

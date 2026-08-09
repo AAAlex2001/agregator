@@ -90,7 +90,7 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
         {section === "subscription" ? (
           <SubscriptionPanel />
         ) : isLoading || !user ? (
-          <SettingsSkeleton section={section} isCustomer />
+          <SettingsSkeleton section={section} isCustomer={role === "CUSTOMER"} />
         ) : (
           <SettingsContent section={section} user={user} onProfileUpdate={setUser} />
         )}
@@ -111,9 +111,6 @@ function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProp
   }
   if (section === "license" && user.role === "LICENSE_HOLDER") {
     return <LicenseTermsForm profile={user} onProfileUpdate={onProfileUpdate} />;
-  }
-  if (section === "subscription" && user.role === "EXPERT") {
-    return <SubscriptionPanel />;
   }
   return <PersonalProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
 }

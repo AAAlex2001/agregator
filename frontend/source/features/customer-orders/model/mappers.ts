@@ -6,7 +6,7 @@ import {
   emptyDirectionDetails,
 } from "./orderDetails";
 import type { DocumentsFormState } from "./formFiles";
-import type { OrderFormValues } from "./schema";
+import type { OrderFormValues } from "./orderForm";
 
 export function getDefaultValues(editTarget?: OrderCardData): OrderFormValues {
   if (!editTarget) {

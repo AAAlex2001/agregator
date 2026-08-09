@@ -8,7 +8,10 @@ import { SearchIcon } from "@/source/shared/ui/icons";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
 import { ChatModal } from "@/source/widgets/chat";
 import type { ContactAccessFilter } from "../model/types";
-import { useExpertContacts } from "../model/useExpertContacts";
+import { ExpertContactsProvider } from "../model/provider";
+import { useMarketplace } from "../model/use-marketplace";
+import { useDeals } from "../model/use-deals";
+import { useOffer } from "../model/use-offer";
 import { ContactDealModal } from "./ContactDealModal";
 import { ContactDealsList } from "./ContactDealsList";
 import { DeleteContactDealModal } from "./DeleteContactDealModal";
@@ -30,14 +33,24 @@ interface ExpertContactsMarketplaceProps {
 }
 
 export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
-  const contacts = useExpertContacts(targetExpertId);
+  return (
+    <ExpertContactsProvider>
+      <Marketplace targetExpertId={targetExpertId} />
+    </ExpertContactsProvider>
+  );
+}
+
+function Marketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
+  const market = useMarketplace();
+  const deals = useDeals();
+  const { offer, saveOffer } = useOffer();
 
   useEffect(() => {
-    if (contacts.loading || !contacts.targetExpertId) return;
+    if (market.loading || !targetExpertId) return;
     document
-      .getElementById(`expert-contact-${contacts.targetExpertId}`)
+      .getElementById(`expert-contact-${targetExpertId}`)
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [contacts.loading, contacts.targetExpertId]);
+  }, [market.loading, targetExpertId]);
 
   return (
     <main className={s.page}>
@@ -49,32 +62,28 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         />
       </header>
 
-      {contacts.role === "EXPERT" && contacts.offer && (
-        <ContactOfferSettings
-          offer={contacts.offer}
-          busy={contacts.busy}
-          onSave={contacts.saveOffer}
-        />
+      {market.role === "EXPERT" && offer && (
+        <ContactOfferSettings offer={offer} busy={market.busy} onSave={saveOffer} />
       )}
 
       <ContactDealsList
-        deals={contacts.deals}
-        busy={contacts.busy}
-        onOpen={(id) => void contacts.openDeal(id)}
-        onOpenChat={(id) => void contacts.openDealChat(id)}
-        onDelete={contacts.requestDeleteDeal}
+        deals={market.deals}
+        busy={market.busy}
+        onOpen={(id) => void deals.openDeal(id)}
+        onOpenChat={(id) => void deals.openDealChat(id)}
+        onDelete={deals.requestDeleteDeal}
       />
 
       <section className={s.catalog} aria-label="Исполнители платформы">
         <div className={s.catalogHead}>
           <div className={s.catalogTitleRow}>
             <Title text="Исполнители платформы" as="h2" className={s.sectionTitle} />
-            <span>{contacts.experts.length}</span>
+            <span>{market.experts.length}</span>
           </div>
           <div className={s.search}>
             <TextInput
-              value={contacts.search}
-              onChange={(event) => contacts.setSearch(event.target.value)}
+              value={market.search}
+              onChange={(event) => market.setSearch(event.target.value)}
               placeholder="ФИО исполнителя"
               aria-label="Фильтр исполнителей по ФИО"
               suffix={<SearchIcon />}
@@ -84,46 +93,46 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
         <div className={s.catalogFilters}>
           <Tabs
             variant="pill"
-            activeTab={contacts.accessFilter}
-            onTabChange={(value) => contacts.setAccessFilter(value as ContactAccessFilter)}
+            activeTab={market.accessFilter}
+            onTabChange={(value) => market.setAccessFilter(value as ContactAccessFilter)}
             className={s.accessTabs}
             tabs={[
-              { id: "ALL", label: "Все", count: contacts.accessCounts.ALL },
-              { id: "OPEN", label: "Доступ открыт", count: contacts.accessCounts.OPEN },
-              { id: "CLOSED", label: "Доступ закрыт", count: contacts.accessCounts.CLOSED },
+              { id: "ALL", label: "Все", count: market.accessCounts.ALL },
+              { id: "OPEN", label: "Доступ открыт", count: market.accessCounts.OPEN },
+              { id: "CLOSED", label: "Доступ закрыт", count: market.accessCounts.CLOSED },
             ]}
           />
           <div className={s.ratingSort}>
             <SortPills
               options={RATING_SORT_OPTIONS}
-              sortBy={contacts.ratingSort ? "rating" : null}
-              sortDir={contacts.ratingSort}
+              sortBy={market.ratingSort ? "rating" : null}
+              sortDir={market.ratingSort}
               title="Сортировка:"
               compact
-              onChange={(_, direction) => contacts.setRatingSort(direction)}
+              onChange={(_, direction) => market.setRatingSort(direction)}
             />
           </div>
         </div>
-        {contacts.loading ? (
+        {market.loading ? (
           <div className={s.expertList} aria-label="Загружаем исполнителей">
             {Array.from({ length: 3 }, (_, index) => <ExpertCardSkeleton key={index} />)}
           </div>
-        ) : contacts.experts.length === 0 ? (
+        ) : market.experts.length === 0 ? (
           <div className={s.empty}>По вашему запросу исполнители не найдены</div>
         ) : (
           <div className={s.expertList}>
-            {contacts.experts.map((expert) => (
+            {market.experts.map((expert) => (
               <div
                 id={`expert-contact-${expert.public_id}`}
                 key={expert.id}
                 className={`${s.expertAnchor} ${
-                  contacts.targetExpertId === expert.public_id ? s.expertAnchorTarget : ""
+                  targetExpertId === expert.public_id ? s.expertAnchorTarget : ""
                 }`}
               >
                 <ExpertContactCard
                   expert={expert}
-                  busy={contacts.busy}
-                  onOpen={() => void contacts.openExpert(expert)}
+                  busy={market.busy}
+                  onOpen={() => void deals.openExpert(expert)}
                 />
               </div>
             ))}
@@ -132,39 +141,39 @@ export function ExpertContactsMarketplace({ targetExpertId }: ExpertContactsMark
       </section>
 
       <ContactDealModal
-        deal={contacts.selectedDeal}
-        busy={contacts.busy}
-        onClose={contacts.closeDeal}
-        onSign={contacts.sign}
-        onUploadReceipt={contacts.uploadReceipt}
-        onConfirmPayment={contacts.confirmPayment}
-        onRejectPayment={contacts.rejectPayment}
-        onReview={contacts.startReview}
+        deal={deals.selectedDeal}
+        busy={deals.busy}
+        onClose={deals.closeDeal}
+        onSign={deals.sign}
+        onUploadReceipt={deals.uploadReceipt}
+        onConfirmPayment={deals.confirmPayment}
+        onRejectPayment={deals.rejectPayment}
+        onReview={deals.startReview}
       />
 
       <DeleteContactDealModal
-        deal={contacts.deleteDeal}
-        busy={contacts.busy}
-        onClose={contacts.cancelDeleteDeal}
-        onConfirm={() => void contacts.confirmDeleteDeal()}
+        deal={deals.deleteDeal}
+        busy={deals.busy}
+        onClose={deals.cancelDeleteDeal}
+        onConfirm={() => void deals.confirmDeleteDeal()}
       />
 
       <AddReviewModalContainer
-        isOpen={contacts.reviewDeal !== null}
-        customerName={contacts.reviewDeal?.buyer_name ?? ""}
+        isOpen={deals.reviewDeal !== null}
+        customerName={deals.reviewDeal?.buyer_name ?? ""}
         orderTitle="Покупка контактов исполнителя"
-        expertName={contacts.reviewDeal?.seller_name ?? ""}
+        expertName={deals.reviewDeal?.seller_name ?? ""}
         title="Оставьте отзыв об исполнителе"
         ratingLabel="Оцените взаимодействие с исполнителем"
         commentPlaceholder="Расскажите о взаимодействии и получении контактных данных"
-        onClose={contacts.closeReview}
-        onSubmit={contacts.submitReview}
+        onClose={deals.closeReview}
+        onSubmit={deals.submitReview}
       />
 
       <ChatModal
-        chatUuid={contacts.dealChatUuid}
-        open={contacts.dealChatUuid !== null}
-        onClose={contacts.closeDealChat}
+        chatUuid={deals.dealChatUuid}
+        open={deals.dealChatUuid !== null}
+        onClose={deals.closeDealChat}
       />
     </main>
   );

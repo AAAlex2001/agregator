@@ -9,12 +9,12 @@ interface Props {
   currentUserAvatarUrl?: string | null;
 }
 
-function toBubbleMessage(message: ExpertRoomMessageData, isMine: boolean): ChatMessageData {
+function toBubbleMessage(message: ExpertRoomMessageData): ChatMessageData {
   return {
     id: message.id,
     chat_id: 0,
     sender_id: message.sender_id,
-    sender_role: isMine ? "EXPERT" : "EXPERT",
+    sender_role: "EXPERT",
     text: message.text,
     file_url: null,
     file_name: null,
@@ -42,7 +42,7 @@ export function ExpertRoomMessageGroup({ group, isMine, currentUserAvatarUrl }: 
         return (
           <div key={message.id} className={isMine ? s.rowSent : s.rowReceived}>
             {!isMine ? avatarSlot : null}
-            <MessageBubble message={toBubbleMessage(message, isMine)} isMine={isMine} />
+            <MessageBubble message={toBubbleMessage(message)} isMine={isMine} />
             {isMine ? avatarSlot : null}
           </div>
         );

@@ -11,7 +11,7 @@ import {
   isImageFileName,
 } from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
-import { TypesPicker, type ExpertiseType } from "@/source/entities/expertise";
+import { TypesPicker } from "@/source/entities/expertise";
 import type { UserProfile } from "@/source/entities/user";
 import { useLicenseTerms } from "../model/useLicenseTerms";
 import s from "./LicenseTermsForm.module.scss";
@@ -32,25 +32,7 @@ const COMPANY_CARD_ACCEPT = ".pdf,application/pdf";
 const COMPANY_CARD_HINT = "Только PDF, до 5 МБ";
 
 export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
-  const {
-    form,
-    isSaving,
-    isUploading,
-    isCardUploading,
-    isMiningUploading,
-    isSroUploading,
-    isLabUploading,
-    submit,
-    replaceFile,
-    replaceCompanyCard,
-    removeCompanyCardFile,
-    replaceMiningLicenseFile,
-    replaceSroDesignFile,
-    replaceLabAccreditationFile,
-  } = useLicenseTerms({ profile, onProfileUpdate });
-  const { watch, setValue, formState } = form;
-  const errors = formState.errors;
-  const shouldValidate = formState.isSubmitted;
+  const form = useLicenseTerms({ profile, onProfileUpdate });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cardInputRef = useRef<HTMLInputElement>(null);
   const miningInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +42,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
   const holder = profile.license_holder;
   const fileItems = holder?.license_file_url ? [remoteFileItem(holder.license_file_url)] : [];
   const cardItems = holder?.company_card_url
-    ? [remoteFileItem(holder.company_card_url, "card-remote", "Карточка предприятия", removeCompanyCardFile)]
+    ? [remoteFileItem(holder.company_card_url, "card-remote", "Карточка предприятия", form.removeCompanyCardFile)]
     : [];
   const miningItems = holder?.mining_license_file_url
     ? [remoteFileItem(holder.mining_license_file_url, "mining-remote", "Лицензия маркшейдера")]
@@ -72,13 +54,8 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
     ? [remoteFileItem(holder.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
     : [];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submit();
-  };
-
   return (
-    <form className={s.form} onSubmit={handleSubmit}>
+    <form className={s.form} onSubmit={form.submit}>
       <header className={s.header}>
         <h2 className={s.title}>Лицензия и условия её предоставления</h2>
         <p className={s.subtitle}>Номер, файл лицензии и стоимость предоставления лицензии для входящих заявок.</p>
@@ -86,15 +63,15 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
 
       <TextInput
         id="licenseNumber"
-        value={watch("licenseNumber")}
+        value={form.licenseNumber}
+        required
         autoComplete="off"
-        onChange={(e) => setValue("licenseNumber", e.target.value, { shouldValidate })}
+        onChange={(e) => form.setLicenseNumber(e.target.value)}
         placeholder="Номер лицензии ЭПБ ОПО"
-        error={errors.licenseNumber?.message}
       />
 
       <FileGallery
-        label={isUploading ? "Загрузка нового файла…" : "Файл лицензии"}
+        label={form.isUploading ? "Загрузка нового файла…" : "Файл лицензии"}
         hint={LICENSE_FILE_HINT}
         items={fileItems}
         variant="editable"
@@ -108,21 +85,20 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
             onChange={(event) => {
               const next = event.target.files?.[0] ?? null;
               event.target.value = "";
-              if (next) replaceFile(next);
+              if (next) form.replaceFile(next);
             }}
           />
         }
       />
 
       <TypesPicker
-        value={watch("licenseAreas") as ExpertiseType[]}
-        onChange={(next) => setValue("licenseAreas", next, { shouldValidate })}
+        value={form.licenseAreas}
+        onChange={form.setLicenseAreas}
         label="Объекты экспертизы по лицензии"
-        error={errors.licenseAreas?.message as string | undefined}
       />
 
       <FileGallery
-        label={isCardUploading ? "Загрузка карточки…" : "Карточка предприятия (необязательно)"}
+        label={form.isCardUploading ? "Загрузка карточки…" : "Карточка предприятия (необязательно)"}
         hint={COMPANY_CARD_HINT}
         items={cardItems}
         variant="editable"
@@ -136,23 +112,19 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
             onChange={(event) => {
               const next = event.target.files?.[0] ?? null;
               event.target.value = "";
-              if (next) replaceCompanyCard(next);
+              if (next) form.replaceCompanyCard(next);
             }}
           />
         }
       />
 
       <RentalPriceField
-        kind={watch("rentalKind")}
-        percent={watch("rentalPercent")}
-        fixedAmount={watch("rentalFixedAmount")}
-        errors={{
-          percent: errors.rentalPercent?.message,
-          fixedAmount: errors.rentalFixedAmount?.message,
-        }}
-        onChangeKind={(next) => setValue("rentalKind", next, { shouldValidate })}
-        onChangePercent={(value) => setValue("rentalPercent", value, { shouldValidate })}
-        onChangeFixed={(value) => setValue("rentalFixedAmount", value, { shouldValidate })}
+        kind={form.rentalKind}
+        percent={form.rentalPercent}
+        fixedAmount={form.rentalFixedAmount}
+        onChangeKind={form.setRentalKind}
+        onChangePercent={form.setRentalPercent}
+        onChangeFixed={form.setRentalFixedAmount}
       />
 
       <div className={s.extrasSection}>
@@ -162,14 +134,13 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         <div className={s.extrasItem}>
           <TextInput
             id="miningLicenseNumber"
-            value={watch("miningLicenseNumber") ?? ""}
+            value={form.miningLicenseNumber}
             autoComplete="off"
-            onChange={(e) => setValue("miningLicenseNumber", e.target.value, { shouldValidate })}
+            onChange={(e) => form.setMiningLicenseNumber(e.target.value)}
             placeholder="Лицензия на маркшейдерские работы №"
-            error={errors.miningLicenseNumber?.message}
           />
           <FileGallery
-            label={isMiningUploading ? "Загрузка файла…" : "Файл лицензии маркшейдера"}
+            label={form.isMiningUploading ? "Загрузка файла…" : "Файл лицензии маркшейдера"}
             hint={REGULATORY_FILE_HINT}
             items={miningItems}
             variant="editable"
@@ -183,7 +154,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
                 onChange={(event) => {
                   const next = event.target.files?.[0] ?? null;
                   event.target.value = "";
-                  if (next) replaceMiningLicenseFile(next);
+                  if (next) form.replaceMiningLicenseFile(next);
                 }}
               />
             }
@@ -192,7 +163,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
 
         <div className={s.extrasItem}>
           <FileGallery
-            label={isSroUploading ? "Загрузка файла…" : "Выписка из реестра членов СРО в области проектирования"}
+            label={form.isSroUploading ? "Загрузка файла…" : "Выписка из реестра членов СРО в области проектирования"}
             hint={REGULATORY_FILE_HINT}
             items={sroItems}
             variant="editable"
@@ -206,7 +177,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
                 onChange={(event) => {
                   const next = event.target.files?.[0] ?? null;
                   event.target.value = "";
-                  if (next) replaceSroDesignFile(next);
+                  if (next) form.replaceSroDesignFile(next);
                 }}
               />
             }
@@ -216,14 +187,13 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         <div className={s.extrasItem}>
           <TextInput
             id="labAccreditationNumber"
-            value={watch("labAccreditationNumber") ?? ""}
+            value={form.labAccreditationNumber}
             autoComplete="off"
-            onChange={(e) => setValue("labAccreditationNumber", e.target.value, { shouldValidate })}
+            onChange={(e) => form.setLabAccreditationNumber(e.target.value)}
             placeholder="Свидетельство об аккредитации лаборатории №"
-            error={errors.labAccreditationNumber?.message}
           />
           <FileGallery
-            label={isLabUploading ? "Загрузка файла…" : "Файл свидетельства аккредитации"}
+            label={form.isLabUploading ? "Загрузка файла…" : "Файл свидетельства аккредитации"}
             hint={REGULATORY_FILE_HINT}
             items={labItems}
             variant="editable"
@@ -237,7 +207,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
                 onChange={(event) => {
                   const next = event.target.files?.[0] ?? null;
                   event.target.value = "";
-                  if (next) replaceLabAccreditationFile(next);
+                  if (next) form.replaceLabAccreditationFile(next);
                 }}
               />
             }
@@ -245,7 +215,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         </div>
       </div>
 
-      <Button type="submit" variant="chat" size="md" className={s.save} isLoading={isSaving}>
+      <Button type="submit" variant="chat" size="md" className={s.save} isLoading={form.isSaving}>
         Сохранить изменения
       </Button>
     </form>

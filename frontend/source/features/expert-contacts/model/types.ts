@@ -18,7 +18,7 @@ export interface ExpertContactsState {
   search: string;
   accessFilter: ContactAccessFilter;
   ratingSort: SortDir | null;
+  dealChatUuid: string | null;
   loading: boolean;
   busy: boolean;
-  error: string | null;
 }

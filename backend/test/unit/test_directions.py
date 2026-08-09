@@ -22,7 +22,7 @@ def registration_payload(**overrides: object) -> dict[str, object]:
     payload: dict[str, object] = {
         "role": "EXPERT",
         "email": "user@example.com",
-        "password": "secret-123",
+        "password": "Secret-123",
     }
     payload.update(overrides)
     return payload

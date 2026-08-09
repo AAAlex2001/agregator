@@ -3,7 +3,6 @@
 import Skeleton from "@/source/shared/ui/Skeleton";
 import {
   CadastralProfileFields,
-  cadastralProfileSchema,
   deleteCadastralDocument,
   fetchCadastralProfile,
   saveCadastralProfile,
@@ -12,15 +11,10 @@ import {
   uploadCadastralDocument,
   type CadastralProfile,
 } from "@/source/features/directions/cadastral";
-import { firstSchemaError } from "@/source/features/directions/shared/model/validate";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
 import { SavedFileField } from "@/source/features/directions/shared/ui/SavedFileField";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
-
-function validate(profile: CadastralProfile): string | null {
-  return firstSchemaError(cadastralProfileSchema, profile);
-}
 
 function mergeFiles(current: CadastralProfile, server: CadastralProfile): CadastralProfile {
   return {
@@ -36,7 +30,6 @@ export function CadastralProfileCard() {
     title: "Кадастровые работы",
     load: fetchCadastralProfile,
     save: saveCadastralProfile,
-    validate,
   });
 
   if (value === null) return <Skeleton className={s.skeleton} rounded="md" />;

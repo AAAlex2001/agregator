@@ -37,15 +37,28 @@ export function ForgotFlow({ onBack }: Props) {
       <h2 className={s.flowTitle}>Восстановление пароля</h2>
 
       {fp.step === 1 && (
-        <EmailStep form={fp.emailForm} isLoading={fp.isEmailLoading} onSubmit={fp.submitEmail} />
+        <EmailStep
+          email={fp.email}
+          onEmailChange={fp.setEmail}
+          isLoading={fp.waiting}
+          onSubmit={fp.submitEmail}
+        />
       )}
       {fp.step === 2 && (
-        <CodeStep form={fp.codeForm} isLoading={fp.isCodeLoading} onSubmit={fp.submitCode} />
+        <CodeStep
+          code={fp.code}
+          onCodeChange={fp.setCode}
+          isLoading={fp.waiting}
+          onSubmit={fp.submitCode}
+        />
       )}
       {fp.step === 3 && (
         <NewPasswordStep
-          form={fp.passwordForm}
-          isLoading={fp.isPasswordLoading}
+          password={fp.password}
+          repeatPassword={fp.repeatPassword}
+          onPasswordChange={fp.setPassword}
+          onRepeatPasswordChange={fp.setRepeatPassword}
+          isLoading={fp.waiting}
           onSubmit={fp.submitPassword}
         />
       )}

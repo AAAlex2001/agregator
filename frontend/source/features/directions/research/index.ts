@@ -1,5 +1,4 @@
-export { fetchResearchProfile, saveResearchProfile } from "./model/api";
-export { researchOrderSchema, researchProfileSchema } from "./model/schema";
+﻿export { fetchResearchProfile, saveResearchProfile } from "./model/api";
 export {
   emptyResearchOrderDetails,
   emptyResearchProfile,

@@ -13,6 +13,7 @@ export interface PasswordInputProps {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
+  minLength?: number;
   autoComplete?: string;
   className?: string;
   error?: string;
@@ -27,6 +28,7 @@ export function PasswordInput({
   placeholder,
   disabled,
   required,
+  minLength,
   autoComplete,
   className,
   error,
@@ -58,6 +60,7 @@ export function PasswordInput({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
+          minLength={minLength}
           autoComplete={autoComplete}
           aria-label={ariaLabel}
           className={`${s.input} ${s.hasLeftIcon} ${s.hasRightIcon}`}

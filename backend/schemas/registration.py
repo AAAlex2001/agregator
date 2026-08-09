@@ -1,3 +1,4 @@
+﻿import re
 from datetime import datetime
 from typing import Any
 
@@ -16,6 +17,18 @@ from schemas.expertise import ExpertiseProfileInput
 from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
 from schemas.research import ResearchProfileInput
+
+PASSWORD_ALLOWED_CHARS = re.compile(r"^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}|;:'\",.<>?/`~ ]+$")
+
+
+def validate_password_complexity(value: str) -> str:
+    if not re.search(r"[A-Z]", value):
+        raise ValueError("Пароль должен содержать заглавную латинскую букву")
+    if not re.search(r"[a-z]", value):
+        raise ValueError("Пароль должен содержать строчную латинскую букву")
+    if not PASSWORD_ALLOWED_CHARS.match(value):
+        raise ValueError("Пароль может содержать только латинские буквы, цифры и спецсимволы")
+    return value
 
 
 class UserRegistration(BaseModel):
@@ -49,9 +62,14 @@ class UserRegistration(BaseModel):
     contact_payment_details: str | None = Field(None, max_length=1000)
     contact_disclosure_consent: bool = False
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        return validate_password_complexity(value)
+
     @field_validator("company_data", mode="before")
     @classmethod
-    def _validate_company_data(cls, value: Any) -> Any:
+    def validate_company(cls, value: Any) -> Any:
         return validate_company_data(value)
 
     @model_validator(mode="after")
@@ -107,9 +125,14 @@ class LicenseHolderRegistration(BaseModel):
     lab_accreditation_number: str | None = Field(None, max_length=100)
     audit_profile: AuditLicenseHolderProfileInput | None = None
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        return validate_password_complexity(value)
+
     @field_validator("company_data", mode="before")
     @classmethod
-    def _validate_company_data(cls, value: Any) -> Any:
+    def validate_company(cls, value: Any) -> Any:
         return validate_company_data(value)
 
     @model_validator(mode="after")

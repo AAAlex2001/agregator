@@ -1,5 +1,6 @@
+"use client";
+
 import { useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
 import {
   TYPES,
   TypeBadge,
@@ -7,14 +8,9 @@ import {
   computeBadgeCodes,
   type ExpertiseType,
 } from "@/source/entities/expertise";
-import type { OrderFormValues } from "../../../model/schema";
+import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
 import s from "./badgeSection.module.scss";
-
-interface Props {
-  form: UseFormReturn<OrderFormValues>;
-  onShowHelp: () => void;
-}
 
 const OPO_ROWS: string[][] = [
   ["1", "2", "3.1", "3.2", "4", "5"],
@@ -22,12 +18,9 @@ const OPO_ROWS: string[][] = [
   ["13", "14.1", "14.2", "14.3", "14.4", "15"],
 ];
 
-export function BadgeSection({ form, onShowHelp }: Props) {
-  const selections = (form.watch("selectionsByType") ?? {}) as Record<ExpertiseType, string[]>;
+export function BadgeSection({ state, dispatch, onShowHelp }: StepProps & { onShowHelp: () => void }) {
+  const selections = state.selectionsByType;
   const [activeType, setActiveType] = useState<ExpertiseType | null>(null);
-
-  const setSelections = (next: Record<ExpertiseType, string[]>) =>
-    form.setValue("selectionsByType", next, { shouldDirty: true });
 
   const toggleType = (type: ExpertiseType) => {
     setActiveType((prev) => (prev === type ? null : type));
@@ -37,7 +30,7 @@ export function BadgeSection({ form, onShowHelp }: Props) {
     if (!activeType) return;
     const current = selections[activeType] ?? [];
     const nextOpos = current.includes(opo) ? current.filter((x) => x !== opo) : [...current, opo];
-    setSelections({ ...selections, [activeType]: nextOpos });
+    dispatch({ type: "selections", value: { ...selections, [activeType]: nextOpos } });
   };
 
   const activeOpos = activeType ? (selections[activeType] ?? []) : [];

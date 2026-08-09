@@ -90,10 +90,23 @@ class OrderCreate(BaseModel):
     badges: list[BadgeSchema] = Field(default_factory=list)
     status: OrderStatus = OrderStatus.ACTIVE
 
+    @field_validator("title")
+    @classmethod
+    def validate_title(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Введите название заказа")
+        return value.strip()
+
     @field_validator("responses_deadline")
     @classmethod
     def normalize_responses_deadline(cls, value: datetime | None) -> datetime | None:
         return normalize_moscow_datetime(value)
+
+    @model_validator(mode="after")
+    def validate_requirements(self) -> "OrderCreate":
+        if not self.requires_expert and not self.requires_license:
+            raise ValueError("Выберите, что требуется: исполнитель и/или лицензия")
+        return self
 
 
 class OrderUpdate(BaseModel):
@@ -114,10 +127,25 @@ class OrderUpdate(BaseModel):
     status: OrderStatus | None = None
     notify_responders: bool = True
 
+    @field_validator("title")
+    @classmethod
+    def validate_title(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        if not value.strip():
+            raise ValueError("Введите название заказа")
+        return value.strip()
+
     @field_validator("responses_deadline")
     @classmethod
     def normalize_responses_deadline(cls, value: datetime | None) -> datetime | None:
         return normalize_moscow_datetime(value)
+
+    @model_validator(mode="after")
+    def validate_requirements(self) -> "OrderUpdate":
+        if self.requires_expert is False and self.requires_license is False:
+            raise ValueError("Выберите, что требуется: исполнитель и/или лицензия")
+        return self
 
 
 class OrderCard(BaseModel):

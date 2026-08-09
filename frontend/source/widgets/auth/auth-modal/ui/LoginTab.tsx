@@ -16,8 +16,11 @@ export function LoginTab({ onSuccess, onForgot }: Props) {
   return (
     <div className={s.flow}>
       <LoginForm
-        form={auth.form}
-        isLoading={auth.isLoading}
+        email={auth.email}
+        password={auth.password}
+        onEmailChange={auth.setEmail}
+        onPasswordChange={auth.setPassword}
+        isLoading={auth.waiting}
         fromOrder={auth.fromOrder}
         onSubmit={auth.submit}
       />

@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-import type { UseFormReturn } from "react-hook-form";
 import { TextInput, CalendarInput } from "@/source/shared/ui";
-import { useSession } from "@/source/features/session";
 import type { OrderWorkType } from "@/source/entities/order";
-import type { OrderFormValues } from "../../../model/schema";
+import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
 import s from "./detailsSection.module.scss";
 
@@ -14,32 +11,18 @@ const TITLE_LABELS: Partial<Record<OrderWorkType, string>> = {
   LABORATORY: "Наименование исследований",
 };
 
-interface Props {
-  form: UseFormReturn<OrderFormValues>;
-}
-
-export function DetailsSection({ form }: Props) {
-  const { watch, setValue } = form;
-  const { user } = useSession();
-  const companyFromProfile = user?.company_data?.value ?? "";
-  const titleLabel = TITLE_LABELS[watch("workType")] ?? "Название заказа";
-
-  useEffect(() => {
-    if (companyFromProfile && watch("company") !== companyFromProfile) {
-      setValue("company", companyFromProfile, { shouldDirty: false });
-    }
-  }, [companyFromProfile, setValue, watch]);
-
+export function DetailsSection({ state, dispatch }: StepProps) {
   return (
     <section className={base.section}>
       <div className={s.grid}>
         <div className={s.field}>
-          <span className={base.label}>{titleLabel}</span>
+          <span className={base.label}>{TITLE_LABELS[state.workType] ?? "Название заказа"}</span>
           <TextInput
             active
+            required
             placeholder="Введите название"
-            value={watch("title")}
-            onChange={(event) => setValue("title", event.target.value, { shouldDirty: true })}
+            value={state.title}
+            onChange={(e) => dispatch({ type: "set", key: "title", value: e.target.value })}
           />
         </div>
 
@@ -47,8 +30,8 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Компания</span>
           <TextInput
             placeholder="Название компании"
-            value={watch("company")}
-            onChange={(event) => setValue("company", event.target.value, { shouldDirty: true })}
+            value={state.company}
+            onChange={(e) => dispatch({ type: "set", key: "company", value: e.target.value })}
             disabled
           />
         </div>
@@ -57,8 +40,8 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Срок начала выполнения работ</span>
           <CalendarInput
             active
-            value={watch("startDate")}
-            onChange={(value) => setValue("startDate", value, { shouldDirty: true })}
+            value={state.startDate}
+            onChange={(value) => dispatch({ type: "set", key: "startDate", value })}
           />
         </div>
 
@@ -66,8 +49,8 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Срок окончания выполнения работ</span>
           <CalendarInput
             active
-            value={watch("deadline")}
-            onChange={(value) => setValue("deadline", value, { shouldDirty: true })}
+            value={state.deadline}
+            onChange={(value) => dispatch({ type: "set", key: "deadline", value })}
           />
         </div>
 
@@ -76,8 +59,8 @@ export function DetailsSection({ form }: Props) {
           <TextInput
             active
             placeholder="Сумма в рублях (0 — не определено)"
-            value={watch("budget")}
-            onChange={(event) => setValue("budget", event.target.value.replace(/[^\d]/g, ""), { shouldDirty: true })}
+            value={state.budget}
+            onChange={(e) => dispatch({ type: "set", key: "budget", value: e.target.value.replace(/[^\d]/g, "") })}
           />
         </div>
 
@@ -85,8 +68,8 @@ export function DetailsSection({ form }: Props) {
           <span className={base.label}>Приём откликов до</span>
           <CalendarInput
             active
-            value={watch("responsesDeadline")}
-            onChange={(value) => setValue("responsesDeadline", value, { shouldDirty: true })}
+            value={state.responsesDeadline}
+            onChange={(value) => dispatch({ type: "set", key: "responsesDeadline", value })}
             withTime
           />
           <span className={s.timezoneHint}>Время указано по МСК</span>

@@ -8,9 +8,16 @@ import type { SortDir } from "@/source/shared/ui/SortPills";
 import type { ContactAccessFilter, ExpertContactsState } from "./types";
 
 export type ExpertContactsAction =
+  | { type: "LOAD_PENDING" }
+  | {
+      type: "LOAD_FULFILLED";
+      experts: ExpertContactCardData[];
+      deals: ContactDealListItem[];
+      offer: ExpertContactOfferData | null;
+    }
+  | { type: "LOAD_REJECTED" }
   | { type: "EXPERTS"; value: ExpertContactCardData[] }
   | { type: "DEALS"; value: ContactDealListItem[] }
-  | { type: "OFFER"; value: ExpertContactOfferData | null }
   | { type: "SELECT_DEAL"; value: ContactDealDetail | null }
   | { type: "REVIEW_DEAL"; value: ContactDealDetail | null }
   | { type: "DELETE_DEAL"; value: ContactDealListItem | null }
@@ -19,9 +26,8 @@ export type ExpertContactsAction =
   | { type: "SEARCH"; value: string }
   | { type: "ACCESS_FILTER"; value: ContactAccessFilter }
   | { type: "RATING_SORT"; value: SortDir | null }
-  | { type: "LOADING"; value: boolean }
-  | { type: "BUSY"; value: boolean }
-  | { type: "ERROR"; value: string | null };
+  | { type: "DEAL_CHAT"; value: string | null }
+  | { type: "BUSY"; value: boolean };
 
 export const initialExpertContactsState: ExpertContactsState = {
   experts: [],
@@ -33,9 +39,9 @@ export const initialExpertContactsState: ExpertContactsState = {
   search: "",
   accessFilter: "ALL",
   ratingSort: null,
+  dealChatUuid: null,
   loading: true,
   busy: false,
-  error: null,
 };
 
 export function expertContactsReducer(
@@ -43,12 +49,16 @@ export function expertContactsReducer(
   action: ExpertContactsAction,
 ): ExpertContactsState {
   switch (action.type) {
+    case "LOAD_PENDING":
+      return { ...state, loading: true };
+    case "LOAD_FULFILLED":
+      return { ...state, loading: false, experts: action.experts, deals: action.deals, offer: action.offer };
+    case "LOAD_REJECTED":
+      return { ...state, loading: false };
     case "EXPERTS":
       return { ...state, experts: action.value };
     case "DEALS":
       return { ...state, deals: action.value };
-    case "OFFER":
-      return { ...state, offer: action.value };
     case "SELECT_DEAL":
       return { ...state, selectedDeal: action.value };
     case "REVIEW_DEAL":
@@ -90,13 +100,9 @@ export function expertContactsReducer(
       return { ...state, accessFilter: action.value };
     case "RATING_SORT":
       return { ...state, ratingSort: action.value };
-    case "LOADING":
-      return { ...state, loading: action.value };
+    case "DEAL_CHAT":
+      return { ...state, dealChatUuid: action.value };
     case "BUSY":
       return { ...state, busy: action.value };
-    case "ERROR":
-      return { ...state, error: action.value };
-    default:
-      return state;
   }
 }

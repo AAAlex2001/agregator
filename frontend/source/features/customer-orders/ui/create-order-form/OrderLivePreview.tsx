@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useWatch, type UseFormReturn } from "react-hook-form";
 import {
   DocumentsGallery,
   OrderCard,
@@ -15,12 +14,11 @@ import {
 import { useSession } from "@/source/features/session";
 import type { DocumentsFormState } from "../../model/formFiles";
 import { buildPreviewBadges } from "../../model/expertiseBadges";
-import type { OrderFormValues } from "../../model/schema";
+import type { OrderFormState } from "../../model/orderForm";
 import s from "./OrderLivePreview.module.scss";
 
 interface Props {
-  form: UseFormReturn<OrderFormValues>;
-  documents: DocumentsFormState;
+  state: OrderFormState;
 }
 
 function formatBudget(budget: string): string {
@@ -37,33 +35,32 @@ function formatDeadline(iso: string): string {
   return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-function previewDetails(workType: OrderWorkType, values: Partial<OrderFormValues>): object | null {
-  switch (workType) {
+function previewDetails(state: OrderFormState): object | null {
+  switch (state.workType) {
     case "CADASTRAL":
-      return values.cadastralDetails ?? null;
+      return state.cadastralDetails;
     case "FORENSIC":
-      return values.forensicDetails ?? null;
+      return state.forensicDetails;
     case "RESEARCH":
-      return values.researchDetails ?? null;
+      return state.researchDetails;
     case "LABORATORY":
-      return values.laboratoryDetails ?? null;
+      return state.laboratoryDetails;
     case "AUDIT_SUPB":
-      return values.auditDetails ?? null;
+      return state.auditDetails;
     default:
       return null;
   }
 }
 
-export function OrderLivePreview({ form, documents }: Props) {
-  const values = useWatch({ control: form.control }) as Partial<OrderFormValues>;
-  const previewDocuments = usePreviewDocuments(documents);
+export function OrderLivePreview({ state }: Props) {
+  const previewDocuments = usePreviewDocuments(state.documents);
   const { user } = useSession();
 
-  const badges = buildPreviewBadges(values.selectionsByType ?? {});
-  const comment = values.comment?.trim() ?? "";
+  const badges = buildPreviewBadges(state.selectionsByType);
+  const comment = state.comment.trim();
   const hasDocuments = countDocuments(previewDocuments) > 0;
-  const workType = values.workType ?? "EXPERTISE";
-  const directionDetails = previewDetails(workType, values);
+  const workType: OrderWorkType = state.workType;
+  const directionDetails = previewDetails(state);
   const hasDirectionFields =
     orderDetailsFields(workType).length > 0 && Boolean(directionDetails);
   const hasDetails = Boolean(comment) || hasDocuments || hasDirectionFields;
@@ -73,14 +70,14 @@ export function OrderLivePreview({ form, documents }: Props) {
       <span className={s.heading}>Как увидят исполнители:</span>
       <OrderCard
         badges={badges}
-        workType={values.workType}
-        title={values.title?.trim() || "Название заказа"}
-        customer={values.company?.trim() || "—"}
+        workType={state.workType}
+        title={state.title.trim() || "Название заказа"}
+        customer={state.company.trim() || "—"}
         customerInn={user?.inn ?? undefined}
-        startDate={values.startDate ? formatDeadline(values.startDate) : undefined}
-        date={formatDeadline(values.deadline ?? "")}
-        sum={formatBudget(values.budget ?? "")}
-        responsesDeadline={values.responsesDeadline || null}
+        startDate={state.startDate ? formatDeadline(state.startDate) : undefined}
+        date={formatDeadline(state.deadline)}
+        sum={formatBudget(state.budget)}
+        responsesDeadline={state.responsesDeadline || null}
         details={hasDetails ? (
           <>
             <OrderDetailsList workType={workType} details={directionDetails} />

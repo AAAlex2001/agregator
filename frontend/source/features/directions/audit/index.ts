@@ -11,12 +11,6 @@ export {
   uploadAuditOrderFile,
 } from "./model/api";
 export {
-  auditCustomerProfileSchema,
-  auditExpertProfileSchema,
-  auditLicenseHolderProfileSchema,
-  auditOrderSchema,
-} from "./model/schema";
-export {
   emptyAuditCatalogs,
   emptyAuditCustomerProfile,
   emptyAuditExpertProfile,

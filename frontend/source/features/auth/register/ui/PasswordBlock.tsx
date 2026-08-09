@@ -19,6 +19,7 @@ export function PasswordBlock({ state, dispatch }: StepProps) {
         id="password"
         value={state.password}
         required
+        minLength={6}
         autoComplete="new-password"
         onChange={(e) => dispatch({ type: "set", key: "password", value: e.target.value })}
         placeholder="Пароль"

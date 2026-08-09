@@ -1,5 +1,4 @@
-export { fetchLaboratoryProfile, saveLaboratoryProfile } from "./model/api";
-export { laboratoryOrderSchema, laboratoryProfileSchema } from "./model/schema";
+﻿export { fetchLaboratoryProfile, saveLaboratoryProfile } from "./model/api";
 export {
   emptyLaboratoryOrderDetails,
   emptyLaboratoryProfile,

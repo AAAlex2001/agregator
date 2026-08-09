@@ -3,6 +3,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 from models.license_holder import LicenseRentalKind
+from schemas.registration import validate_password_complexity
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES_SET
 
 
@@ -101,12 +102,16 @@ class UpdateExpertLocationRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     """Смена пароля пользователя"""
-    new_password: str = Field(..., description="Новый пароль", min_length=8)
+    new_password: str = Field(..., description="Новый пароль", min_length=6)
     new_password_confirm: str = Field(..., description="Подтверждение нового пароля")
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        return validate_password_complexity(value)
 
     @model_validator(mode="after")
     def check_passwords_match(self) -> "ChangePasswordRequest":
-        """Проверка совпадения паролей"""
         if self.new_password != self.new_password_confirm:
             raise ValueError("Пароли не совпадают")
         return self

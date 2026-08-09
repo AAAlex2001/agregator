@@ -40,8 +40,6 @@ export interface ServiceRequestState {
 
 export type ServiceRequestAgreement = "agreePrivacy" | "agreeTerms" | "agreeConsent";
 
-export type ServiceRequestErrors = Partial<Record<keyof ServiceRequestState, string>>;
-
 export type ServiceRequestField =
   | "firstName"
   | "lastName"
