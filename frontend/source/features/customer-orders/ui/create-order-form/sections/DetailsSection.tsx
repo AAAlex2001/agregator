@@ -18,7 +18,6 @@ export function DetailsSection({ state, dispatch }: StepProps) {
         <div className={s.field}>
           <span className={base.label}>{TITLE_LABELS[state.workType] ?? "Название заказа"}</span>
           <TextInput
-            active
             required
             placeholder="Введите название"
             value={state.title}
@@ -57,7 +56,6 @@ export function DetailsSection({ state, dispatch }: StepProps) {
         <div className={s.field}>
           <span className={base.label}>Начальная максимальная цена, ₽</span>
           <TextInput
-            active
             placeholder="Сумма в рублях (0 — не определено)"
             value={state.budget}
             onChange={(e) => dispatch({ type: "set", key: "budget", value: e.target.value.replace(/[^\d]/g, "") })}

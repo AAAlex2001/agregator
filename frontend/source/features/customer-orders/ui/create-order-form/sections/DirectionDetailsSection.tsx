@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { OrderWorkType } from "@/source/entities/order";
 import {
   AuditOrderFields,
   emptyAuditCatalogs,
@@ -15,16 +14,6 @@ import { ResearchOrderFields } from "@/source/features/directions/research";
 import { TechDiagOrderFields } from "@/source/features/directions/tech-diag";
 import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
-import s from "./directionDetailsSection.module.scss";
-
-const SECTION_TITLES: Partial<Record<OrderWorkType, string>> = {
-  CADASTRAL: "Кадастровые работы",
-  FORENSIC: "Судебная экспертиза",
-  RESEARCH: "Создать заявку на проведение НИР",
-  LABORATORY: "Создать заявку на проведение лабораторных исследований",
-  AUDIT_SUPB: "Заявка на аудит СУПБ",
-  TECH_DIAG: "Заявка на техническое освидетельствование и диагностирование",
-};
 
 export function DirectionDetailsSection({ state, dispatch }: StepProps) {
   const { workType } = state;
@@ -37,10 +26,6 @@ export function DirectionDetailsSection({ state, dispatch }: StepProps) {
 
   return (
     <section className={base.section}>
-      <span className={`${base.label} ${s.title}`}>
-        {SECTION_TITLES[workType] ?? "Поля направления"}
-      </span>
-
       {workType === "CADASTRAL" && (
         <CadastralOrderFields
           value={state.cadastralDetails}

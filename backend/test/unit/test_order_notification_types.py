@@ -13,7 +13,7 @@ from services.notifications.use_cases.create_new_order_notification import (
     CreateNewOrderNotificationUseCase,
 )
 from services.order_notification_types import (
-    ENGINEERING_ORDER_NOTIFICATION_TYPES,
+    DIRECTION_ORDER_NOTIFICATION_TYPES,
     notification_types_for_order,
 )
 from services.settings.use_cases.update_order_notifications import (
@@ -50,32 +50,31 @@ class NotificationTypesForOrderTest(TestCase):
 
         assert notification_types_for_order(order) == {"Э1 КЛ/ТП", "Э2 ЗС"}
 
-    def test_each_engineering_order_uses_its_work_type(self) -> None:
+    def test_each_direction_order_uses_its_work_type(self) -> None:
         work_types = (
-            OrderWorkType.DESIGN_SURVEY,
-            OrderWorkType.INSPECTION_TESTING,
             OrderWorkType.RESEARCH_LAB,
-            OrderWorkType.OTHER,
+            OrderWorkType.AUDIT_SUPB,
+            OrderWorkType.TECH_DIAG,
         )
         for work_type in work_types:
             with self.subTest(work_type=work_type):
                 order = make_order(work_type)
                 assert notification_types_for_order(order) == {work_type.value}
 
-    def test_settings_schema_accepts_all_engineering_types(self) -> None:
+    def test_settings_schema_accepts_all_direction_types(self) -> None:
         data = UpdateOrderNotificationsRequest(
             order_types=[
-                *ENGINEERING_ORDER_NOTIFICATION_TYPES,
-                OrderWorkType.DESIGN_SURVEY.value,
+                *DIRECTION_ORDER_NOTIFICATION_TYPES,
+                OrderWorkType.TECH_DIAG.value,
             ]
         )
 
-        assert data.order_types == list(ENGINEERING_ORDER_NOTIFICATION_TYPES)
+        assert data.order_types == list(DIRECTION_ORDER_NOTIFICATION_TYPES)
 
 
 class OrderNotificationUseCasesTest(IsolatedAsyncioTestCase):
-    async def test_in_app_notification_matches_engineering_subscription(self) -> None:
-        matching = make_expert(1, [OrderWorkType.DESIGN_SURVEY.value])
+    async def test_in_app_notification_matches_direction_subscription(self) -> None:
+        matching = make_expert(1, [OrderWorkType.TECH_DIAG.value])
         unrelated = make_expert(2, [OrderWorkType.RESEARCH_LAB.value])
         repo = MagicMock()
         repo.list_experts_subscribed_to_order_types = AsyncMock(
@@ -91,7 +90,7 @@ class OrderNotificationUseCasesTest(IsolatedAsyncioTestCase):
             SimpleNamespace,
         ):
             sent = await CreateNewOrderNotificationUseCase(repo).execute(
-                make_order(OrderWorkType.DESIGN_SURVEY)
+                make_order(OrderWorkType.TECH_DIAG)
             )
 
         assert sent == 1
@@ -101,12 +100,12 @@ class OrderNotificationUseCasesTest(IsolatedAsyncioTestCase):
         assert notification.payload["badges"] == []
         repo.increment_unread.assert_awaited_once_with(matching.id)
 
-    async def test_email_notification_matches_engineering_subscription(self) -> None:
-        matching = make_expert(1, [OrderWorkType.INSPECTION_TESTING.value])
-        unrelated = make_expert(2, [OrderWorkType.OTHER.value])
+    async def test_email_notification_matches_direction_subscription(self) -> None:
+        matching = make_expert(1, [OrderWorkType.AUDIT_SUPB.value])
+        unrelated = make_expert(2, [OrderWorkType.RESEARCH_LAB.value])
         repo = MagicMock()
         repo.find_order = AsyncMock(
-            return_value=make_order(OrderWorkType.INSPECTION_TESTING)
+            return_value=make_order(OrderWorkType.AUDIT_SUPB)
         )
         repo.list_experts_subscribed_to_order_types = AsyncMock(
             return_value=[matching, unrelated]
@@ -130,12 +129,12 @@ class OrderNotificationUseCasesTest(IsolatedAsyncioTestCase):
 
         result = await UpdateOrderNotificationsUseCase(repo, validator).execute(
             account.id,
-            [OrderWorkType.OTHER.value],
+            [OrderWorkType.TECH_DIAG.value],
         )
 
         validator.require_expert.assert_awaited_once_with(account.id)
         assert result is account
-        assert account.expert_profile.notify_order_types == [OrderWorkType.OTHER.value]
+        assert account.expert_profile.notify_order_types == [OrderWorkType.TECH_DIAG.value]
         repo.flush.assert_awaited_once()
 
     async def test_customer_cannot_update_order_notification_settings(self) -> None:

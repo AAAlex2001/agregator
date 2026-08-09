@@ -1,11 +1,7 @@
 "use client";
 
 import { ALL_BADGE_CODES_SET, BadgeCodesPicker } from "@/source/entities/expertise";
-import {
-  ORDER_WORK_GROUPS,
-  SUBSCRIPTION_WORK_OPTIONS,
-  subscriptionWorkOptionsOf,
-} from "@/source/entities/order";
+import { SUBSCRIPTION_WORK_OPTIONS } from "@/source/entities/order";
 import { Switch } from "@/source/shared/ui/Switch";
 import s from "./OrderNotificationTypesPicker.module.scss";
 
@@ -45,25 +41,23 @@ export function OrderNotificationTypesPicker({
         <BadgeCodesPicker value={badgeCodes} onChange={(next) => replace(next, workTypes)} />
       </section>
 
-      {ORDER_WORK_GROUPS.map((group) => (
-        <section key={group.key} className={s.section}>
-          <h4 className={s.heading}>{group.title}</h4>
-          <ul className={s.engineeringList}>
-            {subscriptionWorkOptionsOf(group.key).map((option) => (
-              <li key={option.value} className={s.engineeringItem}>
-                <Switch
-                  id={`order-notification-${option.value.toLowerCase()}`}
-                  checked={workTypes.includes(option.value)}
-                  onChange={(next) => toggleWorkType(option.value, next)}
-                  label={option.label}
-                  description={option.description}
-                  disabled={disabled}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      <section className={s.section}>
+        <h4 className={s.heading}>Направления</h4>
+        <ul className={s.engineeringList}>
+          {SUBSCRIPTION_WORK_OPTIONS.map((option) => (
+            <li key={option.value} className={s.engineeringItem}>
+              <Switch
+                id={`order-notification-${option.value.toLowerCase()}`}
+                checked={workTypes.includes(option.value)}
+                onChange={(next) => toggleWorkType(option.value, next)}
+                label={option.label}
+                description={option.description}
+                disabled={disabled}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
     </fieldset>
   );
 }

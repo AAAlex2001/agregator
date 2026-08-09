@@ -40,25 +40,6 @@
   }
 }
 
-.promoRow {
-  order: 2;
-  width: auto;
-  max-width: 100%;
-  min-width: 0;
-  display: inline-flex;
-  justify-content: flex-start;
-  gap: 6px;
-  overflow: hidden;
-
-  @media (min-width: 768px) {
-    gap: 8px;
-  }
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
-}
-
 .navLink {
   text-decoration: none;
   font-size: 13px;
@@ -87,47 +68,5 @@
     padding: 8px 5px;
     font-size: 14px;
     line-height: 17px;
-  }
-}
-
-.navLinkPromo {
-  border: none;
-  font-family: inherit;
-  cursor: pointer;
-  font-weight: 600;
-  flex: 0 1 auto;
-  min-width: 0;
-  font-size: 12px;
-  line-height: 16px;
-  padding-inline: 9px;
-
-  @media (min-width: 768px) {
-    font-size: 15px;
-    line-height: 18px;
-    padding-inline: 16px;
-    min-width: 210px;
-    text-align: center;
-  }
-}
-
-.navLinkPromoBot {
-  background: rgba(34, 158, 217, 0.1);
-  color: #147fba;
-
-  &:hover,
-  &:focus-visible {
-    background: #229ed9;
-    color: #ffffff;
-  }
-}
-
-.navLinkPromoApp {
-  background: #fff3e0;
-  color: #e87800;
-
-  &:hover,
-  &:focus-visible {
-    background: #ff8a00;
-    color: #ffffff;
   }
 }

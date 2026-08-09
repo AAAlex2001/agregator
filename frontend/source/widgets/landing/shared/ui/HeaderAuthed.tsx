@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
-import PromoDrawer, { PromoNavButtons } from "./PromoDrawer";
 import s from "./header-authed.module.scss";
 
 const NAV_PAGES = [
@@ -10,29 +9,19 @@ const NAV_PAGES = [
 ] as const;
 
 const HeaderAuthed = () => (
-  <>
-    <PromoDrawer />
-    <header className={s.header}>
-      <nav className={s.nav} aria-label="Основная навигация">
-        <ExpertHelpPlates compact spread />
-        <div className={s.menuLinks}>
-          {NAV_PAGES.map((page) => (
-            <Link key={page.href} href={page.href} className={s.navLink}>
-              {page.label}
-            </Link>
-          ))}
-        </div>
-        <div className={s.promoRow}>
-          <PromoNavButtons
-            className={`${s.navLink} ${s.navLinkPromo}`}
-            botClassName={s.navLinkPromoBot}
-            appClassName={s.navLinkPromoApp}
-          />
-        </div>
-        <CabinetBurgerMenu />
-      </nav>
-    </header>
-  </>
+  <header className={s.header}>
+    <nav className={s.nav} aria-label="Основная навигация">
+      <ExpertHelpPlates compact spread />
+      <div className={s.menuLinks}>
+        {NAV_PAGES.map((page) => (
+          <Link key={page.href} href={page.href} className={s.navLink}>
+            {page.label}
+          </Link>
+        ))}
+      </div>
+      <CabinetBurgerMenu />
+    </nav>
+  </header>
 );
 
 export default HeaderAuthed;

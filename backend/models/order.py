@@ -38,8 +38,6 @@ class OrderStatus(str, PyEnum):
 
 class OrderWorkType(str, PyEnum):
     EXPERTISE = "EXPERTISE"
-    DESIGN_SURVEY = "DESIGN_SURVEY"
-    INSPECTION_TESTING = "INSPECTION_TESTING"
     RESEARCH_LAB = "RESEARCH_LAB"
     CADASTRAL = "CADASTRAL"
     FORENSIC = "FORENSIC"
@@ -47,7 +45,6 @@ class OrderWorkType(str, PyEnum):
     LABORATORY = "LABORATORY"
     AUDIT_SUPB = "AUDIT_SUPB"
     TECH_DIAG = "TECH_DIAG"
-    OTHER = "OTHER"
 
 
 class BadgeVariant(str, PyEnum):
