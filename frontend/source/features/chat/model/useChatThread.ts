@@ -138,5 +138,7 @@ export function useChatThread(chatUuid: string | null, currentUserId: number) {
     setMessages(nextChat.messages);
   }
 
-  return { chat, messages, loading, error, threadRef, appendMessage, replaceChat };
+  const isCustomerParty = chat ? chat.customer_id === currentUserId : false;
+
+  return { chat, messages, loading, error, threadRef, appendMessage, replaceChat, isCustomerParty };
 }

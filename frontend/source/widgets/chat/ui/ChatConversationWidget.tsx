@@ -4,12 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useOptionalChatListContext } from "@/source/features/chat";
 import { ArrowIcon } from "@/source/shared/ui/icons";
-import {
-  MessageGroup,
-  type ChatDetailData,
-  type ChatMessageData,
-  type ChatMessageGroupData,
-} from "@/source/entities/chat";
+import { MessageGroup, groupChatMessages, type ChatDetailData } from "@/source/entities/chat";
 import { ChatBlockButton, ChatComposer, ChatOrderBanner, useChatThread } from "@/source/features/chat";
 import { ChatConversationSkeleton } from "./ChatConversationSkeleton";
 import s from "./ChatConversationWidget.module.scss";
@@ -20,34 +15,14 @@ interface ChatConversationWidgetProps {
   onClose?: () => void;
 }
 
-function groupMessages(messages: ChatMessageData[]): ChatMessageGroupData[] {
-  const groups: ChatMessageGroupData[] = [];
-
-  for (const message of messages) {
-    const lastGroup = groups[groups.length - 1];
-
-    if (lastGroup && lastGroup.senderId === message.sender_id) {
-      lastGroup.messages.push(message);
-    } else {
-      groups.push({
-        senderId: message.sender_id,
-        senderRole: message.sender_role,
-        messages: [message],
-      });
-    }
-  }
-
-  return groups;
-}
-
 export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: ChatConversationWidgetProps) {
   const router = useRouter();
   const { user } = useSession();
   const chatList = useOptionalChatListContext();
   const currentUserId = user?.id ?? 0;
-  const { chat, messages, loading, error, threadRef, appendMessage, replaceChat } = useChatThread(chatUuid, currentUserId);
-  const groups = groupMessages(messages);
-  const isCustomerParty = chat ? chat.customer_id === currentUserId : false;
+  const { chat, messages, loading, error, threadRef, appendMessage, replaceChat, isCustomerParty } =
+    useChatThread(chatUuid, currentUserId);
+  const groups = groupChatMessages(messages);
   const canManageChatBlock = isCustomerParty;
   const blockedText = !isCustomerParty && chat?.is_manually_blocked
     ? "Заказчик вас заблокировал."

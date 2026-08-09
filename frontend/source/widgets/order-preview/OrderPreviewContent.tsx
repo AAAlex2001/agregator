@@ -1,56 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader } from "@/source/shared/ui";
 import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import { LogoIcon } from "@/source/shared/ui/icons";
-import { documentPaths, fetchPublicOrder, PENDING_ORDER_UUID_KEY, type PublicOrderPreview } from "@/source/entities/order";
-import { fetchProfile } from "@/source/entities/user";
+import { documentPaths } from "@/source/entities/order";
+import { useOrderPreview } from "@/source/features/order-preview";
 import styles from "./order-preview.module.scss";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
-
-type PreviewOrder = PublicOrderPreview;
-
-function useOrderPreviewState() {
-  const params = useParams();
-  const router = useRouter();
-  const uuid = params?.uuid as string | undefined;
-  const [order, setOrder] = useState<PreviewOrder | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-
-  useEffect(() => {
-    if (uuid) sessionStorage.setItem(PENDING_ORDER_UUID_KEY, uuid);
-  }, [uuid]);
-
-  useEffect(() => {
-    if (!uuid) return;
-    setIsLoading(true);
-    fetchPublicOrder(uuid)
-      .then((data) => setOrder(data))
-      .catch((e) => setError(e instanceof Error ? e.message : "Заказ не найден"))
-      .finally(() => setIsLoading(false));
-  }, [uuid]);
-
-  useEffect(() => {
-    if (!order) return;
-    fetchProfile()
-      .then((profile) => {
-        if (profile.role === "EXPERT") {
-          sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
-          router.replace(`/expert/orders?orderId=${order.id}`);
-        } else {
-          setCheckingAuth(false);
-        }
-      })
-      .catch(() => setCheckingAuth(false));
-  }, [order, router]);
-
-  return { order, isLoading, error, checkingAuth };
-}
 
 const variantClassMap: Record<string, string> = {
   BLUE: "badgeBlue", GREEN: "badgeGreen", GRAY: "badgeGray",
@@ -64,7 +21,7 @@ function getFileName(url: string): string {
 }
 
 export function OrderPreviewContent() {
-  const { order, isLoading, error, checkingAuth } = useOrderPreviewState();
+  const { order, isLoading, error, checkingAuth } = useOrderPreview();
 
   if (checkingAuth && !error) {
     return (

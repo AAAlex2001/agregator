@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { ChevronIcon } from "@/source/shared/ui/icons";
@@ -16,12 +14,12 @@ import type { FileGalleryItem } from "@/source/shared/ui/FileGallery";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { CATEGORY_LABEL, type TicketCategory } from "@/source/entities/ticket";
 import {
-  createTicketSchema,
   FILE_ACCEPT,
   MAX_FILES,
   MAX_MESSAGE_LENGTH,
-  type CreateTicketValues,
-} from "../model/schemas";
+  MAX_SUBJECT_LENGTH,
+  ticketFilesError,
+} from "../model/files";
 import s from "./CreateTicketForm.module.scss";
 
 interface Props {
@@ -53,29 +51,12 @@ interface PreviewItem {
 export function CreateTicketForm({ onCancel, onSubmit }: Props) {
   const { showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [subject, setSubject] = useState("");
+  const [category, setCategory] = useState<TicketCategory>("ORDER");
+  const [message, setMessage] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting, isValid },
-  } = useForm<CreateTicketValues>({
-    resolver: zodResolver(createTicketSchema),
-    mode: "onChange",
-    defaultValues: {
-      subject: "",
-      category: "ORDER",
-      message: "",
-      files: [],
-    },
-  });
-
-  const files = watch("files");
-  const message = watch("message");
-  const category = watch("category");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     const next = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
@@ -85,40 +66,35 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
     };
   }, [files]);
 
-  const submit = handleSubmit(
-    async (values) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (sending) return;
+    setSending(true);
+    try {
       await onSubmit({
-        subject: values.subject.trim(),
-        category: values.category,
-        message: values.message.trim(),
-        files: values.files,
+        subject: subject.trim(),
+        category,
+        message: message.trim(),
+        files,
       });
-    },
-    (formErrors) => {
-      const first = Object.values(formErrors)[0];
-      const message = (first && typeof first === "object" && "message" in first
-        ? (first as { message?: string }).message
-        : undefined) ?? "Проверьте поля формы";
-      showError(message);
-    },
-  );
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleAddFiles = (list: FileList | null) => {
     if (!list || list.length === 0) return;
     const next = Array.from(list);
-    if (files.length + next.length > MAX_FILES) {
-      showError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
+    const error = ticketFilesError(files, next);
+    if (error) {
+      showError(error);
       return;
     }
-    setValue("files", [...files, ...next], { shouldValidate: true, shouldDirty: true });
+    setFiles((prev) => [...prev, ...next]);
   };
 
   const removeFile = (index: number) => {
-    setValue(
-      "files",
-      files.filter((_, i) => i !== index),
-      { shouldValidate: true, shouldDirty: true },
-    );
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const galleryItems: FileGalleryItem[] = files
@@ -138,7 +114,7 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
     .filter((item) => item.url);
 
   return (
-    <form className={s.panel} onSubmit={submit} noValidate>
+    <form className={s.panel} onSubmit={submit}>
       <header className={s.head}>
         <button
           type="button"
@@ -160,18 +136,12 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
           <label className={s.label} htmlFor="ticket-subject">
             Тема обращения
           </label>
-          <Controller
-            control={control}
-            name="subject"
-            render={({ field }) => (
-              <TextInput
-                id="ticket-subject"
-                placeholder="Кратко опишите суть"
-                value={field.value}
-                onChange={(event) => field.onChange(event.target.value)}
-                error={errors.subject?.message}
-              />
-            )}
+          <TextInput
+            id="ticket-subject"
+            placeholder="Кратко опишите суть"
+            required
+            value={subject}
+            onChange={(event) => setSubject(event.target.value.slice(0, MAX_SUBJECT_LENGTH))}
           />
         </div>
 
@@ -185,7 +155,7 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
                   key={cat}
                   type="button"
                   className={`${s.categoryChip} ${active ? s.categoryActive : ""}`}
-                  onClick={() => setValue("category", cat, { shouldValidate: true })}
+                  onClick={() => setCategory(cat)}
                 >
                   {CATEGORY_LABEL[cat]}
                 </button>
@@ -203,12 +173,13 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
             className={s.textarea}
             placeholder="Опишите вопрос. Если связан с заказом или откликом — укажите номер."
             rows={6}
-            {...register("message")}
+            required
+            maxLength={MAX_MESSAGE_LENGTH}
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
           />
           <div className={s.fieldFoot}>
-            {errors.message?.message ? (
-              <span className={s.fieldError}>{errors.message.message}</span>
-            ) : <span />}
+            <span />
             <span className={s.counter}>
               {message.length} / {MAX_MESSAGE_LENGTH}
             </span>
@@ -244,9 +215,6 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
               />
             )}
           />
-          {errors.files?.message && (
-            <span className={s.fieldError}>{errors.files.message}</span>
-          )}
         </div>
       </div>
 
@@ -258,8 +226,8 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
           variant="primary"
           size="md"
           type="submit"
-          disabled={!isValid || isSubmitting}
-          isLoading={isSubmitting}
+          disabled={sending}
+          isLoading={sending}
         >
           Отправить обращение
         </Button>

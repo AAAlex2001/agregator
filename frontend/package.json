@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@fontsource/montserrat": "^5.2.8",
-    "@hookform/resolvers": "^5.2.2",
     "framer-motion": "^12.23.24",
     "keen-slider": "^6.8.6",
     "lightgallery": "^2.9.0",
@@ -19,10 +18,8 @@
     "react-datepicker": "^7.6.0",
     "react-dom": "19.2.1",
     "react-dropzone": "^15.0.0",
-    "react-hook-form": "^7.72.1",
     "sass": "^1.94.0",
-    "swiper": "^12.0.3",
-    "zod": "^4.3.6"
+    "swiper": "^12.0.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

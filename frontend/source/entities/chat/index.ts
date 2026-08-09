@@ -12,6 +12,7 @@ export { ChatListItem } from "./ui/ChatListItem";
 export { MessageBubble } from "./ui/MessageBubble";
 export { MessageGroup } from "./ui/MessageGroup";
 export type { ChatMessageGroupData } from "./ui/MessageGroup";
+export { groupChatMessages } from "./model/groupMessages";
 export {
   fetchChatList,
   fetchChatDetail,

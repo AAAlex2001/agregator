@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowIcon, ChatClipIcon } from "@/source/shared/ui/icons";
 import {
   getFileGalleryPreviewUrl,
@@ -20,8 +20,9 @@ import {
 import {
   FILE_ACCEPT,
   MAX_FILES,
-  ticketReplySchema,
-} from "../model/schemas";
+  MAX_MESSAGE_LENGTH,
+  ticketFilesError,
+} from "../model/files";
 import s from "./TicketDetail.module.scss";
 
 interface Props {
@@ -70,7 +71,7 @@ export function TicketDetail({ ticket, onBack, onReply }: Props) {
   const threadRef = useRef<HTMLDivElement>(null);
 
   const isClosed = ticket.status === "CLOSED";
-  const groups = useMemo(() => groupMessages(ticket.messages), [ticket.messages]);
+  const groups = groupMessages(ticket.messages);
 
   useEffect(() => {
     const next = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
@@ -89,14 +90,17 @@ export function TicketDetail({ ticket, onBack, onReply }: Props) {
   const handleSend = () => {
     if (isClosed) return;
 
-    const result = ticketReplySchema.safeParse({ text: draft, files });
-    if (!result.success) {
-      const first = result.error.issues[0]?.message ?? "Проверьте сообщение";
-      showError(first);
+    const text = draft.trim();
+    if (!text && files.length === 0) {
+      showError("Введите сообщение или прикрепите файл");
+      return;
+    }
+    if (text.length > MAX_MESSAGE_LENGTH) {
+      showError(`Сообщение не должно превышать ${MAX_MESSAGE_LENGTH} символов`);
       return;
     }
 
-    onReply(result.data.text, result.data.files);
+    onReply(text, files);
     setDraft("");
     setFiles([]);
   };
@@ -104,8 +108,9 @@ export function TicketDetail({ ticket, onBack, onReply }: Props) {
   const handleAddFiles = (list: FileList | null) => {
     if (!list || list.length === 0) return;
     const next = Array.from(list);
-    if (files.length + next.length > MAX_FILES) {
-      showError(`Можно прикрепить не больше ${MAX_FILES} файлов`);
+    const error = ticketFilesError(files, next);
+    if (error) {
+      showError(error);
       return;
     }
     setFiles((prev) => [...prev, ...next]);

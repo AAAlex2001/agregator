@@ -1,10 +1,13 @@
-import type { UseFormReturn } from "react-hook-form";
+import type { Dispatch, FormEvent } from "react";
 import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
-import type { VatKind } from "@/source/entities/response";
 import { VAT_LABEL, VatBreakdown } from "@/source/entities/response";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
-import { VAT_KIND_VALUES, type RespondFormValues } from "../../model/respond.schema";
+import {
+  VAT_KIND_VALUES,
+  type RespondFormAction,
+  type RespondFormState,
+} from "../../model/respondForm";
 import base from "./sectionBase.module.scss";
 import { BidFilesField } from "./BidFilesField";
 import { ModalHeader } from "./ModalHeader";
@@ -13,7 +16,8 @@ import s from "./OfferStep.module.scss";
 
 interface Props {
   order: OrderCardData;
-  form: UseFormReturn<RespondFormValues>;
+  state: RespondFormState;
+  dispatch: Dispatch<RespondFormAction>;
   showCompanyField: boolean;
   files: File[];
   isSubmitting: boolean;
@@ -25,7 +29,8 @@ interface Props {
 
 export function OfferStep({
   order,
-  form,
+  state,
+  dispatch,
   showCompanyField,
   files,
   isSubmitting,
@@ -34,15 +39,7 @@ export function OfferStep({
   onBack,
   onSubmit,
 }: Props) {
-  const { watch, setValue, formState } = form;
-  const shouldValidate = formState.isSubmitted;
-  const startDate = watch("startDate");
-  const deadline = watch("deadline");
-  const cost = watch("cost");
-  const vatKind = watch("vatKind");
-  const comment = watch("comment");
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit();
   };
@@ -57,10 +54,9 @@ export function OfferStep({
           <span className={base.fieldLabel}>Срок начала выполнения работ</span>
           <CalendarInput
             active
-            value={startDate}
-            onChange={(value) => setValue("startDate", value, { shouldValidate })}
+            value={state.startDate}
+            onChange={(value) => dispatch({ type: "set", field: "startDate", value })}
             placeholder="Выберите дату"
-            error={formState.errors.startDate?.message}
           />
         </div>
 
@@ -68,10 +64,9 @@ export function OfferStep({
           <span className={base.fieldLabel}>Срок окончания выполнения работ</span>
           <CalendarInput
             active
-            value={deadline}
-            onChange={(value) => setValue("deadline", value, { shouldValidate })}
+            value={state.deadline}
+            onChange={(value) => dispatch({ type: "set", field: "deadline", value })}
             placeholder="Выберите дату"
-            error={formState.errors.deadline?.message}
           />
         </div>
       </div>
@@ -80,13 +75,11 @@ export function OfferStep({
         <span className={base.fieldLabel}>Ваша оценка стоимости работ</span>
         <TextInput
           active
+          required
           inputMode="numeric"
-          value={cost}
-          onChange={(event) =>
-            setValue("cost", event.target.value.replace(/[^0-9]/g, ""), { shouldValidate })
-          }
+          value={state.cost}
+          onChange={(event) => dispatch({ type: "cost", value: event.target.value })}
           placeholder="Сумма в рублях"
-          error={formState.errors.cost?.message}
         />
       </div>
 
@@ -94,7 +87,7 @@ export function OfferStep({
         <span className={base.fieldLabel}>НДС</span>
         <div className={s.vatGroup} role="radiogroup" aria-label="НДС">
           {VAT_KIND_VALUES.map((kind) => {
-            const active = vatKind === kind;
+            const active = state.vatKind === kind;
             return (
               <button
                 key={kind}
@@ -102,14 +95,14 @@ export function OfferStep({
                 role="radio"
                 aria-checked={active}
                 className={`${s.vatChip} ${active ? s.vatChipActive : ""}`.trim()}
-                onClick={() => setValue("vatKind", kind as VatKind, { shouldValidate })}
+                onClick={() => dispatch({ type: "vatKind", value: kind })}
               >
-                {VAT_LABEL[kind as VatKind]}
+                {VAT_LABEL[kind]}
               </button>
             );
           })}
         </div>
-        <VatBreakdown baseAmount={Number(cost) || 0} vatKind={vatKind as VatKind} />
+        <VatBreakdown baseAmount={Number(state.cost) || 0} vatKind={state.vatKind} />
       </div>
 
       <span className={s.formHint}>
@@ -122,13 +115,11 @@ export function OfferStep({
             Организация, от которой подаёте заявку для последующего заключения договора:
           </span>
           <PartySuggestInput
-            value={watch("companyName")}
+            value={state.companyName}
             onChange={(query: string, picked: PartySuggestion | null) => {
-              setValue("companyName", picked?.value ?? query, { shouldValidate });
-              setValue("companyData", picked, { shouldValidate });
+              dispatch({ type: "company", name: picked?.value ?? query, data: picked });
             }}
             placeholder="ИНН или название компании"
-            error={formState.errors.companyName?.message as string | undefined}
           />
         </div>
       )}
@@ -137,8 +128,8 @@ export function OfferStep({
         <span className={base.fieldLabel}>Комментарий для заказчика</span>
         <textarea
           className={s.textarea}
-          value={comment}
-          onChange={(event) => setValue("comment", event.target.value, { shouldValidate })}
+          value={state.comment}
+          onChange={(event) => dispatch({ type: "set", field: "comment", value: event.target.value })}
           placeholder="Напишите комментарий для заказчика..."
           maxLength={5000}
         />
