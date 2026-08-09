@@ -21,6 +21,7 @@ from models.base import Base
 if TYPE_CHECKING:
     from models.account import Account
     from models.audit import LicenseHolderAuditProfile
+    from models.tech_diag import LicenseHolderTechDiagProfile
 
 
 class LicenseRentalKind(str, PyEnum):
@@ -68,6 +69,13 @@ class LicenseHolder(Base):
 
     account: Mapped["Account"] = relationship(back_populates="license_holder_profile")
     audit_profile: Mapped["LicenseHolderAuditProfile | None"] = relationship(
+        back_populates="license_holder",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    tech_diag_profile: Mapped["LicenseHolderTechDiagProfile | None"] = relationship(
         back_populates="license_holder",
         cascade="all, delete-orphan",
         passive_deletes=True,

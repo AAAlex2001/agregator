@@ -8,6 +8,7 @@ import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import { TypesPicker } from "@/source/entities/expertise";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import { emptyAuditLicenseHolderProfile } from "@/source/features/directions/audit";
+import { emptyTechDiagHolderProfile } from "@/source/features/directions/tech-diag";
 import { DirectionOption } from "./directions/DirectionOption";
 import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
 import type { StepProps } from "./types";
@@ -17,6 +18,7 @@ const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,ima
 
 export function HolderFields({ state, dispatch }: StepProps) {
   const audit = state.auditHolderProfile;
+  const techDiag = state.techDiagHolderProfile;
   const licenseFileInputRef = useRef<HTMLInputElement>(null);
   const licenseBlobUrl = useObjectUrl(state.files.license);
 
@@ -111,6 +113,32 @@ export function HolderFields({ state, dispatch }: StepProps) {
               />
               <span className={d.itemText}>
                 Области аккредитации по аудиту СУПБ укажете в личном кабинете.
+              </span>
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="TECH_DIAG"
+          title="Лаборатория неразрушающего контроля"
+          description="Техническое освидетельствование и диагностирование: аккредитация лаборатории и виды контроля"
+          checked={techDiag !== null}
+          onToggle={() =>
+            dispatch({ type: "techDiagHolder", value: techDiag ? null : { ...emptyTechDiagHolderProfile } })
+          }
+        >
+          {techDiag && (
+            <>
+              <TextInput
+                value={techDiag.organization_city}
+                onChange={(e) =>
+                  dispatch({ type: "techDiagHolder", value: { ...techDiag, organization_city: e.target.value } })
+                }
+                placeholder="Где находится организация — город"
+              />
+              <span className={d.itemText}>
+                Виды неразрушающего контроля укажете в личном кабинете. Лицензию и аккредитацию
+                лаборатории приложите в блоке лицензии выше.
               </span>
             </>
           )}

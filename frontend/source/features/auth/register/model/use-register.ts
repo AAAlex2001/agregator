@@ -50,6 +50,7 @@ export function useRegister(
             mining_license_number: state.miningNumber.trim() || null,
             lab_accreditation_number: state.labNumber.trim() || null,
             audit_profile: state.auditHolderProfile,
+            tech_diag_profile: state.techDiagHolderProfile,
           },
           state.files.license,
           state.files.mining,
@@ -78,6 +79,7 @@ export function useRegister(
             forensic_profile: state.forensicProfile,
             research_profile: state.researchProfile,
             laboratory_profile: state.laboratoryProfile,
+            tech_diag_profile: state.techDiagProfile,
             contact_sales_enabled: state.contactEnabled,
             contact_price_rubles: state.contactEnabled
               ? Number(state.contactPrice.replace(/\s/g, ""))

@@ -16,6 +16,10 @@ import {
   emptyResearchOrderDetails,
   type ResearchOrderDetails,
 } from "@/source/features/directions/research";
+import {
+  emptyTechDiagOrderDetails,
+  type TechDiagOrderDetails,
+} from "@/source/features/directions/tech-diag";
 
 const DIRECTIONS_WITH_DETAILS: OrderWorkType[] = [
   "CADASTRAL",
@@ -23,6 +27,7 @@ const DIRECTIONS_WITH_DETAILS: OrderWorkType[] = [
   "RESEARCH",
   "LABORATORY",
   "AUDIT_SUPB",
+  "TECH_DIAG",
 ];
 
 export function hasOrderDetails(workType: OrderWorkType): boolean {
@@ -35,6 +40,7 @@ export interface DirectionDetailsValues {
   researchDetails: ResearchOrderDetails;
   laboratoryDetails: LaboratoryOrderDetails;
   auditDetails: AuditOrderDetails;
+  techDiagDetails: TechDiagOrderDetails;
 }
 
 export function emptyDirectionDetails(): DirectionDetailsValues {
@@ -44,6 +50,7 @@ export function emptyDirectionDetails(): DirectionDetailsValues {
     researchDetails: emptyResearchOrderDetails,
     laboratoryDetails: emptyLaboratoryOrderDetails,
     auditDetails: emptyAuditOrderDetails,
+    techDiagDetails: emptyTechDiagOrderDetails,
   });
 }
 
@@ -62,6 +69,7 @@ export function directionDetailsFromServer(
   if (workType === "RESEARCH") values.researchDetails = merge(values.researchDetails, incoming);
   if (workType === "LABORATORY") values.laboratoryDetails = merge(values.laboratoryDetails, incoming);
   if (workType === "AUDIT_SUPB") values.auditDetails = merge(values.auditDetails, incoming);
+  if (workType === "TECH_DIAG") values.techDiagDetails = merge(values.techDiagDetails, incoming);
   return values;
 }
 
@@ -80,6 +88,8 @@ export function activeDirectionDetails(
       return values.laboratoryDetails;
     case "AUDIT_SUPB":
       return values.auditDetails;
+    case "TECH_DIAG":
+      return values.techDiagDetails;
     default:
       return undefined;
   }

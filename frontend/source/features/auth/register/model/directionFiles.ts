@@ -7,6 +7,7 @@ export interface DirectionFilesState {
   cadastralDocuments: File[];
   forensicDiploma: File | null;
   forensicDocuments: File[];
+  techDiagDocuments: File[];
 }
 
 export const emptyDirectionFiles: DirectionFilesState = {
@@ -16,6 +17,7 @@ export const emptyDirectionFiles: DirectionFilesState = {
   cadastralDocuments: [],
   forensicDiploma: null,
   forensicDocuments: [],
+  techDiagDocuments: [],
 };
 
 export function toRegisterDocuments(files: DirectionFilesState): RegisterDocument[] {
@@ -32,5 +34,6 @@ export function toRegisterDocuments(files: DirectionFilesState): RegisterDocumen
   }
   for (const file of files.forensicDocuments) documents.push({ slot: "FORENSIC", file });
   for (const file of files.auditDocuments) documents.push({ slot: "AUDIT_SUPB", file });
+  for (const file of files.techDiagDocuments) documents.push({ slot: "TECH_DIAG", file });
   return documents;
 }

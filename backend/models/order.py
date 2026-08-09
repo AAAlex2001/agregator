@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     from models.question import OrderQuestion
     from models.research import OrderResearchDetails
     from models.response import OrderResponse
+    from models.tech_diag import OrderTechDiagDetails
 
 
 class OrderStatus(str, PyEnum):
@@ -45,6 +46,7 @@ class OrderWorkType(str, PyEnum):
     RESEARCH = "RESEARCH"
     LABORATORY = "LABORATORY"
     AUDIT_SUPB = "AUDIT_SUPB"
+    TECH_DIAG = "TECH_DIAG"
     OTHER = "OTHER"
 
 
@@ -179,6 +181,13 @@ class Order(Base):
         lazy="selectin",
     )
     audit_details: Mapped["OrderAuditDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    tech_diag_details: Mapped["OrderTechDiagDetails | None"] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,

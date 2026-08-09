@@ -19,6 +19,7 @@ export const ORDER_DETAILS_TITLES: Partial<Record<OrderWorkType, string>> = {
   RESEARCH: "Проведение НИР",
   LABORATORY: "Лабораторные исследования",
   AUDIT_SUPB: "Аудит СУПБ",
+  TECH_DIAG: "Техническое освидетельствование и диагностирование",
 };
 
 const APPLICANT_GROUP = "Заявитель";
@@ -85,6 +86,11 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
   ],
   LABORATORY: [
     { key: "equipment_requirements", label: "Требования к оборудованию", kind: "text", wide: true },
+  ],
+  TECH_DIAG: [
+    { key: "purpose", label: "Цель проведения работ", kind: "text", wide: true },
+    { key: "object_city", label: "Где находится объект", kind: "text" },
+    { key: "duration", label: "Срок проведения", kind: "text" },
   ],
   AUDIT_SUPB: [
     ...APPLICANT_FIELDS,

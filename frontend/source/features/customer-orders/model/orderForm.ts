@@ -4,6 +4,7 @@ import type { CadastralOrderDetails } from "@/source/features/directions/cadastr
 import type { ForensicOrderDetails } from "@/source/features/directions/forensic";
 import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
 import type { ResearchOrderDetails } from "@/source/features/directions/research";
+import type { TechDiagOrderDetails } from "@/source/features/directions/tech-diag";
 import { emptyDirectionDetails } from "./orderDetails";
 import { initialDocumentsFormState, type DocumentsFormState } from "@/source/entities/order";
 import { getDefaultValues } from "./mappers";
@@ -26,6 +27,7 @@ export interface OrderFormValues {
   researchDetails: ResearchOrderDetails;
   laboratoryDetails: LaboratoryOrderDetails;
   auditDetails: AuditOrderDetails;
+  techDiagDetails: TechDiagOrderDetails;
 }
 
 export type StringField =
@@ -56,6 +58,7 @@ export type OrderFormAction =
   | { type: "research"; value: ResearchOrderDetails }
   | { type: "laboratory"; value: LaboratoryOrderDetails }
   | { type: "audit"; value: AuditOrderDetails }
+  | { type: "techDiag"; value: TechDiagOrderDetails }
   | { type: "docSingle"; category: SingleCategory; file: File | null }
   | { type: "docRemoveSingleExisting"; category: SingleCategory }
   | { type: "docAddOther"; files: File[] }
@@ -93,6 +96,7 @@ export function orderFormValues(state: OrderFormState): OrderFormValues {
     researchDetails: state.researchDetails,
     laboratoryDetails: state.laboratoryDetails,
     auditDetails: state.auditDetails,
+    techDiagDetails: state.techDiagDetails,
   };
 }
 
@@ -128,6 +132,8 @@ export function reducer(state: OrderFormState, action: OrderFormAction): OrderFo
       return { ...state, laboratoryDetails: action.value };
     case "audit":
       return { ...state, auditDetails: action.value };
+    case "techDiag":
+      return { ...state, techDiagDetails: action.value };
     case "docSingle":
       return {
         ...state,

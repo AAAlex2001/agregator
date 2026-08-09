@@ -12,6 +12,7 @@ import { CadastralOrderFields } from "@/source/features/directions/cadastral";
 import { ForensicOrderFields } from "@/source/features/directions/forensic";
 import { LaboratoryOrderFields } from "@/source/features/directions/laboratory";
 import { ResearchOrderFields } from "@/source/features/directions/research";
+import { TechDiagOrderFields } from "@/source/features/directions/tech-diag";
 import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
 import s from "./directionDetailsSection.module.scss";
@@ -22,6 +23,7 @@ const SECTION_TITLES: Partial<Record<OrderWorkType, string>> = {
   RESEARCH: "Создать заявку на проведение НИР",
   LABORATORY: "Создать заявку на проведение лабораторных исследований",
   AUDIT_SUPB: "Заявка на аудит СУПБ",
+  TECH_DIAG: "Заявка на техническое освидетельствование и диагностирование",
 };
 
 export function DirectionDetailsSection({ state, dispatch }: StepProps) {
@@ -72,6 +74,13 @@ export function DirectionDetailsSection({ state, dispatch }: StepProps) {
           value={state.auditDetails}
           onChange={(value) => dispatch({ type: "audit", value })}
           catalogs={auditCatalogs}
+        />
+      )}
+
+      {workType === "TECH_DIAG" && (
+        <TechDiagOrderFields
+          value={state.techDiagDetails}
+          onChange={(value) => dispatch({ type: "techDiag", value })}
         />
       )}
     </section>

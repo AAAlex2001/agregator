@@ -12,6 +12,7 @@ from models.cadastral import OrderCadastralDetails
 from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.research import OrderResearchDetails
+from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput
 from services.directions.registry import Direction
 
@@ -21,6 +22,7 @@ OrderDirectionDetails = (
     | OrderForensicDetails
     | OrderLaboratoryDetails
     | OrderResearchDetails
+    | OrderTechDiagDetails
 )
 
 

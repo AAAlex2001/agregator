@@ -29,6 +29,11 @@ export interface LicenseHolderAuditRegisterPayload {
   accreditation_areas: string[];
 }
 
+export interface LicenseHolderTechDiagRegisterPayload {
+  methods: string[];
+  organization_city: string;
+}
+
 export interface LicenseHolderRegisterPayload {
   email: string;
   password: string;
@@ -43,6 +48,7 @@ export interface LicenseHolderRegisterPayload {
   mining_license_number?: string | null;
   lab_accreditation_number?: string | null;
   audit_profile?: LicenseHolderAuditRegisterPayload | null;
+  tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
 }
 
 export interface LicenseHolderUpdatePayload {

@@ -26,6 +26,13 @@ import {
   emptyLaboratoryProfile,
   LaboratoryProfileFields,
 } from "@/source/features/directions/laboratory";
+import {
+  emptyTechDiagCatalogs,
+  emptyTechDiagProfile,
+  fetchTechDiagCatalogs,
+  TechDiagProfileFields,
+  type TechDiagCatalogs,
+} from "@/source/features/directions/tech-diag";
 import { LocalFilePicker } from "@/source/features/directions/shared/ui/LocalFilePicker";
 import { LocalFilesPicker } from "@/source/features/directions/shared/ui/LocalFilesPicker";
 import { DirectionOption } from "./directions/DirectionOption";
@@ -35,9 +42,11 @@ import d from "./directions/DirectionsPicker.module.scss";
 
 export function ExpertFields({ state, dispatch }: StepProps) {
   const [catalogs, setCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
+  const [techDiagCatalogs, setTechDiagCatalogs] = useState<TechDiagCatalogs>(emptyTechDiagCatalogs);
 
   useEffect(() => {
     fetchAuditCatalogs().then(setCatalogs).catch(() => undefined);
+    fetchTechDiagCatalogs().then(setTechDiagCatalogs).catch(() => undefined);
   }, []);
 
   const { expertiseProfile, auditExpertProfile, cadastralProfile, forensicProfile } = state;
@@ -184,6 +193,32 @@ export function ExpertFields({ state, dispatch }: StepProps) {
               value={state.laboratoryProfile}
               onChange={(value) => dispatch({ type: "laboratory", value })}
             />
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="TECH_DIAG"
+          title="Техническое освидетельствование и диагностирование"
+          description="Специалист НК: квалификационные удостоверения, виды и объекты контроля"
+          checked={state.techDiagProfile !== null}
+          onToggle={() =>
+            dispatch({ type: "techDiag", value: state.techDiagProfile ? null : { ...emptyTechDiagProfile } })
+          }
+        >
+          {state.techDiagProfile && (
+            <>
+              <TechDiagProfileFields
+                value={state.techDiagProfile}
+                onChange={(value) => dispatch({ type: "techDiag", value })}
+                catalogs={techDiagCatalogs}
+              />
+              <LocalFilesPicker
+                label="Квалификационные удостоверения — до 10 документов"
+                files={state.directionFiles.techDiagDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "techDiagDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "techDiagDocuments", index })}
+              />
+            </>
           )}
         </DirectionOption>
       </ul>

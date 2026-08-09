@@ -14,6 +14,7 @@ import type { CadastralProfile } from "@/source/features/directions/cadastral";
 import type { ForensicProfile } from "@/source/features/directions/forensic";
 import type { ResearchProfile } from "@/source/features/directions/research";
 import type { LaboratoryProfile } from "@/source/features/directions/laboratory";
+import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/features/directions/tech-diag";
 import type { DirectionFilesState } from "./directionFiles";
 
 export type StringField =
@@ -34,7 +35,7 @@ export type StringField =
 export type FileKey = "license" | "mining" | "sro" | "lab";
 export type ConsentKey = "privacy" | "terms" | "personal";
 export type DocFileKey = "cadastralDiploma" | "cadastralCertificate" | "forensicDiploma";
-export type DocListKey = "auditDocuments" | "cadastralDocuments" | "forensicDocuments";
+export type DocListKey = "auditDocuments" | "cadastralDocuments" | "forensicDocuments" | "techDiagDocuments";
 
 export interface RegisterState {
   waiting: boolean;
@@ -64,6 +65,8 @@ export interface RegisterState {
   forensicProfile: ForensicProfile | null;
   researchProfile: ResearchProfile | null;
   laboratoryProfile: LaboratoryProfile | null;
+  techDiagProfile: TechDiagProfile | null;
+  techDiagHolderProfile: TechDiagHolderProfile | null;
   directionFiles: DirectionFilesState;
   licenseEnabled: boolean;
   licenseNumber: string;
@@ -99,6 +102,8 @@ export type RegisterAction =
   | { type: "forensic"; value: ForensicProfile | null }
   | { type: "research"; value: ResearchProfile | null }
   | { type: "laboratory"; value: LaboratoryProfile | null }
+  | { type: "techDiag"; value: TechDiagProfile | null }
+  | { type: "techDiagHolder"; value: TechDiagHolderProfile | null }
   | { type: "licenseEnabled"; value: boolean }
   | { type: "areas"; value: ExpertiseType[] }
   | { type: "rentalKind"; value: LicenseRentalKind }

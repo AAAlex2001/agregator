@@ -15,11 +15,13 @@ from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.order import OrderWorkType
 from models.research import OrderResearchDetails
+from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput, AuditOrderDetailsResponse
 from schemas.cadastral import CadastralOrderDetailsInput, CadastralOrderDetailsResponse
 from schemas.forensic import ForensicOrderDetailsInput, ForensicOrderDetailsResponse
 from schemas.laboratory import LaboratoryOrderDetailsInput, LaboratoryOrderDetailsResponse
 from schemas.research import ResearchOrderDetailsInput, ResearchOrderDetailsResponse
+from schemas.tech_diag import TechDiagOrderDetailsInput, TechDiagOrderDetailsResponse
 
 
 @dataclass(frozen=True)
@@ -82,6 +84,14 @@ DIRECTIONS: tuple[Direction, ...] = (
         details_attribute="laboratory_details",
         details_input_schema=LaboratoryOrderDetailsInput,
         details_response_schema=LaboratoryOrderDetailsResponse,
+    ),
+    Direction(
+        key=OrderWorkType.TECH_DIAG.value,
+        title="Техническое освидетельствование и диагностирование",
+        details_model=OrderTechDiagDetails,
+        details_attribute="tech_diag_details",
+        details_input_schema=TechDiagOrderDetailsInput,
+        details_response_schema=TechDiagOrderDetailsResponse,
     ),
 )
 

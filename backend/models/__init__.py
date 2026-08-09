@@ -46,6 +46,7 @@ from models import (
     static_news_interaction,
     support_ticket,
     tag,
+    tech_diag,
 )
 
 __all__ = [
@@ -91,4 +92,5 @@ __all__ = [
     "static_news_interaction",
     "support_ticket",
     "tag",
+    "tech_diag",
 ]

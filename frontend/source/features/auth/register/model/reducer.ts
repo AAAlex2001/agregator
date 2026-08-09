@@ -6,6 +6,10 @@ import {
 } from "@/source/features/directions/audit";
 import { emptyResearchProfile } from "@/source/features/directions/research";
 import { emptyLaboratoryProfile } from "@/source/features/directions/laboratory";
+import {
+  emptyTechDiagHolderProfile,
+  emptyTechDiagProfile,
+} from "@/source/features/directions/tech-diag";
 import { emptyDirectionFiles } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -37,6 +41,8 @@ export const initialState: RegisterState = {
   forensicProfile: null,
   researchProfile: null,
   laboratoryProfile: null,
+  techDiagProfile: null,
+  techDiagHolderProfile: null,
   directionFiles: emptyDirectionFiles,
   licenseEnabled: true,
   licenseNumber: "",
@@ -69,6 +75,13 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
   if (preset.direction === "LABORATORY" && preset.role === "EXPERT") {
     state.laboratoryProfile = { ...emptyLaboratoryProfile };
   }
+  if (preset.direction === "TECH_DIAG") {
+    if (preset.role === "EXPERT") state.techDiagProfile = { ...emptyTechDiagProfile };
+    if (preset.role === "LICENSE_HOLDER") {
+      state.techDiagHolderProfile = { ...emptyTechDiagHolderProfile };
+      state.licenseEnabled = false;
+    }
+  }
   return state;
 }
 
@@ -95,6 +108,8 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         forensicProfile: null,
         researchProfile: null,
         laboratoryProfile: null,
+        techDiagProfile: null,
+        techDiagHolderProfile: null,
         directionFiles: emptyDirectionFiles,
       };
     case "travels":
@@ -129,6 +144,10 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, researchProfile: action.value };
     case "laboratory":
       return { ...state, laboratoryProfile: action.value };
+    case "techDiag":
+      return { ...state, techDiagProfile: action.value };
+    case "techDiagHolder":
+      return { ...state, techDiagHolderProfile: action.value };
     case "licenseEnabled":
       return { ...state, licenseEnabled: action.value };
     case "areas":

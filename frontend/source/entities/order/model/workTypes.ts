@@ -8,6 +8,7 @@ export type OrderWorkType =
   | "FORENSIC"
   | "RESEARCH"
   | "LABORATORY"
+  | "TECH_DIAG"
   | "OTHER";
 
 export type OrderWorkGroup = "direction" | "engineering";
@@ -30,6 +31,7 @@ export const ORDER_WORK_OPTIONS: OrderWorkOption[] = [
   { value: "AUDIT_SUPB", label: "Аудит СУПБ", description: "Независимая оценка системы управления промышленной безопасностью", group: "direction" },
   { value: "RESEARCH", label: "НИРы", description: "Научно-исследовательские работы: тема, требования к исполнителю, выезд на объект", group: "direction" },
   { value: "LABORATORY", label: "Лабораторные исследования", description: "Наименование исследований и требования к оборудованию", group: "direction" },
+  { value: "TECH_DIAG", label: "Техническое освидетельствование и диагностирование", shortLabel: "Техдиагностирование", description: "Оценка состояния оборудования и неразрушающий контроль аттестованными лабораториями и специалистами", group: "direction" },
   { value: "CADASTRAL", label: "Кадастровые работы", description: "Межевание, технические планы, схемы на КПТ и другие работы кадастровых инженеров", group: "direction" },
   { value: "FORENSIC", label: "Судебная экспертиза", description: "Заключение эксперта для суда: госорган, требования к эксперту, предмет экспертизы", group: "direction" },
   { value: "DESIGN_SURVEY", label: "ПИРы", description: "Проектные и изыскательские работы, геодезия, геология, обоснование безопасности", group: "engineering" },

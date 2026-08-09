@@ -21,6 +21,7 @@ from services.forensic import (
     UploadForensicDiplomaUseCase,
     UploadForensicDocumentUseCase,
 )
+from services.tech_diag import TechDiagRepository, TechDiagValidator, UploadTechDiagDocumentUseCase
 
 MAX_REGISTRATION_DOCUMENTS = 20
 
@@ -51,6 +52,10 @@ async def upload_to_slot(db: AsyncSession, account_id: int, slot: str, file: Upl
     if slot == "AUDIT_SUPB":
         repo = AuditRepository(db)
         await UploadAuditDocumentUseCase(repo, AuditValidator(repo)).execute(account_id, file)
+        return
+    if slot == "TECH_DIAG":
+        repo = TechDiagRepository(db)
+        await UploadTechDiagDocumentUseCase(repo, TechDiagValidator(repo)).execute(account_id, file)
         return
     if slot in ("CADASTRAL_DIPLOMA", "CADASTRAL_CERTIFICATE", "CADASTRAL"):
         repo = CadastralRepository(db)

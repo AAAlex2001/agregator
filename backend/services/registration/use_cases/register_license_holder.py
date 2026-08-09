@@ -2,6 +2,7 @@
 from models.account import Account, UserRole
 from models.audit import LicenseHolderAuditProfile
 from models.license_holder import LicenseHolder, LicenseRentalKind
+from models.tech_diag import LicenseHolderTechDiagProfile
 from schemas.registration import LicenseHolderRegistration
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
@@ -78,6 +79,14 @@ class RegisterLicenseHolderUseCase:
                 LicenseHolderAuditProfile(
                     license_holder_id=profile.id,
                     **data.audit_profile.model_dump(),
+                )
+            )
+
+        if data.tech_diag_profile is not None:
+            await self.repo.add(
+                LicenseHolderTechDiagProfile(
+                    license_holder_id=profile.id,
+                    **data.tech_diag_profile.model_dump(),
                 )
             )
 
