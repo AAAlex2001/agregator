@@ -6,7 +6,7 @@ export type AuthTab = "login" | "register";
 
 export interface AuthPreset {
   role: "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
-  direction?: "AUDIT_SUPB";
+  direction?: "AUDIT_SUPB" | "RESEARCH" | "LABORATORY";
 }
 
 interface AuthModalContextValue {

@@ -6,7 +6,6 @@ import {
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
-  LandingOtherDirections,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { KadastrServices } from "./Services";
@@ -62,7 +61,6 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
           subtitle="Кто выполняет кадастровые работы, сколько они занимают и что делать с ошибками в ЕГРН."
         />
         <KadastrSeoText />
-        <LandingOtherDirections currentSlug="kadastrovye-raboty" basePath={basePath} />
       </main>
       {footer}
     </div>

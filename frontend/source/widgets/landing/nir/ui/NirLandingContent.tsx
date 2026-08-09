@@ -6,7 +6,6 @@ import {
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
-  LandingOtherDirections,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { NirSeoText } from "./SeoText";
@@ -57,7 +56,6 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
           subtitle="Какая лаборатория вправе выполнять неразрушающий контроль, как проверить дефектоскописта и что входит в НИР."
         />
         <NirSeoText />
-        <LandingOtherDirections currentSlug="nir" basePath={basePath} />
       </main>
       {footer}
     </div>

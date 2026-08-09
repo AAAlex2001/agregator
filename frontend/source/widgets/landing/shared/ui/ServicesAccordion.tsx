@@ -38,13 +38,12 @@ export function ServicesAccordion({
   const active = items[activeIndex];
 
   useEffect(() => {
-    if (!mobileStack) return;
     const mq = window.matchMedia("(min-width: 1024px)");
     const update = () => setIsDesktop(mq.matches);
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
-  }, [mobileStack]);
+  }, []);
 
   const inlineVisual = mobileStack && !isDesktop;
 
@@ -106,7 +105,7 @@ export function ServicesAccordion({
         )}
       </div>
 
-      {!mobileStack && (
+      {!mobileStack && !isDesktop && (
         <Swiper className={s.slider} slidesPerView={1.1} spaceBetween={12}>
           {items.map((item) => (
             <SwiperSlide key={item.title} className={s.slide}>

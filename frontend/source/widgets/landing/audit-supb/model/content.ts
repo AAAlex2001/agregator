@@ -68,6 +68,7 @@ export const AUDIT_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",
+    direction: "AUDIT_SUPB",
     title: "Заказчик",
     subtitle: "(эксплуатирующая организация)",
     description:
@@ -82,6 +83,7 @@ export const AUDIT_ROLES: ServiceLandingRole[] = [
   {
     id: "auditor",
     role: "EXPERT",
+    direction: "AUDIT_SUPB",
     title: "Исполнитель",
     subtitle: "(эксперт в области промышленной безопасности)",
     description:
@@ -96,6 +98,7 @@ export const AUDIT_ROLES: ServiceLandingRole[] = [
   {
     id: "inspection-body",
     role: "LICENSE_HOLDER",
+    direction: "AUDIT_SUPB",
     title: "Держатель разрешительных документов",
     subtitle: "(Аккредитованный инспекционный орган)",
     description:

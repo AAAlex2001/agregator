@@ -8,6 +8,7 @@ import s from "./service-roles.module.scss";
 export interface ServiceLandingRole {
   id: string;
   role: AuthPreset["role"];
+  direction?: AuthPreset["direction"];
   title: string;
   subtitle: string;
   description: string;
@@ -16,10 +17,9 @@ export interface ServiceLandingRole {
 
 interface Props {
   roles: ServiceLandingRole[];
-  direction?: AuthPreset["direction"];
 }
 
-export function ServiceRoles({ roles, direction }: Props) {
+export function ServiceRoles({ roles }: Props) {
   const { openAuth } = useAuthModal();
 
   return (
@@ -45,7 +45,7 @@ export function ServiceRoles({ roles, direction }: Props) {
                 variant="primary"
                 fullWidth
                 className={s.cardButton}
-                onClick={() => openAuth("register", { role: role.role, direction })}
+                onClick={() => openAuth("register", { role: role.role, direction: role.direction })}
               >
                 Выбрать
               </Button>

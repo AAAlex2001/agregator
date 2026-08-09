@@ -10,7 +10,6 @@ export { ServiceLandingSchema as LandingServiceSchema } from "./ui/ServiceLandin
 export type { ServicesAccordionItem } from "./ui/ServicesAccordion";
 export { AudienceSection as LandingAudience } from "./ui/AudienceSection";
 export type { AudienceBlock } from "./ui/AudienceSection";
-export { OtherDirectionsSlider as LandingOtherDirections } from "./ui/OtherDirectionsSlider";
 export { ServiceRoles as LandingServiceRoles } from "./ui/ServiceRoles";
 export type { ServiceLandingRole } from "./ui/ServiceRoles";
 export { StartWorkingButton } from "./ui/StartWorkingButton";

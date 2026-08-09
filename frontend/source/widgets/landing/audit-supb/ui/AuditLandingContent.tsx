@@ -6,7 +6,6 @@ import {
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
-  LandingOtherDirections,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { AuditAudience } from "./Audience";
@@ -54,14 +53,13 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
 
         <AuditPurpose />
         <AuditAudience />
-        <LandingServiceRoles roles={AUDIT_ROLES} direction="AUDIT_SUPB" />
+        <LandingServiceRoles roles={AUDIT_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq
           items={AUDIT_FAQ}
           subtitle="Кому аудит обязателен, как он влияет на категорию риска и кто вправе его проводить."
         />
         <AuditSeoText />
-        <LandingOtherDirections currentSlug="audit" basePath={basePath} />
       </main>
       {footer}
     </div>

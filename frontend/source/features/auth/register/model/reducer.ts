@@ -4,6 +4,8 @@ import {
   emptyAuditExpertProfile,
   emptyAuditLicenseHolderProfile,
 } from "@/source/features/directions/audit";
+import { emptyResearchProfile } from "@/source/features/directions/research";
+import { emptyLaboratoryProfile } from "@/source/features/directions/laboratory";
 import { emptyDirectionFiles } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -52,13 +54,20 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
   if (!preset) return initialState;
 
   const state = { ...initialState, role: preset.role };
-  if (preset.direction !== "AUDIT_SUPB") return state;
 
-  if (preset.role === "CUSTOMER") state.auditCustomerProfile = { ...emptyAuditCustomerProfile };
-  if (preset.role === "EXPERT") state.auditExpertProfile = { ...emptyAuditExpertProfile };
-  if (preset.role === "LICENSE_HOLDER") {
-    state.auditHolderProfile = { ...emptyAuditLicenseHolderProfile };
-    state.licenseEnabled = false;
+  if (preset.direction === "AUDIT_SUPB") {
+    if (preset.role === "CUSTOMER") state.auditCustomerProfile = { ...emptyAuditCustomerProfile };
+    if (preset.role === "EXPERT") state.auditExpertProfile = { ...emptyAuditExpertProfile };
+    if (preset.role === "LICENSE_HOLDER") {
+      state.auditHolderProfile = { ...emptyAuditLicenseHolderProfile };
+      state.licenseEnabled = false;
+    }
+  }
+  if (preset.direction === "RESEARCH" && preset.role === "EXPERT") {
+    state.researchProfile = { ...emptyResearchProfile };
+  }
+  if (preset.direction === "LABORATORY" && preset.role === "EXPERT") {
+    state.laboratoryProfile = { ...emptyLaboratoryProfile };
   }
   return state;
 }

@@ -6,7 +6,6 @@ import {
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
-  LandingOtherDirections,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { ForensicCatalog } from "./Catalog";
@@ -63,7 +62,6 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
           subtitle="Кто вправе давать заключение для суда, кто оплачивает экспертизу и как оспорить её выводы."
         />
         <ForensicSeoText />
-        <LandingOtherDirections currentSlug="sudebnaya-ekspertiza" basePath={basePath} />
       </main>
       {footer}
     </div>
