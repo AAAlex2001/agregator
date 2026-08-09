@@ -6,6 +6,7 @@ import {
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
+  LandingServiceRoles,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { ForensicCatalog } from "./Catalog";
@@ -16,6 +17,7 @@ import {
   FORENSIC_CLAIM,
   FORENSIC_COVER,
   FORENSIC_FAQ,
+  FORENSIC_ROLES,
   FORENSIC_SUBTITLE,
   FORENSIC_TITLE,
 } from "../model/content";
@@ -56,6 +58,7 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
 
         <ForensicCatalog />
         <LandingAudience blocks={FORENSIC_AUDIENCE} />
+        <LandingServiceRoles roles={FORENSIC_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq
           items={FORENSIC_FAQ}

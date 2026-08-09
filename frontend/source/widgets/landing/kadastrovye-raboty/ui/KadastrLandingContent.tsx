@@ -6,6 +6,7 @@ import {
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
+  LandingServiceRoles,
   StartWorkingButton,
 } from "@/source/widgets/landing";
 import { KadastrServices } from "./Services";
@@ -15,6 +16,7 @@ import {
   KADASTR_BULLETS,
   KADASTR_COVER,
   KADASTR_FAQ,
+  KADASTR_ROLES,
   KADASTR_SUBTITLE,
   KADASTR_TITLE,
 } from "../model/content";
@@ -55,6 +57,7 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
 
         <KadastrServices />
         <LandingAudience blocks={KADASTR_AUDIENCE} />
+        <LandingServiceRoles roles={KADASTR_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq
           items={KADASTR_FAQ}

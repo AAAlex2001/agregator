@@ -6,6 +6,8 @@ import {
 } from "@/source/features/directions/audit";
 import { emptyResearchProfile } from "@/source/features/directions/research";
 import { emptyLaboratoryProfile } from "@/source/features/directions/laboratory";
+import { emptyCadastralProfile } from "@/source/features/directions/cadastral";
+import { emptyForensicProfile } from "@/source/features/directions/forensic";
 import {
   emptyTechDiagHolderProfile,
   emptyTechDiagProfile,
@@ -81,6 +83,12 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
       state.techDiagHolderProfile = { ...emptyTechDiagHolderProfile };
       state.licenseEnabled = false;
     }
+  }
+  if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
+    state.cadastralProfile = { ...emptyCadastralProfile };
+  }
+  if (preset.direction === "FORENSIC" && preset.role === "EXPERT") {
+    state.forensicProfile = { ...emptyForensicProfile };
   }
   return state;
 }

@@ -3,6 +3,7 @@ import type { AudienceBlock } from "../../shared/ui/AudienceSection";
 import type { ServiceLandingFaqItem } from "../../shared/ui/ServiceLandingFaq";
 import type { ServiceLandingBullet } from "../../shared/ui/ServiceLandingHero";
 import type { ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
+import type { ServiceLandingRole } from "../../shared/ui/ServiceRoles";
 
 export const KADASTR_TITLE = "Кадастровые работы — подбор кадастровых инженеров";
 
@@ -139,5 +140,37 @@ export const KADASTR_AUDIENCE: AudienceBlock[] = [
       label: "Проверить по реестру СРО",
       href: KADASTR_SRO_REGISTRY_URL,
     },
+  },
+];
+
+export const KADASTR_ROLES: ServiceLandingRole[] = [
+  {
+    id: "customer",
+    role: "CUSTOMER",
+    title: "Заказчик",
+    subtitle: "(организация или частное лицо)",
+    description:
+      "Для тех, кому нужны кадастровые работы: межевание, технические планы, схемы и акты обследования.",
+    fields: [
+      "Имя, фамилия и контакты: телефон и почта",
+      "В заявке: цель работ, где находится объект и сроки",
+      "Требования к исполнителю: образование, членство в СРО",
+      "Проект договора и ТЗ (Word, PDF, ZIP) — по желанию",
+    ],
+  },
+  {
+    id: "cadastral-expert",
+    role: "EXPERT",
+    direction: "CADASTRAL",
+    title: "Кадастровый инженер",
+    subtitle: "(исполнитель)",
+    description: "Для кадастровых инженеров, состоящих в СРО.",
+    fields: [
+      "ФИО полностью",
+      "Образование, номер аттестата и реестровый номер",
+      "Дата вступления в СРО, место работы и оборудование",
+      "Где вы находитесь",
+      "Контактный телефон и электронная почта",
+    ],
   },
 ];

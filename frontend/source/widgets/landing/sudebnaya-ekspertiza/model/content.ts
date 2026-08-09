@@ -1,6 +1,7 @@
 import type { AudienceBlock } from "../../shared/ui/AudienceSection";
 import type { ServiceLandingFaqItem } from "../../shared/ui/ServiceLandingFaq";
 import type { ServiceLandingBullet } from "../../shared/ui/ServiceLandingHero";
+import type { ServiceLandingRole } from "../../shared/ui/ServiceRoles";
 
 export const FORENSIC_FAQ: ServiceLandingFaqItem[] = [
   {
@@ -262,5 +263,37 @@ export const FORENSIC_AUDIENCE: AudienceBlock[] = [
     ],
     image: "/landing/forensic-customer.svg",
     imageAlt: "Заявка на судебную экспертизу с материалами дела",
+  },
+];
+
+export const FORENSIC_ROLES: ServiceLandingRole[] = [
+  {
+    id: "customer",
+    role: "CUSTOMER",
+    title: "Заказчик",
+    subtitle: "(организация или частное лицо)",
+    description:
+      "Для тех, кому нужно заключение судебного эксперта для суда или государственного органа.",
+    fields: [
+      "Имя, фамилия и контакты: телефон и почта",
+      "В заявке: предмет и цель экспертизы, госорган и сроки",
+      "Требования к эксперту: образование, опыт аналогичных экспертиз",
+      "Материалы дела и ТЗ (Word, PDF, ZIP) — по желанию",
+    ],
+  },
+  {
+    id: "forensic-expert",
+    role: "EXPERT",
+    direction: "FORENSIC",
+    title: "Судебный эксперт",
+    subtitle: "(исполнитель)",
+    description: "Для экспертов, готовящих заключения для судов и государственных органов.",
+    fields: [
+      "ФИО полностью",
+      "Образование, учёная степень и дополнительное образование",
+      "Опыт аналогичных экспертиз и место работы",
+      "Где вы находитесь",
+      "Контактный телефон и электронная почта",
+    ],
   },
 ];
