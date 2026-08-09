@@ -56,6 +56,7 @@ export const NIR_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",
+    direction: "RESEARCH",
     title: "Заказчик",
     subtitle: "(организация или частное лицо)",
     description:

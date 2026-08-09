@@ -270,6 +270,7 @@ export const FORENSIC_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",
+    direction: "FORENSIC",
     title: "Заказчик",
     subtitle: "(организация или частное лицо)",
     description:

@@ -2,7 +2,7 @@
 
 import { useEffect, useReducer, type FormEvent } from "react";
 import type { OrderCardData } from "@/source/entities/order";
-import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES } from "@/source/entities/order";
+import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES, ORDER_WORK_OPTIONS } from "@/source/entities/order";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { clearDraft, saveDraft } from "./orderDraft";
@@ -27,6 +27,15 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
   useEffect(() => {
     if (company) dispatch({ type: "set", key: "company", value: company });
   }, [company]);
+
+  const directions = (user?.directions ?? []).join(",");
+  useEffect(() => {
+    if (isEdit || !directions) return;
+    const available = directions.split(",");
+    if (available.includes(state.workType)) return;
+    const first = ORDER_WORK_OPTIONS.find((option) => available.includes(option.value));
+    if (first) dispatch({ type: "workType", value: first.value });
+  }, [isEdit, directions, state.workType]);
 
   useEffect(() => {
     if (isEdit) return;

@@ -147,6 +147,7 @@ export const KADASTR_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",
+    direction: "CADASTRAL",
     title: "Заказчик",
     subtitle: "(организация или частное лицо)",
     description:
