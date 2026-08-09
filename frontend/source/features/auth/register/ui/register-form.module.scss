@@ -1,0 +1,91 @@
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeInSlide 0.4s ease-in-out;
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.phoneBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contactHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: #999999;
+}
+
+.agreements {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.link {
+  color: #ff8a00;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: #ffb800;
+  }
+}
+
+.requirements {
+  list-style: none;
+  padding: 0;
+  margin: -4px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #999999;
+    transition: color 0.3s ease;
+
+    &::before {
+      content: '✕';
+      position: absolute;
+      left: 0;
+      font-size: 10px;
+      color: #999999;
+      transition: color 0.3s ease;
+    }
+
+    &.met {
+      color: #4caf50;
+
+      &::before {
+        content: '✓';
+        color: #4caf50;
+      }
+    }
+  }
+}
+
+.locationBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

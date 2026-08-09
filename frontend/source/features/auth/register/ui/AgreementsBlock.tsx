@@ -1,25 +1,16 @@
 import Link from "next/link";
-import type { UseFormReturn } from "react-hook-form";
 import { Checkbox } from "@/source/shared/ui";
-import type { RegisterFormValues } from "../../model/schema";
-import s from "./AgreementsFields.module.scss";
+import type { StepProps } from "./types";
+import s from "./register-form.module.scss";
 
-interface Props {
-  form: UseFormReturn<RegisterFormValues>;
-}
-
-export function AgreementsFields({ form }: Props) {
-  const { watch, setValue, formState } = form;
-  const errors = formState.errors;
-  const shouldValidate = formState.isSubmitted;
-
+export function AgreementsBlock({ state, dispatch }: StepProps) {
   return (
     <div className={s.agreements}>
       <Checkbox
         id="agreePrivacy"
-        checked={watch("agreePrivacy")}
-        onChange={(checked) => setValue("agreePrivacy", checked, { shouldValidate })}
-        error={errors.agreePrivacy?.message}
+        required
+        checked={state.consents.privacy}
+        onChange={(value) => dispatch({ type: "consent", key: "privacy", value })}
       >
         Я соглашаюсь с{" "}
         <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer" className={s.link}>
@@ -28,9 +19,9 @@ export function AgreementsFields({ form }: Props) {
       </Checkbox>
       <Checkbox
         id="agreeTerms"
-        checked={watch("agreeTerms")}
-        onChange={(checked) => setValue("agreeTerms", checked, { shouldValidate })}
-        error={errors.agreeTerms?.message}
+        required
+        checked={state.consents.terms}
+        onChange={(value) => dispatch({ type: "consent", key: "terms", value })}
       >
         Я соглашаюсь с{" "}
         <Link href="/user-agreement" target="_blank" rel="noopener noreferrer" className={s.link}>
@@ -39,9 +30,9 @@ export function AgreementsFields({ form }: Props) {
       </Checkbox>
       <Checkbox
         id="agreeConsent"
-        checked={watch("agreeConsent")}
-        onChange={(checked) => setValue("agreeConsent", checked, { shouldValidate })}
-        error={errors.agreeConsent?.message}
+        required
+        checked={state.consents.personal}
+        onChange={(value) => dispatch({ type: "consent", key: "personal", value })}
       >
         Я даю{" "}
         <Link href="/personal-data-consent" target="_blank" rel="noopener noreferrer" className={s.link}>

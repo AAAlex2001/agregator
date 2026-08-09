@@ -6,26 +6,14 @@ import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGaller
 import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
+import type { StepProps } from "./types";
 import s from "./RegulatoryDocumentsBlock.module.scss";
 
 const ACCEPT =
   ".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const HINT = "PDF / JPG / PNG / DOC / DOCX, до 10 МБ";
 
-interface Props {
-  miningLicenseFile: File | null;
-  sroDesignFile: File | null;
-  labAccreditationFile: File | null;
-  miningLicenseNumber: string;
-  labAccreditationNumber: string;
-  onMiningNumberChange: (v: string) => void;
-  onLabNumberChange: (v: string) => void;
-  onMiningFileSelect?: (f: File | null) => void;
-  onSroFileSelect?: (f: File | null) => void;
-  onLabFileSelect?: (f: File | null) => void;
-}
-
-export function RegulatoryDocumentsBlock(props: Props) {
+export function RegulatoryDocumentsBlock({ state, dispatch }: StepProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,45 +30,56 @@ export function RegulatoryDocumentsBlock(props: Props) {
 
       {open && (
         <div className={s.body}>
-          <DocRow
-            placeholder="Лицензия на маркшейдерские работы №"
-            number={props.miningLicenseNumber}
-            file={props.miningLicenseFile}
-            onNumberChange={props.onMiningNumberChange}
-            onFileSelect={props.onMiningFileSelect}
-            galleryId="mining"
-          />
-          <DocRow
-            fileLabel="Выписка из реестра членов СРО в области проектирования"
-            file={props.sroDesignFile}
-            onFileSelect={props.onSroFileSelect}
-            galleryId="sro"
-          />
-          <DocRow
-            placeholder="Свидетельство об аккредитации лаборатории №"
-            number={props.labAccreditationNumber}
-            file={props.labAccreditationFile}
-            onNumberChange={props.onLabNumberChange}
-            onFileSelect={props.onLabFileSelect}
-            galleryId="lab"
-          />
+          <div className={s.row}>
+            <TextInput
+              value={state.miningNumber}
+              autoComplete="off"
+              onChange={(e) => dispatch({ type: "set", key: "miningNumber", value: e.target.value })}
+              placeholder="Лицензия на маркшейдерские работы №"
+            />
+            <DocFileGallery
+              galleryId="mining"
+              file={state.files.mining}
+              onSelect={(file) => dispatch({ type: "file", key: "mining", file })}
+            />
+          </div>
+
+          <div className={s.row}>
+            <DocFileGallery
+              galleryId="sro"
+              fileLabel="Выписка из реестра членов СРО в области проектирования"
+              file={state.files.sro}
+              onSelect={(file) => dispatch({ type: "file", key: "sro", file })}
+            />
+          </div>
+
+          <div className={s.row}>
+            <TextInput
+              value={state.labNumber}
+              autoComplete="off"
+              onChange={(e) => dispatch({ type: "set", key: "labNumber", value: e.target.value })}
+              placeholder="Свидетельство об аккредитации лаборатории №"
+            />
+            <DocFileGallery
+              galleryId="lab"
+              file={state.files.lab}
+              onSelect={(file) => dispatch({ type: "file", key: "lab", file })}
+            />
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-interface RowProps {
-  placeholder?: string;
-  number?: string;
+interface DocFileProps {
+  galleryId: string;
   fileLabel?: string;
   file: File | null;
-  onNumberChange?: (v: string) => void;
-  onFileSelect?: (f: File | null) => void;
-  galleryId: string;
+  onSelect: (file: File | null) => void;
 }
 
-function DocRow({ placeholder, number, fileLabel, file, onNumberChange, onFileSelect, galleryId }: RowProps) {
+function DocFileGallery({ galleryId, fileLabel, file, onSelect }: DocFileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const blobUrl = useObjectUrl(file);
 
@@ -94,41 +93,30 @@ function DocRow({ placeholder, number, fileLabel, file, onNumberChange, onFileSe
             previewUrl: blobUrl,
             thumbnailUrl: blobUrl,
             isImage: isImageFileName(file.name),
-            onRemove: onFileSelect ? () => onFileSelect(null) : undefined,
+            onRemove: () => onSelect(null),
           },
         ]
       : [];
 
   return (
-    <div className={s.row}>
-      {placeholder && (
-        <TextInput
-          value={number ?? ""}
-          autoComplete="off"
-          onChange={(e) => onNumberChange?.(e.target.value)}
-          placeholder={placeholder}
+    <FileGallery
+      label={fileLabel ?? "Файл документа"}
+      hint={HINT}
+      items={items}
+      variant="editable"
+      onAdd={() => inputRef.current?.click()}
+      input={
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPT}
+          hidden
+          onChange={(e) => {
+            onSelect(e.target.files?.[0] ?? null);
+            e.target.value = "";
+          }}
         />
-      )}
-      <FileGallery
-        label={fileLabel ?? "Файл документа"}
-        hint={HINT}
-        items={items}
-        variant="editable"
-        onAdd={() => inputRef.current?.click()}
-        input={
-          <input
-            ref={inputRef}
-            type="file"
-            accept={ACCEPT}
-            hidden
-            onChange={(e) => {
-              const next = e.target.files?.[0] ?? null;
-              e.target.value = "";
-              if (onFileSelect) onFileSelect(next);
-            }}
-          />
-        }
-      />
-    </div>
+      }
+    />
   );
 }

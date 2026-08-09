@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import type { AuthPreset } from "@/source/shared/lib/auth-modal";
-import { useRegister, CredentialsStep, EmailConfirmStep } from "@/source/features/auth/register";
+import { RegisterForm, ConfirmCodeForm, type UserRole } from "@/source/features/auth/register";
 import s from "./auth-modal.module.scss";
 
 interface Props {
@@ -9,48 +10,19 @@ interface Props {
   preset?: AuthPreset | null;
 }
 
-const STEP_LABELS: Record<1 | 2, string> = {
-  1: "Шаг 1. Данные",
-  2: "Шаг 2. Код",
-};
-
 export function RegisterTab({ onSuccess, preset = null }: Props) {
-  const reg = useRegister({ onSuccess, preset });
+  const [pending, setPending] = useState<{ email: string; role: UserRole } | null>(null);
 
   return (
     <div className={s.flow}>
       <div className={s.stepHeader}>
-        <span className={s.stepIndicator}>{STEP_LABELS[reg.step]}</span>
+        <span className={s.stepIndicator}>{pending ? "Шаг 2. Код" : "Шаг 1. Данные"}</span>
       </div>
 
-      {reg.step === 1 && (
-        <CredentialsStep
-          form={reg.form}
-          isLoading={reg.isLoading}
-          lockRole={reg.lockRole}
-          directionFiles={reg.directionFiles}
-          licenseFile={reg.licenseFile}
-          miningLicenseFile={reg.miningLicenseFile}
-          sroDesignFile={reg.sroDesignFile}
-          labAccreditationFile={reg.labAccreditationFile}
-          onPhoneChange={reg.setPhone}
-          onRoleSelect={reg.selectRole}
-          onDirectionFilesChange={reg.setDirectionFiles}
-          onLicenseFileSelect={reg.selectLicenseFile}
-          onMiningLicenseFileSelect={reg.setMiningLicenseFile}
-          onSroDesignFileSelect={reg.setSroDesignFile}
-          onLabAccreditationFileSelect={reg.setLabAccreditationFile}
-          onSubmit={reg.submit}
-        />
-      )}
-
-      {reg.step === 2 && (
-        <EmailConfirmStep
-          form={reg.confirmForm}
-          email={reg.pendingEmail}
-          isLoading={reg.isConfirmLoading}
-          onSubmit={reg.confirmSubmit}
-        />
+      {!pending ? (
+        <RegisterForm preset={preset} onRegistered={(email, role) => setPending({ email, role })} />
+      ) : (
+        <ConfirmCodeForm email={pending.email} role={pending.role} onSuccess={onSuccess} />
       )}
     </div>
   );

@@ -5,6 +5,7 @@ interface CheckboxProps {
   id: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  required?: boolean;
   disabled?: boolean;
   error?: string;
   className?: string;
@@ -15,6 +16,7 @@ export function Checkbox({
   id,
   checked,
   onChange,
+  required,
   disabled,
   error,
   className = "",
@@ -33,6 +35,7 @@ export function Checkbox({
         type="checkbox"
         checked={checked}
         onChange={handleChange}
+        required={required}
         disabled={disabled}
         className={styles.input}
       />

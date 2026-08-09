@@ -1,2 +1,2 @@
-export { CredentialsStep } from "./CredentialsStep";
-export { EmailConfirmStep } from "./EmailConfirmStep";
+export { RegisterForm } from "./RegisterForm";
+export { ConfirmCodeForm } from "./ConfirmCodeForm";

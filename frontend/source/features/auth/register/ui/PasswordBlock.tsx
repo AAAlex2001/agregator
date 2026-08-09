@@ -1,7 +1,6 @@
-import type { UseFormReturn } from "react-hook-form";
 import { PasswordInput } from "@/source/shared/ui/Inputs";
-import type { RegisterFormValues } from "../../model/schema";
-import s from "./PasswordFields.module.scss";
+import type { StepProps } from "./types";
+import s from "./register-form.module.scss";
 
 const PASSWORD_RULES: Array<{ label: string; test: (pw: string) => boolean }> = [
   { label: "Не менее 6 символов", test: (pw) => pw.length >= 6 },
@@ -13,39 +12,30 @@ const PASSWORD_RULES: Array<{ label: string; test: (pw: string) => boolean }> = 
   },
 ];
 
-interface Props {
-  form: UseFormReturn<RegisterFormValues>;
-}
-
-export function PasswordFields({ form }: Props) {
-  const { watch, setValue, formState } = form;
-  const errors = formState.errors;
-  const shouldValidate = formState.isSubmitted;
-  const password = watch("password");
-
+export function PasswordBlock({ state, dispatch }: StepProps) {
   return (
     <>
       <PasswordInput
         id="password"
-        value={password}
+        value={state.password}
+        required
         autoComplete="new-password"
-        onChange={(e) => setValue("password", e.target.value, { shouldValidate })}
+        onChange={(e) => dispatch({ type: "set", key: "password", value: e.target.value })}
         placeholder="Пароль"
-        error={errors.password?.message}
       />
 
       <PasswordInput
         id="repeatPassword"
-        value={watch("repeatPassword")}
+        value={state.confirm}
+        required
         autoComplete="new-password"
-        onChange={(e) => setValue("repeatPassword", e.target.value, { shouldValidate })}
+        onChange={(e) => dispatch({ type: "set", key: "confirm", value: e.target.value })}
         placeholder="Повторите пароль"
-        error={errors.repeatPassword?.message}
       />
 
       <ul className={s.requirements}>
         {PASSWORD_RULES.map((rule) => (
-          <li key={rule.label} className={rule.test(password) ? s.met : ""}>
+          <li key={rule.label} className={rule.test(state.password) ? s.met : ""}>
             {rule.label}
           </li>
         ))}
