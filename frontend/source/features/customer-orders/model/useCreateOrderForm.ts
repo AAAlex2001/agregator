@@ -86,6 +86,10 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (!isEdit && user && (user.directions ?? []).length === 0) {
+      showError("Отметьте направления работы в настройках профиля — без них заказ не создать");
+      return;
+    }
     if (!state.startDate) {
       showError("Укажите срок начала выполнения работ");
       return;
