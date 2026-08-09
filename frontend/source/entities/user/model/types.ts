@@ -49,6 +49,7 @@ export interface LicenseHolderRegisterPayload {
   lab_accreditation_number?: string | null;
   audit_profile?: LicenseHolderAuditRegisterPayload | null;
   tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
+  directions?: string[];
 }
 
 export interface LicenseHolderUpdatePayload {
@@ -101,6 +102,7 @@ export interface UserProfile {
   company_data: CompanyData | null;
   email_preferences: EmailPreferences;
   notify_order_types: string[];
+  directions: string[];
   notifications_introduced: boolean;
   expert: ExpertProfileData | null;
   license_holder: LicenseHolderProfileData | null;

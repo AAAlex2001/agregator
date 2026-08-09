@@ -33,6 +33,7 @@ def to_response(account: Account) -> UserSettingsResponse:
     "Собирает ответ настроек личного кабинета из аккаунта и профиля его роли."
     expert = account.expert_profile
     holder = account.license_holder_profile
+    directions = getattr(account.customer_profile or holder, "directions", None)
     return UserSettingsResponse(
         id=account.id,
         role=account.role.value,
@@ -50,6 +51,7 @@ def to_response(account: Account) -> UserSettingsResponse:
             if expert is not None and isinstance(expert.notify_order_types, list)
             else []
         ),
+        directions=directions if isinstance(directions, list) else [],
         notifications_introduced=bool(account.notifications_introduced),
         expert=ExpertProfileData.model_validate(expert) if expert is not None else None,
         license_holder=(

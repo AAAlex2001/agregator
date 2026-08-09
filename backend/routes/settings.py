@@ -9,6 +9,7 @@ from schemas.settings import (
     ChangePasswordRequest,
     ConfirmEmailChangeRequest,
     RequestEmailChangeRequest,
+    UpdateDirectionsRequest,
     UpdateEmailPreferencesRequest,
     UpdateExpertLocationRequest,
     UpdateLicenseHolderRequest,
@@ -30,6 +31,7 @@ from services.settings import (
     RequestEmailChangeUseCase,
     SettingsRepository,
     SettingsValidator,
+    UpdateDirectionsUseCase,
     UpdateEmailPreferencesUseCase,
     UpdateExpertLocationUseCase,
     UpdateLicenseTermsUseCase,
@@ -75,6 +77,20 @@ async def update_profile(
     repo = build_repo(db)
     user = await UpdatePersonalDataUseCase(repo, build_validator(repo)).execute(user_id, data)
     set_role_cookie(response, user.role.value)
+    return to_response(user)
+
+
+@router.put("/settings/directions", response_model=UserSettingsResponse)
+async def update_directions(
+    data: UpdateDirectionsRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Сохраняет отметки направлений заказчика или держателя разрешительных документов."
+    repo = build_repo(db)
+    user = await UpdateDirectionsUseCase(repo, build_validator(repo)).execute(
+        user_id, data.directions
+    )
     return to_response(user)
 
 

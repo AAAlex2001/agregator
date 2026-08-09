@@ -51,6 +51,7 @@ export function useRegister(
             lab_accreditation_number: state.labNumber.trim() || null,
             audit_profile: state.auditHolderProfile,
             tech_diag_profile: state.techDiagHolderProfile,
+            directions: state.directions,
           },
           state.files.license,
           state.files.mining,
@@ -100,6 +101,7 @@ export function useRegister(
           inn: state.party?.data.inn ?? "",
           company_data: state.party as CompanyData | null,
           audit_customer_profile: state.auditCustomerProfile,
+          directions: state.directions,
         });
       }
       dispatch({ type: "SUBMIT_FULFILLED" });

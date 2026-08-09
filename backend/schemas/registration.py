@@ -18,6 +18,7 @@ from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
 from schemas.research import ResearchProfileInput
 from schemas.tech_diag import TechDiagExpertProfileInput, TechDiagLicenseHolderProfileInput
+from services.directions.registry import validate_direction_keys
 
 PASSWORD_ALLOWED_CHARS = re.compile(r"^[A-Za-z0-9!@#$%^&*()\-_+=\[\]{}|;:'\",.<>?/`~ ]+$")
 
@@ -51,6 +52,9 @@ class UserRegistration(BaseModel):
     map_fields: list[str] = Field(
         default_factory=list, description="Что показывать в метке на карте", max_length=10
     )
+    directions: list[str] = Field(
+        default_factory=list, description="Отметки направлений без анкет", max_length=10
+    )
     expertise_profile: ExpertiseProfileInput | None = None
     audit_expert_profile: AuditExpertProfileInput | None = None
     audit_customer_profile: AuditCustomerProfileInput | None = None
@@ -73,6 +77,11 @@ class UserRegistration(BaseModel):
     @classmethod
     def validate_company(cls, value: Any) -> Any:
         return validate_company_data(value)
+
+    @field_validator("directions")
+    @classmethod
+    def validate_directions(cls, value: list[str]) -> list[str]:
+        return validate_direction_keys(value)
 
     @model_validator(mode="after")
     def validate_direction_roles(self) -> "UserRegistration":
@@ -128,6 +137,9 @@ class LicenseHolderRegistration(BaseModel):
     lab_accreditation_number: str | None = Field(None, max_length=100)
     audit_profile: AuditLicenseHolderProfileInput | None = None
     tech_diag_profile: TechDiagLicenseHolderProfileInput | None = None
+    directions: list[str] = Field(
+        default_factory=list, description="Отметки направлений без анкет", max_length=10
+    )
 
     @field_validator("password")
     @classmethod
@@ -138,6 +150,11 @@ class LicenseHolderRegistration(BaseModel):
     @classmethod
     def validate_company(cls, value: Any) -> Any:
         return validate_company_data(value)
+
+    @field_validator("directions")
+    @classmethod
+    def validate_directions(cls, value: list[str]) -> list[str]:
+        return validate_direction_keys(value)
 
     @model_validator(mode="after")
     def cross_field_checks(self) -> "LicenseHolderRegistration":

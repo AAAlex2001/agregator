@@ -42,6 +42,7 @@ class LicenseHolder(Base):
         unique=True,
         index=True,
     )
+    directions: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list, server_default="[]")
     license_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     license_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     license_areas: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)

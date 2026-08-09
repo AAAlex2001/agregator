@@ -46,6 +46,7 @@ class RegisterLicenseHolderUseCase:
 
         profile = LicenseHolder(
             account_id=account.id,
+            directions=data.directions,
             license_number=data.license_number,
             license_file_url=license_file_url,
             license_areas=data.license_areas,

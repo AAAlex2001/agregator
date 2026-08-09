@@ -59,7 +59,7 @@ class RegisterUserUseCase:
             profile = self.build_expert_profile(account, data)
             account.expert_profile = profile
         else:
-            profile = Customer(account_id=account.id)
+            profile = Customer(account_id=account.id, directions=data.directions)
             account.customer_profile = profile
         await self.repo.add(profile)
 

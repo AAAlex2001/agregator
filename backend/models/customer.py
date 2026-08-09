@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
@@ -23,6 +24,7 @@ class Customer(Base):
         unique=True,
         index=True,
     )
+    directions: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list, server_default="[]")
     email_on_response_created: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     email_on_response_updated: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     email_on_expert_rejected: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")

@@ -5,6 +5,7 @@ import Tabs from "@/source/shared/ui/Tabs";
 import { FormSection } from "@/source/shared/ui";
 import type { UserRole } from "@/source/entities/user";
 import { AuditCustomerProfileCard } from "./AuditCustomerProfileCard";
+import { DirectionMarksCard } from "./DirectionMarksCard";
 import { AuditExpertProfileCard } from "./AuditExpertProfileCard";
 import { AuditLicenseHolderProfileCard } from "./AuditLicenseHolderProfileCard";
 import { CadastralProfileCard } from "./CadastralProfileCard";
@@ -80,6 +81,8 @@ export function DirectionsSection({ role }: Props) {
             {entry.card}
           </div>
         ))}
+
+        {role !== "EXPERT" && <DirectionMarksCard />}
       </div>
     </FormSection>
   );

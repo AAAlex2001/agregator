@@ -54,11 +54,13 @@ export function ServiceLandingFaq({
           <Subtitle text={subtitle} />
         </header>
 
-        <Accordion
-          items={items}
-          activeId={activeId}
-          onToggle={(id) => setActiveId((prev) => (prev === id ? null : id))}
-        />
+        <div className={s.accordion}>
+          <Accordion
+            items={items}
+            activeId={activeId}
+            onToggle={(id) => setActiveId((prev) => (prev === id ? null : id))}
+          />
+        </div>
       </div>
     </section>
   );

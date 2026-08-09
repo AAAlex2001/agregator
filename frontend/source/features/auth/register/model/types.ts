@@ -57,6 +57,7 @@ export interface RegisterState {
   contactConsent: boolean;
   party: PartySuggestion | null;
   companyName: string;
+  directions: string[];
   expertiseProfile: ExpertiseProfile | null;
   auditExpertProfile: AuditExpertProfile | null;
   auditCustomerProfile: AuditCustomerProfile | null;
@@ -94,6 +95,7 @@ export type RegisterAction =
   | { type: "location"; point: SelectedLocation }
   | { type: "party"; party: PartySuggestion }
   | { type: "companyText"; value: string }
+  | { type: "direction"; key: string; value: boolean }
   | { type: "expertise"; value: ExpertiseProfile | null }
   | { type: "auditExpert"; value: AuditExpertProfile | null }
   | { type: "auditCustomer"; value: AuditCustomerProfile | null }

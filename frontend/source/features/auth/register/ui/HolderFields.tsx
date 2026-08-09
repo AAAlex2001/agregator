@@ -6,6 +6,7 @@ import { FileGallery, RentalPriceField } from "@/source/shared/ui";
 import { isImageFileName } from "@/source/shared/lib/filePreview";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import { TypesPicker } from "@/source/entities/expertise";
+import { ORDER_WORK_OPTIONS } from "@/source/entities/order";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import { emptyAuditLicenseHolderProfile } from "@/source/features/directions/audit";
 import { emptyTechDiagHolderProfile } from "@/source/features/directions/tech-diag";
@@ -15,6 +16,10 @@ import type { StepProps } from "./types";
 import d from "./directions/DirectionsPicker.module.scss";
 
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
+
+const HOLDER_MARK_OPTIONS = ORDER_WORK_OPTIONS.filter(
+  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG"].includes(option.value),
+);
 
 export function HolderFields({ state, dispatch }: StepProps) {
   const audit = state.auditHolderProfile;
@@ -143,6 +148,23 @@ export function HolderFields({ state, dispatch }: StepProps) {
             </>
           )}
         </DirectionOption>
+
+        {HOLDER_MARK_OPTIONS.map((option) => (
+          <DirectionOption
+            key={option.value}
+            id={option.value}
+            title={option.label}
+            description={option.description}
+            checked={state.directions.includes(option.value)}
+            onToggle={() =>
+              dispatch({
+                type: "direction",
+                key: option.value,
+                value: !state.directions.includes(option.value),
+              })
+            }
+          />
+        ))}
       </ul>
 
       <PartySuggestInput

@@ -43,6 +43,7 @@ export interface RegisterPayload {
   contact_price_rubles?: number;
   contact_payment_details?: string;
   contact_disclosure_consent?: boolean;
+  directions?: string[];
 }
 
 export type RegisterDocumentSlot =

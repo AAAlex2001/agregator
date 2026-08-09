@@ -54,6 +54,18 @@ export async function updateExpertLocation(data: {
   return res.json();
 }
 
+export async function updateDirections(directions: string[]): Promise<UserProfile> {
+  const res = await fetchWithSession(`${API_URL}/settings/directions`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ directions }),
+  });
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, "Не удалось сохранить направления"));
+  }
+  return res.json();
+}
+
 export async function changePassword(
   newPassword: string,
   newPasswordConfirm: string,

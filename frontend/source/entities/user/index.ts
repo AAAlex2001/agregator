@@ -12,6 +12,7 @@ export type { UpdateEmailPreferencesPayload } from "./model/email-preferences";
 export {
   fetchProfile,
   updateProfile,
+  updateDirections,
   changePassword,
   uploadAvatar,
   requestEmailChange,

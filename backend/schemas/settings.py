@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 
 from models.license_holder import LicenseRentalKind
 from schemas.registration import validate_password_complexity
+from services.directions.registry import validate_direction_keys
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES_SET
 
 
@@ -175,6 +176,16 @@ class LicenseHolderProfileData(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UpdateDirectionsRequest(BaseModel):
+    "Отметки направлений заказчика или держателя разрешительных документов."
+    directions: list[str] = Field(default_factory=list, max_length=10)
+
+    @field_validator("directions")
+    @classmethod
+    def validate_directions(cls, value: list[str]) -> list[str]:
+        return validate_direction_keys(value)
+
+
 class UserSettingsResponse(BaseModel):
     """Личный кабинет: общие данные аккаунта, настройки уведомлений и профиль его роли.
 
@@ -193,6 +204,7 @@ class UserSettingsResponse(BaseModel):
     company_data: dict[str, Any] | None = None
     email_preferences: EmailPreferences
     notify_order_types: list[str] = Field(default_factory=list)
+    directions: list[str] = Field(default_factory=list)
     notifications_introduced: bool = False
     expert: ExpertProfileData | None = None
     license_holder: LicenseHolderProfileData | None = None

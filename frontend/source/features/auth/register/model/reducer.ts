@@ -35,6 +35,7 @@ export const initialState: RegisterState = {
   contactConsent: false,
   party: null,
   companyName: "",
+  directions: [],
   expertiseProfile: null,
   auditExpertProfile: null,
   auditCustomerProfile: null,
@@ -90,6 +91,18 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
   if (preset.direction === "FORENSIC" && preset.role === "EXPERT") {
     state.forensicProfile = { ...emptyForensicProfile };
   }
+  if (preset.direction && preset.role === "CUSTOMER" && preset.direction !== "AUDIT_SUPB") {
+    state.directions = [preset.direction];
+  }
+  if (
+    preset.direction &&
+    preset.role === "LICENSE_HOLDER" &&
+    preset.direction !== "AUDIT_SUPB" &&
+    preset.direction !== "TECH_DIAG"
+  ) {
+    state.directions = [preset.direction];
+    state.licenseEnabled = false;
+  }
   return state;
 }
 
@@ -108,6 +121,7 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         ...state,
         role: action.value,
         licenseEnabled: true,
+        directions: [],
         expertiseProfile: null,
         auditExpertProfile: null,
         auditCustomerProfile: null,
@@ -136,6 +150,13 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, party: action.party, companyName: action.party.value };
     case "companyText":
       return { ...state, companyName: action.value, party: null };
+    case "direction":
+      return {
+        ...state,
+        directions: action.value
+          ? [...state.directions, action.key]
+          : state.directions.filter((key) => key !== action.key),
+      };
     case "expertise":
       return { ...state, expertiseProfile: action.value };
     case "auditExpert":

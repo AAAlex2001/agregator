@@ -101,3 +101,11 @@ DIRECTIONS_BY_KEY: dict[str, Direction] = {direction.key: direction for directio
 def get_direction(key: str) -> Direction | None:
     "Возвращает направление по ключу (значению OrderWorkType) или None."
     return DIRECTIONS_BY_KEY.get(key)
+
+
+def validate_direction_keys(value: list[str]) -> list[str]:
+    "Проверяет ключи направлений по реестру и убирает дубли, сохраняя порядок."
+    unknown = [key for key in value if key not in DIRECTIONS_BY_KEY]
+    if unknown:
+        raise ValueError(f"Неизвестные направления: {', '.join(unknown)}")
+    return list(dict.fromkeys(value))
