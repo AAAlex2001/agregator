@@ -7,6 +7,7 @@ from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -55,7 +56,7 @@ class ExpertForensicProfile(Base):
     expert: Mapped["Expert"] = relationship(back_populates="forensic_profile")
 
 
-class OrderForensicDetails(Base):
+class OrderForensicDetails(ApplicantColumns, Base):
     """Поля заявки на судебную экспертизу: заявитель, объект, требования, сроки."""
     __tablename__ = "order_forensic_details"
 
@@ -66,12 +67,6 @@ class OrderForensicDetails(Base):
         unique=True,
         index=True,
     )
-    applicant_full_name: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
-    applicant_position: Mapped[str] = mapped_column(String(200), nullable=False, default="", server_default="")
-    applicant_organization: Mapped[str] = mapped_column(String(500), nullable=False, default="", server_default="")
-    applicant_inn: Mapped[str] = mapped_column(String(12), nullable=False, default="", server_default="")
-    applicant_phone: Mapped[str] = mapped_column(String(30), nullable=False, default="", server_default="")
-    applicant_email: Mapped[str] = mapped_column(String(320), nullable=False, default="", server_default="")
     expertise_purpose: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
     government_body: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     city: Mapped[str] = mapped_column(String(200), nullable=False, default="", server_default="")

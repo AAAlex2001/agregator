@@ -6,6 +6,7 @@ from sqlalchemy import Boolean, Date, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -40,7 +41,7 @@ class ExpertCadastralProfile(Base):
     expert: Mapped["Expert"] = relationship(back_populates="cadastral_profile")
 
 
-class OrderCadastralDetails(Base):
+class OrderCadastralDetails(ApplicantColumns, Base):
     """Поля заявки на кадастровые работы: заявитель, работа, требования, сроки."""
     __tablename__ = "order_cadastral_details"
 
@@ -51,12 +52,6 @@ class OrderCadastralDetails(Base):
         unique=True,
         index=True,
     )
-    applicant_full_name: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
-    applicant_position: Mapped[str] = mapped_column(String(200), nullable=False, default="", server_default="")
-    applicant_organization: Mapped[str] = mapped_column(String(500), nullable=False, default="", server_default="")
-    applicant_inn: Mapped[str] = mapped_column(String(12), nullable=False, default="", server_default="")
-    applicant_phone: Mapped[str] = mapped_column(String(30), nullable=False, default="", server_default="")
-    applicant_email: Mapped[str] = mapped_column(String(320), nullable=False, default="", server_default="")
     work_purpose: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
     city: Mapped[str] = mapped_column(String(200), nullable=False, default="", server_default="")
     education_requirement: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")

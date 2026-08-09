@@ -1,6 +1,7 @@
 "use client";
 
 import { TextArea } from "@/source/shared/ui/Inputs";
+import { ApplicantFields } from "../../shared/ui/ApplicantFields";
 import type { LaboratoryOrderDetails } from "../model/types";
 import s from "../../shared/ui/fields.module.scss";
 
@@ -12,6 +13,11 @@ interface Props {
 export function LaboratoryOrderFields({ value, onChange }: Props) {
   return (
     <div className={s.form}>
+      <div className={s.field}>
+        <span className={s.label}>Сведения о заявителе</span>
+        <ApplicantFields value={value} onChange={(next) => onChange({ ...value, ...next })} />
+      </div>
+
       <label className={s.field}>
         <span className={s.label}>Требования к оборудованию</span>
         <TextArea

@@ -6,6 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -58,7 +59,7 @@ class LicenseHolderTechDiagProfile(Base):
     license_holder: Mapped["LicenseHolder"] = relationship(back_populates="tech_diag_profile")
 
 
-class OrderTechDiagDetails(Base):
+class OrderTechDiagDetails(ApplicantColumns, Base):
     """Поля заявки на техническое освидетельствование и диагностирование."""
     __tablename__ = "order_tech_diag_details"
 

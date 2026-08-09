@@ -3,6 +3,7 @@
 import Button from "@/source/shared/ui/Button";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { TextInput } from "@/source/shared/ui/Inputs";
+import { ApplicantFields } from "../../shared/ui/ApplicantFields";
 import type { ResearchOrderDetails } from "../model/types";
 import s from "../../shared/ui/fields.module.scss";
 import own from "./ResearchOrderFields.module.scss";
@@ -19,6 +20,11 @@ export function ResearchOrderFields({ value, onChange }: Props) {
 
   return (
     <div className={s.form}>
+      <div className={s.field}>
+        <span className={s.label}>Сведения о заявителе</span>
+        <ApplicantFields value={value} onChange={(next) => onChange({ ...value, ...next })} />
+      </div>
+
       <div className={s.field}>
         <span className={s.label}>Требования к исполнителю</span>
         <span className={s.hint}>Например: {REQUIREMENT_HINTS.join(", ").toLowerCase()}</span>

@@ -1,6 +1,8 @@
 """DTO лабораторных исследований: анкета исполнителя и поля заявки."""
 from pydantic import BaseModel, ConfigDict, Field
 
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
+
 
 class LaboratoryProfileInput(BaseModel):
     """Анкета исполнителя лабораторных исследований."""
@@ -16,13 +18,11 @@ class LaboratoryProfileResponse(BaseModel):
     comment: str = ""
 
 
-class LaboratoryOrderDetailsInput(BaseModel):
+class LaboratoryOrderDetailsInput(ApplicantDetailsInput):
     """Поля заявки на проведение лабораторных исследований."""
     equipment_requirements: str = Field("", max_length=5000)
 
 
-class LaboratoryOrderDetailsResponse(BaseModel):
+class LaboratoryOrderDetailsResponse(ApplicantDetailsResponse):
     """Поля лабораторной заявки в ответе API."""
-    model_config = ConfigDict(from_attributes=True)
-
     equipment_requirements: str = ""

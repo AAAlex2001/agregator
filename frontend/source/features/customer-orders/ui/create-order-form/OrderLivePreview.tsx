@@ -14,6 +14,7 @@ import {
 import { useSession } from "@/source/features/session";
 import type { DocumentsFormState } from "@/source/entities/order";
 import { buildPreviewBadges } from "../../model/expertiseBadges";
+import { activeDirectionDetails } from "../../model/orderDetails";
 import type { OrderFormState } from "../../model/orderForm";
 import s from "./OrderLivePreview.module.scss";
 
@@ -35,23 +36,6 @@ function formatDeadline(iso: string): string {
   return date.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-function previewDetails(state: OrderFormState): object | null {
-  switch (state.workType) {
-    case "CADASTRAL":
-      return state.cadastralDetails;
-    case "FORENSIC":
-      return state.forensicDetails;
-    case "RESEARCH":
-      return state.researchDetails;
-    case "LABORATORY":
-      return state.laboratoryDetails;
-    case "AUDIT_SUPB":
-      return state.auditDetails;
-    default:
-      return null;
-  }
-}
-
 export function OrderLivePreview({ state }: Props) {
   const previewDocuments = usePreviewDocuments(state.documents);
   const { user } = useSession();
@@ -60,7 +44,7 @@ export function OrderLivePreview({ state }: Props) {
   const comment = state.comment.trim();
   const hasDocuments = countDocuments(previewDocuments) > 0;
   const workType: OrderWorkType = state.workType;
-  const directionDetails = previewDetails(state);
+  const directionDetails = activeDirectionDetails(state.workType, state) ?? null;
   const hasDirectionFields =
     orderDetailsFields(workType).length > 0 && Boolean(directionDetails);
   const hasDetails = Boolean(comment) || hasDocuments || hasDirectionFields;

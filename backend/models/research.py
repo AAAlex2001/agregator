@@ -6,6 +6,7 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -33,8 +34,8 @@ class ExpertResearchProfile(Base):
     expert: Mapped["Expert"] = relationship(back_populates="research_profile")
 
 
-class OrderResearchDetails(Base):
-    """Поля заявки на проведение НИР: требования к исполнителю и выезд на объект."""
+class OrderResearchDetails(ApplicantColumns, Base):
+    """Поля заявки на проведение НИР: заявитель, требования к исполнителю, выезд на объект."""
     __tablename__ = "order_research_details"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

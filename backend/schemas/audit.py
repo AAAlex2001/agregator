@@ -2,6 +2,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from models.audit import AuditKind, AuditScale, AuditTimeline
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
 from schemas.common import DirectionFileSchema
 from services.audit_catalogs import (
     ACCREDITATION_AREA_CODES,
@@ -125,14 +126,8 @@ class AuditOpoItemResponse(AuditOpoItemInput):
     model_config = ConfigDict(from_attributes=True)
 
 
-class AuditOrderDetailsInput(BaseModel):
+class AuditOrderDetailsInput(ApplicantDetailsInput):
     """Поля заявки на аудит СУПБ: блоки 1-5 формы из ТЗ."""
-    applicant_full_name: str = Field(..., min_length=1, max_length=300)
-    applicant_position: str = Field("", max_length=200)
-    applicant_organization: str = Field("", max_length=500)
-    applicant_inn: str = Field("", pattern=r"^$|^\d{10}$|^\d{12}$")
-    applicant_phone: str = Field(..., min_length=5, max_length=30)
-    applicant_email: str = Field(..., min_length=5, max_length=320)
     audit_scale: AuditScale
     opo_items: list[AuditOpoItemInput] = Field(default_factory=list, max_length=50)
     opo_total: int | None = Field(None, ge=1, le=10_000)
@@ -190,16 +185,8 @@ class AuditOrderDetailsInput(BaseModel):
         return self
 
 
-class AuditOrderDetailsResponse(BaseModel):
+class AuditOrderDetailsResponse(ApplicantDetailsResponse):
     """Поля заявки на аудит СУПБ в ответе API."""
-    model_config = ConfigDict(from_attributes=True)
-
-    applicant_full_name: str
-    applicant_position: str
-    applicant_organization: str
-    applicant_inn: str
-    applicant_phone: str
-    applicant_email: str
     audit_scale: AuditScale
     opo_items: list[AuditOpoItemResponse] = Field(default_factory=list)
     opo_total: int | None = None

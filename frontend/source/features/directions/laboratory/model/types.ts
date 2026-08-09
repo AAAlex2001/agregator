@@ -1,9 +1,11 @@
+import { emptyApplicant, type ApplicantBlock } from "../../shared/model/applicant";
+
 export interface LaboratoryProfile {
   accreditation_area: string;
   comment: string;
 }
 
-export interface LaboratoryOrderDetails {
+export interface LaboratoryOrderDetails extends ApplicantBlock {
   equipment_requirements: string;
 }
 
@@ -13,5 +15,6 @@ export const emptyLaboratoryProfile: LaboratoryProfile = {
 };
 
 export const emptyLaboratoryOrderDetails: LaboratoryOrderDetails = {
+  ...emptyApplicant,
   equipment_requirements: "",
 };

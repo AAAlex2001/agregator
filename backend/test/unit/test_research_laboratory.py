@@ -129,7 +129,11 @@ class TestLaboratoryProfile:
 class TestResearchOrderSchema:
     def test_blank_requirements_dropped(self):
         payload = ResearchOrderDetailsInput(
-            executor_requirements=["Кандидат наук", "  ", ""], needs_site_visit=True
+            applicant_full_name="Иванов Иван",
+            applicant_phone="+7-999-000-00-00",
+            applicant_email="ivanov@example.com",
+            executor_requirements=["Кандидат наук", "  ", ""],
+            needs_site_visit=True,
         )
 
         assert payload.executor_requirements == ["Кандидат наук"]

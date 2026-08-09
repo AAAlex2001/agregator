@@ -2,6 +2,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from models.forensic import ForensicWorkplaceKind
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
 from schemas.common import DirectionFileSchema
 
 
@@ -42,14 +43,8 @@ class ForensicProfileResponse(BaseModel):
     documents: list[DirectionFileSchema] = Field(default_factory=list)
 
 
-class ForensicOrderDetailsInput(BaseModel):
+class ForensicOrderDetailsInput(ApplicantDetailsInput):
     """Поля заявки на судебную экспертизу: заявитель, объект, требования, сроки."""
-    applicant_full_name: str = Field(..., min_length=1, max_length=300)
-    applicant_position: str = Field("", max_length=200)
-    applicant_organization: str = Field("", max_length=500)
-    applicant_inn: str = Field("", pattern=r"^$|^\d{10}$|^\d{12}$")
-    applicant_phone: str = Field(..., min_length=5, max_length=30)
-    applicant_email: str = Field(..., min_length=5, max_length=320)
     expertise_purpose: str = Field(..., min_length=1, max_length=5000)
     government_body: str = Field(..., min_length=1, max_length=500)
     city: str = Field(..., min_length=1, max_length=200)
@@ -59,16 +54,8 @@ class ForensicOrderDetailsInput(BaseModel):
     duration: str = Field("", max_length=200)
 
 
-class ForensicOrderDetailsResponse(BaseModel):
+class ForensicOrderDetailsResponse(ApplicantDetailsResponse):
     """Поля судебной заявки в ответе API."""
-    model_config = ConfigDict(from_attributes=True)
-
-    applicant_full_name: str
-    applicant_position: str
-    applicant_organization: str
-    applicant_inn: str
-    applicant_phone: str
-    applicant_email: str
     expertise_purpose: str
     government_body: str
     city: str

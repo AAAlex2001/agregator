@@ -1,6 +1,8 @@
 """DTO НИР: анкета исполнителя и поля заявки."""
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
+
 
 class ResearchProfileInput(BaseModel):
     """Анкета исполнителя НИР из формы регистрации или кабинета."""
@@ -18,7 +20,7 @@ class ResearchProfileResponse(BaseModel):
     research_field: str = ""
 
 
-class ResearchOrderDetailsInput(BaseModel):
+class ResearchOrderDetailsInput(ApplicantDetailsInput):
     """Поля заявки на проведение НИР."""
     executor_requirements: list[str] = Field(default_factory=list, max_length=20)
     needs_site_visit: bool = False
@@ -30,9 +32,7 @@ class ResearchOrderDetailsInput(BaseModel):
         return [item.strip() for item in value if item.strip()]
 
 
-class ResearchOrderDetailsResponse(BaseModel):
+class ResearchOrderDetailsResponse(ApplicantDetailsResponse):
     """Поля заявки на НИР в ответе API."""
-    model_config = ConfigDict(from_attributes=True)
-
     executor_requirements: list[str] = Field(default_factory=list)
     needs_site_visit: bool = False

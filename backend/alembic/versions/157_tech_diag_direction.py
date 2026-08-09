@@ -56,6 +56,12 @@ def upgrade() -> None:
         CREATE TABLE IF NOT EXISTS order_tech_diag_details (
             id SERIAL PRIMARY KEY,
             order_id INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+            applicant_full_name VARCHAR(300) NOT NULL DEFAULT '',
+            applicant_position VARCHAR(200) NOT NULL DEFAULT '',
+            applicant_organization VARCHAR(500) NOT NULL DEFAULT '',
+            applicant_inn VARCHAR(12) NOT NULL DEFAULT '',
+            applicant_phone VARCHAR(30) NOT NULL DEFAULT '',
+            applicant_email VARCHAR(320) NOT NULL DEFAULT '',
             purpose TEXT NOT NULL DEFAULT '',
             object_city VARCHAR(200) NOT NULL DEFAULT '',
             duration VARCHAR(200) NOT NULL DEFAULT ''

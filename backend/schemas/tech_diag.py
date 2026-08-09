@@ -1,6 +1,7 @@
 """DTO техдиагностирования: анкеты специалиста НК и лаборатории, поля заявки."""
 from pydantic import BaseModel, ConfigDict, Field
 
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
 from schemas.common import DirectionFileSchema
 
 
@@ -49,17 +50,15 @@ class TechDiagLicenseHolderProfileResponse(BaseModel):
     organization_city: str = ""
 
 
-class TechDiagOrderDetailsInput(BaseModel):
+class TechDiagOrderDetailsInput(ApplicantDetailsInput):
     """Поля заявки на техническое освидетельствование и диагностирование."""
     purpose: str = Field("", max_length=5000)
     object_city: str = Field("", max_length=200)
     duration: str = Field("", max_length=200)
 
 
-class TechDiagOrderDetailsResponse(BaseModel):
+class TechDiagOrderDetailsResponse(ApplicantDetailsResponse):
     """Поля заявки в ответе API."""
-    model_config = ConfigDict(from_attributes=True)
-
     purpose: str = ""
     object_city: str = ""
     duration: str = ""

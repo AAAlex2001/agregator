@@ -7,6 +7,7 @@ from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, Tex
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -102,7 +103,7 @@ class LicenseHolderAuditProfile(Base):
     license_holder: Mapped["LicenseHolder"] = relationship(back_populates="audit_profile")
 
 
-class OrderAuditDetails(Base):
+class OrderAuditDetails(ApplicantColumns, Base):
     """Поля заявки на аудит СУПБ: заявитель, объект аудита, параметры, сроки, файлы."""
     __tablename__ = "order_audit_details"
 
@@ -113,12 +114,6 @@ class OrderAuditDetails(Base):
         unique=True,
         index=True,
     )
-    applicant_full_name: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
-    applicant_position: Mapped[str] = mapped_column(String(200), nullable=False, default="", server_default="")
-    applicant_organization: Mapped[str] = mapped_column(String(500), nullable=False, default="", server_default="")
-    applicant_inn: Mapped[str] = mapped_column(String(12), nullable=False, default="", server_default="")
-    applicant_phone: Mapped[str] = mapped_column(String(30), nullable=False, default="", server_default="")
-    applicant_email: Mapped[str] = mapped_column(String(320), nullable=False, default="", server_default="")
     audit_scale: Mapped[AuditScale] = mapped_column(Enum(AuditScale), nullable=False)
     opo_total: Mapped[int | None] = mapped_column(Integer, nullable=True)
     opo_class_1: Mapped[int | None] = mapped_column(Integer, nullable=True)

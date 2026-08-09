@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
@@ -31,8 +32,8 @@ class ExpertLaboratoryProfile(Base):
     expert: Mapped["Expert"] = relationship(back_populates="laboratory_profile")
 
 
-class OrderLaboratoryDetails(Base):
-    """Поля заявки на лабораторные исследования: требования к оборудованию."""
+class OrderLaboratoryDetails(ApplicantColumns, Base):
+    """Поля заявки на лабораторные исследования: заявитель и требования к оборудованию."""
     __tablename__ = "order_laboratory_details"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

@@ -81,16 +81,36 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
     },
   ],
   RESEARCH: [
-    { key: "executor_requirements", label: "Требования к исполнителю", kind: "list", wide: true },
-    { key: "needs_site_visit", label: "Необходимость выезда на объект исследований", kind: "flag" },
+    ...APPLICANT_FIELDS,
+    {
+      key: "executor_requirements",
+      label: "Требования к исполнителю",
+      kind: "list",
+      group: "Работы",
+      wide: true,
+    },
+    {
+      key: "needs_site_visit",
+      label: "Необходимость выезда на объект исследований",
+      kind: "flag",
+      group: "Работы",
+    },
   ],
   LABORATORY: [
-    { key: "equipment_requirements", label: "Требования к оборудованию", kind: "text", wide: true },
+    ...APPLICANT_FIELDS,
+    {
+      key: "equipment_requirements",
+      label: "Требования к оборудованию",
+      kind: "text",
+      group: "Работы",
+      wide: true,
+    },
   ],
   TECH_DIAG: [
-    { key: "purpose", label: "Цель проведения работ", kind: "text", wide: true },
-    { key: "object_city", label: "Где находится объект", kind: "text" },
-    { key: "duration", label: "Срок проведения", kind: "text" },
+    ...APPLICANT_FIELDS,
+    { key: "purpose", label: "Цель проведения работ", kind: "text", group: "Работы", wide: true },
+    { key: "object_city", label: "Где находится объект", kind: "text", group: "Работы" },
+    { key: "duration", label: "Срок проведения", kind: "text", group: "Работы" },
   ],
   AUDIT_SUPB: [
     ...APPLICANT_FIELDS,

@@ -1,4 +1,5 @@
 import type { DirectionFile } from "../../shared/model/files";
+import { emptyApplicant, type ApplicantBlock } from "../../shared/model/applicant";
 
 export interface TechDiagCatalogOption {
   code: string;
@@ -22,7 +23,7 @@ export interface TechDiagHolderProfile {
   organization_city: string;
 }
 
-export interface TechDiagOrderDetails {
+export interface TechDiagOrderDetails extends ApplicantBlock {
   purpose: string;
   object_city: string;
   duration: string;
@@ -46,6 +47,7 @@ export const emptyTechDiagHolderProfile: TechDiagHolderProfile = {
 };
 
 export const emptyTechDiagOrderDetails: TechDiagOrderDetails = {
+  ...emptyApplicant,
   purpose: "",
   object_city: "",
   duration: "",
