@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { fetchExpertsMap, type ExpertMapItemApi } from "@/source/entities/expert";
+import { useExpertsMap } from "@/source/entities/expert";
 import { FilterableExpertsMap } from "@/source/features/expert-map-filter";
 import { useSession } from "@/source/features/session";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -12,19 +11,7 @@ export function HeroExpertsMap({
   mapOnly = false,
 }: { hideHead?: boolean; mapOnly?: boolean } = {}) {
   const { user } = useSession();
-  const [items, setItems] = useState<ExpertMapItemApi[]>([]);
-
-  useEffect(() => {
-    let active = true;
-    fetchExpertsMap()
-      .then((data) => {
-        if (active) setItems(data.items);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { items } = useExpertsMap();
 
   return (
     <div className={s.wrap}>

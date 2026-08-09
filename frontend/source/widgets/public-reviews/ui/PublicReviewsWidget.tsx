@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { fetchPublicReviews, type LandingReview } from "@/source/entities/landing-review";
+import { usePublicReviews, type LandingReview } from "@/source/entities/landing-review";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { useNotifications } from "@/source/shared/ui/Notifications";
 import { PublicReviewCard } from "./PublicReviewCard";
 import { PublicReviewsSkeleton } from "./PublicReviewsSkeleton";
 import s from "./PublicReviewsWidget.module.scss";
@@ -15,31 +13,7 @@ interface Props {
 }
 
 export function PublicReviewsWidget({ initial }: Props = {}) {
-  const { showError } = useNotifications();
-  const [items, setItems] = useState<LandingReview[]>(initial ?? []);
-  const [isLoading, setIsLoading] = useState(!initial);
-
-  useEffect(() => {
-    if (initial) return;
-    let cancelled = false;
-    setIsLoading(true);
-    fetchPublicReviews()
-      .then((data) => {
-        if (cancelled) return;
-        setItems(data);
-      })
-      .catch((error) => {
-        if (cancelled) return;
-        showError(error instanceof Error ? error.message : "Не удалось загрузить отзывы");
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { items, isLoading } = usePublicReviews(initial);
 
   return (
     <section className={s.wrapper}>

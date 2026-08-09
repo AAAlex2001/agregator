@@ -1,32 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import {
   PricingCard,
   PricingCardSkeleton,
   derivePricingCardState,
-  type PricingPlan,
-  type UserSubscription,
 } from "@/source/entities/pricing";
-import { fetchMySubscription, fetchPricingPlans, useSubscribeToPlan } from "@/source/features/pricing/subscribe";
+import { useSubscribeToPlan, useSubscription } from "@/source/features/pricing/subscribe";
 import s from "./SubscriptionPanel.module.scss";
 
 export function SubscriptionPanel() {
   const { select, pendingPlanId } = useSubscribeToPlan();
-  const [plans, setPlans] = useState<PricingPlan[] | null>(null);
-  const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-
-  useEffect(() => {
-    let disposed = false;
-    (async () => {
-      const [plansResult, subResult] = await Promise.all([fetchPricingPlans(), fetchMySubscription()]);
-      if (disposed) return;
-      setPlans(plansResult);
-      setSubscription(subResult);
-    })();
-    return () => { disposed = true; };
-  }, []);
+  const { plans, subscription } = useSubscription();
 
   if (plans === null) {
     return <SubscriptionPanelSkeleton />;

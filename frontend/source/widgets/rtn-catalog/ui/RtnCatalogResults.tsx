@@ -1,19 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { EmptyStateCard } from "@/source/shared/ui";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
-import { useNotifications } from "@/source/shared/ui/Notifications";
-import {
-  RtnCard,
-  fetchRtnList,
-  type RtnList,
-  type RtnTaxonomy,
-} from "@/source/entities/rtn-clarification";
-import { useRtnCatalogFilters, RtnFilters } from "@/source/features/rtn-catalog";
+import { RtnCard, type RtnList, type RtnTaxonomy } from "@/source/entities/rtn-clarification";
+import { useRtnCatalogFilters, useRtnCatalogResults, RtnFilters } from "@/source/features/rtn-catalog";
 import s from "./RtnCatalogWidget.module.scss";
-
-const PAGE_SIZE = 12;
 
 interface Props {
   initial: RtnList;
@@ -21,7 +12,6 @@ interface Props {
 }
 
 export function RtnCatalogResults({ initial, taxonomy }: Props) {
-  const { showError } = useNotifications();
   const {
     filters,
     toggleTaxonomy,
@@ -31,32 +21,7 @@ export function RtnCatalogResults({ initial, taxonomy }: Props) {
     resetFilters,
     hasActiveFilters,
   } = useRtnCatalogFilters();
-
-  const [items, setItems] = useState(initial.items);
-  const [hasMore, setHasMore] = useState(initial.has_more);
-  const [offset, setOffset] = useState(initial.items.length);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  useEffect(() => {
-    setItems(initial.items);
-    setHasMore(initial.has_more);
-    setOffset(initial.items.length);
-  }, [initial]);
-
-  const loadMore = async () => {
-    if (!hasMore || isLoadingMore) return;
-    setIsLoadingMore(true);
-    try {
-      const page = await fetchRtnList({ ...filters, limit: PAGE_SIZE, offset });
-      setItems((prev) => [...prev, ...page.items]);
-      setHasMore(page.has_more);
-      setOffset((value) => value + page.items.length);
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось подгрузить разъяснения");
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
+  const { items, hasMore, isLoadingMore, loadMore } = useRtnCatalogResults(initial, filters);
 
   const sentinelRef = useInfiniteScroll({ hasMore, isLoading: isLoadingMore, onLoadMore: loadMore });
 
