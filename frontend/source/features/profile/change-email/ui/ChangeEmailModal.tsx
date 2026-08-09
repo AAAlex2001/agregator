@@ -14,6 +14,8 @@ import s from "./ChangeEmailModal.module.scss";
 
 type Step = "request" | "confirm";
 
+const CODE_LENGTH = 6;
+
 interface Props {
   open: boolean;
   currentEmail: string | null;
@@ -55,7 +57,7 @@ export function ChangeEmailModal({ open, currentEmail, onClose, onChanged }: Pro
   }
 
   async function handleConfirm() {
-    if (code.length < 4 || submitting) return;
+    if (code.length < CODE_LENGTH || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
@@ -123,7 +125,7 @@ export function ChangeEmailModal({ open, currentEmail, onClose, onChanged }: Pro
               fullWidth
               onClick={() => void handleConfirm()}
               isLoading={submitting}
-              disabled={code.length < 4}
+              disabled={code.length < CODE_LENGTH}
             >
               Подтвердить
             </Button>

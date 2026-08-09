@@ -1,5 +1,4 @@
 .form,
-.finance,
 .notifications {
   width: 100%;
   display: flex;
@@ -122,30 +121,6 @@
   height: 72px;
 }
 
-.section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.sectionTitle {
-  width: 180px;
-  height: 20px;
-}
-
-.grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-
-  @media (min-width: 768px) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .input {
   width: 100%;
   height: 48px;
@@ -248,15 +223,6 @@
   height: 48px;
 }
 
-.notificationsRow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding-top: 14px;
-  border-top: 1px solid #F0F0F2;
-}
-
 .notificationsText {
   display: flex;
   flex-direction: column;
@@ -282,53 +248,4 @@
   height: 20px;
   margin-top: 2px;
   flex-shrink: 0;
-}
-
-.actions,
-.financeButtons {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.actionButton,
-.financeButton {
-  width: 100%;
-  max-width: 237px;
-  height: 40px;
-}
-
-.balance {
-  width: 160px;
-  height: 20px;
-}
-
-.financeList {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.financeItem {
-  width: 100%;
-  padding: 16px;
-  border: 1px solid #ffdda9;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.financeLineWide {
-  width: 100%;
-  height: 16px;
-}
-
-.financeLineShort {
-  width: 42%;
-  height: 14px;
 }

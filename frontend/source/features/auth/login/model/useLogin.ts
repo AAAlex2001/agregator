@@ -9,6 +9,7 @@ import {
   RoleChoiceRequiredError,
   loginUser,
 } from "@/source/entities/session";
+import { PENDING_ORDER_UUID_KEY } from "@/source/entities/order";
 import type { LoginResponse, UserRole } from "./types";
 
 interface PendingConfirm {
@@ -34,7 +35,7 @@ export function useLogin(options?: UseLoginOptions) {
   const [isFinalizing, setIsFinalizing] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem("pendingOrderUuid")) {
+    if (sessionStorage.getItem(PENDING_ORDER_UUID_KEY)) {
       setFromOrder(true);
     }
   }, []);
@@ -42,14 +43,14 @@ export function useLogin(options?: UseLoginOptions) {
   const finishLogin = async (user: LoginResponse) => {
     await reload();
     options?.onSuccess?.();
-    const pendingUuid = sessionStorage.getItem("pendingOrderUuid");
+    const pendingUuid = sessionStorage.getItem(PENDING_ORDER_UUID_KEY);
     if (user.role === "EXPERT" && pendingUuid) {
-      sessionStorage.removeItem("pendingOrderUuid");
+      sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
       router.push(`/order/${pendingUuid}`);
       return;
     }
     if (pendingUuid) {
-      sessionStorage.removeItem("pendingOrderUuid");
+      sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
       showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт исполнителя");
     }
     if (user.role === "EXPERT") router.push("/expert/orders");

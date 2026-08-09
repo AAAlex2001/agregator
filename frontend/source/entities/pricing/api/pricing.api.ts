@@ -1,5 +1,6 @@
 import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { PricingPlan, UserSubscription } from "../model/types";
 
 interface PricingListResponse {
@@ -26,8 +27,7 @@ export async function subscribeToPlan(planId: number, returnUrl: string): Promis
     body: JSON.stringify({ plan_id: planId, return_url: returnUrl }),
   });
   if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(detail || "Не удалось оформить подписку");
+    throw new Error(await readErrorMessage(response, "Не удалось оформить подписку"));
   }
   return (await response.json()) as SubscribeResponse;
 }

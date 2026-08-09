@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useArticleReactions, type ReactionState, type ReactionValue } from "@/source/entities/article-reaction";
 import { EyeIcon } from "@/source/shared/ui/icons";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
@@ -15,10 +14,8 @@ interface Props {
 
 export function ArticleReactions({ articleId, initial, views }: Props) {
   const { state, react, pending } = useArticleReactions(articleId, initial);
-  const [hint, setHint] = useState("");
 
   const onVote = (value: ReactionValue) => {
-    setHint("");
     void react(value);
   };
 
@@ -51,8 +48,6 @@ export function ArticleReactions({ articleId, initial, views }: Props) {
           <span className={s.count}>{state.dislikes_count}</span>
         </button>
       </div>
-
-      {hint && <span className={s.hint}>{hint}</span>}
 
       {(views !== undefined || state.views_count !== undefined) && (
         <span className={s.views} title="Просмотры">

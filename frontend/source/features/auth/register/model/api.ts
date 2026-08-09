@@ -1,4 +1,5 @@
 import { API_URL } from "@/source/shared/api/config";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type {
   CompanyData,
@@ -55,13 +56,6 @@ export interface RegisterDocument {
   file: File;
 }
 
-async function registerErrorMessage(res: Response): Promise<string> {
-  const body = await res.json().catch(() => null);
-  if (typeof body?.detail === "string") return body.detail;
-  if (Array.isArray(body?.detail) && body.detail[0]?.msg) return String(body.detail[0].msg);
-  return "Не удалось зарегистрироваться";
-}
-
 export async function registerUser(
   payload: RegisterPayload,
   documents: RegisterDocument[] = [],
@@ -80,7 +74,7 @@ export async function registerUser(
       return formData;
     },
   });
-  if (!res.ok) throw new Error(await registerErrorMessage(res));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось зарегистрироваться"));
   return res.json();
 }
 
@@ -108,6 +102,6 @@ export async function registerLicenseHolder(
       return formData;
     },
   });
-  if (!res.ok) throw new Error(await registerErrorMessage(res));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось зарегистрироваться"));
   return res.json();
 }

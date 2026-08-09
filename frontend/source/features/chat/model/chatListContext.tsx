@@ -41,6 +41,16 @@ function sortChats(chats: ChatListItemData[]) {
   });
 }
 
+function countUnread(
+  chats: ChatListItemData[],
+  match: (chat: ChatListItemData) => boolean,
+): number {
+  return chats.reduce(
+    (sum, chat) => (match(chat) && !chat.is_blocked ? sum + chat.unread_count : sum),
+    0,
+  );
+}
+
 function getMessagePreview(message: ChatMessageData): string {
   const normalizedText = message.text.trim();
 
@@ -138,71 +148,20 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  const unreadForLabor = chats.reduce(
-    (sum, chat) => (
-      chat.labor_listing_id !== null && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
-  const unreadForExpertSearch = chats.reduce(
-    (sum, chat) => (
-      chat.labor_listing_kind === "EXPERT_WANTED" && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
-  const unreadForEmployment = chats.reduce(
-    (sum, chat) => (
-      chat.labor_listing_kind === "EXPERT_AVAILABLE" && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
-  const unreadForLaborTab = (
-    kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE",
-    isMine: boolean,
-  ) => chats.reduce(
-    (sum, chat) => (
-      chat.labor_listing_kind === kind
-      && chat.labor_listing_is_mine === isMine
-      && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
-  const unreadForLaborListing = (listingId: number) => chats.reduce(
-    (sum, chat) => (
-      chat.labor_listing_id === listingId && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
+  const unreadForLabor = countUnread(chats, (chat) => chat.labor_listing_id !== null);
+  const unreadForExpertSearch = countUnread(chats, (chat) => chat.labor_listing_kind === "EXPERT_WANTED");
+  const unreadForEmployment = countUnread(chats, (chat) => chat.labor_listing_kind === "EXPERT_AVAILABLE");
+  const unreadForLaborTab = (kind: "EXPERT_WANTED" | "EXPERT_AVAILABLE", isMine: boolean) =>
+    countUnread(chats, (chat) => chat.labor_listing_kind === kind && chat.labor_listing_is_mine === isMine);
+  const unreadForLaborListing = (listingId: number) =>
+    countUnread(chats, (chat) => chat.labor_listing_id === listingId);
   const unreadForChat = (chatUuid: string) => {
     const chat = chats.find((item) => item.uuid === chatUuid);
     return chat && !chat.is_blocked ? chat.unread_count : 0;
   };
-  const unreadForDeals = chats.reduce(
-    (sum, chat) => (
-      chat.contact_deal_id !== null && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
-  const unreadForDeal = (dealId: number) => chats.reduce(
-    (sum, chat) => (
-      chat.contact_deal_id === dealId && !chat.is_blocked
-        ? sum + chat.unread_count
-        : sum
-    ),
-    0,
-  );
+  const unreadForDeals = countUnread(chats, (chat) => chat.contact_deal_id !== null);
+  const unreadForDeal = (dealId: number) =>
+    countUnread(chats, (chat) => chat.contact_deal_id === dealId);
 
   return (
     <ChatListContext.Provider

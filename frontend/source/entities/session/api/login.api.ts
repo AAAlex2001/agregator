@@ -1,4 +1,5 @@
 import { API_URL } from "@/source/shared/api/config";
+import { extractErrorMessage } from "@/source/shared/api/errorMessage";
 import {
   EmailNotVerifiedError,
   RoleChoiceRequiredError,
@@ -51,13 +52,7 @@ export async function loginUser(data: LoginFormData): Promise<LoginResponse> {
         body.detail.role ?? data.role ?? null,
       );
     }
-    const message =
-      typeof body.detail === "string"
-        ? body.detail
-        : typeof body.detail === "object" && typeof body.detail?.message === "string"
-          ? body.detail.message
-          : `HTTP Error ${res.status}`;
-    throw new Error(message);
+    throw new Error(extractErrorMessage(body) ?? `HTTP Error ${res.status}`);
   }
 
   return res.json();

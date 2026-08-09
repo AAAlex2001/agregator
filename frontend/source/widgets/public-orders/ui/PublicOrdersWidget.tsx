@@ -10,6 +10,7 @@ import {
   orderDetailsFields,
   usePublicOrdersList,
   OrderDetailsList,
+  PENDING_ORDER_UUID_KEY,
   type OrderCardData,
   type OrderSortBy,
 } from "@/source/entities/order";
@@ -49,7 +50,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
   });
 
   useEffect(() => {
-    sessionStorage.removeItem("pendingOrderUuid");
+    sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
   }, []);
 
   const onCardClick = (order: OrderCardData) => {

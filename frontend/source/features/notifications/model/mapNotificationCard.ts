@@ -13,6 +13,23 @@ import type {
   SupportReplyNotificationPayload,
 } from "@/source/entities/notification";
 
+function card(
+  item: NotificationItem,
+  title: string,
+  message: string,
+  actionLabel: string,
+): NotificationCardModel {
+  return {
+    id: item.id,
+    title,
+    message,
+    actionLabel: item.action_url ? actionLabel : null,
+    actionUrl: item.action_url,
+    isRead: item.is_read,
+    createdAt: item.created_at,
+  };
+}
+
 function getOrderTitle(orderTitle: string | undefined): string {
   return orderTitle || "без названия";
 }
@@ -23,38 +40,17 @@ function mapResponseUpdated(item: NotificationItem): NotificationCardModel {
   const kind = payload.kind ?? "UPDATED";
 
   if (kind === "CREATED") {
-    return {
-      id: item.id,
-      title: "Новый отклик на заказ",
-      message: `Исполнитель откликнулся на заказ «${orderTitle}».`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Новый отклик на заказ", `Исполнитель откликнулся на заказ «${orderTitle}».`, "Открыть отклики");
   }
-
   if (kind === "WITHDRAWN") {
-    return {
-      id: item.id,
-      title: "Исполнитель отозвал отклик",
-      message: `Исполнитель отозвал отклик по заказу «${orderTitle}».`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Исполнитель отозвал отклик", `Исполнитель отозвал отклик по заказу «${orderTitle}».`, "Открыть отклики");
   }
-
-  return {
-    id: item.id,
-    title: "Исполнитель обновил предложение",
-    message: `Исполнитель обновил отклик по заказу «${orderTitle}». Проверьте новые условия, сроки и файлы.`,
-    actionLabel: item.action_url ? "Открыть отклики" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(
+    item,
+    "Исполнитель обновил предложение",
+    `Исполнитель обновил отклик по заказу «${orderTitle}». Проверьте новые условия, сроки и файлы.`,
+    "Открыть отклики",
+  );
 }
 
 function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel {
@@ -65,112 +61,42 @@ function mapResponseStatusChanged(item: NotificationItem): NotificationCardModel
   const reason = payload.reason;
 
   if (actorRole === "CUSTOMER" && statusTo === "REVIEW" && reason === "SELECTED_ANOTHER_REVERTED") {
-    return {
-      id: item.id,
-      title: "Ваш отклик снова на рассмотрении",
-      message: `Заказчик отклонил ранее выбранного исполнителя по заказу «${orderTitle}». Ваш отклик снова участвует в рассмотрении.`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(
+      item,
+      "Ваш отклик снова на рассмотрении",
+      `Заказчик отклонил ранее выбранного исполнителя по заказу «${orderTitle}». Ваш отклик снова участвует в рассмотрении.`,
+      "Открыть отклики",
+    );
   }
-
   if (actorRole === "CUSTOMER" && statusTo === "ACCEPTED") {
-    return {
-      id: item.id,
-      title: "Заказчик пригласил вас в чат",
-      message: `По заказу «${orderTitle}» заказчик открыл чат для обсуждения условий.`,
-      actionLabel: item.action_url ? "Открыть чат" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Заказчик пригласил вас в чат", `По заказу «${orderTitle}» заказчик открыл чат для обсуждения условий.`, "Открыть чат");
   }
-
   if (actorRole === "CUSTOMER" && statusTo === "IN_PROGRESS") {
-    return {
-      id: item.id,
-      title: "Вас выбрали исполнителем",
-      message: `Заказчик выбрал вас исполнителем по заказу «${orderTitle}».`,
-      actionLabel: item.action_url ? "Открыть чат" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Вас выбрали исполнителем", `Заказчик выбрал вас исполнителем по заказу «${orderTitle}».`, "Открыть чат");
   }
-
   if (actorRole === "CUSTOMER" && statusTo === "REJECTED" && reason === "SELECTED_ANOTHER") {
-    return {
-      id: item.id,
-      title: "Отклик отклонён",
-      message: `По заказу «${orderTitle}» выбран другой исполнитель.`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Отклик отклонён", `По заказу «${orderTitle}» выбран другой исполнитель.`, "Открыть отклики");
   }
-
   if (actorRole === "CUSTOMER" && statusTo === "REJECTED") {
     const rejectionReason = payload.rejection_reason?.trim();
     const baseMessage = `Заказчик отклонил ваш отклик по заказу «${orderTitle}».`;
-    return {
-      id: item.id,
-      title: "Отклик отклонён",
-      message: rejectionReason ? `${baseMessage} Причина: ${rejectionReason}` : baseMessage,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(
+      item,
+      "Отклик отклонён",
+      rejectionReason ? `${baseMessage} Причина: ${rejectionReason}` : baseMessage,
+      "Открыть отклики",
+    );
   }
-
   if (actorRole === "CUSTOMER" && statusTo === "COMPLETED") {
-    return {
-      id: item.id,
-      title: "Заказчик завершил проект",
-      message: `Заказчик отметил проект по заказу «${orderTitle}» как завершённый.`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Заказчик завершил проект", `Заказчик отметил проект по заказу «${orderTitle}» как завершённый.`, "Открыть отклики");
   }
-
   if (actorRole === "EXPERT" && statusTo === "IN_PROGRESS") {
-    return {
-      id: item.id,
-      title: "Исполнитель принял проект",
-      message: `Исполнитель подтвердил начало работ по заказу «${orderTitle}».`,
-      actionLabel: item.action_url ? "Открыть чат" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Исполнитель принял проект", `Исполнитель подтвердил начало работ по заказу «${orderTitle}».`, "Открыть чат");
   }
-
   if (actorRole === "EXPERT" && statusTo === "COMPLETED") {
-    return {
-      id: item.id,
-      title: "Исполнитель завершил проект",
-      message: `Исполнитель отметил проект по заказу «${orderTitle}» как завершённый.`,
-      actionLabel: item.action_url ? "Открыть отклики" : null,
-      actionUrl: item.action_url,
-      isRead: item.is_read,
-      createdAt: item.created_at,
-    };
+    return card(item, "Исполнитель завершил проект", `Исполнитель отметил проект по заказу «${orderTitle}» как завершённый.`, "Открыть отклики");
   }
-
-  return {
-    id: item.id,
-    title: "Изменился статус отклика",
-    message: `По заказу «${orderTitle}» обновился статус отклика.`,
-    actionLabel: item.action_url ? "Открыть отклики" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, "Изменился статус отклика", `По заказу «${orderTitle}» обновился статус отклика.`, "Открыть отклики");
 }
 
 function mapChatMessage(item: NotificationItem): NotificationCardModel {
@@ -183,15 +109,7 @@ function mapChatMessage(item: NotificationItem): NotificationCardModel {
   }[payload.sender_role];
   const preview = payload.preview || "Новое сообщение";
 
-  return {
-    id: item.id,
-    title: `Новое сообщение от ${senderTitle}`,
-    message: `По заказу «${orderTitle}»: ${preview}`,
-    actionLabel: item.action_url ? "Открыть чат" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, `Новое сообщение от ${senderTitle}`, `По заказу «${orderTitle}»: ${preview}`, "Открыть чат");
 }
 
 function mapQuestionAsked(item: NotificationItem): NotificationCardModel {
@@ -200,15 +118,7 @@ function mapQuestionAsked(item: NotificationItem): NotificationCardModel {
   const expertName = payload.expert_name || "Исполнитель";
   const preview = payload.preview || "Новый вопрос";
 
-  return {
-    id: item.id,
-    title: "Новый вопрос по заказу",
-    message: `${expertName} спрашивает по «${orderTitle}»: ${preview}`,
-    actionLabel: item.action_url ? "Перейти к заказу" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, "Новый вопрос по заказу", `${expertName} спрашивает по «${orderTitle}»: ${preview}`, "Перейти к заказу");
 }
 
 function mapQuestionAnswered(item: NotificationItem): NotificationCardModel {
@@ -216,15 +126,7 @@ function mapQuestionAnswered(item: NotificationItem): NotificationCardModel {
   const orderTitle = getOrderTitle(payload.order_title);
   const preview = payload.preview || "Ответ заказчика";
 
-  return {
-    id: item.id,
-    title: "Заказчик ответил на ваш вопрос",
-    message: `По заказу «${orderTitle}»: ${preview}`,
-    actionLabel: item.action_url ? "Перейти к заказу" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, "Заказчик ответил на ваш вопрос", `По заказу «${orderTitle}»: ${preview}`, "Перейти к заказу");
 }
 
 function mapNewBlogPost(item: NotificationItem): NotificationCardModel {
@@ -232,15 +134,7 @@ function mapNewBlogPost(item: NotificationItem): NotificationCardModel {
   const title = payload.blog_title || "Новая статья";
   const preview = payload.preview || "На платформе появилась новая публикация.";
 
-  return {
-    id: item.id,
-    title: "Новая статья в блоге",
-    message: `«${title}»: ${preview}`,
-    actionLabel: item.action_url ? "Читать статью" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, "Новая статья в блоге", `«${title}»: ${preview}`, "Читать статью");
 }
 
 function mapNewOrder(item: NotificationItem): NotificationCardModel {
@@ -250,42 +144,26 @@ function mapNewOrder(item: NotificationItem): NotificationCardModel {
   const message = payload.message || (badges
     ? `Опубликована заявка «${orderTitle}» по вашим типам: ${badges}.`
     : `Опубликована заявка «${orderTitle}» по вашим типам.`);
+  const title = payload.message
+    ? `Вам может быть интересен этот заказ: ${orderTitle}`
+    : "Новая заявка по вашим типам";
 
-  return {
-    id: item.id,
-    title: payload.message ? `Вам может быть интересен этот заказ: ${orderTitle}` : "Новая заявка по вашим типам",
-    message,
-    actionLabel: item.action_url ? "Открыть заказы" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, title, message, "Открыть заказы");
 }
 
 function mapContactAccess(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as ContactAccessNotificationPayload;
-  return {
-    id: item.id,
-    title: payload.title,
-    message: payload.message,
-    actionLabel: item.action_url ? "Открыть сделку" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, payload.title, payload.message, "Открыть сделку");
 }
 
 function mapLaborResponse(item: NotificationItem): NotificationCardModel {
   const payload = item.payload as LaborResponseNotificationPayload;
-  return {
-    id: item.id,
-    title: "Новый отклик на вашу заявку",
-    message: `${payload.responder_name} откликнулся на объявление «${payload.listing_title}». Откройте вкладку «Мои заявки», чтобы перейти в чат.`,
-    actionLabel: item.action_url ? "Открыть мои заявки" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(
+    item,
+    "Новый отклик на вашу заявку",
+    `${payload.responder_name} откликнулся на объявление «${payload.listing_title}». Откройте вкладку «Мои заявки», чтобы перейти в чат.`,
+    "Открыть мои заявки",
+  );
 }
 
 function mapSupportReply(item: NotificationItem): NotificationCardModel {
@@ -294,65 +172,24 @@ function mapSupportReply(item: NotificationItem): NotificationCardModel {
   const preview = payload.preview || "Новое сообщение от поддержки";
   const ticketNumber = payload.ticket_number ? `${payload.ticket_number} ` : "";
 
-  return {
-    id: item.id,
-    title: "Поддержка ответила на ваше обращение",
-    message: `${ticketNumber}«${subject}»: ${preview}`,
-    actionLabel: item.action_url ? "Открыть обращение" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  return card(item, "Поддержка ответила на ваше обращение", `${ticketNumber}«${subject}»: ${preview}`, "Открыть обращение");
 }
 
+const MAPPERS: Record<string, (item: NotificationItem) => NotificationCardModel> = {
+  RESPONSE_UPDATED: mapResponseUpdated,
+  RESPONSE_STATUS_CHANGED: mapResponseStatusChanged,
+  CHAT_MESSAGE: mapChatMessage,
+  QUESTION_ASKED: mapQuestionAsked,
+  QUESTION_ANSWERED: mapQuestionAnswered,
+  SUPPORT_REPLY: mapSupportReply,
+  NEW_BLOG_POST: mapNewBlogPost,
+  NEW_ORDER: mapNewOrder,
+  CONTACT_ACCESS: mapContactAccess,
+  LABOR_RESPONSE: mapLaborResponse,
+};
+
 export function mapNotificationCard(item: NotificationItem): NotificationCardModel {
-  if (item.type === "RESPONSE_UPDATED") {
-    return mapResponseUpdated(item);
-  }
-
-  if (item.type === "RESPONSE_STATUS_CHANGED") {
-    return mapResponseStatusChanged(item);
-  }
-
-  if (item.type === "CHAT_MESSAGE") {
-    return mapChatMessage(item);
-  }
-
-  if (item.type === "QUESTION_ASKED") {
-    return mapQuestionAsked(item);
-  }
-
-  if (item.type === "QUESTION_ANSWERED") {
-    return mapQuestionAnswered(item);
-  }
-
-  if (item.type === "SUPPORT_REPLY") {
-    return mapSupportReply(item);
-  }
-
-  if (item.type === "NEW_BLOG_POST") {
-    return mapNewBlogPost(item);
-  }
-
-  if (item.type === "NEW_ORDER") {
-    return mapNewOrder(item);
-  }
-
-  if (item.type === "CONTACT_ACCESS") {
-    return mapContactAccess(item);
-  }
-
-  if (item.type === "LABOR_RESPONSE") {
-    return mapLaborResponse(item);
-  }
-
-  return {
-    id: item.id,
-    title: "Новое уведомление",
-    message: "Откройте уведомление, чтобы посмотреть детали.",
-    actionLabel: item.action_url ? "Открыть" : null,
-    actionUrl: item.action_url,
-    isRead: item.is_read,
-    createdAt: item.created_at,
-  };
+  const mapper = MAPPERS[item.type];
+  if (mapper) return mapper(item);
+  return card(item, "Новое уведомление", "Откройте уведомление, чтобы посмотреть детали.", "Открыть");
 }

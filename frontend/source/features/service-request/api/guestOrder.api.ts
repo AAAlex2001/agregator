@@ -1,4 +1,5 @@
 import { API_URL } from "@/source/shared/api/config";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { OrderWorkType } from "@/source/entities/order";
 
 interface GuestOrderPayload {
@@ -39,11 +40,7 @@ export async function createGuestOrder(
   });
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    const detail = data?.detail;
-    if (typeof detail === "string") throw new Error(detail);
-    if (Array.isArray(detail) && typeof detail[0]?.msg === "string") throw new Error(detail[0].msg);
-    throw new Error("Не удалось отправить заявку");
+    throw new Error(await readErrorMessage(res, "Не удалось отправить заявку"));
   }
 
   return res.json();

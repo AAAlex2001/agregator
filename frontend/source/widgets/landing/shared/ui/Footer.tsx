@@ -68,12 +68,6 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <Link href="/personal-data-consent">Согласие на обработку ПДн</Link>
                 </div>
               </div>
-
-          {/*
-          <div className={s.chatBlock}>
-          </div>
-          */}
-
       </div>
       <div className={s.bottom}>
         <div className={s.bottomLinks}>
@@ -85,13 +79,6 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
             Приказу № 287 от 31.08.2022 г.
             </a>
             </span>
-            {/*
-            <div className={s.bottomLinksButtoms}>
-          <Link href="/user-agreement"><p>Пользовательское соглашение</p></Link>
-          <p>Политика конфиденциальности</p>
-          <p>Политика обработки данных</p>
-                </div>
-            */}
         </div>
           <span>© {new Date().getFullYear()} ООО «НПИ «Недра». Все права защищены.</span>
       </div>

@@ -17,7 +17,7 @@ import type { UserProfile } from "@/source/entities/user";
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import s from "./SettingsWidget.module.scss";
 
-type SettingsSection = "personal" | "notifications" | "subscription" | "license";
+export type SettingsSection = "personal" | "notifications" | "subscription" | "license";
 
 interface SettingsWidgetProps {
   explicitSection: SettingsSection | null;

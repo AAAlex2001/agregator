@@ -4,7 +4,6 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { mapApiToOrderCard } from "@/source/entities/order";
 import type { OrderCardData } from "@/source/entities/order";
-import { useSession } from "@/source/features/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { copyOrderLink } from "@/source/shared/lib/copyOrderLink";
 import { fetchOrders, respondToOrder } from "@/source/entities/order";
@@ -16,7 +15,6 @@ const PAGE = 50;
 
 export function useExpertOrders() {
   const [s, d] = useReducer(reducer, initial);
-  const { user } = useSession();
   const router = useRouter();
   const { showError } = useNotifications();
   const loadingMoreRef = useRef(false);
@@ -67,12 +65,7 @@ export function useExpertOrders() {
     }
   };
 
-  const openDetails = (order: OrderCardData) => {
-    setUseDraft(false);
-    d({ type: "SELECT", order });
-  };
-
-  const openRespond = (order: OrderCardData) => {
+  const openOrder = (order: OrderCardData) => {
     setUseDraft(false);
     d({ type: "SELECT", order });
   };
@@ -124,8 +117,7 @@ export function useExpertOrders() {
     useDraft,
     reload,
     loadMore,
-    openDetails,
-    openRespond,
+    openOrder,
     continueDraft,
     closeModal,
     onShare,

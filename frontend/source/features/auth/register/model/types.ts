@@ -1,5 +1,4 @@
-export type { RegisterResponse, UserRole } from "@/source/entities/user";
-export type { RegisterPayload } from "./api";
+export type { UserRole } from "@/source/entities/user";
 
 import type { SelectedLocation } from "@/source/shared/ui/YandexMap";
 import type { ExpertiseType } from "@/source/entities/expertise";

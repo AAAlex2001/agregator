@@ -1,15 +1,21 @@
+const DAY_MONTH_YEAR: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
+
+function pad(value: number): string {
+  return String(value).padStart(2, "0");
+}
+
 export function formatDateRu(iso: string | null | undefined): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return d.toLocaleDateString("ru-RU", DAY_MONTH_YEAR);
 }
 
 export function formatDateRuOrEmpty(input: string | Date | null | undefined): string {
   if (!input) return "";
   const d = input instanceof Date ? input : new Date(input);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return d.toLocaleDateString("ru-RU", DAY_MONTH_YEAR);
 }
 
 export function formatChatListTime(input: string | Date | null | undefined): string {
@@ -88,7 +94,6 @@ export function parseMoscowWallClock(value: string): Date | null {
 }
 
 export function formatMoscowApiValue(date: Date, withTime: boolean): string {
-  const pad = (value: number) => String(value).padStart(2, "0");
   const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   return withTime
     ? `${day}T${pad(date.getHours())}:${pad(date.getMinutes())}:00+03:00`
@@ -96,7 +101,6 @@ export function formatMoscowApiValue(date: Date, withTime: boolean): string {
 }
 
 export function formatManualDateValue(date: Date, withTime: boolean): string {
-  const pad = (value: number) => String(value).padStart(2, "0");
   const day = `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
   return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day;
 }

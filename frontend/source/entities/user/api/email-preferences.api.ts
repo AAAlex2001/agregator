@@ -1,4 +1,5 @@
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { UserProfile } from "@/source/entities/user";
 import type { UpdateEmailPreferencesPayload } from "@/source/entities/user/model/email-preferences";
 
@@ -13,8 +14,7 @@ export async function updateEmailPreferences(
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сохранить настройки уведомлений");
+    throw new Error(await readErrorMessage(res, "Не удалось сохранить настройки уведомлений"));
   }
   return res.json();
 }
@@ -26,8 +26,7 @@ export async function updateOrderNotifications(orderTypes: string[]): Promise<Us
     body: JSON.stringify({ order_types: orderTypes }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сохранить фильтр уведомлений");
+    throw new Error(await readErrorMessage(res, "Не удалось сохранить фильтр уведомлений"));
   }
   return res.json();
 }

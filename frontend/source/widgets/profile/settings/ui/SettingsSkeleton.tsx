@@ -2,9 +2,8 @@ import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { FormGrid, FormSection } from "@/source/shared/ui";
 import { LogoutIcon } from "@/source/shared/ui/icons";
+import type { SettingsSection } from "./SettingsWidget";
 import s from "./SettingsSkeleton.module.scss";
-
-type SettingsSection = "personal" | "notifications" | "subscription" | "license";
 
 interface SettingsSkeletonProps {
   section: SettingsSection;
@@ -12,9 +11,6 @@ interface SettingsSkeletonProps {
 }
 
 export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkeletonProps) {
-  if (section === "subscription") {
-    return <SubscriptionSkeleton />;
-  }
   if (section === "notifications") {
     return <NotificationsSkeleton />;
   }
@@ -22,22 +18,6 @@ export function SettingsSkeleton({ section, isCustomer = false }: SettingsSkelet
     return <LicenseSkeleton />;
   }
   return <PersonalSkeleton isCustomer={isCustomer} />;
-}
-
-function SubscriptionSkeleton() {
-  return (
-    <div className={s.finance} aria-hidden="true">
-      <Skeleton className={s.balance} rounded="pill" />
-      <div className={s.financeList}>
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className={s.financeItem}>
-            <Skeleton className={s.financeLineWide} />
-            <Skeleton className={s.financeLineShort} rounded="pill" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 function NotificationsSkeleton() {

@@ -1,6 +1,7 @@
 "use client";
 
 import { API_URL } from "./config";
+import { readErrorMessage } from "./errorMessage";
 
 export type EmailVerificationRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
 
@@ -10,13 +11,6 @@ export interface ConfirmedUser {
   email: string | null;
   phone: string | null;
   created_at: string;
-}
-
-async function readError(res: Response, fallback: string): Promise<string> {
-  const body = await res.json().catch(() => null);
-  if (typeof body?.detail === "string") return body.detail;
-  if (typeof body?.detail?.message === "string") return body.detail.message;
-  return fallback;
 }
 
 export async function confirmEmailCode(
@@ -30,7 +24,7 @@ export async function confirmEmailCode(
     credentials: "include",
     body: JSON.stringify({ email, code, role: role ?? undefined }),
   });
-  if (!res.ok) throw new Error(await readError(res, "Не удалось подтвердить почту"));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось подтвердить почту"));
   return res.json();
 }
 
@@ -44,5 +38,5 @@ export async function resendEmailCode(
     credentials: "include",
     body: JSON.stringify({ email, role: role ?? undefined }),
   });
-  if (!res.ok) throw new Error(await readError(res, "Не удалось отправить код"));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось отправить код"));
 }

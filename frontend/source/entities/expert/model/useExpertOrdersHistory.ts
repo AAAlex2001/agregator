@@ -20,10 +20,6 @@ interface UseExpertOrdersHistoryResult {
   loadMore: () => Promise<void>;
 }
 
-function getErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
-}
-
 export function useExpertOrdersHistory(publicId: string): UseExpertOrdersHistoryResult {
   const [expert, setExpert] = useState<ExpertSummary | null>(null);
   const [items, setItems] = useState<OrderCardData[]>([]);
@@ -44,7 +40,7 @@ export function useExpertOrdersHistory(publicId: string): UseExpertOrdersHistory
       setItems(ordersApi.items.map(mapApiToOrderCard));
       setHasMore(ordersApi.has_more);
     } catch (err) {
-      setError(getErrorMessage(err, "Не удалось загрузить историю заказов"));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить историю заказов");
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +57,7 @@ export function useExpertOrdersHistory(publicId: string): UseExpertOrdersHistory
       setItems((prev) => [...prev, ...data.items.map(mapApiToOrderCard)]);
       setHasMore(data.has_more);
     } catch (err) {
-      setError(getErrorMessage(err, "Не удалось загрузить историю заказов"));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить историю заказов");
     } finally {
       setIsLoadingMore(false);
     }

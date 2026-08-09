@@ -35,7 +35,6 @@ function CollapsibleSection({
   count?: number;
   children: ReactNode;
 }) {
-  "Свёрнуто по умолчанию. Открыт/закрыт — обычный локальный стейт, никак не завязанный на выбранные значения."
   const [open, setOpen] = useState(false);
   const onToggle = (event: SyntheticEvent<HTMLDetailsElement>) => setOpen(event.currentTarget.open);
 

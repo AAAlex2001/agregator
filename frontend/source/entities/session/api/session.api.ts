@@ -1,5 +1,6 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { UserProfile } from "@/source/entities/user";
 
 export type SessionRoleValue = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
@@ -17,8 +18,7 @@ export async function fetchSessionUser(): Promise<UserProfile | null> {
   }
 
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось загрузить сессию");
+    throw new Error(await readErrorMessage(res, "Не удалось загрузить сессию"));
   }
 
   return res.json();
@@ -30,8 +30,7 @@ export async function fetchAvailableRoles(): Promise<AvailableRole[]> {
     return [];
   }
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось получить список ролей");
+    throw new Error(await readErrorMessage(res, "Не удалось получить список ролей"));
   }
   const data = (await res.json()) as { roles: AvailableRole[] };
   return data.roles;
@@ -44,14 +43,6 @@ export async function switchSessionRole(role: SessionRoleValue, password: string
     body: JSON.stringify({ role, password }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    const detail = body?.detail;
-    if (typeof detail === "string") {
-      throw new Error(detail);
-    }
-    if (detail && typeof detail === "object" && typeof detail.message === "string") {
-      throw new Error(detail.message);
-    }
-    throw new Error("Не удалось переключить роль");
+    throw new Error(await readErrorMessage(res, "Не удалось переключить роль"));
   }
 }

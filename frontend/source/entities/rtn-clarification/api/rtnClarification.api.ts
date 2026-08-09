@@ -105,7 +105,6 @@ function base(server: boolean): string {
 export function toURLSearchParams(
   raw: Record<string, string | string[] | undefined>,
 ): URLSearchParams {
-  "Next.js передаёт searchParams серверных страниц как plain-объект — приводим его к URLSearchParams."
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(raw)) {
     if (value === undefined) continue;
@@ -116,7 +115,6 @@ export function toURLSearchParams(
 }
 
 export function parseRtnListFilters(params: URLSearchParams): RtnListFilters {
-  "Единая точка разбора фильтров каталога из query-строки — используется и на сервере, и на клиенте."
   return {
     search: params.get("search") ?? undefined,
     documentTypes: params.getAll("document_type") as RtnDocumentType[],

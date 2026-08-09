@@ -1,5 +1,6 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type {
   SupportTicket,
@@ -84,8 +85,7 @@ export async function fetchTickets(skip = 0, limit = 50): Promise<{
     `${API_URL}/support/tickets?skip=${skip}&limit=${limit}`,
   );
   if (!res.ok) {
-    const detail = (await res.json().catch(() => ({}))).detail;
-    throw new Error(detail || "Не удалось загрузить обращения");
+    throw new Error(await readErrorMessage(res, "Не удалось загрузить обращения"));
   }
   const data = (await res.json()) as ApiTicketList;
   return { items: data.items.map(mapTicketSummary), hasMore: data.has_more };
@@ -94,8 +94,7 @@ export async function fetchTickets(skip = 0, limit = 50): Promise<{
 export async function fetchTicket(ticketId: number): Promise<SupportTicket> {
   const res = await fetchWithSession(`${API_URL}/support/tickets/${ticketId}`);
   if (!res.ok) {
-    const detail = (await res.json().catch(() => ({}))).detail;
-    throw new Error(detail || "Не удалось загрузить обращение");
+    throw new Error(await readErrorMessage(res, "Не удалось загрузить обращение"));
   }
   const data = (await res.json()) as ApiTicketDetail;
   return mapTicketDetail(data);
@@ -124,8 +123,7 @@ export async function createTicket(p: CreateTicketPayload): Promise<SupportTicke
     buildBody: build,
   });
   if (!res.ok) {
-    const detail = (await res.json().catch(() => ({}))).detail;
-    throw new Error(detail || "Не удалось создать обращение");
+    throw new Error(await readErrorMessage(res, "Не удалось создать обращение"));
   }
   const data = (await res.json()) as ApiTicketDetail;
   return mapTicketDetail(data);
@@ -153,8 +151,7 @@ export async function replyToTicket(
     buildBody: build,
   });
   if (!res.ok) {
-    const detail = (await res.json().catch(() => ({}))).detail;
-    throw new Error(detail || "Не удалось отправить сообщение");
+    throw new Error(await readErrorMessage(res, "Не удалось отправить сообщение"));
   }
   const data = (await res.json()) as ApiTicketDetail;
   return mapTicketDetail(data);

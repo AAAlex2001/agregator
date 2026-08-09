@@ -12,4 +12,4 @@ export type {
   LandingSnapshot,
   LandingStep,
 } from "@/source/entities/landing";
-export { LandingApi, loadLandingSnapshot } from "@/source/entities/landing/api/landing.api";
+export { loadLandingSnapshot } from "@/source/entities/landing/api/landing.api";

@@ -1,4 +1,5 @@
 import { API_URL } from "./config";
+import { readErrorMessage } from "./errorMessage";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -28,8 +29,7 @@ export async function fetchBase<T>(
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: `HTTP Error ${res.status}` }));
-    throw new Error(err.detail || `HTTP Error ${res.status}`);
+    throw new Error(await readErrorMessage(res, `HTTP Error ${res.status}`));
   }
 
   const text = await res.text();

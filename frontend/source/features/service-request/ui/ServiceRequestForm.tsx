@@ -165,7 +165,7 @@ const ServiceRequestForm = () => {
         <TextInput
           value={state.maxPrice}
           required
-          onChange={(e) => setField("maxPrice", e.target.value)}
+          onChange={(e) => setField("maxPrice", e.target.value.replace(/[^\d]/g, ""))}
           placeholder="0"
           inputMode="numeric"
           suffix="₽"

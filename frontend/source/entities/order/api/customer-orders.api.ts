@@ -1,12 +1,13 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { OrderWorkType, OrdersApiList } from "@/source/entities/order";
 import type { DocumentsFormState } from "@/source/features/customer-orders/model/formFiles";
 
 export async function fetchCustomerOrders(skip = 0, limit = 50): Promise<OrdersApiList> {
   const res = await fetchWithSession(`${API_URL}/orders/?skip=${skip}&limit=${limit}`);
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить заказы");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить заказы"));
   return res.json();
 }
 
@@ -58,8 +59,7 @@ function collectNewFiles(documents: DocumentsFormState): File[] {
   return result;
 }
 
-function buildKeepDocuments(documents: DocumentsFormState): string {
-  if (documents.copySourceOrderId !== null) return "{}";
+function existingDocumentsJson(documents: DocumentsFormState): string {
   return JSON.stringify({
     technical: documents.technical.existing ? [documents.technical.existing] : [],
     contract: documents.contract.existing ? [documents.contract.existing] : [],
@@ -68,14 +68,12 @@ function buildKeepDocuments(documents: DocumentsFormState): string {
   });
 }
 
+function buildKeepDocuments(documents: DocumentsFormState): string {
+  return documents.copySourceOrderId !== null ? "{}" : existingDocumentsJson(documents);
+}
+
 function buildCopyDocuments(documents: DocumentsFormState): string {
-  if (documents.copySourceOrderId === null) return "{}";
-  return JSON.stringify({
-    technical: documents.technical.existing ? [documents.technical.existing] : [],
-    contract: documents.contract.existing ? [documents.contract.existing] : [],
-    company: documents.company.existing ? [documents.company.existing] : [],
-    other: documents.other.existing,
-  });
+  return documents.copySourceOrderId === null ? "{}" : existingDocumentsJson(documents);
 }
 
 function appendCopySource(fd: FormData, documents: DocumentsFormState): void {
@@ -111,7 +109,7 @@ export async function createOrder(p: CreatePayload): Promise<{ id: number }> {
     files: newFiles,
     buildBody: build,
   });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось создать заказ");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось создать заказ"));
   return res.json();
 }
 
@@ -143,11 +141,11 @@ export async function updateOrder(id: number, p: UpdatePayload): Promise<{ id: n
     files: newFiles,
     buildBody: build,
   });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось обновить заказ");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось обновить заказ"));
   return res.json();
 }
 
 export async function deleteOrder(id: number): Promise<void> {
   const res = await fetchWithSession(`${API_URL}/orders/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось удалить заказ");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось удалить заказ"));
 }

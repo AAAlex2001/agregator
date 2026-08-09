@@ -1,4 +1,5 @@
 import { API_URL } from "@/source/shared/api/config";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { OrdersApiList } from "../model/types";
 
 export interface PublicOrderSearchFilters {
@@ -18,7 +19,7 @@ export async function searchOrdersPublic(
   const url = `${API_URL}/orders/search?${params.toString()}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) {
-    throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось выполнить поиск");
+    throw new Error(await readErrorMessage(res, "Не удалось выполнить поиск"));
   }
   return res.json();
 }

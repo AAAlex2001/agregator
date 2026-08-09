@@ -1,14 +1,11 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { LiningCatalog, LiningInput, LiningReportItem } from "../model/types";
-
-async function detail(res: Response, fallback: string): Promise<string> {
-  return (await res.json().catch(() => ({})))?.detail || fallback;
-}
 
 export async function fetchLiningCatalog(profile: string): Promise<LiningCatalog> {
   const res = await fetchWithSession(`${API_URL}/lining/catalog?profile=${profile}`);
-  if (!res.ok) throw new Error(await detail(res, "Не удалось загрузить справочник"));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить справочник"));
   return res.json();
 }
 
@@ -22,13 +19,13 @@ export async function createLiningReport(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...input, report_name: reportName, ...header }),
   });
-  if (!res.ok) throw new Error(await detail(res, "Не удалось сформировать отчёт"));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось сформировать отчёт"));
   return res.json();
 }
 
 export async function fetchLiningReports(): Promise<LiningReportItem[]> {
   const res = await fetchWithSession(`${API_URL}/lining/reports`);
-  if (!res.ok) throw new Error(await detail(res, "Не удалось загрузить историю"));
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить историю"));
   return (await res.json()).items;
 }
 

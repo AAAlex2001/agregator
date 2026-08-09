@@ -2,16 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { fetchExpertReviews, fetchMyReviews } from "@/source/entities/review";
-import type { ReviewItem } from "./types";
+import type { ReviewItem } from "@/source/entities/review";
 
 const PAGE_SIZE = 50;
 
 async function getReviews(publicId: string | undefined, skip: number, limit: number) {
   return publicId ? fetchExpertReviews(publicId, skip, limit) : fetchMyReviews(skip, limit);
-}
-
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Не удалось загрузить отзывы";
 }
 
 export function useExpertReviews(publicId?: string) {
@@ -36,7 +32,7 @@ export function useExpertReviews(publicId?: string) {
       setExpertName(data.expert_name ?? "");
       setHasMore(data.has_more);
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить отзывы");
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +46,7 @@ export function useExpertReviews(publicId?: string) {
       setReviews((prev) => [...prev, ...data.reviews]);
       setHasMore(data.has_more);
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить отзывы");
     } finally {
       setIsLoadingMore(false);
     }

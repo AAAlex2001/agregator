@@ -1,5 +1,7 @@
 "use client";
 
+import { extractErrorMessage } from "./errorMessage";
+
 export interface UploadResult<T> {
   ok: boolean;
   status: number;
@@ -43,15 +45,4 @@ export async function uploadWithProgress<T>(
     xhr.onerror = () => resolve({ ok: false, status: 0, body: null, errorMessage: "Сетевая ошибка" });
     xhr.send(formData);
   });
-}
-
-function extractErrorMessage(body: unknown): string | undefined {
-  if (!body || typeof body !== "object") return undefined;
-  const detail = (body as { detail?: unknown }).detail;
-  if (typeof detail === "string") return detail;
-  if (Array.isArray(detail) && detail[0] && typeof detail[0] === "object") {
-    const msg = (detail[0] as { msg?: unknown }).msg;
-    if (typeof msg === "string") return msg;
-  }
-  return undefined;
 }

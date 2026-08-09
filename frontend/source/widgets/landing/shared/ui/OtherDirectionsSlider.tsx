@@ -9,6 +9,7 @@ import Button from "@/source/shared/ui/Button";
 import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
 import { Title } from "@/source/shared/ui/Typography";
 import { SERVICES_SHOWCASE } from "../model/servicesShowcase";
+import { buildLandingHref } from "../model/buildHref";
 import s from "./other-directions-slider.module.scss";
 
 interface OtherDirectionsSliderProps {
@@ -23,7 +24,6 @@ export function OtherDirectionsSlider({
   basePath = "",
 }: OtherDirectionsSliderProps) {
   const items = SERVICES_SHOWCASE.filter((item) => item.slug !== currentSlug);
-  const buildHref = (href: string) => (href === "/" ? basePath || "/" : `${basePath}${href}`);
 
   return (
     <section className={s.section}>
@@ -54,7 +54,7 @@ export function OtherDirectionsSlider({
                     <p className={s.cardDesc}>{item.text}</p>
                     {item.href ? (
                       <Button
-                        href={buildHref(item.href)}
+                        href={buildLandingHref(basePath, item.href)}
                         variant="primary"
                         fullWidth
                         showArrow

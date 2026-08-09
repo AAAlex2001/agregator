@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Loader } from "@/source/shared/ui";
 import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import { LogoIcon } from "@/source/shared/ui/icons";
-import { documentPaths, fetchPublicOrder, type PublicOrderPreview } from "@/source/entities/order";
+import { documentPaths, fetchPublicOrder, PENDING_ORDER_UUID_KEY, type PublicOrderPreview } from "@/source/entities/order";
 import { fetchProfile } from "@/source/entities/user";
 import styles from "./order-preview.module.scss";
 import { formatMoscowDateTime } from "@/source/shared/lib/formatDate";
@@ -23,7 +23,7 @@ function useOrderPreviewState() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    if (uuid) sessionStorage.setItem("pendingOrderUuid", uuid);
+    if (uuid) sessionStorage.setItem(PENDING_ORDER_UUID_KEY, uuid);
   }, [uuid]);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ function useOrderPreviewState() {
     fetchProfile()
       .then((profile) => {
         if (profile.role === "EXPERT") {
-          sessionStorage.removeItem("pendingOrderUuid");
+          sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
           router.replace(`/expert/orders?orderId=${order.id}`);
         } else {
           setCheckingAuth(false);

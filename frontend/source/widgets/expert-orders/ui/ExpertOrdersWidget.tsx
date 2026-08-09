@@ -78,7 +78,7 @@ export function ExpertOrdersWidget() {
                   previousSum={o.previousSum}
                   previousDate={o.previousDeadline}
                   previousBadges={o.previousBadges}
-                  onClick={() => h.openDetails(o)}
+                  onClick={() => h.openOrder(o)}
                   details={hasDetails ? (
                     <>
                       <OrderDetailsList workType={o.workType} details={o.details} />
@@ -113,7 +113,7 @@ export function ExpertOrdersWidget() {
                     disabled={isResponsesDeadlineExpired(o.responsesDeadline)}
                     onClick={(e) => {
                       e.stopPropagation();
-                      h.openRespond(o);
+                      h.openOrder(o);
                     }}
                   >
                     Откликнуться

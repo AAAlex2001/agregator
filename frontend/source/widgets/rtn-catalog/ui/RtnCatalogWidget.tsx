@@ -14,8 +14,6 @@ interface Props {
 }
 
 export function RtnCatalogWidget({ homeHref = "/", children }: Props) {
-  "Статичная оболочка (крошки/заголовок/поиск) не зависит от серверных данных и рендерится мгновенно — \
-данные (фильтры + сетка карточек) приходят через children, обёрнутые снаружи в Suspense со скелетоном."
   const { searchInput, setSearchInput, clearSearch } = useRtnCatalogFilters({ liveSearch: true });
   const askHref = homeHref === "/landing" ? "/landing/rtn/ask" : "/rtn/ask";
 

@@ -1,6 +1,5 @@
 export { OrderCard } from "./ui/OrderCard";
 export { OrderCardSkeleton } from "./ui/OrderCardSkeleton";
-export { OrderDetailCardSkeleton } from "./ui/OrderDetailCardSkeleton";
 export { OrderDetailsList } from "./ui/OrderDetailsList";
 export { OrderOrganizer } from "./ui/OrderOrganizer";
 export {
@@ -38,6 +37,6 @@ export type {
 } from "./model/types";
 export {
   DOCUMENT_CATEGORIES, DOCUMENT_LABELS, SINGLE_DOCUMENT_CATEGORIES,
-  MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES,
+  MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES, PENDING_ORDER_UUID_KEY,
   emptyDocuments, documentPaths, countDocuments,
 } from "./model/types";

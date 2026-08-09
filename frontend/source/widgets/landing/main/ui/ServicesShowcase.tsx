@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { ServicesAccordion, type ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
 import { HeroExpertsMap } from "../../shared/ui/HeroExpertsMap";
 import { SERVICES_SHOWCASE } from "../../shared/model/servicesShowcase";
+import { buildLandingHref } from "../../shared/model/buildHref";
 import s from "./services-showcase.module.scss";
 
 type ServicesShowcaseProps = {
@@ -13,12 +14,11 @@ type ServicesShowcaseProps = {
 
 const ServicesShowcase = ({ basePath = "", activeHref = "/" }: ServicesShowcaseProps) => {
   const router = useRouter();
-  const buildHref = (href: string) => (href === "/" ? basePath || "/" : `${basePath}${href}`);
   const activeIndex = SERVICES_SHOWCASE.findIndex((item) => item.href === activeHref);
 
   const openDirection = (item: ServicesAccordionItem) => {
     if (!item.href || item.href === activeHref) return;
-    router.push(buildHref(item.href));
+    router.push(buildLandingHref(basePath, item.href));
   };
 
   return (

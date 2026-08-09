@@ -21,10 +21,6 @@ interface UseExpertsListResult {
   loadMore: () => Promise<void>;
 }
 
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Не удалось загрузить исполнителей";
-}
-
 export function useExpertsList(): UseExpertsListResult {
   const [items, setItems] = useState<ExpertSummary[]>([]);
   const [hasMore, setHasMore] = useState(false);
@@ -48,7 +44,7 @@ export function useExpertsList(): UseExpertsListResult {
       setItems(mapped.items);
       setHasMore(mapped.hasMore);
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить исполнителей");
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +66,7 @@ export function useExpertsList(): UseExpertsListResult {
       setItems((prev) => [...prev, ...mapped.items]);
       setHasMore(mapped.hasMore);
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(err instanceof Error ? err.message : "Не удалось загрузить исполнителей");
     } finally {
       setIsLoadingMore(false);
     }
@@ -84,7 +80,6 @@ export function useExpertsList(): UseExpertsListResult {
 
   useEffect(() => {
     void fetchInitial(null, null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

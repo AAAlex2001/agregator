@@ -1,5 +1,6 @@
 import { API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { SortDir } from "@/source/shared/ui/SortPills";
 import type { OrdersApiList, OrderSortBy } from "@/source/entities/order";
@@ -13,7 +14,7 @@ export async function fetchOrders(
   if (sort?.sortBy) params.set("sort_by", sort.sortBy);
   if (sort?.sortDir) params.set("sort_dir", sort.sortDir);
   const res = await fetchWithSession(`${API_URL}/orders/?${params.toString()}`);
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось загрузить заказы");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить заказы"));
   return res.json();
 }
 
@@ -45,7 +46,7 @@ export async function respondToOrder(orderId: number, p: RespondPayload): Promis
     input: `${API_URL}/orders/${orderId}/responses`,
     method: "POST", files: p.files ?? [], buildBody: build,
   });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Не удалось отправить отклик");
+  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось отправить отклик"));
 }
 
 export async function createPayment(amount: number, returnUrl: string): Promise<{ confirmation_url: string }> {

@@ -4,17 +4,8 @@ import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useSidebarMobile } from "@/source/widgets/sidebar";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
+import { isFullScreenRoute } from "@/source/shared/lib/isFullScreenRoute";
 import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";
-
-const FULLSCREEN_ROUTES = [
-  /^\/chat(?:\/.*)?$/,
-  /^\/expert\/room$/,
-  /^\/support(?:\/.*)?$/,
-];
-
-function isFullScreenRoute(pathname: string): boolean {
-  return FULLSCREEN_ROUTES.some((pattern) => pattern.test(pathname));
-}
 
 export function CabinetMenuTabs() {
   const pathname = usePathname();

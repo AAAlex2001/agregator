@@ -1,4 +1,5 @@
 ﻿import { fetchWithSession } from "@/source/shared/api/session";
+import { readErrorMessage } from "@/source/shared/api/errorMessage";
 import type { UserProfile } from "@/source/entities/user";
 import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
 import type { UpdateProfilePayload } from "../model/profilePayload";
@@ -28,8 +29,7 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<UserPro
     body: JSON.stringify(data),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сохранить данные");
+    throw new Error(await readErrorMessage(res, "Не удалось сохранить данные"));
   }
   return res.json();
 }
@@ -49,8 +49,7 @@ export async function updateExpertLocation(data: {
     body: JSON.stringify(data),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сохранить локацию");
+    throw new Error(await readErrorMessage(res, "Не удалось сохранить локацию"));
   }
   return res.json();
 }
@@ -68,8 +67,7 @@ export async function changePassword(
     }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось сменить пароль");
+    throw new Error(await readErrorMessage(res, "Не удалось сменить пароль"));
   }
 }
 
@@ -80,8 +78,7 @@ export async function requestEmailChange(newEmail: string): Promise<void> {
     body: JSON.stringify({ new_email: newEmail }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось отправить код");
+    throw new Error(await readErrorMessage(res, "Не удалось отправить код"));
   }
 }
 
@@ -92,8 +89,7 @@ export async function confirmEmailChange(code: string): Promise<UserProfile> {
     body: JSON.stringify({ code }),
   });
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось подтвердить код");
+    throw new Error(await readErrorMessage(res, "Не удалось подтвердить код"));
   }
   return res.json();
 }
@@ -115,8 +111,7 @@ export async function uploadAvatar(file: File): Promise<UserProfile> {
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.detail || "Не удалось загрузить фото");
+    throw new Error(await readErrorMessage(res, "Не удалось загрузить фото"));
   }
 
   return res.json();
