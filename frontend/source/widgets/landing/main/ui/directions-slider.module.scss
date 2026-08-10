@@ -43,7 +43,7 @@
   width: 100%;
 }
 
-.slide {
+:global(.directions-swiper .swiper-slide) {
   width: 380px;
   max-width: 86vw;
   height: auto;

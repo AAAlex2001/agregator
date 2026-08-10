@@ -38,7 +38,7 @@ export function DirectionsSlider({ basePath = "" }: Props) {
           className={`${s.swiper} directions-swiper`}
         >
           {SERVICES_SHOWCASE.map((item) => (
-            <SwiperSlide key={item.id} className={s.slide}>
+            <SwiperSlide key={item.id}>
               <div className={s.card}>
                 <div className={s.image}>
                   <Image src={item.image} alt={item.title} fill sizes="380px" className={s.img} />
