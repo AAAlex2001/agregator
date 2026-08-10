@@ -10,9 +10,16 @@ export function HeroExpertsMap({
   hideHead = false,
   mapOnly = false,
   direction,
-}: { hideHead?: boolean; mapOnly?: boolean; direction?: string } = {}) {
+}: { hideHead?: boolean; mapOnly?: boolean; direction?: string | null } = {}) {
   const { user } = useSession();
-  const { items } = useExpertsMap(direction);
+  const { items, isLoading } = useExpertsMap(direction);
+
+  const emptyText =
+    direction === null
+      ? "Исполнители этого направления скоро появятся на площадке"
+      : isLoading
+        ? "Загрузка карты исполнителей…"
+        : "Пока нет исполнителей этого направления с указанной локацией";
 
   return (
     <div className={s.wrap}>
@@ -26,7 +33,7 @@ export function HeroExpertsMap({
         <FilterableExpertsMap
           items={items}
           height="100%"
-          emptyText="Загрузка карты исполнителей…"
+          emptyText={emptyText}
           contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
           mapOnly={mapOnly}
         />

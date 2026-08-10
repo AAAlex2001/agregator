@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { OrderCardData } from "@/source/entities/order";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
+import Button from "@/source/shared/ui/Button";
+import { useSession } from "@/source/features/session";
 import { hasOrderDetails } from "../../model/orderDetails";
 import { useCreateOrderForm } from "../../model/useCreateOrderForm";
 import type { DocumentsFormState } from "@/source/entities/order";
@@ -49,7 +52,28 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
     onSubmit,
   });
   const [view, setView] = useState<View>("form");
+  const { user } = useSession();
   const isExpertise = state.workType === "EXPERTISE";
+
+  if (!isEdit && user !== null && (user.directions ?? []).length === 0) {
+    return (
+      <div className={s.shell}>
+        <div className={s.form}>
+          <h2 className={s.title}>Создание заказа</h2>
+          <p className={s.noDirectionsText}>
+            У вас не выбрано ни одного направления работы. Перейдите в настройки профиля и отметьте
+            направления, по которым размещаете заказы, — после этого форма станет доступна.
+          </p>
+          <Button href="/settings" variant="chat" size="md">
+            Перейти в настройки профиля
+          </Button>
+          <Link href="/customer/orders" className={s.noDirectionsBack}>
+            Вернуться к заказам
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const shellClassName = [
     s.shell,

@@ -7,7 +7,7 @@ import base from "./sectionBase.module.scss";
 import s from "./expertsMapSection.module.scss";
 
 export function ExpertsMapSection({ workType }: { workType: OrderWorkType }) {
-  const { items } = useExpertsMap(workType === "EXPERTISE" ? undefined : workType);
+  const { items, isLoading } = useExpertsMap(workType === "EXPERTISE" ? undefined : workType);
 
   return (
     <section className={base.section}>
@@ -19,8 +19,13 @@ export function ExpertsMapSection({ workType }: { workType: OrderWorkType }) {
       <FilterableExpertsMap
         items={items}
         height={420}
-        emptyText="Пока нет исполнителей с указанной локацией"
+        emptyText={
+          isLoading
+            ? "Загрузка карты исполнителей…"
+            : "Пока нет исполнителей этого направления с указанной локацией"
+        }
         contactsHref="/landing/expert-contacts"
+        mapOnly={workType !== "EXPERTISE"}
       />
     </section>
   );

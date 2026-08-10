@@ -32,7 +32,11 @@ const ServicesShowcase = ({ basePath = "", activeHref = "/" }: ServicesShowcaseP
         <div className={s.mapVisual}>
           <p className={s.mapText}>{item.text}</p>
           <div className={s.mapBox}>
-            <HeroExpertsMap hideHead mapOnly={item.href !== "/"} direction={item.direction} />
+            <HeroExpertsMap
+              hideHead
+              mapOnly={item.href !== "/"}
+              direction={item.href === "/" ? undefined : (item.direction ?? null)}
+            />
           </div>
         </div>
       )}

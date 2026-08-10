@@ -262,6 +262,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           mapFields={state.mapFields}
           onChangeShowOnMap={(value) => dispatch({ type: "showOnMap", value })}
           onChangeMapFields={(value) => dispatch({ type: "mapFields", value })}
+          certificateFieldsVisible={state.expertiseProfile !== null}
         />
       </FormSection>
     </>

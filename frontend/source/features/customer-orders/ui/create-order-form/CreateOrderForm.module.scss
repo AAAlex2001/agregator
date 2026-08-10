@@ -65,6 +65,22 @@
   color: #1a1a1a;
 }
 
+.noDirectionsText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: #4a5460;
+}
+
+.noDirectionsBack {
+  align-self: flex-start;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ff8a00;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .notifyRow {
   padding: 12px 14px;
   border: 1px solid #ffdda9;
