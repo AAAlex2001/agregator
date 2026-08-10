@@ -183,48 +183,14 @@
 }
 
 .backgroundImageBelAz {
-    position: absolute;
-    width: 315px;
-    height: 280px;
-    left: 0;
-    top: -210px;
-    z-index: 3;
-    display: block;
-  }
+  display: none;
+}
 
-  .backgroundImageCoal {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    left: 80px;
-    top: -230px;
-    z-index: 0;
-    rotate: (-80deg);
-    display: block;
+.backgroundImageCoal {
+  display: none;
+}
 
-    &:nth-child(2) {
-      position: absolute;
-      width: 270px;
-      height: 270px;
-      left: -20px;
-      top: -280px;
-      z-index: 0;
-      rotate: (90deg);
-    }
-
-    &:nth-child(3) {
-      position: absolute;
-      width: 250px;
-      height: 250px;
-      left: 0;
-      top: -250px;
-      z-index: 0;
-      rotate: (0deg);
-    }
-
-  }
-
-  .backgroundImage {
+.backgroundImage {
   display: none;
 }
 
