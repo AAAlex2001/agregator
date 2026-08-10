@@ -238,7 +238,8 @@ class ExpertsRepository:
         show_name = "name" in fields
         contacts_paid = bool(expert.contact_sales_enabled)
         show_contacts = "contacts" in fields and not contacts_paid
-        certificate_fields = ["area", "object", "category"] if contacts_paid else fields
+        chosen = [field for field in fields if field in ("area", "object", "category")]
+        certificate_fields = ["area", "object", "category"] if contacts_paid or not chosen else chosen
 
         certificates = []
         certificate_codes = []

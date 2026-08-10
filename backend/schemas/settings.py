@@ -98,7 +98,7 @@ class UpdateExpertLocationRequest(BaseModel):
     location_city: str | None = Field(None, max_length=200)
     travels_to_other_regions: bool = False
     show_on_map: bool = True
-    map_fields: list[str] = Field(default_factory=list, max_length=10)
+    map_fields: list[str] = Field(default_factory=list, max_length=30)
 
 
 class ChangePasswordRequest(BaseModel):

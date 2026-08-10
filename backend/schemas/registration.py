@@ -50,7 +50,7 @@ class UserRegistration(BaseModel):
     travels_to_other_regions: bool = Field(False, description="Готов выезжать на объекты в другие регионы")
     show_on_map: bool = Field(True, description="Показывать исполнителя на карте России")
     map_fields: list[str] = Field(
-        default_factory=list, description="Что показывать в метке на карте", max_length=10
+        default_factory=list, description="Что показывать в метке на карте", max_length=30
     )
     directions: list[str] = Field(
         default_factory=list, description="Отметки направлений без анкет", max_length=10

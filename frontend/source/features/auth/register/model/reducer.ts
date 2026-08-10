@@ -28,7 +28,7 @@ export const initialState: RegisterState = {
   location: null,
   travels: false,
   showOnMap: true,
-  mapFields: ["name", "area", "object", "category"],
+  mapFields: ["name"],
   contactEnabled: false,
   contactPrice: "",
   contactDetails: "",
