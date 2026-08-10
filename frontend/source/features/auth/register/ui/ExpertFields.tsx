@@ -40,6 +40,19 @@ import type { StepProps } from "./types";
 import s from "./register-form.module.scss";
 import d from "./directions/DirectionsPicker.module.scss";
 
+function activeDirections(state: StepProps["state"]): string[] {
+  const profiles: Array<[string, unknown]> = [
+    ["EXPERTISE", state.expertiseProfile],
+    ["AUDIT_SUPB", state.auditExpertProfile],
+    ["TECH_DIAG", state.techDiagProfile],
+    ["RESEARCH", state.researchProfile],
+    ["LABORATORY", state.laboratoryProfile],
+    ["CADASTRAL", state.cadastralProfile],
+    ["FORENSIC", state.forensicProfile],
+  ];
+  return profiles.filter(([, profile]) => profile !== null).map(([key]) => key);
+}
+
 export function ExpertFields({ state, dispatch }: StepProps) {
   const [catalogs, setCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
   const [techDiagCatalogs, setTechDiagCatalogs] = useState<TechDiagCatalogs>(emptyTechDiagCatalogs);
@@ -262,7 +275,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           mapFields={state.mapFields}
           onChangeShowOnMap={(value) => dispatch({ type: "showOnMap", value })}
           onChangeMapFields={(value) => dispatch({ type: "mapFields", value })}
-          certificateFieldsVisible={state.expertiseProfile !== null}
+          activeDirections={activeDirections(state)}
         />
       </FormSection>
     </>

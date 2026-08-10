@@ -18,6 +18,7 @@ from models.research import ExpertResearchProfile
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus
 from models.tech_diag import ExpertTechDiagProfile
+from services.experts.map_summary import build_direction_summary
 from utils.pagination import paginate_with_has_more
 
 SORT_BY_RATING = "rating"
@@ -39,46 +40,6 @@ EXPERT_DIRECTION_PROFILES = {
     OrderWorkType.LABORATORY.value: ExpertLaboratoryProfile,
     OrderWorkType.TECH_DIAG.value: ExpertTechDiagProfile,
 }
-
-
-def build_direction_summary(expert: Expert, direction: str) -> list[str]:
-    "Сводка анкеты направления для метки на карте — вместо удостоверений экспертизы."
-    if direction == OrderWorkType.AUDIT_SUPB.value:
-        profile = expert.audit_profile
-        qualifications = list(profile.audit_qualifications or []) if profile else []
-        return qualifications or ["Аудитор СУПБ"]
-    if direction == OrderWorkType.CADASTRAL.value:
-        profile = expert.cadastral_profile
-        parts = ["Кадастровый инженер"]
-        if profile is not None and profile.registry_number:
-            parts.append(f"Реестровый № {profile.registry_number}")
-        return parts
-    if direction == OrderWorkType.FORENSIC.value:
-        profile = expert.forensic_profile
-        parts = ["Судебный эксперт"]
-        if profile is not None and profile.degree:
-            parts.append(profile.degree)
-        return parts
-    if direction == OrderWorkType.RESEARCH.value:
-        profile = expert.research_profile
-        parts = [
-            part
-            for part in (
-                profile.academic_degree if profile else "",
-                profile.academic_title if profile else "",
-            )
-            if part
-        ]
-        return parts or ["Исполнитель НИР"]
-    if direction == OrderWorkType.LABORATORY.value:
-        profile = expert.laboratory_profile
-        area = (profile.accreditation_area or "").strip() if profile else ""
-        return [area[:200]] if area else ["Лабораторные исследования"]
-    if direction == OrderWorkType.TECH_DIAG.value:
-        profile = expert.tech_diag_profile
-        methods = list(profile.methods or []) if profile else []
-        return [f"Виды НК: {', '.join(methods)}"] if methods else ["Специалист НК"]
-    return []
 
 
 def build_completed_orders_expr() -> ColumnElement[int]:
@@ -282,7 +243,7 @@ class ExpertsRepository:
         certificates = []
         certificate_codes = []
         if direction in EXPERT_DIRECTION_PROFILES:
-            certificates = build_direction_summary(expert, direction)
+            certificates = build_direction_summary(expert, direction, fields)
         else:
             for cert in expert.certificates or []:
                 text = format_cert_for_map(cert, certificate_fields)

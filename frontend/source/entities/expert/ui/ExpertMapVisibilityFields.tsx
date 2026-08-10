@@ -1,26 +1,19 @@
 "use client";
 
 import { Checkbox } from "@/source/shared/ui";
+import {
+  COMMON_MAP_FIELD_OPTIONS,
+  DIRECTION_MAP_FIELD_GROUPS,
+  type MapFieldOption,
+} from "../model/mapFields";
 import s from "./ExpertMapVisibilityFields.module.scss";
-
-export const MAP_FIELD_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: "name", label: "ФИО" },
-  { value: "object", label: "Объект экспертизы" },
-  { value: "area", label: "Область аттестации" },
-  { value: "category", label: "Категория" },
-  { value: "contacts", label: "Контактные данные" },
-];
-
-const CERTIFICATE_FIELDS = ["object", "area", "category"];
-
-export const DEFAULT_MAP_FIELDS = ["name", "area", "object", "category"];
 
 interface Props {
   showOnMap: boolean;
   mapFields: string[];
   onChangeShowOnMap: (value: boolean) => void;
   onChangeMapFields: (value: string[]) => void;
-  certificateFieldsVisible?: boolean;
+  activeDirections?: string[];
 }
 
 export function ExpertMapVisibilityFields({
@@ -28,15 +21,27 @@ export function ExpertMapVisibilityFields({
   mapFields,
   onChangeShowOnMap,
   onChangeMapFields,
-  certificateFieldsVisible = true,
+  activeDirections,
 }: Props) {
-  const options = certificateFieldsVisible
-    ? MAP_FIELD_OPTIONS
-    : MAP_FIELD_OPTIONS.filter((option) => !CERTIFICATE_FIELDS.includes(option.value));
+  const groups = activeDirections
+    ? DIRECTION_MAP_FIELD_GROUPS.filter((group) => activeDirections.includes(group.direction))
+    : DIRECTION_MAP_FIELD_GROUPS;
+
   const toggle = (item: string) =>
     onChangeMapFields(
       mapFields.includes(item) ? mapFields.filter((x) => x !== item) : [...mapFields, item],
     );
+
+  const renderOption = (option: MapFieldOption) => (
+    <button
+      key={option.value}
+      type="button"
+      className={`${s.option} ${mapFields.includes(option.value) ? s.optionActive : ""}`}
+      onClick={() => toggle(option.value)}
+    >
+      {option.label}
+    </button>
+  );
 
   return (
     <div className={s.block}>
@@ -47,22 +52,18 @@ export function ExpertMapVisibilityFields({
       {showOnMap && (
         <div className={s.fields}>
           <span className={s.hint}>
-            {certificateFieldsVisible
-              ? "Что отразить на карте — отметьте нужное. Область, объект и категория относятся к удостоверениям экспертизы ОПО; на картах других направлений показываются данные их анкет."
-              : "Что отразить на карте — отметьте нужное. Данные направлений показываются из их анкет."}
+            Что отразить в метке на карте — отметьте нужное. Пока ничего не отмечено, направление
+            показывает все данные своей анкеты.
           </span>
-          <div className={s.options}>
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={`${s.option} ${mapFields.includes(option.value) ? s.optionActive : ""}`}
-                onClick={() => toggle(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+
+          <div className={s.options}>{COMMON_MAP_FIELD_OPTIONS.map(renderOption)}</div>
+
+          {groups.map((group) => (
+            <div key={group.direction} className={s.group}>
+              <span className={s.groupTitle}>{group.title}</span>
+              <div className={s.options}>{group.options.map(renderOption)}</div>
+            </div>
+          ))}
         </div>
       )}
     </div>
