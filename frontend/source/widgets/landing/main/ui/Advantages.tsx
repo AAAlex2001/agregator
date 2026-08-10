@@ -1,62 +1,56 @@
 "use client";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import Image from "next/image";
+import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
+import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import type { LandingAdvantage } from "../model/landing.data";
 import s from "./advantages.module.scss";
-import { useState } from "react";
-import Card from "@/source/shared/ui/Card";
-import { CommentIcon, DiplomaIcon, QuickIcon, SearchIcon } from "@/source/shared/ui/icons";
-
-import type { AdvantageIconKey, LandingAdvantage } from "../model/landing.data";
 
 type AdvantagesProps = {
   features: LandingAdvantage[];
+  title: string;
+  subtitle: string;
 };
 
-function renderIcon(iconKey: AdvantageIconKey) {
-  switch (iconKey) {
-    case "diploma":
-      return <DiplomaIcon size={40} />;
-    case "quick":
-      return <QuickIcon size={40} />;
-    case "search":
-      return <SearchIcon size={40} />;
-    case "comment":
-      return <CommentIcon size={40} />;
-  }
-}
-
-const Advantages = ({ features }: AdvantagesProps) => {
-  const [openedCards, setOpenedCards] = useState<Set<number>>(new Set());
-
-  const toggleCard = (id: number) => {
-    setOpenedCards((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
-
+const Advantages = ({ features, title, subtitle }: AdvantagesProps) => {
   return (
     <section className={s.section} id="advantages">
-      <div className={s.card}>
-        {features.map((feature) => {
-          const isOpen = openedCards.has(feature.id);
-          return (
-            <Card
-              key={feature.id}
-              variant="advantage"
-              title={feature.title}
-              description={feature.description}
-              icon={renderIcon(feature.iconKey)}
-              photo={feature.photo}
-              isOpen={isOpen}
-              onClick={() => toggleCard(feature.id)}
-            />
-          );
-        })}
+      <div className={s.panel}>
+        <header className={s.header}>
+          <div className={s.headCopy}>
+            <Title text={title} as="h2" />
+            <Subtitle text={subtitle} />
+          </div>
+          <div className={s.arrows}>
+            <SwiperNavigation prevClassName="advantages-nav--prev" nextClassName="advantages-nav--next" />
+          </div>
+        </header>
+
+        <Swiper
+          modules={[Navigation]}
+          slidesPerView="auto"
+          spaceBetween={16}
+          navigation={{ prevEl: ".advantages-nav--prev", nextEl: ".advantages-nav--next" }}
+          className={s.swiper}
+        >
+          {features.map((feature) => (
+            <SwiperSlide key={feature.id} className={s.slide}>
+              <article className={s.card}>
+                <div className={s.image}>
+                  <Image src={feature.photo} alt={feature.title} fill sizes="380px" className={s.img} />
+                </div>
+                <div className={s.body}>
+                  <h3 className={s.cardTitle}>{feature.title}</h3>
+                  <p className={s.cardText}>{feature.description}</p>
+                </div>
+              </article>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );

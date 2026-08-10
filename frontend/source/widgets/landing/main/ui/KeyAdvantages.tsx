@@ -2,7 +2,6 @@
 
 import s from "./key-advantages.module.scss";
 import { useState } from "react";
-import Image from "next/image";
 import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -39,30 +38,6 @@ const KeyAdvantages = ({
     <section className={s.section} id="key-advantages">
       <div className={s.content}>
         <div className={s.header}>
-          <div className={s.truckImage}>
-            <Image src="/belaz.webp" alt="" aria-hidden="true" fill sizes="630px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.truckCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.truckCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.truckCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.truckCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
-          <div className={s.truckCoal}>
-            <Image src="/coal.webp" alt="" aria-hidden="true" fill sizes="246px" style={{ objectFit: "contain" }} />
-          </div>
-
           <Title text={title} />
           <Subtitle text={subtitle} />
         </div>
@@ -96,9 +71,6 @@ const KeyAdvantages = ({
             Смотреть все преимущества
           </AuthTrigger>
         </div>
-      </div>
-      <div className={s.backgroundImage}>
-        <Image src="/key-advantages.webp" alt="" aria-hidden="true" fill sizes="100vw" style={{ objectFit: "cover" }} />
       </div>
     </section>
   );

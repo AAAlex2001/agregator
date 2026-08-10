@@ -1,6 +1,7 @@
 import s from "./cta-footer.module.scss";
 import Image from "next/image";
 import { AuthTrigger, AuthLinkButton } from "@/source/shared/ui/AuthTrigger";
+import { Title } from "@/source/shared/ui/Typography";
 import { BulletIcon } from "@/source/shared/ui/icons";
 
 const CtaFooter = () => {
@@ -47,10 +48,10 @@ const CtaFooter = () => {
             </div>
           <div className={s.ctaLeft}>
             <AuthLinkButton tab="register" className={s.ctaChip}>Действуйте прямо сейчас</AuthLinkButton>
-            <h2>Найдите исполнителя по промышленной безопасности или заявите о своей специализации</h2>
+            <Title as="h2" text="Найдите исполнителя по промышленной безопасности или заявите о своей специализации" />
           </div>
           <div className={s.ctaRight}>
-            <h2>После регистрации вы сможете:</h2>
+            <Title as="h2" text="После регистрации вы сможете:" />
             <ul>
               <li>
                 <span aria-hidden="true" className={s.bullet}>

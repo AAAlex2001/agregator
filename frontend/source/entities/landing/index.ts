@@ -12,3 +12,4 @@ export type {
   LandingSnapshot,
   LandingStep,
 } from "./model/types";
+export { loadLandingSnapshot } from "./api/landing.api";

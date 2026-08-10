@@ -7,6 +7,7 @@ import {
 import { emptyResearchProfile } from "@/source/features/directions/research";
 import { emptyLaboratoryProfile } from "@/source/features/directions/laboratory";
 import { emptyCadastralProfile } from "@/source/features/directions/cadastral";
+import { emptyExpertiseProfile } from "@/source/features/directions/expertise";
 import { emptyForensicProfile } from "@/source/features/directions/forensic";
 import {
   emptyTechDiagHolderProfile,
@@ -47,7 +48,7 @@ export const initialState: RegisterState = {
   techDiagProfile: null,
   techDiagHolderProfile: null,
   directionFiles: emptyDirectionFiles,
-  licenseEnabled: true,
+  licenseEnabled: false,
   licenseNumber: "",
   licenseAreas: [],
   rentalKind: "PERCENT",
@@ -69,7 +70,6 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     if (preset.role === "EXPERT") state.auditExpertProfile = { ...emptyAuditExpertProfile };
     if (preset.role === "LICENSE_HOLDER") {
       state.auditHolderProfile = { ...emptyAuditLicenseHolderProfile };
-      state.licenseEnabled = false;
     }
   }
   if (preset.direction === "RESEARCH" && preset.role === "EXPERT") {
@@ -82,7 +82,6 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     if (preset.role === "EXPERT") state.techDiagProfile = { ...emptyTechDiagProfile };
     if (preset.role === "LICENSE_HOLDER") {
       state.techDiagHolderProfile = { ...emptyTechDiagHolderProfile };
-      state.licenseEnabled = false;
     }
   }
   if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
@@ -91,6 +90,12 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
   if (preset.direction === "FORENSIC" && preset.role === "EXPERT") {
     state.forensicProfile = { ...emptyForensicProfile };
   }
+  if (preset.direction === "EXPERTISE" && preset.role === "EXPERT") {
+    state.expertiseProfile = { ...emptyExpertiseProfile };
+  }
+  if (preset.direction === "EXPERTISE" && preset.role === "LICENSE_HOLDER") {
+    state.licenseEnabled = true;
+  }
   if (preset.direction && preset.role === "CUSTOMER" && preset.direction !== "AUDIT_SUPB") {
     state.directions = [preset.direction];
   }
@@ -98,10 +103,10 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     preset.direction &&
     preset.role === "LICENSE_HOLDER" &&
     preset.direction !== "AUDIT_SUPB" &&
-    preset.direction !== "TECH_DIAG"
+    preset.direction !== "TECH_DIAG" &&
+    preset.direction !== "EXPERTISE"
   ) {
     state.directions = [preset.direction];
-    state.licenseEnabled = false;
   }
   return state;
 }
@@ -120,7 +125,7 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return {
         ...state,
         role: action.value,
-        licenseEnabled: true,
+        licenseEnabled: false,
         directions: [],
         expertiseProfile: null,
         auditExpertProfile: null,

@@ -1,14 +1,12 @@
 import { PricingSection } from "@/source/widgets/pricing-section";
-import LandingSearchBlock from "../../shared/ui/SearchBlock";
 import LandingFooter from "../../shared/ui/Footer";
 import { ServiceLandingFaq } from "../../shared/ui/ServiceLandingFaq";
 import type { LandingPageData } from "../model/loadLandingPageData";
-import LandingHero from "./Hero";
-import LandingHowItWorks from "./HowItWorks";
-import LandingKeyAdvantages from "./KeyAdvantages";
+import { MainHero } from "./MainHero";
+import { RoleHighlights } from "./RoleHighlights";
+import { DirectionsSlider } from "./DirectionsSlider";
 import LandingOrders from "./Orders";
 import LandingAdvantages from "./Advantages";
-import LandingIndustryDirections from "./IndustryDirections";
 import LandingReviews from "./Reviews";
 import LandingArticlesPreview from "./ArticlesPreview";
 import LandingNotificationsCta from "./NotificationsCta";
@@ -23,49 +21,28 @@ interface Props {
 
 export function LandingSections({ data, articleBasePath = "" }: Props) {
   const { snapshot, pricingPlans, newsPage, blogPage } = data;
-  const {
-    sectionHeaders,
-    howItWorks,
-    keyAdvantages,
-    orders,
-    advantages,
-    industries,
-    reviews,
-    faq,
-    pricingContent,
-  } = snapshot;
+  const { sectionHeaders, orders, advantages, reviews, faq, pricingContent } = snapshot;
 
   return (
     <div className={s.page}>
       <main>
-        <LandingHero basePath={articleBasePath} />
-        <LandingSearchBlock />
-        <LandingNotificationsCta />
-        <LandingHowItWorks
-          clientSteps={howItWorks.client}
-          expertSteps={howItWorks.expert}
-          licenseHolderSteps={howItWorks.licenseHolder}
-          title={sectionHeaders.howItWorks.title}
-          subtitle={sectionHeaders.howItWorks.subtitle}
-        />
-        <LandingKeyAdvantages
-          clientSteps={keyAdvantages.client}
-          expertSteps={keyAdvantages.expert}
-          licenseHolderSteps={keyAdvantages.licenseHolder}
-          title={sectionHeaders.keyAdvantages.title}
-          subtitle={sectionHeaders.keyAdvantages.subtitle}
-        />
+        <MainHero />
+        <DirectionsSlider basePath={articleBasePath} />
+        <RoleHighlights />
         <LandingOrders
           orders={orders}
           title={sectionHeaders.orders.title}
           subtitle={sectionHeaders.orders.subtitle}
         />
-        <LandingAdvantages features={advantages} />
-        <LandingIndustryDirections
-          industries={industries}
-          title={sectionHeaders.industries.title}
-          subtitle={sectionHeaders.industries.subtitle}
+        <LandingAdvantages
+          features={advantages}
+          title={sectionHeaders.advantages.title || "Почему выбирают Ресурс-Плюс"}
+          subtitle={
+            sectionHeaders.advantages.subtitle ||
+            "Преимущества работы через платформу для заказчиков и исполнителей"
+          }
         />
+        <LandingNotificationsCta />
         <LandingReviews
           reviews={reviews}
           title={sectionHeaders.reviews.title}
@@ -77,6 +54,7 @@ export function LandingSections({ data, articleBasePath = "" }: Props) {
           ctaHref={`${articleBasePath}/news`}
           ctaLabel="Все новости"
           items={newsPage.items}
+          navPrefix="news-nav"
         />
         <LandingArticlesPreview
           title="Блог платформы"
@@ -84,6 +62,7 @@ export function LandingSections({ data, articleBasePath = "" }: Props) {
           ctaHref={`${articleBasePath}/blog`}
           ctaLabel="Все статьи"
           items={blogPage.items}
+          navPrefix="blog-nav"
         />
         {pricingPlans.length > 0 ? (
           <PricingSection

@@ -1,191 +1,95 @@
 .section {
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  padding: 0 var(--page-px);
+}
+
+.panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 24px;
+  background: #f4f7fb;
+  box-shadow: 0 6px 28px rgba(16, 24, 40, 0.08);
+
+  @media (min-width: 1024px) {
+    padding: 24px;
+  }
+}
+
+.header {
   display: flex;
-  margin-bottom: 120px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.headCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.arrows {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.slide {
+  width: 380px;
+  max-width: 86vw;
+  height: auto;
+  display: flex;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 1620px;
-  justify-content: center;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--page-px);
-  box-sizing: border-box;
-}
-
-.feature {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 20px;
-  border-radius: 15px;
-  border: 2px solid #FFB800;
-  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
   overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  p {
-    font-size: 16px;
-    line-height: 22px;
-    color: #808080;
-    font-weight: 400;
-  }
 }
 
-.featureImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-
-.featureImage.visible {
-  opacity: 0.18;
-}
-
-.featureContent {
+.image {
   position: relative;
-  z-index: 1;
+  width: 100%;
+  height: 180px;
+  background: #e9ebf0;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.body {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.featureHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
   gap: 10px;
-  width: 100%;
-
-  h3 {
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: 600;
-    width: 100%;
-  }
+  padding: 16px 18px 20px 18px;
 }
 
-.chevron {
-  flex-shrink: 0;
-  transition: transform 0.5s ease;
+.cardTitle {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 700;
+  color: #101828;
 }
 
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
-.descriptionWrapper {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
-
-.descriptionOpen {
-  max-height: 1000px;
-  opacity: 1;
-}
-
-@media (min-width: 768px) {
-
-  .section {
-  margin-bottom: 200px;
-  }
-  .card {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: center;
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .feature {
-    width: calc((100% - 24px) / 2);
-
-  }
-
-  .featureHeader {
-
-  h3 {
-      font-size: 18px;
-      line-height: 22px;
-  }
-}
-
-}
-
-@media (min-width: 1440px) {
-
-  .section {
-  margin-bottom: 200px;
-  }
-
-  .card {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 24px;
-    justify-content: center;
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .feature {
-    width: 100%;
-    min-height: 200px;
-  }
-
-  .featureHeader {
-
-  h3 {
-      font-size: 18px;
-      line-height: 22px;
-    white-space: nowrap;
-  }
-}
-
-
-  .featureImage.visible {
-    opacity: 0;
-  }
-
-  .feature:hover .featureImage {
-    opacity: 0.18;
-  }
-
-  .featureContent {
-    flex-grow: 1;
-    justify-content: space-between;
-  }
-
-  .chevron {
-    display: none;
-  }
-
-  .descriptionWrapper {
-  max-height: 1000px;
-  opacity: 1;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
-
-.descriptionOpen {
-  max-height: 1000px;
-  opacity: 1;
-}
+.cardText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 21px;
+  color: #4a5460;
 }

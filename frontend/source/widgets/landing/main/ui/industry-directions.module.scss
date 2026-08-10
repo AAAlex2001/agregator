@@ -1,7 +1,6 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 120px;
 }
 
 .content {
@@ -20,12 +19,6 @@
   gap: 15px;
   margin-bottom: 40px;
   width: 100%;
-}
-
-.backgroundImage {
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
 }
 
 .swiper {
@@ -164,10 +157,6 @@
 
 @media (min-width: 768px) {
 
-  .section {
-  margin-bottom: 200px;
-}
-
   .slide {
   min-width: 490px;
   }
@@ -218,10 +207,6 @@
 @media (min-width: 1440px) {
   .arrows {
     display: none;
-  }
-
-  .backgroundImage {
-  height: 920px;
   }
 
   .swiper {

@@ -157,72 +157,6 @@
   }
 }
 
-.advantage {
-  align-items: flex-start;
-  gap: 8px;
-  border-radius: 15px;
-  width: 100%;
-  overflow: hidden;
-  cursor: pointer;
-
-  p {
-    font-size: 16px;
-    line-height: 22px;
-    color: #808080;
-    font-weight: 400;
-  }
-
-  .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-
-    h3 {
-      font-size: 16px;
-      line-height: 20px;
-      font-weight: 600;
-      width: 100%;
-    }
-  }
-
-  @media (min-width: 768px) {
-    .header h3 {
-      font-size: 18px;
-      line-height: 22px;
-    }
-  }
-
-  @media (min-width: 1440px) {
-    min-height: 200px;
-
-    &:hover .image {
-      opacity: 0.18;
-    }
-
-    .content {
-      flex-grow: 1;
-      justify-content: space-between;
-    }
-
-    .chevron {
-      display: none;
-    }
-
-    .header h3 {
-      white-space: nowrap;
-    }
-
-    .descriptionWrapper {
-      max-height: 1000px;
-      opacity: 1;
-      overflow: hidden;
-    }
-  }
-}
-
 .order {
   transform: scale(1);
   opacity: 1;
@@ -331,26 +265,4 @@
   flex-direction: column;
   gap: 8px;
   width: 100%;
-}
-
-.chevron {
-  flex-shrink: 0;
-  transition: transform 0.5s ease;
-  display: flex;
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
-.descriptionWrapper {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
-
-.descriptionOpen {
-  max-height: 1000px;
-  opacity: 1;
 }

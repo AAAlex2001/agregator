@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Button from "@/source/shared/ui/Button";
+import { Title } from "@/source/shared/ui/Typography";
 import s from "./audience-section.module.scss";
 
 export interface AudienceBlock {
@@ -26,7 +27,7 @@ export function AudienceSection({ blocks }: AudienceSectionProps) {
           >
             <div className={s.text}>
               <span className={s.badge}>{block.audience}</span>
-              <h2 className={s.title}>{block.title}</h2>
+              <Title as="h2" className={s.title} text={block.title} />
               <ul className={s.list}>
                 {block.items.map((item) => (
                   <li key={item} className={s.item}>

@@ -48,3 +48,17 @@
 .coverButton {
   min-height: 55px;
 }
+
+.page main {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 24px 0 72px;
+}
+
+@media (min-width: 1440px) {
+  .page main {
+    gap: 120px;
+    padding: 32px 0 120px;
+  }
+}

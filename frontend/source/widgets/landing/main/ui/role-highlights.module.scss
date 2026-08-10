@@ -1,0 +1,83 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  padding: 0 var(--page-px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px;
+  border-radius: 32px;
+}
+
+.media {
+  width: 100%;
+}
+
+.video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 20px;
+  background: #e9ebf0;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.copy .title {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 700;
+  color: #101828;
+}
+
+.copy .text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 25px;
+  font-weight: 400;
+  color: #4a5460;
+  max-width: 520px;
+}
+
+@media (min-width: 1024px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+  }
+
+  .cardReverse {
+    flex-direction: row-reverse;
+  }
+
+  .media {
+    flex: 1.1 1 0;
+    min-width: 0;
+  }
+
+  .copy {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .copy .title {
+    font-size: 32px;
+    line-height: 41px;
+  }
+}

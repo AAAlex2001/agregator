@@ -1,11 +1,6 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 120px;
-
-  @media (min-width: 768px) {
-    margin-bottom: 200px;
-  }
 }
 
 .content {
@@ -85,7 +80,7 @@
   font-weight: 600;
 }
 
-.title {
+.text .title {
   margin: 0;
   font-size: 24px;
   line-height: 30px;

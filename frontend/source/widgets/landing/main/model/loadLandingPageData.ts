@@ -7,8 +7,8 @@ export async function loadLandingPageData() {
   const [snapshot, pricingPlans, newsPage, blogPage] = await Promise.all([
     loadLandingSnapshot(),
     fetchPricingPlans(),
-    fetchArticleList({ kind: "news", limit: 3, offset: 0 }, { server: true }),
-    fetchArticleList({ kind: "blog", limit: 3, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
   ]);
 
   return { snapshot, pricingPlans, newsPage, blogPage };

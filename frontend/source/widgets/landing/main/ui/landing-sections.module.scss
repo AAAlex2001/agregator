@@ -5,3 +5,17 @@
   background: #ffffff;
   overflow: hidden;
 }
+
+.page main {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding-top: 24px;
+}
+
+@media (min-width: 1440px) {
+  .page main {
+    gap: 120px;
+    padding-top: 32px;
+  }
+}

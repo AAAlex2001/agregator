@@ -1,11 +1,6 @@
 .section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 80px;
-
-  @media (min-width: 768px) {
-    margin-bottom: 120px;
-  }
 }
 
 .content {
@@ -24,23 +19,33 @@
 
 .header {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.grid {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: 1fr;
+.headCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+}
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.arrows {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
-  @media (min-width: 1440px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.swiper {
+  width: 100%;
+}
+
+.slide {
+  width: 380px;
+  max-width: 86vw;
+  height: auto;
+  display: flex;
 }
 
 .cta {

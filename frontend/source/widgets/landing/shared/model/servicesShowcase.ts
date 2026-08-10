@@ -16,7 +16,8 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
     text:
       "Аттестованные эксперты Ростехнадзора по всей стране — выбирайте исполнителя ближе к вашему опасному производственному объекту.",
     image: "/services/1.webp",
-    href: "/",
+    href: "/ekspertiza-promyshlennoy-bezopasnosti",
+    direction: "EXPERTISE",
   },
   {
     id: 2,

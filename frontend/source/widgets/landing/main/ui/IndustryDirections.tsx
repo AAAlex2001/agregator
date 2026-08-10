@@ -5,7 +5,6 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import s from "./industry-directions.module.scss";
-import Image from "next/image";
 import { useState } from "react";
 import Card from "@/source/shared/ui/Card";
 import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
@@ -67,9 +66,6 @@ const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsP
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
-      <div className={s.backgroundImage}>
-        <Image src="/industry.webp" alt="" aria-hidden="true" fill sizes="100vw" style={{ objectFit: "cover" }} />
       </div>
     </section>
   );
