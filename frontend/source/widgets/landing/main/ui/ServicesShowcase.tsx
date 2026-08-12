@@ -38,7 +38,7 @@ const ServicesShowcase = ({ basePath = "", activeHref = "/" }: ServicesShowcaseP
       renderVisual={(item) => (
         <div className={s.mapVisual}>
           <p className={s.mapText}>{item.text}</p>
-          <div className={s.mapBox}>
+          <div className={item.slug === "proektirovanie" ? s.mapBoxAuto : s.mapBox}>
             <DirectionMap item={item} />
           </div>
         </div>

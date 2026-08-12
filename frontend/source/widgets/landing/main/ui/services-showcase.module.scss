@@ -21,6 +21,10 @@
   height: 440px;
 }
 
+.mapBoxAuto {
+  min-width: 0;
+}
+
 @media (min-width: 1024px) {
   .mapBox {
     height: 420px;
