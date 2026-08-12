@@ -2,7 +2,8 @@
 
 import type { ExpertMapItemApi } from "@/source/entities/expert";
 import { TypeBadge } from "@/source/entities/expertise";
-import { YandexMarkersMap, type MapMarker } from "@/source/shared/ui/YandexMap";
+import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
+import { toMarker } from "../model/toMarker";
 import { useExpertMapFilter } from "../model/useExpertMapFilter";
 import s from "./filterableExpertsMap.module.scss";
 
@@ -15,23 +16,6 @@ interface Props {
 }
 
 const NO_MATCH_TEXT = "По выбранным фильтрам исполнителей не нашлось — снимите часть фильтров";
-
-function toMarker(item: ExpertMapItemApi): MapMarker {
-  return {
-    id: item.public_id,
-    lat: item.lat,
-    lng: item.lng,
-    title: item.full_name,
-    city: item.city,
-    rating: item.rating,
-    travelsToOtherRegions: item.travels_to_other_regions,
-    certificates: item.certificates,
-    phone: item.phone,
-    email: item.email,
-    contactsPaid: item.contacts_paid,
-    contactPriceRubles: item.contact_price_rubles,
-  };
-}
 
 export function FilterableExpertsMap({
   items,

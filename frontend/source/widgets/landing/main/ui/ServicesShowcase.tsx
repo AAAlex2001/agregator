@@ -1,11 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { DesignSpecialistsMap } from "@/source/features/design-map-filter";
+import { ExpertiseExpertsMap, DirectionExpertsMap } from "@/source/features/expert-map-filter";
 import { ServicesAccordion, type ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
-import { HeroExpertsMap } from "../../shared/ui/HeroExpertsMap";
-import { SERVICES_SHOWCASE } from "../../shared/model/servicesShowcase";
+import { SERVICES_SHOWCASE, type ServiceShowcaseItem } from "../../shared/model/servicesShowcase";
 import { buildLandingHref } from "../../shared/model/buildHref";
 import s from "./services-showcase.module.scss";
+
+function DirectionMap({ item }: { item: ServiceShowcaseItem }) {
+  if (item.slug === "epb") return <ExpertiseExpertsMap />;
+  if (item.slug === "proektirovanie") return <DesignSpecialistsMap />;
+  return <DirectionExpertsMap direction={item.direction ?? null} />;
+}
 
 type ServicesShowcaseProps = {
   basePath?: string;
@@ -32,11 +39,7 @@ const ServicesShowcase = ({ basePath = "", activeHref = "/" }: ServicesShowcaseP
         <div className={s.mapVisual}>
           <p className={s.mapText}>{item.text}</p>
           <div className={s.mapBox}>
-            <HeroExpertsMap
-              hideHead
-              mapOnly={item.direction !== "EXPERTISE"}
-              direction={item.direction === "EXPERTISE" ? undefined : (item.direction ?? null)}
-            />
+            <DirectionMap item={item} />
           </div>
         </div>
       )}
