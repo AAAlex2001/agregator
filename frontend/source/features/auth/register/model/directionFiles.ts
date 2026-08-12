@@ -8,6 +8,11 @@ export interface DirectionFilesState {
   forensicDiploma: File | null;
   forensicDocuments: File[];
   techDiagDocuments: File[];
+  designEducationDocuments: File[];
+  designNokDocuments: File[];
+  designNrsDocuments: File[];
+  designQualificationDocuments: File[];
+  designRtnDocuments: File[];
 }
 
 export const emptyDirectionFiles: DirectionFilesState = {
@@ -18,6 +23,11 @@ export const emptyDirectionFiles: DirectionFilesState = {
   forensicDiploma: null,
   forensicDocuments: [],
   techDiagDocuments: [],
+  designEducationDocuments: [],
+  designNokDocuments: [],
+  designNrsDocuments: [],
+  designQualificationDocuments: [],
+  designRtnDocuments: [],
 };
 
 export function toRegisterDocuments(files: DirectionFilesState): RegisterDocument[] {
@@ -35,5 +45,10 @@ export function toRegisterDocuments(files: DirectionFilesState): RegisterDocumen
   for (const file of files.forensicDocuments) documents.push({ slot: "FORENSIC", file });
   for (const file of files.auditDocuments) documents.push({ slot: "AUDIT_SUPB", file });
   for (const file of files.techDiagDocuments) documents.push({ slot: "TECH_DIAG", file });
+  for (const file of files.designEducationDocuments) documents.push({ slot: "DESIGN_EDUCATION", file });
+  for (const file of files.designNokDocuments) documents.push({ slot: "DESIGN_NOK", file });
+  for (const file of files.designNrsDocuments) documents.push({ slot: "DESIGN_NRS", file });
+  for (const file of files.designQualificationDocuments) documents.push({ slot: "DESIGN_QUALIFICATION", file });
+  for (const file of files.designRtnDocuments) documents.push({ slot: "DESIGN_RTN", file });
   return documents;
 }

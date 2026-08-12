@@ -13,6 +13,7 @@ from schemas.audit import (
 )
 from schemas.cadastral import CadastralProfileInput
 from schemas.company import validate_company_data
+from schemas.design import DesignExpertProfileInput, DesignLicenseHolderProfileInput
 from schemas.expertise import ExpertiseProfileInput
 from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
@@ -63,6 +64,7 @@ class UserRegistration(BaseModel):
     research_profile: ResearchProfileInput | None = None
     laboratory_profile: LaboratoryProfileInput | None = None
     tech_diag_profile: TechDiagExpertProfileInput | None = None
+    design_profile: DesignExpertProfileInput | None = None
     contact_sales_enabled: bool = False
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
     contact_payment_details: str | None = Field(None, max_length=1000)
@@ -94,6 +96,7 @@ class UserRegistration(BaseModel):
             self.research_profile,
             self.laboratory_profile,
             self.tech_diag_profile,
+            self.design_profile,
         )
         if self.role is not UserRole.EXPERT and any(form is not None for form in expert_forms):
             raise ValueError("Анкеты направлений исполнителя доступны только исполнителю")
@@ -137,6 +140,7 @@ class LicenseHolderRegistration(BaseModel):
     lab_accreditation_number: str | None = Field(None, max_length=100)
     audit_profile: AuditLicenseHolderProfileInput | None = None
     tech_diag_profile: TechDiagLicenseHolderProfileInput | None = None
+    design_profile: DesignLicenseHolderProfileInput | None = None
     directions: list[str] = Field(
         default_factory=list, description="Отметки направлений без анкет", max_length=10
     )
@@ -161,7 +165,7 @@ class LicenseHolderRegistration(BaseModel):
         company_inn = (self.company_data.get("data") or {}).get("inn")
         if company_inn and company_inn != self.inn:
             raise ValueError("Выбранная компания не соответствует указанному ИНН")
-        if self.audit_profile is None and self.tech_diag_profile is None:
+        if self.audit_profile is None and self.tech_diag_profile is None and self.design_profile is None:
             if not (self.license_number or "").strip():
                 raise ValueError("Укажите номер лицензии")
             if not self.license_areas:

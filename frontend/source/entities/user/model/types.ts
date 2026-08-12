@@ -34,6 +34,17 @@ export interface LicenseHolderTechDiagRegisterPayload {
   organization_city: string;
 }
 
+export interface LicenseHolderDesignRegisterPayload {
+  sro_name: string;
+  sro_registry_number: string;
+  hazardous_objects_right: boolean;
+  nuclear_objects_right: boolean;
+  liability_level: number;
+  pricing_kind: LicenseRentalKind;
+  pricing_percent: number | null;
+  pricing_fixed_amount: number | null;
+}
+
 export interface LicenseHolderRegisterPayload {
   email: string;
   password: string;
@@ -49,6 +60,7 @@ export interface LicenseHolderRegisterPayload {
   lab_accreditation_number?: string | null;
   audit_profile?: LicenseHolderAuditRegisterPayload | null;
   tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
+  design_profile?: LicenseHolderDesignRegisterPayload | null;
   directions?: string[];
 }
 

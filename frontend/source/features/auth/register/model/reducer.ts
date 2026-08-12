@@ -13,6 +13,10 @@ import {
   emptyTechDiagHolderProfile,
   emptyTechDiagProfile,
 } from "@/source/features/directions/tech-diag";
+import {
+  emptyDesignHolderProfile,
+  emptyDesignProfile,
+} from "@/source/features/directions/design";
 import { emptyDirectionFiles } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -47,6 +51,8 @@ export const initialState: RegisterState = {
   laboratoryProfile: null,
   techDiagProfile: null,
   techDiagHolderProfile: null,
+  designProfile: null,
+  designHolderProfile: null,
   directionFiles: emptyDirectionFiles,
   licenseEnabled: false,
   licenseNumber: "",
@@ -84,6 +90,12 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
       state.techDiagHolderProfile = { ...emptyTechDiagHolderProfile };
     }
   }
+  if (preset.direction === "DESIGN") {
+    if (preset.role === "EXPERT") state.designProfile = { ...emptyDesignProfile };
+    if (preset.role === "LICENSE_HOLDER") {
+      state.designHolderProfile = { ...emptyDesignHolderProfile };
+    }
+  }
   if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
     state.cadastralProfile = { ...emptyCadastralProfile };
   }
@@ -104,7 +116,8 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     preset.role === "LICENSE_HOLDER" &&
     preset.direction !== "AUDIT_SUPB" &&
     preset.direction !== "TECH_DIAG" &&
-    preset.direction !== "EXPERTISE"
+    preset.direction !== "EXPERTISE" &&
+    preset.direction !== "DESIGN"
   ) {
     state.directions = [preset.direction];
   }
@@ -137,6 +150,8 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         laboratoryProfile: null,
         techDiagProfile: null,
         techDiagHolderProfile: null,
+        designProfile: null,
+        designHolderProfile: null,
         directionFiles: emptyDirectionFiles,
       };
     case "travels":
@@ -182,6 +197,10 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, techDiagProfile: action.value };
     case "techDiagHolder":
       return { ...state, techDiagHolderProfile: action.value };
+    case "design":
+      return { ...state, designProfile: action.value };
+    case "designHolder":
+      return { ...state, designHolderProfile: action.value };
     case "licenseEnabled":
       return { ...state, licenseEnabled: action.value };
     case "areas":

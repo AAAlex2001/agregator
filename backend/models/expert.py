@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from models.account import Account
     from models.audit import ExpertAuditProfile
     from models.cadastral import ExpertCadastralProfile
+    from models.design import ExpertDesignProfile
     from models.forensic import ExpertForensicProfile
     from models.laboratory import ExpertLaboratoryProfile
     from models.research import ExpertResearchProfile
@@ -115,6 +116,14 @@ class Expert(Base):
     )
 
     tech_diag_profile: Mapped["ExpertTechDiagProfile | None"] = relationship(
+        back_populates="expert",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+
+    design_profile: Mapped["ExpertDesignProfile | None"] = relationship(
         back_populates="expert",
         cascade="all, delete-orphan",
         passive_deletes=True,

@@ -1,6 +1,7 @@
 "Use case: register license holder."
 from models.account import Account, UserRole
 from models.audit import LicenseHolderAuditProfile
+from models.design import LicenseHolderDesignProfile
 from models.license_holder import LicenseHolder, LicenseRentalKind
 from models.tech_diag import LicenseHolderTechDiagProfile
 from schemas.registration import LicenseHolderRegistration
@@ -88,6 +89,15 @@ class RegisterLicenseHolderUseCase:
                 LicenseHolderTechDiagProfile(
                     license_holder_id=profile.id,
                     **data.tech_diag_profile.model_dump(),
+                )
+            )
+
+        if data.design_profile is not None:
+            await self.repo.add(
+                LicenseHolderDesignProfile(
+                    license_holder_id=profile.id,
+                    documents=[],
+                    **data.design_profile.model_dump(),
                 )
             )
 

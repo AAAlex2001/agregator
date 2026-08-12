@@ -6,6 +6,7 @@
 """
 from models.expert import Expert
 from models.order import OrderWorkType
+from services.design.catalogs import DESIGN_SPECIALTY_SHORTS, RTN_AREA_TITLES
 from services.tech_diag.catalogs import CONTROL_OBJECTS, NDT_METHODS
 
 AUDIT_KEYS = ("audit_qualifications", "audit_attestation_areas", "audit_safety_areas")
@@ -25,6 +26,13 @@ FORENSIC_KEYS = (
 RESEARCH_KEYS = ("research_degree", "research_title", "research_field")
 LABORATORY_KEYS = ("laboratory_accreditation_area",)
 TECH_DIAG_KEYS = ("tech_diag_certificates", "tech_diag_methods", "tech_diag_control_objects")
+DESIGN_KEYS = (
+    "design_specialties",
+    "design_education",
+    "design_nrs",
+    "design_nok",
+    "design_rtn_areas",
+)
 
 NDT_METHOD_TITLES = {item.code: item.title for item in NDT_METHODS}
 CONTROL_OBJECT_TITLES = {item.code: item.title for item in CONTROL_OBJECTS}
@@ -128,6 +136,28 @@ def tech_diag_summary(expert: Expert, keys: set[str]) -> list[str]:
     return parts or ["Специалист НК"]
 
 
+def design_summary(expert: Expert, keys: set[str]) -> list[str]:
+    "Метка проектировщика: специальности, образование, НРС, НОК и области аттестации РТН."
+    profile = expert.design_profile
+    if profile is None:
+        return ["Проектировщик"]
+    parts = []
+    if "design_specialties" in keys and profile.specialties:
+        shorts = [DESIGN_SPECIALTY_SHORTS.get(code, code) for code in profile.specialties]
+        parts.append("Специальности: " + ", ".join(shorts))
+    if "design_education" in keys and profile.education:
+        parts.append(profile.education[:200])
+    if "design_nrs" in keys and profile.nrs_number:
+        parts.append(f"НРС № {profile.nrs_number}")
+    if "design_nok" in keys and profile.nok_passed:
+        parts.append("Пройдена независимая оценка квалификации")
+    if "design_rtn_areas" in keys and profile.rtn_areas:
+        codes = [code for code in profile.rtn_areas if code in RTN_AREA_TITLES]
+        if codes:
+            parts.append("Аттестация РТН: " + ", ".join(codes))
+    return parts or ["Проектировщик"]
+
+
 def build_direction_summary(expert: Expert, direction: str, fields: list[str]) -> list[str]:
     "Строки метки по анкете направления с учётом настроек «что показывать на карте»."
     if direction == OrderWorkType.AUDIT_SUPB.value:
@@ -142,4 +172,6 @@ def build_direction_summary(expert: Expert, direction: str, fields: list[str]) -
         return laboratory_summary(expert, chosen_keys(fields, LABORATORY_KEYS))
     if direction == OrderWorkType.TECH_DIAG.value:
         return tech_diag_summary(expert, chosen_keys(fields, TECH_DIAG_KEYS))
+    if direction == OrderWorkType.DESIGN.value:
+        return design_summary(expert, chosen_keys(fields, DESIGN_KEYS))
     return []

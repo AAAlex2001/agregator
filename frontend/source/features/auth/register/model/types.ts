@@ -15,6 +15,7 @@ import type { ForensicProfile } from "@/source/features/directions/forensic";
 import type { ResearchProfile } from "@/source/features/directions/research";
 import type { LaboratoryProfile } from "@/source/features/directions/laboratory";
 import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/features/directions/tech-diag";
+import type { DesignHolderProfile, DesignProfile } from "@/source/features/directions/design";
 import type { DirectionFilesState } from "./directionFiles";
 
 export type StringField =
@@ -35,7 +36,16 @@ export type StringField =
 export type FileKey = "license" | "mining" | "sro" | "lab";
 export type ConsentKey = "privacy" | "terms" | "personal";
 export type DocFileKey = "cadastralDiploma" | "cadastralCertificate" | "forensicDiploma";
-export type DocListKey = "auditDocuments" | "cadastralDocuments" | "forensicDocuments" | "techDiagDocuments";
+export type DocListKey =
+  | "auditDocuments"
+  | "cadastralDocuments"
+  | "forensicDocuments"
+  | "techDiagDocuments"
+  | "designEducationDocuments"
+  | "designNokDocuments"
+  | "designNrsDocuments"
+  | "designQualificationDocuments"
+  | "designRtnDocuments";
 
 export interface RegisterState {
   waiting: boolean;
@@ -68,6 +78,8 @@ export interface RegisterState {
   laboratoryProfile: LaboratoryProfile | null;
   techDiagProfile: TechDiagProfile | null;
   techDiagHolderProfile: TechDiagHolderProfile | null;
+  designProfile: DesignProfile | null;
+  designHolderProfile: DesignHolderProfile | null;
   directionFiles: DirectionFilesState;
   licenseEnabled: boolean;
   licenseNumber: string;
@@ -106,6 +118,8 @@ export type RegisterAction =
   | { type: "laboratory"; value: LaboratoryProfile | null }
   | { type: "techDiag"; value: TechDiagProfile | null }
   | { type: "techDiagHolder"; value: TechDiagHolderProfile | null }
+  | { type: "design"; value: DesignProfile | null }
+  | { type: "designHolder"; value: DesignHolderProfile | null }
   | { type: "licenseEnabled"; value: boolean }
   | { type: "areas"; value: ExpertiseType[] }
   | { type: "rentalKind"; value: LicenseRentalKind }

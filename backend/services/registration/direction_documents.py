@@ -15,6 +15,7 @@ from services.cadastral import (
     ReplaceCadastralFileUseCase,
     UploadCadastralDocumentUseCase,
 )
+from services.design import DesignRepository, DesignValidator, UploadDesignDocumentUseCase
 from services.forensic import (
     ForensicRepository,
     ForensicValidator,
@@ -24,6 +25,14 @@ from services.forensic import (
 from services.tech_diag import TechDiagRepository, TechDiagValidator, UploadTechDiagDocumentUseCase
 
 MAX_REGISTRATION_DOCUMENTS = 20
+
+DESIGN_SLOT_GROUPS = {
+    "DESIGN_EDUCATION": "education",
+    "DESIGN_NOK": "nok",
+    "DESIGN_NRS": "nrs",
+    "DESIGN_QUALIFICATION": "qualification",
+    "DESIGN_RTN": "rtn",
+}
 
 
 async def attach_documents(
@@ -56,6 +65,11 @@ async def upload_to_slot(db: AsyncSession, account_id: int, slot: str, file: Upl
     if slot == "TECH_DIAG":
         repo = TechDiagRepository(db)
         await UploadTechDiagDocumentUseCase(repo, TechDiagValidator(repo)).execute(account_id, file)
+        return
+    if slot in DESIGN_SLOT_GROUPS:
+        repo = DesignRepository(db)
+        use_case = UploadDesignDocumentUseCase(repo, DesignValidator(repo))
+        await use_case.execute(account_id, DESIGN_SLOT_GROUPS[slot], file)
         return
     if slot in ("CADASTRAL_DIPLOMA", "CADASTRAL_CERTIFICATE", "CADASTRAL"):
         repo = CadastralRepository(db)

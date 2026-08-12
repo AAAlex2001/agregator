@@ -14,6 +14,7 @@ import type { ForensicProfile } from "@/source/features/directions/forensic";
 import type { LaboratoryProfile } from "@/source/features/directions/laboratory";
 import type { ResearchProfile } from "@/source/features/directions/research";
 import type { TechDiagProfile } from "@/source/features/directions/tech-diag";
+import type { DesignProfile } from "@/source/features/directions/design";
 
 export interface RegisterPayload {
   role: UserRole;
@@ -39,6 +40,7 @@ export interface RegisterPayload {
   research_profile?: ResearchProfile | null;
   laboratory_profile?: LaboratoryProfile | null;
   tech_diag_profile?: TechDiagProfile | null;
+  design_profile?: DesignProfile | null;
   contact_sales_enabled?: boolean;
   contact_price_rubles?: number;
   contact_payment_details?: string;
@@ -53,7 +55,12 @@ export type RegisterDocumentSlot =
   | "CADASTRAL"
   | "FORENSIC_DIPLOMA"
   | "FORENSIC"
-  | "TECH_DIAG";
+  | "TECH_DIAG"
+  | "DESIGN_EDUCATION"
+  | "DESIGN_NOK"
+  | "DESIGN_NRS"
+  | "DESIGN_QUALIFICATION"
+  | "DESIGN_RTN";
 
 export interface RegisterDocument {
   slot: RegisterDocumentSlot;

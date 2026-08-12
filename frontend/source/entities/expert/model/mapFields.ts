@@ -43,6 +43,17 @@ export const DIRECTION_MAP_FIELD_GROUPS: MapFieldGroup[] = [
     ],
   },
   {
+    direction: "DESIGN",
+    title: "Проектирование",
+    options: [
+      { value: "design_specialties", label: "Специальности" },
+      { value: "design_education", label: "Образование" },
+      { value: "design_nrs", label: "Номер в НРС" },
+      { value: "design_nok", label: "Отметка о НОК" },
+      { value: "design_rtn_areas", label: "Области аттестации РТН" },
+    ],
+  },
+  {
     direction: "RESEARCH",
     title: "НИР",
     options: [

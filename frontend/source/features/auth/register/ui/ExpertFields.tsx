@@ -33,6 +33,13 @@ import {
   TechDiagProfileFields,
   type TechDiagCatalogs,
 } from "@/source/features/directions/tech-diag";
+import {
+  DesignProfileFields,
+  emptyDesignCatalogs,
+  emptyDesignProfile,
+  fetchDesignCatalogs,
+  type DesignCatalogs,
+} from "@/source/features/directions/design";
 import { LocalFilePicker } from "@/source/features/directions/shared/ui/LocalFilePicker";
 import { LocalFilesPicker } from "@/source/features/directions/shared/ui/LocalFilesPicker";
 import { DirectionOption } from "./directions/DirectionOption";
@@ -45,6 +52,7 @@ function activeDirections(state: StepProps["state"]): string[] {
     ["EXPERTISE", state.expertiseProfile],
     ["AUDIT_SUPB", state.auditExpertProfile],
     ["TECH_DIAG", state.techDiagProfile],
+    ["DESIGN", state.designProfile],
     ["RESEARCH", state.researchProfile],
     ["LABORATORY", state.laboratoryProfile],
     ["CADASTRAL", state.cadastralProfile],
@@ -56,10 +64,12 @@ function activeDirections(state: StepProps["state"]): string[] {
 export function ExpertFields({ state, dispatch }: StepProps) {
   const [catalogs, setCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
   const [techDiagCatalogs, setTechDiagCatalogs] = useState<TechDiagCatalogs>(emptyTechDiagCatalogs);
+  const [designCatalogs, setDesignCatalogs] = useState<DesignCatalogs>(emptyDesignCatalogs);
 
   useEffect(() => {
     fetchAuditCatalogs().then(setCatalogs).catch(() => undefined);
     fetchTechDiagCatalogs().then(setTechDiagCatalogs).catch(() => undefined);
+    fetchDesignCatalogs().then(setDesignCatalogs).catch(() => undefined);
   }, []);
 
   const { expertiseProfile, auditExpertProfile, cadastralProfile, forensicProfile } = state;
@@ -230,6 +240,56 @@ export function ExpertFields({ state, dispatch }: StepProps) {
                 files={state.directionFiles.techDiagDocuments}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "techDiagDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "techDiagDocuments", index })}
+              />
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="DESIGN"
+          title="Проектирование промышленных и гражданских объектов"
+          description="Специальности по разделам ПД, НОК, НРС и аттестация РТН по промышленной безопасности"
+          checked={state.designProfile !== null}
+          onToggle={() =>
+            dispatch({ type: "design", value: state.designProfile ? null : { ...emptyDesignProfile } })
+          }
+        >
+          {state.designProfile && (
+            <>
+              <DesignProfileFields
+                value={state.designProfile}
+                onChange={(value) => dispatch({ type: "design", value })}
+                catalogs={designCatalogs}
+              />
+              <LocalFilesPicker
+                label="Диплом об образовании — до 5 документов"
+                files={state.directionFiles.designEducationDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "designEducationDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "designEducationDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Свидетельство НОК"
+                files={state.directionFiles.designNokDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "designNokDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "designNokDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Уведомление о включении в НРС"
+                files={state.directionFiles.designNrsDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "designNrsDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "designNrsDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Повышение квалификации, курсы — до 5 документов"
+                files={state.directionFiles.designQualificationDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "designQualificationDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "designQualificationDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Протокол аттестации РТН"
+                files={state.directionFiles.designRtnDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "designRtnDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "designRtnDocuments", index })}
               />
             </>
           )}

@@ -10,6 +10,10 @@ import { ORDER_WORK_OPTIONS } from "@/source/entities/order";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import { emptyAuditLicenseHolderProfile } from "@/source/features/directions/audit";
 import { emptyTechDiagHolderProfile } from "@/source/features/directions/tech-diag";
+import {
+  DesignHolderProfileFields,
+  emptyDesignHolderProfile,
+} from "@/source/features/directions/design";
 import { DirectionOption } from "./directions/DirectionOption";
 import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
 import type { StepProps } from "./types";
@@ -18,12 +22,13 @@ import d from "./directions/DirectionsPicker.module.scss";
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 
 const HOLDER_MARK_OPTIONS = ORDER_WORK_OPTIONS.filter(
-  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG"].includes(option.value),
+  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN"].includes(option.value),
 );
 
 export function HolderFields({ state, dispatch }: StepProps) {
   const audit = state.auditHolderProfile;
   const techDiag = state.techDiagHolderProfile;
+  const design = state.designHolderProfile;
   const licenseFileInputRef = useRef<HTMLInputElement>(null);
   const licenseBlobUrl = useObjectUrl(state.files.license);
 
@@ -144,6 +149,29 @@ export function HolderFields({ state, dispatch }: StepProps) {
               <span className={d.itemText}>
                 Виды неразрушающего контроля укажете в личном кабинете. Лицензию и аккредитацию
                 лаборатории приложите в блоке лицензии выше.
+              </span>
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="DESIGN"
+          title="Проектирование промышленных и гражданских объектов"
+          description="Членство в СРО проектировщиков: права, компенсационный фонд и условия предоставления"
+          checked={design !== null}
+          onToggle={() =>
+            dispatch({ type: "designHolder", value: design ? null : { ...emptyDesignHolderProfile } })
+          }
+        >
+          {design && (
+            <>
+              <DesignHolderProfileFields
+                value={design}
+                onChange={(value) => dispatch({ type: "designHolder", value })}
+              />
+              <span className={d.itemText}>
+                Выписку из реестра членов СРО приложите в блоке разрешительных документов выше,
+                дополнительные документы можно загрузить в личном кабинете.
               </span>
             </>
           )}

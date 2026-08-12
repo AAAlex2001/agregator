@@ -93,6 +93,10 @@ DIRECTIONS: tuple[Direction, ...] = (
         details_input_schema=TechDiagOrderDetailsInput,
         details_response_schema=TechDiagOrderDetailsResponse,
     ),
+    Direction(
+        key=OrderWorkType.DESIGN.value,
+        title="Проектирование промышленных и гражданских объектов",
+    ),
 )
 
 DIRECTIONS_BY_KEY: dict[str, Direction] = {direction.key: direction for direction in DIRECTIONS}

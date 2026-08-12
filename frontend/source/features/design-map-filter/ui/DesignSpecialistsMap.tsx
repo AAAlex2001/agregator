@@ -1,13 +1,16 @@
 "use client";
 
+import { useExpertsMap } from "@/source/entities/expert";
+import { useSession } from "@/source/features/session";
+import { toMarker } from "@/source/features/expert-map-filter";
 import ToolTip from "@/source/shared/ui/Tooltip";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { useDesignMapFilter } from "../model/useDesignMapFilter";
 import s from "./designSpecialistsMap.module.scss";
 
-const EMPTY_TEXT = "Проектировщики скоро появятся на площадке";
-
 export function DesignSpecialistsMap() {
+  const { user } = useSession();
+  const { items, isLoading } = useExpertsMap("DESIGN");
   const {
     categories,
     specialties,
@@ -16,6 +19,10 @@ export function DesignSpecialistsMap() {
     toggleCategory,
     toggleSpecialty,
   } = useDesignMapFilter();
+
+  const emptyText = isLoading
+    ? "Загрузка карты исполнителей…"
+    : "Пока нет исполнителей этого направления";
 
   return (
     <div className={s.layout}>
@@ -34,7 +41,12 @@ export function DesignSpecialistsMap() {
       </div>
 
       <div className={s.mapBox}>
-        <YandexMarkersMap markers={[]} height="100%" emptyText={EMPTY_TEXT} />
+        <YandexMarkersMap
+          markers={items.map(toMarker)}
+          height="100%"
+          emptyText={emptyText}
+          contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
+        />
       </div>
 
       <div className={s.specialtiesAxis} role="group" aria-label="Фильтр по специалистам">

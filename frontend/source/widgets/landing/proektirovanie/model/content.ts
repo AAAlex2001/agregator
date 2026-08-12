@@ -240,6 +240,7 @@ export const DESIGN_ROLES: ServiceLandingRole[] = [
   {
     id: "customer",
     role: "CUSTOMER",
+    direction: "DESIGN",
     title: "Заказчик",
     subtitle: "(предприятие или застройщик)",
     description:
@@ -254,6 +255,7 @@ export const DESIGN_ROLES: ServiceLandingRole[] = [
   {
     id: "expert",
     role: "EXPERT",
+    direction: "DESIGN",
     title: "Исполнитель",
     subtitle: "(специалист-проектировщик)",
     description:
@@ -269,6 +271,7 @@ export const DESIGN_ROLES: ServiceLandingRole[] = [
   {
     id: "license-holder",
     role: "LICENSE_HOLDER",
+    direction: "DESIGN",
     title: "Держатель разрешительных документов",
     subtitle: "(организация — член СРО)",
     description:

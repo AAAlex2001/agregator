@@ -6,7 +6,8 @@ export type OrderWorkType =
   | "FORENSIC"
   | "RESEARCH"
   | "LABORATORY"
-  | "TECH_DIAG";
+  | "TECH_DIAG"
+  | "DESIGN";
 
 export interface OrderWorkOption {
   value: Exclude<OrderWorkType, "RESEARCH_LAB">;
@@ -19,6 +20,7 @@ export const ORDER_WORK_OPTIONS: OrderWorkOption[] = [
   { value: "EXPERTISE", label: "Экспертиза промышленной безопасности", shortLabel: "Экспертиза", description: "Технические устройства, здания и сооружения, документация ОПО" },
   { value: "AUDIT_SUPB", label: "Аудит СУПБ", description: "Независимая оценка системы управления промышленной безопасностью" },
   { value: "TECH_DIAG", label: "Техническое освидетельствование и диагностирование", shortLabel: "Техдиагностирование", description: "Оценка состояния оборудования и неразрушающий контроль аттестованными лабораториями и специалистами" },
+  { value: "DESIGN", label: "Проектирование промышленных и гражданских объектов", shortLabel: "Проектирование", description: "Проектная и рабочая документация силами специалистов НОПРИЗ, включённых в НРС" },
   { value: "RESEARCH", label: "НИРы", description: "Научно-исследовательские работы: тема, требования к исполнителю, выезд на объект" },
   { value: "LABORATORY", label: "Лабораторные исследования", description: "Наименование исследований и требования к оборудованию" },
   { value: "CADASTRAL", label: "Кадастровые работы", description: "Межевание, технические планы, схемы на КПТ и другие работы кадастровых инженеров" },

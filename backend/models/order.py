@@ -45,6 +45,7 @@ class OrderWorkType(str, PyEnum):
     LABORATORY = "LABORATORY"
     AUDIT_SUPB = "AUDIT_SUPB"
     TECH_DIAG = "TECH_DIAG"
+    DESIGN = "DESIGN"
 
 
 class BadgeVariant(str, PyEnum):

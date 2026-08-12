@@ -12,6 +12,7 @@
 from models.account import Account
 from models.audit import CustomerAuditProfile, ExpertAuditProfile, LicenseHolderAuditProfile
 from models.cadastral import ExpertCadastralProfile
+from models.design import ExpertDesignProfile
 from models.forensic import ExpertForensicProfile
 from models.laboratory import ExpertLaboratoryProfile
 from models.research import ExpertResearchProfile
@@ -22,6 +23,7 @@ DirectionProfile = (
     CustomerAuditProfile
     | ExpertAuditProfile
     | ExpertCadastralProfile
+    | ExpertDesignProfile
     | ExpertForensicProfile
     | ExpertLaboratoryProfile
     | ExpertResearchProfile
@@ -96,6 +98,19 @@ def build_direction_profiles(account: Account, data: UserRegistration) -> list[D
                 expert_id=account.expert_profile.id,
                 documents=[],
                 **data.tech_diag_profile.model_dump(),
+            )
+        )
+
+    if data.design_profile is not None:
+        created.append(
+            ExpertDesignProfile(
+                expert_id=account.expert_profile.id,
+                education_documents=[],
+                nok_documents=[],
+                nrs_documents=[],
+                qualification_documents=[],
+                rtn_documents=[],
+                **data.design_profile.model_dump(),
             )
         )
 

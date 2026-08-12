@@ -6,6 +6,7 @@ import { toRussianPhoneApiValue } from "@/source/shared/lib/phone";
 import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import type { CompanyData } from "@/source/entities/user";
 import type { UserRole } from "@/source/entities/user";
+import { holderProfileToApi } from "@/source/features/directions/design";
 import { registerLicenseHolder, registerUser } from "./api";
 import { toRegisterDocuments } from "./directionFiles";
 import { initFromPreset, reducer } from "./reducer";
@@ -51,6 +52,9 @@ export function useRegister(
             lab_accreditation_number: state.labNumber.trim() || null,
             audit_profile: state.auditHolderProfile,
             tech_diag_profile: state.techDiagHolderProfile,
+            design_profile: state.designHolderProfile
+              ? holderProfileToApi(state.designHolderProfile)
+              : null,
             directions: state.directions,
           },
           state.files.license,
@@ -81,6 +85,7 @@ export function useRegister(
             research_profile: state.researchProfile,
             laboratory_profile: state.laboratoryProfile,
             tech_diag_profile: state.techDiagProfile,
+            design_profile: state.designProfile,
             contact_sales_enabled: state.contactEnabled,
             contact_price_rubles: state.contactEnabled
               ? Number(state.contactPrice.replace(/\s/g, ""))

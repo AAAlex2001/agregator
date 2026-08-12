@@ -9,6 +9,7 @@ export interface AuthPreset {
   direction?:
     | "EXPERTISE"
     | "AUDIT_SUPB"
+    | "DESIGN"
     | "RESEARCH"
     | "LABORATORY"
     | "TECH_DIAG"

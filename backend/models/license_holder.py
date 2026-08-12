@@ -21,6 +21,7 @@ from models.base import Base
 if TYPE_CHECKING:
     from models.account import Account
     from models.audit import LicenseHolderAuditProfile
+    from models.design import LicenseHolderDesignProfile
     from models.tech_diag import LicenseHolderTechDiagProfile
 
 
@@ -77,6 +78,13 @@ class LicenseHolder(Base):
         lazy="selectin",
     )
     tech_diag_profile: Mapped["LicenseHolderTechDiagProfile | None"] = relationship(
+        back_populates="license_holder",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    design_profile: Mapped["LicenseHolderDesignProfile | None"] = relationship(
         back_populates="license_holder",
         cascade="all, delete-orphan",
         passive_deletes=True,

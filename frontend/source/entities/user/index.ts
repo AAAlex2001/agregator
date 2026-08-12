@@ -3,6 +3,7 @@ export type {
   UserProfile,
   CompanyData,
   LicenseRentalKind,
+  LicenseHolderDesignRegisterPayload,
   LicenseHolderRegisterPayload,
   LicenseHolderUpdatePayload,
 } from "./model/types";
