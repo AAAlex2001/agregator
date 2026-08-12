@@ -70,11 +70,12 @@ export function DesignHolderProfileFields({ value, onChange }: Props) {
       </div>
 
       <div className={s.field}>
-        <span className={s.label}>Стоимость услуг</span>
         <RentalPriceField
           kind={value.pricing_kind}
           percent={value.pricing_percent}
           fixedAmount={value.pricing_fixed_amount}
+          name="design-pricing-kind"
+          legend="Стоимость услуг"
           onChangeKind={(next) => onChange({ ...value, pricing_kind: next })}
           onChangePercent={(next) => onChange({ ...value, pricing_percent: next })}
           onChangeFixed={(next) => onChange({ ...value, pricing_fixed_amount: next })}

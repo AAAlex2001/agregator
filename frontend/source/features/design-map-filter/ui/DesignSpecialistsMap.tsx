@@ -3,9 +3,9 @@
 import { useExpertsMap } from "@/source/entities/expert";
 import { useSession } from "@/source/features/session";
 import { toMarker } from "@/source/features/expert-map-filter";
-import ToolTip from "@/source/shared/ui/Tooltip";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { useDesignMapFilter } from "../model/useDesignMapFilter";
+import { FilterDropdown } from "./FilterDropdown";
 import s from "./designSpecialistsMap.module.scss";
 
 export function DesignSpecialistsMap() {
@@ -26,18 +26,27 @@ export function DesignSpecialistsMap() {
 
   return (
     <div className={s.layout}>
-      <div className={s.categoriesAxis} role="group" aria-label="Фильтр по видам документации">
-        {availableCategories.map((category) => (
-          <ToolTip key={category.code} message={category.title} side="right" ariaLabel={category.title}>
-            <button
-              type="button"
-              className={`${s.chip} ${categories.includes(category.code) ? s.chipActive : ""}`}
-              onClick={() => toggleCategory(category.code)}
-            >
-              {category.code}
-            </button>
-          </ToolTip>
-        ))}
+      <div className={s.filters}>
+        <FilterDropdown
+          label="Виды документации"
+          options={availableCategories.map((category) => ({
+            value: category.code,
+            short: category.code,
+            title: category.title,
+          }))}
+          selected={categories}
+          onToggle={(value) => toggleCategory(value as (typeof categories)[number])}
+        />
+        <FilterDropdown
+          label="Специалисты"
+          options={availableSpecialties.map((specialty) => ({
+            value: specialty.title,
+            short: specialty.code,
+            title: specialty.title,
+          }))}
+          selected={specialties}
+          onToggle={toggleSpecialty}
+        />
       </div>
 
       <div className={s.mapBox}>
@@ -47,20 +56,6 @@ export function DesignSpecialistsMap() {
           emptyText={emptyText}
           contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}
         />
-      </div>
-
-      <div className={s.specialtiesAxis} role="group" aria-label="Фильтр по специалистам">
-        {availableSpecialties.map((specialty) => (
-          <ToolTip key={specialty.title} message={specialty.title} side="bottom" ariaLabel={specialty.title}>
-            <button
-              type="button"
-              className={`${s.chip} ${specialties.includes(specialty.title) ? s.chipActive : ""}`}
-              onClick={() => toggleSpecialty(specialty.title)}
-            >
-              {specialty.code}
-            </button>
-          </ToolTip>
-        ))}
       </div>
     </div>
   );

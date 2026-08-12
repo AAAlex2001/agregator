@@ -40,24 +40,38 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
           </div>
               <div className={s.links}>
                 <div>
+                  <h2>Направления</h2>
+                  <Link href="/ekspertiza-promyshlennoy-bezopasnosti">Экспертиза промышленной безопасности</Link>
+                  <Link href="/proektirovanie">Проектирование объектов</Link>
+                  <Link href="/audit-supb">Аудит СУПБ</Link>
+                  <Link href="/tehnicheskoe-diagnostirovanie">Техническое диагностирование</Link>
+                  <Link href="/nir">НИР и лабораторные исследования</Link>
+                  <Link href="/kadastrovye-raboty">Кадастровые работы</Link>
+                  <Link href="/sudebnaya-ekspertiza">Судебная экспертиза</Link>
+                </div>
+                <div>
                   <h2>Платформа</h2>
-                  <Link href="/#about">О нас</Link>
-                  <Link href="/#advantages">Как это работает</Link>
-                  <Link href="/#faq">FAQ</Link>
+                  <Link href="/">О платформе</Link>
+                  <Link href="/#advantages">Почему выбирают нас</Link>
+                  <Link href="/#faq">Частые вопросы</Link>
+                  <Link href="/orders">Заказы и тендеры</Link>
+                  <Link href="/reviews">Отзывы</Link>
                   <Link href="/news">Новости отрасли</Link>
-                  <Link href="/blog">Блог об экспертизе ОПО</Link>
+                  <Link href="/blog">Блог платформы</Link>
                 </div>
                 <div>
-                  <h2>Заказчикам</h2>
-                  <AuthLinkButton tab="register">Разместить заказ на экспертизу промышленной безопасности</AuthLinkButton>
-                  <Link href="/orders">Тендеры на экспертизу ОПО</Link>
-                  <AuthLinkButton tab="register">Найти аттестованного исполнителя Ростехнадзора</AuthLinkButton>
-                </div>
-                <div>
-                  <h2>Специалистам</h2>
+                  <h2>Сервисы</h2>
                   <Link href="/zepb-registry">Реестр заключений ЭПБ</Link>
+                  <Link href="/expert-contacts">Контакты исполнителей</Link>
+                  <Link href="/rtn">Разъяснения Ростехнадзора</Link>
+                  <Link href="/rtn/ask">Задать вопрос в Ростехнадзор</Link>
+                  <Link href="/training/defectoscopist-certification">Обучение дефектоскопистов</Link>
+                </div>
+                <div>
+                  <h2>Начать работу</h2>
+                  <AuthLinkButton tab="register">Разместить заказ</AuthLinkButton>
                   <AuthLinkButton tab="register">Создать профиль исполнителя</AuthLinkButton>
-                  <AuthLinkButton tab="register">Портфолио и отзывы</AuthLinkButton>
+                  <AuthLinkButton tab="register">Разместить разрешительные документы</AuthLinkButton>
                 </div>
                 <div>
                   <h2>Документы</h2>
@@ -71,7 +85,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
       </div>
       <div className={s.bottom}>
         <div className={s.bottomLinks}>
-            <span>*Все исполнители имеют аттестацию Ростехнадзора согласно
+            <span>*Исполнители экспертизы промышленной безопасности имеют аттестацию Ростехнадзора согласно
             <a href="https://www.gosnadzor.ru/service/list/certification%20experts/%D0%9F%D1%80-287%20%D0%BE%D1%82%2031.08.2022.pdf?ysclid=mi265psds810889564"
                target="_blank"
                rel="noopener noreferrer"

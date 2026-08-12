@@ -9,6 +9,8 @@ interface Props {
   kind: LicenseRentalKind;
   percent: string;
   fixedAmount: string;
+  name?: string;
+  legend?: string;
   errors?: { percent?: string; fixedAmount?: string };
   onChangeKind: (next: LicenseRentalKind) => void;
   onChangePercent: (value: string) => void;
@@ -37,6 +39,8 @@ export function RentalPriceField({
   kind,
   percent,
   fixedAmount,
+  name = "rentalKind",
+  legend = "Стоимость предоставления лицензии",
   errors,
   onChangeKind,
   onChangePercent,
@@ -45,11 +49,11 @@ export function RentalPriceField({
   return (
     <div className={s.wrap}>
       <RadioGroup
-        name="rentalKind"
+        name={name}
         value={kind}
         options={OPTIONS}
         onChange={onChangeKind}
-        legend="Стоимость предоставления лицензии"
+        legend={legend}
       />
 
       {kind === "PERCENT" && (
