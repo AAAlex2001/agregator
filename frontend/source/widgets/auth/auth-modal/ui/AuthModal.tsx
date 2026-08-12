@@ -26,14 +26,7 @@ export function AuthModal({ initialTab, preset = null, onClose }: Props) {
 
   if (preset) {
     return (
-      <Modal
-        open
-        onClose={onClose}
-        size="md"
-        variant="sheet"
-        ariaLabel="Регистрация"
-        dialogClassName={s.dialog}
-      >
+      <Modal open onClose={onClose} size="md" ariaLabel="Регистрация" dialogClassName={s.dialog}>
         <div className={s.scrollArea}>
           <RegisterTab onSuccess={onClose} preset={preset} />
         </div>
@@ -42,14 +35,7 @@ export function AuthModal({ initialTab, preset = null, onClose }: Props) {
   }
 
   return (
-    <Modal
-      open
-      onClose={onClose}
-      size="md"
-      variant="sheet"
-      ariaLabel="Авторизация"
-      dialogClassName={s.dialog}
-    >
+    <Modal open onClose={onClose} size="md" ariaLabel="Авторизация" dialogClassName={s.dialog}>
       {forgot ? (
         <div className={s.scrollArea}>
           <ForgotFlow onBack={() => setForgot(false)} />
