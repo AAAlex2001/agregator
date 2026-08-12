@@ -5,6 +5,10 @@ import {
   type CadastralOrderDetails,
 } from "@/source/features/directions/cadastral";
 import {
+  emptyDesignOrderDetails,
+  type DesignOrderDetails,
+} from "@/source/features/directions/design";
+import {
   emptyForensicOrderDetails,
   type ForensicOrderDetails,
 } from "@/source/features/directions/forensic";
@@ -21,19 +25,6 @@ import {
   type TechDiagOrderDetails,
 } from "@/source/features/directions/tech-diag";
 
-const DIRECTIONS_WITH_DETAILS: OrderWorkType[] = [
-  "CADASTRAL",
-  "FORENSIC",
-  "RESEARCH",
-  "LABORATORY",
-  "AUDIT_SUPB",
-  "TECH_DIAG",
-];
-
-export function hasOrderDetails(workType: OrderWorkType): boolean {
-  return DIRECTIONS_WITH_DETAILS.includes(workType);
-}
-
 export interface DirectionDetailsValues {
   cadastralDetails: CadastralOrderDetails;
   forensicDetails: ForensicOrderDetails;
@@ -41,6 +32,21 @@ export interface DirectionDetailsValues {
   laboratoryDetails: LaboratoryOrderDetails;
   auditDetails: AuditOrderDetails;
   techDiagDetails: TechDiagOrderDetails;
+  designDetails: DesignOrderDetails;
+}
+
+const DETAILS_KEYS: Partial<Record<OrderWorkType, keyof DirectionDetailsValues>> = {
+  CADASTRAL: "cadastralDetails",
+  FORENSIC: "forensicDetails",
+  RESEARCH: "researchDetails",
+  LABORATORY: "laboratoryDetails",
+  AUDIT_SUPB: "auditDetails",
+  TECH_DIAG: "techDiagDetails",
+  DESIGN: "designDetails",
+};
+
+export function hasOrderDetails(workType: OrderWorkType): boolean {
+  return workType in DETAILS_KEYS;
 }
 
 export function emptyDirectionDetails(): DirectionDetailsValues {
@@ -51,11 +57,8 @@ export function emptyDirectionDetails(): DirectionDetailsValues {
     laboratoryDetails: emptyLaboratoryOrderDetails,
     auditDetails: emptyAuditOrderDetails,
     techDiagDetails: emptyTechDiagOrderDetails,
+    designDetails: emptyDesignOrderDetails,
   });
-}
-
-function merge<T extends object>(empty: T, incoming: object): T {
-  return { ...empty, ...incoming };
 }
 
 export function directionDetailsFromServer(
@@ -63,34 +66,15 @@ export function directionDetailsFromServer(
   incoming: object | null | undefined,
 ): DirectionDetailsValues {
   const values = emptyDirectionDetails();
-  if (!incoming) return values;
-  if (workType === "CADASTRAL") values.cadastralDetails = merge(values.cadastralDetails, incoming);
-  if (workType === "FORENSIC") values.forensicDetails = merge(values.forensicDetails, incoming);
-  if (workType === "RESEARCH") values.researchDetails = merge(values.researchDetails, incoming);
-  if (workType === "LABORATORY") values.laboratoryDetails = merge(values.laboratoryDetails, incoming);
-  if (workType === "AUDIT_SUPB") values.auditDetails = merge(values.auditDetails, incoming);
-  if (workType === "TECH_DIAG") values.techDiagDetails = merge(values.techDiagDetails, incoming);
-  return values;
+  const key = DETAILS_KEYS[workType];
+  if (!key || !incoming) return values;
+  return { ...values, [key]: { ...values[key], ...incoming } };
 }
 
 export function activeDirectionDetails(
   workType: OrderWorkType,
   values: DirectionDetailsValues,
 ): object | undefined {
-  switch (workType) {
-    case "CADASTRAL":
-      return values.cadastralDetails;
-    case "FORENSIC":
-      return values.forensicDetails;
-    case "RESEARCH":
-      return values.researchDetails;
-    case "LABORATORY":
-      return values.laboratoryDetails;
-    case "AUDIT_SUPB":
-      return values.auditDetails;
-    case "TECH_DIAG":
-      return values.techDiagDetails;
-    default:
-      return undefined;
-  }
+  const key = DETAILS_KEYS[workType];
+  return key ? values[key] : undefined;
 }

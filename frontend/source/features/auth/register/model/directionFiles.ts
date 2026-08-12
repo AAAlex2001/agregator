@@ -30,25 +30,27 @@ export const emptyDirectionFiles: DirectionFilesState = {
   designRtnDocuments: [],
 };
 
+const FIELD_SLOTS: Record<keyof DirectionFilesState, RegisterDocument["slot"]> = {
+  auditDocuments: "AUDIT_SUPB",
+  cadastralDiploma: "CADASTRAL_DIPLOMA",
+  cadastralCertificate: "CADASTRAL_CERTIFICATE",
+  cadastralDocuments: "CADASTRAL",
+  forensicDiploma: "FORENSIC_DIPLOMA",
+  forensicDocuments: "FORENSIC",
+  techDiagDocuments: "TECH_DIAG",
+  designEducationDocuments: "DESIGN_EDUCATION",
+  designNokDocuments: "DESIGN_NOK",
+  designNrsDocuments: "DESIGN_NRS",
+  designQualificationDocuments: "DESIGN_QUALIFICATION",
+  designRtnDocuments: "DESIGN_RTN",
+};
+
 export function toRegisterDocuments(files: DirectionFilesState): RegisterDocument[] {
   const documents: RegisterDocument[] = [];
-  if (files.cadastralDiploma) {
-    documents.push({ slot: "CADASTRAL_DIPLOMA", file: files.cadastralDiploma });
+  for (const [field, slot] of Object.entries(FIELD_SLOTS)) {
+    const value = files[field as keyof DirectionFilesState];
+    const list = Array.isArray(value) ? value : value ? [value] : [];
+    for (const file of list) documents.push({ slot, file });
   }
-  if (files.cadastralCertificate) {
-    documents.push({ slot: "CADASTRAL_CERTIFICATE", file: files.cadastralCertificate });
-  }
-  for (const file of files.cadastralDocuments) documents.push({ slot: "CADASTRAL", file });
-  if (files.forensicDiploma) {
-    documents.push({ slot: "FORENSIC_DIPLOMA", file: files.forensicDiploma });
-  }
-  for (const file of files.forensicDocuments) documents.push({ slot: "FORENSIC", file });
-  for (const file of files.auditDocuments) documents.push({ slot: "AUDIT_SUPB", file });
-  for (const file of files.techDiagDocuments) documents.push({ slot: "TECH_DIAG", file });
-  for (const file of files.designEducationDocuments) documents.push({ slot: "DESIGN_EDUCATION", file });
-  for (const file of files.designNokDocuments) documents.push({ slot: "DESIGN_NOK", file });
-  for (const file of files.designNrsDocuments) documents.push({ slot: "DESIGN_NRS", file });
-  for (const file of files.designQualificationDocuments) documents.push({ slot: "DESIGN_QUALIFICATION", file });
-  for (const file of files.designRtnDocuments) documents.push({ slot: "DESIGN_RTN", file });
   return documents;
 }

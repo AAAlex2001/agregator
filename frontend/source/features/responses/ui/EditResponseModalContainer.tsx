@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MAX_ATTACH_FILES_COUNT, mergeFilesWithLimits } from "@/source/shared/lib/fileUploadValidation";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { OrderCardData } from "@/source/entities/order";
@@ -77,35 +77,39 @@ export function EditResponseModalContainer({
   onClose,
   onSubmit,
 }: EditResponseModalContainerProps) {
+  if (!response) return null;
+  return (
+    <EditResponseForm
+      key={response.id}
+      response={response}
+      isSubmitting={isSubmitting}
+      onClose={onClose}
+      onSubmit={onSubmit}
+    />
+  );
+}
+
+interface EditResponseFormProps {
+  response: ResponseCardData;
+  isSubmitting: boolean;
+  onClose: () => void;
+  onSubmit: (formData: EditResponseSubmitData) => void;
+}
+
+function EditResponseForm({ response, isSubmitting, onClose, onSubmit }: EditResponseFormProps) {
   const { showError } = useNotifications();
-  const [startDate, setStartDate] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [cost, setCost] = useState("");
-  const [comment, setComment] = useState("");
-  const [vatKind, setVatKind] = useState<VatKind>("NONE");
+  const [startDate, setStartDate] = useState(response.rawStartDate);
+  const [deadline, setDeadline] = useState(response.rawDeadline);
+  const [cost, setCost] = useState(response.rawSumAmount > 0 ? String(response.rawSumAmount / 100) : "");
+  const [comment, setComment] = useState(response.commentText);
+  const [vatKind, setVatKind] = useState<VatKind>(response.vatKind);
   const [files, setFiles] = useState<File[]>([]);
-  const [existingFiles, setExistingFiles] = useState<ExistingResponseFile[]>([]);
-
-  useEffect(() => {
-    setStartDate(response?.rawStartDate ?? "");
-    setDeadline(response?.rawDeadline ?? "");
-    setCost(response && response.rawSumAmount > 0 ? String(response.rawSumAmount / 100) : "");
-    setComment(response?.commentText ?? "");
-    setVatKind(response?.vatKind ?? "NONE");
-    setFiles([]);
-    setExistingFiles(
-      response
-        ? response.rawTechSpecFiles.map((fileKey, index) => ({
-          key: fileKey,
-          url: response.techSpecFiles[index] ?? fileKey,
-        }))
-        : [],
-    );
-  }, [response?.id]);
-
-  if (!response) {
-    return null;
-  }
+  const [existingFiles, setExistingFiles] = useState<ExistingResponseFile[]>(() =>
+    response.rawTechSpecFiles.map((fileKey, index) => ({
+      key: fileKey,
+      url: response.techSpecFiles[index] ?? fileKey,
+    })),
+  );
 
   const handleAddFiles = (nextFiles: FileList | null) => {
     if (!nextFiles || nextFiles.length === 0) {

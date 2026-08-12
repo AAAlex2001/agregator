@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from models.audit import OrderAuditDetails
     from models.cadastral import OrderCadastralDetails
     from models.chat import Chat
+    from models.design import OrderDesignDetails
     from models.forensic import OrderForensicDetails
     from models.laboratory import OrderLaboratoryDetails
     from models.question import OrderQuestion
@@ -186,6 +187,13 @@ class Order(Base):
         lazy="selectin",
     )
     tech_diag_details: Mapped["OrderTechDiagDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    design_details: Mapped["OrderDesignDetails | None"] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,

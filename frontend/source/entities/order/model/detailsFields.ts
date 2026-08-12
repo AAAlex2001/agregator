@@ -1,3 +1,4 @@
+import { DESIGN_SPECIALTIES } from "@/source/entities/design";
 import type { OrderWorkType } from "./workTypes";
 
 export type OrderDetailKind = "text" | "flag" | "list" | "file" | "opo_list";
@@ -20,7 +21,12 @@ export const ORDER_DETAILS_TITLES: Partial<Record<OrderWorkType, string>> = {
   LABORATORY: "Лабораторные исследования",
   AUDIT_SUPB: "Аудит СУПБ",
   TECH_DIAG: "Техническое освидетельствование и диагностирование",
+  DESIGN: "Проектирование промышленных и гражданских объектов",
 };
+
+const DESIGN_SECTION_LABELS = Object.fromEntries(
+  DESIGN_SPECIALTIES.map((item) => [item.key, item.title]),
+);
 
 const APPLICANT_GROUP = "Заявитель";
 
@@ -112,6 +118,80 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
     { key: "object_city", label: "Где находится объект", kind: "text", group: "Работы" },
     { key: "duration", label: "Срок проведения", kind: "text", group: "Работы" },
   ],
+  DESIGN: [
+    ...APPLICANT_FIELDS,
+    { key: "object_name", label: "Наименование объекта", kind: "text", group: "Объект", wide: true },
+    { key: "construction_city", label: "Город строительства", kind: "text", group: "Объект" },
+    {
+      key: "doc_categories",
+      label: "Направление разрабатываемой документации",
+      kind: "list",
+      group: "Документация",
+      wide: true,
+      valueLabels: {
+        DP: "Дизайн-проекты",
+        PS: "Промышленные объекты",
+        GS: "Гражданские объекты",
+        OKN: "Объекты культурного наследия",
+        BIM: "BIM-моделирование",
+        KD: "Конструкторская документация",
+        NSO: "Нестандартное оборудование",
+      },
+    },
+    {
+      key: "documentation_kinds",
+      label: "Вид документации",
+      kind: "list",
+      group: "Документация",
+      wide: true,
+      valueLabels: {
+        PD: "Проектная документация",
+        RD: "Рабочая документация",
+        TECH_REEQUIPMENT: "Техническое перевооружение",
+        CONSERVATION: "Консервация",
+        LIQUIDATION: "Ликвидация",
+        TECH_PROJECT: "Технический проект",
+      },
+    },
+    {
+      key: "scope",
+      label: "Объём разрабатываемой документации",
+      kind: "text",
+      group: "Документация",
+      valueLabels: {
+        FULL: "Полный пакет документации",
+        SECTIONS: "Отдельные разделы",
+      },
+    },
+    {
+      key: "sections",
+      label: "Разделы проектной документации",
+      kind: "list",
+      group: "Документация",
+      wide: true,
+      valueLabels: DESIGN_SECTION_LABELS,
+    },
+    {
+      key: "approvals",
+      label: "Согласования и экспертизы",
+      kind: "list",
+      group: "Согласования",
+      wide: true,
+      valueLabels: {
+        STATE_EXPERTISE: "Государственная экспертиза",
+        ECO_EXPERTISE: "Государственная экологическая экспертиза",
+        EPB: "Экспертиза промышленной безопасности",
+        CKR_TPI: "Согласование в ЦКР (ТКР)-ТПИ Роснедр",
+      },
+    },
+    {
+      key: "approvals_other",
+      label: "Иные согласования",
+      kind: "text",
+      group: "Согласования",
+      wide: true,
+    },
+  ],
   AUDIT_SUPB: [
     ...APPLICANT_FIELDS,
     {
@@ -181,35 +261,29 @@ export function orderDetailsFields(workType: OrderWorkType): OrderDetailField[] 
   return FIELDS[workType] ?? [];
 }
 
-function isOrderFile(value: unknown): value is { name: string } {
-  return (
-    typeof value === "object" && value !== null && "name" in value && typeof value.name === "string"
-  );
-}
-
-function formatOpoItem(value: unknown): string {
-  if (typeof value !== "object" || value === null) return "";
-  const registration =
-    "registration_number" in value && typeof value.registration_number === "string"
-      ? value.registration_number
-      : "";
-  const name = "name" in value && typeof value.name === "string" ? value.name : "";
-  return [registration, name].filter(Boolean).join(" — ");
+interface OpoItem {
+  registration_number?: string;
+  name?: string;
 }
 
 export function formatOrderDetailValue(field: OrderDetailField, value: unknown): string {
   if (value === null || value === undefined) return "";
   if (field.kind === "flag") {
-    return typeof value === "boolean" ? (value ? "Да" : "Нет") : "";
+    return value ? "Да" : "Нет";
   }
   if (field.kind === "list") {
-    return Array.isArray(value) ? value.filter(Boolean).join(", ") : "";
+    const items = value as string[];
+    return items.map((item) => field.valueLabels?.[item] ?? item).join(", ");
   }
   if (field.kind === "file") {
-    return isOrderFile(value) ? value.name : "";
+    return (value as { name?: string }).name ?? "";
   }
   if (field.kind === "opo_list") {
-    return Array.isArray(value) ? value.map(formatOpoItem).filter(Boolean).join("\n") : "";
+    const items = value as OpoItem[];
+    return items
+      .map((item) => [item.registration_number, item.name].filter(Boolean).join(" — "))
+      .filter(Boolean)
+      .join("\n");
   }
   const text = String(value);
   return field.valueLabels?.[text] ?? text;

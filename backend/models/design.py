@@ -1,4 +1,4 @@
-"""Проектирование промышленных и гражданских объектов: анкеты исполнителей."""
+"""Проектирование промышленных и гражданских объектов: анкеты исполнителей и поля заявки."""
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
@@ -6,11 +6,13 @@ from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Te
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from models.applicant import ApplicantColumns
 from models.base import Base
 
 if TYPE_CHECKING:
     from models.expert import Expert
     from models.license_holder import LicenseHolder
+    from models.order import Order
 
 
 class ExpertDesignProfile(Base):
@@ -70,3 +72,26 @@ class LicenseHolderDesignProfile(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     license_holder: Mapped["LicenseHolder"] = relationship(back_populates="design_profile")
+
+
+class OrderDesignDetails(ApplicantColumns, Base):
+    """Поля заявки на проектирование."""
+    __tablename__ = "order_design_details"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    order_id: Mapped[int] = mapped_column(
+        ForeignKey("orders.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    object_name: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    construction_city: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    doc_categories: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    documentation_kinds: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    scope: Mapped[str] = mapped_column(String(20), nullable=False, default="FULL")
+    sections: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    approvals: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    approvals_other: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+    order: Mapped["Order"] = relationship(back_populates="design_details")

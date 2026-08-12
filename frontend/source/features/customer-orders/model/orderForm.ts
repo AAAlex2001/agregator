@@ -1,6 +1,7 @@
 import type { OrderCardData, OrderWorkType } from "@/source/entities/order";
 import type { AuditOrderDetails } from "@/source/features/directions/audit";
 import type { CadastralOrderDetails } from "@/source/features/directions/cadastral";
+import type { DesignOrderDetails } from "@/source/features/directions/design";
 import type { ForensicOrderDetails } from "@/source/features/directions/forensic";
 import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
 import type { ResearchOrderDetails } from "@/source/features/directions/research";
@@ -28,6 +29,7 @@ export interface OrderFormValues {
   laboratoryDetails: LaboratoryOrderDetails;
   auditDetails: AuditOrderDetails;
   techDiagDetails: TechDiagOrderDetails;
+  designDetails: DesignOrderDetails;
 }
 
 export type StringField =
@@ -59,6 +61,7 @@ export type OrderFormAction =
   | { type: "laboratory"; value: LaboratoryOrderDetails }
   | { type: "audit"; value: AuditOrderDetails }
   | { type: "techDiag"; value: TechDiagOrderDetails }
+  | { type: "design"; value: DesignOrderDetails }
   | { type: "docSingle"; category: SingleCategory; file: File | null }
   | { type: "docRemoveSingleExisting"; category: SingleCategory }
   | { type: "docAddOther"; files: File[] }
@@ -97,6 +100,7 @@ export function orderFormValues(state: OrderFormState): OrderFormValues {
     laboratoryDetails: state.laboratoryDetails,
     auditDetails: state.auditDetails,
     techDiagDetails: state.techDiagDetails,
+    designDetails: state.designDetails,
   };
 }
 
@@ -134,6 +138,8 @@ export function reducer(state: OrderFormState, action: OrderFormAction): OrderFo
       return { ...state, auditDetails: action.value };
     case "techDiag":
       return { ...state, techDiagDetails: action.value };
+    case "design":
+      return { ...state, designDetails: action.value };
     case "docSingle":
       return {
         ...state,

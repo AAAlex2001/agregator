@@ -7,6 +7,7 @@ export function useObjectUrls(files: File[] | undefined): string[] {
 
   useEffect(() => {
     if (!files?.length) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- blob-URL создаются с побочным эффектом, их место в эффекте
       setUrls([]);
       return;
     }

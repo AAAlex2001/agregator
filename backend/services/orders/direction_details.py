@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from models.audit import OrderAuditDetails, OrderAuditOpoItem
 from models.base import Base
 from models.cadastral import OrderCadastralDetails
+from models.design import OrderDesignDetails
 from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.research import OrderResearchDetails
@@ -19,6 +20,7 @@ from services.directions.registry import Direction
 OrderDirectionDetails = (
     OrderAuditDetails
     | OrderCadastralDetails
+    | OrderDesignDetails
     | OrderForensicDetails
     | OrderLaboratoryDetails
     | OrderResearchDetails

@@ -31,15 +31,14 @@ export function buildPreviewBadges(selections: Record<string, string[]>): Badge[
 export function parseBadges(badges: { text: string }[]): Record<string, string[]> {
   const result: Record<string, string[]> = {};
   for (const badge of badges) {
-    const match = badge.text.trim().match(/^Э([\d.]+)\s+(.+)$/);
-    if (!match) continue;
+    const [opoWithPrefix, type] = badge.text.trim().split(" ");
+    if (!opoWithPrefix?.startsWith("Э") || !type) continue;
 
-    const opo = match[1];
-    const type = match[2] as ExpertiseType;
-    if (cell(opo, type).length === 0) continue;
+    const opo = opoWithPrefix.slice(1);
+    if (cell(opo, type as ExpertiseType).length === 0) continue;
 
-    if (!result[type]) result[type] = [];
-    if (!result[type].includes(opo)) result[type].push(opo);
+    const opos = result[type] ?? [];
+    if (!opos.includes(opo)) result[type] = [...opos, opo];
   }
   return result;
 }

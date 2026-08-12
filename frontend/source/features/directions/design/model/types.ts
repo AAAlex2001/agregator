@@ -1,4 +1,5 @@
 import type { DirectionFile } from "../../shared/model/files";
+import { emptyApplicant, type ApplicantBlock } from "../../shared/model/applicant";
 import type { LicenseRentalKind } from "@/source/entities/user";
 
 export interface DesignCatalogOption {
@@ -13,6 +14,9 @@ export interface DesignSpecialtyOption extends DesignCatalogOption {
 export interface DesignCatalogs {
   specialties: DesignSpecialtyOption[];
   rtn_areas: DesignCatalogOption[];
+  doc_categories: DesignCatalogOption[];
+  documentation_kinds: DesignCatalogOption[];
+  approvals: DesignCatalogOption[];
 }
 
 export type DesignDocumentGroup = "education" | "nok" | "nrs" | "qualification" | "rtn";
@@ -44,9 +48,37 @@ export interface DesignHolderProfile {
   documents: DirectionFile[];
 }
 
+export type DesignOrderScope = "FULL" | "SECTIONS";
+
+export interface DesignOrderDetails extends ApplicantBlock {
+  object_name: string;
+  construction_city: string;
+  doc_categories: string[];
+  documentation_kinds: string[];
+  scope: DesignOrderScope;
+  sections: string[];
+  approvals: string[];
+  approvals_other: string;
+}
+
 export const emptyDesignCatalogs: DesignCatalogs = {
   specialties: [],
   rtn_areas: [],
+  doc_categories: [],
+  documentation_kinds: [],
+  approvals: [],
+};
+
+export const emptyDesignOrderDetails: DesignOrderDetails = {
+  ...emptyApplicant,
+  object_name: "",
+  construction_city: "",
+  doc_categories: [],
+  documentation_kinds: [],
+  scope: "FULL",
+  sections: [],
+  approvals: [],
+  approvals_other: "",
 };
 
 export const emptyDesignProfile: DesignProfile = {

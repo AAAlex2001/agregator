@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
+import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
 import {
   getFileDisplayName,
   getFileExtension,
@@ -38,6 +39,7 @@ function formatBytes(bytes: number): string {
 
 interface Props {
   documents: DocumentsFormState;
+  requirementHint?: string;
   onSetSingle: (category: "technical" | "contract" | "company", file: File | null) => void;
   onRemoveSingleExisting: (category: "technical" | "contract" | "company") => void;
   onAddOther: (files: File[]) => void;
@@ -47,6 +49,7 @@ interface Props {
 
 export function FilesSection({
   documents,
+  requirementHint,
   onSetSingle,
   onRemoveSingleExisting,
   onAddOther,
@@ -58,6 +61,7 @@ export function FilesSection({
   return (
     <section className={base.section}>
       <span className={base.label}>Документы заказа</span>
+      {requirementHint && <span className={s.requirementHint}>{requirementHint}</span>}
       <div className={s.row}>
         {SINGLE_DOCUMENT_CATEGORIES.map((category) => (
           <SingleSlotField
@@ -202,18 +206,8 @@ function AddTile({ onClick }: { onClick: () => void }) {
 }
 
 function NewFileTile({ file, onRemove }: { file: File; onRemove: () => void }) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const isImage = isImageFileName(file.name);
-
-  useEffect(() => {
-    if (!isImage) {
-      setPreviewUrl(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file, isImage]);
+  const previewUrl = useObjectUrl(isImage ? file : null);
 
   return (
     <FileTile

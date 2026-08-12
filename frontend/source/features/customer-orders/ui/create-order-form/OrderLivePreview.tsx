@@ -94,6 +94,7 @@ function usePreviewDocuments(state: DocumentsFormState): OrderDocuments {
     for (const file of newFiles) {
       next.set(file, `${URL.createObjectURL(file)}#name=${encodeURIComponent(file.name)}`);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- blob-URL создаются с побочным эффектом, их место в эффекте
     setBlobUrls(next);
     return () => { next.forEach((url) => URL.revokeObjectURL(url.split("#")[0])); };
   }, [

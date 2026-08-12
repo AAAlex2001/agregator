@@ -1,9 +1,11 @@
-"""DTO проектирования: анкеты проектировщика и держателя-члена СРО."""
+"""DTO проектирования: анкеты проектировщика и держателя-члена СРО, поля заявки."""
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
 from schemas.common import DirectionFileSchema
 
 DESIGN_PRICING_KINDS = ("PERCENT", "FIXED", "NEGOTIABLE")
+DESIGN_ORDER_SCOPES = ("FULL", "SECTIONS")
 
 
 class DesignCatalogOption(BaseModel):
@@ -20,9 +22,12 @@ class DesignSpecialtyOption(DesignCatalogOption):
 
 
 class DesignCatalogsResponse(BaseModel):
-    """Справочники направления: специальности и области аттестации РТН."""
+    """Справочники направления: специальности, области аттестации РТН и опции заявки."""
     specialties: list[DesignSpecialtyOption]
     rtn_areas: list[DesignCatalogOption]
+    doc_categories: list[DesignCatalogOption]
+    documentation_kinds: list[DesignCatalogOption]
+    approvals: list[DesignCatalogOption]
 
 
 class DesignExpertProfileInput(BaseModel):
@@ -86,3 +91,34 @@ class DesignLicenseHolderProfileResponse(BaseModel):
     pricing_percent: float | None = None
     pricing_fixed_amount: int | None = None
     documents: list[DirectionFileSchema] = Field(default_factory=list)
+
+
+class DesignOrderDetailsInput(ApplicantDetailsInput):
+    """Поля заявки на проектирование."""
+    object_name: str = Field("", max_length=500)
+    construction_city: str = Field("", max_length=200)
+    doc_categories: list[str] = Field(default_factory=list, max_length=10)
+    documentation_kinds: list[str] = Field(default_factory=list, max_length=10)
+    scope: str = "FULL"
+    sections: list[str] = Field(default_factory=list, max_length=80)
+    approvals: list[str] = Field(default_factory=list, max_length=10)
+    approvals_other: str = Field("", max_length=2000)
+
+    @field_validator("scope")
+    @classmethod
+    def validate_scope(cls, value: str) -> str:
+        if value not in DESIGN_ORDER_SCOPES:
+            raise ValueError("Неизвестный объём разрабатываемой документации")
+        return value
+
+
+class DesignOrderDetailsResponse(ApplicantDetailsResponse):
+    """Поля заявки на проектирование в ответе API."""
+    object_name: str = ""
+    construction_city: str = ""
+    doc_categories: list[str] = Field(default_factory=list)
+    documentation_kinds: list[str] = Field(default_factory=list)
+    scope: str = "FULL"
+    sections: list[str] = Field(default_factory=list)
+    approvals: list[str] = Field(default_factory=list)
+    approvals_other: str = ""

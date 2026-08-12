@@ -119,7 +119,9 @@ export async function fetchStaticNewsMetrics(
   );
   if (!response.ok) return {};
   const items = await response.json() as Array<ArticleMetrics & { news_id: number }>;
-  return Object.fromEntries(items.map(({ news_id, ...metrics }) => [news_id, metrics]));
+  const result: Record<number, ArticleMetrics> = {};
+  for (const { news_id, ...metrics } of items) result[news_id] = metrics;
+  return result;
 }
 
 export function applyArticleMetrics(

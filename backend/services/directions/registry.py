@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from models.audit import OrderAuditDetails
 from models.base import Base
 from models.cadastral import OrderCadastralDetails
+from models.design import OrderDesignDetails
 from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.order import OrderWorkType
@@ -18,6 +19,7 @@ from models.research import OrderResearchDetails
 from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput, AuditOrderDetailsResponse
 from schemas.cadastral import CadastralOrderDetailsInput, CadastralOrderDetailsResponse
+from schemas.design import DesignOrderDetailsInput, DesignOrderDetailsResponse
 from schemas.forensic import ForensicOrderDetailsInput, ForensicOrderDetailsResponse
 from schemas.laboratory import LaboratoryOrderDetailsInput, LaboratoryOrderDetailsResponse
 from schemas.research import ResearchOrderDetailsInput, ResearchOrderDetailsResponse
@@ -96,6 +98,10 @@ DIRECTIONS: tuple[Direction, ...] = (
     Direction(
         key=OrderWorkType.DESIGN.value,
         title="Проектирование промышленных и гражданских объектов",
+        details_model=OrderDesignDetails,
+        details_attribute="design_details",
+        details_input_schema=DesignOrderDetailsInput,
+        details_response_schema=DesignOrderDetailsResponse,
     ),
 )
 

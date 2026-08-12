@@ -190,14 +190,48 @@ RTN_ATTESTATION_AREAS: tuple[CatalogItem, ...] = (
     CatalogItem("Г.2.4", "Эксплуатация объектов возобновляемых источников энергии"),
 )
 
+DESIGN_DOC_CATEGORIES: tuple[CatalogItem, ...] = (
+    CatalogItem("DP", "Дизайн-проекты"),
+    CatalogItem("PS", "Промышленные объекты"),
+    CatalogItem("GS", "Гражданские объекты"),
+    CatalogItem("OKN", "Объекты культурного наследия"),
+    CatalogItem("BIM", "BIM-моделирование"),
+    CatalogItem("KD", "Конструкторская документация"),
+    CatalogItem("NSO", "Нестандартное оборудование"),
+)
+
+DESIGN_DOCUMENTATION_KINDS: tuple[CatalogItem, ...] = (
+    CatalogItem("PD", "Проектная документация"),
+    CatalogItem("RD", "Рабочая документация"),
+    CatalogItem("TECH_REEQUIPMENT", "Техническое перевооружение"),
+    CatalogItem("CONSERVATION", "Консервация"),
+    CatalogItem("LIQUIDATION", "Ликвидация"),
+    CatalogItem("TECH_PROJECT", "Технический проект"),
+)
+
+DESIGN_APPROVALS: tuple[CatalogItem, ...] = (
+    CatalogItem("STATE_EXPERTISE", "Государственная экспертиза"),
+    CatalogItem("ECO_EXPERTISE", "Государственная экологическая экспертиза"),
+    CatalogItem("EPB", "Экспертиза промышленной безопасности"),
+    CatalogItem("CKR_TPI", "Согласование в ЦКР (ТКР)-ТПИ Роснедр"),
+)
+
 DESIGN_SPECIALTY_TITLES = {item.code: item.title for item in DESIGN_SPECIALTIES}
 DESIGN_SPECIALTY_SHORTS = {item.code: item.short for item in DESIGN_SPECIALTIES}
 RTN_AREA_TITLES = {item.code: item.title for item in RTN_ATTESTATION_AREAS}
+DESIGN_DOC_CATEGORY_TITLES = {item.code: item.title for item in DESIGN_DOC_CATEGORIES}
+DESIGN_DOCUMENTATION_KIND_TITLES = {item.code: item.title for item in DESIGN_DOCUMENTATION_KINDS}
+DESIGN_APPROVAL_TITLES = {item.code: item.title for item in DESIGN_APPROVALS}
 
 
 def build_design_catalogs() -> DesignCatalogsResponse:
-    """Собирает справочники направления для анкет."""
+    """Собирает справочники направления для анкет и заявки."""
     return DesignCatalogsResponse(
         specialties=[DesignSpecialtyOption.model_validate(item) for item in DESIGN_SPECIALTIES],
         rtn_areas=[DesignCatalogOption.model_validate(item) for item in RTN_ATTESTATION_AREAS],
+        doc_categories=[DesignCatalogOption.model_validate(item) for item in DESIGN_DOC_CATEGORIES],
+        documentation_kinds=[
+            DesignCatalogOption.model_validate(item) for item in DESIGN_DOCUMENTATION_KINDS
+        ],
+        approvals=[DesignCatalogOption.model_validate(item) for item in DESIGN_APPROVALS],
     )

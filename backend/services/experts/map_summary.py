@@ -158,6 +158,37 @@ def design_summary(expert: Expert, keys: set[str]) -> list[str]:
     return parts or ["Проектировщик"]
 
 
+def direction_tags(expert: Expert, direction: str) -> list[str]:
+    "Ключи анкеты направления для фильтров на карте — независимо от настроек метки."
+    if direction == OrderWorkType.DESIGN.value and expert.design_profile is not None:
+        return list(expert.design_profile.specialties or [])
+    if direction == OrderWorkType.TECH_DIAG.value and expert.tech_diag_profile is not None:
+        profile = expert.tech_diag_profile
+        return [*(profile.methods or []), *(profile.control_objects or [])]
+    if direction == OrderWorkType.AUDIT_SUPB.value and expert.audit_profile is not None:
+        profile = expert.audit_profile
+        return [*(profile.audit_qualifications or []), *(profile.industrial_safety_areas or [])]
+    if direction == OrderWorkType.CADASTRAL.value and expert.cadastral_profile is not None:
+        return ["EQUIPMENT"] if expert.cadastral_profile.has_equipment else []
+    if direction == OrderWorkType.FORENSIC.value and expert.forensic_profile is not None:
+        profile = expert.forensic_profile
+        tags = [f"WORKPLACE_{profile.workplace_kind.value}"]
+        if profile.has_degree:
+            tags.append("DEGREE")
+        if profile.has_similar_experience:
+            tags.append("EXPERIENCE")
+        return tags
+    if direction == OrderWorkType.RESEARCH.value and expert.research_profile is not None:
+        profile = expert.research_profile
+        tags = []
+        if profile.academic_degree.strip():
+            tags.append("DEGREE")
+        if profile.academic_title.strip():
+            tags.append("TITLE")
+        return tags
+    return []
+
+
 def build_direction_summary(expert: Expert, direction: str, fields: list[str]) -> list[str]:
     "Строки метки по анкете направления с учётом настроек «что показывать на карте»."
     if direction == OrderWorkType.AUDIT_SUPB.value:

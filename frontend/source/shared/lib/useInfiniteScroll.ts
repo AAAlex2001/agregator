@@ -19,7 +19,9 @@ export function useInfiniteScroll({ hasMore, isLoading, onLoadMore, rootMargin =
   const sentinelRef = useRef<HTMLDivElement>(null);
   const callbackRef = useRef(onLoadMore);
 
-  callbackRef.current = onLoadMore;
+  useEffect(() => {
+    callbackRef.current = onLoadMore;
+  });
 
   useEffect(() => {
     const el = sentinelRef.current;

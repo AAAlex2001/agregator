@@ -116,6 +116,11 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
 
               <FilesSection
                 documents={state.documents}
+                requirementHint={
+                  state.workType === "DESIGN"
+                    ? "Обязательно приложите задание на проектирование. Также можно приложить инженерные изыскания, эскизный проект и другие исходные данные."
+                    : undefined
+                }
                 onSetSingle={setSingle}
                 onRemoveSingleExisting={(category) => dispatch({ type: "docRemoveSingleExisting", category })}
                 onAddOther={addOther}

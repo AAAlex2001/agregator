@@ -25,40 +25,49 @@ async function loadAll(
   }
 }
 
-export function OrderCopyPicker({ open, customerId, onClose, onSelect }: Props) {
+function PickerContent({ customerId, onSelect }: { customerId: number; onSelect: (order: OrderCardData) => void }) {
   const [items, setItems] = useState<OrderCardData[] | null>(null);
 
   useEffect(() => {
-    if (!open) return;
-    setItems(null);
+    let active = true;
     Promise.all([
       loadAll(fetchCustomerOrders),
       loadAll(fetchArchivedOrders),
-    ]).then(([active, archived]) => {
+    ]).then(([own, archived]) => {
+      if (!active) return;
       const unique = new Map<number, OrderCardData>();
-      [...active, ...archived]
+      [...own, ...archived]
         .filter((order) => order.customerId === customerId)
         .forEach((order) => unique.set(order.id, order));
       setItems([...unique.values()]);
     });
-  }, [open, customerId]);
+    return () => {
+      active = false;
+    };
+  }, [customerId]);
 
+  if (items === null) {
+    return <div className={s.loading}><Loader label="" size="md" /></div>;
+  }
+
+  return (
+    <div className={s.list}>
+      {items.map((order) => (
+        <button key={order.id} type="button" className={s.item} onClick={() => onSelect(order)}>
+          <span className={s.number}>№ {order.id}</span>
+          <span className={s.name}>{order.title}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function OrderCopyPicker({ open, customerId, onClose, onSelect }: Props) {
   return (
     <Modal open={open} onClose={onClose} size="md" ariaLabel="Выбор заявки для копирования">
       <div className={s.content}>
         <h2 className={s.title}>Какую заявку вы хотите скопировать?</h2>
-        {items === null ? (
-          <div className={s.loading}><Loader label="" size="md" /></div>
-        ) : (
-          <div className={s.list}>
-            {items.map((order) => (
-              <button key={order.id} type="button" className={s.item} onClick={() => onSelect(order)}>
-                <span className={s.number}>№ {order.id}</span>
-                <span className={s.name}>{order.title}</span>
-              </button>
-            ))}
-          </div>
-        )}
+        {open && <PickerContent customerId={customerId} onSelect={onSelect} />}
       </div>
     </Modal>
   );

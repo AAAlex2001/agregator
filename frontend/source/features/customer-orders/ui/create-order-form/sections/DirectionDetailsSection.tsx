@@ -8,6 +8,12 @@ import {
   type AuditCatalogs,
 } from "@/source/features/directions/audit";
 import { CadastralOrderFields } from "@/source/features/directions/cadastral";
+import {
+  DesignOrderFields,
+  emptyDesignCatalogs,
+  fetchDesignCatalogs,
+  type DesignCatalogs,
+} from "@/source/features/directions/design";
 import { ForensicOrderFields } from "@/source/features/directions/forensic";
 import { LaboratoryOrderFields } from "@/source/features/directions/laboratory";
 import { ResearchOrderFields } from "@/source/features/directions/research";
@@ -18,10 +24,16 @@ import base from "./sectionBase.module.scss";
 export function DirectionDetailsSection({ state, dispatch }: StepProps) {
   const { workType } = state;
   const [auditCatalogs, setAuditCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
+  const [designCatalogs, setDesignCatalogs] = useState<DesignCatalogs>(emptyDesignCatalogs);
 
   useEffect(() => {
     if (workType !== "AUDIT_SUPB") return;
     fetchAuditCatalogs().then(setAuditCatalogs).catch(() => undefined);
+  }, [workType]);
+
+  useEffect(() => {
+    if (workType !== "DESIGN") return;
+    fetchDesignCatalogs().then(setDesignCatalogs).catch(() => undefined);
   }, [workType]);
 
   return (
@@ -66,6 +78,14 @@ export function DirectionDetailsSection({ state, dispatch }: StepProps) {
         <TechDiagOrderFields
           value={state.techDiagDetails}
           onChange={(value) => dispatch({ type: "techDiag", value })}
+        />
+      )}
+
+      {workType === "DESIGN" && (
+        <DesignOrderFields
+          value={state.designDetails}
+          onChange={(value) => dispatch({ type: "design", value })}
+          catalogs={designCatalogs}
         />
       )}
     </section>

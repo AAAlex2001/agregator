@@ -2,10 +2,9 @@
 
 import { useExpertsMap } from "@/source/entities/expert";
 import { useSession } from "@/source/features/session";
-import { toMarker } from "@/source/features/expert-map-filter";
+import { FilterDropdown, toMarker } from "@/source/features/expert-map-filter";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { useDesignMapFilter } from "../model/useDesignMapFilter";
-import { FilterDropdown } from "./FilterDropdown";
 import s from "./designSpecialistsMap.module.scss";
 
 export function DesignSpecialistsMap() {
@@ -18,11 +17,14 @@ export function DesignSpecialistsMap() {
     availableSpecialties,
     toggleCategory,
     toggleSpecialty,
-  } = useDesignMapFilter();
+    filtered,
+  } = useDesignMapFilter(items);
 
   const emptyText = isLoading
     ? "Загрузка карты исполнителей…"
-    : "Пока нет исполнителей этого направления";
+    : items.length > 0
+      ? "По выбранным фильтрам исполнителей не нашлось — снимите часть фильтров"
+      : "Пока нет исполнителей этого направления";
 
   return (
     <div className={s.layout}>
@@ -40,7 +42,7 @@ export function DesignSpecialistsMap() {
         <FilterDropdown
           label="Специалисты"
           options={availableSpecialties.map((specialty) => ({
-            value: specialty.title,
+            value: specialty.key,
             short: specialty.code,
             title: specialty.title,
           }))}
@@ -51,7 +53,7 @@ export function DesignSpecialistsMap() {
 
       <div className={s.mapBox}>
         <YandexMarkersMap
-          markers={items.map(toMarker)}
+          markers={filtered.map(toMarker)}
           height="100%"
           emptyText={emptyText}
           contactsHref={user ? "/landing/expert-contacts" : "/expert-contacts"}

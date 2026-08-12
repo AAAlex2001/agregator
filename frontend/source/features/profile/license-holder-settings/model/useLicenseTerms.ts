@@ -19,16 +19,15 @@ interface Options {
   onProfileUpdate: (profile: UserProfile) => void;
 }
 
-const isExpertiseType = (v: unknown): v is ExpertiseType =>
-  typeof v === "string" && (TYPES as readonly string[]).includes(v);
-
 export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
   const { showError, showSuccess } = useNotifications();
   const holder = profile.license_holder;
 
   const [licenseNumber, setLicenseNumber] = useState(holder?.license_number ?? "");
   const [licenseAreas, setLicenseAreas] = useState<ExpertiseType[]>(
-    (holder?.license_areas ?? []).filter(isExpertiseType),
+    (holder?.license_areas ?? []).filter((area): area is ExpertiseType =>
+      TYPES.includes(area as ExpertiseType),
+    ),
   );
   const [rentalKind, setRentalKind] = useState<LicenseRentalKind>(
     holder?.license_rental_kind ?? "PERCENT",

@@ -6,8 +6,8 @@ import s from "./filterDropdown.module.scss";
 
 export interface FilterDropdownOption {
   value: string;
-  short: string;
   title: string;
+  short?: string;
 }
 
 interface Props {
@@ -58,7 +58,7 @@ export function FilterDropdown({ label, options, selected, onToggle }: Props) {
                 className={isActive ? `${s.option} ${s.optionActive}` : s.option}
                 onClick={() => onToggle(option.value)}
               >
-                <span className={s.optionShort}>{option.short}</span>
+                {option.short && <span className={s.optionShort}>{option.short}</span>}
                 <span className={s.optionTitle}>{option.title}</span>
                 {isActive && (
                   <span className={s.optionCheck} aria-hidden="true">

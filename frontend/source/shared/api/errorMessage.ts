@@ -1,10 +1,12 @@
+interface ErrorBody {
+  detail?: string | { message?: string } | Array<{ msg?: string }>;
+}
+
 export function extractErrorMessage(body: unknown): string | undefined {
-  const detail = (body as { detail?: unknown } | null | undefined)?.detail;
+  const detail = (body as ErrorBody | null)?.detail;
   if (typeof detail === "string") return detail;
-  if (Array.isArray(detail) && typeof detail[0]?.msg === "string") return String(detail[0].msg);
-  if (detail && typeof detail === "object" && typeof (detail as { message?: unknown }).message === "string") {
-    return (detail as { message: string }).message;
-  }
+  if (Array.isArray(detail)) return detail[0]?.msg;
+  if (typeof detail?.message === "string") return detail.message;
   return undefined;
 }
 

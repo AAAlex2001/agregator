@@ -26,28 +26,27 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   WITHDRAWN_BY_EXPERT: { label: "Отозван исполнителем", color: "#4d4d4d", bg: "#e6e6e6" },
 };
 
+function resolveStatus(
+  item: ResponseApiItem,
+  role: UserRole,
+  confirmed: boolean,
+): { status: string; statusMessage?: string } {
+  const base = (STATUS_MAP[item.status] ?? STATUS_MAP.REVIEW).label;
+  if (role === "expert") {
+    if (item.status === "ACCEPTED") return { status: `Приглашение на собеседование от ${item.date}` };
+    if (item.status === "IN_PROGRESS" && !confirmed) return { status: base, statusMessage: "Заказчик выбрал вас!" };
+    if (item.status === "IN_PROGRESS" && confirmed) return { status: `Принято ${item.date}` };
+    return { status: base };
+  }
+  if (item.status === "ACCEPTED") return { status: "В переговорах" };
+  if (item.status === "IN_PROGRESS") return { status: "Исполнитель выбран" };
+  return { status: base };
+}
+
 export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCardData {
   const s = STATUS_MAP[item.status] ?? STATUS_MAP.REVIEW;
   const confirmed = item.expert_confirmed ?? false;
-
-  let status = s.label;
-  let statusMessage: string | undefined;
-
-  if (role === "expert") {
-    if (item.status === "ACCEPTED") {
-      status = `Приглашение на собеседование от ${item.date}`;
-    } else if (item.status === "IN_PROGRESS" && !confirmed) {
-      statusMessage = "Заказчик выбрал вас!";
-    } else if (item.status === "IN_PROGRESS" && confirmed) {
-      status = `Принято ${item.date}`;
-    }
-  } else {
-    if (item.status === "ACCEPTED") {
-      status = "В переговорах";
-    } else if (item.status === "IN_PROGRESS") {
-      status = "Исполнитель выбран";
-    }
-  }
+  const { status, statusMessage } = resolveStatus(item, role, confirmed);
 
   const vatKind = (item.vat_kind ?? "NONE") as VatKind;
   const vatLabel = VAT_LABEL[vatKind];
@@ -58,11 +57,13 @@ export function mapApiToCard(item: ResponseApiItem, role: UserRole): ResponseCar
   const previousVatKind = (item.previous_vat_kind ?? null) as VatKind | null;
   const previousSumStr = item.previous_proposed_sum ?? null;
   const previousVatLabel = previousVatKind ? VAT_LABEL[previousVatKind] : vatLabel;
-  const previousCostEstimate = previousSumStr
-    ? `${previousSumStr} · ${previousVatLabel}`
-    : previousVatKind && previousVatKind !== vatKind
-      ? `${item.proposed_sum} · ${previousVatLabel}`
-      : null;
+
+  let previousCostEstimate: string | null = null;
+  if (previousSumStr) {
+    previousCostEstimate = `${previousSumStr} · ${previousVatLabel}`;
+  } else if (previousVatKind && previousVatKind !== vatKind) {
+    previousCostEstimate = `${item.proposed_sum} · ${previousVatLabel}`;
+  }
 
   return {
     id: item.id,

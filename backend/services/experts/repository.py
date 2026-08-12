@@ -19,7 +19,7 @@ from models.research import ExpertResearchProfile
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus
 from models.tech_diag import ExpertTechDiagProfile
-from services.experts.map_summary import build_direction_summary
+from services.experts.map_summary import build_direction_summary, direction_tags
 from utils.pagination import paginate_with_has_more
 
 SORT_BY_RATING = "rating"
@@ -247,6 +247,7 @@ class ExpertsRepository:
         certificate_codes = []
         if direction in EXPERT_DIRECTION_PROFILES:
             certificates = build_direction_summary(expert, direction, fields)
+            certificate_codes = direction_tags(expert, direction)
         else:
             for cert in expert.certificates or []:
                 text = format_cert_for_map(cert, certificate_fields)

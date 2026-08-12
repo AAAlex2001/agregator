@@ -1,15 +1,25 @@
 "use client";
 
 import { useEffect, useReducer, type FormEvent } from "react";
-import type { OrderCardData } from "@/source/entities/order";
-import { MAX_ORDER_DOCUMENTS, MAX_ORDER_FILES_TOTAL_BYTES, ORDER_WORK_OPTIONS } from "@/source/entities/order";
+import {
+  freeSlots,
+  singleSlotIsFilled,
+  totalDocumentsCount,
+  totalNewFilesBytes,
+  MAX_ORDER_DOCUMENTS,
+  MAX_ORDER_FILES_TOTAL_BYTES,
+  ORDER_WORK_OPTIONS,
+  type DocumentsFormState,
+  type OrderCardData,
+} from "@/source/entities/order";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useSession } from "@/source/features/session";
 import { clearDraft, saveDraft } from "./orderDraft";
-import { freeSlots, singleSlotIsFilled, totalNewFilesBytes, type DocumentsFormState } from "@/source/entities/order";
 import { initOrderForm, orderFormValues, reducer, type OrderFormValues, type SingleCategory } from "./orderForm";
 
 const MAX_TOTAL_MB = Math.round(MAX_ORDER_FILES_TOTAL_BYTES / 1024 / 1024);
+const FILE_COUNT_ERROR = `Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`;
+const FILE_SIZE_ERROR = `Суммарный размер новых файлов не должен превышать ${MAX_TOTAL_MB} МБ`;
 
 interface Props {
   editTarget?: OrderCardData;
@@ -28,14 +38,13 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
     if (company) dispatch({ type: "set", key: "company", value: company });
   }, [company]);
 
-  const directions = (user?.directions ?? []).join(",");
   useEffect(() => {
-    if (isEdit || !directions) return;
-    const available = directions.split(",");
-    if (available.includes(state.workType)) return;
+    if (isEdit) return;
+    const available = user?.directions ?? [];
+    if (available.length === 0 || available.includes(state.workType)) return;
     const first = ORDER_WORK_OPTIONS.find((option) => available.includes(option.value));
     if (first) dispatch({ type: "workType", value: first.value });
-  }, [isEdit, directions, state.workType]);
+  }, [isEdit, user, state.workType]);
 
   useEffect(() => {
     if (isEdit) return;
@@ -43,41 +52,34 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
   }, [state, isEdit]);
 
   const setSingle = (category: SingleCategory, file: File | null) => {
-    const slotWasEmpty = !singleSlotIsFilled(state.documents[category]);
-    if (file !== null && slotWasEmpty && freeSlots(state.documents) <= 0) {
-      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
-      return;
-    }
-    if (file !== null && totalNewFilesBytes(state.documents) + file.size > MAX_ORDER_FILES_TOTAL_BYTES) {
-      showError(`Суммарный размер новых файлов не должен превышать ${MAX_TOTAL_MB} МБ`);
-      return;
+    if (file !== null) {
+      const needsFreeSlot = !singleSlotIsFilled(state.documents[category]);
+      if (needsFreeSlot && freeSlots(state.documents) <= 0) {
+        showError(FILE_COUNT_ERROR);
+        return;
+      }
+      if (totalNewFilesBytes(state.documents) + file.size > MAX_ORDER_FILES_TOTAL_BYTES) {
+        showError(FILE_SIZE_ERROR);
+        return;
+      }
     }
     dispatch({ type: "docSingle", category, file });
   };
 
   const addOther = (incoming: File[]) => {
     const free = freeSlots(state.documents);
-    if (free <= 0) {
-      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
-      return;
-    }
-    const trimmed = incoming.slice(0, free);
-    if (trimmed.length < incoming.length) {
-      showError(`Можно прикрепить не более ${MAX_ORDER_DOCUMENTS} файлов`);
+    if (incoming.length > free) {
+      showError(FILE_COUNT_ERROR);
     }
     const accepted: File[] = [];
-    let runningBytes = totalNewFilesBytes(state.documents);
-    let rejectedBySize = false;
-    for (const file of trimmed) {
-      if (runningBytes + file.size > MAX_ORDER_FILES_TOTAL_BYTES) {
-        rejectedBySize = true;
-        continue;
+    let bytes = totalNewFilesBytes(state.documents);
+    for (const file of incoming.slice(0, free)) {
+      if (bytes + file.size > MAX_ORDER_FILES_TOTAL_BYTES) {
+        showError(FILE_SIZE_ERROR);
+        break;
       }
-      runningBytes += file.size;
+      bytes += file.size;
       accepted.push(file);
-    }
-    if (rejectedBySize) {
-      showError(`Суммарный размер новых файлов не должен превышать ${MAX_TOTAL_MB} МБ`);
     }
     if (accepted.length > 0) {
       dispatch({ type: "docAddOther", files: accepted });
@@ -96,6 +98,10 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
     }
     if (!state.requiresExpert && !state.requiresLicense) {
       showError("Выберите, что требуется: исполнитель и/или лицензия");
+      return;
+    }
+    if (state.workType === "DESIGN" && totalDocumentsCount(state.documents) === 0) {
+      showError("Приложите задание на проектирование");
       return;
     }
     onSubmit(orderFormValues(state), state.documents, { notifyResponders: state.notifyResponders });

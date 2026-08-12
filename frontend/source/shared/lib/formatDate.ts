@@ -70,24 +70,22 @@ export function formatMoscowDateTime(input: string | Date | null | undefined): s
   });
 }
 
+const MOSCOW_UTC_OFFSET_MS = 3 * 60 * 60 * 1000;
+
 export function parseMoscowWallClock(value: string): Date | null {
   if (!value) return null;
   const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value);
   if (value.includes("T") && hasTimezone) {
     const instant = new Date(value);
     if (Number.isNaN(instant.getTime())) return null;
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Europe/Moscow",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(instant);
-    const part = (type: Intl.DateTimeFormatPartTypes) =>
-      Number(parts.find((item) => item.type === type)?.value);
-    return new Date(part("year"), part("month") - 1, part("day"), part("hour"), part("minute"));
+    const moscow = new Date(instant.getTime() + MOSCOW_UTC_OFFSET_MS);
+    return new Date(
+      moscow.getUTCFullYear(),
+      moscow.getUTCMonth(),
+      moscow.getUTCDate(),
+      moscow.getUTCHours(),
+      moscow.getUTCMinutes(),
+    );
   }
   const date = new Date(value.includes("T") ? value : `${value}T12:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
