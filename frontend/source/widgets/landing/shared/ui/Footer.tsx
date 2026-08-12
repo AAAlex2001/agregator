@@ -36,7 +36,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
           <LogoIcon title="Ресурс-Плюс" />
         </Link>
 
-          <p>Площадка для аттестованных исполнителей промышленной безопасности</p>
+          <p>Первая единая площадка промышленных и инженерных услуг России</p>
           </div>
               <div className={s.links}>
                 <div>
@@ -90,7 +90,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                target="_blank"
                rel="noopener noreferrer"
                title="Открыть Приказ № 287 от 31.08.2022 г.">
-            Приказу № 287 от 31.08.2022 г.
+            Приказу № 287 от 31.08.2022 г.
             </a>
             </span>
         </div>

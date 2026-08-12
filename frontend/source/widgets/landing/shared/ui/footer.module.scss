@@ -8,9 +8,10 @@
 }
 
 .footer.light {
-  background: #f9eae7;
+  background: #eef1f7;
   color: #1A1A1A;
   margin-top: 40px;
+  padding-top: 56px;
   border-radius: 48px 48px 0 0;
   overflow: hidden;
 
@@ -194,7 +195,7 @@
 }
 
 .links > div {
-  flex: 1 0 calc((100% - 40px) / 4);
+  flex: 1 0 calc((100% - 40px) / 2);
   display: flex;
   flex-direction: column;
 
@@ -422,7 +423,8 @@
 }
 
   .links > div {
-  flex: 1 0 calc((100% - 40px) / 5);
+  flex: 1 1 calc((100% - 160px) / 5);
+  min-width: 0;
 }
 
 
@@ -539,7 +541,7 @@
   .links {
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 24px;
   width: 100%;
   justify-content: center;
   padding: 0 var(--page-px);
@@ -549,7 +551,8 @@
 }
 
   .links > div {
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 
