@@ -4,15 +4,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
-from schemas.research import ResearchProfileInput, ResearchProfileResponse
+from schemas.research import ResearchCatalogsResponse, ResearchProfileInput, ResearchProfileResponse
 from services.research import (
     GetResearchProfileUseCase,
     ResearchRepository,
     ResearchValidator,
     SaveResearchProfileUseCase,
 )
+from services.research.catalogs import build_research_catalogs
 
 router = APIRouter(prefix="/directions/research", tags=["directions"])
+
+
+@router.get("/catalogs", response_model=ResearchCatalogsResponse)
+async def get_catalogs() -> ResearchCatalogsResponse:
+    """Справочники направления: учёные степени, отрасли науки и звания."""
+    return build_research_catalogs()
 
 
 @router.get("/profile", response_model=ResearchProfileResponse)

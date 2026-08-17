@@ -8,6 +8,7 @@ import {
   LandingServiceRoles,
   StartWorkingButton,
 } from "@/source/widgets/landing";
+import { NirPurpose } from "./Purpose";
 import { NirSeoText } from "./SeoText";
 import {
   NIR_BULLETS,
@@ -49,6 +50,7 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
             <StartWorkingButton className={s.coverButton} />
           </div>
         </LandingServiceHero>
+        <NirPurpose />
         <LandingServiceRoles roles={NIR_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

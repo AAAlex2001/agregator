@@ -1,32 +1,54 @@
 "use client";
 
-import { TextArea, TextInput } from "@/source/shared/ui/Inputs";
-import type { ResearchProfile } from "../model/types";
+import { SelectInput, TextArea } from "@/source/shared/ui/Inputs";
+import type { ResearchCatalogs, ResearchProfile } from "../model/types";
 import s from "../../shared/ui/fields.module.scss";
 
 interface Props {
   value: ResearchProfile;
   onChange: (value: ResearchProfile) => void;
+  catalogs: ResearchCatalogs;
 }
 
-export function ResearchProfileFields({ value, onChange }: Props) {
+function toOptions(items: ResearchCatalogs["academic_degrees"]) {
+  return items.map((item) => ({ value: item.code, label: item.title }));
+}
+
+export function ResearchProfileFields({ value, onChange, catalogs }: Props) {
   return (
     <div className={s.form}>
       <label className={s.field}>
         <span className={s.label}>Учёная степень (при наличии)</span>
-        <TextInput
+        <SelectInput
+          id="research-degree"
           value={value.academic_degree}
-          onChange={(event) => onChange({ ...value, academic_degree: event.target.value })}
-          placeholder="Кандидат технических наук"
+          options={toOptions(catalogs.academic_degrees)}
+          onChange={(next) => onChange({ ...value, academic_degree: next, science_branch: next ? value.science_branch : "" })}
+          placeholder="Нет учёной степени"
         />
       </label>
 
+      {value.academic_degree && (
+        <label className={s.field}>
+          <span className={s.label}>Отрасль науки</span>
+          <SelectInput
+            id="research-branch"
+            value={value.science_branch}
+            options={toOptions(catalogs.science_branches)}
+            onChange={(next) => onChange({ ...value, science_branch: next })}
+            placeholder="Выберите отрасль науки"
+          />
+        </label>
+      )}
+
       <label className={s.field}>
         <span className={s.label}>Учёное звание (при наличии)</span>
-        <TextInput
+        <SelectInput
+          id="research-title"
           value={value.academic_title}
-          onChange={(event) => onChange({ ...value, academic_title: event.target.value })}
-          placeholder="Доцент"
+          options={toOptions(catalogs.academic_titles)}
+          onChange={(next) => onChange({ ...value, academic_title: next })}
+          placeholder="Нет учёного звания"
         />
       </label>
 

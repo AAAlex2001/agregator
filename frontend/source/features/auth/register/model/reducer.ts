@@ -17,6 +17,7 @@ import {
   emptyDesignHolderProfile,
   emptyDesignProfile,
 } from "@/source/features/directions/design";
+import { emptyEcologyProfile } from "@/source/features/directions/ecology";
 import { emptyDirectionFiles } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -53,6 +54,7 @@ export const initialState: RegisterState = {
   techDiagHolderProfile: null,
   designProfile: null,
   designHolderProfile: null,
+  ecologyProfile: null,
   directionFiles: emptyDirectionFiles,
   licenseEnabled: false,
   licenseNumber: "",
@@ -96,6 +98,9 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
       state.designHolderProfile = { ...emptyDesignHolderProfile };
     }
   }
+  if (preset.direction === "ECOLOGY" && preset.role === "EXPERT") {
+    state.ecologyProfile = { ...emptyEcologyProfile };
+  }
   if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
     state.cadastralProfile = { ...emptyCadastralProfile };
   }
@@ -117,7 +122,8 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     preset.direction !== "AUDIT_SUPB" &&
     preset.direction !== "TECH_DIAG" &&
     preset.direction !== "EXPERTISE" &&
-    preset.direction !== "DESIGN"
+    preset.direction !== "DESIGN" &&
+    preset.direction !== "ECOLOGY"
   ) {
     state.directions = [preset.direction];
   }
@@ -152,6 +158,7 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         techDiagHolderProfile: null,
         designProfile: null,
         designHolderProfile: null,
+        ecologyProfile: null,
         directionFiles: emptyDirectionFiles,
       };
     case "travels":
@@ -201,6 +208,8 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, designProfile: action.value };
     case "designHolder":
       return { ...state, designHolderProfile: action.value };
+    case "ecology":
+      return { ...state, ecologyProfile: action.value };
     case "licenseEnabled":
       return { ...state, licenseEnabled: action.value };
     case "areas":

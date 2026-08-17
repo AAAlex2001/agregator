@@ -25,6 +25,7 @@ class SaveResearchProfileUseCase:
             expert.research_profile = profile
 
         profile.academic_degree = data.academic_degree
+        profile.science_branch = data.science_branch
         profile.academic_title = data.academic_title
         profile.research_field = data.research_field
 

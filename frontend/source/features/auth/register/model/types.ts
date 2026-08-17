@@ -16,6 +16,7 @@ import type { ResearchProfile } from "@/source/features/directions/research";
 import type { LaboratoryProfile } from "@/source/features/directions/laboratory";
 import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/features/directions/tech-diag";
 import type { DesignHolderProfile, DesignProfile } from "@/source/features/directions/design";
+import type { EcologyProfile } from "@/source/features/directions/ecology";
 import type { DirectionFilesState } from "./directionFiles";
 
 export type StringField =
@@ -45,7 +46,8 @@ export type DocListKey =
   | "designNokDocuments"
   | "designNrsDocuments"
   | "designQualificationDocuments"
-  | "designRtnDocuments";
+  | "designRtnDocuments"
+  | "ecologyDocuments";
 
 export interface RegisterState {
   waiting: boolean;
@@ -80,6 +82,7 @@ export interface RegisterState {
   techDiagHolderProfile: TechDiagHolderProfile | null;
   designProfile: DesignProfile | null;
   designHolderProfile: DesignHolderProfile | null;
+  ecologyProfile: EcologyProfile | null;
   directionFiles: DirectionFilesState;
   licenseEnabled: boolean;
   licenseNumber: string;
@@ -120,6 +123,7 @@ export type RegisterAction =
   | { type: "techDiagHolder"; value: TechDiagHolderProfile | null }
   | { type: "design"; value: DesignProfile | null }
   | { type: "designHolder"; value: DesignHolderProfile | null }
+  | { type: "ecology"; value: EcologyProfile | null }
   | { type: "licenseEnabled"; value: boolean }
   | { type: "areas"; value: ExpertiseType[] }
   | { type: "rentalKind"; value: LicenseRentalKind }

@@ -16,6 +16,7 @@ from services.cadastral import (
     UploadCadastralDocumentUseCase,
 )
 from services.design import DesignRepository, DesignValidator, UploadDesignDocumentUseCase
+from services.ecology import EcologyRepository, EcologyValidator, UploadEcologyDocumentUseCase
 from services.forensic import (
     ForensicRepository,
     ForensicValidator,
@@ -65,6 +66,10 @@ async def upload_to_slot(db: AsyncSession, account_id: int, slot: str, file: Upl
     if slot == "TECH_DIAG":
         repo = TechDiagRepository(db)
         await UploadTechDiagDocumentUseCase(repo, TechDiagValidator(repo)).execute(account_id, file)
+        return
+    if slot == "ECOLOGY":
+        repo = EcologyRepository(db)
+        await UploadEcologyDocumentUseCase(repo, EcologyValidator(repo)).execute(account_id, file)
         return
     if slot in DESIGN_SLOT_GROUPS:
         repo = DesignRepository(db)

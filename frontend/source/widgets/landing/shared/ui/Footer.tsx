@@ -43,6 +43,7 @@ const Footer = ({ variant = "dark" }: FooterProps) => {
                   <h2>Направления</h2>
                   <Link href="/ekspertiza-promyshlennoy-bezopasnosti">Экспертиза промышленной безопасности</Link>
                   <Link href="/proektirovanie">Проектирование объектов</Link>
+                  <Link href="/ekologiya">Экологическое сопровождение</Link>
                   <Link href="/audit-supb">Аудит СУПБ</Link>
                   <Link href="/tehnicheskoe-diagnostirovanie">Техническое диагностирование</Link>
                   <Link href="/nir">НИР и лабораторные исследования</Link>

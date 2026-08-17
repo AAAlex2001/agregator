@@ -4,9 +4,25 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from schemas.applicant import ApplicantDetailsInput, ApplicantDetailsResponse
 
 
+class ResearchCatalogOption(BaseModel):
+    """Позиция справочника: код для хранения и название для интерфейса."""
+    model_config = ConfigDict(from_attributes=True)
+
+    code: str
+    title: str
+
+
+class ResearchCatalogsResponse(BaseModel):
+    """Справочники направления: степени, отрасли науки и звания."""
+    academic_degrees: list[ResearchCatalogOption]
+    science_branches: list[ResearchCatalogOption]
+    academic_titles: list[ResearchCatalogOption]
+
+
 class ResearchProfileInput(BaseModel):
     """Анкета исполнителя НИР из формы регистрации или кабинета."""
     academic_degree: str = Field("", max_length=300)
+    science_branch: str = Field("", max_length=100)
     academic_title: str = Field("", max_length=300)
     research_field: str = Field("", max_length=5000)
 
@@ -16,6 +32,7 @@ class ResearchProfileResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     academic_degree: str = ""
+    science_branch: str = ""
     academic_title: str = ""
     research_field: str = ""
 

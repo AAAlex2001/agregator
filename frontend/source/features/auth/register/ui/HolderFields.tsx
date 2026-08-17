@@ -22,7 +22,7 @@ import d from "./directions/DirectionsPicker.module.scss";
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 
 const HOLDER_MARK_OPTIONS = ORDER_WORK_OPTIONS.filter(
-  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN"].includes(option.value),
+  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN", "ECOLOGY"].includes(option.value),
 );
 
 export function HolderFields({ state, dispatch }: StepProps) {

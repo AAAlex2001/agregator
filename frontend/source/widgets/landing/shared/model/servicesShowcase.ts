@@ -62,6 +62,8 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
     text:
       "Инженеры-экологи с высшим профессиональным образованием и многолетним опытом в сфере экологии. Получение комплексного экологического разрешения (КЭР) и подготовка экологических отчётов.",
     image: "/services/6.webp",
+    href: "/ekologiya",
+    direction: "ECOLOGY",
   },
   {
     id: 7,

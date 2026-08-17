@@ -14,6 +14,7 @@ from schemas.audit import (
 from schemas.cadastral import CadastralProfileInput
 from schemas.company import validate_company_data
 from schemas.design import DesignExpertProfileInput, DesignLicenseHolderProfileInput
+from schemas.ecology import EcologyExpertProfileInput
 from schemas.expertise import ExpertiseProfileInput
 from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
@@ -66,6 +67,7 @@ class UserRegistration(BaseModel):
     laboratory_profile: LaboratoryProfileInput | None = None
     tech_diag_profile: TechDiagExpertProfileInput | None = None
     design_profile: DesignExpertProfileInput | None = None
+    ecology_profile: EcologyExpertProfileInput | None = None
     contact_sales_enabled: bool = False
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
     contact_payment_details: str | None = Field(None, max_length=1000)
@@ -101,6 +103,7 @@ class UserRegistration(BaseModel):
             self.laboratory_profile,
             self.tech_diag_profile,
             self.design_profile,
+            self.ecology_profile,
         )
         if self.role is not UserRole.EXPERT and any(form is not None for form in expert_forms):
             raise ValueError("Анкеты направлений исполнителя доступны только исполнителю")

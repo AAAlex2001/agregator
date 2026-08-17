@@ -14,6 +14,7 @@ import {
   fetchDesignCatalogs,
   type DesignCatalogs,
 } from "@/source/features/directions/design";
+import { EcologyOrderFields } from "@/source/features/directions/ecology";
 import { ForensicOrderFields } from "@/source/features/directions/forensic";
 import { LaboratoryOrderFields } from "@/source/features/directions/laboratory";
 import { ResearchOrderFields } from "@/source/features/directions/research";
@@ -86,6 +87,13 @@ export function DirectionDetailsSection({ state, dispatch }: StepProps) {
           value={state.designDetails}
           onChange={(value) => dispatch({ type: "design", value })}
           catalogs={designCatalogs}
+        />
+      )}
+
+      {workType === "ECOLOGY" && (
+        <EcologyOrderFields
+          value={state.ecologyDetails}
+          onChange={(value) => dispatch({ type: "ecology", value })}
         />
       )}
     </section>

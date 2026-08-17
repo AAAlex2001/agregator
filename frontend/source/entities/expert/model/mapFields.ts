@@ -54,6 +54,14 @@ export const DIRECTION_MAP_FIELD_GROUPS: MapFieldGroup[] = [
     ],
   },
   {
+    direction: "ECOLOGY",
+    title: "Экология",
+    options: [
+      { value: "ecology_work_types", label: "Виды работ" },
+      { value: "ecology_skills", label: "Практические навыки" },
+    ],
+  },
+  {
     direction: "RESEARCH",
     title: "НИР",
     options: [

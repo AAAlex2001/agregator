@@ -11,6 +11,7 @@ from models.account import Account, UserRole
 from models.audit import ExpertAuditProfile
 from models.cadastral import ExpertCadastralProfile
 from models.design import ExpertDesignProfile
+from models.ecology import ExpertEcologyProfile
 from models.expert import Expert
 from models.forensic import ExpertForensicProfile
 from models.laboratory import ExpertLaboratoryProfile
@@ -41,6 +42,7 @@ EXPERT_DIRECTION_PROFILES = {
     OrderWorkType.LABORATORY.value: ExpertLaboratoryProfile,
     OrderWorkType.TECH_DIAG.value: ExpertTechDiagProfile,
     OrderWorkType.DESIGN.value: ExpertDesignProfile,
+    OrderWorkType.ECOLOGY.value: ExpertEcologyProfile,
 }
 
 

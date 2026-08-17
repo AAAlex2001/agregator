@@ -118,6 +118,7 @@ export function useRegister(
             laboratory_profile: state.laboratoryProfile,
             tech_diag_profile: state.techDiagProfile,
             design_profile: state.designProfile,
+            ecology_profile: state.ecologyProfile,
             contact_sales_enabled: state.contactEnabled,
             contact_price_rubles: state.contactEnabled
               ? Number(state.contactPrice.replace(/\s/g, ""))

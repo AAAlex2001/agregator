@@ -13,6 +13,7 @@ export interface DirectionFilesState {
   designNrsDocuments: File[];
   designQualificationDocuments: File[];
   designRtnDocuments: File[];
+  ecologyDocuments: File[];
 }
 
 export const emptyDirectionFiles: DirectionFilesState = {
@@ -28,6 +29,7 @@ export const emptyDirectionFiles: DirectionFilesState = {
   designNrsDocuments: [],
   designQualificationDocuments: [],
   designRtnDocuments: [],
+  ecologyDocuments: [],
 };
 
 const FIELD_SLOTS: Record<keyof DirectionFilesState, RegisterDocument["slot"]> = {
@@ -43,6 +45,7 @@ const FIELD_SLOTS: Record<keyof DirectionFilesState, RegisterDocument["slot"]> =
   designNrsDocuments: "DESIGN_NRS",
   designQualificationDocuments: "DESIGN_QUALIFICATION",
   designRtnDocuments: "DESIGN_RTN",
+  ecologyDocuments: "ECOLOGY",
 };
 
 export function toRegisterDocuments(files: DirectionFilesState): RegisterDocument[] {

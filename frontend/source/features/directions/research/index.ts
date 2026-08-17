@@ -1,7 +1,9 @@
-﻿export { fetchResearchProfile, saveResearchProfile } from "./model/api";
+export { fetchResearchCatalogs, fetchResearchProfile, saveResearchProfile } from "./model/api";
 export {
+  emptyResearchCatalogs,
   emptyResearchOrderDetails,
   emptyResearchProfile,
+  type ResearchCatalogs,
   type ResearchOrderDetails,
   type ResearchProfile,
 } from "./model/types";

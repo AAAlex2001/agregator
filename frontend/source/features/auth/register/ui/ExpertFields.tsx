@@ -20,7 +20,13 @@ import {
   emptyCadastralProfile,
 } from "@/source/features/directions/cadastral";
 import { emptyForensicProfile, ForensicProfileFields } from "@/source/features/directions/forensic";
-import { emptyResearchProfile, ResearchProfileFields } from "@/source/features/directions/research";
+import {
+  emptyResearchCatalogs,
+  emptyResearchProfile,
+  fetchResearchCatalogs,
+  ResearchProfileFields,
+  type ResearchCatalogs,
+} from "@/source/features/directions/research";
 import {
   emptyLaboratoryProfile,
   LaboratoryProfileFields,
@@ -39,6 +45,13 @@ import {
   fetchDesignCatalogs,
   type DesignCatalogs,
 } from "@/source/features/directions/design";
+import {
+  EcologyProfileFields,
+  emptyEcologyCatalogs,
+  emptyEcologyProfile,
+  fetchEcologyCatalogs,
+  type EcologyCatalogs,
+} from "@/source/features/directions/ecology";
 import { LocalFilePicker } from "@/source/features/directions/shared/ui/LocalFilePicker";
 import { LocalFilesPicker } from "@/source/features/directions/shared/ui/LocalFilesPicker";
 import { DirectionOption } from "./directions/DirectionOption";
@@ -52,6 +65,7 @@ function activeDirections(state: StepProps["state"]): string[] {
     ["AUDIT_SUPB", state.auditExpertProfile],
     ["TECH_DIAG", state.techDiagProfile],
     ["DESIGN", state.designProfile],
+    ["ECOLOGY", state.ecologyProfile],
     ["RESEARCH", state.researchProfile],
     ["LABORATORY", state.laboratoryProfile],
     ["CADASTRAL", state.cadastralProfile],
@@ -64,11 +78,15 @@ export function ExpertFields({ state, dispatch }: StepProps) {
   const [catalogs, setCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
   const [techDiagCatalogs, setTechDiagCatalogs] = useState<TechDiagCatalogs>(emptyTechDiagCatalogs);
   const [designCatalogs, setDesignCatalogs] = useState<DesignCatalogs>(emptyDesignCatalogs);
+  const [ecologyCatalogs, setEcologyCatalogs] = useState<EcologyCatalogs>(emptyEcologyCatalogs);
+  const [researchCatalogs, setResearchCatalogs] = useState<ResearchCatalogs>(emptyResearchCatalogs);
 
   useEffect(() => {
     fetchAuditCatalogs().then(setCatalogs).catch(() => undefined);
     fetchTechDiagCatalogs().then(setTechDiagCatalogs).catch(() => undefined);
     fetchDesignCatalogs().then(setDesignCatalogs).catch(() => undefined);
+    fetchEcologyCatalogs().then(setEcologyCatalogs).catch(() => undefined);
+    fetchResearchCatalogs().then(setResearchCatalogs).catch(() => undefined);
   }, []);
 
   const { expertiseProfile, auditExpertProfile, cadastralProfile, forensicProfile } = state;
@@ -197,6 +215,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
             <ResearchProfileFields
               value={state.researchProfile}
               onChange={(value) => dispatch({ type: "research", value })}
+              catalogs={researchCatalogs}
             />
           )}
         </DirectionOption>
@@ -294,6 +313,32 @@ export function ExpertFields({ state, dispatch }: StepProps) {
                 maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designRtnDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designRtnDocuments", index })}
+              />
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="ECOLOGY"
+          title="Экологическое сопровождение предприятий"
+          description="Виды экологических работ, практические навыки и подтверждающие документы"
+          checked={state.ecologyProfile !== null}
+          onToggle={() =>
+            dispatch({ type: "ecology", value: state.ecologyProfile ? null : { ...emptyEcologyProfile } })
+          }
+        >
+          {state.ecologyProfile && (
+            <>
+              <EcologyProfileFields
+                value={state.ecologyProfile}
+                onChange={(value) => dispatch({ type: "ecology", value })}
+                catalogs={ecologyCatalogs}
+              />
+              <LocalFilesPicker
+                label="Подтверждение квалификационных требований — дипломы, удостоверения, сертификаты"
+                files={state.directionFiles.ecologyDocuments}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "ecologyDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "ecologyDocuments", index })}
               />
             </>
           )}

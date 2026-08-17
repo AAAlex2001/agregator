@@ -9,6 +9,10 @@ import {
   type DesignOrderDetails,
 } from "@/source/features/directions/design";
 import {
+  emptyEcologyOrderDetails,
+  type EcologyOrderDetails,
+} from "@/source/features/directions/ecology";
+import {
   emptyForensicOrderDetails,
   type ForensicOrderDetails,
 } from "@/source/features/directions/forensic";
@@ -33,6 +37,7 @@ export interface DirectionDetailsValues {
   auditDetails: AuditOrderDetails;
   techDiagDetails: TechDiagOrderDetails;
   designDetails: DesignOrderDetails;
+  ecologyDetails: EcologyOrderDetails;
 }
 
 const DETAILS_KEYS: Partial<Record<OrderWorkType, keyof DirectionDetailsValues>> = {
@@ -43,6 +48,7 @@ const DETAILS_KEYS: Partial<Record<OrderWorkType, keyof DirectionDetailsValues>>
   AUDIT_SUPB: "auditDetails",
   TECH_DIAG: "techDiagDetails",
   DESIGN: "designDetails",
+  ECOLOGY: "ecologyDetails",
 };
 
 export function hasOrderDetails(workType: OrderWorkType): boolean {
@@ -58,6 +64,7 @@ export function emptyDirectionDetails(): DirectionDetailsValues {
     auditDetails: emptyAuditOrderDetails,
     techDiagDetails: emptyTechDiagOrderDetails,
     designDetails: emptyDesignOrderDetails,
+    ecologyDetails: emptyEcologyOrderDetails,
   });
 }
 

@@ -1,7 +1,19 @@
 import { emptyApplicant, type ApplicantBlock } from "../../shared/model/applicant";
 
+export interface ResearchCatalogOption {
+  code: string;
+  title: string;
+}
+
+export interface ResearchCatalogs {
+  academic_degrees: ResearchCatalogOption[];
+  science_branches: ResearchCatalogOption[];
+  academic_titles: ResearchCatalogOption[];
+}
+
 export interface ResearchProfile {
   academic_degree: string;
+  science_branch: string;
   academic_title: string;
   research_field: string;
 }
@@ -11,8 +23,15 @@ export interface ResearchOrderDetails extends ApplicantBlock {
   needs_site_visit: boolean;
 }
 
+export const emptyResearchCatalogs: ResearchCatalogs = {
+  academic_degrees: [],
+  science_branches: [],
+  academic_titles: [],
+};
+
 export const emptyResearchProfile: ResearchProfile = {
   academic_degree: "",
+  science_branch: "",
   academic_title: "",
   research_field: "",
 };

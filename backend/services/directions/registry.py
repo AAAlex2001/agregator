@@ -12,6 +12,7 @@ from models.audit import OrderAuditDetails
 from models.base import Base
 from models.cadastral import OrderCadastralDetails
 from models.design import OrderDesignDetails
+from models.ecology import OrderEcologyDetails
 from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.order import OrderWorkType
@@ -20,6 +21,7 @@ from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput, AuditOrderDetailsResponse
 from schemas.cadastral import CadastralOrderDetailsInput, CadastralOrderDetailsResponse
 from schemas.design import DesignOrderDetailsInput, DesignOrderDetailsResponse
+from schemas.ecology import EcologyOrderDetailsInput, EcologyOrderDetailsResponse
 from schemas.forensic import ForensicOrderDetailsInput, ForensicOrderDetailsResponse
 from schemas.laboratory import LaboratoryOrderDetailsInput, LaboratoryOrderDetailsResponse
 from schemas.research import ResearchOrderDetailsInput, ResearchOrderDetailsResponse
@@ -102,6 +104,14 @@ DIRECTIONS: tuple[Direction, ...] = (
         details_attribute="design_details",
         details_input_schema=DesignOrderDetailsInput,
         details_response_schema=DesignOrderDetailsResponse,
+    ),
+    Direction(
+        key=OrderWorkType.ECOLOGY.value,
+        title="Экологическое сопровождение предприятий",
+        details_model=OrderEcologyDetails,
+        details_attribute="ecology_details",
+        details_input_schema=EcologyOrderDetailsInput,
+        details_response_schema=EcologyOrderDetailsResponse,
     ),
 )
 

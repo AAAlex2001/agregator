@@ -7,6 +7,8 @@
 from models.expert import Expert
 from models.order import OrderWorkType
 from services.design.catalogs import DESIGN_SPECIALTY_SHORTS, RTN_AREA_TITLES
+from services.ecology.catalogs import ECOLOGY_WORK_TYPE_TITLES
+from services.research.catalogs import BRANCH_TITLES, DEGREE_WORDS, TITLE_TITLES, format_degree
 from services.tech_diag.catalogs import CONTROL_OBJECTS, NDT_METHODS
 
 AUDIT_KEYS = ("audit_qualifications", "audit_attestation_areas", "audit_safety_areas")
@@ -33,6 +35,7 @@ DESIGN_KEYS = (
     "design_nok",
     "design_rtn_areas",
 )
+ECOLOGY_KEYS = ("ecology_work_types", "ecology_skills")
 
 NDT_METHOD_TITLES = {item.code: item.title for item in NDT_METHODS}
 CONTROL_OBJECT_TITLES = {item.code: item.title for item in CONTROL_OBJECTS}
@@ -102,9 +105,9 @@ def research_summary(expert: Expert, keys: set[str]) -> list[str]:
         return ["Исполнитель НИР"]
     parts = []
     if "research_degree" in keys and profile.academic_degree:
-        parts.append(profile.academic_degree)
+        parts.append(format_degree(profile.academic_degree, profile.science_branch))
     if "research_title" in keys and profile.academic_title:
-        parts.append(profile.academic_title)
+        parts.append(TITLE_TITLES.get(profile.academic_title, profile.academic_title))
     if "research_field" in keys and profile.research_field:
         parts.append(profile.research_field[:200])
     return parts or ["Исполнитель НИР"]
@@ -158,8 +161,24 @@ def design_summary(expert: Expert, keys: set[str]) -> list[str]:
     return parts or ["Проектировщик"]
 
 
+def ecology_summary(expert: Expert, keys: set[str]) -> list[str]:
+    "Метка эколога: виды работ и практические навыки."
+    profile = expert.ecology_profile
+    if profile is None:
+        return ["Эколог"]
+    parts = []
+    if "ecology_work_types" in keys and profile.work_types:
+        titles = [ECOLOGY_WORK_TYPE_TITLES.get(code, code) for code in profile.work_types]
+        parts.append("Виды работ: " + ", ".join(titles))
+    if "ecology_skills" in keys and profile.practical_skills:
+        parts.append(profile.practical_skills[:200])
+    return parts or ["Эколог"]
+
+
 def direction_tags(expert: Expert, direction: str) -> list[str]:
     "Ключи анкеты направления для фильтров на карте — независимо от настроек метки."
+    if direction == OrderWorkType.ECOLOGY.value and expert.ecology_profile is not None:
+        return list(expert.ecology_profile.work_types or [])
     if direction == OrderWorkType.DESIGN.value and expert.design_profile is not None:
         return list(expert.design_profile.specialties or [])
     if direction == OrderWorkType.TECH_DIAG.value and expert.tech_diag_profile is not None:
@@ -180,12 +199,8 @@ def direction_tags(expert: Expert, direction: str) -> list[str]:
         return tags
     if direction == OrderWorkType.RESEARCH.value and expert.research_profile is not None:
         profile = expert.research_profile
-        tags = []
-        if profile.academic_degree.strip():
-            tags.append("DEGREE")
-        if profile.academic_title.strip():
-            tags.append("TITLE")
-        return tags
+        codes = [profile.academic_degree, profile.science_branch, profile.academic_title]
+        return [code for code in codes if code in DEGREE_WORDS or code in BRANCH_TITLES or code in TITLE_TITLES]
     return []
 
 
@@ -205,4 +220,6 @@ def build_direction_summary(expert: Expert, direction: str, fields: list[str]) -
         return tech_diag_summary(expert, chosen_keys(fields, TECH_DIAG_KEYS))
     if direction == OrderWorkType.DESIGN.value:
         return design_summary(expert, chosen_keys(fields, DESIGN_KEYS))
+    if direction == OrderWorkType.ECOLOGY.value:
+        return ecology_summary(expert, chosen_keys(fields, ECOLOGY_KEYS))
     return []

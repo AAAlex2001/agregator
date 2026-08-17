@@ -10,7 +10,7 @@ import s from "./DirectionMarksCard.module.scss";
 
 const HIDDEN_BY_ROLE: Record<string, string[]> = {
   CUSTOMER: ["AUDIT_SUPB"],
-  LICENSE_HOLDER: ["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN"],
+  LICENSE_HOLDER: ["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN", "ECOLOGY"],
 };
 
 export function DirectionMarksCard() {

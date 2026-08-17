@@ -32,13 +32,3 @@ export const FORENSIC_FILTER_GROUPS: MapFilterGroup[] = [
     ],
   },
 ];
-
-export const RESEARCH_FILTER_GROUPS: MapFilterGroup[] = [
-  {
-    label: "Квалификация",
-    options: [
-      { value: "DEGREE", title: "С учёной степенью" },
-      { value: "TITLE", title: "С учёным званием" },
-    ],
-  },
-];

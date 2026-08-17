@@ -35,6 +35,14 @@ const KeyAdvantages = ({
   };
   const steps = stepsByRole[role];
 
+  const tabs = [
+    { id: "client", label: "Я заказчик" },
+    { id: "expert", label: "Я исполнитель" },
+  ];
+  if (licenseHolderSteps.length > 0) {
+    tabs.push({ id: "license_holder", label: "Я держатель разрешительных документов" });
+  }
+
   return (
     <section className={s.section} id="key-advantages">
       <div className={s.content}>
@@ -44,11 +52,7 @@ const KeyAdvantages = ({
         </div>
         <div className={s.stepsInfo}>
           <Tabs
-            tabs={[
-              { id: "client", label: "Я заказчик" },
-              { id: "expert", label: "Я исполнитель" },
-              { id: "license_holder", label: "Я держатель разрешительных документов" },
-            ]}
+            tabs={tabs}
             activeTab={role}
             onTabChange={(tabId) => setRole(tabId as Role)}
           />
