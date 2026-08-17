@@ -123,7 +123,7 @@ export const KADASTR_AUDIENCE: AudienceBlock[] = [
       "Наличие необходимого оборудования",
       "Место работы",
     ],
-    image: "/landing/kadastr-engineer.svg",
+    image: "/landing/kadastr-engineer-v2.webp",
     imageAlt: "Профиль кадастрового инженера с аттестатом и оборудованием",
   },
   {
@@ -134,7 +134,7 @@ export const KADASTR_AUDIENCE: AudienceBlock[] = [
       "Где необходимо провести работы",
       "Проверить кадастрового инженера по реестру СРО",
     ],
-    image: "/landing/kadastr-customer.svg",
+    image: "/landing/kadastr-customer-v2.webp",
     imageAlt: "Заявка на кадастровые работы с планом участка",
     link: {
       label: "Проверить по реестру СРО",

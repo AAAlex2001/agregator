@@ -5,6 +5,7 @@ import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
+import { scrollToRegistration } from "../../shared/lib/scrollToRegistration";
 
 import type { LandingStep } from "../model/landing.data";
 
@@ -67,7 +68,7 @@ const KeyAdvantages = ({
               </div>
             ))}
           </div>
-          <Button href="#registraciya" variant="secondary" className={s.ctaButton}>
+          <Button onClick={scrollToRegistration} variant="secondary" className={s.ctaButton}>
             Выбрать роль
           </Button>
         </div>

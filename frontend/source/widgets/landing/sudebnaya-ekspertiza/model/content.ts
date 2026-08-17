@@ -248,7 +248,7 @@ export const FORENSIC_AUDIENCE: AudienceBlock[] = [
       "Местонахождение исполнителя",
       "Место работы: экспертная организация, которая выдаст заключение, или работа как физическое лицо",
     ],
-    image: "/landing/forensic-expert.svg",
+    image: "/landing/forensic-expert-v2.webp",
     imageAlt: "Профиль исполнителя с дипломами и опытом судебных экспертиз",
   },
   {
@@ -261,7 +261,7 @@ export const FORENSIC_AUDIENCE: AudienceBlock[] = [
       "Дату, до которой ждёте отклики",
       "Где находится предмет экспертизы",
     ],
-    image: "/landing/forensic-customer.svg",
+    image: "/landing/forensic-customer-v2.webp",
     imageAlt: "Заявка на судебную экспертизу с материалами дела",
   },
 ];

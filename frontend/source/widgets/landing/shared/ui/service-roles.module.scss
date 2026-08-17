@@ -52,6 +52,12 @@
   border-radius: 20px;
   background: #ffffff;
   box-shadow: 0 6px 28px rgba(16, 24, 40, 0.08);
+  transition: border-color 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--color-orange-primary);
+  }
 }
 
 .cardTitle {

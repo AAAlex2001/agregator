@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/source/shared/ui/Button";
+import { scrollToRegistration } from "../lib/scrollToRegistration";
 
 interface Props {
   className?: string;
@@ -9,7 +10,7 @@ interface Props {
 export function StartWorkingButton({ className }: Props) {
   return (
     <Button
-      href="#registraciya"
+      onClick={scrollToRegistration}
       variant="primary"
       fullWidth
       showArrow

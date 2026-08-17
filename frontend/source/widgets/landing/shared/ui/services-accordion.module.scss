@@ -122,6 +122,10 @@
   display: none;
 }
 
+.visualDesc {
+  display: none;
+}
+
 .slider {
   width: 100%;
 }
@@ -193,6 +197,18 @@
 
   .visualImg {
     object-fit: cover;
+  }
+
+  .body .desc {
+    display: none;
+  }
+
+  .visualDesc {
+    display: block;
+    margin: 0;
+    font-size: 18px;
+    line-height: 28px;
+    color: #4a5460;
   }
 
   .slider {

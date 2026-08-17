@@ -89,16 +89,19 @@ export function ServicesAccordion<T extends ServicesAccordionItem>({
             {renderVisual ? (
               renderVisual(active)
             ) : (
-              <div className={s.visual}>
-                <Image
-                  key={active.image}
-                  src={active.image}
-                  alt={active.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 720px"
-                  className={s.visualImg}
-                />
-              </div>
+              <>
+                <div className={s.visual}>
+                  <Image
+                    key={active.image}
+                    src={active.image}
+                    alt={active.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 720px"
+                    className={s.visualImg}
+                  />
+                </div>
+                <p className={s.visualDesc}>{active.text}</p>
+              </>
             )}
             {renderActions?.(active)}
           </div>
