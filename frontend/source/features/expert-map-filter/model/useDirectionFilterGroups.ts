@@ -53,9 +53,11 @@ export function useDirectionFilterGroups(direction: string | null): MapFilterGro
       fetchResearchCatalogs()
         .then((catalogs) =>
           setLoaded([
-            { label: "Учёная степень", options: catalogs.academic_degrees.map(toTitleOption) },
+            {
+              label: "Степень и звание",
+              options: [...catalogs.academic_degrees, ...catalogs.academic_titles].map(toTitleOption),
+            },
             { label: "Отрасль науки", options: catalogs.science_branches.map(toTitleOption) },
-            { label: "Учёное звание", options: catalogs.academic_titles.map(toTitleOption) },
           ]),
         )
         .catch(() => {});
