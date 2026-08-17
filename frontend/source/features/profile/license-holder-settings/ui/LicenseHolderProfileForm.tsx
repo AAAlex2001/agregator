@@ -13,7 +13,6 @@ import {
   type UserProfile,
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
-import { DirectionsSection } from "@/source/features/profile/directions";
 
 interface Props {
   profile: UserProfile;
@@ -50,8 +49,6 @@ export function LicenseHolderProfileForm({ profile, onProfileUpdate }: Props) {
             <CompanyReadonly companyName={profile.company_data.value ?? ""} inn={profile.inn} />
           )}
         </FormSection>
-
-        <DirectionsSection role="LICENSE_HOLDER" />
 
         <FormSection title="Изменить пароль">
           <FormGrid>

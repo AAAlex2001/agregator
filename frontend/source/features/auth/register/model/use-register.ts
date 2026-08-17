@@ -18,9 +18,41 @@ export function useRegister(
   const { showError } = useNotifications();
   const [state, dispatch] = useReducer(reducer, preset, initFromPreset);
 
-  const submit = async (event: FormEvent) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (state.waiting) return;
+    if (!event.currentTarget.checkValidity()) {
+      showError("Заполните обязательные поля");
+      event.currentTarget.reportValidity();
+      return;
+    }
+    const hasDirection =
+      state.role === "CUSTOMER"
+        ? state.directions.length > 0 || state.auditCustomerProfile !== null
+        : state.role === "EXPERT"
+          ? [
+              state.expertiseProfile,
+              state.auditExpertProfile,
+              state.cadastralProfile,
+              state.forensicProfile,
+              state.researchProfile,
+              state.laboratoryProfile,
+              state.techDiagProfile,
+              state.designProfile,
+            ].some((profile) => profile !== null)
+          : state.licenseEnabled ||
+            state.auditHolderProfile !== null ||
+            state.techDiagHolderProfile !== null ||
+            state.designHolderProfile !== null ||
+            state.directions.length > 0;
+    if (!hasDirection) {
+      showError("Выберите хотя бы одно направление");
+      return;
+    }
+    if (state.role !== "EXPERT" && !state.party) {
+      showError("Выберите организацию из подсказок по ИНН");
+      return;
+    }
 
     dispatch({ type: "SUBMIT_PENDING" });
     try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Tabs from "@/source/shared/ui/Tabs";
 import { FormSection } from "@/source/shared/ui";
 import type { UserRole } from "@/source/entities/user";
@@ -33,6 +33,7 @@ const EXPERT_TABS = [
 const CUSTOMER_TABS = [{ id: "AUDIT_SUPB", label: "Аудит СУПБ" }];
 
 const LICENSE_HOLDER_TABS = [
+  { id: "EXPERTISE", label: "Экспертиза промышленной безопасности" },
   { id: "AUDIT_SUPB", label: "Аудит СУПБ" },
   { id: "TECH_DIAG", label: "Лаборатория НК" },
   { id: "DESIGN", label: "СРО проектировщиков" },
@@ -40,9 +41,10 @@ const LICENSE_HOLDER_TABS = [
 
 interface Props {
   role: UserRole;
+  licenseHolderExpertiseCard?: ReactNode;
 }
 
-export function DirectionsSection({ role }: Props) {
+export function DirectionsSection({ role, licenseHolderExpertiseCard }: Props) {
   const tabs =
     role === "EXPERT"
       ? EXPERT_TABS
@@ -68,6 +70,7 @@ export function DirectionsSection({ role }: Props) {
       : role === "CUSTOMER"
         ? [{ id: "AUDIT_SUPB", card: <AuditCustomerProfileCard /> }]
         : [
+            { id: "EXPERTISE", card: licenseHolderExpertiseCard },
             { id: "AUDIT_SUPB", card: <AuditLicenseHolderProfileCard /> },
             { id: "TECH_DIAG", card: <TechDiagHolderProfileCard /> },
             { id: "DESIGN", card: <DesignHolderProfileCard /> },

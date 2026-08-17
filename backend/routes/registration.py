@@ -114,7 +114,7 @@ async def resend_confirmation_code(
     "/license-holder",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(rate_limit("register_lh", max_calls=3, window_seconds=60))],
+    dependencies=[Depends(rate_limit("register", max_calls=3, window_seconds=60))],
 )
 async def register_license_holder(
     background_tasks: BackgroundTasks,

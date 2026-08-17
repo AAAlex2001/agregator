@@ -12,6 +12,7 @@ import {
   LicenseTermsForm,
 } from "@/source/features/profile/license-holder-settings";
 import { NotificationPreferencesForm } from "@/source/features/profile/notifications";
+import { DirectionsSection } from "@/source/features/profile/directions";
 import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
 import type { UserProfile } from "@/source/entities/user";
 import { SettingsSkeleton } from "./SettingsSkeleton";
@@ -33,7 +34,7 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
   }
   if (role === "LICENSE_HOLDER") {
     return [
-      { id: "license", label: "Лицензия" },
+      { id: "license", label: "Направления" },
       { id: "notifications", label: "Уведомления" },
       { id: "personal", label: "Личные данные" },
     ];
@@ -110,7 +111,14 @@ function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProp
     return <NotificationPreferencesForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
   if (section === "license" && user.role === "LICENSE_HOLDER") {
-    return <LicenseTermsForm profile={user} onProfileUpdate={onProfileUpdate} />;
+    return (
+      <DirectionsSection
+        role="LICENSE_HOLDER"
+        licenseHolderExpertiseCard={
+          <LicenseTermsForm profile={user} onProfileUpdate={onProfileUpdate} />
+        }
+      />
+    );
   }
   return <PersonalProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
 }

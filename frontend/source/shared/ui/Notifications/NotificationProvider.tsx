@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Toast, type ToastType } from "./Toast";
 import s from "./Toast.module.scss";
 
@@ -33,22 +34,25 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const showError = useCallback((message: string) => {
     push("error", message);
   }, [push]);
+  const toastHost =
+    typeof document === "undefined" ? null : document.querySelector("dialog[open]") ?? document.body;
+  const toastStack = (
+    <div className={s.stack}>
+      {item && (
+        <Toast
+          key={item.id}
+          message={item.message}
+          type={item.type}
+          onDismiss={() => dismiss(item.id)}
+        />
+      )}
+    </div>
+  );
 
   return (
-    <Ctx.Provider
-      value={{ showSuccess, showError }}
-    >
+    <Ctx.Provider value={{ showSuccess, showError }}>
       {children}
-      <div className={s.stack}>
-        {item && (
-          <Toast
-            key={item.id}
-            message={item.message}
-            type={item.type}
-            onDismiss={() => dismiss(item.id)}
-          />
-        )}
-      </div>
+      {toastHost && createPortal(toastStack, toastHost)}
     </Ctx.Provider>
   );
 }
