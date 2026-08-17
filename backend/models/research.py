@@ -26,7 +26,7 @@ class ExpertResearchProfile(Base):
         index=True,
     )
     academic_degree: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
-    science_branch: Mapped[str] = mapped_column(String(100), nullable=False, default="", server_default="")
+    science_branches: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     academic_title: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
     research_field: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)

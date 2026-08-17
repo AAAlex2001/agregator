@@ -1,6 +1,8 @@
 "use client";
 
-import { SelectInput, TextArea } from "@/source/shared/ui/Inputs";
+import { TextArea } from "@/source/shared/ui/Inputs";
+import { MultiSelect } from "@/source/shared/ui/MultiSelect";
+import { RadioGroup } from "@/source/shared/ui/RadioGroup";
 import type { ResearchCatalogs, ResearchProfile } from "../model/types";
 import s from "../../shared/ui/fields.module.scss";
 
@@ -10,47 +12,49 @@ interface Props {
   catalogs: ResearchCatalogs;
 }
 
-function toOptions(items: ResearchCatalogs["academic_degrees"]) {
-  return items.map((item) => ({ value: item.code, label: item.title }));
+function toRadioOptions(items: ResearchCatalogs["academic_degrees"], noneLabel: string) {
+  return [
+    { value: "", label: noneLabel },
+    ...items.map((item) => ({ value: item.code, label: item.title })),
+  ];
 }
 
 export function ResearchProfileFields({ value, onChange, catalogs }: Props) {
   return (
     <div className={s.form}>
-      <label className={s.field}>
-        <span className={s.label}>Учёная степень (при наличии)</span>
-        <SelectInput
-          id="research-degree"
+      <div className={s.field}>
+        <span className={s.label}>Учёная степень</span>
+        <RadioGroup
+          name="research-degree"
           value={value.academic_degree}
-          options={toOptions(catalogs.academic_degrees)}
-          onChange={(next) => onChange({ ...value, academic_degree: next, science_branch: next ? value.science_branch : "" })}
-          placeholder="Нет учёной степени"
+          options={toRadioOptions(catalogs.academic_degrees, "Нет учёной степени")}
+          onChange={(next) =>
+            onChange({ ...value, academic_degree: next, science_branches: next ? value.science_branches : [] })
+          }
         />
-      </label>
+      </div>
 
       {value.academic_degree && (
-        <label className={s.field}>
-          <span className={s.label}>Отрасль науки</span>
-          <SelectInput
-            id="research-branch"
-            value={value.science_branch}
-            options={toOptions(catalogs.science_branches)}
-            onChange={(next) => onChange({ ...value, science_branch: next })}
-            placeholder="Выберите отрасль науки"
+        <div className={s.field}>
+          <span className={s.label}>Отрасли науки</span>
+          <MultiSelect
+            id="research-branches"
+            options={catalogs.science_branches}
+            value={value.science_branches}
+            onChange={(next) => onChange({ ...value, science_branches: next })}
           />
-        </label>
+        </div>
       )}
 
-      <label className={s.field}>
-        <span className={s.label}>Учёное звание (при наличии)</span>
-        <SelectInput
-          id="research-title"
+      <div className={s.field}>
+        <span className={s.label}>Учёное звание</span>
+        <RadioGroup
+          name="research-title"
           value={value.academic_title}
-          options={toOptions(catalogs.academic_titles)}
+          options={toRadioOptions(catalogs.academic_titles, "Нет учёного звания")}
           onChange={(next) => onChange({ ...value, academic_title: next })}
-          placeholder="Нет учёного звания"
         />
-      </label>
+      </div>
 
       <label className={s.field}>
         <span className={s.label}>Направление научной деятельности</span>

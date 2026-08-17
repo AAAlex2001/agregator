@@ -71,7 +71,7 @@ REGISTRATION_FIELD_LABELS: dict[str, str] = {
     "ecology_profile": "анкета эколога",
     "work_types": "виды работ",
     "practical_skills": "практические навыки",
-    "science_branch": "отрасль науки",
+    "science_branches": "отрасли науки",
     "contact_sales_enabled": "платный доступ к контактам",
     "contact_price_rubles": "стоимость доступа к контактам",
     "contact_payment_details": "условия оплаты доступа к контактам",

@@ -105,7 +105,7 @@ def research_summary(expert: Expert, keys: set[str]) -> list[str]:
         return ["Исполнитель НИР"]
     parts = []
     if "research_degree" in keys and profile.academic_degree:
-        parts.append(format_degree(profile.academic_degree, profile.science_branch))
+        parts.append(format_degree(profile.academic_degree, profile.science_branches))
     if "research_title" in keys and profile.academic_title:
         parts.append(TITLE_TITLES.get(profile.academic_title, profile.academic_title))
     if "research_field" in keys and profile.research_field:
@@ -199,7 +199,7 @@ def direction_tags(expert: Expert, direction: str) -> list[str]:
         return tags
     if direction == OrderWorkType.RESEARCH.value and expert.research_profile is not None:
         profile = expert.research_profile
-        codes = [profile.academic_degree, profile.science_branch, profile.academic_title]
+        codes = [profile.academic_degree, *profile.science_branches, profile.academic_title]
         return [code for code in codes if code in DEGREE_WORDS or code in BRANCH_TITLES or code in TITLE_TITLES]
     return []
 

@@ -53,12 +53,13 @@ TITLE_TITLES = {item.code: item.title for item in ACADEMIC_TITLES}
 BRANCH_TITLES = {item.code: item.title for item in SCIENCE_BRANCHES}
 
 
-def format_degree(degree_code: str, branch_code: str) -> str:
+def format_degree(degree_code: str, branch_codes: list[str]) -> str:
     """Собирает читаемую степень: «Кандидат биологических наук» или сырой текст анкеты."""
     word = DEGREE_WORDS.get(degree_code)
     if word is None:
         return degree_code
-    return f"{word} {BRANCH_TITLES.get(branch_code, 'наук')}"
+    branches = [BRANCH_TITLES[code] for code in branch_codes if code in BRANCH_TITLES]
+    return f"{word} {', '.join(branches) if branches else 'наук'}"
 
 
 def build_research_catalogs() -> ResearchCatalogsResponse:

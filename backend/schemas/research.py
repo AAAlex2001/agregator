@@ -22,7 +22,7 @@ class ResearchCatalogsResponse(BaseModel):
 class ResearchProfileInput(BaseModel):
     """Анкета исполнителя НИР из формы регистрации или кабинета."""
     academic_degree: str = Field("", max_length=300)
-    science_branch: str = Field("", max_length=100)
+    science_branches: list[str] = Field(default_factory=list, max_length=30)
     academic_title: str = Field("", max_length=300)
     research_field: str = Field("", max_length=5000)
 
@@ -32,7 +32,7 @@ class ResearchProfileResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     academic_degree: str = ""
-    science_branch: str = ""
+    science_branches: list[str] = Field(default_factory=list)
     academic_title: str = ""
     research_field: str = ""
 

@@ -8,5 +8,3 @@ export { PhoneInput } from "./PhoneInput";
 export type { PhoneInputProps } from "./PhoneInput";
 export { PasswordInput } from "./PasswordInput";
 export type { PasswordInputProps } from "./PasswordInput";
-export { SelectInput } from "./SelectInput";
-export type { SelectInputOption, SelectInputProps } from "./SelectInput";

@@ -13,7 +13,7 @@ export interface ResearchCatalogs {
 
 export interface ResearchProfile {
   academic_degree: string;
-  science_branch: string;
+  science_branches: string[];
   academic_title: string;
   research_field: string;
 }
@@ -31,7 +31,7 @@ export const emptyResearchCatalogs: ResearchCatalogs = {
 
 export const emptyResearchProfile: ResearchProfile = {
   academic_degree: "",
-  science_branch: "",
+  science_branches: [],
   academic_title: "",
   research_field: "",
 };
