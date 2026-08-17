@@ -1,6 +1,6 @@
 """HTTP-зависимости для разбора multipart-запросов регистрации."""
 
-from fastapi import Depends, Form, HTTPException, status
+from fastapi import Depends, Form, HTTPException
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,14 +37,14 @@ def get_login_repository(db: AsyncSession = Depends(get_db)) -> LoginRepository:
 def parse_user_payload(payload: str | None = Form(None)) -> UserRegistration:
     if not payload:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=422,
             detail="Данные регистрации не переданы",
         )
     try:
         return UserRegistration.model_validate_json(payload)
     except ValidationError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=422,
             detail=registration_validation_message(exc),
         ) from exc
 
@@ -52,13 +52,13 @@ def parse_user_payload(payload: str | None = Form(None)) -> UserRegistration:
 def parse_license_holder_payload(payload: str | None = Form(None)) -> LicenseHolderRegistration:
     if not payload:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=422,
             detail="Данные регистрации не переданы",
         )
     try:
         return LicenseHolderRegistration.model_validate_json(payload)
     except ValidationError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=422,
             detail=registration_validation_message(exc),
         ) from exc

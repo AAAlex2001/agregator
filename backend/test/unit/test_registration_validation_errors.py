@@ -1,8 +1,10 @@
 from typing import get_args, get_origin
 
 import pytest
+from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
 
+from dependencies.registration import parse_license_holder_payload, parse_user_payload
 from schemas.registration import LicenseHolderRegistration, UserRegistration
 from services.registration.validation_errors import (
     REGISTRATION_FIELD_LABELS,
@@ -92,3 +94,12 @@ def test_direction_errors_use_context_specific_russian_labels(payload, expected_
         schema(**payload)
 
     assert registration_validation_message(captured.value) == expected_message
+
+
+@pytest.mark.parametrize("parser", [parse_user_payload, parse_license_holder_payload])
+def test_missing_registration_payload_returns_compatible_422(parser):
+    with pytest.raises(HTTPException) as captured:
+        parser(None)
+
+    assert captured.value.status_code == 422
+    assert captured.value.detail == "Данные регистрации не переданы"
