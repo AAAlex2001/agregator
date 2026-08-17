@@ -10,7 +10,7 @@ export function MainHero() {
         <Title
           as="h1"
           className={s.title}
-          text={"Первая единая площадка промышленных и инженерных услуг России"}
+          text={"Первая единая площадка для специалистов и промышленников России"}
         />
         <Subtitle
           className={s.subtitle}

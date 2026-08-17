@@ -2,7 +2,7 @@
 
 import s from "./key-advantages.module.scss";
 import { useState } from "react";
-import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
+import Button from "@/source/shared/ui/Button";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 
@@ -67,9 +67,9 @@ const KeyAdvantages = ({
               </div>
             ))}
           </div>
-          <AuthTrigger tab="register" variant="secondary" className={s.ctaButton}>
-            Смотреть все преимущества
-          </AuthTrigger>
+          <Button href="#registraciya" variant="secondary" className={s.ctaButton}>
+            Выбрать роль
+          </Button>
         </div>
       </div>
     </section>
