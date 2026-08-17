@@ -286,8 +286,8 @@ export const FORENSIC_ROLES: ServiceLandingRole[] = [
     id: "forensic-expert",
     role: "EXPERT",
     direction: "FORENSIC",
-    title: "Судебный эксперт",
-    subtitle: "(исполнитель)",
+    title: "Исполнитель",
+    subtitle: "(судебный эксперт)",
     description: "Для экспертов, готовящих заключения для судов и государственных органов.",
     fields: [
       "ФИО полностью",

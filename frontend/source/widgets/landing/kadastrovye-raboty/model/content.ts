@@ -163,8 +163,8 @@ export const KADASTR_ROLES: ServiceLandingRole[] = [
     id: "cadastral-expert",
     role: "EXPERT",
     direction: "CADASTRAL",
-    title: "Кадастровый инженер",
-    subtitle: "(исполнитель)",
+    title: "Исполнитель",
+    subtitle: "(кадастровый инженер)",
     description: "Для кадастровых инженеров, состоящих в СРО.",
     fields: [
       "ФИО полностью",
