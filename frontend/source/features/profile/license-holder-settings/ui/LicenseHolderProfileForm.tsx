@@ -8,11 +8,14 @@ import {
   PasswordFields,
   ProfileAvatarUpload,
   ProfileForm,
+  ProfileSaveProvider,
   SaveBar,
   useProfileShell,
   type UserProfile,
 } from "@/source/entities/user";
 import { ChangeEmailModal } from "@/source/features/profile/change-email";
+import { DirectionsSection } from "@/source/features/profile/directions";
+import { LicenseTermsForm } from "./LicenseTermsForm";
 
 interface Props {
   profile: UserProfile;
@@ -20,8 +23,16 @@ interface Props {
 }
 
 export function LicenseHolderProfileForm({ profile, onProfileUpdate }: Props) {
-  const { form, avatarPreviewUrl, avatarError, isLoggingOut, isSaving, handleAvatarSelect, submit } =
-    useProfileShell({ profile, onProfileUpdate });
+  const {
+    form,
+    avatarPreviewUrl,
+    avatarError,
+    isLoggingOut,
+    isSaving,
+    registerSave,
+    handleAvatarSelect,
+    submit,
+  } = useProfileShell({ profile, onProfileUpdate });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   return (
@@ -49,6 +60,15 @@ export function LicenseHolderProfileForm({ profile, onProfileUpdate }: Props) {
             <CompanyReadonly companyName={profile.company_data.value ?? ""} inn={profile.inn} />
           )}
         </FormSection>
+
+        <ProfileSaveProvider register={registerSave}>
+          <DirectionsSection
+            role="LICENSE_HOLDER"
+            licenseHolderExpertiseCard={
+              <LicenseTermsForm profile={profile} onProfileUpdate={onProfileUpdate} />
+            }
+          />
+        </ProfileSaveProvider>
 
         <FormSection title="Изменить пароль">
           <FormGrid>

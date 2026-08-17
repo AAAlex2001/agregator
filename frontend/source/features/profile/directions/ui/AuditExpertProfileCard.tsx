@@ -14,6 +14,7 @@ import {
   type AuditExpertProfile,
 } from "@/source/features/directions/audit";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
@@ -48,7 +49,12 @@ export function AuditExpertProfileCard() {
         label="Дипломы, аттестаты, курсы"
         documents={value.documents}
         isBusy={isBusy}
-        onUpload={(file) => applyServerUpdate(() => uploadAuditDocument(file), mergeDocuments)}
+        onUpload={(files) =>
+          applyServerUpdate(
+            () => uploadDirectionFiles(files, uploadAuditDocument),
+            mergeDocuments,
+          )
+        }
         onRemove={(url) => applyServerUpdate(() => deleteAuditDocument(url), mergeDocuments)}
       />
     </>

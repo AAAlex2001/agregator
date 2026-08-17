@@ -14,6 +14,7 @@ import {
   type TechDiagProfile,
 } from "@/source/features/directions/tech-diag";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
@@ -48,7 +49,12 @@ export function TechDiagProfileCard() {
         label="Квалификационные удостоверения — до 10 документов"
         documents={value.documents}
         isBusy={isBusy}
-        onUpload={(file) => applyServerUpdate(() => uploadTechDiagDocument(file), mergeDocuments)}
+        onUpload={(files) =>
+          applyServerUpdate(
+            () => uploadDirectionFiles(files, uploadTechDiagDocument),
+            mergeDocuments,
+          )
+        }
         onRemove={(url) => applyServerUpdate(() => deleteTechDiagDocument(url), mergeDocuments)}
       />
     </>

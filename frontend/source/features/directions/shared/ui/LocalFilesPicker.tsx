@@ -11,9 +11,16 @@ interface Props {
   files: File[];
   onAdd: (files: File[]) => void;
   onRemove: (index: number) => void;
+  maxFiles?: number;
 }
 
-export function LocalFilesPicker({ label, files, onAdd, onRemove }: Props) {
+export function LocalFilesPicker({
+  label,
+  files,
+  onAdd,
+  onRemove,
+  maxFiles = MAX_PROFILE_DOCUMENTS,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const urls = useObjectUrls(files);
 
@@ -34,9 +41,9 @@ export function LocalFilesPicker({ label, files, onAdd, onRemove }: Props) {
     <FileGallery
       variant="editable"
       label={label}
-      hint={`${FILE_HINT}, не более ${MAX_PROFILE_DOCUMENTS} файлов`}
+      hint={`${FILE_HINT}, не более ${maxFiles} файлов`}
       items={items}
-      onAdd={files.length < MAX_PROFILE_DOCUMENTS ? () => inputRef.current?.click() : undefined}
+      onAdd={files.length < maxFiles ? () => inputRef.current?.click() : undefined}
       input={
         <input
           ref={inputRef}
@@ -47,7 +54,7 @@ export function LocalFilesPicker({ label, files, onAdd, onRemove }: Props) {
           onChange={(event) => {
             const picked = Array.from(event.target.files ?? []);
             event.target.value = "";
-            if (picked.length) onAdd(picked.slice(0, MAX_PROFILE_DOCUMENTS - files.length));
+            if (picked.length) onAdd(picked.slice(0, maxFiles - files.length));
           }}
         />
       }

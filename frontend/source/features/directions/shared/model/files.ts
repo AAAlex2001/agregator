@@ -9,3 +9,15 @@ export const FILE_ACCEPT =
 export const FILE_HINT = "PDF / JPG / PNG / DOC / DOCX, до 10 МБ";
 
 export const MAX_PROFILE_DOCUMENTS = 10;
+
+export async function uploadDirectionFiles<T>(
+  files: File[],
+  upload: (file: File) => Promise<T>,
+): Promise<T> {
+  const [first, ...rest] = files;
+  if (!first) throw new Error("Выберите хотя бы один файл");
+
+  let result = await upload(first);
+  for (const file of rest) result = await upload(file);
+  return result;
+}

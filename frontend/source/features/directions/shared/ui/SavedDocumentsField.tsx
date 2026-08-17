@@ -8,17 +8,25 @@ import {
   isImageFileName,
 } from "@/source/shared/lib/filePreview";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
-import { FILE_ACCEPT, FILE_HINT, type DirectionFile } from "../model/files";
+import { FILE_ACCEPT, FILE_HINT, MAX_PROFILE_DOCUMENTS, type DirectionFile } from "../model/files";
 
 interface Props {
   label: string;
   documents: DirectionFile[];
   isBusy: boolean;
-  onUpload: (file: File) => void;
+  onUpload: (files: File[]) => void;
   onRemove: (url: string) => void;
+  maxFiles?: number;
 }
 
-export function SavedDocumentsField({ label, documents, isBusy, onUpload, onRemove }: Props) {
+export function SavedDocumentsField({
+  label,
+  documents,
+  isBusy,
+  onUpload,
+  onRemove,
+  maxFiles = MAX_PROFILE_DOCUMENTS,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const items = documents.map((document) => {
@@ -39,21 +47,22 @@ export function SavedDocumentsField({ label, documents, isBusy, onUpload, onRemo
     <FileGallery
       variant="editable"
       label={label}
-      hint={FILE_HINT}
+      hint={`${FILE_HINT}, не более ${maxFiles} файлов`}
       emptyText="Документы не загружены"
       items={items}
-      onAdd={() => inputRef.current?.click()}
+      onAdd={documents.length < maxFiles ? () => inputRef.current?.click() : undefined}
       input={
         <input
           ref={inputRef}
           type="file"
           hidden
+          multiple
           accept={FILE_ACCEPT}
           disabled={isBusy}
           onChange={(event) => {
-            const file = event.target.files?.[0];
+            const files = Array.from(event.target.files ?? []).slice(0, maxFiles - documents.length);
             event.target.value = "";
-            if (file) onUpload(file);
+            if (files.length) onUpload(files);
           }}
         />
       }

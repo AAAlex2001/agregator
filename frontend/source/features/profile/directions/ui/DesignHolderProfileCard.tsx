@@ -10,6 +10,7 @@ import {
   type DesignHolderProfile,
 } from "@/source/features/directions/design";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
@@ -33,7 +34,12 @@ export function DesignHolderProfileCard() {
         label="Дополнительные документы — до 10 файлов"
         documents={value.documents}
         isBusy={isBusy}
-        onUpload={(file) => applyServerUpdate(() => uploadDesignHolderDocument(file), mergeDocuments)}
+        onUpload={(files) =>
+          applyServerUpdate(
+            () => uploadDirectionFiles(files, uploadDesignHolderDocument),
+            mergeDocuments,
+          )
+        }
         onRemove={(url) => applyServerUpdate(() => deleteDesignHolderDocument(url), mergeDocuments)}
       />
     </>

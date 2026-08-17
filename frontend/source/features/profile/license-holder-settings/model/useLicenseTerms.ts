@@ -1,9 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState } from "react";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { TYPES, type ExpertiseType } from "@/source/entities/expertise";
-import type { LicenseHolderUpdatePayload, LicenseRentalKind, UserProfile } from "@/source/entities/user";
+import {
+  useRegisterProfileSave,
+  type LicenseHolderUpdatePayload,
+  type LicenseRentalKind,
+  type UserProfile,
+} from "@/source/entities/user";
 import {
   deleteCompanyCard,
   updateLicenseHolderProfile,
@@ -47,7 +52,6 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     holder?.lab_accreditation_number ?? "",
   );
 
-  const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isCardUploading, setIsCardUploading] = useState(false);
   const [isMiningUploading, setIsMiningUploading] = useState(false);
@@ -70,19 +74,17 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     lab_accreditation_number: labAccreditationNumber.trim() || null,
   });
 
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    setIsSaving(true);
-    try {
-      const updated = await updateLicenseHolderProfile(payload());
-      onProfileUpdate(updated);
-      showSuccess("Изменения сохранены");
-    } catch (err) {
-      showError(err instanceof Error ? err.message : "Не удалось сохранить");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const savedPayloadRef = useRef(JSON.stringify(payload()));
+
+  useRegisterProfileSave(async () => {
+    const nextPayload = payload();
+    const serializedPayload = JSON.stringify(nextPayload);
+    if (serializedPayload === savedPayloadRef.current) return;
+
+    const updated = await updateLicenseHolderProfile(nextPayload);
+    savedPayloadRef.current = serializedPayload;
+    onProfileUpdate(updated);
+  });
 
   const makeUploader = (
     uploader: (file: File) => Promise<UserProfile>,
@@ -130,13 +132,11 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     setMiningLicenseNumber,
     labAccreditationNumber,
     setLabAccreditationNumber,
-    isSaving,
     isUploading,
     isCardUploading,
     isMiningUploading,
     isSroUploading,
     isLabUploading,
-    submit,
     replaceFile: makeUploader(uploadLicenseFile, setIsUploading, "Файл лицензии обновлён"),
     replaceCompanyCard: makeUploader(uploadCompanyCard, setIsCardUploading, "Карточка предприятия обновлена"),
     removeCompanyCardFile,

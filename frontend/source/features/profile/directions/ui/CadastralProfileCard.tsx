@@ -13,6 +13,7 @@ import {
 } from "@/source/features/directions/cadastral";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
 import { SavedFileField } from "@/source/features/directions/shared/ui/SavedFileField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
@@ -53,7 +54,12 @@ export function CadastralProfileCard() {
         label="Дипломы, аттестаты, курсы"
         documents={value.documents}
         isBusy={isBusy}
-        onUpload={(file) => applyServerUpdate(() => uploadCadastralDocument(file), mergeFiles)}
+        onUpload={(files) =>
+          applyServerUpdate(
+            () => uploadDirectionFiles(files, uploadCadastralDocument),
+            mergeFiles,
+          )
+        }
         onRemove={(url) => applyServerUpdate(() => deleteCadastralDocument(url), mergeFiles)}
       />
     </>

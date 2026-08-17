@@ -15,15 +15,16 @@ import {
   type DesignProfile,
 } from "@/source/features/directions/design";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
 const DOCUMENT_GROUPS: Array<{ group: DesignDocumentGroup; label: string }> = [
   { group: "education", label: "Диплом об образовании — до 5 документов" },
-  { group: "nok", label: "Свидетельство НОК" },
-  { group: "nrs", label: "Уведомление о включении в НРС" },
+  { group: "nok", label: "Свидетельства НОК — до 5 документов" },
+  { group: "nrs", label: "Уведомления о включении в НРС — до 5 документов" },
   { group: "qualification", label: "Повышение квалификации, курсы — до 5 документов" },
-  { group: "rtn", label: "Протокол аттестации РТН" },
+  { group: "rtn", label: "Протоколы аттестации РТН — до 5 документов" },
 ];
 
 const GROUP_FIELDS: Record<DesignDocumentGroup, keyof DesignProfile> = {
@@ -74,7 +75,13 @@ export function DesignProfileCard() {
           label={label}
           documents={value[GROUP_FIELDS[group]] as DesignProfile["education_documents"]}
           isBusy={isBusy}
-          onUpload={(file) => applyServerUpdate(() => uploadDesignDocument(group, file), mergeDocuments)}
+          maxFiles={5}
+          onUpload={(files) =>
+            applyServerUpdate(
+              () => uploadDirectionFiles(files, (file) => uploadDesignDocument(group, file)),
+              mergeDocuments,
+            )
+          }
           onRemove={(url) => applyServerUpdate(() => deleteDesignDocument(group, url), mergeDocuments)}
         />
       ))}

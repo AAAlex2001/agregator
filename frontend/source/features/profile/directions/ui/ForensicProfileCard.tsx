@@ -12,6 +12,7 @@ import {
 } from "@/source/features/directions/forensic";
 import { SavedDocumentsField } from "@/source/features/directions/shared/ui/SavedDocumentsField";
 import { SavedFileField } from "@/source/features/directions/shared/ui/SavedFileField";
+import { uploadDirectionFiles } from "@/source/features/directions/shared/model/files";
 import { useDirectionProfile } from "../model/useDirectionProfile";
 import s from "./DirectionsSection.module.scss";
 
@@ -45,7 +46,12 @@ export function ForensicProfileCard() {
         label="Документы о дополнительном образовании"
         documents={value.documents}
         isBusy={isBusy}
-        onUpload={(file) => applyServerUpdate(() => uploadForensicDocument(file), mergeFiles)}
+        onUpload={(files) =>
+          applyServerUpdate(
+            () => uploadDirectionFiles(files, uploadForensicDocument),
+            mergeFiles,
+          )
+        }
         onRemove={(url) => applyServerUpdate(() => deleteForensicDocument(url), mergeFiles)}
       />
     </>

@@ -7,12 +7,8 @@ import { RoleBadge } from "@/source/shared/ui";
 import { useSession } from "@/source/features/session";
 import { CustomerSettingsForm } from "@/source/features/profile/customer-settings";
 import { ExpertSettingsForm } from "@/source/features/profile/expert-settings";
-import {
-  LicenseHolderProfileForm,
-  LicenseTermsForm,
-} from "@/source/features/profile/license-holder-settings";
+import { LicenseHolderProfileForm } from "@/source/features/profile/license-holder-settings";
 import { NotificationPreferencesForm } from "@/source/features/profile/notifications";
-import { DirectionsSection } from "@/source/features/profile/directions";
 import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
 import type { UserProfile } from "@/source/entities/user";
 import { SettingsSkeleton } from "./SettingsSkeleton";
@@ -34,7 +30,6 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
   }
   if (role === "LICENSE_HOLDER") {
     return [
-      { id: "license", label: "Направления" },
       { id: "notifications", label: "Уведомления" },
       { id: "personal", label: "Личные данные" },
     ];
@@ -46,7 +41,7 @@ function buildTabs(role: string | null): Array<{ id: SettingsSection; label: str
 }
 
 function defaultSection(role: string | null): SettingsSection {
-  if (role === "LICENSE_HOLDER") return "license";
+  if (role === "LICENSE_HOLDER") return "personal";
   if (role === "EXPERT" || role === "CUSTOMER") return "notifications";
   return "personal";
 }
@@ -109,16 +104,6 @@ interface SettingsContentProps {
 function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProps) {
   if (section === "notifications") {
     return <NotificationPreferencesForm profile={user} onProfileUpdate={onProfileUpdate} />;
-  }
-  if (section === "license" && user.role === "LICENSE_HOLDER") {
-    return (
-      <DirectionsSection
-        role="LICENSE_HOLDER"
-        licenseHolderExpertiseCard={
-          <LicenseTermsForm profile={user} onProfileUpdate={onProfileUpdate} />
-        }
-      />
-    );
   }
   return <PersonalProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Button from "@/source/shared/ui/Button";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { FileGallery, RentalPriceField } from "@/source/shared/ui";
 import {
@@ -55,7 +54,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
     : [];
 
   return (
-    <form className={s.form} onSubmit={form.submit}>
+    <div className={s.form}>
       <header className={s.header}>
         <h2 className={s.title}>Лицензия и условия её предоставления</h2>
         <p className={s.subtitle}>Номер, файл лицензии и стоимость предоставления лицензии для входящих заявок.</p>
@@ -64,7 +63,6 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
       <TextInput
         id="licenseNumber"
         value={form.licenseNumber}
-        required
         autoComplete="off"
         onChange={(e) => form.setLicenseNumber(e.target.value)}
         placeholder="Номер лицензии ЭПБ ОПО"
@@ -215,10 +213,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
         </div>
       </div>
 
-      <Button type="submit" variant="chat" size="md" className={s.save} isLoading={form.isSaving}>
-        Сохранить изменения
-      </Button>
-    </form>
+    </div>
   );
 }
 

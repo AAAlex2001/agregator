@@ -263,30 +263,35 @@ export function ExpertFields({ state, dispatch }: StepProps) {
               <LocalFilesPicker
                 label="Диплом об образовании — до 5 документов"
                 files={state.directionFiles.designEducationDocuments}
+                maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designEducationDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designEducationDocuments", index })}
               />
               <LocalFilesPicker
-                label="Свидетельство НОК"
+                label="Свидетельства НОК — до 5 документов"
                 files={state.directionFiles.designNokDocuments}
+                maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designNokDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designNokDocuments", index })}
               />
               <LocalFilesPicker
-                label="Уведомление о включении в НРС"
+                label="Уведомления о включении в НРС — до 5 документов"
                 files={state.directionFiles.designNrsDocuments}
+                maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designNrsDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designNrsDocuments", index })}
               />
               <LocalFilesPicker
                 label="Повышение квалификации, курсы — до 5 документов"
                 files={state.directionFiles.designQualificationDocuments}
+                maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designQualificationDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designQualificationDocuments", index })}
               />
               <LocalFilesPicker
-                label="Протокол аттестации РТН"
+                label="Протоколы аттестации РТН — до 5 документов"
                 files={state.directionFiles.designRtnDocuments}
+                maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designRtnDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designRtnDocuments", index })}
               />
