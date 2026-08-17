@@ -39,6 +39,7 @@ class UserRegistration(BaseModel):
     role: UserRole = Field(..., description="Роль пользователя")
     email: EmailStr = Field(..., description="Почта пользователя")
     password: str = Field(..., description="Пароль пользователя", min_length=6)
+    password_confirm: str = Field(..., description="Подтверждение пароля")
     phone: str | None = Field(None, description="Номер телефона пользователя")
     inn: str | None = Field(None, description="ИНН")
     company_data: dict[str, Any] | None = Field(None, description="Полные данные компании из DaData")
@@ -69,6 +70,9 @@ class UserRegistration(BaseModel):
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
     contact_payment_details: str | None = Field(None, max_length=1000)
     contact_disclosure_consent: bool = False
+    privacy_consent: bool = False
+    terms_consent: bool = False
+    personal_data_consent: bool = False
 
     @field_validator("password")
     @classmethod
@@ -102,6 +106,34 @@ class UserRegistration(BaseModel):
             raise ValueError("Анкеты направлений исполнителя доступны только исполнителю")
         if self.role is not UserRole.CUSTOMER and self.audit_customer_profile is not None:
             raise ValueError("Анкета заказчика по аудиту доступна только заказчику")
+        if self.role is UserRole.LICENSE_HOLDER:
+            raise ValueError("Для держателя разрешительных документов используйте специальную форму")
+
+        if self.role is UserRole.CUSTOMER:
+            if not self.inn or not self.company_data:
+                raise ValueError("Выберите организацию из подсказок по ИНН")
+            if "AUDIT_SUPB" in self.directions:
+                raise ValueError("Для аудита СУПБ заполните анкету заказчика")
+            if not self.directions and self.audit_customer_profile is None:
+                raise ValueError("Выберите хотя бы одно направление")
+
+        if self.role is UserRole.EXPERT:
+            if self.directions:
+                raise ValueError("Для направлений исполнителя заполните профильные анкеты")
+            if not any(form is not None for form in expert_forms):
+                raise ValueError("Выберите хотя бы одно направление")
+        return self
+
+    @model_validator(mode="after")
+    def validate_confirmation_and_consents(self) -> "UserRegistration":
+        if self.password != self.password_confirm:
+            raise ValueError("Пароли не совпадают")
+        if not self.privacy_consent:
+            raise ValueError("Подтвердите согласие с Политикой конфиденциальности")
+        if not self.terms_consent:
+            raise ValueError("Подтвердите согласие с Пользовательским соглашением")
+        if not self.personal_data_consent:
+            raise ValueError("Подтвердите согласие на обработку персональных данных")
         return self
 
     @model_validator(mode="after")
@@ -128,7 +160,8 @@ class LicenseHolderRegistration(BaseModel):
     """
     email: EmailStr
     password: str = Field(..., min_length=6)
-    phone: str = Field(..., min_length=10)
+    password_confirm: str
+    phone: str | None = Field(None, min_length=10)
     inn: str = Field(..., min_length=10, max_length=12, pattern=r"^\d{10}(\d{2})?$")
     company_data: dict[str, Any]
     license_number: str | None = Field(None, max_length=100)
@@ -144,6 +177,9 @@ class LicenseHolderRegistration(BaseModel):
     directions: list[str] = Field(
         default_factory=list, description="Отметки направлений без анкет", max_length=10
     )
+    privacy_consent: bool = False
+    terms_consent: bool = False
+    personal_data_consent: bool = False
 
     @field_validator("password")
     @classmethod
@@ -165,7 +201,31 @@ class LicenseHolderRegistration(BaseModel):
         company_inn = (self.company_data.get("data") or {}).get("inn")
         if company_inn and company_inn != self.inn:
             raise ValueError("Выбранная компания не соответствует указанному ИНН")
-        if self.audit_profile is None and self.tech_diag_profile is None and self.design_profile is None:
+        generic_directions = {"RESEARCH", "LABORATORY", "CADASTRAL", "FORENSIC"}
+        unsupported_directions = [key for key in self.directions if key not in generic_directions]
+        if unsupported_directions:
+            raise ValueError(
+                "Для выбранного направления заполните профильную анкету держателя документов"
+            )
+
+        has_license_data = bool(
+            (self.license_number or "").strip()
+            or self.license_areas
+            or self.license_rental_kind is not None
+            or self.license_rental_percent is not None
+            or self.license_rental_fixed_amount is not None
+        )
+        has_any_direction = bool(
+            has_license_data
+            or self.audit_profile is not None
+            or self.tech_diag_profile is not None
+            or self.design_profile is not None
+            or self.directions
+        )
+        if not has_any_direction:
+            raise ValueError("Выберите хотя бы одно направление")
+
+        if has_license_data:
             if not (self.license_number or "").strip():
                 raise ValueError("Укажите номер лицензии")
             if not self.license_areas:
@@ -176,6 +236,14 @@ class LicenseHolderRegistration(BaseModel):
             raise ValueError("Укажите процент от суммы договора")
         if self.license_rental_kind is LicenseRentalKind.FIXED and self.license_rental_fixed_amount is None:
             raise ValueError("Укажите минимальную фиксированную цену предоставления лицензии")
+        if self.password != self.password_confirm:
+            raise ValueError("Пароли не совпадают")
+        if not self.privacy_consent:
+            raise ValueError("Подтвердите согласие с Политикой конфиденциальности")
+        if not self.terms_consent:
+            raise ValueError("Подтвердите согласие с Пользовательским соглашением")
+        if not self.personal_data_consent:
+            raise ValueError("Подтвердите согласие на обработку персональных данных")
         return self
 
 

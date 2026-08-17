@@ -36,6 +36,7 @@ export function RegisterForm({ preset, onRegistered }: Props) {
       <form
         onSubmit={submit}
         className={s.form}
+        noValidate
         autoComplete="off"
         data-lpignore="true"
         data-1p-ignore="true"
@@ -59,7 +60,7 @@ export function RegisterForm({ preset, onRegistered }: Props) {
 
         {state.role === "EXPERT" && <NameFields state={state} dispatch={dispatch} />}
 
-        <ContactBlock state={state} dispatch={dispatch} showPhoneHint={!isHolder} />
+        <ContactBlock state={state} dispatch={dispatch} />
 
         <PasswordBlock state={state} dispatch={dispatch} />
 

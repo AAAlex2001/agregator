@@ -4,10 +4,15 @@ interface ErrorBody {
 
 export function extractErrorMessage(body: unknown): string | undefined {
   const detail = (body as ErrorBody | null)?.detail;
-  if (typeof detail === "string") return detail;
-  if (Array.isArray(detail)) return detail[0]?.msg;
-  if (typeof detail?.message === "string") return detail.message;
-  return undefined;
+  const message =
+    typeof detail === "string"
+      ? detail
+      : Array.isArray(detail)
+        ? detail[0]?.msg
+        : typeof detail?.message === "string"
+          ? detail.message
+          : undefined;
+  return message?.replace(/^Value error,\s*/, "").trim();
 }
 
 export async function readErrorMessage(response: Response, fallback: string): Promise<string> {

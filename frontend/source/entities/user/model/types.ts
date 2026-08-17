@@ -48,7 +48,8 @@ export interface LicenseHolderDesignRegisterPayload {
 export interface LicenseHolderRegisterPayload {
   email: string;
   password: string;
-  phone: string;
+  password_confirm: string;
+  phone?: string;
   inn: string;
   company_data: CompanyData;
   license_number: string;
@@ -62,6 +63,9 @@ export interface LicenseHolderRegisterPayload {
   tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
   design_profile?: LicenseHolderDesignRegisterPayload | null;
   directions?: string[];
+  privacy_consent: boolean;
+  terms_consent: boolean;
+  personal_data_consent: boolean;
 }
 
 export interface LicenseHolderUpdatePayload {

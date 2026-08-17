@@ -20,6 +20,7 @@ export interface RegisterPayload {
   role: UserRole;
   email: string;
   password: string;
+  password_confirm: string;
   phone?: string;
   first_name?: string;
   last_name?: string;
@@ -46,6 +47,9 @@ export interface RegisterPayload {
   contact_payment_details?: string;
   contact_disclosure_consent?: boolean;
   directions?: string[];
+  privacy_consent: boolean;
+  terms_consent: boolean;
+  personal_data_consent: boolean;
 }
 
 export type RegisterDocumentSlot =

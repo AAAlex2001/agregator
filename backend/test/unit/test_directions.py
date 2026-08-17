@@ -23,6 +23,11 @@ def registration_payload(**overrides: object) -> dict[str, object]:
         "role": "EXPERT",
         "email": "user@example.com",
         "password": "Secret-123",
+        "password_confirm": "Secret-123",
+        "expertise_profile": {},
+        "privacy_consent": True,
+        "terms_consent": True,
+        "personal_data_consent": True,
     }
     payload.update(overrides)
     return payload
@@ -97,6 +102,7 @@ class TestRegistrationSchemaRoles:
             UserRegistration(
                 **registration_payload(
                     role="CUSTOMER",
+                    expertise_profile=None,
                     company_data={"value": "ООО Ромашка", "data": {"inn": "7707083893"}},
                     inn="7707083893",
                     forensic_profile={"education": "МГЮА"},
@@ -157,11 +163,12 @@ class TestBuildDirectionProfiles:
     def test_customer_audit_profile_created_with_customer_fk(self):
         account = build_customer_account()
         data = UserRegistration(
-            **registration_payload(
-                role="CUSTOMER",
-                company_data={"value": "ООО Ромашка", "data": {"inn": "7707083893"}},
-                inn="7707083893",
-                audit_customer_profile={"position": "Главный инженер"},
+                **registration_payload(
+                    role="CUSTOMER",
+                    expertise_profile=None,
+                    company_data={"value": "ООО Ромашка", "data": {"inn": "7707083893"}},
+                    inn="7707083893",
+                    audit_customer_profile={"position": "Главный инженер"},
             )
         )
 
@@ -174,6 +181,7 @@ class TestBuildDirectionProfiles:
     def test_empty_form_creates_nothing(self):
         account = build_expert_account()
         data = UserRegistration(**registration_payload())
+        data.expertise_profile = None
 
         assert build_direction_profiles(account, data) == []
         assert account.expert_profile.certificates == []

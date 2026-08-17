@@ -22,11 +22,6 @@ export function useRegister(
     event.preventDefault();
     if (state.waiting) return;
 
-    if (state.password !== state.confirm) {
-      showError("Пароли не совпадают");
-      return;
-    }
-
     dispatch({ type: "SUBMIT_PENDING" });
     try {
       if (state.role === "LICENSE_HOLDER") {
@@ -34,7 +29,8 @@ export function useRegister(
           {
             email: state.email.trim(),
             password: state.password,
-            phone: toRussianPhoneApiValue(state.phone),
+            password_confirm: state.confirm,
+            phone: toRussianPhoneApiValue(state.phone) || undefined,
             inn: state.party?.data.inn ?? "",
             company_data: state.party as CompanyData,
             license_number: state.licenseEnabled ? state.licenseNumber.trim() : "",
@@ -56,6 +52,9 @@ export function useRegister(
               ? holderProfileToApi(state.designHolderProfile)
               : null,
             directions: state.directions,
+            privacy_consent: state.consents.privacy,
+            terms_consent: state.consents.terms,
+            personal_data_consent: state.consents.personal,
           },
           state.files.license,
           state.files.mining,
@@ -68,6 +67,7 @@ export function useRegister(
             role: "EXPERT",
             email: state.email.trim(),
             password: state.password,
+            password_confirm: state.confirm,
             phone: toRussianPhoneApiValue(state.phone) || undefined,
             first_name: state.firstName || undefined,
             last_name: state.lastName || undefined,
@@ -92,6 +92,9 @@ export function useRegister(
               : undefined,
             contact_payment_details: state.contactEnabled ? state.contactDetails.trim() : undefined,
             contact_disclosure_consent: state.contactConsent,
+            privacy_consent: state.consents.privacy,
+            terms_consent: state.consents.terms,
+            personal_data_consent: state.consents.personal,
           },
           toRegisterDocuments(state.directionFiles),
         );
@@ -100,6 +103,7 @@ export function useRegister(
           role: "CUSTOMER",
           email: state.email.trim(),
           password: state.password,
+          password_confirm: state.confirm,
           phone: toRussianPhoneApiValue(state.phone) || undefined,
           first_name: state.firstName || undefined,
           last_name: state.lastName || undefined,
@@ -107,6 +111,9 @@ export function useRegister(
           company_data: state.party as CompanyData | null,
           audit_customer_profile: state.auditCustomerProfile,
           directions: state.directions,
+          privacy_consent: state.consents.privacy,
+          terms_consent: state.consents.terms,
+          personal_data_consent: state.consents.personal,
         });
       }
       dispatch({ type: "SUBMIT_FULFILLED" });

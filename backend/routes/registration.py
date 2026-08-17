@@ -1,12 +1,19 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, UploadFile, status
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.contact_deal import build_contact_cipher
 from dependencies.rate_limit import rate_limit
+from dependencies.registration import (
+    get_login_repository,
+    get_registration_notifier,
+    get_registration_repository,
+    get_registration_validator,
+    get_verification_service,
+    parse_license_holder_payload,
+    parse_user_payload,
+)
 from schemas.common import DetailResponse
 from schemas.registration import (
     EmailConfirmRequest,
@@ -42,34 +49,6 @@ from services.verification import VerificationService
 router = APIRouter(prefix="/register", tags=["auth"])
 
 
-def parse_user_payload(payload: str = Form(...)) -> UserRegistration:
-    "Парсит JSON-строку формы в pydantic-модель; ошибки идут как стандартный 422."
-    try:
-        return UserRegistration.model_validate_json(payload)
-    except ValidationError as exc:
-        raise RequestValidationError(exc.errors()) from exc
-
-
-def parse_license_holder_payload(payload: str = Form(...)) -> LicenseHolderRegistration:
-    "Парсит JSON-строку формы в pydantic-модель; ошибки идут как стандартный 422."
-    try:
-        return LicenseHolderRegistration.model_validate_json(payload)
-    except ValidationError as exc:
-        raise RequestValidationError(exc.errors()) from exc
-
-
-def build_repo(db: AsyncSession) -> RegistrationRepository:
-    return RegistrationRepository(db)
-
-
-def build_validator(repo: RegistrationRepository) -> RegistrationValidator:
-    return RegistrationValidator(repo)
-
-
-def build_notifier(db: AsyncSession) -> RegistrationNotifier:
-    return RegistrationNotifier(VerificationService(db))
-
-
 @router.post(
     "/",
     response_model=UserResponse,
@@ -82,13 +61,15 @@ async def register_user(
     documents: list[UploadFile] = File(default=[]),
     document_directions: list[str] = Form(default=[]),
     db: AsyncSession = Depends(get_db),
+    repository: RegistrationRepository = Depends(get_registration_repository),
+    validator: RegistrationValidator = Depends(get_registration_validator),
+    notifier: RegistrationNotifier = Depends(get_registration_notifier),
 ) -> UserResponse:
     "Регистрирует обычного пользователя, прикладывает дипломы направлений и шлёт письмо подтверждения."
-    repo = build_repo(db)
     cipher = build_contact_cipher() if data.contact_sales_enabled else None
-    user = await RegisterUserUseCase(repo, build_validator(repo), cipher).execute(data)
+    user = await RegisterUserUseCase(repository, validator, cipher).execute(data)
     await attach_documents(db, user.id, document_directions, documents)
-    await build_notifier(db).schedule_confirmation_email(user, background_tasks)
+    await notifier.schedule_confirmation_email(user, background_tasks)
     return UserResponse.from_account(user)
 
 
@@ -99,13 +80,13 @@ async def register_user(
 )
 async def confirm_email(
     data: EmailConfirmRequest,
-    db: AsyncSession = Depends(get_db),
+    repository: RegistrationRepository = Depends(get_registration_repository),
+    verification: VerificationService = Depends(get_verification_service),
+    login_repository: LoginRepository = Depends(get_login_repository),
 ) -> JSONResponse:
     "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
-    user = await ConfirmEmailUseCase(build_repo(db), VerificationService(db)).execute(
-        data.email, data.code, data.role
-    )
-    session = await CreateSessionUseCase(LoginRepository(db)).execute(user.id)
+    user = await ConfirmEmailUseCase(repository, verification).execute(data.email, data.code, data.role)
+    session = await CreateSessionUseCase(login_repository).execute(user.id)
 
     response = JSONResponse(content=UserResponse.from_account(user).model_dump(mode="json"))
     set_session_cookies(response, session.session_id, user.role.value)
@@ -121,12 +102,11 @@ async def confirm_email(
 async def resend_confirmation_code(
     data: ResendCodeRequest,
     background_tasks: BackgroundTasks,
-    db: AsyncSession = Depends(get_db),
+    repository: RegistrationRepository = Depends(get_registration_repository),
+    notifier: RegistrationNotifier = Depends(get_registration_notifier),
 ) -> DetailResponse:
     "Повторно отправляет код подтверждения почты — для случая, когда пользователь закрыл вкладку."
-    await ResendConfirmationUseCase(build_repo(db), build_notifier(db)).execute(
-        data.email, background_tasks, data.role
-    )
+    await ResendConfirmationUseCase(repository, notifier).execute(data.email, background_tasks, data.role)
     return DetailResponse(detail="Код отправлен повторно")
 
 
@@ -143,17 +123,24 @@ async def register_license_holder(
     mining_license_file: UploadFile | None = File(None),
     sro_design_file: UploadFile | None = File(None),
     lab_accreditation_file: UploadFile | None = File(None),
-    db: AsyncSession = Depends(get_db),
+    repository: RegistrationRepository = Depends(get_registration_repository),
+    validator: RegistrationValidator = Depends(get_registration_validator),
+    notifier: RegistrationNotifier = Depends(get_registration_notifier),
 ) -> UserResponse:
-    "Регистрирует лицензиата: сохраняет основной файл лицензии + (опц.) 3 дополнительных регуляторных документа."
+    "Регистрирует лицензиата и сохраняет приложенные разрешительные документы."
     file_url = await save_license_file(data.inn, license_file) if license_file else None
-    mining_url = await save_mining_license_file(data.inn, mining_license_file) if mining_license_file else None
+    mining_url = (
+        await save_mining_license_file(data.inn, mining_license_file) if mining_license_file else None
+    )
     sro_url = await save_sro_design_file(data.inn, sro_design_file) if sro_design_file else None
-    lab_url = await save_lab_accreditation_file(data.inn, lab_accreditation_file) if lab_accreditation_file else None
+    lab_url = (
+        await save_lab_accreditation_file(data.inn, lab_accreditation_file)
+        if lab_accreditation_file
+        else None
+    )
 
-    repo = build_repo(db)
     try:
-        user = await RegisterLicenseHolderUseCase(repo, build_validator(repo)).execute(
+        user = await RegisterLicenseHolderUseCase(repository, validator).execute(
             data,
             file_url,
             mining_license_file_url=mining_url,
@@ -167,7 +154,7 @@ async def register_license_holder(
         remove_regulatory_document_file(lab_url)
         raise
 
-    await build_notifier(db).schedule_confirmation_email(user, background_tasks)
+    await notifier.schedule_confirmation_email(user, background_tasks)
     return UserResponse.from_account(user)
 
 
