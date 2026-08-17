@@ -21,7 +21,7 @@ export function ContactBlock({ state, dispatch, showPhoneHint = true }: StepProp
           value={state.phone}
           autoComplete="off"
           onChange={(e) => dispatch({ type: "set", key: "phone", value: formatRussianPhone(e.target.value) })}
-          placeholder="+7-999-999-99-12"
+          placeholder="+7-999-999-99-99"
         />
         {showPhoneHint && <p className={s.contactHint}>Номер телефона необязателен</p>}
       </div>

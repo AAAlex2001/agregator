@@ -1,4 +1,3 @@
-import { TextInput } from "@/source/shared/ui/Inputs";
 import { ORDER_WORK_OPTIONS } from "@/source/entities/order";
 import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
 import {
@@ -6,6 +5,7 @@ import {
   emptyAuditCustomerProfile,
 } from "@/source/features/directions/audit";
 import { DirectionOption } from "./directions/DirectionOption";
+import { NameFields } from "./NameFields";
 import type { StepProps } from "./types";
 import d from "./directions/DirectionsPicker.module.scss";
 
@@ -56,20 +56,7 @@ export function CustomerFields({ state, dispatch }: StepProps) {
         )}
       </ul>
 
-      <TextInput
-        id="lastName"
-        value={state.lastName}
-        autoComplete="off"
-        onChange={(e) => dispatch({ type: "set", key: "lastName", value: e.target.value })}
-        placeholder="Фамилия"
-      />
-      <TextInput
-        id="firstName"
-        value={state.firstName}
-        autoComplete="off"
-        onChange={(e) => dispatch({ type: "set", key: "firstName", value: e.target.value })}
-        placeholder="Имя"
-      />
+      <NameFields state={state} dispatch={dispatch} />
 
       <PartySuggestInput
         value={state.companyName}

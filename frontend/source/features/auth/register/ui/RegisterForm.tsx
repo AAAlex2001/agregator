@@ -11,6 +11,7 @@ import { ExpertFields } from "./ExpertFields";
 import { HolderFields } from "./HolderFields";
 import { ContactBlock } from "./ContactBlock";
 import { ExpertContactBlock } from "./ExpertContactBlock";
+import { NameFields } from "./NameFields";
 import { PasswordBlock } from "./PasswordBlock";
 import { AgreementsBlock } from "./AgreementsBlock";
 import s from "./register-form.module.scss";
@@ -54,9 +55,11 @@ export function RegisterForm({ preset, onRegistered }: Props) {
         {state.role === "EXPERT" && <ExpertFields state={state} dispatch={dispatch} />}
         {isHolder && <HolderFields state={state} dispatch={dispatch} />}
 
-        <ContactBlock state={state} dispatch={dispatch} showPhoneHint={!isHolder} />
-
         {state.role === "EXPERT" && <ExpertContactBlock state={state} dispatch={dispatch} />}
+
+        {state.role === "EXPERT" && <NameFields state={state} dispatch={dispatch} />}
+
+        <ContactBlock state={state} dispatch={dispatch} showPhoneHint={!isHolder} />
 
         <PasswordBlock state={state} dispatch={dispatch} />
 

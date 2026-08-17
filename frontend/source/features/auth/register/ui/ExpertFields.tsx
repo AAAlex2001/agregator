@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TextInput } from "@/source/shared/ui/Inputs";
 import { Checkbox, FormSection } from "@/source/shared/ui";
 import { YandexAddressPicker } from "@/source/shared/ui/YandexMap";
 import { ExpertMapVisibilityFields } from "@/source/entities/expert";
@@ -295,21 +294,6 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           )}
         </DirectionOption>
       </ul>
-
-      <TextInput
-        id="lastName"
-        value={state.lastName}
-        autoComplete="off"
-        onChange={(e) => dispatch({ type: "set", key: "lastName", value: e.target.value })}
-        placeholder="Фамилия"
-      />
-      <TextInput
-        id="firstName"
-        value={state.firstName}
-        autoComplete="off"
-        onChange={(e) => dispatch({ type: "set", key: "firstName", value: e.target.value })}
-        placeholder="Имя"
-      />
 
       <FormSection
         title="Где вы находитесь"
