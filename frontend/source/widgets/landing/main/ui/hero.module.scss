@@ -70,8 +70,14 @@
 }
 
 @media (min-width: 1024px) {
+  .heroHead {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 40px;
+  }
+
   .brand {
-    align-self: flex-start;
     align-items: flex-start;
     text-align: left;
   }

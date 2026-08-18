@@ -1,8 +1,5 @@
-"use client";
-
-import Image from "next/image";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { LandingTabsShowcase } from "../../shared/ui/LandingTabsShowcase";
+import { ServicesAccordion } from "../../shared/ui/ServicesAccordion";
 import { AUDIT_AUDIENCE } from "../model/content";
 import s from "./audience.module.scss";
 
@@ -15,25 +12,7 @@ export function AuditAudience() {
           <Subtitle text="Кому аудит СУПБ обязателен по закону, а кому даёт снижение категории риска и меньше проверок." />
         </header>
 
-        <LandingTabsShowcase
-          items={AUDIT_AUDIENCE}
-          renderPanel={(item) => (
-            <>
-              <h3 className={s.panelTitle}>{item.title}</h3>
-              <div className={s.visual}>
-                <Image
-                  key={item.image}
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 1200px"
-                  className={s.visualImg}
-                />
-              </div>
-              <p className={s.desc}>{item.text}</p>
-            </>
-          )}
-        />
+        <ServicesAccordion items={AUDIT_AUDIENCE} />
       </div>
     </section>
   );
