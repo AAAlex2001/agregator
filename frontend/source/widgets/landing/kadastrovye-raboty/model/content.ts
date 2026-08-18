@@ -2,7 +2,7 @@ import { KADASTR_SRO_REGISTRY_URL } from "@/source/shared/config/externalLinks";
 import type { AudienceBlock } from "../../shared/ui/AudienceSection";
 import type { ServiceLandingFaqItem } from "../../shared/ui/ServiceLandingFaq";
 import type { ServiceLandingBullet } from "../../shared/ui/ServiceLandingHero";
-import type { ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
+import type { LandingTabsPanelItem } from "../../shared/ui/LandingTabsShowcase";
 import type { ServiceLandingRole } from "../../shared/ui/ServiceRoles";
 
 export const KADASTR_TITLE = "Кадастровые работы — подбор кадастровых инженеров";
@@ -43,43 +43,51 @@ export const KADASTR_BULLETS: ServiceLandingBullet[] = [
   },
 ];
 
-export const KADASTR_SERVICES: ServicesAccordionItem[] = [
+export const KADASTR_SERVICES: LandingTabsPanelItem[] = [
   {
+    tab: "Межевание",
     title: "Межевание",
     text: "Определение и закрепление границ земельного участка с подготовкой межевого плана.",
     image: "/landing/kadastr/1.webp",
   },
   {
+    tab: "Технические планы",
     title: "Технические планы",
     text: "Документы на здания, сооружения, помещения и объекты незавершённого строительства.",
     image: "/landing/kadastr/2.webp",
   },
   {
+    tab: "Схемы на КПТ",
     title: "Схемы на кадастровом плане территории",
     text: "Подготовка схемы расположения земельного участка на КПТ для дальнейшего утверждения.",
     image: "/landing/kadastr/3.webp",
   },
   {
+    tab: "Кадастровые ошибки",
     title: "Исправление кадастровых ошибок",
     text: "Выявление и устранение реестровых ошибок в сведениях ЕГРН о границах и площади.",
     image: "/landing/kadastr/4.webp",
   },
   {
+    tab: "Охранные зоны",
     title: "Постановка на учёт охранных зон",
     text: "Зоны с особыми условиями использования территорий (ЗОУИТ) — подготовка и внесение сведений.",
     image: "/landing/kadastr/5.webp",
   },
   {
+    tab: "Санитарно-защитные зоны",
     title: "Постановка на учёт санитарно-защитных зон",
     text: "Формирование и учёт СЗЗ предприятий и производственных объектов.",
     image: "/landing/kadastr/6.webp",
   },
   {
+    tab: "Акт обследования",
     title: "Акт обследования земельного участка",
     text: "Подтверждение прекращения существования объекта для снятия его с кадастрового учёта.",
     image: "/landing/kadastr/7.webp",
   },
   {
+    tab: "Кадастровая стоимость",
     title: "Снижение кадастровой стоимости",
     text: "Подготовка материалов для пересмотра кадастровой стоимости объекта недвижимости.",
     image: "/landing/kadastr/8.webp",

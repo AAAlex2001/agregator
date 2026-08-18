@@ -29,3 +29,40 @@
   }
 
 }
+
+.panelTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 700;
+  color: #101828;
+}
+
+.visual {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #e9ebf0;
+
+  @media (min-width: 1024px) {
+    height: 440px;
+  }
+}
+
+.visualImg {
+  object-fit: cover;
+}
+
+.desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 23px;
+  color: #4a5460;
+
+  @media (min-width: 1024px) {
+    font-size: 17px;
+    line-height: 27px;
+  }
+}

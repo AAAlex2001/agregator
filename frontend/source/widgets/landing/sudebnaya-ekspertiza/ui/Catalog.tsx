@@ -1,11 +1,9 @@
+"use client";
+
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
-import { ServicesAccordion, type ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
-import {
-  FORENSIC_GROUPS,
-  FORENSIC_LABOUR_SAFETY,
-  type ForensicExpertiseItem,
-} from "../model/content";
+import { LandingTabsShowcase } from "../../shared/ui/LandingTabsShowcase";
+import { FORENSIC_GROUPS, FORENSIC_LABOUR_SAFETY } from "../model/content";
 import s from "./catalog.module.scss";
 
 function ArrowUpRight() {
@@ -28,18 +26,6 @@ function ArrowUpRight() {
   );
 }
 
-interface ForensicAccordionItem extends ServicesAccordionItem {
-  items: ForensicExpertiseItem[];
-}
-
-const ACCORDION_ITEMS: ForensicAccordionItem[] = FORENSIC_GROUPS.map((group) => ({
-  title: group.title,
-  text: group.description,
-  image: "",
-  href: group.href,
-  items: group.items,
-}));
-
 export function ForensicCatalog() {
   return (
     <section className={s.section} id="vidy-ekspertiz">
@@ -49,45 +35,47 @@ export function ForensicCatalog() {
           <Subtitle text="Выберите направление — внутри собраны конкретные виды исследований и рецензии на заключения." />
         </header>
 
-        <ServicesAccordion
-          items={ACCORDION_ITEMS}
-          hideItemText
-          mobileStack
-          renderVisual={(item) => (
-            <div className={s.kindsPanel}>
-              <p className={s.kindsDesc}>{item.text}</p>
-              <ul className={s.kinds}>
-                {item.items.map((kind, index) => (
-                  <li key={kind.label} className={s.kindsItem}>
-                    <a className={s.card} href={kind.href} target="_blank" rel="noopener noreferrer">
+        <LandingTabsShowcase
+          items={FORENSIC_GROUPS}
+          renderPanel={(group) => (
+            <>
+              <div className={s.groupHead}>
+                <div className={s.groupText}>
+                  <h3 className={s.groupTitle}>{group.title}</h3>
+                  <p className={s.groupDesc}>{group.description}</p>
+                </div>
+                <Button
+                  href={group.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="primary"
+                  size="md"
+                  showArrow
+                  className={s.groupBtn}
+                >
+                  Подробнее о направлении
+                </Button>
+              </div>
+
+              <ul className={s.grid}>
+                {group.items.map((item, index) => (
+                  <li key={item.label} className={s.gridItem}>
+                    <a className={s.card} href={item.href} target="_blank" rel="noopener noreferrer">
                       <span className={s.cardNum}>{String(index + 1).padStart(2, "0")}</span>
-                      <span className={s.cardLabel}>{kind.label}</span>
+                      <span className={s.cardLabel}>{item.label}</span>
                       <ArrowUpRight />
                     </a>
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-          renderActions={(item) => (
-            <Button
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="primary"
-              size="md"
-              showArrow
-              className={s.groupBtn}
-            >
-              Подробнее о направлении
-            </Button>
+
+              <div className={s.safety}>
+                <h3 className={s.safetyTitle}>{FORENSIC_LABOUR_SAFETY.title}</h3>
+                <p className={s.safetyDesc}>{FORENSIC_LABOUR_SAFETY.description}</p>
+              </div>
+            </>
           )}
         />
-
-        <div className={s.safety}>
-          <h3 className={s.safetyTitle}>{FORENSIC_LABOUR_SAFETY.title}</h3>
-          <p className={s.safetyDesc}>{FORENSIC_LABOUR_SAFETY.description}</p>
-        </div>
       </div>
     </section>
   );

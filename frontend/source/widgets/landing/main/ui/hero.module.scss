@@ -64,30 +64,20 @@
 }
 
 .heroTitleText {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 640px;
   text-align: center;
 }
 
 @media (min-width: 1024px) {
-  .heroHead {
-    display: grid;
-    grid-template-columns: minmax(300px, 1fr) minmax(0, 640px) minmax(300px, 1fr);
-    align-items: center;
-    gap: 40px;
-  }
-
   .brand {
+    align-self: flex-start;
     align-items: flex-start;
     text-align: left;
   }
 
   .tagline {
     max-width: 360px;
-  }
-
-  .heroTitleText {
-    grid-column: 2;
-    min-width: 0;
   }
 }
 
