@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
@@ -14,7 +13,7 @@ import { KadastrSeoText } from "./SeoText";
 import {
   KADASTR_AUDIENCE,
   KADASTR_BULLETS,
-  KADASTR_COVER,
+  KADASTR_COVER_VIDEO,
   KADASTR_FAQ,
   KADASTR_ROLES,
   KADASTR_SUBTITLE,
@@ -41,13 +40,14 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
         >
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={KADASTR_COVER}
-                alt="Кадастровые работы"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={KADASTR_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>Кадастровые инженеры из СРО — по всей России</p>

@@ -26,6 +26,8 @@ export const AUDIT_KEYWORDS = [
 
 export const AUDIT_COVER = "/services/5.webp";
 
+export const AUDIT_COVER_VIDEO = "/landing/audit/hero.mp4";
+
 export const AUDIT_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите объект",

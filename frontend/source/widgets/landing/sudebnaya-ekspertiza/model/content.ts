@@ -53,6 +53,8 @@ export const FORENSIC_KEYWORDS = [
 
 export const FORENSIC_COVER = "/services/10.webp";
 
+export const FORENSIC_COVER_VIDEO = "/landing/forensic/hero.mp4";
+
 export const FORENSIC_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите задачу",

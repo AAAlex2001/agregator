@@ -50,6 +50,8 @@ export const NIR_KEYWORDS = [
 
 export const NIR_COVER = "/services/7.webp";
 
+export const NIR_COVER_VIDEO = "/landing/nir/hero.mp4";
+
 export const NIR_CLAIM = "Аттестованные лаборатории и дефектоскописты по СДАНК-01/02-2020";
 
 export const NIR_PURPOSE = [

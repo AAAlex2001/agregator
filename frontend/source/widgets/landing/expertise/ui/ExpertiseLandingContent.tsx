@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import type { LandingSnapshot } from "@/source/entities/landing";
 import {
   LandingHero,
@@ -16,7 +15,7 @@ import { ExpertiseSeoText } from "./SeoText";
 import {
   EXPERTISE_BULLETS,
   EXPERTISE_CLAIM,
-  EXPERTISE_COVER,
+  EXPERTISE_COVER_VIDEO,
   EXPERTISE_FAQ,
   EXPERTISE_ROLES,
   EXPERTISE_SUBTITLE,
@@ -46,13 +45,14 @@ export function ExpertiseLandingContent({ snapshot, basePath = "", header, foote
         >
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={EXPERTISE_COVER}
-                alt="Экспертиза промышленной безопасности"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={EXPERTISE_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{EXPERTISE_CLAIM}</p>

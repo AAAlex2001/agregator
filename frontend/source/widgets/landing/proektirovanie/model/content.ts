@@ -27,6 +27,8 @@ export const DESIGN_KEYWORDS = [
 
 export const DESIGN_COVER = "/services/2.webp";
 
+export const DESIGN_COVER_VIDEO = "/landing/design/hero.mp4";
+
 export const DESIGN_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите задачу",

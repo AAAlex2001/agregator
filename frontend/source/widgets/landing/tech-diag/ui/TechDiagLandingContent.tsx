@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
@@ -13,7 +12,7 @@ import { TechDiagSeoText } from "./SeoText";
 import {
   TECH_DIAG_BULLETS,
   TECH_DIAG_CLAIM,
-  TECH_DIAG_COVER,
+  TECH_DIAG_COVER_VIDEO,
   TECH_DIAG_FAQ,
   TECH_DIAG_ROLES,
   TECH_DIAG_SUBTITLE,
@@ -40,13 +39,14 @@ export function TechDiagLandingContent({ basePath = "", header, footer }: Props)
         >
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={TECH_DIAG_COVER}
-                alt="Техническое освидетельствование и диагностирование"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={TECH_DIAG_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{TECH_DIAG_CLAIM}</p>

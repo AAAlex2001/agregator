@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
@@ -13,7 +12,7 @@ import { NirSeoText } from "./SeoText";
 import {
   NIR_BULLETS,
   NIR_CLAIM,
-  NIR_COVER,
+  NIR_COVER_VIDEO,
   NIR_FAQ,
   NIR_ROLES,
   NIR_SUBTITLE,
@@ -37,13 +36,14 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
         <LandingServiceHero title={NIR_TITLE} subtitle={NIR_SUBTITLE} bullets={NIR_BULLETS}>
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={NIR_COVER}
-                alt="Проведение НИР и лабораторных исследований"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={NIR_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{NIR_CLAIM}</p>

@@ -26,6 +26,8 @@ export const ECOLOGY_KEYWORDS = [
 
 export const ECOLOGY_COVER = "/services/6.webp";
 
+export const ECOLOGY_COVER_VIDEO = "/landing/ekologiya/hero.mp4";
+
 export const ECOLOGY_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите задачу",

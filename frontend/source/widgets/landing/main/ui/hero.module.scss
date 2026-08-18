@@ -71,7 +71,7 @@
 @media (min-width: 1024px) {
   .heroHead {
     display: grid;
-    grid-template-columns: 1fr minmax(0, 640px) 1fr;
+    grid-template-columns: minmax(300px, 1fr) minmax(0, 640px) minmax(300px, 1fr);
     align-items: center;
     gap: 40px;
   }
@@ -87,7 +87,6 @@
 
   .heroTitleText {
     grid-column: 2;
-    text-align: center;
     min-width: 0;
   }
 }

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
@@ -14,7 +13,7 @@ import { AuditSeoText } from "./SeoText";
 import {
   AUDIT_BULLETS,
   AUDIT_CLAIM,
-  AUDIT_COVER,
+  AUDIT_COVER_VIDEO,
   AUDIT_FAQ,
   AUDIT_ROLES,
   AUDIT_SUBTITLE,
@@ -37,13 +36,14 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
         <LandingServiceHero title={AUDIT_TITLE} subtitle={AUDIT_SUBTITLE} bullets={AUDIT_BULLETS}>
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={AUDIT_COVER}
-                alt="Аудит СУПБ"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={AUDIT_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{AUDIT_CLAIM}</p>

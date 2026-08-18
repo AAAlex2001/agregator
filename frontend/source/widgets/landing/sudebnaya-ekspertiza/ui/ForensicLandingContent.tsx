@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingServiceHero,
@@ -15,7 +14,7 @@ import {
   FORENSIC_AUDIENCE,
   FORENSIC_BULLETS,
   FORENSIC_CLAIM,
-  FORENSIC_COVER,
+  FORENSIC_COVER_VIDEO,
   FORENSIC_FAQ,
   FORENSIC_ROLES,
   FORENSIC_SUBTITLE,
@@ -42,13 +41,14 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
         >
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={FORENSIC_COVER}
-                alt="Судебная экспертиза"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={FORENSIC_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{FORENSIC_CLAIM}</p>

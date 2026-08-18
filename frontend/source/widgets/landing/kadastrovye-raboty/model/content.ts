@@ -26,6 +26,8 @@ export const KADASTR_KEYWORDS = [
 
 export const KADASTR_COVER = "/services/9.webp";
 
+export const KADASTR_COVER_VIDEO = "/landing/kadastr/hero.mp4";
+
 export const KADASTR_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите задачу",

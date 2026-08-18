@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingHowItWorks,
@@ -14,7 +13,7 @@ import { EcologySeoText } from "./SeoText";
 import {
   ECOLOGY_BULLETS,
   ECOLOGY_CLAIM,
-  ECOLOGY_COVER,
+  ECOLOGY_COVER_VIDEO,
   ECOLOGY_FAQ,
   ECOLOGY_HOW_IT_WORKS,
   ECOLOGY_KEY_ADVANTAGES,
@@ -45,13 +44,14 @@ export function EcologyLandingContent({ basePath = "", header, footer }: Props) 
         >
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={ECOLOGY_COVER}
-                alt="Экологическое сопровождение предприятий"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={ECOLOGY_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{ECOLOGY_CLAIM}</p>

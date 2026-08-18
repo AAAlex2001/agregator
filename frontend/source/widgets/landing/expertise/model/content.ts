@@ -27,6 +27,8 @@ export const EXPERTISE_KEYWORDS = [
 
 export const EXPERTISE_COVER = "/services/1.webp";
 
+export const EXPERTISE_COVER_VIDEO = "/landing/expertise/hero.mp4";
+
 export const EXPERTISE_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите объект",

@@ -25,6 +25,8 @@ export const TECH_DIAG_KEYWORDS = [
 
 export const TECH_DIAG_COVER = "/services/8.webp";
 
+export const TECH_DIAG_COVER_VIDEO = "/landing/tech-diag/hero.mp4";
+
 export const TECH_DIAG_BULLETS: ServiceLandingBullet[] = [
   {
     title: "Опишите объект",

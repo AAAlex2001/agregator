@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Image from "next/image";
 import {
   LandingHero,
   LandingHowItWorks,
@@ -14,7 +13,7 @@ import { DesignSeoText } from "./SeoText";
 import {
   DESIGN_BULLETS,
   DESIGN_CLAIM,
-  DESIGN_COVER,
+  DESIGN_COVER_VIDEO,
   DESIGN_FAQ,
   DESIGN_HOW_IT_WORKS,
   DESIGN_KEY_ADVANTAGES,
@@ -41,13 +40,14 @@ export function DesignLandingContent({ basePath = "", header, footer }: Props) {
         <LandingServiceHero title={DESIGN_TITLE} subtitle={DESIGN_SUBTITLE} bullets={DESIGN_BULLETS}>
           <div className={s.cover}>
             <div className={s.coverImage}>
-              <Image
-                src={DESIGN_COVER}
-                alt="Проектирование промышленных и гражданских объектов"
-                fill
-                sizes="(min-width: 1024px) 480px, 100vw"
-                className={s.coverImg}
-                priority
+              <video
+                className={s.coverVideo}
+                src={DESIGN_COVER_VIDEO}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
             <p className={s.coverClaim}>{DESIGN_CLAIM}</p>
