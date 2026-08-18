@@ -11,7 +11,7 @@ interface Props {
 
 export function ApplicantFields({ value, onChange }: Props) {
   return (
-    <div className={s.form}>
+    <div className={s.grid2}>
       <label className={s.field}>
         <span className={s.label}>ФИО представителя заявителя</span>
         <TextInput

@@ -1,4 +1,5 @@
 import type { OrderCardData, OrderWorkType } from "@/source/entities/order";
+import type { ApplicantBlock } from "@/source/features/directions/shared/model/applicant";
 import type { AuditOrderDetails } from "@/source/features/directions/audit";
 import type { CadastralOrderDetails } from "@/source/features/directions/cadastral";
 import type { DesignOrderDetails } from "@/source/features/directions/design";
@@ -65,6 +66,7 @@ export type OrderFormAction =
   | { type: "techDiag"; value: TechDiagOrderDetails }
   | { type: "design"; value: DesignOrderDetails }
   | { type: "ecology"; value: EcologyOrderDetails }
+  | { type: "applicantDefaults"; value: ApplicantBlock }
   | { type: "docSingle"; category: SingleCategory; file: File | null }
   | { type: "docRemoveSingleExisting"; category: SingleCategory }
   | { type: "docAddOther"; files: File[] }
@@ -108,6 +110,18 @@ export function orderFormValues(state: OrderFormState): OrderFormValues {
   };
 }
 
+function fillApplicant<T extends ApplicantBlock>(details: T, defaults: ApplicantBlock): T {
+  return {
+    ...details,
+    applicant_full_name: details.applicant_full_name || defaults.applicant_full_name,
+    applicant_position: details.applicant_position || defaults.applicant_position,
+    applicant_organization: details.applicant_organization || defaults.applicant_organization,
+    applicant_inn: details.applicant_inn || defaults.applicant_inn,
+    applicant_phone: details.applicant_phone || defaults.applicant_phone,
+    applicant_email: details.applicant_email || defaults.applicant_email,
+  };
+}
+
 export function reducer(state: OrderFormState, action: OrderFormAction): OrderFormState {
   switch (action.type) {
     case "set":
@@ -146,6 +160,18 @@ export function reducer(state: OrderFormState, action: OrderFormAction): OrderFo
       return { ...state, designDetails: action.value };
     case "ecology":
       return { ...state, ecologyDetails: action.value };
+    case "applicantDefaults":
+      return {
+        ...state,
+        cadastralDetails: fillApplicant(state.cadastralDetails, action.value),
+        forensicDetails: fillApplicant(state.forensicDetails, action.value),
+        researchDetails: fillApplicant(state.researchDetails, action.value),
+        laboratoryDetails: fillApplicant(state.laboratoryDetails, action.value),
+        auditDetails: fillApplicant(state.auditDetails, action.value),
+        techDiagDetails: fillApplicant(state.techDiagDetails, action.value),
+        designDetails: fillApplicant(state.designDetails, action.value),
+        ecologyDetails: fillApplicant(state.ecologyDetails, action.value),
+      };
     case "docSingle":
       return {
         ...state,

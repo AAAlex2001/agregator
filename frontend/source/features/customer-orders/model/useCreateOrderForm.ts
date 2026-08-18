@@ -39,6 +39,21 @@ export function useCreateOrderForm({ editTarget, copyTemplate, onSubmit }: Props
   }, [company]);
 
   useEffect(() => {
+    if (isEdit || !user) return;
+    dispatch({
+      type: "applicantDefaults",
+      value: {
+        applicant_full_name: [user.last_name, user.first_name].filter(Boolean).join(" "),
+        applicant_position: "",
+        applicant_organization: user.company_data?.value ?? "",
+        applicant_inn: user.inn ?? "",
+        applicant_phone: user.phone ?? "",
+        applicant_email: user.email ?? "",
+      },
+    });
+  }, [isEdit, user]);
+
+  useEffect(() => {
     if (isEdit) return;
     const available = user?.directions ?? [];
     if (available.length === 0 || available.includes(state.workType)) return;
