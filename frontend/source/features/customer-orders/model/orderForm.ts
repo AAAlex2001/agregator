@@ -1,5 +1,5 @@
 import type { OrderCardData, OrderWorkType } from "@/source/entities/order";
-import type { ApplicantBlock } from "@/source/features/directions/shared/model/applicant";
+import { emptyApplicant, type ApplicantBlock } from "@/source/features/directions/shared/model/applicant";
 import type { AuditOrderDetails } from "@/source/features/directions/audit";
 import type { CadastralOrderDetails } from "@/source/features/directions/cadastral";
 import type { DesignOrderDetails } from "@/source/features/directions/design";
@@ -8,7 +8,7 @@ import type { ForensicOrderDetails } from "@/source/features/directions/forensic
 import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
 import type { ResearchOrderDetails } from "@/source/features/directions/research";
 import type { TechDiagOrderDetails } from "@/source/features/directions/tech-diag";
-import { emptyDirectionDetails } from "./orderDetails";
+import { activeDirectionDetails, emptyDirectionDetails } from "./orderDetails";
 import { initialDocumentsFormState, type DocumentsFormState } from "@/source/entities/order";
 import { getDefaultValues } from "./mappers";
 import { loadDraft } from "./orderDraft";
@@ -49,6 +49,7 @@ export type SingleCategory = "technical" | "contract" | "company";
 export interface OrderFormState extends OrderFormValues {
   documents: DocumentsFormState;
   notifyResponders: boolean;
+  applicantDefaults: ApplicantBlock;
 }
 
 export type OrderFormAction =
@@ -83,6 +84,7 @@ export function initOrderForm(source: {
     ...values,
     documents: initialDocumentsFormState(card?.documents, source.copyTemplate?.id ?? null),
     notifyResponders: true,
+    applicantDefaults: emptyApplicant,
   };
 }
 
@@ -122,13 +124,31 @@ function fillApplicant<T extends ApplicantBlock>(details: T, defaults: Applicant
   };
 }
 
+function applyApplicantToAll(state: OrderFormState, defaults: ApplicantBlock): OrderFormState {
+  return {
+    ...state,
+    cadastralDetails: fillApplicant(state.cadastralDetails, defaults),
+    forensicDetails: fillApplicant(state.forensicDetails, defaults),
+    researchDetails: fillApplicant(state.researchDetails, defaults),
+    laboratoryDetails: fillApplicant(state.laboratoryDetails, defaults),
+    auditDetails: fillApplicant(state.auditDetails, defaults),
+    techDiagDetails: fillApplicant(state.techDiagDetails, defaults),
+    designDetails: fillApplicant(state.designDetails, defaults),
+    ecologyDetails: fillApplicant(state.ecologyDetails, defaults),
+  };
+}
+
 export function reducer(state: OrderFormState, action: OrderFormAction): OrderFormState {
   switch (action.type) {
     case "set":
       return { ...state, [action.key]: action.value };
     case "workType": {
       if (action.value === state.workType) return state;
-      const next = { ...state, workType: action.value, ...emptyDirectionDetails() };
+      const applicant = activeDirectionDetails(state.workType, state) ?? state.applicantDefaults;
+      const next = applyApplicantToAll(
+        { ...state, workType: action.value, ...emptyDirectionDetails() },
+        applicant,
+      );
       if (action.value !== "EXPERTISE") {
         next.selectionsByType = {};
         next.requiresExpert = true;
@@ -161,17 +181,7 @@ export function reducer(state: OrderFormState, action: OrderFormAction): OrderFo
     case "ecology":
       return { ...state, ecologyDetails: action.value };
     case "applicantDefaults":
-      return {
-        ...state,
-        cadastralDetails: fillApplicant(state.cadastralDetails, action.value),
-        forensicDetails: fillApplicant(state.forensicDetails, action.value),
-        researchDetails: fillApplicant(state.researchDetails, action.value),
-        laboratoryDetails: fillApplicant(state.laboratoryDetails, action.value),
-        auditDetails: fillApplicant(state.auditDetails, action.value),
-        techDiagDetails: fillApplicant(state.techDiagDetails, action.value),
-        designDetails: fillApplicant(state.designDetails, action.value),
-        ecologyDetails: fillApplicant(state.ecologyDetails, action.value),
-      };
+      return applyApplicantToAll({ ...state, applicantDefaults: action.value }, action.value);
     case "docSingle":
       return {
         ...state,

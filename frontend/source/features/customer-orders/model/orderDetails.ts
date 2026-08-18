@@ -81,7 +81,7 @@ export function directionDetailsFromServer(
 export function activeDirectionDetails(
   workType: OrderWorkType,
   values: DirectionDetailsValues,
-): object | undefined {
+): DirectionDetailsValues[keyof DirectionDetailsValues] | undefined {
   const key = DETAILS_KEYS[workType];
   return key ? values[key] : undefined;
 }

@@ -1,6 +1,6 @@
 
 "Repository: доступ к БД для orders."
-from sqlalchemy import delete, func, not_, select
+from sqlalchemy import and_, delete, func, not_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -147,13 +147,15 @@ class OrderRepository:
         sort_by: str | None = None,
         sort_dir: str | None = None,
     ) -> tuple[list[Order], bool]:
-        "Публичный список для гостей: только активные заказы без назначенного исполнителя."
+        "Публичный список для гостей: активные заказы в наборе откликов и весь архив."
         list_query = (
             select(Order)
             .options(selectinload(Order.badges), selectinload(Order.customer))
             .where(
-                Order.status == OrderStatus.ACTIVE,
-                Order.assigned_expert_id.is_(None),
+                or_(
+                    and_(Order.status == OrderStatus.ACTIVE, Order.assigned_expert_id.is_(None)),
+                    Order.status == OrderStatus.ARCHIVED,
+                )
             )
         )
         list_query = apply_order_sort(list_query, sort_by, sort_dir)
