@@ -37,6 +37,7 @@ interface ButtonProps {
   href?: string;
   target?: React.HTMLAttributeAnchorTarget;
   rel?: string;
+  scroll?: boolean;
 }
 
 const Button = ({
@@ -54,6 +55,7 @@ const Button = ({
   href,
   target,
   rel,
+  scroll,
 }: ButtonProps) => {
   const buttonClasses = [
     styles.button,
@@ -79,7 +81,7 @@ const Button = ({
 
   if (href && !disabled && !isLoading) {
     return (
-      <Link href={href} className={buttonClasses} target={target} rel={rel}>
+      <Link href={href} className={buttonClasses} target={target} rel={rel} scroll={scroll}>
         {content}
       </Link>
     );

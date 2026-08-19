@@ -15,8 +15,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-async function AuthedNewsListContent() {
-  const staticItemsSource = getStaticNewsListItems();
+const STATIC_PAGE_SIZE = 24;
+
+async function AuthedNewsListContent({ page }: { page: number }) {
+  const staticAll = getStaticNewsListItems();
+  const staticItemsSource = staticAll.slice(0, page * STATIC_PAGE_SIZE);
   const [initial, crossBlog, staticMetrics] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
@@ -25,12 +28,16 @@ async function AuthedNewsListContent() {
   const staticItems = applyArticleMetrics(staticItemsSource, staticMetrics);
   return (
     <ArticlesList
+      key={page}
       kind="news"
       title="Новости отрасли"
       subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
       initial={initial}
       staticItems={staticItems}
       homeHref="/landing"
+      nextPageHref={
+        staticItemsSource.length < staticAll.length ? `/landing/news?page=${page + 1}` : undefined
+      }
       cross={{
         title: "Читайте также из блога",
         href: "/landing/blog",
@@ -41,10 +48,16 @@ async function AuthedNewsListContent() {
   );
 }
 
-export default function AuthedNewsListPage() {
+export default async function AuthedNewsListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page) || 1);
   return (
     <Suspense fallback={<ArticlesListSkeleton />}>
-      <AuthedNewsListContent />
+      <AuthedNewsListContent page={page} />
     </Suspense>
   );
 }

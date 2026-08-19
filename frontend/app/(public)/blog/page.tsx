@@ -35,17 +35,24 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
-async function BlogListContent() {
+const PAGE_SIZE = 12;
+const MAX_LINKED_PAGE = 4;
+
+async function BlogListContent({ page }: { page: number }) {
   const [initial, crossNews] = await Promise.all([
-    fetchArticleList({ kind: "blog", limit: 12, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: PAGE_SIZE * page, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
   ]);
   return (
     <ArticlesList
+      key={page}
       kind="blog"
       title="Блог платформы"
       subtitle="Развитие Ресурс-Плюс, кейсы и инструкции по работе с экспертизой промышленной безопасности"
       initial={initial}
+      nextPageHref={
+        initial.has_more && page < MAX_LINKED_PAGE ? `/blog?page=${page + 1}` : undefined
+      }
       cross={{
         title: "Свежие новости отрасли",
         href: "/news",
@@ -56,14 +63,20 @@ async function BlogListContent() {
   );
 }
 
-export default function BlogListPage() {
+export default async function BlogListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Math.min(Math.max(1, Number(params.page) || 1), MAX_LINKED_PAGE);
   return (
     <>
       <RedirectIfAuthed to="/landing/blog" />
       <LandingHeader />
       <main>
         <Suspense fallback={<ArticlesListSkeleton />}>
-          <BlogListContent />
+          <BlogListContent page={page} />
         </Suspense>
       </main>
       <LandingFooter variant="light" />

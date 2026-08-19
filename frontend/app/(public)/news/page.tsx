@@ -42,8 +42,11 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
-async function NewsListContent() {
-  const staticItemsSource = getStaticNewsListItems();
+const STATIC_PAGE_SIZE = 24;
+
+async function NewsListContent({ page }: { page: number }) {
+  const staticAll = getStaticNewsListItems();
+  const staticItemsSource = staticAll.slice(0, page * STATIC_PAGE_SIZE);
   const [initial, crossBlog, staticMetrics] = await Promise.all([
     fetchArticleList({ kind: "news", limit: 12, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
@@ -52,11 +55,13 @@ async function NewsListContent() {
   const staticItems = applyArticleMetrics(staticItemsSource, staticMetrics);
   return (
     <ArticlesList
+      key={page}
       kind="news"
       title="Новости отрасли"
       subtitle="Что происходит в горной, нефтегазовой и других отраслях промышленности"
       initial={initial}
       staticItems={staticItems}
+      nextPageHref={staticItemsSource.length < staticAll.length ? `/news?page=${page + 1}` : undefined}
       cross={{
         title: "Читайте также из блога",
         href: "/blog",
@@ -67,14 +72,20 @@ async function NewsListContent() {
   );
 }
 
-export default function NewsListPage() {
+export default async function NewsListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page) || 1);
   return (
     <>
       <RedirectIfAuthed to="/landing/news" />
       <LandingHeader />
       <main>
         <Suspense fallback={<ArticlesListSkeleton />}>
-          <NewsListContent />
+          <NewsListContent page={page} />
         </Suspense>
       </main>
       <LandingFooter variant="light" />

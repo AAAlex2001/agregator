@@ -35,6 +35,7 @@ interface Props {
   staticItems?: ArticleListItem[];
   cross?: CrossPromotion;
   homeHref?: string;
+  nextPageHref?: string;
 }
 
 function collectTags(items: ArticleListItem[]): string[] {
@@ -48,7 +49,7 @@ function mergeUnique(primary: ArticleListItem[], secondary: ArticleListItem[]): 
   return [...primary, ...secondary.filter((item) => !slugs.has(item.slug))];
 }
 
-export function ArticlesList({ kind, title, subtitle, initial, staticItems = [], cross, homeHref = "/" }: Props) {
+export function ArticlesList({ kind, title, subtitle, initial, staticItems = [], cross, homeHref = "/", nextPageHref }: Props) {
   const { showError } = useNotifications();
   const [items, setItems] = useState<ArticleListItem[]>(mergeUnique(staticItems, initial.items));
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
@@ -163,13 +164,19 @@ export function ArticlesList({ kind, title, subtitle, initial, staticItems = [],
         </ul>
       )}
 
-      {hasMore && !isReloading && (
+      {nextPageHref && !activeTag && !isReloading ? (
+        <div className={s.loadMoreWrap}>
+          <Button href={nextPageHref} scroll={false} variant="outline" className={s.loadMore}>
+            Показать ещё
+          </Button>
+        </div>
+      ) : hasMore && !isReloading ? (
         <div className={s.loadMoreWrap}>
           <Button type="button" variant="outline" className={s.loadMore} onClick={loadMore} disabled={isLoadingMore}>
             {isLoadingMore ? "Загружаем..." : "Показать ещё"}
           </Button>
         </div>
-      )}
+      ) : null}
 
       {cross && cross.items.length > 0 && (
         <section className={s.cross}>

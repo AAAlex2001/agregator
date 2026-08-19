@@ -15,10 +15,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-async function AuthedBlogListContent() {
-  const staticNewsSource = getStaticNewsListItems();
+const PAGE_SIZE = 12;
+const MAX_LINKED_PAGE = 4;
+const CROSS_NEWS_COUNT = 10;
+
+async function AuthedBlogListContent({ page }: { page: number }) {
+  const staticNewsSource = getStaticNewsListItems().slice(0, CROSS_NEWS_COUNT);
   const [initial, crossNews, staticMetrics] = await Promise.all([
-    fetchArticleList({ kind: "blog", limit: 12, offset: 0 }, { server: true }),
+    fetchArticleList({ kind: "blog", limit: PAGE_SIZE * page, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
     fetchStaticNewsMetrics(staticNewsSource.map((item) => item.id), { server: true }),
   ]);
@@ -27,15 +31,19 @@ async function AuthedBlogListContent() {
   const crossNewsItems = [
     ...staticNews,
     ...crossNews.items.filter((item) => !staticSlugs.has(item.slug)),
-  ].slice(0, 10);
+  ].slice(0, CROSS_NEWS_COUNT);
 
   return (
     <ArticlesList
+      key={page}
       kind="blog"
       title="Блог платформы"
       subtitle="Развитие Ресурс-Плюс, кейсы и инструкции по работе с экспертизой промышленной безопасности"
       initial={initial}
       homeHref="/landing"
+      nextPageHref={
+        initial.has_more && page < MAX_LINKED_PAGE ? `/landing/blog?page=${page + 1}` : undefined
+      }
       cross={{
         title: "Свежие новости отрасли",
         href: "/landing/news",
@@ -46,10 +54,16 @@ async function AuthedBlogListContent() {
   );
 }
 
-export default function AuthedBlogListPage() {
+export default async function AuthedBlogListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Math.min(Math.max(1, Number(params.page) || 1), MAX_LINKED_PAGE);
   return (
     <Suspense fallback={<ArticlesListSkeleton />}>
-      <AuthedBlogListContent />
+      <AuthedBlogListContent page={page} />
     </Suspense>
   );
 }
