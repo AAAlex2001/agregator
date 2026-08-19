@@ -28,6 +28,15 @@ import articles27 from "./articles-27";
 import articles28 from "./articles-28";
 import articles29 from "./articles-29";
 import articles30 from "./articles-30";
+import articles31 from "./articles-31";
+import articles32 from "./articles-32";
+import articles33 from "./articles-33";
+import articles34 from "./articles-34";
+import articles35 from "./articles-35";
+import articles36 from "./articles-36";
+import articles37 from "./articles-37";
+import articles38 from "./articles-38";
+import articles39 from "./articles-39";
 
 const toIndex = (shard: number) => (item: (typeof articles02)[number]) => ({
   id: item.id,
@@ -79,6 +88,15 @@ const shard27 = articles27.map(toIndex(27));
 const shard28 = articles28.map(toIndex(28));
 const shard29 = articles29.map(toIndex(29));
 const shard30 = articles30.map(toIndex(30));
+const shard31 = articles31.map(toIndex(31));
+const shard32 = articles32.map(toIndex(32));
+const shard33 = articles33.map(toIndex(33));
+const shard34 = articles34.map(toIndex(34));
+const shard35 = articles35.map(toIndex(35));
+const shard36 = articles36.map(toIndex(36));
+const shard37 = articles37.map(toIndex(37));
+const shard38 = articles38.map(toIndex(38));
+const shard39 = articles39.map(toIndex(39));
 
 export const STATIC_NEWS_INDEX = [
   {
@@ -330,4 +348,13 @@ export const STATIC_NEWS_INDEX = [
   ...shard28,
   ...shard29,
   ...shard30,
+  ...shard31,
+  ...shard32,
+  ...shard33,
+  ...shard34,
+  ...shard35,
+  ...shard36,
+  ...shard37,
+  ...shard38,
+  ...shard39,
 ] satisfies readonly StaticNewsIndexItem[];
