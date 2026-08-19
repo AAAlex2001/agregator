@@ -44,6 +44,20 @@ async def save_sro_design_file(owner_key: str, file: UploadFile) -> str:
     )
 
 
+async def save_sro_survey_file(owner_key: str, file: UploadFile) -> str:
+    "Сохраняет выписку из реестра СРО изыскателей под uploads/sro_survey/<owner_key>/."
+    return await save_uploaded_file(
+        subdir="sro_survey",
+        owner_key=owner_key,
+        file=file,
+        allowed_extensions=ALLOWED_EXTENSIONS,
+        allowed_content_types=ALLOWED_CONTENT_TYPES,
+        max_size=MAX_SIZE,
+        bad_format_message="Допустимые форматы: PDF, JPG, PNG, DOC, DOCX",
+        too_large_message="Размер файла не должен превышать 10 МБ",
+    )
+
+
 async def save_lab_accreditation_file(owner_key: str, file: UploadFile) -> str:
     "Сохраняет свидетельство об аккредитации лаборатории под uploads/lab_accreditations/<owner_key>/."
     return await save_uploaded_file(

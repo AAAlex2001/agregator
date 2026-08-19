@@ -6,9 +6,13 @@ import { useOrderSearch } from "../model/useOrderSearch";
 import { OrderSearchFilters } from "./OrderSearchFilters";
 import s from "./OrderSearchBar.module.scss";
 
-export function OrderSearchBar() {
+interface Props {
+  withFilters?: boolean;
+}
+
+export function OrderSearchBar({ withFilters = false }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const search = useOrderSearch(rootRef);
+  const search = useOrderSearch(rootRef, withFilters);
   const { state, suggestionsState, dispatch } = search;
 
   const items: SearchBarSuggestion[] = suggestionsState.items.map((item) => ({
@@ -51,7 +55,7 @@ export function OrderSearchBar() {
           </button>
         </div>
       ) : null}
-      {state.filtersOpen && (
+      {withFilters && state.filtersOpen && (
         <OrderSearchFilters
           onClose={() => dispatch({ type: "filtersClosed" })}
           onSelect={search.selectFilter}

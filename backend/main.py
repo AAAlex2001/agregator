@@ -52,6 +52,7 @@ from routes import (
     rtn_interactions,
     settings,
     support,
+    survey,
     tech_diag,
     telegram_auth,
 )
@@ -153,6 +154,7 @@ app.include_router(laboratory.router, prefix="/api")
 app.include_router(tech_diag.router, prefix="/api")
 app.include_router(design.router, prefix="/api")
 app.include_router(ecology.router, prefix="/api")
+app.include_router(survey.router, prefix="/api")
 app.include_router(geo.router, prefix="/api")
 app.include_router(chat.expert_room_router, prefix="/api")
 app.include_router(internal.router, prefix="/api")

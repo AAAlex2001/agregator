@@ -19,6 +19,7 @@ from schemas.expertise import ExpertiseProfileInput
 from schemas.forensic import ForensicProfileInput
 from schemas.laboratory import LaboratoryProfileInput
 from schemas.research import ResearchProfileInput
+from schemas.survey import SurveyExpertProfileInput, SurveyLicenseHolderProfileInput
 from schemas.tech_diag import TechDiagExpertProfileInput, TechDiagLicenseHolderProfileInput
 from services.directions.registry import validate_direction_keys
 
@@ -68,6 +69,7 @@ class UserRegistration(BaseModel):
     tech_diag_profile: TechDiagExpertProfileInput | None = None
     design_profile: DesignExpertProfileInput | None = None
     ecology_profile: EcologyExpertProfileInput | None = None
+    survey_profile: SurveyExpertProfileInput | None = None
     contact_sales_enabled: bool = False
     contact_price_rubles: int | None = Field(None, ge=1, le=1_000_000)
     contact_payment_details: str | None = Field(None, max_length=1000)
@@ -104,6 +106,7 @@ class UserRegistration(BaseModel):
             self.tech_diag_profile,
             self.design_profile,
             self.ecology_profile,
+            self.survey_profile,
         )
         if self.role is not UserRole.EXPERT and any(form is not None for form in expert_forms):
             raise ValueError("Анкеты направлений исполнителя доступны только исполнителю")
@@ -177,6 +180,7 @@ class LicenseHolderRegistration(BaseModel):
     audit_profile: AuditLicenseHolderProfileInput | None = None
     tech_diag_profile: TechDiagLicenseHolderProfileInput | None = None
     design_profile: DesignLicenseHolderProfileInput | None = None
+    survey_profile: SurveyLicenseHolderProfileInput | None = None
     directions: list[str] = Field(
         default_factory=list, description="Отметки направлений без анкет", max_length=10
     )
@@ -223,6 +227,7 @@ class LicenseHolderRegistration(BaseModel):
             or self.audit_profile is not None
             or self.tech_diag_profile is not None
             or self.design_profile is not None
+            or self.survey_profile is not None
             or self.directions
         )
         if not has_any_direction:
@@ -294,6 +299,7 @@ class UserResponse(BaseModel):
     mining_license_number: str | None = None
     mining_license_file_url: str | None = None
     sro_design_file_url: str | None = None
+    sro_survey_file_url: str | None = None
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None
     location_lat: float | None = None
@@ -332,6 +338,7 @@ class UserResponse(BaseModel):
             mining_license_number=holder.mining_license_number if holder else None,
             mining_license_file_url=holder.mining_license_file_url if holder else None,
             sro_design_file_url=holder.sro_design_file_url if holder else None,
+            sro_survey_file_url=holder.sro_survey_file_url if holder else None,
             lab_accreditation_number=holder.lab_accreditation_number if holder else None,
             lab_accreditation_file_url=holder.lab_accreditation_file_url if holder else None,
             location_lat=expert.location_lat if expert else None,

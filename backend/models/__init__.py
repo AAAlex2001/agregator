@@ -47,6 +47,7 @@ from models import (
     session,
     static_news_interaction,
     support_ticket,
+    survey,
     tag,
     tech_diag,
 )
@@ -95,6 +96,7 @@ __all__ = [
     "session",
     "static_news_interaction",
     "support_ticket",
+    "survey",
     "tag",
     "tech_diag",
 ]

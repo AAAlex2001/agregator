@@ -36,6 +36,8 @@ export const SERVICES_SHOWCASE: ServiceShowcaseItem[] = [
     text:
       "Аттестованные члены НОПРИЗ, включённые в НРС. Готовы выполнить не только камеральные работы (отчёты), но и полевые работы. Оказывают услуги как в комплексе работ, так и по отдельным видам инженерных изысканий.",
     image: "/services/3.webp",
+    href: "/inzhenernye-izyskaniya",
+    direction: "SURVEY",
   },
   {
     id: 4,

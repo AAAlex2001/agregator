@@ -54,6 +54,15 @@ export function RegulatoryDocumentsBlock({ state, dispatch }: StepProps) {
           </div>
 
           <div className={s.row}>
+            <DocFileGallery
+              galleryId="sroSurvey"
+              fileLabel="Выписка из реестра членов СРО в области инженерных изысканий"
+              file={state.files.sroSurvey}
+              onSelect={(file) => dispatch({ type: "file", key: "sroSurvey", file })}
+            />
+          </div>
+
+          <div className={s.row}>
             <TextInput
               value={state.labNumber}
               autoComplete="off"

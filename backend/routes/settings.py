@@ -28,6 +28,7 @@ from services.settings import (
     ReplaceLicenseFileUseCase,
     ReplaceMiningLicenseFileUseCase,
     ReplaceSroDesignFileUseCase,
+    ReplaceSroSurveyFileUseCase,
     RequestEmailChangeUseCase,
     SettingsRepository,
     SettingsValidator,
@@ -274,6 +275,22 @@ async def upload_sro_design_file(
     "Заменяет файл выписки из реестра СРО проектирования (PDF/Word/JPG/PNG)."
     repo = build_repo(db)
     user = await ReplaceSroDesignFileUseCase(repo, build_validator(repo)).execute(user_id, file)
+    return to_response(user)
+
+
+@router.post(
+    "/settings/sro-survey-file",
+    response_model=UserSettingsResponse,
+    dependencies=[Depends(rate_limit("settings_upload", max_calls=5, window_seconds=60))],
+)
+async def upload_sro_survey_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user),
+) -> UserSettingsResponse:
+    "Заменяет файл выписки из реестра СРО изыскателей (PDF/Word/JPG/PNG)."
+    repo = build_repo(db)
+    user = await ReplaceSroSurveyFileUseCase(repo, build_validator(repo)).execute(user_id, file)
     return to_response(user)
 
 

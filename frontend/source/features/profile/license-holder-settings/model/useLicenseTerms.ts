@@ -17,6 +17,7 @@ import {
   uploadLicenseFile,
   uploadMiningLicenseFile,
   uploadSroDesignFile,
+  uploadSroSurveyFile,
 } from "@/source/entities/user";
 
 interface Options {
@@ -56,6 +57,7 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
   const [isCardUploading, setIsCardUploading] = useState(false);
   const [isMiningUploading, setIsMiningUploading] = useState(false);
   const [isSroUploading, setIsSroUploading] = useState(false);
+  const [isSroSurveyUploading, setIsSroSurveyUploading] = useState(false);
   const [isLabUploading, setIsLabUploading] = useState(false);
 
   const payload = (): LicenseHolderUpdatePayload => ({
@@ -136,6 +138,7 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     isCardUploading,
     isMiningUploading,
     isSroUploading,
+    isSroSurveyUploading,
     isLabUploading,
     replaceFile: makeUploader(uploadLicenseFile, setIsUploading, "Файл лицензии обновлён"),
     replaceCompanyCard: makeUploader(uploadCompanyCard, setIsCardUploading, "Карточка предприятия обновлена"),
@@ -148,6 +151,11 @@ export function useLicenseTerms({ profile, onProfileUpdate }: Options) {
     replaceSroDesignFile: makeUploader(
       uploadSroDesignFile,
       setIsSroUploading,
+      "Выписка из реестра членов СРО обновлена",
+    ),
+    replaceSroSurveyFile: makeUploader(
+      uploadSroSurveyFile,
+      setIsSroSurveyUploading,
       "Выписка из реестра членов СРО обновлена",
     ),
     replaceLabAccreditationFile: makeUploader(

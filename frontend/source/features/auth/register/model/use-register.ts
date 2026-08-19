@@ -7,6 +7,7 @@ import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import type { CompanyData } from "@/source/entities/user";
 import type { UserRole } from "@/source/entities/user";
 import { holderProfileToApi } from "@/source/features/directions/design";
+import { surveyHolderProfileToApi } from "@/source/features/directions/survey";
 import { registerLicenseHolder, registerUser } from "./api";
 import { toRegisterDocuments } from "./directionFiles";
 import { initFromPreset, reducer } from "./reducer";
@@ -39,11 +40,13 @@ export function useRegister(
               state.laboratoryProfile,
               state.techDiagProfile,
               state.designProfile,
+              state.surveyProfile,
             ].some((profile) => profile !== null)
           : state.licenseEnabled ||
             state.auditHolderProfile !== null ||
             state.techDiagHolderProfile !== null ||
             state.designHolderProfile !== null ||
+            state.surveyHolderProfile !== null ||
             state.directions.length > 0;
     if (!hasDirection) {
       showError("Выберите хотя бы одно направление");
@@ -83,6 +86,9 @@ export function useRegister(
             design_profile: state.designHolderProfile
               ? holderProfileToApi(state.designHolderProfile)
               : null,
+            survey_profile: state.surveyHolderProfile
+              ? surveyHolderProfileToApi(state.surveyHolderProfile)
+              : null,
             directions: state.directions,
             privacy_consent: state.consents.privacy,
             terms_consent: state.consents.terms,
@@ -91,6 +97,7 @@ export function useRegister(
           state.files.license,
           state.files.mining,
           state.files.sro,
+          state.files.sroSurvey,
           state.files.lab,
         );
       } else if (state.role === "EXPERT") {
@@ -119,6 +126,7 @@ export function useRegister(
             tech_diag_profile: state.techDiagProfile,
             design_profile: state.designProfile,
             ecology_profile: state.ecologyProfile,
+            survey_profile: state.surveyProfile,
             contact_sales_enabled: state.contactEnabled,
             contact_price_rubles: state.contactEnabled
               ? Number(state.contactPrice.replace(/\s/g, ""))

@@ -45,6 +45,17 @@ export interface LicenseHolderDesignRegisterPayload {
   pricing_fixed_amount: number | null;
 }
 
+export interface LicenseHolderSurveyRegisterPayload {
+  sro_name: string;
+  sro_registry_number: string;
+  hazardous_objects_right: boolean;
+  nuclear_objects_right: boolean;
+  liability_level: number;
+  pricing_kind: LicenseRentalKind;
+  pricing_percent: number | null;
+  pricing_fixed_amount: number | null;
+}
+
 export interface LicenseHolderRegisterPayload {
   email: string;
   password: string;
@@ -62,6 +73,7 @@ export interface LicenseHolderRegisterPayload {
   audit_profile?: LicenseHolderAuditRegisterPayload | null;
   tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
   design_profile?: LicenseHolderDesignRegisterPayload | null;
+  survey_profile?: LicenseHolderSurveyRegisterPayload | null;
   directions?: string[];
   privacy_consent: boolean;
   terms_consent: boolean;
@@ -100,6 +112,7 @@ export interface LicenseHolderProfileData {
   mining_license_number: string | null;
   mining_license_file_url: string | null;
   sro_design_file_url: string | null;
+  sro_survey_file_url: string | null;
   lab_accreditation_number: string | null;
   lab_accreditation_file_url: string | null;
   company_card_url: string | null;

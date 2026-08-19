@@ -73,6 +73,7 @@ def test_customer_registration_accepts_every_direction(direction_data):
         {"audit_expert_profile": {}},
         {"tech_diag_profile": {}},
         {"design_profile": {}},
+        {"survey_profile": {}},
         {"research_profile": {}},
         {"laboratory_profile": {}},
         {"cadastral_profile": {}},
@@ -102,6 +103,7 @@ def test_holder_registration_accepts_generic_direction_without_epb_license(direc
         {"audit_profile": {"certificate_number": "А-123"}},
         {"tech_diag_profile": {}},
         {"design_profile": {"pricing_kind": "NEGOTIABLE"}},
+        {"survey_profile": {"pricing_kind": "NEGOTIABLE"}},
     ],
 )
 def test_holder_registration_accepts_profile_directions(direction_data):

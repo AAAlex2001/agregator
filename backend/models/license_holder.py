@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from models.account import Account
     from models.audit import LicenseHolderAuditProfile
     from models.design import LicenseHolderDesignProfile
+    from models.survey import LicenseHolderSurveyProfile
     from models.tech_diag import LicenseHolderTechDiagProfile
 
 
@@ -50,6 +51,7 @@ class LicenseHolder(Base):
     mining_license_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     mining_license_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     sro_design_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    sro_survey_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     lab_accreditation_number: Mapped[str | None] = mapped_column(String(100), nullable=True)
     lab_accreditation_file_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     company_card_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
@@ -85,6 +87,13 @@ class LicenseHolder(Base):
         lazy="selectin",
     )
     design_profile: Mapped["LicenseHolderDesignProfile | None"] = relationship(
+        back_populates="license_holder",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    survey_profile: Mapped["LicenseHolderSurveyProfile | None"] = relationship(
         back_populates="license_holder",
         cascade="all, delete-orphan",
         passive_deletes=True,

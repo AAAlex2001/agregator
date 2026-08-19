@@ -8,6 +8,7 @@ from services.license_holders.regulatory_document_storage import (
     save_lab_accreditation_file,
     save_mining_license_file,
     save_sro_design_file,
+    save_sro_survey_file,
 )
 from services.license_holders.repository import LicenseHoldersRepository
 from services.license_holders.use_cases import ListLicenseHoldersUseCase
@@ -22,4 +23,5 @@ __all__ = [
     "save_license_file",
     "save_mining_license_file",
     "save_sro_design_file",
+    "save_sro_survey_file",
 ]

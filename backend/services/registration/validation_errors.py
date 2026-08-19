@@ -71,6 +71,9 @@ REGISTRATION_FIELD_LABELS: dict[str, str] = {
     "ecology_profile": "анкета эколога",
     "work_types": "виды работ",
     "practical_skills": "практические навыки",
+    "survey_profile": "анкета изыскателя",
+    "kinds": "направления изысканий",
+    "kinds_other": "другие направления изысканий",
     "science_branches": "отрасли науки",
     "contact_sales_enabled": "платный доступ к контактам",
     "contact_price_rubles": "стоимость доступа к контактам",
@@ -108,6 +111,9 @@ REGISTRATION_PATH_LABELS: dict[str, str] = {
     "design_profile.pricing_kind": "способ расчёта стоимости проектных работ",
     "design_profile.pricing_percent": "процент от стоимости проектных работ",
     "design_profile.pricing_fixed_amount": "фиксированная стоимость проектных работ",
+    "survey_profile.pricing_kind": "способ расчёта стоимости изыскательских работ",
+    "survey_profile.pricing_percent": "процент от стоимости изыскательских работ",
+    "survey_profile.pricing_fixed_amount": "фиксированная стоимость изыскательских работ",
 }
 
 

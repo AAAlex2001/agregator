@@ -22,6 +22,7 @@ def license_holder_to_list_item(account: Account, profile: LicenseHolder) -> Lic
         mining_license_number=profile.mining_license_number,
         mining_license_file_url=profile.mining_license_file_url,
         sro_design_file_url=profile.sro_design_file_url,
+        sro_survey_file_url=profile.sro_survey_file_url,
         lab_accreditation_number=profile.lab_accreditation_number,
         lab_accreditation_file_url=profile.lab_accreditation_file_url,
         company_card_url=profile.company_card_url,

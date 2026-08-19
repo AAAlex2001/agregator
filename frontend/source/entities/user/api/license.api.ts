@@ -78,6 +78,10 @@ export function uploadSroDesignFile(file: File): Promise<UserProfile> {
   return uploadRegulatoryDocument(file, "/settings/sro-design-file", "Не удалось загрузить файл выписки СРО");
 }
 
+export function uploadSroSurveyFile(file: File): Promise<UserProfile> {
+  return uploadRegulatoryDocument(file, "/settings/sro-survey-file", "Не удалось загрузить файл выписки СРО");
+}
+
 export function uploadLabAccreditationFile(file: File): Promise<UserProfile> {
   return uploadRegulatoryDocument(file, "/settings/lab-accreditation-file", "Не удалось загрузить файл аккредитации");
 }

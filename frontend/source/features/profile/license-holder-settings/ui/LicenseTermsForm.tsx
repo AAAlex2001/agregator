@@ -36,6 +36,7 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
   const cardInputRef = useRef<HTMLInputElement>(null);
   const miningInputRef = useRef<HTMLInputElement>(null);
   const sroInputRef = useRef<HTMLInputElement>(null);
+  const sroSurveyInputRef = useRef<HTMLInputElement>(null);
   const labInputRef = useRef<HTMLInputElement>(null);
 
   const holder = profile.license_holder;
@@ -48,6 +49,9 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
     : [];
   const sroItems = holder?.sro_design_file_url
     ? [remoteFileItem(holder.sro_design_file_url, "sro-remote", "Выписка из реестра членов СРО в области проектирования")]
+    : [];
+  const sroSurveyItems = holder?.sro_survey_file_url
+    ? [remoteFileItem(holder.sro_survey_file_url, "sro-survey-remote", "Выписка из реестра членов СРО в области инженерных изысканий")]
     : [];
   const labItems = holder?.lab_accreditation_file_url
     ? [remoteFileItem(holder.lab_accreditation_file_url, "lab-remote", "Аккредитация лаборатории")]
@@ -176,6 +180,29 @@ export function LicenseTermsForm({ profile, onProfileUpdate }: Props) {
                   const next = event.target.files?.[0] ?? null;
                   event.target.value = "";
                   if (next) form.replaceSroDesignFile(next);
+                }}
+              />
+            }
+          />
+        </div>
+
+        <div className={s.extrasItem}>
+          <FileGallery
+            label={form.isSroSurveyUploading ? "Загрузка файла…" : "Выписка из реестра членов СРО в области инженерных изысканий"}
+            hint={REGULATORY_FILE_HINT}
+            items={sroSurveyItems}
+            variant="editable"
+            onAdd={() => sroSurveyInputRef.current?.click()}
+            input={
+              <input
+                ref={sroSurveyInputRef}
+                type="file"
+                accept={REGULATORY_FILE_ACCEPT}
+                hidden
+                onChange={(event) => {
+                  const next = event.target.files?.[0] ?? null;
+                  event.target.value = "";
+                  if (next) form.replaceSroSurveyFile(next);
                 }}
               />
             }

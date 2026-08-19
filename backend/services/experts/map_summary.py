@@ -9,6 +9,7 @@ from models.order import OrderWorkType
 from services.design.catalogs import DESIGN_SPECIALTY_SHORTS, RTN_AREA_TITLES
 from services.ecology.catalogs import ECOLOGY_WORK_TYPE_TITLES
 from services.research.catalogs import BRANCH_TITLES, DEGREE_WORDS, TITLE_TITLES, format_degree
+from services.survey.catalogs import SURVEY_KIND_SHORTS
 from services.tech_diag.catalogs import CONTROL_OBJECTS, NDT_METHODS
 
 AUDIT_KEYS = ("audit_qualifications", "audit_attestation_areas", "audit_safety_areas")
@@ -36,6 +37,13 @@ DESIGN_KEYS = (
     "design_rtn_areas",
 )
 ECOLOGY_KEYS = ("ecology_work_types", "ecology_skills")
+SURVEY_KEYS = (
+    "survey_kinds",
+    "survey_education",
+    "survey_nrs",
+    "survey_nok",
+    "survey_rtn_areas",
+)
 
 NDT_METHOD_TITLES = {item.code: item.title for item in NDT_METHODS}
 CONTROL_OBJECT_TITLES = {item.code: item.title for item in CONTROL_OBJECTS}
@@ -175,12 +183,38 @@ def ecology_summary(expert: Expert, keys: set[str]) -> list[str]:
     return parts or ["Эколог"]
 
 
+def survey_summary(expert: Expert, keys: set[str]) -> list[str]:
+    "Метка изыскателя: направления изысканий, образование, НРС, НОК и области аттестации РТН."
+    profile = expert.survey_profile
+    if profile is None:
+        return ["Изыскатель"]
+    parts = []
+    if "survey_kinds" in keys and (profile.kinds or profile.kinds_other):
+        shorts = [SURVEY_KIND_SHORTS.get(code, code) for code in profile.kinds]
+        if profile.kinds_other:
+            shorts.append(profile.kinds_other[:100])
+        parts.append("Направления: " + ", ".join(shorts))
+    if "survey_education" in keys and profile.education:
+        parts.append(profile.education[:200])
+    if "survey_nrs" in keys and profile.nrs_number:
+        parts.append(f"НРС № {profile.nrs_number}")
+    if "survey_nok" in keys and profile.nok_passed:
+        parts.append("Пройдена независимая оценка квалификации")
+    if "survey_rtn_areas" in keys and profile.rtn_areas:
+        codes = [code for code in profile.rtn_areas if code in RTN_AREA_TITLES]
+        if codes:
+            parts.append("Аттестация РТН: " + ", ".join(codes))
+    return parts or ["Изыскатель"]
+
+
 def direction_tags(expert: Expert, direction: str) -> list[str]:
     "Ключи анкеты направления для фильтров на карте — независимо от настроек метки."
     if direction == OrderWorkType.ECOLOGY.value and expert.ecology_profile is not None:
         return list(expert.ecology_profile.work_types or [])
     if direction == OrderWorkType.DESIGN.value and expert.design_profile is not None:
         return list(expert.design_profile.specialties or [])
+    if direction == OrderWorkType.SURVEY.value and expert.survey_profile is not None:
+        return list(expert.survey_profile.kinds or [])
     if direction == OrderWorkType.TECH_DIAG.value and expert.tech_diag_profile is not None:
         profile = expert.tech_diag_profile
         return [*(profile.methods or []), *(profile.control_objects or [])]
@@ -222,4 +256,6 @@ def build_direction_summary(expert: Expert, direction: str, fields: list[str]) -
         return design_summary(expert, chosen_keys(fields, DESIGN_KEYS))
     if direction == OrderWorkType.ECOLOGY.value:
         return ecology_summary(expert, chosen_keys(fields, ECOLOGY_KEYS))
+    if direction == OrderWorkType.SURVEY.value:
+        return survey_summary(expert, chosen_keys(fields, SURVEY_KEYS))
     return []

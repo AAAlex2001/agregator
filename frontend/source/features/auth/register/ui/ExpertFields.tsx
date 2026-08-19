@@ -52,6 +52,13 @@ import {
   fetchEcologyCatalogs,
   type EcologyCatalogs,
 } from "@/source/features/directions/ecology";
+import {
+  SurveyProfileFields,
+  emptySurveyCatalogs,
+  emptySurveyProfile,
+  fetchSurveyCatalogs,
+  type SurveyCatalogs,
+} from "@/source/features/directions/survey";
 import { LocalFilePicker } from "@/source/features/directions/shared/ui/LocalFilePicker";
 import { LocalFilesPicker } from "@/source/features/directions/shared/ui/LocalFilesPicker";
 import { DirectionOption } from "./directions/DirectionOption";
@@ -66,6 +73,7 @@ function activeDirections(state: StepProps["state"]): string[] {
     ["TECH_DIAG", state.techDiagProfile],
     ["DESIGN", state.designProfile],
     ["ECOLOGY", state.ecologyProfile],
+    ["SURVEY", state.surveyProfile],
     ["RESEARCH", state.researchProfile],
     ["LABORATORY", state.laboratoryProfile],
     ["CADASTRAL", state.cadastralProfile],
@@ -80,6 +88,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
   const [designCatalogs, setDesignCatalogs] = useState<DesignCatalogs>(emptyDesignCatalogs);
   const [ecologyCatalogs, setEcologyCatalogs] = useState<EcologyCatalogs>(emptyEcologyCatalogs);
   const [researchCatalogs, setResearchCatalogs] = useState<ResearchCatalogs>(emptyResearchCatalogs);
+  const [surveyCatalogs, setSurveyCatalogs] = useState<SurveyCatalogs>(emptySurveyCatalogs);
 
   useEffect(() => {
     fetchAuditCatalogs().then(setCatalogs).catch(() => undefined);
@@ -87,6 +96,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
     fetchDesignCatalogs().then(setDesignCatalogs).catch(() => undefined);
     fetchEcologyCatalogs().then(setEcologyCatalogs).catch(() => undefined);
     fetchResearchCatalogs().then(setResearchCatalogs).catch(() => undefined);
+    fetchSurveyCatalogs().then(setSurveyCatalogs).catch(() => undefined);
   }, []);
 
   const { expertiseProfile, auditExpertProfile, cadastralProfile, forensicProfile } = state;
@@ -313,6 +323,61 @@ export function ExpertFields({ state, dispatch }: StepProps) {
                 maxFiles={5}
                 onAdd={(files) => dispatch({ type: "docAdd", key: "designRtnDocuments", files })}
                 onRemove={(index) => dispatch({ type: "docRemove", key: "designRtnDocuments", index })}
+              />
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="SURVEY"
+          title="Инженерные изыскания"
+          description="Направления изысканий, НОК, НРС и аттестация РТН по промышленной безопасности"
+          checked={state.surveyProfile !== null}
+          onToggle={() =>
+            dispatch({ type: "survey", value: state.surveyProfile ? null : { ...emptySurveyProfile } })
+          }
+        >
+          {state.surveyProfile && (
+            <>
+              <SurveyProfileFields
+                value={state.surveyProfile}
+                onChange={(value) => dispatch({ type: "survey", value })}
+                catalogs={surveyCatalogs}
+              />
+              <LocalFilesPicker
+                label="Диплом об образовании — до 5 документов"
+                files={state.directionFiles.surveyEducationDocuments}
+                maxFiles={5}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyEducationDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyEducationDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Свидетельства НОК — до 5 документов"
+                files={state.directionFiles.surveyNokDocuments}
+                maxFiles={5}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyNokDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyNokDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Уведомления о включении в НРС — до 5 документов"
+                files={state.directionFiles.surveyNrsDocuments}
+                maxFiles={5}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyNrsDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyNrsDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Повышение квалификации, курсы — до 5 документов"
+                files={state.directionFiles.surveyQualificationDocuments}
+                maxFiles={5}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyQualificationDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyQualificationDocuments", index })}
+              />
+              <LocalFilesPicker
+                label="Протоколы аттестации РТН — до 5 документов"
+                files={state.directionFiles.surveyRtnDocuments}
+                maxFiles={5}
+                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyRtnDocuments", files })}
+                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyRtnDocuments", index })}
               />
             </>
           )}

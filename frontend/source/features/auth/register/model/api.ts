@@ -16,6 +16,7 @@ import type { ResearchProfile } from "@/source/features/directions/research";
 import type { TechDiagProfile } from "@/source/features/directions/tech-diag";
 import type { DesignProfile } from "@/source/features/directions/design";
 import type { EcologyProfile } from "@/source/features/directions/ecology";
+import type { SurveyProfile } from "@/source/features/directions/survey";
 
 export interface RegisterPayload {
   role: UserRole;
@@ -44,6 +45,7 @@ export interface RegisterPayload {
   tech_diag_profile?: TechDiagProfile | null;
   design_profile?: DesignProfile | null;
   ecology_profile?: EcologyProfile | null;
+  survey_profile?: SurveyProfile | null;
   contact_sales_enabled?: boolean;
   contact_price_rubles?: number;
   contact_payment_details?: string;
@@ -67,7 +69,12 @@ export type RegisterDocumentSlot =
   | "DESIGN_NRS"
   | "DESIGN_QUALIFICATION"
   | "DESIGN_RTN"
-  | "ECOLOGY";
+  | "ECOLOGY"
+  | "SURVEY_EDUCATION"
+  | "SURVEY_NOK"
+  | "SURVEY_NRS"
+  | "SURVEY_QUALIFICATION"
+  | "SURVEY_RTN";
 
 export interface RegisterDocument {
   slot: RegisterDocumentSlot;
@@ -101,6 +108,7 @@ export async function registerLicenseHolder(
   licenseFile: File | null,
   miningLicenseFile: File | null = null,
   sroDesignFile: File | null = null,
+  sroSurveyFile: File | null = null,
   labAccreditationFile: File | null = null,
 ): Promise<RegisterResponse> {
   const allFiles = [licenseFile, miningLicenseFile, sroDesignFile, labAccreditationFile].filter(
@@ -116,6 +124,7 @@ export async function registerLicenseHolder(
       if (licenseFile) formData.append("license_file", licenseFile);
       if (miningLicenseFile) formData.append("mining_license_file", miningLicenseFile);
       if (sroDesignFile) formData.append("sro_design_file", sroDesignFile);
+      if (sroSurveyFile) formData.append("sro_survey_file", sroSurveyFile);
       if (labAccreditationFile) formData.append("lab_accreditation_file", labAccreditationFile);
       return formData;
     },

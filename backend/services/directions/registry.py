@@ -17,6 +17,7 @@ from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.order import OrderWorkType
 from models.research import OrderResearchDetails
+from models.survey import OrderSurveyDetails
 from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput, AuditOrderDetailsResponse
 from schemas.cadastral import CadastralOrderDetailsInput, CadastralOrderDetailsResponse
@@ -25,6 +26,7 @@ from schemas.ecology import EcologyOrderDetailsInput, EcologyOrderDetailsRespons
 from schemas.forensic import ForensicOrderDetailsInput, ForensicOrderDetailsResponse
 from schemas.laboratory import LaboratoryOrderDetailsInput, LaboratoryOrderDetailsResponse
 from schemas.research import ResearchOrderDetailsInput, ResearchOrderDetailsResponse
+from schemas.survey import SurveyOrderDetailsInput, SurveyOrderDetailsResponse
 from schemas.tech_diag import TechDiagOrderDetailsInput, TechDiagOrderDetailsResponse
 
 
@@ -112,6 +114,14 @@ DIRECTIONS: tuple[Direction, ...] = (
         details_attribute="ecology_details",
         details_input_schema=EcologyOrderDetailsInput,
         details_response_schema=EcologyOrderDetailsResponse,
+    ),
+    Direction(
+        key=OrderWorkType.SURVEY.value,
+        title="Инженерные изыскания",
+        details_model=OrderSurveyDetails,
+        details_attribute="survey_details",
+        details_input_schema=SurveyOrderDetailsInput,
+        details_response_schema=SurveyOrderDetailsResponse,
     ),
 )
 

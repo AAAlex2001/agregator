@@ -23,6 +23,16 @@ export const ORDER_DETAILS_TITLES: Partial<Record<OrderWorkType, string>> = {
   TECH_DIAG: "Техническое освидетельствование и диагностирование",
   DESIGN: "Проектирование промышленных и гражданских объектов",
   ECOLOGY: "Экологическое сопровождение предприятий",
+  SURVEY: "Инженерные изыскания",
+};
+
+const SURVEY_KIND_LABELS: Record<string, string> = {
+  IGI: "Инженерно-геологические изыскания",
+  IGDI: "Инженерно-геодезические изыскания",
+  IGMI: "Гидрометеорологические изыскания",
+  IEI: "Инженерно-экологические изыскания",
+  IGFI: "Инженерно-геофизические изыскания",
+  ARCH: "Археологические исследования",
 };
 
 const ECOLOGY_WORK_TYPE_LABELS: Record<string, string> = {
@@ -218,6 +228,17 @@ const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
       group: "Работы",
       wide: true,
       valueLabels: ECOLOGY_WORK_TYPE_LABELS,
+    },
+  ],
+  SURVEY: [
+    ...APPLICANT_FIELDS,
+    {
+      key: "kinds",
+      label: "Виды изысканий",
+      kind: "list",
+      group: "Изыскания",
+      wide: true,
+      valueLabels: SURVEY_KIND_LABELS,
     },
   ],
   AUDIT_SUPB: [

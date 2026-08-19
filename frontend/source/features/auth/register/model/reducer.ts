@@ -18,6 +18,10 @@ import {
   emptyDesignProfile,
 } from "@/source/features/directions/design";
 import { emptyEcologyProfile } from "@/source/features/directions/ecology";
+import {
+  emptySurveyHolderProfile,
+  emptySurveyProfile,
+} from "@/source/features/directions/survey";
 import { emptyDirectionFiles } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
@@ -55,6 +59,8 @@ export const initialState: RegisterState = {
   designProfile: null,
   designHolderProfile: null,
   ecologyProfile: null,
+  surveyProfile: null,
+  surveyHolderProfile: null,
   directionFiles: emptyDirectionFiles,
   licenseEnabled: false,
   licenseNumber: "",
@@ -64,7 +70,7 @@ export const initialState: RegisterState = {
   rentalFixed: "",
   miningNumber: "",
   labNumber: "",
-  files: { license: null, mining: null, sro: null, lab: null },
+  files: { license: null, mining: null, sro: null, sroSurvey: null, lab: null },
   consents: { privacy: false, terms: false, personal: false },
 };
 
@@ -101,6 +107,12 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
   if (preset.direction === "ECOLOGY" && preset.role === "EXPERT") {
     state.ecologyProfile = { ...emptyEcologyProfile };
   }
+  if (preset.direction === "SURVEY") {
+    if (preset.role === "EXPERT") state.surveyProfile = { ...emptySurveyProfile };
+    if (preset.role === "LICENSE_HOLDER") {
+      state.surveyHolderProfile = { ...emptySurveyHolderProfile };
+    }
+  }
   if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
     state.cadastralProfile = { ...emptyCadastralProfile };
   }
@@ -123,7 +135,8 @@ export function initFromPreset(preset: AuthPreset | null): RegisterState {
     preset.direction !== "TECH_DIAG" &&
     preset.direction !== "EXPERTISE" &&
     preset.direction !== "DESIGN" &&
-    preset.direction !== "ECOLOGY"
+    preset.direction !== "ECOLOGY" &&
+    preset.direction !== "SURVEY"
   ) {
     state.directions = [preset.direction];
   }
@@ -159,6 +172,8 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         designProfile: null,
         designHolderProfile: null,
         ecologyProfile: null,
+        surveyProfile: null,
+        surveyHolderProfile: null,
         directionFiles: emptyDirectionFiles,
       };
     case "travels":
@@ -210,6 +225,10 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
       return { ...state, designHolderProfile: action.value };
     case "ecology":
       return { ...state, ecologyProfile: action.value };
+    case "survey":
+      return { ...state, surveyProfile: action.value };
+    case "surveyHolder":
+      return { ...state, surveyHolderProfile: action.value };
     case "licenseEnabled":
       return { ...state, licenseEnabled: action.value };
     case "areas":

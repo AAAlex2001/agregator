@@ -17,6 +17,7 @@ import type { LaboratoryProfile } from "@/source/features/directions/laboratory"
 import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/features/directions/tech-diag";
 import type { DesignHolderProfile, DesignProfile } from "@/source/features/directions/design";
 import type { EcologyProfile } from "@/source/features/directions/ecology";
+import type { SurveyHolderProfile, SurveyProfile } from "@/source/features/directions/survey";
 import type { DirectionFilesState } from "./directionFiles";
 
 export type StringField =
@@ -34,7 +35,7 @@ export type StringField =
   | "contactPrice"
   | "contactDetails";
 
-export type FileKey = "license" | "mining" | "sro" | "lab";
+export type FileKey = "license" | "mining" | "sro" | "sroSurvey" | "lab";
 export type ConsentKey = "privacy" | "terms" | "personal";
 export type DocFileKey = "cadastralDiploma" | "cadastralCertificate" | "forensicDiploma";
 export type DocListKey =
@@ -47,7 +48,12 @@ export type DocListKey =
   | "designNrsDocuments"
   | "designQualificationDocuments"
   | "designRtnDocuments"
-  | "ecologyDocuments";
+  | "ecologyDocuments"
+  | "surveyEducationDocuments"
+  | "surveyNokDocuments"
+  | "surveyNrsDocuments"
+  | "surveyQualificationDocuments"
+  | "surveyRtnDocuments";
 
 export interface RegisterState {
   waiting: boolean;
@@ -83,6 +89,8 @@ export interface RegisterState {
   designProfile: DesignProfile | null;
   designHolderProfile: DesignHolderProfile | null;
   ecologyProfile: EcologyProfile | null;
+  surveyProfile: SurveyProfile | null;
+  surveyHolderProfile: SurveyHolderProfile | null;
   directionFiles: DirectionFilesState;
   licenseEnabled: boolean;
   licenseNumber: string;
@@ -124,6 +132,8 @@ export type RegisterAction =
   | { type: "design"; value: DesignProfile | null }
   | { type: "designHolder"; value: DesignHolderProfile | null }
   | { type: "ecology"; value: EcologyProfile | null }
+  | { type: "survey"; value: SurveyProfile | null }
+  | { type: "surveyHolder"; value: SurveyHolderProfile | null }
   | { type: "licenseEnabled"; value: boolean }
   | { type: "areas"; value: ExpertiseType[] }
   | { type: "rentalKind"; value: LicenseRentalKind }

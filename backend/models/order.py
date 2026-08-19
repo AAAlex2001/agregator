@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from models.question import OrderQuestion
     from models.research import OrderResearchDetails
     from models.response import OrderResponse
+    from models.survey import OrderSurveyDetails
     from models.tech_diag import OrderTechDiagDetails
 
 
@@ -49,6 +50,7 @@ class OrderWorkType(str, PyEnum):
     TECH_DIAG = "TECH_DIAG"
     DESIGN = "DESIGN"
     ECOLOGY = "ECOLOGY"
+    SURVEY = "SURVEY"
 
 
 class BadgeVariant(str, PyEnum):
@@ -203,6 +205,13 @@ class Order(Base):
         lazy="selectin",
     )
     ecology_details: Mapped["OrderEcologyDetails | None"] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        uselist=False,
+        lazy="selectin",
+    )
+    survey_details: Mapped["OrderSurveyDetails | None"] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         passive_deletes=True,

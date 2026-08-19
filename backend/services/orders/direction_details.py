@@ -14,6 +14,7 @@ from models.ecology import OrderEcologyDetails
 from models.forensic import OrderForensicDetails
 from models.laboratory import OrderLaboratoryDetails
 from models.research import OrderResearchDetails
+from models.survey import OrderSurveyDetails
 from models.tech_diag import OrderTechDiagDetails
 from schemas.audit import AuditOrderDetailsInput
 from services.directions.registry import Direction
@@ -26,6 +27,7 @@ OrderDirectionDetails = (
     | OrderForensicDetails
     | OrderLaboratoryDetails
     | OrderResearchDetails
+    | OrderSurveyDetails
     | OrderTechDiagDetails
 )
 

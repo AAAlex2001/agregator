@@ -14,6 +14,10 @@ import {
   DesignHolderProfileFields,
   emptyDesignHolderProfile,
 } from "@/source/features/directions/design";
+import {
+  SurveyHolderProfileFields,
+  emptySurveyHolderProfile,
+} from "@/source/features/directions/survey";
 import { DirectionOption } from "./directions/DirectionOption";
 import { RegulatoryDocumentsBlock } from "./RegulatoryDocumentsBlock";
 import type { StepProps } from "./types";
@@ -22,13 +26,14 @@ import d from "./directions/DirectionsPicker.module.scss";
 const LICENSE_FILE_ACCEPT = ".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
 
 const HOLDER_MARK_OPTIONS = ORDER_WORK_OPTIONS.filter(
-  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN", "ECOLOGY"].includes(option.value),
+  (option) => !["EXPERTISE", "AUDIT_SUPB", "TECH_DIAG", "DESIGN", "ECOLOGY", "SURVEY"].includes(option.value),
 );
 
 export function HolderFields({ state, dispatch }: StepProps) {
   const audit = state.auditHolderProfile;
   const techDiag = state.techDiagHolderProfile;
   const design = state.designHolderProfile;
+  const survey = state.surveyHolderProfile;
   const licenseFileInputRef = useRef<HTMLInputElement>(null);
   const licenseBlobUrl = useObjectUrl(state.files.license);
 
@@ -168,6 +173,29 @@ export function HolderFields({ state, dispatch }: StepProps) {
               <DesignHolderProfileFields
                 value={design}
                 onChange={(value) => dispatch({ type: "designHolder", value })}
+              />
+              <span className={d.itemText}>
+                Выписку из реестра членов СРО приложите в блоке разрешительных документов выше,
+                дополнительные документы можно загрузить в личном кабинете.
+              </span>
+            </>
+          )}
+        </DirectionOption>
+
+        <DirectionOption
+          id="SURVEY"
+          title="Инженерные изыскания"
+          description="Членство в СРО изыскателей: права, компенсационный фонд и условия предоставления"
+          checked={survey !== null}
+          onToggle={() =>
+            dispatch({ type: "surveyHolder", value: survey ? null : { ...emptySurveyHolderProfile } })
+          }
+        >
+          {survey && (
+            <>
+              <SurveyHolderProfileFields
+                value={survey}
+                onChange={(value) => dispatch({ type: "surveyHolder", value })}
               />
               <span className={d.itemText}>
                 Выписку из реестра членов СРО приложите в блоке разрешительных документов выше,

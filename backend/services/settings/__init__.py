@@ -11,6 +11,7 @@ from services.settings.use_cases.replace_lab_accreditation_file import ReplaceLa
 from services.settings.use_cases.replace_license_file import ReplaceLicenseFileUseCase
 from services.settings.use_cases.replace_mining_license_file import ReplaceMiningLicenseFileUseCase
 from services.settings.use_cases.replace_sro_design_file import ReplaceSroDesignFileUseCase
+from services.settings.use_cases.replace_sro_survey_file import ReplaceSroSurveyFileUseCase
 from services.settings.use_cases.request_email_change import RequestEmailChangeUseCase
 from services.settings.use_cases.update_directions import UpdateDirectionsUseCase
 from services.settings.use_cases.update_email_preferences import UpdateEmailPreferencesUseCase
@@ -32,6 +33,7 @@ __all__ = [
     "ReplaceLicenseFileUseCase",
     "ReplaceMiningLicenseFileUseCase",
     "ReplaceSroDesignFileUseCase",
+    "ReplaceSroSurveyFileUseCase",
     "RequestEmailChangeUseCase",
     "SettingsRepository",
     "SettingsValidator",

@@ -169,6 +169,7 @@ class LicenseHolderProfileData(BaseModel):
     mining_license_number: str | None = None
     mining_license_file_url: str | None = None
     sro_design_file_url: str | None = None
+    sro_survey_file_url: str | None = None
     lab_accreditation_number: str | None = None
     lab_accreditation_file_url: str | None = None
     company_card_url: str | None = None

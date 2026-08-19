@@ -25,6 +25,10 @@ import {
   type ResearchOrderDetails,
 } from "@/source/features/directions/research";
 import {
+  emptySurveyOrderDetails,
+  type SurveyOrderDetails,
+} from "@/source/features/directions/survey";
+import {
   emptyTechDiagOrderDetails,
   type TechDiagOrderDetails,
 } from "@/source/features/directions/tech-diag";
@@ -38,6 +42,7 @@ export interface DirectionDetailsValues {
   techDiagDetails: TechDiagOrderDetails;
   designDetails: DesignOrderDetails;
   ecologyDetails: EcologyOrderDetails;
+  surveyDetails: SurveyOrderDetails;
 }
 
 const DETAILS_KEYS: Partial<Record<OrderWorkType, keyof DirectionDetailsValues>> = {
@@ -49,6 +54,7 @@ const DETAILS_KEYS: Partial<Record<OrderWorkType, keyof DirectionDetailsValues>>
   TECH_DIAG: "techDiagDetails",
   DESIGN: "designDetails",
   ECOLOGY: "ecologyDetails",
+  SURVEY: "surveyDetails",
 };
 
 export function hasOrderDetails(workType: OrderWorkType): boolean {
@@ -65,6 +71,7 @@ export function emptyDirectionDetails(): DirectionDetailsValues {
     techDiagDetails: emptyTechDiagOrderDetails,
     designDetails: emptyDesignOrderDetails,
     ecologyDetails: emptyEcologyOrderDetails,
+    surveyDetails: emptySurveyOrderDetails,
   });
 }
 

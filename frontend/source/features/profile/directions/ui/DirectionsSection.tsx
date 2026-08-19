@@ -18,6 +18,8 @@ import { TechDiagProfileCard } from "./TechDiagProfileCard";
 import { DesignHolderProfileCard } from "./DesignHolderProfileCard";
 import { DesignProfileCard } from "./DesignProfileCard";
 import { EcologyProfileCard } from "./EcologyProfileCard";
+import { SurveyHolderProfileCard } from "./SurveyHolderProfileCard";
+import { SurveyProfileCard } from "./SurveyProfileCard";
 import s from "./DirectionsSection.module.scss";
 
 const EXPERT_TABS = [
@@ -30,6 +32,7 @@ const EXPERT_TABS = [
   { id: "TECH_DIAG", label: "Техдиагностирование" },
   { id: "DESIGN", label: "Проектирование" },
   { id: "ECOLOGY", label: "Экология" },
+  { id: "SURVEY", label: "Изыскания" },
 ];
 
 const CUSTOMER_TABS = [{ id: "AUDIT_SUPB", label: "Аудит СУПБ" }];
@@ -39,6 +42,7 @@ const LICENSE_HOLDER_TABS = [
   { id: "AUDIT_SUPB", label: "Аудит СУПБ" },
   { id: "TECH_DIAG", label: "Лаборатория НК" },
   { id: "DESIGN", label: "СРО проектировщиков" },
+  { id: "SURVEY", label: "СРО изыскателей" },
 ];
 
 interface Props {
@@ -69,6 +73,7 @@ export function DirectionsSection({ role, licenseHolderExpertiseCard }: Props) {
           { id: "TECH_DIAG", card: <TechDiagProfileCard /> },
           { id: "DESIGN", card: <DesignProfileCard /> },
           { id: "ECOLOGY", card: <EcologyProfileCard /> },
+          { id: "SURVEY", card: <SurveyProfileCard /> },
         ]
       : role === "CUSTOMER"
         ? [{ id: "AUDIT_SUPB", card: <AuditCustomerProfileCard /> }]
@@ -77,6 +82,7 @@ export function DirectionsSection({ role, licenseHolderExpertiseCard }: Props) {
             { id: "AUDIT_SUPB", card: <AuditLicenseHolderProfileCard /> },
             { id: "TECH_DIAG", card: <TechDiagHolderProfileCard /> },
             { id: "DESIGN", card: <DesignHolderProfileCard /> },
+            { id: "SURVEY", card: <SurveyHolderProfileCard /> },
           ];
 
   return (

@@ -7,6 +7,7 @@ import type { EcologyOrderDetails } from "@/source/features/directions/ecology";
 import type { ForensicOrderDetails } from "@/source/features/directions/forensic";
 import type { LaboratoryOrderDetails } from "@/source/features/directions/laboratory";
 import type { ResearchOrderDetails } from "@/source/features/directions/research";
+import type { SurveyOrderDetails } from "@/source/features/directions/survey";
 import type { TechDiagOrderDetails } from "@/source/features/directions/tech-diag";
 import { activeDirectionDetails, emptyDirectionDetails } from "./orderDetails";
 import { initialDocumentsFormState, type DocumentsFormState } from "@/source/entities/order";
@@ -33,6 +34,7 @@ export interface OrderFormValues {
   techDiagDetails: TechDiagOrderDetails;
   designDetails: DesignOrderDetails;
   ecologyDetails: EcologyOrderDetails;
+  surveyDetails: SurveyOrderDetails;
 }
 
 export type StringField =
@@ -67,6 +69,7 @@ export type OrderFormAction =
   | { type: "techDiag"; value: TechDiagOrderDetails }
   | { type: "design"; value: DesignOrderDetails }
   | { type: "ecology"; value: EcologyOrderDetails }
+  | { type: "survey"; value: SurveyOrderDetails }
   | { type: "applicantDefaults"; value: ApplicantBlock }
   | { type: "docSingle"; category: SingleCategory; file: File | null }
   | { type: "docRemoveSingleExisting"; category: SingleCategory }
@@ -109,6 +112,7 @@ export function orderFormValues(state: OrderFormState): OrderFormValues {
     techDiagDetails: state.techDiagDetails,
     designDetails: state.designDetails,
     ecologyDetails: state.ecologyDetails,
+    surveyDetails: state.surveyDetails,
   };
 }
 
@@ -135,6 +139,7 @@ function applyApplicantToAll(state: OrderFormState, defaults: ApplicantBlock): O
     techDiagDetails: fillApplicant(state.techDiagDetails, defaults),
     designDetails: fillApplicant(state.designDetails, defaults),
     ecologyDetails: fillApplicant(state.ecologyDetails, defaults),
+    surveyDetails: fillApplicant(state.surveyDetails, defaults),
   };
 }
 
@@ -180,6 +185,8 @@ export function reducer(state: OrderFormState, action: OrderFormAction): OrderFo
       return { ...state, designDetails: action.value };
     case "ecology":
       return { ...state, ecologyDetails: action.value };
+    case "survey":
+      return { ...state, surveyDetails: action.value };
     case "applicantDefaults":
       return applyApplicantToAll({ ...state, applicantDefaults: action.value }, action.value);
     case "docSingle":

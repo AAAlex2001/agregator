@@ -2,7 +2,11 @@ import { OrderSearchBar } from "@/source/features/order-search";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./search-block.module.scss";
 
-const SearchBlock = () => (
+interface Props {
+  withDirectionsFilter?: boolean;
+}
+
+const SearchBlock = ({ withDirectionsFilter = false }: Props) => (
   <section className={s.section} id="search">
     <div className={s.content}>
       <header className={s.header}>
@@ -10,7 +14,7 @@ const SearchBlock = () => (
         <Subtitle text="Найдите проект по наименованию работы или наименованию организации(заказчика) — покажем все актуальные и архивные заказы платформы" />
       </header>
       <div className={s.bar}>
-        <OrderSearchBar />
+        <OrderSearchBar withFilters={withDirectionsFilter} />
       </div>
     </div>
   </section>

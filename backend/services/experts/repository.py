@@ -19,6 +19,7 @@ from models.order import Order, OrderStatus, OrderWorkType
 from models.research import ExpertResearchProfile
 from models.response import OrderResponse as OrderResponseModel
 from models.response import ResponseStatus
+from models.survey import ExpertSurveyProfile
 from models.tech_diag import ExpertTechDiagProfile
 from services.experts.map_summary import build_direction_summary, direction_tags
 from utils.pagination import paginate_with_has_more
@@ -43,6 +44,7 @@ EXPERT_DIRECTION_PROFILES = {
     OrderWorkType.TECH_DIAG.value: ExpertTechDiagProfile,
     OrderWorkType.DESIGN.value: ExpertDesignProfile,
     OrderWorkType.ECOLOGY.value: ExpertEcologyProfile,
+    OrderWorkType.SURVEY.value: ExpertSurveyProfile,
 }
 
 

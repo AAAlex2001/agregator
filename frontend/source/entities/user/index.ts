@@ -4,6 +4,7 @@ export type {
   CompanyData,
   LicenseRentalKind,
   LicenseHolderDesignRegisterPayload,
+  LicenseHolderSurveyRegisterPayload,
   LicenseHolderRegisterPayload,
   LicenseHolderUpdatePayload,
 } from "./model/types";
@@ -37,6 +38,7 @@ export {
   deleteCompanyCard,
   uploadMiningLicenseFile,
   uploadSroDesignFile,
+  uploadSroSurveyFile,
   uploadLabAccreditationFile,
 } from "./api/license.api";
 export { useProfileForm } from "./model/useProfileForm";

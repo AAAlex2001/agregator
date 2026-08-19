@@ -24,6 +24,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; pri
   { path: "/tehnicheskoe-diagnostirovanie", changeFrequency: "weekly", priority: 0.9 },
   { path: "/proektirovanie", changeFrequency: "weekly", priority: 0.9 },
   { path: "/ekologiya", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/inzhenernye-izyskaniya", changeFrequency: "weekly", priority: 0.9 },
   { path: "/reviews", changeFrequency: "weekly", priority: 0.7 },
   { path: "/zepb-registry", changeFrequency: "monthly", priority: 0.8 },
   { path: "/expert-contacts", changeFrequency: "weekly", priority: 0.8 },

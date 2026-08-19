@@ -6,7 +6,7 @@ import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import { initialSearchBarState, searchBarReducer } from "./searchBarReducer";
 import { useOrderSearchSuggestions } from "./useOrderSearchSuggestions";
 
-export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>) {
+export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>, withFilters: boolean) {
   const router = useRouter();
   const [state, dispatch] = useReducer(searchBarReducer, initialSearchBarState);
   const suggestionsState = useOrderSearchSuggestions({ query: state.query, filters: state.filters });
@@ -55,6 +55,7 @@ export function useOrderSearch(rootRef: RefObject<HTMLDivElement | null>) {
       dispatch({ type: "suggestionsOpened" });
       return;
     }
+    if (!withFilters) return;
 
     dispatch({ type: "filtersOpened" });
     if (window.matchMedia("(max-width: 767px)").matches) {

@@ -80,7 +80,7 @@ export function ExpertiseLandingContent({ snapshot, basePath = "", header, foote
           subtitle={sectionHeaders.industries.subtitle}
         />
         <LandingServiceRoles roles={EXPERTISE_ROLES} />
-        <LandingSearchBlock />
+        <LandingSearchBlock withDirectionsFilter />
         <LandingServiceFaq
           items={EXPERTISE_FAQ}
           subtitle="Когда ЭПБ обязательна, кто вправе её проводить и что происходит с заключением."

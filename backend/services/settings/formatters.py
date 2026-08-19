@@ -38,6 +38,7 @@ def build_directions(account: Account) -> list[str]:
         ("AUDIT_SUPB", getattr(profile, "audit_profile", None)),
         ("TECH_DIAG", getattr(profile, "tech_diag_profile", None)),
         ("DESIGN", getattr(profile, "design_profile", None)),
+        ("SURVEY", getattr(profile, "survey_profile", None)),
     ):
         if direction_profile is not None and key not in result:
             result.append(key)

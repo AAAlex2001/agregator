@@ -32,6 +32,7 @@ from services.license_holders import (
     save_license_file,
     save_mining_license_file,
     save_sro_design_file,
+    save_sro_survey_file,
 )
 from services.login import CreateSessionUseCase, LoginRepository, set_session_cookies
 from services.registration import (
@@ -122,6 +123,7 @@ async def register_license_holder(
     license_file: UploadFile | None = File(None),
     mining_license_file: UploadFile | None = File(None),
     sro_design_file: UploadFile | None = File(None),
+    sro_survey_file: UploadFile | None = File(None),
     lab_accreditation_file: UploadFile | None = File(None),
     repository: RegistrationRepository = Depends(get_registration_repository),
     validator: RegistrationValidator = Depends(get_registration_validator),
@@ -133,6 +135,7 @@ async def register_license_holder(
         await save_mining_license_file(data.inn, mining_license_file) if mining_license_file else None
     )
     sro_url = await save_sro_design_file(data.inn, sro_design_file) if sro_design_file else None
+    sro_survey_url = await save_sro_survey_file(data.inn, sro_survey_file) if sro_survey_file else None
     lab_url = (
         await save_lab_accreditation_file(data.inn, lab_accreditation_file)
         if lab_accreditation_file
@@ -145,12 +148,14 @@ async def register_license_holder(
             file_url,
             mining_license_file_url=mining_url,
             sro_design_file_url=sro_url,
+            sro_survey_file_url=sro_survey_url,
             lab_accreditation_file_url=lab_url,
         )
     except Exception:
         remove_license_file(file_url)
         remove_regulatory_document_file(mining_url)
         remove_regulatory_document_file(sro_url)
+        remove_regulatory_document_file(sro_survey_url)
         remove_regulatory_document_file(lab_url)
         raise
 

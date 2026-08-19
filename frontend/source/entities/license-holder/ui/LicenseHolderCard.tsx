@@ -120,12 +120,14 @@ export function LicenseHolderCard({ item }: Props) {
   const cardItems = buildFileItems(item.company_card_url, "company-card", "Карточка предприятия");
   const miningItems = buildFileItems(item.mining_license_file_url, "mining-license", "Лицензия маркшейдера");
   const sroItems = buildFileItems(item.sro_design_file_url, "sro-design", "Выписка из реестра членов СРО в области проектирования");
+  const sroSurveyItems = buildFileItems(item.sro_survey_file_url, "sro-survey", "Выписка из реестра членов СРО в области инженерных изысканий");
   const labItems = buildFileItems(item.lab_accreditation_file_url, "lab-accreditation", "Аккредитация лаборатории");
   const hasAnyExtras = Boolean(
     item.mining_license_number ||
       item.lab_accreditation_number ||
       item.mining_license_file_url ||
       item.sro_design_file_url ||
+      item.sro_survey_file_url ||
       item.lab_accreditation_file_url,
   );
   const companyName = getCompanyName(item);
@@ -273,6 +275,19 @@ export function LicenseHolderCard({ item }: Props) {
                       <FileGallery
                         items={sroItems}
                         label="Выписка из реестра членов СРО в области проектирования:"
+                        labelClassName={s.label}
+                        blockClassName={s.fileBlock}
+                        gridProps={{ className: s.fileGrid }}
+                        hideWhenEmpty
+                      />
+                    </div>
+                  )}
+
+                  {sroSurveyItems.length > 0 && (
+                    <div className={s.extrasItem}>
+                      <FileGallery
+                        items={sroSurveyItems}
+                        label="Выписка из реестра членов СРО в области инженерных изысканий:"
                         labelClassName={s.label}
                         blockClassName={s.fileBlock}
                         gridProps={{ className: s.fileGrid }}

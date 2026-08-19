@@ -3,6 +3,7 @@ from models.account import Account, UserRole
 from models.audit import LicenseHolderAuditProfile
 from models.design import LicenseHolderDesignProfile
 from models.license_holder import LicenseHolder, LicenseRentalKind
+from models.survey import LicenseHolderSurveyProfile
 from models.tech_diag import LicenseHolderTechDiagProfile
 from schemas.registration import LicenseHolderRegistration
 from services.registration.repository import RegistrationRepository
@@ -23,6 +24,7 @@ class RegisterLicenseHolderUseCase:
         license_file_url: str | None,
         mining_license_file_url: str | None = None,
         sro_design_file_url: str | None = None,
+        sro_survey_file_url: str | None = None,
         lab_accreditation_file_url: str | None = None,
     ) -> Account:
         "Запускает основной сценарий use case."
@@ -67,6 +69,7 @@ class RegisterLicenseHolderUseCase:
             mining_license_number=data.mining_license_number,
             mining_license_file_url=mining_license_file_url,
             sro_design_file_url=sro_design_file_url,
+            sro_survey_file_url=sro_survey_file_url,
             lab_accreditation_number=data.lab_accreditation_number,
             lab_accreditation_file_url=lab_accreditation_file_url,
             email_on_order_updated=False,
@@ -98,6 +101,15 @@ class RegisterLicenseHolderUseCase:
                     license_holder_id=profile.id,
                     documents=[],
                     **data.design_profile.model_dump(),
+                )
+            )
+
+        if data.survey_profile is not None:
+            await self.repo.add(
+                LicenseHolderSurveyProfile(
+                    license_holder_id=profile.id,
+                    documents=[],
+                    **data.survey_profile.model_dump(),
                 )
             )
 

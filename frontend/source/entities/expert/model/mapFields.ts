@@ -54,6 +54,17 @@ export const DIRECTION_MAP_FIELD_GROUPS: MapFieldGroup[] = [
     ],
   },
   {
+    direction: "SURVEY",
+    title: "Инженерные изыскания",
+    options: [
+      { value: "survey_kinds", label: "Направления изысканий" },
+      { value: "survey_education", label: "Образование" },
+      { value: "survey_nrs", label: "Номер в НРС" },
+      { value: "survey_nok", label: "Отметка о НОК" },
+      { value: "survey_rtn_areas", label: "Области аттестации РТН" },
+    ],
+  },
+  {
     direction: "ECOLOGY",
     title: "Экология",
     options: [

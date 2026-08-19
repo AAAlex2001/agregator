@@ -23,6 +23,7 @@ from services.forensic import (
     UploadForensicDiplomaUseCase,
     UploadForensicDocumentUseCase,
 )
+from services.survey import SurveyRepository, SurveyValidator, UploadSurveyDocumentUseCase
 from services.tech_diag import TechDiagRepository, TechDiagValidator, UploadTechDiagDocumentUseCase
 
 MAX_REGISTRATION_DOCUMENTS = 20
@@ -33,6 +34,14 @@ DESIGN_SLOT_GROUPS = {
     "DESIGN_NRS": "nrs",
     "DESIGN_QUALIFICATION": "qualification",
     "DESIGN_RTN": "rtn",
+}
+
+SURVEY_SLOT_GROUPS = {
+    "SURVEY_EDUCATION": "education",
+    "SURVEY_NOK": "nok",
+    "SURVEY_NRS": "nrs",
+    "SURVEY_QUALIFICATION": "qualification",
+    "SURVEY_RTN": "rtn",
 }
 
 
@@ -75,6 +84,11 @@ async def upload_to_slot(db: AsyncSession, account_id: int, slot: str, file: Upl
         repo = DesignRepository(db)
         use_case = UploadDesignDocumentUseCase(repo, DesignValidator(repo))
         await use_case.execute(account_id, DESIGN_SLOT_GROUPS[slot], file)
+        return
+    if slot in SURVEY_SLOT_GROUPS:
+        repo = SurveyRepository(db)
+        use_case = UploadSurveyDocumentUseCase(repo, SurveyValidator(repo))
+        await use_case.execute(account_id, SURVEY_SLOT_GROUPS[slot], file)
         return
     if slot in ("CADASTRAL_DIPLOMA", "CADASTRAL_CERTIFICATE", "CADASTRAL"):
         repo = CadastralRepository(db)

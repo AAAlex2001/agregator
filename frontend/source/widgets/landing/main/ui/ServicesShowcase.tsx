@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { DesignSpecialistsMap } from "@/source/features/design-map-filter";
+import { SurveySpecialistsMap } from "@/source/features/survey-map-filter";
 import { ExpertiseExpertsMap, DirectionExpertsMap } from "@/source/features/expert-map-filter";
 import { ServicesAccordion, type ServicesAccordionItem } from "../../shared/ui/ServicesAccordion";
 import { SERVICES_SHOWCASE, type ServiceShowcaseItem } from "../../shared/model/servicesShowcase";
@@ -11,6 +12,7 @@ import s from "./services-showcase.module.scss";
 function DirectionMap({ item }: { item: ServiceShowcaseItem }) {
   if (item.slug === "epb") return <ExpertiseExpertsMap />;
   if (item.slug === "proektirovanie") return <DesignSpecialistsMap />;
+  if (item.slug === "izyskaniya") return <SurveySpecialistsMap />;
   return <DirectionExpertsMap direction={item.direction ?? null} />;
 }
 

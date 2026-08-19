@@ -3,6 +3,7 @@
 import { useExpertsMap } from "@/source/entities/expert";
 import type { OrderWorkType } from "@/source/entities/order";
 import { DesignSpecialistsMap } from "@/source/features/design-map-filter";
+import { SurveySpecialistsMap } from "@/source/features/survey-map-filter";
 import { DirectionExpertsMap, FilterableExpertsMap } from "@/source/features/expert-map-filter";
 import base from "./sectionBase.module.scss";
 import s from "./expertsMapSection.module.scss";
@@ -34,6 +35,8 @@ export function ExpertsMapSection({ workType }: { workType: OrderWorkType }) {
         <ExpertiseMap />
       ) : workType === "DESIGN" ? (
         <DesignSpecialistsMap />
+      ) : workType === "SURVEY" ? (
+        <SurveySpecialistsMap />
       ) : (
         <DirectionExpertsMap direction={workType} />
       )}

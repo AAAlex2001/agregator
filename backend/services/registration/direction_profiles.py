@@ -17,6 +17,7 @@ from models.ecology import ExpertEcologyProfile
 from models.forensic import ExpertForensicProfile
 from models.laboratory import ExpertLaboratoryProfile
 from models.research import ExpertResearchProfile
+from models.survey import ExpertSurveyProfile
 from models.tech_diag import ExpertTechDiagProfile
 from schemas.registration import UserRegistration
 
@@ -29,6 +30,7 @@ DirectionProfile = (
     | ExpertForensicProfile
     | ExpertLaboratoryProfile
     | ExpertResearchProfile
+    | ExpertSurveyProfile
     | ExpertTechDiagProfile
     | LicenseHolderAuditProfile
 )
@@ -122,6 +124,19 @@ def build_direction_profiles(account: Account, data: UserRegistration) -> list[D
                 expert_id=account.expert_profile.id,
                 documents=[],
                 **data.ecology_profile.model_dump(),
+            )
+        )
+
+    if data.survey_profile is not None:
+        created.append(
+            ExpertSurveyProfile(
+                expert_id=account.expert_profile.id,
+                education_documents=[],
+                nok_documents=[],
+                nrs_documents=[],
+                qualification_documents=[],
+                rtn_documents=[],
+                **data.survey_profile.model_dump(),
             )
         )
 

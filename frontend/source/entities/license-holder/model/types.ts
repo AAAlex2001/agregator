@@ -16,6 +16,7 @@ export interface LicenseHolderListItem {
   mining_license_number: string | null;
   mining_license_file_url: string | null;
   sro_design_file_url: string | null;
+  sro_survey_file_url: string | null;
   lab_accreditation_number: string | null;
   lab_accreditation_file_url: string | null;
   company_card_url: string | null;

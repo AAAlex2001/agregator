@@ -10,6 +10,7 @@ export interface AuthPreset {
     | "EXPERTISE"
     | "AUDIT_SUPB"
     | "DESIGN"
+    | "SURVEY"
     | "ECOLOGY"
     | "RESEARCH"
     | "LABORATORY"
