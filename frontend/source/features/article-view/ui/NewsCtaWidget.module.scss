@@ -1,67 +1,89 @@
-.panel {
+.outer {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   margin: 32px 0 8px;
-  padding: 26px 28px;
-  border: 1px solid #ffe3bd;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #fffdf9 0%, #fff5e6 100%);
-  box-shadow: 0 8px 28px rgba(163, 106, 8, 0.08);
+  padding: 16px;
+  border-radius: 28px;
+  background: #f3f5f8;
 
   @media (max-width: 600px) {
-    padding: 20px 16px;
+    padding: 12px;
+    border-radius: 22px;
   }
 }
 
-.eyebrow {
-  margin: 0;
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #ff8a00;
+.fields {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  @media (min-width: 860px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
 }
 
-.title {
-  margin: 0;
-  font-family: "Montserrat";
-  font-size: 21px;
-  line-height: 27px;
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(16, 24, 40, 0.05);
+}
+
+.single {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(16, 24, 40, 0.05);
+}
+
+.fieldHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fieldLabel {
+  flex-shrink: 0;
+  font-size: 13px;
+  line-height: 17px;
   font-weight: 700;
   color: #101828;
 }
 
-.text {
-  margin: 0;
-  font-size: 15px;
-  line-height: 22px;
-  color: #4a5460;
-  max-width: 60ch;
+.fieldRule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: #e3e8ef;
 }
 
-.pills {
+.picker {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.pill {
-  padding: 9px 16px;
-  border: 1px solid #ffdda9;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #eceff4;
   border-radius: 40px;
-  background: #ffffff;
+  background: #f8fafc;
   font-family: inherit;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 500;
-  color: #1a1a1a;
+  text-align: left;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 
-  &:hover {
+  &:hover,
+  &[aria-expanded="true"] {
     border-color: #ff8a00;
+    background: #ffffff;
   }
 
   &:focus-visible {
@@ -70,60 +92,144 @@
   }
 }
 
-.pillActive {
-  border-color: #ff8a00;
-  background: #ff8a00;
-  color: #ffffff;
-  font-weight: 600;
+.pickerIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.actionRow {
+.pickerLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pickerTop {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #101828;
+}
+
+.pickerBottom {
+  font-size: 12.5px;
+  line-height: 16px;
+  color: #8a94a3;
+}
+
+.chevron {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: #ff8a00;
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 12px;
+  right: 12px;
+  z-index: 20;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #eceff4;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.16);
+}
+
+.option {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 24px;
-  margin-top: 4px;
-}
-
-.cta {
-  min-height: 52px;
-  padding-left: 32px;
-  padding-right: 32px;
-
-  @media (max-width: 600px) {
-    width: 100%;
-  }
-}
-
-.expertLink {
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
   border: none;
+  border-radius: 12px;
   background: none;
-  padding: 0;
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: #ff8a00;
+  text-align: left;
   cursor: pointer;
 
   &:hover {
-    text-decoration: underline;
+    background: #fff5e8;
   }
 }
 
-.perks {
+.optionActive {
+  background: #fff0dc;
+}
+
+.optionIcon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.optionLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.swap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffa733 0%, #ff8a00 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(255, 138, 0, 0.35), 0 0 0 5px #f3f5f8;
+
+  @media (min-width: 860px) {
+    display: flex;
+  }
+}
+
+.resultTitle {
+  margin: 0;
+  font-size: 17px;
+  line-height: 23px;
+  font-weight: 700;
+  color: #101828;
+}
+
+.resultPerks {
   list-style: none;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  margin: 2px 0 0;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
   padding: 0;
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 18px;
-  color: #75818f;
+  color: #5c6b78;
 
   li {
     position: relative;
-    padding-left: 20px;
+    padding-left: 22px;
   }
 
   li::before {
@@ -135,5 +241,36 @@
     height: 15px;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8.4L6.3 11.6L13 4.8' stroke='%23FF8A00' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
       no-repeat center / contain;
+  }
+}
+
+.cta {
+  min-height: 56px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fine {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 17px;
+  color: #8a94a3;
+  text-align: center;
+}
+
+.expertLink {
+  align-self: center;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff8a00;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
