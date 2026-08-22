@@ -251,6 +251,7 @@ export function NewsCtaWidget() {
           <Button
             variant="primary"
             size="md"
+            fullWidth
             showArrow
             className={s.cta}
             onClick={() => openAuth("register", { role, direction: direction.value })}
