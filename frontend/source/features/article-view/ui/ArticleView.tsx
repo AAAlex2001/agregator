@@ -12,6 +12,7 @@ import { ArticleReactions } from "@/source/features/article-reactions/ui/Article
 import { ArticleDiscussion } from "@/source/features/article-discussion/ui/ArticleDiscussion";
 import { ArticleViewTracker } from "./ArticleViewTracker";
 import { ArticleShareButton } from "./ArticleShareButton";
+import { NewsCtaWidget } from "./NewsCtaWidget";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import { extractToc } from "../lib/extractToc";
@@ -85,6 +86,7 @@ export function ArticleView({
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
+          {isNews ? <NewsCtaWidget /> : null}
           {interactive ? <ArticleViewTracker articleId={article.id} /> : null}
           <div className={s.shareRow}>
             <ArticleShareButton url={publicUrl} />
