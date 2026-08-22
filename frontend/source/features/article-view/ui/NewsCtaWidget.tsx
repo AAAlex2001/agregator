@@ -113,14 +113,7 @@ const DIRECTIONS: DirectionItem[] = [
   },
 ];
 
-const HOLDER_DIRECTIONS: Direction[] = [
-  "EXPERTISE",
-  "AUDIT_SUPB",
-  "TECH_DIAG",
-  "DESIGN",
-  "SURVEY",
-  "FORENSIC",
-];
+const HOLDER_EXCLUDED: Direction[] = ["ECOLOGY"];
 
 const ROLE_TABS: { role: Role; label: string }[] = [
   { role: "CUSTOMER", label: "Я заказчик" },
@@ -162,7 +155,7 @@ export function NewsCtaWidget() {
 
   const options =
     role === "LICENSE_HOLDER"
-      ? DIRECTIONS.filter((item) => HOLDER_DIRECTIONS.includes(item.value))
+      ? DIRECTIONS.filter((item) => !HOLDER_EXCLUDED.includes(item.value))
       : DIRECTIONS;
   const content = ROLE_CONTENT[role];
 
@@ -180,7 +173,7 @@ export function NewsCtaWidget() {
   const selectRole = (next: Role) => {
     setRole(next);
     setIsOpen(false);
-    if (next === "LICENSE_HOLDER" && !HOLDER_DIRECTIONS.includes(direction.value)) {
+    if (next === "LICENSE_HOLDER" && HOLDER_EXCLUDED.includes(direction.value)) {
       setDirection(DIRECTIONS[0]);
     }
   };

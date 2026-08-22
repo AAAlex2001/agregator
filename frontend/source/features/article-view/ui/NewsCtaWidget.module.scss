@@ -238,15 +238,9 @@
 }
 
 .cta {
-  align-self: flex-start;
+  align-self: stretch;
   min-height: 50px;
-  padding-left: 30px;
-  padding-right: 30px;
   margin-top: 4px;
-
-  @media (max-width: 600px) {
-    align-self: stretch;
-  }
 }
 
 .fine {
