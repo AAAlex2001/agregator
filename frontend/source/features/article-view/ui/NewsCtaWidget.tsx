@@ -9,17 +9,19 @@ import s from "./NewsCtaWidget.module.scss";
 type Direction = NonNullable<AuthPreset["direction"]>;
 
 const DIRECTIONS: { value: Direction; label: string }[] = [
-  { value: "EXPERTISE", label: "Экспертиза промышленной безопасности" },
+  { value: "EXPERTISE", label: "ЭПБ" },
   { value: "AUDIT_SUPB", label: "Аудит СУПБ" },
-  { value: "TECH_DIAG", label: "Техническое освидетельствование и диагностирование" },
+  { value: "TECH_DIAG", label: "Техдиагностирование" },
   { value: "DESIGN", label: "Проектирование" },
-  { value: "SURVEY", label: "Инженерные изыскания" },
-  { value: "ECOLOGY", label: "Экологическое сопровождение" },
-  { value: "RESEARCH", label: "Научно-исследовательские работы" },
-  { value: "LABORATORY", label: "Лабораторные исследования" },
-  { value: "CADASTRAL", label: "Кадастровые работы" },
+  { value: "SURVEY", label: "Изыскания" },
+  { value: "ECOLOGY", label: "Экология" },
+  { value: "RESEARCH", label: "НИР" },
+  { value: "LABORATORY", label: "Лаборатория" },
+  { value: "CADASTRAL", label: "Кадастр" },
   { value: "FORENSIC", label: "Судебная экспертиза" },
 ];
+
+const PERKS = ["Размещение бесплатно", "Отклики с ценой и сроками", "Напрямую, без посредников"];
 
 export function NewsCtaWidget() {
   const { user, role } = useSession();
@@ -30,21 +32,22 @@ export function NewsCtaWidget() {
     const isCustomer = role === "CUSTOMER";
     return (
       <aside className={s.panel}>
-        <div className={s.card}>
-          <h2 className={s.title}>
-            {isCustomer ? "Нужен исполнитель под задачу?" : "Новые заказы уже на площадке"}
-          </h2>
-          <p className={s.text}>
-            {isCustomer
-              ? "Разместите заявку бесплатно — исполнители откликнутся с ценой и сроками."
-              : "Откликайтесь на заказы по вашим направлениям и работайте с заказчиками напрямую."}
-          </p>
+        <p className={s.eyebrow}>Ресурс-Плюс</p>
+        <h2 className={s.title}>
+          {isCustomer ? "Нужен исполнитель под задачу?" : "Новые заказы уже на площадке"}
+        </h2>
+        <p className={s.text}>
+          {isCustomer
+            ? "Разместите заявку бесплатно — исполнители откликнутся с ценой и сроками."
+            : "Откликайтесь на заказы по вашим направлениям и работайте с заказчиками напрямую."}
+        </p>
+        <div className={s.actionRow}>
           <Button
             href={isCustomer ? "/customer/orders" : "/orders"}
             variant="primary"
             size="md"
-            fullWidth
             showArrow
+            className={s.cta}
           >
             {isCustomer ? "Разместить заказ" : "Смотреть заказы"}
           </Button>
@@ -55,38 +58,38 @@ export function NewsCtaWidget() {
 
   return (
     <aside className={s.panel}>
-      <div className={s.card}>
-        <h2 className={s.title}>Подберите исполнителя под вашу задачу</h2>
-        <p className={s.text}>
-          Эксперты, лаборатории и проектные организации откликнутся на заявку с ценой и сроками —
-          напрямую, без посредников.
-        </p>
-        <label className={s.selectLabel}>
-          Направление работ
-          <select
-            className={s.select}
-            value={direction}
-            onChange={(event) => setDirection(event.target.value as Direction)}
+      <p className={s.eyebrow}>Ресурс-Плюс</p>
+      <h2 className={s.title}>Подберите исполнителя под вашу задачу</h2>
+      <p className={s.text}>
+        Эксперты, лаборатории и проектные организации откликнутся на заявку с ценой и сроками.
+        Выберите направление работ:
+      </p>
+
+      <div className={s.pills} role="radiogroup" aria-label="Направление работ">
+        {DIRECTIONS.map((item) => (
+          <button
+            key={item.value}
+            type="button"
+            role="radio"
+            aria-checked={direction === item.value}
+            className={direction === item.value ? `${s.pill} ${s.pillActive}` : s.pill}
+            onClick={() => setDirection(item.value)}
           >
-            {DIRECTIONS.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div className={s.actionRow}>
         <Button
           variant="primary"
           size="md"
-          fullWidth
           showArrow
+          className={s.cta}
           onClick={() => openAuth("register", { role: "CUSTOMER", direction })}
         >
           Найти исполнителя
         </Button>
-        <p className={s.fine}>
-          Размещение заявки бесплатно — после короткой регистрации сразу попадёте к созданию заказа.
-        </p>
         <button
           type="button"
           className={s.expertLink}
@@ -95,6 +98,12 @@ export function NewsCtaWidget() {
           Я исполнитель — хочу получать заказы
         </button>
       </div>
+
+      <ul className={s.perks}>
+        {PERKS.map((perk) => (
+          <li key={perk}>{perk}</li>
+        ))}
+      </ul>
     </aside>
   );
 }
