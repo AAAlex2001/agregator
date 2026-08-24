@@ -46,6 +46,11 @@ const SHARD_LOADERS: Record<number, () => Promise<ShardModule>> = {
   37: () => import("../content/articles-37"),
   38: () => import("../content/articles-38"),
   39: () => import("../content/articles-39"),
+  40: () => import("../content/articles-40"),
+  41: () => import("../content/articles-41"),
+  42: () => import("../content/articles-42"),
+  43: () => import("../content/articles-43"),
+  44: () => import("../content/articles-44"),
 };
 
 export const STATIC_NEWS_SLUGS = STATIC_NEWS_INDEX.map((item) => item.slug);
