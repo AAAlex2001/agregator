@@ -1,10 +1,20 @@
-.header {
+.shell {
   position: relative;
   z-index: 1302;
+  background: linear-gradient(90deg, #fdf3e4 0%, #f7e6cf 50%, #fdf3e4 100%);
+}
+
+.header {
+  position: relative;
   backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.92);
   padding: 15px var(--page-px);
   border-bottom: 1px solid #E6E6E6;
+  border-radius: 48px 48px 0 0;
+
+  @media (max-width: 767px) {
+    border-radius: 28px 28px 0 0;
+  }
 }
 
 .container {

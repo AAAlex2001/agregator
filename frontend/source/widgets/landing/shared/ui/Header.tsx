@@ -6,6 +6,7 @@ import { LogoMarkIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import BurgerMenu from "./BurgerMenu";
+import HeaderMarquee from "./HeaderMarquee";
 import s from "./header.module.scss";
 
 const NAV_PAGES = [
@@ -18,7 +19,8 @@ const NAV_PAGES = [
 const Header = () => {
   const { openAuth } = useAuthModal();
   return (
-    <>
+    <div className={s.shell}>
+      <HeaderMarquee />
       <header className={s.header}>
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
@@ -57,7 +59,7 @@ const Header = () => {
           <ExpertHelpPlates mode="guest" compact />
         </nav>
       </header>
-    </>
+    </div>
   );
 };
 
