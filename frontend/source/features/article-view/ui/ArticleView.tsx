@@ -88,7 +88,7 @@ export function ArticleView({
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
           <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlBeforeCta }} />
-          {isNews ? <NewsCtaWidget /> : null}
+          <NewsCtaWidget />
           {htmlAfterCta ? (
             <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlAfterCta }} />
           ) : null}
