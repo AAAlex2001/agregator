@@ -73,6 +73,40 @@ const SHARD_LOADERS: Record<number, () => Promise<ShardModule>> = {
 
 export const STATIC_NEWS_SLUGS = STATIC_NEWS_INDEX.map((item) => item.slug);
 
+/** Шарды новостей, написанные под конкретное направление платформы. */
+const DIRECTION_SHARDS: Record<string, number[]> = {
+  EXPERTISE: [31, 40, 41, 42, 43, 45, 46],
+  AUDIT_SUPB: [32, 47, 48],
+  TECH_DIAG: [33, 44, 49, 50],
+  DESIGN: [34, 51, 52],
+  SURVEY: [35, 53, 54],
+  ECOLOGY: [36, 55, 56],
+  RESEARCH: [37, 57, 58],
+  CADASTRAL: [38, 59, 60],
+  FORENSIC: [39, 61, 62],
+};
+
+export function getStaticNewsByDirection(direction: string, limit = 12): ArticleListItem[] {
+  const shards = DIRECTION_SHARDS[direction] ?? [];
+  return STATIC_NEWS_INDEX.filter((item) => shards.includes(item.shard))
+    .sort((left, right) => (right.published_at ?? "").localeCompare(left.published_at ?? ""))
+    .slice(0, limit)
+    .map((item) => ({
+      id: item.id,
+      kind: item.kind,
+      slug: item.slug,
+      title: item.title,
+      excerpt: item.excerpt,
+      cover_image: item.cover_image,
+      tg_cover_image: item.tg_cover_image,
+      tags: item.tags,
+      published_at: item.published_at,
+      likes_count: item.likes_count,
+      dislikes_count: item.dislikes_count,
+      views_count: item.views_count,
+    }));
+}
+
 export async function getStaticNewsArticle(slug: string): Promise<StaticNewsArticle | null> {
   const indexItem = STATIC_NEWS_INDEX.find((item) => item.slug === slug);
   if (!indexItem) return null;

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   LandingHero,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
@@ -58,6 +59,11 @@ export function ForensicLandingContent({ basePath = "", header, footer }: Props)
 
         <ForensicCatalog />
         <LandingAudience blocks={FORENSIC_AUDIENCE} />
+        <LandingDirectionNews
+          direction="FORENSIC"
+          basePath={basePath}
+          subtitle="Реформа судебно-экспертной деятельности, позиции судов и практика по видам экспертиз"
+        />
         <LandingServiceRoles roles={FORENSIC_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

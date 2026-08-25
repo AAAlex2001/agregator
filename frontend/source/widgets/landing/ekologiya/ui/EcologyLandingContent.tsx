@@ -4,6 +4,7 @@ import {
   LandingHowItWorks,
   LandingKeyAdvantages,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -72,6 +73,11 @@ export function EcologyLandingContent({ basePath = "", header, footer }: Props) 
           licenseHolderSteps={ECOLOGY_KEY_ADVANTAGES.licenseHolder}
           title={ECOLOGY_KEY_ADVANTAGES_TITLE}
           subtitle={ECOLOGY_KEY_ADVANTAGES_SUBTITLE}
+        />
+        <LandingDirectionNews
+          direction="ECOLOGY"
+          basePath={basePath}
+          subtitle="КЭР и экосбор, требования Росприроднадзора, НДТ и практика экологического сопровождения"
         />
         <LandingServiceRoles roles={ECOLOGY_ROLES} />
         <LandingSearchBlock />

@@ -4,6 +4,7 @@ import {
   LandingHowItWorks,
   LandingKeyAdvantages,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -72,6 +73,11 @@ export function SurveyLandingContent({ basePath = "", header, footer }: Props) {
           licenseHolderSteps={SURVEY_KEY_ADVANTAGES.licenseHolder}
           title={SURVEY_KEY_ADVANTAGES_TITLE}
           subtitle={SURVEY_KEY_ADVANTAGES_SUBTITLE}
+        />
+        <LandingDirectionNews
+          direction="SURVEY"
+          basePath={basePath}
+          subtitle="Технологии съёмки и БПЛА, мониторинг мерзлоты, экспертиза результатов и рынок изысканий"
         />
         <LandingServiceRoles roles={SURVEY_ROLES} />
         <LandingSearchBlock />

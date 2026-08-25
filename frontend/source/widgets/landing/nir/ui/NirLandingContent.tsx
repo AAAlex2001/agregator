@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   LandingHero,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -51,6 +52,11 @@ export function NirLandingContent({ basePath = "", header, footer }: Props) {
           </div>
         </LandingServiceHero>
         <NirPurpose />
+        <LandingDirectionNews
+          direction="RESEARCH"
+          basePath={basePath}
+          subtitle="Господдержка НИОКР, аккредитация лабораторий и практика испытаний для промышленности"
+        />
         <LandingServiceRoles roles={NIR_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

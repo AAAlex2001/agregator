@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   LandingHero,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -55,6 +56,11 @@ export function TechDiagLandingContent({ basePath = "", header, footer }: Props)
         </LandingServiceHero>
 
         <TechDiagDefinitions />
+        <LandingDirectionNews
+          direction="TECH_DIAG"
+          basePath={basePath}
+          subtitle="Методы неразрушающего контроля, диагностирование оборудования и аттестация лабораторий"
+        />
         <LandingServiceRoles roles={TECH_DIAG_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

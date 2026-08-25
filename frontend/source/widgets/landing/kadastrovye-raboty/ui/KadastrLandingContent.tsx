@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   LandingHero,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingAudience,
   LandingServiceFaq,
@@ -57,6 +58,11 @@ export function KadastrLandingContent({ basePath = "", header, footer }: Props) 
 
         <KadastrServices />
         <LandingAudience blocks={KADASTR_AUDIENCE} />
+        <LandingDirectionNews
+          direction="CADASTRAL"
+          basePath={basePath}
+          subtitle="Изменения в законах о недвижимости, кадастровая оценка и практика земельных споров"
+        />
         <LandingServiceRoles roles={KADASTR_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

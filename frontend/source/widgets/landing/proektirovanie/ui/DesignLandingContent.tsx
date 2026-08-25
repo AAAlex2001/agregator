@@ -4,6 +4,7 @@ import {
   LandingHowItWorks,
   LandingKeyAdvantages,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -68,6 +69,11 @@ export function DesignLandingContent({ basePath = "", header, footer }: Props) {
           licenseHolderSteps={DESIGN_KEY_ADVANTAGES.licenseHolder}
           title={DESIGN_KEY_ADVANTAGES_TITLE}
           subtitle={DESIGN_KEY_ADVANTAGES_SUBTITLE}
+        />
+        <LandingDirectionNews
+          direction="DESIGN"
+          basePath={basePath}
+          subtitle="ТИМ и экспертиза проектов, изменения градостроительных требований, рынок и российские САПР"
         />
         <LandingServiceRoles roles={DESIGN_ROLES} />
         <LandingSearchBlock />

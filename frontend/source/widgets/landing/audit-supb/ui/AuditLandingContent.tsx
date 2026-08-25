@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import {
   LandingHero,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -53,6 +54,11 @@ export function AuditLandingContent({ basePath = "", header, footer }: Props) {
 
         <AuditPurpose />
         <AuditAudience />
+        <LandingDirectionNews
+          direction="AUDIT_SUPB"
+          basePath={basePath}
+          subtitle="Требования к аудиту СУПБ, категории риска и практика проверок Ростехнадзора"
+        />
         <LandingServiceRoles roles={AUDIT_ROLES} />
         <LandingSearchBlock />
         <LandingServiceFaq

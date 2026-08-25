@@ -6,6 +6,7 @@ import {
   LandingIndustryDirections,
   LandingKeyAdvantages,
   LandingServiceHero,
+  LandingDirectionNews,
   LandingSearchBlock,
   LandingServiceFaq,
   LandingServiceRoles,
@@ -78,6 +79,11 @@ export function ExpertiseLandingContent({ snapshot, basePath = "", header, foote
           industries={industries}
           title={sectionHeaders.industries.title}
           subtitle={sectionHeaders.industries.subtitle}
+        />
+        <LandingDirectionNews
+          direction="EXPERTISE"
+          basePath={basePath}
+          subtitle="Изменения в требованиях Ростехнадзора, разборы аварий и практика проведения ЭПБ"
         />
         <LandingServiceRoles roles={EXPERTISE_ROLES} />
         <LandingSearchBlock withDirectionsFilter />
