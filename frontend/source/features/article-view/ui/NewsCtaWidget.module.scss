@@ -215,11 +215,6 @@
   min-width: 0;
 }
 
-.aboutLink {
-  min-height: 46px;
-  font-size: 14px;
-}
-
 .right {
   display: flex;
   flex-direction: column;
@@ -244,13 +239,15 @@
 
 .cta {
   align-self: stretch;
-  min-height: 50px;
-  margin-top: 4px;
+  margin-top: auto;
+  min-height: 52px;
+  font-size: 15px;
 }
 
 .fine {
-  margin: 0;
+  margin: 12px 4px 0;
   font-size: 12.5px;
   line-height: 17px;
   color: #8a94a3;
+  text-align: center;
 }

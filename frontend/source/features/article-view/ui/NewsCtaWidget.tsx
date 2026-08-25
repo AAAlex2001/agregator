@@ -253,13 +253,7 @@ export function NewsCtaWidget() {
               </ul>
             )}
           </div>
-          <Button
-            href={direction.href}
-            variant="outline"
-            size="md"
-            fullWidth
-            className={s.aboutLink}
-          >
+          <Button href={direction.href} variant="outline" size="md" fullWidth className={s.cta}>
             Чем занимается направление
           </Button>
         </div>
@@ -277,9 +271,9 @@ export function NewsCtaWidget() {
           >
             {content.button}
           </Button>
-          <p className={s.fine}>{content.fine}</p>
         </div>
       </div>
+      <p className={s.fine}>{content.fine}</p>
     </aside>
   );
 }
