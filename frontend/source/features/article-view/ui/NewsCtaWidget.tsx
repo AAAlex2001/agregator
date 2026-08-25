@@ -16,6 +16,7 @@ interface DirectionItem {
   label: string;
   hint: string;
   image: string;
+  href: string;
   forCustomer: string;
   forExpert: string;
 }
@@ -26,6 +27,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Экспертиза промбезопасности",
     hint: "аттестованные эксперты",
     image: "/services/1.webp",
+    href: "/ekspertiza-promyshlennoy-bezopasnosti",
     forCustomer:
       "Аттестованные эксперты проведут ЭПБ технических устройств, зданий и документации с внесением заключения в реестр Ростехнадзора.",
     forExpert:
@@ -36,6 +38,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Аудит СУПБ",
     hint: "органы инспекции и аудиторы",
     image: "/services/5.webp",
+    href: "/audit-supb",
     forCustomer:
       "Независимые аудиторы проверят систему управления промышленной безопасностью, помогут снизить категорию риска и подготовиться к проверкам.",
     forExpert:
@@ -46,6 +49,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Техдиагностирование и НК",
     hint: "лаборатории и дефектоскописты",
     image: "/services/8.webp",
+    href: "/tehnicheskoe-diagnostirovanie",
     forCustomer:
       "Аттестованные лаборатории неразрушающего контроля и дефектоскописты выполнят диагностирование и освидетельствование вашего оборудования.",
     forExpert:
@@ -56,6 +60,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Проектирование",
     hint: "специалисты НОПРИЗ",
     image: "/services/2.webp",
+    href: "/proektirovanie",
     forCustomer:
       "Проектировщики из НРС НОПРИЗ — от ГИП до BIM-специалистов — выполнят проект и сопроводят его до положительного заключения экспертизы.",
     forExpert:
@@ -66,6 +71,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Инженерные изыскания",
     hint: "геологи, геодезисты, экологи",
     image: "/services/3.webp",
+    href: "/inzhenernye-izyskaniya",
     forCustomer:
       "Геологи, геодезисты, гидрометеорологи, геофизики и археологи выполнят изыскания для вашего проекта — в комплексе или по отдельным видам.",
     forExpert:
@@ -76,6 +82,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Экологическое сопровождение",
     hint: "инженеры-экологи",
     image: "/services/6.webp",
+    href: "/ekologiya",
     forCustomer:
       "Инженеры-экологи подготовят КЭР, ПНООЛР, проекты НДВ и СЗЗ, отчётность — документы оформляются на бланках вашей организации.",
     forExpert:
@@ -86,6 +93,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "НИР и лаборатории",
     hint: "кандидаты и доктора наук",
     image: "/services/7.webp",
+    href: "/nir",
     forCustomer:
       "Кандидаты и доктора наук выполнят исследования под вашу задачу, а лаборатории — испытания материалов, металла и грунтов.",
     forExpert:
@@ -96,6 +104,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Кадастровые работы",
     hint: "инженеры из СРО",
     image: "/services/9.webp",
+    href: "/kadastrovye-raboty",
     forCustomer:
       "Кадастровые инженеры из СРО выполнят межевание, технические планы, акты обследования и постановку на учёт в ЕГРН.",
     forExpert:
@@ -106,6 +115,7 @@ const DIRECTIONS: DirectionItem[] = [
     label: "Судебная экспертиза",
     hint: "судебные эксперты",
     image: "/services/10.webp",
+    href: "/sudebnaya-ekspertiza",
     forCustomer:
       "Судебные эксперты с профильным образованием подготовят заключение для суда, досудебное исследование или рецензию на экспертизу.",
     forExpert:
@@ -243,6 +253,15 @@ export function NewsCtaWidget() {
               </ul>
             )}
           </div>
+          <Button
+            href={direction.href}
+            variant="outline"
+            size="md"
+            fullWidth
+            className={s.aboutLink}
+          >
+            Чем занимается направление
+          </Button>
         </div>
 
         <div className={s.right}>
