@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
-import { LogoMarkIcon } from "@/source/shared/ui/icons";
+import { LogoIcon } from "@/source/shared/ui/icons";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import BurgerMenu from "./BurgerMenu";
@@ -25,7 +25,7 @@ const Header = () => {
         <div className={s.container}>
           <Link href="/" className={s.brand} aria-label="На главную">
             <span className={s.logo}>
-              <LogoMarkIcon />
+              <LogoIcon title="Ресурс-Плюс" />
             </span>
           </Link>
           <nav className={s.nav}>
