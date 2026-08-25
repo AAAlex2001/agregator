@@ -16,6 +16,7 @@ import { NewsCtaWidget } from "./NewsCtaWidget";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import { extractToc } from "../lib/extractToc";
+import { splitByMiddleHeading } from "../lib/splitByMiddleHeading";
 import s from "./ArticleView.module.scss";
 
 interface Props {
@@ -45,6 +46,7 @@ export function ArticleView({
   const publicPath = `${isNews ? "/news" : "/blog"}/${article.slug}`;
   const publicUrl = `${SITE_URL}${publicPath}`;
   const { html, toc } = extractToc(article.content_html || "");
+  const [htmlBeforeCta, htmlAfterCta] = splitByMiddleHeading(html);
   const dateLabel = formatArticleDate(article.published_at);
 
   const breadcrumbJsonLd = {
@@ -85,8 +87,11 @@ export function ArticleView({
       <div className={s.layout}>
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
-          <div className={s.content} dangerouslySetInnerHTML={{ __html: html }} />
+          <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlBeforeCta }} />
           {isNews ? <NewsCtaWidget /> : null}
+          {htmlAfterCta ? (
+            <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlAfterCta }} />
+          ) : null}
           {interactive ? <ArticleViewTracker articleId={article.id} /> : null}
           <div className={s.shareRow}>
             <ArticleShareButton url={publicUrl} />
