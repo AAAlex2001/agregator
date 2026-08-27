@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import Image from "next/image";
 import Button from "@/source/shared/ui/Button";
+import { ChevronIcon } from "@/source/shared/ui/icons";
 import { TextInput, TextArea, EmailInput, PhoneInput } from "@/source/shared/ui/Inputs";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { submitLead } from "../api/lead.api";
@@ -28,11 +30,22 @@ export function LeadFormWidget({ defaultDirection }: Props) {
   });
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const pickerRef = useRef<HTMLDivElement | null>(null);
 
   const direction =
     LEAD_DIRECTIONS.find((item) => item.value === values.direction) ?? LEAD_DIRECTIONS[0];
   const set = (key: keyof LeadFormValues) => (value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (!pickerRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, [isOpen]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -80,114 +93,176 @@ export function LeadFormWidget({ defaultDirection }: Props) {
         </p>
       </div>
 
-      <div className={s.tabs} role="radiogroup" aria-label="Направление работ">
-        {LEAD_DIRECTIONS.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            role="radio"
-            aria-checked={item.value === direction.value}
-            className={item.value === direction.value ? `${s.tab} ${s.tabActive}` : s.tab}
-            onClick={() => set("direction")(item.value)}
-          >
-            {item.short}
-          </button>
-        ))}
-      </div>
-
       <form className={s.form} onSubmit={submit}>
-        <div className={s.grid}>
-          <label className={s.field}>
-            <span className={s.label}>Ваше имя *</span>
-            <TextInput
-              required
-              placeholder="Иван Иванович"
-              value={values.name}
-              onChange={(event) => set("name")(event.target.value)}
+        <div className={s.layout}>
+          <div className={s.fields}>
+            <label className={`${s.field} ${s.fieldWide}`}>
+              <span className={s.label}>Направление работ *</span>
+              <div className={s.pickerWrap} ref={pickerRef}>
+                <button
+                  type="button"
+                  className={s.picker}
+                  aria-haspopup="listbox"
+                  aria-expanded={isOpen}
+                  onClick={() => setIsOpen((value) => !value)}
+                >
+                  <Image
+                    src={direction.image}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className={s.pickerIcon}
+                  />
+                  <span className={s.pickerLabel}>
+                    <span className={s.pickerTop}>{direction.label}</span>
+                    <span className={s.pickerBottom}>{direction.hint}</span>
+                  </span>
+                  <ChevronIcon
+                    className={isOpen ? `${s.chevron} ${s.chevronOpen}` : s.chevron}
+                    color="currentColor"
+                  />
+                </button>
+                {isOpen && (
+                  <ul className={s.menu} role="listbox" aria-label="Направление работ">
+                    {LEAD_DIRECTIONS.map((item) => (
+                      <li key={item.value}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={item.value === direction.value}
+                          className={
+                            item.value === direction.value ? `${s.option} ${s.optionActive}` : s.option
+                          }
+                          onClick={() => {
+                            set("direction")(item.value);
+                            setIsOpen(false);
+                          }}
+                        >
+                          <Image
+                            src={item.image}
+                            alt=""
+                            width={32}
+                            height={32}
+                            className={s.optionIcon}
+                          />
+                          <span className={s.optionLabel}>
+                            <span className={s.pickerTop}>{item.label}</span>
+                            <span className={s.pickerBottom}>{item.hint}</span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </label>
+
+            <label className={s.field}>
+              <span className={s.label}>Ваше имя *</span>
+              <TextInput
+                required
+                placeholder="Иван Иванович"
+                value={values.name}
+                onChange={(event) => set("name")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Телефон *</span>
+              <PhoneInput
+                required
+                placeholder="+7-999-000-00-00"
+                value={values.phone}
+                onChange={(event) => set("phone")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Email</span>
+              <EmailInput
+                placeholder="mail@example.com"
+                value={values.email}
+                onChange={(event) => set("email")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Организация</span>
+              <TextInput
+                placeholder="ООО «Пример»"
+                value={values.company}
+                onChange={(event) => set("company")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>ИНН</span>
+              <TextInput
+                placeholder="10 или 12 цифр"
+                value={values.inn}
+                onChange={(event) => set("inn")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Регион, город</span>
+              <TextInput
+                placeholder="Например: Кемеровская область"
+                value={values.region}
+                onChange={(event) => set("region")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Объект</span>
+              <TextInput
+                placeholder={direction.objectPlaceholder}
+                value={values.objectName}
+                onChange={(event) => set("objectName")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Желаемый срок</span>
+              <TextInput
+                placeholder="Например: до конца месяца"
+                value={values.deadline}
+                onChange={(event) => set("deadline")(event.target.value)}
+              />
+            </label>
+            <label className={s.field}>
+              <span className={s.label}>Ориентировочный бюджет</span>
+              <TextInput
+                placeholder="Если известен"
+                value={values.budget}
+                onChange={(event) => set("budget")(event.target.value)}
+              />
+            </label>
+
+            <label className={`${s.field} ${s.fieldWide}`}>
+              <span className={s.label}>Задача *</span>
+              <TextArea
+                required
+                rows={3}
+                placeholder={direction.taskPlaceholder}
+                value={values.task}
+                onChange={(event) => set("task")(event.target.value)}
+              />
+            </label>
+          </div>
+
+          <aside className={s.media}>
+            <video
+              key={direction.video}
+              className={s.video}
+              src={direction.video}
+              poster={direction.image}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="none"
             />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Телефон *</span>
-            <PhoneInput
-              required
-              value={values.phone}
-              onChange={(event) => set("phone")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Email</span>
-            <EmailInput
-              placeholder="mail@example.com"
-              value={values.email}
-              onChange={(event) => set("email")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Организация</span>
-            <TextInput
-              placeholder="ООО «Пример»"
-              value={values.company}
-              onChange={(event) => set("company")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>ИНН</span>
-            <TextInput
-              placeholder="10 или 12 цифр"
-              value={values.inn}
-              onChange={(event) => set("inn")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Регион, город</span>
-            <TextInput
-              placeholder="Например: Кемеровская область"
-              value={values.region}
-              onChange={(event) => set("region")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Объект</span>
-            <TextInput
-              placeholder={direction.objectPlaceholder}
-              value={values.objectName}
-              onChange={(event) => set("objectName")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Желаемый срок</span>
-            <TextInput
-              placeholder="Например: до конца месяца"
-              value={values.deadline}
-              onChange={(event) => set("deadline")(event.target.value)}
-            />
-          </label>
-          <label className={s.field}>
-            <span className={s.label}>Ориентировочный бюджет</span>
-            <TextInput
-              placeholder="Если известен"
-              value={values.budget}
-              onChange={(event) => set("budget")(event.target.value)}
-            />
-          </label>
+            <ul className={s.benefits}>
+              {BENEFITS.map((benefit) => (
+                <li key={benefit}>{benefit}</li>
+              ))}
+            </ul>
+          </aside>
         </div>
-
-        <label className={`${s.field} ${s.taskField}`}>
-          <span className={s.label}>Задача *</span>
-          <TextArea
-            required
-            rows={3}
-            placeholder={direction.taskPlaceholder}
-            value={values.task}
-            onChange={(event) => set("task")(event.target.value)}
-          />
-        </label>
-
-        <ul className={s.benefits}>
-          {BENEFITS.map((benefit) => (
-            <li key={benefit}>{benefit}</li>
-          ))}
-        </ul>
 
         <Button
           type="submit"

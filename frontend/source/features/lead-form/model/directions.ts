@@ -1,8 +1,10 @@
 export interface LeadDirection {
   value: string;
   label: string;
-  short: string;
+  hint: string;
   href: string;
+  image: string;
+  video: string;
   /** Палитра берётся с лендинга направления — виджет перекрашивается вместе с выбором. */
   bg: string;
   ink: string;
@@ -14,9 +16,11 @@ export interface LeadDirection {
 export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "EXPERTISE",
-    label: "Экспертиза промышленной безопасности",
-    short: "ЭПБ",
+    label: "Экспертиза промбезопасности",
+    hint: "аттестованные эксперты",
     href: "/ekspertiza-promyshlennoy-bezopasnosti",
+    image: "/services/1.webp",
+    video: "/landing/expertise/hero.mp4",
     bg: "linear-gradient(135deg, #e7eefb 0%, #b7c9ec 100%)",
     ink: "#14263c",
     muted: "#47608c",
@@ -26,8 +30,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "AUDIT_SUPB",
     label: "Аудит СУПБ",
-    short: "Аудит СУПБ",
+    hint: "органы инспекции и аудиторы",
     href: "/audit-supb",
+    image: "/services/5.webp",
+    video: "/landing/audit/hero.mp4",
     bg: "linear-gradient(135deg, #eef1f4 0%, #c2ccd6 100%)",
     ink: "#222d36",
     muted: "#52626f",
@@ -36,9 +42,11 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   },
   {
     value: "TECH_DIAG",
-    label: "Техническое диагностирование и НК",
-    short: "Техдиагностирование",
+    label: "Техдиагностирование и НК",
+    hint: "лаборатории и дефектоскописты",
     href: "/tehnicheskoe-diagnostirovanie",
+    image: "/services/8.webp",
+    video: "/landing/tech-diag/hero.mp4",
     bg: "linear-gradient(135deg, #f5f1fb 0%, #d9c9f0 100%)",
     ink: "#2b1e42",
     muted: "#6b5a8a",
@@ -48,8 +56,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "DESIGN",
     label: "Проектирование объектов",
-    short: "Проектирование",
+    hint: "специалисты НОПРИЗ",
     href: "/proektirovanie",
+    image: "/services/2.webp",
+    video: "/landing/design/hero.mp4",
     bg: "linear-gradient(135deg, #fceae4 0%, #eeab8d 100%)",
     ink: "#3f2212",
     muted: "#7d4f33",
@@ -59,8 +69,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "SURVEY",
     label: "Инженерные изыскания",
-    short: "Изыскания",
+    hint: "геологи, геодезисты, экологи",
     href: "/inzhenernye-izyskaniya",
+    image: "/services/3.webp",
+    video: "/landing/survey/hero.mp4",
     bg: "linear-gradient(135deg, #e9f6fb 0%, #a5d8ee 100%)",
     ink: "#103648",
     muted: "#35687e",
@@ -70,8 +82,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "ECOLOGY",
     label: "Экологическое сопровождение",
-    short: "Экология",
+    hint: "инженеры-экологи",
     href: "/ekologiya",
+    image: "/services/6.webp",
+    video: "/landing/ekologiya/hero.mp4",
     bg: "linear-gradient(135deg, #f2fbe8 0%, #cdeaa8 100%)",
     ink: "#2c3d0f",
     muted: "#5a7333",
@@ -80,9 +94,11 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   },
   {
     value: "RESEARCH",
-    label: "НИР и лабораторные исследования",
-    short: "НИР",
+    label: "НИР и лаборатории",
+    hint: "кандидаты и доктора наук",
     href: "/nir",
+    image: "/services/7.webp",
+    video: "/landing/nir/hero.mp4",
     bg: "linear-gradient(135deg, #fff9ee 0%, #ffe7bf 100%)",
     ink: "#2c2113",
     muted: "#6f5c3c",
@@ -92,8 +108,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "CADASTRAL",
     label: "Кадастровые работы",
-    short: "Кадастр",
+    hint: "инженеры из СРО",
     href: "/kadastrovye-raboty",
+    image: "/services/9.webp",
+    video: "/landing/kadastr/hero.mp4",
     bg: "linear-gradient(135deg, #f7f0e8 0%, #dcc3a4 100%)",
     ink: "#3a2c18",
     muted: "#75603f",
@@ -103,8 +121,10 @@ export const LEAD_DIRECTIONS: LeadDirection[] = [
   {
     value: "FORENSIC",
     label: "Судебная экспертиза",
-    short: "Судэкспертиза",
+    hint: "судебные эксперты",
     href: "/sudebnaya-ekspertiza",
+    image: "/services/10.webp",
+    video: "/landing/forensic/hero.mp4",
     bg: "linear-gradient(135deg, #fbecf3 0%, #eebbd6 100%)",
     ink: "#4a1f36",
     muted: "#8a4a6b",
