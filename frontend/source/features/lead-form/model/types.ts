@@ -1,3 +1,5 @@
+export const LEAD_FORM_ID = "lead-form";
+
 export interface LeadFormValues {
   direction: string;
   name: string;

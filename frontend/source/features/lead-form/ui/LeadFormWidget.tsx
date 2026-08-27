@@ -7,10 +7,8 @@ import { TextInput, TextArea, EmailInput, PhoneInput } from "@/source/shared/ui/
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { submitLead } from "../api/lead.api";
 import { LEAD_DIRECTIONS } from "../model/directions";
-import { emptyLeadForm, type LeadFormValues } from "../model/types";
+import { emptyLeadForm, LEAD_FORM_ID, type LeadFormValues } from "../model/types";
 import s from "./LeadFormWidget.module.scss";
-
-export const LEAD_FORM_ID = "lead-form";
 
 const DIRECTION_OPTIONS = LEAD_DIRECTIONS.map((item) => ({
   value: item.value,
