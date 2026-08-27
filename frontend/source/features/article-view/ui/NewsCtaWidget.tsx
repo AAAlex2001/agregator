@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
-import { ChevronIcon } from "@/source/shared/ui/icons";
+import { Select } from "@/source/shared/ui/Select";
 import { useAuthModal, type AuthPreset } from "@/source/shared/lib/auth-modal";
 import { useSession } from "@/source/features/session";
 import s from "./NewsCtaWidget.module.scss";
@@ -160,8 +159,6 @@ export function NewsCtaWidget() {
   const { openAuth } = useAuthModal();
   const [role, setRole] = useState<Role>("CUSTOMER");
   const [direction, setDirection] = useState(DIRECTIONS[0]);
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef<HTMLDivElement | null>(null);
 
   const options =
     role === "LICENSE_HOLDER"
@@ -169,20 +166,10 @@ export function NewsCtaWidget() {
       : DIRECTIONS;
   const content = ROLE_CONTENT[role];
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!pickerRef.current?.contains(event.target as Node)) setIsOpen(false);
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    return () => document.removeEventListener("pointerdown", closeOutside);
-  }, [isOpen]);
-
   if (user) return null;
 
   const selectRole = (next: Role) => {
     setRole(next);
-    setIsOpen(false);
     if (next === "LICENSE_HOLDER" && HOLDER_EXCLUDED.includes(direction.value)) {
       setDirection(DIRECTIONS[0]);
     }
@@ -208,51 +195,20 @@ export function NewsCtaWidget() {
       <div className={s.panel}>
         <div className={s.left}>
           <h2 className={s.fieldLabel}>Направление работ</h2>
-          <div className={s.pickerWrap} ref={pickerRef}>
-            <button
-              type="button"
-              className={s.picker}
-              aria-haspopup="listbox"
-              aria-expanded={isOpen}
-              onClick={() => setIsOpen((value) => !value)}
-            >
-              <Image src={direction.image} alt="" width={40} height={40} className={s.pickerIcon} />
-              <span className={s.pickerLabel}>
-                <span className={s.pickerTop}>{direction.label}</span>
-                <span className={s.pickerBottom}>{direction.hint}</span>
-              </span>
-              <ChevronIcon
-                className={isOpen ? `${s.chevron} ${s.chevronOpen}` : s.chevron}
-                color="currentColor"
-              />
-            </button>
-            {isOpen && (
-              <ul className={s.menu} role="listbox" aria-label="Направление работ">
-                {options.map((item) => (
-                  <li key={item.value}>
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={item.value === direction.value}
-                      className={
-                        item.value === direction.value ? `${s.option} ${s.optionActive}` : s.option
-                      }
-                      onClick={() => {
-                        setDirection(item);
-                        setIsOpen(false);
-                      }}
-                    >
-                      <Image src={item.image} alt="" width={32} height={32} className={s.optionIcon} />
-                      <span className={s.optionLabel}>
-                        <span className={s.pickerTop}>{item.label}</span>
-                        <span className={s.pickerBottom}>{item.hint}</span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <Select
+            variant="pill"
+            ariaLabel="Направление работ"
+            options={options.map((item) => ({
+              value: item.value,
+              label: item.label,
+              hint: item.hint,
+              image: item.image,
+            }))}
+            value={direction.value}
+            onChange={(value) =>
+              setDirection(DIRECTIONS.find((item) => item.value === value) ?? DIRECTIONS[0])
+            }
+          />
           <Button href={direction.href} variant="outline" size="md" fullWidth className={s.cta}>
             Чем занимается направление
           </Button>

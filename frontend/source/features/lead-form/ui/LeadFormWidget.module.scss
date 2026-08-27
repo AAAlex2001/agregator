@@ -6,6 +6,7 @@
   padding: 28px;
   border-radius: 28px;
   background: var(--lead-bg);
+  scroll-margin-top: 110px;
   transition: background 0.35s ease;
 
   @media (max-width: 767px) {
@@ -68,43 +69,6 @@
   }
 }
 
-.kinds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.kind {
-  padding: 9px 14px;
-  border: 1px solid #e3e8ef;
-  border-radius: 40px;
-  background: #ffffff;
-  font-family: inherit;
-  font-size: 13.5px;
-  line-height: 18px;
-  font-weight: 500;
-  color: #4a5460;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
-
-  &:hover {
-    border-color: #ff8a00;
-    color: #1a1a1a;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #ff8a00;
-    outline-offset: 1px;
-  }
-}
-
-.kindActive {
-  border-color: #ff8a00;
-  background: #fff3e2;
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
 .fields {
   display: grid;
   grid-template-columns: 1fr;
@@ -134,131 +98,6 @@
   line-height: 17px;
   font-weight: 700;
   color: #1a1a1a;
-}
-
-.pickerWrap {
-  position: relative;
-}
-
-.picker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 8px 14px;
-  border: 1px solid #eceff4;
-  border-radius: 40px;
-  background: #f8fafc;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
-
-  &:hover,
-  &[aria-expanded="true"] {
-    border-color: #ff8a00;
-    background: #ffffff;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #ff8a00;
-    outline-offset: 1px;
-  }
-}
-
-.pickerIcon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.pickerLabel {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.pickerTop {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 600;
-  color: #101828;
-}
-
-.pickerBottom {
-  font-size: 12.5px;
-  line-height: 16px;
-  color: #8a94a3;
-}
-
-.chevron {
-  flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  color: #ff8a00;
-  transition: transform 0.15s ease;
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-}
-
-.menu {
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  right: 0;
-  z-index: 20;
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-  max-height: 320px;
-  overflow-y: auto;
-  border: 1px solid #eceff4;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.16);
-}
-
-.option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 10px;
-  border: none;
-  border-radius: 12px;
-  background: none;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-
-  &:hover {
-    background: #fff5e8;
-  }
-}
-
-.optionActive {
-  background: #fff0dc;
-}
-
-.optionIcon {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.optionLabel {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
 }
 
 .media {

@@ -1,15 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import Image from "next/image";
+import { useState, type FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
-import { ChevronIcon } from "@/source/shared/ui/icons";
+import { Select } from "@/source/shared/ui/Select";
 import { TextInput, TextArea, EmailInput, PhoneInput } from "@/source/shared/ui/Inputs";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { submitLead } from "../api/lead.api";
 import { LEAD_DIRECTIONS } from "../model/directions";
 import { emptyLeadForm, type LeadFormValues } from "../model/types";
 import s from "./LeadFormWidget.module.scss";
+
+export const LEAD_FORM_ID = "lead-form";
+
+const DIRECTION_OPTIONS = LEAD_DIRECTIONS.map((item) => ({
+  value: item.value,
+  label: item.label,
+  hint: item.hint,
+  image: item.image,
+}));
 
 const BENEFITS = [
   "Ответим и уточним детали в течение рабочего дня",
@@ -30,30 +38,11 @@ export function LeadFormWidget({ defaultDirection }: Props) {
   });
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef<HTMLDivElement | null>(null);
 
   const direction =
     LEAD_DIRECTIONS.find((item) => item.value === values.direction) ?? LEAD_DIRECTIONS[0];
   const set = (key: keyof LeadFormValues) => (value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
-
-  const toggleKind = (kind: string) =>
-    setValues((prev) => ({
-      ...prev,
-      workKinds: prev.workKinds.includes(kind)
-        ? prev.workKinds.filter((item) => item !== kind)
-        : [...prev.workKinds, kind],
-    }));
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!pickerRef.current?.contains(event.target as Node)) setIsOpen(false);
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    return () => document.removeEventListener("pointerdown", closeOutside);
-  }, [isOpen]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -77,7 +66,7 @@ export function LeadFormWidget({ defaultDirection }: Props) {
 
   if (isSent) {
     return (
-      <aside className={s.widget} style={style}>
+      <aside className={s.widget} style={style} id={LEAD_FORM_ID}>
         <div className={s.done}>
           <h2 className={s.doneTitle}>Заявка отправлена</h2>
           <p className={s.doneText}>
@@ -93,7 +82,7 @@ export function LeadFormWidget({ defaultDirection }: Props) {
   }
 
   return (
-    <aside className={s.widget} style={style} id="lead-form">
+    <aside className={s.widget} style={style} id={LEAD_FORM_ID}>
       <div className={s.head}>
         <h2 className={s.title}>Оставьте заявку — подберём исполнителя</h2>
         <p className={s.subtitle}>
@@ -104,86 +93,17 @@ export function LeadFormWidget({ defaultDirection }: Props) {
       <form className={s.form} onSubmit={submit}>
         <div className={s.layout}>
           <div className={s.fields}>
-            <label className={`${s.field} ${s.fieldWide}`}>
-              <span className={s.label}>Направление работ *</span>
-              <div className={s.pickerWrap} ref={pickerRef}>
-                <button
-                  type="button"
-                  className={s.picker}
-                  aria-haspopup="listbox"
-                  aria-expanded={isOpen}
-                  onClick={() => setIsOpen((value) => !value)}
-                >
-                  <Image
-                    src={direction.image}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className={s.pickerIcon}
-                  />
-                  <span className={s.pickerLabel}>
-                    <span className={s.pickerTop}>{direction.label}</span>
-                    <span className={s.pickerBottom}>{direction.hint}</span>
-                  </span>
-                  <ChevronIcon
-                    className={isOpen ? `${s.chevron} ${s.chevronOpen}` : s.chevron}
-                    color="currentColor"
-                  />
-                </button>
-                {isOpen && (
-                  <ul className={s.menu} role="listbox" aria-label="Направление работ">
-                    {LEAD_DIRECTIONS.map((item) => (
-                      <li key={item.value}>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={item.value === direction.value}
-                          className={
-                            item.value === direction.value ? `${s.option} ${s.optionActive}` : s.option
-                          }
-                          onClick={() => {
-                            setValues((prev) => ({
-                              ...prev,
-                              direction: item.value,
-                              workKinds: [],
-                            }));
-                            setIsOpen(false);
-                          }}
-                        >
-                          <Image
-                            src={item.image}
-                            alt=""
-                            width={32}
-                            height={32}
-                            className={s.optionIcon}
-                          />
-                          <span className={s.optionLabel}>
-                            <span className={s.pickerTop}>{item.label}</span>
-                            <span className={s.pickerBottom}>{item.hint}</span>
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </label>
-
             <div className={`${s.field} ${s.fieldWide}`}>
-              <span className={s.label}>Что нужно сделать</span>
-              <div className={s.kinds}>
-                {direction.kinds.map((kind) => (
-                  <button
-                    key={kind}
-                    type="button"
-                    aria-pressed={values.workKinds.includes(kind)}
-                    className={values.workKinds.includes(kind) ? `${s.kind} ${s.kindActive}` : s.kind}
-                    onClick={() => toggleKind(kind)}
-                  >
-                    {kind}
-                  </button>
-                ))}
-              </div>
+              <span className={s.label}>Направление работ *</span>
+              <Select
+                variant="pill"
+                ariaLabel="Направление работ"
+                options={DIRECTION_OPTIONS}
+                value={direction.value}
+                onChange={(value) =>
+                  setValues((prev) => ({ ...prev, direction: value, workKinds: [] }))
+                }
+              />
             </div>
 
             <label className={s.field}>
@@ -252,6 +172,18 @@ export function LeadFormWidget({ defaultDirection }: Props) {
                 onChange={(event) => set("deadline")(event.target.value)}
               />
             </label>
+            <div className={s.field}>
+              <span className={s.label}>Что нужно сделать</span>
+              <Select
+                multiple
+                ariaLabel="Виды работ"
+                placeholder="Выберите виды работ"
+                options={direction.kinds.map((kind) => ({ value: kind, label: kind }))}
+                value={values.workKinds}
+                onChange={(workKinds) => setValues((prev) => ({ ...prev, workKinds }))}
+              />
+            </div>
+
             <label className={s.field}>
               <span className={s.label}>Ориентировочный бюджет</span>
               <TextInput

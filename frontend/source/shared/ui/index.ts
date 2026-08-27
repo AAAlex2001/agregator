@@ -29,6 +29,8 @@ export type {
   PhoneInputProps,
   PasswordInputProps,
 } from "./Inputs";
+export { Select } from "./Select";
+export type { SelectOption } from "./Select";
 export { CalendarInput } from "./CalendarInput";
 export { default as CardInput } from "./CardInput";
 export { default as Loader } from "./Loader";

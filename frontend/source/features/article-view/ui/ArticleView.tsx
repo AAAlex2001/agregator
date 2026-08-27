@@ -15,7 +15,7 @@ import { ArticleShareButton } from "./ArticleShareButton";
 import { NewsCtaWidget } from "./NewsCtaWidget";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
-import { LeadFormWidget } from "@/source/features/lead-form";
+import { LeadFormWidget, LEAD_FORM_ID } from "@/source/features/lead-form";
 import { extractToc } from "../lib/extractToc";
 import { splitByMiddleHeading } from "../lib/splitByMiddleHeading";
 import { splitTrailingImage } from "../lib/splitTrailingImage";
@@ -64,7 +64,17 @@ export function ArticleView({
   const sectionHref = `${sectionHrefPrefix}${isNews ? "/news" : "/blog"}`;
   const publicPath = `${isNews ? "/news" : "/blog"}/${article.slug}`;
   const publicUrl = `${SITE_URL}${publicPath}`;
-  const { html, toc } = extractToc(article.content_html || "");
+  const { html, toc: headings } = extractToc(article.content_html || "");
+  const toc = headings.length
+    ? [
+        ...headings,
+        {
+          id: LEAD_FORM_ID,
+          num: String(headings.length + 1).padStart(2, "0"),
+          label: "Оставить заявку",
+        },
+      ]
+    : [];
   const [htmlBeforeCta, htmlAfterCta] = splitByMiddleHeading(html);
   const [htmlTail, trailingImage] = splitTrailingImage(htmlAfterCta || htmlBeforeCta);
   const leadDirection = detectDirection(html);
