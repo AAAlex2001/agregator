@@ -6,6 +6,7 @@ export interface LeadFormValues {
   company: string;
   inn: string;
   region: string;
+  workKinds: string[];
   objectName: string;
   task: string;
   deadline: string;
@@ -20,6 +21,7 @@ export const emptyLeadForm: LeadFormValues = {
   company: "",
   inn: "",
   region: "",
+  workKinds: [],
   objectName: "",
   task: "",
   deadline: "",

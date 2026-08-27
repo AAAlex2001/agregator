@@ -9,6 +9,7 @@ export type Lead = {
   company: string;
   inn: string;
   region: string;
+  workKinds: string;
   objectName: string;
   task: string;
   deadline: string;

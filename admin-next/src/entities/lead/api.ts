@@ -11,6 +11,7 @@ const toLead = (raw: any): Lead => ({
   company: raw.company,
   inn: raw.inn,
   region: raw.region,
+  workKinds: raw.work_kinds,
   objectName: raw.object_name,
   task: raw.task,
   deadline: raw.deadline,

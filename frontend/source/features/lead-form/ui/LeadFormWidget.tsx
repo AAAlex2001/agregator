@@ -38,6 +38,14 @@ export function LeadFormWidget({ defaultDirection }: Props) {
   const set = (key: keyof LeadFormValues) => (value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
 
+  const toggleKind = (kind: string) =>
+    setValues((prev) => ({
+      ...prev,
+      workKinds: prev.workKinds.includes(kind)
+        ? prev.workKinds.filter((item) => item !== kind)
+        : [...prev.workKinds, kind],
+    }));
+
   useEffect(() => {
     if (!isOpen) return;
     const closeOutside = (event: PointerEvent) => {
@@ -134,7 +142,11 @@ export function LeadFormWidget({ defaultDirection }: Props) {
                             item.value === direction.value ? `${s.option} ${s.optionActive}` : s.option
                           }
                           onClick={() => {
-                            set("direction")(item.value);
+                            setValues((prev) => ({
+                              ...prev,
+                              direction: item.value,
+                              workKinds: [],
+                            }));
                             setIsOpen(false);
                           }}
                         >
@@ -156,6 +168,23 @@ export function LeadFormWidget({ defaultDirection }: Props) {
                 )}
               </div>
             </label>
+
+            <div className={`${s.field} ${s.fieldWide}`}>
+              <span className={s.label}>Что нужно сделать</span>
+              <div className={s.kinds}>
+                {direction.kinds.map((kind) => (
+                  <button
+                    key={kind}
+                    type="button"
+                    aria-pressed={values.workKinds.includes(kind)}
+                    className={values.workKinds.includes(kind) ? `${s.kind} ${s.kindActive}` : s.kind}
+                    onClick={() => toggleKind(kind)}
+                  >
+                    {kind}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <label className={s.field}>
               <span className={s.label}>Ваше имя *</span>

@@ -15,6 +15,7 @@ class LeadCreate(BaseModel):
     company: str = Field("", max_length=300)
     inn: str = Field("", max_length=20)
     region: str = Field("", max_length=200)
+    work_kinds: str = Field("", max_length=1000)
     object_name: str = Field("", max_length=500)
     task: str = Field(..., min_length=5, max_length=4000)
     deadline: str = Field("", max_length=100)
@@ -41,6 +42,7 @@ class LeadOut(BaseModel):
     company: str
     inn: str
     region: str
+    work_kinds: str
     object_name: str
     task: str
     deadline: str

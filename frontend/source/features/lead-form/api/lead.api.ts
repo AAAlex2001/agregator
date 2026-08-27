@@ -14,6 +14,7 @@ export async function submitLead(values: LeadFormValues, sourceUrl: string): Pro
       company: values.company,
       inn: values.inn,
       region: values.region,
+      work_kinds: values.workKinds.join(", "),
       object_name: values.objectName,
       task: values.task,
       deadline: values.deadline,

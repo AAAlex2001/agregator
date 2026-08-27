@@ -207,7 +207,7 @@ export function NewsCtaWidget() {
 
       <div className={s.panel}>
         <div className={s.left}>
-          <span className={s.fieldLabel}>Направление работ</span>
+          <h2 className={s.fieldLabel}>Направление работ</h2>
           <div className={s.pickerWrap} ref={pickerRef}>
             <button
               type="button"

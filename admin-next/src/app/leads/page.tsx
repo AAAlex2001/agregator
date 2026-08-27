@@ -109,6 +109,7 @@ export default function LeadsPage() {
                   {lead.region && <div className="muted">{lead.region}</div>}
                 </td>
                 <td>
+                  {lead.workKinds && <div><b>{lead.workKinds}</b></div>}
                   <div>{lead.task}</div>
                   {lead.objectName && <div className="muted">Объект: {lead.objectName}</div>}
                   {(lead.deadline || lead.budget) && (

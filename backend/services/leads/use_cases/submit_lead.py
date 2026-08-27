@@ -35,6 +35,7 @@ class SubmitLeadUseCase:
             company=data.company.strip(),
             inn=data.inn.strip(),
             region=data.region.strip(),
+            work_kinds=data.work_kinds.strip(),
             object_name=data.object_name.strip(),
             task=data.task.strip(),
             deadline=data.deadline.strip(),

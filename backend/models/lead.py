@@ -28,6 +28,7 @@ class Lead(Base):
     company: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     inn: Mapped[str] = mapped_column(String(20), nullable=False, default="")
     region: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    work_kinds: Mapped[str] = mapped_column(String(1000), nullable=False, default="")
     object_name: Mapped[str] = mapped_column(String(500), nullable=False, default="")
     task: Mapped[str] = mapped_column(Text, nullable=False, default="")
     deadline: Mapped[str] = mapped_column(String(100), nullable=False, default="")
