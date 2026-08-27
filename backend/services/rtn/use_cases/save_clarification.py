@@ -51,6 +51,12 @@ class SaveRtnClarificationUseCase:
         published_at = data.published_at
         if data.publication_status == "PUBLISHED" and published_at is None:
             published_at = datetime.now(UTC)
+        request_files = [item.model_dump() for item in data.request_files]
+        response_files = [item.model_dump() for item in data.response_files]
+        if not request_files and data.pdf_url.strip():
+            request_files = [{"name": "Обращение в ведомство.pdf", "url": data.pdf_url.strip()}]
+        if not response_files and data.response_pdf_url.strip():
+            response_files = [{"name": "Официальный ответ.pdf", "url": data.response_pdf_url.strip()}]
         return {
             "document_type": DocumentType(data.document_type),
             "status": ClarificationStatus(data.status),
@@ -63,8 +69,12 @@ class SaveRtnClarificationUseCase:
             "letter_number": data.letter_number.strip(),
             "department": data.department.strip(),
             "source_url": data.source_url.strip(),
-            "pdf_url": data.pdf_url.strip(),
-            "response_pdf_url": data.response_pdf_url.strip(),
+            # Legacy-поля сохраняем синхронными с первым файлом для совместимости
+            # при поэтапном развёртывании backend/frontend.
+            "pdf_url": request_files[0]["url"] if request_files else data.pdf_url.strip(),
+            "response_pdf_url": response_files[0]["url"] if response_files else data.response_pdf_url.strip(),
+            "request_files": request_files,
+            "response_files": response_files,
             "referenced_regulations": [item.model_dump() for item in data.referenced_regulations],
             "meta_title": data.meta_title.strip(),
             "meta_description": data.meta_description,

@@ -9,6 +9,8 @@ const INDEXABLE_PATHS: string[] = [
   "/reviews",
   "/news",
   "/blog",
+  "/rtn",
+  "/rtn/ask",
   "/zepb-registry",
   "/expert-contacts",
   "/training/defectoscopist-certification",

@@ -6,7 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from models.rtn_clarification import ClarificationStatus, DocumentType, PublicationStatus
-from schemas.rtn import RegulationLinkDto
+from schemas.rtn import AttachmentDto, RegulationLinkDto
 
 
 class RtnClarificationWrite(BaseModel):
@@ -23,6 +23,8 @@ class RtnClarificationWrite(BaseModel):
     source_url: str = Field(default="", max_length=500)
     pdf_url: str = Field(default="", max_length=500)
     response_pdf_url: str = Field(default="", max_length=500)
+    request_files: list[AttachmentDto] = Field(default_factory=list)
+    response_files: list[AttachmentDto] = Field(default_factory=list)
     referenced_regulations: list[RegulationLinkDto] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     oversight_areas: list[str] = Field(default_factory=list)

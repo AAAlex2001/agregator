@@ -31,6 +31,8 @@ class GetRtnClarificationUseCase:
             source_url=clarification.source_url,
             pdf_url=clarification.pdf_url,
             response_pdf_url=clarification.response_pdf_url,
+            request_files=clarification.request_files,
+            response_files=clarification.response_files,
             referenced_regulations=[RegulationLinkDto(**item) for item in clarification.referenced_regulations],
             tags=[tag.name for tag in clarification.tags],
             oversight_areas=self.to_options(OVERSIGHT_AREA_LABELS, selection.oversight_areas),

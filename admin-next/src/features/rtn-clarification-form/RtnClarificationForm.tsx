@@ -201,14 +201,14 @@ export function RtnClarificationForm({
           <input value={f.sourceUrl} onChange={(e) => setField("sourceUrl", e.target.value)} />
         </label>
         <label>
-          Обращение в Ростехнадзор (PDF)
-          <PdfUpload value={f.pdfUrl} onChange={(url) => setField("pdfUrl", url)} />
+          Файлы запроса (PDF, можно несколько)
+          <PdfUpload value={f.requestFiles} onChange={(files) => setField("requestFiles", files)} />
         </label>
         <label>
-          Ответ Ростехнадзора (PDF)
+          Файлы ответов (PDF, можно несколько)
           <PdfUpload
-            value={f.responsePdfUrl}
-            onChange={(url) => setField("responsePdfUrl", url)}
+            value={f.responseFiles}
+            onChange={(files) => setField("responseFiles", files)}
           />
         </label>
 

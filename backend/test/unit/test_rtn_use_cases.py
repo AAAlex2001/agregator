@@ -6,9 +6,11 @@ import pytest
 from fastapi import HTTPException
 
 from models.rtn_comment_reaction import CommentReactionValue
+from schemas.admin_rtn import RtnClarificationWrite
 from services.rtn.taxonomy import DOCUMENT_TYPE_LABELS, build_taxonomy, serialize_options
 from services.rtn.use_cases.react_to_comment import ReactToRtnCommentUseCase
 from services.rtn.use_cases.report_change import ReportRtnChangeUseCase
+from services.rtn.use_cases.save_clarification import SaveRtnClarificationUseCase
 from services.rtn.use_cases.submit_question import SubmitRtnQuestionUseCase
 
 
@@ -183,3 +185,27 @@ def test_build_taxonomy_returns_all_dimensions():
     assert len(taxonomy["object_types"]) == 7
     assert len(taxonomy["document_types"]) == 3
     assert len(taxonomy["statuses"]) == 2
+
+
+def test_save_clarification_preserves_all_request_and_response_files():
+    data = RtnClarificationWrite(
+        document_type="INFO_LETTER",
+        status="ACTIVE",
+        publication_status="DRAFT",
+        slug="audit-supb",
+        request_files=[
+            {"name": "Запрос, часть 1.pdf", "url": "/files/request-1.pdf"},
+            {"name": "Запрос, часть 2.pdf", "url": "/files/request-2.pdf"},
+        ],
+        response_files=[
+            {"name": "Ответ Ростехнадзора.pdf", "url": "/files/answer-rtn.pdf"},
+            {"name": "Ответ прокуратуры.pdf", "url": "/files/answer-prosecutor.pdf"},
+        ],
+    )
+
+    normalized = SaveRtnClarificationUseCase(None, None).normalize(data)  # type: ignore[arg-type]
+
+    assert len(normalized["request_files"]) == 2
+    assert len(normalized["response_files"]) == 2
+    assert normalized["pdf_url"] == "/files/request-1.pdf"
+    assert normalized["response_pdf_url"] == "/files/answer-rtn.pdf"

@@ -10,6 +10,11 @@ export interface RtnTaxonomyOption {
   label: string;
 }
 
+export interface RtnDocumentFile {
+  name: string;
+  url: string;
+}
+
 export interface RtnTaxonomy {
   oversight_areas: RtnTaxonomyOption[];
   industries: RtnTaxonomyOption[];
@@ -31,6 +36,8 @@ export interface RtnListItem {
   source_url: string;
   pdf_url: string;
   response_pdf_url: string;
+  request_files: RtnDocumentFile[];
+  response_files: RtnDocumentFile[];
   tags: string[];
   published_at: string | null;
 }
@@ -59,6 +66,8 @@ export interface RtnDetail {
   source_url: string;
   pdf_url: string;
   response_pdf_url: string;
+  request_files: RtnDocumentFile[];
+  response_files: RtnDocumentFile[];
   referenced_regulations: RtnRegulationLink[];
   tags: string[];
   oversight_areas: RtnTaxonomyOption[];

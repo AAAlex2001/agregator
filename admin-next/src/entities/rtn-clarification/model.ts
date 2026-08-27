@@ -3,6 +3,7 @@ export type ClarificationStatus = "ACTIVE" | "EXPIRED";
 export type PublicationStatus = "DRAFT" | "PUBLISHED";
 
 export type RegulationLink = { label: string; url: string };
+export type RtnDocumentFile = { name: string; url: string };
 
 // что приходит при загрузке разъяснения
 export type RtnClarificationIn = {
@@ -18,8 +19,8 @@ export type RtnClarificationIn = {
   letterNumber: string;
   department: string;
   sourceUrl: string;
-  pdfUrl: string;
-  responsePdfUrl: string;
+  requestFiles: RtnDocumentFile[];
+  responseFiles: RtnDocumentFile[];
   referencedRegulations: RegulationLink[];
   tags: string[];
   oversightAreas: string[];
@@ -60,8 +61,8 @@ export const EMPTY_CLARIFICATION: RtnClarificationOut = {
   letterNumber: "",
   department: "",
   sourceUrl: "",
-  pdfUrl: "",
-  responsePdfUrl: "",
+  requestFiles: [],
+  responseFiles: [],
   referencedRegulations: [],
   tags: [],
   oversightAreas: [],
@@ -86,8 +87,8 @@ export const toOut = (c: RtnClarificationIn): RtnClarificationOut => ({
   letterNumber: c.letterNumber,
   department: c.department,
   sourceUrl: c.sourceUrl,
-  pdfUrl: c.pdfUrl,
-  responsePdfUrl: c.responsePdfUrl,
+  requestFiles: c.requestFiles,
+  responseFiles: c.responseFiles,
   referencedRegulations: c.referencedRegulations,
   tags: c.tags,
   oversightAreas: c.oversightAreas,

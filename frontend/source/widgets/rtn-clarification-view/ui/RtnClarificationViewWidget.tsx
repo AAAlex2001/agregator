@@ -60,20 +60,30 @@ export function RtnClarificationViewWidget({
   ];
   const requestDocumentItems: FileGalleryItem[] = [];
   const responseDocumentItems: FileGalleryItem[] = [];
-  if (clarification.pdf_url) {
+  const requestFiles = clarification.request_files?.length
+    ? clarification.request_files
+    : clarification.pdf_url
+      ? [{ name: "Запрос.pdf", url: clarification.pdf_url }]
+      : [];
+  const responseFiles = clarification.response_files?.length
+    ? clarification.response_files
+    : clarification.response_pdf_url
+      ? [{ name: "Официальный ответ.pdf", url: clarification.response_pdf_url }]
+      : [];
+  requestFiles.forEach((file, index) => {
     requestDocumentItems.push({
-      id: `rtn-request-${clarification.id}`,
-      name: "Обращение в Ростехнадзор.pdf",
-      url: resolveFileUrl(clarification.pdf_url),
+      id: `rtn-request-${clarification.id}-${index}`,
+      name: file.name || `Запрос ${index + 1}.pdf`,
+      url: resolveFileUrl(file.url),
     });
-  }
-  if (clarification.response_pdf_url) {
+  });
+  responseFiles.forEach((file, index) => {
     responseDocumentItems.push({
-      id: `rtn-response-${clarification.id}`,
-      name: "Ответ Ростехнадзора.pdf",
-      url: resolveFileUrl(clarification.response_pdf_url),
+      id: `rtn-response-${clarification.id}-${index}`,
+      name: file.name || `Ответ ${index + 1}.pdf`,
+      url: resolveFileUrl(file.url),
     });
-  }
+  });
   const hasDocuments = requestDocumentItems.length > 0 || responseDocumentItems.length > 0;
 
   return (
@@ -156,14 +166,14 @@ export function RtnClarificationViewWidget({
               {requestDocumentItems.length > 0 ? (
                 <FileGallery
                   items={requestDocumentItems}
-                  label="Официальное письмо"
+                  label={requestDocumentItems.length > 1 ? "Файлы запроса" : "Файл запроса"}
                   blockClassName={s.documentGallery}
                 />
               ) : null}
               {responseDocumentItems.length > 0 ? (
                 <FileGallery
                   items={responseDocumentItems}
-                  label="Ответ Ростехнадзора"
+                  label={responseDocumentItems.length > 1 ? "Файлы ответов" : "Файл ответа"}
                   blockClassName={s.documentGallery}
                 />
               ) : null}

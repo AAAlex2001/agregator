@@ -53,6 +53,8 @@ class RtnListItemDto(BaseModel):
     source_url: str
     pdf_url: str
     response_pdf_url: str
+    request_files: list[AttachmentDto] = Field(default_factory=list)
+    response_files: list[AttachmentDto] = Field(default_factory=list)
     tags: list[str]
     published_at: datetime | None
 
@@ -78,6 +80,8 @@ class RtnDetailDto(BaseModel):
     source_url: str
     pdf_url: str
     response_pdf_url: str
+    request_files: list[AttachmentDto] = Field(default_factory=list)
+    response_files: list[AttachmentDto] = Field(default_factory=list)
     referenced_regulations: list[RegulationLinkDto]
     tags: list[str]
     oversight_areas: list[RtnTaxonomyOptionDto]

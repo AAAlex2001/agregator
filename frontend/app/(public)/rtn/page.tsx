@@ -12,7 +12,9 @@ import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+
+const baseMetadata: Metadata = {
   title: "Ростехнадзор отвечает: база официальных ответов — Ресурс-Плюс",
   description:
     "Актуальные ответы на сложные вопросы промышленной, энергетической и строительной безопасности. Систематизированная база официальных ответов Ростехнадзора.",
@@ -39,7 +41,18 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
-type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const isFiltered = Object.values(params).some((value) =>
+    Array.isArray(value) ? value.length > 0 : Boolean(value),
+  );
+  if (!isFiltered) return baseMetadata;
+
+  return {
+    ...baseMetadata,
+    robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
+  };
+}
 
 async function RtnCatalogData({ searchParams }: Props) {
   const filters = parseRtnListFilters(toURLSearchParams(await searchParams));

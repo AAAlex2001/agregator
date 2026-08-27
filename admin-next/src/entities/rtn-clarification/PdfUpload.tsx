@@ -2,22 +2,34 @@
 
 import { useState } from "react";
 import { uploadPdf } from "./api";
+import type { RtnDocumentFile } from "./model";
 
-export function PdfUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+export function PdfUpload({
+  value,
+  onChange,
+}: {
+  value: RtnDocumentFile[];
+  onChange: (files: RtnDocumentFile[]) => void;
+}) {
   const [uploading, setUploading] = useState(false);
 
   const pick = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "application/pdf";
+    input.multiple = true;
     input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
+      const files = Array.from(input.files ?? []);
+      if (!files.length) return;
       setUploading(true);
       try {
-        onChange(await uploadPdf(file));
+        const uploaded: RtnDocumentFile[] = [];
+        for (const file of files) {
+          uploaded.push({ name: file.name, url: await uploadPdf(file) });
+        }
+        onChange([...value, ...uploaded]);
       } catch {
-        alert("Не удалось загрузить PDF");
+        alert("Не удалось загрузить один или несколько PDF");
       } finally {
         setUploading(false);
       }
@@ -27,20 +39,33 @@ export function PdfUpload({ value, onChange }: { value: string; onChange: (url: 
 
   return (
     <div className="cover">
-      {value ? (
-        <a className="pdf-preview" href={value} target="_blank" rel="noreferrer">
-          Открыть текущий PDF
-        </a>
+      {value.length ? (
+        <ul className="pdf-list">
+          {value.map((file, index) => (
+            <li key={`${file.url}-${index}`} className="pdf-list-item">
+              <a className="pdf-preview" href={file.url} target="_blank" rel="noreferrer">
+                {file.name || `Документ ${index + 1}.pdf`}
+              </a>
+              <button
+                type="button"
+                className="link danger"
+                onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))}
+              >
+                Убрать
+              </button>
+            </li>
+          ))}
+        </ul>
       ) : (
-        <div className="cover-empty">PDF не загружен</div>
+        <div className="cover-empty">PDF-файлы не загружены</div>
       )}
       <div className="cover-actions">
         <button type="button" onClick={pick} disabled={uploading}>
-          {uploading ? "Загрузка…" : value ? "Заменить PDF" : "Загрузить PDF"}
+          {uploading ? "Загрузка…" : value.length ? "Добавить PDF" : "Загрузить PDF"}
         </button>
-        {value && (
-          <button type="button" className="link danger" onClick={() => onChange("")}>
-            Убрать
+        {value.length > 1 && (
+          <button type="button" className="link danger" onClick={() => onChange([])}>
+            Убрать все
           </button>
         )}
       </div>

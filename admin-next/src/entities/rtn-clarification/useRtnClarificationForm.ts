@@ -17,8 +17,16 @@ type State = {
   errorMessage: string | null;
 };
 
+type SetFieldAction = {
+  [Field in keyof RtnClarificationOut]: {
+    type: "SET_FIELD";
+    field: Field;
+    value: RtnClarificationOut[Field];
+  };
+}[keyof RtnClarificationOut];
+
 type Action =
-  | { type: "SET_FIELD"; field: keyof RtnClarificationOut; value: string }
+  | SetFieldAction
   | { type: "TOGGLE_TAXONOMY"; dimension: TaxonomyDimension; value: string }
   | { type: "TOGGLE_TAG"; name: string }
   | { type: "SET_REGULATIONS"; regulations: RegulationLink[] }
@@ -92,7 +100,10 @@ export const useRtnClarificationForm = (id: number | null) => {
       });
   }, [id, router]);
 
-  const setField = (field: keyof RtnClarificationOut, value: string) => dispatch({ type: "SET_FIELD", field, value });
+  const setField = <Field extends keyof RtnClarificationOut>(
+    field: Field,
+    value: RtnClarificationOut[Field],
+  ) => dispatch({ type: "SET_FIELD", field, value } as SetFieldAction);
   const toggleTaxonomy = (dimension: TaxonomyDimension, value: string) =>
     dispatch({ type: "TOGGLE_TAXONOMY", dimension, value });
   const toggleTag = (name: string) => dispatch({ type: "TOGGLE_TAG", name });

@@ -48,8 +48,16 @@ export const loadClarification = async (id: number): Promise<RtnClarificationIn>
     letterNumber: c.letter_number,
     department: c.department,
     sourceUrl: c.source_url,
-    pdfUrl: c.pdf_url,
-    responsePdfUrl: c.response_pdf_url,
+    requestFiles: c.request_files?.length
+      ? c.request_files
+      : c.pdf_url
+        ? [{ name: "Обращение в ведомство.pdf", url: c.pdf_url }]
+        : [],
+    responseFiles: c.response_files?.length
+      ? c.response_files
+      : c.response_pdf_url
+        ? [{ name: "Официальный ответ.pdf", url: c.response_pdf_url }]
+        : [],
     referencedRegulations: c.referenced_regulations,
     tags: c.tags,
     oversightAreas: c.oversight_areas,
@@ -79,8 +87,10 @@ export const saveClarification = async (id: number | null, data: RtnClarificatio
       letter_number: data.letterNumber,
       department: data.department,
       source_url: data.sourceUrl,
-      pdf_url: data.pdfUrl,
-      response_pdf_url: data.responsePdfUrl,
+      pdf_url: data.requestFiles[0]?.url ?? "",
+      response_pdf_url: data.responseFiles[0]?.url ?? "",
+      request_files: data.requestFiles,
+      response_files: data.responseFiles,
       referenced_regulations: data.referencedRegulations,
       tags: data.tags,
       oversight_areas: data.oversightAreas,
