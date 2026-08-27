@@ -14,6 +14,7 @@ from starlette.responses import Response
 from routes import (
     admin_contact_deal,
     admin_content,
+    admin_lead,
     admin_rtn,
     article,
     article_interactions,
@@ -35,6 +36,7 @@ from routes import (
     labor,
     laboratory,
     landing,
+    lead,
     license_holder,
     lining,
     login,
@@ -127,6 +129,7 @@ app.include_router(pricing.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")
 app.include_router(landing.router, prefix="/api")
+app.include_router(lead.router, prefix="/api")
 app.include_router(labor.router, prefix="/api")
 app.include_router(contact_deal.router, prefix="/api")
 app.include_router(question.router, prefix="/api")
@@ -141,6 +144,7 @@ app.include_router(admin_content.router, prefix="/api")
 app.include_router(rtn.router, prefix="/api")
 app.include_router(rtn_interactions.router, prefix="/api")
 app.include_router(admin_rtn.router, prefix="/api")
+app.include_router(admin_lead.router, prefix="/api")
 app.include_router(admin_contact_deal.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")

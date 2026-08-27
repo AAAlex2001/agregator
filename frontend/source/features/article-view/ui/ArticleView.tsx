@@ -15,9 +15,28 @@ import { ArticleShareButton } from "./ArticleShareButton";
 import { NewsCtaWidget } from "./NewsCtaWidget";
 import type { ReactionState } from "@/source/entities/article-reaction";
 import type { ArticleComment } from "@/source/entities/article-comment";
+import { LeadFormWidget } from "@/source/features/lead-form";
 import { extractToc } from "../lib/extractToc";
 import { splitByMiddleHeading } from "../lib/splitByMiddleHeading";
+import { splitTrailingImage } from "../lib/splitTrailingImage";
 import s from "./ArticleView.module.scss";
+
+/** Направление формы заявки берём по ссылке на лендинг в тексте статьи. */
+const DIRECTION_BY_HREF: [string, string][] = [
+  ["/ekspertiza-promyshlennoy-bezopasnosti", "EXPERTISE"],
+  ["/audit-supb", "AUDIT_SUPB"],
+  ["/tehnicheskoe-diagnostirovanie", "TECH_DIAG"],
+  ["/proektirovanie", "DESIGN"],
+  ["/inzhenernye-izyskaniya", "SURVEY"],
+  ["/ekologiya", "ECOLOGY"],
+  ["/nir", "RESEARCH"],
+  ["/kadastrovye-raboty", "CADASTRAL"],
+  ["/sudebnaya-ekspertiza", "FORENSIC"],
+];
+
+function detectDirection(html: string): string | undefined {
+  return DIRECTION_BY_HREF.find(([href]) => html.includes(`href="${href}"`))?.[1];
+}
 
 interface Props {
   article: ArticleDetail;
@@ -47,6 +66,8 @@ export function ArticleView({
   const publicUrl = `${SITE_URL}${publicPath}`;
   const { html, toc } = extractToc(article.content_html || "");
   const [htmlBeforeCta, htmlAfterCta] = splitByMiddleHeading(html);
+  const [htmlTail, trailingImage] = splitTrailingImage(htmlAfterCta || htmlBeforeCta);
+  const leadDirection = detectDirection(html);
   const dateLabel = formatArticleDate(article.published_at);
 
   const breadcrumbJsonLd = {
@@ -87,10 +108,21 @@ export function ArticleView({
       <div className={s.layout}>
         {toc.length > 0 ? <DocToc items={toc} className={s.toc} /> : null}
         <div className={s.body}>
-          <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlBeforeCta }} />
-          <NewsCtaWidget />
           {htmlAfterCta ? (
-            <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlAfterCta }} />
+            <>
+              <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlBeforeCta }} />
+              <NewsCtaWidget />
+              <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlTail }} />
+            </>
+          ) : (
+            <>
+              <div className={s.content} dangerouslySetInnerHTML={{ __html: htmlTail }} />
+              <NewsCtaWidget />
+            </>
+          )}
+          <LeadFormWidget defaultDirection={leadDirection} />
+          {trailingImage ? (
+            <div className={s.content} dangerouslySetInnerHTML={{ __html: trailingImage }} />
           ) : null}
           {interactive ? <ArticleViewTracker articleId={article.id} /> : null}
           <div className={s.shareRow}>
