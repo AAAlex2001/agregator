@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Editor } from "@/entities/article";
-import { PdfUpload, RegulationLink, useRtnClarificationForm } from "@/entities/rtn-clarification";
+import {
+  ClarificationStatus,
+  DocumentType,
+  PdfUpload,
+  PublicationStatus,
+  RegulationLink,
+  useRtnClarificationForm,
+} from "@/entities/rtn-clarification";
 import { getQuestion } from "@/entities/rtn-question";
 import { RtnTaxonomy, TaxonomyOption, loadTaxonomy } from "@/entities/rtn-taxonomy";
 import { listTags } from "@/entities/tag";
@@ -133,7 +140,10 @@ export function RtnClarificationForm({
         <div className="row">
           <label>
             Тип документа
-            <select value={f.documentType} onChange={(e) => setField("documentType", e.target.value)}>
+            <select
+              value={f.documentType}
+              onChange={(e) => setField("documentType", e.target.value as DocumentType)}
+            >
               {Object.entries(DOCUMENT_TYPE_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -143,7 +153,10 @@ export function RtnClarificationForm({
           </label>
           <label>
             Актуальность
-            <select value={f.status} onChange={(e) => setField("status", e.target.value)}>
+            <select
+              value={f.status}
+              onChange={(e) => setField("status", e.target.value as ClarificationStatus)}
+            >
               {Object.entries(STATUS_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -153,7 +166,10 @@ export function RtnClarificationForm({
           </label>
           <label>
             Публикация
-            <select value={f.publicationStatus} onChange={(e) => setField("publicationStatus", e.target.value)}>
+            <select
+              value={f.publicationStatus}
+              onChange={(e) => setField("publicationStatus", e.target.value as PublicationStatus)}
+            >
               {Object.entries(PUBLICATION_STATUS_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
