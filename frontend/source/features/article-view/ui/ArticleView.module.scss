@@ -198,6 +198,14 @@ $scroll-offset: 120px;
   }
 }
 
+.trailingImage {
+  & img {
+    width: 100%;
+    max-width: 1053px;
+    max-height: 593px;
+  }
+}
+
 .shareRow {
   display: flex;
   justify-content: flex-start;

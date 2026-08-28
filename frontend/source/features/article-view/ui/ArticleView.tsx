@@ -132,7 +132,10 @@ export function ArticleView({
           )}
           <LeadFormWidget defaultDirection={leadDirection} />
           {trailingImage ? (
-            <div className={s.content} dangerouslySetInnerHTML={{ __html: trailingImage }} />
+            <div
+              className={`${s.content} ${s.trailingImage}`}
+              dangerouslySetInnerHTML={{ __html: trailingImage }}
+            />
           ) : null}
           {interactive ? <ArticleViewTracker articleId={article.id} /> : null}
           <div className={s.shareRow}>
