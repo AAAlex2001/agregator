@@ -10,7 +10,7 @@ import "@fontsource/montserrat/600.css";
 import "@fontsource/montserrat/700.css";
 import "./globals.css";
 
-const YANDEX_METRIKA_ID = 108708847;
+const YANDEX_METRIKA_ID = 112169933;
 const GOOGLE_TAG_ID = "G-QGC88WQWTJ";
 
 export const metadata: Metadata = {

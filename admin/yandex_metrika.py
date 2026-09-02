@@ -9,7 +9,7 @@ import httpx
 
 API_BASE = "https://api-metrika.yandex.net/stat/v1/data"
 TIMEOUT_SECONDS = 10.0
-COUNTER_ID = int(os.getenv("YANDEX_METRIKA_COUNTER_ID", "108708847"))
+COUNTER_ID = int(os.getenv("YANDEX_METRIKA_COUNTER_ID", "112169933"))
 OAUTH_TOKEN = os.getenv("YANDEX_METRIKA_OAUTH_TOKEN", "").strip()
 
 
