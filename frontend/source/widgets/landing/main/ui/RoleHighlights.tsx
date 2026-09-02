@@ -52,7 +52,7 @@ export function RoleHighlights() {
             />
           </div>
           <div className={s.copy}>
-            <Title as="h2" className={s.title} text={item.title} />
+            <Title as="h2" text={item.title} />
             <Subtitle className={s.text} text={item.text} />
           </div>
         </article>
