@@ -191,15 +191,14 @@
   padding: 0;
 }
 
-.sentinel {
+.loadMoreWrap {
   display: flex;
   justify-content: center;
   padding: 8px 0;
 }
 
-.loadingLabel {
-  color: #9aa1ad;
-  font-size: 14px;
+.loadMore {
+  min-width: 180px;
 }
 
 .askBlock {

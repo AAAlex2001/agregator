@@ -7,7 +7,12 @@ import {
   parseRtnListFilters,
   toURLSearchParams,
 } from "@/source/entities/rtn-clarification";
-import { RtnCatalogWidget, RtnCatalogResults, RtnCatalogSkeleton } from "@/source/widgets/rtn-catalog";
+import {
+  RtnCatalogWidget,
+  RtnCatalogResults,
+  RtnCatalogSkeleton,
+  RtnCatalogJsonLd,
+} from "@/source/widgets/rtn-catalog";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const dynamic = "force-dynamic";
@@ -41,26 +46,68 @@ const baseMetadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
+const PAGE_SIZE = 12;
+const MAX_PAGE = 10;
+
+type RawParams = Record<string, string | string[] | undefined>;
+
+function readPage(params: RawParams): number {
+  return Math.min(MAX_PAGE, Math.max(1, Number(params.page) || 1));
+}
+
+function isFiltered(params: RawParams): boolean {
+  return Object.entries(params).some(([key, value]) =>
+    key === "page" ? false : Array.isArray(value) ? value.length > 0 : Boolean(value),
+  );
+}
+
+function pageHref(params: RawParams, page: number): string {
+  const search = toURLSearchParams({ ...params, page: undefined });
+  search.set("page", String(page));
+  return `/rtn?${search.toString()}`;
+}
+
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const params = await searchParams;
-  const isFiltered = Object.values(params).some((value) =>
-    Array.isArray(value) ? value.length > 0 : Boolean(value),
-  );
-  if (!isFiltered) return baseMetadata;
+  if (isFiltered(params)) {
+    return {
+      ...baseMetadata,
+      robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
+    };
+  }
+
+  const page = readPage(params);
+  if (page === 1) return baseMetadata;
 
   return {
     ...baseMetadata,
-    robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
+    title: `${baseMetadata.title} — страница ${page}`,
+    alternates: { canonical: `/rtn?page=${page}` },
   };
 }
 
 async function RtnCatalogData({ searchParams }: Props) {
-  const filters = parseRtnListFilters(toURLSearchParams(await searchParams));
+  const params = await searchParams;
+  const page = readPage(params);
+  const filters = parseRtnListFilters(toURLSearchParams(params));
   const [initial, taxonomy] = await Promise.all([
-    fetchRtnList({ ...filters, limit: 12, offset: 0 }, { server: true }),
+    fetchRtnList({ ...filters, limit: PAGE_SIZE * page, offset: 0 }, { server: true }),
     fetchRtnTaxonomy({ server: true }),
   ]);
-  return <RtnCatalogResults initial={initial} taxonomy={taxonomy} />;
+
+  return (
+    <>
+      <RtnCatalogJsonLd items={initial.items} />
+      <RtnCatalogResults
+        key={page}
+        initial={initial}
+        taxonomy={taxonomy}
+        nextPageHref={
+          initial.has_more && page < MAX_PAGE ? pageHref(params, page + 1) : undefined
+        }
+      />
+    </>
+  );
 }
 
 export default function RtnListPage({ searchParams }: Props) {

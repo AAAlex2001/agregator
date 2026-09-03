@@ -60,6 +60,9 @@ async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
   }
 }
 
+const RTN_PAGE_SIZE = 12;
+const RTN_MAX_PAGE = 10;
+
 async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
   try {
     const items = [];
@@ -74,12 +77,22 @@ async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
       offset += limit;
     }
 
-    return items.map((item) => ({
+    const details: MetadataRoute.Sitemap = items.map((item) => ({
       url: `${SITE_URL}/rtn/${item.slug}`,
       lastModified: item.published_at ? new Date(item.published_at) : new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
     }));
+
+    const pageCount = Math.min(RTN_MAX_PAGE, Math.ceil(items.length / RTN_PAGE_SIZE));
+    const pages: MetadataRoute.Sitemap = Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
+      url: `${SITE_URL}/rtn?page=${index + 2}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.6,
+    }));
+
+    return [...pages, ...details];
   } catch {
     return [];
   }

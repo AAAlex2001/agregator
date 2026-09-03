@@ -6,8 +6,33 @@ interface Props {
   commentCount?: number;
 }
 
+const PUBLISHER = {
+  "@type": "Organization",
+  name: "Ресурс-Плюс",
+  url: SITE_URL,
+  logo: { "@type": "ImageObject", url: `${SITE_URL}/og-default.png`, width: 1200, height: 630 },
+};
+
 export function RtnJsonLd({ clarification, commentCount }: Props) {
   const pageUrl = `${SITE_URL}/rtn/${clarification.slug}`;
+  const published = clarification.published_at || clarification.updated_at;
+
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: clarification.title,
+    description: clarification.excerpt || clarification.meta_description || clarification.title,
+    articleSection: "Ростехнадзор отвечает",
+    inLanguage: "ru-RU",
+    url: pageUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    datePublished: published,
+    dateModified: clarification.updated_at,
+    keywords: clarification.tags.join(", "),
+    image: `${SITE_URL}/og-default.png`,
+    author: PUBLISHER,
+    publisher: PUBLISHER,
+  };
 
   const data = {
     "@context": "https://schema.org",
@@ -45,6 +70,7 @@ export function RtnJsonLd({ clarification, commentCount }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
     </>
   );

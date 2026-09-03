@@ -91,8 +91,8 @@ export function RtnCommentForm({ placeholder, submitLabel = "Отправить"
           className={s.hiddenInput}
           onChange={onFileSelected}
         />
-        <Button variant="transparent" size="sm" type="button" onClick={pickFile} disabled={uploading}>
-          {uploading ? "Загрузка…" : "Прикрепить файл"}
+        <Button variant="transparent" size="sm" type="button" onClick={pickFile} isLoading={uploading}>
+          Прикрепить файл
         </Button>
         <Button variant="primary" size="md" type="submit" isLoading={busy}>
           {submitLabel}

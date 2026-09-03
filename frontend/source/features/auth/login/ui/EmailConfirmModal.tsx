@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
+import Loader from "@/source/shared/ui/Loader";
 import { Modal, OtpCodeInput } from "@/source/shared/ui";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { confirmEmailCode, resendEmailCode } from "@/source/shared/api/emailVerification";
@@ -74,7 +75,7 @@ export function EmailConfirmModal({ email, role, onClose, onConfirmed }: Props) 
         disabled={isResending}
         onClick={resend}
       >
-        {isResending ? "Отправляем…" : "Отправить код снова"}
+        {isResending ? <Loader size="sm" label="" /> : "Отправить код снова"}
       </button>
     </Modal>
   );

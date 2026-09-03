@@ -172,8 +172,8 @@ export function ArticlesList({ kind, title, subtitle, initial, staticItems = [],
         </div>
       ) : hasMore && !isReloading ? (
         <div className={s.loadMoreWrap}>
-          <Button type="button" variant="outline" className={s.loadMore} onClick={loadMore} disabled={isLoadingMore}>
-            {isLoadingMore ? "Загружаем..." : "Показать ещё"}
+          <Button type="button" variant="outline" className={s.loadMore} onClick={loadMore} isLoading={isLoadingMore}>
+            Показать ещё
           </Button>
         </div>
       ) : null}

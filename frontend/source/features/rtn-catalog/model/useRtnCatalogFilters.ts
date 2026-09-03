@@ -32,6 +32,7 @@ export function useRtnCatalogFilters({ liveSearch = false }: Options = {}) {
   function pushParams(mutate: (params: URLSearchParams) => void) {
     const params = new URLSearchParams(searchParams.toString());
     mutate(params);
+    params.delete("page");
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
@@ -46,6 +47,7 @@ export function useRtnCatalogFilters({ liveSearch = false }: Options = {}) {
       const params = new URLSearchParams(searchParams.toString());
       if (search) params.set("search", search);
       else params.delete("search");
+      params.delete("page");
 
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
