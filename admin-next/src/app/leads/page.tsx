@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -57,9 +56,6 @@ export default function LeadsPage() {
     <div className="page">
       <header className="topbar">
         <h1>Заявки с сайта</h1>
-        <div className="topbar-right">
-          <Link className="btn" href="/">← К статьям</Link>
-        </div>
       </header>
 
       <div className="toolbar">

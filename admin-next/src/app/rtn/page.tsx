@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { RtnClarificationListItem, deleteClarification, listClarifications } from "@/entities/rtn-clarification";
-import { logout } from "@/entities/article";
 
 const DOCUMENT_TYPE: Record<string, string> = {
   OFFICIAL_CLARIFICATION: "Офиц. разъяснение",
@@ -42,12 +41,6 @@ export default function RtnListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicationStatus]);
 
-  const onLogout = async () => {
-    await logout();
-    router.replace("/login");
-    router.refresh();
-  };
-
   const onDelete = async (id: number, title: string) => {
     if (!confirm(`Удалить «${title}»? Это необратимо.`)) return;
     try {
@@ -63,12 +56,6 @@ export default function RtnListPage() {
     <div className="page">
       <header className="topbar">
         <h1>Ростехнадзор отвечает</h1>
-        <div className="topbar-right">
-          <Link className="btn" href="/">Статьи</Link>
-          <Link className="btn" href="/rtn/questions">Вопросы</Link>
-          <Link className="btn" href="/rtn/change-reports">Сообщения об изменениях</Link>
-          <button className="ghost" onClick={onLogout}>Выйти</button>
-        </div>
       </header>
 
       <div className="toolbar">

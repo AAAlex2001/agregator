@@ -63,10 +63,6 @@ export default function ContactDealsPage() {
           <h1>Покупка контактов исполнителей</h1>
           <p className="muted topbar-subtitle">Чеки, электронные договоры и ручная выдача контактов</p>
         </div>
-        <div className="topbar-right">
-          <Link className="btn" href="/">Статьи</Link>
-          <Link className="btn" href="/rtn">Ростехнадзор отвечает</Link>
-        </div>
       </header>
 
       <div className="toolbar">

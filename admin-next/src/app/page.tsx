@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArticleListItem, deleteArticle, listArticles, logout } from "@/entities/article";
+import { ArticleListItem, deleteArticle, listArticles } from "@/entities/article";
 import { TagsPanel } from "@/features/tags-manage/TagsPanel";
 
 const KIND: Record<string, string> = { NEWS: "Новость", BLOG: "Блог" };
@@ -38,12 +38,6 @@ export default function ListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kind, status]);
 
-  const onLogout = async () => {
-    await logout();
-    router.replace("/login");
-    router.refresh();
-  };
-
   const onDelete = async (id: number, title: string) => {
     if (!confirm(`Удалить «${title}»? Это необратимо.`)) return;
     try {
@@ -59,12 +53,6 @@ export default function ListPage() {
     <div className="page">
       <header className="topbar">
         <h1>Статьи · Новости и блог</h1>
-        <div className="topbar-right">
-          <Link className="btn" href="/leads">Заявки с сайта</Link>
-          <Link className="btn" href="/rtn">Ростехнадзор отвечает</Link>
-          <Link className="btn" href="/contact-deals">Чеки и контакты</Link>
-          <button className="ghost" onClick={onLogout}>Выйти</button>
-        </div>
       </header>
 
       <div className="toolbar">
