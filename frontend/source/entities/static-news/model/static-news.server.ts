@@ -69,21 +69,32 @@ const SHARD_LOADERS: Record<number, () => Promise<ShardModule>> = {
   60: () => import("../content/articles-60"),
   61: () => import("../content/articles-61"),
   62: () => import("../content/articles-62"),
+  63: () => import("../content/articles-63"),
+  64: () => import("../content/articles-64"),
+  65: () => import("../content/articles-65"),
+  66: () => import("../content/articles-66"),
+  67: () => import("../content/articles-67"),
+  68: () => import("../content/articles-68"),
+  69: () => import("../content/articles-69"),
+  70: () => import("../content/articles-70"),
+  71: () => import("../content/articles-71"),
+  72: () => import("../content/articles-72"),
+  73: () => import("../content/articles-73"),
 };
 
 export const STATIC_NEWS_SLUGS = STATIC_NEWS_INDEX.map((item) => item.slug);
 
 /** Шарды новостей, написанные под конкретное направление платформы. */
 const DIRECTION_SHARDS: Record<string, number[]> = {
-  EXPERTISE: [31, 40, 41, 42, 43, 45, 46],
-  AUDIT_SUPB: [32, 47, 48],
-  TECH_DIAG: [33, 44, 49, 50],
-  DESIGN: [34, 51, 52],
-  SURVEY: [35, 53, 54],
-  ECOLOGY: [36, 55, 56],
-  RESEARCH: [37, 57, 58],
-  CADASTRAL: [38, 59, 60],
-  FORENSIC: [39, 61, 62],
+  EXPERTISE: [31, 40, 41, 42, 43, 45, 46, 73],
+  AUDIT_SUPB: [32, 47, 48, 71],
+  TECH_DIAG: [33, 44, 49, 50, 68],
+  DESIGN: [34, 51, 52, 69],
+  SURVEY: [35, 53, 54, 67],
+  ECOLOGY: [36, 55, 56, 65],
+  RESEARCH: [37, 57, 58, 72],
+  CADASTRAL: [38, 59, 60, 64],
+  FORENSIC: [39, 61, 62, 70],
 };
 
 export function getStaticNewsByDirection(direction: string, limit = 12): ArticleListItem[] {
