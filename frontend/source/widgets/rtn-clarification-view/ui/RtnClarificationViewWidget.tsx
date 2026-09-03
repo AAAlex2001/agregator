@@ -20,6 +20,7 @@ import { RtnClarificationReactions } from "@/source/features/rtn-clarification-r
 import { ReportChangeModal } from "@/source/features/rtn-feedback";
 import { extractToc } from "@/source/features/article-view";
 import { RtnRelatedList } from "./RtnRelatedList";
+import { RtnTaxonomyDisclosure } from "./RtnTaxonomyDisclosure";
 import s from "./RtnClarificationViewWidget.module.scss";
 
 interface Props {
@@ -42,12 +43,6 @@ export function RtnClarificationViewWidget({
   const [reportOpen, setReportOpen] = useState(false);
   const sectionHref = `${sectionHrefPrefix}/rtn`;
   const dateLabel = formatDateRu(clarification.published_at);
-  const taxonomyChips = [
-    ...clarification.oversight_areas,
-    ...clarification.industries,
-    ...clarification.activities,
-    ...clarification.object_types,
-  ];
   const parsedAnswer = extractToc(
     `<h2>Ответ Ростехнадзора</h2>${clarification.answer_html}`,
   );
@@ -114,15 +109,12 @@ export function RtnClarificationViewWidget({
           ) : null}
         </div>
 
-        {taxonomyChips.length > 0 && (
-          <div className={s.taxonomyChips}>
-            {taxonomyChips.map((chip) => (
-              <span key={chip.value} className={s.taxonomyChip}>
-                {chip.label}
-              </span>
-            ))}
-          </div>
-        )}
+        <RtnTaxonomyDisclosure
+          oversightAreas={clarification.oversight_areas}
+          industries={clarification.industries}
+          activities={clarification.activities}
+          objectTypes={clarification.object_types}
+        />
         {clarification.tags.length > 0 ? (
           <div className={s.tags}>
             {clarification.tags.map((tag) => (

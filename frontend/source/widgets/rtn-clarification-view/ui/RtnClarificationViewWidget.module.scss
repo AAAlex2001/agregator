@@ -89,22 +89,6 @@ $scroll-offset: 120px;
   justify-content: center;
 }
 
-.taxonomyChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.taxonomyChip {
-  display: inline-flex;
-  font-size: 12px;
-  color: #525969;
-  background: #f4f5f8;
-  border-radius: 12px;
-  padding: 4px 12px;
-}
-
 .tags {
   display: flex;
   flex-wrap: wrap;
