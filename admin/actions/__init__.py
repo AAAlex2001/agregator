@@ -2,12 +2,11 @@
 
 from fastapi import FastAPI
 
-from actions import accounts, expert_room, mailing, support
+from actions import accounts, expert_room, support
 
 
 def setup_action_routes(app: FastAPI) -> None:
-    "Подключает все action-роуты (аккаунты, поддержка, чат исполнителей, рассылка) к приложению."
+    "Подключает все action-роуты (аккаунты, поддержка, чат исполнителей) к приложению."
     accounts.setup(app)
     support.setup(app)
     expert_room.setup(app)
-    mailing.setup(app)

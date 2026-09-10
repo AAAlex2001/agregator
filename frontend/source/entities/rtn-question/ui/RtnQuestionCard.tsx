@@ -4,11 +4,20 @@ import { usePathname } from "next/navigation";
 import type { RtnQuestion, RtnQuestionStatus } from "../model/types";
 import Button from "@/source/shared/ui/Button";
 import { ListCard } from "@/source/shared/ui/ListCard";
+import s from "./RtnQuestionCard.module.scss";
 
 const STATUS: Record<RtnQuestionStatus, { label: string; color: string; background: string }> = {
   NEW: { label: "Передан на рассмотрение", color: "#9c5b00", background: "#fff3df" },
-  PUBLISHED: { label: "Ответ опубликован", color: "#237a43", background: "#e9f7ee" },
-  DISMISSED: { label: "Рассмотрение завершено", color: "#666d78", background: "#eef0f3" },
+  IN_REVIEW: { label: "В работе", color: "#1f5fbf", background: "#e8f1fd" },
+  PUBLISHED: { label: "Обработан", color: "#237a43", background: "#e9f7ee" },
+  DISMISSED: { label: "Отклонён", color: "#8a1a1a", background: "#f7e6e6" },
+};
+
+const ANSWER_LABEL: Record<RtnQuestionStatus, string> = {
+  NEW: "Ожидает рассмотрения",
+  IN_REVIEW: "Готовим ответ",
+  PUBLISHED: "Опубликован",
+  DISMISSED: "Не опубликован",
 };
 
 function formatDate(value: string): string {
@@ -33,6 +42,14 @@ export function RtnQuestionCard({ question }: { question: RtnQuestion }) {
       statusColor={status.color}
       statusBg={status.background}
       title={question.question_text}
+      leftExtra={
+        question.status === "DISMISSED" && question.dismiss_reason ? (
+          <div className={s.reason}>
+            <span className={s.reasonLabel}>Причина отклонения</span>
+            <p className={s.reasonText}>{question.dismiss_reason}</p>
+          </div>
+        ) : null
+      }
       bottomLeftLabel="Email для ответа"
       bottomLeftValue={question.contact_email || "Не указан"}
       rightItems={[
@@ -46,9 +63,8 @@ export function RtnQuestionCard({ question }: { question: RtnQuestion }) {
         },
         {
           label: "Официальный ответ",
-          value: question.answer_title ?? (
-            question.status === "NEW" ? "Ожидает рассмотрения" : "Не опубликован"
-          ),
+          value: question.answer_title ?? ANSWER_LABEL[question.status],
+          valueAccent: question.status === "PUBLISHED",
         },
       ]}
       actions={answerHref && (

@@ -23,9 +23,10 @@ class EmailConfig(BaseSettings):
     public_base_url: str = "https://plus-resurs.com"
     mailing_token_secret: str | None = None
 
-    mailing_daily_limit: int = 0
-    mailing_chunk_size: int = 200
-    mailing_chunk_pause_seconds: float = 1.0
+    admin_notify_emails: str = (
+        "sasha_tolstov_2001@mail.ru,av-expertiza@yandex.ru,a.astraxantseva@yandex.ru"
+    )
+
 
     @model_validator(mode="after")
     def fill_defaults(self) -> "EmailConfig":
@@ -34,6 +35,11 @@ class EmailConfig(BaseSettings):
         if not self.mailing_token_secret:
             object.__setattr__(self, "mailing_token_secret", self.unisender_go_api_key)
         return self
+
+    @property
+    def admin_recipients(self) -> list[str]:
+        "Адреса, куда уходят служебные уведомления о новых обращениях с сайта."
+        return [address.strip() for address in self.admin_notify_emails.split(",") if address.strip()]
 
 
 email_config = EmailConfig()

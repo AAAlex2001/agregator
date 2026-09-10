@@ -167,6 +167,7 @@ class RtnQuestionDto(BaseModel):
     question_text: str
     contact_email: str
     status: RtnQuestionStatus
+    dismiss_reason: str
     answered_clarification_id: int | None
     answer_title: str | None
     answer_slug: str | None

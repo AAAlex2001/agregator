@@ -1,6 +1,6 @@
 "Публичные ручки соц-функций разъяснения РТН: обсуждение, реакции на комментарии, вопрос, отчёт об изменении."
 
-from fastapi import APIRouter, Depends, File, Query, Response, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Query, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -23,6 +23,7 @@ from schemas.rtn import (
     RtnQuestionCreate,
     RtnQuestionDto,
 )
+from services.email import EmailDispatcher, SendRtnQuestionAdminEmailUseCase
 from services.file_uploads import save_uploaded_file
 from services.rtn import (
     RtnChangeReportRepository,
@@ -273,13 +274,15 @@ async def report_change(
 @router.post("/public/rtn/questions", status_code=status.HTTP_201_CREATED)
 async def submit_question(
     data: RtnQuestionCreate,
+    background_tasks: BackgroundTasks,
     user_id: int | None = Depends(get_current_user_optional),
     visitor_key: str = Depends(get_visitor_key),
     db: AsyncSession = Depends(get_db),
 ) -> Response:
-    "Форма «Не нашли ответ?» — вопрос уходит в очередь модерации админки."
+    "Форма «Не нашли ответ?» — вопрос уходит в очередь модерации админки и на почту модераторам."
     current_key = interaction_key(user_id, visitor_key)
-    use_case = SubmitRtnQuestionUseCase(RtnQuestionRepository(db))
+    notifier = SendRtnQuestionAdminEmailUseCase(EmailDispatcher(background_tasks))
+    use_case = SubmitRtnQuestionUseCase(RtnQuestionRepository(db), notifier)
     await use_case.execute(user_id, current_key, data.question_text, data.contact_email)
     return Response(status_code=status.HTTP_201_CREATED)
 
@@ -298,6 +301,7 @@ async def list_my_questions(
             question_text=item.question.question_text,
             contact_email=item.contact_email,
             status=item.question.status,
+            dismiss_reason=item.question.dismiss_reason,
             answered_clarification_id=item.question.answered_clarification_id,
             answer_title=item.answer_title,
             answer_slug=item.answer_slug,

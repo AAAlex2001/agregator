@@ -14,31 +14,3 @@ class BroadcastResult(BaseModel):
     "Результат массовой рассылки: сколько in-app уведомлений создано и сколько писем поставлено в очередь."
     notifications_sent: int
     emails_queued: int
-
-
-class ImportStartedResult(BaseModel):
-    "Импорт базы запущен в фоне. Прогресс — через /companies/stats (растущий счётчик)."
-    started: bool = True
-
-
-class CompaniesStatsResponse(BaseModel):
-    "Состояние базы: всего компаний, пригодны к рассылке (действующие с email), уже отправлено, осталось."
-    total: int
-    sendable: int
-    sent: int
-    remaining: int
-
-
-class SendBatchRequest(BaseModel):
-    "Рассылка: тема, текст, презентация (опц.). Либо пачка непосланных (batch_size), либо явный диапазон позиций range_from..range_to."
-    subject: str = Field(..., min_length=1, max_length=300)
-    body_text: str = Field(..., min_length=1, max_length=5000)
-    batch_size: int = Field(100, ge=1, le=10000)
-    presentation_url: str | None = Field(None, max_length=500)
-    range_from: int | None = Field(None, ge=1)
-    range_to: int | None = Field(None, ge=1)
-
-
-class SendBatchQueuedResult(BaseModel):
-    "Пачка поставлена на отправку в фоне."
-    queued: bool = True

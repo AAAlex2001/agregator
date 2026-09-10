@@ -3,7 +3,6 @@
 from models.account import Account, UserRole
 from models.base import Base
 from models.chat import Chat, ChatMessage, ExpertRoomBan, ExpertRoomMessage
-from models.company import Company
 from models.customer import Customer
 from models.expert import Expert
 from models.landing import (
@@ -39,7 +38,7 @@ __all__ = [
     "Account",
     "BadgeVariant",
     "Base",
-    "Company", "Customer",
+    "Customer",
     "Chat", "ChatMessage",
     "Expert",
     "LicenseHolder",

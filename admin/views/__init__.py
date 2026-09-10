@@ -4,7 +4,6 @@ from typing import Any
 
 from views.accounts import AccountAdmin, PasswordResetCodeAdmin, SessionAdmin
 from views.billing import PaymentAdmin, PricingPlanAdmin, UserSubscriptionAdmin
-from views.campaigns import CompanyAdmin, MailingView
 from views.chats import (
     ChatAdmin,
     ExpertRoomBanAdmin,
@@ -58,6 +57,4 @@ ALL_VIEWS: list[Any] = [
     ExpertRoomChatView,
     ExpertRoomMessageAdmin,
     ExpertRoomBanAdmin,
-    MailingView,
-    CompanyAdmin,
 ]

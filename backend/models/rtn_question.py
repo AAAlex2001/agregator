@@ -10,6 +10,7 @@ from models.base import Base
 class RtnQuestionStatus(str, PyEnum):
     "Статус обработки вопроса, заданного через форму «Не нашли ответ?»."
     NEW = "NEW"
+    IN_REVIEW = "IN_REVIEW"
     PUBLISHED = "PUBLISHED"
     DISMISSED = "DISMISSED"
 
@@ -33,6 +34,9 @@ class RtnQuestion(Base):
     )
     answered_clarification_id: Mapped[int | None] = mapped_column(
         ForeignKey("rtn_clarifications.id", ondelete="SET NULL"), nullable=True
+    )
+    dismiss_reason: Mapped[str] = mapped_column(
+        String(1000), nullable=False, default="", server_default=""
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False

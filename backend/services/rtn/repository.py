@@ -530,6 +530,29 @@ class RtnQuestionRepository:
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
 
+    async def get_answer(self, question: RtnQuestion) -> tuple[str, str] | None:
+        "Заголовок и slug разъяснения, которым закрыт вопрос."
+        if question.answered_clarification_id is None:
+            return None
+        query = select(RtnClarification.title, RtnClarification.slug).where(
+            RtnClarification.id == question.answered_clarification_id
+        )
+        return (await self.db.execute(query)).first()
+
+    async def save_status(
+        self,
+        question: RtnQuestion,
+        status: RtnQuestionStatus,
+        dismiss_reason: str,
+        clarification_id: int | None = None,
+    ) -> RtnQuestion:
+        question.status = status
+        question.dismiss_reason = dismiss_reason
+        if clarification_id is not None:
+            question.answered_clarification_id = clarification_id
+        await self.db.flush()
+        return question
+
 
 class RtnChangeReportRepository:
     "Сообщения об устаревших разъяснениях через форму «Сообщить об изменении»."

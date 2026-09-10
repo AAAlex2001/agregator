@@ -72,7 +72,11 @@ export const loadClarification = async (id: number): Promise<RtnClarificationIn>
   };
 };
 
-export const saveClarification = async (id: number | null, data: RtnClarificationOut) => {
+export const saveClarification = async (
+  id: number | null,
+  data: RtnClarificationOut,
+  answeredQuestionId: number | null = null,
+) => {
   const response = await fetch(id ? `${base}/api/rtn/clarifications/${id}` : `${base}/api/rtn/clarifications`, {
     method: id ? "PUT" : "POST",
     body: JSON.stringify({
@@ -101,6 +105,7 @@ export const saveClarification = async (id: number | null, data: RtnClarificatio
       meta_description: data.metaDescription,
       meta_keywords: data.metaKeywords,
       published_at: data.publishedAt,
+      answered_question_id: answeredQuestionId,
     }),
     headers: { "Content-Type": "application/json" },
   });

@@ -71,6 +71,16 @@ class OrderUpdatedContext(BaseContext):
     changes_summary: str
 
 
+class RtnQuestionAdminContext(BaseContext):
+    "Служебное письмо модераторам о новом вопросе в рубрику «Ростехнадзор отвечает»."
+    question_id: int
+    question_text: str
+    contact_email: str
+    author: str
+    created_at: str
+    cta_url: str
+
+
 class ChatMessageContext(BaseContext):
     recipient_greeting: str
     sender_name: str

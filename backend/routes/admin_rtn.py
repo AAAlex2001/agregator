@@ -20,9 +20,15 @@ from schemas.admin_rtn import (
     RtnClarificationWrite,
     RtnQuestionListOut,
     RtnQuestionOut,
+    RtnQuestionStatusWrite,
 )
 from services.file_uploads import save_uploaded_file
 from services.rtn import RtnChangeReportRepository, RtnQuestionRepository, RtnRepository
+from services.rtn.use_cases.manage_questions import (
+    AnswerRtnQuestionUseCase,
+    ChangeRtnQuestionStatusUseCase,
+    ReasonRequiredError,
+)
 from services.rtn.use_cases.save_clarification import SaveRtnClarificationUseCase, SlugTakenError
 from services.tags import TagRepository
 
@@ -46,6 +52,19 @@ def parse_enum[E: Enum](enum_cls: type[E], raw: str) -> E:
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Недопустимое значение: {raw}",
         )
+
+
+async def link_answered_question(
+    data: RtnClarificationWrite,
+    clarification_id: int,
+    db: AsyncSession,
+) -> None:
+    "Разъяснение сохранено из очереди вопросов — вопрос закрывается и получает ссылку на ответ."
+    if data.answered_question_id is None:
+        return
+    await AnswerRtnQuestionUseCase(RtnQuestionRepository(db)).execute(
+        data.answered_question_id, clarification_id
+    )
 
 
 async def to_out(clarification: RtnClarification, repo: RtnRepository) -> RtnClarificationOut:
@@ -128,6 +147,7 @@ async def create_clarification(
         clarification = await SaveRtnClarificationUseCase(repo, TagRepository(db)).create(data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
+    await link_answered_question(data, clarification.id, db)
     return await to_out(clarification, repo)
 
 
@@ -145,6 +165,7 @@ async def update_clarification(
         clarification = await SaveRtnClarificationUseCase(repo, TagRepository(db)).update(clarification, data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
+    await link_answered_question(data, clarification.id, db)
     return await to_out(clarification, repo)
 
 
@@ -180,33 +201,43 @@ async def list_questions(
     db: AsyncSession = Depends(get_db),
 ) -> RtnQuestionListOut:
     "Очередь вопросов из формы «Не нашли ответ?»."
-    rows = await RtnQuestionRepository(db).list_all(
-        parse_enum(RtnQuestionStatus, status_filter) if status_filter else None
-    )
-    items = [to_question_out(row) for row in rows]
+    repo = RtnQuestionRepository(db)
+    rows = await repo.list_all(parse_enum(RtnQuestionStatus, status_filter) if status_filter else None)
+    items = [await to_question_out(row, repo) for row in rows]
     return RtnQuestionListOut(items=items)
 
 
 @router.get("/questions/{question_id}", response_model=RtnQuestionOut)
 async def get_question(question_id: int, db: AsyncSession = Depends(get_db)) -> RtnQuestionOut:
-    question = await RtnQuestionRepository(db).get_by_id(question_id)
+    repo = RtnQuestionRepository(db)
+    question = await repo.get_by_id(question_id)
     if question is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
-    return to_question_out(question)
+    return await to_question_out(question, repo)
 
 
 @router.patch("/questions/{question_id}", response_model=RtnQuestionOut)
 async def update_question_status(
     question_id: int,
-    status_value: str = Query(..., alias="status"),
+    data: RtnQuestionStatusWrite,
     db: AsyncSession = Depends(get_db),
 ) -> RtnQuestionOut:
     repo = RtnQuestionRepository(db)
     question = await repo.get_by_id(question_id)
     if question is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
-    question.status = parse_enum(RtnQuestionStatus, status_value)
-    return to_question_out(question)
+    try:
+        question = await ChangeRtnQuestionStatusUseCase(repo).execute(
+            question,
+            parse_enum(RtnQuestionStatus, data.status),
+            data.dismiss_reason,
+        )
+    except ReasonRequiredError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Укажите причину отклонения — её увидит автор вопроса",
+        )
+    return await to_question_out(question, repo)
 
 
 @router.get("/change-reports", response_model=RtnChangeReportListOut)
@@ -236,13 +267,17 @@ async def update_change_report_status(
     return to_change_report_out(report)
 
 
-def to_question_out(question: RtnQuestion) -> RtnQuestionOut:
+async def to_question_out(question: RtnQuestion, repo: RtnQuestionRepository) -> RtnQuestionOut:
+    answer = await repo.get_answer(question)
     return RtnQuestionOut(
         id=question.id,
         question_text=question.question_text,
         contact_email=question.contact_email,
         status=question.status.value,
+        dismiss_reason=question.dismiss_reason,
         answered_clarification_id=question.answered_clarification_id,
+        answer_title=answer[0] if answer else None,
+        answer_slug=answer[1] if answer else None,
         created_at=question.created_at,
     )
 

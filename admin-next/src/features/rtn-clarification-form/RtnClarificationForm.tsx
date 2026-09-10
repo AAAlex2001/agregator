@@ -98,7 +98,10 @@ export function RtnClarificationForm({
   id: number | null;
   fromQuestionId?: number | null;
 }) {
-  const { state, setField, toggleTaxonomy, toggleTag, setRegulations, submit } = useRtnClarificationForm(id);
+  const { state, setField, toggleTaxonomy, toggleTag, setRegulations, submit } = useRtnClarificationForm(
+    id,
+    fromQuestionId,
+  );
   const [taxonomy, setTaxonomy] = useState<RtnTaxonomy | null>(null);
   const [allTags, setAllTags] = useState<string[]>([]);
 

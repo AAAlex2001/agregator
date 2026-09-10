@@ -1,0 +1,22 @@
+.reason {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f7e6e6;
+}
+
+.reasonLabel {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #8a1a1a;
+}
+
+.reasonText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5f2020;
+}

@@ -86,7 +86,7 @@ const validate = (fields: RtnClarificationOut): Errors => {
   return errors;
 };
 
-export const useRtnClarificationForm = (id: number | null) => {
+export const useRtnClarificationForm = (id: number | null, answeredQuestionId: number | null = null) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, id === null, makeInitial);
 
@@ -117,7 +117,7 @@ export const useRtnClarificationForm = (id: number | null) => {
     }
     dispatch({ type: "SAVING" });
     try {
-      await saveClarification(id, state.fields);
+      await saveClarification(id, state.fields, answeredQuestionId);
       router.push("/rtn");
       router.refresh();
     } catch (e) {

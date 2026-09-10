@@ -35,6 +35,7 @@ class RtnClarificationWrite(BaseModel):
     meta_description: str = ""
     meta_keywords: str = ""
     published_at: datetime | None = None
+    answered_question_id: int | None = None
 
 
 class RtnClarificationOut(RtnClarificationWrite):
@@ -66,13 +67,22 @@ class RtnQuestionOut(BaseModel):
     id: int
     question_text: str
     contact_email: str
-    status: Literal["NEW", "PUBLISHED", "DISMISSED"]
+    status: Literal["NEW", "IN_REVIEW", "PUBLISHED", "DISMISSED"]
+    dismiss_reason: str
     answered_clarification_id: int | None
+    answer_slug: str | None
+    answer_title: str | None
     created_at: datetime
 
 
 class RtnQuestionListOut(BaseModel):
     items: list[RtnQuestionOut]
+
+
+class RtnQuestionStatusWrite(BaseModel):
+    "Смена статуса вопроса из админки: при отклонении обязательна причина для заявителя."
+    status: Literal["NEW", "IN_REVIEW", "PUBLISHED", "DISMISSED"]
+    dismiss_reason: str = Field(default="", max_length=1000)
 
 
 class RtnChangeReportOut(BaseModel):
@@ -102,4 +112,5 @@ __all__ = [
     "RtnClarificationWrite",
     "RtnQuestionListOut",
     "RtnQuestionOut",
+    "RtnQuestionStatusWrite",
 ]
