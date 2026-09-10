@@ -30,6 +30,12 @@ export const listQuestions = async (status?: RtnQuestionStatus): Promise<RtnQues
   return data.items.map(toQuestion);
 };
 
+export const deleteQuestion = async (id: number): Promise<void> => {
+  const response = await fetch(`${base}/api/rtn/questions/${id}`, { method: "DELETE" });
+  if (response.status === 401) throw new Error("UNAUTHORIZED");
+  if (!response.ok) throw new Error("Не удалось удалить вопрос");
+};
+
 export const setQuestionStatus = async (
   id: number,
   status: RtnQuestionStatus,

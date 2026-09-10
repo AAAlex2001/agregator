@@ -174,6 +174,37 @@ class RtnQuestionDto(BaseModel):
     created_at: datetime
 
 
+class PublicRtnQuestionDto(BaseModel):
+    "Вопрос в открытой ленте: без контактов автора, со ссылкой на официальный ответ."
+    id: int
+    question_text: str
+    status: RtnQuestionStatus
+    answer_title: str | None
+    answer_slug: str | None
+    replies_count: int
+    created_at: datetime
+
+
+class RtnQuestionReplyDto(BaseModel):
+    "Ответ сообщества: документ обязателен, текст — пояснение к нему."
+    id: int
+    text: str
+    attachments: list[AttachmentDto]
+    author_name: str
+    created_at: datetime
+
+
+class RtnQuestionReplyCreate(BaseModel):
+    "Ответ на вопрос принимается только с приложенным документом."
+    text: str = Field(default="", max_length=4000)
+    attachments: list[AttachmentDto] = Field(min_length=1)
+
+
+class RtnQuestionSubscribeRequest(BaseModel):
+    "Подписка на публикацию официального ответа по вопросу."
+    email: str = Field(min_length=5, max_length=255)
+
+
 class RtnChangeReportCreate(BaseModel):
     "Форма «Сообщить об изменении»."
     description: str = Field(min_length=1, max_length=4000)

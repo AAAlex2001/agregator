@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RtnQuestionComposer } from "@/source/features/rtn-feedback";
+import { RtnPublicQuestionList } from "@/source/features/rtn-public-questions";
 import { RtnQuestionList } from "@/source/features/rtn-question-list";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
@@ -16,6 +17,7 @@ interface Props {
 
 export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Props) {
   const [refreshKey, setRefreshKey] = useState(0);
+  const answerHrefPrefix = catalogHref.startsWith("/landing") ? "/landing" : "";
 
   return (
     <div className={s.wrapper}>
@@ -46,19 +48,27 @@ export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Pro
         </div>
       </section>
 
-      {authenticated ? (
-          <section className={s.questionsSection}>
-            <div className={s.sectionHead}>
-              <div>
-                <Title text="Ваши вопросы" as="h2" />
-                <Subtitle text="Следите за рассмотрением обращений и публикацией официальных ответов." />
-              </div>
+      {authenticated && (
+        <section className={s.questionsSection}>
+          <div className={s.sectionHead}>
+            <div>
+              <Title text="Ваши вопросы" as="h2" />
+              <Subtitle text="Следите за рассмотрением обращений и публикацией официальных ответов." />
             </div>
-            <RtnQuestionList refreshKey={refreshKey} />
-          </section>
-      ) : (
-        null
+          </div>
+          <RtnQuestionList refreshKey={refreshKey} />
+        </section>
       )}
+
+      <section className={s.questionsSection}>
+        <div className={s.sectionHead}>
+          <div>
+            <Title text="Вопросы на рассмотрении" as="h2" />
+            <Subtitle text="Обращения, которые уже переданы в работу. Если у вас есть ответ ведомства по такому вопросу — приложите документ, а если ждёте ответа — подпишитесь на публикацию." />
+          </div>
+        </div>
+        <RtnPublicQuestionList refreshKey={refreshKey} answerHrefPrefix={answerHrefPrefix} />
+      </section>
     </div>
   );
 }

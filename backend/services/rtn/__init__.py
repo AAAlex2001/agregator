@@ -5,7 +5,9 @@ from services.rtn.repository import (
     RtnCommentReactionRepository,
     RtnCommentRepository,
     RtnListFilters,
+    RtnQuestionReplyRepository,
     RtnQuestionRepository,
+    RtnQuestionSubscriptionRepository,
     RtnRepository,
     RtnTaxonomySelection,
 )
@@ -17,7 +19,9 @@ __all__ = [
     "RtnCommentReactionRepository",
     "RtnCommentRepository",
     "RtnListFilters",
+    "RtnQuestionReplyRepository",
     "RtnQuestionRepository",
+    "RtnQuestionSubscriptionRepository",
     "RtnRepository",
     "RtnTaxonomySelection",
 ]

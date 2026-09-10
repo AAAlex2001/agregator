@@ -2,7 +2,17 @@
 
 from enum import Enum
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -22,8 +32,14 @@ from schemas.admin_rtn import (
     RtnQuestionOut,
     RtnQuestionStatusWrite,
 )
+from services.email import EmailDispatcher, SendRtnAnswerPublishedEmailUseCase
 from services.file_uploads import save_uploaded_file
-from services.rtn import RtnChangeReportRepository, RtnQuestionRepository, RtnRepository
+from services.rtn import (
+    RtnChangeReportRepository,
+    RtnQuestionRepository,
+    RtnQuestionSubscriptionRepository,
+    RtnRepository,
+)
 from services.rtn.use_cases.manage_questions import (
     AnswerRtnQuestionUseCase,
     ChangeRtnQuestionStatusUseCase,
@@ -58,13 +74,17 @@ async def link_answered_question(
     data: RtnClarificationWrite,
     clarification_id: int,
     db: AsyncSession,
+    background_tasks: BackgroundTasks,
 ) -> None:
     "Разъяснение сохранено из очереди вопросов — вопрос закрывается и получает ссылку на ответ."
     if data.answered_question_id is None:
         return
-    await AnswerRtnQuestionUseCase(RtnQuestionRepository(db)).execute(
-        data.answered_question_id, clarification_id
+    use_case = AnswerRtnQuestionUseCase(
+        RtnQuestionRepository(db),
+        RtnQuestionSubscriptionRepository(db),
+        SendRtnAnswerPublishedEmailUseCase(EmailDispatcher(background_tasks)),
     )
+    await use_case.execute(data.answered_question_id, clarification_id)
 
 
 async def to_out(clarification: RtnClarification, repo: RtnRepository) -> RtnClarificationOut:
@@ -140,6 +160,7 @@ async def get_clarification(clarification_id: int, db: AsyncSession = Depends(ge
 @router.post("/clarifications", response_model=RtnClarificationOut, status_code=status.HTTP_201_CREATED)
 async def create_clarification(
     data: RtnClarificationWrite,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ) -> RtnClarificationOut:
     repo = RtnRepository(db)
@@ -147,7 +168,7 @@ async def create_clarification(
         clarification = await SaveRtnClarificationUseCase(repo, TagRepository(db)).create(data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
-    await link_answered_question(data, clarification.id, db)
+    await link_answered_question(data, clarification.id, db, background_tasks)
     return await to_out(clarification, repo)
 
 
@@ -155,6 +176,7 @@ async def create_clarification(
 async def update_clarification(
     clarification_id: int,
     data: RtnClarificationWrite,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ) -> RtnClarificationOut:
     repo = RtnRepository(db)
@@ -165,7 +187,7 @@ async def update_clarification(
         clarification = await SaveRtnClarificationUseCase(repo, TagRepository(db)).update(clarification, data)
     except SlugTakenError:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Такой slug уже занят")
-    await link_answered_question(data, clarification.id, db)
+    await link_answered_question(data, clarification.id, db, background_tasks)
     return await to_out(clarification, repo)
 
 
@@ -238,6 +260,17 @@ async def update_question_status(
             detail="Укажите причину отклонения — её увидит автор вопроса",
         )
     return await to_question_out(question, repo)
+
+
+@router.delete("/questions/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)) -> Response:
+    "Удаление вопроса из очереди вместе с ответами сообщества и подписками (каскадом)."
+    repo = RtnQuestionRepository(db)
+    question = await repo.get_by_id(question_id)
+    if question is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
+    await repo.delete(question)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/change-reports", response_model=RtnChangeReportListOut)

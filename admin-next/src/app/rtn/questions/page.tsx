@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { RtnQuestion, RtnQuestionStatus, listQuestions, setQuestionStatus } from "@/entities/rtn-question";
+import {
+  RtnQuestion,
+  RtnQuestionStatus,
+  deleteQuestion,
+  listQuestions,
+  setQuestionStatus,
+} from "@/entities/rtn-question";
 
 const STATUS_LABELS: Record<RtnQuestionStatus, string> = {
   NEW: "Новый",
@@ -39,6 +45,17 @@ export default function RtnQuestionsPage() {
       setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
     } catch {
       alert("Не удалось обновить статус");
+    }
+  };
+
+  const remove = async (question: RtnQuestion) => {
+    const preview = question.questionText.slice(0, 60);
+    if (!confirm(`Удалить вопрос № ${question.id} «${preview}»? Это необратимо.`)) return;
+    try {
+      await deleteQuestion(question.id);
+      setItems((prev) => prev.filter((item) => item.id !== question.id));
+    } catch {
+      alert("Не удалось удалить вопрос");
     }
   };
 
@@ -106,6 +123,9 @@ export default function RtnQuestionsPage() {
                   </button>
                   <button className="link danger" onClick={() => dismiss(q.id)}>
                     Отклонить
+                  </button>
+                  <button className="link danger" onClick={() => remove(q)}>
+                    Удалить
                   </button>
                 </td>
               </tr>

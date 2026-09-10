@@ -1,0 +1,190 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty {
+  margin: 0;
+  color: #7a7f8d;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.subscribed {
+  color: #237a43;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.subscribe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f4f6fa;
+}
+
+.subscribeLabel {
+  font-size: 13px;
+  line-height: 18px;
+  color: #525969;
+}
+
+.subscribeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 13px 16px;
+  border: 2px solid #e6e6e6;
+  border-radius: 10px;
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 125%;
+  color: #1a1a1a;
+  background: #ffffff;
+
+  &:focus {
+    outline: none;
+    border-color: #ffb800;
+  }
+}
+
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.replyList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.reply {
+  padding: 14px 16px;
+  border: 1px solid #eceff4;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.replyHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.replyAuthor {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.replyDate {
+  font-size: 12.5px;
+  color: #9aa1ad;
+}
+
+.replyText {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 20px;
+  color: #3a4150;
+}
+
+.files {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  font-size: 13.5px;
+
+  a {
+    color: #c2410c;
+    text-decoration: underline;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px dashed #d9dee7;
+  border-radius: 14px;
+  background: #fafbfd;
+}
+
+.formTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.formHint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: #7a7f8d;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.pending {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #eef1f6;
+    font-size: 13.5px;
+    color: #3a4150;
+  }
+}
+
+.removeFile {
+  border: none;
+  background: none;
+  color: #8a1a1a;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

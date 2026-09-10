@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
 
-from sqlalchemy import Select, Table, case, delete, select, update
+from sqlalchemy import Select, Table, case, delete, func, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,6 +29,8 @@ from models.rtn_clarification_view import RtnClarificationView
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue, RtnCommentReaction
 from models.rtn_question import RtnQuestion, RtnQuestionStatus
+from models.rtn_question_reply import RtnQuestionReply
+from models.rtn_question_subscription import RtnQuestionSubscription
 from models.tag import Tag
 from utils.pagination import paginate_with_has_more
 
@@ -76,6 +78,16 @@ class UserRtnQuestion:
     contact_email: str
     answer_title: str | None
     answer_slug: str | None
+
+
+@dataclass(frozen=True)
+class PublicRtnQuestion:
+    "Вопрос в публичной ленте: сам вопрос, ссылка на официальный ответ и число ответов сообщества."
+
+    question: RtnQuestion
+    answer_title: str | None
+    answer_slug: str | None
+    replies_count: int
 
 
 class RtnRepository:
@@ -552,6 +564,119 @@ class RtnQuestionRepository:
             question.answered_clarification_id = clarification_id
         await self.db.flush()
         return question
+
+    async def delete(self, question: RtnQuestion) -> None:
+        await self.db.delete(question)
+
+    async def list_public(self, limit: int) -> list[PublicRtnQuestion]:
+        "Лента вопросов: взятые в работу и уже закрытые официальным ответом."
+        replies = (
+            select(RtnQuestionReply.question_id, func.count().label("replies_count"))
+            .group_by(RtnQuestionReply.question_id)
+            .subquery()
+        )
+        query = (
+            select(RtnQuestion, RtnClarification.title, RtnClarification.slug, replies.c.replies_count)
+            .outerjoin(
+                RtnClarification,
+                RtnClarification.id == RtnQuestion.answered_clarification_id,
+            )
+            .outerjoin(replies, replies.c.question_id == RtnQuestion.id)
+            .where(
+                RtnQuestion.status.in_(
+                    [RtnQuestionStatus.IN_REVIEW, RtnQuestionStatus.PUBLISHED]
+                )
+            )
+            .order_by(RtnQuestion.created_at.desc())
+            .limit(limit)
+        )
+        result = await self.db.execute(query)
+        return [
+            PublicRtnQuestion(
+                question=question,
+                answer_title=answer_title,
+                answer_slug=answer_slug,
+                replies_count=int(replies_count or 0),
+            )
+            for question, answer_title, answer_slug, replies_count in result.all()
+        ]
+
+    async def get_public_by_id(self, question_id: int) -> RtnQuestion | None:
+        "Вопрос, доступный посетителям: только взятый в работу или закрытый ответом."
+        query = select(RtnQuestion).where(
+            RtnQuestion.id == question_id,
+            RtnQuestion.status.in_([RtnQuestionStatus.IN_REVIEW, RtnQuestionStatus.PUBLISHED]),
+        )
+        return (await self.db.execute(query)).scalar_one_or_none()
+
+
+class RtnQuestionReplyRepository:
+    "Ответы сообщества на опубликованные вопросы."
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def list_for_question(self, question_id: int) -> list[RtnQuestionReply]:
+        query = (
+            select(RtnQuestionReply)
+            .where(RtnQuestionReply.question_id == question_id)
+            .order_by(RtnQuestionReply.created_at.asc(), RtnQuestionReply.id.asc())
+        )
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def add(
+        self,
+        question_id: int,
+        user_id: int | None,
+        visitor_key: str,
+        text: str,
+        attachments: list[Any],
+    ) -> RtnQuestionReply:
+        reply = RtnQuestionReply(
+            question_id=question_id,
+            user_id=user_id,
+            visitor_key=visitor_key,
+            text=text,
+            attachments=attachments,
+        )
+        self.db.add(reply)
+        await self.db.flush()
+        return reply
+
+
+class RtnQuestionSubscriptionRepository:
+    "Подписки на публикацию официального ответа по вопросу."
+
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
+    async def subscribe(self, question_id: int, user_id: int | None, email: str) -> None:
+        query = (
+            pg_insert(RtnQuestionSubscription)
+            .values(
+                question_id=question_id,
+                user_id=user_id,
+                email=email,
+                created_at=datetime.now(UTC),
+            )
+            .on_conflict_do_nothing(constraint="uq_rtn_question_subscription")
+        )
+        await self.db.execute(query)
+
+    async def list_pending(self, question_id: int) -> list[RtnQuestionSubscription]:
+        query = select(RtnQuestionSubscription).where(
+            RtnQuestionSubscription.question_id == question_id,
+            RtnQuestionSubscription.notified_at.is_(None),
+        )
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def mark_notified(self, subscriptions: list[RtnQuestionSubscription]) -> None:
+        now = datetime.now(UTC)
+        for subscription in subscriptions:
+            subscription.notified_at = now
+        await self.db.flush()
 
 
 class RtnChangeReportRepository:

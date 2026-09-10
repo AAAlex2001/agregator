@@ -1,6 +1,16 @@
 "Публичные ручки соц-функций разъяснения РТН: обсуждение, реакции на комментарии, вопрос, отчёт об изменении."
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Query, Response, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+    status,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -9,8 +19,10 @@ from dependencies.visitor import get_visitor_key, interaction_key
 from models.account import UserRole
 from models.rtn_comment import RtnComment
 from models.rtn_comment_reaction import CommentReactionValue
+from models.rtn_question_reply import RtnQuestionReply
 from schemas.rtn import (
     AttachmentDto,
+    PublicRtnQuestionDto,
     RtnChangeReportCreate,
     RtnClarificationReactionRequest,
     RtnClarificationReactionResponse,
@@ -22,6 +34,9 @@ from schemas.rtn import (
     RtnCommentReactionResponse,
     RtnQuestionCreate,
     RtnQuestionDto,
+    RtnQuestionReplyCreate,
+    RtnQuestionReplyDto,
+    RtnQuestionSubscribeRequest,
 )
 from services.email import EmailDispatcher, SendRtnQuestionAdminEmailUseCase
 from services.file_uploads import save_uploaded_file
@@ -31,11 +46,21 @@ from services.rtn import (
     RtnClarificationViewRepository,
     RtnCommentReactionRepository,
     RtnCommentRepository,
+    RtnQuestionReplyRepository,
     RtnQuestionRepository,
+    RtnQuestionSubscriptionRepository,
     RtnRepository,
 )
 from services.rtn.use_cases.clarification_interactions import RtnClarificationInteractionsUseCase
 from services.rtn.use_cases.list_user_questions import ListUserRtnQuestionsUseCase
+from services.rtn.use_cases.question_replies import (
+    AddRtnQuestionReplyUseCase,
+    AttachmentRequiredError,
+    ListPublicRtnQuestionsUseCase,
+    ListRtnQuestionRepliesUseCase,
+    QuestionNotPublicError,
+    SubscribeToRtnQuestionUseCase,
+)
 from services.rtn.use_cases.react_to_comment import ReactToRtnCommentUseCase
 from services.rtn.use_cases.report_change import ReportRtnChangeUseCase
 from services.rtn.use_cases.rtn_comments import RtnCommentsUseCase
@@ -65,6 +90,20 @@ def author_name(comment: RtnComment) -> str:
 
 def is_expert_author(comment: RtnComment) -> bool:
     return comment.user is not None and comment.user.role == UserRole.EXPERT
+
+
+def to_reply_dto(reply: RtnQuestionReply) -> RtnQuestionReplyDto:
+    author = "Аноним"
+    if reply.user is not None:
+        parts = [part for part in (reply.user.first_name, reply.user.last_name) if part]
+        author = " ".join(parts) if parts else "Пользователь"
+    return RtnQuestionReplyDto(
+        id=reply.id,
+        text=reply.text,
+        attachments=reply.attachments,
+        author_name=author,
+        created_at=reply.created_at,
+    )
 
 
 def to_comment_dto(comment: RtnComment, current_user_id: int | None, visitor_key: str | None) -> RtnCommentDto:
@@ -284,6 +323,89 @@ async def submit_question(
     notifier = SendRtnQuestionAdminEmailUseCase(EmailDispatcher(background_tasks))
     use_case = SubmitRtnQuestionUseCase(RtnQuestionRepository(db), notifier)
     await use_case.execute(user_id, current_key, data.question_text, data.contact_email)
+    return Response(status_code=status.HTTP_201_CREATED)
+
+
+@router.get("/public/rtn/questions", response_model=list[PublicRtnQuestionDto])
+async def list_public_questions(db: AsyncSession = Depends(get_db)) -> list[PublicRtnQuestionDto]:
+    "Открытая лента: вопросы, взятые в работу, и вопросы с уже опубликованным ответом."
+    items = await ListPublicRtnQuestionsUseCase(RtnQuestionRepository(db)).execute()
+    return [
+        PublicRtnQuestionDto(
+            id=item.question.id,
+            question_text=item.question.question_text,
+            status=item.question.status,
+            answer_title=item.answer_title,
+            answer_slug=item.answer_slug,
+            replies_count=item.replies_count,
+            created_at=item.question.created_at,
+        )
+        for item in items
+    ]
+
+
+@router.get("/public/rtn/questions/{question_id}/replies", response_model=list[RtnQuestionReplyDto])
+async def list_question_replies(
+    question_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> list[RtnQuestionReplyDto]:
+    "Ответы сообщества: у кого-то уже есть письмо ведомства по этому вопросу."
+    use_case = ListRtnQuestionRepliesUseCase(RtnQuestionRepository(db), RtnQuestionReplyRepository(db))
+    try:
+        replies = await use_case.execute(question_id)
+    except QuestionNotPublicError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
+    return [to_reply_dto(reply) for reply in replies]
+
+
+@router.post(
+    "/public/rtn/questions/{question_id}/replies",
+    response_model=RtnQuestionReplyDto,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_question_reply(
+    question_id: int,
+    data: RtnQuestionReplyCreate,
+    user_id: int | None = Depends(get_current_user_optional),
+    visitor_key: str = Depends(get_visitor_key),
+    db: AsyncSession = Depends(get_db),
+) -> RtnQuestionReplyDto:
+    "Поделиться полученным ответом: комментарий принимается только вместе с документом."
+    current_key = interaction_key(user_id, visitor_key)
+    use_case = AddRtnQuestionReplyUseCase(RtnQuestionRepository(db), RtnQuestionReplyRepository(db))
+    try:
+        reply = await use_case.execute(
+            question_id,
+            user_id,
+            current_key,
+            data.text,
+            [item.model_dump() for item in data.attachments],
+        )
+    except QuestionNotPublicError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
+    except AttachmentRequiredError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Приложите документ — без него ответ не публикуется",
+        )
+    return to_reply_dto(reply)
+
+
+@router.post("/public/rtn/questions/{question_id}/subscribe", status_code=status.HTTP_201_CREATED)
+async def subscribe_to_question(
+    question_id: int,
+    data: RtnQuestionSubscribeRequest,
+    user_id: int | None = Depends(get_current_user_optional),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
+    "Уведомить письмом, когда по вопросу выйдет официальный ответ."
+    use_case = SubscribeToRtnQuestionUseCase(
+        RtnQuestionRepository(db), RtnQuestionSubscriptionRepository(db)
+    )
+    try:
+        await use_case.execute(question_id, user_id, data.email)
+    except QuestionNotPublicError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Вопрос не найден")
     return Response(status_code=status.HTTP_201_CREATED)
 
 

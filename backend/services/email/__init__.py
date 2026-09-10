@@ -11,6 +11,7 @@ from services.email.use_cases.send_new_order_email import SendNewOrderEmailUseCa
 from services.email.use_cases.send_order_updated_email import SendOrderUpdatedEmailUseCase
 from services.email.use_cases.send_response_created_email import SendResponseCreatedEmailUseCase
 from services.email.use_cases.send_response_updated_email import SendResponseUpdatedEmailUseCase
+from services.email.use_cases.send_rtn_answer_published_email import SendRtnAnswerPublishedEmailUseCase
 from services.email.use_cases.send_rtn_question_admin_email import SendRtnQuestionAdminEmailUseCase
 
 __all__ = [
@@ -27,5 +28,6 @@ __all__ = [
     "SendOrderUpdatedEmailUseCase",
     "SendResponseCreatedEmailUseCase",
     "SendResponseUpdatedEmailUseCase",
+    "SendRtnAnswerPublishedEmailUseCase",
     "SendRtnQuestionAdminEmailUseCase",
 ]
