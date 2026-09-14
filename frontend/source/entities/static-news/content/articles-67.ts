@@ -2,7 +2,6 @@ import type { StaticNewsArticle } from "../model/types";
 import { defineStaticNewsArticle as article } from "./article-factory";
 
 const grk = "https://www.consultant.ru/document/cons_doc_LAW_51040/";
-const pp87 = "https://www.consultant.ru/document/cons_doc_LAW_75048/";
 const sp47 = "https://docs.cntd.ru/document/456045544";
 const minstroy = "https://minstroyrf.gov.ru/";
 const nopriz = "https://nopriz.ru/";

@@ -80,6 +80,16 @@ const SHARD_LOADERS: Record<number, () => Promise<ShardModule>> = {
   71: () => import("../content/articles-71"),
   72: () => import("../content/articles-72"),
   73: () => import("../content/articles-73"),
+  74: () => import("../content/articles-74"),
+  75: () => import("../content/articles-75"),
+  76: () => import("../content/articles-76"),
+  77: () => import("../content/articles-77"),
+  78: () => import("../content/articles-78"),
+  79: () => import("../content/articles-79"),
+  80: () => import("../content/articles-80"),
+  81: () => import("../content/articles-81"),
+  82: () => import("../content/articles-82"),
+  83: () => import("../content/articles-83"),
 };
 
 export const STATIC_NEWS_SLUGS = STATIC_NEWS_INDEX.map((item) => item.slug);
@@ -89,7 +99,7 @@ const DIRECTION_SHARDS: Record<string, number[]> = {
   EXPERTISE: [31, 40, 41, 42, 43, 45, 46, 73],
   AUDIT_SUPB: [32, 47, 48, 71],
   TECH_DIAG: [33, 44, 49, 50, 68],
-  DESIGN: [34, 51, 52, 69],
+  DESIGN: [34, 51, 52, 69, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83],
   SURVEY: [35, 53, 54, 67],
   ECOLOGY: [36, 55, 56, 65],
   RESEARCH: [37, 57, 58, 72],

@@ -1,4 +1,3 @@
-import type { StaticNewsArticle } from "../model/types";
 import { defineStaticNewsArticle as article } from "./article-factory";
 
 const commonSupervision = "https://www.gosnadzor.ru/industrial/common/";

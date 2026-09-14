@@ -2,7 +2,6 @@ import type { StaticNewsArticle } from "../model/types";
 import { defineStaticNewsArticle as article } from "./article-factory";
 
 const rosakkred = "https://fsa.gov.ru/";
-const rosstandart = "https://www.rst.gov.ru/";
 const minstroy = "https://minstroyrf.gov.ru/";
 const sp47 = "https://docs.cntd.ru/document/456045544";
 const gost = "https://protect.gost.ru/";

@@ -5,7 +5,6 @@ const grk = "https://www.consultant.ru/document/cons_doc_LAW_51040/";
 const pp87 = "https://www.consultant.ru/document/cons_doc_LAW_75048/";
 const fz123 = "https://www.consultant.ru/document/cons_doc_LAW_78699/";
 const minstroy = "https://minstroyrf.gov.ru/";
-const nopriz = "https://nopriz.ru/";
 const egrz = "https://egrz.ru/";
 const gge = "https://gge.ru/";
 
