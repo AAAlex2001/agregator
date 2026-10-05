@@ -1,3 +1,4 @@
+import { MAIN_PAGE_TITLE, MAIN_PAGE_DESCRIPTION } from "@/source/shared/config/mainPageContent";
 import { SITE_URL } from "@/source/shared/api/config";
 import type { ServiceLandingFaqItem } from "./ServiceLandingFaq";
 
@@ -13,8 +14,7 @@ export default function StructuredData({ faq = [] }: Props) {
     name: "Ресурс-Плюс",
     url: SITE_URL,
     logo: `${SITE_URL}/og-default.png`,
-    description:
-      "Тендерная платформа для заказа экспертизы промышленной безопасности опасных производственных объектов. Аттестованные исполнители Ростехнадзора.",
+    description: MAIN_PAGE_DESCRIPTION,
     sameAs: [],
   };
 
@@ -24,6 +24,7 @@ export default function StructuredData({ faq = [] }: Props) {
     "@id": `${SITE_URL}/#website`,
     url: SITE_URL,
     name: "Ресурс-Плюс",
+    description: MAIN_PAGE_DESCRIPTION,
     inLanguage: "ru-RU",
     publisher: { "@id": `${SITE_URL}/#organization` },
     potentialAction: {
@@ -36,15 +37,14 @@ export default function StructuredData({ faq = [] }: Props) {
   const service = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Экспертиза промышленной безопасности ОПО",
-    serviceType: "Экспертиза промышленной безопасности",
-    description:
-      "Проведение экспертизы промышленной безопасности зданий, сооружений, технических устройств и документации опасных производственных объектов через тендерную платформу с аттестованными исполнителями Ростехнадзора.",
+    name: MAIN_PAGE_TITLE,
+    serviceType: "Промышленные и инженерные услуги",
+    description: MAIN_PAGE_DESCRIPTION,
     provider: { "@id": `${SITE_URL}/#organization` },
     areaServed: { "@type": "Country", name: "Россия" },
     audience: {
       "@type": "BusinessAudience",
-      audienceType: "Промышленные предприятия, операторы ОПО",
+      audienceType: "Специалисты и промышленные предприятия",
     },
   };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import { MAIN_PAGE_TITLE, MAIN_PAGE_DESCRIPTION, MAIN_PAGE_KEYWORDS } from "@/source/shared/config/mainPageContent";
 import { SITE_URL } from "@/source/shared/api/config";
 import { NotificationProvider } from "@/source/shared/ui/Notifications";
 import { CookiesBanner } from "@/source/widgets/cookies-banner";
@@ -16,49 +17,27 @@ const GOOGLE_TAG_ID = "G-QGC88WQWTJ";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
+    default: `${MAIN_PAGE_TITLE} | Ресурс-Плюс`,
     template: "%s | Ресурс-Плюс",
   },
-  description:
-    "Платформа для заказа экспертизы промышленной безопасности опасных производственных объектов. Аттестованные исполнители Ростехнадзора, прозрачные тендеры, договоры, отчёты в PDF.",
-  keywords: [
-    "экспертиза промышленной безопасности",
-    "ЭПБ",
-    "исполнители промышленной безопасности",
-    "тендерная площадка",
-    "тендерная площадка экспертиза промышленной безопасности",
-    "экспертиза ОПО",
-    "опасные производственные объекты",
-    "Ростехнадзор",
-    "аттестованные исполнители Ростехнадзора",
-    "аттестация исполнителей",
-    "промышленная безопасность",
-    "тендеры на экспертизу",
-    "обследование диагностирование экспертиза",
-    "техническое диагностирование",
-    "экспертиза зданий и сооружений",
-    "экспертиза технических устройств",
-    "экспертиза документации ОПО",
-    "Ресурс-Плюс",
-  ],
+  description: MAIN_PAGE_DESCRIPTION,
+  keywords: MAIN_PAGE_KEYWORDS,
   applicationName: "Ресурс-Плюс",
   authors: [{ name: "Ресурс-Плюс" }],
-  category: "industrial safety",
+  category: "industrial and engineering services",
   formatDetection: { telephone: false, address: false, email: false },
   openGraph: {
     type: "website",
     siteName: "Ресурс-Плюс",
     locale: "ru_RU",
-    title: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
-    description:
-      "Найдите аттестованного исполнителя Ростехнадзора или разместите заказ на экспертизу промышленной безопасности. Тендеры, отзывы, отчёты в PDF.",
+    title: MAIN_PAGE_TITLE,
+    description: MAIN_PAGE_DESCRIPTION,
     images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
-    description:
-      "Платформа для тендеров на экспертизу промышленной безопасности. Аттестованные исполнители Ростехнадзора.",
+    title: MAIN_PAGE_TITLE,
+    description: MAIN_PAGE_DESCRIPTION,
     images: ["/og-default.png"],
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },

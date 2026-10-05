@@ -52,7 +52,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #FFF8EB 0%, #FFC580 69.56%, var(--color-orange-primary) 100%);
+  background: var(--surface-gradient-subscription);
   opacity: 0;
   transition: opacity 0.5s ease;
   z-index: 0;

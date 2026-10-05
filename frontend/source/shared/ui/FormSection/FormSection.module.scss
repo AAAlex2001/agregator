@@ -35,8 +35,34 @@
   gap: var(--profile-block-gap);
 }
 
-.bodyHidden {
-  display: none;
+.collapsible {
+  gap: 0;
+}
+
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.28s ease, opacity 0.2s ease;
+
+  .body {
+    padding-top: 0;
+    transition: padding-top 0.28s ease;
+  }
+}
+
+.collapseOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+
+  .body {
+    padding-top: var(--profile-block-gap);
+  }
+}
+
+.collapseInner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .toggle {
@@ -82,5 +108,13 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse,
+  .collapse .body,
+  .chevron {
+    transition: none;
   }
 }

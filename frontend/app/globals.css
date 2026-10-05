@@ -19,6 +19,8 @@
   --color-orange-bg-soft: #FFF3E0;
   --color-orange-bg-faint: #FFF8EE;
   --color-orange-accent: #FF6A00;
+  --surface-gradient-subscription: linear-gradient(90deg, #FFF8EB 0%, #FFC580 69.56%, var(--color-orange-primary) 100%);
+  --radius-pill: 999px;
   --color-text-primary: #1A1A1A;
   --color-text-secondary: #475569;
   --color-text-muted: #78909C;

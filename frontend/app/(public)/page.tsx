@@ -1,73 +1,45 @@
 import type { Metadata } from "next";
+import { MAIN_PAGE_TITLE, MAIN_PAGE_DESCRIPTION, MAIN_PAGE_KEYWORDS } from "@/source/shared/config/mainPageContent";
 import {
-	LandingHeader,
-	LandingStructuredData,
-	LandingSections,
-	loadLandingPageData,
+  LandingHeader,
+  LandingStructuredData,
+  LandingSections,
+  loadLandingPageData,
 } from "@/source/widgets/landing";
 import { RedirectIfAuthed } from "@/source/features/session";
 
 export const metadata: Metadata = {
-	title: "Экспертиза промышленной безопасности ОПО — тендерная площадка",
-	description:
-		"Тендерная площадка экспертизы промышленной безопасности (ЭПБ) опасных производственных объектов. Аттестованные исполнители промышленной безопасности Ростехнадзора, обследование, диагностирование и экспертиза, прозрачный выбор исполнителя, отчёты в PDF.",
-	keywords: [
-		"экспертиза промышленной безопасности",
-		"ЭПБ",
-		"исполнители промышленной безопасности",
-		"исполнитель промышленной безопасности",
-		"исполнитель в области промышленной безопасности",
-		"исполнитель по промышленной безопасности",
-		"тендерная площадка",
-		"тендерная площадка экспертиза промышленной безопасности",
-		"тендер на экспертизу промышленной безопасности",
-		"проведение экспертизы промышленной безопасности",
-		"правила проведения экспертизы промышленной безопасности",
-		"заключение экспертизы промышленной безопасности",
-		"реестр заключений экспертизы промышленной безопасности",
-		"реестр экспертиз промышленной безопасности",
-		"реестр исполнителей промышленной безопасности",
-		"объекты экспертизы промышленной безопасности",
-		"лицензия на проведение экспертизы промышленной безопасности",
-		"организации экспертизы промышленной безопасности",
-		"аттестация исполнителей по промышленной безопасности",
-		"категории исполнителей промышленной безопасности",
-		"экспертиза промышленной безопасности ОПО",
-		"экспертиза опасных производственных объектов",
-		"найти исполнителя Ростехнадзора",
-		"аттестованные исполнители Ростехнадзора",
-		"обследование диагностирование экспертиза",
-		"техническое диагностирование",
-		"экспертиза зданий и сооружений",
-		"экспертиза технических устройств",
-		"экспертиза документации ОПО",
-		"диагностика опасных производственных объектов",
-		"регистрация заключения ЭПБ Ростехнадзор",
-		"Ростехнадзор экспертиза",
-	],
-	alternates: { canonical: "/" },
-	openGraph: {
-		title: "Экспертиза промышленной безопасности ОПО | Ресурс-Плюс",
-		description:
-			"Найдите аттестованного исполнителя Ростехнадзора или разместите заказ на экспертизу промышленной безопасности (ЭПБ). Тендеры, отзывы, отчёты в PDF.",
-		type: "website",
-		url: "/",
-		images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
-	},
-	robots: { index: true, follow: true },
+  title: MAIN_PAGE_TITLE,
+  description: MAIN_PAGE_DESCRIPTION,
+  keywords: MAIN_PAGE_KEYWORDS,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: MAIN_PAGE_TITLE,
+    description: MAIN_PAGE_DESCRIPTION,
+    type: "website",
+    url: "/",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: MAIN_PAGE_TITLE,
+    description: MAIN_PAGE_DESCRIPTION,
+    images: ["/og-default.png"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
-	const data = await loadLandingPageData();
+  const data = await loadLandingPageData();
 
-	return (
-		<>
-			<RedirectIfAuthed to="/landing" />
-			<LandingStructuredData faq={data.snapshot.faq} />
-			<LandingHeader />
-			<LandingSections data={data} />
-		</>
-	);
+  return (
+    <>
+      <RedirectIfAuthed to="/landing" />
+      <LandingStructuredData faq={data.snapshot.faq} />
+      <LandingHeader />
+      <LandingSections data={data} />
+    </>
+  );
 }

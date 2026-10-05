@@ -1,5 +1,6 @@
 "use client";
 
+import { MAIN_PAGE_TITLE, MAIN_PAGE_DESCRIPTION } from "@/source/shared/config/mainPageContent";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./main-hero.module.scss";
 
@@ -10,11 +11,11 @@ export function MainHero() {
         <Title
           as="h1"
           className={s.title}
-          text={"Первая единая площадка для специалистов и промышленников России"}
+          text={MAIN_PAGE_TITLE}
         />
         <Subtitle
           className={s.subtitle}
-          text="Экспертиза промышленной безопасности, аудит СУПБ, техническое освидетельствование и диагностирование, НИР и лабораторные исследования, кадастровые работы, судебная экспертиза, проектирование, инженерные изыскания, строительный контроль и экологическое сопровождение предприятий. Разместите заказ бесплатно — проверенные исполнители откликнутся с ценой и сроками."
+          text={MAIN_PAGE_DESCRIPTION}
         />
       </div>
 
