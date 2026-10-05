@@ -4,7 +4,7 @@
   padding: 28px;
   border: 1px solid #ffdda94d;
   border-radius: 40px;
-  background: var(--color-orange-bg-faint);
+  background: var(--color-orange-bg-soft);
   color: var(--color-text-primary);
   text-align: left;
 }
@@ -165,6 +165,8 @@
 
 .results {
   margin: 16px 0 0;
+  color: #000;
+  font-weight: 500;
 
   div {
     display: flex;
