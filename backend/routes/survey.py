@@ -1,10 +1,12 @@
 """Инженерные изыскания: анкеты изыскателя и держателя-члена СРО, справочники."""
+
 from fastapi import APIRouter, Body, Depends, File, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_reward_referral_use_case
 from schemas.common import DocumentUrl
 from schemas.survey import (
     SurveyCatalogsResponse,
@@ -13,6 +15,7 @@ from schemas.survey import (
     SurveyLicenseHolderProfileInput,
     SurveyLicenseHolderProfileResponse,
 )
+from services.referrals import RewardReferralUseCase
 from services.survey import (
     DeleteSurveyDocumentUseCase,
     DeleteSurveyHolderDocumentUseCase,
@@ -56,11 +59,14 @@ async def save_expert_profile(
     data: SurveyExpertProfileInput,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> SurveyExpertProfileResponse:
     """Сохраняет анкету изыскателя: образование, направления изысканий, НОК, НРС и аттестация РТН."""
     repo = SurveyRepository(db)
     use_case = SaveSurveyExpertProfileUseCase(repo, SurveyValidator(repo))
-    return await use_case.execute(user_id, data)
+    result = await use_case.execute(user_id, data)
+    await referrals.execute(user_id)
+    return result
 
 
 @router.get("/license-holder-profile", response_model=SurveyLicenseHolderProfileResponse)
@@ -84,7 +90,9 @@ async def save_license_holder_profile(
     return await use_case.execute(user_id, data)
 
 
-@router.post("/expert-profile/documents", response_model=SurveyExpertProfileResponse, dependencies=[UPLOAD_LIMIT])
+@router.post(
+    "/expert-profile/documents", response_model=SurveyExpertProfileResponse, dependencies=[UPLOAD_LIMIT]
+)
 async def upload_document(
     group: str = Query(...),
     file: UploadFile = File(...),
@@ -110,7 +118,11 @@ async def delete_document(
     return await use_case.execute(user_id, group, data.url)
 
 
-@router.post("/license-holder-profile/documents", response_model=SurveyLicenseHolderProfileResponse, dependencies=[UPLOAD_LIMIT])
+@router.post(
+    "/license-holder-profile/documents",
+    response_model=SurveyLicenseHolderProfileResponse,
+    dependencies=[UPLOAD_LIMIT],
+)
 async def upload_holder_document(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),

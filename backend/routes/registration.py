@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.contact_deal import build_contact_cipher
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_register_referral_use_case, get_reward_referral_use_case
 from dependencies.registration import (
     get_login_repository,
     get_registration_notifier,
@@ -35,6 +36,7 @@ from services.license_holders import (
     save_sro_survey_file,
 )
 from services.login import CreateSessionUseCase, LoginRepository, set_session_cookies
+from services.referrals import RegisterReferralUseCase, RewardReferralUseCase
 from services.registration import (
     ConfirmEmailUseCase,
     RegisterLicenseHolderUseCase,
@@ -65,10 +67,11 @@ async def register_user(
     repository: RegistrationRepository = Depends(get_registration_repository),
     validator: RegistrationValidator = Depends(get_registration_validator),
     notifier: RegistrationNotifier = Depends(get_registration_notifier),
+    referrals: RegisterReferralUseCase = Depends(get_register_referral_use_case),
 ) -> UserResponse:
     "Регистрирует обычного пользователя, прикладывает дипломы направлений и шлёт письмо подтверждения."
     cipher = build_contact_cipher() if data.contact_sales_enabled else None
-    user = await RegisterUserUseCase(repository, validator, cipher).execute(data)
+    user = await RegisterUserUseCase(repository, validator, referrals, cipher).execute(data)
     await attach_documents(db, user.id, document_directions, documents)
     await notifier.schedule_confirmation_email(user, background_tasks)
     return UserResponse.from_account(user)
@@ -84,9 +87,12 @@ async def confirm_email(
     repository: RegistrationRepository = Depends(get_registration_repository),
     verification: VerificationService = Depends(get_verification_service),
     login_repository: LoginRepository = Depends(get_login_repository),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> JSONResponse:
     "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
-    user = await ConfirmEmailUseCase(repository, verification).execute(data.email, data.code, data.role)
+    user = await ConfirmEmailUseCase(repository, verification, referrals).execute(
+        data.email, data.code, data.role
+    )
     session = await CreateSessionUseCase(login_repository).execute(user.id)
 
     response = JSONResponse(content=UserResponse.from_account(user).model_dump(mode="json"))

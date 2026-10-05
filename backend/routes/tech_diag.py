@@ -1,10 +1,12 @@
 """Техдиагностирование: анкеты специалиста НК и лаборатории, справочники."""
+
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_reward_referral_use_case
 from schemas.common import DocumentUrl
 from schemas.tech_diag import (
     TechDiagCatalogsResponse,
@@ -13,6 +15,7 @@ from schemas.tech_diag import (
     TechDiagLicenseHolderProfileInput,
     TechDiagLicenseHolderProfileResponse,
 )
+from services.referrals import RewardReferralUseCase
 from services.tech_diag import (
     DeleteTechDiagDocumentUseCase,
     GetTechDiagExpertProfileUseCase,
@@ -54,11 +57,14 @@ async def save_expert_profile(
     data: TechDiagExpertProfileInput,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> TechDiagExpertProfileResponse:
     """Сохраняет анкету специалиста НК: удостоверения, виды и объекты контроля."""
     repo = TechDiagRepository(db)
     use_case = SaveTechDiagExpertProfileUseCase(repo, TechDiagValidator(repo))
-    return await use_case.execute(user_id, data)
+    result = await use_case.execute(user_id, data)
+    await referrals.execute(user_id)
+    return result
 
 
 @router.get("/license-holder-profile", response_model=TechDiagLicenseHolderProfileResponse)
@@ -82,7 +88,9 @@ async def save_license_holder_profile(
     return await use_case.execute(user_id, data)
 
 
-@router.post("/expert-profile/documents", response_model=TechDiagExpertProfileResponse, dependencies=[UPLOAD_LIMIT])
+@router.post(
+    "/expert-profile/documents", response_model=TechDiagExpertProfileResponse, dependencies=[UPLOAD_LIMIT]
+)
 async def upload_document(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),

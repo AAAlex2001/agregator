@@ -24,6 +24,7 @@ export interface RegisterPayload {
   password: string;
   password_confirm: string;
   phone?: string;
+  referral_code?: string;
   first_name?: string;
   last_name?: string;
   inn?: string;

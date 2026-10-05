@@ -45,6 +45,7 @@ from routes import (
     payment,
     pricing,
     question,
+    referral,
     registration,
     report,
     research,
@@ -126,6 +127,7 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(payment.router, prefix="/api")
 app.include_router(pricing.router, prefix="/api")
+app.include_router(referral.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")
 app.include_router(landing.router, prefix="/api")

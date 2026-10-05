@@ -1,10 +1,12 @@
 """Кадастровые работы: анкета кадастрового инженера."""
+
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_reward_referral_use_case
 from schemas.cadastral import CadastralProfileInput, CadastralProfileResponse
 from schemas.common import DocumentUrl
 from services.cadastral import (
@@ -17,6 +19,7 @@ from services.cadastral import (
     SaveCadastralProfileUseCase,
     UploadCadastralDocumentUseCase,
 )
+from services.referrals import RewardReferralUseCase
 
 router = APIRouter(prefix="/directions/cadastral", tags=["directions"])
 
@@ -41,11 +44,14 @@ async def save_profile(
     data: CadastralProfileInput,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> CadastralProfileResponse:
     """Сохраняет анкету кадастрового инженера."""
     repo = CadastralRepository(db)
     use_case = SaveCadastralProfileUseCase(repo, CadastralValidator(repo))
-    return await use_case.execute(user_id, data)
+    result = await use_case.execute(user_id, data)
+    await referrals.execute(user_id)
+    return result
 
 
 @router.post("/profile/diploma", response_model=CadastralProfileResponse, dependencies=[UPLOAD_LIMIT])

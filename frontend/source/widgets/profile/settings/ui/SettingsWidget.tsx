@@ -9,6 +9,7 @@ import { CustomerSettingsForm } from "@/source/features/profile/customer-setting
 import { ExpertSettingsForm } from "@/source/features/profile/expert-settings";
 import { LicenseHolderProfileForm } from "@/source/features/profile/license-holder-settings";
 import { NotificationPreferencesForm } from "@/source/features/profile/notifications";
+import { ReferralPanel } from "@/source/features/referrals/invite-colleague";
 import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
 import type { UserProfile } from "@/source/entities/user";
 import { SettingsSkeleton } from "./SettingsSkeleton";
@@ -69,6 +70,9 @@ export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
         <div className={s.roleBadgeRow}>
           <RoleBadge role={role} />
         </div>
+      )}
+      {role === "EXPERT" && user?.email_verified && (
+        <ReferralPanel key={user.id} />
       )}
       <div className={`${s.content} ${section === "subscription" ? s.contentWide : ""}`}>
         <Tabs

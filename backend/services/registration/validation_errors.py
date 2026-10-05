@@ -7,6 +7,7 @@ from pydantic import ValidationError
 REGISTRATION_FIELD_LABELS: dict[str, str] = {
     "role": "роль",
     "email": "электронная почта",
+    "referral_code": "реферальная ссылка",
     "password": "пароль",
     "password_confirm": "подтверждение пароля",
     "phone": "номер телефона",

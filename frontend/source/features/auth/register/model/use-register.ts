@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducer, type FormEvent } from "react";
+import { clearReferralCode, readReferralCode } from "@/source/entities/referral";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { toRussianPhoneApiValue } from "@/source/shared/lib/phone";
 import type { AuthPreset } from "@/source/shared/lib/auth-modal";
@@ -41,6 +42,7 @@ export function useRegister(
               state.techDiagProfile,
               state.designProfile,
               state.surveyProfile,
+              state.ecologyProfile,
             ].some((profile) => profile !== null)
           : state.licenseEnabled ||
             state.auditHolderProfile !== null ||
@@ -104,6 +106,7 @@ export function useRegister(
         await registerUser(
           {
             role: "EXPERT",
+            referral_code: readReferralCode(),
             email: state.email.trim(),
             password: state.password,
             password_confirm: state.confirm,
@@ -157,6 +160,7 @@ export function useRegister(
           personal_data_consent: state.consents.personal,
         });
       }
+      clearReferralCode();
       dispatch({ type: "SUBMIT_FULFILLED" });
       onRegistered(state.email.trim(), state.role);
     } catch (err) {

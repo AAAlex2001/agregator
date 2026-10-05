@@ -1,10 +1,12 @@
 """Аудит СУПБ: анкеты заказчика, аудитора и инспекционного органа, файлы заявки."""
+
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_reward_referral_use_case
 from schemas.audit import (
     AuditCatalogsResponse,
     AuditCustomerProfileInput,
@@ -29,6 +31,7 @@ from services.audit import (
     UploadAuditOrderFileUseCase,
 )
 from services.audit.catalogs import build_audit_catalogs
+from services.referrals import RewardReferralUseCase
 
 router = APIRouter(prefix="/directions/audit", tags=["directions"])
 
@@ -80,11 +83,14 @@ async def save_expert_profile(
     data: AuditExpertProfileInput,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> AuditExpertProfileResponse:
     """Сохраняет анкету исполнителя-аудитора: аттестации и НОК."""
     repo = AuditRepository(db)
     use_case = SaveAuditExpertProfileUseCase(repo, AuditValidator(repo))
-    return await use_case.execute(user_id, data)
+    result = await use_case.execute(user_id, data)
+    await referrals.execute(user_id)
+    return result
 
 
 @router.get("/license-holder-profile", response_model=AuditLicenseHolderProfileResponse)
@@ -108,7 +114,9 @@ async def save_license_holder_profile(
     return await use_case.execute(user_id, data)
 
 
-@router.post("/expert-profile/documents", response_model=AuditExpertProfileResponse, dependencies=[UPLOAD_LIMIT])
+@router.post(
+    "/expert-profile/documents", response_model=AuditExpertProfileResponse, dependencies=[UPLOAD_LIMIT]
+)
 async def upload_document(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),

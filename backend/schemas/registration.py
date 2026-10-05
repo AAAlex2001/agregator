@@ -40,6 +40,11 @@ class UserRegistration(BaseModel):
     "модель валидации пользователя"
     role: UserRole = Field(..., description="Роль пользователя")
     email: EmailStr = Field(..., description="Почта пользователя")
+    referral_code: str | None = Field(
+        None,
+        description="Публичный ID пригласившего исполнителя",
+        pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    )
     password: str = Field(..., description="Пароль пользователя", min_length=6)
     password_confirm: str = Field(..., description="Подтверждение пароля")
     phone: str | None = Field(None, description="Номер телефона пользователя")

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.rate_limit import rate_limit
+from dependencies.referral import get_reward_referral_use_case
 from schemas.common import DetailResponse
 from schemas.settings import (
     ChangePasswordRequest,
@@ -18,6 +19,7 @@ from schemas.settings import (
     UserSettingsResponse,
 )
 from services.login import set_role_cookie
+from services.referrals import RewardReferralUseCase
 from services.settings import (
     ClearCompanyCardUseCase,
     ConfirmEmailChangeUseCase,
@@ -73,10 +75,12 @@ async def update_profile(
     response: Response,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> UserSettingsResponse:
     "Обновляет личные данные пользователя и обновляет cookie роли."
     repo = build_repo(db)
     user = await UpdatePersonalDataUseCase(repo, build_validator(repo)).execute(user_id, data)
+    await referrals.execute(user_id)
     set_role_cookie(response, user.role.value)
     return to_response(user)
 
@@ -89,9 +93,7 @@ async def update_directions(
 ) -> UserSettingsResponse:
     "Сохраняет отметки направлений заказчика или держателя разрешительных документов."
     repo = build_repo(db)
-    user = await UpdateDirectionsUseCase(repo, build_validator(repo)).execute(
-        user_id, data.directions
-    )
+    user = await UpdateDirectionsUseCase(repo, build_validator(repo)).execute(user_id, data.directions)
     return to_response(user)
 
 

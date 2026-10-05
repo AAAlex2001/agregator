@@ -1,10 +1,13 @@
 """НИР: анкета исполнителя научно-исследовательских работ."""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.referral import get_reward_referral_use_case
 from schemas.research import ResearchCatalogsResponse, ResearchProfileInput, ResearchProfileResponse
+from services.referrals import RewardReferralUseCase
 from services.research import (
     GetResearchProfileUseCase,
     ResearchRepository,
@@ -37,8 +40,11 @@ async def save_profile(
     data: ResearchProfileInput,
     db: AsyncSession = Depends(get_db),
     user_id: int = Depends(get_current_user),
+    referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> ResearchProfileResponse:
     """Сохраняет анкету исполнителя НИР."""
     repo = ResearchRepository(db)
     use_case = SaveResearchProfileUseCase(repo, ResearchValidator(repo))
-    return await use_case.execute(user_id, data)
+    result = await use_case.execute(user_id, data)
+    await referrals.execute(user_id)
+    return result

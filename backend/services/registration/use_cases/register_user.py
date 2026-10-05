@@ -1,4 +1,5 @@
 "Use case: register user."
+
 from datetime import UTC, datetime
 
 from models.account import Account, UserRole
@@ -7,6 +8,7 @@ from models.expert import CONTACT_DISCLOSURE_CONSENT_VERSION, Expert
 from schemas.registration import UserRegistration
 from services.contact_deals.crypto import ContactDealCipher
 from services.order_notification_types import ALL_ORDER_NOTIFICATION_TYPES
+from services.referrals import RegisterReferralUseCase
 from services.registration.direction_profiles import build_direction_profiles
 from services.registration.repository import RegistrationRepository
 from services.registration.validators import RegistrationValidator
@@ -24,19 +26,24 @@ class RegisterUserUseCase:
         self,
         repo: RegistrationRepository,
         validator: RegistrationValidator,
+        referrals: RegisterReferralUseCase,
         cipher: ContactDealCipher | None = None,
     ) -> None:
+        """Создаёт сценарий регистрации с проверкой необязательной реферальной ссылки."""
         self.repo = repo
         self.validator = validator
+        self.referrals = referrals
         self.cipher = cipher
 
     async def execute(self, data: UserRegistration) -> Account:
-        "Запускает основной сценарий use case."
+        """Создаёт аккаунт, профиль роли, анкеты направлений и приглашение в одной транзакции."""
         self.validator.ensure_password_strong(data.password)
         self.validator.ensure_email_not_disposable(data.email)
         self.validator.ensure_customer_has_company(data)
         self.validator.ensure_inn_format(data.inn)
         self.validator.ensure_company_matches_inn(data.inn, data.company_data)
+
+        inviter = await self.referrals.prepare(data.referral_code, data.email, data.role)
 
         await self.repo.delete_unverified(data.email, data.role)
         await self.validator.ensure_email_is_free(data.email, data.role)
@@ -66,11 +73,13 @@ class RegisterUserUseCase:
         for entity in build_direction_profiles(account, data):
             await self.repo.add(entity)
 
+        await self.referrals.execute(account, inviter)
+
         loaded = await self.repo.find_account(account.id)
         return loaded if loaded is not None else account
 
     def build_expert_profile(self, account: Account, data: UserRegistration) -> Expert:
-        "Собирает профиль исполнителя: место работы на карте и условия продажи контактов."
+        """Возвращает профиль исполнителя, шифруя реквизиты при включённой продаже контактов."""
         profile = Expert(
             account_id=account.id,
             location_lat=data.location_lat,
