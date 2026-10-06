@@ -4,6 +4,7 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock
+from uuid import uuid4
 
 import httpx
 import pytest
@@ -132,21 +133,17 @@ async def test_empty_cabinet_returns_link_and_zero_counters(
     overview = ReferralOverview.model_validate_json(response.content)
 
     assert response.status_code == 200
-    assert overview.referral_code == inviter.public_id
+    assert overview.referral_url.endswith(f"/register?ref={inviter.public_id}")
     assert overview.invited_count == 0
     assert overview.balance_kopecks == 0
     assert overview.reward_kopecks == 300_000
-    assert overview.withdrawal_allowed is False
 
 
-async def test_registration_confirmation_and_profile_update_credit_once(
-    api: httpx.AsyncClient,
-    sessions: SessionFactory,
-) -> None:
-    inviter = await create_account(sessions)
-    data = UserRegistration(
+def make_registration(email: str, referral_code: str) -> UserRegistration:
+    """Возвращает заполненную регистрацию исполнителя по ссылке."""
+    return UserRegistration(
         role=UserRole.EXPERT,
-        email="new@example.com",
+        email=email,
         first_name="Пётр",
         password="Secret-123",
         password_confirm="Secret-123",
@@ -154,8 +151,37 @@ async def test_registration_confirmation_and_profile_update_credit_once(
         privacy_consent=True,
         terms_consent=True,
         personal_data_consent=True,
-        referral_code=inviter.public_id,
+        referral_code=referral_code,
     )
+
+
+@pytest.mark.parametrize(
+    ("email", "referral_code"),
+    [("new@example.com", str(uuid4())), ("inviter+alias@example.com", None)],
+)
+async def test_unusable_link_does_not_block_registration(
+    api: httpx.AsyncClient,
+    sessions: SessionFactory,
+    email: str,
+    referral_code: str | None,
+) -> None:
+    inviter = await create_account(sessions)
+    data = make_registration(email, referral_code or inviter.public_id)
+
+    response = await api.post("/api/register/", data={"payload": data.model_dump_json()})
+
+    assert response.status_code == 201, response.text
+    api.cookies.set("session_id", inviter.session_id)
+    overview = ReferralOverview.model_validate_json((await api.get("/api/referrals/me")).content)
+    assert overview.invited_count == 0
+
+
+async def test_registration_confirmation_and_profile_update_credit_once(
+    api: httpx.AsyncClient,
+    sessions: SessionFactory,
+) -> None:
+    inviter = await create_account(sessions)
+    data = make_registration("new@example.com", inviter.public_id)
     response = await api.post("/api/register/", data={"payload": data.model_dump_json()})
     assert response.status_code == 201, response.text
     invited = UserResponse.model_validate_json(response.content)

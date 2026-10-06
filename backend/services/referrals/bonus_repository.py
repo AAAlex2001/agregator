@@ -11,7 +11,6 @@ class BonusRepository:
     """Хранит бонусы, не принимает решения об условиях приглашения."""
 
     def __init__(self, db: AsyncSession) -> None:
-        """Создаёт репозиторий бонусных счетов."""
         self.db = db
 
     async def get_balance(self, user_id: int) -> int:

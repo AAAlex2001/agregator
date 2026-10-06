@@ -1,5 +1,6 @@
 """Данные реферального блока в личном кабинете исполнителя."""
 
+from models.referral import ReferralStatus
 from schemas.referral import ReferralOverview
 from services.referrals.bonus_repository import BonusRepository
 from services.referrals.repository import ReferralRepository
@@ -16,7 +17,6 @@ class GetReferralOverviewUseCase:
         bonuses: BonusRepository,
         public_base_url: str,
     ) -> None:
-        """Создаёт сценарий чтения реферального кабинета."""
         self.repo = repo
         self.validator = validator
         self.bonuses = bonuses
@@ -30,16 +30,15 @@ class GetReferralOverviewUseCase:
         balance = await self.bonuses.get_balance(user_id)
 
         return ReferralOverview(
-            referral_code=account.public_id,
             referral_url=f"{self.public_base_url}/register?ref={account.public_id}",
             reward_kopecks=campaign.reward_kopecks,
             balance_kopecks=balance,
             pool_total_kopecks=campaign.total_kopecks,
             pool_remaining_kopecks=campaign.remaining_kopecks,
             accepting_referrals=campaign.is_active and campaign.remaining_kopecks >= campaign.reward_kopecks,
-            invited_count=counts.total_count,
-            pending_count=counts.pending_count,
-            rewarded_count=counts.rewarded_count,
-            pool_exhausted_count=counts.pool_exhausted_count,
-            rejected_count=counts.rejected_count,
+            invited_count=sum(counts.values()),
+            pending_count=counts.get(ReferralStatus.PENDING, 0),
+            rewarded_count=counts.get(ReferralStatus.REWARDED, 0),
+            pool_exhausted_count=counts.get(ReferralStatus.POOL_EXHAUSTED, 0),
+            rejected_count=counts.get(ReferralStatus.REJECTED, 0),
         )

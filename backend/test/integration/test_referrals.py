@@ -4,9 +4,9 @@ import asyncio
 import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
+from types import ModuleType
 
 import pytest
-from fastapi import HTTPException
 from sqlalchemy import delete, func, select
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -15,9 +15,8 @@ from alembic.migration import MigrationContext
 from alembic.operations import Operations
 from models.account import Account, UserRole
 from models.expert import Expert
-from models.referral import BonusAccount, BonusTransaction, Referral, ReferralCampaign
+from models.referral import BonusAccount, BonusTransaction, Referral, ReferralCampaign, ReferralStatus
 from models.research import ExpertResearchProfile
-from schemas.referral import ReferralCounts
 from services.referrals import (
     BonusRepository,
     GetReferralOverviewUseCase,
@@ -47,7 +46,7 @@ class ProgramState:
     balance_kopecks: int
     spent_kopecks: int
     transactions_count: int
-    counts: ReferralCounts
+    counts: dict[ReferralStatus, int]
 
 
 async def create_program(
@@ -136,7 +135,7 @@ async def test_repeated_reward_is_credited_once(sessions: SessionFactory) -> Non
     assert state.balance_kopecks == 300_000
     assert state.spent_kopecks == 300_000
     assert state.transactions_count == 1
-    assert state.counts.rewarded_count == 1
+    assert state.counts[ReferralStatus.REWARDED] == 1
 
 
 async def test_parallel_reward_is_credited_once(sessions: SessionFactory) -> None:
@@ -163,8 +162,8 @@ async def test_parallel_requests_cannot_exceed_pool(sessions: SessionFactory) ->
     assert state.spent_kopecks == 300_000
     assert state.balance_kopecks == 300_000
     assert state.transactions_count == 1
-    assert state.counts.rewarded_count == 1
-    assert state.counts.pool_exhausted_count == 1
+    assert state.counts[ReferralStatus.REWARDED] == 1
+    assert state.counts[ReferralStatus.POOL_EXHAUSTED] == 1
 
 
 async def test_rollback_restores_balance_pool_and_referral(sessions: SessionFactory) -> None:
@@ -178,7 +177,7 @@ async def test_rollback_restores_balance_pool_and_referral(sessions: SessionFact
     assert state.balance_kopecks == 0
     assert state.spent_kopecks == 0
     assert state.transactions_count == 0
-    assert state.counts.pending_count == 1
+    assert state.counts[ReferralStatus.PENDING] == 1
 
 
 @pytest.mark.parametrize("missing_condition", ["email", "profile"])
@@ -195,7 +194,7 @@ async def test_incomplete_registration_waits_for_conditions(
     await reward(sessions, participants.invited_ids[0])
     state = await read_state(sessions, participants.inviter_id)
     assert state.balance_kopecks == 0
-    assert state.counts.pending_count == 1
+    assert state.counts[ReferralStatus.PENDING] == 1
 
     async with sessions.begin() as db:
         invited = await ReferralRepository(db).find_account(participants.invited_ids[0])
@@ -205,7 +204,7 @@ async def test_incomplete_registration_waits_for_conditions(
 
     state = await read_state(sessions, participants.inviter_id)
     assert state.balance_kopecks == 300_000
-    assert state.counts.rewarded_count == 1
+    assert state.counts[ReferralStatus.REWARDED] == 1
 
 
 async def test_paused_campaign_keeps_pending_status(sessions: SessionFactory) -> None:
@@ -218,7 +217,7 @@ async def test_paused_campaign_keeps_pending_status(sessions: SessionFactory) ->
 
     state = await read_state(sessions, participants.inviter_id)
     assert state.balance_kopecks == 0
-    assert state.counts.pending_count == 1
+    assert state.counts[ReferralStatus.PENDING] == 1
 
 
 async def test_disabled_inviter_does_not_receive_bonus(sessions: SessionFactory) -> None:
@@ -231,7 +230,7 @@ async def test_disabled_inviter_does_not_receive_bonus(sessions: SessionFactory)
 
     state = await read_state(sessions, participants.inviter_id)
     assert state.balance_kopecks == 0
-    assert state.counts.rejected_count == 1
+    assert state.counts[ReferralStatus.REJECTED] == 1
 
 
 async def test_email_change_does_not_confirm_original_invitation(sessions: SessionFactory) -> None:
@@ -245,24 +244,32 @@ async def test_email_change_does_not_confirm_original_invitation(sessions: Sessi
 
     state = await read_state(sessions, participants.inviter_id)
     assert state.balance_kopecks == 0
-    assert state.counts.pending_count == 1
+    assert state.counts[ReferralStatus.PENDING] == 1
 
 
-async def test_deleted_account_cannot_participate_again(sessions: SessionFactory) -> None:
+@pytest.mark.parametrize("email", ["invited0@example.com", "Invited0+again@example.com"])
+async def test_rewarded_mailbox_cannot_participate_again(sessions: SessionFactory, email: str) -> None:
     participants = await create_program(sessions)
     await reward(sessions, participants.invited_ids[0])
     async with sessions.begin() as db:
         await db.execute(delete(Account).where(Account.id == participants.invited_ids[0]))
 
-    async with sessions() as db:
+    async with sessions.begin() as db:
+        repeated = Account(email=email, role=UserRole.EXPERT, password="unused", expert_profile=Expert())
+        db.add(repeated)
+        await db.flush()
         repo = ReferralRepository(db)
-        use_case = RegisterReferralUseCase(repo, ReferralValidator(repo))
-        with pytest.raises(HTTPException, match="уже участвовал"):
-            await use_case.prepare(participants.referral_code, "invited0@example.com", UserRole.EXPERT)
+        await RegisterReferralUseCase(repo, ReferralValidator(repo)).execute(
+            repeated, participants.referral_code
+        )
 
+    async with sessions() as db:
+        referrals = (await db.execute(select(Referral))).scalars().all()
+    assert len(referrals) == 1
+    assert referrals[0].invited_id is None
     state = await read_state(sessions, participants.inviter_id)
     assert state.transactions_count == 1
-    assert state.counts.rewarded_count == 1
+    assert state.counts[ReferralStatus.REWARDED] == 1
 
 
 async def test_overview_has_typed_counters_and_internal_balance(sessions: SessionFactory) -> None:
@@ -280,14 +287,19 @@ async def test_overview_has_typed_counters_and_internal_balance(sessions: Sessio
     assert overview.invited_count == 2
     assert overview.pending_count == 1
     assert overview.rewarded_count == 1
-    assert overview.withdrawal_allowed is False
+
+
+def load_migration(name: str) -> ModuleType:
+    """Загружает файл миграции как модуль."""
+    path = Path(__file__).resolve().parents[2] / "alembic/versions" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, path)
+    migration = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(migration)
+    return migration
 
 
 async def test_migration_upgrade_and_downgrade(sessions: SessionFactory) -> None:
-    path = Path(__file__).resolve().parents[2] / "alembic/versions/174_expert_referrals.py"
-    spec = importlib.util.spec_from_file_location("referral_migration", path)
-    migration = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(migration)
+    migrations = [load_migration("174_expert_referrals"), load_migration("175_referral_status_enum")]
 
     def run_migration(connection: Connection) -> None:
         """Проверяет upgrade/downgrade только в изолированной схеме текущего теста."""
@@ -298,14 +310,18 @@ async def test_migration_upgrade_and_downgrade(sessions: SessionFactory) -> None
             ReferralCampaign.__table__,
         ]:
             table.drop(connection)
+        Referral.__table__.c.status.type.drop(connection)
         context = MigrationContext.configure(connection)
         with Operations.context(context):
-            migration.upgrade()
+            for migration in migrations:
+                migration.upgrade()
             row = connection.execute(select(ReferralCampaign.__table__)).one()
             assert row.total_kopecks == 100_000_000
             assert row.reward_kopecks == 300_000
-            migration.downgrade()
-            migration.upgrade()
+            for migration in reversed(migrations):
+                migration.downgrade()
+            for migration in migrations:
+                migration.upgrade()
 
     async with sessions.begin() as db:
         connection = await db.connection()

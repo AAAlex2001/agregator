@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from enum import StrEnum
 
-from sqlalchemy import BigInteger, Boolean, CheckConstraint, DateTime, ForeignKey, String
+from sqlalchemy import BigInteger, Boolean, CheckConstraint, DateTime, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
@@ -45,7 +45,7 @@ class ReferralCampaign(Base):
 
 
 class Referral(Base):
-    """Сохраняет участие по email даже после удаления приглашённого аккаунта."""
+    """Участие по каноническому email; сохраняется после удаления приглашённого аккаунта."""
 
     __tablename__ = "referrals"
 
@@ -61,10 +61,10 @@ class Referral(Base):
         unique=True,
     )
     invited_email: Mapped[str] = mapped_column(String(320), unique=True)
-    status: Mapped[str] = mapped_column(
-        String(20),
+    status: Mapped[ReferralStatus] = mapped_column(
+        Enum(ReferralStatus, name="referralstatus"),
         default=ReferralStatus.PENDING,
-        server_default=ReferralStatus.PENDING,
+        server_default=ReferralStatus.PENDING.value,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -72,13 +72,7 @@ class Referral(Base):
     )
     rewarded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    __table_args__ = (
-        CheckConstraint("inviter_id <> invited_id", name="ck_referral_not_self"),
-        CheckConstraint(
-            "status IN ('PENDING', 'REWARDED', 'POOL_EXHAUSTED', 'REJECTED')",
-            name="ck_referral_status",
-        ),
-    )
+    __table_args__ = (CheckConstraint("inviter_id <> invited_id", name="ck_referral_not_self"),)
 
 
 class BonusAccount(Base):

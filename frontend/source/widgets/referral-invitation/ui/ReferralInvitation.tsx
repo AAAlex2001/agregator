@@ -37,7 +37,9 @@ export function ReferralInvitation({ referralCode, invalidInvitation }: Referral
         {error && <p className={s.message} role="alert">{error}</p>}
         {isAuthenticated ? (
           <>
-            <p className={s.message}>Вы уже вошли в аккаунт. Приглашения действуют для новых исполнителей.</p>
+            <p className={`${s.message} ${s.signedIn}`}>
+              Вы уже вошли в аккаунт. Приглашения действуют для новых исполнителей.
+            </p>
             <Button href="/settings" variant="chat">Перейти в кабинет</Button>
           </>
         ) : (
@@ -45,9 +47,9 @@ export function ReferralInvitation({ referralCode, invalidInvitation }: Referral
             <Button variant="chat" onClick={openRegistration} disabled={isLoading || Boolean(error)}>
               Зарегистрироваться
             </Button>
-            <Button variant="transparent" size="sm" className={s.login} onClick={openLogin}>
+            <button type="button" className={s.login} onClick={openLogin}>
               Уже есть аккаунт? Войти
-            </Button>
+            </button>
           </div>
         )}
       </section>

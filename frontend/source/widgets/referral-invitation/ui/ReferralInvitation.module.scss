@@ -52,16 +52,24 @@
   gap: 16px;
 }
 
+.signedIn {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
 .login {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--color-orange-primary);
   font: inherit;
-  font-size: 13px;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  font-size: 14px;
   cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 
 @media (max-width: 480px) {

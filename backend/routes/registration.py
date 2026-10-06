@@ -71,7 +71,8 @@ async def register_user(
 ) -> UserResponse:
     "Регистрирует обычного пользователя, прикладывает дипломы направлений и шлёт письмо подтверждения."
     cipher = build_contact_cipher() if data.contact_sales_enabled else None
-    user = await RegisterUserUseCase(repository, validator, referrals, cipher).execute(data)
+    user = await RegisterUserUseCase(repository, validator, cipher).execute(data)
+    await referrals.execute(user, data.referral_code)
     await attach_documents(db, user.id, document_directions, documents)
     await notifier.schedule_confirmation_email(user, background_tasks)
     return UserResponse.from_account(user)
@@ -90,9 +91,8 @@ async def confirm_email(
     referrals: RewardReferralUseCase = Depends(get_reward_referral_use_case),
 ) -> JSONResponse:
     "Подтверждает email и сразу выдаёт сессию — пользователь после ввода кода попадает в кабинет."
-    user = await ConfirmEmailUseCase(repository, verification, referrals).execute(
-        data.email, data.code, data.role
-    )
+    user = await ConfirmEmailUseCase(repository, verification).execute(data.email, data.code, data.role)
+    await referrals.execute(user.id)
     session = await CreateSessionUseCase(login_repository).execute(user.id)
 
     response = JSONResponse(content=UserResponse.from_account(user).model_dump(mode="json"))
