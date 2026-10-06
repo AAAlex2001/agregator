@@ -33,8 +33,6 @@ class GetReferralOverviewUseCase:
             referral_url=f"{self.public_base_url}/register?ref={account.public_id}",
             reward_kopecks=campaign.reward_kopecks,
             balance_kopecks=balance,
-            pool_total_kopecks=campaign.total_kopecks,
-            pool_remaining_kopecks=campaign.remaining_kopecks,
             accepting_referrals=campaign.is_active and campaign.remaining_kopecks >= campaign.reward_kopecks,
             invited_count=sum(counts.values()),
             pending_count=counts.get(ReferralStatus.PENDING, 0),

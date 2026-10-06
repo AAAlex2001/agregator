@@ -9,46 +9,6 @@
   text-align: left;
 }
 
-.header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.heading {
-  flex: 1;
-  min-width: 0;
-}
-
-.pool {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  align-items: flex-end;
-  gap: 4px;
-  text-align: right;
-}
-
-.poolLabel {
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.poolTotal {
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.poolRemaining {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 28px;
-  white-space: nowrap;
-}
-
 .title {
   margin: 0 0 8px;
   font-size: 20px;
@@ -231,16 +191,6 @@
   .panel {
     padding: 20px;
     border-radius: 28px;
-  }
-
-  .header {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .pool {
-    align-items: flex-start;
-    text-align: left;
   }
 
   .title {
