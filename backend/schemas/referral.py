@@ -9,6 +9,8 @@ class ReferralOverview(BaseModel):
     referral_url: str
     reward_kopecks: int
     balance_kopecks: int
+    pool_total_kopecks: int
+    pool_remaining_kopecks: int
     accepting_referrals: bool
     invited_count: int
     pending_count: int

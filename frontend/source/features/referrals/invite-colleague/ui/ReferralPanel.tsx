@@ -8,6 +8,7 @@ import { TextInput } from "@/source/shared/ui/Inputs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useReferralOverview } from "../model/useReferralOverview";
 import { useCopyReferralLink } from "../model/useCopyReferralLink";
+import { ReferralPool } from "./ReferralPool";
 import { ReferralConditions } from "./ReferralConditions";
 import s from "./ReferralPanel.module.scss";
 
@@ -19,13 +20,23 @@ export function ReferralPanel() {
 
   return (
     <section className={s.panel} aria-labelledby={`${panelId}-title`} aria-busy={isLoading}>
-      <Title id={`${panelId}-title`} text="Приглашайте коллег" className={s.title} />
-      {overview && !isLoading && !error && (
-        <Subtitle
-          text={`Получайте ${formatBonusAmount(overview.reward_kopecks)}* за каждого нового исполнителя.`}
-          className={s.description}
-        />
-      )}
+      <div className={s.header}>
+        <div className={s.heading}>
+          <Title id={`${panelId}-title`} text="Приглашайте коллег" className={s.title} />
+          {overview && !isLoading && !error && (
+            <Subtitle
+              text={`Получайте ${formatBonusAmount(overview.reward_kopecks)}* за каждого нового исполнителя.`}
+              className={s.description}
+            />
+          )}
+        </div>
+        {overview && !isLoading && !error && (
+          <ReferralPool
+            totalKopecks={overview.pool_total_kopecks}
+            remainingKopecks={overview.pool_remaining_kopecks}
+          />
+        )}
+      </div>
 
       {isLoading ? (
         <div className={s.loading} role="status" aria-label="Загружаем приглашения">

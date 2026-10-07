@@ -3,6 +3,8 @@ export interface ReferralOverview {
   referral_url: string;
   reward_kopecks: number;
   balance_kopecks: number;
+  pool_total_kopecks: number;
+  pool_remaining_kopecks: number;
   accepting_referrals: boolean;
   invited_count: number;
   pending_count: number;
