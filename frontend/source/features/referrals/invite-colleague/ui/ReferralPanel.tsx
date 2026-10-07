@@ -3,11 +3,11 @@
 import { useId } from "react";
 import { formatPluses } from "@/source/entities/referral";
 import Button from "@/source/shared/ui/Button";
-import Skeleton from "@/source/shared/ui/Skeleton";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useReferralOverview } from "../model/useReferralOverview";
 import { useCopyReferralLink } from "../model/useCopyReferralLink";
+import { ReferralPanelSkeleton } from "./ReferralPanelSkeleton";
 import { ReferralPool } from "./ReferralPool";
 import { ReferralConditions } from "./ReferralConditions";
 import s from "./ReferralPanel.module.scss";
@@ -18,19 +18,21 @@ export function ReferralPanel() {
   const { copied, isCopying, error: copyError, inputRef, copyLink } = useCopyReferralLink(overview?.referral_url);
   const panelId = useId();
 
+  if (isLoading) return <ReferralPanelSkeleton />;
+
   return (
-    <section className={s.panel} aria-labelledby={`${panelId}-title`} aria-busy={isLoading}>
+    <section className={s.panel} aria-labelledby={`${panelId}-title`}>
       <div className={s.header}>
         <div className={s.heading}>
           <Title id={`${panelId}-title`} text="Приглашайте коллег" className={s.title} />
-          {overview && !isLoading && !error && (
+          {overview && !error && (
             <Subtitle
               text={`Получайте ${formatPluses(overview.reward_points)}* за каждого нового исполнителя.`}
               className={s.description}
             />
           )}
         </div>
-        {overview && !isLoading && !error && (
+        {overview && !error && (
           <ReferralPool
             totalPoints={overview.pool_total_points}
             remainingPoints={overview.pool_remaining_points}
@@ -38,13 +40,7 @@ export function ReferralPanel() {
         )}
       </div>
 
-      {isLoading ? (
-        <div className={s.loading} role="status" aria-label="Загружаем приглашения">
-          <Skeleton className={s.textSkeleton} />
-          <Skeleton className={s.balanceSkeleton} />
-          <Skeleton className={s.linkSkeleton} />
-        </div>
-      ) : error ? (
+      {error ? (
         <div className={s.failure}>
           <p className={s.error} role="alert">{error}</p>
           <Button variant="outlineOrange" size="sm" onClick={reload}>Попробовать ещё раз</Button>
