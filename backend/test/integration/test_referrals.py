@@ -43,8 +43,8 @@ class Participants:
 class ProgramState:
     """Согласованное состояние фонда, бонусного счёта и журнала."""
 
-    balance_kopecks: int
-    spent_kopecks: int
+    balance_points: int
+    spent_points: int
     transactions_count: int
     counts: dict[ReferralStatus, int]
 
@@ -52,13 +52,13 @@ class ProgramState:
 async def create_program(
     sessions: SessionFactory,
     invited_count: int = 1,
-    total_kopecks: int = 100_000_000,
+    total_points: int = 1_000_000,
     email_verified: bool = True,
     profile_filled: bool = True,
 ) -> Participants:
     """Создаёт фонд, пригласившего и указанное количество новых исполнителей."""
     async with sessions.begin() as db:
-        campaign = ReferralCampaign(id=1, total_kopecks=total_kopecks, reward_kopecks=300_000)
+        campaign = ReferralCampaign(id=1, total_points=total_points, reward_points=3_000)
         inviter = Account(
             email="inviter@example.com",
             role=UserRole.EXPERT,
@@ -118,8 +118,8 @@ async def read_state(sessions: SessionFactory, inviter_id: int) -> ProgramState:
         campaign = await repo.get_campaign()
         result = await db.execute(select(func.count(BonusTransaction.id)))
         return ProgramState(
-            balance_kopecks=await BonusRepository(db).get_balance(inviter_id),
-            spent_kopecks=campaign.spent_kopecks,
+            balance_points=await BonusRepository(db).get_balance(inviter_id),
+            spent_points=campaign.spent_points,
             transactions_count=result.scalar_one(),
             counts=await repo.count_by_status(inviter_id),
         )
@@ -132,8 +132,8 @@ async def test_repeated_reward_is_credited_once(sessions: SessionFactory) -> Non
     await reward(sessions, participants.invited_ids[0])
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 300_000
-    assert state.spent_kopecks == 300_000
+    assert state.balance_points == 3_000
+    assert state.spent_points == 3_000
     assert state.transactions_count == 1
     assert state.counts[ReferralStatus.REWARDED] == 1
 
@@ -145,13 +145,13 @@ async def test_parallel_reward_is_credited_once(sessions: SessionFactory) -> Non
     await asyncio.gather(reward(sessions, invited_id), reward(sessions, invited_id))
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 300_000
-    assert state.spent_kopecks == 300_000
+    assert state.balance_points == 3_000
+    assert state.spent_points == 3_000
     assert state.transactions_count == 1
 
 
 async def test_parallel_requests_cannot_exceed_pool(sessions: SessionFactory) -> None:
-    participants = await create_program(sessions, invited_count=2, total_kopecks=300_000)
+    participants = await create_program(sessions, invited_count=2, total_points=3_000)
 
     await asyncio.gather(
         reward(sessions, participants.invited_ids[0]),
@@ -159,8 +159,8 @@ async def test_parallel_requests_cannot_exceed_pool(sessions: SessionFactory) ->
     )
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.spent_kopecks == 300_000
-    assert state.balance_kopecks == 300_000
+    assert state.spent_points == 3_000
+    assert state.balance_points == 3_000
     assert state.transactions_count == 1
     assert state.counts[ReferralStatus.REWARDED] == 1
     assert state.counts[ReferralStatus.POOL_EXHAUSTED] == 1
@@ -174,8 +174,8 @@ async def test_rollback_restores_balance_pool_and_referral(sessions: SessionFact
         await db.rollback()
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 0
-    assert state.spent_kopecks == 0
+    assert state.balance_points == 0
+    assert state.spent_points == 0
     assert state.transactions_count == 0
     assert state.counts[ReferralStatus.PENDING] == 1
 
@@ -193,7 +193,7 @@ async def test_incomplete_registration_waits_for_conditions(
 
     await reward(sessions, participants.invited_ids[0])
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 0
+    assert state.balance_points == 0
     assert state.counts[ReferralStatus.PENDING] == 1
 
     async with sessions.begin() as db:
@@ -203,7 +203,7 @@ async def test_incomplete_registration_waits_for_conditions(
         await reward_use_case(db).execute(invited.id)
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 300_000
+    assert state.balance_points == 3_000
     assert state.counts[ReferralStatus.REWARDED] == 1
 
 
@@ -216,7 +216,7 @@ async def test_paused_campaign_keeps_pending_status(sessions: SessionFactory) ->
     await reward(sessions, participants.invited_ids[0])
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 0
+    assert state.balance_points == 0
     assert state.counts[ReferralStatus.PENDING] == 1
 
 
@@ -229,7 +229,7 @@ async def test_disabled_inviter_does_not_receive_bonus(sessions: SessionFactory)
     await reward(sessions, participants.invited_ids[0])
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 0
+    assert state.balance_points == 0
     assert state.counts[ReferralStatus.REJECTED] == 1
 
 
@@ -243,7 +243,7 @@ async def test_email_change_does_not_confirm_original_invitation(sessions: Sessi
     await reward(sessions, participants.invited_ids[0])
 
     state = await read_state(sessions, participants.inviter_id)
-    assert state.balance_kopecks == 0
+    assert state.balance_points == 0
     assert state.counts[ReferralStatus.PENDING] == 1
 
 
@@ -283,7 +283,7 @@ async def test_overview_has_typed_counters_and_internal_balance(sessions: Sessio
         overview = await use_case.execute(participants.inviter_id)
 
     assert overview.referral_url == f"https://example.com/register?ref={participants.referral_code}"
-    assert overview.balance_kopecks == 300_000
+    assert overview.balance_points == 3_000
     assert overview.invited_count == 2
     assert overview.pending_count == 1
     assert overview.rewarded_count == 1
@@ -299,7 +299,11 @@ def load_migration(name: str) -> ModuleType:
 
 
 async def test_migration_upgrade_and_downgrade(sessions: SessionFactory) -> None:
-    migrations = [load_migration("174_expert_referrals"), load_migration("175_referral_status_enum")]
+    migrations = [
+        load_migration("174_expert_referrals"),
+        load_migration("175_referral_status_enum"),
+        load_migration("176_referral_points"),
+    ]
 
     def run_migration(connection: Connection) -> None:
         """Проверяет upgrade/downgrade только в изолированной схеме текущего теста."""
@@ -316,8 +320,8 @@ async def test_migration_upgrade_and_downgrade(sessions: SessionFactory) -> None
             for migration in migrations:
                 migration.upgrade()
             row = connection.execute(select(ReferralCampaign.__table__)).one()
-            assert row.total_kopecks == 100_000_000
-            assert row.reward_kopecks == 300_000
+            assert row.total_points == 1_000_000
+            assert row.reward_points == 3_000
             for migration in reversed(migrations):
                 migration.downgrade()
             for migration in migrations:
@@ -329,4 +333,4 @@ async def test_migration_upgrade_and_downgrade(sessions: SessionFactory) -> None
 
     async with sessions() as db:
         campaign = await ReferralRepository(db).get_campaign()
-        assert campaign.remaining_kopecks == 100_000_000
+        assert campaign.remaining_points == 1_000_000

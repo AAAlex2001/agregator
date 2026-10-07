@@ -14,14 +14,14 @@ class BonusRepository:
         self.db = db
 
     async def get_balance(self, user_id: int) -> int:
-        """Возвращает бонусный баланс в копейках; ноль, если счёт ещё не создан."""
-        query = select(BonusAccount.balance_kopecks).where(BonusAccount.user_id == user_id)
+        """Возвращает бонусный баланс в плюсах; ноль, если счёт ещё не создан."""
+        query = select(BonusAccount.balance_points).where(BonusAccount.user_id == user_id)
         result = await self.db.execute(query)
         return result.scalar_one_or_none() or 0
 
     async def get_account_for_update(self, user_id: int) -> BonusAccount:
         """Создаёт бонусный счёт при необходимости и блокирует его до конца транзакции."""
-        statement = insert(BonusAccount).values(user_id=user_id, balance_kopecks=0)
+        statement = insert(BonusAccount).values(user_id=user_id, balance_points=0)
         statement = statement.on_conflict_do_nothing(index_elements=["user_id"])
         await self.db.execute(statement)
 

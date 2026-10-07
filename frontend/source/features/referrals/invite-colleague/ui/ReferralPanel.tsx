@@ -1,7 +1,7 @@
 "use client";
 
 import { useId } from "react";
-import { formatBonusAmount } from "@/source/entities/referral";
+import { formatPluses } from "@/source/entities/referral";
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { TextInput } from "@/source/shared/ui/Inputs";
@@ -25,15 +25,15 @@ export function ReferralPanel() {
           <Title id={`${panelId}-title`} text="Приглашайте коллег" className={s.title} />
           {overview && !isLoading && !error && (
             <Subtitle
-              text={`Получайте ${formatBonusAmount(overview.reward_kopecks)}* за каждого нового исполнителя.`}
+              text={`Получайте ${formatPluses(overview.reward_points)}* за каждого нового исполнителя.`}
               className={s.description}
             />
           )}
         </div>
         {overview && !isLoading && !error && (
           <ReferralPool
-            totalKopecks={overview.pool_total_kopecks}
-            remainingKopecks={overview.pool_remaining_kopecks}
+            totalPoints={overview.pool_total_points}
+            remainingPoints={overview.pool_remaining_points}
           />
         )}
       </div>
@@ -53,8 +53,8 @@ export function ReferralPanel() {
         <>
           <dl className={s.stats}>
             <div>
-              <dt>Бонусный баланс</dt>
-              <dd>{formatBonusAmount(overview.balance_kopecks)}</dd>
+              <dt>Ваши плюсы</dt>
+              <dd>{formatPluses(overview.balance_points)}</dd>
             </div>
             <div>
               <dt>Приглашено</dt>
@@ -68,7 +68,7 @@ export function ReferralPanel() {
 
           {!overview.accepting_referrals && (
             <p className={s.notice} role="status">
-              Начисление новых бонусов приостановлено. Доступный баланс сохранён.
+              Начисление новых плюсов приостановлено. Накопленные плюсы сохранены.
             </p>
           )}
 
@@ -90,7 +90,10 @@ export function ReferralPanel() {
           <span className={s.srOnly} role="status">{copied ? "Ссылка скопирована" : ""}</span>
           {copyError && <p className={s.error} role="alert">{copyError}</p>}
 
-          <p className={s.footnote}>* Бонусы зачисляются на внутренний счёт сайта. Вывести их нельзя.</p>
+          <p className={s.footnote}>
+            * Плюсы — внутренние баллы Ресурс-Плюс для оплаты услуг на сайте. Это не деньги:
+            обменять на рубли или вывести их нельзя.
+          </p>
 
           <ReferralConditions overview={overview} />
         </>

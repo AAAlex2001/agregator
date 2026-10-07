@@ -1,4 +1,4 @@
-"""Данные реферальной программы для личного кабинета. Суммы — в копейках."""
+"""Данные реферальной программы для личного кабинета. Суммы — в плюсах (внутренних баллах)."""
 
 from pydantic import BaseModel
 
@@ -7,10 +7,10 @@ class ReferralOverview(BaseModel):
     """Персональная ссылка, бонусы и результат приглашений."""
 
     referral_url: str
-    reward_kopecks: int
-    balance_kopecks: int
-    pool_total_kopecks: int
-    pool_remaining_kopecks: int
+    reward_points: int
+    balance_points: int
+    pool_total_points: int
+    pool_remaining_points: int
     accepting_referrals: bool
     invited_count: int
     pending_count: int

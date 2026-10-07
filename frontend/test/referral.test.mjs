@@ -6,7 +6,7 @@ import {
   readReferralCode,
   saveReferralCode,
 } from "../source/entities/referral/model/invitation.ts";
-import { formatBonusAmount } from "../source/entities/referral/model/formatBonusAmount.ts";
+import { formatPluses } from "../source/entities/referral/model/formatPluses.ts";
 import { initialReferralState, referralReducer } from "../source/features/referrals/invite-colleague/model/reducer.ts";
 
 const code = "d64234b5-8fb8-4ed9-8762-0f6b237de4c0";
@@ -78,10 +78,13 @@ test("blocked storage does not prevent registration from a direct link", () => {
   assert.equal(readReferralCode(), undefined);
 });
 
-test("converts kopecks without multiplying the displayed bonus", () => {
-  assert.equal(formatBonusAmount(300_000).replace(/\s/g, " "), "3 000 ₽");
-  assert.equal(formatBonusAmount(12_345).replace(/\s/g, " "), "123,45 ₽");
-  assert.equal(formatBonusAmount(0).replace(/\s/g, " "), "0 ₽");
+test("formats points as pluses with russian plural forms", () => {
+  assert.equal(formatPluses(1), "1 плюс");
+  assert.equal(formatPluses(3), "3 плюса");
+  assert.equal(formatPluses(0), "0 плюсов");
+  assert.equal(formatPluses(21), "21 плюс");
+  assert.equal(formatPluses(3_000).replace(/\s/g, " "), "3 000 плюсов");
+  assert.equal(formatPluses(1_000_000).replace(/\s/g, " "), "1 000 000 плюсов");
 });
 
 test("retry clears failure and a successful request restores referral data", () => {
@@ -92,7 +95,7 @@ test("retry clears failure and a successful request restores referral data", () 
   assert.equal(retry.isLoading, true);
   assert.equal(retry.error, null);
   assert.equal(retry.requestNumber, 1);
-  const overview = { balance_kopecks: 300_000, invited_count: 2 };
+  const overview = { balance_points: 3_000, invited_count: 2 };
   const loaded = referralReducer(retry, { type: "LOAD_SUCCEEDED", overview });
   assert.equal(loaded.overview, overview);
   assert.equal(loaded.isLoading, false);

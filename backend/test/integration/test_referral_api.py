@@ -57,7 +57,7 @@ async def create_account(
         if role == UserRole.EXPERT:
             account.expert_profile = Expert(certificates=[])
         db.add(account)
-        db.add(ReferralCampaign(id=1, total_kopecks=100_000_000, reward_kopecks=300_000))
+        db.add(ReferralCampaign(id=1, total_points=1_000_000, reward_points=3_000))
         await db.flush()
         expires = datetime.now(UTC) + timedelta(days=1)
         session = Session(user_id=account.id, expires_at=expires, max_expires_at=expires)
@@ -135,8 +135,8 @@ async def test_empty_cabinet_returns_link_and_zero_counters(
     assert response.status_code == 200
     assert overview.referral_url.endswith(f"/register?ref={inviter.public_id}")
     assert overview.invited_count == 0
-    assert overview.balance_kopecks == 0
-    assert overview.reward_kopecks == 300_000
+    assert overview.balance_points == 0
+    assert overview.reward_points == 3_000
 
 
 def make_registration(email: str, referral_code: str) -> UserRegistration:
@@ -199,7 +199,7 @@ async def test_registration_confirmation_and_profile_update_credit_once(
     assert response.status_code == 200, response.text
 
     async with sessions() as db:
-        assert await BonusRepository(db).get_balance(inviter.user_id) == 300_000
+        assert await BonusRepository(db).get_balance(inviter.user_id) == 3_000
 
     response = await api.put("/api/settings/profile", json={"first_name": "Пётр"})
     assert response.status_code == 200, response.text
@@ -209,4 +209,4 @@ async def test_registration_confirmation_and_profile_update_credit_once(
     assert response.status_code == 200, response.text
 
     async with sessions() as db:
-        assert await BonusRepository(db).get_balance(inviter.user_id) == 300_000
+        assert await BonusRepository(db).get_balance(inviter.user_id) == 3_000

@@ -42,7 +42,7 @@ class RewardReferralUseCase:
             return
         if not campaign.is_active:
             return
-        if campaign.remaining_kopecks < campaign.reward_kopecks:
+        if campaign.remaining_points < campaign.reward_points:
             await self.finish(referral, ReferralStatus.POOL_EXHAUSTED)
             return
 
@@ -63,14 +63,14 @@ class RewardReferralUseCase:
     async def credit_reward(self, referral: Referral, inviter: Account, campaign: ReferralCampaign) -> None:
         """Увеличивает бонусный баланс и записывает вознаграждение в фонд и журнал."""
         account = await self.bonuses.get_account_for_update(inviter.id)
-        account.balance_kopecks += campaign.reward_kopecks
-        campaign.spent_kopecks += campaign.reward_kopecks
+        account.balance_points += campaign.reward_points
+        campaign.spent_points += campaign.reward_points
         referral.status = ReferralStatus.REWARDED
         referral.rewarded_at = datetime.now(UTC)
 
         transaction = BonusTransaction(
             user_id=inviter.id,
             referral_id=referral.id,
-            amount_kopecks=campaign.reward_kopecks,
+            amount_points=campaign.reward_points,
         )
         await self.bonuses.add_transaction(transaction)

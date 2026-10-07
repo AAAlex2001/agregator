@@ -1,5 +1,5 @@
 export { fetchReferralOverview } from "./api/referral.api";
-export { formatBonusAmount } from "./model/formatBonusAmount";
+export { formatPluses } from "./model/formatPluses";
 export {
   normalizeReferralCode,
   saveReferralCode,

@@ -1,4 +1,7 @@
-"""Приглашения исполнителей, фонд программы и бонусы. Суммы — в копейках."""
+"""Приглашения исполнителей, фонд программы и бонусы.
+
+Суммы — в «плюсах»: целые внутренние баллы площадки, не деньги и не рубли.
+"""
 
 from datetime import UTC, datetime
 from enum import StrEnum
@@ -24,24 +27,24 @@ class ReferralCampaign(Base):
     __tablename__ = "referral_campaigns"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    total_kopecks: Mapped[int] = mapped_column(BigInteger)
-    reward_kopecks: Mapped[int] = mapped_column(BigInteger)
-    spent_kopecks: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0")
+    total_points: Mapped[int] = mapped_column(BigInteger)
+    reward_points: Mapped[int] = mapped_column(BigInteger)
+    spent_points: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
     __table_args__ = (
-        CheckConstraint("total_kopecks >= 0", name="ck_referral_total_nonnegative"),
-        CheckConstraint("reward_kopecks > 0", name="ck_referral_reward_positive"),
+        CheckConstraint("total_points >= 0", name="ck_referral_total_nonnegative"),
+        CheckConstraint("reward_points > 0", name="ck_referral_reward_positive"),
         CheckConstraint(
-            "spent_kopecks >= 0 AND spent_kopecks <= total_kopecks",
+            "spent_points >= 0 AND spent_points <= total_points",
             name="ck_referral_spent_within_pool",
         ),
     )
 
     @property
-    def remaining_kopecks(self) -> int:
-        """Возвращает невыданную часть фонда в копейках."""
-        return self.total_kopecks - self.spent_kopecks
+    def remaining_points(self) -> int:
+        """Возвращает невыданную часть фонда в плюсах."""
+        return self.total_points - self.spent_points
 
 
 class Referral(Base):
@@ -84,9 +87,9 @@ class BonusAccount(Base):
         ForeignKey("accounts.id", ondelete="RESTRICT"),
         primary_key=True,
     )
-    balance_kopecks: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0")
+    balance_points: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0")
 
-    __table_args__ = (CheckConstraint("balance_kopecks >= 0", name="ck_bonus_balance_nonnegative"),)
+    __table_args__ = (CheckConstraint("balance_points >= 0", name="ck_bonus_balance_nonnegative"),)
 
 
 class BonusTransaction(Base):
@@ -103,10 +106,10 @@ class BonusTransaction(Base):
         ForeignKey("referrals.id", ondelete="RESTRICT"),
         unique=True,
     )
-    amount_kopecks: Mapped[int] = mapped_column(BigInteger)
+    amount_points: Mapped[int] = mapped_column(BigInteger)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
     )
 
-    __table_args__ = (CheckConstraint("amount_kopecks > 0", name="ck_bonus_amount_positive"),)
+    __table_args__ = (CheckConstraint("amount_points > 0", name="ck_bonus_amount_positive"),)

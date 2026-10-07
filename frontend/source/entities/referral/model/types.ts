@@ -1,10 +1,10 @@
-/** Данные реферальной программы. Денежные суммы приходят в копейках. */
+/** Данные реферальной программы. Суммы — во внутренних баллах («плюсах»), не в рублях. */
 export interface ReferralOverview {
   referral_url: string;
-  reward_kopecks: number;
-  balance_kopecks: number;
-  pool_total_kopecks: number;
-  pool_remaining_kopecks: number;
+  reward_points: number;
+  balance_points: number;
+  pool_total_points: number;
+  pool_remaining_points: number;
   accepting_referrals: boolean;
   invited_count: number;
   pending_count: number;
