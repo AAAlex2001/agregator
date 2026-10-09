@@ -102,6 +102,26 @@ class EmailRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
+    async def list_experts_for_announcement(self, after_email: str | None = None) -> list[Account]:
+        "Исполнители для анонса: активны, почта подтверждена, новости не отключены, адрес вне стоп-листа. Один ящик — одно письмо, порядок по email (для продолжения после сбоя)."
+        email = func.lower(Account.email)
+        query = (
+            select(Account)
+            .where(
+                Account.role == UserRole.EXPERT,
+                Account.is_active.is_(True),
+                Account.email.isnot(None),
+                Account.email_verified.is_(True),
+                Account.email_on_new_blog_post.is_(True),
+                email.notin_(select(EmailSuppression.email)),
+            )
+            .distinct(email)
+            .order_by(email, Account.id)
+        )
+        if after_email:
+            query = query.where(email > after_email.strip().lower())
+        return list((await self.db.execute(query)).scalars().all())
+
     async def list_experts_subscribed_to_order_types(self) -> list[Account]:
         "Эксперты с непустым фильтром типов заказов. Пересечение проверяем в use case."
         query = (

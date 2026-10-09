@@ -135,6 +135,16 @@ class NewBlogPostEmailContext(BaseContext):
     cta_url: str
 
 
+class ReferralLaunchEmailContext(BaseContext):
+    "Контекст письма о запуске реферальной программы. Суммы уже отформатированы в плюсах."
+    recipient_greeting: str
+    reward: str
+    pool: str
+    steps: list[str]
+    cta_url: str
+    unsubscribe_url: str
+
+
 class NewLaborListingContext(BaseContext):
     recipient_greeting: str
     heading: str

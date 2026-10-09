@@ -9,6 +9,7 @@ from services.email.use_cases.send_new_blog_post_email import SendNewBlogPostEma
 from services.email.use_cases.send_new_labor_listing_email import SendNewLaborListingEmailUseCase
 from services.email.use_cases.send_new_order_email import SendNewOrderEmailUseCase
 from services.email.use_cases.send_order_updated_email import SendOrderUpdatedEmailUseCase
+from services.email.use_cases.send_referral_launch_email import SendReferralLaunchEmailUseCase
 from services.email.use_cases.send_response_created_email import SendResponseCreatedEmailUseCase
 from services.email.use_cases.send_response_updated_email import SendResponseUpdatedEmailUseCase
 from services.email.use_cases.send_rtn_answer_published_email import SendRtnAnswerPublishedEmailUseCase
@@ -26,6 +27,7 @@ __all__ = [
     "SendNewLaborListingEmailUseCase",
     "SendNewOrderEmailUseCase",
     "SendOrderUpdatedEmailUseCase",
+    "SendReferralLaunchEmailUseCase",
     "SendResponseCreatedEmailUseCase",
     "SendResponseUpdatedEmailUseCase",
     "SendRtnAnswerPublishedEmailUseCase",

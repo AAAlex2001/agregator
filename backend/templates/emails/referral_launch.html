@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block preheader %}{{ reward }} за каждого коллегу-исполнителя. Призовой фонд программы — {{ pool }}.{% endblock %}
+
+{% block content %}
+<p style="margin: 0 0 12px 0; font-size: 12px; line-height: 16px; color: #FF8A00; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+  Реферальная программа
+</p>
+<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 34px; font-weight: 700; color: #0F172A; letter-spacing: -0.5px;">
+  {% if recipient_greeting %}{{ recipient_greeting }}, приглашайте{% else %}Приглашайте{% endif %} коллег и получайте плюсы
+</h1>
+<p style="margin: 0 0 28px 0; font-size: 15px; line-height: 24px; color: #475569;">
+  Мы запустили реферальную программу для исполнителей «Ресурс-Плюс». За каждого коллегу,
+  который зарегистрируется по вашей ссылке, вы получите
+  <span style="color: #0F172A; font-weight: 600;">{{ reward }}</span>.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td style="padding: 24px; background: #FFF3E0; border-radius: 12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr class="kv-row-last">
+          <td class="kv-label" style="padding: 0 12px 0 0; width: 50%; vertical-align: top;">
+            <p style="margin: 0 0 6px 0; font-size: 12px; line-height: 16px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Призовой фонд</p>
+            <p style="margin: 0; font-size: 24px; line-height: 30px; color: #0F172A; font-weight: 700; letter-spacing: -0.3px;">{{ pool }}</p>
+          </td>
+          <td class="kv-value" style="padding: 0 0 0 12px; width: 50%; vertical-align: top;">
+            <p style="margin: 0 0 6px 0; font-size: 12px; line-height: 16px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">За одного коллегу</p>
+            <p style="margin: 0; font-size: 24px; line-height: 30px; color: #C2410C; font-weight: 700; letter-spacing: -0.3px;">{{ reward }}</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<p style="margin: 32px 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">
+  Как это работает
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  {% for step in steps %}
+  <tr>
+    <td style="width: 36px; padding: 0 0 16px 0; vertical-align: top;">
+      <span style="display: inline-block; width: 26px; height: 26px; border-radius: 13px; background: #FF8A00; color: #FFFFFF; font-size: 13px; line-height: 26px; font-weight: 700; text-align: center;">{{ loop.index }}</span>
+    </td>
+    <td style="padding: 2px 0 16px 0; font-size: 15px; line-height: 24px; color: #1F2937; vertical-align: top;">
+      {{ step }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p style="margin: 16px 0 12px 0; font-size: 13px; line-height: 16px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 1.4px;">
+  Что такое плюсы
+</p>
+<p style="margin: 0 0 12px 0; font-size: 15px; line-height: 24px; color: #1F2937;">
+  Плюсы — внутренние баллы площадки. Ими можно будет оплачивать отклики на заявки, подписку
+  и другие возможности «Ресурс-Плюс». Накопленные плюсы видны в личном кабинете.
+</p>
+<p style="margin: 0 0 28px 0; font-size: 14px; line-height: 22px; color: #475569; background: #F8FAFC; border-left: 3px solid #FF8A00; padding: 12px 14px; border-radius: 8px;">
+  Плюсы начисляются, пока в фонде хватает на полное вознаграждение. Фонд общий для всех
+  участников — чем раньше пригласите коллег, тем больше успеете получить.
+</p>
+
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td>
+      <!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ cta_url }}" style="height:44px;v-text-anchor:middle;width:240px;" arcsize="18%" stroke="f" fillcolor="#FF8A00">
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:600;">Получить свою ссылку</center>
+      </v:roundrect>
+      <![endif]-->
+      <!--[if !mso]><!-->
+      <a href="{{ cta_url }}" style="display: inline-block; padding: 12px 28px; background: #FF8A00; color: #FFFFFF; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; border-radius: 8px;">Получить свою ссылку</a>
+      <!--<![endif]-->
+    </td>
+  </tr>
+</table>
+
+<p style="margin: 32px 0 0 0; font-size: 15px; line-height: 24px; color: #1F2937;">
+  Если появятся вопросы — просто ответьте на это письмо.
+</p>
+<p style="margin: 20px 0 0 0; font-size: 15px; line-height: 24px; color: #1F2937;">
+  С уважением,<br>
+  команда «Ресурс-Плюс»
+</p>
+<p style="margin: 8px 0 0 0; font-size: 14px; line-height: 22px; color: #64748B;">
+  <a href="mailto:expert@plus-resurs.com" style="color: #64748B; text-decoration: underline;">expert@plus-resurs.com</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://plus-resurs.com" target="_blank" rel="noopener" style="color: #64748B; text-decoration: underline;">plus-resurs.com</a>
+</p>
+{% endblock %}
+
+{% block footer %}
+Письмо отправлено электронной площадкой-агрегатором «Ресурс-Плюс» исполнителям площадки · <a href="https://plus-resurs.com/settings" style="color: #94A3B8; text-decoration: underline;">настройки уведомлений</a>
+<br>Не хотите получать такие письма? <a href="{{ unsubscribe_url }}" style="color: #94A3B8; text-decoration: underline;">Отписаться</a>
+{% endblock %}

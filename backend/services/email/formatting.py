@@ -23,6 +23,18 @@ def format_price(amount_kopecks: int | None) -> str:
     return f"{formatted} ₽"
 
 
+def format_pluses(amount: int) -> str:
+    "Целые плюсы -> «3 000 плюсов» с русским склонением и неразрывными пробелами."
+    formatted = f"{amount:,}".replace(",", " ")
+    if amount % 100 in range(11, 15) or amount % 10 in (0, 5, 6, 7, 8, 9):
+        word = "плюсов"
+    elif amount % 10 == 1:
+        word = "плюс"
+    else:
+        word = "плюса"
+    return f"{formatted} {word}"
+
+
 def escape_html(value: str | None) -> str:
     "Экранирует пользовательский текст для Telegram parse_mode=HTML."
     return html.escape(value or "", quote=False)
