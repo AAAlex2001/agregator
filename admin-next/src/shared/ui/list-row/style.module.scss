@@ -1,0 +1,35 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px 14px;
+  gap: 10px 14px;
+
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s ease;
+}
+
+.link:hover {
+  border-color: var(--accent);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-wrap: nowrap;
+    padding: 12px 16px;
+    gap: 16px;
+  }
+}

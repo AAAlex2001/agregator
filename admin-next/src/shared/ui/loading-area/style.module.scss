@@ -1,0 +1,11 @@
+.area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.loading > :not(.loader) {
+  opacity: 0.4;
+  pointer-events: none;
+}

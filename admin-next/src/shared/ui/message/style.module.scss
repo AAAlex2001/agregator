@@ -1,0 +1,19 @@
+.message {
+  padding: 16px 18px;
+
+  font-size: 14px;
+  line-height: 20px;
+
+  border-radius: var(--radius);
+}
+
+.muted {
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px dashed var(--border-strong);
+}
+
+.error {
+  color: var(--danger);
+  background: var(--danger-soft);
+}

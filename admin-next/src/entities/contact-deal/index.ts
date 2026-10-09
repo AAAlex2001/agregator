@@ -1,2 +1,15 @@
-export * from "./model";
-export * from "./api";
+export {
+  DEAL_STATUS_LABELS,
+  DEAL_STATUS_TONES,
+  PARTY_LABELS,
+  RECEIPT_STATUS_LABELS,
+  RECEIPT_STATUS_TONES,
+  RELEASE_ACTOR_LABELS,
+  SIGNATURE_METHOD_LABELS,
+  type Deal,
+  type DealContract,
+  type DealListItem,
+  type DealReceipt,
+  type DealSignature,
+  type DealStatus,
+} from "./model/types";

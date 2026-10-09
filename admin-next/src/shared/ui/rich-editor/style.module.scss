@@ -1,0 +1,93 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  min-height: 380px;
+
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.editor:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.content {
+  flex: 1 1 auto;
+  padding: 16px;
+
+  min-height: 320px;
+
+  font-size: 15px;
+  line-height: 160%;
+
+  outline: none;
+}
+
+.content > * + * {
+  margin-top: 12px;
+}
+
+.content h2 {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 26px;
+
+  color: var(--accent-hover);
+}
+
+.content h3 {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 24px;
+}
+
+.content ul,
+.content ol {
+  padding-left: 24px;
+}
+
+.content a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.content blockquote {
+  padding: 8px 16px;
+
+  color: var(--text-secondary);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-faint);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.content img,
+.content video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+
+  border-radius: var(--radius);
+}
+
+.content table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.content th,
+.content td {
+  padding: 8px 10px;
+
+  text-align: left;
+
+  border: 1px solid var(--border);
+}

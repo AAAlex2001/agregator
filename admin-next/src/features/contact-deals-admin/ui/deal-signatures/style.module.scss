@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 6px 14px;
+
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.party {
+  width: 110px;
+
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.signer {
+  flex: 1 1 auto;
+
+  font-size: 14px;
+}
+
+.meta {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}

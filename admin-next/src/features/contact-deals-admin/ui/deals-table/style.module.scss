@@ -1,0 +1,73 @@
+.number {
+  flex: none;
+
+  font-weight: 600;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.parties {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.party {
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.price {
+  flex: none;
+
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status {
+  flex: none;
+}
+
+.details {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 2px;
+
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .number {
+    width: 90px;
+  }
+
+  .parties {
+    flex: 1 1 0;
+  }
+
+  .price {
+    width: 110px;
+
+    text-align: right;
+  }
+
+  .status {
+    width: 200px;
+  }
+
+  .details {
+    width: 130px;
+
+    text-align: right;
+  }
+}

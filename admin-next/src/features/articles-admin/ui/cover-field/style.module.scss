@@ -1,0 +1,40 @@
+.cover {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  max-width: 320px;
+  height: 120px;
+
+  font-size: 13px;
+
+  color: var(--text-muted);
+  background: var(--raised);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}

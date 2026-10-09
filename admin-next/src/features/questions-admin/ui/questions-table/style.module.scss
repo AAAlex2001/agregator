@@ -1,0 +1,54 @@
+.row {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.pending {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.head {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.text {
+  white-space: pre-wrap;
+}
+
+.note {
+  font-size: 13px;
+  line-height: 18px;
+
+  color: var(--text-secondary);
+}
+
+.note a {
+  color: var(--accent-hover);
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove {
+  margin-left: auto;
+}

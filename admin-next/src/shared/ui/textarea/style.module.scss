@@ -1,0 +1,30 @@
+.textarea {
+  display: block;
+  padding: 10px 12px;
+
+  width: 100%;
+  min-height: 42px;
+
+  font-size: 14px;
+  line-height: 150%;
+
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  outline: none;
+  resize: vertical;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}

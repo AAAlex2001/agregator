@@ -1,0 +1,36 @@
+.add {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.add > :first-child {
+  flex: 1 1 260px;
+}
+
+.count {
+  font-weight: 500;
+  font-size: 13px;
+
+  color: var(--text-secondary);
+}
+
+.row {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.name {
+  flex: 1 1 auto;
+
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  gap: 6px;
+}

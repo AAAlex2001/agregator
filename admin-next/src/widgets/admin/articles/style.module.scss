@@ -1,0 +1,12 @@
+.search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 0;
+}
+
+.search > :first-child {
+  flex: 1 1 260px;
+}

@@ -1,0 +1,52 @@
+.preamble {
+  font-size: 14px;
+  line-height: 155%;
+
+  color: var(--text-secondary);
+}
+
+.clauses {
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  gap: 6px;
+
+  font-size: 14px;
+  line-height: 150%;
+}
+
+.requisites {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px 24px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--border);
+}
+
+.party {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.partyTitle {
+  margin-bottom: 4px;
+
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.line {
+  font-size: 13px;
+  line-height: 18px;
+
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  .requisites {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

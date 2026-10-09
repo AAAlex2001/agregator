@@ -1,0 +1,71 @@
+.field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: text;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.icon {
+  display: flex;
+  flex: none;
+
+  color: var(--text-muted);
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  font-size: 14px;
+  line-height: 18px;
+
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.small {
+  padding: 0 10px;
+
+  height: 34px;
+}
+
+.small .input {
+  font-size: 13px;
+}

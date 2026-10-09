@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { AdminNav } from "@/widgets/admin-nav/AdminNav";
-import "./globals.css";
+import type { ReactNode } from "react";
+import { ToastProvider } from "@/shared/ui/toaster";
+import "./globals.scss";
 
 export const metadata: Metadata = {
-  title: "Панель управления",
+  title: "Панель управления — Ресурс-Плюс",
   robots: { index: false, follow: false, nocache: true },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/** Общая оболочка админки: шрифты, тема и уведомления. */
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
       <body>
-        <div className="shell">
-          <AdminNav />
-          <div className="shell-content">{children}</div>
-        </div>
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );
