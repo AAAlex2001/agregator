@@ -70,11 +70,8 @@
   z-index: 40;
 
   max-height: 280px;
-  margin: 0;
   padding: 4px;
   overflow-y: auto;
-
-  list-style: none;
 
   background: var(--surface);
   border: 1px solid var(--border);
@@ -88,31 +85,29 @@
   justify-content: space-between;
   gap: 8px;
 
+  width: 100%;
   padding: 9px 10px;
 
   font-size: 14px;
   line-height: 18px;
+  text-align: left;
 
   color: var(--text);
+  background: transparent;
+  border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
-.highlighted {
+.option:hover,
+.option:focus-visible {
   background: var(--subtle);
+  outline: none;
 }
 
 .selected {
   font-weight: 600;
   color: var(--accent-hover);
-}
-
-.selected.highlighted {
-  background: var(--accent-soft);
-}
-
-.label {
-  min-width: 0;
 }
 
 .check {
