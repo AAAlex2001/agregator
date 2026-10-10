@@ -1,11 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import {
-  applyArticleMetrics,
-  fetchArticleList,
-  fetchStaticNewsMetrics,
-} from "@/source/entities/article";
-import { getStaticNewsListItems } from "@/source/entities/static-news";
+import { fetchArticleList } from "@/source/entities/article";
 import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
 
 export const dynamic = "force-dynamic";
@@ -20,18 +15,10 @@ const MAX_LINKED_PAGE = 4;
 const CROSS_NEWS_COUNT = 10;
 
 async function AuthedBlogListContent({ page }: { page: number }) {
-  const staticNewsSource = getStaticNewsListItems().slice(0, CROSS_NEWS_COUNT);
-  const [initial, crossNews, staticMetrics] = await Promise.all([
+  const [initial, crossNews] = await Promise.all([
     fetchArticleList({ kind: "blog", limit: PAGE_SIZE * page, offset: 0 }, { server: true }),
-    fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
-    fetchStaticNewsMetrics(staticNewsSource.map((item) => item.id), { server: true }),
+    fetchArticleList({ kind: "news", limit: CROSS_NEWS_COUNT, offset: 0 }, { server: true }),
   ]);
-  const staticNews = applyArticleMetrics(staticNewsSource, staticMetrics);
-  const staticSlugs = new Set(staticNews.map((item) => item.slug));
-  const crossNewsItems = [
-    ...staticNews,
-    ...crossNews.items.filter((item) => !staticSlugs.has(item.slug)),
-  ].slice(0, CROSS_NEWS_COUNT);
 
   return (
     <ArticlesList
@@ -48,7 +35,7 @@ async function AuthedBlogListContent({ page }: { page: number }) {
         title: "Свежие новости отрасли",
         href: "/landing/news",
         hrefLabel: "Все новости",
-        items: crossNewsItems,
+        items: crossNews.items,
       }}
     />
   );

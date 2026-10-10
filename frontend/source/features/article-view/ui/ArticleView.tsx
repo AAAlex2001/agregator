@@ -21,7 +21,7 @@ import { splitByMiddleHeading } from "../lib/splitByMiddleHeading";
 import { splitTrailingImage } from "../lib/splitTrailingImage";
 import s from "./ArticleView.module.scss";
 
-/** Направление формы заявки берём по ссылке на лендинг в тексте статьи. */
+/** Для статей без направления форма заявки открывается по первой ссылке на лендинг в тексте. */
 const DIRECTION_BY_HREF: [string, string][] = [
   ["/ekspertiza-promyshlennoy-bezopasnosti", "EXPERTISE"],
   ["/audit-supb", "AUDIT_SUPB"],
@@ -77,7 +77,7 @@ export function ArticleView({
     : [];
   const [htmlBeforeCta, htmlAfterCta] = splitByMiddleHeading(html);
   const [htmlTail, trailingImage] = splitTrailingImage(htmlAfterCta || htmlBeforeCta);
-  const leadDirection = detectDirection(html);
+  const leadDirection = article.direction ?? detectDirection(html);
   const dateLabel = formatArticleDate(article.published_at);
 
   const breadcrumbJsonLd = {

@@ -22,7 +22,9 @@ export function extractToc(rawHtml: string): ParsedArticleHtml {
       if (!attrs) return `<img loading="lazy" decoding="async">`;
       if (/loading=/.test(attrs)) return match;
       return `<img${attrs} loading="lazy" decoding="async">`;
-    });
+    })
+    .replace(/<table(\s[^>]*)?>/gi, (_match, attrs) => `<div class="table-wrap"><table${attrs || ""}>`)
+    .replace(/<\/table>/gi, "</table></div>");
 
   return { html, toc };
 }

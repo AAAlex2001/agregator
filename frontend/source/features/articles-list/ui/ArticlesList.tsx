@@ -32,7 +32,7 @@ interface Props {
   title: string;
   subtitle: string;
   initial: ArticleList;
-  staticItems?: ArticleListItem[];
+  initialOffset?: number;
   cross?: CrossPromotion;
   homeHref?: string;
   nextPageHref?: string;
@@ -44,21 +44,16 @@ function collectTags(items: ArticleListItem[]): string[] {
   return Array.from(set);
 }
 
-function mergeUnique(primary: ArticleListItem[], secondary: ArticleListItem[]): ArticleListItem[] {
-  const slugs = new Set(primary.map((item) => item.slug));
-  return [...primary, ...secondary.filter((item) => !slugs.has(item.slug))];
-}
-
-export function ArticlesList({ kind, title, subtitle, initial, staticItems = [], cross, homeHref = "/", nextPageHref }: Props) {
+export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0, cross, homeHref = "/", nextPageHref }: Props) {
   const { showError } = useNotifications();
-  const [items, setItems] = useState<ArticleListItem[]>(mergeUnique(staticItems, initial.items));
+  const [items, setItems] = useState<ArticleListItem[]>(initial.items);
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
-  const [remoteOffset, setRemoteOffset] = useState(initial.items.length);
+  const [remoteOffset, setRemoteOffset] = useState(initialOffset + initial.items.length);
   const [activeTag, setActiveTag] = useState<string>("");
   const [isReloading, setIsReloading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const availableTags = collectTags(mergeUnique(staticItems, initial.items));
+  const availableTags = collectTags(initial.items);
 
   const tabItems = [
     { id: "", label: "Все" },
@@ -69,8 +64,7 @@ export function ArticlesList({ kind, title, subtitle, initial, staticItems = [],
     setIsReloading(true);
     try {
       const page = await fetchArticleList({ kind, limit: PAGE_SIZE, offset: 0, tag: tag || undefined });
-      const matchingStatic = tag ? staticItems.filter((item) => item.tags.includes(tag)) : staticItems;
-      setItems(mergeUnique(matchingStatic, page.items));
+      setItems(page.items);
       setHasMore(page.has_more);
       setRemoteOffset(page.items.length);
     } catch (error) {

@@ -6,6 +6,7 @@ export type ArticleKind = "news" | "blog";
 export interface ArticleListItem {
   id: number;
   kind: ArticleKind;
+  direction: string | null;
   slug: string;
   title: string;
   excerpt: string;
@@ -26,6 +27,7 @@ export interface ArticleList {
 export interface ArticleDetail {
   id: number;
   kind: ArticleKind;
+  direction: string | null;
   slug: string;
   title: string;
   excerpt: string;
@@ -44,10 +46,10 @@ export interface ArticleDetail {
   views_count: number;
 }
 
-export interface ArticleMetrics {
-  likes_count: number;
-  dislikes_count: number;
-  views_count: number;
+export interface ArticleSitemapItem {
+  slug: string;
+  published_at: string | null;
+  updated_at: string;
 }
 
 function base(server: boolean): string {
@@ -55,16 +57,26 @@ function base(server: boolean): string {
 }
 
 export async function fetchArticleList(
-  args: { kind: ArticleKind; limit?: number; offset?: number; tag?: string },
+  args: { kind: ArticleKind; limit?: number; offset?: number; tag?: string; direction?: string },
   opts: { server?: boolean } = {},
 ): Promise<ArticleList> {
   const params = new URLSearchParams({ kind: args.kind });
   if (args.limit !== undefined) params.set("limit", String(args.limit));
   if (args.offset !== undefined) params.set("offset", String(args.offset));
   if (args.tag) params.set("tag", args.tag);
+  if (args.direction) params.set("direction", args.direction);
 
   const res = await fetch(`${base(Boolean(opts.server))}/public/articles?${params}`, { cache: "no-store" });
   if (!res.ok) throw new Error(`Не удалось загрузить статьи: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchArticleSitemap(
+  kind: ArticleKind,
+  opts: { server?: boolean } = {},
+): Promise<ArticleSitemapItem[]> {
+  const res = await fetch(`${base(Boolean(opts.server))}/public/articles/sitemap?kind=${kind}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Не удалось загрузить карту статей: ${res.status}`);
   return res.json();
 }
 
@@ -104,29 +116,4 @@ export async function fetchRelatedArticles(
   );
   if (!res.ok) return [];
   return res.json();
-}
-
-export async function fetchStaticNewsMetrics(
-  newsIds: number[],
-  opts: { server?: boolean } = {},
-): Promise<Record<number, ArticleMetrics>> {
-  if (newsIds.length === 0) return {};
-  const params = new URLSearchParams();
-  newsIds.forEach((newsId) => params.append("news_ids", String(newsId)));
-  const response = await fetch(
-    `${base(Boolean(opts.server))}/public/static-news/metrics?${params}`,
-    { cache: "no-store" },
-  );
-  if (!response.ok) return {};
-  const items = await response.json() as Array<ArticleMetrics & { news_id: number }>;
-  const result: Record<number, ArticleMetrics> = {};
-  for (const { news_id, ...metrics } of items) result[news_id] = metrics;
-  return result;
-}
-
-export function applyArticleMetrics(
-  items: ArticleListItem[],
-  metrics: Record<number, ArticleMetrics>,
-): ArticleListItem[] {
-  return items.map((item) => ({ ...item, ...metrics[item.id] }));
 }

@@ -1,5 +1,4 @@
-import { applyArticleMetrics, fetchStaticNewsMetrics } from "@/source/entities/article";
-import { getStaticNewsByDirection } from "@/source/entities/static-news";
+import { fetchArticleList } from "@/source/entities/article";
 import { LandingArticlesPreview } from "@/source/widgets/landing/main";
 
 interface Props {
@@ -9,10 +8,8 @@ interface Props {
 }
 
 export async function DirectionNews({ direction, subtitle, basePath = "" }: Props) {
-  const items = getStaticNewsByDirection(direction);
-  if (items.length === 0) return null;
-
-  const metrics = await fetchStaticNewsMetrics(items.map((item) => item.id), { server: true });
+  const list = await fetchArticleList({ kind: "news", direction, limit: 12 }, { server: true }).catch(() => null);
+  if (!list || list.items.length === 0) return null;
 
   return (
     <LandingArticlesPreview
@@ -20,7 +17,7 @@ export async function DirectionNews({ direction, subtitle, basePath = "" }: Prop
       subtitle={subtitle}
       ctaHref={`${basePath}/news`}
       ctaLabel="Все новости"
-      items={applyArticleMetrics(items, metrics)}
+      items={list.items}
       navPrefix={`direction-news-${direction.toLowerCase()}`}
     />
   );

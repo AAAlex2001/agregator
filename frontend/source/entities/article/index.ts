@@ -1,17 +1,16 @@
 export {
   fetchArticleList,
+  fetchArticleSitemap,
   fetchArticleBySlug,
   fetchRelatedArticles,
   recordArticleView,
-  fetchStaticNewsMetrics,
-  applyArticleMetrics,
 } from "./api/article.api";
 export type {
   ArticleKind,
   ArticleListItem,
   ArticleList,
   ArticleDetail,
-  ArticleMetrics,
+  ArticleSitemapItem,
 } from "./api/article.api";
 
 export { formatArticleDate } from "./lib/formatArticleDate";

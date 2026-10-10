@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/source/shared/api/config";
-import { fetchArticleList, type ArticleKind } from "@/source/entities/article";
-import { getStaticNewsListItems } from "@/source/entities/static-news";
+import { fetchArticleSitemap, type ArticleKind } from "@/source/entities/article";
+import { NEWS_PAGE_SIZE } from "@/source/features/articles-list";
 import { fetchRtnList } from "@/source/entities/rtn-clarification";
 
 export const dynamic = "force-dynamic";
@@ -37,27 +37,26 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; pri
 
 async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
   try {
-    const items = [];
-    const limit = 48;
-    let offset = 0;
-    let hasMore = true;
-
-    while (hasMore) {
-      const page = await fetchArticleList({ kind, limit, offset }, { server: true });
-      items.push(...page.items);
-      hasMore = page.has_more;
-      offset += limit;
-    }
-
+    const items = await fetchArticleSitemap(kind, { server: true });
     return items.map((item) => ({
       url: `${SITE_URL}/${kind}/${item.slug}`,
-      lastModified: item.published_at ? new Date(item.published_at) : new Date(),
+      lastModified: new Date(item.updated_at),
       changeFrequency: "weekly",
       priority: 0.8,
     }));
   } catch {
     return [];
   }
+}
+
+function listPages(path: string, total: number, pageSize: number, maxPage = Infinity): MetadataRoute.Sitemap {
+  const pageCount = Math.min(maxPage, Math.ceil(total / pageSize));
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
+    url: `${SITE_URL}${path}?page=${index + 2}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: 0.6,
+  }));
 }
 
 const RTN_PAGE_SIZE = 12;
@@ -84,15 +83,7 @@ async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    const pageCount = Math.min(RTN_MAX_PAGE, Math.ceil(items.length / RTN_PAGE_SIZE));
-    const pages: MetadataRoute.Sitemap = Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
-      url: `${SITE_URL}/rtn?page=${index + 2}`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.6,
-    }));
-
-    return [...pages, ...details];
+    return [...listPages("/rtn", items.length, RTN_PAGE_SIZE, RTN_MAX_PAGE), ...details];
   } catch {
     return [];
   }
@@ -111,12 +102,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     loadArticles("blog"),
     loadRtnClarifications(),
   ]);
-  const staticNews = getStaticNewsListItems().map((item) => ({
-    url: `${SITE_URL}/news/${item.slug}`,
-    lastModified: item.published_at ? new Date(item.published_at) : now,
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-  const staticUrls = new Set(staticNews.map((item) => item.url));
-  return [...staticItems, ...staticNews, ...news.filter((item) => !staticUrls.has(item.url)), ...blog, ...rtn];
+  return [...staticItems, ...listPages("/news", news.length, NEWS_PAGE_SIZE), ...news, ...blog, ...rtn];
 }

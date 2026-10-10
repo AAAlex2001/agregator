@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/source/shared/api/config";
 import type { ArticleDetail } from "@/source/entities/article";
 import type { ReactionState } from "@/source/entities/article-reaction";
+import { extractFaq } from "../lib/extractFaq";
 
 interface Props {
   article: ArticleDetail;
@@ -71,10 +72,24 @@ export function ArticleJsonLd({ article, reactions, commentCount }: Props) {
     ],
   };
 
+  const faqEntries = extractFaq(article.content_html);
+  const faq = faqEntries.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqEntries.map((entry) => ({
+          "@type": "Question",
+          name: entry.question,
+          acceptedAnswer: { "@type": "Answer", text: entry.answer },
+        })),
+      }
+    : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      {faq ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} /> : null}
     </>
   );
 }
