@@ -25,6 +25,19 @@
   }
 }
 
+.filters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.directionSelect {
+  width: 100%;
+  max-width: 320px;
+}
+
 .title { text-align: center; }
 .subtitle { text-align: center; max-width: 720px; }
 

@@ -14,6 +14,7 @@ export type {
 } from "./api/article.api";
 
 export { formatArticleDate } from "./lib/formatArticleDate";
+export { ARTICLE_DIRECTION_OPTIONS } from "./model/directions";
 
 export { ArticleCard } from "./ui/ArticleCard/ArticleCard";
 export { ArticleCardSkeleton } from "./ui/ArticleCard/ArticleCardSkeleton";

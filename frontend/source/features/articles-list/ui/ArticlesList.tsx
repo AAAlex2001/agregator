@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  ARTICLE_DIRECTION_OPTIONS,
   ArticleCard,
   ArticleCardSkeleton,
   fetchArticleList,
@@ -12,6 +13,7 @@ import {
 import { ArticlesRelatedSlider } from "@/source/features/articles-related-slider";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Button from "@/source/shared/ui/Button";
+import { Select } from "@/source/shared/ui/Select";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
@@ -50,6 +52,7 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
   const [hasMore, setHasMore] = useState<boolean>(initial.has_more);
   const [remoteOffset, setRemoteOffset] = useState(initialOffset + initial.items.length);
   const [activeTag, setActiveTag] = useState<string>("");
+  const [activeDirection, setActiveDirection] = useState<string>("");
   const [isReloading, setIsReloading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -60,10 +63,16 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
     ...availableTags.map((tag) => ({ id: tag, label: tag })),
   ];
 
-  async function reload(tag: string) {
+  async function reload(tag: string, direction: string) {
     setIsReloading(true);
     try {
-      const page = await fetchArticleList({ kind, limit: PAGE_SIZE, offset: 0, tag: tag || undefined });
+      const page = await fetchArticleList({
+        kind,
+        limit: PAGE_SIZE,
+        offset: 0,
+        tag: tag || undefined,
+        direction: direction || undefined,
+      });
       setItems(page.items);
       setHasMore(page.has_more);
       setRemoteOffset(page.items.length);
@@ -83,6 +92,7 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
         limit: PAGE_SIZE,
         offset: remoteOffset,
         tag: activeTag || undefined,
+        direction: activeDirection || undefined,
       });
       setItems((prev) => [...prev, ...page.items]);
       setHasMore(page.has_more);
@@ -97,7 +107,13 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
   function selectTab(tabId: string) {
     if (tabId === activeTag) return;
     setActiveTag(tabId);
-    void reload(tabId);
+    void reload(tabId, activeDirection);
+  }
+
+  function selectDirection(direction: string) {
+    if (direction === activeDirection) return;
+    setActiveDirection(direction);
+    void reload(activeTag, direction);
   }
 
   return (
@@ -113,14 +129,24 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
         <Subtitle text={subtitle} className={s.subtitle} />
       </div>
 
-      {availableTags.length > 0 && (
-        <Tabs
-          tabs={tabItems}
-          activeTab={activeTag}
-          onTabChange={selectTab}
-          variant="pill"
+      <div className={s.filters}>
+        <Select
+          options={ARTICLE_DIRECTION_OPTIONS}
+          value={activeDirection}
+          onChange={selectDirection}
+          ariaLabel="Направление"
+          className={s.directionSelect}
         />
-      )}
+
+        {availableTags.length > 0 && (
+          <Tabs
+            tabs={tabItems}
+            activeTab={activeTag}
+            onTabChange={selectTab}
+            variant="pill"
+          />
+        )}
+      </div>
 
       {isReloading ? (
         <div className={s.grid}>
@@ -158,7 +184,7 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
         </ul>
       )}
 
-      {nextPageHref && !activeTag && !isReloading ? (
+      {nextPageHref && !activeTag && !activeDirection && !isReloading ? (
         <div className={s.loadMoreWrap}>
           <Button href={nextPageHref} scroll={false} variant="outline" className={s.loadMore}>
             Показать ещё
