@@ -102,8 +102,10 @@ class EmailRepository:
         )
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_experts_for_announcement(self, after_email: str | None = None) -> list[Account]:
-        "Исполнители для анонса: активны, почта подтверждена, новости не отключены, адрес вне стоп-листа. Один ящик — одно письмо, порядок по email (для продолжения после сбоя)."
+    async def list_experts_for_announcement(
+        self, after_email: str | None = None, news_enabled: bool = True
+    ) -> list[Account]:
+        "Исполнители для анонса: активны, почта подтверждена, адрес вне стоп-листа; news_enabled — с включёнными или отключёнными новостными письмами. Один ящик — одно письмо, порядок по email (для продолжения после сбоя)."
         email = func.lower(Account.email)
         query = (
             select(Account)
@@ -112,7 +114,7 @@ class EmailRepository:
                 Account.is_active.is_(True),
                 Account.email.isnot(None),
                 Account.email_verified.is_(True),
-                Account.email_on_new_blog_post.is_(True),
+                Account.email_on_new_blog_post.is_(news_enabled),
                 email.notin_(select(EmailSuppression.email)),
             )
             .distinct(email)

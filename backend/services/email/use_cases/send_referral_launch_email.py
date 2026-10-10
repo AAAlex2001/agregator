@@ -29,13 +29,15 @@ class SendReferralLaunchEmailUseCase:
         self.reward = format_pluses(reward_points)
         self.pool = format_pluses(pool_points)
 
-    async def list_recipients(self, after_email: str | None = None) -> list[Account]:
-        "Получатели по порядку email; after_email — продолжить после последнего отправленного."
-        return await self.repo.list_experts_for_announcement(after_email)
+    async def list_recipients(
+        self, after_email: str | None = None, news_enabled: bool = True
+    ) -> list[Account]:
+        "Получатели по порядку email; after_email — продолжить после последнего отправленного, news_enabled=False — те, кто отключил новостные письма."
+        return await self.repo.list_experts_for_announcement(after_email, news_enabled)
 
-    async def execute(self, after_email: str | None = None) -> int:
+    async def execute(self, after_email: str | None = None, news_enabled: bool = True) -> int:
         "Отправляет всем получателям. Возвращает число успешно отправленных писем."
-        recipients = await self.list_recipients(after_email)
+        recipients = await self.list_recipients(after_email, news_enabled)
         logger.info("Анонс рефералки: получателей %d", len(recipients))
         sent = 0
         for index, account in enumerate(recipients, start=1):
