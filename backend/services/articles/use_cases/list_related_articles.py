@@ -1,11 +1,13 @@
 "Use case: list related articles."
+
 from schemas.article import ArticleListItemDto
 from services.articles.repository import ArticleRepository
-from services.articles.use_cases.list_articles import KIND_TO_DTO
+from services.articles.use_cases.list_articles import build_list_item
 
 
 class ListRelatedArticlesUseCase:
     "Сценарий приложения: координирует репозитории и сервисы."
+
     def __init__(self, repo: ArticleRepository) -> None:
         self.repo = repo
 
@@ -15,22 +17,6 @@ class ListRelatedArticlesUseCase:
         if current is None:
             return []
         rows = await self.repo.list_related(
-            kind=current.kind, exclude_id=current.id, limit=limit
+            kind=current.kind, exclude_id=current.id, limit=limit, direction=current.direction
         )
-        return [
-            ArticleListItemDto(
-                id=row.id,
-                kind=KIND_TO_DTO[row.kind],
-                slug=row.slug,
-                title=row.title,
-                excerpt=row.excerpt,
-                cover_image=row.cover_image,
-                tg_cover_image=row.tg_cover_image,
-                tags=[t.name for t in row.tags],
-                published_at=row.published_at,
-                likes_count=row.likes_count,
-                dislikes_count=row.dislikes_count,
-                views_count=row.views_count,
-            )
-            for row in rows
-        ]
+        return [build_list_item(row) for row in rows]

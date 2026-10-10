@@ -1,6 +1,6 @@
 "Публичные ручки соц-функций статьи: реакции, просмотры и комментарии."
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
@@ -13,7 +13,6 @@ from schemas.article_interactions import (
     CommentResponse,
     ReactionRequest,
     ReactionResponse,
-    StaticNewsMetricResponse,
     ViewResponse,
 )
 from services.articles.repository import (
@@ -21,32 +20,12 @@ from services.articles.repository import (
     ArticleReactionRepository,
     ArticleRepository,
     ArticleViewRepository,
-    StaticNewsInteractionRepository,
 )
 from services.articles.use_cases.article_comments import ArticleCommentsUseCase
 from services.articles.use_cases.react_to_article import ReactToArticleUseCase
 from services.articles.use_cases.record_article_view import RecordArticleViewUseCase
-from services.articles.use_cases.static_news_interactions import StaticNewsInteractionsUseCase
 
 router = APIRouter(tags=["article-interactions"])
-
-
-@router.get("/public/static-news/metrics", response_model=list[StaticNewsMetricResponse])
-async def get_static_news_metrics(
-    news_ids: list[int] = Query(default=[]),
-    db: AsyncSession = Depends(get_db),
-) -> list[StaticNewsMetricResponse]:
-    ids = list(dict.fromkeys(news_id for news_id in news_ids if news_id < 0))[:200]
-    metrics = await StaticNewsInteractionRepository(db).list_metrics(ids)
-    return [
-        StaticNewsMetricResponse(
-            news_id=item.news_id,
-            likes_count=item.likes_count,
-            dislikes_count=item.dislikes_count,
-            views_count=item.views_count,
-        )
-        for item in metrics
-    ]
 
 
 def author_name(comment: ArticleComment) -> str:
@@ -61,7 +40,11 @@ def to_comment_response(
     current_user_id: int | None,
     visitor_key: str | None,
 ) -> CommentResponse:
-    is_mine = comment.user_id == current_user_id if current_user_id is not None else comment.visitor_key == visitor_key
+    is_mine = (
+        comment.user_id == current_user_id
+        if current_user_id is not None
+        else comment.visitor_key == visitor_key
+    )
     return CommentResponse(
         id=comment.id,
         parent_id=comment.parent_id,
@@ -80,16 +63,6 @@ async def get_reactions(
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
-    if article_id < 0:
-        metrics, my_reaction = await StaticNewsInteractionsUseCase(
-            StaticNewsInteractionRepository(db)
-        ).read(article_id, current_key)
-        return ReactionResponse(
-            likes_count=metrics.likes_count,
-            dislikes_count=metrics.dislikes_count,
-            views_count=metrics.views_count,
-            my_reaction=my_reaction,
-        )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
     article, my_reaction = await use_case.read(article_id, current_key)
     return ReactionResponse(
@@ -109,16 +82,6 @@ async def react(
     db: AsyncSession = Depends(get_db),
 ) -> ReactionResponse:
     current_key = interaction_key(user_id, visitor_key)
-    if article_id < 0:
-        metrics, my_reaction = await StaticNewsInteractionsUseCase(
-            StaticNewsInteractionRepository(db)
-        ).react(article_id, user_id, current_key, data.value)
-        return ReactionResponse(
-            likes_count=metrics.likes_count,
-            dislikes_count=metrics.dislikes_count,
-            views_count=metrics.views_count,
-            my_reaction=my_reaction,
-        )
     use_case = ReactToArticleUseCase(ArticleRepository(db), ArticleReactionRepository(db))
     article, my_reaction = await use_case.react(article_id, user_id, current_key, data.value)
     return ReactionResponse(
@@ -137,11 +100,6 @@ async def record_view(
     db: AsyncSession = Depends(get_db),
 ) -> ViewResponse:
     current_key = interaction_key(user_id, visitor_key)
-    if article_id < 0:
-        metrics = await StaticNewsInteractionsUseCase(
-            StaticNewsInteractionRepository(db)
-        ).record_view(article_id, user_id, current_key)
-        return ViewResponse(views_count=metrics.views_count)
     use_case = RecordArticleViewUseCase(ArticleRepository(db), ArticleViewRepository(db))
     article = await use_case.record(article_id, user_id, current_key)
     return ViewResponse(views_count=article.views_count)
@@ -157,7 +115,9 @@ async def list_comments(
     current_key = interaction_key(user_id, visitor_key)
     use_case = ArticleCommentsUseCase(ArticleRepository(db), ArticleCommentRepository(db))
     comments = await use_case.list_comments(article_id)
-    return CommentListResponse(items=[to_comment_response(comment, user_id, current_key) for comment in comments])
+    return CommentListResponse(
+        items=[to_comment_response(comment, user_id, current_key) for comment in comments]
+    )
 
 
 @router.post(

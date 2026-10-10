@@ -5,6 +5,7 @@ from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, Strin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base
+from models.order import OrderWorkType
 from models.tag import Tag
 
 
@@ -39,6 +40,9 @@ class Article(Base):
         index=True,
     )
 
+    direction: Mapped[OrderWorkType | None] = mapped_column(
+        Enum(OrderWorkType, name="orderworktype"), nullable=True, index=True
+    )
     slug: Mapped[str] = mapped_column(String(220), nullable=False, unique=True, index=True)
     title: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     excerpt: Mapped[str] = mapped_column(Text, nullable=False, default="")

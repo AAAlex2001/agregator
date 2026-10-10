@@ -27,7 +27,9 @@ class SaveArticleUseCase:
 
     async def update(self, article: Article, data: ArticleWrite) -> Article:
         values = self.normalize(data)
-        if values["slug"] != article.slug and await self.repo.slug_exists(values["slug"], exclude_id=article.id):
+        if values["slug"] != article.slug and await self.repo.slug_exists(
+            values["slug"], exclude_id=article.id
+        ):
             raise SlugTakenError
         tags = await self.tag_repo.get_or_create_many(data.tags)
         return await self.repo.update(article, values, tags)
@@ -39,6 +41,7 @@ class SaveArticleUseCase:
         return {
             "kind": ArticleKind(data.kind),
             "status": ArticleStatus(data.status),
+            "direction": data.direction,
             "slug": data.slug.strip().lower().replace(" ", "-"),
             "title": data.title.strip(),
             "excerpt": data.excerpt,

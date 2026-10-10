@@ -53,6 +53,7 @@ def to_out(a: Article) -> ArticleOut:
         id=a.id,
         kind=a.kind.value,
         status=a.status.value,
+        direction=a.direction,
         slug=a.slug,
         title=a.title,
         excerpt=a.excerpt,
@@ -74,11 +75,17 @@ def to_out(a: Article) -> ArticleOut:
 async def list_articles(
     kind: Kind | None = Query(None),
     article_status: Status | None = Query(None, alias="status"),
+    q: str | None = Query(None, max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
 ) -> ArticleListOut:
-    rows = await ArticleRepository(db).list_all(
+    rows, total = await ArticleRepository(db).list_all(
         kind=ArticleKind(kind) if kind else None,
         status=ArticleStatus(article_status) if article_status else None,
+        query=q,
+        skip=offset,
+        limit=limit,
     )
     items = [
         ArticleListItem(
@@ -92,7 +99,7 @@ async def list_articles(
         )
         for r in rows
     ]
-    return ArticleListOut(items=items, total=len(items))
+    return ArticleListOut(items=items, total=total)
 
 
 @router.get("/articles/{article_id}", response_model=ArticleOut)

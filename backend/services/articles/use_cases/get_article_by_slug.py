@@ -1,4 +1,5 @@
 "Use case: get article by slug."
+
 from fastapi import HTTPException, status
 
 from schemas.article import ArticleDetailDto
@@ -8,6 +9,7 @@ from services.articles.use_cases.list_articles import KIND_TO_DTO
 
 class GetArticleBySlugUseCase:
     "Сценарий приложения: координирует репозитории и сервисы."
+
     def __init__(self, repo: ArticleRepository) -> None:
         self.repo = repo
 
@@ -22,6 +24,7 @@ class GetArticleBySlugUseCase:
         return ArticleDetailDto(
             id=row.id,
             kind=KIND_TO_DTO[row.kind],
+            direction=row.direction.value if row.direction else None,
             slug=row.slug,
             title=row.title,
             excerpt=row.excerpt,

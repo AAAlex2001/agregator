@@ -1,17 +1,16 @@
-
 "Repository: доступ к БД для articles."
-from datetime import UTC, date, datetime
+
+from datetime import datetime
 from typing import Any
 
-from sqlalchemy import and_, delete, select, update
-from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy import and_, case, delete, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.article import Article, ArticleKind, ArticleStatus
 from models.article_comment import ArticleComment
 from models.article_reaction import ArticleReaction, ReactionValue
 from models.article_view import ArticleView
-from models.static_news_interaction import StaticNewsMetric, StaticNewsReaction, StaticNewsView
+from models.order import OrderWorkType
 from models.tag import Tag
 from utils.pagination import paginate_with_has_more
 
@@ -28,56 +27,76 @@ class ArticleRepository:
         skip: int,
         limit: int,
         tag: str | None,
+        direction: OrderWorkType | None = None,
     ) -> tuple[list[Article], bool]:
         "Возвращает список сущностей с пагинацией/фильтрами."
-        query = select(Article).where(
-            and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED)
-        )
+        query = select(Article).where(and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED))
         if tag:
             query = query.where(Article.tags.any(Tag.name == tag))
+        if direction is not None:
+            query = query.where(Article.direction == direction)
         query = query.order_by(Article.published_at.desc(), Article.id.desc())
         return await paginate_with_has_more(self.db, query, skip, limit)
 
+    async def list_published_sitemap(self, kind: ArticleKind) -> list[tuple[str, datetime | None, datetime]]:
+        "Slug и даты всех опубликованных статей типа — для карты сайта."
+        query = (
+            select(Article.slug, Article.published_at, Article.updated_at)
+            .where(and_(Article.kind == kind, Article.status == ArticleStatus.PUBLISHED))
+            .order_by(Article.published_at.desc(), Article.id.desc())
+        )
+        return list((await self.db.execute(query)).tuples().all())
+
     async def get_published_by_slug(self, slug: str) -> Article | None:
         "Возвращает запрошенную сущность."
-        query = select(Article).where(
-            and_(Article.slug == slug, Article.status == ArticleStatus.PUBLISHED)
-        )
+        query = select(Article).where(and_(Article.slug == slug, Article.status == ArticleStatus.PUBLISHED))
         return (await self.db.execute(query)).scalars().first()
+
+    async def get_by_slug(self, slug: str) -> Article | None:
+        "Статья по slug в любом статусе — для импорта из файлов."
+        return (await self.db.execute(select(Article).where(Article.slug == slug))).scalars().first()
 
     async def list_related(
         self,
         kind: ArticleKind,
         exclude_id: int,
         limit: int,
+        direction: OrderWorkType | None = None,
     ) -> list[Article]:
-        "Возвращает список сущностей с пагинацией/фильтрами."
-        query = (
-            select(Article)
-            .where(
-                and_(
-                    Article.kind == kind,
-                    Article.status == ArticleStatus.PUBLISHED,
-                    Article.id != exclude_id,
-                )
+        "Свежие статьи того же типа; статьи того же направления идут первыми."
+        query = select(Article).where(
+            and_(
+                Article.kind == kind,
+                Article.status == ArticleStatus.PUBLISHED,
+                Article.id != exclude_id,
             )
-            .order_by(Article.published_at.desc(), Article.id.desc())
-            .limit(limit)
         )
+        if direction is not None:
+            query = query.order_by(case((Article.direction == direction, 0), else_=1))
+        query = query.order_by(Article.published_at.desc(), Article.id.desc()).limit(limit)
         return list((await self.db.execute(query)).scalars().all())
 
-    async def list_all(self, kind: ArticleKind | None, status: ArticleStatus | None) -> list[Article]:
-        "Админская выборка: любые статусы, фильтр по типу/статусу, весь список без пагинации."
+    async def list_all(
+        self,
+        kind: ArticleKind | None,
+        status: ArticleStatus | None,
+        query: str | None,
+        skip: int,
+        limit: int,
+    ) -> tuple[list[Article], int]:
+        "Админская выборка: любые статусы, фильтры по типу/статусу, поиск по заголовку и slug, страница и total."
         conditions = []
         if kind is not None:
             conditions.append(Article.kind == kind)
         if status is not None:
             conditions.append(Article.status == status)
-        query = select(Article)
-        if conditions:
-            query = query.where(and_(*conditions))
-        query = query.order_by(Article.updated_at.desc(), Article.id.desc())
-        return list((await self.db.execute(query)).scalars().all())
+        if query:
+            pattern = f"%{query.strip()}%"
+            conditions.append(or_(Article.title.ilike(pattern), Article.slug.ilike(pattern)))
+        base = select(Article).where(*conditions)
+        total = (await self.db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
+        page = base.order_by(Article.updated_at.desc(), Article.id.desc()).offset(skip).limit(limit)
+        return list((await self.db.execute(page)).scalars().all()), total
 
     async def get_by_id(self, article_id: int) -> Article | None:
         return (await self.db.execute(select(Article).where(Article.id == article_id))).scalars().first()
@@ -117,7 +136,6 @@ class ArticleRepository:
         await self.db.delete(article)
 
 
-
 class ArticleReactionRepository:
     "Голоса 👍/👎 по статьям. Источник правды; счётчики на articles обновляет use case."
 
@@ -138,7 +156,9 @@ class ArticleReactionRepository:
         visitor_key: str | None,
         value: ReactionValue,
     ) -> ArticleReaction:
-        reaction = ArticleReaction(article_id=article_id, user_id=user_id, visitor_key=visitor_key or "", value=value)
+        reaction = ArticleReaction(
+            article_id=article_id, user_id=user_id, visitor_key=visitor_key or "", value=value
+        )
         self.db.add(reaction)
         await self.db.flush()
         return reaction
@@ -168,89 +188,6 @@ class ArticleViewRepository:
     async def add(self, article_id: int, user_id: int | None, visitor_key: str) -> None:
         self.db.add(ArticleView(article_id=article_id, user_id=user_id, visitor_key=visitor_key))
         await self.db.flush()
-
-
-class StaticNewsInteractionRepository:
-    def __init__(self, db: AsyncSession) -> None:
-        self.db = db
-
-    async def get_metrics(self, news_id: int, for_update: bool = False) -> StaticNewsMetric:
-        await self.db.execute(
-            pg_insert(StaticNewsMetric)
-            .values(news_id=news_id, likes_count=0, dislikes_count=0, views_count=0)
-            .on_conflict_do_nothing(index_elements=["news_id"])
-        )
-        query = select(StaticNewsMetric).where(StaticNewsMetric.news_id == news_id)
-        if for_update:
-            query = query.with_for_update()
-        return (await self.db.execute(query)).scalar_one()
-
-    async def list_metrics(self, news_ids: list[int]) -> list[StaticNewsMetric]:
-        if not news_ids:
-            return []
-        query = select(StaticNewsMetric).where(StaticNewsMetric.news_id.in_(news_ids))
-        return list((await self.db.execute(query)).scalars().all())
-
-    async def get_reaction(
-        self,
-        news_id: int,
-        visitor_key: str,
-    ) -> StaticNewsReaction | None:
-        query = select(StaticNewsReaction).where(
-            StaticNewsReaction.news_id == news_id,
-            StaticNewsReaction.visitor_key == visitor_key,
-        )
-        return (await self.db.execute(query)).scalar_one_or_none()
-
-    async def add_reaction(
-        self,
-        news_id: int,
-        user_id: int | None,
-        visitor_key: str,
-        value: str,
-    ) -> StaticNewsReaction:
-        reaction = StaticNewsReaction(
-            news_id=news_id,
-            user_id=user_id,
-            visitor_key=visitor_key,
-            value=value,
-        )
-        self.db.add(reaction)
-        await self.db.flush()
-        return reaction
-
-    async def remove_reaction(self, reaction: StaticNewsReaction) -> None:
-        await self.db.delete(reaction)
-
-    async def add_view_once(
-        self,
-        news_id: int,
-        user_id: int | None,
-        visitor_key: str,
-        viewed_on: date,
-    ) -> bool:
-        query = (
-            pg_insert(StaticNewsView)
-            .values(
-                news_id=news_id,
-                user_id=user_id,
-                visitor_key=visitor_key,
-                viewed_on=viewed_on,
-                created_at=datetime.now(UTC),
-            )
-            .on_conflict_do_nothing(index_elements=["news_id", "visitor_key", "viewed_on"])
-            .returning(StaticNewsView.id)
-        )
-        return (await self.db.execute(query)).scalar_one_or_none() is not None
-
-    async def increment_views(self, news_id: int) -> int:
-        query = (
-            update(StaticNewsMetric)
-            .where(StaticNewsMetric.news_id == news_id)
-            .values(views_count=StaticNewsMetric.views_count + 1)
-            .returning(StaticNewsMetric.views_count)
-        )
-        return (await self.db.execute(query)).scalar_one()
 
 
 class ArticleCommentRepository:

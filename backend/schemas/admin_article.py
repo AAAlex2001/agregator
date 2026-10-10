@@ -3,6 +3,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from models.order import OrderWorkType
+
 Kind = Literal["NEWS", "BLOG"]
 Status = Literal["DRAFT", "PUBLISHED"]
 
@@ -10,6 +12,7 @@ Status = Literal["DRAFT", "PUBLISHED"]
 class ArticleWrite(BaseModel):
     kind: Kind
     status: Status
+    direction: OrderWorkType | None = None
     slug: str = Field(min_length=1, max_length=220)
     title: str = Field(default="", max_length=300)
     excerpt: str = ""

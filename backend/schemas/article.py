@@ -10,6 +10,7 @@ class ArticleListItemDto(BaseModel):
     "Карточка статьи в списке новостей/блога."
     id: int
     kind: ArticleKindDto
+    direction: str | None = None
     slug: str
     title: str
     excerpt: str
@@ -32,6 +33,7 @@ class ArticleDetailDto(BaseModel):
     "Полная карточка статьи для страницы публикации (с SEO-метаданными и HTML-контентом)."
     id: int
     kind: ArticleKindDto
+    direction: str | None = None
     slug: str
     title: str
     excerpt: str
@@ -48,3 +50,10 @@ class ArticleDetailDto(BaseModel):
     likes_count: int = 0
     dislikes_count: int = 0
     views_count: int = 0
+
+
+class ArticleSitemapItemDto(BaseModel):
+    "Строка карты сайта: адрес и даты статьи без тела."
+    slug: str
+    published_at: datetime | None
+    updated_at: datetime
