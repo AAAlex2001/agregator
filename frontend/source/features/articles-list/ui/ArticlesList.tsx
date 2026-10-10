@@ -14,7 +14,6 @@ import { ArticlesRelatedSlider } from "@/source/features/articles-related-slider
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Button from "@/source/shared/ui/Button";
 import { Select } from "@/source/shared/ui/Select";
-import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import s from "./ArticlesList.module.scss";
@@ -58,9 +57,9 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
 
   const availableTags = collectTags(initial.items);
 
-  const tabItems = [
-    { id: "", label: "Все" },
-    ...availableTags.map((tag) => ({ id: tag, label: tag })),
+  const tagOptions = [
+    { value: "", label: "Все теги" },
+    ...availableTags.map((tag) => ({ value: tag, label: tag })),
   ];
 
   async function reload(tag: string, direction: string) {
@@ -135,15 +134,16 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
           value={activeDirection}
           onChange={selectDirection}
           ariaLabel="Направление"
-          className={s.directionSelect}
+          className={s.select}
         />
 
         {availableTags.length > 0 && (
-          <Tabs
-            tabs={tabItems}
-            activeTab={activeTag}
-            onTabChange={selectTab}
-            variant="pill"
+          <Select
+            options={tagOptions}
+            value={activeTag}
+            onChange={selectTab}
+            ariaLabel="Тег"
+            className={s.select}
           />
         )}
       </div>
