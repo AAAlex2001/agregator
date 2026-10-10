@@ -1,0 +1,38 @@
+.name {
+  margin: 0;
+
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+
+  color: var(--text);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.label {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-secondary);
+}
+
+.value {
+  margin: 0;
+
+  color: var(--text);
+}

@@ -10,4 +10,5 @@ export {
   type AccountRole,
 } from "./model/types";
 export { default as AccountSummary } from "./ui/account-summary";
+export { default as CompanyCard } from "./ui/company-card";
 export { default as AccountsTable } from "./ui/accounts-table";

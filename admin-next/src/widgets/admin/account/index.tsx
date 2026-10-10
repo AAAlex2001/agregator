@@ -1,6 +1,6 @@
 "use client";
 
-import { AccountSummary } from "@/entities/account";
+import { AccountSummary, CompanyCard } from "@/entities/account";
 import { AccountForm, useAccountEditor } from "@/features/account-editor";
 import { ACCOUNTS_PATH } from "@/shared/lib/admin-paths";
 import Loader from "@/shared/ui/loader";
@@ -13,7 +13,7 @@ type AccountProfileProps = {
   accountId: number;
 };
 
-/** Профиль учётной записи: форма правки и сводка по активности. */
+/** Профиль учётной записи: форма правки, сводка по активности и карточка компании из DaData. */
 const AccountProfile = ({ accountId }: AccountProfileProps) => {
   const { state, change, save } = useAccountEditor(accountId);
   const { account } = state;
@@ -33,7 +33,11 @@ const AccountProfile = ({ accountId }: AccountProfileProps) => {
 
       <div className={styles.columns}>
         <AccountForm fields={state.fields} pending={state.pending} onChange={change} onSubmit={save} />
-        <AccountSummary account={account} />
+
+        <div className={styles.aside}>
+          <AccountSummary account={account} />
+          <CompanyCard company={account.company} />
+        </div>
       </div>
     </Page>
   );

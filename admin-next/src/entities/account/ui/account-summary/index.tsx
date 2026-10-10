@@ -8,14 +8,13 @@ type AccountSummaryProps = {
   account: AccountDetail;
 };
 
-/** Сводка по учётной записи: роль, компания, активность, подписка и даты. */
+/** Сводка по учётной записи: роль, активность, подписка и даты. */
 const AccountSummary = ({ account }: AccountSummaryProps) => {
   const subscription = account.subscription_name
     ? `${account.subscription_name}${account.subscription_expires_at ? ` до ${formatDate(account.subscription_expires_at)}` : ""}`
     : "Нет";
 
   const rows = [
-    ["Компания", account.company_name ?? "Не указана"],
     ["Заказов размещено", String(account.orders_count)],
     ["Откликов оставлено", String(account.responses_count)],
     ["Подписка", subscription],

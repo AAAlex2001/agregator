@@ -5,6 +5,12 @@
   gap: 16px;
 }
 
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 @media (min-width: 1024px) {
   .columns {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);

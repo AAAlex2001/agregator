@@ -1,9 +1,12 @@
 "Профиль учётной записи в админке: просмотр и правка."
 
+from datetime import UTC, datetime
+from typing import Any
+
 from fastapi import HTTPException, status
 
 from models.account import Account
-from schemas.admin_panel import AdminAccountDetailOut, AdminAccountUpdate
+from schemas.admin_panel import AdminAccountDetailOut, AdminAccountUpdate, AdminCompanyOut
 from services.admin_panel.repository import AdminPanelRepository
 from services.dadata import DaDataService
 
@@ -75,7 +78,7 @@ async def build_detail(repo: AdminPanelRepository, account: Account) -> AdminAcc
         email_verified=account.email_verified,
         phone=account.phone,
         inn=account.inn,
-        company_name=(account.company_data or {}).get("value"),
+        company=company_card(account.company_data),
         is_active=account.is_active,
         has_telegram=account.telegram_id is not None,
         orders_count=await repo.count_customer_orders(account.id),
@@ -84,4 +87,26 @@ async def build_detail(repo: AdminPanelRepository, account: Account) -> AdminAcc
         subscription_expires_at=subscription.expires_at if subscription else None,
         created_at=account.created_at,
         updated_at=account.updated_at,
+    )
+
+
+def company_card(company_data: dict[str, Any] | None) -> AdminCompanyOut | None:
+    "Главное из подсказки DaData: название, реквизиты, статус, руководитель, адрес, ОКВЭД."
+    if not company_data:
+        return None
+    data = company_data.get("data") or {}
+    name = data.get("name") or {}
+    management = data.get("management") or {}
+    state = data.get("state") or {}
+    registered = state.get("registration_date")
+    return AdminCompanyOut(
+        name=name.get("full_with_opf") or company_data.get("value") or "",
+        inn=data.get("inn"),
+        kpp=data.get("kpp"),
+        ogrn=data.get("ogrn"),
+        status=state.get("status"),
+        registration_date=datetime.fromtimestamp(registered / 1000, UTC).date() if registered else None,
+        manager=", ".join(filter(None, [management.get("post"), management.get("name")])) or None,
+        address=(data.get("address") or {}).get("value"),
+        okved=data.get("okved"),
     )

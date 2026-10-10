@@ -70,6 +70,20 @@ class AdminAccountOut(BaseModel):
     created_at: datetime
 
 
+class AdminCompanyOut(BaseModel):
+    "Карточка компании из DaData по ИНН учётной записи."
+
+    name: str
+    inn: str | None
+    kpp: str | None
+    ogrn: str | None
+    status: str | None
+    registration_date: date | None
+    manager: str | None
+    address: str | None
+    okved: str | None
+
+
 class AdminAccountDetailOut(BaseModel):
     "Профиль учётной записи в админке."
 
@@ -81,7 +95,7 @@ class AdminAccountDetailOut(BaseModel):
     email_verified: bool
     phone: str | None
     inn: str | None
-    company_name: str | None
+    company: AdminCompanyOut | None
     is_active: bool
     has_telegram: bool
     orders_count: int

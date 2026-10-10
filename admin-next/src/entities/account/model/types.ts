@@ -14,6 +14,18 @@ export type Account = {
   created_at: string;
 };
 
+export type Company = {
+  name: string;
+  inn: string | null;
+  kpp: string | null;
+  ogrn: string | null;
+  status: string | null;
+  registration_date: string | null;
+  manager: string | null;
+  address: string | null;
+  okved: string | null;
+};
+
 export type AccountDetail = {
   id: number;
   role: AccountRole;
@@ -23,7 +35,7 @@ export type AccountDetail = {
   email_verified: boolean;
   phone: string | null;
   inn: string | null;
-  company_name: string | null;
+  company: Company | null;
   is_active: boolean;
   has_telegram: boolean;
   orders_count: number;
@@ -58,6 +70,14 @@ export const ACCOUNT_ROLE_LABELS: Record<AccountRole, string> = {
   CUSTOMER: "Заказчик",
   EXPERT: "Исполнитель",
   LICENSE_HOLDER: "Держатель документов",
+};
+
+export const COMPANY_STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Действующая",
+  LIQUIDATING: "Ликвидируется",
+  LIQUIDATED: "Ликвидирована",
+  BANKRUPT: "Банкротство",
+  REORGANIZING: "Реорганизация",
 };
 
 export const ACCOUNT_ROLE_TONES: Record<AccountRole, BadgeTone> = {
