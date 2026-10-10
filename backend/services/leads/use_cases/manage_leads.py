@@ -1,4 +1,5 @@
 "Use cases: просмотр и обработка заявок в админке."
+
 from fastapi import HTTPException, status
 
 from models.lead import Lead, LeadStatus
@@ -44,3 +45,17 @@ class UpdateLeadUseCase:
             lead.comment = comment.strip()
         await self.repo.flush()
         return lead
+
+
+class DeleteLeadUseCase:
+    "Удаляет заявку, например спам или дубль."
+
+    def __init__(self, repo: LeadRepository) -> None:
+        self.repo = repo
+
+    async def execute(self, lead_id: int) -> None:
+        "Удаляет заявку по id, если её нет — 404."
+        lead = await self.repo.get_by_id(lead_id)
+        if lead is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Заявка не найдена")
+        await self.repo.delete(lead)

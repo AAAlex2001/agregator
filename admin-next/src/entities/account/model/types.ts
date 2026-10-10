@@ -14,6 +14,36 @@ export type Account = {
   created_at: string;
 };
 
+export type AccountDetail = {
+  id: number;
+  role: AccountRole;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  email_verified: boolean;
+  phone: string | null;
+  inn: string | null;
+  company_name: string | null;
+  is_active: boolean;
+  has_telegram: boolean;
+  orders_count: number;
+  responses_count: number;
+  subscription_name: string | null;
+  subscription_expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AccountChanges = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  email_verified: boolean;
+  phone: string;
+  inn: string;
+  is_active: boolean;
+};
+
 export type AccountList = {
   items: Account[];
   total: number;

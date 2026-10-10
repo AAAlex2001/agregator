@@ -9,6 +9,7 @@ export type LeadsState = {
   pendingId: number | null;
   noteFor: number | null;
   noteDraft: string;
+  removing: Lead | null;
 };
 
 export type LeadsAction =
@@ -20,4 +21,7 @@ export type LeadsAction =
   | { type: "lead/changed"; lead: Lead }
   | { type: "note/open"; lead: Lead }
   | { type: "note/change"; value: string }
-  | { type: "note/close" };
+  | { type: "note/close" }
+  | { type: "remove/ask"; lead: Lead }
+  | { type: "remove/cancel" }
+  | { type: "lead/removed"; id: number };

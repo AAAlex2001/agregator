@@ -37,6 +37,22 @@ export const leadsReducer = (state: LeadsState, action: LeadsAction): LeadsState
     case "note/close":
       return { ...state, noteFor: null, noteDraft: "" };
 
+    case "remove/ask":
+      return { ...state, removing: action.lead };
+
+    case "remove/cancel":
+      return { ...state, removing: null };
+
+    case "lead/removed":
+      return {
+        ...state,
+        removing: null,
+        list: state.list && {
+          items: state.list.items.filter((item) => item.id !== action.id),
+          total: state.list.total - 1,
+        },
+      };
+
     default:
       return state;
   }

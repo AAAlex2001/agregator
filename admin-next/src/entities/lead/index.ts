@@ -1,4 +1,4 @@
-export { fetchLeads, updateLead } from "./api/leads";
+export { deleteLead, fetchLeads, updateLead } from "./api/leads";
 export {
   LEAD_STATUS_LABELS,
   LEAD_STATUS_TONES,

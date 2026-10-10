@@ -1,4 +1,10 @@
 from services.leads.repository import LeadRepository
-from services.leads.use_cases import ListLeadsUseCase, SubmitLeadUseCase, UpdateLeadUseCase
+from services.leads.use_cases import DeleteLeadUseCase, ListLeadsUseCase, SubmitLeadUseCase, UpdateLeadUseCase
 
-__all__ = ["LeadRepository", "ListLeadsUseCase", "SubmitLeadUseCase", "UpdateLeadUseCase"]
+__all__ = [
+    "DeleteLeadUseCase",
+    "LeadRepository",
+    "ListLeadsUseCase",
+    "SubmitLeadUseCase",
+    "UpdateLeadUseCase",
+]

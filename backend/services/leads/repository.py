@@ -1,4 +1,5 @@
 "Repository: доступ к БД для заявок с публичных страниц."
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -43,11 +44,17 @@ class LeadRepository:
 
     async def count_recent_by_phone(self, phone: str, since) -> int:
         "Сколько заявок с этого телефона пришло за период — защита от спама."
-        return await self.db.scalar(
-            select(func.count())
-            .select_from(Lead)
-            .where(Lead.phone == phone, Lead.created_at >= since)
-        ) or 0
+        return (
+            await self.db.scalar(
+                select(func.count()).select_from(Lead).where(Lead.phone == phone, Lead.created_at >= since)
+            )
+            or 0
+        )
+
+    async def delete(self, lead: Lead) -> None:
+        "Удаляет заявку."
+        await self.db.delete(lead)
+        await self.db.flush()
 
     async def flush(self) -> None:
         "Сбрасывает накопленные изменения в БД."

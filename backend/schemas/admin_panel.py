@@ -2,7 +2,7 @@
 
 from datetime import date, datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DashboardCounterOut(BaseModel):
@@ -68,6 +68,40 @@ class AdminAccountOut(BaseModel):
     inn: str | None
     is_active: bool
     created_at: datetime
+
+
+class AdminAccountDetailOut(BaseModel):
+    "Профиль учётной записи в админке."
+
+    id: int
+    role: str
+    first_name: str | None
+    last_name: str | None
+    email: str | None
+    email_verified: bool
+    phone: str | None
+    inn: str | None
+    company_name: str | None
+    is_active: bool
+    has_telegram: bool
+    orders_count: int
+    responses_count: int
+    subscription_name: str | None
+    subscription_expires_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AdminAccountUpdate(BaseModel):
+    "Правка профиля учётной записи из админки."
+
+    first_name: str | None = Field(None, max_length=100)
+    last_name: str | None = Field(None, max_length=100)
+    email: str | None = Field(None, max_length=255)
+    email_verified: bool
+    phone: str | None = Field(None, max_length=50)
+    inn: str | None = Field(None, max_length=12)
+    is_active: bool
 
 
 class AdminAccountListOut(BaseModel):

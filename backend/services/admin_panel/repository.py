@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 
 from models.account import Account, UserRole
 from models.order import Order, OrderStatus, OrderWorkType
+from models.pricing import SubscriptionStatus, UserSubscription
 from models.response import OrderResponse
 
 TrackedModel = type[Account] | type[Order] | type[OrderResponse]
@@ -102,3 +103,45 @@ class AdminPanelRepository:
         total = await self.db.scalar(select(func.count()).select_from(statement.subquery())) or 0
         rows = await self.db.execute(statement.order_by(Account.id.desc()).offset(skip).limit(limit))
         return list(rows.scalars().all()), total
+
+    async def get_account(self, account_id: int) -> Account | None:
+        "Учётная запись по id."
+        return await self.db.get(Account, account_id)
+
+    async def count_customer_orders(self, account_id: int) -> int:
+        "Сколько заказов разместил заказчик."
+        return await self.db.scalar(select(func.count()).where(Order.customer_id == account_id)) or 0
+
+    async def count_expert_responses(self, account_id: int) -> int:
+        "Сколько откликов оставил исполнитель."
+        return await self.db.scalar(select(func.count()).where(OrderResponse.expert_id == account_id)) or 0
+
+    async def get_active_subscription(self, account_id: int) -> UserSubscription | None:
+        "Действующая подписка с тарифом — последняя по дате активации."
+        return await self.db.scalar(
+            select(UserSubscription)
+            .options(selectinload(UserSubscription.plan))
+            .where(
+                UserSubscription.user_id == account_id, UserSubscription.status == SubscriptionStatus.ACTIVE
+            )
+            .order_by(UserSubscription.activated_at.desc())
+            .limit(1)
+        )
+
+    async def is_contact_taken(self, account: Account, email: str | None, phone: str | None) -> bool:
+        "Занят ли email или телефон другой учётной записью той же роли."
+        contacts = []
+        if email:
+            contacts.append(Account.email == email)
+        if phone:
+            contacts.append(Account.phone == phone)
+        if not contacts:
+            return False
+        taken = await self.db.scalar(
+            select(func.count()).where(Account.role == account.role, Account.id != account.id, or_(*contacts))
+        )
+        return bool(taken)
+
+    async def flush(self) -> None:
+        "Сохраняет изменения в БД."
+        await self.db.flush()

@@ -12,6 +12,11 @@ export const fetchLeads = async (status: string, limit: number, offset: number):
   return response.json();
 };
 
+/** Удалить заявку. */
+export const deleteLead = async (id: number): Promise<void> => {
+  await adminFetch(`/leads/${id}`, { method: "DELETE" });
+};
+
 /** Сменить статус заявки или заметку менеджера. */
 export const updateLead = async (id: number, changes: LeadChanges): Promise<Lead> => {
   const response = await adminFetch(`/leads/${id}`, jsonBody("PATCH", changes));

@@ -6,6 +6,7 @@ import { LEAD_STATUS_LABELS, LEAD_STATUS_TONES, type Lead, type LeadStatus } fro
 import { formatDateTime } from "@/shared/lib/date";
 import Badge from "@/shared/ui/badge";
 import Button from "@/shared/ui/button";
+import { TrashIcon } from "@/shared/ui/icons";
 import List from "@/shared/ui/list";
 import ListRow from "@/shared/ui/list-row";
 import LeadNote from "../lead-note";
@@ -21,13 +22,14 @@ type LeadsTableProps = {
   onChangeNote: (value: string) => void;
   onSaveNote: (lead: Lead) => void;
   onCloseNote: () => void;
+  onRemove: (lead: Lead) => void;
 };
 
 const contactLines = (lead: Lead) =>
   [lead.phone, lead.email, [lead.company, lead.inn && `ИНН ${lead.inn}`].filter(Boolean).join(" · "), lead.region].filter(Boolean);
 
-/** Список заявок: контакты, задача, заметка менеджера и смена статуса в строке. */
-const LeadsTable = ({ leads, pendingId, noteFor, noteDraft, onSetStatus, onOpenNote, onChangeNote, onSaveNote, onCloseNote }: LeadsTableProps) => (
+/** Список заявок: контакты, задача, заметка менеджера, смена статуса и удаление в строке. */
+const LeadsTable = ({ leads, pendingId, noteFor, noteDraft, onSetStatus, onOpenNote, onChangeNote, onSaveNote, onCloseNote, onRemove }: LeadsTableProps) => (
   <List>
     {leads.map((lead) => (
       <ListRow key={lead.id} className={cn(styles.row, pendingId === lead.id && styles.pending)}>
@@ -76,21 +78,27 @@ const LeadsTable = ({ leads, pendingId, noteFor, noteDraft, onSetStatus, onOpenN
           onClose={onCloseNote}
         />
 
-        {lead.status !== "DONE" && lead.status !== "SPAM" && (
-          <div className={styles.actions}>
-            {lead.status === "NEW" && (
-              <Button variant="outline" size="sm" onClick={() => onSetStatus(lead, "IN_WORK")}>
-                В работу
+        <div className={styles.actions}>
+          {lead.status === "NEW" && (
+            <Button variant="outline" size="sm" onClick={() => onSetStatus(lead, "IN_WORK")}>
+              В работу
+            </Button>
+          )}
+          {lead.status !== "DONE" && lead.status !== "SPAM" && (
+            <>
+              <Button size="sm" onClick={() => onSetStatus(lead, "DONE")}>
+                Обработана
               </Button>
-            )}
-            <Button size="sm" onClick={() => onSetStatus(lead, "DONE")}>
-              Обработана
-            </Button>
-            <Button variant="danger" size="sm" onClick={() => onSetStatus(lead, "SPAM")}>
-              Спам
-            </Button>
-          </div>
-        )}
+              <Button variant="danger" size="sm" onClick={() => onSetStatus(lead, "SPAM")}>
+                Спам
+              </Button>
+            </>
+          )}
+          <Button variant="ghost" size="sm" onClick={() => onRemove(lead)}>
+            <TrashIcon />
+            Удалить
+          </Button>
+        </div>
       </ListRow>
     ))}
   </List>

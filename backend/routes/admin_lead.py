@@ -1,13 +1,13 @@
 "Заявки с сайта для admin-next. За X-Internal-Token; логин держит сама админка."
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.database import get_db
 from dependencies.internal_auth import require_internal_token
 from models.lead import LeadStatus
 from schemas.lead import LeadListOut, LeadOut, LeadUpdate
-from services.leads import LeadRepository, ListLeadsUseCase, UpdateLeadUseCase
+from services.leads import DeleteLeadUseCase, LeadRepository, ListLeadsUseCase, UpdateLeadUseCase
 
 router = APIRouter(
     prefix="/internal/leads",
@@ -53,3 +53,10 @@ async def update_lead(
     use_case = UpdateLeadUseCase(LeadRepository(db))
     lead = await use_case.execute(lead_id, parse_status(data.status), data.comment)
     return LeadOut.model_validate(lead)
+
+
+@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_lead(lead_id: int, db: AsyncSession = Depends(get_db)) -> Response:
+    "Удаляет заявку."
+    await DeleteLeadUseCase(LeadRepository(db)).execute(lead_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

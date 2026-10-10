@@ -1,3 +1,4 @@
+import { accountPath } from "@/shared/lib/admin-paths";
 import { formatDate } from "@/shared/lib/date";
 import Badge from "@/shared/ui/badge";
 import List from "@/shared/ui/list";
@@ -9,11 +10,11 @@ type AccountsTableProps = {
   accounts: Account[];
 };
 
-/** Список учётных записей: имя и компания, контакты, роль и дата регистрации. */
+/** Список учётных записей. Строка целиком ведёт в профиль. */
 const AccountsTable = ({ accounts }: AccountsTableProps) => (
   <List>
     {accounts.map((account) => (
-      <ListRow key={account.id}>
+      <ListRow key={account.id} href={accountPath(account.id)}>
         <span className={styles.id}>#{account.id}</span>
 
         <span className={styles.cell}>

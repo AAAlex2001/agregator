@@ -24,6 +24,9 @@ export const LEADS_PATH = "/leads";
 
 export const CONTACT_DEALS_PATH = "/contact-deals";
 
+/** Адрес профиля учётной записи. */
+export const accountPath = (id: number) => `${ACCOUNTS_PATH}/${id}`;
+
 /** Адрес редактирования статьи. */
 export const articlePath = (id: number) => `${ARTICLES_PATH}/${id}`;
 

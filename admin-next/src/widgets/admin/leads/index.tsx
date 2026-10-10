@@ -4,6 +4,7 @@ import { LEAD_STATUS_LABELS } from "@/entities/lead";
 import { LeadsTable, useLeads } from "@/features/leads-admin";
 import { withAllOption } from "@/shared/lib/options";
 import { countLabel } from "@/shared/lib/text";
+import ConfirmModal from "@/shared/ui/confirm-modal";
 import Loader from "@/shared/ui/loader";
 import LoadingArea from "@/shared/ui/loading-area";
 import Message from "@/shared/ui/message";
@@ -48,11 +49,22 @@ const AdminLeads = () => {
               onChangeNote={leads.changeNote}
               onSaveNote={leads.saveNote}
               onCloseNote={leads.closeNote}
+              onRemove={leads.askRemove}
             />
           )}
           <Pagination page={state.page} pages={leads.pages} disabled={state.loading} onChange={leads.openPage} />
         </LoadingArea>
       )}
+
+      <ConfirmModal
+        open={state.removing !== null}
+        title="Удалить заявку?"
+        text={`Заявка от «${state.removing?.name ?? ""}» удалится без возможности восстановления.`}
+        confirmLabel="Удалить"
+        pending={state.pendingId !== null}
+        onConfirm={leads.remove}
+        onCancel={leads.cancelRemove}
+      />
     </Page>
   );
 };

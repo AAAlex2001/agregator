@@ -7,13 +7,22 @@ from database.database import get_db
 from dependencies.internal_auth import require_internal_token
 from models.account import UserRole
 from models.order import OrderStatus, OrderWorkType
-from schemas.admin_panel import AdminAccountListOut, AdminOrderListOut, DashboardOut
+from schemas.admin_panel import (
+    AdminAccountDetailOut,
+    AdminAccountListOut,
+    AdminAccountUpdate,
+    AdminOrderListOut,
+    DashboardOut,
+)
 from services.admin_panel import (
     AdminPanelRepository,
+    GetAccountUseCase,
     GetDashboardUseCase,
     ListAccountsUseCase,
     ListOrdersUseCase,
+    UpdateAccountUseCase,
 )
+from services.dadata import DaDataService
 
 router = APIRouter(
     prefix="/internal",
@@ -51,3 +60,19 @@ async def list_accounts(
 ) -> AdminAccountListOut:
     "Учётные записи новыми сверху: фильтр по роли, поиск по имени, email, телефону и ИНН."
     return await ListAccountsUseCase(AdminPanelRepository(db)).execute(role, q, skip, limit)
+
+
+@router.get("/accounts/{account_id}", response_model=AdminAccountDetailOut)
+async def get_account(account_id: int, db: AsyncSession = Depends(get_db)) -> AdminAccountDetailOut:
+    "Профиль учётной записи: контакты, компания, активность и действующая подписка."
+    return await GetAccountUseCase(AdminPanelRepository(db)).execute(account_id)
+
+
+@router.put("/accounts/{account_id}", response_model=AdminAccountDetailOut)
+async def update_account(
+    account_id: int,
+    data: AdminAccountUpdate,
+    db: AsyncSession = Depends(get_db),
+) -> AdminAccountDetailOut:
+    "Правка имени, контактов, ИНН и доступа учётной записи."
+    return await UpdateAccountUseCase(AdminPanelRepository(db), DaDataService()).execute(account_id, data)
