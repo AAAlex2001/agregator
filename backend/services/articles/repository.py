@@ -81,10 +81,12 @@ class ArticleRepository:
         kind: ArticleKind | None,
         status: ArticleStatus | None,
         query: str | None,
+        with_comments: bool,
+        views_order: str | None,
         skip: int,
         limit: int,
     ) -> tuple[list[Article], int]:
-        "Админская выборка: любые статусы, фильтры по типу/статусу, поиск по заголовку и slug, страница и total."
+        "Админская выборка: фильтры по типу, статусу и обсуждениям, поиск, порядок по просмотрам или по изменению."
         conditions = []
         if kind is not None:
             conditions.append(Article.kind == kind)
@@ -93,9 +95,19 @@ class ArticleRepository:
         if query:
             pattern = f"%{query.strip()}%"
             conditions.append(or_(Article.title.ilike(pattern), Article.slug.ilike(pattern)))
+        if with_comments:
+            conditions.append(
+                select(ArticleComment.id).where(ArticleComment.article_id == Article.id).exists()
+            )
         base = select(Article).where(*conditions)
         total = (await self.db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
-        page = base.order_by(Article.updated_at.desc(), Article.id.desc()).offset(skip).limit(limit)
+        if views_order == "desc":
+            order = Article.views_count.desc()
+        elif views_order == "asc":
+            order = Article.views_count.asc()
+        else:
+            order = Article.updated_at.desc()
+        page = base.order_by(order, Article.id.desc()).offset(skip).limit(limit)
         return list((await self.db.execute(page)).scalars().all()), total
 
     async def get_by_id(self, article_id: int) -> Article | None:

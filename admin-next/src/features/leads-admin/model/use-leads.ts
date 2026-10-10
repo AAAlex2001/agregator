@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import type { Lead, LeadStatus } from "@/entities/lead";
+import { fetchLeads, updateLead, type Lead, type LeadChanges, type LeadStatus } from "@/entities/lead";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { fetchLeads, updateLead } from "../api/leads";
 import { leadsReducer } from "./reducers";
 
 const PAGE_SIZE = 50;
@@ -40,7 +39,7 @@ export const useLeads = () => {
     };
   }, [filter, page]);
 
-  const request = async (lead: Lead, changes: { status?: LeadStatus; comment?: string }, success: string) => {
+  const request = async (lead: Lead, changes: LeadChanges, success: string) => {
     dispatch({ type: "request/start", id: lead.id });
 
     try {

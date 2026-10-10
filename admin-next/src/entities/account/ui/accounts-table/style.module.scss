@@ -1,0 +1,74 @@
+.id {
+  flex: none;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.cell,
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.cell {
+  flex: 1 1 100%;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.badges {
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.date {
+  flex: none;
+
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .id {
+    width: 52px;
+  }
+
+  .cell {
+    flex: 1 1 0;
+  }
+
+  .contacts {
+    width: 240px;
+  }
+
+  .badges {
+    width: 170px;
+  }
+
+  .date {
+    width: 80px;
+
+    text-align: right;
+  }
+}

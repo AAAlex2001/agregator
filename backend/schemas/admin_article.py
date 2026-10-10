@@ -41,6 +41,7 @@ class ArticleListItem(BaseModel):
     slug: str
     published_at: datetime | None
     updated_at: datetime
+    views_count: int
 
 
 class ArticleListOut(BaseModel):

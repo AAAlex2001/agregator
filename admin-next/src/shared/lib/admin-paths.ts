@@ -1,5 +1,11 @@
 export const LOGIN_PATH = "/login";
 
+export const DASHBOARD_PATH = "/";
+
+export const ORDERS_PATH = "/orders";
+
+export const ACCOUNTS_PATH = "/accounts";
+
 export const ARTICLES_PATH = "/articles";
 
 export const NEW_ARTICLE_PATH = "/articles/new";

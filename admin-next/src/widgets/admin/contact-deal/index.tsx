@@ -1,14 +1,14 @@
 "use client";
 
-import { DEAL_STATUS_LABELS, DEAL_STATUS_TONES } from "@/entities/contact-deal";
 import {
+  DEAL_STATUS_LABELS,
+  DEAL_STATUS_TONES,
   DealContractPanel,
   DealReceipts,
   DealSignatures,
   DealSummary,
-  ReleaseForm,
-  useDeal,
-} from "@/features/contact-deals-admin";
+} from "@/entities/contact-deal";
+import { ReleaseForm, useDeal } from "@/features/contact-deals-admin";
 import { CONTACT_DEALS_PATH } from "@/shared/lib/admin-paths";
 import Badge from "@/shared/ui/badge";
 import Loader from "@/shared/ui/loader";

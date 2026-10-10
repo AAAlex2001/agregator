@@ -1,0 +1,46 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: var(--text-secondary);
+}
+
+.total {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+
+  color: var(--text);
+}
+
+.periods {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.period {
+  font-size: 13px;
+  line-height: 18px;
+
+  color: var(--text-muted);
+}
+
+.growth {
+  font-weight: 600;
+
+  color: var(--success);
+}

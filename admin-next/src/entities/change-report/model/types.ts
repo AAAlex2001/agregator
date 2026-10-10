@@ -10,6 +10,10 @@ export type ChangeReport = {
   created_at: string;
 };
 
+export type ChangeReportList = {
+  items: ChangeReport[];
+};
+
 export const CHANGE_REPORT_STATUS_LABELS: Record<ChangeReportStatus, string> = {
   NEW: "Новое",
   REVIEWED: "Рассмотрено",

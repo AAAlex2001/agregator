@@ -1,0 +1,76 @@
+.id {
+  flex: none;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.cell,
+.people,
+.money {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.cell {
+  flex: 1 1 100%;
+}
+
+.title,
+.sum {
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-muted);
+}
+
+.status {
+  flex: none;
+}
+
+.date {
+  flex: none;
+
+  font-size: 12px;
+  line-height: 16px;
+
+  color: var(--text-secondary);
+}
+
+@media (min-width: 768px) {
+  .id {
+    width: 52px;
+  }
+
+  .cell {
+    flex: 1 1 0;
+  }
+
+  .people {
+    width: 220px;
+  }
+
+  .money {
+    width: 120px;
+  }
+
+  .status {
+    width: 100px;
+  }
+
+  .date {
+    width: 80px;
+
+    text-align: right;
+  }
+}

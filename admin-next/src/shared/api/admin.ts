@@ -4,8 +4,8 @@ import { readErrorMessage } from "./errors";
 /** Событие в window: сессия админки истекла, оболочка уводит на страницу входа. */
 export const UNAUTHORIZED_EVENT = "admin:unauthorized";
 
-/** Запрос к API админки. Cookie со входом браузер прикладывает сам; 204 возвращает undefined. */
-export const adminRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {
+/** Запрос к API админки. Cookie со входом браузер прикладывает сам. На 401 и ошибки бросает исключение. */
+export const adminFetch = async (path: string, init?: RequestInit): Promise<Response> => {
   const response = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
 
   if (response.status === 401) {
@@ -15,11 +15,11 @@ export const adminRequest = async <T>(path: string, init?: RequestInit): Promise
 
   if (!response.ok) throw new Error(await readErrorMessage(response));
 
-  return response.status === 204 ? (undefined as T) : response.json();
+  return response;
 };
 
 /** Параметры запроса с JSON в теле. */
-export const jsonBody = (method: string, body: unknown): RequestInit => ({
+export const jsonBody = (method: string, body: object): RequestInit => ({
   method,
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(body),

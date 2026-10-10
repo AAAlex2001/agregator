@@ -1,7 +1,7 @@
 "use client";
 
-import { DEAL_STATUS_LABELS } from "@/entities/contact-deal";
-import { DealsTable, useDealsList } from "@/features/contact-deals-admin";
+import { DEAL_STATUS_LABELS, DealsTable } from "@/entities/contact-deal";
+import { useDealsList } from "@/features/contact-deals-admin";
 import { withAllOption } from "@/shared/lib/options";
 import { countLabel } from "@/shared/lib/text";
 import Loader from "@/shared/ui/loader";

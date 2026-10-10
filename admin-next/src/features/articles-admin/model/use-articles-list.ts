@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { fetchArticles } from "../api/articles";
+import { fetchArticles, type ArticleListQuery } from "@/entities/article";
 import { listReducer } from "./reducers";
-import type { ListFilters } from "./types";
 
 const PAGE_SIZE = 50;
 
-const EMPTY_FILTERS: ListFilters = { kind: "", status: "", query: "" };
-
-/** Список статей админки: фильтры по типу и статусу, поиск и листание страниц. */
+/** Список статей админки: фильтры по типу, статусу и обсуждениям, порядок по просмотрам, поиск и листание. */
 export const useArticlesList = () => {
   const [state, dispatch] = useReducer(listReducer, {
     search: "",
-    filters: EMPTY_FILTERS,
+    filters: { kind: "", status: "", query: "", withComments: false, views: "" },
     page: 1,
     list: null,
     loading: true,
@@ -39,14 +36,13 @@ export const useArticlesList = () => {
 
   const changeSearch = (value: string) => dispatch({ type: "search/change", value });
 
-  const changeFilter = (changes: Partial<ListFilters>) =>
-    dispatch({ type: "load/start", filters: { ...filters, ...changes }, page: 1 });
+  const changeFilters = (nextFilters: ArticleListQuery) => dispatch({ type: "load/start", filters: nextFilters, page: 1 });
 
-  const submitSearch = () => changeFilter({ query: state.search.trim() });
+  const submitSearch = () => changeFilters({ ...filters, query: state.search.trim() });
 
   const openPage = (nextPage: number) => dispatch({ type: "load/start", filters, page: nextPage });
 
   const pages = Math.ceil((state.list?.total ?? 0) / PAGE_SIZE);
 
-  return { state, pages, changeSearch, changeFilter, submitSearch, openPage };
+  return { state, pages, changeSearch, changeFilters, submitSearch, openPage };
 };

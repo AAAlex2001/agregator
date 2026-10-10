@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { DocumentFile } from "@/entities/clarification";
+import { uploadClarificationPdf, type DocumentFile } from "@/entities/clarification";
 import { errorMessage } from "@/shared/lib/errors";
 import Field from "@/shared/ui/field";
 import FileButton from "@/shared/ui/file-button";
 import IconButton from "@/shared/ui/icon-button";
 import { CloseIcon, PaperclipIcon } from "@/shared/ui/icons";
 import { useToast } from "@/shared/ui/toaster";
-import { uploadPdf } from "../../api/clarifications";
 import styles from "./style.module.scss";
 
 type PdfFilesFieldProps = {
@@ -28,7 +27,7 @@ const PdfFilesField = ({ label, value, onChange }: PdfFilesFieldProps) => {
     setUploading(true);
 
     try {
-      const uploaded = await Promise.all(files.map(async (file) => ({ name: file.name, url: await uploadPdf(file) })));
+      const uploaded = await Promise.all(files.map(async (file) => ({ name: file.name, url: await uploadClarificationPdf(file) })));
 
       onChange([...value, ...uploaded]);
     } catch (failure) {

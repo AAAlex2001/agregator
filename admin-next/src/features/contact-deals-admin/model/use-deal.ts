@@ -3,7 +3,7 @@
 import { useEffect, useReducer } from "react";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { fetchDeal, releaseDeal } from "../api/deals";
+import { fetchDeal, releaseDeal } from "@/entities/contact-deal";
 import { dealReducer } from "./reducers";
 
 const MIN_NOTE_LENGTH = 3;

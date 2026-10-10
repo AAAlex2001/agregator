@@ -1,15 +1,36 @@
 import {
+  ACCOUNTS_PATH,
   ARTICLES_PATH,
   CONTACT_DEALS_PATH,
+  DASHBOARD_PATH,
   LEADS_PATH,
+  ORDERS_PATH,
   RTN_CHANGE_REPORTS_PATH,
   RTN_PATH,
   RTN_QUESTIONS_PATH,
   TAGS_PATH,
 } from "@/shared/lib/admin-paths";
-import { BellIcon, BriefcaseIcon, FileTextIcon, HelpCircleIcon, InboxIcon, TagIcon } from "@/shared/ui/icons";
+import {
+  BellIcon,
+  BriefcaseIcon,
+  ClipboardIcon,
+  DashboardIcon,
+  FileTextIcon,
+  HelpCircleIcon,
+  InboxIcon,
+  TagIcon,
+  UsersIcon,
+} from "@/shared/ui/icons";
 
 export const ADMIN_NAV = [
+  {
+    title: "Платформа",
+    items: [
+      { href: DASHBOARD_PATH, label: "Дашборд", Icon: DashboardIcon },
+      { href: ORDERS_PATH, label: "Заказы", Icon: ClipboardIcon },
+      { href: ACCOUNTS_PATH, label: "Учётные записи", Icon: UsersIcon },
+    ],
+  },
   {
     title: "Контент",
     items: [

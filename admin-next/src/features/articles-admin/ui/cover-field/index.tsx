@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { uploadArticleImage } from "@/entities/article";
 import { errorMessage } from "@/shared/lib/errors";
 import Button from "@/shared/ui/button";
 import Field from "@/shared/ui/field";
 import FileButton from "@/shared/ui/file-button";
 import { useToast } from "@/shared/ui/toaster";
-import { uploadImage } from "../../api/articles";
 import styles from "./style.module.scss";
 
 type CoverFieldProps = {
@@ -28,7 +28,7 @@ const CoverField = ({ label, hint, value, onChange }: CoverFieldProps) => {
     setUploading(true);
 
     try {
-      onChange(await uploadImage(file));
+      onChange(await uploadArticleImage(file));
     } catch (failure) {
       toast(errorMessage(failure, "Не удалось загрузить картинку"), "error");
     } finally {

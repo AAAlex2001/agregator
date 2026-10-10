@@ -1,7 +1,7 @@
 "use client";
 
-import { PUBLICATION_STATUS_LABELS } from "@/entities/clarification";
-import { ClarificationsTable, useClarificationsList } from "@/features/clarifications-admin";
+import { ClarificationsTable, PUBLICATION_STATUS_LABELS } from "@/entities/clarification";
+import { useClarificationsList } from "@/features/clarifications-admin";
 import { NEW_RTN_PATH } from "@/shared/lib/admin-paths";
 import { withAllOption } from "@/shared/lib/options";
 import { countLabel } from "@/shared/lib/text";

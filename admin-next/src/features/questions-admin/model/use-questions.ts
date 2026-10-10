@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import type { Question } from "@/entities/question";
+import { deleteQuestion, fetchQuestions, setQuestionStatus, type Question } from "@/entities/question";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { deleteQuestion, fetchQuestions, setQuestionStatus } from "../api/questions";
 import { questionsReducer } from "./reducers";
 
 /** Очередь вопросов посетителей: фильтр по статусу, взятие в работу, отклонение с причиной, удаление. */

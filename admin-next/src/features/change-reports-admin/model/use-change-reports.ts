@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import type { ChangeReport, ChangeReportStatus } from "@/entities/change-report";
+import { fetchChangeReports, setChangeReportStatus, type ChangeReport, type ChangeReportStatus } from "@/entities/change-report";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { fetchChangeReports, setChangeReportStatus } from "../api/change-reports";
 import { changeReportsReducer } from "./reducers";
 
 /** Сигналы об устаревших разъяснениях: фильтр по статусу и смена статуса в строке. */

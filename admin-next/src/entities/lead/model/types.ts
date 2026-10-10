@@ -23,6 +23,16 @@ export type Lead = {
   updated_at: string;
 };
 
+export type LeadList = {
+  items: Lead[];
+  total: number;
+};
+
+export type LeadChanges = {
+  status?: LeadStatus;
+  comment?: string;
+};
+
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "Новая",
   IN_WORK: "В работе",

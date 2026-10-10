@@ -1,0 +1,43 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 12px;
+
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.track {
+  display: block;
+
+  height: 6px;
+
+  background: var(--subtle);
+  border-radius: 3px;
+}
+
+.fill {
+  display: block;
+
+  height: 100%;
+
+  background: var(--accent);
+  border-radius: 3px;
+}

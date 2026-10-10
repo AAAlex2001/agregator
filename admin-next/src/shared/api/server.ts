@@ -4,7 +4,7 @@ import { isValidSessionToken, SESSION_COOKIE } from "./session";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://backend:8000/api";
 
-const ALLOWED_PREFIXES = ["content/", "leads", "contact-deals", "rtn/"];
+const ALLOWED_PREFIXES = ["content/", "leads", "contact-deals", "rtn/", "dashboard", "orders", "accounts"];
 
 const PUBLIC_PATHS = new Set(["rtn/taxonomy"]);
 

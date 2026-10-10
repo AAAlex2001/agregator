@@ -2,20 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useReducer } from "react";
-import { fetchTaxonomy } from "@/entities/clarification";
-import { fetchTags } from "@/entities/tag";
-import { RTN_PATH, rtnPath } from "@/shared/lib/admin-paths";
-import { errorMessage } from "@/shared/lib/errors";
-import { useToast } from "@/shared/ui/toaster";
 import {
   createClarification,
   deleteClarification,
   fetchClarification,
-  fetchQuestion,
+  fetchTaxonomy,
   updateClarification,
-} from "../api/clarifications";
+  type Clarification,
+  type ClarificationPayload,
+} from "@/entities/clarification";
+import { fetchQuestion } from "@/entities/question";
+import { fetchTags } from "@/entities/tag";
+import { RTN_PATH, rtnPath } from "@/shared/lib/admin-paths";
+import { errorMessage } from "@/shared/lib/errors";
+import { useToast } from "@/shared/ui/toaster";
 import { editorReducer } from "./reducers";
-import type { Clarification, ClarificationFields, ClarificationPayload, TaxonomyDimension } from "./types";
+import type { ClarificationFields, TaxonomyDimension } from "./types";
 
 const EMPTY_FIELDS: ClarificationFields = {
   documentType: "OFFICIAL_CLARIFICATION",

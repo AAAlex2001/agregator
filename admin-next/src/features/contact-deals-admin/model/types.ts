@@ -1,15 +1,15 @@
-import type { Deal, DealListItem } from "@/entities/contact-deal";
+import type { Deal, DealList } from "@/entities/contact-deal";
 
 export type DealsState = {
   filter: string;
-  list: { items: DealListItem[]; total: number } | null;
+  list: DealList | null;
   loading: boolean;
   failed: boolean;
 };
 
 export type DealsAction =
   | { type: "load/start"; filter: string }
-  | { type: "load/success"; list: { items: DealListItem[]; total: number } }
+  | { type: "load/success"; list: DealList }
   | { type: "load/error" };
 
 export type DealState = {

@@ -1,6 +1,13 @@
 "use client";
 
-import { ARTICLE_KIND_LABELS, ARTICLE_STATUS_LABELS, type ArticleKind, type ArticleStatus } from "@/entities/article";
+import {
+  ARTICLE_KIND_LABELS,
+  ARTICLE_STATUS_LABELS,
+  uploadArticleImage,
+  uploadArticleVideo,
+  type ArticleKind,
+  type ArticleStatus,
+} from "@/entities/article";
 import { ARTICLE_DIRECTIONS, DIRECTION_LABELS } from "@/entities/direction";
 import { TagPicker, type Tag } from "@/entities/tag";
 import { toOptions } from "@/shared/lib/options";
@@ -13,7 +20,6 @@ import RichEditor from "@/shared/ui/rich-editor";
 import Select from "@/shared/ui/select";
 import SeoFieldsPanel from "@/shared/ui/seo-fields";
 import Textarea from "@/shared/ui/textarea";
-import { uploadImage, uploadVideo } from "../../api/articles";
 import type { ArticleFields } from "../../model/types";
 import CoverField from "../cover-field";
 import styles from "./style.module.scss";
@@ -100,8 +106,8 @@ const ArticleForm = ({ fields, tags, pending, isNew, onChange, onToggleTag, onSu
         ariaLabel="Текст статьи"
         value={fields.contentHtml}
         onChange={(contentHtml) => onChange({ contentHtml })}
-        onUploadImage={uploadImage}
-        onUploadVideo={uploadVideo}
+        onUploadImage={uploadArticleImage}
+        onUploadVideo={uploadArticleVideo}
       />
     </Panel>
 

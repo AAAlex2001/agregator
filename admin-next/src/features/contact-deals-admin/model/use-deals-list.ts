@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { fetchDeals } from "../api/deals";
+import { fetchDeals } from "@/entities/contact-deal";
 import { dealsReducer } from "./reducers";
 
 /** Список сделок с фильтром по статусу. */

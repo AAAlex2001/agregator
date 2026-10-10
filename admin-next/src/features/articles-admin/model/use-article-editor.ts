@@ -2,13 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useReducer } from "react";
+import {
+  createArticle,
+  deleteArticle,
+  fetchArticle,
+  updateArticle,
+  type Article,
+  type ArticlePayload,
+} from "@/entities/article";
 import { fetchTags } from "@/entities/tag";
 import { ARTICLES_PATH, articlePath } from "@/shared/lib/admin-paths";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { createArticle, deleteArticle, fetchArticle, updateArticle } from "../api/articles";
 import { editorReducer } from "./reducers";
-import type { Article, ArticleFields, ArticlePayload } from "./types";
+import type { ArticleFields } from "./types";
 
 const EMPTY_FIELDS: ArticleFields = {
   kind: "NEWS",

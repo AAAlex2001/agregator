@@ -1,4 +1,6 @@
 import type {
+  Clarification,
+  ClarificationList,
   ClarificationStatus,
   DocumentFile,
   DocumentType,
@@ -7,59 +9,6 @@ import type {
   Taxonomy,
 } from "@/entities/clarification";
 import type { Tag } from "@/entities/tag";
-
-export type ClarificationListItem = {
-  id: number;
-  document_type: DocumentType;
-  status: ClarificationStatus;
-  publication_status: PublicationStatus;
-  title: string;
-  slug: string;
-  letter_number: string;
-  published_at: string | null;
-  updated_at: string;
-};
-
-export type ClarificationList = {
-  items: ClarificationListItem[];
-  total: number;
-};
-
-export type ClarificationPayload = {
-  document_type: DocumentType;
-  status: ClarificationStatus;
-  publication_status: PublicationStatus;
-  slug: string;
-  title: string;
-  excerpt: string;
-  question_text: string;
-  answer_html: string;
-  letter_number: string;
-  department: string;
-  source_url: string;
-  pdf_url: string;
-  response_pdf_url: string;
-  request_files: DocumentFile[];
-  response_files: DocumentFile[];
-  referenced_regulations: RegulationLink[];
-  tags: string[];
-  oversight_areas: string[];
-  industries: string[];
-  activities: string[];
-  object_types: string[];
-  meta_title: string;
-  meta_description: string;
-  meta_keywords: string;
-  published_at: string | null;
-  answered_question_id: number | null;
-};
-
-export type Clarification = ClarificationPayload & {
-  id: number;
-  views_count: number;
-  created_at: string;
-  updated_at: string;
-};
 
 export type TaxonomyDimension = "oversightAreas" | "industries" | "activities" | "objectTypes";
 

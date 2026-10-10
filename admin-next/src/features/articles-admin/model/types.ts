@@ -1,43 +1,5 @@
-import type { ArticleKind, ArticleStatus } from "@/entities/article";
+import type { Article, ArticleKind, ArticleList, ArticleListQuery, ArticleStatus } from "@/entities/article";
 import type { Tag } from "@/entities/tag";
-
-export type ArticleListItem = {
-  id: number;
-  kind: ArticleKind;
-  status: ArticleStatus;
-  title: string;
-  slug: string;
-  published_at: string | null;
-  updated_at: string;
-};
-
-export type ArticleList = {
-  items: ArticleListItem[];
-  total: number;
-};
-
-export type Article = {
-  id: number;
-  kind: ArticleKind;
-  status: ArticleStatus;
-  direction: string | null;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image: string;
-  tg_cover_image: string;
-  tags: string[];
-  content_html: string;
-  meta_title: string;
-  meta_description: string;
-  meta_keywords: string;
-  og_image: string;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-export type ArticlePayload = Omit<Article, "id" | "created_at" | "updated_at">;
 
 export type ArticleFields = {
   kind: ArticleKind;
@@ -57,15 +19,9 @@ export type ArticleFields = {
   publishedAt: string | null;
 };
 
-export type ListFilters = {
-  kind: string;
-  status: string;
-  query: string;
-};
-
 export type ListState = {
   search: string;
-  filters: ListFilters;
+  filters: ArticleListQuery;
   page: number;
   list: ArticleList | null;
   loading: boolean;
@@ -74,7 +30,7 @@ export type ListState = {
 
 export type ListAction =
   | { type: "search/change"; value: string }
-  | { type: "load/start"; filters: ListFilters; page: number }
+  | { type: "load/start"; filters: ArticleListQuery; page: number }
   | { type: "load/success"; list: ArticleList }
   | { type: "load/error" };
 

@@ -1,5 +1,7 @@
 "Тонкий CRUD статей для кастомной админки (admin-next). За X-Internal-Token; логин держит сама админка."
 
+from typing import Literal
+
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -76,6 +78,8 @@ async def list_articles(
     kind: Kind | None = Query(None),
     article_status: Status | None = Query(None, alias="status"),
     q: str | None = Query(None, max_length=200),
+    with_comments: bool = Query(False),
+    views: Literal["asc", "desc"] | None = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
@@ -84,6 +88,8 @@ async def list_articles(
         kind=ArticleKind(kind) if kind else None,
         status=ArticleStatus(article_status) if article_status else None,
         query=q,
+        with_comments=with_comments,
+        views_order=views,
         skip=offset,
         limit=limit,
     )
@@ -96,6 +102,7 @@ async def list_articles(
             slug=r.slug,
             published_at=r.published_at,
             updated_at=r.updated_at,
+            views_count=r.views_count,
         )
         for r in rows
     ]

@@ -227,7 +227,39 @@ export const RedoIcon = ({ className }: IconProps) => (
   </Icon>
 );
 
-export const PaperclipIcon = ({ className }: IconProps) => (
+export const EyeIcon = ({ className }: IconProps) => (
+  <Icon className={className}>
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+    <circle cx="12" cy="12" r="3" />
+  </Icon>
+);
+
+export const DashboardIcon =({ className }: IconProps) => (
+  <Icon className={className}>
+    <rect x="3" y="3" width="7" height="9" rx="1" />
+    <rect x="14" y="3" width="7" height="5" rx="1" />
+    <rect x="14" y="12" width="7" height="9" rx="1" />
+    <rect x="3" y="16" width="7" height="5" rx="1" />
+  </Icon>
+);
+
+export const ClipboardIcon = ({ className }: IconProps) => (
+  <Icon className={className}>
+    <rect x="8" y="2" width="8" height="4" rx="1" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+  </Icon>
+);
+
+export const UsersIcon = ({ className }: IconProps) => (
+  <Icon className={className}>
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </Icon>
+);
+
+export const PaperclipIcon =({ className }: IconProps) => (
   <Icon className={className}>
     <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
   </Icon>

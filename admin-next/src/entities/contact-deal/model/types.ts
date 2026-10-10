@@ -63,7 +63,22 @@ export type DealReceipt = {
   download_url: string;
 };
 
-export type Deal = Omit<DealListItem, "receipt_count"> & {
+export type DealList = {
+  items: DealListItem[];
+  total: number;
+};
+
+export type Deal = {
+  id: number;
+  public_id: string;
+  seller_id: number;
+  status: DealStatus;
+  seller_name: string;
+  buyer_name: string;
+  price_rubles: number;
+  actor_party: DealParty | null;
+  created_at: string;
+  updated_at: string;
   contract: DealContract;
   contract_hash: string;
   signatures: DealSignature[];

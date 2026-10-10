@@ -1,5 +1,4 @@
-import type { Lead } from "@/entities/lead";
-import type { LeadList } from "../api/leads";
+import type { Lead, LeadList } from "@/entities/lead";
 
 export type LeadsState = {
   filter: string;

@@ -15,6 +15,7 @@ from routes import (
     admin_contact_deal,
     admin_content,
     admin_lead,
+    admin_panel,
     admin_rtn,
     article,
     article_interactions,
@@ -147,6 +148,7 @@ app.include_router(rtn.router, prefix="/api")
 app.include_router(rtn_interactions.router, prefix="/api")
 app.include_router(admin_rtn.router, prefix="/api")
 app.include_router(admin_lead.router, prefix="/api")
+app.include_router(admin_panel.router, prefix="/api")
 app.include_router(admin_contact_deal.router, prefix="/api")
 app.include_router(email.router, prefix="/api")
 app.include_router(expert.router, prefix="/api")

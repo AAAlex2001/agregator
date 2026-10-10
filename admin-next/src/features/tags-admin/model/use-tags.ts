@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { fetchTags, type Tag } from "@/entities/tag";
+import { createTag, deleteTag, fetchTags, renameTag, type Tag } from "@/entities/tag";
 import { errorMessage } from "@/shared/lib/errors";
 import { useToast } from "@/shared/ui/toaster";
-import { createTag, deleteTag, renameTag } from "../api/tags";
 import { tagsReducer } from "./reducers";
 
 /** Теги: список, добавление, переименование на месте и удаление через подтверждение. */

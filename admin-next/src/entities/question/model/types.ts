@@ -14,6 +14,10 @@ export type Question = {
   created_at: string;
 };
 
+export type QuestionList = {
+  items: Question[];
+};
+
 export const QUESTION_STATUS_LABELS: Record<QuestionStatus, string> = {
   NEW: "Новый",
   IN_REVIEW: "В работе",

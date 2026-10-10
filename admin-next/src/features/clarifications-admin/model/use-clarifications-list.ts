@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useReducer } from "react";
-import { fetchClarifications } from "../api/clarifications";
+import { fetchClarifications } from "@/entities/clarification";
 import { listReducer } from "./reducers";
 
 /** Список разъяснений с фильтром по статусу публикации. */
