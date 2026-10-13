@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { deleteComment, FlagIcon, PencilIcon, TrashIcon, type PostComment } from "@/source/entities/posts";
+import {
+  deleteComment,
+  FlagIcon,
+  PencilIcon,
+  TrashIcon,
+  type PostComment,
+} from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
 import { ReportModal } from "@/source/features/posts/report";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
@@ -30,13 +36,38 @@ export function CommentMenu({ comment, onEdit, onDeleted }: CommentMenuProps) {
     onDeleted();
   };
 
-  const actions: MenuAction[] =
-    user?.id === comment.author.id
-      ? [
-          { label: "Изменить", icon: <PencilIcon />, onClick: onEdit },
-          { label: "Удалить", icon: <TrashIcon />, danger: true, onClick: () => setIsDeleteOpen(true) },
-        ]
-      : [{ label: "Пожаловаться", icon: <FlagIcon />, onClick: () => (user ? setIsReportOpen(true) : openAuth("login")) }];
+  const openReport = () => {
+    if (user) {
+      setIsReportOpen(true);
+    } else {
+      openAuth("login");
+    }
+  };
+
+  const ownActions: MenuAction[] = [
+    {
+      label: "Изменить",
+      icon: <PencilIcon />,
+      onClick: onEdit,
+    },
+    {
+      label: "Удалить",
+      icon: <TrashIcon />,
+      danger: true,
+      onClick: () => setIsDeleteOpen(true),
+    },
+  ];
+
+  const foreignActions: MenuAction[] = [
+    {
+      label: "Пожаловаться",
+      icon: <FlagIcon />,
+      onClick: openReport,
+    },
+  ];
+
+  const isOwn = user?.id === comment.author.id;
+  const actions = isOwn ? ownActions : foreignActions;
 
   return (
     <>
@@ -49,7 +80,13 @@ export function CommentMenu({ comment, onEdit, onDeleted }: CommentMenuProps) {
         onConfirm={remove}
         onCancel={() => setIsDeleteOpen(false)}
       />
-      {isReportOpen && <ReportModal id={comment.id} kind="comment" onClose={() => setIsReportOpen(false)} />}
+      {isReportOpen && (
+        <ReportModal
+          id={comment.id}
+          kind="comment"
+          onClose={() => setIsReportOpen(false)}
+        />
+      )}
     </>
   );
 }

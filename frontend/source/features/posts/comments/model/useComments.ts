@@ -4,7 +4,10 @@ import { useState } from "react";
 import { fetchThreads, type ThreadPage } from "@/source/entities/posts";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 
-/** Обсуждение публикации: первая страница приходит с сервера, следующие и обновление — по запросу. */
+/**
+ * Обсуждение публикации: первая страница приходит с сервера,
+ * следующие и обновление — по запросу.
+ */
 export function useComments(postId: number, initial: ThreadPage) {
   const { showError } = useNotifications();
   const [page, setPage] = useState(initial);
@@ -14,9 +17,20 @@ export function useComments(postId: number, initial: ThreadPage) {
     setIsLoading(true);
     try {
       const next = await fetchThreads(postId, offset);
-      setPage(offset === 0 ? next : { ...next, items: [...page.items, ...next.items] });
+
+      if (offset === 0) {
+        setPage(next);
+      } else {
+        setPage({
+          ...next,
+          items: [...page.items, ...next.items],
+        });
+      }
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось загрузить комментарии");
+      const message = error instanceof Error
+        ? error.message
+        : "Не удалось загрузить комментарии";
+      showError(message);
     } finally {
       setIsLoading(false);
     }

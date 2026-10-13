@@ -8,7 +8,10 @@ from services.posts.repo import PostLikeRepository, PostSaveRepository
 
 
 class LoadMarksUseCase:
-    """Какие из постов пользователь лайкнул и сохранил, на каких авторов подписан. Гостю — без отметок."""
+    """Какие посты пользователь лайкнул и сохранил, на каких авторов подписан.
+
+    Гостю — без отметок.
+    """
 
     def __init__(
         self,

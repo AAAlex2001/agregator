@@ -8,7 +8,10 @@ export function MyReposts() {
     <div className={s.section}>
       <div className={s.heading}>
         <Title as="h1" text="Репосты" />
-        <Subtitle text="Записи, которыми вы поделились в своей ленте, с комментарием или без." className={s.subtitle} />
+        <Subtitle
+          text="Записи, которыми вы поделились в своей ленте, с комментарием или без."
+          className={s.subtitle}
+        />
       </div>
       <PostList
         query={{ mode: "reposts" }}

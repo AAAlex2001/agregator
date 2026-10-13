@@ -10,15 +10,29 @@ export function useFollowingUnseen(userId: number | undefined) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
+
     let cancelled = false;
+
     fetchFollowingUnseen()
       .then((result) => {
-        if (!cancelled) setCount(result.count);
+        if (!cancelled) {
+          setCount(result.count);
+        }
       })
       .catch((error) => {
-        if (!cancelled) showError(error instanceof Error ? error.message : "Не удалось загрузить новые публикации");
+        if (cancelled) {
+          return;
+        }
+
+        const message = error instanceof Error
+          ? error.message
+          : "Не удалось загрузить новые публикации";
+        showError(message);
       });
+
     return () => {
       cancelled = true;
     };
@@ -29,7 +43,10 @@ export function useFollowingUnseen(userId: number | undefined) {
       await markFollowingSeen();
       setCount(0);
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось отметить подписки просмотренными");
+      const message = error instanceof Error
+        ? error.message
+        : "Не удалось отметить подписки просмотренными";
+      showError(message);
     }
   };
 

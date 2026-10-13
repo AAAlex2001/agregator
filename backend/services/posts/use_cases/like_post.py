@@ -25,8 +25,12 @@ class LikePostUseCase:
     async def execute(self, user: Account, post: Post, liked: bool) -> LikesSchema:
         """Лайки поста после нажатия. Повторное нажатие ничего не меняет."""
 
-        if liked and await self.likes.add(user.id, post.id):
-            await self.notify.execute(post.author_id, user, "like", post_id=post.id)
-        if not liked:
+        if liked:
+            inserted = await self.likes.add(user.id, post.id)
+            if inserted:
+                await self.notify.execute(post.author_id, user, "like", post_id=post.id)
+        else:
             await self.likes.remove(user.id, post.id)
-        return LikesSchema(likes_count=await self.posts.refresh_likes(post.id), liked=liked)
+
+        likes_count = await self.posts.refresh_likes(post.id)
+        return LikesSchema(likes_count=likes_count, liked=liked)

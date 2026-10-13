@@ -1,12 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { copyPostLink, repostPost, togglePostLike, togglePostSave, type Post } from "@/source/entities/posts";
+import {
+  copyPostLink,
+  repostPost,
+  togglePostLike,
+  togglePostSave,
+  type Post,
+} from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 
-/** Лайк, сохранение, репост и ссылка на публикацию. Гостю вместо действия предлагается войти. */
+/**
+ * Лайк, сохранение, репост и ссылка на публикацию.
+ * Гостю вместо действия предлагается войти.
+ */
 export function usePostReactions(post: Post, onUnsaved?: () => void) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
@@ -18,12 +27,16 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
   const [isBusy, setIsBusy] = useState(false);
 
   const run = async (action: () => Promise<void>) => {
-    if (!user) return openAuth("login");
+    if (!user) {
+      return openAuth("login");
+    }
+
     setIsBusy(true);
     try {
       await action();
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось выполнить действие");
+      const message = error instanceof Error ? error.message : "Не удалось выполнить действие";
+      showError(message);
     } finally {
       setIsBusy(false);
     }
@@ -40,8 +53,11 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
     run(async () => {
       await togglePostSave(post.id, !saved);
       setSaved(!saved);
-      showSuccess(saved ? "Публикация убрана из сохранённого" : "Публикация сохранена");
-      if (saved) onUnsaved?.();
+      const notice = saved ? "Публикация убрана из сохранённого" : "Публикация сохранена";
+      showSuccess(notice);
+      if (saved) {
+        onUnsaved?.();
+      }
     });
 
   const repost = () =>
@@ -60,5 +76,17 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
     }
   };
 
-  return { signedIn: Boolean(user), openAuth, isBusy, liked, likes, saved, reposts, like, save, repost, share };
+  return {
+    signedIn: Boolean(user),
+    openAuth,
+    isBusy,
+    liked,
+    likes,
+    saved,
+    reposts,
+    like,
+    save,
+    repost,
+    share,
+  };
 }

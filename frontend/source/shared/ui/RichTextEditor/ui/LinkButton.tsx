@@ -28,8 +28,11 @@ export function LinkButton({
         aria-pressed={active}
         disabled={disabled}
         onClick={() => {
-          if (active) editor.chain().focus().unsetLink().run();
-          else setOpen(true);
+          if (active) {
+            editor.chain().focus().unsetLink().run();
+          } else {
+            setOpen(true);
+          }
         }}
       >
         <LinkIcon />

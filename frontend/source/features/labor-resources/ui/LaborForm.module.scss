@@ -35,7 +35,7 @@
 
 .formFooter {
   position: sticky;
-  bottom: var(--cabinet-menu-height, 0px);
+  bottom: var(--cabinet-bottom-height, 0px);
   z-index: 5;
   display: flex;
   flex-direction: column;

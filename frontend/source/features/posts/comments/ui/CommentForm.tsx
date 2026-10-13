@@ -19,10 +19,21 @@ interface CommentFormProps {
 }
 
 /** Форма комментария, ответа или правки. Гостю вместо формы — предложение войти. */
-export function CommentForm({ postId, comment, replyTo, onSaved, onCancel }: CommentFormProps) {
+export function CommentForm({
+  postId,
+  comment,
+  replyTo,
+  onSaved,
+  onCancel,
+}: CommentFormProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
-  const form = useCommentForm({ postId, comment, replyTo, onSaved });
+  const form = useCommentForm({
+    postId,
+    comment,
+    replyTo,
+    onSaved,
+  });
 
   if (!user) {
     return (
@@ -37,7 +48,11 @@ export function CommentForm({ postId, comment, replyTo, onSaved, onCancel }: Com
 
   return (
     <form className={s.form} onSubmit={form.submit}>
-      {replyTo && <p className={s.replyTo}>Ответ для {replyTo.author.name || "пользователя"}</p>}
+      {replyTo && (
+        <p className={s.replyTo}>
+          Ответ для {replyTo.author.name || "пользователя"}
+        </p>
+      )}
       <TextArea
         value={form.text}
         onChange={(event) => form.setText(event.target.value)}
@@ -49,7 +64,11 @@ export function CommentForm({ postId, comment, replyTo, onSaved, onCancel }: Com
         placeholder={replyTo ? "Напишите ответ…" : "Напишите комментарий…"}
       />
       <div className={s.buttons}>
-        <Button type="submit" isLoading={form.isSending} disabled={!form.text.trim()}>
+        <Button
+          type="submit"
+          isLoading={form.isSending}
+          disabled={!form.text.trim()}
+        >
           {comment ? "Сохранить" : "Отправить"}
         </Button>
         {onCancel && (

@@ -18,7 +18,10 @@ interface RichTextEditorProps {
   onChange: (html: string) => void;
 }
 
-/** Редактор текста с оформлением, ссылками, смайликами и счётчиком символов. Текст задаётся один раз при открытии. */
+/**
+ * Редактор текста с оформлением, ссылками, смайликами и счётчиком символов.
+ * Текст задаётся один раз при открытии.
+ */
 export function RichTextEditor({
   ariaLabel,
   placeholder,
@@ -34,12 +37,20 @@ export function RichTextEditor({
     content: defaultValue,
     immediatelyRender: false,
     editorProps: {
-      attributes: { class: s.field, "aria-label": ariaLabel, role: "textbox", "aria-multiline": "true" },
+      attributes: {
+        class: s.field,
+        "aria-label": ariaLabel,
+        role: "textbox",
+        "aria-multiline": "true",
+      },
     },
   }));
   const editor = useEditor({
     ...setup,
-    onUpdate: ({ editor: current }) => onChange(current.isEmpty ? "" : current.getHTML()),
+    onUpdate: ({ editor: current }) => {
+      const html = current.isEmpty ? "" : current.getHTML();
+      onChange(html);
+    },
   });
 
   useEffect(() => {
@@ -47,7 +58,15 @@ export function RichTextEditor({
   }, [editor, disabled]);
 
   if (!editor) {
-    return <textarea className={s.field} aria-label={ariaLabel} placeholder={placeholder} defaultValue="" readOnly />;
+    return (
+      <textarea
+        className={s.field}
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        defaultValue=""
+        readOnly
+      />
+    );
   }
 
   return (

@@ -9,7 +9,11 @@ interface PostSitemapItem {
 
 /** Опубликованные оригиналы для карты сайта: только id и дата изменения. */
 export async function fetchPostSitemap(): Promise<PostSitemapItem[]> {
-  const response = await fetch(`${SERVER_API_URL}/posts/sitemap`, { next: { revalidate: 300 } });
-  if (!response.ok) throw new Error(`Не удалось загрузить карту публикаций: ${response.status}`);
+  const response = await fetch(`${SERVER_API_URL}/posts/sitemap`, {
+    next: { revalidate: 300 },
+  });
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить карту публикаций: ${response.status}`);
+  }
   return response.json();
 }

@@ -17,7 +17,8 @@ class EditCommentUseCase:
         """Комментарий с новым текстом и отметкой лайка автора."""
 
         updated = await self.comments.update_text(comment, text)
-        return CommentSchema.for_viewer(updated, await self.likes.liked_ids(user.id, [updated.id]))
+        liked = await self.likes.liked_ids(user.id, [updated.id])
+        return CommentSchema.for_viewer(updated, liked)
 
 
 class LikeCommentUseCase:
@@ -34,4 +35,6 @@ class LikeCommentUseCase:
             await self.likes.add(user.id, comment.id)
         else:
             await self.likes.remove(user.id, comment.id)
-        return LikesSchema(likes_count=await self.comments.refresh_likes(comment.id), liked=liked)
+
+        likes_count = await self.comments.refresh_likes(comment.id)
+        return LikesSchema(likes_count=likes_count, liked=liked)

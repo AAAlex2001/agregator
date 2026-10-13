@@ -17,7 +17,8 @@ interface PostsFeedProps {
   children: ReactNode;
 }
 
-/** Лента: заголовок, «Написать пост» и вкладки «Для вас» и «Подписки». «Для вас» приходит с сервера в children. */
+/** Лента: заголовок, «Написать пост» и вкладки «Для вас» и «Подписки».
+ *  «Для вас» приходит с сервера в children. */
 export function PostsFeed({ authorId, children }: PostsFeedProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
@@ -44,7 +45,11 @@ export function PostsFeed({ authorId, children }: PostsFeedProps) {
             className={s.subtitle}
           />
         </div>
-        {user ? <Button href="/posts/new">Написать пост</Button> : <Button onClick={() => openAuth("login")}>Написать пост</Button>}
+        {user ? (
+          <Button href="/posts/new">Написать пост</Button>
+        ) : (
+          <Button onClick={() => openAuth("login")}>Написать пост</Button>
+        )}
       </div>
       {showTabs && (
         <div className={s.tabs} role="tablist" aria-label="Разделы ленты">
@@ -64,7 +69,8 @@ export function PostsFeed({ authorId, children }: PostsFeedProps) {
             className={cn(s.tab, { [s.active]: tab === "following" })}
             onClick={openFollowing}
           >
-            Подписки {unseen.count > 0 && <span className={s.badge}>{unseen.count}</span>}
+            Подписки
+            {unseen.count > 0 && <span className={s.badge}>{unseen.count}</span>}
           </button>
         </div>
       )}
@@ -73,7 +79,7 @@ export function PostsFeed({ authorId, children }: PostsFeedProps) {
           query={{ mode: "following" }}
           emptyTitle="В подписках пока пусто"
           emptyText="Подпишитесь на интересных авторов через меню публикации."
-          emptyAction={{ label: "Перейти в ленту", href: "/posts" }}
+          emptyAction={{ label: "Перейти в ленту", onClick: () => setTab("all") }}
         />
       ) : (
         children

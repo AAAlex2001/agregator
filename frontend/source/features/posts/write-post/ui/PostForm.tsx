@@ -16,7 +16,10 @@ interface PostFormProps {
   post?: Post;
 }
 
-/** Новая публикация или правка своей: текст с ИИ-помощником, фото и видео, черновик или публикация. */
+/**
+ * Новая публикация или правка своей: текст с ИИ-помощником, фото и видео,
+ * черновик или публикация.
+ */
 export function PostForm({ post }: PostFormProps) {
   const { user } = useSession();
   const form = usePostForm(post);
@@ -28,7 +31,13 @@ export function PostForm({ post }: PostFormProps) {
   const aiPanel: EditorPanel = {
     label: "Написать с ИИ",
     Icon: AiEditIcon,
-    render: (editor) => <AiPanel editor={editor} assistant={assistant} disabled={isSaving} />,
+    render: (editor) => (
+      <AiPanel
+        editor={editor}
+        assistant={assistant}
+        disabled={isSaving}
+      />
+    ),
   };
 
   return (
@@ -78,7 +87,11 @@ export function PostForm({ post }: PostFormProps) {
           >
             В черновик
           </Button>
-          <Button type="submit" isLoading={form.savingMode === "publish"} disabled={isLocked || isEmpty}>
+          <Button
+            type="submit"
+            isLoading={form.savingMode === "publish"}
+            disabled={isLocked || isEmpty}
+          >
             Опубликовать
           </Button>
         </div>

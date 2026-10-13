@@ -7,13 +7,20 @@ interface SectionTab {
 
 /** Возвращает вкладки текущего раздела с учётом роли. */
 export function getSectionTabs(pathname: string, role: UserRole | null): SectionTab[] {
-  if (role !== "EXPERT" && role !== "CUSTOMER") return [];
+  if (role !== "EXPERT" && role !== "CUSTOMER") {
+    return [];
+  }
 
-  if (pathname === "/chat" || pathname.startsWith("/chat/") || pathname === "/expert/room") {
+  const isChatPage =
+    pathname === "/chat" || pathname.startsWith("/chat/") || pathname === "/expert/room";
+
+  if (isChatPage) {
     const tabs = [{ href: "/chat", label: "Чаты по заказам" }];
+
     if (role === "EXPERT") {
       tabs.push({ href: "/expert/room", label: "Чат исполнителей" });
     }
+
     return tabs;
   }
 
@@ -24,19 +31,25 @@ export function getSectionTabs(pathname: string, role: UserRole | null): Section
     || pathname === "/archive"
     || (role === "CUSTOMER" && pathname === "/customer/reports");
 
-  if (!isOrdersPage) return [];
+  if (!isOrdersPage) {
+    return [];
+  }
 
+  const responsesLabel = role === "EXPERT" ? "Мои отклики" : "Отклики";
   const tabs = [
     { href: ordersPath, label: "Все заказы" },
-    { href: "/responses", label: role === "EXPERT" ? "Мои отклики" : "Отклики" },
+    { href: "/responses", label: responsesLabel },
   ];
 
   if (role === "CUSTOMER") {
     tabs.push({ href: "/customer/orders/new", label: "Создать заказ" });
   }
+
   tabs.push({ href: "/archive", label: "Архивные заказы" });
+
   if (role === "CUSTOMER") {
     tabs.push({ href: "/customer/reports", label: "Отчёты" });
   }
+
   return tabs;
 }

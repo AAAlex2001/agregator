@@ -10,21 +10,30 @@ interface PostPageProps {
 
 /** Номер публикации из адреса или null, если это не номер. */
 async function postId(params: PostPageProps["params"]): Promise<number | null> {
-  const id = Number((await params).id);
-  return Number.isSafeInteger(id) && id > 0 ? id : null;
+  const { id: rawId } = await params;
+  const id = Number(rawId);
+  const isValid = Number.isSafeInteger(id) && id > 0;
+
+  return isValid ? id : null;
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const id = await postId(params);
-  return postMetadata(id ? await loadPost(id) : null);
+  const post = id ? await loadPost(id) : null;
+
+  return postMetadata(post);
 }
 
 /** Публикация с обсуждением; черновик видит только автор. */
 export default async function PostPage({ params }: PostPageProps) {
   const id = await postId(params);
   const post = id ? await loadPost(id) : null;
-  if (!post) notFound();
-  const threads = post.status === "published" ? await loadThreads(post.id) : null;
+  if (!post) {
+    notFound();
+  }
+
+  const isPublished = post.status === "published";
+  const threads = isPublished ? await loadThreads(post.id) : null;
 
   return (
     <>

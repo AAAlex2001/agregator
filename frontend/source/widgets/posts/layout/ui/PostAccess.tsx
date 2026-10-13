@@ -14,11 +14,21 @@ interface PostAccessProps {
 }
 
 /** Личный раздел публикаций: гостю вместо него — предложение войти. */
-export function PostAccess({ children, loadingFallback = <PostsSkeleton /> }: PostAccessProps) {
+export function PostAccess({
+  children,
+  loadingFallback = <PostsSkeleton />,
+}: PostAccessProps) {
   const { user, isLoading } = useSession();
   const { openAuth } = useAuthModal();
-  if (user) return children;
-  if (isLoading) return loadingFallback;
+
+  if (user) {
+    return children;
+  }
+
+  if (isLoading) {
+    return loadingFallback;
+  }
+
   return (
     <section className={s.access}>
       <Title as="h1" text="Ваши публикации" />

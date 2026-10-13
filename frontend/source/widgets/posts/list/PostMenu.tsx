@@ -27,7 +27,10 @@ interface PostMenuProps {
   onDeleted: () => void;
 }
 
-/** Меню публикации. Всем — открыть и скопировать ссылку; автору — правка и удаление; остальным — подписка и жалоба. */
+/**
+ * Меню публикации. Всем — открыть и скопировать ссылку;
+ * автору — правка и удаление; остальным — подписка и жалоба.
+ */
 export function PostMenu({ post, showOpen, onDeleted }: PostMenuProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
@@ -49,46 +52,91 @@ export function PostMenu({ post, showOpen, onDeleted }: PostMenuProps) {
   const remove = async () => {
     await deletePost(post.id);
     setIsDeleteOpen(false);
-    showSuccess(post.repost_of ? "Репост удалён" : "Публикация удалена");
+    const message = post.repost_of ? "Репост удалён" : "Публикация удалена";
+    showSuccess(message);
     onDeleted();
   };
 
-  const openActions: MenuAction[] = showOpen
-    ? [{ label: "Открыть публикацию", icon: <ExternalLinkIcon />, href: `/posts/${post.id}` }]
-    : [];
-  const linkAction: MenuAction = { label: "Скопировать ссылку", icon: <LinkIcon />, onClick: copyLink };
-  const editActions: MenuAction[] = post.repost_of
-    ? []
-    : [{ label: "Изменить", icon: <PencilIcon />, href: `/posts/${post.id}/edit` }];
+  const openReport = () => {
+    if (user) {
+      setIsReportOpen(true);
+    } else {
+      openAuth("login");
+    }
+  };
+
+  const openAction: MenuAction = {
+    label: "Открыть публикацию",
+    icon: <ExternalLinkIcon />,
+    href: `/posts/${post.id}`,
+  };
+  const openActions: MenuAction[] = showOpen ? [openAction] : [];
+
+  const linkAction: MenuAction = {
+    label: "Скопировать ссылку",
+    icon: <LinkIcon />,
+    onClick: copyLink,
+  };
+
+  const editAction: MenuAction = {
+    label: "Изменить",
+    icon: <PencilIcon />,
+    href: `/posts/${post.id}/edit`,
+  };
+  const editActions: MenuAction[] = post.repost_of ? [] : [editAction];
+
   const ownActions: MenuAction[] = [
     ...editActions,
-    { label: "Удалить", icon: <TrashIcon />, danger: true, onClick: () => setIsDeleteOpen(true) },
+    {
+      label: "Удалить",
+      icon: <TrashIcon />,
+      danger: true,
+      onClick: () => setIsDeleteOpen(true),
+    },
   ];
+
+  const followLabel = follow.following ? "Отписаться от автора" : "Подписаться на автора";
+  const followIcon = follow.following ? <UserMinusIcon /> : <UserPlusIcon />;
+
   const readerActions: MenuAction[] = [
     {
-      label: follow.following ? "Отписаться от автора" : "Подписаться на автора",
-      icon: follow.following ? <UserMinusIcon /> : <UserPlusIcon />,
+      label: followLabel,
+      icon: followIcon,
       onClick: follow.toggle,
     },
-    { label: "Пожаловаться", icon: <FlagIcon />, onClick: () => (user ? setIsReportOpen(true) : openAuth("login")) },
+    {
+      label: "Пожаловаться",
+      icon: <FlagIcon />,
+      onClick: openReport,
+    },
   ];
+
+  const roleActions = isOwn ? ownActions : readerActions;
+  const actions = [...openActions, linkAction, ...roleActions];
+  const deleteTitle = post.repost_of ? "Удалить репост?" : "Удалить публикацию?";
 
   return (
     <>
       <ActionMenu
         label="Действия с публикацией"
         disabled={follow.isBusy}
-        actions={[...openActions, linkAction, ...(isOwn ? ownActions : readerActions)]}
+        actions={actions}
       />
       <ConfirmModal
         open={isDeleteOpen}
-        title={post.repost_of ? "Удалить репост?" : "Удалить публикацию?"}
+        title={deleteTitle}
         description="Публикация и комментарии к ней будут удалены без возможности восстановления."
         confirmLabel="Удалить"
         onConfirm={remove}
         onCancel={() => setIsDeleteOpen(false)}
       />
-      {isReportOpen && <ReportModal id={post.id} kind="post" onClose={() => setIsReportOpen(false)} />}
+      {isReportOpen && (
+        <ReportModal
+          id={post.id}
+          kind="post"
+          onClose={() => setIsReportOpen(false)}
+        />
+      )}
     </>
   );
 }

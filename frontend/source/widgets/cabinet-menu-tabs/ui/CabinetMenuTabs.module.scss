@@ -1,6 +1,6 @@
 .spacer {
   flex: none;
-  height: var(--cabinet-menu-height, calc(88px + env(safe-area-inset-bottom, 0px)));
+  height: calc(88px + env(safe-area-inset-bottom, 0px));
 }
 
 .menuTabs {
@@ -87,7 +87,7 @@
   }
 
   .spacer {
-    height: var(--cabinet-menu-height, calc(96px + env(safe-area-inset-bottom, 0px)));
+    height: calc(96px + env(safe-area-inset-bottom, 0px));
   }
 }
 

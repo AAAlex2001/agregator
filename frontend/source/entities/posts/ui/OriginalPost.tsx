@@ -10,9 +10,11 @@ interface OriginalPostProps {
 
 /** Исходная публикация внутри репоста. */
 export function OriginalPost({ post }: OriginalPostProps) {
+  const date = post.published_at ?? post.created_at;
+
   return (
     <div className={s.original}>
-      <PostHead author={post.author} date={post.published_at ?? post.created_at} />
+      <PostHead author={post.author} date={date} />
       <PostContent html={post.html} media={post.media} />
       <Link className={s.originalLink} href={`/posts/${post.id}`}>
         Открыть публикацию

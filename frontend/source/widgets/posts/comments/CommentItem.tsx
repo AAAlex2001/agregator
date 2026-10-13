@@ -17,31 +17,53 @@ interface CommentItemProps {
 }
 
 /** Комментарий с меню, правкой, лайком и кнопкой «Ответить». */
-export function CommentItem({ postId, comment, onReply, onChanged, children }: CommentItemProps) {
+export function CommentItem({
+  postId,
+  comment,
+  onReply,
+  onChanged,
+  children,
+}: CommentItemProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleReply = () => {
+    if (user) {
+      onReply(comment);
+    } else {
+      openAuth("login");
+    }
+  };
+
+  const handleSaved = () => {
+    setIsEditing(false);
+    onChanged();
+  };
+
   return (
     <CommentCard
       comment={comment}
-      menu={<CommentMenu comment={comment} onEdit={() => setIsEditing(true)} onDeleted={onChanged} />}
+      menu={
+        <CommentMenu
+          comment={comment}
+          onEdit={() => setIsEditing(true)}
+          onDeleted={onChanged}
+        />
+      }
       editor={
         isEditing && (
           <CommentForm
             postId={postId}
             comment={comment}
-            onSaved={() => {
-              setIsEditing(false);
-              onChanged();
-            }}
+            onSaved={handleSaved}
             onCancel={() => setIsEditing(false)}
           />
         )
       }
       actions={
         <div className={s.actions}>
-          <button type="button" className={s.reply} onClick={() => (user ? onReply(comment) : openAuth("login"))}>
+          <button type="button" className={s.reply} onClick={handleReply}>
             Ответить
           </button>
           <CommentLike comment={comment} />

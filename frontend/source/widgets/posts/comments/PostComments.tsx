@@ -27,7 +27,9 @@ export function PostComments({ postId, initial }: PostCommentsProps) {
     <section id="comments" className={s.comments}>
       <Title as="h2" text={`Комментарии · ${list.comments_count}`} className={s.title} />
       <CommentForm postId={postId} onSaved={refresh} />
-      {list.items.length === 0 && <p className={s.empty}>Комментариев пока нет. Начните обсуждение.</p>}
+      {list.items.length === 0 && (
+        <p className={s.empty}>Комментариев пока нет. Начните обсуждение.</p>
+      )}
       <div className={s.list}>
         {list.items.map((thread) => (
           <CommentThread

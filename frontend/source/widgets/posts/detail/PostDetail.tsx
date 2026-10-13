@@ -13,7 +13,10 @@ interface PostDetailProps {
   threads: ThreadPage | null;
 }
 
-/** Публикация целиком и обсуждение под ней. Всё пришло с сервера и сразу есть в разметке страницы. */
+/**
+ * Публикация целиком и обсуждение под ней.
+ * Всё пришло с сервера и сразу есть в разметке страницы.
+ */
 export function PostDetail({ post, threads }: PostDetailProps) {
   const router = useRouter();
 
@@ -23,8 +26,12 @@ export function PostDetail({ post, threads }: PostDetailProps) {
         <ArrowLeftIcon />
         Назад в ленту
       </Button>
-      <Title as="h1" text={`Публикация ${post.author.name || "участника сообщества"}`} />
-      <PostItem post={post} showOpen={false} onDeleted={() => router.push("/posts")} />
+      <Title as="h1" text={`Публикация #${post.id}`} />
+      <PostItem
+        post={post}
+        showOpen={false}
+        onDeleted={() => router.push("/posts")}
+      />
       {threads && <PostComments postId={post.id} initial={threads} />}
     </div>
   );

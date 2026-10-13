@@ -18,7 +18,10 @@ export function RepostEditor({ post }: RepostEditorProps) {
       </Button>
       <div className={s.head}>
         <Title as="h1" text="Репост с комментарием" />
-        <Subtitle className={s.subtitle} text="Добавьте свой комментарий и поделитесь публикацией в ленте." />
+        <Subtitle
+          className={s.subtitle}
+          text="Добавьте свой комментарий и поделитесь публикацией в ленте."
+        />
       </div>
       {post.status === "published" ? (
         <RepostForm post={post} />

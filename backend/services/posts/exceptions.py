@@ -1,4 +1,7 @@
-"""Ошибки публикаций. У каждой свой HTTP-код и текст для пользователя — их отдаёт общий обработчик."""
+"""Ошибки публикаций.
+
+У каждой свой HTTP-код и текст для пользователя — их отдаёт общий обработчик.
+"""
 
 import math
 
@@ -93,7 +96,8 @@ class TooManyAiRequestsError(PostError):
     status_code = 429
 
     def __init__(self, retry_after: int) -> None:
-        super().__init__(f"Лимит запросов к ИИ исчерпан. Попробуйте через {math.ceil(retry_after / 60)} мин")
+        minutes = math.ceil(retry_after / 60)
+        super().__init__(f"Лимит запросов к ИИ исчерпан. Попробуйте через {minutes} мин")
         self.retry_after = retry_after
         self.headers = {"Retry-After": str(retry_after)}
 

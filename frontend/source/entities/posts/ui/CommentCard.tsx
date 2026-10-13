@@ -31,7 +31,9 @@ export function CommentCard({ comment, menu, editor, actions, children }: Commen
         </time>
         {editor || (
           <p className={s.text}>
-            {comment.reply_to_name && <span className={s.replyTo}>{comment.reply_to_name}, </span>}
+            {comment.reply_to_name && (
+              <span className={s.replyTo}>{comment.reply_to_name}, </span>
+            )}
             {comment.text}
           </p>
         )}

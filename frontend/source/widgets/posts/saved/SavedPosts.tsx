@@ -8,7 +8,10 @@ export function SavedPosts() {
     <div className={s.section}>
       <div className={s.heading}>
         <Title as="h1" text="Сохранённое" />
-        <Subtitle text="Публикации, которые вы сохранили, чтобы вернуться к ним позже." className={s.subtitle} />
+        <Subtitle
+          text="Публикации, которые вы сохранили, чтобы вернуться к ним позже."
+          className={s.subtitle}
+        />
       </div>
       <PostList
         query={{ mode: "saved" }}

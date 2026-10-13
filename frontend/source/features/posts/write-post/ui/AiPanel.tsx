@@ -18,9 +18,15 @@ interface AiPanelProps {
 
 /** Своя просьба к ИИ и быстрые действия с текстом публикации. */
 export function AiPanel({ editor, assistant, disabled }: AiPanelProps) {
-  const isEmpty = useEditorState({ editor, selector: ({ editor: current }) => current.isEmpty });
+  const isEmpty = useEditorState({
+    editor,
+    selector: ({ editor: current }) => current.isEmpty,
+  });
   const isLocked = disabled || assistant.isPending;
   const canSend = !isLocked && assistant.instruction.trim().length >= 2;
+  const placeholder = isEmpty
+    ? "Опишите, о чём написать пост…"
+    : "Напишите, что нужно сделать с текстом…";
 
   return (
     <section className={s.panel} aria-label="ИИ-помощник">
@@ -29,18 +35,28 @@ export function AiPanel({ editor, assistant, disabled }: AiPanelProps) {
           className={s.prompt}
           value={assistant.instruction}
           aria-label="Просьба к ИИ"
-          placeholder={isEmpty ? "Опишите, о чём написать пост…" : "Напишите, что нужно сделать с текстом…"}
+          placeholder={placeholder}
           maxLength={MAX_INSTRUCTION_LENGTH}
           disabled={isLocked}
           onChange={(event) => assistant.setInstruction(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key !== "Enter") return;
+            if (event.key !== "Enter") {
+              return;
+            }
+
             event.preventDefault();
-            if (canSend) void assistant.ask(editor, assistant.instruction);
+            if (canSend) {
+              void assistant.ask(editor, assistant.instruction);
+            }
           }}
         />
         {assistant.isPending ? (
-          <Loader className={s.send} size="sm" label="" ariaLabel="ИИ готовит текст" />
+          <Loader
+            className={s.send}
+            size="sm"
+            label=""
+            ariaLabel="ИИ готовит текст"
+          />
         ) : (
           <button
             type="button"

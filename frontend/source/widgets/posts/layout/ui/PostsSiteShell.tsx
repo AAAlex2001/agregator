@@ -10,7 +10,10 @@ import { PostsLayout } from "./PostsLayout";
 export function PostsSiteShell({ children }: { children: ReactNode }) {
   const { user, role } = useSession();
   const content = <PostsLayout key={user?.id ?? "guest"}>{children}</PostsLayout>;
-  if (role) return content;
+
+  if (role) {
+    return content;
+  }
 
   return (
     <>

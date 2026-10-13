@@ -18,14 +18,30 @@ class PostCommentRepository:
 
         return await self.db.get(PostComment, comment_id)
 
-    async def list_roots(self, post_id: int, limit: int, offset: int) -> tuple[list[PostComment], int]:
+    async def list_roots(
+        self,
+        post_id: int,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[PostComment], int]:
         """Корневые комментарии поста по порядку написания и сколько всего веток."""
 
-        conditions = [PostComment.post_id == post_id, PostComment.parent_id.is_(None)]
-        stmt = select(PostComment).where(*conditions).order_by(PostComment.created_at, PostComment.id)
-        items = (await self.db.execute(stmt.limit(limit).offset(offset))).unique().scalars().all()
-        total = await self.db.scalar(select(func.count()).select_from(PostComment).where(*conditions))
-        return list(items), total or 0
+        conditions = [
+            PostComment.post_id == post_id,
+            PostComment.parent_id.is_(None),
+        ]
+        stmt = (
+            select(PostComment)
+            .where(*conditions)
+            .order_by(PostComment.created_at, PostComment.id)
+            .limit(limit)
+            .offset(offset)
+        )
+        result = await self.db.execute(stmt)
+        total = await self.db.scalar(
+            select(func.count()).select_from(PostComment).where(*conditions)
+        )
+        return list(result.unique().scalars().all()), total or 0
 
     async def list_replies(self, root_ids: list[int]) -> list[PostComment]:
         """Ответы в ветках этих корневых комментариев по порядку написания."""
@@ -35,7 +51,8 @@ class PostCommentRepository:
             .where(PostComment.parent_id.in_(root_ids))
             .order_by(PostComment.created_at, PostComment.id)
         )
-        return list((await self.db.execute(stmt)).unique().scalars().all())
+        result = await self.db.execute(stmt)
+        return list(result.unique().scalars().all())
 
     async def add(self, comment: PostComment) -> PostComment:
         """Сохраняет комментарий и пересчитывает комментарии поста."""
@@ -63,32 +80,52 @@ class PostCommentRepository:
     async def refresh_count(self, post_id: int) -> None:
         """Пересчитывает комментарии поста под блокировкой его строки."""
 
-        await self.db.execute(select(Post.id).where(Post.id == post_id).with_for_update(no_key=True))
+        lock = (
+            select(Post.id)
+            .where(Post.id == post_id)
+            .with_for_update(key_share=True)
+        )
+        await self.db.execute(lock)
+
         count = select(func.count()).where(PostComment.post_id == post_id).scalar_subquery()
-        stmt = update(Post).where(Post.id == post_id).values(comments_count=count)
-        await self.db.execute(stmt.execution_options(synchronize_session=False))
+        stmt = (
+            update(Post)
+            .where(Post.id == post_id)
+            .values(comments_count=count)
+            .execution_options(synchronize_session=False)
+        )
+        await self.db.execute(stmt)
 
     async def refresh_likes(self, comment_id: int) -> int:
         """Пересчитывает лайки комментария под блокировкой его строки и возвращает их число."""
 
-        lock = select(PostComment.id).where(PostComment.id == comment_id).with_for_update(no_key=True)
+        lock = (
+            select(PostComment.id)
+            .where(PostComment.id == comment_id)
+            .with_for_update(key_share=True)
+        )
         await self.db.execute(lock)
+
         count = select(func.count()).where(CommentLike.comment_id == comment_id).scalar_subquery()
         stmt = (
             update(PostComment)
             .where(PostComment.id == comment_id)
             .values(likes_count=count)
             .returning(PostComment.likes_count)
+            .execution_options(synchronize_session=False)
         )
-        return await self.db.scalar(stmt.execution_options(synchronize_session=False)) or 0
+        return await self.db.scalar(stmt) or 0
 
     async def reload(self, comment_id: int) -> PostComment:
         """Перечитывает комментарий вместе с автором и тем, кому ответ."""
 
         stmt = (
-            select(PostComment).where(PostComment.id == comment_id).execution_options(populate_existing=True)
+            select(PostComment)
+            .where(PostComment.id == comment_id)
+            .execution_options(populate_existing=True)
         )
-        return (await self.db.execute(stmt)).unique().scalar_one()
+        result = await self.db.execute(stmt)
+        return result.unique().scalar_one()
 
 
 class CommentLikeRepository:
@@ -100,21 +137,30 @@ class CommentLikeRepository:
     async def add(self, user_id: int, comment_id: int) -> None:
         """Ставит лайк. Повторный ничего не меняет."""
 
-        await self.db.execute(
-            insert(CommentLike).values(user_id=user_id, comment_id=comment_id).on_conflict_do_nothing()
+        stmt = (
+            insert(CommentLike)
+            .values(user_id=user_id, comment_id=comment_id)
+            .on_conflict_do_nothing()
         )
+        await self.db.execute(stmt)
 
     async def remove(self, user_id: int, comment_id: int) -> None:
         """Убирает лайк."""
 
-        await self.db.execute(
-            delete(CommentLike).where(CommentLike.user_id == user_id, CommentLike.comment_id == comment_id)
+        stmt = (
+            delete(CommentLike)
+            .where(CommentLike.user_id == user_id)
+            .where(CommentLike.comment_id == comment_id)
         )
+        await self.db.execute(stmt)
 
     async def liked_ids(self, user_id: int, comment_ids: list[int]) -> set[int]:
         """Какие комментарии из списка пользователь лайкнул."""
 
-        stmt = select(CommentLike.comment_id).where(
-            CommentLike.user_id == user_id, CommentLike.comment_id.in_(comment_ids)
+        stmt = (
+            select(CommentLike.comment_id)
+            .where(CommentLike.user_id == user_id)
+            .where(CommentLike.comment_id.in_(comment_ids))
         )
-        return set((await self.db.execute(stmt)).scalars().all())
+        result = await self.db.execute(stmt)
+        return set(result.scalars().all())

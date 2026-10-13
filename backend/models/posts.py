@@ -28,6 +28,8 @@ MAX_AI_INSTRUCTION = 1000
 PUBLISHED_ONLY = text("status = 'published'")
 ROOTS_ONLY = text("parent_id IS NULL")
 OPEN_ONLY = text("status = 'open'")
+FREE_MEDIA_ONLY = text("post_id IS NULL")
+SITEMAP_ONLY = text("status = 'published' AND repost_of_id IS NULL")
 
 
 class ReportStatus(StrEnum):
@@ -62,8 +64,13 @@ class Post(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    author_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"))
-    repost_of_id: Mapped[int | None] = mapped_column(ForeignKey("posts.id", ondelete="CASCADE"), index=True)
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+    )
+    repost_of_id: Mapped[int | None] = mapped_column(
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        index=True,
+    )
 
     html: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[str] = mapped_column(String(16), default=PostStatus.DRAFT, index=True)
@@ -72,8 +79,14 @@ class Post(Base):
     reposts_count: Mapped[int] = mapped_column(Integer, default=0)
     views_count: Mapped[int] = mapped_column(Integer, default=0)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     author: Mapped[Account] = relationship(lazy="joined")
@@ -84,11 +97,17 @@ class Post(Base):
         cascade="all, delete-orphan",
     )
     repost_of: Mapped["Post | None"] = relationship(
-        remote_side=[id], foreign_keys=[repost_of_id], lazy="joined", join_depth=1
+        remote_side=[id],
+        foreign_keys=[repost_of_id],
+        lazy="joined",
+        join_depth=1,
     )
 
     __table_args__ = (
-        CheckConstraint("status IN ('draft', 'published', 'hidden')", name="ck_posts_status"),
+        CheckConstraint(
+            "status IN ('draft', 'published', 'hidden')",
+            name="ck_posts_status",
+        ),
         Index(
             "ix_posts_feed",
             func.coalesce(published_at, created_at).desc(),
@@ -102,11 +121,16 @@ class Post(Base):
             func.coalesce(published_at, created_at).desc(),
             id.desc(),
         ),
-        Index("ix_posts_author_published", author_id, published_at, postgresql_where=PUBLISHED_ONLY),
+        Index(
+            "ix_posts_author_published",
+            author_id,
+            published_at,
+            postgresql_where=PUBLISHED_ONLY,
+        ),
         Index(
             "ix_posts_sitemap",
             id,
-            postgresql_where=text("status = 'published' AND repost_of_id IS NULL"),
+            postgresql_where=SITEMAP_ONLY,
             postgresql_include=["updated_at"],
         ),
     )
@@ -117,12 +141,20 @@ class PostLike(Base):
 
     __tablename__ = "post_likes"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     post_id: Mapped[int] = mapped_column(
-        ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True, index=True
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True,
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
 
 class PostView(Base):
@@ -130,7 +162,10 @@ class PostView(Base):
 
     __tablename__ = "post_views"
 
-    post_id: Mapped[int] = mapped_column(ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True)
+    post_id: Mapped[int] = mapped_column(
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     visitor: Mapped[str] = mapped_column(String(64), primary_key=True)
     viewed_on: Mapped[date] = mapped_column(Date, primary_key=True)
 
@@ -140,14 +175,29 @@ class PostSave(Base):
 
     __tablename__ = "post_saves"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     post_id: Mapped[int] = mapped_column(
-        ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True, index=True
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True,
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
-    __table_args__ = (Index("ix_post_saves_user_recent", user_id, created_at.desc(), post_id.desc()),)
+    __table_args__ = (
+        Index(
+            "ix_post_saves_user_recent",
+            user_id,
+            created_at.desc(),
+            post_id.desc(),
+        ),
+    )
 
 
 class PostComment(Base):
@@ -161,21 +211,36 @@ class PostComment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    post_id: Mapped[int] = mapped_column(ForeignKey("posts.id", ondelete="CASCADE"), index=True)
-    author_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), index=True)
-    parent_id: Mapped[int | None] = mapped_column(ForeignKey("post_comments.id", ondelete="CASCADE"))
+    post_id: Mapped[int] = mapped_column(
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        index=True,
+    )
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        index=True,
+    )
+    parent_id: Mapped[int | None] = mapped_column(
+        ForeignKey("post_comments.id", ondelete="CASCADE"),
+    )
     reply_to_id: Mapped[int | None] = mapped_column(
-        ForeignKey("post_comments.id", ondelete="SET NULL"), index=True
+        ForeignKey("post_comments.id", ondelete="SET NULL"),
+        index=True,
     )
 
     text: Mapped[str] = mapped_column(Text)
     likes_count: Mapped[int] = mapped_column(Integer, default=0)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
     author: Mapped[Account] = relationship(lazy="joined")
     reply_to: Mapped["PostComment | None"] = relationship(
-        remote_side=[id], foreign_keys=[reply_to_id], lazy="joined", join_depth=1
+        remote_side=[id],
+        foreign_keys=[reply_to_id],
+        lazy="joined",
+        join_depth=1,
     )
 
     __table_args__ = (
@@ -186,14 +251,21 @@ class PostComment(Base):
             id,
             postgresql_where=ROOTS_ONLY,
         ),
-        Index("ix_post_comments_replies", parent_id, created_at, id),
+        Index(
+            "ix_post_comments_replies",
+            parent_id,
+            created_at,
+            id,
+        ),
     )
 
     @property
     def reply_to_name(self) -> str | None:
         """Кому ответ: имя автора комментария, на который отвечают."""
 
-        return self.reply_to.author.display_name if self.reply_to else None
+        if self.reply_to is None:
+            return None
+        return self.reply_to.author.display_name
 
 
 class CommentLike(Base):
@@ -201,12 +273,20 @@ class CommentLike(Base):
 
     __tablename__ = "post_comment_likes"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     comment_id: Mapped[int] = mapped_column(
-        ForeignKey("post_comments.id", ondelete="CASCADE"), primary_key=True, index=True
+        ForeignKey("post_comments.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True,
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
 
 class PostMedia(Base):
@@ -216,21 +296,42 @@ class PostMedia(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    owner_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), index=True)
-    post_id: Mapped[int | None] = mapped_column(ForeignKey("posts.id", ondelete="CASCADE"), index=True)
+    owner_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        index=True,
+    )
+    post_id: Mapped[int | None] = mapped_column(
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        index=True,
+    )
 
     kind: Mapped[str] = mapped_column(String(16))
     path: Mapped[str] = mapped_column(String(500))
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
     post: Mapped[Post | None] = relationship(back_populates="media")
 
     __table_args__ = (
-        CheckConstraint("kind IN ('photo', 'video')", name="ck_post_media_kind"),
-        Index("ix_post_media_free_owner", owner_id, postgresql_where=text("post_id IS NULL")),
-        Index("ix_post_media_expired", created_at, id, postgresql_where=text("post_id IS NULL")),
+        CheckConstraint(
+            "kind IN ('photo', 'video')",
+            name="ck_post_media_kind",
+        ),
+        Index(
+            "ix_post_media_free_owner",
+            owner_id,
+            postgresql_where=FREE_MEDIA_ONLY,
+        ),
+        Index(
+            "ix_post_media_expired",
+            created_at,
+            id,
+            postgresql_where=FREE_MEDIA_ONLY,
+        ),
     )
 
     @property
@@ -241,33 +342,64 @@ class PostMedia(Base):
 
 
 class PostReport(Base):
-    """Жалоба на пост или комментарий. Модератор скрывает пост, удаляет комментарий или отклоняет жалобу."""
+    """Жалоба на пост или комментарий.
+
+    Модератор скрывает пост, удаляет комментарий или отклоняет жалобу.
+    """
 
     __tablename__ = "post_reports"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    reporter_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), index=True)
-    post_id: Mapped[int | None] = mapped_column(ForeignKey("posts.id", ondelete="CASCADE"), index=True)
+    reporter_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        index=True,
+    )
+    post_id: Mapped[int | None] = mapped_column(
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        index=True,
+    )
     comment_id: Mapped[int | None] = mapped_column(
-        ForeignKey("post_comments.id", ondelete="CASCADE"), index=True
+        ForeignKey("post_comments.id", ondelete="CASCADE"),
+        index=True,
     )
 
     reason: Mapped[str] = mapped_column(String(MAX_REPORT_LENGTH))
     status: Mapped[str] = mapped_column(String(16), default=ReportStatus.OPEN)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
     reporter: Mapped[Account] = relationship(lazy="joined")
     post: Mapped[Post | None] = relationship(lazy="joined")
     comment: Mapped[PostComment | None] = relationship(lazy="joined")
 
     __table_args__ = (
-        CheckConstraint("status IN ('open', 'resolved')", name="ck_post_reports_status"),
-        Index("ix_post_reports_status_recent", status, created_at.desc(), id.desc()),
-        Index("ux_post_reports_open_post", reporter_id, post_id, unique=True, postgresql_where=OPEN_ONLY),
+        CheckConstraint(
+            "status IN ('open', 'resolved')",
+            name="ck_post_reports_status",
+        ),
         Index(
-            "ux_post_reports_open_comment", reporter_id, comment_id, unique=True, postgresql_where=OPEN_ONLY
+            "ix_post_reports_status_recent",
+            status,
+            created_at.desc(),
+            id.desc(),
+        ),
+        Index(
+            "ux_post_reports_open_post",
+            reporter_id,
+            post_id,
+            unique=True,
+            postgresql_where=OPEN_ONLY,
+        ),
+        Index(
+            "ux_post_reports_open_comment",
+            reporter_id,
+            comment_id,
+            unique=True,
+            postgresql_where=OPEN_ONLY,
         ),
     )
 
@@ -279,10 +411,21 @@ class AiRequest(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
 
-    __table_args__ = (Index("ix_post_ai_requests_user_created", user_id, created_at),)
+    __table_args__ = (
+        Index(
+            "ix_post_ai_requests_user_created",
+            user_id,
+            created_at,
+        ),
+    )
 
 
 class Follow(Base):
@@ -290,9 +433,17 @@ class Follow(Base):
 
     __tablename__ = "post_follows"
 
-    follower_id: Mapped[int] = mapped_column(ForeignKey("accounts.id", ondelete="CASCADE"), primary_key=True)
+    follower_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     author_id: Mapped[int] = mapped_column(
-        ForeignKey("accounts.id", ondelete="CASCADE"), primary_key=True, index=True
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+        index=True,
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )

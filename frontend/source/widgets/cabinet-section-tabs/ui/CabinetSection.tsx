@@ -21,7 +21,9 @@ export function CabinetSection({ children }: CabinetSectionProps) {
   const tabs = getSectionTabs(pathname, role);
   const heading = ORDER_PAGE_HEADINGS[pathname];
 
-  if (tabs.length === 0) return children;
+  if (tabs.length === 0) {
+    return children;
+  }
 
   return (
     <div className={s.section}>
@@ -34,7 +36,9 @@ export function CabinetSection({ children }: CabinetSectionProps) {
         )}
         <nav className={s.tabs} aria-label="Вкладки раздела">
           {tabs.map((tab) => {
-            const isActive = pathname === tab.href || (tab.href === "/chat" && pathname.startsWith("/chat/"));
+            const isChatThread = tab.href === "/chat" && pathname.startsWith("/chat/");
+            const isActive = pathname === tab.href || isChatThread;
+
             return (
               <Link
                 key={tab.href}

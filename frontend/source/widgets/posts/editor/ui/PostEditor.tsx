@@ -11,11 +11,19 @@ interface PostEditorProps {
   post?: Post;
 }
 
-/** Новая публикация или правка своей. Пост для правки приходит с сервера уже загруженным. */
+/**
+ * Новая публикация или правка своей.
+ * Пост для правки приходит с сервера уже загруженным.
+ */
 export function PostEditor({ post }: PostEditorProps) {
   const { user } = useSession();
   const isForeign = post !== undefined && post.author.id !== user?.id;
   const isRepost = Boolean(post?.repost_of);
+
+  const title = post ? "Изменить публикацию" : "Новая публикация";
+  const subtitle = post
+    ? "Обновите текст и вложения, затем сохраните изменения."
+    : "Поделитесь опытом, новостью или полезным материалом — добавьте текст, фото и видео.";
 
   return (
     <div className={s.page}>
@@ -24,18 +32,17 @@ export function PostEditor({ post }: PostEditorProps) {
         Мои публикации
       </Button>
       <div className={s.head}>
-        <Title as="h1" text={post ? "Изменить публикацию" : "Новая публикация"} />
-        <Subtitle
-          className={s.subtitle}
-          text={
-            post
-              ? "Обновите текст и вложения, затем сохраните изменения."
-              : "Поделитесь опытом, новостью или полезным материалом — добавьте текст, фото и видео."
-          }
-        />
+        <Title as="h1" text={title} />
+        <Subtitle className={s.subtitle} text={subtitle} />
       </div>
-      {isForeign && <p className={s.notice}>Изменять можно только свои публикации.</p>}
-      {isRepost && <p className={s.notice}>Репост нельзя изменить — его можно удалить и сделать заново.</p>}
+      {isForeign && (
+        <p className={s.notice}>Изменять можно только свои публикации.</p>
+      )}
+      {isRepost && (
+        <p className={s.notice}>
+          Репост нельзя изменить — его можно удалить и сделать заново.
+        </p>
+      )}
       {!isForeign && !isRepost && <PostForm post={post} />}
     </div>
   );

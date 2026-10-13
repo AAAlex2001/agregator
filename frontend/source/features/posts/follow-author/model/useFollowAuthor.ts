@@ -15,14 +15,19 @@ export function useFollowAuthor(authorId: number, initial: boolean) {
   const [isBusy, setIsBusy] = useState(false);
 
   const toggle = async () => {
-    if (!user) return openAuth("login");
+    if (!user) {
+      return openAuth("login");
+    }
+
     setIsBusy(true);
     try {
       await followPostAuthor(authorId, !following);
       setFollowing(!following);
-      showSuccess(following ? "Вы отписались от автора" : "Вы подписались на автора");
+      const notice = following ? "Вы отписались от автора" : "Вы подписались на автора";
+      showSuccess(notice);
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось изменить подписку");
+      const message = error instanceof Error ? error.message : "Не удалось изменить подписку";
+      showError(message);
     } finally {
       setIsBusy(false);
     }

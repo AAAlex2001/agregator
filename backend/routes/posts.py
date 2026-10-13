@@ -1,6 +1,7 @@
 """Публикации: лента, свои посты, реакции, комментарии, файлы и ИИ-помощник.
 
-Ручки только связывают запрос со сценарием. Ошибки сценариев (PostError) переводит в HTTP общий обработчик.
+Ручки только связывают запрос со сценарием.
+Ошибки сценариев (PostError) переводит в HTTP общий обработчик.
 """
 
 from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
@@ -81,7 +82,11 @@ router = APIRouter(prefix="/posts", tags=["posts"])
 async def post_error_handler(request: Request, error: PostError) -> JSONResponse:
     """Ошибка сценария публикаций — в ответ с её кодом и текстом."""
 
-    return JSONResponse({"detail": str(error)}, status_code=error.status_code, headers=error.headers)
+    return JSONResponse(
+        {"detail": str(error)},
+        status_code=error.status_code,
+        headers=error.headers,
+    )
 
 
 @router.post("/media", status_code=status.HTTP_201_CREATED)
@@ -92,7 +97,8 @@ async def upload_media(
 ) -> PostMediaSchema:
     """Загрузить фото или видео для будущего поста. id передаётся при сохранении поста."""
 
-    return PostMediaSchema.model_validate(await usecase.execute(user, file))
+    media = await usecase.execute(user, file)
+    return PostMediaSchema.model_validate(media)
 
 
 @router.delete("/media/{media_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -114,7 +120,8 @@ async def write_with_ai(
 ) -> AssistantAnswerSchema:
     """ИИ-помощник: пишет пост по просьбе автора или переделывает текущий текст."""
 
-    return AssistantAnswerSchema(html=await usecase.execute(user, payload.instruction, payload.html))
+    html = await usecase.execute(user, payload.instruction, payload.html)
+    return AssistantAnswerSchema(html=html)
 
 
 @router.get("/sitemap")
@@ -124,7 +131,10 @@ async def list_posts_sitemap(
     """Опубликованные оригиналы для карты сайта."""
 
     rows = await posts.list_sitemap()
-    return [PostSitemapItemSchema(id=post_id, updated_at=updated_at) for post_id, updated_at in rows]
+    return [
+        PostSitemapItemSchema(id=post_id, updated_at=updated_at)
+        for post_id, updated_at in rows
+    ]
 
 
 @router.get("/feed")
@@ -137,7 +147,8 @@ async def list_feed(
     """Лента «Для вас»: опубликованные посты и репосты всех авторов. Открыта всем."""
 
     items, total = await posts.list_published(page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.get("/feed/following/unseen")
@@ -147,7 +158,8 @@ async def count_unseen_following(
 ) -> UnseenSchema:
     """Сколько постов вышло в подписках с прошлого захода во вкладку."""
 
-    return UnseenSchema(count=await posts.count_following_since(user.id, user.following_seen_at))
+    count = await posts.count_following_since(user.id, user.following_seen_at)
+    return UnseenSchema(count=count)
 
 
 @router.post("/feed/following/seen", status_code=status.HTTP_204_NO_CONTENT)
@@ -170,7 +182,8 @@ async def list_following_feed(
     """Лента «Подписки»: посты и репосты авторов, на которых вы подписаны."""
 
     items, total = await posts.list_following(user.id, page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.get("/author/{author_id}")
@@ -184,7 +197,8 @@ async def list_author_posts(
     """Опубликованные посты автора для его страницы. Открыты всем."""
 
     items, total = await posts.list_by_author(author_id, page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.get("/reposts")
@@ -197,7 +211,8 @@ async def list_my_reposts(
     """Свои репосты, новые первыми."""
 
     items, total = await posts.list_reposts(user.id, page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.get("/saved")
@@ -210,7 +225,8 @@ async def list_saved_posts(
     """Сохранённые посты, недавно сохранённые первыми."""
 
     items, total = await posts.list_saved(user.id, page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.get("/my")
@@ -224,7 +240,8 @@ async def list_my_posts(
     """Свои посты: опубликованные, черновики или скрытые модератором."""
 
     items, total = await posts.list_for_author(user.id, post_status, page.limit, page.offset)
-    return PostPageSchema.for_viewer(items, total, await marks.execute(user, items))
+    viewer_marks = await marks.execute(user, items)
+    return PostPageSchema.for_viewer(items, total, viewer_marks)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -235,7 +252,8 @@ async def create_post(
 ) -> PostSchema:
     """Опубликовать пост или сохранить черновиком."""
 
-    return PostSchema.model_validate(await usecase.execute(user, payload))
+    post = await usecase.execute(user, payload)
+    return PostSchema.model_validate(post)
 
 
 @router.put("/comments/{comment_id}")
@@ -324,7 +342,8 @@ async def get_post(
 ) -> PostSchema:
     """Пост по id: опубликованный — всем, свой черновик — автору."""
 
-    return PostSchema.for_viewer(post, await marks.execute(user, [post]))
+    viewer_marks = await marks.execute(user, [post])
+    return PostSchema.for_viewer(post, viewer_marks)
 
 
 @router.put("/{post_id}")
@@ -335,7 +354,8 @@ async def update_post(
 ) -> PostSchema:
     """Изменить свой пост. Репост изменить нельзя."""
 
-    return PostSchema.model_validate(await usecase.execute(post, payload))
+    updated = await usecase.execute(post, payload)
+    return PostSchema.model_validate(updated)
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -369,7 +389,8 @@ async def create_comment(
 ) -> CommentSchema:
     """Написать комментарий или ответить на комментарий."""
 
-    return CommentSchema.model_validate(await usecase.execute(user, post, payload))
+    comment = await usecase.execute(user, post, payload)
+    return CommentSchema.model_validate(comment)
 
 
 @router.post("/{post_id}/report", status_code=status.HTTP_204_NO_CONTENT)
@@ -393,7 +414,8 @@ async def repost(
 ) -> PostSchema:
     """Репостнуть публикацию: просто или с комментарием."""
 
-    return PostSchema.model_validate(await usecase.execute(user, post, payload))
+    created = await usecase.execute(user, post, payload)
+    return PostSchema.model_validate(created)
 
 
 @router.post("/{post_id}/view", status_code=status.HTTP_204_NO_CONTENT)

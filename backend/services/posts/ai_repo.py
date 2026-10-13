@@ -16,15 +16,26 @@ class AiRequestRepository:
         self.db = db
 
     async def list_since(self, user_id: int, since: datetime) -> list[datetime]:
-        """Время запросов пользователя начиная с since, старые первыми. Запросы одного автора идут по очереди."""
+        """Время запросов пользователя начиная с since, старые первыми.
 
-        await self.db.execute(select(Account.id).where(Account.id == user_id).with_for_update(no_key=True))
+        Запросы одного автора идут по очереди: строка аккаунта блокируется.
+        """
+
+        lock = (
+            select(Account.id)
+            .where(Account.id == user_id)
+            .with_for_update(key_share=True)
+        )
+        await self.db.execute(lock)
+
         stmt = (
             select(AiRequest.created_at)
-            .where(AiRequest.user_id == user_id, AiRequest.created_at >= since)
+            .where(AiRequest.user_id == user_id)
+            .where(AiRequest.created_at >= since)
             .order_by(AiRequest.created_at)
         )
-        return list((await self.db.execute(stmt)).scalars().all())
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
 
     async def add(self, user_id: int) -> None:
         """Записывает запрос и сразу фиксирует транзакцию.

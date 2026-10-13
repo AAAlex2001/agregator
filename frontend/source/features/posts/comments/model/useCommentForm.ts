@@ -21,12 +21,19 @@ export function useCommentForm({ postId, comment, replyTo, onSaved }: CommentFor
     event.preventDefault();
     setIsSending(true);
     try {
-      if (comment) await updateComment(comment.id, text.trim());
-      else await createComment(postId, text.trim(), replyTo?.id ?? null);
+      if (comment) {
+        await updateComment(comment.id, text.trim());
+      } else {
+        await createComment(postId, text.trim(), replyTo?.id ?? null);
+      }
+
       setText("");
       onSaved();
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось сохранить комментарий");
+      const message = error instanceof Error
+        ? error.message
+        : "Не удалось сохранить комментарий";
+      showError(message);
     } finally {
       setIsSending(false);
     }

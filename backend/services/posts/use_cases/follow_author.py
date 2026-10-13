@@ -11,7 +11,11 @@ from services.posts.follow_repository import FollowRepository
 class FollowAuthorUseCase:
     """Подписывает читателя на автора. Автору сообщается только о новой подписке."""
 
-    def __init__(self, follows: FollowRepository, notify: CreatePostActivityNotificationUseCase) -> None:
+    def __init__(
+        self,
+        follows: FollowRepository,
+        notify: CreatePostActivityNotificationUseCase,
+    ) -> None:
         self.follows = follows
         self.notify = notify
 

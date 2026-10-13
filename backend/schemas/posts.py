@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
+from textwrap import shorten
 from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
@@ -20,7 +21,9 @@ from models.posts import (
 )
 from services.posts.html import plain_text
 
-EXCERPT_LENGTH = 200
+TITLE_LENGTH = 80
+DESCRIPTION_LENGTH = 160
+DEFAULT_AUTHOR_NAME = "Участник «Ресурс-Плюс»"
 
 
 class ModerationStatus(StrEnum):
@@ -43,7 +46,11 @@ class PostSaveSchema(BaseModel):
     """Текст и файлы поста при публикации и правке."""
 
     html: str = Field("", max_length=MAX_POST_HTML, description="Текст из редактора в HTML")
-    media_ids: list[int] = Field([], max_length=MAX_POST_MEDIA, description="Фото и видео по порядку")
+    media_ids: list[int] = Field(
+        [],
+        max_length=MAX_POST_MEDIA,
+        description="Фото и видео по порядку",
+    )
     draft: bool = Field(False, description="Сохранить черновиком, не публикуя")
 
 
@@ -97,7 +104,10 @@ class OriginalPostSchema(BaseModel):
 
 
 class PostSchema(BaseModel):
-    """Пост целиком. liked, saved и following — для того, кто смотрит. У репоста — оригинал в repost_of."""
+    """Пост целиком. У репоста — оригинал в repost_of.
+
+    liked, saved и following — для того, кто смотрит.
+    """
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -118,24 +128,58 @@ class PostSchema(BaseModel):
     updated_at: datetime = Field(..., description="Когда изменено содержимое")
     published_at: datetime | None = Field(None, description="Когда опубликован")
 
-    @computed_field(description="Начало текста без разметки — для заголовка и описания страницы")
-    @property
-    def excerpt(self) -> str:
-        """Первые символы видимого текста."""
+    def visible_text(self) -> str:
+        """Текст поста без разметки. У репоста без комментария — текст оригинала."""
 
-        return plain_text(self.html)[:EXCERPT_LENGTH]
+        text = plain_text(self.html)
+        if not text and self.repost_of:
+            text = plain_text(self.repost_of.html)
+        return text
+
+    def author_name(self) -> str:
+        """Имя автора для заголовков страницы."""
+
+        return self.author.name or DEFAULT_AUTHOR_NAME
+
+    @computed_field(description="Заголовок страницы публикации")
+    @property
+    def title(self) -> str:
+        """Начало текста, а пост без текста — по имени автора."""
+
+        text = self.visible_text()
+        if not text:
+            return f"Публикация: {self.author_name()}"
+        return shorten(text, TITLE_LENGTH, placeholder="…")
+
+    @computed_field(description="Описание страницы публикации")
+    @property
+    def description(self) -> str:
+        """Начало текста, а пост без текста — о фото и видео автора."""
+
+        text = self.visible_text()
+        if not text:
+            return f"Фото и видео автора {self.author_name()} на «Ресурс-Плюс»"
+        return shorten(text, DESCRIPTION_LENGTH, placeholder="…")
+
+    @computed_field(description="Первое фото — обложка для превью ссылки")
+    @property
+    def cover_url(self) -> str | None:
+        """Адрес первого фото или None."""
+
+        for item in self.media:
+            if item.kind == MediaKind.PHOTO:
+                return item.url
+        return None
 
     @classmethod
     def for_viewer(cls, post: Post, marks: ViewerMarks) -> Self:
         """Пост с отметками того, кто смотрит."""
 
-        return cls.model_validate(post).model_copy(
-            update={
-                "liked": post.id in marks.liked,
-                "saved": post.id in marks.saved,
-                "following": post.author_id in marks.following,
-            }
-        )
+        schema = cls.model_validate(post)
+        schema.liked = post.id in marks.liked
+        schema.saved = post.id in marks.saved
+        schema.following = post.author_id in marks.following
+        return schema
 
 
 class PostSitemapItemSchema(BaseModel):
@@ -155,7 +199,8 @@ class PostPageSchema(BaseModel):
     def for_viewer(cls, posts: list[Post], total: int, marks: ViewerMarks) -> Self:
         """Страница постов с отметками того, кто смотрит."""
 
-        return cls(items=[PostSchema.for_viewer(post, marks) for post in posts], total=total)
+        items = [PostSchema.for_viewer(post, marks) for post in posts]
+        return cls(items=items, total=total)
 
 
 class UnseenSchema(BaseModel):
@@ -207,7 +252,9 @@ class CommentSchema(BaseModel):
     def for_viewer(cls, comment: PostComment, liked: set[int]) -> Self:
         """Комментарий с отметкой лайка того, кто смотрит."""
 
-        return cls.model_validate(comment).model_copy(update={"liked": comment.id in liked})
+        schema = cls.model_validate(comment)
+        schema.liked = comment.id in liked
+        return schema
 
 
 class CommentThreadSchema(BaseModel):
@@ -258,7 +305,10 @@ class ReportSchema(BaseModel):
     id: int = Field(..., description="ID жалобы")
     reporter: PostAuthorSchema = Field(..., description="Кто пожаловался")
     post: PostSchema | None = Field(None, description="Пост, если жалоба на пост")
-    comment: CommentSchema | None = Field(None, description="Комментарий, если жалоба на комментарий")
+    comment: CommentSchema | None = Field(
+        None,
+        description="Комментарий, если жалоба на комментарий",
+    )
     reason: str = Field(..., description="Причина")
     status: ReportStatus = Field(..., description="Ждёт модератора или рассмотрена")
     created_at: datetime = Field(..., description="Когда")

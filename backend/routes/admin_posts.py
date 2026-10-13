@@ -15,7 +15,13 @@ from dependencies.posts import (
     get_set_post_status_usecase,
 )
 from models.posts import Post, PostComment, PostReport, PostStatus, ReportStatus
-from schemas.posts import ModerationStatus, PostPageSchema, PostSchema, ReportPageSchema, ReportSchema
+from schemas.posts import (
+    ModerationStatus,
+    PostPageSchema,
+    PostSchema,
+    ReportPageSchema,
+    ReportSchema,
+)
 from services.posts.comment_repo import PostCommentRepository
 from services.posts.repo import PostRepository
 from services.posts.report_repo import PostReportRepository
@@ -23,7 +29,9 @@ from services.posts.use_cases.delete_post import DeletePostUseCase
 from services.posts.use_cases.moderate_post import DismissReportUseCase, SetPostStatusUseCase
 
 router = APIRouter(
-    prefix="/internal/posts", tags=["admin-posts"], dependencies=[Depends(require_internal_token)]
+    prefix="/internal/posts",
+    tags=["admin-posts"],
+    dependencies=[Depends(require_internal_token)],
 )
 
 
@@ -38,7 +46,8 @@ async def list_posts(
     """Публикации одного состояния, при необходимости — одного автора."""
 
     items, total = await posts.list_for_moderation(post_status, author_id, limit, offset)
-    return PostPageSchema(items=[PostSchema.model_validate(item) for item in items], total=total)
+    schemas = [PostSchema.model_validate(item) for item in items]
+    return PostPageSchema(items=schemas, total=total)
 
 
 @router.get("/reports")
@@ -51,7 +60,8 @@ async def list_reports(
     """Жалобы одного состояния вместе с материалом."""
 
     items, total = await reports.list_by_status(report_status, limit, offset)
-    return ReportPageSchema(items=[ReportSchema.model_validate(item) for item in items], total=total)
+    schemas = [ReportSchema.model_validate(item) for item in items]
+    return ReportPageSchema(items=schemas, total=total)
 
 
 @router.post("/reports/{report_id}/dismiss", status_code=status.HTTP_204_NO_CONTENT)
@@ -89,7 +99,8 @@ async def set_status(
 ) -> PostSchema:
     """Скрыть публикацию или вернуть её в ленту."""
 
-    return PostSchema.model_validate(await usecase.execute(post, moderation_status))
+    updated = await usecase.execute(post, moderation_status)
+    return PostSchema.model_validate(updated)
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -27,11 +27,17 @@ export function ReportModal({ id, kind, onClose }: ReportModalProps) {
     event.preventDefault();
     setIsSending(true);
     try {
-      await (kind === "post" ? reportPost(id, reason.trim()) : reportComment(id, reason.trim()));
+      if (kind === "post") {
+        await reportPost(id, reason.trim());
+      } else {
+        await reportComment(id, reason.trim());
+      }
+
       showSuccess("Жалоба отправлена модератору");
       onClose();
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось отправить жалобу");
+      const message = error instanceof Error ? error.message : "Не удалось отправить жалобу";
+      showError(message);
     } finally {
       setIsSending(false);
     }
@@ -50,7 +56,11 @@ export function ReportModal({ id, kind, onClose }: ReportModalProps) {
           maxLength={MAX_REASON_LENGTH}
           placeholder="Причина жалобы"
         />
-        <Button type="submit" isLoading={isSending} disabled={reason.trim().length < 3}>
+        <Button
+          type="submit"
+          isLoading={isSending}
+          disabled={reason.trim().length < 3}
+        >
           Отправить жалобу
         </Button>
       </form>

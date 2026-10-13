@@ -101,14 +101,10 @@
     padding: 16px;
   }
 }
-.pagination {
+.loadMore {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
+  justify-content: center;
 }
-.pageNumber {
-  color: var(--color-text-secondary);
-  font-size: 14px;
+.loadMoreButton {
+  min-width: 180px;
 }

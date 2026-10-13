@@ -12,10 +12,16 @@ export type {
   RepostedPost,
   ThreadPage,
 } from "./model/types";
-export { POSTS_PAGE_SIZE } from "./model/types";
+export { POSTS_MAX_PAGE, POSTS_PAGE_SIZE } from "./model/types";
 export { fetchFollowingUnseen, fetchPostPage, markFollowingSeen } from "./api/feed.api";
 export { createPost, deletePost, repostPost, updatePost } from "./api/post.api";
-export { countPostView, followPostAuthor, reportPost, togglePostLike, togglePostSave } from "./api/reactions.api";
+export {
+  countPostView,
+  followPostAuthor,
+  reportPost,
+  togglePostLike,
+  togglePostSave,
+} from "./api/reactions.api";
 export { deletePostMedia, uploadPostMedia } from "./api/media.api";
 export { writePostWithAi } from "./api/assistant.api";
 export {

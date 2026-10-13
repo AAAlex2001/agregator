@@ -12,16 +12,30 @@ interface CommentThreadProps {
 }
 
 /** Ветка: корневой комментарий, ответы и форма ответа, если отвечают в этой ветке. */
-export function CommentThread({ postId, thread, replyTo, onReply, onChanged }: CommentThreadProps) {
+export function CommentThread({
+  postId,
+  thread,
+  replyTo,
+  onReply,
+  onChanged,
+}: CommentThreadProps) {
   const root = thread.comment;
-  const isReplyingHere = replyTo !== null && (replyTo.id === root.id || replyTo.parent_id === root.id);
+  const isReplyingHere =
+    replyTo !== null && (replyTo.id === root.id || replyTo.parent_id === root.id);
+  const hasReplies = thread.replies.length > 0;
 
   return (
     <CommentItem postId={postId} comment={root} onReply={onReply} onChanged={onChanged}>
-      {(thread.replies.length > 0 || isReplyingHere) && (
+      {(hasReplies || isReplyingHere) && (
         <div className={s.thread}>
           {thread.replies.map((reply) => (
-            <CommentItem key={reply.id} postId={postId} comment={reply} onReply={onReply} onChanged={onChanged} />
+            <CommentItem
+              key={reply.id}
+              postId={postId}
+              comment={reply}
+              onReply={onReply}
+              onChanged={onChanged}
+            />
           ))}
           {isReplyingHere && (
             <CommentForm

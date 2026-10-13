@@ -16,18 +16,27 @@ class PostFormUseCase:
         self.posts = posts
         self.media = media
 
-    async def check_media(self, owner_id: int, media_ids: list[int], post_id: int | None) -> list[PostMedia]:
+    async def check_media(
+        self,
+        owner_id: int,
+        media_ids: list[int],
+        post_id: int | None,
+    ) -> list[PostMedia]:
         """Файлы в порядке формы. Чужой или занятый другим постом — PostMediaUnavailableError."""
 
         media_ids = list(dict.fromkeys(media_ids))
         files = await self.media.list_usable(owner_id, media_ids, post_id)
         if len(files) != len(media_ids):
             raise PostMediaUnavailableError()
+
         by_id = {item.id: item for item in files}
         return [by_id[media_id] for media_id in media_ids]
 
     async def fill(self, post: Post, owner_id: int, payload: PostSaveSchema) -> None:
-        """Переносит текст, файлы и статус. Пустой пост — EmptyPostError. Скрытый модератором остаётся скрытым."""
+        """Переносит текст, файлы и статус. Пустой пост — EmptyPostError.
+
+        Скрытый модератором пост остаётся скрытым.
+        """
 
         html = clean_html(payload.html)
         check_text_length(html)
@@ -42,6 +51,7 @@ class PostFormUseCase:
         post.html = html
         post.media = media
         post.updated_at = now
+
         if post.status != PostStatus.HIDDEN:
             post.status = PostStatus.DRAFT if payload.draft else PostStatus.PUBLISHED
         if post.status == PostStatus.PUBLISHED and post.published_at is None:

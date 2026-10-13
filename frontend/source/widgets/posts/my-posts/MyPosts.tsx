@@ -10,9 +10,21 @@ import { PostList } from "../list/PostList";
 import s from "../posts.module.scss";
 
 const TABS: { status: PostStatus; label: string; hint: string }[] = [
-  { status: "published", label: "Публикации", hint: "Ваши опубликованные записи. Управление — в меню публикации." },
-  { status: "draft", label: "Черновики", hint: "Черновики видите только вы. Опубликовать — через «Изменить» в меню." },
-  { status: "hidden", label: "Скрытые", hint: "Публикации, скрытые модератором. Их видите только вы." },
+  {
+    status: "published",
+    label: "Публикации",
+    hint: "Ваши опубликованные записи. Управление — в меню публикации.",
+  },
+  {
+    status: "draft",
+    label: "Черновики",
+    hint: "Черновики видите только вы. Опубликовать — через «Изменить» в меню.",
+  },
+  {
+    status: "hidden",
+    label: "Скрытые",
+    hint: "Публикации, скрытые модератором. Их видите только вы.",
+  },
 ];
 
 interface MyPostsProps {
@@ -23,7 +35,8 @@ interface MyPostsProps {
 export function MyPosts({ initialStatus }: MyPostsProps) {
   const { user } = useSession();
   const [status, setStatus] = useState(initialStatus);
-  const name = [user?.first_name, user?.last_name].filter(Boolean).join(" ") || "Мой профиль";
+  const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+  const name = fullName || "Мой профиль";
   const current = TABS.find((tab) => tab.status === status);
 
   return (
@@ -43,18 +56,22 @@ export function MyPosts({ initialStatus }: MyPostsProps) {
         <Title as="h2" text={name} className={s.profileTitle} />
       </div>
       <div className={s.tabs} role="tablist" aria-label="Мои публикации">
-        {TABS.map((tab) => (
-          <button
-            key={tab.status}
-            type="button"
-            role="tab"
-            aria-selected={status === tab.status}
-            className={cn(s.tab, { [s.active]: status === tab.status })}
-            onClick={() => setStatus(tab.status)}
-          >
-            {tab.label}
-          </button>
-        ))}
+        {TABS.map((tab) => {
+          const isActive = status === tab.status;
+
+          return (
+            <button
+              key={tab.status}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              className={cn(s.tab, { [s.active]: isActive })}
+              onClick={() => setStatus(tab.status)}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
       <p className={s.hint}>{current?.hint}</p>
       <PostList

@@ -1,4 +1,6 @@
-"""Публикации: репозитории, фабрики сценариев и загрузка поста, комментария, жалобы и автора по id из пути.
+"""Публикации: репозитории, фабрики сценариев и загрузчики по id из пути.
+
+Загрузчики достают пост, комментарий, жалобу и автора.
 
 Загрузчики заодно проверяют доступ: чужое и неопубликованное выглядит как несуществующее (404).
 """
@@ -51,12 +53,14 @@ from services.posts.use_cases.moderate_post import DismissReportUseCase, SetPost
 from services.posts.use_cases.update_post import UpdatePostUseCase
 from services.posts.use_cases.write_with_ai import WritePostWithAiUseCase
 
+MAX_PAGE_LIMIT = 1000
+
 
 @dataclass
 class PageQuery:
     """Страница списка из параметров запроса."""
 
-    limit: int = Query(20, ge=1, le=50)
+    limit: int = Query(20, ge=1, le=MAX_PAGE_LIMIT)
     offset: int = Query(0, ge=0)
 
 
@@ -105,7 +109,9 @@ def get_report_repository(db: AsyncSession = Depends(get_db)) -> PostReportRepos
     return PostReportRepository(db)
 
 
-def get_notify_usecase(db: AsyncSession = Depends(get_db)) -> CreatePostActivityNotificationUseCase:
+def get_notify_usecase(
+    db: AsyncSession = Depends(get_db),
+) -> CreatePostActivityNotificationUseCase:
     """Уведомления о реакциях на публикации."""
     return CreatePostActivityNotificationUseCase(NotificationRepository(db))
 
@@ -143,7 +149,9 @@ def get_update_post_usecase(
     return UpdatePostUseCase(posts, media)
 
 
-def get_delete_post_usecase(posts: PostRepository = Depends(get_post_repository)) -> DeletePostUseCase:
+def get_delete_post_usecase(
+    posts: PostRepository = Depends(get_post_repository),
+) -> DeletePostUseCase:
     """Удаление поста."""
     return DeletePostUseCase(posts)
 
@@ -222,7 +230,9 @@ def get_delete_post_media_usecase(
 def get_write_with_ai_usecase(db: AsyncSession = Depends(get_db)) -> WritePostWithAiUseCase:
     """ИИ-помощник."""
     settings = get_settings()
-    return WritePostWithAiUseCase(AiClient(settings), AiRequestRepository(db), settings)
+    ai = AiClient(settings)
+    requests = AiRequestRepository(db)
+    return WritePostWithAiUseCase(ai, requests, settings)
 
 
 def get_set_post_status_usecase(
@@ -240,7 +250,10 @@ def get_dismiss_report_usecase(
     return DismissReportUseCase(reports)
 
 
-async def get_post(post_id: int, posts: PostRepository = Depends(get_post_repository)) -> Post:
+async def get_post(
+    post_id: int,
+    posts: PostRepository = Depends(get_post_repository),
+) -> Post:
     """Пост любого статуса — для модератора."""
 
     post = await posts.get_by_id(post_id)
@@ -255,9 +268,13 @@ async def get_visible_post(
 ) -> Post:
     """Пост, который можно показать: опубликованный или свой."""
 
-    hidden_original = post.repost_of is not None and post.repost_of.status != PostStatus.PUBLISHED
+    original = post.repost_of
+    if original is not None and original.status != PostStatus.PUBLISHED:
+        raise PostNotFoundError()
+
+    published = post.status == PostStatus.PUBLISHED
     own = user is not None and post.author_id == user.id
-    if hidden_original or not (post.status == PostStatus.PUBLISHED or own):
+    if not published and not own:
         raise PostNotFoundError()
     return post
 
@@ -270,7 +287,10 @@ async def get_published_post(post: Post = Depends(get_visible_post)) -> Post:
     return post
 
 
-async def get_own_post(post: Post = Depends(get_post), user: Account = Depends(require_user)) -> Post:
+async def get_own_post(
+    post: Post = Depends(get_post),
+    user: Account = Depends(require_user),
+) -> Post:
     """Свой пост."""
 
     if post.author_id != user.id:
@@ -316,7 +336,8 @@ async def get_own_comment(
 
 
 async def get_report(
-    report_id: int, reports: PostReportRepository = Depends(get_report_repository)
+    report_id: int,
+    reports: PostReportRepository = Depends(get_report_repository),
 ) -> PostReport:
     """Жалоба для модератора."""
 
@@ -332,7 +353,8 @@ def get_post_visitor(
 ) -> str:
     """Кто смотрит пост: вошедший — по аккаунту, гость — по cookie посетителя."""
 
-    return interaction_key(user.id if user else None, visitor_key)
+    user_id = user.id if user else None
+    return interaction_key(user_id, visitor_key)
 
 
 async def get_author(author_id: int, db: AsyncSession = Depends(get_db)) -> Account:

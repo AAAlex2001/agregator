@@ -2,7 +2,6 @@
 
 import cn from "classnames";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 import {
   BurgerHeaderIcon,
   DiplomaIcon,
@@ -27,48 +26,40 @@ interface CabinetMenuTabsViewProps {
 }
 
 function renderIcon(key: CabinetMenuKey) {
-  if (key === "orders") return <TabOrdersIcon />;
-  if (key === "posts") return <NewspaperIcon />;
-  if (key === "chat") return <TabChatIcon />;
-  if (key === "license-holders") return <DiplomaIcon size={22} />;
+  if (key === "orders") {
+    return <TabOrdersIcon />;
+  }
+
+  if (key === "posts") {
+    return <NewspaperIcon />;
+  }
+
+  if (key === "chat") {
+    return <TabChatIcon />;
+  }
+
+  if (key === "license-holders") {
+    return <DiplomaIcon size={22} />;
+  }
+
   return <BurgerHeaderIcon />;
 }
 
 export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewProps) {
-  const menuRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const menu = menuRef.current;
-    if (!menu) return;
-    const root = document.documentElement;
-    const updateHeight = () => {
-      const height = menu.getBoundingClientRect().height;
-      const bottom = Number.parseFloat(getComputedStyle(menu).bottom) || 0;
-      // Оставляем место для панели, её нижнего отступа и зазора над ней.
-      root.style.setProperty("--cabinet-menu-height", `${height > 0 ? height + bottom + 12 : 0}px`);
-    };
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(menu);
-    window.addEventListener("resize", updateHeight);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-      root.style.removeProperty("--cabinet-menu-height");
-    };
-  }, []);
-
   return (
     <>
       <div className={s.spacer} aria-hidden="true" />
-      <nav ref={menuRef} className={s.menuTabs} aria-label="Навигация кабинета">
+      <nav className={s.menuTabs} aria-label="Навигация кабинета">
         {items.map((item) => {
           const isActive = item.key === activeKey;
           const className = cn(s.tab, { [s.tabActive]: isActive });
+          const text = item.key === "license-holders" ? "Держатели" : item.label;
           const content = (
             <>
-              <span className={s.icon} aria-hidden="true">{renderIcon(item.key)}</span>
-              <span className={s.text}>{item.key === "license-holders" ? "Держатели" : item.label}</span>
+              <span className={s.icon} aria-hidden="true">
+                {renderIcon(item.key)}
+              </span>
+              <span className={s.text}>{text}</span>
             </>
           );
 
@@ -85,6 +76,7 @@ export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewPro
               </Link>
             );
           }
+
           return (
             <button
               key={item.key}

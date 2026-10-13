@@ -22,14 +22,18 @@ export function CommentLike({ comment }: CommentLikeProps) {
   const [isBusy, setIsBusy] = useState(false);
 
   const toggle = async () => {
-    if (!user) return openAuth("login");
+    if (!user) {
+      return openAuth("login");
+    }
+
     setIsBusy(true);
     try {
       const result = await toggleCommentLike(comment.id, !liked);
       setLiked(result.liked);
       setLikes(result.likes_count);
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось изменить лайк");
+      const message = error instanceof Error ? error.message : "Не удалось изменить лайк";
+      showError(message);
     } finally {
       setIsBusy(false);
     }

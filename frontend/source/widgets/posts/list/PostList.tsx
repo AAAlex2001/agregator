@@ -8,28 +8,51 @@ import { PostCardSkeleton, PostsSkeleton } from "../skeleton";
 import { PostItem } from "./PostItem";
 import s from "../posts.module.scss";
 
+interface EmptyAction {
+  label: string;
+  href?: string;
+  onClick?: () => void;
+}
+
 interface PostListProps {
   query: PostFeedQuery;
   emptyTitle: string;
   emptyText: string;
-  emptyAction: { label: string; href: string };
+  emptyAction: EmptyAction;
 }
 
 /** Личный раздел публикаций: загрузка, пустое состояние, ошибка с повтором и «Показать ещё». */
 export function PostList({ query, emptyTitle, emptyText, emptyAction }: PostListProps) {
   const list = usePostList(query);
 
-  if (list.isLoading) return <PostsSkeleton />;
+  if (list.isLoading) {
+    return <PostsSkeleton />;
+  }
+
   if (list.error) {
     return (
-      <EmptyState title="Ошибка загрузки" subtitle={list.error} actionLabel="Повторить" onAction={list.reload} />
+      <EmptyState
+        title="Ошибка загрузки"
+        subtitle={list.error}
+        actionLabel="Повторить"
+        onAction={list.reload}
+      />
     );
   }
+
   if (list.items.length === 0) {
     return (
-      <EmptyState title={emptyTitle} subtitle={emptyText} actionLabel={emptyAction.label} actionHref={emptyAction.href} />
+      <EmptyState
+        title={emptyTitle}
+        subtitle={emptyText}
+        actionLabel={emptyAction.label}
+        actionHref={emptyAction.href}
+        onAction={emptyAction.onClick}
+      />
     );
   }
+
+  const removeOnUnsave = query.mode === "saved";
 
   return (
     <>
@@ -39,15 +62,21 @@ export function PostList({ query, emptyTitle, emptyText, emptyAction }: PostList
             key={post.id}
             post={post}
             onDeleted={() => list.remove(post.id)}
-            onUnsaved={query.mode === "saved" ? () => list.remove(post.id) : undefined}
+            onUnsaved={removeOnUnsave ? () => list.remove(post.id) : undefined}
           />
         ))}
       </div>
       {list.isLoadingMore && <PostCardSkeleton />}
       {list.hasMore && !list.isLoadingMore && (
-        <Button variant="secondary" onClick={list.loadMore}>
-          Показать ещё
-        </Button>
+        <div className={s.loadMore}>
+          <Button
+            variant="outline"
+            className={s.loadMoreButton}
+            onClick={list.loadMore}
+          >
+            Показать ещё
+          </Button>
+        </div>
       )}
     </>
   );

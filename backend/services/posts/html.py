@@ -30,4 +30,6 @@ def check_text_length(html: str) -> None:
     """Длина видимого текста: теги и экранирование в лимит не входят."""
 
     if len(plain_text(html)) > MAX_POST_TEXT:
-        raise PostTextTooLongError(f"Текст публикации должен быть не длиннее {MAX_POST_TEXT} символов")
+        raise PostTextTooLongError(
+            f"Текст публикации должен быть не длиннее {MAX_POST_TEXT} символов"
+        )

@@ -14,8 +14,15 @@ from models.account import Account
 from models.posts import Follow, Post, PostLike, PostMedia, PostSave, PostStatus, PostView
 
 MAX_SITEMAP_POSTS = 50000
-VISIBLE_REPOST = or_(Post.repost_of_id.is_(None), Post.repost_of.has(status=PostStatus.PUBLISHED))
-NEWEST_FIRST = (func.coalesce(Post.published_at, Post.created_at).desc(), Post.id.desc())
+
+VISIBLE_REPOST = or_(
+    Post.repost_of_id.is_(None),
+    Post.repost_of.has(status=PostStatus.PUBLISHED),
+)
+NEWEST_FIRST = (
+    func.coalesce(Post.published_at, Post.created_at).desc(),
+    Post.id.desc(),
+)
 
 
 class PostRepository:
@@ -32,7 +39,12 @@ class PostRepository:
     async def lock(self, post_id: int) -> None:
         """Блокирует строку поста до конца транзакции."""
 
-        await self.db.execute(select(Post.id).where(Post.id == post_id).with_for_update(no_key=True))
+        stmt = (
+            select(Post.id)
+            .where(Post.id == post_id)
+            .with_for_update(key_share=True)
+        )
+        await self.db.execute(stmt)
 
     async def get_for_update(self, post_id: int) -> Post:
         """Свежая версия поста под блокировкой: правка автора не затрёт решение модератора."""
@@ -41,30 +53,54 @@ class PostRepository:
         return await self.reload(post_id)
 
     async def page(
-        self, conditions: list[ColumnElement[bool]], limit: int, offset: int
+        self,
+        conditions: list[ColumnElement[bool]],
+        limit: int,
+        offset: int,
     ) -> tuple[list[Post], int]:
         """Страница видимых постов по условиям, новые первыми, и сколько их всего."""
 
         conditions = [*conditions, VISIBLE_REPOST]
-        stmt = select(Post).where(*conditions).order_by(*NEWEST_FIRST).limit(limit).offset(offset)
-        items = (await self.db.execute(stmt)).unique().scalars().all()
-        total = await self.db.scalar(select(func.count()).select_from(Post).where(*conditions))
-        return list(items), total or 0
+        stmt = (
+            select(Post)
+            .where(*conditions)
+            .order_by(*NEWEST_FIRST)
+            .limit(limit)
+            .offset(offset)
+        )
+        result = await self.db.execute(stmt)
+        total = await self.db.scalar(
+            select(func.count()).select_from(Post).where(*conditions)
+        )
+        return list(result.unique().scalars().all()), total or 0
 
     async def list_published(self, limit: int, offset: int) -> tuple[list[Post], int]:
         """Лента «Для вас»: опубликованные посты и репосты всех авторов."""
 
-        return await self.page([Post.status == PostStatus.PUBLISHED], limit, offset)
+        conditions = [Post.status == PostStatus.PUBLISHED]
+        return await self.page(conditions, limit, offset)
 
-    async def list_following(self, user_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
+    async def list_following(
+        self,
+        user_id: int,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[Post], int]:
         """Лента «Подписки»: посты и репосты авторов, на которых подписан пользователь."""
 
         authors = select(Follow.author_id).where(Follow.follower_id == user_id)
-        return await self.page(
-            [Post.status == PostStatus.PUBLISHED, Post.author_id.in_(authors)], limit, offset
-        )
+        conditions = [
+            Post.status == PostStatus.PUBLISHED,
+            Post.author_id.in_(authors),
+        ]
+        return await self.page(conditions, limit, offset)
 
-    async def list_by_author(self, author_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
+    async def list_by_author(
+        self,
+        author_id: int,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[Post], int]:
         """Опубликованные оригиналы автора — для его страницы."""
 
         conditions = [
@@ -75,14 +111,27 @@ class PostRepository:
         return await self.page(conditions, limit, offset)
 
     async def list_for_author(
-        self, author_id: int, status: PostStatus, limit: int, offset: int
+        self,
+        author_id: int,
+        status: PostStatus,
+        limit: int,
+        offset: int,
     ) -> tuple[list[Post], int]:
         """Свои оригиналы в одном состоянии: публикации, черновики или скрытые."""
 
-        conditions = [Post.author_id == author_id, Post.status == status, Post.repost_of_id.is_(None)]
+        conditions = [
+            Post.author_id == author_id,
+            Post.status == status,
+            Post.repost_of_id.is_(None),
+        ]
         return await self.page(conditions, limit, offset)
 
-    async def list_reposts(self, author_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
+    async def list_reposts(
+        self,
+        author_id: int,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[Post], int]:
         """Свои репосты."""
 
         conditions = [
@@ -92,31 +141,49 @@ class PostRepository:
         ]
         return await self.page(conditions, limit, offset)
 
-    async def list_saved(self, user_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
+    async def list_saved(
+        self,
+        user_id: int,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[Post], int]:
         """Сохранённые посты, недавно сохранённые первыми, и сколько их всего."""
 
-        conditions = [PostSave.user_id == user_id, Post.status == PostStatus.PUBLISHED, VISIBLE_REPOST]
-        joined = select(Post).join(PostSave, PostSave.post_id == Post.id).where(*conditions)
+        conditions = [
+            PostSave.user_id == user_id,
+            Post.status == PostStatus.PUBLISHED,
+            VISIBLE_REPOST,
+        ]
         stmt = (
-            joined.order_by(PostSave.created_at.desc(), PostSave.post_id.desc()).limit(limit).offset(offset)
+            select(Post)
+            .join(PostSave, PostSave.post_id == Post.id)
+            .where(*conditions)
+            .order_by(PostSave.created_at.desc(), PostSave.post_id.desc())
+            .limit(limit)
+            .offset(offset)
         )
-        items = (await self.db.execute(stmt)).unique().scalars().all()
+        result = await self.db.execute(stmt)
         total = await self.db.scalar(
             select(func.count())
             .select_from(Post)
             .join(PostSave, PostSave.post_id == Post.id)
             .where(*conditions)
         )
-        return list(items), total or 0
+        return list(result.unique().scalars().all()), total or 0
 
     async def list_for_moderation(
-        self, status: PostStatus, author_id: int | None, limit: int, offset: int
+        self,
+        status: PostStatus,
+        author_id: int | None,
+        limit: int,
+        offset: int,
     ) -> tuple[list[Post], int]:
         """Посты одного состояния для модератора, в том числе репосты скрытых оригиналов."""
 
         conditions = [Post.status == status]
         if author_id is not None:
             conditions.append(Post.author_id == author_id)
+
         stmt = (
             select(Post)
             .where(*conditions)
@@ -124,9 +191,11 @@ class PostRepository:
             .limit(limit)
             .offset(offset)
         )
-        items = (await self.db.execute(stmt)).unique().scalars().all()
-        total = await self.db.scalar(select(func.count()).select_from(Post).where(*conditions))
-        return list(items), total or 0
+        result = await self.db.execute(stmt)
+        total = await self.db.scalar(
+            select(func.count()).select_from(Post).where(*conditions)
+        )
+        return list(result.unique().scalars().all()), total or 0
 
     async def count_following_since(self, user_id: int, since: datetime | None) -> int:
         """Сколько постов вышло у авторов из подписок после since и после подписки на автора."""
@@ -139,6 +208,7 @@ class PostRepository:
         ]
         if since is not None:
             conditions.append(Post.published_at > since)
+
         stmt = (
             select(func.count())
             .select_from(Post)
@@ -152,11 +222,13 @@ class PostRepository:
 
         stmt = (
             select(Post.id, Post.updated_at)
-            .where(Post.status == PostStatus.PUBLISHED, Post.repost_of_id.is_(None))
+            .where(Post.status == PostStatus.PUBLISHED)
+            .where(Post.repost_of_id.is_(None))
             .order_by(Post.id)
             .limit(MAX_SITEMAP_POSTS)
         )
-        return list((await self.db.execute(stmt)).tuples().all())
+        result = await self.db.execute(stmt)
+        return list(result.tuples().all())
 
     async def media_paths_for_delete(self, post_id: int) -> list[str]:
         """Файлы поста и его репостов: они удалятся вместе с оригиналом."""
@@ -166,29 +238,46 @@ class PostRepository:
             .join(Post, Post.id == PostMedia.post_id)
             .where(or_(Post.id == post_id, Post.repost_of_id == post_id))
         )
-        return list((await self.db.execute(stmt)).scalars().all())
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
 
     async def refresh_likes(self, post_id: int) -> int:
         """Пересчитывает лайки поста и возвращает их число."""
 
         await self.lock(post_id)
         count = select(func.count()).where(PostLike.post_id == post_id).scalar_subquery()
-        stmt = update(Post).where(Post.id == post_id).values(likes_count=count).returning(Post.likes_count)
-        return await self.db.scalar(stmt.execution_options(synchronize_session=False)) or 0
+        stmt = (
+            update(Post)
+            .where(Post.id == post_id)
+            .values(likes_count=count)
+            .returning(Post.likes_count)
+            .execution_options(synchronize_session=False)
+        )
+        return await self.db.scalar(stmt) or 0
 
     async def refresh_reposts(self, post_id: int) -> None:
         """Пересчитывает, сколько раз пост репостнули."""
 
         await self.lock(post_id)
         count = select(func.count()).where(Post.repost_of_id == post_id).scalar_subquery()
-        stmt = update(Post).where(Post.id == post_id).values(reposts_count=count)
-        await self.db.execute(stmt.execution_options(synchronize_session=False))
+        stmt = (
+            update(Post)
+            .where(Post.id == post_id)
+            .values(reposts_count=count)
+            .execution_options(synchronize_session=False)
+        )
+        await self.db.execute(stmt)
 
     async def add_view(self, post_id: int) -> None:
         """Прибавляет просмотр."""
 
-        stmt = update(Post).where(Post.id == post_id).values(views_count=Post.views_count + 1)
-        await self.db.execute(stmt.execution_options(synchronize_session=False))
+        stmt = (
+            update(Post)
+            .where(Post.id == post_id)
+            .values(views_count=Post.views_count + 1)
+            .execution_options(synchronize_session=False)
+        )
+        await self.db.execute(stmt)
 
     async def add(self, post: Post) -> Post:
         """Сохраняет новый пост вместе с файлами."""
@@ -215,8 +304,13 @@ class PostRepository:
     async def reload(self, post_id: int) -> Post:
         """Перечитывает пост вместе с автором, файлами и оригиналом."""
 
-        stmt = select(Post).where(Post.id == post_id).execution_options(populate_existing=True)
-        return (await self.db.execute(stmt)).unique().scalar_one()
+        stmt = (
+            select(Post)
+            .where(Post.id == post_id)
+            .execution_options(populate_existing=True)
+        )
+        result = await self.db.execute(stmt)
+        return result.unique().scalar_one()
 
 
 class PostMediaRepository:
@@ -228,36 +322,73 @@ class PostMediaRepository:
     async def get_for_update(self, media_id: int) -> PostMedia | None:
         """Файл под блокировкой: публикация не займёт его, пока он удаляется."""
 
-        return await self.db.scalar(select(PostMedia).where(PostMedia.id == media_id).with_for_update())
+        stmt = (
+            select(PostMedia)
+            .where(PostMedia.id == media_id)
+            .with_for_update()
+        )
+        return await self.db.scalar(stmt)
 
     async def count_free(self, owner_id: int) -> int:
-        """Сколько файлов пользователь загрузил и ещё не привязал. Загрузки одного владельца идут по очереди."""
+        """Сколько файлов пользователь загрузил и ещё не привязал.
 
-        await self.db.execute(select(Account.id).where(Account.id == owner_id).with_for_update(no_key=True))
-        stmt = select(func.count()).where(PostMedia.owner_id == owner_id, PostMedia.post_id.is_(None))
+        Загрузки одного владельца идут по очереди: строка аккаунта блокируется.
+        """
+
+        lock = (
+            select(Account.id)
+            .where(Account.id == owner_id)
+            .with_for_update(key_share=True)
+        )
+        await self.db.execute(lock)
+
+        stmt = (
+            select(func.count())
+            .where(PostMedia.owner_id == owner_id)
+            .where(PostMedia.post_id.is_(None))
+        )
         return await self.db.scalar(stmt) or 0
 
-    async def list_usable(self, owner_id: int, media_ids: list[int], post_id: int | None) -> list[PostMedia]:
+    async def list_usable(
+        self,
+        owner_id: int,
+        media_ids: list[int],
+        post_id: int | None,
+    ) -> list[PostMedia]:
         """Файлы пользователя из списка: свободные или уже привязанные к этому посту."""
 
         allowed = PostMedia.post_id.is_(None)
         if post_id is not None:
             allowed = or_(allowed, PostMedia.post_id == post_id)
-        stmt = select(PostMedia).where(PostMedia.id.in_(media_ids), PostMedia.owner_id == owner_id, allowed)
-        return list((await self.db.execute(stmt.with_for_update())).scalars().all())
+
+        stmt = (
+            select(PostMedia)
+            .where(PostMedia.id.in_(media_ids))
+            .where(PostMedia.owner_id == owner_id)
+            .where(allowed)
+            .with_for_update()
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
 
     async def delete_expired(self, before: datetime, limit: int) -> list[str]:
         """Удаляет порцию старых свободных файлов; занятые другой транзакцией пропускает."""
 
         expired = (
             select(PostMedia.id)
-            .where(PostMedia.post_id.is_(None), PostMedia.created_at < before)
+            .where(PostMedia.post_id.is_(None))
+            .where(PostMedia.created_at < before)
             .order_by(PostMedia.created_at, PostMedia.id)
             .limit(limit)
             .with_for_update(skip_locked=True)
         )
-        stmt = delete(PostMedia).where(PostMedia.id.in_(expired)).returning(PostMedia.path)
-        return list((await self.db.execute(stmt)).scalars().all())
+        stmt = (
+            delete(PostMedia)
+            .where(PostMedia.id.in_(expired))
+            .returning(PostMedia.path)
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
 
     async def add(self, media: PostMedia) -> PostMedia:
         """Сохраняет загруженный файл."""
@@ -282,21 +413,34 @@ class PostLikeRepository:
     async def add(self, user_id: int, post_id: int) -> bool:
         """Ставит лайк. False — лайк уже стоял."""
 
-        stmt = insert(PostLike).values(user_id=user_id, post_id=post_id).on_conflict_do_nothing()
-        return await self.db.scalar(stmt.returning(PostLike.post_id)) is not None
+        stmt = (
+            insert(PostLike)
+            .values(user_id=user_id, post_id=post_id)
+            .on_conflict_do_nothing()
+            .returning(PostLike.post_id)
+        )
+        return await self.db.scalar(stmt) is not None
 
     async def remove(self, user_id: int, post_id: int) -> None:
         """Убирает лайк."""
 
-        await self.db.execute(
-            delete(PostLike).where(PostLike.user_id == user_id, PostLike.post_id == post_id)
+        stmt = (
+            delete(PostLike)
+            .where(PostLike.user_id == user_id)
+            .where(PostLike.post_id == post_id)
         )
+        await self.db.execute(stmt)
 
     async def liked_ids(self, user_id: int, post_ids: list[int]) -> set[int]:
         """Какие посты из списка пользователь лайкнул."""
 
-        stmt = select(PostLike.post_id).where(PostLike.user_id == user_id, PostLike.post_id.in_(post_ids))
-        return set((await self.db.execute(stmt)).scalars().all())
+        stmt = (
+            select(PostLike.post_id)
+            .where(PostLike.user_id == user_id)
+            .where(PostLike.post_id.in_(post_ids))
+        )
+        result = await self.db.execute(stmt)
+        return set(result.scalars().all())
 
 
 class PostViewRepository:
@@ -309,9 +453,12 @@ class PostViewRepository:
         """Записывает просмотр за день. False — посетитель сегодня уже смотрел."""
 
         stmt = (
-            insert(PostView).values(post_id=post_id, visitor=visitor, viewed_on=day).on_conflict_do_nothing()
+            insert(PostView)
+            .values(post_id=post_id, visitor=visitor, viewed_on=day)
+            .on_conflict_do_nothing()
+            .returning(PostView.post_id)
         )
-        return await self.db.scalar(stmt.returning(PostView.post_id)) is not None
+        return await self.db.scalar(stmt) is not None
 
 
 class PostSaveRepository:
@@ -323,19 +470,30 @@ class PostSaveRepository:
     async def add(self, user_id: int, post_id: int) -> None:
         """Сохраняет пост. Повторное сохранение ничего не меняет."""
 
-        await self.db.execute(
-            insert(PostSave).values(user_id=user_id, post_id=post_id).on_conflict_do_nothing()
+        stmt = (
+            insert(PostSave)
+            .values(user_id=user_id, post_id=post_id)
+            .on_conflict_do_nothing()
         )
+        await self.db.execute(stmt)
 
     async def remove(self, user_id: int, post_id: int) -> None:
         """Убирает пост из сохранённого."""
 
-        await self.db.execute(
-            delete(PostSave).where(PostSave.user_id == user_id, PostSave.post_id == post_id)
+        stmt = (
+            delete(PostSave)
+            .where(PostSave.user_id == user_id)
+            .where(PostSave.post_id == post_id)
         )
+        await self.db.execute(stmt)
 
     async def saved_ids(self, user_id: int, post_ids: list[int]) -> set[int]:
         """Какие посты из списка пользователь сохранил."""
 
-        stmt = select(PostSave.post_id).where(PostSave.user_id == user_id, PostSave.post_id.in_(post_ids))
-        return set((await self.db.execute(stmt)).scalars().all())
+        stmt = (
+            select(PostSave.post_id)
+            .where(PostSave.user_id == user_id)
+            .where(PostSave.post_id.in_(post_ids))
+        )
+        result = await self.db.execute(stmt)
+        return set(result.scalars().all())

@@ -18,8 +18,9 @@ INTERVAL_SECONDS = 3600
 async def cleanup_post_media() -> None:
     """Удаляет порцию свободных файлов старше суток: сначала записи, после коммита — файлы."""
 
+    expired_before = datetime.now(UTC) - FILE_TTL
     async with AsyncSessionLocal() as db, db.begin():
-        paths = await PostMediaRepository(db).delete_expired(datetime.now(UTC) - FILE_TTL, BATCH_SIZE)
+        paths = await PostMediaRepository(db).delete_expired(expired_before, BATCH_SIZE)
     for path in paths:
         try:
             await asyncio.to_thread(remove_file, path)

@@ -23,9 +23,22 @@ interface PostReactionsProps {
 /** Нижняя панель публикации: лайк, комментарии, репост, сохранение и ссылка. */
 export function PostReactions({ post, onUnsaved }: PostReactionsProps) {
   const state = usePostReactions(post, onUnsaved);
+  const quickRepost = {
+    label: "Репостнуть",
+    icon: <RepostIcon />,
+    onClick: state.repost,
+  };
   const commentedRepost = state.signedIn
-    ? { label: "Репост с комментарием", icon: <PencilIcon />, href: `/posts/${post.id}/repost` }
-    : { label: "Репост с комментарием", icon: <PencilIcon />, onClick: () => state.openAuth("login") };
+    ? {
+        label: "Репост с комментарием",
+        icon: <PencilIcon />,
+        href: `/posts/${post.id}/repost`,
+      }
+    : {
+        label: "Репост с комментарием",
+        icon: <PencilIcon />,
+        onClick: () => state.openAuth("login"),
+      };
 
   return (
     <div className={s.panel}>
@@ -40,7 +53,11 @@ export function PostReactions({ post, onUnsaved }: PostReactionsProps) {
         <HeartIcon />
         <span>{state.likes}</span>
       </button>
-      <Link className={s.tool} aria-label="Комментарии" href={`/posts/${post.id}#comments`}>
+      <Link
+        className={s.tool}
+        aria-label="Комментарии"
+        href={`/posts/${post.id}#comments`}
+      >
         <MessageCircleIcon />
         <span>{post.comments_count}</span>
       </Link>
@@ -53,7 +70,7 @@ export function PostReactions({ post, onUnsaved }: PostReactionsProps) {
             <span>{state.reposts}</span>
           </>
         }
-        actions={[{ label: "Репостнуть", icon: <RepostIcon />, onClick: state.repost }, commentedRepost]}
+        actions={[quickRepost, commentedRepost]}
       />
       <button
         type="button"
@@ -65,7 +82,12 @@ export function PostReactions({ post, onUnsaved }: PostReactionsProps) {
       >
         <BookmarkIcon />
       </button>
-      <button type="button" className={s.tool} aria-label="Скопировать ссылку" onClick={state.share}>
+      <button
+        type="button"
+        className={s.tool}
+        aria-label="Скопировать ссылку"
+        onClick={state.share}
+      >
         <ShareIcon />
       </button>
     </div>

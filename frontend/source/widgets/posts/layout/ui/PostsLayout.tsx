@@ -19,41 +19,68 @@ const SECTIONS = [
 
 /** Какой раздел подсветить в меню и как назвать страницу в хлебных крошках. */
 function currentPage(pathname: string) {
-  if (pathname === "/posts/new") return { section: "/posts/my", title: "Новая публикация" };
-  if (pathname.endsWith("/edit")) return { section: "/posts/my", title: "Редактирование" };
-  if (pathname.endsWith("/repost")) return { section: "/posts/reposts", title: "Репост" };
+  if (pathname === "/posts/new") {
+    return { section: "/posts/my", title: "Новая публикация" };
+  }
+
+  if (pathname.endsWith("/edit")) {
+    return { section: "/posts/my", title: "Редактирование" };
+  }
+
+  if (pathname.endsWith("/repost")) {
+    return { section: "/posts/reposts", title: "Репост" };
+  }
+
   const section = SECTIONS.find((item) => item.href === pathname);
-  return { section: section?.href ?? "/posts", title: section?.label ?? "Публикация" };
+  if (section) {
+    return { section: section.href, title: section.label };
+  }
+
+  const postId = pathname.split("/")[2];
+  return { section: "/posts", title: `Публикация #${postId}` };
 }
 
 interface PostsLayoutProps {
   children: ReactNode;
 }
 
-/** Раздел публикаций: хлебные крошки и меню разделов — справа на ПК и над лентой на телефоне. */
+/**
+ * Раздел публикаций: хлебные крошки и меню разделов —
+ * справа на ПК и над лентой на телефоне.
+ */
 export function PostsLayout({ children }: PostsLayoutProps) {
   const pathname = usePathname();
   const { role } = useSession();
   const page = currentPage(pathname);
-  const home = role ? { label: "Профиль", href: "/settings" } : { label: "Главная", href: "/" };
+
+  const profileCrumb = { label: "Профиль", href: "/settings" };
+  const landingCrumb = { label: "Главная", href: "/" };
+  const home = role ? profileCrumb : landingCrumb;
   const posts = { label: "Публикации", href: "/posts" };
+
+  const isFeed = pathname === "/posts";
+  const breadcrumbs = isFeed ? [home, posts] : [home, posts, { label: page.title }];
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={pathname === "/posts" ? [home, posts] : [home, posts, { label: page.title }]} />
+      <Breadcrumbs items={breadcrumbs} />
       <div className={s.layout}>
         <nav className={s.nav} aria-label="Разделы публикаций">
-          {SECTIONS.map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(s.item, { [s.active]: href === page.section })}
-              aria-current={href === page.section ? "page" : undefined}
-            >
-              <Icon className={s.icon} />
-              {label}
-            </Link>
-          ))}
+          {SECTIONS.map(({ href, label, Icon }) => {
+            const isActive = href === page.section;
+
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(s.item, { [s.active]: isActive })}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon className={s.icon} />
+                {label}
+              </Link>
+            );
+          })}
         </nav>
         <div key={pathname} className={s.content}>
           {children}

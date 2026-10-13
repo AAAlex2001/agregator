@@ -17,26 +17,42 @@ class FollowRepository:
     async def add(self, follower_id: int, author_id: int) -> bool:
         """Подписывает. False — подписка уже была."""
 
-        stmt = insert(Follow).values(follower_id=follower_id, author_id=author_id).on_conflict_do_nothing()
-        return await self.db.scalar(stmt.returning(Follow.author_id)) is not None
+        stmt = (
+            insert(Follow)
+            .values(follower_id=follower_id, author_id=author_id)
+            .on_conflict_do_nothing()
+            .returning(Follow.author_id)
+        )
+        return await self.db.scalar(stmt) is not None
 
     async def remove(self, follower_id: int, author_id: int) -> None:
         """Отписывает."""
 
-        await self.db.execute(
-            delete(Follow).where(Follow.follower_id == follower_id, Follow.author_id == author_id)
+        stmt = (
+            delete(Follow)
+            .where(Follow.follower_id == follower_id)
+            .where(Follow.author_id == author_id)
         )
+        await self.db.execute(stmt)
 
     async def following_ids(self, follower_id: int, author_ids: list[int]) -> set[int]:
         """На кого из авторов пользователь подписан."""
 
-        stmt = select(Follow.author_id).where(
-            Follow.follower_id == follower_id, Follow.author_id.in_(author_ids)
+        stmt = (
+            select(Follow.author_id)
+            .where(Follow.follower_id == follower_id)
+            .where(Follow.author_id.in_(author_ids))
         )
-        return set((await self.db.execute(stmt)).scalars().all())
+        result = await self.db.execute(stmt)
+        return set(result.scalars().all())
 
     async def mark_feed_seen(self, user_id: int) -> None:
         """Вкладка «Подписки» просмотрена: новые посты считаются с этого момента."""
 
-        stmt = update(Account).where(Account.id == user_id).values(following_seen_at=func.now())
-        await self.db.execute(stmt.execution_options(synchronize_session=False))
+        stmt = (
+            update(Account)
+            .where(Account.id == user_id)
+            .values(following_seen_at=func.now())
+            .execution_options(synchronize_session=False)
+        )
+        await self.db.execute(stmt)

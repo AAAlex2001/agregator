@@ -12,7 +12,10 @@ interface LinkModalProps {
   onSave: (href: string) => void;
 }
 
-/** Адрес ссылки. Окно выносится в body: форма ссылки не может лежать внутри формы, где стоит редактор. */
+/**
+ * Адрес ссылки. Окно выносится в body:
+ * форма ссылки не может лежать внутри формы, где стоит редактор.
+ */
 export function LinkModal({ onClose, onSave }: LinkModalProps) {
   const id = useId();
   const [url, setUrl] = useState("");

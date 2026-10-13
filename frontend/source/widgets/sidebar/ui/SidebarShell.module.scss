@@ -1,8 +1,14 @@
 .layout {
   --cabinet-header-height: 64px;
-  --cabinet-bottom-height: var(--cabinet-menu-height, 88px);
+  --cabinet-bottom-height: calc(88px + env(safe-area-inset-bottom, 0px));
   --cabinet-sidebar-top: var(--cabinet-header-height);
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    --cabinet-bottom-height: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .body {

@@ -20,5 +20,7 @@ class UpdatePostUseCase(PostFormUseCase):
         old_paths = {item.path for item in post.media}
         await self.fill(post, post.author_id, payload)
         updated = await self.posts.save(post)
-        remove_files(list(old_paths - {item.path for item in updated.media}))
+
+        new_paths = {item.path for item in updated.media}
+        remove_files(list(old_paths - new_paths))
         return updated

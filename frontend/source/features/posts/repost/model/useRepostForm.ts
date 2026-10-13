@@ -19,7 +19,10 @@ export function useRepostForm(postId: number) {
       showSuccess("Репост опубликован");
       router.push("/posts/reposts");
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Не удалось опубликовать репост");
+      const message = error instanceof Error
+        ? error.message
+        : "Не удалось опубликовать репост";
+      showError(message);
       setIsSending(false);
     }
   };

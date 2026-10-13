@@ -20,7 +20,15 @@ interface PostMediaPickerProps {
 }
 
 /** Фото и видео публикации: превью, удаление и порядок показа. */
-export function PostMediaPicker({ files, uploading, removingId, disabled, onUpload, onRemove, onMove }: PostMediaPickerProps) {
+export function PostMediaPicker({
+  files,
+  uploading,
+  removingId,
+  disabled,
+  onUpload,
+  onRemove,
+  onMove,
+}: PostMediaPickerProps) {
   const input = useRef<HTMLInputElement>(null);
 
   return (
@@ -32,7 +40,13 @@ export function PostMediaPicker({ files, uploading, removingId, disabled, onUplo
             {file.kind === "video" ? (
               <video src={file.url} controls preload="metadata" playsInline />
             ) : (
-              <Image src={file.url} alt="Фото публикации" width={224} height={200} unoptimized />
+              <Image
+                src={file.url}
+                alt="Фото публикации"
+                width={224}
+                height={200}
+                unoptimized
+              />
             )}
             <button
               type="button"
@@ -70,12 +84,18 @@ export function PostMediaPicker({ files, uploading, removingId, disabled, onUplo
         )}
       </div>
       {files.length < MAX_POST_MEDIA && (
-        <Button variant="outline" disabled={disabled} onClick={() => input.current?.click()}>
+        <Button
+          variant="outline"
+          disabled={disabled}
+          onClick={() => input.current?.click()}
+        >
           <ImageIcon />
           Добавить фото или видео
         </Button>
       )}
-      <p className={s.hint}>До 10 файлов по 50 МБ. Фото: JPEG, PNG, WebP. Видео: MP4, MOV.</p>
+      <p className={s.hint}>
+        До 10 файлов по 50 МБ. Фото: JPEG, PNG, WebP. Видео: MP4, MOV.
+      </p>
       <input
         ref={input}
         className={s.file}

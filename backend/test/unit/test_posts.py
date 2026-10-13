@@ -133,6 +133,41 @@ def test_viewer_marks_come_from_sets() -> None:
     assert schema.following is True
 
 
+def page_schema(post: Post) -> PostSchema:
+    post.author = AUTHOR
+    post.likes_count = 0
+    post.comments_count = 0
+    post.reposts_count = 0
+    post.views_count = 0
+    post.created_at = datetime(2026, 10, 10, tzinfo=UTC)
+    return PostSchema.model_validate(post)
+
+
+def test_page_title_description_and_cover_come_from_post() -> None:
+    video = PostMedia(id=1, owner_id=AUTHOR.id, kind="video", path="posts/a.mp4")
+    photo = PostMedia(id=2, owner_id=AUTHOR.id, kind="photo", path="posts/b.jpg")
+    long_text = "слово " * 50
+    post = save(PostSaveSchema(html=f"<p>{long_text}</p>", media_ids=[1, 2]), [video, photo])
+
+    schema = page_schema(post)
+
+    assert len(schema.title) <= 80
+    assert schema.title.startswith("слово слово")
+    assert len(schema.description) <= 160
+    assert schema.cover_url == "/uploads/posts/b.jpg"
+
+
+def test_page_title_of_post_without_text_names_author() -> None:
+    video = PostMedia(id=1, owner_id=AUTHOR.id, kind="video", path="posts/a.mp4")
+    post = save(PostSaveSchema(media_ids=[1]), [video])
+
+    schema = page_schema(post)
+
+    assert schema.title == "Публикация: Анна"
+    assert "Анна" in schema.description
+    assert schema.cover_url is None
+
+
 class FakeRepostRepository:
     """Сохранённые репосты и пересчитанные оригиналы."""
 

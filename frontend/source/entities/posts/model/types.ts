@@ -2,6 +2,8 @@ export type PostStatus = "draft" | "published" | "hidden";
 
 export const POSTS_PAGE_SIZE = 20;
 
+export const POSTS_MAX_PAGE = 50;
+
 export interface PostMedia {
   id: number;
   kind: "photo" | "video";
@@ -25,7 +27,9 @@ export interface RepostedPost {
 }
 
 export interface Post extends RepostedPost {
-  excerpt: string;
+  title: string;
+  description: string;
+  cover_url: string | null;
   repost_of: RepostedPost | null;
   status: PostStatus;
   likes_count: number;

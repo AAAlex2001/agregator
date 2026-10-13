@@ -17,7 +17,9 @@ class CreateCommentUseCase:
     """
 
     def __init__(
-        self, comments: PostCommentRepository, notify: CreatePostActivityNotificationUseCase
+        self,
+        comments: PostCommentRepository,
+        notify: CreatePostActivityNotificationUseCase,
     ) -> None:
         self.comments = comments
         self.notify = notify
@@ -36,18 +38,31 @@ class CreateCommentUseCase:
         """Новый комментарий."""
 
         reply_to = await self.reply_target(post, payload.reply_to_id)
+
         comment = PostComment(
             post_id=post.id,
             author_id=user.id,
-            parent_id=(reply_to.parent_id or reply_to.id) if reply_to else None,
             reply_to_id=payload.reply_to_id,
             text=payload.text,
         )
+        if reply_to:
+            comment.parent_id = reply_to.parent_id or reply_to.id
         created = await self.comments.add(comment)
+
         if reply_to:
             await self.notify.execute(
-                reply_to.author_id, user, "reply", post_id=post.id, comment_id=created.id
+                reply_to.author_id,
+                user,
+                "reply",
+                post_id=post.id,
+                comment_id=created.id,
             )
         else:
-            await self.notify.execute(post.author_id, user, "comment", post_id=post.id, comment_id=created.id)
+            await self.notify.execute(
+                post.author_id,
+                user,
+                "comment",
+                post_id=post.id,
+                comment_id=created.id,
+            )
         return created

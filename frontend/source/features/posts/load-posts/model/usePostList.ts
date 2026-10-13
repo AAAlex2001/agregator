@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useReducer, useState } from "react";
-import { fetchPostPage, type Post, type PostFeedQuery, type PostPage } from "@/source/entities/posts";
+import {
+  fetchPostPage,
+  type Post,
+  type PostFeedQuery,
+  type PostPage,
+} from "@/source/entities/posts";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 
 interface PostListState {
@@ -21,24 +26,58 @@ type PostListAction =
   | { type: "more/error" }
   | { type: "remove"; id: number };
 
-const initialState: PostListState = { items: [], total: 0, isLoading: true, isLoadingMore: false, error: "" };
+const initialState: PostListState = {
+  items: [],
+  total: 0,
+  isLoading: true,
+  isLoadingMore: false,
+  error: "",
+};
 
 function reducer(state: PostListState, action: PostListAction): PostListState {
   switch (action.type) {
     case "load/start":
-      return { ...state, isLoading: true, error: "" };
+      return {
+        ...state,
+        isLoading: true,
+        error: "",
+      };
     case "load/success":
-      return { ...state, items: action.page.items, total: action.page.total, isLoading: false };
+      return {
+        ...state,
+        items: action.page.items,
+        total: action.page.total,
+        isLoading: false,
+      };
     case "load/error":
-      return { ...state, isLoading: false, error: action.error };
+      return {
+        ...state,
+        isLoading: false,
+        error: action.error,
+      };
     case "more/start":
-      return { ...state, isLoadingMore: true };
+      return {
+        ...state,
+        isLoadingMore: true,
+      };
     case "more/success":
-      return { ...state, items: [...state.items, ...action.page.items], total: action.page.total, isLoadingMore: false };
+      return {
+        ...state,
+        items: [...state.items, ...action.page.items],
+        total: action.page.total,
+        isLoadingMore: false,
+      };
     case "more/error":
-      return { ...state, isLoadingMore: false };
+      return {
+        ...state,
+        isLoadingMore: false,
+      };
     case "remove":
-      return { ...state, items: state.items.filter((post) => post.id !== action.id), total: state.total - 1 };
+      return {
+        ...state,
+        items: state.items.filter((post) => post.id !== action.id),
+        total: state.total - 1,
+      };
   }
 }
 
@@ -50,13 +89,24 @@ export function usePostList({ mode, status }: PostFeedQuery) {
 
   useEffect(() => {
     let cancelled = false;
+
     fetchPostPage({ mode, status }, 0)
       .then((page) => {
-        if (!cancelled) dispatch({ type: "load/success", page });
+        if (!cancelled) {
+          dispatch({ type: "load/success", page });
+        }
       })
       .catch((error) => {
-        if (!cancelled) dispatch({ type: "load/error", error: error instanceof Error ? error.message : "Не удалось загрузить публикации" });
+        if (cancelled) {
+          return;
+        }
+
+        const message = error instanceof Error
+          ? error.message
+          : "Не удалось загрузить публикации";
+        dispatch({ type: "load/error", error: message });
       });
+
     return () => {
       cancelled = true;
     };
@@ -65,21 +115,29 @@ export function usePostList({ mode, status }: PostFeedQuery) {
   const loadMore = async () => {
     dispatch({ type: "more/start" });
     try {
-      dispatch({ type: "more/success", page: await fetchPostPage({ mode, status }, state.items.length) });
+      const page = await fetchPostPage({ mode, status }, state.items.length);
+      dispatch({ type: "more/success", page });
     } catch (error) {
       dispatch({ type: "more/error" });
-      showError(error instanceof Error ? error.message : "Не удалось загрузить публикации");
+      const message = error instanceof Error
+        ? error.message
+        : "Не удалось загрузить публикации";
+      showError(message);
     }
+  };
+
+  const remove = (id: number) => dispatch({ type: "remove", id });
+
+  const reload = () => {
+    dispatch({ type: "load/start" });
+    setVersion(version + 1);
   };
 
   return {
     ...state,
     hasMore: state.items.length < state.total,
     loadMore,
-    remove: (id: number) => dispatch({ type: "remove", id }),
-    reload: () => {
-      dispatch({ type: "load/start" });
-      setVersion(version + 1);
-    },
+    remove,
+    reload,
   };
 }

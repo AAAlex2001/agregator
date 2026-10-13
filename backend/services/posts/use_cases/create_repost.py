@@ -15,7 +15,11 @@ from services.posts.repo import PostRepository
 class CreateRepostUseCase:
     """Репост сразу публикуется: просто или с комментарием. Репост репоста ведёт на оригинал."""
 
-    def __init__(self, posts: PostRepository, notify: CreatePostActivityNotificationUseCase) -> None:
+    def __init__(
+        self,
+        posts: PostRepository,
+        notify: CreatePostActivityNotificationUseCase,
+    ) -> None:
         self.posts = posts
         self.notify = notify
 
