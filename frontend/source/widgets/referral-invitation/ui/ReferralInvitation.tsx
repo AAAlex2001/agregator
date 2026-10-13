@@ -1,5 +1,6 @@
 "use client";
 
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { LogoIcon } from "@/source/shared/ui/icons";
@@ -18,6 +19,7 @@ export function ReferralInvitation({ referralCode, invalidInvitation }: Referral
         <LogoIcon title="Ресурс-Плюс" />
       </Link>
       <section className={s.card}>
+        <Breadcrumbs className={s.breadcrumbs} items={[{ label: "Главная", href: isAuthenticated ? "/landing" : "/" }, { label: "Регистрация" }]} />
         <p className={s.eyebrow}>Сообщество исполнителей</p>
         <Title
           as="h1"

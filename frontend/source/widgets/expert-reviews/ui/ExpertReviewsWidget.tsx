@@ -2,7 +2,7 @@
 
 import { ReviewCard } from "@/source/entities/review";
 import { useExpertReviews } from "@/source/features/reviews";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import Button from "@/source/shared/ui/Button";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -100,7 +100,7 @@ export function ExpertReviewsWidget({ publicId }: { publicId?: string } = {}) {
         </div>
       ) : isEmpty ? (
         <div className={s.emptyState}>
-          <EmptyStateCard
+          <EmptyState
             title="Пока нет отзывов"
             subtitle="После завершения заказов здесь появятся оценки и комментарии заказчиков"
           />

@@ -5,9 +5,9 @@
   gap: 8px;
   padding: 12px;
   height: 44px;
-  background: #f8f8f8;
+  background: var(--background);
   border: 1px solid #e3e3e3;
-  border-radius: 14px;
+  border-radius: 8px;
   box-sizing: border-box;
   flex-shrink: 0;
 
@@ -27,6 +27,7 @@
 
 .input {
   flex: 1;
+  min-width: 0;
   background: none;
   border: none;
   outline: none;

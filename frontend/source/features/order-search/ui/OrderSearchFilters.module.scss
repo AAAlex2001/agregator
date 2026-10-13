@@ -119,7 +119,7 @@
   border: 0;
 }
 
-@media (max-width: 1023px) and (min-width: 768px) {
+@media (max-width: 1439px) and (min-width: 768px) {
   .opoGrid { grid-template-columns: repeat(4, minmax(54px, 1fr)); }
 }
 

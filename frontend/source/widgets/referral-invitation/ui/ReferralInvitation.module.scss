@@ -72,7 +72,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 767px) {
   .page {
     padding: 24px 16px;
     gap: 24px;
@@ -86,3 +86,5 @@
     font-size: 22px;
   }
 }
+
+.breadcrumbs { margin-bottom: 24px; }

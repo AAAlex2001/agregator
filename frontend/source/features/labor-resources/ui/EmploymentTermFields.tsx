@@ -4,6 +4,7 @@ import {
   TextInput,
 } from "@/source/shared/ui";
 import type { LaborPageMode } from "../model/types";
+import s from "./LaborForm.module.scss";
 
 interface EmploymentTermFieldsProps {
   mode: LaborPageMode;
@@ -21,8 +22,9 @@ export function EmploymentTermFields({
   onFixedTermChange,
 }: EmploymentTermFieldsProps) {
   return (
-    <>
+    <div className={s.fieldGroup}>
       <RadioGroup
+        variant="checklist"
         name={`${mode}-term`}
         value={term}
         onChange={onTermChange}
@@ -48,6 +50,6 @@ export function EmploymentTermFields({
           placeholder="Укажите срок договора"
         />
       )}
-    </>
+    </div>
   );
 }

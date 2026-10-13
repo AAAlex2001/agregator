@@ -1,26 +1,25 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
-import { ChatListProvider, ChatSidebar } from "@/source/features/chat";
+import { ChatSidebar } from "@/source/features/chat";
 import s from "./ChatLayout.module.scss";
 
-export function ChatLayout({ children }: { children: React.ReactNode }) {
+/** Размещает переписку слева и список диалогов справа; на телефоне показывает одну панель. */
+export function ChatLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user } = useSession();
-  const currentUserId = user?.id ?? 0;
   const hasActiveChat = pathname.startsWith("/chat/");
 
   return (
-    <ChatListProvider>
-      <main className={s.body}>
-        <div className={`${s.sidebarPane} ${hasActiveChat ? s.sidebarPaneHiddenMobile : ""}`.trim()}>
-          <ChatSidebar currentUserId={currentUserId} />
-        </div>
-        <div className={`${s.contentPane} ${!hasActiveChat ? s.contentPaneHiddenMobile : ""}`.trim()}>
-          {children}
-        </div>
-      </main>
-    </ChatListProvider>
+    <div className={s.body}>
+      <section className={`${s.contentPane} ${!hasActiveChat ? s.contentPaneHiddenMobile : ""}`.trim()} aria-label="Переписка">
+        {children}
+      </section>
+      <div className={`${s.sidebarPane} ${hasActiveChat ? s.sidebarPaneHiddenMobile : ""}`.trim()}>
+        <ChatSidebar currentUserId={user?.id ?? 0} />
+      </div>
+    </div>
   );
 }

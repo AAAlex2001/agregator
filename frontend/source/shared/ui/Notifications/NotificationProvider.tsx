@@ -52,7 +52,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={{ showSuccess, showError }}>
       {children}
-      {toastHost && createPortal(toastStack, toastHost)}
+      {item && toastHost && createPortal(toastStack, toastHost)}
     </Ctx.Provider>
   );
 }

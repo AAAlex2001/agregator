@@ -10,9 +10,10 @@ interface ChatListResponse {
   total: number;
 }
 
-export async function fetchChatList(): Promise<ChatListItemData[]> {
+export async function fetchChatList(signal?: AbortSignal): Promise<ChatListItemData[]> {
   const response = await fetchWithSession(`${API_URL}/chats/`, {
     method: "GET",
+    signal,
     cache: "no-store",
   });
 

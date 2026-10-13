@@ -12,6 +12,7 @@ export function ExpertEmploymentFields({
 }: ExpertEmploymentFieldsProps) {
   return (
     <RadioGroup
+      variant="checklist"
       name="job-status"
       value={jobStatus}
       onChange={onJobStatusChange}

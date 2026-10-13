@@ -1,7 +1,6 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   width: 100%;
 }
 
@@ -97,4 +96,31 @@
 .checkbox {
   font-size: var(--profile-label-size);
   line-height: var(--profile-label-line);
+}
+
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.28s ease, opacity 0.2s ease;
+}
+
+.collapseOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.collapseInner {
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse {
+    transition: none;
+  }
 }

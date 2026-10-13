@@ -8,6 +8,7 @@ import {
   TicketListSkeleton,
   useSupportTickets,
 } from "@/source/features/support-tickets";
+import Button from "@/source/shared/ui/Button";
 import { EmptyDetail } from "./EmptyDetail";
 import s from "./SupportWidget.module.scss";
 
@@ -15,28 +16,17 @@ export function SupportWidget() {
   const support = useSupportTickets();
 
   return (
-    <main className={s.body}>
-      <div
-        className={`${s.sidebarPane} ${support.view !== "list" ? s.paneHiddenMobile : ""}`.trim()}
-      >
-        {support.isListLoading ? (
-          <TicketListSkeleton />
-        ) : (
-          <TicketList
-            tickets={support.tickets}
-            selectedId={support.selectedId}
-            onSelect={support.openTicket}
-            onCreate={support.startCreate}
-            hasMore={support.hasMore}
-            isLoadingMore={support.isLoadingMore}
-            onLoadMore={support.loadMore}
-          />
-        )}
-      </div>
-
+    <div className={s.body}>
       <div
         className={`${s.contentPane} ${support.view === "list" ? s.paneHiddenMobile : ""}`.trim()}
       >
+        {support.view === "detail" && (
+          <div className={s.detailActions}>
+            <Button variant="outlineOrange" size="sm" onClick={support.startCreate}>
+              Создать обращение
+            </Button>
+          </div>
+        )}
         {support.view === "create" && (
           <CreateTicketForm onCancel={support.backToList} onSubmit={support.create} />
         )}
@@ -53,6 +43,26 @@ export function SupportWidget() {
         )}
         {support.view === "list" && <EmptyDetail onCreate={support.startCreate} />}
       </div>
-    </main>
+
+      <div
+        className={`${s.sidebarPane} ${support.view !== "list" ? s.paneHiddenMobile : ""}`.trim()}
+      >
+        <div className={s.mobileCreate}>
+          <Button onClick={support.startCreate}>Создать обращение</Button>
+        </div>
+        {support.isListLoading ? (
+          <TicketListSkeleton />
+        ) : (
+          <TicketList
+            tickets={support.tickets}
+            selectedId={support.selectedId}
+            onSelect={support.openTicket}
+            hasMore={support.hasMore}
+            isLoadingMore={support.isLoadingMore}
+            onLoadMore={support.loadMore}
+          />
+        )}
+      </div>
+    </div>
   );
 }

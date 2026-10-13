@@ -13,8 +13,6 @@ export function TicketListSkeleton() {
         <Skeleton className={s.count} rounded="pill" />
       </div>
 
-      <Skeleton className={s.createButton} rounded="pill" />
-
       <ul className={s.list}>
         {PLACEHOLDERS.map((index) => (
           <li key={index} className={s.item}>

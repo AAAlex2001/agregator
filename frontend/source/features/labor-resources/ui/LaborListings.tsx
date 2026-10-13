@@ -1,7 +1,7 @@
 "use client";
 
 import type { LaborListingData } from "@/source/entities/labor";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import type { LaborListTab } from "../model/types";
 import { LaborListingCard } from "./LaborListingCard";
 import { LaborListingsSkeleton } from "./LaborListingsSkeleton";
@@ -41,7 +41,7 @@ export function LaborListings({
       {error && <p className={s.error}>{error}</p>}
 
       {items.length === 0 ? (
-        <EmptyStateCard
+        <EmptyState
           title={
             tab === "mine"
               ? "У вас пока нет активных заявок"

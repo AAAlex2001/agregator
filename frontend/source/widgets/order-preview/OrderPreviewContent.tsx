@@ -1,5 +1,6 @@
 "use client";
 
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Link from "next/link";
 import { Loader } from "@/source/shared/ui";
 import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";
@@ -39,6 +40,8 @@ export function OrderPreviewContent() {
           <div className={styles.header}>
             <Link href="/" className={styles.logo}><LogoIcon title="Ресурс-Плюс" /></Link>
           </div>
+
+          <Breadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Заявки", href: "/orders" }, { label: order?.title || "Заказ" }]} />
 
           {isLoading && <div className={styles.loaderWrapper}><Loader label="" size="lg" /></div>}
 

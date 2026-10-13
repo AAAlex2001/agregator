@@ -82,7 +82,7 @@ export function useLaborResources(mode: LaborPageMode) {
   ]);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1100px)");
+    const media = window.matchMedia("(min-width: 1440px)");
     const syncLayout = () => {
       dispatch({ type: "DESKTOP", value: media.matches });
     };

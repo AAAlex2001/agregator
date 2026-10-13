@@ -139,17 +139,17 @@
   z-index: 5;
 }
 
-:global(.industry-nav-btn) {
+.section :global(.industry-nav-btn) {
   display: none;
 }
 
-:global(.industry-nav-btn--prev) {
+.section :global(.industry-nav-btn--prev) {
   span {
     transform: rotate(180deg);
   }
 }
 
-:global(.industry-nav-btn--next) {
+.section :global(.industry-nav-btn--next) {
   span {
     transform: rotate(0deg);
   }
@@ -176,7 +176,7 @@
     }
   }
 
-  :global(.industry-nav-btn) {
+  .section :global(.industry-nav-btn) {
     position: relative;
     width: 50px;
     height: 50px;
@@ -255,7 +255,7 @@
     flex: 0 0 calc((100% - 40px) / 3);
   }
 
-  :global(.industry-swiper .swiper-slide) {
+  .swiper :global(.swiper-slide) {
     width: auto !important;
     margin: 0 !important;
   }

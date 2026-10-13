@@ -115,6 +115,7 @@ export function BadgeCodesPicker({
                     className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
                     onClick={() => toggleOpo(code)}
                     disabled={!enabled}
+                    aria-pressed={active}
                   >
                     Э{code}
                   </button>

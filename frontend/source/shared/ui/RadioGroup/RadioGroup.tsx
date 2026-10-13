@@ -2,6 +2,7 @@
 
 import { type ReactNode } from "react";
 import s from "./RadioGroup.module.scss";
+import checkbox from "../Checkbox/checkbox.module.scss";
 
 export interface RadioOption<V extends string> {
   value: V;
@@ -17,6 +18,7 @@ interface Props<V extends string> {
   onChange: (next: V) => void;
   legend?: string;
   className?: string;
+  variant?: "default" | "checklist";
 }
 
 export function RadioGroup<V extends string>({
@@ -26,9 +28,10 @@ export function RadioGroup<V extends string>({
   onChange,
   legend,
   className,
+  variant = "default",
 }: Props<V>) {
   return (
-    <fieldset className={[s.group, className].filter(Boolean).join(" ")}>
+    <fieldset className={[s.group, variant === "checklist" ? s.checklist : "", className].filter(Boolean).join(" ")}>
       {legend && <legend className={s.legend}>{legend}</legend>}
       <div className={s.options}>
         {options.map((opt) => {
@@ -41,11 +44,19 @@ export function RadioGroup<V extends string>({
                 value={opt.value}
                 checked={checked}
                 onChange={() => onChange(opt.value)}
-                className={s.input}
+                className={`${s.input} ${variant === "checklist" ? checkbox.input : ""}`}
               />
-              <span className={s.indicator} aria-hidden="true">
-                <span className={s.dot} />
-              </span>
+              {variant === "checklist" ? (
+                <span className={checkbox.box} aria-hidden="true">
+                  <svg className={checkbox.check} viewBox="0 0 14 14" fill="none">
+                    <path d="M3 7.2L5.7 10L11 4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              ) : (
+                <span className={s.indicator} aria-hidden="true">
+                  <span className={s.dot} />
+                </span>
+              )}
               <span className={s.text}>
                 <span className={s.label}>{opt.label}</span>
                 {opt.description && <span className={s.description}>{opt.description}</span>}

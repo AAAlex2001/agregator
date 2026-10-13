@@ -35,3 +35,16 @@
   width: 90px;
   height: 16px;
 }
+
+@media (max-width: 767px) {
+  .cover {
+    height: 112px;
+    margin: -10px -10px 0;
+  }
+  .date {
+    width: 60px;
+  }
+  .read {
+    width: 40px;
+  }
+}

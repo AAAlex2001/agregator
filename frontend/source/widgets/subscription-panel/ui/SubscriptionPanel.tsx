@@ -11,10 +11,22 @@ import s from "./SubscriptionPanel.module.scss";
 
 export function SubscriptionPanel() {
   const { select, pendingPlanId } = useSubscribeToPlan();
-  const { plans, subscription } = useSubscription();
+  const { plans, subscription, error } = useSubscription();
+
+  if (error) {
+    return (
+      <div className={s.statusBlock}>
+        <p className={s.error} role="alert">{error}</p>
+      </div>
+    );
+  }
 
   if (plans === null) {
     return <SubscriptionPanelSkeleton />;
+  }
+
+  if (plans.length === 0) {
+    return <p className={s.statusSubtitle}>Тарифы пока недоступны.</p>;
   }
 
   return (

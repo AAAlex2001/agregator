@@ -29,6 +29,11 @@ import type {
   LaborPageMode,
 } from "./types";
 
+type ProfileCertificatesState =
+  | { status: "loading" }
+  | { status: "ready"; certificates: LaborCertificate[] }
+  | { status: "error" };
+
 interface UseLaborFormOptions {
   mode: LaborPageMode;
   onCreated: () => void;
@@ -39,7 +44,12 @@ export function useLaborForm({
   onCreated,
 }: UseLaborFormOptions) {
   const { user } = useSession();
-  const [profileCertificates, setProfileCertificates] = useState<LaborCertificate[]>([]);
+  const [profileState, setProfileState] = useState<ProfileCertificatesState>({ status: "loading" });
+  const profileCertificates = profileState.status === "ready" ? profileState.certificates : [];
+  const profileLoading = mode === "expert" && profileState.status === "loading";
+  const profileError = mode === "expert" && profileState.status === "error"
+    ? "Не удалось загрузить удостоверения из профиля. Обновите страницу."
+    : null;
   const homeCity = user?.expert?.location_city ?? "";
   const [state, dispatch] = useReducer(
     laborFormReducer,
@@ -56,9 +66,11 @@ export function useLaborForm({
     let alive = true;
     fetchExpertiseProfile()
       .then((profile) => {
-        if (alive) setProfileCertificates(profile.certificates);
+        if (alive) setProfileState({ status: "ready", certificates: profile.certificates });
       })
-      .catch(() => undefined);
+      .catch(() => {
+        if (alive) setProfileState({ status: "error" });
+      });
     return () => {
       alive = false;
     };
@@ -85,6 +97,8 @@ export function useLaborForm({
   }, [state.region, homeCity]);
 
   const validate = () => {
+    if (profileLoading) return "Дождитесь загрузки удостоверений из профиля";
+    if (profileError) return profileError;
     if (!state.region.trim()) {
       return "Укажите регион фактического проживания";
     }
@@ -169,6 +183,8 @@ export function useLaborForm({
     copy,
     certificates,
     profileCertificates,
+    profileLoading,
+    profileError,
     submit,
     setExpertiseMode: (value: LaborExpertiseMode) =>
       dispatch({ type: "EXPERTISE_MODE", value }),

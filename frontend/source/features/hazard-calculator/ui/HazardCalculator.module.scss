@@ -51,7 +51,7 @@
   align-items: stretch;
   gap: 10px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex-direction: row;
   }
 }
@@ -59,7 +59,7 @@
 .nameInput {
   width: 100%;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex: 1 1 180px;
     width: auto;
   }
@@ -71,7 +71,7 @@
   align-items: stretch;
   gap: 10px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex: 1 1 auto;
     flex-wrap: nowrap;
   }
@@ -86,7 +86,7 @@
   flex-basis: 100%;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1440px) {
   .btnGroup .actionBtn,
   .btnGroup .actionBtn:last-child {
     flex: 1 1 auto;

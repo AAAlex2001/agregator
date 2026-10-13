@@ -2,12 +2,14 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { ChatListItemData, ChatMessageData } from "@/source/entities/chat";
 import { fetchChatList } from "@/source/entities/chat";
 
@@ -33,7 +35,6 @@ interface ChatListContextValue {
 }
 
 const ChatListContext = createContext<ChatListContextValue | null>(null);
-const CHAT_LIST_POLL_INTERVAL_MS = 30000;
 
 function sortChats(chats: ChatListItemData[]) {
   return [...chats].sort((left, right) => {
@@ -70,55 +71,48 @@ function getMessagePreview(message: ChatMessageData): string {
 }
 
 export function ChatListProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isChatListPage = pathname === "/chat";
   const [chats, setChats] = useState<ChatListItemData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const refreshSequenceRef = useRef(0);
-  const localChangeSequenceRef = useRef(0);
+  const requestRef = useRef<AbortController | null>(null);
 
-  async function refresh() {
-    const requestSequence = ++refreshSequenceRef.current;
-    const localChangeSequence = localChangeSequenceRef.current;
+  const refresh = useCallback(async () => {
+    requestRef.current?.abort();
+    const request = new AbortController();
+    requestRef.current = request;
     setLoading(true);
     setError(null);
 
     try {
-      const items = await fetchChatList();
-      if (
-        requestSequence === refreshSequenceRef.current
-        && localChangeSequence === localChangeSequenceRef.current
-      ) {
-        setChats(sortChats(items));
-      }
+      const items = await fetchChatList(request.signal);
+      if (!request.signal.aborted) setChats(sortChats(items));
     } catch (err) {
-      if (requestSequence === refreshSequenceRef.current) {
+      if (!request.signal.aborted) {
         setError(err instanceof Error ? err.message : "Не удалось загрузить чаты");
       }
     } finally {
-      if (requestSequence === refreshSequenceRef.current) {
-        setLoading(false);
-      }
+      if (!request.signal.aborted) setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
-    void refresh();
-    const intervalId = window.setInterval(
-      () => void refresh(),
-      CHAT_LIST_POLL_INTERVAL_MS,
-    );
-    return () => window.clearInterval(intervalId);
+    if (isChatListPage || !requestRef.current) void refresh();
+  }, [isChatListPage, refresh]);
+
+  useEffect(() => () => {
+    requestRef.current?.abort();
+    requestRef.current = null;
   }, []);
 
   function markChatAsRead(chatUuid: string) {
-    localChangeSequenceRef.current += 1;
     setChats((currentChats) => currentChats.map((chat) => (
       chat.uuid === chatUuid ? { ...chat, unread_count: 0 } : chat
     )));
   }
 
   function setChatBlocked(chatUuid: string, isBlocked: boolean) {
-    localChangeSequenceRef.current += 1;
     setChats((currentChats) => currentChats.map((chat) => (
       chat.uuid === chatUuid
         ? { ...chat, is_blocked: isBlocked }
@@ -127,7 +121,6 @@ export function ChatListProvider({ children }: { children: ReactNode }) {
   }
 
   function syncChatMessage(chatUuid: string, message: ChatMessageData, currentUserId: number) {
-    localChangeSequenceRef.current += 1;
     setChats((currentChats) => {
       const nextChats = currentChats.map((chat) => {
         if (chat.uuid !== chatUuid) {

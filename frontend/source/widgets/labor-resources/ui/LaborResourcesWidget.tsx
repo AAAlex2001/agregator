@@ -22,9 +22,11 @@ interface LaborResourcesWidgetProps {
   mode: LaborPageMode;
 }
 
-export function LaborResourcesWidget({
-  mode,
-}: LaborResourcesWidgetProps) {
+export function LaborResourcesWidget({ mode }: LaborResourcesWidgetProps) {
+  return <LaborResourcesContent key={mode} mode={mode} />;
+}
+
+function LaborResourcesContent({ mode }: LaborResourcesWidgetProps) {
   const resources = useLaborResources(mode);
   const form = (
     <LaborForm

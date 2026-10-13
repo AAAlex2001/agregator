@@ -52,7 +52,7 @@ export default async function RootLayout({
   const cookiesAccepted = cookieStore.get("cookies_accepted")?.value === "true";
 
   return (
-    <html lang="ru">
+    <html lang="ru" data-scroll-behavior="smooth">
       <body className="antialiased">
         <noscript>
           <div>

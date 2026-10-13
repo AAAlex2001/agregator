@@ -16,7 +16,7 @@ import {
 } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
 import { Loader } from "@/source/shared/ui";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
@@ -91,7 +91,7 @@ export function PublicOrdersWidget({ initial }: Props = {}) {
 
       {!isLoading && items.length === 0 && (
         <div className={s.emptyState}>
-          <EmptyStateCard
+          <EmptyState
             title="Пока нет открытых заявок"
             subtitle="Загляните позже — новые задачи появляются регулярно"
           />

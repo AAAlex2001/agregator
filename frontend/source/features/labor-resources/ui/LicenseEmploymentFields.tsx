@@ -30,6 +30,7 @@ export function LicenseEmploymentFields({
       </div>
 
       <RadioGroup
+        variant="checklist"
         name="employment-type"
         value={employmentType}
         onChange={onEmploymentTypeChange}

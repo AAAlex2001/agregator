@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { RoleBadge } from "@/source/shared/ui";
@@ -12,117 +12,86 @@ import { NotificationPreferencesForm } from "@/source/features/profile/notificat
 import { ReferralPanel, ReferralPanelSkeleton } from "@/source/features/referrals/invite-colleague";
 import { SubscriptionPanel } from "@/source/widgets/subscription-panel";
 import type { UserProfile } from "@/source/entities/user";
+import { getSettingsTabs, resolveSettingsSection, type SettingsSection } from "../model/sections";
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import s from "./SettingsWidget.module.scss";
 
-export type SettingsSection = "personal" | "notifications" | "subscription" | "license";
-
-interface SettingsWidgetProps {
-  explicitSection: SettingsSection | null;
+interface SettingsContentProps {
+  section: SettingsSection;
+  user: UserProfile | null;
+  isLoading: boolean;
+  isCustomer: boolean;
+  onProfileUpdate: (profile: UserProfile | null) => void;
 }
 
-function buildTabs(role: string | null): Array<{ id: SettingsSection; label: string }> {
-  if (role === "EXPERT") {
-    return [
-      { id: "notifications", label: "Уведомления" },
-      { id: "subscription", label: "Подписка" },
-      { id: "personal", label: "Личные данные" },
-    ];
-  }
-  if (role === "LICENSE_HOLDER") {
-    return [
-      { id: "notifications", label: "Уведомления" },
-      { id: "personal", label: "Личные данные" },
-    ];
-  }
-  return [
-    { id: "notifications", label: "Уведомления" },
-    { id: "personal", label: "Личные данные" },
-  ];
-}
-
-function defaultSection(role: string | null): SettingsSection {
-  if (role === "LICENSE_HOLDER") return "personal";
-  if (role === "EXPERT" || role === "CUSTOMER") return "notifications";
-  return "personal";
-}
-
-export function SettingsWidget({ explicitSection }: SettingsWidgetProps) {
+/** Показывает настройки роли во вкладках и сохраняет выбранную вкладку в URL. */
+export function SettingsWidget() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, role, isLoading, error, setUser } = useSession();
-  const tabs = buildTabs(role);
-  const [selectedSection, setSelectedSection] =
-    useState<SettingsSection | null>(null);
-  const requestedSection = explicitSection ?? selectedSection;
-  const hasRequestedSection = tabs.some(
-    (tab) => tab.id === requestedSection,
-  );
-  const section = hasRequestedSection && requestedSection
-    ? requestedSection
-    : defaultSection(role);
+  const tabs = getSettingsTabs(role);
+  const section = resolveSettingsSection(searchParams.get("section"), role);
+
+  function selectSection(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("section", value);
+    router.push(`/settings?${params.toString()}`, { scroll: false });
+  }
 
   return (
     <div className={s.wrapper}>
       <div className={s.pageHead}>
-        <Title text="Настройки профиля" as="h1" className={s.pageTitle} />
-        <Subtitle text="Управляйте личными данными" className={s.pageSubtitle} />
-      </div>
-      {role && (
-        <div className={s.roleBadgeRow}>
-          <RoleBadge role={role} />
+        <div className={s.heading}>
+          <Title text="Настройки" as="h1" />
+          <Subtitle text="Профиль, уведомления и возможности аккаунта" className={s.pageSubtitle} />
         </div>
-      )}
-      {role === "EXPERT" && isLoading && <ReferralPanelSkeleton />}
-      {role === "EXPERT" && !isLoading && user?.email_verified && <ReferralPanel />}
-      <div className={`${s.content} ${section === "subscription" ? s.contentWide : ""}`}>
+        {role && <RoleBadge role={role} />}
+      </div>
+
+      <div className={`${s.content} ${(section === "subscription" || section === "referrals") ? s.contentWide : ""}`.trim()}>
         <Tabs
-          variant="pill"
+          variant="underline"
           tabs={tabs}
           activeTab={section}
-          onTabChange={(id) =>
-            setSelectedSection(id as SettingsSection)
-          }
+          onTabChange={selectSection}
           className={s.tabs}
         />
 
-        {error && <p className={s.error}>{error}</p>}
+        {error && <p className={s.error} role="alert">{error}</p>}
 
-        {section === "subscription" ? (
-          <SubscriptionPanel />
-        ) : isLoading || !user ? (
-          <SettingsSkeleton section={section} isCustomer={role === "CUSTOMER"} />
-        ) : (
-          <SettingsContent section={section} user={user} onProfileUpdate={setUser} />
-        )}
+        <SettingsContent
+          section={section}
+          user={user}
+          isLoading={isLoading}
+          isCustomer={role === "CUSTOMER"}
+          onProfileUpdate={setUser}
+        />
       </div>
     </div>
   );
 }
 
-interface SettingsContentProps {
-  section: SettingsSection;
-  user: NonNullable<ReturnType<typeof useSession>["user"]>;
-  onProfileUpdate: ReturnType<typeof useSession>["setUser"];
-}
+function SettingsContent({ section, user, isLoading, isCustomer, onProfileUpdate }: SettingsContentProps) {
+  if (section === "subscription") {
+    return <SubscriptionPanel />;
+  }
+  if (section === "referrals") {
+    if (isLoading) return <ReferralPanelSkeleton />;
+    if (user?.email_verified) return <ReferralPanel />;
 
-function SettingsContent({ section, user, onProfileUpdate }: SettingsContentProps) {
+    return <p className={s.notice}>Подтвердите почту, чтобы приглашать коллег и получать плюсы.</p>;
+  }
+  if (isLoading || !user) {
+    return <SettingsSkeleton section={section} isCustomer={isCustomer} />;
+  }
   if (section === "notifications") {
     return <NotificationPreferencesForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
-  return <PersonalProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
-}
-
-function PersonalProfileForm({
-  profile,
-  onProfileUpdate,
-}: {
-  profile: UserProfile;
-  onProfileUpdate: (p: UserProfile | null) => void;
-}) {
-  if (profile.role === "EXPERT") {
-    return <ExpertSettingsForm profile={profile} onProfileUpdate={onProfileUpdate} />;
+  if (user.role === "EXPERT") {
+    return <ExpertSettingsForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
-  if (profile.role === "LICENSE_HOLDER") {
-    return <LicenseHolderProfileForm profile={profile} onProfileUpdate={onProfileUpdate} />;
+  if (user.role === "LICENSE_HOLDER") {
+    return <LicenseHolderProfileForm profile={user} onProfileUpdate={onProfileUpdate} />;
   }
-  return <CustomerSettingsForm profile={profile} onProfileUpdate={onProfileUpdate} />;
+  return <CustomerSettingsForm profile={user} onProfileUpdate={onProfileUpdate} />;
 }

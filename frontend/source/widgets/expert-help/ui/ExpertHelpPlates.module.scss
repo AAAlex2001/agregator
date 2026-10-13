@@ -24,15 +24,6 @@
   line-height: 1;
 }
 
-.platesRight {
-  display: none;
-
-  @media (min-width: 1440px) {
-    display: flex;
-    align-items: center;
-  }
-}
-
 .plateWrap {
   position: relative;
 }
@@ -101,8 +92,9 @@
   margin-right: 0;
 }
 
-.plates.platesCompact.platesSpread {
-  margin-right: auto;
+.platesSpread {
+  width: 100%;
+  justify-content: space-between;
 }
 
 .chevron {

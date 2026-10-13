@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { ExpertCardSkeleton } from "@/source/entities/expert";
 import { AddReviewModalContainer } from "@/source/features/reviews";
-import { TextInput, Title, Subtitle, Tabs } from "@/source/shared/ui";
+import { TextInput, Title, Subtitle, Tabs, EmptyState } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
 import { ChatModal } from "@/source/widgets/chat";
@@ -108,7 +108,6 @@ function Marketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
               sortBy={market.ratingSort ? "rating" : null}
               sortDir={market.ratingSort}
               title="Сортировка:"
-              compact
               onChange={(_, direction) => market.setRatingSort(direction)}
             />
           </div>
@@ -118,7 +117,10 @@ function Marketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
             {Array.from({ length: 3 }, (_, index) => <ExpertCardSkeleton key={index} />)}
           </div>
         ) : market.experts.length === 0 ? (
-          <div className={s.empty}>По вашему запросу исполнители не найдены</div>
+          <EmptyState
+            title="Исполнители не найдены"
+            subtitle="Попробуйте изменить поиск или фильтр доступа."
+          />
         ) : (
           <div className={s.expertList}>
             {market.experts.map((expert) => (

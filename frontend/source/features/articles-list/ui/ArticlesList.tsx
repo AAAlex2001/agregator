@@ -199,13 +199,11 @@ export function ArticlesList({ kind, title, subtitle, initial, initialOffset = 0
       ) : null}
 
       {cross && cross.items.length > 0 && (
-        <section className={s.cross}>
-          <ArticlesRelatedSlider
-            title={cross.title}
-            items={cross.items}
-            cta={{ href: cross.href, label: cross.hrefLabel }}
-          />
-        </section>
+        <ArticlesRelatedSlider
+          title={cross.title}
+          items={cross.items}
+          cta={{ href: cross.href, label: cross.hrefLabel }}
+        />
       )}
     </div>
   );

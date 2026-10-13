@@ -23,6 +23,7 @@ export function TicketCard({ ticket, isActive, onClick }: Props) {
       type="button"
       className={`${s.card} ${isActive ? s.active : ""}`}
       onClick={onClick}
+      aria-current={isActive ? "true" : undefined}
     >
       <div className={s.topRow}>
         <span className={s.number}>{ticket.number}</span>

@@ -6,7 +6,7 @@ import { loadLandingSnapshot } from "./landing.data";
 export async function loadLandingPageData() {
   const [snapshot, pricingPlans, newsPage, blogPage] = await Promise.all([
     loadLandingSnapshot(),
-    fetchPricingPlans(),
+    fetchPricingPlans().catch(() => []),
     fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
   ]);

@@ -8,8 +8,7 @@ import {
   orderDetailsFields,
 } from "@/source/entities/order";
 import { CommentSection } from "@/source/entities/response";
-import { Button, Loader } from "@/source/shared/ui";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { Button, EmptyState, Loader } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
@@ -43,7 +42,7 @@ export function ExpertOrdersWidget() {
 
       {isEmpty && (
         <div className={s.emptyState}>
-          <EmptyStateCard
+          <EmptyState
             title="Пока нет доступных заказов"
             subtitle="Загляните позже — мы пришлём новые"
           />

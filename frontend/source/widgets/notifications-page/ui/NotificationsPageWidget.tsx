@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { NotificationCard, NotificationCardSkeleton } from "@/source/entities/notification";
 import { mapNotificationCard, useUserNotifications } from "@/source/features/notifications";
 import Button from "@/source/shared/ui/Button";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
@@ -105,11 +105,11 @@ export function NotificationsPageWidget() {
           </div>
         ) : notifications.error ? (
           <div className={s.empty}>
-            <EmptyStateCard title="Ошибка загрузки" subtitle={notifications.error} />
+            <EmptyState title="Ошибка загрузки" subtitle={notifications.error} />
           </div>
         ) : items.length === 0 ? (
           <div className={s.empty}>
-            <EmptyStateCard
+            <EmptyState
               title="Здесь пока нет уведомлений"
               subtitle="Когда появятся события — мы покажем их тут"
             />

@@ -2,6 +2,7 @@ import Skeleton from "@/source/shared/ui/Skeleton";
 import { ArticleCardSkeleton } from "@/source/entities/article";
 import styles from "./ArticleView.module.scss";
 import s from "./ArticleViewSkeleton.module.scss";
+import sliderStyles from "@/source/shared/ui/RelatedSlider/RelatedSlider.module.scss";
 
 export function ArticleViewSkeleton() {
   return (
@@ -26,7 +27,7 @@ export function ArticleViewSkeleton() {
         <Skeleton className={s.toc} rounded="lg" />
       </div>
 
-      <div className={s.related}>
+      <div className={sliderStyles.section}>
         <Skeleton className={s.relatedTitle} rounded="md" />
         <div className={s.relatedGrid}>
           {Array.from({ length: 3 }).map((_, idx) => (

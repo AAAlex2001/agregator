@@ -3,7 +3,7 @@
   width: 100%;
   max-width: var(--page-maxw);
   margin: 0 auto;
-  padding: var(--page-pt) var(--page-px) var(--page-pb);
+  padding: var(--page-pt) var(--content-page-px, var(--page-px)) var(--page-pb);
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -43,7 +43,7 @@
     padding: 40px;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     gap: 48px;
     padding: 60px;
   }
@@ -55,13 +55,14 @@
 }
 
 .bannerTitle {
+  line-height: 1.35;
   margin: 0;
   color: #3a2600;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
 
   @media (min-width: 768px) {
-    font-size: 28px;
+    font-size: 22px;
   }
 }
 
@@ -167,7 +168,7 @@
   flex-direction: column-reverse;
   gap: 24px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex-direction: row;
     align-items: flex-start;
   }
@@ -227,7 +228,7 @@
   margin: 0;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1440px) {
   .layout > aside {
     width: 300px;
     flex-shrink: 0;

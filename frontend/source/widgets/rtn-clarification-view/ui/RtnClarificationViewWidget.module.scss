@@ -5,7 +5,7 @@ $scroll-offset: 120px;
   width: 100%;
   max-width: var(--page-maxw);
   margin: 0 auto;
-  padding: var(--page-pt) var(--page-px) var(--page-pb);
+  padding: var(--page-pt) var(--content-page-px, var(--page-px)) var(--page-pb);
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -329,20 +329,4 @@ $scroll-offset: 120px;
 .reportRow {
   display: flex;
   justify-content: flex-start;
-}
-
-.related {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.relatedGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
-  gap: 20px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
 }

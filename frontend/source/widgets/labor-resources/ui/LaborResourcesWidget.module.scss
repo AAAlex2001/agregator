@@ -5,9 +5,10 @@
   gap: 24px;
   width: 100%;
   max-width: 1640px;
-  min-height: calc(100dvh - 72px);
   margin: 0 auto;
-  padding: 20px var(--page-px);
+  padding: 20px var(--content-page-px, var(--page-px));
+
+  @media (min-width: 1440px) { padding-top: 24px; }
 
   @media (min-width: 768px) {
     gap: 32px;
@@ -43,13 +44,18 @@
 
 .mobileForm {
   display: block;
+
+  [role="region"] > div {
+    min-height: 0;
+    overflow: clip;
+  }
 }
 
 .desktopForm {
   display: none;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1440px) {
   .layout {
     grid-template-columns: minmax(0, 1fr) 430px;
     gap: 32px;
@@ -60,9 +66,6 @@
   }
 
   .desktopForm {
-    position: sticky;
-    top: 88px;
     display: block;
-    max-height: calc(100dvh - 228px);
   }
 }

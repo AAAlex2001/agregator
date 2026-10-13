@@ -1,5 +1,6 @@
 "use client";
 
+import { PageBreadcrumbs } from "@/source/shared/ui/PageBreadcrumbs/PageBreadcrumbs";
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
 import { LogoIcon } from "@/source/shared/ui/icons";
@@ -19,6 +20,7 @@ const NAV_PAGES = [
 const Header = () => {
   const { openAuth } = useAuthModal();
   return (
+    <>
     <div className={s.shell}>
       <HeaderMarquee />
       <header className={s.header}>
@@ -60,6 +62,8 @@ const Header = () => {
         </nav>
       </header>
     </div>
+    <PageBreadcrumbs />
+    </>
   );
 };
 

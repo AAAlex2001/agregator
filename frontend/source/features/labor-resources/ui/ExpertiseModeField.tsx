@@ -28,6 +28,7 @@ export function ExpertiseModeField({
 }: ExpertiseModeFieldProps) {
   return (
     <RadioGroup
+      variant="checklist"
       name="labor-expertise-mode"
       legend="Требования к исполнителю"
       value={value}

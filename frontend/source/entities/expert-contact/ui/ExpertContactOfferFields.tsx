@@ -54,47 +54,49 @@ export function ExpertContactOfferFields({
         </Checkbox>
       </div>
 
-      {enabled && (
-        <div className={s.fields}>
-          <label className={s.field}>
-            <span>Стоимость доступа, ₽</span>
-            <TextInput
-              inputMode="numeric"
-              value={price}
-              onChange={(event) => onPriceChange(event.target.value)}
-              error={priceError}
-              required
-            />
-          </label>
+      <div className={`${s.collapse} ${enabled ? s.collapseOpen : ""}`} aria-hidden={!enabled} inert={!enabled}>
+        <fieldset className={s.collapseInner} disabled={!enabled}>
+          <div className={s.fields}>
+            <label className={s.field}>
+              <span>Стоимость доступа, ₽</span>
+              <TextInput
+                inputMode="numeric"
+                value={price}
+                onChange={(event) => onPriceChange(event.target.value)}
+                error={priceError}
+                required
+              />
+            </label>
 
-          <label className={s.field}>
-            <span>Реквизиты для прямого перевода</span>
-            <textarea
-              value={paymentDetails}
-              onChange={(event) => onPaymentDetailsChange(event.target.value)}
-              placeholder="Например: номер карты или банковские реквизиты"
-              maxLength={1000}
-              aria-invalid={Boolean(paymentDetailsError)}
-              required
-            />
-            {paymentDetailsError && <span className={s.error}>{paymentDetailsError}</span>}
-          </label>
+            <label className={s.field}>
+              <span>Реквизиты для прямого перевода</span>
+              <textarea
+                value={paymentDetails}
+                onChange={(event) => onPaymentDetailsChange(event.target.value)}
+                placeholder="Например: номер карты или банковские реквизиты"
+                maxLength={1000}
+                aria-invalid={Boolean(paymentDetailsError)}
+                required
+              />
+              {paymentDetailsError && <span className={s.error}>{paymentDetailsError}</span>}
+            </label>
 
-          <p className={s.warning}>
-            При оплате по СБП не указывайте номер телефона, который планируете передать покупателю контакта
-          </p>
+            <p className={s.warning}>
+              При оплате по СБП не указывайте номер телефона, который планируете передать покупателю контакта
+            </p>
 
-          <Checkbox
-            id={`${idPrefix}-contact-disclosure-consent`}
-            checked={consent}
-            onChange={onConsentChange}
-            error={consentError}
-            className={s.checkbox}
-          >
-            Согласен передать телефон и email покупателю после подтверждения оплаты
-          </Checkbox>
-        </div>
-      )}
+            <Checkbox
+              id={`${idPrefix}-contact-disclosure-consent`}
+              checked={consent}
+              onChange={onConsentChange}
+              error={consentError}
+              className={s.checkbox}
+            >
+              Согласен передать телефон и email покупателю после подтверждения оплаты
+            </Checkbox>
+          </div>
+        </fieldset>
+      </div>
     </section>
   );
 }

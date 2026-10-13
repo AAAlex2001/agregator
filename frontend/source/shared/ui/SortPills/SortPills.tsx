@@ -11,7 +11,6 @@ interface Props<K extends string> {
   sortDir: SortDir | null;
   isLoading?: boolean;
   title?: string;
-  compact?: boolean;
   onChange: (sortBy: K | null, sortDir: SortDir | null) => void;
 }
 
@@ -21,7 +20,6 @@ export function SortPills<K extends string>({
   sortDir,
   isLoading,
   title = "Сортировка:",
-  compact = false,
   onChange,
 }: Props<K>) {
   const [openKey, setOpenKey] = useState<K | null>(null);
@@ -38,10 +36,8 @@ export function SortPills<K extends string>({
 
   if (isLoading) return <SortPillsSkeleton count={options.length} />;
 
-  const rowClass = compact ? `${s.row} ${s.rowCompact}` : s.row;
-
   return (
-    <div className={rowClass} ref={ref}>
+    <div className={s.row} ref={ref}>
       <span className={s.title}>{title}</span>
       {options.map((pill) => (
         <SortPill

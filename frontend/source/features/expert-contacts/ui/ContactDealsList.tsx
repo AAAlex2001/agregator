@@ -1,6 +1,7 @@
 import type { ContactDealListItem, ContactDealStatus } from "@/source/entities/expert-contact";
 import { useOptionalChatListContext } from "@/source/features/chat";
-import { Button, Title } from "@/source/shared/ui";
+import { FormSection } from "@/source/shared/ui/FormSection";
+import { Button } from "@/source/shared/ui";
 import { formatDealDate } from "../lib/formatters";
 import { ContactDealStatusBadge } from "./ContactDealStatusBadge";
 import s from "./ContactDealsList.module.scss";
@@ -26,15 +27,14 @@ export function ContactDealsList({
   if (deals.length === 0) return null;
 
   return (
-    <section className={s.dealsSection} aria-label="Мои сделки">
-      <Title text="Мои сделки" as="h2" className={s.sectionTitle} />
+    <FormSection title="Мои сделки" collapsible className={s.dealsSection} titleClassName={s.sectionTitle}>
       <div className={s.dealRows}>
         {deals.map((deal) => {
           const chatAvailable = !CLOSED_STATUSES.includes(deal.status);
           const unread = chat?.unreadForDeal(deal.id) ?? 0;
           return (
             <article className={s.dealRow} key={deal.id}>
-              <div>
+              <div className={s.dealInfo}>
                 <strong>
                   {deal.actor_party === "SELLER" ? deal.buyer_name : deal.seller_name}
                 </strong>
@@ -45,6 +45,7 @@ export function ContactDealsList({
                 {chatAvailable && (
                   <Button
                     variant="outline"
+                    className={s.chatAction}
                     size="sm"
                     onClick={() => onOpenChat(deal.id)}
                     disabled={busy}
@@ -55,6 +56,7 @@ export function ContactDealsList({
                 )}
                 <Button
                   variant="outlineOrange"
+                  className={s.openAction}
                   size="sm"
                   onClick={() => onOpen(deal.id)}
                   disabled={busy}
@@ -64,6 +66,7 @@ export function ContactDealsList({
                 {deal.actor_party === "BUYER" && (
                   <Button
                     variant="danger"
+                    className={s.deleteAction}
                     size="sm"
                     onClick={() => onDelete(deal)}
                     disabled={busy}
@@ -76,6 +79,6 @@ export function ContactDealsList({
           );
         })}
       </div>
-    </section>
+    </FormSection>
   );
 }

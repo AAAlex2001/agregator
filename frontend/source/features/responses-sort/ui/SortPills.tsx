@@ -24,7 +24,6 @@ export function SortPills({ sortBy, sortDir, isLoading, onChange }: Props) {
       sortDir={sortDir}
       isLoading={isLoading}
       onChange={onChange}
-      compact
     />
   );
 }

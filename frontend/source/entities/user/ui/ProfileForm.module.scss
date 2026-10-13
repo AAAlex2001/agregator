@@ -10,12 +10,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
 }
 
 .saveButton {
   width: 100%;
+
 }
 
 .logoutButton {

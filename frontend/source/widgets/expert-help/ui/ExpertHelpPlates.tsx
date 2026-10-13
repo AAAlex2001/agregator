@@ -252,27 +252,17 @@ export function ExpertHelpPlates({
   };
 
   const plates = isGuestMode ? getGuestCabinetNav() : getCabinetNav(role);
-  const leftPlates = plates.filter((p) => p.key !== "reviews");
-  const reviewsPlate = plates.find((p) => p.key === "reviews");
-
   return (
-    <>
-      <div className={`${s.plates} ${compact ? s.platesCompact : ""} ${spread ? s.platesSpread : ""}`}>
-        {leftPlates.map((plate) => (
-          <PlateNode
-            key={plate.key}
-            plate={plate}
-            align="left"
-            badges={badges}
-            locked={isGuestMode}
-          />
-        ))}
-      </div>
-      {reviewsPlate && (
-        <div className={`${s.platesRight} ${compact ? s.platesCompact : ""}`}>
-          <PlateNode plate={reviewsPlate} align="right" badges={badges} locked={isGuestMode} />
-        </div>
-      )}
-    </>
+    <div className={`${s.plates} ${compact ? s.platesCompact : ""} ${spread ? s.platesSpread : ""}`}>
+      {plates.map((plate, index) => (
+        <PlateNode
+          key={plate.key}
+          plate={plate}
+          align={index >= plates.length - 2 ? "right" : "left"}
+          badges={badges}
+          locked={isGuestMode}
+        />
+      ))}
+    </div>
   );
 }

@@ -39,6 +39,6 @@ export { DiffValue } from "./DiffValue";
 export { FileGallery } from "./FileGallery";
 export { GeoSuggestInput } from "./GeoSuggestInput";
 export { YesNoField } from "./YesNoField";
-export { EmptyStateCard } from "./EmptyStateCard/EmptyStateCard";
+export { EmptyState } from "./EmptyState/EmptyState";
 export { ListCard } from "./ListCard";
 export type { ListCardProps, ListCardItem } from "./ListCard";

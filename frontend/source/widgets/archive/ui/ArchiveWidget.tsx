@@ -2,7 +2,7 @@
 
 import { useArchive } from "@/source/features/archive-orders";
 import { ResponsesSkeleton } from "@/source/widgets/responses";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { AddReviewModalContainer } from "@/source/features/reviews";
@@ -38,11 +38,11 @@ export function ArchiveWidget() {
             <ResponsesSkeleton compact hideTabs />
           ) : error ? (
             <div className={s.empty}>
-              <EmptyStateCard title="Ошибка загрузки" subtitle={error} />
+              <EmptyState title="Ошибка загрузки" subtitle={error} />
             </div>
           ) : items.length === 0 ? (
             <div className={s.empty}>
-              <EmptyStateCard title="Архив пуст" subtitle="Здесь будут завершённые заказы" />
+              <EmptyState title="Архив пуст" subtitle="Здесь будут завершённые заказы" />
             </div>
           ) : (
             <>

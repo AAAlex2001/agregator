@@ -16,7 +16,7 @@
   background: #fff6ea;
   box-shadow: 0 6px 28px rgba(16, 24, 40, 0.08);
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex-direction: row;
     align-items: center;
     gap: 56px;
@@ -30,7 +30,7 @@
   align-items: flex-start;
   gap: 14px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex: 1 1 0;
     min-width: 0;
   }
@@ -52,7 +52,7 @@
   flex-direction: column;
   gap: 16px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     flex: 1.2 1 0;
     min-width: 0;
   }

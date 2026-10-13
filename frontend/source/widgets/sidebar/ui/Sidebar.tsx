@@ -1,288 +1,92 @@
 "use client";
 
-import { useState, type ComponentType } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useAvailableRoles, useSession } from "@/source/features/session";
+import { useSession } from "@/source/features/session";
 import { useUnreadNotificationCount } from "@/source/features/notifications";
 import { logout } from "@/source/entities/user";
-import {
-  CollapseSidebarIcon,
-  ExpertRoomIcon,
-  FileIcon,
-  LogoIcon,
-  LogoMarkIcon,
-  LogoutIcon,
-  ReviewIcon,
-  SwitchRoleIcon,
-  TabArchiveIcon,
-  TabChatIcon,
-  TabNotificationIcon,
-  TabOrdersIcon,
-  TabProfileIcon,
-  TabResponsesIcon,
-  TabSupportIcon,
-} from "@/source/shared/ui/icons";
+import { CloseIcon, LogoIcon, LogoutIcon } from "@/source/shared/ui/icons";
+import { SIDEBAR_SECTIONS } from "../model/navigation";
 import { useSidebarMobile } from "../model/SidebarMobileContext";
 import { RoleSwitcher } from "./RoleSwitcher";
+import { SidebarLink } from "./SidebarLink";
+import { SidebarProfile } from "./SidebarProfile";
 import s from "./Sidebar.module.scss";
 
-interface SidebarItem {
-  href: string;
-  label: string;
-  icon: ComponentType<{ className?: string }>;
-}
-
-interface SidebarSection {
-  label: string;
-  items: SidebarItem[];
-}
-
-const NAV: Record<"EXPERT" | "CUSTOMER" | "LICENSE_HOLDER", SidebarSection[]> = {
-  EXPERT: [
-    {
-      label: "Работа",
-      items: [
-        { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
-        { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
-        { href: "/archive", label: "Архив", icon: TabArchiveIcon },
-      ],
-    },
-    {
-      label: "Общение",
-      items: [
-        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
-        { href: "/expert/room", label: "Чат исполнителей", icon: ExpertRoomIcon },
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
-        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
-      ],
-    },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Профиль", icon: TabProfileIcon },
-      ],
-    },
-  ],
-  CUSTOMER: [
-    {
-      label: "Работа",
-      items: [
-        { href: "/customer/orders", label: "Мои заказы", icon: TabOrdersIcon },
-        { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
-      ],
-    },
-    {
-      label: "Результаты тендеров",
-      items: [
-        { href: "/archive", label: "Архив", icon: TabArchiveIcon },
-        { href: "/customer/reports", label: "Отчёты", icon: FileIcon },
-      ],
-    },
-    {
-      label: "Общение",
-      items: [
-        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
-        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
-      ],
-    },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Профиль", icon: TabProfileIcon },
-      ],
-    },
-  ],
-  LICENSE_HOLDER: [
-    {
-      label: "Исполнители",
-      items: [
-        { href: "/expert-reviews", label: "Отзывы исполнителей", icon: ReviewIcon },
-      ],
-    },
-    {
-      label: "Общение",
-      items: [
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
-        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
-      ],
-    },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Профиль", icon: TabProfileIcon },
-      ],
-    },
-  ],
-};
-
+/** Постоянное меню кабинета на ПК и выдвижное меню на телефоне. */
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { role } = useSession();
-  const { roles } = useAvailableRoles(role);
-  const mobile = useSidebarMobile();
+  const { user, role, isLoading, setUser } = useSession();
+  const { isOpen, close } = useSidebarMobile();
   const unreadCount = useUnreadNotificationCount();
-  const [collapsed, setCollapsed] = useState(true);
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const sections = role ? SIDEBAR_SECTIONS[role] : [];
 
-  const toggleCollapsed = () => {
-    if (mobile.isOpen) {
-      mobile.close();
-      return;
-    }
-    setCollapsed((prev) => !prev);
-  };
+  async function handleLogout() {
+    if (isLoggingOut) return;
 
-  const closeOverlay = () => {
-    mobile.close();
-    setCollapsed(true);
-    setHoveredKey(null);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      /* ignore */
-    }
-    router.push("/");
-  };
-
-  const HIDDEN_ON_MOBILE = new Set([
-    "/expert/orders",
-    "/customer/orders",
-    "/responses",
-    "/chat",
-  ]);
-
-  const baseSections = role ? NAV[role] : [];
-  const sections = mobile.isOpen
-    ? baseSections
-        .map((section) => ({
-          ...section,
-          items: section.items.filter((item) => !HIDDEN_ON_MOBILE.has(item.href)),
-        }))
-        .filter((section) => section.items.length > 0)
-    : baseSections;
-  const isActive = (href: string) =>
-    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
-
-  const visualCollapsed = collapsed && !mobile.isOpen;
-  const tipsOn = visualCollapsed;
-
-  const renderTab = (
-    key: string,
-    label: string,
-    Icon: ComponentType<{ className?: string }>,
-    options: {
-      active?: boolean;
-      onClick?: () => void;
-      href?: string;
-      type?: "link" | "button";
-      className?: string;
-      badge?: number;
-    },
-  ) => {
-    const tabClass = `${s.tab} ${options.active ? s.tabActive : ""} ${options.className ?? ""}`.trim();
-    const badge = options.badge && options.badge > 0 ? options.badge : null;
-    const badgeLabel = badge !== null && badge > 99 ? "99+" : badge;
-    const inner = (
-      <>
-        <span className={s.tabIcon}>
-          <Icon />
-          {badge !== null && <span className={s.iconBadge}>{badgeLabel}</span>}
-        </span>
-        {!visualCollapsed && <span className={s.tabLabel}>{label}</span>}
-      </>
-    );
-
-    const tooltipNode = tipsOn && hoveredKey === key
-      ? <span className={s.tip}>{label}</span>
-      : null;
-
-    const wrapperHandlers = {
-      onMouseEnter: () => setHoveredKey(key),
-      onMouseLeave: () => setHoveredKey(null),
-    };
-
-    if (options.type === "button" || !options.href) {
-      return (
-        <span key={key} className={s.tipAnchor} {...wrapperHandlers}>
-          <button type="button" className={tabClass} onClick={options.onClick}>
-            {inner}
-          </button>
-          {tooltipNode}
-        </span>
-      );
-    }
-    return (
-      <span key={key} className={s.tipAnchor} {...wrapperHandlers}>
-        <Link href={options.href} className={tabClass} onClick={closeOverlay}>
-          {inner}
-        </Link>
-        {tooltipNode}
-      </span>
-    );
-  };
+    setIsLoggingOut(true);
+    await logout();
+    close();
+    setUser(null);
+    router.replace("/");
+  }
 
   return (
     <>
-      <div
-        className={`${s.backdrop} ${mobile.isOpen || !collapsed ? s.backdropVisible : ""}`.trim()}
-        onClick={closeOverlay}
-        aria-hidden="true"
+      <button
+        type="button"
+        className={`${s.backdrop} ${isOpen ? s.backdropVisible : ""}`.trim()}
+        onClick={close}
+        aria-label="Закрыть меню кабинета"
+        tabIndex={-1}
       />
       <aside
-        className={`${s.sidebar} ${visualCollapsed ? s.collapsed : ""} ${mobile.isOpen ? s.mobileOpen : ""}`.trim()}
-        aria-label="Главное меню"
+        className={`${s.sidebar} ${isOpen ? s.mobileOpen : ""}`.trim()}
+        aria-label="Личный кабинет"
       >
-        <Link href="/landing" className={s.logo} aria-label="На главную" onClick={closeOverlay}>
-          {visualCollapsed ? <LogoMarkIcon /> : <LogoIcon />}
-        </Link>
+        <div className={s.brand}>
+          <Link href="/landing" className={s.logo} aria-label="На главную" onClick={close}>
+            <LogoIcon />
+          </Link>
+          <button type="button" className={s.closeButton} onClick={close} aria-label="Закрыть меню">
+            <CloseIcon />
+          </button>
+        </div>
 
-        <nav className={s.nav}>
-          <div className={s.sections}>
-            {sections.map((section) => (
-              <section key={section.label} className={s.section}>
-                {!visualCollapsed && <span className={s.sectionTitle}>{section.label}</span>}
-                <div className={s.tabs}>
-                  {section.items.map((item) =>
-                    renderTab(item.href, item.label, item.icon, {
-                      active: isActive(item.href),
-                      href: item.href,
-                      badge: item.href === "/notifications" ? unreadCount : undefined,
-                    }),
-                  )}
-                </div>
-              </section>
-            ))}
-          </div>
+        <SidebarProfile user={user} isLoading={isLoading} onNavigate={close} />
 
-          <div className={s.bottom}>
-            {visualCollapsed
-              ? roles.length > 0 &&
-                renderTab("switch-role", "Сменить роль", SwitchRoleIcon, {
-                  type: "button",
-                  onClick: () => setCollapsed(false),
-                })
-              : <RoleSwitcher />}
-
-            {renderTab(
-              "collapse",
-              visualCollapsed ? "Развернуть" : "Скрыть панель",
-              CollapseSidebarIcon,
-              { type: "button", onClick: toggleCollapsed, className: s.tabCollapse },
-            )}
-
-            {renderTab("logout", "Выйти", LogoutIcon, {
-              type: "button",
-              onClick: handleLogout,
-              className: s.tabLogout,
-            })}
-          </div>
+        <nav className={s.nav} aria-label="Разделы кабинета">
+          {sections.map((section) => (
+            <div key={section.label} className={s.section}>
+              <span className={s.sectionTitle}>{section.label}</span>
+              {section.items.map((item) => (
+                <SidebarLink
+                  key={item.href}
+                  item={item}
+                  active={pathname === item.href || pathname.startsWith(`${item.href}/`)}
+                  badge={item.href === "/notifications" ? unreadCount : 0}
+                  onNavigate={close}
+                />
+              ))}
+            </div>
+          ))}
         </nav>
+
+        <div className={s.bottom}>
+          <RoleSwitcher />
+          <button
+            type="button"
+            className={`${s.tab} ${s.tabLogout}`}
+            disabled={isLoggingOut}
+            onClick={() => void handleLogout()}
+          >
+            <span className={s.tabIcon} aria-hidden="true"><LogoutIcon /></span>
+            <span className={s.tabLabel}>{isLoggingOut ? "Выходим…" : "Выйти"}</span>
+          </button>
+        </div>
       </aside>
     </>
   );

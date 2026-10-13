@@ -1,47 +1,60 @@
 .dealsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
   width: 100%;
-  max-width: 1340px;
 }
 
 .sectionTitle {
-  margin: 0;
+  font-size: 28px;
+  line-height: 36px;
 }
 
 .dealRows {
-  border-block: 1px solid #e6e6e6;
+  border-top: 1px solid var(--color-border-soft);
 }
 
 .dealRow {
   display: grid;
-  gap: 10px;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-border-soft);
 }
 
-.dealRow:last-child {
-  border-bottom: none;
-}
-
-.dealRow > div {
+.dealInfo {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 16px;
+  }
 }
 
-.dealRow > div span {
-  color: #808080;
-  font-size: 12px;
-  line-height: 16px;
-}
-
-.dealRow .dealActions {
-  flex-direction: row;
-  flex-wrap: wrap;
+.dealActions {
+  display: grid;
+  grid-template-columns: repeat(2, 124px);
   gap: 8px;
-  justify-content: flex-end;
+
+  > button {
+    width: 100%;
+  }
+}
+
+.openAction {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.deleteAction {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.chatAction {
+  grid-column: 1 / -1;
+  grid-row: 2;
 }
 
 .chatUnread {
@@ -50,8 +63,7 @@
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  margin-left: 6px;
-  padding: 0 5px;
+  padding-inline: 5px;
   border-radius: 999px;
   background: #e7000b;
   color: #ffffff;
@@ -60,9 +72,9 @@
   line-height: 1;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1440px) {
   .dealRow {
-    grid-template-columns: minmax(220px, 1fr) minmax(180px, auto) auto;
+    grid-template-columns: minmax(0, 1fr) 260px 256px;
     align-items: center;
     gap: 20px;
   }

@@ -12,10 +12,14 @@
 }
 
 .title {
+  font-size: 18px;
+  line-height: 26px;
   text-align: left;
 }
 
 .description {
+  font-size: 14px;
+  line-height: 22px;
   max-width: 760px;
   text-align: left;
 }
@@ -67,5 +71,12 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 20px;
+    line-height: 28px;
   }
 }

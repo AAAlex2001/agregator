@@ -13,7 +13,7 @@
   width: 100%;
   box-sizing: border-box;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     gap: 120px;
   }
 }
@@ -24,7 +24,7 @@
   gap: 28px;
   align-items: center;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     grid-template-columns: 1fr 1fr;
     gap: 80px;
   }
@@ -36,7 +36,7 @@
   gap: 16px;
   order: 2;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     order: 1;
   }
 }
@@ -46,19 +46,19 @@
   display: flex;
   justify-content: center;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     order: 2;
   }
 }
 
 .rowReversed .text {
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     order: 2;
   }
 }
 
 .rowReversed .media {
-  @media (min-width: 1024px) {
+  @media (min-width: 1440px) {
     order: 1;
   }
 }

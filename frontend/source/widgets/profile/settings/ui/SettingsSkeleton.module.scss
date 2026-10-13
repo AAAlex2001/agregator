@@ -8,7 +8,7 @@
 
 .saveWrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
@@ -16,23 +16,7 @@
 }
 
 .saveButton {
-  width: 100%;
-}
-
-.logoutButton {
-  width: 100%;
-  max-width: 237px;
-}
-
-.logoutContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.logoutIcon {
-  flex-shrink: 0;
+  width: min(100%, 280px);
 }
 
 .notificationsHeader {
@@ -62,7 +46,7 @@
 
 .notificationsItem {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 14px 18px;
@@ -74,51 +58,33 @@
 }
 
 .avatarSection {
-  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
+  width: 100%;
 }
 
-.avatarTitle {
-  margin: 0;
-  width: 100%;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  color: #808080;
-  text-align: center;
+.avatarCircle {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
 }
 
 .avatarContent {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
+  gap: 6px;
+}
+
+.avatarButton {
+  width: 178px;
+  height: 40px;
 }
 
 .avatarHint {
-  font-weight: 500;
   font-size: 12px;
-  line-height: 24px;
-  color: #ccced5;
-  text-align: center;
-}
-
-.avatarTriggerWrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: min(100%, 296px);
-  max-width: 296px;
-  height: 72px;
-}
-
-.avatarCircle {
-  width: 72px;
-  height: 72px;
+  line-height: 18px;
+  color: var(--color-text-secondary);
 }
 
 .input {
@@ -151,76 +117,9 @@
   gap: 12px;
   margin-top: 12px;
 
-  @media (min-width: 720px) {
+  @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
   }
-}
-
-.license {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.licenseHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.licenseTitle {
-  width: 240px;
-  height: 22px;
-}
-
-.licenseSubtitle {
-  width: 80%;
-  max-width: 420px;
-  height: 14px;
-}
-
-.licenseField {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.licenseLabel {
-  width: 180px;
-  height: 14px;
-}
-
-.licenseFile {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.licenseFileTile {
-  width: 64px;
-  height: 64px;
-}
-
-.licenseBadges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.licenseBadge {
-  width: 64px;
-  height: 32px;
-}
-
-.licenseRadio {
-  width: 100%;
-  height: 56px;
-}
-
-.licenseSave {
-  width: 100%;
-  height: 48px;
 }
 
 .notificationsText {

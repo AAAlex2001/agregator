@@ -12,9 +12,10 @@ import s from "./RtnCard.module.scss";
 interface Props {
   item: RtnListItem;
   horizontal?: boolean;
+  as?: "li" | "article";
 }
 
-export function RtnCard({ item, horizontal = false }: Props) {
+export function RtnCard({ item, horizontal = false, as: Tag = "li" }: Props) {
   const pathname = usePathname();
   const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
   const href = `${prefix}/rtn/${item.slug}`;
@@ -48,7 +49,7 @@ export function RtnCard({ item, horizontal = false }: Props) {
   const hasAside = documentItems.length > 0 || Boolean(item.source_url);
 
   return (
-    <li
+    <Tag
       className={`${s.card}${horizontal ? ` ${s.horizontal}` : ""}${
         horizontal && hasAside ? ` ${s.withAside}` : ""
       }`}
@@ -156,6 +157,6 @@ export function RtnCard({ item, horizontal = false }: Props) {
           />
         </div>
       ) : null}
-    </li>
+    </Tag>
   );
 }

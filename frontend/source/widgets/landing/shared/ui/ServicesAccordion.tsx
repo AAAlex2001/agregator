@@ -38,7 +38,7 @@ export function ServicesAccordion<T extends ServicesAccordionItem>({
   const active = items[activeIndex];
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 1440px)");
     const update = () => setIsDesktop(mq.matches);
     update();
     mq.addEventListener("change", update);
@@ -96,7 +96,7 @@ export function ServicesAccordion<T extends ServicesAccordionItem>({
                     src={active.image}
                     alt={active.title}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 720px"
+                    sizes="(max-width: 1439px) 100vw, 720px"
                     className={s.visualImg}
                   />
                 </div>

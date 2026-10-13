@@ -15,7 +15,9 @@ interface SubscribeResponse {
 export async function fetchPricingPlans(): Promise<PricingPlan[]> {
   const base = typeof window === "undefined" ? SERVER_API_URL : API_URL;
   const response = await fetch(`${base}/pricing/`, { cache: "no-store" });
-  if (!response.ok) return [];
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Не удалось загрузить тарифы"));
+  }
   const payload = (await response.json()) as PricingListResponse;
   return payload.plans ?? [];
 }
@@ -34,7 +36,9 @@ export async function subscribeToPlan(planId: number, returnUrl: string): Promis
 
 export async function fetchMySubscription(): Promise<UserSubscription | null> {
   const response = await fetchWithSession(`${API_URL}/pricing/my-subscription`);
-  if (!response.ok) return null;
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, "Не удалось загрузить подписку"));
+  }
   const payload = await response.json();
   if (!payload) return null;
   return payload as UserSubscription;

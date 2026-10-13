@@ -12,6 +12,8 @@ import {
   useExpertRoomThread,
 } from "@/source/features/expert-room";
 import { ChatConversationSkeleton } from "@/source/widgets/chat";
+import { EmptyState } from "@/source/shared/ui/EmptyState";
+import { TabChatIcon } from "@/source/shared/ui/icons";
 import s from "./ExpertRoomWidget.module.scss";
 
 export function ExpertRoomWidget() {
@@ -55,9 +57,11 @@ export function ExpertRoomWidget() {
             <p className={s.error}>{error}</p>
           </div>
         ) : groups.length === 0 ? (
-          <div className={s.threadLoader}>
-            <p className={s.empty}>Сообщений пока нет — будь первым</p>
-          </div>
+          <EmptyState
+            icon={<TabChatIcon />}
+            title="Сообщений пока нет"
+            subtitle="Начните разговор с коллегами."
+          />
         ) : (
           groups.map((group, index) => (
             <ExpertRoomMessageGroupView

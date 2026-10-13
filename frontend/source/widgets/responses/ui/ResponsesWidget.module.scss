@@ -2,17 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px var(--page-px);
+  padding: 20px var(--content-page-px, var(--page-px));
+
+  @media (min-width: 1440px) { padding-top: 24px; }
   gap: 24px;
   max-width: 1640px;
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
-  min-height: calc(100dvh - 72px);
   @media (min-width: 768px) { gap: 40px; }
-  @media (min-width: 1024px) {
-    min-height: 100dvh;
-  }
 }
 
 .pageHead {
@@ -93,5 +91,5 @@
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  padding: 0 0 150px;
+
 }

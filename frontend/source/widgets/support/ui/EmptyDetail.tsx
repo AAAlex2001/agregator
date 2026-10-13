@@ -1,27 +1,18 @@
-"use client";
+import { EmptyState } from "@/source/shared/ui/EmptyState";
+import { TabSupportIcon } from "@/source/shared/ui/icons";
 
-import Button from "@/source/shared/ui/Button";
-import { CommentIcon } from "@/source/shared/ui/icons";
-import s from "./EmptyDetail.module.scss";
-
-interface Props {
+interface EmptyDetailProps {
   onCreate: () => void;
 }
 
-export function EmptyDetail({ onCreate }: Props) {
+export function EmptyDetail({ onCreate }: EmptyDetailProps) {
   return (
-    <div className={s.panel}>
-      <div className={s.iconWrap}>
-        <CommentIcon />
-      </div>
-      <h2 className={s.title}>Выберите обращение или создайте новое</h2>
-      <p className={s.subtitle}>
-        Здесь появится переписка по выбранному тикету. Вся история сохраняется,
-        её можно перечитать в любой момент.
-      </p>
-      <Button variant="primary" size="md" onClick={onCreate}>
-        Создать обращение
-      </Button>
-    </div>
+    <EmptyState
+      icon={<TabSupportIcon />}
+      title="Выберите обращение"
+      subtitle="Здесь появится переписка с поддержкой. Выберите обращение в списке или создайте новое."
+      actionLabel="Создать обращение"
+      onAction={onCreate}
+    />
   );
 }

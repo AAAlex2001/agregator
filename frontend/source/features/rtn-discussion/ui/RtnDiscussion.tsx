@@ -39,7 +39,7 @@ export function RtnDiscussion({ clarificationId, initialComments }: Props) {
 
       {comments.length > 0 && (
         <div className={s.sortRow}>
-          <SortPills options={SORT_PILLS} sortBy={sortBy} sortDir={sortDir} onChange={setSort} compact />
+          <SortPills options={SORT_PILLS} sortBy={sortBy} sortDir={sortDir} onChange={setSort} />
         </div>
       )}
 

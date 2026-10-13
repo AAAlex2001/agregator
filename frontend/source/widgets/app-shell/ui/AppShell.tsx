@@ -1,5 +1,6 @@
 "use client";
 
+import { BreadcrumbPage } from "@/source/shared/ui/PageBreadcrumbs/PageBreadcrumbs";
 import { usePathname } from "next/navigation";
 import { SidebarShell } from "@/source/widgets/sidebar";
 import LandingHeaderAuthed from "@/source/widgets/landing/shared/ui/HeaderAuthed";
@@ -9,7 +10,9 @@ interface AppShellProps {
 }
 
 const SIDEBAR_ROUTES = [
-  /^\/landing(?:\/.*)?$/,
+  /^\/landing\/(?:blog|news|rtn|reviews)(?:\/.*)?$/,
+  /^\/landing\/expert-contacts(?:\/.*)?$/,
+  /^\/landing\/training(?:\/.*)?$/,
   /^\/customer\/orders(?:\/.*)?$/,
   /^\/customer\/reports(?:\/.*)?$/,
   /^\/expert\/orders(?:\/.*)?$/,
@@ -39,12 +42,12 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
 
   if (shouldShowSidebar(pathname)) {
-    return <SidebarShell>{children}</SidebarShell>;
+    return <SidebarShell><BreadcrumbPage>{children}</BreadcrumbPage></SidebarShell>;
   }
   return (
     <>
       <LandingHeaderAuthed />
-      {children}
+      <BreadcrumbPage>{children}</BreadcrumbPage>
     </>
   );
 }

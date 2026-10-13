@@ -1,61 +1,73 @@
 .spacer {
-  height: 72px;
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
+  flex: none;
+  height: var(--cabinet-menu-height, calc(88px + env(safe-area-inset-bottom, 0px)));
 }
 
 .menuTabs {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  width: 100%;
-  padding: 6px 4px;
-  padding-bottom: max(6px, env(safe-area-inset-bottom));
-  background: #ffffff;
-  border-top: 1px solid #e6e6e6;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
   z-index: 1100;
-
-  @media (min-width: 1440px) {
-    display: none;
-  }
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: calc(100% - 24px);
+  max-width: 720px;
+  height: 64px;
+  padding: 0 12px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #e6e6e6;
+  border-radius: 999px;
+  box-shadow: 0 8px 32px rgba(26, 26, 26, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .tab {
-  flex: 1;
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
-  padding: 6px 4px;
+  gap: 2px;
   min-width: 0;
-  text-decoration: none;
-  color: #8a8a8a;
+  min-height: 44px;
+  padding: 0;
+  color: #70757f;
   background: transparent;
   border: none;
   font: inherit;
+  text-decoration: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid #ff8a00;
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
 }
 
-.tabActive {
-  color: #ff8a00;
-}
+.tabActive { color: #ff8a00; }
 
 .icon {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
   color: currentColor;
 
   svg {
     display: block;
+    width: 24px;
+    height: 24px;
   }
+
+  svg [stroke] { stroke: currentColor; }
 }
 
 .text {
@@ -64,5 +76,22 @@
   font-size: 11px;
   line-height: 14px;
   text-align: center;
+  white-space: nowrap;
   color: currentColor;
+}
+
+@media (min-width: 768px) {
+  .menuTabs {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 48px);
+  }
+
+  .spacer {
+    height: var(--cabinet-menu-height, calc(96px + env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+@media (min-width: 1440px) {
+  .spacer,
+  .menuTabs { display: none; }
 }

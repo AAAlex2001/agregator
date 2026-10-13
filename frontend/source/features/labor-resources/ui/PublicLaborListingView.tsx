@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { AuthLinkButton } from "@/source/shared/ui/AuthTrigger";
 import type { LaborListingData } from "@/source/entities/labor";
 import {
@@ -17,6 +18,7 @@ export function PublicLaborListingView({ item }: PublicLaborListingViewProps) {
 
   return (
     <section className={s.wrap}>
+      <Breadcrumbs className={s.breadcrumbs} items={[{ label: "Главная", href: "/" }, { label: "Трудовые ресурсы" }, { label: item.owner_name }]} />
       <article className={s.card}>
         <span className={s.kind}>{laborKindLabel(item.kind)}</span>
         <h1 className={s.title}>{item.owner_name}</h1>

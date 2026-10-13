@@ -96,7 +96,7 @@ export function TechExpertWidget() {
             src="/tech-expert-people.webp"
             alt=""
             fill
-            sizes="(max-width: 1023px) 0px, 640px"
+            sizes="(max-width: 1439px) 0px, 640px"
           />
         </div>
         <div className={s.bannerTop}>

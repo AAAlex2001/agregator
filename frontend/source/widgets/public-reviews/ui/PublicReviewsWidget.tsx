@@ -2,7 +2,7 @@
 
 import { usePublicReviews, type LandingReview } from "@/source/entities/landing-review";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { PublicReviewCard } from "./PublicReviewCard";
 import { PublicReviewsSkeleton } from "./PublicReviewsSkeleton";
@@ -30,7 +30,7 @@ export function PublicReviewsWidget({ initial }: Props = {}) {
         <PublicReviewsSkeleton />
       ) : items.length === 0 ? (
         <div className={s.emptyState}>
-          <EmptyStateCard
+          <EmptyState
             title="Отзывов пока нет"
             subtitle="Совсем скоро здесь появятся первые отзывы от наших клиентов"
           />

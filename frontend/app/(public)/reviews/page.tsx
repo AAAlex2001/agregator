@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
+import LandingHeader from "@/source/widgets/landing/shared/ui/Header";
+import LandingFooter from "@/source/widgets/landing/shared/ui/Footer";
 import { PublicReviewsWidget } from "@/source/widgets/public-reviews";
 import { fetchPublicReviews } from "@/source/entities/landing-review";
 import { RedirectIfAuthed } from "@/source/features/session";

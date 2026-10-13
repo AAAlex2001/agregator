@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/source/shared/ui";
 import { CustomerActiveCard } from "./CustomerActiveCard";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import Loader from "@/source/shared/ui/Loader";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -114,7 +114,7 @@ export function CustomerOrdersWidget() {
 
       {!h.isLoading && !h.error && h.items.length === 0 && !h.draft && (
         <div className={s.emptyState}>
-          <EmptyStateCard
+          <EmptyState
             title="Вы ещё не создали ни одного заказа"
             subtitle="Опубликуйте заказ, чтобы получить отклики от исполнителей по промышленной безопасности"
             actionLabel="Добавить заказ"

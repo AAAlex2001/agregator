@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Fragment } from "react";
 import styles from "./Breadcrumbs.module.scss";
@@ -13,6 +16,7 @@ interface Props {
 }
 
 export function Breadcrumbs({ items, className }: Props) {
+  const pathname = usePathname();
   if (items.length === 0) return null;
   const cls = className ? `${styles.nav} ${className}` : styles.nav;
 
@@ -25,7 +29,7 @@ export function Breadcrumbs({ items, className }: Props) {
             <Fragment key={`${item.label}-${idx}`}>
               <li className={styles.item}>
                 {item.href && !isLast ? (
-                  <Link href={item.href} className={styles.link}>{item.label}</Link>
+                  <Link href={item.href === "/" && pathname.startsWith("/landing") ? "/landing" : item.href} className={styles.link}>{item.label}</Link>
                 ) : (
                   <span className={styles.current} aria-current={isLast ? "page" : undefined}>
                     {item.label}

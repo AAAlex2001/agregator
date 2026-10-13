@@ -45,7 +45,7 @@ export default async function RtnDetailPage({ params }: Props) {
   if (!clarification) notFound();
 
   const [related, comments] = await Promise.all([
-    fetchRelatedRtn(slug, { limit: 4, server: true }),
+    fetchRelatedRtn(slug, { limit: 10, server: true }),
     fetchRtnComments(clarification.id, { server: true }).catch(() => []),
   ]);
 

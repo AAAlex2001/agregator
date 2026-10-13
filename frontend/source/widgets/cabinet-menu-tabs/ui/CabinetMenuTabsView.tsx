@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import {
   BurgerHeaderIcon,
   DiplomaIcon,
@@ -22,7 +23,6 @@ export interface CabinetMenuItem {
 interface CabinetMenuTabsViewProps {
   items: CabinetMenuItem[];
   activeKey: CabinetMenuKey | null;
-  withSpacer?: boolean;
 }
 
 function renderIcon(key: CabinetMenuKey) {
@@ -33,18 +33,41 @@ function renderIcon(key: CabinetMenuKey) {
   return <BurgerHeaderIcon />;
 }
 
-export function CabinetMenuTabsView({ items, activeKey, withSpacer = true }: CabinetMenuTabsViewProps) {
+export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewProps) {
+  const menuRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const menu = menuRef.current;
+    if (!menu) return;
+    const root = document.documentElement;
+    const updateHeight = () => {
+      const height = menu.getBoundingClientRect().height;
+      const bottom = Number.parseFloat(getComputedStyle(menu).bottom) || 0;
+      // Reserve the floating bar, its bottom inset and a 12px gap above it.
+      root.style.setProperty("--cabinet-menu-height", `${height > 0 ? height + bottom + 12 : 0}px`);
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(menu);
+    window.addEventListener("resize", updateHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+      root.style.removeProperty("--cabinet-menu-height");
+    };
+  }, []);
+
   return (
     <>
-      {withSpacer ? <div className={s.spacer} aria-hidden="true" /> : null}
-      <nav className={s.menuTabs} aria-label="Навигация кабинета">
+      <div className={s.spacer} aria-hidden="true" />
+      <nav ref={menuRef} className={s.menuTabs} aria-label="Навигация кабинета">
         {items.map((item) => {
           const isActive = item.key === activeKey;
           const className = `${s.tab} ${isActive ? s.tabActive : ""}`.trim();
           const content = (
             <>
-              <span className={s.icon}>{renderIcon(item.key)}</span>
-              <span className={s.text}>{item.label}</span>
+              <span className={s.icon} aria-hidden="true">{renderIcon(item.key)}</span>
+              <span className={s.text}>{item.key === "license-holders" ? "Держатели" : item.label}</span>
             </>
           );
 
@@ -54,6 +77,7 @@ export function CabinetMenuTabsView({ items, activeKey, withSpacer = true }: Cab
                 key={item.key}
                 href={item.href}
                 className={className}
+                aria-label={item.label}
                 aria-current={isActive ? "page" : undefined}
               >
                 {content}
@@ -65,6 +89,7 @@ export function CabinetMenuTabsView({ items, activeKey, withSpacer = true }: Cab
               key={item.key}
               type="button"
               className={className}
+              aria-label={item.label}
               onClick={item.onClick}
             >
               {content}

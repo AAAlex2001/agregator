@@ -13,7 +13,7 @@ interface ChatListItemProps {
 
 export function ChatListItem({ chat, href, active = false, isOwnLastMessage = false }: ChatListItemProps) {
   return (
-    <Link href={href} className={`${s.item} ${active ? s.active : ""}`.trim()}>
+    <Link href={href} className={`${s.item} ${active ? s.active : ""}`.trim()} aria-current={active ? "page" : undefined}>
       <ChatAvatar src={chat.counterpart_avatar_url} alt={`Аватар ${chat.counterpart_name}`} />
       <div className={s.content}>
         <div className={s.titleRow}>

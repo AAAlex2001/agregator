@@ -25,7 +25,7 @@ export function LoginTab({ onSuccess, onForgot }: Props) {
         onSubmit={auth.submit}
       />
 
-      <Button variant="transparent" size="sm" className={s.centerLink} onClick={onForgot}>
+      <Button variant="transparent" size="sm" fullWidth onClick={onForgot}>
         Забыли пароль?
       </Button>
 

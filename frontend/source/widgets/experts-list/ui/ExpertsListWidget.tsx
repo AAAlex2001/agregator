@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import { SortPills, type SortPillSpec } from "@/source/shared/ui/SortPills";
@@ -72,7 +72,7 @@ export function ExpertsListWidget() {
         </div>
       ) : error ? (
         <div className={s.statusState}>
-          <EmptyStateCard
+          <EmptyState
             title="Не удалось загрузить исполнителей"
             subtitle={error}
             actionLabel="Повторить"
@@ -81,7 +81,7 @@ export function ExpertsListWidget() {
         </div>
       ) : isEmpty ? (
         <div className={s.statusState}>
-          <EmptyStateCard
+          <EmptyState
             title="Пока нет исполнителей с отзывами"
             subtitle="Здесь появятся аттестованные исполнители, получившие отзывы от заказчиков"
           />

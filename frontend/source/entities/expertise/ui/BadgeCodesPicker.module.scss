@@ -13,10 +13,8 @@
 }
 
 .subLabel {
-  font-size: var(--profile-label-size);
-  line-height: var(--profile-label-line);
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font: var(--form-field-label-font, 700 var(--profile-label-size)/var(--profile-label-line) "Montserrat", sans-serif);
+  color: var(--form-field-label-color, var(--color-text-primary));
 }
 
 .row {

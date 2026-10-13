@@ -1,5 +1,6 @@
 "use client";
 
+import Skeleton from "@/source/shared/ui/Skeleton";
 import { Button } from "@/source/shared/ui";
 import { useLaborForm } from "../model/useLaborForm";
 import type { LaborPageMode } from "../model/types";
@@ -31,7 +32,14 @@ export function LaborForm({
 
       <div className={s.formGrid}>
         <div className={s.formColumn}>
-          {useProfileCertificates ? (
+          {form.profileLoading ? (
+            <div className={s.fieldGroup} role="status" aria-label="Загружаем удостоверения из профиля">
+              <span className={s.label}>Удостоверения из профиля</span>
+              <Skeleton className={s.profileCertificatesSkeleton} rounded="pill" />
+            </div>
+          ) : form.profileError ? (
+            <p className={s.error} role="alert">{form.profileError}</p>
+          ) : useProfileCertificates ? (
             <ExpertCertificatesField
               certificates={form.profileCertificates}
             />
@@ -95,9 +103,8 @@ export function LaborForm({
           )}
         </div>
       </div>
-
       <div className={s.formFooter}>
-        {form.error && <p className={s.error}>{form.error}</p>}
+        {form.error && <p className={s.error} role="alert">{form.error}</p>}
 
         <Button
           type="submit"
@@ -105,6 +112,7 @@ export function LaborForm({
           size="md"
           fullWidth
           isLoading={form.submitting}
+          disabled={form.profileLoading || Boolean(form.profileError)}
         >
           Опубликовать заявку
         </Button>

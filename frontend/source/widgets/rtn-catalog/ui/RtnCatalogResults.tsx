@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/source/shared/ui/Button";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { RtnCard, type RtnList, type RtnTaxonomy } from "@/source/entities/rtn-clarification";
 import { useRtnCatalogFilters, useRtnCatalogResults, RtnFilters } from "@/source/features/rtn-catalog";
 import s from "./RtnCatalogWidget.module.scss";
@@ -29,14 +29,14 @@ export function RtnCatalogResults({ initial, taxonomy, nextPageHref }: Props) {
       <div className={s.results}>
         {items.length === 0 ? (
           hasActiveFilters ? (
-            <EmptyStateCard
+            <EmptyState
               title="Ничего не найдено"
               subtitle="Попробуйте изменить запрос или сбросить фильтры"
               actionLabel="Сбросить фильтры"
               onAction={resetFilters}
             />
           ) : (
-            <EmptyStateCard
+            <EmptyState
               title="Пока нет опубликованных разъяснений"
               subtitle="Ответы Ростехнадзора еще не опубликованы в этом разделе — загляните позже"
             />

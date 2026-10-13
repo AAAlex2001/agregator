@@ -98,6 +98,7 @@ function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: ()
 
 export function CabinetBurgerMenu() {
   const { role } = useSession();
+  const ordersHref = role === "EXPERT" ? "/expert/orders" : role === "CUSTOMER" ? "/customer/orders" : "/orders";
   const [open, setOpen] = useState(false);
   const [openKey, setOpenKey] = useState<string | null>(null);
 
@@ -131,6 +132,12 @@ export function CabinetBurgerMenu() {
         <nav className={s.menu}>
           <div className={s.menuLogo}>
             <LogoIcon />
+          </div>
+
+          <div className={s.group}>
+            <Link href={ordersHref} className={s.groupHead} onClick={close}>
+              Все заказы
+            </Link>
           </div>
 
           {plates.map((plate) => (

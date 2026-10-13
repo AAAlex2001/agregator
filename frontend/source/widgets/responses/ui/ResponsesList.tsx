@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 import { Button } from "@/source/shared/ui";
 import Loader from "@/source/shared/ui/Loader";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
 import { ResponsesState } from "@/source/widgets/responses-state";
@@ -64,7 +64,7 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
             />
           ) : model.items.length === 0 ? (
             <div className={s.emptyState}>
-              <EmptyStateCard
+              <EmptyState
                 title="Пока нет откликов"
                 subtitle={activeLabel ? `В разделе «${activeLabel}» пока пусто` : "Здесь пока нет откликов"}
               />

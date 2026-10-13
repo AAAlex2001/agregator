@@ -45,7 +45,7 @@ export function ArticleCard({
       <div className={s.body}>
         <div className={s.cover}>
           {cover_image ? (
-            <Image src={cover_image} alt={title} fill sizes="450px" className={s.coverImage} />
+            <Image src={cover_image} alt={title} fill sizes="(min-width: 1440px) 25vw, (min-width: 768px) 33vw, 50vw" className={s.coverImage} />
           ) : null}
           <span className={s.badge}>{badge}</span>
         </div>

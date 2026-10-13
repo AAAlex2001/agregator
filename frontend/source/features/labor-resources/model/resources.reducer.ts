@@ -33,7 +33,8 @@ export function laborResourcesReducer(
 ): LaborResourcesState {
   switch (action.type) {
     case "TAB":
-      return { ...state, tab: action.value };
+      if (action.value === state.tab) return state;
+      return { ...state, tab: action.value, items: [], loading: true, error: null };
     case "LOADING":
       return { ...state, loading: action.value };
     case "DATA":

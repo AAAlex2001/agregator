@@ -6,15 +6,12 @@
 }
 
 .label {
-  font-size: var(--profile-label-size);
-  line-height: var(--profile-label-line);
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font: var(--form-field-label-font, 700 var(--profile-label-size)/var(--profile-label-line) "Montserrat", sans-serif);
+  color: var(--form-field-label-color, var(--color-text-primary));
 }
 
 .hint {
-  font-size: var(--profile-hint-size);
-  line-height: var(--profile-hint-line);
+  font: var(--form-help-font, 400 var(--profile-hint-size)/var(--profile-hint-line) "Montserrat", sans-serif);
   color: var(--color-text-secondary);
 }
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { OrderCardData } from "@/source/entities/order";
 import { ResponsesSkeleton } from "@/source/widgets/responses";
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
@@ -48,11 +48,11 @@ export function ReportsWidget() {
             <ResponsesSkeleton compact hideTabs />
           ) : error ? (
             <div className={s.empty}>
-              <EmptyStateCard title="Ошибка загрузки" subtitle={error} />
+              <EmptyState title="Ошибка загрузки" subtitle={error} />
             </div>
           ) : items.length === 0 ? (
             <div className={s.empty}>
-              <EmptyStateCard
+              <EmptyState
                 title="Отчётов пока нет"
                 subtitle="Здесь появятся отчёты по завершённым тендерам"
               />

@@ -1,13 +1,12 @@
-import { Subtitle } from "@/source/shared/ui/Typography";
-import s from "./ChatEmptyStateWidget.module.scss";
+import { EmptyState } from "@/source/shared/ui/EmptyState";
+import { TabChatIcon } from "@/source/shared/ui/icons";
 
 export function ChatEmptyStateWidget() {
   return (
-    <section className={s.desktopEmptyState} aria-label="Пустое состояние чата">
-      <Subtitle
-        text="Выберите кому написать в левой панели чатов"
-        className={s.emptyStateText}
-      />
-    </section>
+    <EmptyState
+      icon={<TabChatIcon />}
+      title="Выберите диалог"
+      subtitle="Переписка откроется здесь. Выберите диалог в списке сообщений."
+    />
   );
 }

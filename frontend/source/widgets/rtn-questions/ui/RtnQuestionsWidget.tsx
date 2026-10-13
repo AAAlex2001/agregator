@@ -52,8 +52,8 @@ export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Pro
         <section className={s.questionsSection}>
           <div className={s.sectionHead}>
             <div>
-              <Title text="Ваши вопросы" as="h2" />
-              <Subtitle text="Следите за рассмотрением обращений и публикацией официальных ответов." />
+              <Title text="Ваши вопросы" as="h2" className={s.sectionTitle} />
+              <Subtitle text="Следите за рассмотрением обращений и публикацией официальных ответов." className={s.sectionSubtitle} />
             </div>
           </div>
           <RtnQuestionList refreshKey={refreshKey} />
@@ -63,8 +63,8 @@ export function RtnQuestionsWidget({ authenticated, homeHref, catalogHref }: Pro
       <section className={s.questionsSection}>
         <div className={s.sectionHead}>
           <div>
-            <Title text="Вопросы на рассмотрении" as="h2" />
-            <Subtitle text="Обращения, которые уже переданы в работу. Если у вас есть ответ ведомства по такому вопросу — приложите документ, а если ждёте ответа — подпишитесь на публикацию." />
+            <Title text="Вопросы на рассмотрении" as="h2" className={s.sectionTitle} />
+            <Subtitle text="Обращения, которые уже переданы в работу. Если у вас есть ответ ведомства по такому вопросу — приложите документ, а если ждёте ответа — подпишитесь на публикацию." className={s.sectionSubtitle} />
           </div>
         </div>
         <RtnPublicQuestionList refreshKey={refreshKey} answerHrefPrefix={answerHrefPrefix} />

@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useSidebarMobile } from "@/source/widgets/sidebar";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
-import { isFullScreenRoute } from "@/source/shared/lib/isFullScreenRoute";
 import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";
 
 export function CabinetMenuTabs() {
@@ -16,8 +15,6 @@ export function CabinetMenuTabs() {
   if (role === null) {
     return null;
   }
-
-  const fullScreen = isFullScreenRoute(pathname);
 
   const activeKey: CabinetMenuKey | null =
     pathname.startsWith("/chat") ? "chat" :
@@ -40,5 +37,5 @@ export function CabinetMenuTabs() {
     items.push({ key: "license-holders", label: "Держатели разрешительных документов", onClick: () => openLicenseDrawer() });
   }
 
-  return <CabinetMenuTabsView items={items} activeKey={activeKey} withSpacer={!fullScreen} />;
+  return <CabinetMenuTabsView items={items} activeKey={activeKey} />;
 }

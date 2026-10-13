@@ -1,27 +1,63 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "@/source/features/session";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
+import { LogoIcon, TabOrdersIcon, TabChatIcon, TabProfileIcon, TabSupportIcon } from "@/source/shared/ui/icons";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
 import s from "./header-authed.module.scss";
 
-const NAV_PAGES = [
+const PUBLICATION_LINKS = [
   { href: "/landing/news", label: "Новости" },
   { href: "/landing/blog", label: "Блог" },
 ] as const;
 
-const HeaderAuthed = () => (
-  <header className={s.header}>
-    <nav className={s.nav} aria-label="Основная навигация">
-      <ExpertHelpPlates compact spread />
-      <div className={s.menuLinks}>
-        {NAV_PAGES.map((page) => (
-          <Link key={page.href} href={page.href} className={s.navLink}>
-            {page.label}
-          </Link>
-        ))}
-      </div>
-      <CabinetBurgerMenu />
-    </nav>
-  </header>
-);
+/** Показывает логотип и личные ссылки сверху, разделы площадки — второй строкой. */
+export default function HeaderAuthed() {
+  const { user, role } = useSession();
+  const ordersHref = role === "EXPERT" ? "/expert/orders" : role === "CUSTOMER" ? "/customer/orders" : "/orders";
+  const name = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
 
-export default HeaderAuthed;
+  return (
+    <header className={s.header}>
+      <div className={s.container}>
+        <div className={s.top}>
+          <Link href="/landing" className={s.brand} aria-label="Ресурс-Плюс — на главную">
+            <LogoIcon />
+          </Link>
+          <nav className={s.publications} aria-label="Публикации">
+            {PUBLICATION_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className={s.link}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <nav className={s.actions} aria-label="Личные разделы">
+            <Link href={ordersHref} className={s.link}>
+              <TabOrdersIcon />
+              <span>Все заказы</span>
+            </Link>
+            <Link href="/support" className={`${s.link} ${s.support}`}>
+              <TabSupportIcon />
+              <span>Поддержка</span>
+            </Link>
+            {role !== "LICENSE_HOLDER" && (
+              <Link href="/chat" className={s.link}>
+                <TabChatIcon />
+                <span>Сообщения</span>
+              </Link>
+            )}
+            <Link href="/settings" className={`${s.link} ${s.account}`}>
+              <TabProfileIcon />
+              <span>{name || "Личный кабинет"}</span>
+            </Link>
+          </nav>
+          <CabinetBurgerMenu />
+        </div>
+        <nav className={s.sections} aria-label="Разделы площадки">
+          <ExpertHelpPlates compact spread />
+        </nav>
+      </div>
+    </header>
+  );
+}

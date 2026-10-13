@@ -6,8 +6,7 @@
   gap: 24px;
   max-width: var(--page-maxw);
   margin: 0 auto;
-  padding: var(--page-pt) var(--page-px) var(--page-pb);
-  min-height: 100dvh;
+  padding: var(--page-pt) var(--content-page-px, var(--page-px)) var(--page-pb);
 
   @media (min-width: 768px) {
     gap: 32px;

@@ -9,11 +9,8 @@
 
 .legend {
   padding: 0 0 6px 0;
-  font-family: "Montserrat";
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 18px;
-  color: #1a1a1a;
+  font: var(--form-field-label-font, 600 15px/18px "Montserrat", sans-serif);
+  color: var(--form-field-label-color, #1a1a1a);
 }
 
 .options {
@@ -107,4 +104,23 @@
 
 .trailing {
   flex-shrink: 0;
+}
+
+.checklist {
+  gap: 4px;
+  .legend { padding-bottom: 4px; }
+  .options { gap: 0; }
+  .option {
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 28px;
+    padding: 4px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    &:has(.input:focus-visible) { outline: 2px solid #ffad42; outline-offset: 3px; }
+  }
+  .label { font: var(--form-choice-label-font, 500 14px/20px "Montserrat", sans-serif); }
+  .description { font: var(--form-help-font, 400 13px/18px "Montserrat", sans-serif); color: #667085; }
 }

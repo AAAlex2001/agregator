@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyStateCard } from "@/source/shared/ui";
+import { EmptyState } from "@/source/shared/ui";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import Skeleton from "@/source/shared/ui/Skeleton";
@@ -47,7 +47,7 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
         </div>
       ) : error ? (
         <div className={s.empty}>
-          <EmptyStateCard
+          <EmptyState
             title="Не удалось загрузить заказы"
             subtitle={error}
             actionLabel="Повторить"
@@ -56,7 +56,7 @@ export function ExpertOrdersHistoryWidget({ publicId }: Props) {
         </div>
       ) : isEmpty ? (
         <div className={s.empty}>
-          <EmptyStateCard
+          <EmptyState
             title="Пока нет выполненных заказов"
             subtitle="Здесь появятся завершённые тендеры с участием исполнителя"
           />

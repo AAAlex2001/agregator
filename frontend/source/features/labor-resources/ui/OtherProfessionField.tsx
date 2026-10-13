@@ -1,4 +1,5 @@
-import { CardInput } from "@/source/shared/ui";
+import { useId } from "react";
+import { CardInput, Checkbox } from "@/source/shared/ui";
 import s from "./OtherProfessionField.module.scss";
 
 interface OtherProfessionFieldProps {
@@ -14,27 +15,20 @@ export function OtherProfessionField({
   onToggle,
   onTextChange,
 }: OtherProfessionFieldProps) {
+  const id = useId();
+
   return (
     <div className={s.wrap}>
-      <button
-        type="button"
-        className={`${s.plate} ${enabled ? s.plateActive : ""}`}
-        aria-pressed={enabled}
-        onClick={() => onToggle(!enabled)}
-      >
-        <span className={s.indicator} aria-hidden="true">
-          <span className={s.dot} />
-        </span>
+      <Checkbox id={id} checked={enabled} onChange={onToggle} className={s.choice}>
         <span className={s.text}>
           <span className={s.label}>Иная профессия</span>
-          <span className={s.description}>
-            Ищу не исполнителя, а другого специалиста — опишу требования сам
-          </span>
+          <span className={s.description}>Ищу не исполнителя, а другого специалиста — опишу требования сам</span>
         </span>
-      </button>
+      </Checkbox>
 
       {enabled && (
         <CardInput
+          className={s.details}
           multiline
           rows={4}
           value={text}

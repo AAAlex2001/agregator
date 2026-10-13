@@ -69,7 +69,7 @@
   text-align: center;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1440px) {
   .heroHead {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -210,8 +210,8 @@
   }
 
   .heroHead h1 {
-    font-size: 32px;
-    line-height: 42px;
+    font-size: 34px;
+    line-height: 41px;
     font-weight: 600;
   }
 
@@ -220,8 +220,8 @@
     min-width: 0;
 
     p {
-      font-size: 16px;
-      line-height: 24px;
+      font-size: 18px;
+      line-height: 28px;
       font-weight: 500;
       max-width: none;
     }
@@ -240,20 +240,5 @@
   .bulletIcon {
     width: 24px;
     height: 24px;
-  }
-}
-
-@media (min-width: 1920px) {
-  .heroHead h1 {
-    font-size: 34px;
-    line-height: 41px;
-  }
-
-  .leftSection {
-    p {
-      font-size: 18px;
-      line-height: 28px;
-      max-width: none;
-    }
   }
 }

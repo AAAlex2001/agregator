@@ -17,6 +17,7 @@ export function ChatSearchInput({ value, onChange, placeholder = "Поиск п�
         type="text"
         className={styles.input}
         placeholder={placeholder}
+        aria-label={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

@@ -1,5 +1,5 @@
 import { CATEGORY_OPTIONS } from "@/source/entities/expertise";
-import s from "./LaborForm.module.scss";
+import { RadioGroup } from "@/source/shared/ui";
 
 const OPTIONS = [
   { value: "", label: "Любая категория" },
@@ -14,29 +14,15 @@ interface ExpertiseCategoryFieldProps {
   onChange: (value: string) => void;
 }
 
-export function ExpertiseCategoryField({
-  value,
-  onChange,
-}: ExpertiseCategoryFieldProps) {
+export function ExpertiseCategoryField({ value, onChange }: ExpertiseCategoryFieldProps) {
   return (
-    <div className={s.fieldGroup}>
-      <span className={s.label}>Категория исполнителя</span>
-
-      <div className={s.categoryRow}>
-        {OPTIONS.map((option) => (
-          <button
-            key={option.value || "any"}
-            type="button"
-            className={
-              value === option.value ? s.categoryActive : ""
-            }
-            aria-pressed={value === option.value}
-            onClick={() => onChange(option.value)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-    </div>
+    <RadioGroup
+      name="expertise-category"
+      legend="Категория исполнителя"
+      variant="checklist"
+      value={value}
+      options={OPTIONS}
+      onChange={onChange}
+    />
   );
 }

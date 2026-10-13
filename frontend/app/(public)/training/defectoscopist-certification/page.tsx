@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { LandingFooter, LandingHeader } from "@/source/widgets/landing";
+import { RedirectIfAuthed } from "@/source/features/session";
+import LandingHeader from "@/source/widgets/landing/shared/ui/Header";
+import LandingFooter from "@/source/widgets/landing/shared/ui/Footer";
 import { DefectoscopistCertificationWidget } from "@/source/widgets/defectoscopist-certification";
 
 export const metadata: Metadata = {
@@ -49,6 +51,7 @@ export const metadata: Metadata = {
 export default function DefectoscopistCertificationPage() {
   return (
     <>
+      <RedirectIfAuthed to="/landing/training/defectoscopist-certification" />
       <LandingHeader />
       <DefectoscopistCertificationWidget />
       <LandingFooter variant="light" />

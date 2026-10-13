@@ -5,10 +5,8 @@
   align-items: center;
   gap: 24px;
   width: 100%;
-  max-width: 1640px;
-  min-height: calc(100dvh - 72px);
-  margin: 0 auto;
-  padding: 20px var(--page-px) 48px;
+  padding: 24px 16px 48px;
+  box-sizing: border-box;
 }
 
 .pageHead {
@@ -100,13 +98,6 @@
   width: 100%;
 }
 
-.empty {
-  width: 100%;
-  padding: 28px 0;
-  color: #808080;
-  text-align: center;
-}
-
 @media (min-width: 768px) {
   .page {
     gap: 32px;
@@ -128,7 +119,7 @@
 
 @media (min-width: 1440px) {
   .page {
-    min-height: 100dvh;
+    padding-inline: 0;
   }
 
   .catalogFilters {

@@ -10,42 +10,61 @@ interface SidebarMobileValue {
   toggle: () => void;
 }
 
-const Ctx = createContext<SidebarMobileValue | null>(null);
+const SidebarMobileContext = createContext<SidebarMobileValue | null>(null);
 
+/** Управляет мобильным меню и закрывает его при переходе на другую страницу. */
 export function SidebarMobileProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [openedPath, setOpenedPath] = useState<string | null>(null);
+  const isOpen = openedPath === pathname;
+
+  if (openedPath !== null && openedPath !== pathname) {
+    setOpenedPath(null);
+  }
 
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (!isOpen) return;
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 1440px)");
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpenedPath(null);
+    }
+
+    function handleViewportChange(event: MediaQueryListEvent) {
+      if (event.matches) setOpenedPath(null);
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    desktop.addEventListener("change", handleViewportChange);
+
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      desktop.removeEventListener("change", handleViewportChange);
     };
   }, [isOpen]);
 
   return (
-    <Ctx.Provider
+    <SidebarMobileContext.Provider
       value={{
         isOpen,
-        open: () => setIsOpen(true),
-        close: () => setIsOpen(false),
-        toggle: () => setIsOpen((p) => !p),
+        open: () => setOpenedPath(pathname),
+        close: () => setOpenedPath(null),
+        toggle: () => setOpenedPath((current) => current === pathname ? null : pathname),
       }}
     >
       {children}
-    </Ctx.Provider>
+    </SidebarMobileContext.Provider>
   );
 }
 
 export function useSidebarMobile(): SidebarMobileValue {
-  const ctx = useContext(Ctx);
-  if (!ctx) {
+  const context = useContext(SidebarMobileContext);
+  if (!context) {
     return { isOpen: false, open: () => {}, close: () => {}, toggle: () => {} };
   }
-  return ctx;
+  return context;
 }

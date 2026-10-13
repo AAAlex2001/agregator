@@ -12,11 +12,30 @@ interface TabsProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
-  variant?: "default" | "pill" | "squared";
+  variant?: "default" | "pill" | "squared" | "underline";
   className?: string;
 }
 
 const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "" }: TabsProps) => {
+  if (variant === "underline") {
+    return (
+      <div className={`${styles.underlineBar} ${className}`} role="tablist" aria-label="Разделы">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            className={`${styles.underline} ${activeTab === tab.id ? styles.underlineActive : ""}`}
+            aria-selected={activeTab === tab.id}
+            onClick={() => onTabChange(tab.id)}
+          >
+            {tab.label}{tab.count !== undefined && ` · ${tab.count}`}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   if (variant === "squared") {
     return (
       <div className={`${styles.squaredBar} ${className}`}>
@@ -25,6 +44,7 @@ const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "
             key={tab.id}
             type="button"
             className={`${styles.squared} ${activeTab === tab.id ? styles.squaredActive : ""}`}
+            aria-pressed={activeTab === tab.id}
             onClick={() => onTabChange(tab.id)}
           >
             {tab.label}

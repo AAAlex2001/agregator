@@ -2,7 +2,7 @@
   width: 100%;
   max-width: var(--page-maxw);
   margin: 0 auto;
-  padding: var(--page-pt) var(--page-px) var(--page-pb);
+  padding: var(--page-pt) var(--content-page-px, var(--page-px)) var(--page-pb);
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -79,8 +79,15 @@
   gap: 8px;
 }
 
-.guestTitle,
+.guestTitle {
+  font-size: 18px;
+  line-height: 26px;
+  text-align: left;
+}
+
 .guestDescription {
+  font-size: 14px;
+  line-height: 22px;
   text-align: left;
 }
 
@@ -128,5 +135,27 @@
     width: min(680px, 52%);
     margin: 0;
     padding: 48px;
+  }
+}
+
+.sectionTitle {
+  font-size: 18px;
+  line-height: 26px;
+  text-align: left;
+}
+.sectionSubtitle {
+  font-size: 14px;
+  line-height: 22px;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 22px;
+    line-height: 30px;
+  }
+  .sectionSubtitle {
+    font-size: 15px;
+    line-height: 24px;
   }
 }
