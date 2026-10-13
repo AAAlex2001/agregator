@@ -183,9 +183,10 @@ class PostSchema(BaseModel):
 
 
 class PostSitemapItemSchema(BaseModel):
-    """Адрес публикации и дата изменения для карты сайта."""
+    """Публикация, её автор и дата изменения для карты сайта."""
 
     id: int
+    author_id: int
     updated_at: datetime
 
 

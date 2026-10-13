@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/source/shared/api/config";
 import { postImage, postUrl } from "../lib/postSeo";
 import type { Post } from "../model/types";
+import { breadcrumbs, JsonLd } from "./JsonLd";
 
 interface PostJsonLdProps {
   post: Post;
@@ -12,27 +13,35 @@ export function PostJsonLd({ post }: PostJsonLdProps) {
     return null;
   }
 
-  const data = {
-    "@context": "https://schema.org",
+  const url = postUrl(post.id);
+  const posting = {
     "@type": "SocialMediaPosting",
     headline: post.title,
     description: post.description,
     image: `${SITE_URL}${postImage(post)}`,
     datePublished: post.published_at ?? post.created_at,
     dateModified: post.updated_at,
-    url: postUrl(post.id),
+    url,
     author: {
       "@type": "Person",
       name: post.author.name,
       url: `${SITE_URL}/posts?author=${post.author.id}`,
     },
+    commentCount: post.comments_count,
+    interactionStatistic: [
+      {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/LikeAction",
+        userInteractionCount: post.likes_count,
+      },
+      {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/CommentAction",
+        userInteractionCount: post.comments_count,
+      },
+    ],
   };
-  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  const crumbs = breadcrumbs({ name: `Публикация #${post.id}`, url });
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: json }}
-    />
-  );
+  return <JsonLd graph={[posting, crumbs]} />;
 }

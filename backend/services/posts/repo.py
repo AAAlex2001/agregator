@@ -217,11 +217,11 @@ class PostRepository:
         )
         return await self.db.scalar(stmt) or 0
 
-    async def list_sitemap(self) -> list[tuple[int, datetime]]:
-        """id и дата изменения опубликованных оригиналов — для карты сайта."""
+    async def list_sitemap(self) -> list[tuple[int, int, datetime]]:
+        """id, автор и дата изменения опубликованных оригиналов — для карты сайта."""
 
         stmt = (
-            select(Post.id, Post.updated_at)
+            select(Post.id, Post.author_id, Post.updated_at)
             .where(Post.status == PostStatus.PUBLISHED)
             .where(Post.repost_of_id.is_(None))
             .order_by(Post.id)

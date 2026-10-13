@@ -84,16 +84,25 @@ async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
   }
 }
 
-/** Добавляет только опубликованные оригиналы, без черновиков и репостов. */
+/** Опубликованные оригиналы, без черновиков и репостов, и ленты их авторов. */
 async function loadPosts(): Promise<MetadataRoute.Sitemap> {
   try {
     const items = await fetchPostSitemap();
-    return items.map((item) => ({
+    const posts: MetadataRoute.Sitemap = items.map((item) => ({
       url: `${SITE_URL}/posts/${item.id}`,
       lastModified: new Date(item.updated_at),
       changeFrequency: "weekly",
       priority: 0.7,
     }));
+
+    const authorIds = new Set(items.map((item) => item.author_id));
+    const authors: MetadataRoute.Sitemap = [...authorIds].map((authorId) => ({
+      url: `${SITE_URL}/posts?author=${authorId}`,
+      changeFrequency: "daily",
+      priority: 0.5,
+    }));
+
+    return [...posts, ...authors];
   } catch {
     return [];
   }

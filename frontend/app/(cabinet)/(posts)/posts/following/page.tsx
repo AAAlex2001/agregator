@@ -23,7 +23,7 @@ export default async function FollowingPage({ searchParams }: FollowingPageProps
   }
 
   return (
-    <PostsFeed tab="following" unseenCount={0}>
+    <PostsFeed title="Лента" tab="following" unseenCount={0}>
       <PostList
         posts={feed.items}
         nextPageHref={nextPostListUrl(feed, page, "/posts/following")}

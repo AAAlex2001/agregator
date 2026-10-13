@@ -34,6 +34,7 @@ export { copyPostLink } from "./lib/copyPostLink";
 export { nextPostListUrl, postListUrl, readPage } from "./lib/postListPage";
 export { postMetadata, postUrl } from "./lib/postSeo";
 export { CommentCard } from "./ui/CommentCard";
+export { FeedJsonLd } from "./ui/FeedJsonLd";
 export { OriginalPost } from "./ui/OriginalPost";
 export { PostAvatar } from "./ui/PostAvatar";
 export { PostCard } from "./ui/PostCard";

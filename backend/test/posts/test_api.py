@@ -331,9 +331,10 @@ async def test_sitemap_exposes_only_published_originals(post_client, posts_datab
     client.cookies.clear()
     response = await client.get("/api/posts/sitemap")
     assert response.status_code == 200, response.text
+    author_id = first["author"]["id"]
     assert response.json() == [
-        {"id": first["id"], "updated_at": first["updated_at"]},
-        {"id": second["id"], "updated_at": second["updated_at"]},
+        {"id": first["id"], "author_id": author_id, "updated_at": first["updated_at"]},
+        {"id": second["id"], "author_id": author_id, "updated_at": second["updated_at"]},
     ]
 
 

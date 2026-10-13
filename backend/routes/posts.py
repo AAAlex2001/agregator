@@ -134,8 +134,8 @@ async def list_posts_sitemap(
 
     rows = await posts.list_sitemap()
     return [
-        PostSitemapItemSchema(id=post_id, updated_at=updated_at)
-        for post_id, updated_at in rows
+        PostSitemapItemSchema(id=post_id, author_id=author_id, updated_at=updated_at)
+        for post_id, author_id, updated_at in rows
     ]
 
 

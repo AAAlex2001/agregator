@@ -10,6 +10,7 @@ import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "../posts.module.scss";
 
 interface PostsFeedProps {
+  title: string;
   tab: "all" | "following";
   authorId?: number;
   unseenCount: number | null;
@@ -18,11 +19,10 @@ interface PostsFeedProps {
 
 /** Лента: заголовок, «Написать пост» и вкладки-ссылки «Для вас» и «Подписки».
  *  Вкладки видит только вошедший (unseenCount не null); публикации приходят в children. */
-export function PostsFeed({ tab, authorId, unseenCount, children }: PostsFeedProps) {
+export function PostsFeed({ title, tab, authorId, unseenCount, children }: PostsFeedProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
 
-  const title = authorId ? "Публикации автора" : "Лента";
   const subtitle = authorId
     ? "Опыт, новости и материалы, которыми делится автор."
     : "Опыт, новости и полезные материалы от участников сообщества.";

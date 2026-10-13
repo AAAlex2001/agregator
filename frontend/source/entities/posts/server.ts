@@ -23,13 +23,13 @@ async function load(path: string): Promise<Response> {
   });
 }
 
-/** Публикации раздела с первой по страницу page включительно.
+/** Публикации раздела с первой по страницу page включительно — один запрос на рендер.
  *  null — раздел личный, а посетитель не вошёл. */
-export async function loadPosts(
+export const loadPosts = cache(async (
   path: string,
   page: number,
   status?: PostStatus,
-): Promise<PostPage | null> {
+): Promise<PostPage | null> => {
   const query = new URLSearchParams({
     limit: String(page * POSTS_PAGE_SIZE),
     offset: "0",
@@ -46,7 +46,7 @@ export async function loadPosts(
     throw new Error(`Не удалось загрузить публикации: ${response.status}`);
   }
   return response.json();
-}
+});
 
 /** Сколько новых публикаций в подписках. null — посетитель не вошёл. */
 export async function loadFollowingUnseen(): Promise<number | null> {
