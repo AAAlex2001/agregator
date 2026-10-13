@@ -5,43 +5,34 @@ from datetime import UTC, datetime
 from models.account import Account
 from models.posts import Post, PostStatus
 from schemas.posts import RepostSaveSchema
-from services.posts.html import clean_html
-from services.posts.notifications import NotificationKind, NotifyUseCase
-from services.posts.notifications import PostNotification as Notification
+from services.notifications.use_cases.create_post_activity_notification import (
+    CreatePostActivityNotificationUseCase,
+)
+from services.posts.html import check_text_length, clean_html
 from services.posts.repo import PostRepository
 
 
 class CreateRepostUseCase:
-    """Репостнуть публикацию сразу: просто или с комментарием. Репост репоста ведёт на оригинал.
+    """Репост сразу публикуется: просто или с комментарием. Репост репоста ведёт на оригинал."""
 
-    Автору оригинала приходит уведомление.
-    """
-
-    def __init__(self, posts: PostRepository, notify: NotifyUseCase) -> None:
+    def __init__(self, posts: PostRepository, notify: CreatePostActivityNotificationUseCase) -> None:
         self.posts = posts
         self.notify = notify
 
     async def execute(self, user: Account, post: Post, payload: RepostSaveSchema) -> Post:
-        """Вернуть опубликованный репост и пересчитать репосты оригинала."""
+        """Опубликованный репост. У оригинала пересчитываются репосты, автору уходит уведомление."""
 
+        html = clean_html(payload.html)
+        check_text_length(html)
         original = post.repost_of or post
         repost = Post(
             author_id=user.id,
             repost_of_id=original.id,
-            html=clean_html(payload.html),
+            html=html,
             status=PostStatus.PUBLISHED,
             published_at=datetime.now(UTC),
         )
-
         created = await self.posts.add(repost)
         await self.posts.refresh_reposts(original.id)
-        await self.notify.execute(
-            Notification(
-                user_id=original.author_id,
-                actor_id=user.id,
-                kind=NotificationKind.REPOST,
-                post_id=original.id,
-            )
-        )
-
+        await self.notify.execute(original.author_id, user, "repost", post_id=original.id)
         return created

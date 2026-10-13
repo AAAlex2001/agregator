@@ -8,13 +8,13 @@ import { PostsSkeleton } from "../../skeleton";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "./PostsLayout.module.scss";
 
-interface Props {
+interface PostAccessProps {
   children: ReactNode;
   loadingFallback?: ReactNode;
 }
 
-/** Сохраняет выбранную страницу и предлагает гостю войти. */
-export function PostAccess({ children, loadingFallback = <PostsSkeleton /> }: Props) {
+/** Личный раздел публикаций: гостю вместо него — предложение войти. */
+export function PostAccess({ children, loadingFallback = <PostsSkeleton /> }: PostAccessProps) {
   const { user, isLoading } = useSession();
   const { openAuth } = useAuthModal();
   if (user) return children;

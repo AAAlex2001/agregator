@@ -49,3 +49,14 @@ def test_delete_cannot_escape_posts_directory(tmp_path, monkeypatch):
     monkeypatch.setattr(uploads, "UPLOADS_DIR", tmp_path)
     with pytest.raises(ValueError, match="папке публикаций"):
         uploads.remove_file("../outside.txt")
+
+
+@pytest.mark.parametrize("brand", [b"heic", b"mif1", b"avif", b"avis"])
+async def test_image_containers_are_not_classified_as_video(brand, tmp_path, monkeypatch):
+    """Общий контейнер ftyp не превращает HEIC/AVIF в видео."""
+    monkeypatch.setattr(uploads, "UPLOADS_DIR", tmp_path)
+    content = b"0000ftyp" + brand + b"content"
+    assert not uploads.is_video_header(content)
+    with pytest.raises(UploadError):
+        await uploads.save_video(UploadFile(file=BytesIO(content)), 1024)
+    assert not (tmp_path / "posts").exists()

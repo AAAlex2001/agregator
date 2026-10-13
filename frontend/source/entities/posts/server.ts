@@ -1,50 +1,36 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { SERVER_API_URL } from "@/source/shared/api/config";
-import type { Post, PostPage } from "./model/types";
+import { POSTS_PAGE_SIZE, type Post, type PostPage, type ThreadPage } from "./model/types";
 
-/** Загружает публичную ленту для первого серверного рендера. */
-export async function loadPostsFeed(
-  offset: number,
-  authorId?: number,
-): Promise<PostPage | undefined> {
-  const path = authorId ? `author/${authorId}` : "feed";
-  const headers = new Headers();
+/** Запрос к API от имени посетителя: с сессией видны свои черновики и отметки лайков. */
+async function load(path: string): Promise<Response> {
   const session = (await cookies()).get("session_id")?.value;
-  if (session) {
-    headers.set("Cookie", `session_id=${session}`);
-  }
-  try {
-    const response = await fetch(`${SERVER_API_URL}/posts/${path}?limit=20&offset=${offset}`, {
-      headers,
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    });
-    if (response.ok) return response.json();
-  } catch {
-    // При недоступном сервере лента предложит повторить загрузку в браузере.
-  }
+  const headers: HeadersInit = session ? { Cookie: `session_id=${session}` } : {};
+  return fetch(`${SERVER_API_URL}${path}`, { headers, cache: "no-store" });
 }
 
-/** Загружает пост; сессия нужна только для просмотра своего черновика. */
-export async function loadPost(id: number, withSession = false): Promise<Post | null | undefined> {
-  const headers = new Headers();
-  if (withSession) {
-    const session = (await cookies()).get("session_id")?.value;
-    if (session) {
-      headers.set("Cookie", `session_id=${session}`);
-    }
-  }
-  try {
-    const response = await fetch(`${SERVER_API_URL}/posts/${id}`, {
-      headers,
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    });
-    if (response.status === 404) return null;
-    if (response.ok) return response.json();
-  } catch {
-    // Страница сохранит возможность повторной загрузки.
-  }
+/** Страница общей ленты или ленты автора. */
+export async function loadPostsFeed(page: number, authorId?: number): Promise<PostPage> {
+  const path = authorId ? `/posts/author/${authorId}` : "/posts/feed";
+  const response = await load(`${path}?limit=${POSTS_PAGE_SIZE}&offset=${(page - 1) * POSTS_PAGE_SIZE}`);
+  if (!response.ok) throw new Error(`Не удалось загрузить публикации: ${response.status}`);
+  return response.json();
+}
+
+/** Публикация для страницы и её метаданных — один запрос на рендер. null — её нет или она недоступна. */
+export const loadPost = cache(async (id: number): Promise<Post | null> => {
+  const response = await load(`/posts/${id}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Не удалось загрузить публикацию: ${response.status}`);
+  return response.json();
+});
+
+/** Первая страница обсуждения — сразу в разметке страницы. */
+export async function loadThreads(postId: number): Promise<ThreadPage> {
+  const response = await load(`/posts/${postId}/comments?limit=${POSTS_PAGE_SIZE}&offset=0`);
+  if (!response.ok) throw new Error(`Не удалось загрузить комментарии: ${response.status}`);
+  return response.json();
 }

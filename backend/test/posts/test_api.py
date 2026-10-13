@@ -41,7 +41,8 @@ async def test_guest_and_draft_access(post_client):
     login(client)
     changed = await client.put(f"/api/posts/{post_id}", json={"html": "<p>Опубликовано</p>"})
     assert changed.status_code == 200, changed.text
-    assert (await client.get("/api/posts/my/counts")).json() == {"published": 1, "draft": 0, "hidden": 0}
+    assert (await client.get("/api/posts/my")).json()["total"] == 1
+    assert (await client.get("/api/posts/my", params={"status": "draft"})).json()["total"] == 0
 
 
 async def test_likes_saves_reposts_comments_and_views(post_client):
@@ -314,7 +315,7 @@ async def test_delete_waits_for_media_attachment(post_client, posts_database):
 
 
 async def test_sitemap_exposes_only_published_originals(post_client, posts_database):
-    """Карта сайта доступна гостям и постранично выдаёт только открытые оригиналы."""
+    """Карта сайта доступна гостям и выдаёт только открытые оригиналы."""
     client = post_client
     login(client)
     first = await publish(client)
@@ -328,14 +329,12 @@ async def test_sitemap_exposes_only_published_originals(post_client, posts_datab
         await db.commit()
 
     client.cookies.clear()
-    response = await client.get("/api/posts/sitemap", params={"limit": 1})
+    response = await client.get("/api/posts/sitemap")
     assert response.status_code == 200, response.text
-    assert response.json() == [{"id": first["id"], "updated_at": first["updated_at"]}]
-    response = await client.get("/api/posts/sitemap", params={"after_id": first["id"], "limit": 1})
-    assert response.json() == [{"id": second["id"], "updated_at": second["updated_at"]}]
-    assert (await client.get("/api/posts/sitemap", params={"after_id": second["id"]})).json() == []
-    assert (await client.get("/api/posts/sitemap", params={"after_id": -1})).status_code == 422
-    assert (await client.get("/api/posts/sitemap", params={"limit": 5001})).status_code == 422
+    assert response.json() == [
+        {"id": first["id"], "updated_at": first["updated_at"]},
+        {"id": second["id"], "updated_at": second["updated_at"]},
+    ]
 
 
 async def test_modified_date_changes_only_when_post_is_edited(post_client):

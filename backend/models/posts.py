@@ -20,12 +20,14 @@ from models.base import Base
 
 MAX_POST_MEDIA = 10
 MAX_POST_HTML = 30000
+MAX_POST_TEXT = 5000
 MAX_COMMENT_LENGTH = 2000
 MAX_REPORT_LENGTH = 500
 MAX_AI_INSTRUCTION = 1000
 
 PUBLISHED_ONLY = text("status = 'published'")
 ROOTS_ONLY = text("parent_id IS NULL")
+OPEN_ONLY = text("status = 'open'")
 
 
 class ReportStatus(StrEnum):
@@ -228,10 +230,11 @@ class PostMedia(Base):
     __table_args__ = (
         CheckConstraint("kind IN ('photo', 'video')", name="ck_post_media_kind"),
         Index("ix_post_media_free_owner", owner_id, postgresql_where=text("post_id IS NULL")),
+        Index("ix_post_media_expired", created_at, id, postgresql_where=text("post_id IS NULL")),
     )
 
     @property
-    def url(self) -> str | None:
+    def url(self) -> str:
         """Адрес файла для сайта."""
 
         return f"/uploads/{self.path}"
@@ -262,6 +265,10 @@ class PostReport(Base):
     __table_args__ = (
         CheckConstraint("status IN ('open', 'resolved')", name="ck_post_reports_status"),
         Index("ix_post_reports_status_recent", status, created_at.desc(), id.desc()),
+        Index("ux_post_reports_open_post", reporter_id, post_id, unique=True, postgresql_where=OPEN_ONLY),
+        Index(
+            "ux_post_reports_open_comment", reporter_id, comment_id, unique=True, postgresql_where=OPEN_ONLY
+        ),
     )
 
 

@@ -1,15 +1,19 @@
 """Сценарий ИИ-помощника: написать публикацию с нуля или переделать текущий текст."""
 
+import logging
 import re
 from datetime import UTC, datetime, timedelta
 from html import escape
 
 from models.account import Account
-from services.posts.ai import AiClient
+from models.posts import MAX_POST_TEXT
+from services.posts.ai import AiClient, AiError
 from services.posts.ai_repo import AiRequestRepository
 from services.posts.config import PostSettings
-from services.posts.exceptions import EmptyAiAnswerError, TooManyAiRequestsError
-from services.posts.html import clean_html, has_text
+from services.posts.exceptions import AiUnavailableError, TooManyAiRequestsError
+from services.posts.html import clean_html, plain_text
+
+logger = logging.getLogger(__name__)
 
 HOUR = timedelta(hours=1)
 MAX_TOKENS = 3000
@@ -41,9 +45,7 @@ def to_html(answer: str) -> str:
     text = FENCE.sub("", answer.strip())
     if "<" in text:
         return text
-
     paragraphs = [part.strip() for part in text.split("\n\n") if part.strip()]
-
     return "".join(f"<p>{escape(part).replace(chr(10), '<br>')}</p>" for part in paragraphs)
 
 
@@ -56,26 +58,30 @@ class WritePostWithAiUseCase:
         self.settings = settings
 
     async def execute(self, user: Account, instruction: str, html: str) -> str:
-        """HTML для редактора. Бросает TooManyAiRequestsError, AiError и EmptyAiAnswerError."""
+        """HTML для редактора. Лимит исчерпан — TooManyAiRequestsError, модель не помогла — AiUnavailableError."""
 
         now = datetime.now(UTC)
         issued = await self.requests.list_since(user.id, now - HOUR)
         if len(issued) >= self.settings.ai_requests_per_hour:
-            wait = int((issued[0] + HOUR - now).total_seconds()) + 1
-            raise TooManyAiRequestsError(max(wait, 1))
-
+            raise TooManyAiRequestsError(max(int((issued[0] + HOUR - now).total_seconds()) + 1, 1))
         await self.requests.add(user.id)
 
-        answer = await self.ai.complete(SYSTEM_PROMPT, self.message(instruction, html), MAX_TOKENS)
-        result = clean_html(to_html(answer))
-        if not has_text(result):
-            raise EmptyAiAnswerError()
+        try:
+            answer = await self.ai.complete(SYSTEM_PROMPT, self.message(instruction, html), MAX_TOKENS)
+        except AiError as error:
+            logger.warning("ИИ-помощник не ответил: %s", error)
+            raise AiUnavailableError() from error
 
+        result = clean_html(to_html(answer))
+        text = plain_text(result)
+        if not text:
+            raise AiUnavailableError()
+        if len(text) > MAX_POST_TEXT:
+            raise AiUnavailableError(f"Ответ ИИ длиннее {MAX_POST_TEXT} символов. Попросите написать короче")
         return result
 
     def message(self, instruction: str, html: str) -> str:
         """Сообщение модели: просьба автора и текущий текст публикации."""
 
-        current = html if has_text(html) else "(пусто)"
-
-        return f"Просьба автора:\n{instruction.strip()}\n\nТекущий текст публикации (HTML):\n{current}"
+        current = html if plain_text(html) else "(пусто)"
+        return f"Просьба автора:\n{instruction}\n\nТекущий текст публикации (HTML):\n{current}"

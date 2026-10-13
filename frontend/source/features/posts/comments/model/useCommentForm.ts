@@ -1,35 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { createComment, updateComment, type PostComment } from "@/source/entities/posts";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 
-interface Props {
+interface CommentFormOptions {
   postId: number;
   comment?: PostComment;
   replyTo?: PostComment;
   onSaved: () => void;
 }
 
-/** Отправляет новый комментарий, ответ или исправление текста. */
-export function useCommentForm({ postId, comment, replyTo, onSaved }: Props) {
+/** Новый комментарий, ответ или правка своего комментария. */
+export function useCommentForm({ postId, comment, replyTo, onSaved }: CommentFormOptions) {
+  const { showError } = useNotifications();
   const [text, setText] = useState(comment?.text ?? "");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const submit = async (event: React.FormEvent) => {
+  const [isSending, setIsSending] = useState(false);
+
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (busy || !text.trim()) return;
-    setBusy(true);
-    setError("");
+    setIsSending(true);
     try {
       if (comment) await updateComment(comment.id, text.trim());
       else await createComment(postId, text.trim(), replyTo?.id ?? null);
       setText("");
       onSaved();
-    } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Не удалось сохранить комментарий");
+    } catch (error) {
+      showError(error instanceof Error ? error.message : "Не удалось сохранить комментарий");
     } finally {
-      setBusy(false);
+      setIsSending(false);
     }
   };
-  return { text, setText, busy, error, submit };
+
+  return { text, setText, isSending, submit };
 }

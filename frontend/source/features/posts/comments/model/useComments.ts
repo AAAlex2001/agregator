@@ -1,54 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { fetchThreads, type ThreadPage } from "@/source/entities/posts";
+import { useNotifications } from "@/source/shared/ui/Notifications";
 
-/** Загружает комментарии и следующие страницы обсуждения. */
-export function useComments(postId: number) {
-  const [page, setPage] = useState<ThreadPage>({
-    items: [],
-    total: 0,
-    comments_count: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const request = useRef<AbortController | null>(null);
+/** Обсуждение публикации: первая страница приходит с сервера, следующие и обновление — по запросу. */
+export function useComments(postId: number, initial: ThreadPage) {
+  const { showError } = useNotifications();
+  const [page, setPage] = useState(initial);
+  const [isLoading, setIsLoading] = useState(false);
 
-  /** Загружает страницу комментариев и отменяет предыдущий запрос. */
-  async function load(id: number, offset: number) {
-    request.current?.abort();
-    const controller = new AbortController();
-    request.current = controller;
-    setLoading(true);
-    setError("");
-
+  const load = async (offset: number) => {
+    setIsLoading(true);
     try {
-      const result = await fetchThreads(id, 20, offset, controller.signal);
-      if (controller.signal.aborted) return;
-      setPage((previous) => ({
-        ...result,
-        items: offset === 0 ? result.items : [...previous.items, ...result.items],
-      }));
-    } catch (failure) {
-      if (!controller.signal.aborted) {
-        setError(failure instanceof Error ? failure.message : "Не удалось загрузить комментарии");
-      }
+      const next = await fetchThreads(postId, offset);
+      setPage(offset === 0 ? next : { ...next, items: [...page.items, ...next.items] });
+    } catch (error) {
+      showError(error instanceof Error ? error.message : "Не удалось загрузить комментарии");
     } finally {
-      if (!controller.signal.aborted) setLoading(false);
+      setIsLoading(false);
     }
-  }
-
-  useEffect(() => {
-    void load(postId, 0);
-    return () => request.current?.abort();
-  }, [postId]);
+  };
 
   return {
     ...page,
-    loading,
-    error,
+    isLoading,
     hasMore: page.items.length < page.total,
-    reload: () => load(postId, 0),
-    loadMore: () => load(postId, page.items.length),
+    reload: () => load(0),
+    loadMore: () => load(page.items.length),
   };
 }

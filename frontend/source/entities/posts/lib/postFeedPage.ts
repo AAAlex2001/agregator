@@ -3,16 +3,17 @@ export interface PostFeedParams {
   page?: string;
 }
 
-/** Читает автора и номер страницы из адреса ленты. */
+/** Автор и номер страницы из адреса ленты; неверные значения — как их отсутствие. */
 export function readPostFeedPage(params: PostFeedParams) {
   const author = Number(params.author);
-  const requestedPage = Number(params.page);
-  const authorId = Number.isSafeInteger(author) && author > 0 ? author : undefined;
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  return { authorId, page };
+  const page = Number(params.page);
+  return {
+    authorId: Number.isSafeInteger(author) && author > 0 ? author : undefined,
+    page: Number.isSafeInteger(page) && page > 0 ? page : 1,
+  };
 }
 
-/** Сохраняет автора при переходе между страницами ленты. */
+/** Адрес страницы ленты: первая — без номера, автор сохраняется. */
 export function postFeedUrl(page: number, authorId?: number): string {
   const query = new URLSearchParams();
   if (authorId) query.set("author", String(authorId));

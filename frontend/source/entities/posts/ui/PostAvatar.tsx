@@ -1,42 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import cn from "classnames";
+import Image from "next/image";
 import { useState } from "react";
 import s from "./post.module.scss";
 
-interface Props {
-  src?: string | null;
+interface PostAvatarProps {
+  src: string | null;
   name: string;
   className?: string;
 }
 
-/** Аватар автора; если фото недоступно, показывает первую букву имени. */
-export function PostAvatar({ src, name, className }: Props) {
-  return (
-    <AvatarImage
-      key={src}
-      src={src}
-      name={name}
-      className={className}
-    />
-  );
-}
-
-/** Показывает фотографию по адресу, который вернул сервер. */
-function AvatarImage({ src, name, className }: Props) {
-  const [broken, setBroken] = useState(false);
+/** Фото автора; если его нет или оно не загрузилось — первая буква имени. */
+export function PostAvatar({ src, name, className }: PostAvatarProps) {
+  const [brokenSrc, setBrokenSrc] = useState<string | null>(null);
   return (
     <span className={cn(s.avatar, className)}>
-      {src && !broken ? (
-        <Image
-          src={src}
-          alt={name}
-          fill
-          sizes="64px"
-          unoptimized
-          onError={() => setBroken(true)}
-        />
+      {src && src !== brokenSrc ? (
+        <Image src={src} alt={name} fill sizes="64px" unoptimized onError={() => setBrokenSrc(src)} />
       ) : (
         <span aria-label={name}>{name.charAt(0).toUpperCase()}</span>
       )}

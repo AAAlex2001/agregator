@@ -2,7 +2,8 @@
 
 import { AccountSummary, CompanyCard } from "@/entities/account";
 import { AccountForm, useAccountEditor } from "@/features/account-editor";
-import { ACCOUNTS_PATH } from "@/shared/lib/admin-paths";
+import { ACCOUNTS_PATH, accountPostsPath } from "@/shared/lib/admin-paths";
+import Button from "@/shared/ui/button";
 import Loader from "@/shared/ui/loader";
 import Message from "@/shared/ui/message";
 import Page from "@/shared/ui/page";
@@ -29,6 +30,7 @@ const AccountProfile = ({ accountId }: AccountProfileProps) => {
         backHref={ACCOUNTS_PATH}
         title={name || account.email || account.phone || `Учётная запись №${account.id}`}
         description={`#${account.id}`}
+        action={<Button variant="outline" href={accountPostsPath(account.id)}>Публикации</Button>}
       />
 
       <div className={styles.columns}>

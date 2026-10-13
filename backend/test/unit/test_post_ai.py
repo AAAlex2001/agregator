@@ -6,8 +6,9 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from models.account import Account
+from services.posts.ai import AiError
 from services.posts.config import PostSettings
-from services.posts.exceptions import EmptyAiAnswerError, TooManyAiRequestsError
+from services.posts.exceptions import AiUnavailableError, TooManyAiRequestsError
 from services.posts.use_cases.write_with_ai import WritePostWithAiUseCase, to_html
 
 USER = Account(id=1, email="anna@mail.ru")
@@ -58,7 +59,7 @@ def test_code_fence_and_plain_text_become_paragraphs() -> None:
 
 
 def test_empty_answer_is_an_error() -> None:
-    with pytest.raises(EmptyAiAnswerError):
+    with pytest.raises(AiUnavailableError):
         write("<p> </p>")
 
 
@@ -80,3 +81,27 @@ def test_hourly_limit_stops_requests() -> None:
         write("<p>Текст</p>", requests=FakeAiRequests(issued))
 
     assert 0 < error.value.retry_after <= 10 * 60 + 1
+
+
+def test_answer_limit_counts_text_after_sanitization():
+    """Разметка и экранирование не съедают лимит, длинный ответ отклоняется сервером."""
+    assert write("<p>" + "&amp;" * 5000 + "</p>").startswith("<p>")
+    with pytest.raises(AiUnavailableError, match="5000"):
+        write("<p>" + "я" * 5001 + "</p>")
+
+
+class BrokenAi:
+    """Модель недоступна."""
+
+    async def complete(self, system: str, user: str, max_tokens: int) -> str:
+        raise AiError("нет ответа")
+
+
+def test_unavailable_model_is_counted_and_reported():
+    requests = FakeAiRequests()
+    usecase = WritePostWithAiUseCase(BrokenAi(), requests, PostSettings(_env_file=None))
+
+    with pytest.raises(AiUnavailableError):
+        asyncio.run(usecase.execute(USER, "Напиши пост", ""))
+
+    assert len(requests.issued) == 1

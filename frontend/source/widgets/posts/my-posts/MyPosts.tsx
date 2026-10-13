@@ -2,27 +2,30 @@
 
 import cn from "classnames";
 import { useState } from "react";
-import type { PostStatus } from "@/source/entities/posts";
+import { PostAvatar, type PostStatus } from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
-import { PostAvatar } from "@/source/entities/posts";
 import Button from "@/source/shared/ui/Button";
-import { usePostCounts } from "@/source/features/posts/my-posts/load-counts/model/usePostCounts";
-import { PostList } from "../list/PostList";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
+import { PostList } from "../list/PostList";
 import s from "../posts.module.scss";
 
-const STATUS_HINTS: Record<PostStatus, string> = {
-  published: "Ваши опубликованные записи. Управление — в меню публикации.",
-  draft: "Черновики видите только вы. Опубликовать — через «Изменить» в меню.",
-  hidden: "Эти публикации скрыты модератором.",
-};
+const TABS: { status: PostStatus; label: string; hint: string }[] = [
+  { status: "published", label: "Публикации", hint: "Ваши опубликованные записи. Управление — в меню публикации." },
+  { status: "draft", label: "Черновики", hint: "Черновики видите только вы. Опубликовать — через «Изменить» в меню." },
+  { status: "hidden", label: "Скрытые", hint: "Публикации, скрытые модератором. Их видите только вы." },
+];
 
-/** Мои публикации и черновики со счётчиками и действиями автора. */
-export function MyPosts({ initialStatus = "published" }: { initialStatus?: PostStatus }) {
+interface MyPostsProps {
+  initialStatus: PostStatus;
+}
+
+/** Свои публикации по вкладкам: опубликованные, черновики и скрытые модератором. */
+export function MyPosts({ initialStatus }: MyPostsProps) {
   const { user } = useSession();
-  const [status, setStatus] = useState<PostStatus>(initialStatus);
-  const { counts, reload } = usePostCounts(user?.id);
+  const [status, setStatus] = useState(initialStatus);
   const name = [user?.first_name, user?.last_name].filter(Boolean).join(" ") || "Мой профиль";
+  const current = TABS.find((tab) => tab.status === status);
+
   return (
     <div className={s.section}>
       <div className={s.head}>
@@ -36,65 +39,30 @@ export function MyPosts({ initialStatus = "published" }: { initialStatus?: PostS
         <Button href="/posts/new">Написать пост</Button>
       </div>
       <div className={s.profile}>
-        <PostAvatar
-          src={user?.avatar_url}
-          name={name}
-          className={s.avatar}
-        />
-        <div>
-          <Title as="h2" text={name} className={s.profileTitle} />
-          <Subtitle
-            className={s.profileSubtitle}
-            text={
-              counts
-                ? `${counts.published} публикаций · ${counts.draft} черновиков`
-                : "Ваши публикации и черновики"
-            }
-          />
-        </div>
+        <PostAvatar src={user?.avatar_url ?? null} name={name} className={s.avatar} />
+        <Title as="h2" text={name} className={s.profileTitle} />
       </div>
-      <div
-        className={s.tabs}
-        role="tablist"
-        aria-label="Мои публикации"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={status === "published"}
-          className={cn(s.tab, status === "published" && s.active)}
-          onClick={() => setStatus("published")}
-        >
-          Публикации
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={status === "draft"}
-          className={cn(s.tab, status === "draft" && s.active)}
-          onClick={() => setStatus("draft")}
-        >
-          Черновики
-        </button>
-        {Boolean(counts?.hidden) && (
+      <div className={s.tabs} role="tablist" aria-label="Мои публикации">
+        {TABS.map((tab) => (
           <button
+            key={tab.status}
             type="button"
             role="tab"
-            aria-selected={status === "hidden"}
-            className={cn(s.tab, status === "hidden" && s.active)}
-            onClick={() => setStatus("hidden")}
+            aria-selected={status === tab.status}
+            className={cn(s.tab, { [s.active]: status === tab.status })}
+            onClick={() => setStatus(tab.status)}
           >
-            Скрытые
+            {tab.label}
           </button>
-        )}
+        ))}
       </div>
-      <p className={s.hint}>{STATUS_HINTS[status]}</p>
+      <p className={s.hint}>{current?.hint}</p>
       <PostList
-        key={`${status}-${user?.id}`}
+        key={status}
         query={{ mode: "my", status }}
         emptyTitle="Здесь пока пусто"
         emptyText="Расскажите о своём опыте и услугах: текст, фото и видео."
-        onChanged={reload}
+        emptyAction={{ label: "Написать пост", href: "/posts/new" }}
       />
     </div>
   );

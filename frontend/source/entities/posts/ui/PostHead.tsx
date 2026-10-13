@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { PostAvatar } from "./PostAvatar";
+import { formatDateLong } from "@/source/shared/lib/formatDate";
 import type { PostAuthor } from "../model/types";
+import { PostAvatar } from "./PostAvatar";
 import s from "./post.module.scss";
 
-interface Props {
+interface PostHeadProps {
   author: PostAuthor;
   date?: string;
   note?: string;
@@ -12,29 +13,18 @@ interface Props {
   menu?: ReactNode;
 }
 
-/** Показывает автора, дату, просмотры и меню публикации. */
-export function PostHead({ author, date, note, views, menu }: Props) {
+/** Автор, дата, просмотры и меню публикации. */
+export function PostHead({ author, date, note, views, menu }: PostHeadProps) {
   const name = author.name || "Пользователь";
   return (
     <div className={s.head}>
-      <Link
-        className={s.author}
-        href={`/posts?author=${author.id}`}
-      >
-        <PostAvatar
-          src={author.avatar_url}
-          name={name}
-          className={s.avatar}
-        />
+      <Link className={s.author} href={`/posts?author=${author.id}`}>
+        <PostAvatar src={author.avatar_url} name={name} className={s.avatar} />
         <span className={s.info}>
           <span className={s.name}>{name}</span>
           {date && (
             <span className={s.date}>
-              {new Date(date).toLocaleDateString("ru-RU", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
+              <time dateTime={date}>{formatDateLong(date)}</time>
               {note && ` · ${note}`}
               {views !== undefined && ` · Просмотров: ${views}`}
             </span>

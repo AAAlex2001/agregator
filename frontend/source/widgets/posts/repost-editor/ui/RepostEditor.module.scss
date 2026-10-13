@@ -17,15 +17,8 @@
   font-weight: 400;
   color: var(--color-text-secondary);
 }
-.error {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  color: var(--color-error);
+.notice {
+  color: var(--color-text-secondary);
   font-size: 14px;
-}
-
-.loadError {
-  width: 100%;
+  line-height: 22px;
 }

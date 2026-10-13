@@ -1,43 +1,35 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { loadPost } from "@/source/entities/posts/server";
-import { postMetadata } from "@/source/entities/posts/lib/postSeo";
-import { PostJsonLd } from "@/source/entities/posts/ui/PostJsonLd";
+import { postMetadata, PostJsonLd } from "@/source/entities/posts";
+import { loadPost, loadThreads } from "@/source/entities/posts/server";
 import { PostDetail } from "@/source/widgets/posts/detail";
-import { PostCardSkeleton } from "@/source/widgets/posts/skeleton";
 
-interface PageProps {
+interface PostPageProps {
   params: Promise<{ id: string }>;
 }
 
-/** Описание опубликованного поста для поисковиков и ссылок. */
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+/** Номер публикации из адреса или null, если это не номер. */
+async function postId(params: PostPageProps["params"]): Promise<number | null> {
   const id = Number((await params).id);
-  if (!Number.isSafeInteger(id) || id < 1) return postMetadata(null);
-  return postMetadata(await loadPost(id));
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
-/** Показывает пост и обсуждение; чужие черновики недоступны. */
-async function PostPageContent({ params }: PageProps) {
-  const id = Number((await params).id);
-  if (!Number.isSafeInteger(id) || id < 1) notFound();
-  const initialPost = await loadPost(id, true);
-  if (initialPost === null) notFound();
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const id = await postId(params);
+  return postMetadata(id ? await loadPost(id) : null);
+}
+
+/** Публикация с обсуждением; черновик видит только автор. */
+export default async function PostPage({ params }: PostPageProps) {
+  const id = await postId(params);
+  const post = id ? await loadPost(id) : null;
+  if (!post) notFound();
+  const threads = post.status === "published" ? await loadThreads(post.id) : null;
 
   return (
     <>
-      {initialPost && <PostJsonLd post={initialPost} />}
-      <PostDetail key={id} id={id} initialPost={initialPost} />
+      <PostJsonLd post={post} />
+      <PostDetail post={post} threads={threads} />
     </>
-  );
-}
-
-/** Показывает скелетон, пока загружается существующая публикация. */
-export default function PostPage(props: PageProps) {
-  return (
-    <Suspense fallback={<PostCardSkeleton />}>
-      <PostPageContent {...props} />
-    </Suspense>
   );
 }

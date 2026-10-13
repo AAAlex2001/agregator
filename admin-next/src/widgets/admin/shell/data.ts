@@ -5,6 +5,8 @@ import {
   DASHBOARD_PATH,
   LEADS_PATH,
   ORDERS_PATH,
+  POSTS_PATH,
+  POST_REPORTS_PATH,
   RTN_CHANGE_REPORTS_PATH,
   RTN_PATH,
   RTN_QUESTIONS_PATH,
@@ -34,6 +36,8 @@ export const ADMIN_NAV = [
   {
     title: "Контент",
     items: [
+      { href: POSTS_PATH, label: "Публикации", Icon: FileTextIcon },
+      { href: POST_REPORTS_PATH, label: "Жалобы на публикации", Icon: BellIcon },
       { href: ARTICLES_PATH, label: "Статьи", Icon: FileTextIcon },
       { href: TAGS_PATH, label: "Теги", Icon: TagIcon },
     ],

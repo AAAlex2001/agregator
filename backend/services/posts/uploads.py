@@ -8,14 +8,25 @@ from fastapi import UploadFile
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from services.posts.config import UPLOADS_DIR
+from services.posts.exceptions import UploadError
 
 MEGABYTE = 1024 * 1024
 IMAGE_EXTENSIONS = {"JPEG": ".jpg", "MPO": ".jpg", "PNG": ".png", "WEBP": ".webp"}
 JPEG_QUALITY = 90
-
-
-class UploadError(ValueError):
-    """Файл не подходит: неверный формат или превышен размер."""
+VIDEO_BRANDS = {
+    b"isom",
+    b"iso2",
+    b"iso3",
+    b"iso4",
+    b"iso5",
+    b"iso6",
+    b"mp41",
+    b"mp42",
+    b"avc1",
+    b"M4V ",
+    b"qt  ",
+    b"dash",
+}
 
 
 def detect_extension(content: bytes) -> str:
@@ -73,6 +84,11 @@ async def save_image(file: UploadFile, max_size: int) -> str:
     return f"posts/{filename}"
 
 
+def is_video_header(head: bytes) -> bool:
+    """Отличает MP4/MOV от HEIC и AVIF, у которых тоже есть контейнер ftyp."""
+    return head[4:8] == b"ftyp" and head[8:12] in VIDEO_BRANDS
+
+
 async def save_video(file: UploadFile, max_size: int) -> str:
     """Сохраняет MP4/MOV в uploads/posts с проверкой размера и заголовка."""
 
@@ -80,7 +96,7 @@ async def save_video(file: UploadFile, max_size: int) -> str:
         raise UploadError(f"Видео больше {max_size // MEGABYTE} МБ")
 
     head = await file.read(12)
-    if head[4:8] != b"ftyp":
+    if not is_video_header(head):
         raise UploadError("Допустимо только видео MP4 или MOV")
 
     directory = UPLOADS_DIR / "posts"
@@ -111,3 +127,10 @@ def remove_file(path: str) -> None:
     if not file_path.is_relative_to(UPLOADS_DIR.resolve() / "posts"):
         raise ValueError("Файл должен находиться в папке публикаций")
     file_path.unlink(missing_ok=True)
+
+
+def remove_files(paths: list[str]) -> None:
+    """Удаляет файлы публикации после того, как записи о них ушли из базы."""
+
+    for path in paths:
+        remove_file(path)

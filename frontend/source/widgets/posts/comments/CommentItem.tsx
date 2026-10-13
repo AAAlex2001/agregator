@@ -3,11 +3,12 @@
 import { useState, type ReactNode } from "react";
 import { CommentCard, type PostComment } from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
+import { CommentForm, CommentLike } from "@/source/features/posts/comments";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
-import { CommentForm, CommentLike, CommentMenu } from "@/source/features/posts/comments";
+import { CommentMenu } from "./CommentMenu";
 import s from "./comments.module.scss";
 
-interface Props {
+interface CommentItemProps {
   postId: number;
   comment: PostComment;
   onReply: (comment: PostComment) => void;
@@ -15,46 +16,32 @@ interface Props {
   children?: ReactNode;
 }
 
-/** Соединяет комментарий с правкой, лайком и действием «Ответить». */
-export function CommentItem({ postId, comment, onReply, onChanged, children }: Props) {
+/** Комментарий с меню, правкой, лайком и кнопкой «Ответить». */
+export function CommentItem({ postId, comment, onReply, onChanged, children }: CommentItemProps) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
-  const [editing, setEditing] = useState(false);
-  const reply = () => {
-    if (user) onReply(comment);
-    else openAuth("login");
-  };
-  const saved = () => {
-    setEditing(false);
-    onChanged();
-  };
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <CommentCard
       comment={comment}
-      menu={
-        <CommentMenu
-          comment={comment}
-          onEdit={() => setEditing(true)}
-          onChanged={onChanged}
-        />
-      }
+      menu={<CommentMenu comment={comment} onEdit={() => setIsEditing(true)} onDeleted={onChanged} />}
       editor={
-        editing && (
+        isEditing && (
           <CommentForm
             postId={postId}
             comment={comment}
-            onSaved={saved}
-            onCancel={() => setEditing(false)}
+            onSaved={() => {
+              setIsEditing(false);
+              onChanged();
+            }}
+            onCancel={() => setIsEditing(false)}
           />
         )
       }
       actions={
         <div className={s.actions}>
-          <button
-            type="button"
-            className={s.reply}
-            onClick={reply}
-          >
+          <button type="button" className={s.reply} onClick={() => (user ? onReply(comment) : openAuth("login"))}>
             Ответить
           </button>
           <CommentLike comment={comment} />

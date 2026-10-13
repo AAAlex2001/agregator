@@ -1,76 +1,51 @@
 "use client";
 
-import { useState } from "react";
-import type { PostPage, PostFeedQuery } from "@/source/entities/posts";
-import { usePostList } from "@/source/features/posts/feed/load-posts/model/usePostList";
+import type { PostFeedQuery } from "@/source/entities/posts";
+import { usePostList } from "@/source/features/posts/load-posts";
 import Button from "@/source/shared/ui/Button";
 import { EmptyState } from "@/source/shared/ui/EmptyState";
 import { PostCardSkeleton, PostsSkeleton } from "../skeleton";
 import { PostItem } from "./PostItem";
-import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "../posts.module.scss";
 
-interface Props {
+interface PostListProps {
   query: PostFeedQuery;
   emptyTitle: string;
   emptyText: string;
-  initial?: PostPage;
-  offset?: number;
-  onChanged?: () => void;
+  emptyAction: { label: string; href: string };
 }
 
-/** Список публикаций с состояниями загрузки, ошибкой и следующей порцией. */
-export function PostList({ query, emptyTitle, emptyText, initial, offset, onChanged }: Props) {
-  const list = usePostList(query, initial, offset);
-  const [hidden, setHidden] = useState<number[]>([]);
-  const items = list.items.filter((post) => !hidden.includes(post.id));
-  const deleted = () => {
-    list.reload();
-    onChanged?.();
-  };
-  const unsaved = (id: number) => {
-    setHidden((previous) => [...previous, id]);
-    list.reload();
-  };
+/** Личный раздел публикаций: загрузка, пустое состояние, ошибка с повтором и «Показать ещё». */
+export function PostList({ query, emptyTitle, emptyText, emptyAction }: PostListProps) {
+  const list = usePostList(query);
+
+  if (list.isLoading) return <PostsSkeleton />;
+  if (list.error) {
+    return (
+      <EmptyState title="Ошибка загрузки" subtitle={list.error} actionLabel="Повторить" onAction={list.reload} />
+    );
+  }
+  if (list.items.length === 0) {
+    return (
+      <EmptyState title={emptyTitle} subtitle={emptyText} actionLabel={emptyAction.label} actionHref={emptyAction.href} />
+    );
+  }
+
   return (
     <>
-      {list.error && (
-        <div className={s.error} role="alert">
-          <EmptyState
-            title="Ошибка загрузки"
-            subtitle={list.error}
-            actionLabel="Повторить"
-            onAction={list.reload}
-          />
-        </div>
-      )}
-      {list.loading && list.items.length === 0 && <PostsSkeleton />}
-      {!list.loading && !list.error && items.length === 0 && (
-        <div className={s.empty}>
-          <Title as="h2" text={emptyTitle} className={s.emptyTitle} />
-          <Subtitle text={emptyText} className={s.emptySubtitle} />
-          <Button href={query.mode === "my" ? "/posts/new" : "/posts"}>
-            {query.mode === "my" ? "Написать пост" : "Перейти в ленту"}
-          </Button>
-        </div>
-      )}
       <div className={s.list}>
-        {items.map((post) => (
+        {list.items.map((post) => (
           <PostItem
             key={post.id}
             post={post}
-            onDeleted={deleted}
-            onUnsaved={query.mode === "saved" ? () => unsaved(post.id) : undefined}
+            onDeleted={() => list.remove(post.id)}
+            onUnsaved={query.mode === "saved" ? () => list.remove(post.id) : undefined}
           />
         ))}
       </div>
-      {list.loadingMore && <PostCardSkeleton />}
-      {list.hasMore && (
-        <Button
-          variant="secondary"
-          disabled={list.loading}
-          onClick={list.loadMore}
-        >
+      {list.isLoadingMore && <PostCardSkeleton />}
+      {list.hasMore && !list.isLoadingMore && (
+        <Button variant="secondary" onClick={list.loadMore}>
           Показать ещё
         </Button>
       )}

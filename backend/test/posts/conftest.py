@@ -72,8 +72,9 @@ async def post_client(posts_database, monkeypatch, tmp_path):
     from database.database import get_db
     from dependencies import internal_auth
     from routes.admin_posts import router as admin_router
-    from routes.posts import router
+    from routes.posts import post_error_handler, router
     from services.posts import uploads
+    from services.posts.exceptions import PostError
 
     async def database():
         async with posts_database() as db:
@@ -86,6 +87,7 @@ async def post_client(posts_database, monkeypatch, tmp_path):
 
     monkeypatch.setattr(uploads, "UPLOADS_DIR", tmp_path)
     app = FastAPI()
+    app.add_exception_handler(PostError, post_error_handler)
     app.include_router(router, prefix="/api")
     app.include_router(admin_router, prefix="/api")
     monkeypatch.setattr(internal_auth, "INTERNAL_API_TOKEN", "posts-test-admin")

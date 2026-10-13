@@ -1,40 +1,28 @@
 "use client";
 
 import { PostCard, type Post } from "@/source/entities/posts";
-import { PostMenu } from "@/source/features/posts/post/actions/PostMenu";
-import { PostReactions } from "@/source/features/posts/post/reactions";
-import { usePostView } from "@/source/features/posts/post/track-view/usePostView";
+import { PostReactions } from "@/source/features/posts/reactions";
+import { usePostView } from "@/source/features/posts/track-view";
+import { PostMenu } from "./PostMenu";
 
-/** Соединяет карточку публикации с меню, реакциями и учётом просмотра. */
-export function PostItem({
-  post,
-  onDeleted,
-  onUnsaved,
-}: {
+interface PostItemProps {
   post: Post;
+  showOpen?: boolean;
   onDeleted: () => void;
   onUnsaved?: () => void;
-}) {
-  const published = post.status === "published";
-  const ref = usePostView(post.id, published);
+}
+
+/** Публикация с меню, реакциями и учётом просмотра. */
+export function PostItem({ post, showOpen = true, onDeleted, onUnsaved }: PostItemProps) {
+  const isPublished = post.status === "published";
+  const card = usePostView(post.id, isPublished);
+
   return (
     <PostCard
-      ref={ref}
+      ref={card}
       post={post}
-      menu={
-        <PostMenu
-          post={post}
-          onDeleted={onDeleted}
-        />
-      }
-      footer={
-        published && (
-          <PostReactions
-            post={post}
-            onUnsaved={onUnsaved}
-          />
-        )
-      }
+      menu={<PostMenu post={post} showOpen={showOpen} onDeleted={onDeleted} />}
+      footer={isPublished && <PostReactions post={post} onUnsaved={onUnsaved} />}
     />
   );
 }

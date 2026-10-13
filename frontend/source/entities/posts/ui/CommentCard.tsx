@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { PostAvatar } from "./PostAvatar";
+import { formatDateLong } from "@/source/shared/lib/formatDate";
 import type { PostComment } from "../model/types";
+import { PostAvatar } from "./PostAvatar";
 import s from "./comment.module.scss";
 
-interface Props {
+interface CommentCardProps {
   comment: PostComment;
   menu?: ReactNode;
   editor?: ReactNode;
@@ -12,35 +13,21 @@ interface Props {
   children?: ReactNode;
 }
 
-/** Показывает автора, текст комментария и слоты для действий и ответов. */
-export function CommentCard({ comment, menu, editor, actions, children }: Props) {
+/** Автор и текст комментария; действия, форма правки и ответы приходят слотами. */
+export function CommentCard({ comment, menu, editor, actions, children }: CommentCardProps) {
   const name = comment.author.name || "Пользователь";
   return (
     <article className={s.card}>
-      <PostAvatar
-        src={comment.author.avatar_url}
-        name={name}
-        className={s.avatar}
-      />
+      <PostAvatar src={comment.author.avatar_url} name={name} className={s.avatar} />
       <div className={s.body}>
         <div className={s.head}>
-          <Link
-            className={s.author}
-            href={`/posts?author=${comment.author.id}`}
-          >
+          <Link className={s.author} href={`/posts?author=${comment.author.id}`}>
             {name}
           </Link>
           {menu}
         </div>
-        <time
-          className={s.date}
-          dateTime={comment.created_at}
-        >
-          {new Date(comment.created_at).toLocaleDateString("ru-RU", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+        <time className={s.date} dateTime={comment.created_at}>
+          {formatDateLong(comment.created_at)}
         </time>
         {editor || (
           <p className={s.text}>

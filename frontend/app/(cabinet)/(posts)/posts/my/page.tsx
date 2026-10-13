@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
-import { MyPosts } from "@/source/widgets/posts/my-posts";
+import type { PostStatus } from "@/source/entities/posts";
 import { PostAccess } from "@/source/widgets/posts/layout";
+import { MyPosts } from "@/source/widgets/posts/my-posts";
 
-export const metadata: Metadata = {
-  title: "Мои публикации",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = { title: "Мои публикации", robots: { index: false, follow: false } };
 
-/** Открывает личный раздел публикаций после входа. */
-export default async function Page({
-  searchParams,
-}: {
+const STATUSES: PostStatus[] = ["published", "draft", "hidden"];
+
+interface MyPostsPageProps {
   searchParams: Promise<{ status?: string }>;
-}) {
-  const status = (await searchParams).status;
+}
+
+/** Свои публикации; вкладка открывается из адреса (?status=draft после сохранения черновика). */
+export default async function MyPostsPage({ searchParams }: MyPostsPageProps) {
+  const requested = (await searchParams).status;
+  const status = STATUSES.find((item) => item === requested) ?? "published";
+
   return (
     <PostAccess>
-      <MyPosts initialStatus={status === "draft" ? "draft" : "published"} />
+      <MyPosts key={status} initialStatus={status} />
     </PostAccess>
   );
 }

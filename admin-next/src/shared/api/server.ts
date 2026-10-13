@@ -4,7 +4,7 @@ import { isValidSessionToken, SESSION_COOKIE } from "./session";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://backend:8000/api";
 
-const ALLOWED_PREFIXES = ["content/", "leads", "contact-deals", "rtn/", "dashboard", "orders", "accounts"];
+const ALLOWED_PREFIXES = ["content/", "leads", "contact-deals", "rtn/", "dashboard", "orders", "accounts", "posts"];
 
 const PUBLIC_PATHS = new Set(["rtn/taxonomy"]);
 
@@ -38,6 +38,8 @@ export const proxyToBackend = async (request: NextRequest, path: string): Promis
     headers,
     body: hasBody ? request.body : undefined,
     cache: "no-store",
+    redirect: "manual",
+    signal: request.signal,
     ...(hasBody && { duplex: "half" }),
   } as RequestInit);
 

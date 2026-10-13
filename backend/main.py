@@ -62,8 +62,10 @@ from routes import (
     tech_diag,
     telegram_auth,
 )
+from services.posts.exceptions import PostError
 from services.techexpert.service import router as techexpert_router
 from tasks.auto_reject import run_auto_reject_loop
+from tasks.post_media_cleanup import run_post_media_cleanup_loop
 from utils.redis_sliding_window import redis_sliding_window
 from utils.request_context import request_id_var
 from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
@@ -84,7 +86,11 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     await ws_pubsub.start()
     await redis_sliding_window.start()
     auto_reject_task = asyncio.create_task(run_auto_reject_loop())
+    media_cleanup_task = asyncio.create_task(run_post_media_cleanup_loop())
     yield
+    media_cleanup_task.cancel()
+    with suppress(asyncio.CancelledError):
+        await media_cleanup_task
     auto_reject_task.cancel()
     with suppress(asyncio.CancelledError):
         await auto_reject_task
@@ -93,6 +99,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
+app.add_exception_handler(PostError, posts.post_error_handler)
 
 
 cors_origins_env = os.getenv("CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000")
@@ -119,6 +126,7 @@ async def request_id_middleware(
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
     return response
+
 
 app.include_router(login.router, prefix="/api")
 app.include_router(telegram_auth.router, prefix="/api")
@@ -175,6 +183,7 @@ app.include_router(techexpert_router, prefix="/api")
 uploads_dir = Path(__file__).resolve().parent / "uploads"
 uploads_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+
 
 @app.get("/")
 async def root() -> dict[str, str]:

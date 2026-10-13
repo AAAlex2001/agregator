@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import StrEnum
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 
 from models.account import Account
 from models.posts import (
@@ -17,6 +18,16 @@ from models.posts import (
     PostStatus,
     ReportStatus,
 )
+from services.posts.html import plain_text
+
+EXCERPT_LENGTH = 200
+
+
+class ModerationStatus(StrEnum):
+    """Решение модератора: скрыть пост или вернуть его в ленту."""
+
+    HIDDEN = "hidden"
+    PUBLISHED = "published"
 
 
 @dataclass
@@ -47,7 +58,7 @@ class PostMediaSchema(BaseModel):
 
 
 class PostAuthorSchema(BaseModel):
-    """Автор поста."""
+    """Автор поста: только публичное имя и фото."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -58,7 +69,8 @@ class PostAuthorSchema(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def from_account(cls, value: object) -> object:
-        """Берёт публичное имя и фото из аккаунта Ресурса."""
+        """Берёт публичное имя и фото из аккаунта."""
+
         if isinstance(value, Account):
             return {"id": value.id, "name": value.display_name, "avatar_url": value.avatar_url}
         return value
@@ -85,7 +97,7 @@ class OriginalPostSchema(BaseModel):
 
 
 class PostSchema(BaseModel):
-    """Пост целиком. liked и saved — для того, кто смотрит. У репоста — оригинал в repost_of."""
+    """Пост целиком. liked, saved и following — для того, кто смотрит. У репоста — оригинал в repost_of."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -105,6 +117,13 @@ class PostSchema(BaseModel):
     created_at: datetime = Field(..., description="Когда создан")
     updated_at: datetime = Field(..., description="Когда изменено содержимое")
     published_at: datetime | None = Field(None, description="Когда опубликован")
+
+    @computed_field(description="Начало текста без разметки — для заголовка и описания страницы")
+    @property
+    def excerpt(self) -> str:
+        """Первые символы видимого текста."""
+
+        return plain_text(self.html)[:EXCERPT_LENGTH]
 
     @classmethod
     def for_viewer(cls, post: Post, marks: ViewerMarks) -> Self:
@@ -145,14 +164,6 @@ class UnseenSchema(BaseModel):
     count: int = Field(..., description="Новых постов")
 
 
-class PostCountsSchema(BaseModel):
-    """Сколько своих постов в каждом состоянии. Репосты не считаются."""
-
-    published: int = Field(0, description="Опубликованные")
-    draft: int = Field(0, description="Черновики")
-    hidden: int = Field(0, description="Скрытые")
-
-
 class LikesSchema(BaseModel):
     """Лайки поста или комментария после нажатия."""
 
@@ -161,16 +172,18 @@ class LikesSchema(BaseModel):
 
 
 class CommentSaveSchema(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
     """Новый комментарий или ответ на комментарий."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     text: str = Field(..., min_length=1, max_length=MAX_COMMENT_LENGTH, description="Текст")
     reply_to_id: int | None = Field(None, description="На какой комментарий ответ")
 
 
 class CommentEditSchema(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
     """Новый текст своего комментария."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     text: str = Field(..., min_length=1, max_length=MAX_COMMENT_LENGTH, description="Текст")
 
@@ -181,6 +194,7 @@ class CommentSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(..., description="ID комментария")
+    post_id: int = Field(..., description="Публикация комментария")
     author: PostAuthorSchema = Field(..., description="Автор")
     text: str = Field(..., description="Текст")
     parent_id: int | None = Field(None, description="Корень ветки")
@@ -212,8 +226,9 @@ class CommentThreadPageSchema(BaseModel):
 
 
 class AssistantRequestSchema(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
     """Просьба к ИИ-помощнику и текущий текст поста."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     instruction: str = Field(
         ..., min_length=2, max_length=MAX_AI_INSTRUCTION, description="Что сделать с текстом"
@@ -228,8 +243,9 @@ class AssistantAnswerSchema(BaseModel):
 
 
 class ReportSaveSchema(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
     """Жалоба: что не так."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
 
     reason: str = Field(..., min_length=3, max_length=MAX_REPORT_LENGTH, description="Причина")
 
@@ -249,7 +265,7 @@ class ReportSchema(BaseModel):
 
 
 class ReportPageSchema(BaseModel):
-    """Страница жалоб для модератора."""
+    """Страница жалоб для модератора и сколько их всего."""
 
     items: list[ReportSchema]
     total: int

@@ -38,6 +38,10 @@ async def test_posts_migration_upgrade_downgrade_upgrade():
     indexes_spec = importlib.util.spec_from_file_location("migration_posts_indexes", indexes_path)
     indexes = importlib.util.module_from_spec(indexes_spec)
     indexes_spec.loader.exec_module(indexes)
+    cleanup_path = path.with_name("180_post_media_cleanup.py")
+    cleanup_spec = importlib.util.spec_from_file_location("migration_media_cleanup", cleanup_path)
+    cleanup = importlib.util.module_from_spec(cleanup_spec)
+    cleanup_spec.loader.exec_module(cleanup)
 
     def apply(connection, action):
         """Выполняет миграцию в тестовой схеме."""
@@ -63,6 +67,8 @@ async def test_posts_migration_upgrade_downgrade_upgrade():
             )
             await connection.run_sync(apply, migration.upgrade)
             await connection.run_sync(apply, indexes.upgrade)
+            await connection.run_sync(apply, cleanup.upgrade)
+            assert (await connection.execute(text("SELECT to_regclass('ix_post_media_expired')"))).scalar()
             assert (await connection.execute(text("SELECT to_regclass('ix_posts_sitemap')"))).scalar()
             assert (
                 await connection.execute(text("SELECT to_regclass('ix_posts_author_feed')"))
@@ -76,6 +82,10 @@ async def test_posts_migration_upgrade_downgrade_upgrade():
                     "INSERT INTO notifications (id,user_id,type) VALUES (1,1,'POST_ACTIVITY'),(2,1,'CHAT_MESSAGE')"
                 )
             )
+            await connection.run_sync(apply, cleanup.downgrade)
+            assert (
+                await connection.execute(text("SELECT to_regclass('ix_post_media_expired')"))
+            ).scalar() is None
             await connection.run_sync(apply, indexes.downgrade)
             assert (await connection.execute(text("SELECT to_regclass('ix_posts_author_feed')"))).scalar()
             assert (await connection.execute(text("SELECT to_regclass('ix_posts_sitemap')"))).scalar() is None
@@ -88,6 +98,8 @@ async def test_posts_migration_upgrade_downgrade_upgrade():
         async with engine.begin() as connection:
             await connection.run_sync(apply, migration.upgrade)
             await connection.run_sync(apply, indexes.upgrade)
+            await connection.run_sync(apply, cleanup.upgrade)
+            assert (await connection.execute(text("SELECT to_regclass('ix_post_media_expired')"))).scalar()
             assert (await connection.execute(text("SELECT to_regclass('ix_posts_sitemap')"))).scalar()
             assert (
                 await connection.execute(text("SELECT to_regclass('ix_posts_author_feed')"))

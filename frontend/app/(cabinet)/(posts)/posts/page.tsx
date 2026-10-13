@@ -1,28 +1,21 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { POSTS_PAGE_SIZE, postFeedUrl, readPostFeedPage, type PostFeedParams } from "@/source/entities/posts";
 import { loadPostsFeed } from "@/source/entities/posts/server";
-import {
-  postFeedUrl,
-  readPostFeedPage,
-  type PostFeedParams,
-} from "@/source/entities/posts/lib/postFeedPage";
-import { PostsFeed } from "@/source/widgets/posts/feed";
+import { FeedList, FeedPagination, PostsFeed } from "@/source/widgets/posts/feed";
 import { PostsSkeleton } from "@/source/widgets/posts/skeleton";
-import { PostList } from "@/source/widgets/posts/list/PostList";
-import Button from "@/source/shared/ui/Button";
-import s from "@/source/widgets/posts/posts.module.scss";
 
-interface PageProps {
+interface PostsPageProps {
   searchParams: Promise<PostFeedParams>;
 }
 
-/** Задаёт отдельный адрес для каждой страницы ленты и каждого автора. */
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+/** У каждой страницы ленты и ленты автора свой адрес и заголовок. */
+export async function generateMetadata({ searchParams }: PostsPageProps): Promise<Metadata> {
   const { authorId, page } = readPostFeedPage(await searchParams);
-  let title = authorId ? "Публикации автора" : "Публикации сообщества";
-  if (page > 1) title += ` — страница ${page}`;
-  const description = "Опыт, новости и публикации специалистов Ресурс-Плюс.";
+  const base = authorId ? "Публикации автора" : "Публикации сообщества";
+  const title = page > 1 ? `${base} — страница ${page}` : base;
+  const description = "Опыт, новости и публикации специалистов промышленной безопасности на Ресурс-Плюс.";
   const url = postFeedUrl(page, authorId);
 
   return {
@@ -30,63 +23,35 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     description,
     alternates: { canonical: url },
     robots: { index: true, follow: true },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url,
-      images: ["/og-default.png"],
-    },
+    openGraph: { title, description, type: "website", url, images: ["/og-default.png"] },
   };
 }
 
-interface FeedContentProps {
-  authorId?: number;
+interface FeedPageProps {
   page: number;
+  authorId?: number;
 }
 
-/** Загружает только список публикаций и ссылки на соседние страницы. */
-async function FeedContent({ authorId, page }: FeedContentProps) {
-  const offset = (page - 1) * 20;
-  const initial = await loadPostsFeed(offset, authorId);
-  if (initial && page > 1 && initial.items.length === 0) notFound();
-  const hasNextPage = initial && offset + initial.items.length < initial.total;
+/** Страница ленты с сервера: публикации сразу в разметке и ссылки на соседние страницы. */
+async function FeedPage({ page, authorId }: FeedPageProps) {
+  const feed = await loadPostsFeed(page, authorId);
+  if (page > 1 && feed.items.length === 0) notFound();
 
   return (
     <>
-      <PostList
-        query={{ mode: authorId ? "author" : "all", authorId }}
-        initial={initial}
-        offset={offset}
-        emptyTitle="Публикаций пока нет"
-        emptyText="Поделитесь опытом, новостями и полезными материалами."
-      />
-      {(page > 1 || hasNextPage) && (
-        <nav className={s.head} aria-label="Страницы публикаций">
-          {page > 1 && (
-            <Button href={postFeedUrl(page - 1, authorId)} variant="transparent">
-              Предыдущая страница
-            </Button>
-          )}
-          {hasNextPage && (
-            <Button href={postFeedUrl(page + 1, authorId)} variant="transparent">
-              Следующая страница
-            </Button>
-          )}
-        </nav>
-      )}
+      <FeedList posts={feed.items} />
+      <FeedPagination page={page} pages={Math.ceil(feed.total / POSTS_PAGE_SIZE)} authorId={authorId} />
     </>
   );
 }
 
-/** Сохраняет заголовок и вкладки на экране во время загрузки публикаций. */
-export default async function PostsPage({ searchParams }: PageProps) {
+export default async function PostsPage({ searchParams }: PostsPageProps) {
   const { authorId, page } = readPostFeedPage(await searchParams);
 
   return (
     <PostsFeed key={`${authorId ?? "all"}-${page}`} authorId={authorId}>
       <Suspense fallback={<PostsSkeleton />}>
-        <FeedContent authorId={authorId} page={page} />
+        <FeedPage page={page} authorId={authorId} />
       </Suspense>
     </PostsFeed>
   );

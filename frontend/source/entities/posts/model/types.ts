@@ -1,15 +1,19 @@
 export type PostStatus = "draft" | "published" | "hidden";
 
+export const POSTS_PAGE_SIZE = 20;
+
 export interface PostMedia {
   id: number;
   kind: "photo" | "video";
   url: string;
 }
+
 export interface PostAuthor {
   id: number;
   name: string | null;
   avatar_url: string | null;
 }
+
 export interface RepostedPost {
   id: number;
   author: PostAuthor;
@@ -19,7 +23,9 @@ export interface RepostedPost {
   updated_at: string;
   published_at: string | null;
 }
+
 export interface Post extends RepostedPost {
+  excerpt: string;
   repost_of: RepostedPost | null;
   status: PostStatus;
   likes_count: number;
@@ -30,20 +36,23 @@ export interface Post extends RepostedPost {
   saved: boolean;
   following: boolean;
 }
+
 export interface PostPage {
   items: Post[];
   total: number;
 }
-export type PostCounts = Record<PostStatus, number>;
+
 export interface PostPayload {
   html: string;
   media_ids: number[];
   draft: boolean;
 }
+
 export interface PostLikes {
   liked: boolean;
   likes_count: number;
 }
+
 export interface PostComment {
   id: number;
   author: PostAuthor;
@@ -54,10 +63,12 @@ export interface PostComment {
   liked: boolean;
   created_at: string;
 }
+
 export interface CommentThread {
   comment: PostComment;
   replies: PostComment[];
 }
+
 export interface ThreadPage {
   items: CommentThread[];
   total: number;
@@ -65,7 +76,6 @@ export interface ThreadPage {
 }
 
 export interface PostFeedQuery {
-  mode: "all" | "following" | "my" | "saved" | "reposts" | "author";
+  mode: "following" | "my" | "saved" | "reposts";
   status?: PostStatus;
-  authorId?: number;
 }

@@ -38,3 +38,13 @@ export const rtnFromQuestionPath = (questionId: number) => `${NEW_RTN_PATH}?from
 
 /** Адрес карточки сделки по покупке контактов. */
 export const contactDealPath = (id: number) => `${CONTACT_DEALS_PATH}/${id}`;
+
+export const POSTS_PATH = "/posts";
+
+export const POST_REPORTS_PATH = "/posts/reports";
+
+/** Адрес публикации для модератора. */
+export const postPath = (id: number) => `${POSTS_PATH}/${id}`;
+
+/** Публикации и черновики выбранного пользователя. */
+export const accountPostsPath = (id: number) => `${ACCOUNTS_PATH}/${id}/posts`;

@@ -2,24 +2,18 @@
 
 from models.posts import Post
 from services.posts.repo import PostRepository
-from services.posts.uploads import remove_file
+from services.posts.uploads import remove_files
 
 
 class DeletePostUseCase:
-    """Удалить пост вместе с его фото и видео на диске. У репоста — пересчитать репосты оригинала."""
+    """Удаляет пост с репостами и обсуждением, потом его фото и видео с диска."""
 
     def __init__(self, posts: PostRepository) -> None:
         self.posts = posts
 
     async def execute(self, post: Post) -> None:
-        """Удалить пост из базы, потом его файлы."""
+        """Удаляет пост из базы, затем файлы."""
 
-        paths = [item.path for item in post.media]
-        original_id = post.repost_of_id
+        paths = await self.posts.media_paths_for_delete(post.id)
         await self.posts.delete(post)
-
-        for path in paths:
-            remove_file(path)
-
-        if original_id is not None:
-            await self.posts.refresh_reposts(original_id)
+        remove_files(paths)

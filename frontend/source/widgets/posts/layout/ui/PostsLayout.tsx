@@ -3,84 +3,59 @@
 import cn from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, type ReactNode } from "react";
-import { NewspaperIcon, SquarePenIcon, BookmarkIcon, RepostIcon } from "@/source/entities/posts/ui/icons";
-import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
+import type { ReactNode } from "react";
+import { BookmarkIcon, RepostIcon, SquarePenIcon } from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
+import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
+import { NewspaperIcon } from "@/source/shared/ui/icons/NewspaperIcon";
 import s from "./PostsLayout.module.scss";
 
-const sections = [
+const SECTIONS = [
   { href: "/posts", label: "Лента", Icon: NewspaperIcon },
   { href: "/posts/my", label: "Мои публикации", Icon: SquarePenIcon },
   { href: "/posts/saved", label: "Сохранённое", Icon: BookmarkIcon },
   { href: "/posts/reposts", label: "Репосты", Icon: RepostIcon },
 ];
 
-/** Меню публикаций справа на ПК и над лентой на телефоне. */
-export function PostsLayout({ children }: { children: ReactNode }) {
+/** Какой раздел подсветить в меню и как назвать страницу в хлебных крошках. */
+function currentPage(pathname: string) {
+  if (pathname === "/posts/new") return { section: "/posts/my", title: "Новая публикация" };
+  if (pathname.endsWith("/edit")) return { section: "/posts/my", title: "Редактирование" };
+  if (pathname.endsWith("/repost")) return { section: "/posts/reposts", title: "Репост" };
+  const section = SECTIONS.find((item) => item.href === pathname);
+  return { section: section?.href ?? "/posts", title: section?.label ?? "Публикация" };
+}
+
+interface PostsLayoutProps {
+  children: ReactNode;
+}
+
+/** Раздел публикаций: хлебные крошки и меню разделов — справа на ПК и над лентой на телефоне. */
+export function PostsLayout({ children }: PostsLayoutProps) {
   const pathname = usePathname();
-  const navRef = useRef<HTMLElement>(null);
-  const { user, role } = useSession();
-  const signedIn = Boolean(user || role);
-  const section = sections.find((item) => item.href === pathname);
-  let current = section?.href ?? "/posts";
-  let pageTitle = section?.label ?? "Публикация";
-
-  if (pathname === "/posts/new") {
-    current = "/posts/my";
-    pageTitle = "Новая публикация";
-  }
-
-  if (pathname.endsWith("/edit")) {
-    current = "/posts/my";
-    pageTitle = "Редактирование";
-  }
-
-  if (pathname.endsWith("/repost")) {
-    current = "/posts/reposts";
-    pageTitle = "Репост";
-  }
-
-  // Прокручивает только панель вкладок, чтобы выбранный раздел был виден.
-  useEffect(() => {
-    const nav = navRef.current;
-    const active = nav?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (nav && active) {
-      nav.scrollLeft = active.offsetLeft;
-    }
-  }, [current]);
-
-  const breadcrumbs = [
-    { label: signedIn ? "Профиль" : "Главная", href: signedIn ? "/settings" : "/" },
-    { label: "Публикации", href: "/posts" },
-    ...(pathname === "/posts" ? [] : [{ label: pageTitle }]),
-  ];
+  const { role } = useSession();
+  const page = currentPage(pathname);
+  const home = role ? { label: "Профиль", href: "/settings" } : { label: "Главная", href: "/" };
+  const posts = { label: "Публикации", href: "/posts" };
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
+      <Breadcrumbs items={pathname === "/posts" ? [home, posts] : [home, posts, { label: page.title }]} />
       <div className={s.layout}>
-        <nav
-          ref={navRef}
-          className={s.nav}
-          aria-label="Разделы публикаций"
-        >
-          {sections.map(({ href, label, Icon }) => (
+        <nav className={s.nav} aria-label="Разделы публикаций">
+          {SECTIONS.map(({ href, label, Icon }) => (
             <Link
               key={href}
               href={href}
-              className={cn(s.item, { [s.active]: href === current })}
-              aria-current={href === current ? "page" : undefined}
+              className={cn(s.item, { [s.active]: href === page.section })}
+              aria-current={href === page.section ? "page" : undefined}
             >
               <Icon className={s.icon} />
               {label}
             </Link>
           ))}
         </nav>
-        <div
-          key={pathname}
-          className={s.content}
-        >
+        <div key={pathname} className={s.content}>
           {children}
         </div>
       </div>

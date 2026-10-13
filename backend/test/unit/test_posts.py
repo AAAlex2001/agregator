@@ -17,7 +17,7 @@ from schemas.posts import (
 from services.posts.exceptions import (
     CommentNotFoundError,
     EmptyPostError,
-    PostMediaNotFoundError,
+    PostMediaUnavailableError,
 )
 from services.posts.html import clean_html
 from services.posts.use_cases.create_comment import CreateCommentUseCase
@@ -26,10 +26,13 @@ from services.posts.use_cases.create_repost import CreateRepostUseCase
 
 
 class FakeNotify:
-    """Сохраняет уведомления только в памяти теста."""
+    """Запоминает, кому ушли уведомления."""
 
-    async def execute(self, notification):
-        pass
+    def __init__(self) -> None:
+        self.sent: list[tuple[int, str]] = []
+
+    async def execute(self, user_id, actor, kind, post_id=None, comment_id=None):
+        self.sent.append((user_id, kind))
 
 
 AUTHOR = Account(id=1, email="anna@mail.ru", first_name="Анна")
@@ -99,7 +102,9 @@ def test_draft_is_not_published() -> None:
     assert post.published_at is None
 
 
-@pytest.mark.parametrize("html", ["<p><br></p>", "<p>&nbsp;</p>", "<p>&#32;</p>", "<script>alert(1)</script>"])
+@pytest.mark.parametrize(
+    "html", ["<p><br></p>", "<p>&nbsp;</p>", "<p>&#32;</p>", "<script>alert(1)</script>"]
+)
 def test_empty_post_is_not_saved(html: str) -> None:
     with pytest.raises(EmptyPostError):
         save(PostSaveSchema(html=html))
@@ -108,7 +113,7 @@ def test_empty_post_is_not_saved(html: str) -> None:
 def test_foreign_media_is_not_attached() -> None:
     stranger = PostMedia(id=9, owner_id=2, kind="photo", path="posts/c.jpg")
 
-    with pytest.raises(PostMediaNotFoundError):
+    with pytest.raises(PostMediaUnavailableError):
         save(PostSaveSchema(html="<p>Текст</p>", media_ids=[9]), [stranger])
 
 
@@ -208,7 +213,7 @@ def test_reply_to_comment_of_other_post_is_rejected() -> None:
 
 def test_attached_media_cannot_be_stolen_by_another_post():
     photo = PostMedia(id=9, owner_id=AUTHOR.id, post_id=100, kind="photo", path="posts/a.jpg")
-    with pytest.raises(PostMediaNotFoundError):
+    with pytest.raises(PostMediaUnavailableError):
         save(PostSaveSchema(html="Текст", media_ids=[9]), [photo])
 
 
@@ -239,12 +244,41 @@ def test_author_schema_does_not_expose_private_contacts():
 
 
 def test_hidden_post_stays_hidden_after_author_edit():
-    from services.posts.use_cases.save_post import SavePostUseCase
+    from services.posts.use_cases.post_form import PostFormUseCase
 
     post = Post(id=8, author_id=AUTHOR.id, status=PostStatus.HIDDEN)
     asyncio.run(
-        SavePostUseCase(FakePostRepository(), FakeMediaRepository([])).fill(
+        PostFormUseCase(FakePostRepository(), FakeMediaRepository([])).fill(
             post, AUTHOR.id, PostSaveSchema(html="Новая версия")
         )
     )
     assert post.status == PostStatus.HIDDEN
+
+
+def test_repost_cannot_be_edited():
+    from services.posts.exceptions import RepostNotEditableError
+    from services.posts.use_cases.update_post import UpdatePostUseCase
+
+    repost = Post(id=5, author_id=AUTHOR.id, repost_of_id=1)
+    with pytest.raises(RepostNotEditableError):
+        asyncio.run(
+            UpdatePostUseCase(FakePostRepository(), FakeMediaRepository([])).execute(
+                repost, PostSaveSchema(html="Правка")
+            )
+        )
+
+
+def test_reply_notifies_author_of_the_comment():
+    reader = Account(id=2, first_name="Читатель")
+    post = Post(id=1, author_id=AUTHOR.id)
+    comments = FakeCommentRepository()
+    notify = FakeNotify()
+    root = asyncio.run(
+        CreateCommentUseCase(comments, notify).execute(reader, post, CommentSaveSchema(text="Вопрос"))
+    )
+    asyncio.run(
+        CreateCommentUseCase(comments, notify).execute(
+            AUTHOR, post, CommentSaveSchema(text="Ответ", reply_to_id=root.id)
+        )
+    )
+    assert notify.sent == [(AUTHOR.id, "comment"), (reader.id, "reply")]

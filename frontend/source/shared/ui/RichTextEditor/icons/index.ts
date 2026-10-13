@@ -1,0 +1,10 @@
+export { BoldIcon } from "./bold-icon";
+export { Heading2Icon } from "./heading2-icon";
+export { Heading3Icon } from "./heading3-icon";
+export { ItalicIcon } from "./italic-icon";
+export { LinkIcon } from "./link-icon";
+export { ListIcon } from "./list-icon";
+export { ListOrderedIcon } from "./list-ordered-icon";
+export { QuoteIcon } from "./quote-icon";
+export { SmileIcon } from "./smile-icon";
+export { UnderlineIcon } from "./underline-icon";

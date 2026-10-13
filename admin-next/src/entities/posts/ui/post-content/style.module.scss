@@ -1,0 +1,53 @@
+.content {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+
+  p + p {
+    margin-top: 12px;
+  }
+
+  h2,
+  h3 {
+    margin: 16px 0 8px;
+    font-size: 18px;
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+  }
+
+  blockquote {
+    margin: 12px 0;
+    padding-left: 16px;
+    border-left: 3px solid var(--border);
+  }
+
+  a {
+    color: var(--accent-hover);
+  }
+}
+
+.media {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 240px));
+  gap: 12px;
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    background: var(--raised);
+  }
+}
