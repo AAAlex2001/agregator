@@ -1,12 +1,12 @@
-import { OrderSearchBar } from "@/source/features/order-search";
+import { OrderSearchBar } from "@/source/features/orders/search";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./search-block.module.scss";
 
-interface Props {
+interface SearchBlockProps {
   withDirectionsFilter?: boolean;
 }
 
-const SearchBlock = ({ withDirectionsFilter = false }: Props) => (
+const SearchBlock = ({ withDirectionsFilter = false }: SearchBlockProps) => (
   <section className={s.section} id="search">
     <div className={s.content}>
       <header className={s.header}>

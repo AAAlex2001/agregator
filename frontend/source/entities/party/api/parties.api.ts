@@ -1,4 +1,4 @@
-import { fetchBase } from "@/source/shared/api/base";
+import { json, send } from "@/source/shared/api/request";
 
 export interface PartySuggestion {
   value: string;
@@ -19,10 +19,8 @@ export interface PartySuggestion {
   [key: string]: unknown;
 }
 
+/** Подсказки по компаниям из ДаДата по ИНН или названию. */
 export async function fetchPartySuggestions(query: string): Promise<PartySuggestion[]> {
-  const result = await fetchBase<PartySuggestion[]>("/register/party-suggestions", {
-    method: "POST",
-    body: { query, count: 10 },
-  });
-  return result ?? [];
+  const response = await send("/register/party-suggestions", json("POST", { query, count: 10 }), "Не удалось найти компанию");
+  return response.json();
 }

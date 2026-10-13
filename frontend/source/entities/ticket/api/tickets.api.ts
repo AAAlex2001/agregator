@@ -1,158 +1,50 @@
-import { API_URL } from "@/source/shared/api/config";
-import { fetchWithSession } from "@/source/shared/api/session";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
-import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
-import type {
-  SupportTicket,
-  TicketAttachment,
-  TicketCategory,
-  TicketStatus,
-} from "../model/types";
+import { send, sendForm } from "@/source/shared/api/request";
+import type { NewTicket, Ticket, TicketList } from "../model/types";
 
-interface ApiAttachment {
-  name: string;
-  url: string;
+/** Обращения пользователя, свежие первыми. */
+export async function fetchTickets(offset: number, limit: number): Promise<TicketList> {
+  const response = await send(`/support/tickets?skip=${offset}&limit=${limit}`, {}, "Не удалось загрузить обращения");
+  return response.json();
 }
 
-interface ApiMessage {
-  id: number;
-  author: "user" | "support";
-  author_name: string;
-  text: string;
-  created_at: string;
-  attachments: ApiAttachment[];
+/** Обращение с перепиской. Открытие помечает ответы поддержки прочитанными. */
+export async function fetchTicket(id: number): Promise<Ticket> {
+  const response = await send(`/support/tickets/${id}`, {}, "Не удалось загрузить обращение");
+  return response.json();
 }
 
-interface ApiTicketSummary {
-  id: number;
-  number: string;
-  subject: string;
-  category: TicketCategory;
-  status: TicketStatus;
-  created_at: string;
-  updated_at: string;
-  has_unread: boolean;
-  last_message_preview: string;
-}
-
-interface ApiTicketDetail extends ApiTicketSummary {
-  messages: ApiMessage[];
-}
-
-interface ApiTicketList {
-  items: ApiTicketSummary[];
-  has_more: boolean;
-}
-
-function mapAttachment(a: ApiAttachment): TicketAttachment {
-  return { name: a.name, url: a.url };
-}
-
-function mapTicketSummary(t: ApiTicketSummary): SupportTicket {
-  return {
-    id: t.id,
-    number: t.number,
-    subject: t.subject,
-    category: t.category,
-    status: t.status,
-    createdAt: t.created_at,
-    updatedAt: t.updated_at,
-    hasUnread: t.has_unread,
-    lastMessagePreview: t.last_message_preview ?? "",
-    messages: [],
-  };
-}
-
-function mapTicketDetail(t: ApiTicketDetail): SupportTicket {
-  return {
-    ...mapTicketSummary(t),
-    messages: t.messages.map((m) => ({
-      id: m.id,
-      author: m.author,
-      authorName: m.author_name,
-      text: m.text,
-      createdAt: m.created_at,
-      attachments: m.attachments.map(mapAttachment),
-    })),
-  };
-}
-
-export async function fetchTickets(skip = 0, limit = 50): Promise<{
-  items: SupportTicket[];
-  hasMore: boolean;
-}> {
-  const res = await fetchWithSession(
-    `${API_URL}/support/tickets?skip=${skip}&limit=${limit}`,
+/** Создать обращение с первым сообщением и файлами. */
+export async function createTicket(ticket: NewTicket): Promise<Ticket> {
+  const response = await sendForm(
+    "/support/tickets",
+    "POST",
+    ticket.files,
+    (files) => {
+      const body = new FormData();
+      body.append("subject", ticket.subject);
+      body.append("category", ticket.category);
+      body.append("message", ticket.message);
+      files.forEach((file) => body.append("files", file));
+      return body;
+    },
+    "Не удалось создать обращение",
   );
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось загрузить обращения"));
-  }
-  const data = (await res.json()) as ApiTicketList;
-  return { items: data.items.map(mapTicketSummary), hasMore: data.has_more };
+  return response.json();
 }
 
-export async function fetchTicket(ticketId: number): Promise<SupportTicket> {
-  const res = await fetchWithSession(`${API_URL}/support/tickets/${ticketId}`);
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось загрузить обращение"));
-  }
-  const data = (await res.json()) as ApiTicketDetail;
-  return mapTicketDetail(data);
-}
-
-export interface CreateTicketPayload {
-  subject: string;
-  category: TicketCategory;
-  message: string;
-  files: File[];
-}
-
-export async function createTicket(p: CreateTicketPayload): Promise<SupportTicket> {
-  const build = (files: File[]) => {
-    const fd = new FormData();
-    fd.append("subject", p.subject);
-    fd.append("category", p.category);
-    fd.append("message", p.message);
-    for (const file of files) fd.append("files", file);
-    return fd;
-  };
-  const res = await stableMultipartFetch({
-    input: `${API_URL}/support/tickets`,
-    method: "POST",
-    files: p.files,
-    buildBody: build,
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось создать обращение"));
-  }
-  const data = (await res.json()) as ApiTicketDetail;
-  return mapTicketDetail(data);
-}
-
-export interface ReplyPayload {
-  text: string;
-  files: File[];
-}
-
-export async function replyToTicket(
-  ticketId: number,
-  p: ReplyPayload,
-): Promise<SupportTicket> {
-  const build = (files: File[]) => {
-    const fd = new FormData();
-    fd.append("text", p.text);
-    for (const file of files) fd.append("files", file);
-    return fd;
-  };
-  const res = await stableMultipartFetch({
-    input: `${API_URL}/support/tickets/${ticketId}/messages`,
-    method: "POST",
-    files: p.files,
-    buildBody: build,
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось отправить сообщение"));
-  }
-  const data = (await res.json()) as ApiTicketDetail;
-  return mapTicketDetail(data);
+/** Ответить в обращении. Возвращает обращение с обновлённой перепиской. */
+export async function replyToTicket(id: number, text: string, files: File[]): Promise<Ticket> {
+  const response = await sendForm(
+    `/support/tickets/${id}/messages`,
+    "POST",
+    files,
+    (attached) => {
+      const body = new FormData();
+      body.append("text", text);
+      attached.forEach((file) => body.append("files", file));
+      return body;
+    },
+    "Не удалось отправить сообщение",
+  );
+  return response.json();
 }

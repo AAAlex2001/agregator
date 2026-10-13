@@ -46,8 +46,8 @@ function Stars({ rating }: { rating: number | null }) {
   const filledCount = rating !== null ? Math.round(rating) : 0;
   return (
     <span className={s.stars} aria-hidden="true">
-      {Array.from({ length: 5 }, (_, index) => (
-        <StarIcon key={index} filled={index < filledCount} width={18} height={18} />
+      {[1, 2, 3, 4, 5].map((star) => (
+        <StarIcon key={star} filled={star <= filledCount} width={18} height={18} />
       ))}
     </span>
   );
@@ -161,7 +161,7 @@ export function ExpertCard({
               {(hasDocuments || hasExecutorFiles) && (
                 <div className={s.filesArea}>
                   {hasDocuments && (
-                    <DocumentsGallery documents={lastOrder.documents} heading="Документы заказчика" />
+                    <DocumentsGallery documents={lastOrder.documents} />
                   )}
                   {hasExecutorFiles && (
                     <TechSpecFiles title="Файлы исполнителя:" files={lastOrder.executorFiles} />

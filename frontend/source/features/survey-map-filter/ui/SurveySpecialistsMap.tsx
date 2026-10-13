@@ -1,8 +1,8 @@
 "use client";
 
 import { useExpertsMap } from "@/source/entities/expert";
-import { SURVEY_KINDS } from "@/source/entities/survey";
-import { useSession } from "@/source/features/session";
+import { SURVEY_KINDS } from "@/source/entities/directions/survey";
+import { useSession } from "@/source/entities/session";
 import { FilterDropdown, toMarker } from "@/source/features/expert-map-filter";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { useSurveyMapFilter } from "../model/useSurveyMapFilter";

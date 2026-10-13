@@ -1,6 +1,6 @@
-export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 import type { OrderWorkType } from "./workTypes";
 
+export type BadgeVariant = "blue" | "green" | "gray" | "orange" | "brown" | "purple";
 export type OrderSortBy = "created_at" | "sum_amount" | "responses_deadline";
 
 export interface Badge {
@@ -20,23 +20,22 @@ export interface OrderDocuments {
   other: string[];
 }
 
+export type DocumentCategory = keyof OrderDocuments;
+export type SingleDocumentCategory = "technical" | "contract" | "company";
+
 export const MAX_ORDER_DOCUMENTS = 6;
 export const MAX_ORDER_FILES_TOTAL_BYTES = 100 * 1024 * 1024;
-
 export const PENDING_ORDER_UUID_KEY = "pendingOrderUuid";
 
-export const DOCUMENT_LABELS = {
+export const DOCUMENT_LABELS: Record<DocumentCategory, string> = {
   technical: "Техническое задание",
   contract: "Проект договора",
   company: "Карточка предприятия",
   other: "Иное",
-} as const;
+};
 
-export type DocumentCategory = keyof OrderDocuments;
-export type SingleDocumentCategory = "technical" | "contract" | "company";
-
-export const DOCUMENT_CATEGORIES: readonly DocumentCategory[] = ["technical", "contract", "company", "other"];
-export const SINGLE_DOCUMENT_CATEGORIES: readonly SingleDocumentCategory[] = ["technical", "contract", "company"];
+export const DOCUMENT_CATEGORIES: DocumentCategory[] = ["technical", "contract", "company", "other"];
+export const SINGLE_DOCUMENT_CATEGORIES: SingleDocumentCategory[] = ["technical", "contract", "company"];
 
 export function emptyDocuments(): OrderDocuments {
   return { technical: [], contract: [], company: [], other: [] };
@@ -47,7 +46,12 @@ export function documentPaths(documents: OrderDocuments): string[] {
 }
 
 export function countDocuments(documents: OrderDocuments): number {
-  return documents.technical.length + documents.contract.length + documents.company.length + documents.other.length;
+  return documentPaths(documents).length;
+}
+
+/** Приём откликов закончился: срок указан и уже прошёл. */
+export function isResponsesClosed(order: { responsesDeadline: string | null }): boolean {
+  return order.responsesDeadline !== null && new Date(order.responsesDeadline) <= new Date();
 }
 
 export interface OrderApiItem {
@@ -99,31 +103,38 @@ export interface OrdersApiList {
   has_more: boolean;
 }
 
-export interface OrderCardData {
+export interface OrderSummary {
   id: number;
-  publicId: string;
-  customerId: number;
   title: string;
   customer: string;
   customerInn: string;
-  company: string;
-  comment: string;
   startDate: string;
   date: string;
-  createdAtDisplay: string;
   sum: string;
+  responsesDeadline: string | null;
+  createdAtDisplay: string;
+  status: string;
+  workType: OrderWorkType;
+  badges: Badge[];
+  previousTitle: string | null;
+  previousSum: string | null;
+  previousDeadline: string | null;
+  previousBadges: Badge[] | null;
+}
+
+export interface OrderCardData extends OrderSummary {
+  publicId: string;
+  customerId: number;
+  company: string;
+  comment: string;
   sumAmountRaw: number;
   startDateRaw: string;
   deadlineRaw: string;
-  responsesDeadline: string | null;
   requiresExpert: boolean;
   requiresLicense: boolean;
-  workType: OrderWorkType;
   details: Record<string, unknown> | null;
   documents: OrderDocuments;
-  badges: Badge[];
   badgesRaw: OrderApiBadge[];
-  status: string;
   assignedExpertName: string;
   executorName: string;
   executorAvatarUrl: string | null;
@@ -137,10 +148,6 @@ export interface OrderCardData {
   executorFiles: string[];
   acceptedResponseId: number | null;
   customerHasReview: boolean;
-  previousTitle?: string | null;
-  previousComment?: string | null;
-  previousSum?: string | null;
-  previousDeadline?: string | null;
-  previousDocuments?: OrderDocuments | null;
-  previousBadges?: Badge[] | null;
+  previousComment: string | null;
+  previousDocuments: OrderDocuments | null;
 }

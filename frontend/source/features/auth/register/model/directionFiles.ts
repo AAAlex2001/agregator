@@ -1,6 +1,6 @@
-import type { RegisterDocument } from "./api";
+import type { ExpertDocument, ExpertDocumentSlot } from "@/source/entities/user";
 
-export interface DirectionFilesState {
+export interface DirectionFiles {
   auditDocuments: File[];
   cadastralDiploma: File | null;
   cadastralCertificate: File | null;
@@ -21,7 +21,7 @@ export interface DirectionFilesState {
   surveyRtnDocuments: File[];
 }
 
-export const emptyDirectionFiles: DirectionFilesState = {
+export const EMPTY_DIRECTION_FILES: DirectionFiles = {
   auditDocuments: [],
   cadastralDiploma: null,
   cadastralCertificate: null,
@@ -42,33 +42,29 @@ export const emptyDirectionFiles: DirectionFilesState = {
   surveyRtnDocuments: [],
 };
 
-const FIELD_SLOTS: Record<keyof DirectionFilesState, RegisterDocument["slot"]> = {
-  auditDocuments: "AUDIT_SUPB",
-  cadastralDiploma: "CADASTRAL_DIPLOMA",
-  cadastralCertificate: "CADASTRAL_CERTIFICATE",
-  cadastralDocuments: "CADASTRAL",
-  forensicDiploma: "FORENSIC_DIPLOMA",
-  forensicDocuments: "FORENSIC",
-  techDiagDocuments: "TECH_DIAG",
-  designEducationDocuments: "DESIGN_EDUCATION",
-  designNokDocuments: "DESIGN_NOK",
-  designNrsDocuments: "DESIGN_NRS",
-  designQualificationDocuments: "DESIGN_QUALIFICATION",
-  designRtnDocuments: "DESIGN_RTN",
-  ecologyDocuments: "ECOLOGY",
-  surveyEducationDocuments: "SURVEY_EDUCATION",
-  surveyNokDocuments: "SURVEY_NOK",
-  surveyNrsDocuments: "SURVEY_NRS",
-  surveyQualificationDocuments: "SURVEY_QUALIFICATION",
-  surveyRtnDocuments: "SURVEY_RTN",
-};
+const one = (slot: ExpertDocumentSlot, file: File | null): ExpertDocument[] => (file ? [{ slot, file }] : []);
+const many = (slot: ExpertDocumentSlot, files: File[]): ExpertDocument[] => files.map((file) => ({ slot, file }));
 
-export function toRegisterDocuments(files: DirectionFilesState): RegisterDocument[] {
-  const documents: RegisterDocument[] = [];
-  for (const [field, slot] of Object.entries(FIELD_SLOTS)) {
-    const value = files[field as keyof DirectionFilesState];
-    const list = Array.isArray(value) ? value : value ? [value] : [];
-    for (const file of list) documents.push({ slot, file });
-  }
-  return documents;
+/** Файлы анкет исполнителя одним списком — каждый со своим слотом для бэкенда. */
+export function toExpertDocuments(files: DirectionFiles): ExpertDocument[] {
+  return [
+    ...many("AUDIT_SUPB", files.auditDocuments),
+    ...one("CADASTRAL_DIPLOMA", files.cadastralDiploma),
+    ...one("CADASTRAL_CERTIFICATE", files.cadastralCertificate),
+    ...many("CADASTRAL", files.cadastralDocuments),
+    ...one("FORENSIC_DIPLOMA", files.forensicDiploma),
+    ...many("FORENSIC", files.forensicDocuments),
+    ...many("TECH_DIAG", files.techDiagDocuments),
+    ...many("DESIGN_EDUCATION", files.designEducationDocuments),
+    ...many("DESIGN_NOK", files.designNokDocuments),
+    ...many("DESIGN_NRS", files.designNrsDocuments),
+    ...many("DESIGN_QUALIFICATION", files.designQualificationDocuments),
+    ...many("DESIGN_RTN", files.designRtnDocuments),
+    ...many("ECOLOGY", files.ecologyDocuments),
+    ...many("SURVEY_EDUCATION", files.surveyEducationDocuments),
+    ...many("SURVEY_NOK", files.surveyNokDocuments),
+    ...many("SURVEY_NRS", files.surveyNrsDocuments),
+    ...many("SURVEY_QUALIFICATION", files.surveyQualificationDocuments),
+    ...many("SURVEY_RTN", files.surveyRtnDocuments),
+  ];
 }

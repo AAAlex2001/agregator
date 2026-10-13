@@ -1,6 +1,6 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 import { LaborResourcesWidget } from "@/source/widgets/labor-resources";
 
 export default function EmploymentPage() {

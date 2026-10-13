@@ -1,121 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { AuditExpertProfileFields, emptyAuditExpertProfile } from "@/source/entities/directions/audit";
+import { CadastralProfileFields, emptyCadastralProfile } from "@/source/entities/directions/cadastral";
+import { DesignProfileFields, emptyDesignProfile } from "@/source/entities/directions/design";
+import { EcologyProfileFields, emptyEcologyProfile } from "@/source/entities/directions/ecology";
+import { ExpertiseProfileFields, emptyExpertiseProfile } from "@/source/entities/directions/expertise";
+import { ForensicProfileFields, emptyForensicProfile } from "@/source/entities/directions/forensic";
+import { LaboratoryProfileFields, emptyLaboratoryProfile } from "@/source/entities/directions/laboratory";
+import { ResearchProfileFields, emptyResearchProfile } from "@/source/entities/directions/research";
+import { LocalFilePicker, LocalFilesPicker } from "@/source/entities/directions/shared";
+import { SurveyProfileFields, emptySurveyProfile } from "@/source/entities/directions/survey";
+import { TechDiagProfileFields, emptyTechDiagProfile } from "@/source/entities/directions/tech-diag";
+import { ExpertMapVisibilityFields } from "@/source/entities/expert";
 import { Checkbox, FormSection } from "@/source/shared/ui";
 import { YandexAddressPicker } from "@/source/shared/ui/YandexMap";
-import { ExpertMapVisibilityFields } from "@/source/entities/expert";
-import {
-  emptyExpertiseProfile,
-  ExpertiseProfileFields,
-} from "@/source/features/directions/expertise";
-import {
-  AuditExpertProfileFields,
-  emptyAuditCatalogs,
-  emptyAuditExpertProfile,
-  fetchAuditCatalogs,
-  type AuditCatalogs,
-} from "@/source/features/directions/audit";
-import {
-  CadastralProfileFields,
-  emptyCadastralProfile,
-} from "@/source/features/directions/cadastral";
-import { emptyForensicProfile, ForensicProfileFields } from "@/source/features/directions/forensic";
-import {
-  emptyResearchCatalogs,
-  emptyResearchProfile,
-  fetchResearchCatalogs,
-  ResearchProfileFields,
-  type ResearchCatalogs,
-} from "@/source/features/directions/research";
-import {
-  emptyLaboratoryProfile,
-  LaboratoryProfileFields,
-} from "@/source/features/directions/laboratory";
-import {
-  emptyTechDiagCatalogs,
-  emptyTechDiagProfile,
-  fetchTechDiagCatalogs,
-  TechDiagProfileFields,
-  type TechDiagCatalogs,
-} from "@/source/features/directions/tech-diag";
-import {
-  DesignProfileFields,
-  emptyDesignCatalogs,
-  emptyDesignProfile,
-  fetchDesignCatalogs,
-  type DesignCatalogs,
-} from "@/source/features/directions/design";
-import {
-  EcologyProfileFields,
-  emptyEcologyCatalogs,
-  emptyEcologyProfile,
-  fetchEcologyCatalogs,
-  type EcologyCatalogs,
-} from "@/source/features/directions/ecology";
-import {
-  SurveyProfileFields,
-  emptySurveyCatalogs,
-  emptySurveyProfile,
-  fetchSurveyCatalogs,
-  type SurveyCatalogs,
-} from "@/source/features/directions/survey";
-import { LocalFilePicker } from "@/source/features/directions/shared/ui/LocalFilePicker";
-import { LocalFilesPicker } from "@/source/features/directions/shared/ui/LocalFilesPicker";
+import type { DocListKey, RegisterState } from "../model/types";
+import { useRegisterCatalogs } from "../model/useRegisterCatalogs";
+import { DirectionList } from "./directions/DirectionList";
 import { DirectionOption } from "./directions/DirectionOption";
 import type { StepProps } from "./types";
-import s from "./register-form.module.scss";
-import d from "./directions/DirectionsPicker.module.scss";
+import s from "./ExpertFields.module.scss";
 
-function activeDirections(state: StepProps["state"]): string[] {
-  const profiles: Array<[string, unknown]> = [
-    ["EXPERTISE", state.expertiseProfile],
-    ["AUDIT_SUPB", state.auditExpertProfile],
-    ["TECH_DIAG", state.techDiagProfile],
-    ["DESIGN", state.designProfile],
-    ["ECOLOGY", state.ecologyProfile],
-    ["SURVEY", state.surveyProfile],
-    ["RESEARCH", state.researchProfile],
-    ["LABORATORY", state.laboratoryProfile],
-    ["CADASTRAL", state.cadastralProfile],
-    ["FORENSIC", state.forensicProfile],
-  ];
-  return profiles.filter(([, profile]) => profile !== null).map(([key]) => key);
+const DESIGN_DOCUMENTS: { key: DocListKey; label: string }[] = [
+  { key: "designEducationDocuments", label: "Диплом об образовании — до 5 документов" },
+  { key: "designNokDocuments", label: "Свидетельства НОК — до 5 документов" },
+  { key: "designNrsDocuments", label: "Уведомления о включении в НРС — до 5 документов" },
+  { key: "designQualificationDocuments", label: "Повышение квалификации, курсы — до 5 документов" },
+  { key: "designRtnDocuments", label: "Протоколы аттестации РТН — до 5 документов" },
+];
+
+const SURVEY_DOCUMENTS: { key: DocListKey; label: string }[] = [
+  { key: "surveyEducationDocuments", label: "Диплом об образовании — до 5 документов" },
+  { key: "surveyNokDocuments", label: "Свидетельства НОК — до 5 документов" },
+  { key: "surveyNrsDocuments", label: "Уведомления о включении в НРС — до 5 документов" },
+  { key: "surveyQualificationDocuments", label: "Повышение квалификации, курсы — до 5 документов" },
+  { key: "surveyRtnDocuments", label: "Протоколы аттестации РТН — до 5 документов" },
+];
+
+const PROFILE_DIRECTIONS = [
+  { direction: "EXPERTISE", profile: "expertiseProfile" },
+  { direction: "AUDIT_SUPB", profile: "auditExpertProfile" },
+  { direction: "TECH_DIAG", profile: "techDiagProfile" },
+  { direction: "DESIGN", profile: "designProfile" },
+  { direction: "ECOLOGY", profile: "ecologyProfile" },
+  { direction: "SURVEY", profile: "surveyProfile" },
+  { direction: "RESEARCH", profile: "researchProfile" },
+  { direction: "LABORATORY", profile: "laboratoryProfile" },
+  { direction: "CADASTRAL", profile: "cadastralProfile" },
+  { direction: "FORENSIC", profile: "forensicProfile" },
+] as const;
+
+/** Направления, по которым исполнитель отметил анкету, — карта показывает только их. */
+function activeDirections(state: RegisterState): string[] {
+  return PROFILE_DIRECTIONS.filter((item) => state[item.profile] !== null).map((item) => item.direction);
 }
 
+/** Поля исполнителя: анкеты по направлениям с документами и местоположение для карты. */
 export function ExpertFields({ state, dispatch }: StepProps) {
-  const [catalogs, setCatalogs] = useState<AuditCatalogs>(emptyAuditCatalogs);
-  const [techDiagCatalogs, setTechDiagCatalogs] = useState<TechDiagCatalogs>(emptyTechDiagCatalogs);
-  const [designCatalogs, setDesignCatalogs] = useState<DesignCatalogs>(emptyDesignCatalogs);
-  const [ecologyCatalogs, setEcologyCatalogs] = useState<EcologyCatalogs>(emptyEcologyCatalogs);
-  const [researchCatalogs, setResearchCatalogs] = useState<ResearchCatalogs>(emptyResearchCatalogs);
-  const [surveyCatalogs, setSurveyCatalogs] = useState<SurveyCatalogs>(emptySurveyCatalogs);
+  const catalogs = useRegisterCatalogs();
+  const { directionFiles } = state;
 
-  useEffect(() => {
-    fetchAuditCatalogs().then(setCatalogs).catch(() => undefined);
-    fetchTechDiagCatalogs().then(setTechDiagCatalogs).catch(() => undefined);
-    fetchDesignCatalogs().then(setDesignCatalogs).catch(() => undefined);
-    fetchEcologyCatalogs().then(setEcologyCatalogs).catch(() => undefined);
-    fetchResearchCatalogs().then(setResearchCatalogs).catch(() => undefined);
-    fetchSurveyCatalogs().then(setSurveyCatalogs).catch(() => undefined);
-  }, []);
-
-  const { expertiseProfile, auditExpertProfile, cadastralProfile, forensicProfile } = state;
+  const documentsPicker = (key: DocListKey, label: string, maxFiles?: number) => (
+    <LocalFilesPicker
+      key={key}
+      label={label}
+      files={directionFiles[key]}
+      maxFiles={maxFiles}
+      onAdd={(files) => dispatch({ type: "docAdd", key, files })}
+      onRemove={(file) => dispatch({ type: "docRemove", key, file })}
+    />
+  );
 
   return (
     <>
-      <ul className={d.list}>
+      <DirectionList>
         <DirectionOption
           id="EXPERTISE"
           title="Экспертиза промышленной безопасности"
           description="Удостоверения: область аттестации, объект экспертизы и категория"
-          checked={expertiseProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "expertise", value: expertiseProfile ? null : { ...emptyExpertiseProfile } })
-          }
+          checked={state.expertiseProfile !== null}
+          onToggle={() => dispatch({ type: "expertise", value: state.expertiseProfile ? null : emptyExpertiseProfile })}
         >
-          {expertiseProfile && (
+          {state.expertiseProfile && (
             <ExpertiseProfileFields
-              value={expertiseProfile}
+              value={state.expertiseProfile}
               onChange={(value) => dispatch({ type: "expertise", value })}
             />
           )}
@@ -125,24 +93,19 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           id="AUDIT_SUPB"
           title="Аудит СУПБ"
           description="Аудитор с независимой оценкой квалификации или инспекционный орган типа А"
-          checked={auditExpertProfile !== null}
+          checked={state.auditExpertProfile !== null}
           onToggle={() =>
-            dispatch({ type: "auditExpert", value: auditExpertProfile ? null : { ...emptyAuditExpertProfile } })
+            dispatch({ type: "auditExpert", value: state.auditExpertProfile ? null : emptyAuditExpertProfile })
           }
         >
-          {auditExpertProfile && (
+          {state.auditExpertProfile && (
             <>
               <AuditExpertProfileFields
-                value={auditExpertProfile}
+                value={state.auditExpertProfile}
                 onChange={(value) => dispatch({ type: "auditExpert", value })}
-                catalogs={catalogs}
+                catalogs={catalogs.audit}
               />
-              <LocalFilesPicker
-                label="Дипломы, аттестаты, курсы"
-                files={state.directionFiles.auditDocuments}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "auditDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "auditDocuments", index })}
-              />
+              {documentsPicker("auditDocuments", "Дипломы, аттестаты, курсы")}
             </>
           )}
         </DirectionOption>
@@ -151,33 +114,26 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           id="CADASTRAL"
           title="Кадастровые работы"
           description="Аттестат кадастрового инженера, оборудование и место работы"
-          checked={cadastralProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "cadastral", value: cadastralProfile ? null : { ...emptyCadastralProfile } })
-          }
+          checked={state.cadastralProfile !== null}
+          onToggle={() => dispatch({ type: "cadastral", value: state.cadastralProfile ? null : emptyCadastralProfile })}
         >
-          {cadastralProfile && (
+          {state.cadastralProfile && (
             <>
               <CadastralProfileFields
-                value={cadastralProfile}
+                value={state.cadastralProfile}
                 onChange={(value) => dispatch({ type: "cadastral", value })}
               />
               <LocalFilePicker
                 label="Диплом об образовании"
-                file={state.directionFiles.cadastralDiploma}
+                file={directionFiles.cadastralDiploma}
                 onSelect={(file) => dispatch({ type: "docFile", key: "cadastralDiploma", file })}
               />
               <LocalFilePicker
                 label="Квалификационный аттестат"
-                file={state.directionFiles.cadastralCertificate}
+                file={directionFiles.cadastralCertificate}
                 onSelect={(file) => dispatch({ type: "docFile", key: "cadastralCertificate", file })}
               />
-              <LocalFilesPicker
-                label="Дипломы, аттестаты, курсы"
-                files={state.directionFiles.cadastralDocuments}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "cadastralDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "cadastralDocuments", index })}
-              />
+              {documentsPicker("cadastralDocuments", "Дипломы, аттестаты, курсы")}
             </>
           )}
         </DirectionOption>
@@ -186,28 +142,21 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           id="FORENSIC"
           title="Судебная экспертиза"
           description="Образование, опыт аналогичных экспертиз и кто выдаёт заключение"
-          checked={forensicProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "forensic", value: forensicProfile ? null : { ...emptyForensicProfile } })
-          }
+          checked={state.forensicProfile !== null}
+          onToggle={() => dispatch({ type: "forensic", value: state.forensicProfile ? null : emptyForensicProfile })}
         >
-          {forensicProfile && (
+          {state.forensicProfile && (
             <>
               <ForensicProfileFields
-                value={forensicProfile}
+                value={state.forensicProfile}
                 onChange={(value) => dispatch({ type: "forensic", value })}
               />
               <LocalFilePicker
                 label="Диплом об образовании"
-                file={state.directionFiles.forensicDiploma}
+                file={directionFiles.forensicDiploma}
                 onSelect={(file) => dispatch({ type: "docFile", key: "forensicDiploma", file })}
               />
-              <LocalFilesPicker
-                label="Документы о дополнительном образовании"
-                files={state.directionFiles.forensicDocuments}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "forensicDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "forensicDocuments", index })}
-              />
+              {documentsPicker("forensicDocuments", "Документы о дополнительном образовании")}
             </>
           )}
         </DirectionOption>
@@ -217,15 +166,13 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           title="Научно-исследовательские работы"
           description="Учёная степень, звание и направление научной деятельности"
           checked={state.researchProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "research", value: state.researchProfile ? null : { ...emptyResearchProfile } })
-          }
+          onToggle={() => dispatch({ type: "research", value: state.researchProfile ? null : emptyResearchProfile })}
         >
           {state.researchProfile && (
             <ResearchProfileFields
               value={state.researchProfile}
               onChange={(value) => dispatch({ type: "research", value })}
-              catalogs={researchCatalogs}
+              catalogs={catalogs.research}
             />
           )}
         </DirectionOption>
@@ -236,7 +183,7 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           description="Область аккредитации лаборатории и дополнительные сведения"
           checked={state.laboratoryProfile !== null}
           onToggle={() =>
-            dispatch({ type: "laboratory", value: state.laboratoryProfile ? null : { ...emptyLaboratoryProfile } })
+            dispatch({ type: "laboratory", value: state.laboratoryProfile ? null : emptyLaboratoryProfile })
           }
         >
           {state.laboratoryProfile && (
@@ -252,23 +199,16 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           title="Техническое освидетельствование и диагностирование"
           description="Специалист НК: квалификационные удостоверения, виды и объекты контроля"
           checked={state.techDiagProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "techDiag", value: state.techDiagProfile ? null : { ...emptyTechDiagProfile } })
-          }
+          onToggle={() => dispatch({ type: "techDiag", value: state.techDiagProfile ? null : emptyTechDiagProfile })}
         >
           {state.techDiagProfile && (
             <>
               <TechDiagProfileFields
                 value={state.techDiagProfile}
                 onChange={(value) => dispatch({ type: "techDiag", value })}
-                catalogs={techDiagCatalogs}
+                catalogs={catalogs.techDiag}
               />
-              <LocalFilesPicker
-                label="Квалификационные удостоверения — до 10 документов"
-                files={state.directionFiles.techDiagDocuments}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "techDiagDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "techDiagDocuments", index })}
-              />
+              {documentsPicker("techDiagDocuments", "Квалификационные удостоверения — до 10 документов")}
             </>
           )}
         </DirectionOption>
@@ -278,52 +218,16 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           title="Проектирование промышленных и гражданских объектов"
           description="Специальности по разделам ПД, НОК, НРС и аттестация РТН по промышленной безопасности"
           checked={state.designProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "design", value: state.designProfile ? null : { ...emptyDesignProfile } })
-          }
+          onToggle={() => dispatch({ type: "design", value: state.designProfile ? null : emptyDesignProfile })}
         >
           {state.designProfile && (
             <>
               <DesignProfileFields
                 value={state.designProfile}
                 onChange={(value) => dispatch({ type: "design", value })}
-                catalogs={designCatalogs}
+                catalogs={catalogs.design}
               />
-              <LocalFilesPicker
-                label="Диплом об образовании — до 5 документов"
-                files={state.directionFiles.designEducationDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "designEducationDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "designEducationDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Свидетельства НОК — до 5 документов"
-                files={state.directionFiles.designNokDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "designNokDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "designNokDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Уведомления о включении в НРС — до 5 документов"
-                files={state.directionFiles.designNrsDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "designNrsDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "designNrsDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Повышение квалификации, курсы — до 5 документов"
-                files={state.directionFiles.designQualificationDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "designQualificationDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "designQualificationDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Протоколы аттестации РТН — до 5 документов"
-                files={state.directionFiles.designRtnDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "designRtnDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "designRtnDocuments", index })}
-              />
+              {DESIGN_DOCUMENTS.map((group) => documentsPicker(group.key, group.label, 5))}
             </>
           )}
         </DirectionOption>
@@ -333,52 +237,16 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           title="Инженерные изыскания"
           description="Направления изысканий, НОК, НРС и аттестация РТН по промышленной безопасности"
           checked={state.surveyProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "survey", value: state.surveyProfile ? null : { ...emptySurveyProfile } })
-          }
+          onToggle={() => dispatch({ type: "survey", value: state.surveyProfile ? null : emptySurveyProfile })}
         >
           {state.surveyProfile && (
             <>
               <SurveyProfileFields
                 value={state.surveyProfile}
                 onChange={(value) => dispatch({ type: "survey", value })}
-                catalogs={surveyCatalogs}
+                catalogs={catalogs.survey}
               />
-              <LocalFilesPicker
-                label="Диплом об образовании — до 5 документов"
-                files={state.directionFiles.surveyEducationDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyEducationDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyEducationDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Свидетельства НОК — до 5 документов"
-                files={state.directionFiles.surveyNokDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyNokDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyNokDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Уведомления о включении в НРС — до 5 документов"
-                files={state.directionFiles.surveyNrsDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyNrsDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyNrsDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Повышение квалификации, курсы — до 5 документов"
-                files={state.directionFiles.surveyQualificationDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyQualificationDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyQualificationDocuments", index })}
-              />
-              <LocalFilesPicker
-                label="Протоколы аттестации РТН — до 5 документов"
-                files={state.directionFiles.surveyRtnDocuments}
-                maxFiles={5}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "surveyRtnDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "surveyRtnDocuments", index })}
-              />
+              {SURVEY_DOCUMENTS.map((group) => documentsPicker(group.key, group.label, 5))}
             </>
           )}
         </DirectionOption>
@@ -388,54 +256,42 @@ export function ExpertFields({ state, dispatch }: StepProps) {
           title="Экологическое сопровождение предприятий"
           description="Виды экологических работ, практические навыки и подтверждающие документы"
           checked={state.ecologyProfile !== null}
-          onToggle={() =>
-            dispatch({ type: "ecology", value: state.ecologyProfile ? null : { ...emptyEcologyProfile } })
-          }
+          onToggle={() => dispatch({ type: "ecology", value: state.ecologyProfile ? null : emptyEcologyProfile })}
         >
           {state.ecologyProfile && (
             <>
               <EcologyProfileFields
                 value={state.ecologyProfile}
                 onChange={(value) => dispatch({ type: "ecology", value })}
-                catalogs={ecologyCatalogs}
+                catalogs={catalogs.ecology}
               />
-              <LocalFilesPicker
-                label="Подтверждение квалификационных требований — дипломы, удостоверения, сертификаты"
-                files={state.directionFiles.ecologyDocuments}
-                onAdd={(files) => dispatch({ type: "docAdd", key: "ecologyDocuments", files })}
-                onRemove={(index) => dispatch({ type: "docRemove", key: "ecologyDocuments", index })}
-              />
+              {documentsPicker(
+                "ecologyDocuments",
+                "Подтверждение квалификационных требований — дипломы, удостоверения, сертификаты",
+              )}
             </>
           )}
         </DirectionOption>
-      </ul>
+      </DirectionList>
 
       <FormSection
         title="Где вы находитесь"
         hint="Город и район базирования — заказчикам проще выбрать исполнителя рядом. Это не личный адрес, можно заполнить позже в профиле."
         collapsible
       >
-        <div className={s.locationBlock}>
-          <YandexAddressPicker
-            value={state.location}
-            onChange={(point) => dispatch({ type: "location", point })}
-          />
-          <Checkbox
-            id="travels"
-            checked={state.travels}
-            onChange={(value) => dispatch({ type: "travels", value })}
-          >
+        <div className={s.location}>
+          <YandexAddressPicker value={state.location} onChange={(point) => dispatch({ type: "location", point })} />
+          <Checkbox id="register-travels" checked={state.travels} onChange={(value) => dispatch({ type: "travels", value })}>
             Готов выезжать на объекты в другие регионы
           </Checkbox>
+          <ExpertMapVisibilityFields
+            showOnMap={state.showOnMap}
+            mapFields={state.mapFields}
+            onChangeShowOnMap={(value) => dispatch({ type: "showOnMap", value })}
+            onChangeMapFields={(value) => dispatch({ type: "mapFields", value })}
+            activeDirections={activeDirections(state)}
+          />
         </div>
-
-        <ExpertMapVisibilityFields
-          showOnMap={state.showOnMap}
-          mapFields={state.mapFields}
-          onChangeShowOnMap={(value) => dispatch({ type: "showOnMap", value })}
-          onChangeMapFields={(value) => dispatch({ type: "mapFields", value })}
-          activeDirections={activeDirections(state)}
-        />
       </FormSection>
     </>
   );

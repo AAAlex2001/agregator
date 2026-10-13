@@ -1,0 +1,12 @@
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
+}

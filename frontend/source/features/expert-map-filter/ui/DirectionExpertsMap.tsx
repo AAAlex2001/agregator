@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useExpertsMap } from "@/source/entities/expert";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { toMarker } from "../model/toMarker";
 import { useDirectionFilterGroups } from "../model/useDirectionFilterGroups";

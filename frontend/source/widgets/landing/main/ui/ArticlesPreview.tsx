@@ -10,7 +10,7 @@ import SwiperNavigation from "@/source/shared/ui/SwiperNavigation";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./articles-preview.module.scss";
 
-interface Props {
+interface ArticlesPreviewProps {
   title: string;
   subtitle: string;
   ctaHref: string;
@@ -19,7 +19,7 @@ interface Props {
   navPrefix: string;
 }
 
-const ArticlesPreview = ({ title, subtitle, ctaHref, ctaLabel, items, navPrefix }: Props) => {
+const ArticlesPreview = ({ title, subtitle, ctaHref, ctaLabel, items, navPrefix }: ArticlesPreviewProps) => {
   if (items.length === 0) return null;
 
   return (
@@ -47,18 +47,7 @@ const ArticlesPreview = ({ title, subtitle, ctaHref, ctaLabel, items, navPrefix 
         >
           {items.map((item) => (
             <SwiperSlide key={item.id} className={s.slide}>
-              <ArticleCard
-                kind={item.kind}
-                slug={item.slug}
-                title={item.title}
-                excerpt={item.excerpt}
-                cover_image={item.cover_image}
-                tags={item.tags}
-                published_at={item.published_at}
-                likes_count={item.likes_count}
-                dislikes_count={item.dislikes_count}
-                views_count={item.views_count}
-              />
+              <ArticleCard article={item} />
             </SwiperSlide>
           ))}
         </Swiper>

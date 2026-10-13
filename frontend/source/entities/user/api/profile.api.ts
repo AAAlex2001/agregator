@@ -1,130 +1,52 @@
-﻿import { fetchWithSession } from "@/source/shared/api/session";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
-import type { UserProfile } from "@/source/entities/user";
-import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
-import type { UpdateProfilePayload } from "../model/profilePayload";
+import type { ExpertLocationPayload, UpdateProfilePayload, UserProfile } from "../model/types";
+import { json, send, upload } from "@/source/shared/api/request";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
-
-export async function logout(): Promise<void> {
-  try {
-    await fetch(`${API_URL}/login/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-  } catch {
-  }
-}
-
+/** Профиль текущего пользователя. */
 export async function fetchProfile(): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/profile`);
-  if (!res.ok) throw new Error("Не удалось загрузить профиль");
-  return res.json();
+  const response = await send("/settings/profile", {}, "Не удалось загрузить профиль");
+  return response.json();
 }
 
-export async function updateProfile(data: UpdateProfilePayload): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/profile`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось сохранить данные"));
-  }
-  return res.json();
+/** Сохранить имя, фамилию и телефон. */
+export async function updateProfile(changes: UpdateProfilePayload): Promise<UserProfile> {
+  const response = await send("/settings/profile", json("PUT", changes), "Не удалось сохранить данные");
+  return response.json();
 }
 
-export async function updateExpertLocation(data: {
-  location_lat: number | null;
-  location_lng: number | null;
-  location_address: string | null;
-  location_city: string | null;
-  travels_to_other_regions: boolean;
-  show_on_map: boolean;
-  map_fields: string[];
-}): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/expert-location`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось сохранить локацию"));
-  }
-  return res.json();
-}
-
-export async function updateDirections(directions: string[]): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/directions`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ directions }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось сохранить направления"));
-  }
-  return res.json();
-}
-
-export async function changePassword(
-  newPassword: string,
-  newPasswordConfirm: string,
-): Promise<void> {
-  const res = await fetchWithSession(`${API_URL}/settings/password`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      new_password: newPassword,
-      new_password_confirm: newPasswordConfirm,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось сменить пароль"));
-  }
-}
-
-export async function requestEmailChange(newEmail: string): Promise<void> {
-  const res = await fetchWithSession(`${API_URL}/settings/email/request-change`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ new_email: newEmail }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось отправить код"));
-  }
-}
-
-export async function confirmEmailChange(code: string): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/email/confirm-change`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось подтвердить код"));
-  }
-  return res.json();
-}
-
+/** Загрузить новое фото профиля. */
 export async function uploadAvatar(file: File): Promise<UserProfile> {
-  const res = await stableMultipartFetch({
-    input: `${API_URL}/settings/avatar`,
-    method: "POST",
-    files: [file],
-    buildBody: (files) => {
-      const formData = new FormData();
+  const response = await upload("/settings/avatar", file, "Не удалось загрузить фото");
+  return response.json();
+}
 
-      if (files[0]) {
-        formData.append("file", files[0]);
-      }
+/** Сменить пароль. */
+export async function changePassword(password: string, passwordConfirm: string): Promise<void> {
+  await send(
+    "/settings/password",
+    json("POST", { new_password: password, new_password_confirm: passwordConfirm }),
+    "Не удалось сменить пароль",
+  );
+}
 
-      return formData;
-    },
-  });
+/** Отправить код подтверждения на новую почту. Почта меняется только после ввода кода. */
+export async function requestEmailChange(email: string): Promise<void> {
+  await send("/settings/email/request-change", json("POST", { new_email: email }), "Не удалось отправить код");
+}
 
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Не удалось загрузить фото"));
-  }
+/** Подтвердить новую почту кодом из письма. */
+export async function confirmEmailChange(code: string): Promise<UserProfile> {
+  const response = await send("/settings/email/confirm-change", json("POST", { code }), "Не удалось подтвердить код");
+  return response.json();
+}
 
-  return res.json();
+/** Сохранить направления, отмеченные без анкеты. */
+export async function updateDirections(directions: string[]): Promise<UserProfile> {
+  const response = await send("/settings/directions", json("PUT", { directions }), "Не удалось сохранить направления");
+  return response.json();
+}
+
+/** Сохранить местоположение исполнителя и видимость на карте. */
+export async function updateExpertLocation(location: ExpertLocationPayload): Promise<UserProfile> {
+  const response = await send("/settings/expert-location", json("PUT", location), "Не удалось сохранить локацию");
+  return response.json();
 }

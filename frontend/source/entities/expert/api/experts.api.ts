@@ -1,9 +1,7 @@
-import { API_URL } from "@/source/shared/api/config";
-import { fetchWithSession } from "@/source/shared/api/session";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
+import { send } from "@/source/shared/api/request";
 import type { OrdersApiList } from "@/source/entities/order";
-import type { ExpertListApi, ExpertMapApi, ExpertSortBy, ExpertSummaryApi } from "../model/types";
 import type { SortDir } from "@/source/shared/ui/SortPills";
+import type { ExpertListApi, ExpertMapApi, ExpertSortBy, ExpertSummaryApi } from "../model/types";
 
 export async function fetchExperts(params: {
   skip?: number;
@@ -12,50 +10,26 @@ export async function fetchExperts(params: {
   sortBy?: ExpertSortBy;
   sortDir?: SortDir;
 } = {}): Promise<ExpertListApi> {
-  const skip = params.skip ?? 0;
-  const limit = params.limit ?? 20;
-  const searchParams = new URLSearchParams({ skip: String(skip), limit: String(limit) });
-  if (params.query && params.query.trim()) {
-    searchParams.set("q", params.query.trim());
-  }
+  const searchParams = new URLSearchParams({ skip: String(params.skip ?? 0), limit: String(params.limit ?? 20) });
+  if (params.query?.trim()) searchParams.set("q", params.query.trim());
   if (params.sortBy) searchParams.set("sort_by", params.sortBy);
   if (params.sortDir) searchParams.set("sort_dir", params.sortDir);
-  const response = await fetchWithSession(`${API_URL}/experts?${searchParams.toString()}`);
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось загрузить исполнителей"));
-  }
+  const response = await send(`/experts?${searchParams}`, {}, "Не удалось загрузить исполнителей");
   return response.json();
 }
 
 export async function fetchExpertsMap(direction?: string): Promise<ExpertMapApi> {
   const params = direction ? `?direction=${encodeURIComponent(direction)}` : "";
-  const response = await fetchWithSession(`${API_URL}/experts/map${params}`);
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось загрузить исполнителей на карте"));
-  }
+  const response = await send(`/experts/map${params}`, {}, "Не удалось загрузить исполнителей на карте");
   return response.json();
 }
 
 export async function fetchExpertSummary(publicId: string): Promise<ExpertSummaryApi> {
-  const response = await fetchWithSession(`${API_URL}/experts/${publicId}/summary`);
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось загрузить исполнителя"));
-  }
+  const response = await send(`/experts/${publicId}/summary`, {}, "Не удалось загрузить исполнителя");
   return response.json();
 }
 
-export async function fetchExpertOrdersHistory(
-  publicId: string,
-  params: { skip?: number; limit?: number } = {},
-): Promise<OrdersApiList> {
-  const skip = params.skip ?? 0;
-  const limit = params.limit ?? 20;
-  const searchParams = new URLSearchParams({ skip: String(skip), limit: String(limit) });
-  const response = await fetchWithSession(
-    `${API_URL}/experts/${publicId}/orders?${searchParams.toString()}`,
-  );
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось загрузить историю заказов"));
-  }
+export async function fetchExpertOrdersHistory(publicId: string, skip: number, limit: number): Promise<OrdersApiList> {
+  const response = await send(`/experts/${publicId}/orders?skip=${skip}&limit=${limit}`, {}, "Не удалось загрузить историю заказов");
   return response.json();
 }

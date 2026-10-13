@@ -1,8 +1,7 @@
 "use client";
 
 import { ListCard } from "@/source/shared/ui/ListCard";
-import { useSession } from "@/source/features/session";
-import { OrderQuestionsBlock } from "@/source/features/order-questions";
+import { OrderQuestions } from "@/source/features/orders/questions";
 import {
   ActionButtons,
   CommentSection,
@@ -13,14 +12,13 @@ import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/e
 import type { OrderCardData } from "@/source/entities/order";
 import s from "./ReportCard.module.scss";
 
-interface Props {
+interface ReportCardProps {
   card: OrderCardData;
   onView: () => void;
   onDownload: () => void;
 }
 
-export function ReportCard({ card, onView, onDownload }: Props) {
-  const { user, role } = useSession();
+export function ReportCard({ card, onView, onDownload }: ReportCardProps) {
   const hasExecutor = Boolean(card.executorName);
 
   const actions: CardAction[] = [
@@ -57,12 +55,12 @@ export function ReportCard({ card, onView, onDownload }: Props) {
       bottomLeftCustom={bottomLeft}
       rightItems={[
         { label: "Начальная максимальная цена", value: card.sum || "—", valueAccent: true },
-        ...(card.executorProposedSum ? [{ label: "Цена исполнителя", value: card.executorProposedSum }] : []),
-        ...(card.executorProposedStartDate ? [{ label: "Срок начала выполнения работ исполнителя", value: card.executorProposedStartDate }] : []),
-        ...(card.executorProposedDeadline ? [{ label: "Срок окончания выполнения работ исполнителя", value: card.executorProposedDeadline }] : []),
+        { label: "Цена исполнителя", value: card.executorProposedSum },
+        { label: "Срок начала выполнения работ исполнителя", value: card.executorProposedStartDate },
+        { label: "Срок окончания выполнения работ исполнителя", value: card.executorProposedDeadline },
         { label: "Срок начала выполнения работ", value: card.startDate || "—" },
         { label: "Срок окончания выполнения работ", value: card.date || "—" },
-      ]}
+      ].filter((item) => item.value)}
       actions={<ActionButtons actions={actions} />}
       leftExtra={<RequirementsBadges badges={card.badges} />}
       details={
@@ -79,14 +77,7 @@ export function ReportCard({ card, onView, onDownload }: Props) {
         </>
       }
       footer={
-        <OrderQuestionsBlock
-          orderId={card.id}
-          currentUserId={user?.id ?? null}
-          customerId={card.customerId}
-          isCustomer={role === "CUSTOMER"}
-          isExpert={role === "EXPERT"}
-          expertCanAsk={false}
-        />
+        <OrderQuestions orderId={card.id} customerId={card.customerId} canAsk={false} />
       }
     />
   );

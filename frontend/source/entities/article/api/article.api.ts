@@ -1,119 +1,52 @@
 import { API_URL, SERVER_API_URL } from "@/source/shared/api/config";
 import { fetchWithSession } from "@/source/shared/api/session";
+import type { ArticleDetail, ArticleKind, ArticleList, ArticleListItem, ArticleListQuery, ArticleSitemapItem } from "../model/types";
 
-export type ArticleKind = "news" | "blog";
-
-export interface ArticleListItem {
-  id: number;
-  kind: ArticleKind;
-  direction: string | null;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image: string;
-  tg_cover_image: string;
-  tags: string[];
-  published_at: string | null;
-  likes_count: number;
-  dislikes_count: number;
-  views_count: number;
+interface FetchOptions {
+  server?: boolean;
 }
 
-export interface ArticleList {
-  items: ArticleListItem[];
-  has_more: boolean;
+/** Публичные статьи читаются без сессии; с сервера Next ходим по внутреннему адресу API. */
+function articlesUrl(path: string, options: FetchOptions): string {
+  return `${options.server ? SERVER_API_URL : API_URL}/public/articles${path}`;
 }
 
-export interface ArticleDetail {
-  id: number;
-  kind: ArticleKind;
-  direction: string | null;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image: string;
-  tg_cover_image: string;
-  content_html: string;
-  tags: string[];
-  meta_title: string;
-  meta_description: string;
-  meta_keywords: string;
-  og_image: string;
-  published_at: string | null;
-  updated_at: string;
-  likes_count: number;
-  dislikes_count: number;
-  views_count: number;
+/** Страница новостей или блога с фильтрами по тегу и направлению. */
+export async function fetchArticleList(query: ArticleListQuery, options: FetchOptions = {}): Promise<ArticleList> {
+  const params = new URLSearchParams({ kind: query.kind });
+  if (query.limit !== undefined) params.set("limit", String(query.limit));
+  if (query.offset !== undefined) params.set("offset", String(query.offset));
+  if (query.tag) params.set("tag", query.tag);
+  if (query.direction) params.set("direction", query.direction);
+
+  const response = await fetch(articlesUrl(`?${params}`, options), { cache: "no-store" });
+  if (!response.ok) throw new Error(`Не удалось загрузить статьи: ${response.status}`);
+  return response.json();
 }
 
-export interface ArticleSitemapItem {
-  slug: string;
-  published_at: string | null;
-  updated_at: string;
+/** Все опубликованные статьи раздела для sitemap. */
+export async function fetchArticleSitemap(kind: ArticleKind, options: FetchOptions = {}): Promise<ArticleSitemapItem[]> {
+  const response = await fetch(articlesUrl(`/sitemap?kind=${kind}`, options), { cache: "no-store" });
+  if (!response.ok) throw new Error(`Не удалось загрузить карту статей: ${response.status}`);
+  return response.json();
 }
 
-function base(server: boolean): string {
-  return server ? SERVER_API_URL : API_URL;
+/** Статья по адресу или null, если её нет. */
+export async function fetchArticleBySlug(slug: string, options: FetchOptions = {}): Promise<ArticleDetail | null> {
+  const response = await fetch(articlesUrl(`/${encodeURIComponent(slug)}`, options), { cache: "no-store" });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Не удалось загрузить статью: ${response.status}`);
+  return response.json();
 }
 
-export async function fetchArticleList(
-  args: { kind: ArticleKind; limit?: number; offset?: number; tag?: string; direction?: string },
-  opts: { server?: boolean } = {},
-): Promise<ArticleList> {
-  const params = new URLSearchParams({ kind: args.kind });
-  if (args.limit !== undefined) params.set("limit", String(args.limit));
-  if (args.offset !== undefined) params.set("offset", String(args.offset));
-  if (args.tag) params.set("tag", args.tag);
-  if (args.direction) params.set("direction", args.direction);
-
-  const res = await fetch(`${base(Boolean(opts.server))}/public/articles?${params}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Не удалось загрузить статьи: ${res.status}`);
-  return res.json();
+/** Похожие статьи для слайдера под текстом; при ошибке слайдер просто не показывается. */
+export async function fetchRelatedArticles(slug: string, limit: number, options: FetchOptions = {}): Promise<ArticleListItem[]> {
+  const response = await fetch(articlesUrl(`/${encodeURIComponent(slug)}/related?limit=${limit}`, options), { cache: "no-store" });
+  if (!response.ok) return [];
+  return response.json();
 }
 
-export async function fetchArticleSitemap(
-  kind: ArticleKind,
-  opts: { server?: boolean } = {},
-): Promise<ArticleSitemapItem[]> {
-  const res = await fetch(`${base(Boolean(opts.server))}/public/articles/sitemap?kind=${kind}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Не удалось загрузить карту статей: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchArticleBySlug(
-  slug: string,
-  opts: { server?: boolean } = {},
-): Promise<ArticleDetail | null> {
-  const res = await fetch(`${base(Boolean(opts.server))}/public/articles/${encodeURIComponent(slug)}`, { cache: "no-store" });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Не удалось загрузить статью: ${res.status}`);
-  return res.json();
-}
-
-export async function recordArticleView(articleId: number): Promise<number | null> {
-  try {
-    const res = await fetchWithSession(`${API_URL}/public/articles/${articleId}/view`, {
-      method: "POST",
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.views_count as number;
-  } catch {
-    return null;
-  }
-}
-
-export async function fetchRelatedArticles(
-  slug: string,
-  opts: { limit?: number; server?: boolean } = {},
-): Promise<ArticleListItem[]> {
-  const params = new URLSearchParams();
-  if (opts.limit !== undefined) params.set("limit", String(opts.limit));
-  const qs = params.toString();
-  const res = await fetch(
-    `${base(Boolean(opts.server))}/public/articles/${encodeURIComponent(slug)}/related${qs ? `?${qs}` : ""}`,
-    { cache: "no-store" },
-  );
-  if (!res.ok) return [];
-  return res.json();
+/** Засчитать просмотр. Счётчик не критичен, поэтому ошибки глотаем. */
+export async function recordArticleView(articleId: number): Promise<void> {
+  await fetchWithSession(`${API_URL}/public/articles/${articleId}/view`, { method: "POST" }).catch(() => undefined);
 }

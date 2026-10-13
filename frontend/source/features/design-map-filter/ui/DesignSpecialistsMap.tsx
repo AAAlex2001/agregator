@@ -1,7 +1,7 @@
 "use client";
 
 import { useExpertsMap } from "@/source/entities/expert";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { FilterDropdown, toMarker } from "@/source/features/expert-map-filter";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
 import { useDesignMapFilter } from "../model/useDesignMapFilter";

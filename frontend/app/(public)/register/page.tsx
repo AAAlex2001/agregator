@@ -14,7 +14,7 @@ interface RegistrationPageProps {
 export default async function RegistrationPage({ searchParams }: RegistrationPageProps) {
   const params = await searchParams;
   const rawCode = typeof params.ref === "string" ? params.ref : null;
-  const referralCode = normalizeReferralCode(rawCode) ?? null;
+  const referralCode = normalizeReferralCode(rawCode);
 
   return (
     <ReferralInvitation

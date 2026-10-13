@@ -1,6 +1,7 @@
 import Skeleton from "@/source/shared/ui/Skeleton";
 import s from "./NotificationCardSkeleton.module.scss";
 
+/** Заглушка карточки уведомления на время загрузки списка. */
 export function NotificationCardSkeleton() {
   return (
     <div className={s.card} aria-hidden="true">

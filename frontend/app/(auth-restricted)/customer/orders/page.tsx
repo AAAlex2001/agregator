@@ -1,7 +1,7 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
-import { CustomerOrdersWidget } from "@/source/widgets/customer-orders";
+import { RoleGuard } from "@/source/entities/session";
+import { CustomerOrdersWidget } from "@/source/widgets/orders";
 
 export default function CustomerOrdersPage() {
   return (

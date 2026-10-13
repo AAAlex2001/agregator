@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 import { fetchPublicLaborListing } from "@/source/entities/labor";
 import {
   PublicLaborListingView,
@@ -11,9 +11,11 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ public_id: string }> };
+interface PublicLaborListingPageProps {
+  params: Promise<{ public_id: string }>;
+}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: PublicLaborListingPageProps): Promise<Metadata> {
   const { public_id } = await params;
   const item = await fetchPublicLaborListing(public_id, { server: true });
   if (!item) {
@@ -45,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PublicLaborListingPage({ params }: Props) {
+export default async function PublicLaborListingPage({ params }: PublicLaborListingPageProps) {
   const { public_id } = await params;
   const item = await fetchPublicLaborListing(public_id, { server: true });
   if (!item) notFound();

@@ -1,339 +1,43 @@
-import { DESIGN_SPECIALTIES } from "@/source/entities/design";
+import { auditOrderDetails } from "@/source/entities/directions/audit";
+import { cadastralOrderDetails } from "@/source/entities/directions/cadastral";
+import { designOrderDetails } from "@/source/entities/directions/design";
+import { ecologyOrderDetails } from "@/source/entities/directions/ecology";
+import { forensicOrderDetails } from "@/source/entities/directions/forensic";
+import { laboratoryOrderDetails } from "@/source/entities/directions/laboratory";
+import { researchOrderDetails } from "@/source/entities/directions/research";
+import type { OrderDetailField, OrderDetailGroup } from "@/source/entities/directions/shared";
+import { surveyOrderDetails } from "@/source/entities/directions/survey";
+import { techDiagOrderDetails } from "@/source/entities/directions/tech-diag";
 import type { OrderWorkType } from "./workTypes";
-
-export type OrderDetailKind = "text" | "flag" | "list" | "file" | "opo_list";
-
-export interface OrderDetailField {
-  key: string;
-  label: string;
-  kind: OrderDetailKind;
-  group?: string;
-  wide?: boolean;
-  valueLabels?: Record<string, string>;
-}
 
 export const EXECUTOR_REQUIREMENT_HINTS = ["Звание", "Должность", "Стаж"] as const;
 
-export const ORDER_DETAILS_TITLES: Partial<Record<OrderWorkType, string>> = {
-  CADASTRAL: "Кадастровые работы",
-  FORENSIC: "Судебная экспертиза",
-  RESEARCH: "Проведение НИР",
-  LABORATORY: "Лабораторные исследования",
-  AUDIT_SUPB: "Аудит СУПБ",
-  TECH_DIAG: "Техническое освидетельствование и диагностирование",
-  DESIGN: "Проектирование промышленных и гражданских объектов",
-  ECOLOGY: "Экологическое сопровождение предприятий",
-  SURVEY: "Инженерные изыскания",
+const GROUPS: Partial<Record<OrderWorkType, OrderDetailGroup[]>> = {
+  CADASTRAL: cadastralOrderDetails,
+  FORENSIC: forensicOrderDetails,
+  RESEARCH: researchOrderDetails,
+  LABORATORY: laboratoryOrderDetails,
+  AUDIT_SUPB: auditOrderDetails,
+  TECH_DIAG: techDiagOrderDetails,
+  DESIGN: designOrderDetails,
+  ECOLOGY: ecologyOrderDetails,
+  SURVEY: surveyOrderDetails,
 };
 
-const SURVEY_KIND_LABELS: Record<string, string> = {
-  IGI: "Инженерно-геологические изыскания",
-  IGDI: "Инженерно-геодезические изыскания",
-  IGMI: "Гидрометеорологические изыскания",
-  IEI: "Инженерно-экологические изыскания",
-  IGFI: "Инженерно-геофизические изыскания",
-  ARCH: "Археологические исследования",
-};
-
-const ECOLOGY_WORK_TYPE_LABELS: Record<string, string> = {
-  "КЭР": "Комплексное экологическое разрешение",
-  "ПНООЛР": "Проект нормативов образования отходов и лимитов на их размещение",
-  "НДВ": "Проект нормативов допустимых выбросов",
-  "СЗЗ": "Проект санитарно-защитных зон",
-  "ПЭК": "Осуществление производственного экологического контроля",
-  "НДС": "Проект нормативов допустимых сбросов",
-  "ОРО": "Мониторинг объектов размещения отходов",
-  "РППВО": "Получение решения на право пользования водным объектом",
-  "НВОС_П": "Постановка на учёт объекта негативного воздействия на окружающую среду",
-  "НВОС_С": "Снятие с учёта объекта негативного воздействия на окружающую среду",
-  "ПО": "Подготовка паспорта отходов",
-  "ВРИ": "Разработка внутренних регламентов и инструкций",
-  "ОФ": "Создание отчётных форм: 2-ТП (отходы), 2-ТП (воздух), 2-ТП (водхоз), 4-ОС, отчёт по ПЭК",
-};
-
-const DESIGN_SECTION_LABELS = Object.fromEntries(
-  DESIGN_SPECIALTIES.map((item) => [item.key, item.title]),
-);
-
-const APPLICANT_GROUP = "Заявитель";
-
-const APPLICANT_FIELDS: OrderDetailField[] = [
-  { key: "applicant_full_name", label: "ФИО представителя", kind: "text", group: APPLICANT_GROUP },
-  { key: "applicant_position", label: "Должность", kind: "text", group: APPLICANT_GROUP },
-  { key: "applicant_organization", label: "Организация", kind: "text", group: APPLICANT_GROUP },
-  { key: "applicant_inn", label: "ИНН", kind: "text", group: APPLICANT_GROUP },
-  { key: "applicant_phone", label: "Телефон", kind: "text", group: APPLICANT_GROUP },
-  { key: "applicant_email", label: "Email", kind: "text", group: APPLICANT_GROUP },
-];
-
-const FIELDS: Partial<Record<OrderWorkType, OrderDetailField[]>> = {
-  CADASTRAL: [
-    ...APPLICANT_FIELDS,
-    { key: "work_purpose", label: "Цель работ", kind: "text", group: "Работы", wide: true },
-    { key: "city", label: "Где находится объект", kind: "text", group: "Работы" },
-    { key: "duration", label: "Срок проведения работ", kind: "text", group: "Работы" },
-    {
-      key: "education_requirement",
-      label: "Требования к образованию",
-      kind: "text",
-      group: "Требования к исполнителю",
-      wide: true,
-    },
-    {
-      key: "sro_required",
-      label: "Обязательное членство в СРО",
-      kind: "flag",
-      group: "Требования к исполнителю",
-    },
-  ],
-  FORENSIC: [
-    ...APPLICANT_FIELDS,
-    { key: "expertise_purpose", label: "Цель экспертизы", kind: "text", group: "Экспертиза", wide: true },
-    { key: "government_body", label: "Государственный орган", kind: "text", group: "Экспертиза" },
-    { key: "city", label: "Где находится предмет экспертизы", kind: "text", group: "Экспертиза" },
-    { key: "duration", label: "Срок проведения экспертизы", kind: "text", group: "Экспертиза" },
-    {
-      key: "education_requirement",
-      label: "Требования к образованию",
-      kind: "text",
-      group: "Требования к эксперту",
-      wide: true,
-    },
-    {
-      key: "extra_requirements",
-      label: "Дополнительные требования",
-      kind: "text",
-      group: "Требования к эксперту",
-      wide: true,
-    },
-    {
-      key: "similar_experience_required",
-      label: "Обязателен опыт аналогичных экспертиз",
-      kind: "flag",
-      group: "Требования к эксперту",
-    },
-  ],
-  RESEARCH: [
-    ...APPLICANT_FIELDS,
-    {
-      key: "executor_requirements",
-      label: "Требования к исполнителю",
-      kind: "list",
-      group: "Работы",
-      wide: true,
-    },
-    {
-      key: "needs_site_visit",
-      label: "Необходимость выезда на объект исследований",
-      kind: "flag",
-      group: "Работы",
-    },
-  ],
-  LABORATORY: [
-    ...APPLICANT_FIELDS,
-    {
-      key: "equipment_requirements",
-      label: "Требования к оборудованию",
-      kind: "text",
-      group: "Работы",
-      wide: true,
-    },
-  ],
-  TECH_DIAG: [
-    ...APPLICANT_FIELDS,
-    { key: "purpose", label: "Цель проведения работ", kind: "text", group: "Работы", wide: true },
-    { key: "object_city", label: "Где находится объект", kind: "text", group: "Работы" },
-    { key: "duration", label: "Срок проведения", kind: "text", group: "Работы" },
-  ],
-  DESIGN: [
-    ...APPLICANT_FIELDS,
-    { key: "object_name", label: "Наименование объекта", kind: "text", group: "Объект", wide: true },
-    { key: "construction_city", label: "Город строительства", kind: "text", group: "Объект" },
-    {
-      key: "doc_categories",
-      label: "Направление разрабатываемой документации",
-      kind: "list",
-      group: "Документация",
-      wide: true,
-      valueLabels: {
-        DP: "Дизайн-проекты",
-        PS: "Промышленные объекты",
-        GS: "Гражданские объекты",
-        OKN: "Объекты культурного наследия",
-        BIM: "BIM-моделирование",
-        KD: "Конструкторская документация",
-        NSO: "Нестандартное оборудование",
-      },
-    },
-    {
-      key: "documentation_kinds",
-      label: "Вид документации",
-      kind: "list",
-      group: "Документация",
-      wide: true,
-      valueLabels: {
-        PD: "Проектная документация",
-        RD: "Рабочая документация",
-        TECH_REEQUIPMENT: "Техническое перевооружение",
-        CONSERVATION: "Консервация",
-        LIQUIDATION: "Ликвидация",
-        TECH_PROJECT: "Технический проект",
-      },
-    },
-    {
-      key: "scope",
-      label: "Объём разрабатываемой документации",
-      kind: "text",
-      group: "Документация",
-      valueLabels: {
-        FULL: "Полный пакет документации",
-        SECTIONS: "Отдельные разделы",
-      },
-    },
-    {
-      key: "sections",
-      label: "Разделы проектной документации",
-      kind: "list",
-      group: "Документация",
-      wide: true,
-      valueLabels: DESIGN_SECTION_LABELS,
-    },
-    {
-      key: "approvals",
-      label: "Согласования и экспертизы",
-      kind: "list",
-      group: "Согласования",
-      wide: true,
-      valueLabels: {
-        STATE_EXPERTISE: "Государственная экспертиза",
-        ECO_EXPERTISE: "Государственная экологическая экспертиза",
-        EPB: "Экспертиза промышленной безопасности",
-        CKR_TPI: "Согласование в ЦКР (ТКР)-ТПИ Роснедр",
-      },
-    },
-    {
-      key: "approvals_other",
-      label: "Иные согласования",
-      kind: "text",
-      group: "Согласования",
-      wide: true,
-    },
-  ],
-  ECOLOGY: [
-    ...APPLICANT_FIELDS,
-    {
-      key: "work_types",
-      label: "Какие работы нужны",
-      kind: "list",
-      group: "Работы",
-      wide: true,
-      valueLabels: ECOLOGY_WORK_TYPE_LABELS,
-    },
-  ],
-  SURVEY: [
-    ...APPLICANT_FIELDS,
-    {
-      key: "kinds",
-      label: "Виды изысканий",
-      kind: "list",
-      group: "Изыскания",
-      wide: true,
-      valueLabels: SURVEY_KIND_LABELS,
-    },
-  ],
-  AUDIT_SUPB: [
-    ...APPLICANT_FIELDS,
-    {
-      key: "audit_scale",
-      label: "Что нужно аудировать",
-      kind: "text",
-      group: "Объект аудита",
-      valueLabels: {
-        SINGLE_OPO: "Один ОПО",
-        ALL_OPO: "Все ОПО организации",
-        SELECTED_OPO: "Выборочные ОПО",
-      },
-    },
-    { key: "opo_total", label: "Общее количество ОПО", kind: "text", group: "Объект аудита" },
-    { key: "opo_class_1", label: "ОПО I класса", kind: "text", group: "Объект аудита" },
-    { key: "opo_class_2", label: "ОПО II класса", kind: "text", group: "Объект аудита" },
-    { key: "opo_class_3", label: "ОПО III класса", kind: "text", group: "Объект аудита" },
-    { key: "opo_class_4", label: "ОПО IV класса", kind: "text", group: "Объект аудита" },
-    { key: "main_industry", label: "Основной отраслевой профиль", kind: "text", group: "Объект аудита" },
-    { key: "multiple_regions", label: "ОПО в разных субъектах РФ", kind: "flag", group: "Объект аудита" },
-    { key: "opo_items", label: "Объекты", kind: "opo_list", group: "Объект аудита", wide: true },
-    {
-      key: "registration_certificate",
-      label: "Свидетельство о регистрации ОПО",
-      kind: "file",
-      group: "Объект аудита",
-    },
-    {
-      key: "audit_kind",
-      label: "Тип аудита",
-      kind: "text",
-      group: "Параметры аудита",
-      valueLabels: {
-        BASIC: "Базовый",
-        INTERIM: "Промежуточный",
-        SELECTIVE: "Выборочный",
-        CONSULTATION: "Консультация",
-      },
-    },
-    { key: "considers_sto", label: "Учитывать СТО организации", kind: "flag", group: "Параметры аудита" },
-    { key: "sto_name", label: "СТО", kind: "text", group: "Параметры аудита" },
-    { key: "sto_file", label: "Файл СТО", kind: "file", group: "Параметры аудита" },
-    {
-      key: "audit_areas",
-      label: "Направления аудита (п.17 Приказа 318)",
-      kind: "list",
-      group: "Параметры аудита",
-      wide: true,
-    },
-    {
-      key: "desired_timeline",
-      label: "Желаемые сроки",
-      kind: "text",
-      group: "Сроки и комментарии",
-      valueLabels: {
-        MONTH_URGENT: "В течение месяца (срочно)",
-        CURRENT_QUARTER: "Текущий квартал",
-        NEXT_QUARTER: "Следующий квартал",
-        CONSULTATION: "Консультация",
-      },
-    },
-    { key: "comments", label: "Комментарии", kind: "text", group: "Сроки и комментарии", wide: true },
-  ],
-};
-
-export function orderDetailsFields(workType: OrderWorkType): OrderDetailField[] {
-  return FIELDS[workType] ?? [];
-}
-
-interface OpoItem {
-  registration_number?: string;
-  name?: string;
+export function orderDetailGroups(workType: OrderWorkType): OrderDetailGroup[] {
+  return GROUPS[workType] ?? [];
 }
 
 export function formatOrderDetailValue(field: OrderDetailField, value: unknown): string {
   if (value === null || value === undefined) return "";
-  if (field.kind === "flag") {
-    return value ? "Да" : "Нет";
-  }
-  if (field.kind === "list") {
-    const items = value as string[];
-    return items.map((item) => field.valueLabels?.[item] ?? item).join(", ");
-  }
-  if (field.kind === "file") {
-    return (value as { name?: string }).name ?? "";
-  }
+  if (field.kind === "flag") return value ? "Да" : "Нет";
+  if (field.kind === "list") return (value as string[]).map((item) => field.valueLabels?.[item] ?? item).join(", ");
+  if (field.kind === "file") return (value as { name: string }).name;
   if (field.kind === "opo_list") {
-    const items = value as OpoItem[];
-    return items
+    return (value as { registration_number: string; name: string }[])
       .map((item) => [item.registration_number, item.name].filter(Boolean).join(" — "))
       .filter(Boolean)
       .join("\n");
   }
-  const text = String(value);
-  return field.valueLabels?.[text] ?? text;
+  return field.valueLabels?.[String(value)] ?? String(value);
 }

@@ -1,38 +1,32 @@
 import type { Metadata } from "next";
 import { fetchPublicOrder, type PublicOrderPreview } from "@/source/entities/order";
-import { OrderPreviewContent } from "@/source/widgets/order-preview";
+import { OrderPreview } from "@/source/features/orders/preview";
 
-type Props = { params: Promise<{ uuid: string }> };
+interface OrderPreviewPageProps {
+  params: Promise<{ uuid: string }>;
+}
+
+const DESCRIPTION_MAX_LENGTH = 220;
 
 function clean(value: string | null | undefined): string {
   return (value ?? "").replace(/\s+/g, " ").trim();
 }
 
-function truncate(value: string, maxLength = 220): string {
-  if (value.length <= maxLength) return value;
-  const shortened = value.slice(0, maxLength - 1);
-  const lastSpace = shortened.lastIndexOf(" ");
-  return `${shortened.slice(0, Math.max(lastSpace, maxLength - 30)).trim()}…`;
-}
-
 function buildDescription(order: PublicOrderPreview): string {
-  const details = [
+  const parts = [
     clean(order.comment),
     order.company ? `Заказчик: ${clean(order.company)}.` : "",
     order.sum ? `Начальная цена: ${clean(order.sum)}.` : "",
     order.date ? `Срок выполнения: до ${clean(order.date)}.` : "",
-    order.badges.length > 0
-      ? `Требования: ${order.badges.map((badge) => clean(badge.text)).filter(Boolean).join(", ")}.`
-      : "",
+    order.badges.length > 0 ? `Требования: ${order.badges.map((badge) => clean(badge.text)).join(", ")}.` : "",
   ].filter(Boolean);
-
-  return truncate(details.join(" ") || `Открытая заявка «${clean(order.title)}» на платформе Ресурс-Плюс.`);
+  const text = parts.join(" ") || `Открытая заявка «${clean(order.title)}» на платформе Ресурс-Плюс.`;
+  return text.length <= DESCRIPTION_MAX_LENGTH ? text : `${text.slice(0, DESCRIPTION_MAX_LENGTH - 1).trim()}…`;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: OrderPreviewPageProps): Promise<Metadata> {
   const { uuid } = await params;
   const order = await fetchPublicOrder(uuid, { server: true }).catch(() => null);
-
   if (!order) {
     return {
       title: "Заявка не найдена",
@@ -44,7 +38,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = clean(order.title) || `Заявка № ${order.id}`;
   const description = buildDescription(order);
-
   return {
     title,
     description,
@@ -56,15 +49,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `/order/${uuid}`,
       images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Ресурс-Плюс" }],
     },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      images: ["/og-default.png"],
-    },
+    twitter: { card: "summary", title, description, images: ["/og-default.png"] },
   };
 }
 
-export default function OrderPreviewPage() {
-  return <OrderPreviewContent />;
+export default async function OrderPreviewPage({ params }: OrderPreviewPageProps) {
+  const { uuid } = await params;
+  return <OrderPreview uuid={uuid} />;
 }

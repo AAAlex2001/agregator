@@ -1,0 +1,35 @@
+import cn from "classnames";
+import Skeleton from "@/source/shared/ui/Skeleton";
+import s from "./TicketChatSkeleton.module.scss";
+
+/** Заглушка переписки, пока грузится обращение. */
+export function TicketChatSkeleton() {
+  return (
+    <div className={s.card} aria-hidden="true">
+      <div className={s.header}>
+        <div className={s.headerTitle}>
+          <Skeleton className={s.headerNumber} rounded="pill" />
+          <Skeleton className={s.headerSubject} rounded="pill" />
+        </div>
+        <Skeleton className={s.headerStatus} rounded="pill" />
+      </div>
+
+      <div className={s.thread}>
+        <div className={cn(s.row, s.rowUser)}>
+          <Skeleton className={s.rowHead} rounded="pill" />
+          <Skeleton className={cn(s.bubble, s.bubbleUser)} rounded="lg" />
+        </div>
+        <div className={cn(s.row, s.rowSupport)}>
+          <Skeleton className={s.rowHead} rounded="pill" />
+          <Skeleton className={cn(s.bubble, s.bubbleSupport)} rounded="lg" />
+        </div>
+        <div className={cn(s.row, s.rowUser)}>
+          <Skeleton className={s.rowHead} rounded="pill" />
+          <Skeleton className={cn(s.bubble, s.bubbleUserShort)} rounded="lg" />
+        </div>
+      </div>
+
+      <Skeleton className={s.composer} rounded="lg" />
+    </div>
+  );
+}

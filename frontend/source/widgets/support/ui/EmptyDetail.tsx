@@ -5,6 +5,7 @@ interface EmptyDetailProps {
   onCreate: () => void;
 }
 
+/** Центр страницы поддержки, пока обращение не выбрано. */
 export function EmptyDetail({ onCreate }: EmptyDetailProps) {
   return (
     <EmptyState

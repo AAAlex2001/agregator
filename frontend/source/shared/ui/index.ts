@@ -4,7 +4,7 @@ export { FormGrid, FormSection } from "./FormSection";
 export { Switch } from "./Switch";
 export { RadioGroup } from "./RadioGroup";
 export type { RadioOption } from "./RadioGroup";
-export { RentalPriceField } from "./RentalPriceField";
+export { RentalPriceField, type LicenseRentalKind } from "./RentalPriceField";
 export { RoleBadge } from "./RoleBadge";
 export { Modal } from "./Modal";
 export { OtpCodeInput } from "./OtpCodeInput";

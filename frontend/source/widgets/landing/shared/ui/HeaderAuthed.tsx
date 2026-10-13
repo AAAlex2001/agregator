@@ -2,7 +2,7 @@
 
 import cn from "classnames";
 import Link from "next/link";
-import { useSession } from "@/source/features/session";
+import { ordersPath, useSession } from "@/source/entities/session";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
 import { LogoIcon, TabOrdersIcon, TabChatIcon, TabProfileIcon, TabSupportIcon } from "@/source/shared/ui/icons";
 import CabinetBurgerMenu from "./CabinetBurgerMenu";
@@ -16,7 +16,7 @@ const PUBLICATION_LINKS = [
 /** Показывает логотип и личные ссылки сверху, разделы площадки — второй строкой. */
 export default function HeaderAuthed() {
   const { user, role } = useSession();
-  const ordersHref = role === "EXPERT" ? "/expert/orders" : role === "CUSTOMER" ? "/customer/orders" : "/orders";
+  const ordersHref = ordersPath(role);
   const name = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
 
   return (

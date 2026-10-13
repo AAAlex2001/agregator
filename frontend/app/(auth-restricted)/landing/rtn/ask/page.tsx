@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RtnQuestionsWidget } from "@/source/widgets/rtn-questions";
+import { RtnQuestionsWidget } from "@/source/widgets/rtn";
 
 export const metadata: Metadata = {
   title: "Задать вопрос в Ростехнадзор",
@@ -8,10 +8,6 @@ export const metadata: Metadata = {
 
 export default function AuthedRtnQuestionPage() {
   return (
-    <RtnQuestionsWidget
-      authenticated
-      homeHref="/landing"
-      catalogHref="/landing/rtn"
-    />
+    <RtnQuestionsWidget basePath="/landing" authenticated />
   );
 }

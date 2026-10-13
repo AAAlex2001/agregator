@@ -1,4 +1,4 @@
-import { NotificationsPageWidget } from "@/source/widgets/notifications-page";
+import { NotificationsPageWidget } from "@/source/widgets/notifications";
 
 export default function NotificationsPage() {
   return <NotificationsPageWidget />;

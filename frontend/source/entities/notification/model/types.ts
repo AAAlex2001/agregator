@@ -1,15 +1,25 @@
-export type NotificationType = "RESPONSE_UPDATED" | "RESPONSE_STATUS_CHANGED" | "CHAT_MESSAGE" | "QUESTION_ASKED" | "QUESTION_ANSWERED" | "SUPPORT_REPLY" | "NEW_BLOG_POST" | "NEW_ORDER" | "CONTACT_ACCESS" | "LABOR_RESPONSE";
+export type NotificationType =
+  | "RESPONSE_UPDATED"
+  | "RESPONSE_STATUS_CHANGED"
+  | "CHAT_MESSAGE"
+  | "QUESTION_ASKED"
+  | "QUESTION_ANSWERED"
+  | "SUPPORT_REPLY"
+  | "NEW_BLOG_POST"
+  | "NEW_ORDER"
+  | "CONTACT_ACCESS"
+  | "LABOR_RESPONSE";
+
 export type NotificationActorRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
 export type NotificationResponseStatus = "REVIEW" | "REJECTED" | "ACCEPTED" | "IN_PROGRESS" | "COMPLETED";
 export type NotificationReason = "DIRECT_CHANGE" | "SELECTED_ANOTHER" | "SELECTED_ANOTHER_REVERTED";
-export type ResponseUpdateKind = "CREATED" | "UPDATED" | "WITHDRAWN";
 
-export interface ResponseUpdatedNotificationPayload {
+export interface ResponseUpdatedPayload {
   order_title: string;
-  kind?: ResponseUpdateKind;
+  kind?: "CREATED" | "UPDATED" | "WITHDRAWN";
 }
 
-export interface ResponseStatusChangedNotificationPayload {
+export interface ResponseStatusChangedPayload {
   order_title: string;
   actor_role: NotificationActorRole;
   status_from: NotificationResponseStatus;
@@ -18,61 +28,61 @@ export interface ResponseStatusChangedNotificationPayload {
   rejection_reason?: string | null;
 }
 
-export interface ChatMessageNotificationPayload {
+export interface ChatMessagePayload {
   order_title: string;
   sender_role: NotificationActorRole;
   preview: string;
 }
 
-export interface QuestionAskedNotificationPayload {
+export interface QuestionAskedPayload {
   order_title: string;
   expert_name: string;
   preview: string;
 }
 
-export interface QuestionAnsweredNotificationPayload {
+export interface QuestionAnsweredPayload {
   order_title: string;
   preview: string;
 }
 
-export interface SupportReplyNotificationPayload {
+export interface SupportReplyPayload {
   ticket_number: string;
   subject: string;
   preview: string;
 }
 
-export interface NewBlogPostNotificationPayload {
+export interface NewBlogPostPayload {
   blog_title: string;
   preview: string;
 }
 
-export interface NewOrderNotificationPayload {
+export interface NewOrderPayload {
   order_title: string;
   badges: string[];
   message?: string;
 }
 
-export interface ContactAccessNotificationPayload {
+export interface ContactAccessPayload {
   title: string;
   message: string;
 }
 
-export interface LaborResponseNotificationPayload {
+export interface LaborResponsePayload {
   responder_name: string;
   listing_title: string;
 }
 
 export type NotificationPayload =
-  | ResponseUpdatedNotificationPayload
-  | ResponseStatusChangedNotificationPayload
-  | ChatMessageNotificationPayload
-  | QuestionAskedNotificationPayload
-  | QuestionAnsweredNotificationPayload
-  | SupportReplyNotificationPayload
-  | NewBlogPostNotificationPayload
-  | NewOrderNotificationPayload
-  | ContactAccessNotificationPayload
-  | LaborResponseNotificationPayload;
+  | ResponseUpdatedPayload
+  | ResponseStatusChangedPayload
+  | ChatMessagePayload
+  | QuestionAskedPayload
+  | QuestionAnsweredPayload
+  | SupportReplyPayload
+  | NewBlogPostPayload
+  | NewOrderPayload
+  | ContactAccessPayload
+  | LaborResponsePayload;
 
 export interface NotificationItem {
   id: number;
@@ -82,16 +92,6 @@ export interface NotificationItem {
   is_read: boolean;
   created_at: string;
   read_at: string | null;
-}
-
-export interface NotificationCardModel {
-  id: number;
-  title: string;
-  message: string;
-  actionLabel: string | null;
-  actionUrl: string | null;
-  isRead: boolean;
-  createdAt: string;
 }
 
 export interface NotificationListResponse {

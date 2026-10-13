@@ -1,6 +1,6 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 import { ZepbRegistryWidget } from "@/source/widgets/zepb-registry";
 
 export default function AuthRestrictedZepbRegistryPage() {

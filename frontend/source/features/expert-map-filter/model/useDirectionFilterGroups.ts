@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchAuditCatalogs } from "@/source/features/directions/audit";
-import { fetchEcologyCatalogs } from "@/source/features/directions/ecology";
-import { fetchResearchCatalogs } from "@/source/features/directions/research";
-import { fetchTechDiagCatalogs } from "@/source/features/directions/tech-diag";
+import { fetchAuditCatalogs } from "@/source/entities/directions/audit";
+import { fetchEcologyCatalogs } from "@/source/entities/directions/ecology";
+import { fetchResearchCatalogs } from "@/source/entities/directions/research";
+import { fetchTechDiagCatalogs } from "@/source/entities/directions/tech-diag";
 import {
   CADASTRAL_FILTER_GROUPS,
   FORENSIC_FILTER_GROUPS,

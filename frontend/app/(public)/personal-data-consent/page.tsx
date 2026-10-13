@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { PersonalDataConsentWidget } from "@/source/widgets/personal-data-consent";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const metadata: Metadata = {
   title: "Согласие на обработку персональных данных — Ресурс-Плюс",

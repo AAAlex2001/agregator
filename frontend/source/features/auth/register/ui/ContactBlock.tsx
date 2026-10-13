@@ -1,29 +1,29 @@
-import { EmailInput, PhoneInput } from "@/source/shared/ui/Inputs";
 import { formatRussianPhone } from "@/source/shared/lib/phone";
+import { EmailInput, PhoneInput } from "@/source/shared/ui/Inputs";
 import type { StepProps } from "./types";
-import s from "./register-form.module.scss";
+import s from "./ContactBlock.module.scss";
 
-export function ContactBlock({ state, dispatch, showPhoneHint = true }: StepProps & { showPhoneHint?: boolean }) {
+/** Почта (обязательна — на неё придёт код) и телефон. */
+export function ContactBlock({ state, dispatch }: StepProps) {
   return (
     <>
       <EmailInput
-        id="email"
+        id="register-email"
         value={state.email}
         required
         autoComplete="off"
-        onChange={(e) => dispatch({ type: "set", key: "email", value: e.target.value })}
+        onChange={(event) => dispatch({ type: "set", key: "email", value: event.target.value })}
         placeholder="Электронная почта"
       />
-
-      <div className={s.phoneBlock}>
+      <div className={s.phone}>
         <PhoneInput
-          id="phone"
+          id="register-phone"
           value={state.phone}
           autoComplete="off"
-          onChange={(e) => dispatch({ type: "set", key: "phone", value: formatRussianPhone(e.target.value) })}
+          onChange={(event) => dispatch({ type: "set", key: "phone", value: formatRussianPhone(event.target.value) })}
           placeholder="+7-999-999-99-99"
         />
-        {showPhoneHint && <p className={s.contactHint}>Номер телефона необязателен</p>}
+        <p className={s.hint}>Номер телефона необязателен</p>
       </div>
     </>
   );

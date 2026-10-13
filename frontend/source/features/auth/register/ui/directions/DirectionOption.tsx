@@ -3,33 +3,31 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
 import { Checkbox } from "@/source/shared/ui";
-import s from "./DirectionsPicker.module.scss";
+import s from "./DirectionOption.module.scss";
 
-interface Props {
+interface DirectionOptionProps {
   id: string;
   title: string;
   description: string;
   checked: boolean;
-  error?: string;
   onToggle: () => void;
+  note?: string;
   children?: ReactNode;
 }
 
-export function DirectionOption({ id, title, description, checked, error, onToggle, children }: Props) {
+/** Направление в списке: галочка, описание и, когда выбрано, поля анкеты под ним. */
+export function DirectionOption({ id, title, description, checked, onToggle, note, children }: DirectionOptionProps) {
   return (
-    <li
-      className={cn(s.item, { [s.itemActive]: checked })}
-      data-invalid={error ? "true" : undefined}
-    >
-      <Checkbox id={`service-${id}`} checked={checked} onChange={onToggle} className={s.checkbox}>
-        <span className={s.itemTitle}>{title}</span>
-        <span className={s.itemText}>{description}</span>
+    <li className={cn(s.item, { [s.itemActive]: checked })}>
+      <Checkbox id={`direction-${id}`} checked={checked} onChange={onToggle} className={s.checkbox}>
+        <span className={s.title}>{title}</span>
+        <span className={s.text}>{description}</span>
       </Checkbox>
 
       {checked && (
         <div className={s.body}>
           {children}
-          {error && <span className={s.error}>{error}</span>}
+          {note && <span className={s.text}>{note}</span>}
         </div>
       )}
     </li>

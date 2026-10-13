@@ -1,4 +1,5 @@
-import type { CompanyData, LicenseRentalKind } from "@/source/entities/user";
+import type { CompanyData } from "@/source/entities/user";
+import type { LicenseRentalKind } from "@/source/shared/ui/RentalPriceField";
 
 export interface LicenseHolderListItem {
   id: number;

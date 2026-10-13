@@ -2,10 +2,11 @@
 
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { RadioGroup, type RadioOption } from "@/source/shared/ui/RadioGroup";
-import type { LicenseRentalKind } from "@/source/entities/user";
 import s from "./RentalPriceField.module.scss";
 
-interface Props {
+export type LicenseRentalKind = "PERCENT" | "FIXED" | "NEGOTIABLE";
+
+interface RentalPriceFieldProps {
   kind: LicenseRentalKind;
   percent: string;
   fixedAmount: string;
@@ -45,7 +46,7 @@ export function RentalPriceField({
   onChangeKind,
   onChangePercent,
   onChangeFixed,
-}: Props) {
+}: RentalPriceFieldProps) {
   return (
     <div className={s.wrap}>
       <RadioGroup

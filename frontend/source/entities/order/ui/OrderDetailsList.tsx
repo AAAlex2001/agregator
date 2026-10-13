@@ -1,61 +1,35 @@
 import cn from "classnames";
-import { formatOrderDetailValue, orderDetailsFields } from "../model/detailsFields";
+import { formatOrderDetailValue, orderDetailGroups } from "../model/detailsFields";
 import type { OrderWorkType } from "../model/workTypes";
 import s from "./OrderDetailsList.module.scss";
 
-interface Props {
+interface OrderDetailsListProps {
   workType: OrderWorkType;
-  details: object | null | undefined;
-  heading?: string;
+  details: object | null;
 }
 
-interface DetailRow {
-  label: string;
-  value: string;
-  wide: boolean;
-}
-
-interface DetailGroup {
-  title: string;
-  rows: DetailRow[];
-}
-
-function buildGroups(workType: OrderWorkType, details: object): DetailGroup[] {
-  const data = new Map<string, unknown>(Object.entries(details));
-  const groups: DetailGroup[] = [];
-
-  for (const field of orderDetailsFields(workType)) {
-    const value = formatOrderDetailValue(field, data.get(field.key));
-    if (value === "") continue;
-
-    const title = field.group ?? "";
-    let current = groups.length > 0 ? groups[groups.length - 1] : null;
-    if (!current || current.title !== title) {
-      current = { title, rows: [] };
-      groups.push(current);
-    }
-    current.rows.push({ label: field.label, value, wide: field.wide ?? false });
-  }
-
-  return groups;
-}
-
-export function OrderDetailsList({ workType, details, heading = "Поля направления" }: Props) {
+export function OrderDetailsList({ workType, details }: OrderDetailsListProps) {
   if (!details) return null;
-
-  const groups = buildGroups(workType, details);
-  if (!groups.length) return null;
+  const values = details as Record<string, unknown>;
+  const groups = orderDetailGroups(workType)
+    .map((group) => ({
+      title: group.title,
+      rows: group.fields
+        .map((field) => ({ ...field, value: formatOrderDetailValue(field, values[field.key]) }))
+        .filter((row) => row.value),
+    }))
+    .filter((group) => group.rows.length > 0);
+  if (groups.length === 0) return null;
 
   return (
     <div className={s.block}>
-      <span className={s.heading}>{heading}</span>
-
-      {groups.map((group, index) => (
-        <div key={`${group.title}-${index}`} className={s.group}>
-          {group.title && <span className={s.groupTitle}>{group.title}</span>}
+      <span className={s.heading}>Поля направления</span>
+      {groups.map((group) => (
+        <div key={group.title} className={s.group}>
+          <span className={s.groupTitle}>{group.title}</span>
           <dl className={s.grid}>
             {group.rows.map((row) => (
-              <div key={row.label} className={cn(s.cell, { [s.cellWide]: row.wide })}>
+              <div key={row.key} className={cn(s.cell, { [s.cellWide]: row.wide })}>
                 <dt className={s.label}>{row.label}</dt>
                 <dd className={s.value}>{row.value}</dd>
               </div>

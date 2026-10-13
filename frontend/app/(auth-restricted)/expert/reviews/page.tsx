@@ -1,6 +1,6 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 import { ExpertReviewsWidget } from "@/source/widgets/expert-reviews";
 
 export default function ExpertReviewsPage() {

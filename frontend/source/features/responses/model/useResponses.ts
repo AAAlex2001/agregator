@@ -220,7 +220,7 @@ export function useResponses(role: UserRole | null) {
   return {
     ...state, role, tabs, reload, loadMore, onChat, onComplete,
     setTab: (tab: ResponseTabKey) => dispatch({ type: "TAB", tab }),
-    onShare: (pid: string, cb: () => void) => copyOrderLink(pid, cb),
+    onShare: (pid: string, cb: () => void) => copyOrderLink(pid).then(cb),
     onWithdraw: (r: ResponseCardData) => dispatch({ type: "WITHDRAW_TARGET", value: r }),
     onEdit: (r: ResponseCardData) => dispatch({ type: "EDITING", value: r }),
     closeEdit: () => dispatch({ type: "EDITING", value: null }),

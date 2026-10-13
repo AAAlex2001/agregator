@@ -1,0 +1,12 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty {
+  margin: 0;
+  color: #7a7f8d;
+  font-size: 14px;
+  line-height: 20px;
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 import LandingHeader from "@/source/widgets/landing/shared/ui/Header";
 import LandingFooter from "@/source/widgets/landing/shared/ui/Footer";
 import { DefectoscopistCertificationWidget } from "@/source/widgets/defectoscopist-certification";

@@ -4,7 +4,7 @@ import cn from "classnames";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useOptionalChatListContext } from "@/source/features/chat";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import Loader from "@/source/shared/ui/Loader";

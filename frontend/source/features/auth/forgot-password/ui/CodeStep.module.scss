@@ -1,22 +1,21 @@
-.stepText {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-  color: #FF8A00;
-  margin: 0 0 24px 0;
-  text-align: center;
-}
-
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.helperText {
+.step {
+  margin: 0 0 14px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #ff8a00;
+  text-align: center;
+}
+
+.spam {
+  margin: 0;
   font-size: 12px;
   line-height: 16px;
   color: #808080;
-  margin: 0;
-  text-align: left;
 }

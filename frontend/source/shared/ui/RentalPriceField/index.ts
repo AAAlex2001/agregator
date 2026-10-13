@@ -1,1 +1,1 @@
-export { RentalPriceField } from "./RentalPriceField";
+export { RentalPriceField, type LicenseRentalKind } from "./RentalPriceField";

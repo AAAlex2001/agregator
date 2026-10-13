@@ -1,6 +1,6 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 import { ReportsWidget } from "@/source/widgets/reports";
 
 export default function CustomerReportsPage() {

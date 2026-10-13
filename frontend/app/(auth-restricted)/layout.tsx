@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { AuthGuard, SessionProvider } from "@/source/features/session";
-import { getInitialSessionRole } from "@/source/features/session/server/getInitialSessionRole";
+import { AuthGuard, SessionProvider } from "@/source/entities/session";
+import { readSessionRole } from "@/source/entities/session/server";
 import { AppShell } from "@/source/widgets/app-shell";
 import { CabinetMenuTabs } from "@/source/widgets/cabinet-menu-tabs";
 import { SidebarMobileProvider } from "@/source/widgets/sidebar";
@@ -8,9 +8,9 @@ import {
   LicenseHoldersDrawer,
   LicenseHoldersDrawerProvider,
 } from "@/source/widgets/license-holders-drawer";
-import { UnreadCountProvider } from "@/source/features/notifications";
+import { UnreadCountProvider } from "@/source/entities/notification";
 import { ChatListProvider } from "@/source/features/chat";
-import { NotificationsWelcomeModal } from "@/source/features/onboarding/notifications-welcome";
+import { NotificationsWelcomeModal } from "@/source/features/notifications/welcome";
 import { AuthModalProvider } from "@/source/shared/lib/auth-modal";
 import { AuthModalHost } from "@/source/widgets/auth/auth-modal";
 import s from "./layout.module.scss";
@@ -27,7 +27,7 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialRole = await getInitialSessionRole();
+  const initialRole = await readSessionRole();
 
   return (
     <SessionProvider initialRole={initialRole}>

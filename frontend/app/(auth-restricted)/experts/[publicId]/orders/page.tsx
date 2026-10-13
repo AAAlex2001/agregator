@@ -1,12 +1,12 @@
-import { ExpertOrdersHistoryWidget } from "@/source/widgets/expert-orders-history";
+import { ExpertHistoryWidget } from "@/source/widgets/orders";
 
 export const dynamic = "force-dynamic";
 
-interface Props {
+interface ExpertOrdersHistoryPageProps {
   params: Promise<{ publicId: string }>;
 }
 
-export default async function ExpertOrdersHistoryPage({ params }: Props) {
+export default async function ExpertOrdersHistoryPage({ params }: ExpertOrdersHistoryPageProps) {
   const { publicId } = await params;
-  return <ExpertOrdersHistoryWidget publicId={publicId} />;
+  return <ExpertHistoryWidget publicId={publicId} />;
 }

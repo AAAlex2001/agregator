@@ -1,8 +1,6 @@
-import { API_URL } from "@/source/shared/api/config";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
-import { fetchWithSession } from "@/source/shared/api/session";
+import { json, send } from "@/source/shared/api/request";
 
-export interface QuestionApiItem {
+export interface OrderQuestion {
   id: number;
   order_id: number;
   expert_id: number;
@@ -15,55 +13,26 @@ export interface QuestionApiItem {
   is_anonymous: boolean;
 }
 
-export interface QuestionsApiList {
-  items: QuestionApiItem[];
-  total: number;
+export async function fetchQuestions(orderId: number): Promise<{ items: OrderQuestion[] }> {
+  const response = await send(`/orders/${orderId}/questions`, {}, "Не удалось загрузить вопросы");
+  return response.json();
 }
 
-export async function fetchQuestions(orderId: number): Promise<QuestionsApiList> {
-  const res = await fetchWithSession(`${API_URL}/orders/${orderId}/questions`);
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить вопросы"));
-  return res.json();
+export async function askQuestion(orderId: number, question: string, isAnonymous: boolean): Promise<OrderQuestion> {
+  const response = await send(
+    `/orders/${orderId}/questions`,
+    json("POST", { question, is_anonymous: isAnonymous }),
+    "Не удалось отправить вопрос",
+  );
+  return response.json();
 }
 
-export async function askQuestion(
-  orderId: number,
-  question: string,
-  isAnonymous: boolean,
-): Promise<QuestionApiItem> {
-  const res = await fetchWithSession(`${API_URL}/orders/${orderId}/questions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, is_anonymous: isAnonymous }),
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось отправить вопрос"));
-  return res.json();
+export async function updateQuestion(questionId: number, question: string): Promise<OrderQuestion> {
+  const response = await send(`/questions/${questionId}`, json("PATCH", { question }), "Не удалось обновить вопрос");
+  return response.json();
 }
 
-export async function updateQuestion(
-  questionId: number,
-  question: string,
-  isAnonymous?: boolean,
-): Promise<QuestionApiItem> {
-  const res = await fetchWithSession(`${API_URL}/questions/${questionId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(
-      isAnonymous === undefined
-        ? { question }
-        : { question, is_anonymous: isAnonymous },
-    ),
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось обновить вопрос"));
-  return res.json();
-}
-
-export async function answerQuestion(questionId: number, answer: string): Promise<QuestionApiItem> {
-  const res = await fetchWithSession(`${API_URL}/questions/${questionId}/answer`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ answer }),
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось отправить ответ"));
-  return res.json();
+export async function answerQuestion(questionId: number, answer: string): Promise<OrderQuestion> {
+  const response = await send(`/questions/${questionId}/answer`, json("PATCH", { answer }), "Не удалось отправить ответ");
+  return response.json();
 }

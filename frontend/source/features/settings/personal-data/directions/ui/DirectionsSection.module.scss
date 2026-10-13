@@ -1,0 +1,15 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  &[hidden] {
+    display: none;
+  }
+}

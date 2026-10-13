@@ -1,80 +1,61 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useNotifications } from "@/source/shared/ui/Notifications";
+import { useReducer, type FormEvent } from "react";
 import { confirmResetCode, requestPasswordReset, resetPassword } from "@/source/entities/user";
+import { useNotifications } from "@/source/shared/ui/Notifications";
+import { INITIAL_STATE, forgotPasswordReducer } from "./reducer";
+import type { ForgotPasswordStep } from "./types";
 
-export type ForgotPasswordStep = 1 | 2 | 3 | 4;
+export const CODE_LENGTH = 6;
 
+/** Восстановление пароля в три шага: почта, код из письма, новый пароль. */
 export function useForgotPassword() {
   const { showError } = useNotifications();
-  const [step, setStep] = useState<ForgotPasswordStep>(1);
-  const [waiting, setWaiting] = useState(false);
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+  const [state, dispatch] = useReducer(forgotPasswordReducer, INITIAL_STATE);
+  const email = state.email.trim();
 
-  const submitEmail = async (event: FormEvent) => {
-    event.preventDefault();
-    setWaiting(true);
+  const submit = async (request: () => Promise<void>, next: ForgotPasswordStep) => {
+    dispatch({ type: "submit/start" });
     try {
-      await requestPasswordReset(email.trim());
-      setStep(2);
-    } catch (err) {
-      showError(err instanceof Error ? err.message : "Произошла ошибка");
-    } finally {
-      setWaiting(false);
+      await request();
+      dispatch({ type: "submit/success", step: next });
+    } catch (error) {
+      dispatch({ type: "submit/error" });
+      showError(error instanceof Error ? error.message : "Произошла ошибка");
     }
   };
 
-  const submitCode = async (event: FormEvent) => {
+  const sendEmail = (event: FormEvent) => {
     event.preventDefault();
-    if (!/^\d{6}$/.test(code)) {
-      showError("Введите 6-значный код");
+    submit(() => requestPasswordReset(email), "code");
+  };
+
+  const sendCode = (event: FormEvent) => {
+    event.preventDefault();
+    if (state.code.length !== CODE_LENGTH) {
+      showError(`Введите ${CODE_LENGTH}-значный код`);
       return;
     }
-    setWaiting(true);
-    try {
-      await confirmResetCode(email.trim(), code);
-      setStep(3);
-    } catch (err) {
-      showError(err instanceof Error ? err.message : "Произошла ошибка");
-    } finally {
-      setWaiting(false);
-    }
+    submit(() => confirmResetCode(email, state.code), "password");
   };
 
-  const submitPassword = async (event: FormEvent) => {
+  const sendPassword = (event: FormEvent) => {
     event.preventDefault();
-    if (password !== repeatPassword) {
+    if (state.password !== state.repeatPassword) {
       showError("Пароли не совпадают");
       return;
     }
-    setWaiting(true);
-    try {
-      await resetPassword(email.trim(), code, password);
-      setStep(4);
-    } catch (err) {
-      showError(err instanceof Error ? err.message : "Произошла ошибка");
-    } finally {
-      setWaiting(false);
-    }
+    submit(() => resetPassword(email, state.code, state.password), "done");
   };
 
   return {
-    step,
-    waiting,
-    email,
-    setEmail,
-    code,
-    setCode,
-    password,
-    setPassword,
-    repeatPassword,
-    setRepeatPassword,
-    submitEmail,
-    submitCode,
-    submitPassword,
+    state,
+    changeEmail: (value: string) => dispatch({ type: "email/change", email: value }),
+    changeCode: (value: string) => dispatch({ type: "code/change", code: value }),
+    changePassword: (value: string) => dispatch({ type: "password/change", password: value }),
+    changeRepeatPassword: (value: string) => dispatch({ type: "repeatPassword/change", repeatPassword: value }),
+    sendEmail,
+    sendCode,
+    sendPassword,
   };
 }

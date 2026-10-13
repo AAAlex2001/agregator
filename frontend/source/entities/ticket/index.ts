@@ -1,24 +1,7 @@
-export type {
-  TicketStatus,
-  TicketCategory,
-  TicketAttachment,
-  TicketMessage,
-  SupportTicket,
-} from "./model/types";
-export { CATEGORY_LABEL, STATUS_LABEL } from "./model/types";
-
-export { StatusBadge } from "./ui/StatusBadge";
+export type { NewTicket, Ticket, TicketCategory, TicketMessage, TicketSummary } from "./model/types";
+export { CATEGORY_LABEL, TICKET_CATEGORIES } from "./model/types";
+export { TICKET_FILE_ACCEPT, TICKET_FILES_HINT, useTicketFiles } from "./model/useTicketFiles";
+export { createTicket, fetchTicket, fetchTickets, replyToTicket } from "./api/tickets.api";
+export { MessageBubble } from "./ui/MessageBubble";
 export { TicketCard } from "./ui/TicketCard";
 export { TicketHeader } from "./ui/TicketHeader";
-export { MessageGroup } from "./ui/MessageGroup";
-
-export {
-  fetchTickets,
-  fetchTicket,
-  createTicket,
-  replyToTicket,
-} from "./api/tickets.api";
-export type {
-  CreateTicketPayload,
-  ReplyPayload,
-} from "./api/tickets.api";

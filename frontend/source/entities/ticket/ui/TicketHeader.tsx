@@ -2,53 +2,38 @@
 
 import cn from "classnames";
 import { useState } from "react";
+import { formatWithTime } from "@/source/shared/lib/formatDate";
 import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
-import {
-  CATEGORY_LABEL,
-  type SupportTicket,
-} from "../model/types";
+import { CATEGORY_LABEL, type TicketSummary } from "../model/types";
 import { StatusBadge } from "./StatusBadge";
 import s from "./TicketHeader.module.scss";
 
-interface Props {
-  ticket: SupportTicket;
+interface TicketHeaderProps {
+  ticket: TicketSummary;
 }
 
-function formatDateTime(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export function TicketHeader({ ticket }: Props) {
-  const [open, setOpen] = useState(false);
+/** Шапка переписки: номер, тема и статус; по клику раскрываются категория и даты. */
+export function TicketHeader({ ticket }: TicketHeaderProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className={s.banner}>
       <button
         type="button"
         className={s.titleRow}
-        aria-expanded={open}
-        aria-label={open ? "Свернуть" : "Развернуть"}
-        onClick={() => setOpen((value) => !value)}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? "Свернуть" : "Развернуть"}
+        onClick={() => setIsOpen((open) => !open)}
       >
         <div className={s.titleBlock}>
           <span className={s.number}>{ticket.number}</span>
           <p className={s.subject}>{ticket.subject}</p>
         </div>
         <StatusBadge status={ticket.status} className={s.statusBadge} />
-        <ChatChevronDownIcon
-          className={cn(s.chevron, { [s.chevronOpen]: open })}
-        />
+        <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: isOpen })} />
       </button>
 
-      {open && (
+      {isOpen && (
         <div className={s.details}>
           <div className={s.detailRow}>
             <span className={s.detailLabel}>Категория:</span>
@@ -56,11 +41,11 @@ export function TicketHeader({ ticket }: Props) {
           </div>
           <div className={s.detailRow}>
             <span className={s.detailLabel}>Создано:</span>
-            <span className={s.detailValue}>{formatDateTime(ticket.createdAt)}</span>
+            <span className={s.detailValue}>{formatWithTime(ticket.created_at)}</span>
           </div>
           <div className={s.detailRow}>
             <span className={s.detailLabel}>Последняя активность:</span>
-            <span className={s.detailValue}>{formatDateTime(ticket.updatedAt)}</span>
+            <span className={s.detailValue}>{formatWithTime(ticket.updated_at)}</span>
           </div>
         </div>
       )}

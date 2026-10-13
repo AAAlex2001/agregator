@@ -2,15 +2,12 @@ import cn from "classnames";
 import { STATUS_LABEL, type TicketStatus } from "../model/types";
 import s from "./StatusBadge.module.scss";
 
-interface Props {
+interface StatusBadgeProps {
   status: TicketStatus;
   className?: string;
 }
 
-export function StatusBadge({ status, className = "" }: Props) {
-  return (
-    <span className={cn(s.badge, s[`status_${status}`], className)}>
-      {STATUS_LABEL[status]}
-    </span>
-  );
+/** Цветная метка статуса обращения. */
+export function StatusBadge({ status, className }: StatusBadgeProps) {
+  return <span className={cn(s.badge, s[`status_${status}`], className)}>{STATUS_LABEL[status]}</span>;
 }

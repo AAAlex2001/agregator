@@ -1,7 +1,7 @@
 "use client";
 
 import { useExpertsMap } from "@/source/entities/expert";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { FilterableExpertsMap } from "./FilterableExpertsMap";
 
 export function ExpertiseExpertsMap() {

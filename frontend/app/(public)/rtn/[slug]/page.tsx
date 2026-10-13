@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
-import { fetchRtnBySlug, fetchRelatedRtn } from "@/source/entities/rtn-clarification";
-import { fetchRtnComments } from "@/source/entities/rtn-comment";
-import { RtnClarificationViewWidget, RtnJsonLd } from "@/source/widgets/rtn-clarification-view";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { fetchRelatedRtn, fetchRtnBySlug, fetchRtnComments, RtnJsonLd } from "@/source/entities/rtn";
+import { RedirectIfAuthed } from "@/source/entities/session";
+import { LandingFooter, LandingHeader } from "@/source/widgets/landing";
+import { RtnClarificationWidget } from "@/source/widgets/rtn";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+interface RtnDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: RtnDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const clarification = await fetchRtnBySlug(slug, { server: true });
   if (!clarification) {
@@ -39,13 +40,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function RtnDetailPage({ params }: Props) {
+export default async function RtnDetailPage({ params }: RtnDetailPageProps) {
   const { slug } = await params;
   const clarification = await fetchRtnBySlug(slug, { server: true });
   if (!clarification) notFound();
 
   const [related, comments] = await Promise.all([
-    fetchRelatedRtn(slug, { limit: 10, server: true }),
+    fetchRelatedRtn(slug, 10, { server: true }),
     fetchRtnComments(clarification.id, { server: true }).catch(() => []),
   ]);
 
@@ -55,7 +56,7 @@ export default async function RtnDetailPage({ params }: Props) {
       <LandingHeader />
       <RtnJsonLd clarification={clarification} commentCount={comments.length} />
       <main>
-        <RtnClarificationViewWidget clarification={clarification} related={related} initialComments={comments} />
+        <RtnClarificationWidget clarification={clarification} related={related} comments={comments} basePath="" />
       </main>
       <LandingFooter variant="light" />
     </>

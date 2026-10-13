@@ -4,13 +4,12 @@ import cn from "classnames";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "@/source/features/session";
-import { useUnreadNotificationCount } from "@/source/features/notifications";
-import { logout } from "@/source/entities/user";
+import { logout, useSession } from "@/source/entities/session";
+import { useUnreadCount } from "@/source/entities/notification";
 import { CloseIcon, LogoIcon, LogoutIcon } from "@/source/shared/ui/icons";
 import { SIDEBAR_SECTIONS } from "../model/navigation";
 import { useSidebarMobile } from "../model/SidebarMobileContext";
-import { RoleSwitcher } from "./RoleSwitcher";
+import { RoleSwitcher } from "@/source/features/auth/switch-role";
 import { SidebarLink } from "./SidebarLink";
 import { SidebarProfile } from "./SidebarProfile";
 import s from "./Sidebar.module.scss";
@@ -21,7 +20,7 @@ export function Sidebar() {
   const router = useRouter();
   const { user, role, isLoading, setUser } = useSession();
   const { isOpen, close } = useSidebarMobile();
-  const unreadCount = useUnreadNotificationCount();
+  const { count: unreadCount } = useUnreadCount();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const sections = role ? SIDEBAR_SECTIONS[role] : [];
 

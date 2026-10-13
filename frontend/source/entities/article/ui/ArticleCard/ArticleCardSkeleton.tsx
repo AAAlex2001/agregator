@@ -1,19 +1,19 @@
 import Skeleton from "@/source/shared/ui/Skeleton";
-import styles from "./ArticleCard.module.scss";
 import s from "./ArticleCardSkeleton.module.scss";
 
+/** Заглушка карточки статьи той же формы, что и ArticleCard. */
 export function ArticleCardSkeleton() {
   return (
-    <div className={styles.card} aria-hidden="true" aria-busy="true">
-      <div className={styles.body}>
+    <div className={s.card} aria-hidden="true">
+      <div className={s.body}>
         <Skeleton className={s.cover} rounded="md" />
-        <div className={styles.info}>
+        <div className={s.info}>
           <Skeleton className={s.title} rounded="md" />
           <Skeleton className={s.line} rounded="md" />
           <Skeleton className={s.lineShort} rounded="md" />
         </div>
       </div>
-      <div className={styles.footer}>
+      <div className={s.footer}>
         <Skeleton className={s.date} rounded="pill" />
         <Skeleton className={s.read} rounded="pill" />
       </div>

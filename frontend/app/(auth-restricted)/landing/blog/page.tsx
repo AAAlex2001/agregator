@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { fetchArticleList } from "@/source/entities/article";
-import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
+import { ArticlesListSkeleton, ArticlesPageWidget } from "@/source/widgets/articles";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ async function AuthedBlogListContent({ page }: { page: number }) {
   ]);
 
   return (
-    <ArticlesList
+    <ArticlesPageWidget
       key={page}
       kind="blog"
       title="Блог платформы"

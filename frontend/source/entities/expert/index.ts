@@ -7,7 +7,6 @@ export {
 
 export { mapExpertList, mapExpertSummary } from "./model/mapper";
 export { useExpertsList } from "./model/useExpertsList";
-export { useExpertOrdersHistory } from "./model/useExpertOrdersHistory";
 export { useExpertsMap } from "./model/useExpertsMap";
 
 export { ExpertCard } from "./ui/ExpertCard";

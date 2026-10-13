@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import LandingHeader from "@/source/widgets/landing/shared/ui/Header";
-import LandingFooter from "@/source/widgets/landing/shared/ui/Footer";
+import { LandingFooter, LandingHeader } from "@/source/widgets/landing";
 import { PublicReviewsWidget } from "@/source/widgets/public-reviews";
 import { fetchPublicReviews } from "@/source/entities/landing-review";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const dynamic = "force-dynamic";
 

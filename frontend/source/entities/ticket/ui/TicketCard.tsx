@@ -2,23 +2,18 @@
 
 import cn from "classnames";
 import { formatRelative } from "@/source/shared/lib/formatDate";
-import { CATEGORY_LABEL, type SupportTicket } from "../model/types";
+import { CATEGORY_LABEL, type TicketSummary } from "../model/types";
 import { StatusBadge } from "./StatusBadge";
 import s from "./TicketCard.module.scss";
 
-interface Props {
-  ticket: SupportTicket;
+interface TicketCardProps {
+  ticket: TicketSummary;
   isActive: boolean;
   onClick: () => void;
 }
 
-export function TicketCard({ ticket, isActive, onClick }: Props) {
-  const preview =
-    ticket.lastMessagePreview ||
-    ticket.messages[ticket.messages.length - 1]?.text ||
-    "";
-  const previewClass = cn(s.preview, { [s.previewUnread]: ticket.hasUnread });
-
+/** Обращение в списке: номер, статус, тема, последнее сообщение, категория и дата. */
+export function TicketCard({ ticket, isActive, onClick }: TicketCardProps) {
   return (
     <button
       type="button"
@@ -33,11 +28,13 @@ export function TicketCard({ ticket, isActive, onClick }: Props) {
 
       <span className={s.subject}>{ticket.subject}</span>
 
-      {preview && <p className={previewClass}>{preview}</p>}
+      {ticket.last_message_preview && (
+        <p className={cn(s.preview, { [s.previewUnread]: ticket.has_unread })}>{ticket.last_message_preview}</p>
+      )}
 
       <div className={s.bottomRow}>
         <span className={s.category}>{CATEGORY_LABEL[ticket.category]}</span>
-        <span className={s.date}>{formatRelative(ticket.updatedAt)}</span>
+        <span className={s.date}>{formatRelative(ticket.updated_at)}</span>
       </div>
     </button>
   );

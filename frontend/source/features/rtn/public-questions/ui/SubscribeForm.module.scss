@@ -1,0 +1,38 @@
+.subscribe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f4f6fa;
+}
+
+.label {
+  font-size: 13px;
+  line-height: 18px;
+  color: #525969;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 13px 16px;
+  border: 2px solid #e6e6e6;
+  border-radius: 10px;
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 125%;
+  color: #1a1a1a;
+  background: #ffffff;
+
+  &:focus {
+    outline: none;
+    border-color: #ffb800;
+  }
+}

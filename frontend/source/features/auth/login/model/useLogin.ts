@@ -1,123 +1,67 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useReducer, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/source/features/session";
-import { useNotifications } from "@/source/shared/ui/Notifications";
-import {
-  EmailNotVerifiedError,
-  RoleChoiceRequiredError,
-  loginUser,
-} from "@/source/entities/session";
 import { PENDING_ORDER_UUID_KEY } from "@/source/entities/order";
-import type { LoginResponse, UserRole } from "./types";
-
-interface PendingConfirm {
-  email: string;
-  role: UserRole | null;
-}
+import { EmailNotVerifiedError, RoleChoiceRequiredError, homePath, login, useSession } from "@/source/entities/session";
+import type { UserRole } from "@/source/entities/user";
+import { useNotifications } from "@/source/shared/ui/Notifications";
+import { initialLoginState, loginReducer } from "./reducer";
 
 interface UseLoginOptions {
-  /** Если задан — вызывается после успешного входа (напр. чтобы закрыть модалку). Редирект в кабинет/заказ выполняется как обычно. */
-  onSuccess?: () => void;
+  onSuccess: () => void;
+  onUnverified: (email: string, role: UserRole | null) => void;
 }
 
-export function useLogin(options?: UseLoginOptions) {
+/** Вход. Если на почту несколько ролей — просит выбрать роль, если почта не подтверждена — отдаёт её на подтверждение. */
+export function useLogin({ onSuccess, onUnverified }: UseLoginOptions) {
   const router = useRouter();
   const { reload } = useSession();
   const { showError } = useNotifications();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [waiting, setWaiting] = useState(false);
-  const [fromOrder, setFromOrder] = useState(false);
-  const [availableRoles, setAvailableRoles] = useState<UserRole[] | null>(null);
-  const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(null);
-  const [isFinalizing, setIsFinalizing] = useState(false);
+  const [state, dispatch] = useReducer(loginReducer, undefined, initialLoginState);
 
-  useEffect(() => {
-    if (sessionStorage.getItem(PENDING_ORDER_UUID_KEY)) {
-      setFromOrder(true);
-    }
-  }, []);
-
-  const finishLogin = async (user: LoginResponse) => {
+  const enter = async (role: UserRole) => {
     await reload();
-    options?.onSuccess?.();
-    const pendingUuid = sessionStorage.getItem(PENDING_ORDER_UUID_KEY);
-    if (user.role === "EXPERT" && pendingUuid) {
-      sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
-      router.push(`/order/${pendingUuid}`);
+    onSuccess();
+
+    const pendingOrder = sessionStorage.getItem(PENDING_ORDER_UUID_KEY);
+    sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
+    if (pendingOrder && role === "EXPERT") {
+      router.push(`/order/${pendingOrder}`);
       return;
     }
-    if (pendingUuid) {
-      sessionStorage.removeItem(PENDING_ORDER_UUID_KEY);
-      showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт исполнителя");
-    }
-    if (user.role === "EXPERT") router.push("/expert/orders");
-    else if (user.role === "LICENSE_HOLDER") router.push("/settings");
-    else router.push("/customer/orders");
+    if (pendingOrder) showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт исполнителя");
+    router.push(homePath(role));
   };
 
-  const submitWithRole = async (role?: UserRole) => {
+  const send = async (role?: UserRole) => {
+    dispatch({ type: "submit/start" });
     try {
-      const user = await loginUser({ email: email.trim(), password, role });
-      await finishLogin(user);
-    } catch (err) {
-      if (err instanceof RoleChoiceRequiredError) {
-        setAvailableRoles(err.availableRoles);
+      const response = await login({ email: state.email.trim(), password: state.password, role });
+      await enter(response.role);
+    } catch (error) {
+      if (error instanceof RoleChoiceRequiredError) {
+        dispatch({ type: "roles/required", roles: error.roles });
         return;
       }
-      if (err instanceof EmailNotVerifiedError) {
-        setPendingConfirm({ email: err.email, role: err.role });
-        return;
-      }
-      showError(err instanceof Error ? err.message : "Произошла ошибка");
+      if (error instanceof EmailNotVerifiedError) onUnverified(error.email, error.role);
+      else showError(error instanceof Error ? error.message : "Не удалось войти");
+    } finally {
+      dispatch({ type: "submit/finish" });
     }
   };
 
-  const submit = async (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    setWaiting(true);
-    try {
-      await submitWithRole();
-    } finally {
-      setWaiting(false);
-    }
-  };
-
-  const chooseRole = async (role: UserRole) => {
-    setIsFinalizing(true);
-    try {
-      await submitWithRole(role);
-    } finally {
-      setIsFinalizing(false);
-    }
-  };
-
-  const cancelRoleChoice = () => setAvailableRoles(null);
-  const closeConfirm = () => setPendingConfirm(null);
-
-  const handleConfirmed = async () => {
-    setPendingConfirm(null);
-    await reload();
-    options?.onSuccess?.();
-    router.push("/settings");
+    send();
   };
 
   return {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    fromOrder,
-    waiting,
-    availableRoles,
-    isFinalizing,
-    pendingConfirm,
-    chooseRole,
-    cancelRoleChoice,
-    closeConfirm,
-    handleConfirmed,
+    state,
+    changeEmail: (value: string) => dispatch({ type: "email/change", email: value }),
+    changePassword: (value: string) => dispatch({ type: "password/change", password: value }),
     submit,
+    chooseRole: (role: UserRole) => send(role),
+    cancelRoleChoice: () => dispatch({ type: "roles/cancel" }),
   };
 }

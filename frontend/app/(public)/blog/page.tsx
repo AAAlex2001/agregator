@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { fetchArticleList } from "@/source/entities/article";
-import { ArticlesList, ArticlesListSkeleton } from "@/source/features/articles-list";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { ArticlesListSkeleton, ArticlesPageWidget } from "@/source/widgets/articles";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +44,7 @@ async function BlogListContent({ page }: { page: number }) {
     fetchArticleList({ kind: "news", limit: 10, offset: 0 }, { server: true }),
   ]);
   return (
-    <ArticlesList
+    <ArticlesPageWidget
       key={page}
       kind="blog"
       title="Блог платформы"

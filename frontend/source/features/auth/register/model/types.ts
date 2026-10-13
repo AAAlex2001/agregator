@@ -1,24 +1,24 @@
-export type { UserRole } from "@/source/entities/user";
-
-import type { SelectedLocation } from "@/source/shared/ui/YandexMap";
-import type { ExpertiseType } from "@/source/entities/expertise";
-import type { LicenseRentalKind, UserRole } from "@/source/entities/user";
-import type { PartySuggestion } from "@/source/features/party-suggest";
-import type { ExpertiseProfile } from "@/source/features/directions/expertise";
 import type {
   AuditCustomerProfile,
   AuditExpertProfile,
   AuditLicenseHolderProfile,
-} from "@/source/features/directions/audit";
-import type { CadastralProfile } from "@/source/features/directions/cadastral";
-import type { ForensicProfile } from "@/source/features/directions/forensic";
-import type { ResearchProfile } from "@/source/features/directions/research";
-import type { LaboratoryProfile } from "@/source/features/directions/laboratory";
-import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/features/directions/tech-diag";
-import type { DesignHolderProfile, DesignProfile } from "@/source/features/directions/design";
-import type { EcologyProfile } from "@/source/features/directions/ecology";
-import type { SurveyHolderProfile, SurveyProfile } from "@/source/features/directions/survey";
-import type { DirectionFilesState } from "./directionFiles";
+} from "@/source/entities/directions/audit";
+import type { CadastralProfile } from "@/source/entities/directions/cadastral";
+import type { DesignProfile } from "@/source/entities/directions/design";
+import type { SroHolderProfile } from "@/source/entities/directions/shared";
+import type { EcologyProfile } from "@/source/entities/directions/ecology";
+import type { ExpertiseProfile } from "@/source/entities/directions/expertise";
+import type { ForensicProfile } from "@/source/entities/directions/forensic";
+import type { LaboratoryProfile } from "@/source/entities/directions/laboratory";
+import type { ResearchProfile } from "@/source/entities/directions/research";
+import type { SurveyProfile } from "@/source/entities/directions/survey";
+import type { TechDiagHolderProfile, TechDiagProfile } from "@/source/entities/directions/tech-diag";
+import type { ExpertiseType } from "@/source/entities/expertise";
+import type { PartySuggestion } from "@/source/entities/party";
+import type { LicenseHolderFiles, UserRole } from "@/source/entities/user";
+import type { LicenseRentalKind } from "@/source/shared/ui/RentalPriceField";
+import type { SelectedLocation } from "@/source/shared/ui/YandexMap";
+import type { DirectionFiles } from "./directionFiles";
 
 export type StringField =
   | "email"
@@ -35,7 +35,6 @@ export type StringField =
   | "contactPrice"
   | "contactDetails";
 
-export type FileKey = "license" | "mining" | "sro" | "sroSurvey" | "lab";
 export type ConsentKey = "privacy" | "terms" | "personal";
 export type DocFileKey = "cadastralDiploma" | "cadastralCertificate" | "forensicDiploma";
 export type DocListKey =
@@ -56,8 +55,7 @@ export type DocListKey =
   | "surveyRtnDocuments";
 
 export interface RegisterState {
-  waiting: boolean;
-  error: string | null;
+  isSubmitting: boolean;
   role: UserRole;
   email: string;
   password: string;
@@ -87,11 +85,11 @@ export interface RegisterState {
   techDiagProfile: TechDiagProfile | null;
   techDiagHolderProfile: TechDiagHolderProfile | null;
   designProfile: DesignProfile | null;
-  designHolderProfile: DesignHolderProfile | null;
+  designHolderProfile: SroHolderProfile | null;
   ecologyProfile: EcologyProfile | null;
   surveyProfile: SurveyProfile | null;
-  surveyHolderProfile: SurveyHolderProfile | null;
-  directionFiles: DirectionFilesState;
+  surveyHolderProfile: SroHolderProfile | null;
+  directionFiles: DirectionFiles;
   licenseEnabled: boolean;
   licenseNumber: string;
   licenseAreas: ExpertiseType[];
@@ -100,14 +98,13 @@ export interface RegisterState {
   rentalFixed: string;
   miningNumber: string;
   labNumber: string;
-  files: Record<FileKey, File | null>;
+  files: LicenseHolderFiles;
   consents: Record<ConsentKey, boolean>;
 }
 
 export type RegisterAction =
-  | { type: "SUBMIT_PENDING" }
-  | { type: "SUBMIT_FULFILLED" }
-  | { type: "SUBMIT_REJECTED"; payload: string }
+  | { type: "submit/start" }
+  | { type: "submit/finish" }
   | { type: "set"; key: StringField; value: string }
   | { type: "role"; value: UserRole }
   | { type: "travels"; value: boolean }
@@ -115,7 +112,7 @@ export type RegisterAction =
   | { type: "mapFields"; value: string[] }
   | { type: "contactEnabled"; value: boolean }
   | { type: "contactConsent"; value: boolean }
-  | { type: "location"; point: SelectedLocation }
+  | { type: "location"; point: SelectedLocation | null }
   | { type: "party"; party: PartySuggestion }
   | { type: "companyText"; value: string }
   | { type: "direction"; key: string; value: boolean }
@@ -130,15 +127,15 @@ export type RegisterAction =
   | { type: "techDiag"; value: TechDiagProfile | null }
   | { type: "techDiagHolder"; value: TechDiagHolderProfile | null }
   | { type: "design"; value: DesignProfile | null }
-  | { type: "designHolder"; value: DesignHolderProfile | null }
+  | { type: "designHolder"; value: SroHolderProfile | null }
   | { type: "ecology"; value: EcologyProfile | null }
   | { type: "survey"; value: SurveyProfile | null }
-  | { type: "surveyHolder"; value: SurveyHolderProfile | null }
+  | { type: "surveyHolder"; value: SroHolderProfile | null }
   | { type: "licenseEnabled"; value: boolean }
   | { type: "areas"; value: ExpertiseType[] }
   | { type: "rentalKind"; value: LicenseRentalKind }
-  | { type: "file"; key: FileKey; file: File | null }
+  | { type: "file"; key: keyof LicenseHolderFiles; file: File | null }
   | { type: "docFile"; key: DocFileKey; file: File | null }
   | { type: "docAdd"; key: DocListKey; files: File[] }
-  | { type: "docRemove"; key: DocListKey; index: number }
+  | { type: "docRemove"; key: DocListKey; file: File }
   | { type: "consent"; key: ConsentKey; value: boolean };

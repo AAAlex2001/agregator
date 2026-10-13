@@ -11,6 +11,7 @@ export { VAT_LABEL } from "./model/types";
 export { calcVat, getVatRate } from "./lib/calcVat";
 export type { VatBreakdown as VatBreakdownData } from "./lib/calcVat";
 export { VatBreakdown } from "./ui/VatBreakdown";
+export { VatKindField } from "./ui/VatKindField";
 export type {
   ResponseStatus, ResponseTabKey, ResponseApiItem,
   ResponsesApiList, ResponseCounters,
@@ -23,3 +24,6 @@ export {
   deleteAllRejectedResponses, editResponse, createReview,
 } from "./api/responses.api";
 export type { EditPayload } from "./api/responses.api";
+export { respondToOrder, type RespondPayload } from "./api/respond.api";
+export { useBidFiles, type BidFiles } from "./model/useBidFiles";
+export { BidFilesField } from "./ui/BidFilesField";

@@ -1,40 +1,30 @@
+import { AuditCustomerProfileFields, emptyAuditCustomerProfile } from "@/source/entities/directions/audit";
 import { ORDER_WORK_OPTIONS } from "@/source/entities/order";
-import { PartySuggestInput, type PartySuggestion } from "@/source/features/party-suggest";
-import {
-  AuditCustomerProfileFields,
-  emptyAuditCustomerProfile,
-} from "@/source/features/directions/audit";
+import { PartySuggestInput } from "@/source/entities/party";
+import { DirectionList } from "./directions/DirectionList";
 import { DirectionOption } from "./directions/DirectionOption";
 import { NameFields } from "./NameFields";
 import type { StepProps } from "./types";
-import d from "./directions/DirectionsPicker.module.scss";
 
+/** Поля заказчика: направления (у аудита СУПБ своя анкета), имя и организация по ИНН. */
 export function CustomerFields({ state, dispatch }: StepProps) {
   const audit = state.auditCustomerProfile;
 
   return (
     <>
-      <ul className={d.list}>
+      <DirectionList>
         {ORDER_WORK_OPTIONS.map((option) =>
           option.value === "AUDIT_SUPB" ? (
             <DirectionOption
               key={option.value}
-              id="AUDIT_SUPB"
+              id={option.value}
               title={option.label}
               description={option.description}
               checked={audit !== null}
-              onToggle={() =>
-                dispatch({
-                  type: "auditCustomer",
-                  value: audit ? null : { ...emptyAuditCustomerProfile },
-                })
-              }
+              onToggle={() => dispatch({ type: "auditCustomer", value: audit ? null : emptyAuditCustomerProfile })}
             >
               {audit && (
-                <AuditCustomerProfileFields
-                  value={audit}
-                  onChange={(value) => dispatch({ type: "auditCustomer", value })}
-                />
+                <AuditCustomerProfileFields value={audit} onChange={(value) => dispatch({ type: "auditCustomer", value })} />
               )}
             </DirectionOption>
           ) : (
@@ -45,25 +35,19 @@ export function CustomerFields({ state, dispatch }: StepProps) {
               description={option.description}
               checked={state.directions.includes(option.value)}
               onToggle={() =>
-                dispatch({
-                  type: "direction",
-                  key: option.value,
-                  value: !state.directions.includes(option.value),
-                })
+                dispatch({ type: "direction", key: option.value, value: !state.directions.includes(option.value) })
               }
             />
           ),
         )}
-      </ul>
+      </DirectionList>
 
       <NameFields state={state} dispatch={dispatch} />
 
       <PartySuggestInput
         value={state.companyName}
-        onChange={(query: string, picked: PartySuggestion | null) =>
-          picked
-            ? dispatch({ type: "party", party: picked })
-            : dispatch({ type: "companyText", value: query })
+        onChange={(query, picked) =>
+          picked ? dispatch({ type: "party", party: picked }) : dispatch({ type: "companyText", value: query })
         }
         placeholder="ИНН или название организации"
       />

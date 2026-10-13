@@ -2,7 +2,7 @@
 
 import cn from "classnames";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useOptionalChatListContext } from "@/source/features/chat";
 import { ArrowIcon } from "@/source/shared/ui/icons";
 import { MessageGroup, groupChatMessages, type ChatDetailData } from "@/source/entities/chat";

@@ -6,7 +6,7 @@ import {
   fetchContactOffer,
   fetchExpertContacts,
 } from "@/source/entities/expert-contact";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import type { SortDir } from "@/source/shared/ui/SortPills";
 import { filterExperts } from "../lib/filterExperts";

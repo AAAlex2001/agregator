@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 import { LandingFooter, LandingHeader } from "@/source/widgets/landing";
-import { RtnQuestionsWidget } from "@/source/widgets/rtn-questions";
+import { RtnQuestionsWidget } from "@/source/widgets/rtn";
 
 export const metadata: Metadata = {
   title: "Задать вопрос в Ростехнадзор",
@@ -30,7 +30,7 @@ export default function PublicRtnQuestionPage() {
       <RedirectIfAuthed to="/landing/rtn/ask" />
       <LandingHeader />
       <main>
-        <RtnQuestionsWidget authenticated={false} homeHref="/" catalogHref="/rtn" />
+        <RtnQuestionsWidget basePath="" authenticated={false} />
       </main>
       <LandingFooter variant="light" />
     </>

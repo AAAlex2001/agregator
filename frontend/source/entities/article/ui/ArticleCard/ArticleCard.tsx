@@ -4,61 +4,48 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { EyeIcon } from "@/source/shared/ui/icons";
-import { ThumbUpIcon } from "@/source/shared/ui/icons/ThumbUpIcon";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
-import { formatArticleDate } from "../../lib/formatArticleDate";
-import type { ArticleKind } from "../../api/article.api";
+import { ThumbUpIcon } from "@/source/shared/ui/icons/ThumbUpIcon";
+import { formatDateLong } from "@/source/shared/lib/formatDate";
+import type { ArticleListItem } from "../../model/types";
 import s from "./ArticleCard.module.scss";
 
-export interface ArticleCardProps {
-  kind: ArticleKind;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image: string;
-  tags: string[];
-  published_at: string | null;
-  likes_count?: number;
-  dislikes_count?: number;
-  views_count?: number;
+interface ArticleCardProps {
+  article: ArticleListItem;
 }
 
-export function ArticleCard({
-  kind,
-  slug,
-  title,
-  excerpt,
-  cover_image,
-  tags,
-  published_at,
-  likes_count = 0,
-  dislikes_count = 0,
-  views_count = 0,
-}: ArticleCardProps) {
+/** Карточка статьи в списках и слайдерах. Внутри кабинета ведёт на /landing-версию страницы. */
+export function ArticleCard({ article }: ArticleCardProps) {
   const pathname = usePathname();
-  const prefix = pathname?.startsWith("/landing") ? "/landing" : "";
-  const href = `${prefix}/${kind === "news" ? "news" : "blog"}/${slug}`;
-  const badge = tags[0] || (kind === "news" ? "Новость" : "Статья");
+  const prefix = pathname.startsWith("/landing") ? "/landing" : "";
+  const href = `${prefix}/${article.kind}/${article.slug}`;
+  const badge = article.tags[0] || (article.kind === "news" ? "Новость" : "Статья");
 
   return (
-    <Link href={href} className={s.card} aria-label={title}>
+    <Link href={href} className={s.card} aria-label={article.title}>
       <div className={s.body}>
         <div className={s.cover}>
-          {cover_image ? (
-            <Image src={cover_image} alt={title} fill sizes="(min-width: 1440px) 25vw, (min-width: 768px) 33vw, 50vw" className={s.coverImage} />
-          ) : null}
+          {article.cover_image && (
+            <Image
+              src={article.cover_image}
+              alt={article.title}
+              fill
+              sizes="(min-width: 1440px) 25vw, (min-width: 768px) 33vw, 50vw"
+              className={s.coverImage}
+            />
+          )}
           <span className={s.badge}>{badge}</span>
         </div>
         <div className={s.info}>
-          <h3 className={s.title}>{title}</h3>
-          {excerpt ? <p className={s.excerpt}>{excerpt}</p> : null}
+          <h3 className={s.title}>{article.title}</h3>
+          {article.excerpt && <p className={s.excerpt}>{article.excerpt}</p>}
         </div>
       </div>
 
       <div className={s.bottom}>
         <div className={s.footer}>
-          <time className={s.date} dateTime={published_at || undefined}>
-            {formatArticleDate(published_at)}
+          <time className={s.date} dateTime={article.published_at || undefined}>
+            {formatDateLong(article.published_at)}
           </time>
           <span className={s.read}>
             Читать
@@ -72,16 +59,16 @@ export function ArticleCard({
           <span className={s.reactions}>
             <span className={s.stat}>
               <ThumbUpIcon className={s.statIcon} />
-              {likes_count}
+              {article.likes_count}
             </span>
             <span className={s.stat}>
               <ThumbDownIcon className={s.statIcon} />
-              {dislikes_count}
+              {article.dislikes_count}
             </span>
           </span>
           <span className={s.stat}>
             <EyeIcon className={s.statIcon} />
-            {views_count}
+            {article.views_count}
           </span>
         </div>
       </div>

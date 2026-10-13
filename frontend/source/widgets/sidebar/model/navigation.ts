@@ -1,4 +1,4 @@
-import type { SessionRole } from "@/source/features/session";
+import type { UserRole } from "@/source/entities/user";
 import {
   ExpertRoomIcon,
   FileIcon,
@@ -13,7 +13,7 @@ import {
 } from "@/source/shared/ui/icons";
 import type { SidebarSection } from "./types";
 
-export const SIDEBAR_SECTIONS: Record<SessionRole, SidebarSection[]> = {
+export const SIDEBAR_SECTIONS: Record<UserRole, SidebarSection[]> = {
   EXPERT: [
     {
       label: "Работа",

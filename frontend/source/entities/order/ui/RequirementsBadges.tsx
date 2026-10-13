@@ -3,60 +3,55 @@ import type { Badge } from "../model/types";
 import { getOrderWorkLabel, type OrderWorkType } from "../model/workTypes";
 import s from "./RequirementsBadges.module.scss";
 
-interface Props {
+interface RequirementsBadgesProps {
   badges: Badge[];
-  label?: string;
-  /** Если передан и отличается — над текущими badge'ами рендерим зачёркнутые предыдущие. */
   previousBadges?: Badge[] | null;
   workType?: OrderWorkType;
 }
 
-function badgesEqual(a: Badge[], b: Badge[]): boolean {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i += 1) {
-    if (a[i].text !== b[i].text || a[i].variant !== b[i].variant) return false;
-  }
-  return true;
+function badgesKey(badges: Badge[]): string {
+  return badges.map((badge) => `${badge.text}:${badge.variant}`).join("|");
 }
 
-export function RequirementsBadges({ badges, label = "Требования к исполнителю", previousBadges, workType = "EXPERTISE" }: Props) {
-  if (workType === "EXPERTISE" && badges.length === 0 && (!previousBadges || previousBadges.length === 0)) {
-    return null;
+/**
+ * Требования заказа. У направлений — вид работ, у экспертизы — коды аттестации;
+ * если заказчик их поменял, сверху зачёркнуты прежние.
+ */
+export function RequirementsBadges({ badges, previousBadges, workType = "EXPERTISE" }: RequirementsBadgesProps) {
+  if (workType !== "EXPERTISE") {
+    return (
+      <div className={s.requirements}>
+        <span className={s.label}>Вид работ</span>
+        <div className={s.badges}>
+          <span className={cn(s.badge, s.orange)}>{getOrderWorkLabel(workType)}</span>
+        </div>
+      </div>
+    );
   }
 
-  const changed = previousBadges != null && !badgesEqual(previousBadges, badges);
+  const previous = previousBadges ?? [];
+  if (badges.length === 0 && previous.length === 0) return null;
+  const changed = previousBadges != null && badgesKey(previous) !== badgesKey(badges);
 
   return (
     <div className={s.requirements}>
-      {workType !== "EXPERTISE" && (
-        <>
-          <span className={s.label}>Вид работ</span>
-          <div className={s.badges}>
-            <span className={cn(s.badge, s.orange)}>{getOrderWorkLabel(workType)}</span>
-          </div>
-        </>
-      )}
-      {workType === "EXPERTISE" && (
-        <>
-      <span className={s.label}>{label}{changed ? " · ИЗМЕНЕНО:" : ""}</span>
-      {changed && previousBadges && previousBadges.length > 0 && (
+      <span className={s.label}>{changed ? "Требования к исполнителю · ИЗМЕНЕНО:" : "Требования к исполнителю"}</span>
+      {changed && previous.length > 0 && (
         <div className={s.previousBadges}>
-          {previousBadges.map((badge, index) => (
-            <span key={`prev-${index}`} className={cn(s.badge, s[badge.variant], s.previousBadge)}>
+          {previous.map((badge) => (
+            <span key={badge.text} className={cn(s.badge, s[badge.variant], s.previousBadge)}>
               {badge.text}
             </span>
           ))}
         </div>
       )}
       <div className={s.badges}>
-        {badges.map((badge, index) => (
-          <span key={index} className={cn(s.badge, s[badge.variant])}>
+        {badges.map((badge) => (
+          <span key={badge.text} className={cn(s.badge, s[badge.variant])}>
             {badge.text}
           </span>
         ))}
       </div>
-        </>
-      )}
     </div>
   );
 }

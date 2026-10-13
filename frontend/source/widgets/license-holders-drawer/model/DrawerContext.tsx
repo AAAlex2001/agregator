@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 
 export type DrawerAnchor = { left: number; top: number };
 

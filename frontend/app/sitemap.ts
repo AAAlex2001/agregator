@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/source/shared/api/config";
-import { fetchArticleSitemap, type ArticleKind } from "@/source/entities/article";
-import { NEWS_PAGE_SIZE } from "@/source/features/articles-list";
-import { fetchRtnList } from "@/source/entities/rtn-clarification";
+import { NEWS_PAGE_SIZE, fetchArticleSitemap, type ArticleKind } from "@/source/entities/article";
+import { RTN_MAX_PAGE, RTN_PAGE_SIZE, fetchRtnList, type RtnListItem } from "@/source/entities/rtn";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 300;
@@ -49,33 +48,27 @@ async function loadArticles(kind: ArticleKind): Promise<MetadataRoute.Sitemap> {
   }
 }
 
+/** Ссылки на вторую и следующие страницы списка: первая уже есть среди статичных. */
 function listPages(path: string, total: number, pageSize: number, maxPage = Infinity): MetadataRoute.Sitemap {
   const pageCount = Math.min(maxPage, Math.ceil(total / pageSize));
-  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) => ({
-    url: `${SITE_URL}${path}?page=${index + 2}`,
+  const pages = [...Array(Math.max(0, pageCount - 1)).keys()].map((index) => index + 2);
+  return pages.map((page) => ({
+    url: `${SITE_URL}${path}?page=${page}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.6,
   }));
 }
 
-const RTN_PAGE_SIZE = 12;
-const RTN_MAX_PAGE = 10;
+async function fetchAllRtn(offset = 0): Promise<RtnListItem[]> {
+  const page = await fetchRtnList({ filters: "", limit: RTN_PAGE_SIZE, offset }, { server: true });
+  if (!page.has_more) return page.items;
+  return [...page.items, ...(await fetchAllRtn(offset + RTN_PAGE_SIZE))];
+}
 
 async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
   try {
-    const items = [];
-    const limit = 48;
-    let offset = 0;
-    let hasMore = true;
-
-    while (hasMore) {
-      const page = await fetchRtnList({ limit, offset }, { server: true });
-      items.push(...page.items);
-      hasMore = page.has_more;
-      offset += limit;
-    }
-
+    const items = await fetchAllRtn();
     const details: MetadataRoute.Sitemap = items.map((item) => ({
       url: `${SITE_URL}/rtn/${item.slug}`,
       lastModified: item.published_at ? new Date(item.published_at) : new Date(),

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { clearReferralCode, saveReferralCode } from "@/source/entities/referral";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 
 /** Сохраняет приглашение и открывает существующую регистрацию исполнителя. */

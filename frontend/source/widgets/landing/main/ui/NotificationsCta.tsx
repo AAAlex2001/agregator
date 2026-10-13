@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import Button from "@/source/shared/ui/Button";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import { AuthTrigger } from "@/source/shared/ui/AuthTrigger";

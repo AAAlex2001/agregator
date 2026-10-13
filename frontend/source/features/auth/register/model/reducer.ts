@@ -1,33 +1,46 @@
-import type { AuthPreset } from "@/source/shared/lib/auth-modal";
 import {
   emptyAuditCustomerProfile,
   emptyAuditExpertProfile,
   emptyAuditLicenseHolderProfile,
-} from "@/source/features/directions/audit";
-import { emptyResearchProfile } from "@/source/features/directions/research";
-import { emptyLaboratoryProfile } from "@/source/features/directions/laboratory";
-import { emptyCadastralProfile } from "@/source/features/directions/cadastral";
-import { emptyExpertiseProfile } from "@/source/features/directions/expertise";
-import { emptyForensicProfile } from "@/source/features/directions/forensic";
-import {
-  emptyTechDiagHolderProfile,
-  emptyTechDiagProfile,
-} from "@/source/features/directions/tech-diag";
-import {
-  emptyDesignHolderProfile,
-  emptyDesignProfile,
-} from "@/source/features/directions/design";
-import { emptyEcologyProfile } from "@/source/features/directions/ecology";
-import {
-  emptySurveyHolderProfile,
-  emptySurveyProfile,
-} from "@/source/features/directions/survey";
-import { emptyDirectionFiles } from "./directionFiles";
+} from "@/source/entities/directions/audit";
+import { emptyCadastralProfile } from "@/source/entities/directions/cadastral";
+import { emptyDesignProfile } from "@/source/entities/directions/design";
+import { emptySroHolderProfile } from "@/source/entities/directions/shared";
+import { emptyEcologyProfile } from "@/source/entities/directions/ecology";
+import { emptyExpertiseProfile } from "@/source/entities/directions/expertise";
+import { emptyForensicProfile } from "@/source/entities/directions/forensic";
+import { emptyLaboratoryProfile } from "@/source/entities/directions/laboratory";
+import { emptyResearchProfile } from "@/source/entities/directions/research";
+import { emptySurveyProfile } from "@/source/entities/directions/survey";
+import { emptyTechDiagHolderProfile, emptyTechDiagProfile } from "@/source/entities/directions/tech-diag";
+import type { AuthDirection, AuthPreset } from "@/source/shared/lib/auth-modal";
+import { EMPTY_DIRECTION_FILES } from "./directionFiles";
 import type { RegisterAction, RegisterState } from "./types";
 
-export const initialState: RegisterState = {
-  waiting: false,
-  error: null,
+const NO_DIRECTIONS = {
+  licenseEnabled: false,
+  directions: [],
+  expertiseProfile: null,
+  auditExpertProfile: null,
+  auditCustomerProfile: null,
+  auditHolderProfile: null,
+  cadastralProfile: null,
+  forensicProfile: null,
+  researchProfile: null,
+  laboratoryProfile: null,
+  techDiagProfile: null,
+  techDiagHolderProfile: null,
+  designProfile: null,
+  designHolderProfile: null,
+  ecologyProfile: null,
+  surveyProfile: null,
+  surveyHolderProfile: null,
+  directionFiles: EMPTY_DIRECTION_FILES,
+};
+
+export const INITIAL_STATE: RegisterState = {
+  ...NO_DIRECTIONS,
+  isSubmitting: false,
   role: "CUSTOMER",
   email: "",
   password: "",
@@ -45,24 +58,6 @@ export const initialState: RegisterState = {
   contactConsent: false,
   party: null,
   companyName: "",
-  directions: [],
-  expertiseProfile: null,
-  auditExpertProfile: null,
-  auditCustomerProfile: null,
-  auditHolderProfile: null,
-  cadastralProfile: null,
-  forensicProfile: null,
-  researchProfile: null,
-  laboratoryProfile: null,
-  techDiagProfile: null,
-  techDiagHolderProfile: null,
-  designProfile: null,
-  designHolderProfile: null,
-  ecologyProfile: null,
-  surveyProfile: null,
-  surveyHolderProfile: null,
-  directionFiles: emptyDirectionFiles,
-  licenseEnabled: false,
   licenseNumber: "",
   licenseAreas: [],
   rentalKind: "PERCENT",
@@ -70,112 +65,79 @@ export const initialState: RegisterState = {
   rentalFixed: "",
   miningNumber: "",
   labNumber: "",
-  files: { license: null, mining: null, sro: null, sroSurvey: null, lab: null },
+  files: { license: null, mining: null, sroDesign: null, sroSurvey: null, lab: null },
   consents: { privacy: false, terms: false, personal: false },
 };
 
-export function initFromPreset(preset: AuthPreset | null): RegisterState {
-  if (!preset) return initialState;
-
-  const state = { ...initialState, role: preset.role };
-
-  if (preset.direction === "AUDIT_SUPB") {
-    if (preset.role === "CUSTOMER") state.auditCustomerProfile = { ...emptyAuditCustomerProfile };
-    if (preset.role === "EXPERT") state.auditExpertProfile = { ...emptyAuditExpertProfile };
-    if (preset.role === "LICENSE_HOLDER") {
-      state.auditHolderProfile = { ...emptyAuditLicenseHolderProfile };
-    }
+function withExpertDirection(state: RegisterState, direction: AuthDirection): RegisterState {
+  switch (direction) {
+    case "EXPERTISE":
+      return { ...state, expertiseProfile: emptyExpertiseProfile };
+    case "AUDIT_SUPB":
+      return { ...state, auditExpertProfile: emptyAuditExpertProfile };
+    case "CADASTRAL":
+      return { ...state, cadastralProfile: emptyCadastralProfile };
+    case "FORENSIC":
+      return { ...state, forensicProfile: emptyForensicProfile };
+    case "RESEARCH":
+      return { ...state, researchProfile: emptyResearchProfile };
+    case "LABORATORY":
+      return { ...state, laboratoryProfile: emptyLaboratoryProfile };
+    case "TECH_DIAG":
+      return { ...state, techDiagProfile: emptyTechDiagProfile };
+    case "DESIGN":
+      return { ...state, designProfile: emptyDesignProfile };
+    case "ECOLOGY":
+      return { ...state, ecologyProfile: emptyEcologyProfile };
+    case "SURVEY":
+      return { ...state, surveyProfile: emptySurveyProfile };
   }
-  if (preset.direction === "RESEARCH" && preset.role === "EXPERT") {
-    state.researchProfile = { ...emptyResearchProfile };
-  }
-  if (preset.direction === "LABORATORY" && preset.role === "EXPERT") {
-    state.laboratoryProfile = { ...emptyLaboratoryProfile };
-  }
-  if (preset.direction === "TECH_DIAG") {
-    if (preset.role === "EXPERT") state.techDiagProfile = { ...emptyTechDiagProfile };
-    if (preset.role === "LICENSE_HOLDER") {
-      state.techDiagHolderProfile = { ...emptyTechDiagHolderProfile };
-    }
-  }
-  if (preset.direction === "DESIGN") {
-    if (preset.role === "EXPERT") state.designProfile = { ...emptyDesignProfile };
-    if (preset.role === "LICENSE_HOLDER") {
-      state.designHolderProfile = { ...emptyDesignHolderProfile };
-    }
-  }
-  if (preset.direction === "ECOLOGY" && preset.role === "EXPERT") {
-    state.ecologyProfile = { ...emptyEcologyProfile };
-  }
-  if (preset.direction === "SURVEY") {
-    if (preset.role === "EXPERT") state.surveyProfile = { ...emptySurveyProfile };
-    if (preset.role === "LICENSE_HOLDER") {
-      state.surveyHolderProfile = { ...emptySurveyHolderProfile };
-    }
-  }
-  if (preset.direction === "CADASTRAL" && preset.role === "EXPERT") {
-    state.cadastralProfile = { ...emptyCadastralProfile };
-  }
-  if (preset.direction === "FORENSIC" && preset.role === "EXPERT") {
-    state.forensicProfile = { ...emptyForensicProfile };
-  }
-  if (preset.direction === "EXPERTISE" && preset.role === "EXPERT") {
-    state.expertiseProfile = { ...emptyExpertiseProfile };
-  }
-  if (preset.direction === "EXPERTISE" && preset.role === "LICENSE_HOLDER") {
-    state.licenseEnabled = true;
-  }
-  if (preset.direction && preset.role === "CUSTOMER" && preset.direction !== "AUDIT_SUPB") {
-    state.directions = [preset.direction];
-  }
-  if (
-    preset.direction &&
-    preset.role === "LICENSE_HOLDER" &&
-    preset.direction !== "AUDIT_SUPB" &&
-    preset.direction !== "TECH_DIAG" &&
-    preset.direction !== "EXPERTISE" &&
-    preset.direction !== "DESIGN" &&
-    preset.direction !== "ECOLOGY" &&
-    preset.direction !== "SURVEY"
-  ) {
-    state.directions = [preset.direction];
-  }
-  return state;
 }
 
-export function reducer(state: RegisterState, action: RegisterAction): RegisterState {
+function withHolderDirection(state: RegisterState, direction: AuthDirection): RegisterState {
+  switch (direction) {
+    case "EXPERTISE":
+      return { ...state, licenseEnabled: true };
+    case "AUDIT_SUPB":
+      return { ...state, auditHolderProfile: emptyAuditLicenseHolderProfile };
+    case "TECH_DIAG":
+      return { ...state, techDiagHolderProfile: emptyTechDiagHolderProfile };
+    case "DESIGN":
+      return { ...state, designHolderProfile: emptySroHolderProfile };
+    case "SURVEY":
+      return { ...state, surveyHolderProfile: emptySroHolderProfile };
+    case "ECOLOGY":
+      return state;
+    default:
+      return { ...state, directions: [direction] };
+  }
+}
+
+function withCustomerDirection(state: RegisterState, direction: AuthDirection): RegisterState {
+  if (direction === "AUDIT_SUPB") return { ...state, auditCustomerProfile: emptyAuditCustomerProfile };
+  return { ...state, directions: [direction] };
+}
+
+/** Стартовое состояние: роль и направление, с которыми пришли с лендинга, уже выбраны. */
+export function initRegisterState(preset: AuthPreset | null): RegisterState {
+  if (!preset) return INITIAL_STATE;
+  const state = { ...INITIAL_STATE, role: preset.role };
+  if (!preset.direction) return state;
+  if (preset.role === "EXPERT") return withExpertDirection(state, preset.direction);
+  if (preset.role === "LICENSE_HOLDER") return withHolderDirection(state, preset.direction);
+  return withCustomerDirection(state, preset.direction);
+}
+
+export function registerReducer(state: RegisterState, action: RegisterAction): RegisterState {
   switch (action.type) {
-    case "SUBMIT_PENDING":
-      return { ...state, waiting: true, error: null };
-    case "SUBMIT_FULFILLED":
-      return { ...state, waiting: false, error: null };
-    case "SUBMIT_REJECTED":
-      return { ...state, waiting: false, error: action.payload };
+    case "submit/start":
+      return { ...state, isSubmitting: true };
+    case "submit/finish":
+      return { ...state, isSubmitting: false };
     case "set":
       return { ...state, [action.key]: action.value };
     case "role":
-      return {
-        ...state,
-        role: action.value,
-        licenseEnabled: false,
-        directions: [],
-        expertiseProfile: null,
-        auditExpertProfile: null,
-        auditCustomerProfile: null,
-        auditHolderProfile: null,
-        cadastralProfile: null,
-        forensicProfile: null,
-        researchProfile: null,
-        laboratoryProfile: null,
-        techDiagProfile: null,
-        techDiagHolderProfile: null,
-        designProfile: null,
-        designHolderProfile: null,
-        ecologyProfile: null,
-        surveyProfile: null,
-        surveyHolderProfile: null,
-        directionFiles: emptyDirectionFiles,
-      };
+      return { ...state, ...NO_DIRECTIONS, role: action.value };
     case "travels":
       return { ...state, travels: action.value };
     case "showOnMap":
@@ -252,7 +214,7 @@ export function reducer(state: RegisterState, action: RegisterAction): RegisterS
         ...state,
         directionFiles: {
           ...state.directionFiles,
-          [action.key]: state.directionFiles[action.key].filter((_, i) => i !== action.index),
+          [action.key]: state.directionFiles[action.key].filter((file) => file !== action.file),
         },
       };
     case "consent":

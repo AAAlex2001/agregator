@@ -4,7 +4,7 @@ import cn from "classnames";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSession } from "@/source/features/session";
+import { ordersPath, useSession } from "@/source/entities/session";
 import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
 import { getCabinetNav, type NavItem } from "@/source/widgets/expert-help";
 import s from "./cabinet-burger.module.scss";
@@ -99,7 +99,7 @@ function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: ()
 
 export function CabinetBurgerMenu() {
   const { role } = useSession();
-  const ordersHref = role === "EXPERT" ? "/expert/orders" : role === "CUSTOMER" ? "/customer/orders" : "/orders";
+  const ordersHref = ordersPath(role);
   const [open, setOpen] = useState(false);
   const [openKey, setOpenKey] = useState<string | null>(null);
 

@@ -1,3 +1,9 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -5,11 +11,10 @@
 }
 
 .orderHint {
+  margin: 0;
   font-family: "Montserrat";
   font-size: 13px;
   line-height: 18px;
   color: #808080;
   text-align: center;
-  margin: 0;
 }
-

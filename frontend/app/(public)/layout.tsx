@@ -1,4 +1,4 @@
-import { SessionProvider } from "@/source/features/session";
+import { SessionProvider } from "@/source/entities/session";
 import { AuthModalProvider } from "@/source/shared/lib/auth-modal";
 import { AuthModalHost } from "@/source/widgets/auth/auth-modal";
 import { ScrollToTop } from "@/source/shared/ui/ScrollToTop";

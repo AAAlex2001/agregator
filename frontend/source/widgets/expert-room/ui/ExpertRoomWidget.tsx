@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import {
   groupExpertRoomMessages,
   ExpertRoomMessageGroupView,

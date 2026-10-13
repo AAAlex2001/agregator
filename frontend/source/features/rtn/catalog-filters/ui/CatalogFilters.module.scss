@@ -1,0 +1,38 @@
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid #e7e9ee;
+  border-radius: 16px;
+  padding: 18px;
+  height: fit-content;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #171923;
+  margin: 0;
+}
+
+.reset {
+  border: none;
+  background: none;
+  color: #ff8a00;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

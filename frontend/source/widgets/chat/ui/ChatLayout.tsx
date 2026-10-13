@@ -3,7 +3,7 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { ChatSidebar } from "@/source/features/chat";
 import s from "./ChatLayout.module.scss";
 

@@ -1,4 +1,13 @@
 const DAY_MONTH_YEAR: Intl.DateTimeFormatOptions = { day: "2-digit", month: "2-digit", year: "numeric" };
+const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+
+/** «12 октября 2026» или пустая строка, если даты нет. */
+export function formatDateLong(iso: string | null): string {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
 
 function pad(value: number): string {
   return String(value).padStart(2, "0");

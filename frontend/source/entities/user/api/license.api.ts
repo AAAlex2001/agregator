@@ -1,87 +1,58 @@
-import { API_URL } from "@/source/shared/api/config";
-import { fetchWithSession } from "@/source/shared/api/session";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
-import { stableMultipartFetch } from "@/source/shared/lib/stableMultipartFetch";
-import type {
-  LicenseHolderUpdatePayload,
-  UserProfile,
-} from "@/source/entities/user";
+import type { LicenseHolderUpdatePayload, UserProfile } from "../model/types";
+import { json, send, upload } from "@/source/shared/api/request";
 
-export async function updateLicenseHolderProfile(
-  payload: LicenseHolderUpdatePayload,
-): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/license`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось сохранить лицензию"));
-  return res.json();
+/** Сохранить номер лицензии, объекты экспертизы, стоимость предоставления и номера дополнительных документов. */
+export async function updateLicenseHolderProfile(payload: LicenseHolderUpdatePayload): Promise<UserProfile> {
+  const response = await send("/settings/license", json("PUT", payload), "Не удалось сохранить лицензию");
+  return response.json();
 }
 
+/** Загрузить файл лицензии ЭПБ. */
 export async function uploadLicenseFile(file: File): Promise<UserProfile> {
-  const res = await stableMultipartFetch({
-    input: `${API_URL}/settings/license-file`,
-    method: "POST",
-    files: [file],
-    buildBody: (files) => {
-      const formData = new FormData();
-      if (files[0]) formData.append("file", files[0]);
-      return formData;
-    },
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить файл лицензии"));
-  return res.json();
+  const response = await upload("/settings/license-file", file, "Не удалось загрузить файл лицензии");
+  return response.json();
 }
 
+/** Загрузить карточку предприятия. */
 export async function uploadCompanyCard(file: File): Promise<UserProfile> {
-  const res = await stableMultipartFetch({
-    input: `${API_URL}/settings/company-card`,
-    method: "POST",
-    files: [file],
-    buildBody: (files) => {
-      const formData = new FormData();
-      if (files[0]) formData.append("file", files[0]);
-      return formData;
-    },
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось загрузить карточку предприятия"));
-  return res.json();
+  const response = await upload("/settings/company-card", file, "Не удалось загрузить карточку предприятия");
+  return response.json();
 }
 
+/** Удалить карточку предприятия. */
 export async function deleteCompanyCard(): Promise<UserProfile> {
-  const res = await fetchWithSession(`${API_URL}/settings/company-card`, { method: "DELETE" });
-  if (!res.ok) throw new Error(await readErrorMessage(res, "Не удалось удалить карточку предприятия"));
-  return res.json();
+  const response = await send("/settings/company-card", { method: "DELETE" }, "Не удалось удалить карточку предприятия");
+  return response.json();
 }
 
-async function uploadRegulatoryDocument(file: File, endpoint: string, fallback: string): Promise<UserProfile> {
-  const res = await stableMultipartFetch({
-    input: `${API_URL}${endpoint}`,
-    method: "POST",
-    files: [file],
-    buildBody: (files) => {
-      const formData = new FormData();
-      if (files[0]) formData.append("file", files[0]);
-      return formData;
-    },
-  });
-  if (!res.ok) throw new Error(await readErrorMessage(res, fallback));
-  return res.json();
+/** Загрузить файл лицензии маркшейдера. */
+export async function uploadMiningLicenseFile(file: File): Promise<UserProfile> {
+  const response = await upload(
+    "/settings/mining-license-file",
+    file,
+    "Не удалось загрузить файл лицензии маркшейдера",
+  );
+  return response.json();
 }
 
-export function uploadMiningLicenseFile(file: File): Promise<UserProfile> {
-  return uploadRegulatoryDocument(file, "/settings/mining-license-file", "Не удалось загрузить файл лицензии маркшейдера");
+/** Загрузить выписку из реестра СРО проектировщиков. */
+export async function uploadSroDesignFile(file: File): Promise<UserProfile> {
+  const response = await upload("/settings/sro-design-file", file, "Не удалось загрузить файл выписки СРО");
+  return response.json();
 }
 
-export function uploadSroDesignFile(file: File): Promise<UserProfile> {
-  return uploadRegulatoryDocument(file, "/settings/sro-design-file", "Не удалось загрузить файл выписки СРО");
+/** Загрузить выписку из реестра СРО изыскателей. */
+export async function uploadSroSurveyFile(file: File): Promise<UserProfile> {
+  const response = await upload("/settings/sro-survey-file", file, "Не удалось загрузить файл выписки СРО");
+  return response.json();
 }
 
-export function uploadSroSurveyFile(file: File): Promise<UserProfile> {
-  return uploadRegulatoryDocument(file, "/settings/sro-survey-file", "Не удалось загрузить файл выписки СРО");
-}
-
-export function uploadLabAccreditationFile(file: File): Promise<UserProfile> {
-  return uploadRegulatoryDocument(file, "/settings/lab-accreditation-file", "Не удалось загрузить файл аккредитации");
+/** Загрузить свидетельство об аккредитации лаборатории. */
+export async function uploadLabAccreditationFile(file: File): Promise<UserProfile> {
+  const response = await upload(
+    "/settings/lab-accreditation-file",
+    file,
+    "Не удалось загрузить файл аккредитации",
+  );
+  return response.json();
 }

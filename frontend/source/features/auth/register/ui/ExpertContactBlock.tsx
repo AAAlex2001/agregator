@@ -1,7 +1,8 @@
-import { FormSection } from "@/source/shared/ui";
 import { ExpertContactOfferFields } from "@/source/entities/expert-contact";
+import { FormSection } from "@/source/shared/ui";
 import type { StepProps } from "./types";
 
+/** Платный доступ к контактам исполнителя: включение, цена, реквизиты и согласие. */
 export function ExpertContactBlock({ state, dispatch }: StepProps) {
   return (
     <FormSection

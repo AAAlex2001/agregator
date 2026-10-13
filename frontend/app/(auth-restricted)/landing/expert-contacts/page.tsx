@@ -1,5 +1,5 @@
 import { ExpertContactsMarketplace } from "@/source/features/expert-contacts";
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 
 interface ExpertContactsPageProps {
   searchParams: Promise<{ expert?: string }>;

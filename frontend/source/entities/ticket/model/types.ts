@@ -1,14 +1,6 @@
 export type TicketStatus = "REVIEW" | "ANSWERED" | "CLOSED";
 
-export type TicketCategory =
-  | "ORDER"
-  | "RESPONSE"
-  | "TECHNICAL"
-  | "BILLING"
-  | "ACCOUNT"
-  | "COMPLAINT"
-  | "SUGGESTION"
-  | "OTHER";
+export type TicketCategory = "ORDER" | "RESPONSE" | "TECHNICAL" | "BILLING" | "ACCOUNT" | "COMPLAINT" | "SUGGESTION" | "OTHER";
 
 export interface TicketAttachment {
   name: string;
@@ -18,24 +10,50 @@ export interface TicketAttachment {
 export interface TicketMessage {
   id: number;
   author: "user" | "support";
-  authorName: string;
+  author_name: string;
   text: string;
-  createdAt: string;
-  attachments?: TicketAttachment[];
+  created_at: string;
+  attachments: TicketAttachment[];
 }
 
-export interface SupportTicket {
+export interface TicketSummary {
   id: number;
   number: string;
   subject: string;
   category: TicketCategory;
   status: TicketStatus;
-  createdAt: string;
-  updatedAt: string;
-  hasUnread: boolean;
-  lastMessagePreview: string;
+  created_at: string;
+  updated_at: string;
+  has_unread: boolean;
+  last_message_preview: string;
+}
+
+export interface Ticket extends TicketSummary {
   messages: TicketMessage[];
 }
+
+export interface TicketList {
+  items: TicketSummary[];
+  has_more: boolean;
+}
+
+export interface NewTicket {
+  subject: string;
+  category: TicketCategory;
+  message: string;
+  files: File[];
+}
+
+export const TICKET_CATEGORIES: TicketCategory[] = [
+  "ORDER",
+  "RESPONSE",
+  "TECHNICAL",
+  "BILLING",
+  "ACCOUNT",
+  "COMPLAINT",
+  "SUGGESTION",
+  "OTHER",
+];
 
 export const CATEGORY_LABEL: Record<TicketCategory, string> = {
   ORDER: "Вопрос по заказу",

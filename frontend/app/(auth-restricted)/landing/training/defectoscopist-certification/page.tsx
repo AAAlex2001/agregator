@@ -1,6 +1,6 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
+import { RoleGuard } from "@/source/entities/session";
 import { DefectoscopistCertificationWidget } from "@/source/widgets/defectoscopist-certification";
 
 export default function AuthRestrictedDefectoscopistCertificationPage() {

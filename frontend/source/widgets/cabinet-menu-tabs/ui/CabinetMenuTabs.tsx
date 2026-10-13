@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useSidebarMobile } from "@/source/widgets/sidebar";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";

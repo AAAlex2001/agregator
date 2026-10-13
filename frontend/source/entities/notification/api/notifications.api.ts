@@ -1,60 +1,39 @@
-import { API_URL } from "@/source/shared/api/config";
-import { readErrorMessage } from "@/source/shared/api/errorMessage";
-import { fetchWithSession } from "@/source/shared/api/session";
+import { send } from "@/source/shared/api/request";
 import type { NotificationListResponse, NotificationMutationResponse } from "../model/types";
 
-const NOTIFICATIONS_API_URL = `${API_URL}/notifications`;
-
-export async function fetchNotifications(limit = 50, offset = 0): Promise<NotificationListResponse | null> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/?limit=${limit}&offset=${offset}`);
-
-  if (response.status === 401) {
-    return null;
-  }
-
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось загрузить уведомления"));
-  }
-
+/** Страница уведомлений пользователя, новые первыми. */
+export async function fetchNotifications(limit: number, offset: number): Promise<NotificationListResponse> {
+  const response = await send(`/notifications/?limit=${limit}&offset=${offset}`, {}, "Не удалось загрузить уведомления");
   return response.json();
 }
 
-export async function markNotificationRead(notificationId: number): Promise<NotificationMutationResponse> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/${notificationId}/read`, {
-    method: "POST",
-  });
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось отметить уведомление как прочитанное"));
-  }
+/** Сколько уведомлений не прочитано — для бейджа в меню. */
+export async function fetchUnreadCount(): Promise<number> {
+  const response = await send("/notifications/?limit=1&offset=0", {}, "Не удалось загрузить уведомления");
+  const data: NotificationListResponse = await response.json();
+  return data.unread_count;
+}
+
+/** Отметить уведомление прочитанным. */
+export async function markNotificationRead(id: number): Promise<NotificationMutationResponse> {
+  const response = await send(`/notifications/${id}/read`, { method: "POST" }, "Не удалось отметить уведомление");
   return response.json();
 }
 
+/** Отметить все уведомления прочитанными. */
 export async function markAllNotificationsRead(): Promise<NotificationMutationResponse> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/read-all`, {
-    method: "POST",
-  });
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось отметить уведомления как прочитанные"));
-  }
+  const response = await send("/notifications/read-all", { method: "POST" }, "Не удалось отметить уведомления");
   return response.json();
 }
 
-export async function deleteNotification(notificationId: number): Promise<NotificationMutationResponse> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/${notificationId}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось удалить уведомление"));
-  }
+/** Удалить уведомление. */
+export async function deleteNotification(id: number): Promise<NotificationMutationResponse> {
+  const response = await send(`/notifications/${id}`, { method: "DELETE" }, "Не удалось удалить уведомление");
   return response.json();
 }
 
+/** Удалить все уведомления. */
 export async function deleteAllNotifications(): Promise<NotificationMutationResponse> {
-  const response = await fetchWithSession(`${NOTIFICATIONS_API_URL}/`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(await readErrorMessage(response, "Не удалось удалить уведомления"));
-  }
+  const response = await send("/notifications/", { method: "DELETE" }, "Не удалось удалить уведомления");
   return response.json();
 }

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
-import { fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
-import { fetchReactions } from "@/source/entities/article-reaction";
-import { fetchComments } from "@/source/entities/article-comment";
-import { ArticleJsonLd, ArticleView, ScrollToTopOnSlug } from "@/source/features/article-view";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { fetchReactions, fetchComments, ArticleJsonLd, fetchArticleBySlug, fetchRelatedArticles } from "@/source/entities/article";
+import { ArticleWidget, ScrollToTopOnSlug } from "@/source/widgets/articles";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+interface BlogArticlePageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "blog") {
@@ -41,12 +41,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function BlogArticlePage({ params }: Props) {
+export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug, { server: true });
   if (!article || article.kind !== "blog") notFound();
   const [related, reactions, comments] = await Promise.all([
-    fetchRelatedArticles(slug, { limit: 10, server: true }),
+    fetchRelatedArticles(slug, 10, { server: true }),
     fetchReactions(article.id, { server: true }).catch(() => undefined),
     fetchComments(article.id, { server: true }).catch(() => []),
   ]);
@@ -58,7 +58,7 @@ export default async function BlogArticlePage({ params }: Props) {
       <ScrollToTopOnSlug slug={article.slug} />
       <ArticleJsonLd article={article} reactions={reactions} commentCount={comments.length} />
       <main>
-        <ArticleView
+        <ArticleWidget
           article={article}
           related={related}
           initialReactions={reactions}

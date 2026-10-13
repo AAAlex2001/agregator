@@ -1,9 +1,9 @@
 "use client";
 
-import { RoleGuard } from "@/source/features/session";
-import { ExpertOrdersWidget } from "@/source/widgets/expert-orders";
+import { RoleGuard } from "@/source/entities/session";
+import { ExpertOrdersWidget } from "@/source/widgets/orders";
 
-export default function OrdersPage() {
+export default function ExpertOrdersPage() {
   return (
     <RoleGuard allowed={["EXPERT"]}>
       <ExpertOrdersWidget />

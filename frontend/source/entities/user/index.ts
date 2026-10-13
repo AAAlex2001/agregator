@@ -1,36 +1,34 @@
 export type {
-  EmailPreferences,
+  UserRole,
   UserProfile,
+  EmailPreferences,
   CompanyData,
-  LicenseRentalKind,
-  LicenseHolderDesignRegisterPayload,
-  LicenseHolderSurveyRegisterPayload,
-  LicenseHolderRegisterPayload,
-  LicenseHolderUpdatePayload,
 } from "./model/types";
-export type { UpdateProfilePayload } from "./model/profilePayload";
-export type { RegisterResponse, UserRole } from "./model/register";
-export type { UpdateEmailPreferencesPayload } from "./model/email-preferences";
+export type {
+  AccountPayload,
+  CustomerRegisterPayload,
+  ExpertDocument,
+  ExpertDocumentSlot,
+  ExpertRegisterPayload,
+  LicenseHolderFiles,
+  LicenseHolderRegisterPayload,
+} from "./model/register";
+export { PASSWORD_MIN_LENGTH, PASSWORD_RULES } from "./model/password";
 export {
   fetchProfile,
   updateProfile,
-  updateDirections,
-  changePassword,
   uploadAvatar,
+  changePassword,
   requestEmailChange,
   confirmEmailChange,
-  logout,
+  updateDirections,
+  updateExpertLocation,
 } from "./api/profile.api";
-export {
-  requestPasswordReset,
-  confirmResetCode,
-  resetPassword,
-} from "./api/forgot-password.api";
 export {
   updateEmailPreferences,
   updateOrderNotifications,
-} from "./api/email-preferences.api";
-export { markNotificationsIntroduced } from "./api/notifications-introduced.api";
+  markNotificationsIntroduced,
+} from "./api/notifications.api";
 export {
   updateLicenseHolderProfile,
   uploadLicenseFile,
@@ -41,13 +39,8 @@ export {
   uploadSroSurveyFile,
   uploadLabAccreditationFile,
 } from "./api/license.api";
-export { useProfileForm } from "./model/useProfileForm";
-export { useProfileShell } from "./model/useProfileShell";
-export { ProfileSaveProvider, useRegisterProfileSave } from "./model/profileSave";
-export { ProfileAvatarUpload } from "./ui/ProfileAvatarUpload";
-export { ProfileForm } from "./ui/ProfileForm";
-export { NameFields } from "./ui/NameFields";
-export { ContactFields } from "./ui/ContactFields";
-export { PasswordFields } from "./ui/PasswordFields";
+export { registerUser, registerLicenseHolder, confirmEmail, resendConfirmationCode } from "./api/register.api";
+export { requestPasswordReset, confirmResetCode, resetPassword } from "./api/password-reset.api";
 export { CompanyReadonly } from "./ui/CompanyReadonly";
-export { SaveBar } from "./ui/SaveBar";
+export { PasswordRequirements } from "./ui/PasswordRequirements";
+export { VerifiedBadge } from "./ui/VerifiedBadge";

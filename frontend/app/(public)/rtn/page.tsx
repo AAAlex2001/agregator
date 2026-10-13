@@ -1,23 +1,23 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import {
   fetchRtnList,
   fetchRtnTaxonomy,
-  parseRtnListFilters,
-  toURLSearchParams,
-} from "@/source/entities/rtn-clarification";
-import {
-  RtnCatalogWidget,
-  RtnCatalogResults,
-  RtnCatalogSkeleton,
+  RTN_MAX_PAGE,
+  RTN_PAGE_SIZE,
   RtnCatalogJsonLd,
-} from "@/source/widgets/rtn-catalog";
-import { RedirectIfAuthed } from "@/source/features/session";
+  toCatalogQuery,
+  type RawSearchParams,
+} from "@/source/entities/rtn";
+import { RedirectIfAuthed } from "@/source/entities/session";
+import { LandingFooter, LandingHeader } from "@/source/widgets/landing";
+import { RtnCatalogResults, RtnCatalogSkeleton, RtnCatalogWidget } from "@/source/widgets/rtn";
 
 export const dynamic = "force-dynamic";
 
-type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
+interface RtnListPageProps {
+  searchParams: Promise<RawSearchParams>;
+}
 
 const baseMetadata: Metadata = {
   title: "Ростехнадзор отвечает: база официальных ответов — Ресурс-Плюс",
@@ -46,39 +46,18 @@ const baseMetadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
-const PAGE_SIZE = 12;
-const MAX_PAGE = 10;
-
-type RawParams = Record<string, string | string[] | undefined>;
-
-function readPage(params: RawParams): number {
-  return Math.min(MAX_PAGE, Math.max(1, Number(params.page) || 1));
+function readPage(params: RawSearchParams): number {
+  return Math.min(RTN_MAX_PAGE, Math.max(1, Number(params.page) || 1));
 }
 
-function isFiltered(params: RawParams): boolean {
-  return Object.entries(params).some(([key, value]) =>
-    key === "page" ? false : Array.isArray(value) ? value.length > 0 : Boolean(value),
-  );
-}
-
-function pageHref(params: RawParams, page: number): string {
-  const search = toURLSearchParams({ ...params, page: undefined });
-  search.set("page", String(page));
-  return `/rtn?${search.toString()}`;
-}
-
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: RtnListPageProps): Promise<Metadata> {
   const params = await searchParams;
-  if (isFiltered(params)) {
-    return {
-      ...baseMetadata,
-      robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
-    };
+  if (toCatalogQuery(params)) {
+    return { ...baseMetadata, robots: { index: false, follow: true, googleBot: { index: false, follow: true } } };
   }
 
   const page = readPage(params);
   if (page === 1) return baseMetadata;
-
   return {
     ...baseMetadata,
     title: `${baseMetadata.title} — страница ${page}`,
@@ -86,37 +65,38 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
-async function RtnCatalogData({ searchParams }: Props) {
+async function RtnCatalogData({ searchParams }: RtnListPageProps) {
   const params = await searchParams;
   const page = readPage(params);
-  const filters = parseRtnListFilters(toURLSearchParams(params));
+  const filters = toCatalogQuery(params);
   const [initial, taxonomy] = await Promise.all([
-    fetchRtnList({ ...filters, limit: PAGE_SIZE * page, offset: 0 }, { server: true }),
+    fetchRtnList({ filters, limit: RTN_PAGE_SIZE * page, offset: 0 }, { server: true }),
     fetchRtnTaxonomy({ server: true }),
   ]);
+  const hasNextPage = !filters && initial.has_more && page < RTN_MAX_PAGE;
 
   return (
     <>
       <RtnCatalogJsonLd items={initial.items} />
       <RtnCatalogResults
-        key={page}
         initial={initial}
         taxonomy={taxonomy}
-        nextPageHref={
-          initial.has_more && page < MAX_PAGE ? pageHref(params, page + 1) : undefined
-        }
+        filters={filters}
+        page={page}
+        basePath=""
+        nextPageHref={hasNextPage ? `/rtn?page=${page + 1}` : undefined}
       />
     </>
   );
 }
 
-export default function RtnListPage({ searchParams }: Props) {
+export default function RtnListPage({ searchParams }: RtnListPageProps) {
   return (
     <>
       <RedirectIfAuthed to="/landing/rtn" />
       <LandingHeader />
       <main>
-        <RtnCatalogWidget homeHref="/">
+        <RtnCatalogWidget basePath="">
           <Suspense fallback={<RtnCatalogSkeleton />}>
             <RtnCatalogData searchParams={searchParams} />
           </Suspense>

@@ -1,13 +1,14 @@
 import { TextInput } from "@/source/shared/ui/Inputs";
-import { VerifiedBadge } from "./ContactFields";
+import { VerifiedBadge } from "./VerifiedBadge";
 import s from "./CompanyReadonly.module.scss";
 
-interface Props {
+interface CompanyReadonlyProps {
   companyName: string;
   inn: string;
 }
 
-export function CompanyReadonly({ companyName, inn }: Props) {
+/** Компания и ИНН из регистрации: только просмотр, меняются через поддержку. */
+export function CompanyReadonly({ companyName, inn }: CompanyReadonlyProps) {
   return (
     <div className={s.block}>
       <div className={s.cell}>

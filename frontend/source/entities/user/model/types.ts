@@ -1,3 +1,23 @@
+import type { LicenseRentalKind } from "@/source/shared/ui/RentalPriceField";
+
+export type UserRole = "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
+
+export interface UpdateProfilePayload {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
+
+export interface ExpertLocationPayload {
+  location_lat: number | null;
+  location_lng: number | null;
+  location_address: string | null;
+  location_city: string | null;
+  travels_to_other_regions: boolean;
+  show_on_map: boolean;
+  map_fields: string[];
+}
+
 export interface EmailPreferences {
   email_on_response_created: boolean;
   email_on_response_updated: boolean;
@@ -20,64 +40,6 @@ export interface CompanyData {
     [k: string]: unknown;
   };
   [k: string]: unknown;
-}
-
-export type LicenseRentalKind = "PERCENT" | "FIXED" | "NEGOTIABLE";
-
-export interface LicenseHolderAuditRegisterPayload {
-  certificate_number: string;
-  accreditation_areas: string[];
-}
-
-export interface LicenseHolderTechDiagRegisterPayload {
-  methods: string[];
-  organization_city: string;
-}
-
-export interface LicenseHolderDesignRegisterPayload {
-  sro_name: string;
-  sro_registry_number: string;
-  hazardous_objects_right: boolean;
-  nuclear_objects_right: boolean;
-  liability_level: number;
-  pricing_kind: LicenseRentalKind;
-  pricing_percent: number | null;
-  pricing_fixed_amount: number | null;
-}
-
-export interface LicenseHolderSurveyRegisterPayload {
-  sro_name: string;
-  sro_registry_number: string;
-  hazardous_objects_right: boolean;
-  nuclear_objects_right: boolean;
-  liability_level: number;
-  pricing_kind: LicenseRentalKind;
-  pricing_percent: number | null;
-  pricing_fixed_amount: number | null;
-}
-
-export interface LicenseHolderRegisterPayload {
-  email: string;
-  password: string;
-  password_confirm: string;
-  phone?: string;
-  inn: string;
-  company_data: CompanyData;
-  license_number: string;
-  license_areas: string[];
-  license_rental_kind: LicenseRentalKind | null;
-  license_rental_percent?: number;
-  license_rental_fixed_amount?: number;
-  mining_license_number?: string | null;
-  lab_accreditation_number?: string | null;
-  audit_profile?: LicenseHolderAuditRegisterPayload | null;
-  tech_diag_profile?: LicenseHolderTechDiagRegisterPayload | null;
-  design_profile?: LicenseHolderDesignRegisterPayload | null;
-  survey_profile?: LicenseHolderSurveyRegisterPayload | null;
-  directions?: string[];
-  privacy_consent: boolean;
-  terms_consent: boolean;
-  personal_data_consent: boolean;
 }
 
 export interface LicenseHolderUpdatePayload {
@@ -120,7 +82,7 @@ export interface LicenseHolderProfileData {
 
 export interface UserProfile {
   id: number;
-  role: string;
+  role: UserRole;
   email: string | null;
   email_verified: boolean;
   phone: string | null;

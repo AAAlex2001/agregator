@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
-import { fetchArticleList } from "@/source/entities/article";
-import { ArticlesList, ArticlesListSkeleton, NEWS_PAGE_SIZE } from "@/source/features/articles-list";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { NEWS_PAGE_SIZE, fetchArticleList } from "@/source/entities/article";
+import { ArticlesListSkeleton, ArticlesPageWidget } from "@/source/widgets/articles";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +44,7 @@ async function NewsListContent({ page }: { page: number }) {
     fetchArticleList({ kind: "blog", limit: 10, offset: 0 }, { server: true }),
   ]);
   return (
-    <ArticlesList
+    <ArticlesPageWidget
       key={page}
       kind="news"
       title="Новости отрасли"

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LandingHeader, LandingFooter } from "@/source/widgets/landing";
 import { RequisitesWidget } from "@/source/widgets/requisites";
-import { RedirectIfAuthed } from "@/source/features/session";
+import { RedirectIfAuthed } from "@/source/entities/session";
 
 export const metadata: Metadata = {
   title: "Реквизиты компании — Ресурс Плюс",

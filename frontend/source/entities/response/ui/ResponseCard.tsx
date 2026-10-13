@@ -1,5 +1,4 @@
-import { useSession } from "@/source/features/session";
-import { OrderQuestionsBlock } from "@/source/features/order-questions";
+import { OrderQuestions } from "@/source/features/orders/questions";
 import { ListCard } from "@/source/shared/ui/ListCard";
 import { DocumentsGallery, RequirementsBadges, countDocuments } from "@/source/entities/order";
 import type { ResponseCardData, CardAction, UserRole } from "../model/types";
@@ -52,7 +51,6 @@ function shouldShowReminder(card: ResponseCardData, role: UserRole): boolean {
 }
 
 export function ResponseCard({ card, actions, role, onClick }: Props) {
-  const { user } = useSession();
   const isExpert = role === "expert";
   const showCustomerExpertInfo = role === "customer" && Boolean(card.expertName);
   const showComment = shouldShowComment(card, role);
@@ -126,14 +124,7 @@ export function ResponseCard({ card, actions, role, onClick }: Props) {
   );
 
   const footer = (
-    <OrderQuestionsBlock
-      orderId={card.orderId}
-      currentUserId={user?.id ?? null}
-      customerId={card.orderCustomerId}
-      isCustomer={role === "customer"}
-      isExpert={role === "expert"}
-      expertCanAsk={false}
-    />
+    <OrderQuestions orderId={card.orderId} customerId={card.orderCustomerId} canAsk={false} />
   );
 
   const bottomLeft = isExpert ? (

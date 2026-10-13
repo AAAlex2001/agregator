@@ -2,19 +2,16 @@
 
 import { useState } from "react";
 import type { ExpertMapItemApi } from "@/source/entities/expert";
-import { SURVEY_KINDS, SURVEY_SPECIALISTS, type SurveyKindCode } from "@/source/entities/survey";
-
-function toggleValue<T>(list: T[], value: T): T[] {
-  return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
-}
+import { SURVEY_KINDS, SURVEY_SPECIALISTS, type SurveyKindCode } from "@/source/entities/directions/survey";
 
 export function useSurveyMapFilter(items: ExpertMapItemApi[]) {
   const [kinds, setKinds] = useState<SurveyKindCode[]>([]);
   const [specialists, setSpecialists] = useState<string[]>([]);
 
-  const toggleKind = (code: SurveyKindCode) => setKinds((current) => toggleValue(current, code));
+  const toggleKind = (code: SurveyKindCode) =>
+    setKinds((current) => (current.includes(code) ? current.filter((item) => item !== code) : [...current, code]));
   const toggleSpecialist = (key: string) =>
-    setSpecialists((current) => toggleValue(current, key));
+    setSpecialists((current) => (current.includes(key) ? current.filter((item) => item !== key) : [...current, key]));
 
   const selectedSpecialists = SURVEY_SPECIALISTS.filter((specialist) =>
     specialists.includes(specialist.key),

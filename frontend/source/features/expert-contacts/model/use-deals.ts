@@ -16,7 +16,7 @@ import {
   type ContactDealListItem,
   type ExpertContactCardData,
 } from "@/source/entities/expert-contact";
-import { useSession } from "@/source/features/session";
+import { useSession } from "@/source/entities/session";
 import { useNotifications } from "@/source/shared/ui/Notifications";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import { useExpertContactsContext } from "./provider";

@@ -4,19 +4,21 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 
 export type AuthTab = "login" | "register";
 
+export type AuthDirection =
+  | "EXPERTISE"
+  | "AUDIT_SUPB"
+  | "DESIGN"
+  | "SURVEY"
+  | "ECOLOGY"
+  | "RESEARCH"
+  | "LABORATORY"
+  | "TECH_DIAG"
+  | "CADASTRAL"
+  | "FORENSIC";
+
 export interface AuthPreset {
   role: "CUSTOMER" | "EXPERT" | "LICENSE_HOLDER";
-  direction?:
-    | "EXPERTISE"
-    | "AUDIT_SUPB"
-    | "DESIGN"
-    | "SURVEY"
-    | "ECOLOGY"
-    | "RESEARCH"
-    | "LABORATORY"
-    | "TECH_DIAG"
-    | "CADASTRAL"
-    | "FORENSIC";
+  direction?: AuthDirection;
 }
 
 interface AuthModalContextValue {

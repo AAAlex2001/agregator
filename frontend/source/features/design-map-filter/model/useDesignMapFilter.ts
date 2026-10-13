@@ -6,20 +6,16 @@ import {
   DESIGN_DOC_CATEGORIES,
   DESIGN_SPECIALTIES,
   type DesignDocCategoryCode,
-} from "@/source/entities/design";
-
-function toggleValue<T>(list: T[], value: T): T[] {
-  return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
-}
+} from "@/source/entities/directions/design";
 
 export function useDesignMapFilter(items: ExpertMapItemApi[]) {
   const [categories, setCategories] = useState<DesignDocCategoryCode[]>([]);
   const [specialties, setSpecialties] = useState<string[]>([]);
 
   const toggleCategory = (code: DesignDocCategoryCode) =>
-    setCategories((current) => toggleValue(current, code));
+    setCategories((current) => (current.includes(code) ? current.filter((item) => item !== code) : [...current, code]));
   const toggleSpecialty = (key: string) =>
-    setSpecialties((current) => toggleValue(current, key));
+    setSpecialties((current) => (current.includes(key) ? current.filter((item) => item !== key) : [...current, key]));
 
   const selectedSpecialties = DESIGN_SPECIALTIES.filter((specialty) =>
     specialties.includes(specialty.key),
