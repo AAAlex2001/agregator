@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { formatRelative } from "@/source/shared/lib/formatDate";
 import { CATEGORY_LABEL, type SupportTicket } from "../model/types";
 import { StatusBadge } from "./StatusBadge";
@@ -16,12 +17,12 @@ export function TicketCard({ ticket, isActive, onClick }: Props) {
     ticket.lastMessagePreview ||
     ticket.messages[ticket.messages.length - 1]?.text ||
     "";
-  const previewClass = `${s.preview} ${ticket.hasUnread ? s.previewUnread : ""}`.trim();
+  const previewClass = cn(s.preview, { [s.previewUnread]: ticket.hasUnread });
 
   return (
     <button
       type="button"
-      className={`${s.card} ${isActive ? s.active : ""}`}
+      className={cn(s.card, { [s.active]: isActive })}
       onClick={onClick}
       aria-current={isActive ? "true" : undefined}
     >

@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Link from "next/link";
 import Image from "next/image";
 import LogoIcon from "@/source/shared/ui/icons/LogoIcon";
@@ -11,7 +12,7 @@ type FooterProps = {
 };
 
 const Footer = ({ variant = "dark" }: FooterProps) => {
-  const footerClass = variant === "light" ? `${s.footer} ${s.light}` : s.footer;
+  const footerClass = cn(s.footer, { [s.light]: variant === "light" });
   return (
     <footer className={footerClass} id="footer">
         <div className={s.content}>

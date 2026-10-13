@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import {
   PricingCard,
@@ -53,7 +54,7 @@ export function SubscriptionPanel() {
           return (
             <div
               key={plan.id}
-              className={`${s.gridItem} ${plan.highlighted ? s.gridItemHighlighted : ""}`}
+              className={cn(s.gridItem, { [s.gridItemHighlighted]: plan.highlighted })}
             >
               <PricingCard
                 plan={plan}
@@ -78,7 +79,7 @@ function SubscriptionPanelSkeleton() {
         <Skeleton className={s.statusSubtitleSkeleton} rounded="md" />
       </div>
       <div className={s.grid}>
-        <div className={`${s.gridItem} ${s.gridItemHighlighted}`}>
+        <div className={cn(s.gridItem, s.gridItemHighlighted)}>
           <PricingCardSkeleton />
         </div>
         <div className={s.gridItem}>

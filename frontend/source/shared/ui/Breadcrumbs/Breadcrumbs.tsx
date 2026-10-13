@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -18,7 +19,7 @@ interface Props {
 export function Breadcrumbs({ items, className }: Props) {
   const pathname = usePathname();
   if (items.length === 0) return null;
-  const cls = className ? `${styles.nav} ${className}` : styles.nav;
+  const cls = cn(styles.nav, className);
 
   return (
     <nav className={cls} aria-label="Хлебные крошки">

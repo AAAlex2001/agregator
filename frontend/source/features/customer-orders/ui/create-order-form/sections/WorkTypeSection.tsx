@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { ORDER_WORK_OPTIONS } from "@/source/entities/order";
 import { useSession } from "@/source/features/session";
 import type { StepProps } from "./types";
@@ -13,14 +14,14 @@ export function WorkTypeSection({ state, dispatch }: StepProps) {
 
   return (
     <section className={base.section}>
-      <span className={`${base.label} ${s.title}`}>Вид работ</span>
+      <span className={cn(base.label, s.title)}>Вид работ</span>
 
       <div className={s.options}>
         {options.map((option) => (
           <button
             key={option.value}
             type="button"
-            className={state.workType === option.value ? `${s.option} ${s.optionActive}` : s.option}
+            className={cn(s.option, { [s.optionActive]: state.workType === option.value })}
             onClick={() => dispatch({ type: "workType", value: option.value })}
           >
             <strong>{option.label}</strong>

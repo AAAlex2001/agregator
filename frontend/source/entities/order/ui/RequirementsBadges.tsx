@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type { Badge } from "../model/types";
 import { getOrderWorkLabel, type OrderWorkType } from "../model/workTypes";
 import s from "./RequirementsBadges.module.scss";
@@ -31,7 +32,7 @@ export function RequirementsBadges({ badges, label = "Требования к и
         <>
           <span className={s.label}>Вид работ</span>
           <div className={s.badges}>
-            <span className={`${s.badge} ${s.orange}`}>{getOrderWorkLabel(workType)}</span>
+            <span className={cn(s.badge, s.orange)}>{getOrderWorkLabel(workType)}</span>
           </div>
         </>
       )}
@@ -41,7 +42,7 @@ export function RequirementsBadges({ badges, label = "Требования к и
       {changed && previousBadges && previousBadges.length > 0 && (
         <div className={s.previousBadges}>
           {previousBadges.map((badge, index) => (
-            <span key={`prev-${index}`} className={`${s.badge} ${s[badge.variant]} ${s.previousBadge}`}>
+            <span key={`prev-${index}`} className={cn(s.badge, s[badge.variant], s.previousBadge)}>
               {badge.text}
             </span>
           ))}
@@ -49,7 +50,7 @@ export function RequirementsBadges({ badges, label = "Требования к и
       )}
       <div className={s.badges}>
         {badges.map((badge, index) => (
-          <span key={index} className={`${s.badge} ${s[badge.variant]}`}>
+          <span key={index} className={cn(s.badge, s[badge.variant])}>
             {badge.text}
           </span>
         ))}

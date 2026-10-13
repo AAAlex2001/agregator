@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRef, useState } from "react";
 import { TextInput } from "@/source/shared/ui/Inputs";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
@@ -25,7 +26,7 @@ export function RegulatoryDocumentsBlock({ state, dispatch }: StepProps) {
         aria-expanded={open}
       >
         <span className={s.toggleText}>Дополнительные разрешительные документы</span>
-        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
+        <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: open })} />
       </button>
 
       {open && (

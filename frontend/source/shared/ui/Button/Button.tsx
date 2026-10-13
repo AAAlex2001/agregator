@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Link from "next/link";
 import styles from "./button.module.scss";
 import { ArrowIcon } from "@/source/shared/ui/icons";
@@ -57,16 +58,13 @@ const Button = ({
   rel,
   scroll,
 }: ButtonProps) => {
-  const buttonClasses = [
+  const buttonClasses = cn(
     styles.button,
     styles[variant],
     styles[size],
-    fullWidth ? styles.fullWidth : "",
-    isActive ? styles.active : "",
+    { [styles.fullWidth]: fullWidth, [styles.active]: isActive },
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const content = (
     <>

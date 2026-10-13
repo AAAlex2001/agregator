@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Link from "next/link";
 import type { ChatListItemData } from "@/source/entities/chat";
 import { formatChatListTime } from "@/source/shared/lib/formatDate";
@@ -13,7 +14,7 @@ interface ChatListItemProps {
 
 export function ChatListItem({ chat, href, active = false, isOwnLastMessage = false }: ChatListItemProps) {
   return (
-    <Link href={href} className={`${s.item} ${active ? s.active : ""}`.trim()} aria-current={active ? "page" : undefined}>
+    <Link href={href} className={cn(s.item, { [s.active]: active })} aria-current={active ? "page" : undefined}>
       <ChatAvatar src={chat.counterpart_avatar_url} alt={`Аватар ${chat.counterpart_name}`} />
       <div className={s.content}>
         <div className={s.titleRow}>

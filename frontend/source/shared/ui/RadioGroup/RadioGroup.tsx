@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { type ReactNode } from "react";
 import s from "./RadioGroup.module.scss";
 import checkbox from "../Checkbox/checkbox.module.scss";
@@ -31,20 +32,20 @@ export function RadioGroup<V extends string>({
   variant = "default",
 }: Props<V>) {
   return (
-    <fieldset className={[s.group, variant === "checklist" ? s.checklist : "", className].filter(Boolean).join(" ")}>
+    <fieldset className={cn(s.group, { [s.checklist]: variant === "checklist" }, className)}>
       {legend && <legend className={s.legend}>{legend}</legend>}
       <div className={s.options}>
         {options.map((opt) => {
           const checked = opt.value === value;
           return (
-            <label key={opt.value} className={`${s.option} ${checked ? s.optionChecked : ""}`}>
+            <label key={opt.value} className={cn(s.option, { [s.optionChecked]: checked })}>
               <input
                 type="radio"
                 name={name}
                 value={opt.value}
                 checked={checked}
                 onChange={() => onChange(opt.value)}
-                className={`${s.input} ${variant === "checklist" ? checkbox.input : ""}`}
+                className={cn(s.input, { [checkbox.input]: variant === "checklist" })}
               />
               {variant === "checklist" ? (
                 <span className={checkbox.box} aria-hidden="true">

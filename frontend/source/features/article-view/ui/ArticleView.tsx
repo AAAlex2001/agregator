@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { DocToc } from "@/source/shared/ui/DocToc";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -133,7 +134,7 @@ export function ArticleView({
           <LeadFormWidget defaultDirection={leadDirection} />
           {trailingImage ? (
             <div
-              className={`${s.content} ${s.trailingImage}`}
+              className={cn(s.content, s.trailingImage)}
               dangerouslySetInnerHTML={{ __html: trailingImage }}
             />
           ) : null}

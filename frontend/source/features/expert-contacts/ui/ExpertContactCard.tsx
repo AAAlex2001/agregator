@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { ExpertCard } from "@/source/entities/expert";
 import type { ExpertContactCardData } from "@/source/entities/expert-contact";
 import { TYPE_COLOR, TYPES, type ExpertiseType } from "@/source/entities/expertise";
@@ -24,7 +25,7 @@ export function ExpertContactCard({ expert, busy, onOpen }: ExpertContactCardPro
           const toneClass = knownType ? s[TYPE_COLOR[type]] : s.gray;
           return (
             <span
-              className={`${s.certificate} ${toneClass}`}
+              className={cn(s.certificate, toneClass)}
               key={`${certificate.area}-${certificate.object}-${certificate.category}-${index}`}
             >
               {certificate.area && <strong>{certificate.area}</strong>}

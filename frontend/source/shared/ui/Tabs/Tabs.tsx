@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import styles from "./Tabs.module.scss";
 
 interface Tab {
@@ -19,13 +20,13 @@ interface TabsProps {
 const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "" }: TabsProps) => {
   if (variant === "underline") {
     return (
-      <div className={`${styles.underlineBar} ${className}`} role="tablist" aria-label="Разделы">
+      <div className={cn(styles.underlineBar, className)} role="tablist" aria-label="Разделы">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             role="tab"
-            className={`${styles.underline} ${activeTab === tab.id ? styles.underlineActive : ""}`}
+            className={cn(styles.underline, { [styles.underlineActive]: activeTab === tab.id })}
             aria-selected={activeTab === tab.id}
             onClick={() => onTabChange(tab.id)}
           >
@@ -38,12 +39,12 @@ const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "
 
   if (variant === "squared") {
     return (
-      <div className={`${styles.squaredBar} ${className}`}>
+      <div className={cn(styles.squaredBar, className)}>
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
-            className={`${styles.squared} ${activeTab === tab.id ? styles.squaredActive : ""}`}
+            className={cn(styles.squared, { [styles.squaredActive]: activeTab === tab.id })}
             aria-pressed={activeTab === tab.id}
             onClick={() => onTabChange(tab.id)}
           >
@@ -56,11 +57,11 @@ const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "
 
   if (variant === "pill") {
     return (
-      <div className={`${styles.pillBar} ${className}`}>
+      <div className={cn(styles.pillBar, className)}>
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`${styles.pill} ${tab.count ? styles.pillWithCount : ""} ${activeTab === tab.id ? styles.pillActive : ""}`}
+            className={cn(styles.pill, { [styles.pillWithCount]: tab.count, [styles.pillActive]: activeTab === tab.id })}
             onClick={() => onTabChange(tab.id)}
           >
             {tab.label}
@@ -72,7 +73,7 @@ const Tabs = ({ tabs, activeTab, onTabChange, variant = "default", className = "
   }
 
   return (
-    <div className={`${styles.tabs} ${className}`}>
+    <div className={cn(styles.tabs, className)}>
       {tabs.map((tab) => (
         <span
           key={tab.id}

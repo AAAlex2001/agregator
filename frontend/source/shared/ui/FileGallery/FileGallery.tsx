@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -43,9 +44,7 @@ interface Props {
   gridProps?: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> };
 }
 
-function joinClassNames(...values: Array<string | false | null | undefined>) {
-  return values.filter(Boolean).join(" ");
-}
+
 
 export function FileGallery({
   files = [],
@@ -129,21 +128,21 @@ export function FileGallery({
   const activeItem = activeIndex !== null ? resolvedItems[activeIndex] : null;
 
   return (
-    <div className={joinClassNames(s.block, blockClassName)}>
-      {label ? <span className={joinClassNames(s.label, labelClassName)}>{label}</span> : null}
+    <div className={cn(s.block, blockClassName)}>
+      {label ? <span className={cn(s.label, labelClassName)}>{label}</span> : null}
 
       {!resolvedItems.length && !onAdd ? (
         <div className={s.empty}>{emptyText}</div>
       ) : (
         <div
           {...gridProps}
-          className={joinClassNames(s.grid, gridClassName)}
+          className={cn(s.grid, gridClassName)}
         >
           {input}
           {onAdd ? (
             <button
               type="button"
-              className={joinClassNames(s.addButton, s.tile, variantClassName)}
+              className={cn(s.addButton, s.tile, variantClassName)}
               onClick={onAdd}
               aria-label="Добавить файл"
             >
@@ -160,7 +159,7 @@ export function FileGallery({
               <div key={item.id} className={s.item}>
                 <button
                   type="button"
-                  className={joinClassNames(s.tile, variantClassName, isImage && s.imageTile)}
+                  className={cn(s.tile, variantClassName, isImage && s.imageTile)}
                   onClick={() => setActiveIndex(index)}
                   title={item.name}
                   aria-label={`Открыть файл ${item.name}`}
@@ -195,7 +194,7 @@ export function FileGallery({
         </div>
       )}
 
-      {hint ? <span className={joinClassNames(s.hint, hintClassName)}>{hint}</span> : null}
+      {hint ? <span className={cn(s.hint, hintClassName)}>{hint}</span> : null}
 
       {dynamicSlides.length > 0 ? (
         <LightGallery

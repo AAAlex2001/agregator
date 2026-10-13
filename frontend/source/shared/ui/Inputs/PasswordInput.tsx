@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useId, useState, type ChangeEvent } from "react";
 import { LockIcon, EyeOpenIcon, EyeClosedIcon } from "@/source/shared/ui/icons";
 import { useFocusedField } from "./useFocusedField";
@@ -39,12 +40,10 @@ export function PasswordInput({
   const { isFocused, onFocus, onBlur } = useFocusedField();
   const [visible, setVisible] = useState(false);
 
-  const wrapperClass = [s.inputWrapper, isFocused && s.focused, error && s.hasError]
-    .filter(Boolean)
-    .join(" ");
+  const wrapperClass = cn(s.inputWrapper, { [s.focused]: isFocused, [s.hasError]: error });
 
   return (
-    <div className={`${s.field} ${className ?? ""}`}>
+    <div className={cn(s.field, className)}>
       <div className={wrapperClass}>
         <span className={s.iconLeft}>
           <LockIcon className={s.iconSvg} dotClassName={s.lockDot} />
@@ -63,7 +62,7 @@ export function PasswordInput({
           minLength={minLength}
           autoComplete={autoComplete}
           aria-label={ariaLabel}
-          className={`${s.input} ${s.hasLeftIcon} ${s.hasRightIcon}`}
+          className={cn(s.input, s.hasLeftIcon, s.hasRightIcon)}
           data-lpignore="true"
           data-1p-ignore="true"
           suppressHydrationWarning
@@ -71,7 +70,7 @@ export function PasswordInput({
         <button
           type="button"
           onClick={() => setVisible((prev) => !prev)}
-          className={`${s.iconRight} ${!visible ? s.closedEye : ""}`}
+          className={cn(s.iconRight, { [s.closedEye]: !visible })}
           aria-label={visible ? "Скрыть пароль" : "Показать пароль"}
         >
           {visible ? <EyeOpenIcon className={s.eyeIcon} /> : <EyeClosedIcon className={s.eyeIcon} />}

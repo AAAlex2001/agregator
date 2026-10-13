@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import {
@@ -63,7 +64,7 @@ export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewPro
       <nav ref={menuRef} className={s.menuTabs} aria-label="Навигация кабинета">
         {items.map((item) => {
           const isActive = item.key === activeKey;
-          const className = `${s.tab} ${isActive ? s.tabActive : ""}`.trim();
+          const className = cn(s.tab, { [s.tabActive]: isActive });
           const content = (
             <>
               <span className={s.icon} aria-hidden="true">{renderIcon(item.key)}</span>

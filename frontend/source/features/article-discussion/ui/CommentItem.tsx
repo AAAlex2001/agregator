@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import type { ArticleComment } from "@/source/entities/article-comment";
 import Button from "@/source/shared/ui/Button";
@@ -22,7 +23,7 @@ export function CommentItem({ comment, all, canReply, depth, onReply, onDelete }
   const replies = all.filter((c) => c.parent_id === comment.id);
 
   return (
-    <div className={`${s.comment} ${depth > 0 ? s.reply : ""}`}>
+    <div className={cn(s.comment, { [s.reply]: depth > 0 })}>
       <div className={s.commentHead}>
         <span className={s.author}>{comment.author_name}</span>
         <time className={s.date} dateTime={comment.created_at}>

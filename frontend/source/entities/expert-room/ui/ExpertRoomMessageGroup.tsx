@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { ChatAvatar, ChatAvatarSpacer, MessageBubble } from "@/source/entities/chat";
 import type { ChatMessageData } from "@/source/entities/chat";
 import type { ExpertRoomMessageData, ExpertRoomMessageGroup as Group } from "../model/types";
@@ -26,7 +27,7 @@ function toBubbleMessage(message: ExpertRoomMessageData): ChatMessageData {
 
 export function ExpertRoomMessageGroup({ group, isMine, currentUserAvatarUrl }: Props) {
   const groupClass = isMine ? s.sent : s.received;
-  const labelClass = `${s.label} ${isMine ? s.alignRight : ""}`.trim();
+  const labelClass = cn(s.label, { [s.alignRight]: isMine });
   const avatarSrc = isMine ? currentUserAvatarUrl : group.senderAvatarUrl;
   const avatarAlt = isMine ? "Ваш аватар" : `Аватар ${group.senderName}`;
 

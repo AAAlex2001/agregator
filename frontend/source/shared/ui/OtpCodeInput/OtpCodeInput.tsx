@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRef, type ChangeEvent, type ClipboardEvent, type KeyboardEvent } from "react";
 import styles from "./otp-code-input.module.scss";
 
@@ -57,7 +58,7 @@ export function OtpCodeInput({
     refs.current[target]?.focus();
   };
 
-  const wrapperClass = `${styles.root} ${error ? styles.hasError : ""}`.trim();
+  const wrapperClass = cn(styles.root, { [styles.hasError]: error });
 
   return (
     <div className={wrapperClass}>

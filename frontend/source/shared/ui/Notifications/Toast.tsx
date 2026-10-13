@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useState } from "react";
 import s from "./Toast.module.scss";
 
@@ -30,7 +31,7 @@ export function Toast({ message, type, duration = 4000, onDismiss }: ToastProps)
 
   return (
     <div
-      className={`${s.toast} ${s[type]} ${s[phase]}`}
+      className={cn(s.toast, s[type], s[phase])}
       role={type === "error" ? "alert" : "status"}
     >
       <span className={s.icon} aria-hidden="true">{type === "success" ? "✓" : "!"}</span>

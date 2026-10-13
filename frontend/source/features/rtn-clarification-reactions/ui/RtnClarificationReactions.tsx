@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import {
   useRtnReactions,
   type RtnReactionState,
@@ -28,7 +29,7 @@ export function RtnClarificationReactions({ clarificationId, initial }: Props) {
       <div className={s.buttons}>
         <button
           type="button"
-          className={`${s.button} ${state.my_reaction === "LIKE" ? s.likeActive : ""}`}
+          className={cn(s.button, { [s.likeActive]: state.my_reaction === "LIKE" })}
           onClick={() => onVote("LIKE")}
           disabled={pending}
           aria-pressed={state.my_reaction === "LIKE"}
@@ -39,7 +40,7 @@ export function RtnClarificationReactions({ clarificationId, initial }: Props) {
         </button>
         <button
           type="button"
-          className={`${s.button} ${state.my_reaction === "DISLIKE" ? s.dislikeActive : ""}`}
+          className={cn(s.button, { [s.dislikeActive]: state.my_reaction === "DISLIKE" })}
           onClick={() => onVote("DISLIKE")}
           disabled={pending}
           aria-pressed={state.my_reaction === "DISLIKE"}

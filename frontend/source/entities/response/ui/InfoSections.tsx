@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { DiffValue } from "@/source/shared/ui/DiffValue";
 import s from "./InfoSections.module.scss";
 
@@ -35,7 +36,7 @@ export function CommentSection({
   variant?: "danger";
 }) {
   return (
-    <div className={`${s.commentRow} ${variant === "danger" ? s.commentDanger : ""}`.trim()}>
+    <div className={cn(s.commentRow, { [s.commentDanger]: variant === "danger" })}>
       <span className={s.commentTitle}>{title}</span>
       <span className={s.commentText}>
         <DiffValue previous={previous ?? null} current={text} />

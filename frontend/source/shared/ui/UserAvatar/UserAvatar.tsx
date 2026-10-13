@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useState, type ReactNode } from "react";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import { ProfileIcon } from "@/source/shared/ui/icons";
@@ -30,12 +31,12 @@ export function UserAvatar({
   const showImage = Boolean(imageSrc) && !broken;
 
   return (
-    <div className={`${s.wrapper} ${className}`.trim()} aria-label={alt}>
+    <div className={cn(s.wrapper, className)} aria-label={alt}>
       {showImage ? (
         <img
           src={imageSrc}
           alt={alt}
-          className={`${s.image} ${imageClassName}`.trim()}
+          className={cn(s.image, imageClassName)}
           onError={() => setBroken(true)}
         />
       ) : (

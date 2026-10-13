@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { formatDateRu } from "@/source/shared/lib/formatDate";
@@ -50,9 +51,7 @@ export function RtnCard({ item, horizontal = false, as: Tag = "li" }: Props) {
 
   return (
     <Tag
-      className={`${s.card}${horizontal ? ` ${s.horizontal}` : ""}${
-        horizontal && hasAside ? ` ${s.withAside}` : ""
-      }`}
+      className={cn(s.card, { [s.horizontal]: horizontal, [s.withAside]: horizontal && hasAside })}
     >
       <Link href={href} className={s.link}>
         <div className={s.top}>
@@ -85,7 +84,7 @@ export function RtnCard({ item, horizontal = false, as: Tag = "li" }: Props) {
                 </div>
               ) : null}
               {item.department ? (
-                <div className={`${s.metaItem} ${s.departmentItem}`}>
+                <div className={cn(s.metaItem, s.departmentItem)}>
                   <span className={s.metaLabel}>Подразделение Ростехнадзора</span>
                   <span className={s.metaValue}>{item.department}</span>
                 </div>

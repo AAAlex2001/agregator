@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import type { ExpertMapItemApi } from "@/source/entities/expert";
 import { TypeBadge } from "@/source/entities/expertise";
 import { YandexMarkersMap } from "@/source/shared/ui/YandexMap";
@@ -67,7 +68,7 @@ export function FilterableExpertsMap({
           <button
             key={area.value}
             type="button"
-            className={`${s.chip} ${areas.includes(area.value) ? s.chipActive : ""}`}
+            className={cn(s.chip, { [s.chipActive]: areas.includes(area.value) })}
             onClick={() => toggleArea(area.value)}
             title={area.name}
           >

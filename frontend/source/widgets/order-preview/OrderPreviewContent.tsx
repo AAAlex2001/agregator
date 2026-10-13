@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Link from "next/link";
 import { Loader } from "@/source/shared/ui";
@@ -92,7 +93,7 @@ export function OrderPreviewContent() {
                   <span className={styles.infoLabel}>Требования к исполнителю:</span>
                   <div className={styles.badges}>
                     {order.badges.map((badge) => (
-                      <span key={badge.text} className={`${styles.badge} ${styles[variantClassMap[badge.variant] || "badgeGray"]}`}>
+                      <span key={badge.text} className={cn(styles.badge, styles[variantClassMap[badge.variant] || "badgeGray"])}>
                         {badge.text}
                       </span>
                     ))}

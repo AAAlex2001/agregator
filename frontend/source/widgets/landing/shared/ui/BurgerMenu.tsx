@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronIcon, LogoIcon, TechExpertLogoIcon } from "@/source/shared/ui/icons";
@@ -29,7 +30,7 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
   return (
     <>
       <button
-        className={`${s.burgerButton} ${isOpen ? s.open : ""}`}
+        className={cn(s.burgerButton, { [s.open]: isOpen })}
         onClick={toggleMenu}
         aria-label="Открыть меню"
         aria-expanded={isOpen}
@@ -40,7 +41,7 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
       </button>
 
       {isOpen && (
-        <nav className={`${s.menu} ${isOpen ? s.menuOpen : ""}`}>
+        <nav className={cn(s.menu, { [s.menuOpen]: isOpen })}>
           <div className={s.menuHeader}>
             <div className={s.menuLogo}>
               <LogoIcon />
@@ -59,7 +60,7 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
                     <span className={s.capabilitiesHint}>Сервисы и полезные материалы</span>
                   </span>
                 <ChevronIcon
-                  className={`${s.capabilitiesChevron} ${showCapabilities ? s.capabilitiesChevronOpen : ""}`}
+                  className={cn(s.capabilitiesChevron, { [s.capabilitiesChevronOpen]: showCapabilities })}
                   color="currentColor"
                 />
               </button>
@@ -68,7 +69,7 @@ const BurgerMenu = ({ showGuestCapabilities = false }: { showGuestCapabilities?:
                   {capabilities.map((plate) => (
                     <div
                       key={plate.key}
-                      className={`${s.capabilityPlate} ${s[plate.color]}`}
+                      className={cn(s.capabilityPlate, s[plate.color])}
                       aria-label={`${plate.label}. Доступно после регистрации`}
                     >
                       <span className={s.capabilityLabel}>

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import styles from "./cardInput.module.scss";
 
 export interface CardInputProps {
@@ -24,7 +25,7 @@ const CardInput = ({
   if (multiline) {
     return (
       <textarea
-        className={`${styles.input} ${styles.textarea} ${className}`}
+        className={cn(styles.input, styles.textarea, className)}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -36,7 +37,7 @@ const CardInput = ({
   return (
     <input
       type={type}
-      className={`${styles.input} ${className}`}
+      className={cn(styles.input, className)}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}

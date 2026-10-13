@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, type ReactNode } from "react";
 import s from "./Modal.module.scss";
 
@@ -57,8 +58,8 @@ export function Modal({
 
   if (!open) return null;
 
-  const hostClass = variant === "sheet" ? `${s.host} ${s.hostSheet}` : s.host;
-  const cardClass = [s.card, SIZE_CLASS[size], dialogClassName].filter(Boolean).join(" ");
+  const hostClass = cn(s.host, { [s.hostSheet]: variant === "sheet" });
+  const cardClass = cn(s.card, SIZE_CLASS[size], dialogClassName);
 
   return (
     <dialog

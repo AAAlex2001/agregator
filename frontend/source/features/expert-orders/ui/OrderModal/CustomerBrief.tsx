@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { OrderDetailsList } from "@/source/entities/order";
 import type { Badge, OrderCardData } from "@/source/entities/order";
 import s from "./CustomerBrief.module.scss";
@@ -41,7 +42,7 @@ export function CustomerBrief({ order }: Props) {
           <span className={s.requirementsLabel}>Требования к исполнителю:</span>
           <div className={s.badges}>
             {order.badges.map((badge, index) => (
-              <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
+              <span key={`${badge.text}-${index}`} className={cn(s.badge, BADGE_CLASS[badge.variant])}>
                 {badge.text}
               </span>
             ))}

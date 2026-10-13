@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Button, CalendarInput, Modal, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
 import { BidFilesField } from "@/source/features/expert-orders/ui/OrderModal/BidFilesField";
@@ -109,7 +110,7 @@ export function EditResponseModal({
                   type="button"
                   role="radio"
                   aria-checked={active}
-                  className={`${s.vatChip} ${active ? s.vatChipActive : ""}`.trim()}
+                  className={cn(s.vatChip, { [s.vatChipActive]: active })}
                   onClick={() => onVatKindChange(kind)}
                 >
                   {VAT_LABEL[kind]}

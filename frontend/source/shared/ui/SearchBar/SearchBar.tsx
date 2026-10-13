@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { forwardRef, type FocusEvent, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { LogoMarkIcon } from "@/source/shared/ui/icons";
 import Button from "@/source/shared/ui/Button";
@@ -62,7 +63,7 @@ export const SearchBar = forwardRef<HTMLFormElement, Props>(function SearchBar(
   return (
     <form
       ref={ref}
-      className={`${s.bar} ${showDropdown ? s.barOpen : ""}`.trim()}
+      className={cn(s.bar, { [s.barOpen]: showDropdown })}
       role="search"
       onSubmit={handleSubmit}
     >
@@ -87,7 +88,7 @@ export const SearchBar = forwardRef<HTMLFormElement, Props>(function SearchBar(
         </Button>
       </div>
 
-      <div className={`${s.dropdown} ${showDropdown ? s.dropdownOpen : ""}`.trim()} aria-hidden={!showDropdown}>
+      <div className={cn(s.dropdown, { [s.dropdownOpen]: showDropdown })} aria-hidden={!showDropdown}>
         {isLoading ? (
           <div className={s.status}>
             <Loader size="sm" label={loadingLabel} />
@@ -101,7 +102,7 @@ export const SearchBar = forwardRef<HTMLFormElement, Props>(function SearchBar(
                 key={item.id}
                 role="option"
                 aria-selected={index === activeSuggestionIndex}
-                className={`${s.item} ${index === activeSuggestionIndex ? s.itemActive : ""}`.trim()}
+                className={cn(s.item, { [s.itemActive]: index === activeSuggestionIndex })}
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onSuggestionPick?.(item);

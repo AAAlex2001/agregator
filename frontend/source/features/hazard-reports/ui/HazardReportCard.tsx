@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { getHazardReportPdfUrl, type HazardReportItem } from "@/source/entities/hazard";
@@ -89,7 +90,7 @@ export function HazardReportCard({ item }: { item: HazardReportItem }) {
           {item.blocks.map((block) => (
             <div key={block.group} className={s.row}>
               <span className={s.rowName}>{block.title}</span>
-              <span className={`${s.badge} ${riskClass(block.category)}`}>
+              <span className={cn(s.badge, riskClass(block.category))}>
                 {block.value.toFixed(1)}% · {shortCategory(block.category)}
               </span>
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronIcon } from "@/source/shared/ui/icons";
@@ -72,7 +73,7 @@ export function SortPill<K extends string>({
       <button
         ref={buttonRef}
         type="button"
-        className={`${s.pill} ${showActiveStyle ? s.pillActive : ""}`}
+        className={cn(s.pill, { [s.pillActive]: showActiveStyle })}
         onClick={onToggle}
       >
         <span>{pill.label}</span>
@@ -85,7 +86,7 @@ export function SortPill<K extends string>({
             <SortPillCloseIcon />
           </span>
         ) : (
-          <ChevronIcon className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`} color="#1E1E1E" />
+          <ChevronIcon className={cn(s.chevron, { [s.chevronOpen]: isOpen })} color="#1E1E1E" />
         )}
       </button>
 
@@ -108,7 +109,7 @@ export function SortPill<K extends string>({
 function Option({ checked, onClick, text }: { checked: boolean; onClick: () => void; text: string }) {
   return (
     <button type="button" className={s.option} onClick={onClick}>
-      <span className={`${s.radio} ${checked ? s.radioChecked : ""}`}>
+      <span className={cn(s.radio, { [s.radioChecked]: checked })}>
         {checked && <span className={s.radioDot} />}
       </span>
       <span className={s.optionText}>{text}</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Image from "next/image";
 import { Button, Loader, Subtitle, Title } from "@/source/shared/ui";
 import { SearchIcon } from "@/source/shared/ui/icons";
@@ -165,7 +166,7 @@ export function TechExpertWidget() {
                   </span>
                   <span className={s.docBadges}>
                     {doc.status && <span className={s.badge}>{doc.status}</span>}
-                    <span className={`${s.badge} ${accessClass(doc.access)}`}>
+                    <span className={cn(s.badge, accessClass(doc.access))}>
                       {ACCESS_LABEL[doc.access] ?? doc.access}
                     </span>
                   </span>

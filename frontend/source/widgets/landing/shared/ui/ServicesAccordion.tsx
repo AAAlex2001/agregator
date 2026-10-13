@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -49,12 +50,12 @@ export function ServicesAccordion<T extends ServicesAccordionItem>({
 
   return (
     <div className={s.panel}>
-      <div className={mobileStack ? `${s.grid} ${s.gridStack}` : s.grid}>
+      <div className={cn(s.grid, { [s.gridStack]: mobileStack })}>
         <ul className={s.list}>
           {items.map((item, index) => {
             const isActive = index === activeIndex;
             return (
-              <li key={item.title} className={isActive ? `${s.item} ${s.itemActive}` : s.item}>
+              <li key={item.title} className={cn(s.item, { [s.itemActive]: isActive })}>
                 <button
                   type="button"
                   className={s.head}

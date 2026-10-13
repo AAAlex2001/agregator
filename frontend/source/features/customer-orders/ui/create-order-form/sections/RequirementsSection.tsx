@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import type { StepProps } from "./types";
 import base from "./sectionBase.module.scss";
@@ -6,7 +7,7 @@ import s from "./requirementsSection.module.scss";
 export function RequirementsSection({ state, dispatch }: StepProps) {
   return (
     <section className={base.section}>
-      <span className={`${base.label} ${s.title}`}>Требования к исполнителю</span>
+      <span className={cn(base.label, s.title)}>Требования к исполнителю</span>
       <div className={s.options}>
         <Checkbox
           id="order-requires-expert"

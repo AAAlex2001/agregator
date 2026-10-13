@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Checkbox } from "@/source/shared/ui";
 import {
   COMMON_MAP_FIELD_OPTIONS,
@@ -36,7 +37,7 @@ export function ExpertMapVisibilityFields({
     <button
       key={option.value}
       type="button"
-      className={`${s.option} ${mapFields.includes(option.value) ? s.optionActive : ""}`}
+      className={cn(s.option, { [s.optionActive]: mapFields.includes(option.value) })}
       onClick={() => toggle(option.value)}
     >
       {option.label}

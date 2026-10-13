@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useId, type ChangeEvent } from "react";
 import { PhoneIcon } from "@/source/shared/ui/icons";
 import { useFocusedField } from "./useFocusedField";
@@ -36,12 +37,10 @@ export function PhoneInput({
   const inputId = id ?? generatedId;
   const { isFocused, onFocus, onBlur } = useFocusedField();
 
-  const wrapperClass = [s.inputWrapper, isFocused && s.focused, error && s.hasError]
-    .filter(Boolean)
-    .join(" ");
+  const wrapperClass = cn(s.inputWrapper, { [s.focused]: isFocused, [s.hasError]: error });
 
   return (
-    <div className={`${s.field} ${className ?? ""}`}>
+    <div className={cn(s.field, className)}>
       <div className={wrapperClass}>
         <span className={s.iconLeft}>
           <PhoneIcon className={s.iconSvg} />
@@ -60,7 +59,7 @@ export function PhoneInput({
           required={required}
           autoComplete={autoComplete}
           aria-label={ariaLabel}
-          className={`${s.input} ${s.hasLeftIcon}`}
+          className={cn(s.input, s.hasLeftIcon)}
           data-lpignore="true"
           data-1p-ignore="true"
           suppressHydrationWarning

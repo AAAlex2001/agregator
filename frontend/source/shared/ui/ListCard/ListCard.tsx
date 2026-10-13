@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { type ReactNode } from "react";
 import s from "./ListCard.module.scss";
 
@@ -54,7 +55,7 @@ export function ListCard({
 
   return (
     <article
-      className={`${s.card} ${clickable ? s.clickable : ""}`.trim()}
+      className={cn(s.card, { [s.clickable]: clickable })}
       onClick={onClick}
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
@@ -106,7 +107,7 @@ export function ListCard({
             {rightItems.map((item, index) => (
               <div key={index} className={s.rightItem}>
                 <span className={s.label}>{item.label}</span>
-                <span className={[s.value, item.valueAccent ? s.valueAccent : "", item.valueOrange ? s.valueOrange : ""].filter(Boolean).join(" ")}>
+                <span className={cn(s.value, { [s.valueAccent]: item.valueAccent, [s.valueOrange]: item.valueOrange })}>
                   {item.value}
                 </span>
               </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useId, type ChangeEvent, type ReactNode, type Ref, type MouseEventHandler } from "react";
 import { useFocusedField } from "./useFocusedField";
 import s from "./inputs.module.scss";
@@ -49,12 +50,10 @@ export function TextInput({
   const inputId = id ?? generatedId;
   const { isFocused, onFocus, onBlur } = useFocusedField();
 
-  const wrapperClass = [s.inputWrapper, isFocused && s.focused, error && s.hasError, active && s.active]
-    .filter(Boolean)
-    .join(" ");
+  const wrapperClass = cn(s.inputWrapper, { [s.focused]: isFocused, [s.hasError]: error, [s.active]: active });
 
   return (
-    <div className={`${s.field} ${className ?? ""}`}>
+    <div className={cn(s.field, className)}>
       <div className={wrapperClass}>
         <input
           ref={ref}
@@ -73,7 +72,7 @@ export function TextInput({
           required={required}
           autoComplete={autoComplete}
           aria-label={ariaLabel}
-          className={`${s.input} ${suffix ? s.hasRightIcon : ""} ${inputClassName ?? ""}`}
+          className={cn(s.input, { [s.hasRightIcon]: suffix }, inputClassName)}
           data-lpignore="true"
           data-1p-ignore="true"
           suppressHydrationWarning

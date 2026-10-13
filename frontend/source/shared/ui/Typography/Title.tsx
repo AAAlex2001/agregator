@@ -1,3 +1,4 @@
+import cn from "classnames";
 import styles from "./typography.module.scss";
 
 interface TitleProps {
@@ -9,7 +10,7 @@ interface TitleProps {
 
 const Title = ({ id, text, className = "", as: Tag = "h2" }: TitleProps) => {
   return (
-    <Tag id={id} className={`${styles.title} ${className}`}>
+    <Tag id={id} className={cn(styles.title, className)}>
       {text}
     </Tag>
   );

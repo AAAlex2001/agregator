@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/source/features/session";
@@ -14,10 +15,10 @@ export function ChatLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className={s.body}>
-      <section className={`${s.contentPane} ${!hasActiveChat ? s.contentPaneHiddenMobile : ""}`.trim()} aria-label="Переписка">
+      <section className={cn(s.contentPane, { [s.contentPaneHiddenMobile]: !hasActiveChat })} aria-label="Переписка">
         {children}
       </section>
-      <div className={`${s.sidebarPane} ${hasActiveChat ? s.sidebarPaneHiddenMobile : ""}`.trim()}>
+      <div className={cn(s.sidebarPane, { [s.sidebarPaneHiddenMobile]: hasActiveChat })}>
         <ChatSidebar currentUserId={user?.id ?? 0} />
       </div>
     </div>

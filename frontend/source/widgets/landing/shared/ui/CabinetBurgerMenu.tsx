@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,7 +32,7 @@ function BurgerItem({ item, onNavigate }: { item: NavItem; onNavigate: () => voi
   );
 
   if (item.soon || !item.href) {
-    return <span className={`${s.subLink} ${s.subMuted}`}>{inner}</span>;
+    return <span className={cn(s.subLink, s.subMuted)}>{inner}</span>;
   }
 
   if (item.external) {
@@ -69,7 +70,7 @@ function BurgerRegionsItem({ item, onNavigate }: { item: NavItem; onNavigate: ()
         <span className={s.subHead}>
           <span className={s.subLabel}>{item.label}</span>
         </span>
-        <ChevronIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`} color="currentColor" />
+        <ChevronIcon className={cn(s.chevron, { [s.chevronOpen]: open })} color="currentColor" />
       </button>
       {open && (
         <div className={s.regions}>
@@ -118,7 +119,7 @@ export function CabinetBurgerMenu() {
     <>
       <button
         type="button"
-        className={`${s.burger} ${open ? s.open : ""}`}
+        className={cn(s.burger, { [s.open]: open })}
         onClick={() => setOpen((v) => !v)}
         aria-label="Меню"
         aria-expanded={open}
@@ -145,7 +146,7 @@ export function CabinetBurgerMenu() {
               {plate.href ? (
                 <Link
                   href={plate.href}
-                  className={`${s.groupHead} ${s.logoHead}`}
+                  className={cn(s.groupHead, s.logoHead)}
                   aria-label={plate.label}
                   onClick={close}
                 >
@@ -154,7 +155,11 @@ export function CabinetBurgerMenu() {
               ) : (
                 <button
                   type="button"
-                  className={`${s.groupHead} ${plate.color === "gold" ? s.gold : ""} ${openKey === plate.key ? `${s.groupOpen} ${s[plate.color]}` : ""}`}
+                  className={cn(
+                    s.groupHead,
+                    { [s.gold]: plate.color === "gold" },
+                    (openKey === plate.key) && cn(s.groupOpen, s[plate.color]),
+                  )}
                   onClick={() => toggle(plate.key)}
                   aria-expanded={openKey === plate.key}
                 >

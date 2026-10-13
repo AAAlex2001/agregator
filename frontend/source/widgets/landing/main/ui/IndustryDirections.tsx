@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -50,7 +51,7 @@ const IndustryDirections = ({ industries, title, subtitle }: IndustryDirectionsP
               allowTouchMove: false,
             },
           }}
-          className={`${s.swiper} industry-swiper`}
+          className={cn(s.swiper, "industry-swiper")}
         >
           {industries.map((industry) => (
             <SwiperSlide key={industry.id} className={s.slide}>

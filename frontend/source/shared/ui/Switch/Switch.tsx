@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import s from "./Switch.module.scss";
 
 interface SwitchProps {
@@ -28,8 +29,8 @@ export function Switch({
     onChange(!checked);
   };
 
-  const wrapperClass = [s.wrapper, disabled ? s.disabled : "", className].filter(Boolean).join(" ");
-  const trackClass = [s.track, checked ? s.trackOn : ""].filter(Boolean).join(" ");
+  const wrapperClass = cn(s.wrapper, { [s.disabled]: disabled }, className);
+  const trackClass = cn(s.track, { [s.trackOn]: checked });
 
   return (
     <label className={wrapperClass} htmlFor={id}>

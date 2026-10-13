@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import { Button, Modal } from "@/source/shared/ui";
 import { FileIcon } from "@/source/shared/ui/icons";
@@ -28,7 +29,7 @@ export function RtnCommentItem({ comment, all, depth, onReply, onDelete, onReact
   const replies = all.filter((c) => c.parent_id === comment.id);
 
   return (
-    <div className={`${s.comment} ${depth > 0 ? s.reply : ""}`}>
+    <div className={cn(s.comment, { [s.reply]: depth > 0 })}>
       <div className={s.commentHead}>
         <span className={s.author}>
           {comment.author.name}
@@ -59,7 +60,7 @@ export function RtnCommentItem({ comment, all, depth, onReply, onDelete, onReact
           <button
             key={reaction.value}
             type="button"
-            className={`${s.reactionBtn} ${comment.my_reaction === reaction.value ? s.reactionActive : ""}`}
+            className={cn(s.reactionBtn, { [s.reactionActive]: comment.my_reaction === reaction.value })}
             onClick={() => void onReact(comment.id, reaction.value)}
           >
             {reaction.label}

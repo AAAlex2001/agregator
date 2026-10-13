@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -75,11 +76,7 @@ export function CreateOrderForm({ onCancel, onSubmit, isSubmitting, editTarget, 
     );
   }
 
-  const shellClassName = [
-    s.shell,
-    view === "help" ? s.shellWide : "",
-    view === "form" ? s.shellWithPreview : "",
-  ].filter(Boolean).join(" ");
+  const shellClassName = cn(s.shell, { [s.shellWide]: view === "help", [s.shellWithPreview]: view === "form" });
 
   return (
     <div className={shellClassName}>

@@ -22,7 +22,7 @@ const TechExpertLogoIcon: FC<TechExpertLogoIconProps> = ({ title, ...props }) =>
       textLength="292"
       lengthAdjust="spacingAndGlyphs"
       fill="#06445f"
-      fontFamily="Arial Black, Impact, Montserrat, system-ui, sans-serif"
+      fontFamily="Montserrat"
       fontSize="72"
       fontWeight="900"
     >
@@ -34,7 +34,7 @@ const TechExpertLogoIcon: FC<TechExpertLogoIconProps> = ({ title, ...props }) =>
         x="338"
         y="74"
         textAnchor="middle"
-        fontFamily="Arial Black, Impact, Montserrat, system-ui, sans-serif"
+        fontFamily="Montserrat"
         fontSize="72"
         fontWeight="900"
       >
@@ -47,7 +47,7 @@ const TechExpertLogoIcon: FC<TechExpertLogoIconProps> = ({ title, ...props }) =>
       textLength="38"
       lengthAdjust="spacingAndGlyphs"
       fill="#06445f"
-      fontFamily="Arial Black, Impact, Montserrat, system-ui, sans-serif"
+      fontFamily="Montserrat"
       fontSize="72"
       fontWeight="900"
     >

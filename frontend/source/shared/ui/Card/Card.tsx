@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Image from "next/image";
 import styles from "./card.module.scss";
 
@@ -36,14 +37,7 @@ const Card = ({
   onMouseLeave,
   className = "",
 }: CardProps) => {
-  const cardClasses = [
-    styles.card,
-    styles[variant],
-    isActive ? styles.active : "",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const cardClasses = cn(styles.card, styles[variant], { [styles.active]: isActive }, className);
 
   // Review card
   if (variant === "review") {
@@ -67,7 +61,7 @@ const Card = ({
         onMouseLeave={onMouseLeave}
       >
         {photo && (
-          <div className={`${styles.image} ${isHovered ? styles.visible : ""}`}>
+          <div className={cn(styles.image, { [styles.visible]: isHovered })}>
             <Image src={photo} alt={title || ""} fill style={{ objectFit: "cover" }} />
           </div>
         )}

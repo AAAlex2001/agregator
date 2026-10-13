@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { Select } from "@/source/shared/ui/Select";
@@ -184,7 +185,7 @@ export function NewsCtaWidget() {
             type="button"
             role="tab"
             aria-selected={role === tab.role}
-            className={role === tab.role ? `${s.tab} ${s.tabActive}` : s.tab}
+            className={cn(s.tab, { [s.tabActive]: role === tab.role })}
             onClick={() => selectRole(tab.role)}
           >
             {tab.label}

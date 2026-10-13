@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import type { Badge, OrderCardData } from "@/source/entities/order";
 import s from "./OrderSummaryPanel.module.scss";
@@ -27,7 +28,7 @@ export function OrderSummaryPanel({ order }: Props) {
           <span className={s.metaLabel}>Название заказа</span>
           <span className={s.title}>{order.title}</span>
         </div>
-        <svg className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg className={cn(s.chevron, { [s.chevronOpen]: isOpen })} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 9L12 15L18 9" stroke="#FFDDA9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
@@ -58,7 +59,7 @@ export function OrderSummaryPanel({ order }: Props) {
                 <span className={s.metaLabel}>Требования к исполнителю:</span>
                 <div className={s.badges}>
                   {order.badges.map((badge, index) => (
-                    <span key={`${badge.text}-${index}`} className={`${s.badge} ${BADGE_CLASS[badge.variant]}`}>
+                    <span key={`${badge.text}-${index}`} className={cn(s.badge, BADGE_CLASS[badge.variant])}>
                       {badge.text}
                     </span>
                   ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import {
   TYPES,
@@ -88,7 +89,7 @@ export function BadgeSection({ state, dispatch, onShowHelp }: StepProps & { onSh
                     <button
                       key={code}
                       type="button"
-                      className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
+                      className={cn(s.opoBadge, { [s.active]: active, [s.disabled]: !(enabled) })}
                       onClick={() => toggleOpo(code)}
                       disabled={!enabled}
                     >

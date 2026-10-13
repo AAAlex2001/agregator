@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import {
   OPO_ROWS,
@@ -112,7 +113,7 @@ export function BadgeCodesPicker({
                   <button
                     key={code}
                     type="button"
-                    className={`${s.opoBadge} ${active ? s.active : ""} ${enabled ? "" : s.disabled}`}
+                    className={cn(s.opoBadge, { [s.active]: active, [s.disabled]: !(enabled) })}
                     onClick={() => toggleOpo(code)}
                     disabled={!enabled}
                     aria-pressed={active}

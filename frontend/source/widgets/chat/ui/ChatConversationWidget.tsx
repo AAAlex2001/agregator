@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/source/features/session";
 import { useOptionalChatListContext } from "@/source/features/chat";
@@ -38,7 +39,7 @@ export function ChatConversationWidget({ chatUuid, embedded = false, onClose }: 
   }
 
   return (
-    <div className={`${s.card} ${embedded ? s.cardEmbedded : ""}`}>
+    <div className={cn(s.card, { [s.cardEmbedded]: embedded })}>
       <div className={s.orderNav}>
         <div className={s.backBtnWrap}>
           <button

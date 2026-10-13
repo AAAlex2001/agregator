@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ru } from "date-fns/locale/ru";
@@ -99,17 +100,17 @@ export function CalendarInput({
   };
 
   return (
-    <div className={`${s.field} ${className ?? ""}`.trim()}>
+    <div className={cn(s.field, className)}>
       <button
         type="button"
-        className={`${s.trigger} ${active ? s.triggerActive : ""} ${isOpen ? s.triggerOpen : ""} ${error ? s.triggerError : ""}`.trim()}
+        className={cn(s.trigger, { [s.triggerActive]: active, [s.triggerOpen]: isOpen, [s.triggerError]: error })}
         onClick={handleOpen}
       >
         <span className={selected ? s.value : s.placeholder}>
           {selected ? formatDisplay(selected, withTime) : placeholder}
         </span>
         <ChevronIcon
-          className={`${s.chevron} ${isOpen ? s.chevronOpen : ""}`}
+          className={cn(s.chevron, { [s.chevronOpen]: isOpen })}
           color={active || isOpen ? "#FF8A00" : "#383F45"}
         />
       </button>
@@ -119,7 +120,7 @@ export function CalendarInput({
       {isOpen && (
         <div className={s.overlay} onClick={handleClose}>
           <div
-            className={`${s.modal} ${withTime ? s.modalWithTime : ""}`}
+            className={cn(s.modal, { [s.modalWithTime]: withTime })}
             onClick={(e) => e.stopPropagation()}
           >
             <label className={s.manualField}>

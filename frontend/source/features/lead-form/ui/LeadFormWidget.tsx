@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState, type FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import { Select } from "@/source/shared/ui/Select";
@@ -91,7 +92,7 @@ export function LeadFormWidget({ defaultDirection }: Props) {
       <form className={s.form} onSubmit={submit}>
         <div className={s.layout}>
           <div className={s.fields}>
-            <div className={`${s.field} ${s.fieldWide}`}>
+            <div className={cn(s.field, s.fieldWide)}>
               <span className={s.label}>Направление работ *</span>
               <Select
                 variant="pill"
@@ -191,7 +192,7 @@ export function LeadFormWidget({ defaultDirection }: Props) {
               />
             </label>
 
-            <label className={`${s.field} ${s.fieldWide}`}>
+            <label className={cn(s.field, s.fieldWide)}>
               <span className={s.label}>Задача *</span>
               <TextArea
                 required

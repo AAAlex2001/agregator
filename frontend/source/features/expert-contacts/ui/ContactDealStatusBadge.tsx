@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type {
   ContactDealParty,
   ContactDealStatus,
@@ -25,7 +26,7 @@ export function ContactDealStatusBadge({
   actorParty = null,
 }: ContactDealStatusBadgeProps) {
   return (
-    <span className={`${s.badge} ${STATUS_TONES[status]}`}>
+    <span className={cn(s.badge, STATUS_TONES[status])}>
       {contactDealStatusLabel(status, actorParty)}
     </span>
   );

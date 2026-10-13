@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import s from "./role-highlights.module.scss";
 
@@ -33,7 +34,7 @@ export function RoleHighlights() {
       {HIGHLIGHTS.map((item, index) => (
         <article
           key={item.id}
-          className={index % 2 === 1 ? `${s.card} ${s.cardReverse}` : s.card}
+          className={cn(s.card, { [s.cardReverse]: index % 2 === 1 })}
           style={{ background: item.background }}
         >
           <div className={s.media}>

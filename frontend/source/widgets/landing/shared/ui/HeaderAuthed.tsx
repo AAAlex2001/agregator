@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Link from "next/link";
 import { useSession } from "@/source/features/session";
 import { ExpertHelpPlates } from "@/source/widgets/expert-help";
@@ -37,7 +38,7 @@ export default function HeaderAuthed() {
               <TabOrdersIcon />
               <span>Все заказы</span>
             </Link>
-            <Link href="/support" className={`${s.link} ${s.support}`}>
+            <Link href="/support" className={cn(s.link, s.support)}>
               <TabSupportIcon />
               <span>Поддержка</span>
             </Link>
@@ -47,7 +48,7 @@ export default function HeaderAuthed() {
                 <span>Сообщения</span>
               </Link>
             )}
-            <Link href="/settings" className={`${s.link} ${s.account}`}>
+            <Link href="/settings" className={cn(s.link, s.account)}>
               <TabProfileIcon />
               <span>{name || "Личный кабинет"}</span>
             </Link>

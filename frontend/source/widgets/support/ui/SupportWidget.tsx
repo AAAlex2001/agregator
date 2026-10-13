@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import {
   CreateTicketForm,
   TicketDetail,
@@ -18,7 +19,7 @@ export function SupportWidget() {
   return (
     <div className={s.body}>
       <div
-        className={`${s.contentPane} ${support.view === "list" ? s.paneHiddenMobile : ""}`.trim()}
+        className={cn(s.contentPane, { [s.paneHiddenMobile]: support.view === "list" })}
       >
         {support.view === "detail" && (
           <div className={s.detailActions}>
@@ -45,7 +46,7 @@ export function SupportWidget() {
       </div>
 
       <div
-        className={`${s.sidebarPane} ${support.view !== "list" ? s.paneHiddenMobile : ""}`.trim()}
+        className={cn(s.sidebarPane, { [s.paneHiddenMobile]: support.view !== "list" })}
       >
         <div className={s.mobileCreate}>
           <Button onClick={support.startCreate}>Создать обращение</Button>

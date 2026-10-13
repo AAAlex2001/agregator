@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type { VatKind } from "../model/types";
 import { calcVat } from "../lib/calcVat";
 import s from "./VatBreakdown.module.scss";
@@ -19,7 +20,7 @@ export function VatBreakdown({ baseAmount, vatKind }: Props) {
   if (vatRate === 0) {
     return (
       <div className={s.box}>
-        <div className={`${s.row} ${s.totalSolo}`}>
+        <div className={cn(s.row, s.totalSolo)}>
           <span>Итого без НДС:</span>
           <span>{format(total)} ₽</span>
         </div>
@@ -37,7 +38,7 @@ export function VatBreakdown({ baseAmount, vatKind }: Props) {
         <span>НДС {vatRate}%:</span>
         <span>{format(vatAmount)} ₽</span>
       </div>
-      <div className={`${s.row} ${s.total}`}>
+      <div className={cn(s.row, s.total)}>
         <span>Итого с НДС:</span>
         <span>{format(total)} ₽</span>
       </div>

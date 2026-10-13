@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { getLiningReportPdfUrl, type LiningReportItem } from "@/source/entities/lining";
@@ -116,7 +117,7 @@ export function LiningReportCard({ item }: { item: LiningReportItem }) {
           {item.blocks.map((block) => (
             <div key={block.group} className={s.row}>
               <span className={s.rowName}>{block.title}</span>
-              <span className={`${s.badge} ${riskClassName(block.category)}`}>
+              <span className={cn(s.badge, riskClassName(block.category))}>
                 {block.value.toFixed(1)}% · {shortCategory(block.category)}
               </span>
             </div>

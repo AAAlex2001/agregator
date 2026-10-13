@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { FC, SVGProps } from "react";
 import anim from "./logoAnim.module.scss";
 
@@ -14,7 +15,7 @@ const LogoIcon: FC<LogoIconProps> = ({ title, className, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     role="img"
     aria-label={title}
-    className={[anim.full, className].filter(Boolean).join(" ")}
+    className={cn(anim.full, className)}
     {...props}
   >
     {title && <title>{title}</title>}

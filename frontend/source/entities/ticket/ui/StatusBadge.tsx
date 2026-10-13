@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { STATUS_LABEL, type TicketStatus } from "../model/types";
 import s from "./StatusBadge.module.scss";
 
@@ -8,7 +9,7 @@ interface Props {
 
 export function StatusBadge({ status, className = "" }: Props) {
   return (
-    <span className={`${s.badge} ${s[`status_${status}`]} ${className}`.trim()}>
+    <span className={cn(s.badge, s[`status_${status}`], className)}>
       {STATUS_LABEL[status]}
     </span>
   );

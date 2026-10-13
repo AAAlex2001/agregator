@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRouter, useSearchParams } from "next/navigation";
 import Tabs from "@/source/shared/ui/Tabs";
 import { Title, Subtitle } from "@/source/shared/ui/Typography";
@@ -48,7 +49,7 @@ export function SettingsWidget() {
         {role && <RoleBadge role={role} />}
       </div>
 
-      <div className={`${s.content} ${(section === "subscription" || section === "referrals") ? s.contentWide : ""}`.trim()}>
+      <div className={cn(s.content, { [s.contentWide]: (section === "subscription" || section === "referrals") })}>
         <Tabs
           variant="underline"
           tabs={tabs}

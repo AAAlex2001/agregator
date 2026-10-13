@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Subtitle, Title } from "@/source/shared/ui";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { REGISTRIES } from "../model/registries";
@@ -27,7 +28,7 @@ export function ZepbRegistryWidget({ homeHref = "/" }: ZepbRegistryWidgetProps) 
           <tbody>
             {REGISTRIES.map((row) => (
               <tr key={row.site}>
-                <td className={`${s.td} ${s.tdName}`}>
+                <td className={cn(s.td, s.tdName)}>
                   <span className={s.name}>{row.name}</span>
                   <span className={s.site}>{row.site}</span>
                 </td>

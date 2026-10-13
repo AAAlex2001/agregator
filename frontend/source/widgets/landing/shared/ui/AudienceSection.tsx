@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Image from "next/image";
 import Button from "@/source/shared/ui/Button";
 import { Title } from "@/source/shared/ui/Typography";
@@ -23,7 +24,7 @@ export function AudienceSection({ blocks }: AudienceSectionProps) {
         {blocks.map((block, index) => (
           <article
             key={block.audience}
-            className={`${s.row} ${index % 2 === 1 ? s.rowReversed : ""}`.trim()}
+            className={cn(s.row, { [s.rowReversed]: index % 2 === 1 })}
           >
             <div className={s.text}>
               <span className={s.badge}>{block.audience}</span>

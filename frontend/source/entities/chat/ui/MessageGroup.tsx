@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type {
   ChatMessageData,
   ChatParticipantRole,
@@ -26,7 +27,7 @@ export function MessageGroup({ group, isMine, currentUserAvatarUrl, counterpartA
     LICENSE_HOLDER: "Держатель разрешительных документов",
   }[group.senderRole];
   const groupClass = isMine ? s.sent : s.received;
-  const labelClass = `${s.label} ${isMine ? s.alignRight : ""}`.trim();
+  const labelClass = cn(s.label, { [s.alignRight]: isMine });
 
   return (
     <div className={groupClass}>

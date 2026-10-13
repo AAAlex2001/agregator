@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import styles from "./swiper-navigation.module.scss";
 import { ArrowIcon } from "@/source/shared/ui/icons";
 
@@ -17,10 +18,10 @@ const SwiperNavigation = ({
   children,
 }: SwiperNavigationProps) => {
   return (
-    <div className={`${styles.navigation} ${className}`}>
+    <div className={cn(styles.navigation, className)}>
       {children}
       <button
-        className={`${styles.navBtn} ${styles.prev} ${prevClassName}`}
+        className={cn(styles.navBtn, styles.prev, prevClassName)}
         type="button"
         aria-label="Предыдущий"
       >
@@ -30,7 +31,7 @@ const SwiperNavigation = ({
       </button>
 
       <button
-        className={`${styles.navBtn} ${styles.next} ${nextClassName}`}
+        className={cn(styles.navBtn, styles.next, nextClassName)}
         type="button"
         aria-label="Следующий"
       >

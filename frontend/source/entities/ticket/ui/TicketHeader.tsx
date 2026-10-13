@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import {
@@ -43,7 +44,7 @@ export function TicketHeader({ ticket }: Props) {
         </div>
         <StatusBadge status={ticket.status} className={s.statusBadge} />
         <ChatChevronDownIcon
-          className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()}
+          className={cn(s.chevron, { [s.chevronOpen]: open })}
         />
       </button>
 

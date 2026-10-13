@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { LicenseHolderCard, useLicenseHolders } from "@/source/entities/license-holder";
 import { ExpertIcon } from "@/source/shared/ui/icons";
 import Loader from "@/source/shared/ui/Loader";
@@ -15,13 +16,13 @@ export function LicenseHoldersDrawer() {
   return (
     <>
       <div
-        className={`${s.backdrop} ${isOpen ? s.backdropVisible : ""}`}
+        className={cn(s.backdrop, { [s.backdropVisible]: isOpen })}
         onClick={close}
         aria-hidden
       />
 
       <aside
-        className={`${s.drawer} ${anchor ? s.pop : s.sheet} ${isOpen ? s.drawerOpen : ""}`}
+        className={cn(s.drawer, anchor ? s.pop : s.sheet, { [s.drawerOpen]: isOpen })}
         style={anchor ? { left: anchor.left, top: anchor.top } : undefined}
         aria-label="Держатели разрешительных документов"
         aria-hidden={!isOpen}

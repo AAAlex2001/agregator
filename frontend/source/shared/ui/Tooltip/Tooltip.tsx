@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRef, useState, type FocusEvent, type KeyboardEvent, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import styles from "./Tooltip.module.scss";
@@ -39,7 +40,11 @@ export default function ToolTip({
   return (
     <span
       ref={rootRef}
-      className={`${styles.toolTip} ${side === "bottom" ? styles.bottom : styles.right} ${hideOnMobile ? styles.hideOnMobile : ""}`.trim()}
+      className={cn(
+        styles.toolTip,
+        side === "bottom" ? styles.bottom : styles.right,
+        { [styles.hideOnMobile]: hideOnMobile },
+      )}
       onPointerEnter={() => setOpenPathname(pathname)}
       onPointerLeave={() => setOpenPathname(null)}
       onFocusCapture={() => setOpenPathname(pathname)}
@@ -53,7 +58,7 @@ export default function ToolTip({
         </button>
       )}
       <span
-        className={`${styles.hintTooltip} ${isOpen ? styles.hintTooltipVisible : ""}`.trim()}
+        className={cn(styles.hintTooltip, { [styles.hintTooltipVisible]: isOpen })}
         role="tooltip"
         aria-hidden={!isOpen}
       >

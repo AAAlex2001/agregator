@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Button from "@/source/shared/ui/Button";
 import { CloseIcon } from "@/source/shared/ui/icons";
 import type { NotificationCardModel } from "../model/types";
@@ -22,7 +23,7 @@ export function NotificationCard({
   onDismiss,
 }: NotificationCardProps) {
   const hasAction = Boolean(item.actionUrl && item.actionLabel);
-  const cardClassName = [s.card, item.isRead ? s.read : s.unread].filter(Boolean).join(" ");
+  const cardClassName = cn(s.card, item.isRead ? s.read : s.unread);
 
   return (
     <div className={cardClassName}>

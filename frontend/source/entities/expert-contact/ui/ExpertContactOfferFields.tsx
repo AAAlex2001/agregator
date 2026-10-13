@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Checkbox, TextInput, Title, Subtitle } from "@/source/shared/ui";
 import s from "./ExpertContactOfferFields.module.scss";
 
@@ -54,7 +55,7 @@ export function ExpertContactOfferFields({
         </Checkbox>
       </div>
 
-      <div className={`${s.collapse} ${enabled ? s.collapseOpen : ""}`} aria-hidden={!enabled} inert={!enabled}>
+      <div className={cn(s.collapse, { [s.collapseOpen]: enabled })} aria-hidden={!enabled} inert={!enabled}>
         <fieldset className={s.collapseInner} disabled={!enabled}>
           <div className={s.fields}>
             <label className={s.field}>

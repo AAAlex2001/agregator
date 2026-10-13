@@ -1,3 +1,4 @@
+import cn from "classnames";
 import s from "./Skeleton.module.scss";
 
 interface SkeletonProps {
@@ -6,5 +7,5 @@ interface SkeletonProps {
 }
 
 export default function Skeleton({ className = "", rounded = "md" }: SkeletonProps) {
-  return <span className={[s.skeleton, s[rounded], className].filter(Boolean).join(" ")} aria-hidden="true" />;
+  return <span className={cn(s.skeleton, s[rounded], className)} aria-hidden="true" />;
 }

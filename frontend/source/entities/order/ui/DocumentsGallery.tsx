@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useMemo, useRef, useState } from "react";
 import LightGallery from "lightgallery/react";
 import type { LightGallery as LightGalleryInstance } from "lightgallery/lightgallery";
@@ -131,7 +132,7 @@ function Column({ category, urls, onOpen }: ColumnProps) {
 
 function EmptyTile() {
   return (
-    <div className={`${s.tile} ${s.tileEmpty}`} aria-hidden="true">
+    <div className={cn(s.tile, s.tileEmpty)} aria-hidden="true">
       <span className={s.dash}>—</span>
     </div>
   );
@@ -143,7 +144,7 @@ function FileTile({ url, onOpen }: { url: string; onOpen: () => void }) {
   return (
     <button
       type="button"
-      className={`${s.tile} ${isImage ? s.imageTile : ""}`.trim()}
+      className={cn(s.tile, { [s.imageTile]: isImage })}
       onClick={onOpen}
       title={name}
       aria-label={`Открыть файл ${name}`}

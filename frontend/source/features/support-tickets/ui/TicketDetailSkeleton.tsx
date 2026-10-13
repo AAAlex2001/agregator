@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Skeleton from "@/source/shared/ui/Skeleton";
 import s from "./TicketDetailSkeleton.module.scss";
 
@@ -15,17 +16,17 @@ export function TicketDetailSkeleton() {
       </div>
 
       <div className={s.thread}>
-        <div className={`${s.row} ${s.rowUser}`}>
+        <div className={cn(s.row, s.rowUser)}>
           <Skeleton className={s.rowHead} rounded="pill" />
-          <Skeleton className={`${s.bubble} ${s.bubbleUser}`} rounded="lg" />
+          <Skeleton className={cn(s.bubble, s.bubbleUser)} rounded="lg" />
         </div>
-        <div className={`${s.row} ${s.rowSupport}`}>
+        <div className={cn(s.row, s.rowSupport)}>
           <Skeleton className={s.rowHead} rounded="pill" />
-          <Skeleton className={`${s.bubble} ${s.bubbleSupport}`} rounded="lg" />
+          <Skeleton className={cn(s.bubble, s.bubbleSupport)} rounded="lg" />
         </div>
-        <div className={`${s.row} ${s.rowUser}`}>
+        <div className={cn(s.row, s.rowUser)}>
           <Skeleton className={s.rowHead} rounded="pill" />
-          <Skeleton className={`${s.bubble} ${s.bubbleUserShort}`} rounded="lg" />
+          <Skeleton className={cn(s.bubble, s.bubbleUserShort)} rounded="lg" />
         </div>
       </div>
 

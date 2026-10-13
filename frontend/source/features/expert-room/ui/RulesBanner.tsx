@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { ChatChevronDownIcon } from "@/source/shared/ui/icons";
 import { useRulesCollapse } from "../model/useRulesCollapse";
 import s from "./RulesBanner.module.scss";
@@ -33,7 +34,7 @@ export function RulesBanner() {
         onClick={toggle}
       >
         <p className={s.title}>{TITLE}</p>
-        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
+        <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: open })} />
       </button>
 
       {open ? (

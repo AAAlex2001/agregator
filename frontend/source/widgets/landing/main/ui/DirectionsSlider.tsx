@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
@@ -35,7 +36,7 @@ export function DirectionsSlider({ basePath = "" }: Props) {
           slidesPerView="auto"
           spaceBetween={16}
           navigation={{ prevEl: ".directions-nav--prev", nextEl: ".directions-nav--next" }}
-          className={`${s.swiper} directions-swiper`}
+          className={cn(s.swiper, "directions-swiper")}
         >
           {SERVICES_SHOWCASE.map((item) => (
             <SwiperSlide key={item.id}>

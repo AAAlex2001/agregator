@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import type { ReactNode } from "react";
 import { PlusIcon } from "@/source/shared/ui/icons";
 import styles from "./accordion.module.scss";
@@ -19,13 +20,13 @@ interface AccordionProps {
 
 const Accordion = ({ items, activeId, onToggle, className = "" }: AccordionProps) => {
   return (
-    <div className={`${styles.list} ${className}`}>
+    <div className={cn(styles.list, className)}>
       {items.map((item) => {
         const isOpen = activeId === item.id;
         return (
           <div
             key={item.id}
-            className={`${styles.item} ${isOpen ? styles.open : ""}`}
+            className={cn(styles.item, { [styles.open]: isOpen })}
           >
             <button
               type="button"
@@ -35,14 +36,14 @@ const Accordion = ({ items, activeId, onToggle, className = "" }: AccordionProps
               aria-controls={`accordion-answer-${item.id}`}
             >
               <span>{item.question}</span>
-              <span className={`${styles.icon} ${isOpen ? styles.open : ""}`}>
+              <span className={cn(styles.icon, { [styles.open]: isOpen })}>
                 <PlusIcon isOpen={isOpen} />
               </span>
             </button>
             <div
               id={`accordion-answer-${item.id}`}
               role="region"
-              className={`${styles.answer} ${isOpen ? styles.open : ""}`}
+              className={cn(styles.answer, { [styles.open]: isOpen })}
             >
               <div className={styles.answerInner}>
                 <div>{item.answer}</div>

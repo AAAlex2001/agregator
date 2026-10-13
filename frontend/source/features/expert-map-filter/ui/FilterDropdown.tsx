@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import s from "./filterDropdown.module.scss";
@@ -36,13 +37,13 @@ export function FilterDropdown({ label, options, selected, onToggle }: Props) {
     <div className={s.wrap} ref={wrapRef}>
       <button
         type="button"
-        className={open ? `${s.trigger} ${s.triggerOpen}` : s.trigger}
+        className={cn(s.trigger, { [s.triggerOpen]: open })}
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
       >
         <span className={s.triggerLabel}>{label}</span>
         {selected.length > 0 && <span className={s.count}>{selected.length}</span>}
-        <ChevronIcon className={open ? `${s.chevron} ${s.chevronOpen}` : s.chevron} color="currentColor" />
+        <ChevronIcon className={cn(s.chevron, { [s.chevronOpen]: open })} color="currentColor" />
       </button>
 
       {open && (
@@ -55,7 +56,7 @@ export function FilterDropdown({ label, options, selected, onToggle }: Props) {
                 type="button"
                 role="option"
                 aria-selected={isActive}
-                className={isActive ? `${s.option} ${s.optionActive}` : s.option}
+                className={cn(s.option, { [s.optionActive]: isActive })}
                 onClick={() => onToggle(option.value)}
               >
                 {option.short && <span className={s.optionShort}>{option.short}</span>}

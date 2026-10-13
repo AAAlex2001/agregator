@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState, type PointerEvent } from "react";
 import type { PublicOrderSearchFilters } from "@/source/entities/order";
 import {
@@ -50,13 +51,13 @@ export function ExpertiseFilter({ onSelect }: Props) {
         {OPO_CODES.map((opo) => (
           <div
             key={opo}
-            className={`${s.opoItem} ${activeOpo === opo ? s.opoItemActive : ""}`}
+            className={cn(s.opoItem, { [s.opoItemActive]: activeOpo === opo })}
             onPointerEnter={(event) => openFromPointer(event, opo)}
             onPointerLeave={(event) => closeFromPointer(event, opo)}
           >
             <button
               type="button"
-              className={`${s.opoButton} ${activeOpo === opo ? s.opoButtonActive : ""}`}
+              className={cn(s.opoButton, { [s.opoButtonActive]: activeOpo === opo })}
               aria-expanded={activeOpo === opo}
               onClick={() => openOpo(opo)}
             >

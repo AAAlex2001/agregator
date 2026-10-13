@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect } from "react";
 import { ExpertCardSkeleton } from "@/source/entities/expert";
 import { AddReviewModalContainer } from "@/source/features/reviews";
@@ -127,9 +128,7 @@ function Marketplace({ targetExpertId }: ExpertContactsMarketplaceProps) {
               <div
                 id={`expert-contact-${expert.public_id}`}
                 key={expert.id}
-                className={`${s.expertAnchor} ${
-                  targetExpertId === expert.public_id ? s.expertAnchorTarget : ""
-                }`}
+                className={cn(s.expertAnchor, { [s.expertAnchorTarget]: targetExpertId === expert.public_id })}
               >
                 <ExpertContactCard
                   expert={expert}

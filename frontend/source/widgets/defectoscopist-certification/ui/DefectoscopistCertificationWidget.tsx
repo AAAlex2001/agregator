@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Image from "next/image";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import { Button, DocToc, Subtitle, Title } from "@/source/shared/ui";
@@ -121,7 +122,7 @@ export function DefectoscopistCertificationWidget({
             </div>
           </section>
 
-          <section id="contacts" className={`${s.section} ${s.contacts}`}>
+          <section id="contacts" className={cn(s.section, s.contacts)}>
             <div>
               <span className={s.contactLabel}>ООО «АРЦ НК»</span>
               <h2>Связаться с учебным центром</h2>

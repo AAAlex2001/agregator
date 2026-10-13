@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { formatOrderDetailValue, orderDetailsFields } from "../model/detailsFields";
 import type { OrderWorkType } from "../model/workTypes";
 import s from "./OrderDetailsList.module.scss";
@@ -54,7 +55,7 @@ export function OrderDetailsList({ workType, details, heading = "Поля нап
           {group.title && <span className={s.groupTitle}>{group.title}</span>}
           <dl className={s.grid}>
             {group.rows.map((row) => (
-              <div key={row.label} className={row.wide ? `${s.cell} ${s.cellWide}` : s.cell}>
+              <div key={row.label} className={cn(s.cell, { [s.cellWide]: row.wide })}>
                 <dt className={s.label}>{row.label}</dt>
                 <dd className={s.value}>{row.value}</dd>
               </div>

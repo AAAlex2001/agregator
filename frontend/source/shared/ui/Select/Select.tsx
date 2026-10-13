@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronIcon } from "@/source/shared/ui/icons";
@@ -74,10 +75,10 @@ export function Select(props: SingleProps | MultipleProps) {
   const summary = selected.map((option) => option.label).join(", ");
 
   return (
-    <div className={className ? `${s.root} ${className}` : s.root} ref={rootRef}>
+    <div className={cn(s.root, className)} ref={rootRef}>
       <button
         type="button"
-        className={variant === "pill" ? `${s.trigger} ${s.triggerPill}` : s.trigger}
+        className={cn(s.trigger, { [s.triggerPill]: variant === "pill" })}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={ariaLabel}
@@ -97,7 +98,7 @@ export function Select(props: SingleProps | MultipleProps) {
           </span>
         )}
         <ChevronIcon
-          className={isOpen ? `${s.chevron} ${s.chevronOpen}` : s.chevron}
+          className={cn(s.chevron, { [s.chevronOpen]: isOpen })}
           color="currentColor"
         />
       </button>
@@ -119,7 +120,7 @@ export function Select(props: SingleProps | MultipleProps) {
                   type="button"
                   role="option"
                   aria-selected={isSelected}
-                  className={isSelected ? `${s.option} ${s.optionActive}` : s.option}
+                  className={cn(s.option, { [s.optionActive]: isSelected })}
                   onClick={() => select(option)}
                 >
                   {props.multiple && <span className={s.box} aria-hidden />}

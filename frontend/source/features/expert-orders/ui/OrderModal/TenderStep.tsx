@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import { Button } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
@@ -38,7 +39,7 @@ export function TenderStep({ order, onBack, onContinue }: Props) {
         <div className={s.guaranteesCard}>
           <button type="button" className={s.guaranteesToggle} onClick={() => setIsOpen((prev) => !prev)}>
             <span className={s.guaranteesTitle}>Что будет дальше</span>
-            <svg className={`${s.guaranteesChevron} ${isOpen ? s.guaranteesChevronOpen : ""}`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg className={cn(s.guaranteesChevron, { [s.guaranteesChevronOpen]: isOpen })} viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 9L12 15L18 9" stroke="#FFDDA9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>

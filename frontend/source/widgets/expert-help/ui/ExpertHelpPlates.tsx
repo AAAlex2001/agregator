@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +31,7 @@ function NavCountBadge({ count }: { count: number }) {
 function PlateLabel({ plate }: { plate: NavPlate }) {
   if (plate.key === "license") {
     return (
-      <span className={`${s.plateLabel} ${s.plateLabelMultiline}`}>
+      <span className={cn(s.plateLabel, s.plateLabelMultiline)}>
         <span>Держатели</span>
         <span>разрешительных документов</span>
       </span>
@@ -64,7 +65,7 @@ function ItemRow({ item, badges }: { item: NavItem; badges: BadgeCounts }) {
   );
 
   if (item.soon || !item.href) {
-    return <span className={`${s.item} ${s.itemMuted}`}>{inner}</span>;
+    return <span className={cn(s.item, s.itemMuted)}>{inner}</span>;
   }
 
   if (item.external) {
@@ -90,7 +91,7 @@ function RegionsItem({ item }: { item: NavItem }) {
       <button type="button" className={s.regionsToggle} onClick={() => setOpen((value) => !value)}>
         <span className={s.itemLabel}>{item.label}</span>
         <ChevronIcon
-          className={`${s.regionsChevron} ${open ? s.regionsChevronOpen : ""}`}
+          className={cn(s.regionsChevron, { [s.regionsChevronOpen]: open })}
           color="currentColor"
         />
       </button>
@@ -159,10 +160,10 @@ function PlateNode({
   if (locked) {
     return (
       <ToolTip message={GUEST_TOOLTIP} ariaLabel={`${plate.label}. ${GUEST_TOOLTIP}`} side="bottom">
-        <span className={`${s.plateWrap} ${s[plate.color]} ${s.plateWrapLocked}`}>
+        <span className={cn(s.plateWrap, s[plate.color], s.plateWrapLocked)}>
           <button
             type="button"
-            className={`${s.plate} ${plate.logo ? s.plateLogo : ""}`}
+            className={cn(s.plate, { [s.plateLogo]: plate.logo })}
             aria-disabled="true"
           >
             {plate.logo ? (
@@ -181,10 +182,10 @@ function PlateNode({
 
   if (plate.href) {
     return (
-      <div className={`${s.plateWrap} ${plate.logo ? "" : s[plate.color]}`}>
+      <div className={cn(s.plateWrap, { [s[plate.color]]: !(plate.logo) })}>
         <Link
           href={plate.href}
-          className={`${s.plate} ${plate.logo ? s.plateLogo : ""}`}
+          className={cn(s.plate, { [s.plateLogo]: plate.logo })}
           aria-label={plate.label}
         >
           {plate.logo ? <TechExpertLogoIcon title={plate.label} /> : <PlateLabel plate={plate} />}
@@ -194,13 +195,13 @@ function PlateNode({
   }
 
   return (
-    <div className={`${s.plateWrap} ${s[plate.color]}`}>
+    <div className={cn(s.plateWrap, s[plate.color])}>
       <button type="button" className={s.plate}>
         <PlateLabel plate={plate} />
         {plate.badge && <NavCountBadge count={badges[plate.badge]} />}
         <ChevronIcon className={s.chevron} color="currentColor" />
       </button>
-      <div className={`${s.dropdown} ${align === "right" ? s.dropRight : ""}`}>
+      <div className={cn(s.dropdown, { [s.dropRight]: align === "right" })}>
         <div className={s.panel}>
           {plate.dynamic === "license" ? (
             <LicenseList />
@@ -253,7 +254,7 @@ export function ExpertHelpPlates({
 
   const plates = isGuestMode ? getGuestCabinetNav() : getCabinetNav(role);
   return (
-    <div className={`${s.plates} ${compact ? s.platesCompact : ""} ${spread ? s.platesSpread : ""}`}>
+    <div className={cn(s.plates, { [s.platesCompact]: compact, [s.platesSpread]: spread })}>
       {plates.map((plate, index) => (
         <PlateNode
           key={plate.key}

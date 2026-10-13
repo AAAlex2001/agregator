@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { Breadcrumbs } from "@/source/shared/ui/Breadcrumbs";
 import Link from "next/link";
 import Button from "@/source/shared/ui/Button";
@@ -39,7 +40,7 @@ export function ReferralInvitation({ referralCode, invalidInvitation }: Referral
         {error && <p className={s.message} role="alert">{error}</p>}
         {isAuthenticated ? (
           <>
-            <p className={`${s.message} ${s.signedIn}`}>
+            <p className={cn(s.message, s.signedIn)}>
               Вы уже вошли в аккаунт. Приглашения действуют для новых исполнителей.
             </p>
             <Button href="/settings" variant="chat">Перейти в кабинет</Button>

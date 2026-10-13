@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { Button } from "@/source/shared/ui";
 import { Modal } from "@/source/shared/ui";
 import type { ResponseBadge } from "@/source/entities/response";
@@ -66,7 +67,7 @@ export function WithdrawResponseModal({
                   <span className={s.requirementsLabel}>Требования к исполнителю:</span>
                   <div className={s.badges}>
                     {badges.map((badge, index) => (
-                      <span key={`${badge.text}-${index}`} className={`${s.badge} ${s[badge.variant]}`}>
+                      <span key={`${badge.text}-${index}`} className={cn(s.badge, s[badge.variant])}>
                         {badge.text}
                       </span>
                     ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Link from "next/link";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
@@ -100,12 +101,12 @@ export function PricingSection({
             />
 
             {role === "expert" ? (
-              <div key="expert" className={`${s.roleContent} ${s.fadeIn}`}>
+              <div key="expert" className={cn(s.roleContent, s.fadeIn)}>
                 <div className={s.grid}>
                   {plans.map((plan) => (
                     <div
                       key={plan.id}
-                      className={`${s.gridItem} ${plan.highlighted ? s.gridItemHighlighted : ""}`}
+                      className={cn(s.gridItem, { [s.gridItemHighlighted]: plan.highlighted })}
                     >
                       <PricingCard
                         plan={plan}
@@ -119,7 +120,7 @@ export function PricingSection({
                 {footnote ? <p className={s.footnote}>{footnote}</p> : null}
               </div>
             ) : role === "customer" ? (
-              <div key="customer" className={`${s.roleContent} ${s.fadeIn}`}>
+              <div key="customer" className={cn(s.roleContent, s.fadeIn)}>
                 <p className={s.customerHeadline}>{customerHeadline}</p>
                 <ul className={s.customerFeatures}>
                   {customerFeatures.map((feature) => (
@@ -132,7 +133,7 @@ export function PricingSection({
                 {customerFootnote ? <p className={s.footnote}>{customerFootnote}</p> : null}
               </div>
             ) : (
-              <div key="license_holder" className={`${s.roleContent} ${s.fadeIn}`}>
+              <div key="license_holder" className={cn(s.roleContent, s.fadeIn)}>
                 <p className={s.customerHeadline}>{licenseHolder.headline}</p>
                 <ul className={s.customerFeatures}>
                   {licenseHolder.features.map((feature) => (
@@ -148,7 +149,7 @@ export function PricingSection({
           </div>
 
           {role === "customer" && customerCta ? (
-            <Link key="customer-cta" href={customerCta.href} className={`${s.customerCtaWrap} ${s.fadeIn}`}>
+            <Link key="customer-cta" href={customerCta.href} className={cn(s.customerCtaWrap, s.fadeIn)}>
               <Button variant="chat" className={s.customerCtaButton}>
                 {customerCta.label}
               </Button>
@@ -156,7 +157,7 @@ export function PricingSection({
           ) : null}
 
           {role === "license_holder" && licenseHolder.cta ? (
-            <Link key="lh-cta" href={licenseHolder.cta.href} className={`${s.customerCtaWrap} ${s.fadeIn}`}>
+            <Link key="lh-cta" href={licenseHolder.cta.href} className={cn(s.customerCtaWrap, s.fadeIn)}>
               <Button variant="chat" className={s.customerCtaButton}>
                 {licenseHolder.cta.label}
               </Button>

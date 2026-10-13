@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type { ChangeEvent, ReactNode } from "react";
 import styles from "./checkbox.module.scss";
 
@@ -26,7 +27,7 @@ export function Checkbox({
     onChange(event.target.checked);
   };
 
-  const labelClass = `${styles.root} ${error ? styles.hasError : ""} ${className}`.trim();
+  const labelClass = cn(styles.root, { [styles.hasError]: error }, className);
 
   return (
     <label htmlFor={id} className={labelClass}>

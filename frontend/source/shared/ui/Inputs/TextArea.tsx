@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useId, type ChangeEvent } from "react";
 import { useFocusedField } from "./useFocusedField";
 import s from "./inputs.module.scss";
@@ -37,12 +38,10 @@ export function TextArea({
   const areaId = id ?? generatedId;
   const { isFocused, onFocus, onBlur } = useFocusedField();
 
-  const wrapperClass = [s.inputWrapper, s.areaWrapper, isFocused && s.focused, error && s.hasError]
-    .filter(Boolean)
-    .join(" ");
+  const wrapperClass = cn(s.inputWrapper, s.areaWrapper, { [s.focused]: isFocused, [s.hasError]: error });
 
   return (
-    <div className={`${s.field} ${className ?? ""}`}>
+    <div className={cn(s.field, className)}>
       <div className={wrapperClass}>
         <textarea
           id={areaId}
@@ -57,7 +56,7 @@ export function TextArea({
           rows={rows}
           maxLength={maxLength}
           aria-label={ariaLabel}
-          className={`${s.input} ${s.area}`}
+          className={cn(s.input, s.area)}
         />
       </div>
       {error && <span className={s.error}>{error}</span>}

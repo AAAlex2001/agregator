@@ -1,3 +1,4 @@
+import cn from "classnames";
 import {
   getFileGalleryPreviewUrl,
   getFileGalleryThumbUrl,
@@ -47,7 +48,7 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
   });
 
   return (
-    <div className={`${s.bubble} ${isMine ? s.sent : s.received}`.trim()}>
+    <div className={cn(s.bubble, isMine ? s.sent : s.received)}>
       <div className={s.content}>
         {message.text ? <span className={s.text}>{message.text}</span> : null}
         {items.length ? (

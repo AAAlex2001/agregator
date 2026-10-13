@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import Button from "@/source/shared/ui/Button";
 import { CalendarInput } from "@/source/shared/ui/CalendarInput";
@@ -57,7 +58,7 @@ export function CertificateBuilder({ value, onChange }: Props) {
               key={opt.value}
               type="button"
               title={opt.name}
-              className={`${s.option} ${area === opt.value ? s.optionActive : ""}`}
+              className={cn(s.option, { [s.optionActive]: area === opt.value })}
               onClick={() => setArea(opt.value)}
             >
               {opt.value}
@@ -87,7 +88,7 @@ export function CertificateBuilder({ value, onChange }: Props) {
             <button
               key={cat}
               type="button"
-              className={`${s.option} ${category === cat ? s.optionActive : ""}`}
+              className={cn(s.option, { [s.optionActive]: category === cat })}
               onClick={() => setCategory(cat)}
             >
               {cat}

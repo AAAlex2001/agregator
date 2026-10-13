@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import type { KeyboardEvent, ReactNode } from "react";
 import Loader from "@/source/shared/ui/Loader";
 import { ChatSendIcon } from "@/source/shared/ui/icons";
@@ -42,7 +43,7 @@ export function MessageComposer(props: MessageComposerProps) {
   if (disabled) {
     return (
       <div className={s.wrap}>
-        <div className={`${s.bar} ${s.barBlocked}`}>
+        <div className={cn(s.bar, s.barBlocked)}>
           <p className={s.blockedText}>{disabledText}</p>
         </div>
       </div>

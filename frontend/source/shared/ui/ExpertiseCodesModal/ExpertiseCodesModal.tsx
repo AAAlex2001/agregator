@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Button from "@/source/shared/ui/Button";
 import { TABLE } from "@/source/entities/expertise";
 import s from "./ExpertiseCodesModal.module.scss";
@@ -45,7 +46,7 @@ export function ExpertiseCodesView({ onBack }: Props) {
               const docCodes = row["КЛ/ТП"] ?? [];
               return (
                 <tr key={code}>
-                  <td className={`${s.td} ${s.tdName}`}>{row.name}</td>
+                  <td className={cn(s.td, s.tdName)}>{row.name}</td>
                   {docCodes.length === 2 ? (
                     <>
                       <td className={s.td}>{docCodes[0]}</td>

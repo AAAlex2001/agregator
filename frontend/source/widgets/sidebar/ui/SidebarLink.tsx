@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Link from "next/link";
 import type { SidebarItem } from "../model/types";
 import s from "./Sidebar.module.scss";
@@ -16,7 +17,7 @@ export function SidebarLink({ item, active, badge = 0, onNavigate }: SidebarLink
   return (
     <Link
       href={item.href}
-      className={`${s.tab} ${active ? s.tabActive : ""}`.trim()}
+      className={cn(s.tab, { [s.tabActive]: active })}
       aria-current={active ? "page" : undefined}
       onClick={onNavigate}
     >

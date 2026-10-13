@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Title from "@/source/shared/ui/Typography/Title";
 import type { DocBlock, DocSection } from "./types";
 import styles from "./DocContent.module.scss";
@@ -83,9 +84,7 @@ function BlockNode({ block }: { block: DocBlock }) {
     );
   }
 
-  const groupClass = block.variant === "tight"
-    ? `${styles.group} ${styles.groupTight}`
-    : styles.group;
+  const groupClass = cn(styles.group, { [styles.groupTight]: block.variant === "tight" });
 
   return (
     <div className={groupClass}>

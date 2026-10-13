@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import Loader from "@/source/shared/ui/Loader";
 import { fetchPartySuggestions, type PartySuggestion } from "@/source/entities/party";
@@ -65,7 +66,7 @@ export function PartySuggestInput({ value, onChange, placeholder, error, disable
     <div ref={wrapRef} className={s.outer}>
       <div className={s.inputWrapper}>
         <input
-          className={`${s.input} ${error ? s.inputError : ""} ${showDropdown ? s.inputOpen : ""}`.trim()}
+          className={cn(s.input, { [s.inputError]: error, [s.inputOpen]: showDropdown })}
           type="text"
           value={value}
           onChange={(e) => {

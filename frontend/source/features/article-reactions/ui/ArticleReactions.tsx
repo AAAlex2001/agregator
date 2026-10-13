@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useArticleReactions, type ReactionState, type ReactionValue } from "@/source/entities/article-reaction";
 import { EyeIcon } from "@/source/shared/ui/icons";
 import { ThumbDownIcon } from "@/source/shared/ui/icons/ThumbDownIcon";
@@ -26,7 +27,7 @@ export function ArticleReactions({ articleId, initial, views }: Props) {
       <div className={s.buttons}>
         <button
           type="button"
-          className={`${s.btn} ${state.my_reaction === "LIKE" ? s.likeActive : ""}`}
+          className={cn(s.btn, { [s.likeActive]: state.my_reaction === "LIKE" })}
           onClick={() => onVote("LIKE")}
           disabled={pending}
           aria-pressed={state.my_reaction === "LIKE"}
@@ -38,7 +39,7 @@ export function ArticleReactions({ articleId, initial, views }: Props) {
 
         <button
           type="button"
-          className={`${s.btn} ${state.my_reaction === "DISLIKE" ? s.dislikeActive : ""}`}
+          className={cn(s.btn, { [s.dislikeActive]: state.my_reaction === "DISLIKE" })}
           onClick={() => onVote("DISLIKE")}
           disabled={pending}
           aria-pressed={state.my_reaction === "DISLIKE"}

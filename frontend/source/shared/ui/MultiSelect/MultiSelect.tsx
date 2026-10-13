@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
@@ -54,7 +55,7 @@ export function MultiSelect({
     <div className={s.root} ref={rootRef}>
       <button
         type="button"
-        className={`${s.trigger} ${isOpen ? s.triggerOpen : ""} ${error ? s.triggerError : ""}`.trim()}
+        className={cn(s.trigger, { [s.triggerOpen]: isOpen, [s.triggerError]: error })}
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
       >

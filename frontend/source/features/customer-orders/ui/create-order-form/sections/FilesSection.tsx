@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useRef } from "react";
 import { resolveFileUrl } from "@/source/shared/lib/fileUrl";
 import { useObjectUrl } from "@/source/shared/lib/useObjectUrl";
@@ -140,7 +141,7 @@ function SingleSlotField({ label, slot, canAdd, onSelect, onRemoveNew, onRemoveE
 
 function DisabledTile() {
   return (
-    <div className={`${s.tile} ${s.tileDisabled}`} aria-hidden="true">
+    <div className={cn(s.tile, s.tileDisabled)} aria-hidden="true">
       <span className={s.dash}>—</span>
     </div>
   );
@@ -197,7 +198,7 @@ function OtherSlotField({ slot, canAddMore, onAdd, onRemoveNew, onRemoveExisting
 
 function AddTile({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" className={`${s.tile} ${s.tileAdd}`} onClick={onClick} aria-label="Добавить файл">
+    <button type="button" className={cn(s.tile, s.tileAdd)} onClick={onClick} aria-label="Добавить файл">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M12 5V19M5 12H19" stroke="#FF8A00" strokeWidth="2" strokeLinecap="round" />
       </svg>
@@ -242,7 +243,7 @@ interface FileTileProps {
 function FileTile({ name, previewUrl, isImage, onRemove }: FileTileProps) {
   return (
     <div className={s.tileWrap}>
-      <div className={`${s.tile} ${isImage ? s.tileImage : ""}`.trim()} title={name}>
+      <div className={cn(s.tile, { [s.tileImage]: isImage })} title={name}>
         {isImage && previewUrl ? (
           <img src={previewUrl} alt={name} className={s.image} />
         ) : (

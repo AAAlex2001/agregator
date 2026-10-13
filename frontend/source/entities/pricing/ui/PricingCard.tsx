@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Button from "@/source/shared/ui/Button";
 import { PricingFeatureIcon } from "@/source/shared/ui/icons";
 import type { PricingCardState, PricingPlan } from "../model/types";
@@ -24,16 +25,16 @@ export function PricingCard({
   const isActive = state === "active";
   const isDisabled = state === "disabled";
 
-  const cardClass = [
+  const cardClass = cn(
     s.card,
-    highlighted ? s.cardHighlighted : "",
-    plan.kind === "SINGLE" ? s.cardSingle : "",
-    plan.kind === "YEARLY" ? s.cardYearly : "",
-    isActive ? s.cardActive : "",
-    isDisabled ? s.cardDisabled : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+    {
+      [s.cardHighlighted]: highlighted,
+      [s.cardSingle]: plan.kind === "SINGLE",
+      [s.cardYearly]: plan.kind === "YEARLY",
+      [s.cardActive]: isActive,
+      [s.cardDisabled]: isDisabled,
+    },
+  );
 
   const buttonVariant = isActive
     ? "pillActive"
@@ -49,13 +50,13 @@ export function PricingCard({
     <article className={cardClass}>
       <div className={s.inner}>
         <div className={s.infoBlock}>
-          <div className={`${s.pillsBlock} ${highlighted ? s.pillsHighlighted : ""}`}>
+          <div className={cn(s.pillsBlock, { [s.pillsHighlighted]: highlighted })}>
             <div className={s.pillsRow}>
-              <div className={`${s.pill} ${s.pillName}`}>
+              <div className={cn(s.pill, s.pillName)}>
                 <span>{plan.name}</span>
               </div>
               {plan.badge ? (
-                <div className={`${s.pill} ${s.pillBadge}`}>
+                <div className={cn(s.pill, s.pillBadge)}>
                   <span>{plan.badge}</span>
                 </div>
               ) : null}

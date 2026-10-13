@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Button from "@/source/shared/ui/Button";
 import { TextInput } from "@/source/shared/ui/Inputs";
@@ -154,7 +155,7 @@ export function CreateTicketForm({ onCancel, onSubmit }: Props) {
                 <button
                   key={cat}
                   type="button"
-                  className={`${s.categoryChip} ${active ? s.categoryActive : ""}`}
+                  className={cn(s.categoryChip, { [s.categoryActive]: active })}
                   onClick={() => setCategory(cat)}
                 >
                   {CATEGORY_LABEL[cat]}

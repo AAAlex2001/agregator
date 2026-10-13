@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import type { RtnTaxonomyOption } from "@/source/entities/rtn-clarification";
@@ -42,7 +43,7 @@ export function RtnTaxonomyDisclosure({
         <span>Классификация разъяснения</span>
         <span className={s.count}>{total}</span>
         <ChevronIcon
-          className={isOpen ? `${s.chevron} ${s.chevronOpen}` : s.chevron}
+          className={cn(s.chevron, { [s.chevronOpen]: isOpen })}
           color="currentColor"
         />
       </button>

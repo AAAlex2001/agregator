@@ -1,3 +1,4 @@
+import cn from "classnames";
 import Link from "next/link";
 import styles from "./DocToc.module.scss";
 
@@ -15,7 +16,7 @@ export type DocTocProps = {
 export function DocToc({ items, className }: DocTocProps) {
   if (items.length === 0) return null;
 
-  const navClass = className ? `${styles.nav} ${className}` : styles.nav;
+  const navClass = cn(styles.nav, className);
 
   return (
     <nav className={navClass}>

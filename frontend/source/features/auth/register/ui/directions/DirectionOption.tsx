@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import type { ReactNode } from "react";
 import { Checkbox } from "@/source/shared/ui";
 import s from "./DirectionsPicker.module.scss";
@@ -17,7 +18,7 @@ interface Props {
 export function DirectionOption({ id, title, description, checked, error, onToggle, children }: Props) {
   return (
     <li
-      className={checked ? `${s.item} ${s.itemActive}` : s.item}
+      className={cn(s.item, { [s.itemActive]: checked })}
       data-invalid={error ? "true" : undefined}
     >
       <Checkbox id={`service-${id}`} checked={checked} onChange={onToggle} className={s.checkbox}>

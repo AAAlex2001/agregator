@@ -1,3 +1,4 @@
+import cn from "classnames";
 import { CustomerIcon, DiplomaIcon, ExpertIcon } from "@/source/shared/ui/icons";
 import s from "./RoleBadge.module.scss";
 
@@ -27,7 +28,7 @@ export function RoleBadge({ role, className }: Props) {
   const { label, tone, Icon } = preset;
 
   return (
-    <span className={`${s.badge} ${s[tone]} ${className ?? ""}`}>
+    <span className={cn(s.badge, s[tone], className)}>
       <Icon size={20} className={s.icon} />
       <span className={s.label}>{label}</span>
     </span>

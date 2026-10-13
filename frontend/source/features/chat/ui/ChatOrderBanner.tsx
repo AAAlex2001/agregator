@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import Link from "next/link";
 import { useState } from "react";
 import type { ChatBadge, ChatResponseStatus } from "@/source/entities/chat";
@@ -36,7 +37,7 @@ export function ChatOrderBanner({ title, customer, date, sum, badges, responseSt
         onClick={() => setOpen((value) => !value)}
       >
         <p className={s.title}>{title}</p>
-        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
+        <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: open })} />
       </button>
 
       {open ? (

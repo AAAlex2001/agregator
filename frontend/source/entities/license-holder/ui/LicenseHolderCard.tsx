@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState, type ReactNode } from "react";
 import { TypeBadge, type ExpertiseType } from "@/source/entities/expertise";
 import { FileGallery, type FileGalleryItem } from "@/source/shared/ui/FileGallery";
@@ -161,7 +162,7 @@ export function LicenseHolderCard({ item }: Props) {
         <h3 className={s.company} title={companyName}>
           {companyName}
         </h3>
-        <ChatChevronDownIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`.trim()} />
+        <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: open })} />
       </div>
 
       <div className={s.badges}>
@@ -245,7 +246,7 @@ export function LicenseHolderCard({ item }: Props) {
                 aria-expanded={extrasOpen}
               >
                 <span>Дополнительные разрешительные документы</span>
-                <ChatChevronDownIcon className={`${s.chevron} ${extrasOpen ? s.chevronOpen : ""}`.trim()} />
+                <ChatChevronDownIcon className={cn(s.chevron, { [s.chevronOpen]: extrasOpen })} />
               </button>
 
               {extrasOpen && (

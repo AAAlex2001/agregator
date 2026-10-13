@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type { Dispatch, FormEvent } from "react";
 import { Button, CalendarInput, TextInput } from "@/source/shared/ui";
 import type { OrderCardData } from "@/source/entities/order";
@@ -94,7 +95,7 @@ export function OfferStep({
                 type="button"
                 role="radio"
                 aria-checked={active}
-                className={`${s.vatChip} ${active ? s.vatChipActive : ""}`.trim()}
+                className={cn(s.vatChip, { [s.vatChipActive]: active })}
                 onClick={() => dispatch({ type: "vatKind", value: kind })}
               >
                 {VAT_LABEL[kind]}

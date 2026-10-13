@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "classnames";
 import { useState } from "react";
 import { ChevronIcon } from "@/source/shared/ui/icons";
 import type { ResponseBadge } from "../model/types";
@@ -23,7 +24,7 @@ export function OrderSection({ title, customer, date, badges, sum }: Props) {
           <span className={s.label}>Название заказа:</span>
           <span className={s.orderTitle}>{title}</span>
         </div>
-        <ChevronIcon className={`${s.chevron} ${open ? s.chevronOpen : ""}`} />
+        <ChevronIcon className={cn(s.chevron, { [s.chevronOpen]: open })} />
       </button>
       {open && (
         <>
@@ -40,7 +41,7 @@ export function OrderSection({ title, customer, date, badges, sum }: Props) {
               <span className={s.label}>Требования к исполнителю:</span>
               <div className={s.badges}>
                 {badges.map((b, i) => (
-                  <span key={i} className={`${s.badge} ${s[b.variant]}`}>{b.text}</span>
+                  <span key={i} className={cn(s.badge, s[b.variant])}>{b.text}</span>
                 ))}
               </div>
             </div>
