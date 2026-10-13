@@ -6,6 +6,7 @@ export type NotificationType =
   | "QUESTION_ANSWERED"
   | "SUPPORT_REPLY"
   | "NEW_BLOG_POST"
+  | "POST_ACTIVITY"
   | "NEW_ORDER"
   | "CONTACT_ACCESS"
   | "LABOR_RESPONSE";
@@ -72,6 +73,14 @@ export interface LaborResponsePayload {
   listing_title: string;
 }
 
+export interface PostActivityPayload {
+  kind: "like" | "comment" | "reply" | "repost" | "follow";
+  actor_id: number;
+  actor_name: string;
+  post_id?: number;
+  comment_id?: number;
+}
+
 export type NotificationPayload =
   | ResponseUpdatedPayload
   | ResponseStatusChangedPayload
@@ -82,7 +91,8 @@ export type NotificationPayload =
   | NewBlogPostPayload
   | NewOrderPayload
   | ContactAccessPayload
-  | LaborResponsePayload;
+  | LaborResponsePayload
+  | PostActivityPayload;
 
 export interface NotificationItem {
   id: number;

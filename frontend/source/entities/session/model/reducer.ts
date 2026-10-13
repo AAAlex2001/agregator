@@ -11,7 +11,7 @@ export function sessionReducer(state: SessionState, action: SessionAction): Sess
     case "load/start":
       return { ...state, isLoading: true, error: null };
     case "load/success":
-      return { user: action.user, role: action.user?.role ?? state.role, isLoading: false, error: null };
+      return { user: action.user, role: action.user?.role ?? null, isLoading: false, error: null };
     case "load/error":
       return { ...state, isLoading: false, error: action.error };
     case "user/set":

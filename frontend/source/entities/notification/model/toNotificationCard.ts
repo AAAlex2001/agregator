@@ -5,6 +5,7 @@ import type {
   NewBlogPostPayload,
   NewOrderPayload,
   NotificationItem,
+  PostActivityPayload,
   QuestionAnsweredPayload,
   QuestionAskedPayload,
   ResponseStatusChangedPayload,
@@ -137,6 +138,23 @@ function laborResponse(payload: LaborResponsePayload): NotificationCardText {
   };
 }
 
+/** Объясняет действие участника с вашей публикацией. */
+function postActivity(payload: PostActivityPayload): NotificationCardText {
+  const actions = {
+    like: "понравилась ваша публикация",
+    comment: "прокомментировал(а) вашу публикацию",
+    reply: "ответил(а) на ваш комментарий",
+    repost: "поделился(-ась) вашей публикацией",
+    follow: "подписался(-ась) на ваши публикации",
+  };
+  const name = payload.actor_name || "Участник";
+  return {
+    title: payload.kind === "follow" ? "Новый подписчик" : "Активность в публикациях",
+    message: payload.kind === "like" ? `${name}: ${actions.like}.` : `${name} ${actions[payload.kind]}.`,
+    actionLabel: payload.kind === "follow" ? "Публикации автора" : "Открыть публикацию",
+  };
+}
+
 /** Заголовок, текст и подпись кнопки карточки по типу уведомления. */
 export function toNotificationCard(item: NotificationItem): NotificationCardText {
   switch (item.type) {
@@ -152,6 +170,8 @@ export function toNotificationCard(item: NotificationItem): NotificationCardText
       return questionAnswered(item.payload as QuestionAnsweredPayload);
     case "SUPPORT_REPLY":
       return supportReply(item.payload as SupportReplyPayload);
+    case "POST_ACTIVITY":
+      return postActivity(item.payload as PostActivityPayload);
     case "NEW_BLOG_POST":
       return newBlogPost(item.payload as NewBlogPostPayload);
     case "NEW_ORDER":

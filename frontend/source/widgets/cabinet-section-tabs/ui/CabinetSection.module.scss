@@ -1,0 +1,37 @@
+.section {
+  --cabinet-section-tabs-height: 65px;
+  min-width: 0;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  min-width: 0;
+  padding: 24px var(--content-page-px, var(--page-px)) 0;
+}
+
+.tabs {
+  position: relative;
+}
+
+.tab {
+  text-decoration: none;
+}
+
+.pageHead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.subtitle {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}

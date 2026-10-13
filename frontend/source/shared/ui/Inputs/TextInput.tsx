@@ -1,7 +1,14 @@
 "use client";
 
 import cn from "classnames";
-import { useId, type ChangeEvent, type ReactNode, type Ref, type MouseEventHandler } from "react";
+import {
+  useId,
+  type ChangeEvent,
+  type KeyboardEventHandler,
+  type MouseEventHandler,
+  type ReactNode,
+  type Ref,
+} from "react";
 import { useFocusedField } from "./useFocusedField";
 import s from "./inputs.module.scss";
 
@@ -9,6 +16,8 @@ export interface TextInputProps {
   ref?: Ref<HTMLInputElement>;
   readOnly?: boolean;
   onClick?: MouseEventHandler<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
+  maxLength?: number;
   id?: string;
   name?: string;
   value: string | null | undefined;
@@ -30,6 +39,8 @@ export function TextInput({
   ref,
   readOnly,
   onClick,
+  onKeyDown,
+  maxLength,
   id,
   name,
   value,
@@ -59,6 +70,8 @@ export function TextInput({
           ref={ref}
           readOnly={readOnly}
           onClick={onClick}
+          onKeyDown={onKeyDown}
+          maxLength={maxLength}
           id={inputId}
           name={name}
           type="text"

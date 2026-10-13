@@ -6,35 +6,50 @@ import { useSidebarMobile } from "@/source/widgets/sidebar";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { CabinetMenuTabsView, type CabinetMenuItem, type CabinetMenuKey } from "./CabinetMenuTabsView";
 
+/** Показывает основные разделы кабинета в нижней панели. */
 export function CabinetMenuTabs() {
   const pathname = usePathname();
   const { role } = useSession();
   const { open } = useSidebarMobile();
-  const { isAvailable: licenseDrawerAvailable, open: openLicenseDrawer } = useLicenseHoldersDrawer();
+  const { isAvailable, open: openLicenseDrawer } = useLicenseHoldersDrawer();
 
-  if (role === null) {
-    return null;
+  if (!role) return null;
+
+  let activeKey: CabinetMenuKey | null = null;
+  if (pathname.startsWith("/posts")) activeKey = "posts";
+  if (pathname.startsWith("/chat") || pathname === "/expert/room") activeKey = "chat";
+  if (
+    pathname.startsWith("/customer/orders")
+    || pathname.startsWith("/customer/reports")
+    || pathname.startsWith("/expert/orders")
+    || pathname === "/responses"
+    || pathname === "/archive"
+  ) {
+    activeKey = "orders";
   }
 
-  const activeKey: CabinetMenuKey | null =
-    pathname.startsWith("/chat") ? "chat" :
-    pathname === "/responses" ? "responses" :
-    pathname.startsWith("/customer") || pathname.startsWith("/expert/orders") ? "orders" :
-    null;
+  const items: CabinetMenuItem[] = [{ key: "menu", label: "Меню", onClick: open }];
 
-  const items: CabinetMenuItem[] = [
-    { key: "menu", label: "Меню", onClick: open },
-    {
+  if (role === "EXPERT" || role === "CUSTOMER") {
+    items.push({
       key: "orders",
       label: "Заказы",
       href: role === "EXPERT" ? "/expert/orders" : "/customer/orders",
-    },
-    { key: "responses", label: "Отклики", href: "/responses" },
-    { key: "chat", label: "Чат", href: "/chat" },
-  ];
+    });
+  }
 
-  if (licenseDrawerAvailable) {
-    items.push({ key: "license-holders", label: "Держатели разрешительных документов", onClick: () => openLicenseDrawer() });
+  items.push({ key: "posts", label: "Публикации", href: "/posts" });
+
+  if (role === "EXPERT" || role === "CUSTOMER") {
+    items.push({ key: "chat", label: "Чаты", href: "/chat" });
+  }
+
+  if (isAvailable) {
+    items.push({
+      key: "license-holders",
+      label: "Держатели разрешительных документов",
+      onClick: () => openLicenseDrawer(),
+    });
   }
 
   return <CabinetMenuTabsView items={items} activeKey={activeKey} />;

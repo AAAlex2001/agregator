@@ -134,7 +134,8 @@
   padding: 8px;
 }
 
-.plateWrap:hover {
+.plateWrap:hover,
+.plateWrap:focus-within {
   .plate {
     background: var(--plate-bg);
     color: var(--plate-color);

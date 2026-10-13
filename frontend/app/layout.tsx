@@ -3,6 +3,10 @@ import { cookies } from "next/headers";
 import Script from "next/script";
 import { MAIN_PAGE_TITLE, MAIN_PAGE_DESCRIPTION, MAIN_PAGE_KEYWORDS } from "@/source/shared/config/mainPageContent";
 import { SITE_URL } from "@/source/shared/api/config";
+import { SessionProvider } from "@/source/entities/session";
+import { readSessionRole } from "@/source/entities/session/server";
+import { AuthModalProvider } from "@/source/shared/lib/auth-modal";
+import { AuthModalHost } from "@/source/widgets/auth/auth-modal";
 import { NotificationProvider } from "@/source/shared/ui/Notifications";
 import { CookiesBanner } from "@/source/widgets/cookies-banner";
 import "@fontsource/montserrat/400.css";
@@ -52,6 +56,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
+  const initialRole = await readSessionRole();
   const cookiesAccepted = cookieStore.get("cookies_accepted")?.value === "true";
 
   return (
@@ -67,7 +72,12 @@ export default async function RootLayout({
           </div>
         </noscript>
         <NotificationProvider>
-          {children}
+          <SessionProvider initialRole={initialRole}>
+            <AuthModalProvider>
+              {children}
+              <AuthModalHost />
+            </AuthModalProvider>
+          </SessionProvider>
         </NotificationProvider>
         {!cookiesAccepted && <CookiesBanner />}
         <Script

@@ -9,7 +9,7 @@ import s from "./LicenseHoldersDrawer.module.scss";
 
 export function LicenseHoldersDrawer() {
   const { isAvailable, isOpen, anchor, close } = useLicenseHoldersDrawer();
-  const { items, isLoading, error } = useLicenseHolders(isAvailable);
+  const { items, isLoading, error } = useLicenseHolders(isAvailable && isOpen);
 
   if (!isAvailable) return null;
 

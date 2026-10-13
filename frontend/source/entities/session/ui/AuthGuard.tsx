@@ -11,11 +11,12 @@ interface AuthGuardProps {
 /** Кабинет только для вошедших: без сессии отправляет на главную, где можно войти. */
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
-  const { user, isLoading } = useSession();
+  const { user, role, isLoading } = useSession();
 
   useEffect(() => {
     if (!isLoading && !user) router.replace("/");
   }, [isLoading, user, router]);
 
+  if (!user && !role) return null;
   return children;
 }

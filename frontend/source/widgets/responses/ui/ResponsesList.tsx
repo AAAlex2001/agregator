@@ -2,7 +2,6 @@
 import { Button } from "@/source/shared/ui";
 import Loader from "@/source/shared/ui/Loader";
 import { EmptyState } from "@/source/shared/ui";
-import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Tabs from "@/source/shared/ui/Tabs";
 import { ResponsesState } from "@/source/widgets/responses-state";
 import { ResponseCard } from "@/source/entities/response";
@@ -17,15 +16,13 @@ type ResponsesModel = ReturnType<typeof useResponses>;
 
 interface Props {
   role: UserRole;
-  title: string;
-  subtitle: string;
   model: ResponsesModel;
   actionHandlers: Parameters<typeof getCardActions>[3];
   sortSlot?: ReactNode;
   topSlot?: ReactNode;
 }
 
-export function ResponsesList({ role, title, subtitle, model, actionHandlers, sortSlot, topSlot }: Props) {
+export function ResponsesList({ role, model, actionHandlers, sortSlot, topSlot }: Props) {
   const activeLabel = model.tabs.find((tab) => tab.id === model.activeTab)?.label ?? "";
 
   const sentinelRef = useInfiniteScroll({
@@ -36,11 +33,6 @@ export function ResponsesList({ role, title, subtitle, model, actionHandlers, so
 
   return (
     <div className={s.wrapper}>
-      <div className={s.pageHead}>
-        <Title text={title} as="h1" className={s.pageTitle} />
-        <Subtitle text={subtitle} className={s.pageSubtitle} />
-      </div>
-
       <div className={s.contentArea}>
         <Tabs
           variant="pill"

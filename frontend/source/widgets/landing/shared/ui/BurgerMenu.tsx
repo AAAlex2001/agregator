@@ -12,6 +12,7 @@ const NAV_PAGES = [
   { href: "/orders", label: "Заявки" },
   { href: "/news", label: "Новости" },
   { href: "/blog", label: "Блог" },
+  { href: "/posts", label: "Публикации" },
   { href: "/reviews", label: "Отзывы" },
 ] as const;
 

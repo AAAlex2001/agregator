@@ -4,7 +4,6 @@ import { useState } from "react";
 import type { OrderCardData } from "@/source/entities/order";
 import { ResponsesSkeleton } from "@/source/widgets/responses";
 import { EmptyState } from "@/source/shared/ui";
-import { Title, Subtitle } from "@/source/shared/ui/Typography";
 import Loader from "@/source/shared/ui/Loader";
 import { useInfiniteScroll } from "@/source/shared/lib/useInfiniteScroll";
 import { getReportPdfUrl, useReports } from "@/source/features/reports";
@@ -34,14 +33,6 @@ export function ReportsWidget() {
 
   return (
     <div className={s.wrapper}>
-      <div className={s.pageHead}>
-        <Title text="Мои отчёты" as="h1" className={s.pageTitle} />
-        <Subtitle
-          text="Отчёты по завершённым тендерам: участники и выбранный исполнитель"
-          className={s.pageSubtitle}
-        />
-      </div>
-
       <div className={s.contentArea}>
         <div className={s.contentBody}>
           {isLoading ? (

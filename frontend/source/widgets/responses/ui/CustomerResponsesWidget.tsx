@@ -49,8 +49,6 @@ export function CustomerResponsesWidget() {
     <>
       <ResponsesList
         role="customer"
-        title="Взаимодействие по заказам"
-        subtitle="Все отклики в одном месте — просмотр, управление и контроль статусов"
         model={model}
         actionHandlers={actionHandlers}
         sortSlot={<SortPills sortBy={model.sortBy} sortDir={model.sortDir} isLoading={model.isLoading} onChange={model.setSort} />}

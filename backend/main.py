@@ -16,6 +16,7 @@ from routes import (
     admin_content,
     admin_lead,
     admin_panel,
+    admin_posts,
     admin_rtn,
     article,
     article_interactions,
@@ -44,6 +45,7 @@ from routes import (
     notification,
     order,
     payment,
+    posts,
     pricing,
     question,
     referral,
@@ -128,6 +130,8 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(payment.router, prefix="/api")
 app.include_router(pricing.router, prefix="/api")
+app.include_router(posts.router, prefix="/api")
+app.include_router(admin_posts.router, prefix="/api")
 app.include_router(referral.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")

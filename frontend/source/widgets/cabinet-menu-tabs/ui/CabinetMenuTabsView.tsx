@@ -8,11 +8,11 @@ import {
   DiplomaIcon,
   TabChatIcon,
   TabOrdersIcon,
-  TabResponsesIcon,
 } from "@/source/shared/ui/icons";
+import { NewspaperIcon } from "@/source/shared/ui/icons/NewspaperIcon";
 import s from "./CabinetMenuTabs.module.scss";
 
-export type CabinetMenuKey = "orders" | "responses" | "chat" | "menu" | "license-holders";
+export type CabinetMenuKey = "orders" | "posts" | "chat" | "menu" | "license-holders";
 
 export interface CabinetMenuItem {
   key: CabinetMenuKey;
@@ -28,7 +28,7 @@ interface CabinetMenuTabsViewProps {
 
 function renderIcon(key: CabinetMenuKey) {
   if (key === "orders") return <TabOrdersIcon />;
-  if (key === "responses") return <TabResponsesIcon />;
+  if (key === "posts") return <NewspaperIcon />;
   if (key === "chat") return <TabChatIcon />;
   if (key === "license-holders") return <DiplomaIcon size={22} />;
   return <BurgerHeaderIcon />;
@@ -44,7 +44,7 @@ export function CabinetMenuTabsView({ items, activeKey }: CabinetMenuTabsViewPro
     const updateHeight = () => {
       const height = menu.getBoundingClientRect().height;
       const bottom = Number.parseFloat(getComputedStyle(menu).bottom) || 0;
-      // Reserve the floating bar, its bottom inset and a 12px gap above it.
+      // Оставляем место для панели, её нижнего отступа и зазора над ней.
       root.style.setProperty("--cabinet-menu-height", `${height > 0 ? height + bottom + 12 : 0}px`);
     };
     updateHeight();

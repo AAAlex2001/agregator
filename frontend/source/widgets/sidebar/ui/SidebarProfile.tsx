@@ -6,13 +6,12 @@ import s from "./Sidebar.module.scss";
 
 interface SidebarProfileProps {
   user: UserProfile | null;
-  isLoading: boolean;
   onNavigate: () => void;
 }
 
 /** Показывает фото, имя и город пользователя из текущей сессии. */
-export function SidebarProfile({ user, isLoading, onNavigate }: SidebarProfileProps) {
-  if (isLoading || !user) {
+export function SidebarProfile({ user, onNavigate }: SidebarProfileProps) {
+  if (!user) {
     return (
       <div className={s.profile} aria-label="Загрузка профиля">
         <Skeleton className={s.avatar} rounded="pill" />

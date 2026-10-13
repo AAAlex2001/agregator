@@ -1,0 +1,82 @@
+"""Тесты ИИ-помощника постов без сети и БД."""
+
+import asyncio
+from datetime import UTC, datetime, timedelta
+
+import pytest
+
+from models.account import Account
+from services.posts.config import PostSettings
+from services.posts.exceptions import EmptyAiAnswerError, TooManyAiRequestsError
+from services.posts.use_cases.write_with_ai import WritePostWithAiUseCase, to_html
+
+USER = Account(id=1, email="anna@mail.ru")
+
+
+class FakeAi:
+    """Отвечает заранее заданным текстом и запоминает, что у него спросили."""
+
+    def __init__(self, answer: str) -> None:
+        self.answer = answer
+        self.asked: list[str] = []
+
+    async def complete(self, system: str, user: str, max_tokens: int) -> str:
+        self.asked.append(user)
+        return self.answer
+
+
+class FakeAiRequests:
+    """Запросы к ИИ в памяти."""
+
+    def __init__(self, issued: list[datetime] | None = None) -> None:
+        self.issued = issued or []
+
+    async def list_since(self, user_id: int, since: datetime) -> list[datetime]:
+        return [moment for moment in self.issued if moment >= since]
+
+    async def add(self, user_id: int) -> None:
+        self.issued.append(datetime.now(UTC))
+
+
+def write(answer: str, html: str = "", requests: FakeAiRequests | None = None) -> str:
+    usecase = WritePostWithAiUseCase(
+        FakeAi(answer), requests or FakeAiRequests(), PostSettings(_env_file=None)
+    )
+
+    return asyncio.run(usecase.execute(USER, "Напиши пост про мёд", html))
+
+
+def test_answer_keeps_only_editor_tags() -> None:
+    html = write("<h1>Пасека</h1><h2>Мёд</h2><p>Свежий <strong>липовый</strong></p><script>alert(1)</script>")
+
+    assert html == "Пасека<h2>Мёд</h2><p>Свежий <strong>липовый</strong></p>"
+
+
+def test_code_fence_and_plain_text_become_paragraphs() -> None:
+    assert to_html("```html\n<p>Привет</p>\n```") == "<p>Привет</p>"
+    assert to_html("Первый абзац\nстрока\n\nВторой") == "<p>Первый абзац<br>строка</p><p>Второй</p>"
+
+
+def test_empty_answer_is_an_error() -> None:
+    with pytest.raises(EmptyAiAnswerError):
+        write("<p> </p>")
+
+
+def test_current_text_goes_to_the_model() -> None:
+    ai = FakeAi("<p>Готово</p>")
+    usecase = WritePostWithAiUseCase(ai, FakeAiRequests(), PostSettings(_env_file=None))
+
+    asyncio.run(usecase.execute(USER, "Сократи", "<p>Длинный текст</p>"))
+
+    assert "Сократи" in ai.asked[0]
+    assert "<p>Длинный текст</p>" in ai.asked[0]
+
+
+def test_hourly_limit_stops_requests() -> None:
+    now = datetime.now(UTC)
+    issued = [now - timedelta(minutes=50) + timedelta(seconds=index) for index in range(30)]
+
+    with pytest.raises(TooManyAiRequestsError) as error:
+        write("<p>Текст</p>", requests=FakeAiRequests(issued))
+
+    assert 0 < error.value.retry_after <= 10 * 60 + 1

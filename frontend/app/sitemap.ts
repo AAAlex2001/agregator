@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { fetchPostSitemap } from "@/source/entities/posts/api/sitemap.api";
 import { SITE_URL } from "@/source/shared/api/config";
 import { NEWS_PAGE_SIZE, fetchArticleSitemap, type ArticleKind } from "@/source/entities/article";
 import { RTN_MAX_PAGE, RTN_PAGE_SIZE, fetchRtnList, type RtnListItem } from "@/source/entities/rtn";
@@ -11,6 +12,7 @@ type ChangeFrequency = "daily" | "weekly" | "monthly" | "yearly";
 const STATIC_ROUTES: Array<{ path: string; changeFrequency: ChangeFrequency; priority: number }> = [
   { path: "/", changeFrequency: "weekly", priority: 1.0 },
   { path: "/orders", changeFrequency: "daily", priority: 0.9 },
+  { path: "/posts", changeFrequency: "daily", priority: 0.9 },
   { path: "/news", changeFrequency: "daily", priority: 0.9 },
   { path: "/blog", changeFrequency: "weekly", priority: 0.9 },
   { path: "/rtn", changeFrequency: "daily", priority: 0.9 },
@@ -82,6 +84,21 @@ async function loadRtnClarifications(): Promise<MetadataRoute.Sitemap> {
   }
 }
 
+/** Добавляет только опубликованные оригиналы, без черновиков и репостов. */
+async function loadPosts(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const items = await fetchPostSitemap();
+    return items.map((item) => ({
+      url: `${SITE_URL}/posts/${item.id}`,
+      lastModified: new Date(item.updated_at),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticItems: MetadataRoute.Sitemap = STATIC_ROUTES.map(({ path, changeFrequency, priority }) => ({
@@ -90,10 +107,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency,
     priority,
   }));
-  const [news, blog, rtn] = await Promise.all([
+  const [news, blog, rtn, posts] = await Promise.all([
     loadArticles("news"),
     loadArticles("blog"),
     loadRtnClarifications(),
+    loadPosts(),
   ]);
-  return [...staticItems, ...listPages("/news", news.length, NEWS_PAGE_SIZE), ...news, ...blog, ...rtn];
+  return [...staticItems, ...listPages("/news", news.length, NEWS_PAGE_SIZE), ...news, ...blog, ...rtn, ...posts];
 }

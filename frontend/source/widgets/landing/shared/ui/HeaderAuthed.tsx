@@ -11,6 +11,7 @@ import s from "./header-authed.module.scss";
 const PUBLICATION_LINKS = [
   { href: "/landing/news", label: "Новости" },
   { href: "/landing/blog", label: "Блог" },
+  { href: "/posts", label: "Публикации" },
 ] as const;
 
 /** Показывает логотип и личные ссылки сверху, разделы площадки — второй строкой. */

@@ -1,7 +1,7 @@
 .body {
   display: flex;
   flex: 1;
-  height: calc(100dvh - var(--cabinet-header-height) - var(--cabinet-bottom-height) - var(--page-breadcrumbs-height, 0px));
+  height: calc(100dvh - var(--cabinet-header-height) - var(--cabinet-bottom-height) - var(--page-breadcrumbs-height, 0px) - var(--cabinet-section-tabs-height, 0px));
   min-height: 400px;
   width: 100%;
   padding: 24px var(--page-px);

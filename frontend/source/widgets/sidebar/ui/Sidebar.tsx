@@ -18,7 +18,7 @@ import s from "./Sidebar.module.scss";
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, role, isLoading, setUser } = useSession();
+  const { user, role, setUser } = useSession();
   const { isOpen, close } = useSidebarMobile();
   const { count: unreadCount } = useUnreadCount();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -58,7 +58,7 @@ export function Sidebar() {
         </div>
 
         <div className={s.content}>
-          <SidebarProfile user={user} isLoading={isLoading} onNavigate={close} />
+          <SidebarProfile user={user} onNavigate={close} />
 
           <nav className={s.nav} aria-label="Разделы кабинета">
             {sections.map((section) => (
@@ -68,7 +68,9 @@ export function Sidebar() {
                   <SidebarLink
                     key={item.href}
                     item={item}
-                    active={pathname === item.href || pathname.startsWith(`${item.href}/`)}
+                    active={(item.activePaths ?? [item.href]).some(
+                      (path) => pathname === path || pathname.startsWith(`${path}/`),
+                    )}
                     badge={item.href === "/notifications" ? unreadCount : 0}
                     onNavigate={close}
                   />

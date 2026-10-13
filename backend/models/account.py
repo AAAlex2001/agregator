@@ -64,6 +64,7 @@ class Account(Base):
     email_on_chat_message: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     email_on_new_blog_post: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default="true")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
+    following_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC), nullable=False)
 
     __table_args__ = (
@@ -181,3 +182,9 @@ class Account(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+
+
+    @property
+    def display_name(self) -> str:
+        """Публичное имя без почты и телефона."""
+        return " ".join(filter(None, [self.first_name, self.last_name])) or "Пользователь"

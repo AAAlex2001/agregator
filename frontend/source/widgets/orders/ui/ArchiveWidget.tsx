@@ -6,7 +6,6 @@ import { createReview } from "@/source/entities/response";
 import { ArchiveList } from "@/source/features/orders/archive";
 import { AddReviewModalContainer } from "@/source/features/reviews";
 import { useNotifications } from "@/source/shared/ui/Notifications";
-import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "./ArchiveWidget.module.scss";
 
 /** Архив заказов. После отзыва список перечитывается, чтобы убрать кнопку у заказа. */
@@ -29,10 +28,6 @@ export function ArchiveWidget() {
 
   return (
     <div className={s.wrapper}>
-      <div className={s.pageHead}>
-        <Title text="Архив заказов" as="h1" className={s.pageTitle} />
-        <Subtitle text="Здесь находятся завершенные заказы" className={s.pageSubtitle} />
-      </div>
       <ArchiveList key={version} onLeaveReview={setReviewTarget} />
       <AddReviewModalContainer
         isOpen={reviewTarget !== null}

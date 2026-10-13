@@ -8,6 +8,7 @@ const INDEXABLE_PATHS: string[] = [
   "/orders",
   "/reviews",
   "/news",
+  "/posts",
   "/blog",
   "/rtn",
   "/rtn/ask",

@@ -1,0 +1,16 @@
+.root {
+  position: relative;
+  flex: none;
+}
+.error {
+  position: absolute;
+  right: 0;
+  z-index: 21;
+  width: 240px;
+  padding: 12px;
+  font-size: 13px;
+  background: white;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  color: var(--color-error);
+}

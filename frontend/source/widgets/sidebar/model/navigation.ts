@@ -1,73 +1,67 @@
 import type { UserRole } from "@/source/entities/user";
 import {
-  ExpertRoomIcon,
-  FileIcon,
   ReviewIcon,
-  TabArchiveIcon,
   TabChatIcon,
   TabNotificationIcon,
   TabOrdersIcon,
   TabProfileIcon,
-  TabResponsesIcon,
   TabSupportIcon,
 } from "@/source/shared/ui/icons";
+import { NewspaperIcon } from "@/source/shared/ui/icons/NewspaperIcon";
 import type { SidebarSection } from "./types";
+
+const communication: SidebarSection = {
+  label: "Общение",
+  items: [
+    { href: "/posts", label: "Публикации", icon: NewspaperIcon },
+    {
+      href: "/chat",
+      label: "Чаты",
+      icon: TabChatIcon,
+      activePaths: ["/chat", "/expert/room"],
+    },
+    { href: "/support", label: "Поддержка", icon: TabSupportIcon },
+  ],
+};
+
+const account: SidebarSection = {
+  label: "Аккаунт",
+  items: [
+    { href: "/settings", label: "Настройки", icon: TabProfileIcon },
+    { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
+  ],
+};
 
 export const SIDEBAR_SECTIONS: Record<UserRole, SidebarSection[]> = {
   EXPERT: [
     {
       label: "Работа",
       items: [
-        { href: "/expert/orders", label: "Все заказы", icon: TabOrdersIcon },
-        { href: "/responses", label: "Мои отклики", icon: TabResponsesIcon },
-        { href: "/archive", label: "Архив", icon: TabArchiveIcon },
+        {
+          href: "/expert/orders",
+          label: "Заказы",
+          icon: TabOrdersIcon,
+          activePaths: ["/expert/orders", "/responses", "/archive"],
+        },
       ],
     },
-    {
-      label: "Общение",
-      items: [
-        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
-        { href: "/expert/room", label: "Чат исполнителей", icon: ExpertRoomIcon },
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
-        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
-      ],
-    },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Настройки", icon: TabProfileIcon },
-      ],
-    },
+    communication,
+    account,
   ],
   CUSTOMER: [
     {
       label: "Работа",
       items: [
-        { href: "/customer/orders", label: "Мои заказы", icon: TabOrdersIcon },
-        { href: "/responses", label: "Отклики", icon: TabResponsesIcon },
+        {
+          href: "/customer/orders",
+          label: "Заказы",
+          icon: TabOrdersIcon,
+          activePaths: ["/customer/orders", "/responses", "/archive", "/customer/reports"],
+        },
       ],
     },
-    {
-      label: "Результаты тендеров",
-      items: [
-        { href: "/archive", label: "Архив", icon: TabArchiveIcon },
-        { href: "/customer/reports", label: "Отчёты", icon: FileIcon },
-      ],
-    },
-    {
-      label: "Общение",
-      items: [
-        { href: "/chat", label: "Чат по заказам", icon: TabChatIcon },
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
-        { href: "/support", label: "Поддержка", icon: TabSupportIcon },
-      ],
-    },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Настройки", icon: TabProfileIcon },
-      ],
-    },
+    communication,
+    account,
   ],
   LICENSE_HOLDER: [
     {
@@ -79,15 +73,10 @@ export const SIDEBAR_SECTIONS: Record<UserRole, SidebarSection[]> = {
     {
       label: "Общение",
       items: [
-        { href: "/notifications", label: "Уведомления", icon: TabNotificationIcon },
+        { href: "/posts", label: "Публикации", icon: NewspaperIcon },
         { href: "/support", label: "Поддержка", icon: TabSupportIcon },
       ],
     },
-    {
-      label: "Аккаунт",
-      items: [
-        { href: "/settings", label: "Настройки", icon: TabProfileIcon },
-      ],
-    },
+    account,
   ],
 };

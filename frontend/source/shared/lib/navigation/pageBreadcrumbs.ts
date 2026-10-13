@@ -50,6 +50,9 @@ export function getPageBreadcrumbs(pathname: string): PageBreadcrumbItem[] | nul
   if (hasContentBreadcrumbs(path)) return null;
   if (path === "/" || path === "/landing" || path === "/settings") return null;
   const profile = { label: "Профиль", href: "/settings" };
+  if (path === "/customer/orders/new") {
+    return [profile, { label: "Заказы", href: "/customer/orders" }, { label: "Создать заказ" }];
+  }
   if (cabinet[path]) return [profile, { label: cabinet[path] }];
   if (/^\/chat\/[^/]+$/.test(path)) {
     return [profile, { label: cabinet["/chat"], href: "/chat" }, { label: "Диалог" }];

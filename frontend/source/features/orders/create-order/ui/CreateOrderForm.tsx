@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { OrderCardData } from "@/source/entities/order";
 import { useSession } from "@/source/entities/session";
 import Button from "@/source/shared/ui/Button";
+import { Title } from "@/source/shared/ui/Typography";
 import { Checkbox } from "@/source/shared/ui/Checkbox";
 import { ExpertiseCodesView } from "@/source/shared/ui/ExpertiseCodesModal";
 import { useOrderForm } from "../model/useOrderForm";
@@ -21,6 +22,7 @@ import { WorkTypeField } from "./WorkTypeField";
 import s from "./CreateOrderForm.module.scss";
 
 interface CreateOrderFormProps {
+  showHeading?: boolean;
   editTarget?: OrderCardData;
   copyTemplate?: OrderCardData;
   onCancel: () => void;
@@ -29,7 +31,14 @@ interface CreateOrderFormProps {
 }
 
 /** Создание или правка заказа с живым предпросмотром карточки. */
-export function CreateOrderForm({ editTarget, copyTemplate, onCancel, onCopy, onSaved }: CreateOrderFormProps) {
+export function CreateOrderForm({
+  showHeading = true,
+  editTarget,
+  copyTemplate,
+  onCancel,
+  onCopy,
+  onSaved,
+}: CreateOrderFormProps) {
   const { user } = useSession();
   const { isEdit, state, dispatch, isSaving, addFile, addOtherFiles, submit } = useOrderForm({ editTarget, copyTemplate, onSaved });
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -39,7 +48,7 @@ export function CreateOrderForm({ editTarget, copyTemplate, onCancel, onCopy, on
     return (
       <div className={s.shell}>
         <div className={s.form}>
-          <h2 className={s.title}>Создание заказа</h2>
+          {showHeading && <Title className={s.title} text="Создание заказа" />}
           <p className={s.noDirectionsText}>
             У вас не выбрано ни одного направления работы. Перейдите в настройки профиля и отметьте направления, по которым размещаете заказы, —
             после этого форма станет доступна.
@@ -69,7 +78,12 @@ export function CreateOrderForm({ editTarget, copyTemplate, onCancel, onCopy, on
     <div className={s.shellWithPreview}>
       <div className={s.layout}>
         <form className={s.form} onSubmit={submit}>
-          <h2 className={s.title}>{isEdit ? "Редактирование заказа" : "Создание заказа"}</h2>
+          {showHeading && (
+            <Title
+              className={s.title}
+              text={isEdit ? "Редактирование заказа" : "Создание заказа"}
+            />
+          )}
           <MainFields state={state} dispatch={dispatch} />
           <WorkTypeField state={state} dispatch={dispatch} />
           {isExpertise && <RequirementsField state={state} dispatch={dispatch} />}

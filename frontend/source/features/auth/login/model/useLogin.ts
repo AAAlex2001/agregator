@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducer, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { PENDING_ORDER_UUID_KEY } from "@/source/entities/order";
 import { EmailNotVerifiedError, RoleChoiceRequiredError, homePath, login, useSession } from "@/source/entities/session";
 import type { UserRole } from "@/source/entities/user";
@@ -16,6 +16,7 @@ interface UseLoginOptions {
 /** Вход. Если на почту несколько ролей — просит выбрать роль, если почта не подтверждена — отдаёт её на подтверждение. */
 export function useLogin({ onSuccess, onUnverified }: UseLoginOptions) {
   const router = useRouter();
+  const pathname = usePathname();
   const { reload } = useSession();
   const { showError } = useNotifications();
   const [state, dispatch] = useReducer(loginReducer, undefined, initialLoginState);
@@ -31,6 +32,7 @@ export function useLogin({ onSuccess, onUnverified }: UseLoginOptions) {
       return;
     }
     if (pendingOrder) showError("Этот аккаунт зарегистрирован под другой ролью. Для отклика нужен аккаунт исполнителя");
+    if (pathname === "/posts" || pathname.startsWith("/posts/")) return;
     router.push(homePath(role));
   };
 

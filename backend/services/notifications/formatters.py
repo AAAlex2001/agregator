@@ -12,6 +12,8 @@ from schemas.notification import (
     NewOrderNotificationItemResponse,
     NewOrderNotificationPayload,
     NotificationItemResponse,
+    PostActivityNotificationItemResponse,
+    PostActivityNotificationPayload,
     QuestionAnsweredNotificationItemResponse,
     QuestionAnsweredNotificationPayload,
     QuestionAskedNotificationItemResponse,
@@ -113,6 +115,13 @@ def to_response(notification: Notification) -> NotificationItemResponse:
         return LaborResponseNotificationItemResponse(
             type=NotificationType.LABOR_RESPONSE,
             payload=LaborResponseNotificationPayload.model_validate(payload),
+            **common,
+        )
+
+    if notification.type == NotificationType.POST_ACTIVITY:
+        return PostActivityNotificationItemResponse(
+            type=NotificationType.POST_ACTIVITY,
+            payload=PostActivityNotificationPayload.model_validate(payload),
             **common,
         )
 

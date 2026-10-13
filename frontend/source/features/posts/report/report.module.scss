@@ -1,0 +1,9 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.error {
+  color: var(--color-error);
+  font-size: 13px;
+}

@@ -157,6 +157,8 @@ function PlateNode({
   badges: BadgeCounts;
   locked?: boolean;
 }) {
+  const [visited, setVisited] = useState(false);
+
   if (locked) {
     return (
       <ToolTip message={GUEST_TOOLTIP} ariaLabel={`${plate.label}. ${GUEST_TOOLTIP}`} side="bottom">
@@ -195,8 +197,12 @@ function PlateNode({
   }
 
   return (
-    <div className={cn(s.plateWrap, s[plate.color])}>
-      <button type="button" className={s.plate}>
+    <div
+      className={cn(s.plateWrap, s[plate.color])}
+      onPointerEnter={() => setVisited(true)}
+      onFocus={() => setVisited(true)}
+    >
+      <button type="button" className={s.plate} onClick={() => setVisited(true)}>
         <PlateLabel plate={plate} />
         {plate.badge && <NavCountBadge count={badges[plate.badge]} />}
         <ChevronIcon className={s.chevron} color="currentColor" />
@@ -204,7 +210,7 @@ function PlateNode({
       <div className={cn(s.dropdown, { [s.dropRight]: align === "right" })}>
         <div className={s.panel}>
           {plate.dynamic === "license" ? (
-            <LicenseList />
+            visited && <LicenseList />
           ) : (
             <div className={s.list}>
               {(plate.items ?? []).map((item) =>

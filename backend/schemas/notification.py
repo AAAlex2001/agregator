@@ -161,6 +161,20 @@ class LaborResponseNotificationItemResponse(NotificationItemBaseResponse):
     payload: LaborResponseNotificationPayload
 
 
+class PostActivityNotificationPayload(NotificationPayloadModel):
+    """Кто отреагировал на публикацию или подписался на автора."""
+    kind: Literal["like", "comment", "reply", "repost", "follow"]
+    actor_id: int
+    actor_name: str
+    post_id: int | None = None
+    comment_id: int | None = None
+
+
+class PostActivityNotificationItemResponse(NotificationItemBaseResponse):
+    type: Literal[NotificationType.POST_ACTIVITY]
+    payload: PostActivityNotificationPayload
+
+
 NotificationItemResponse = Annotated[
     ResponseUpdatedNotificationItemResponse
     | ResponseStatusChangedNotificationItemResponse
@@ -171,7 +185,8 @@ NotificationItemResponse = Annotated[
     | NewOrderNotificationItemResponse
     | ContactAccessNotificationItemResponse
     | LaborResponseNotificationItemResponse
-    | SupportReplyNotificationItemResponse,
+    | SupportReplyNotificationItemResponse
+    | PostActivityNotificationItemResponse,
     Field(discriminator="type"),
 ]
 
