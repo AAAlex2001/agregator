@@ -2,6 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { ordersPath, useSession } from "@/source/entities/session";
+import {
+  BurgerHeaderIcon,
+  DiplomaIcon,
+  TabChatIcon,
+  TabOrdersIcon,
+} from "@/source/shared/ui/icons";
+import { NewspaperIcon } from "@/source/shared/ui/icons/NewspaperIcon";
 import { useLicenseHoldersDrawer } from "@/source/widgets/license-holders-drawer";
 import { useSidebarMobile } from "@/source/widgets/sidebar";
 import {
@@ -35,10 +42,8 @@ function activeMenuKey(pathname: string): CabinetMenuKey | null {
   return null;
 }
 
-/**
- * Основные разделы кабинета в нижней панели на телефоне.
- * Заказы и чаты — только заказчику и исполнителю.
- */
+/** Основные разделы кабинета в нижней панели на телефоне.
+ *  Заказы и чаты — заказчику и исполнителю, держатели документов — исполнителю. */
 export function CabinetMenuTabs() {
   const pathname = usePathname();
   const { role } = useSession();
@@ -49,43 +54,43 @@ export function CabinetMenuTabs() {
     return null;
   }
 
-  const hasOrders = role === "EXPERT" || role === "CUSTOMER";
-  const items: CabinetMenuItem[] = [
-    {
-      key: "menu",
-      label: "Меню",
-      onClick: open,
-    },
-  ];
-
-  if (hasOrders) {
-    items.push({
-      key: "orders",
-      label: "Заказы",
-      href: ordersPath(role),
-    });
-  }
-
-  items.push({
+  const menu: CabinetMenuItem = {
+    key: "menu",
+    label: "Меню",
+    icon: <BurgerHeaderIcon />,
+    onClick: open,
+  };
+  const orders: CabinetMenuItem = {
+    key: "orders",
+    label: "Заказы",
+    icon: <TabOrdersIcon />,
+    href: ordersPath(role),
+  };
+  const posts: CabinetMenuItem = {
     key: "posts",
     label: "Публикации",
+    icon: <NewspaperIcon />,
     href: "/posts",
-  });
+  };
+  const chat: CabinetMenuItem = {
+    key: "chat",
+    label: "Чаты",
+    icon: <TabChatIcon />,
+    href: "/chat",
+  };
+  const licenseHolders: CabinetMenuItem = {
+    key: "license-holders",
+    label: "Держатели",
+    icon: <DiplomaIcon size={22} />,
+    onClick: () => licenseDrawer.open(),
+  };
 
-  if (hasOrders) {
-    items.push({
-      key: "chat",
-      label: "Чаты",
-      href: "/chat",
-    });
+  let items = [menu, posts];
+  if (role === "CUSTOMER") {
+    items = [menu, orders, posts, chat];
   }
-
-  if (licenseDrawer.isAvailable) {
-    items.push({
-      key: "license-holders",
-      label: "Держатели разрешительных документов",
-      onClick: () => licenseDrawer.open(),
-    });
+  if (role === "EXPERT") {
+    items = [menu, orders, posts, chat, licenseHolders];
   }
 
   return <CabinetMenuTabsView items={items} activeKey={activeMenuKey(pathname)} />;

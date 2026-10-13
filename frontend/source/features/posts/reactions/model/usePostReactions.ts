@@ -16,7 +16,7 @@ import { useNotifications } from "@/source/shared/ui/Notifications";
  * Лайк, сохранение, репост и ссылка на публикацию.
  * Гостю вместо действия предлагается войти.
  */
-export function usePostReactions(post: Post, onUnsaved?: () => void) {
+export function usePostReactions(post: Post) {
   const { user } = useSession();
   const { openAuth } = useAuthModal();
   const { showSuccess, showError } = useNotifications();
@@ -35,8 +35,7 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
     try {
       await action();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Не удалось выполнить действие";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsBusy(false);
     }
@@ -55,9 +54,6 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
       setSaved(!saved);
       const notice = saved ? "Публикация убрана из сохранённого" : "Публикация сохранена";
       showSuccess(notice);
-      if (saved) {
-        onUnsaved?.();
-      }
     });
 
   const repost = () =>
@@ -77,8 +73,6 @@ export function usePostReactions(post: Post, onUnsaved?: () => void) {
   };
 
   return {
-    signedIn: Boolean(user),
-    openAuth,
     isBusy,
     liked,
     likes,

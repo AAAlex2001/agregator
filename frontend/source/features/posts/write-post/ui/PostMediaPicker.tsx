@@ -2,32 +2,27 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { ArrowLeftIcon, type PostMedia } from "@/source/entities/posts";
+import type { PostMedia } from "@/source/entities/posts";
 import Button from "@/source/shared/ui/Button";
-import Loader from "@/source/shared/ui/Loader";
 import { MAX_POST_MEDIA, MEDIA_ACCEPT } from "../lib/mediaValidation";
-import { ArrowRightIcon, ImageIcon } from "./icons";
+import { ImageIcon } from "./icons";
 import s from "./PostMediaPicker.module.scss";
 
 interface PostMediaPickerProps {
   files: PostMedia[];
-  uploading: number;
-  removingId: number | null;
   disabled: boolean;
+  isBusy: boolean;
   onUpload: (files: File[]) => void;
   onRemove: (file: PostMedia) => void;
-  onMove: (file: PostMedia, step: -1 | 1) => void;
 }
 
-/** Фото и видео публикации: превью, удаление и порядок показа. */
+/** Фото и видео публикации: превью и удаление. */
 export function PostMediaPicker({
   files,
-  uploading,
-  removingId,
   disabled,
+  isBusy,
   onUpload,
   onRemove,
-  onMove,
 }: PostMediaPickerProps) {
   const input = useRef<HTMLInputElement>(null);
 
@@ -55,38 +50,16 @@ export function PostMediaPicker({
               disabled={disabled}
               onClick={() => onRemove(file)}
             >
-              {removingId === file.id ? "…" : "×"}
+              ×
             </button>
-            <div className={s.order}>
-              <button
-                type="button"
-                aria-label="Переместить левее"
-                disabled={disabled || file === files.at(0)}
-                onClick={() => onMove(file, -1)}
-              >
-                <ArrowLeftIcon />
-              </button>
-              <button
-                type="button"
-                aria-label="Переместить правее"
-                disabled={disabled || file === files.at(-1)}
-                onClick={() => onMove(file, 1)}
-              >
-                <ArrowRightIcon />
-              </button>
-            </div>
           </div>
         ))}
-        {uploading > 0 && (
-          <div className={s.tile}>
-            <Loader size="sm" label={`Загрузка: ${uploading}`} />
-          </div>
-        )}
       </div>
       {files.length < MAX_POST_MEDIA && (
         <Button
           variant="outline"
           disabled={disabled}
+          isLoading={isBusy}
           onClick={() => input.current?.click()}
         >
           <ImageIcon />

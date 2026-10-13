@@ -21,19 +21,11 @@ export function useAiAssistant(): AiAssistant {
   const ask = async (editor: Editor, request: string) => {
     setIsPending(true);
     try {
-      const currentHtml = editor.isEmpty ? "" : editor.getHTML();
-      const html = await writePostWithAi(request.trim(), currentHtml);
-
-      if (!editor.isDestroyed) {
-        editor.commands.setContent(html, { emitUpdate: true });
-      }
-
+      const html = await writePostWithAi(request, editor.getHTML());
+      editor.commands.setContent(html, { emitUpdate: true });
       setInstruction("");
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "ИИ-помощник сейчас недоступен";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsPending(false);
     }

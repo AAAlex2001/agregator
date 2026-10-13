@@ -26,8 +26,7 @@ export function useFollowAuthor(authorId: number, initial: boolean) {
       const notice = following ? "Вы отписались от автора" : "Вы подписались на автора";
       showSuccess(notice);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Не удалось изменить подписку";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsBusy(false);
     }

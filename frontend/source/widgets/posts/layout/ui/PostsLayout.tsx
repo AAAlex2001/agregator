@@ -27,6 +27,10 @@ function currentPage(pathname: string) {
     return { section: "/posts/my", title: "Редактирование" };
   }
 
+  if (pathname === "/posts/following") {
+    return { section: "/posts", title: "Подписки" };
+  }
+
   if (pathname.endsWith("/repost")) {
     return { section: "/posts/reposts", title: "Репост" };
   }

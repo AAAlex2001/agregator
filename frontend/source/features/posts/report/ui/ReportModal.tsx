@@ -36,8 +36,7 @@ export function ReportModal({ id, kind, onClose }: ReportModalProps) {
       showSuccess("Жалоба отправлена модератору");
       onClose();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Не удалось отправить жалобу";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsSending(false);
     }

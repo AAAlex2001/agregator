@@ -1,9 +1,15 @@
+import type { Post } from "@/source/entities/posts";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import { PostList } from "../list/PostList";
 import s from "../posts.module.scss";
 
+interface MyRepostsProps {
+  posts: Post[];
+  nextPageHref?: string;
+}
+
 /** Свои репосты, с комментарием и без. */
-export function MyReposts() {
+export function MyReposts({ posts, nextPageHref }: MyRepostsProps) {
   return (
     <div className={s.section}>
       <div className={s.heading}>
@@ -14,10 +20,12 @@ export function MyReposts() {
         />
       </div>
       <PostList
-        query={{ mode: "reposts" }}
+        posts={posts}
+        nextPageHref={nextPageHref}
         emptyTitle="Репостов пока нет"
         emptyText="Нажмите на стрелки под постом, чтобы поделиться им у себя."
-        emptyAction={{ label: "Перейти в ленту", href: "/posts" }}
+        emptyActionLabel="Перейти в ленту"
+        emptyActionHref="/posts"
       />
     </div>
   );

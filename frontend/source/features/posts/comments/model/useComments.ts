@@ -27,10 +27,7 @@ export function useComments(postId: number, initial: ThreadPage) {
         });
       }
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "Не удалось загрузить комментарии";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsLoading(false);
     }

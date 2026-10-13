@@ -3,7 +3,13 @@ import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import { SERVER_API_URL } from "@/source/shared/api/config";
-import { POSTS_PAGE_SIZE, type Post, type PostPage, type ThreadPage } from "./model/types";
+import {
+  POSTS_PAGE_SIZE,
+  type Post,
+  type PostPage,
+  type PostStatus,
+  type ThreadPage,
+} from "./model/types";
 
 /** Запрос к API от имени посетителя: с сессией видны свои черновики и отметки лайков. */
 async function load(path: string): Promise<Response> {
@@ -17,16 +23,43 @@ async function load(path: string): Promise<Response> {
   });
 }
 
-/** Лента или лента автора с первой публикации по страницу page включительно. */
-export async function loadPostsFeed(page: number, authorId?: number): Promise<PostPage> {
-  const path = authorId ? `/posts/author/${authorId}` : "/posts/feed";
-  const limit = page * POSTS_PAGE_SIZE;
+/** Публикации раздела с первой по страницу page включительно.
+ *  null — раздел личный, а посетитель не вошёл. */
+export async function loadPosts(
+  path: string,
+  page: number,
+  status?: PostStatus,
+): Promise<PostPage | null> {
+  const query = new URLSearchParams({
+    limit: String(page * POSTS_PAGE_SIZE),
+    offset: "0",
+  });
+  if (status) {
+    query.set("status", status);
+  }
 
-  const response = await load(`${path}?limit=${limit}&offset=0`);
+  const response = await load(`${path}?${query}`);
+  if (response.status === 401) {
+    return null;
+  }
   if (!response.ok) {
     throw new Error(`Не удалось загрузить публикации: ${response.status}`);
   }
   return response.json();
+}
+
+/** Сколько новых публикаций в подписках. null — посетитель не вошёл. */
+export async function loadFollowingUnseen(): Promise<number | null> {
+  const response = await load("/posts/feed/following/unseen");
+  if (response.status === 401) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить новые публикации: ${response.status}`);
+  }
+
+  const unseen: { count: number } = await response.json();
+  return unseen.count;
 }
 
 /** Публикация для страницы и её метаданных — один запрос на рендер.

@@ -1,8 +1,5 @@
-"use client";
-
 import cn from "classnames";
 import Image from "next/image";
-import { useState } from "react";
 import s from "./post.module.scss";
 
 interface PostAvatarProps {
@@ -11,25 +8,14 @@ interface PostAvatarProps {
   className?: string;
 }
 
-/** Фото автора; если его нет или оно не загрузилось — первая буква имени. */
+/** Фото автора, а без фото — первая буква имени. */
 export function PostAvatar({ src, name, className }: PostAvatarProps) {
-  const [brokenSrc, setBrokenSrc] = useState<string | null>(null);
-  const showPhoto = src && src !== brokenSrc;
-  const initial = name.charAt(0).toUpperCase();
-
   return (
     <span className={cn(s.avatar, className)}>
-      {showPhoto ? (
-        <Image
-          src={src}
-          alt={name}
-          fill
-          sizes="64px"
-          unoptimized
-          onError={() => setBrokenSrc(src)}
-        />
+      {src ? (
+        <Image src={src} alt={name} fill sizes="64px" unoptimized />
       ) : (
-        <span aria-label={name}>{initial}</span>
+        <span aria-label={name}>{name.charAt(0).toUpperCase()}</span>
       )}
     </span>
   );

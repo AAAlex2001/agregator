@@ -23,6 +23,7 @@ from dependencies.posts import (
     get_follow_repository,
     get_like_comment_usecase,
     get_like_post_usecase,
+    get_load_following_feed_usecase,
     get_load_marks_usecase,
     get_load_threads_usecase,
     get_own_comment,
@@ -69,6 +70,7 @@ from services.posts.use_cases.create_repost import CreateRepostUseCase
 from services.posts.use_cases.delete_post import DeletePostUseCase
 from services.posts.use_cases.follow_author import FollowAuthorUseCase
 from services.posts.use_cases.like_post import LikePostUseCase
+from services.posts.use_cases.load_following_feed import LoadFollowingFeedUseCase
 from services.posts.use_cases.load_marks import LoadMarksUseCase
 from services.posts.use_cases.load_threads import LoadThreadsUseCase
 from services.posts.use_cases.manage_comment import EditCommentUseCase, LikeCommentUseCase
@@ -162,26 +164,16 @@ async def count_unseen_following(
     return UnseenSchema(count=count)
 
 
-@router.post("/feed/following/seen", status_code=status.HTTP_204_NO_CONTENT)
-async def mark_following_seen(
-    user: Account = Depends(require_user),
-    follows: FollowRepository = Depends(get_follow_repository),
-) -> None:
-    """Вкладка «Подписки» просмотрена: счётчик новых постов обнуляется."""
-
-    await follows.mark_feed_seen(user.id)
-
-
 @router.get("/feed/following")
 async def list_following_feed(
     page: PageQuery = Depends(),
     user: Account = Depends(require_user),
-    posts: PostRepository = Depends(get_post_repository),
+    usecase: LoadFollowingFeedUseCase = Depends(get_load_following_feed_usecase),
     marks: LoadMarksUseCase = Depends(get_load_marks_usecase),
 ) -> PostPageSchema:
-    """Лента «Подписки»: посты и репосты авторов, на которых вы подписаны."""
+    """Лента «Подписки». Первая страница обнуляет счётчик новых постов."""
 
-    items, total = await posts.list_following(user.id, page.limit, page.offset)
+    items, total = await usecase.execute(user, page.limit, page.offset)
     viewer_marks = await marks.execute(user, items)
     return PostPageSchema.for_viewer(items, total, viewer_marks)
 

@@ -3,7 +3,6 @@ export type {
   Post,
   PostAuthor,
   PostComment,
-  PostFeedQuery,
   PostLikes,
   PostMedia,
   PostPage,
@@ -13,7 +12,6 @@ export type {
   ThreadPage,
 } from "./model/types";
 export { POSTS_MAX_PAGE, POSTS_PAGE_SIZE } from "./model/types";
-export { fetchFollowingUnseen, fetchPostPage, markFollowingSeen } from "./api/feed.api";
 export { createPost, deletePost, repostPost, updatePost } from "./api/post.api";
 export {
   countPostView,
@@ -33,7 +31,7 @@ export {
   updateComment,
 } from "./api/comments.api";
 export { copyPostLink } from "./lib/copyPostLink";
-export { postFeedUrl, readPostFeedPage, type PostFeedParams } from "./lib/postFeedPage";
+export { nextPostListUrl, postListUrl, readPage } from "./lib/postListPage";
 export { postMetadata, postUrl } from "./lib/postSeo";
 export { CommentCard } from "./ui/CommentCard";
 export { OriginalPost } from "./ui/OriginalPost";

@@ -45,6 +45,7 @@ from services.posts.use_cases.create_repost import CreateRepostUseCase
 from services.posts.use_cases.delete_post import DeletePostUseCase
 from services.posts.use_cases.follow_author import FollowAuthorUseCase
 from services.posts.use_cases.like_post import LikePostUseCase
+from services.posts.use_cases.load_following_feed import LoadFollowingFeedUseCase
 from services.posts.use_cases.load_marks import LoadMarksUseCase
 from services.posts.use_cases.load_threads import LoadThreadsUseCase
 from services.posts.use_cases.manage_comment import EditCommentUseCase, LikeCommentUseCase
@@ -123,6 +124,14 @@ def get_load_marks_usecase(
 ) -> LoadMarksUseCase:
     """Отметки того, кто смотрит посты."""
     return LoadMarksUseCase(likes, saves, follows)
+
+
+def get_load_following_feed_usecase(
+    posts: PostRepository = Depends(get_post_repository),
+    follows: FollowRepository = Depends(get_follow_repository),
+) -> LoadFollowingFeedUseCase:
+    """Лента подписок."""
+    return LoadFollowingFeedUseCase(posts, follows)
 
 
 def get_load_threads_usecase(

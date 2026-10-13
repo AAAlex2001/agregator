@@ -109,7 +109,7 @@ async def test_following_feed_and_unseen(post_client):
     await publish(client, "<p>Новый пост</p>")
     login(client, 1)
     assert (await client.get("/api/posts/feed/following/unseen")).json()["count"] == 1
-    assert (await client.post("/api/posts/feed/following/seen")).status_code == 204
+    assert (await client.get("/api/posts/feed/following")).json()["total"] == 2
     assert (await client.get("/api/posts/feed/following/unseen")).json()["count"] == 0
     assert (await client.delete(f"/api/posts/authors/{author_id}/follow")).status_code == 204
     assert (await client.get("/api/posts/feed/following")).json()["total"] == 0

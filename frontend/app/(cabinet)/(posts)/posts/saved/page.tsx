@@ -1,17 +1,30 @@
 import type { Metadata } from "next";
+import { nextPostListUrl, readPage } from "@/source/entities/posts";
+import { loadPosts } from "@/source/entities/posts/server";
+import { PostsSignIn } from "@/source/widgets/posts/layout";
 import { SavedPosts } from "@/source/widgets/posts/saved";
-import { PostAccess } from "@/source/widgets/posts/layout";
 
 export const metadata: Metadata = {
   title: "Сохранённые публикации",
   robots: { index: false, follow: false },
 };
 
-/** Открывает личный раздел публикаций после входа. */
-export default function Page() {
+interface SavedPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+/** Сохранённые публикации, недавно сохранённые первыми. */
+export default async function SavedPage({ searchParams }: SavedPageProps) {
+  const page = readPage((await searchParams).page);
+  const list = await loadPosts("/posts/saved", page);
+  if (!list) {
+    return <PostsSignIn />;
+  }
+
   return (
-    <PostAccess>
-      <SavedPosts />
-    </PostAccess>
+    <SavedPosts
+      posts={list.items}
+      nextPageHref={nextPostListUrl(list, page, "/posts/saved")}
+    />
   );
 }

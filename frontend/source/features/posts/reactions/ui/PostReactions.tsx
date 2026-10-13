@@ -17,28 +17,21 @@ import s from "./reactions.module.scss";
 
 interface PostReactionsProps {
   post: Post;
-  onUnsaved?: () => void;
 }
 
 /** Нижняя панель публикации: лайк, комментарии, репост, сохранение и ссылка. */
-export function PostReactions({ post, onUnsaved }: PostReactionsProps) {
-  const state = usePostReactions(post, onUnsaved);
+export function PostReactions({ post }: PostReactionsProps) {
+  const state = usePostReactions(post);
   const quickRepost = {
     label: "Репостнуть",
     icon: <RepostIcon />,
     onClick: state.repost,
   };
-  const commentedRepost = state.signedIn
-    ? {
-        label: "Репост с комментарием",
-        icon: <PencilIcon />,
-        href: `/posts/${post.id}/repost`,
-      }
-    : {
-        label: "Репост с комментарием",
-        icon: <PencilIcon />,
-        onClick: () => state.openAuth("login"),
-      };
+  const commentedRepost = {
+    label: "Репост с комментарием",
+    icon: <PencilIcon />,
+    href: `/posts/${post.id}/repost`,
+  };
 
   return (
     <div className={s.panel}>

@@ -78,8 +78,3 @@ export interface ThreadPage {
   total: number;
   comments_count: number;
 }
-
-export interface PostFeedQuery {
-  mode: "following" | "my" | "saved" | "reposts";
-  status?: PostStatus;
-}

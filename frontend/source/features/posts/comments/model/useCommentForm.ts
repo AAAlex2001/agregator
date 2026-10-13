@@ -30,10 +30,7 @@ export function useCommentForm({ postId, comment, replyTo, onSaved }: CommentFor
       setText("");
       onSaved();
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "Не удалось сохранить комментарий";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsSending(false);
     }

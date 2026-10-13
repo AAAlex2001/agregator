@@ -1,3 +1,4 @@
+import { ordersPath } from "@/source/entities/session";
 import type { UserRole } from "@/source/entities/user";
 
 interface SectionTab {
@@ -5,51 +6,43 @@ interface SectionTab {
   label: string;
 }
 
-/** Возвращает вкладки текущего раздела с учётом роли. */
+const CUSTOMER_ORDER_TABS: SectionTab[] = [
+  { href: "/customer/orders", label: "Все заказы" },
+  { href: "/responses", label: "Отклики" },
+  { href: "/customer/orders/new", label: "Создать заказ" },
+  { href: "/archive", label: "Архивные заказы" },
+  { href: "/customer/reports", label: "Отчёты" },
+];
+
+const EXPERT_ORDER_TABS: SectionTab[] = [
+  { href: "/expert/orders", label: "Все заказы" },
+  { href: "/responses", label: "Мои отклики" },
+  { href: "/archive", label: "Архивные заказы" },
+];
+
+const CUSTOMER_CHAT_TABS: SectionTab[] = [
+  { href: "/chat", label: "Чаты по заказам" },
+];
+
+const EXPERT_CHAT_TABS: SectionTab[] = [
+  { href: "/chat", label: "Чаты по заказам" },
+  { href: "/expert/room", label: "Чат исполнителей" },
+];
+
+/** Вкладки раздела «Заказы» или «Чаты» для заказчика и исполнителя; на других страницах — нет. */
 export function getSectionTabs(pathname: string, role: UserRole | null): SectionTab[] {
   if (role !== "EXPERT" && role !== "CUSTOMER") {
     return [];
   }
 
-  const isChatPage =
-    pathname === "/chat" || pathname.startsWith("/chat/") || pathname === "/expert/room";
-
+  const isExpert = role === "EXPERT";
+  const isChatPage = pathname.startsWith("/chat") || pathname === "/expert/room";
   if (isChatPage) {
-    const tabs = [{ href: "/chat", label: "Чаты по заказам" }];
-
-    if (role === "EXPERT") {
-      tabs.push({ href: "/expert/room", label: "Чат исполнителей" });
-    }
-
-    return tabs;
+    return isExpert ? EXPERT_CHAT_TABS : CUSTOMER_CHAT_TABS;
   }
 
-  const ordersPath = role === "EXPERT" ? "/expert/orders" : "/customer/orders";
-  const isOrdersPage = pathname === ordersPath
-    || pathname.startsWith(`${ordersPath}/`)
-    || pathname === "/responses"
-    || pathname === "/archive"
-    || (role === "CUSTOMER" && pathname === "/customer/reports");
-
-  if (!isOrdersPage) {
-    return [];
-  }
-
-  const responsesLabel = role === "EXPERT" ? "Мои отклики" : "Отклики";
-  const tabs = [
-    { href: ordersPath, label: "Все заказы" },
-    { href: "/responses", label: responsesLabel },
-  ];
-
-  if (role === "CUSTOMER") {
-    tabs.push({ href: "/customer/orders/new", label: "Создать заказ" });
-  }
-
-  tabs.push({ href: "/archive", label: "Архивные заказы" });
-
-  if (role === "CUSTOMER") {
-    tabs.push({ href: "/customer/reports", label: "Отчёты" });
-  }
-
-  return tabs;
+  const orderTabs = isExpert ? EXPERT_ORDER_TABS : CUSTOMER_ORDER_TABS;
+  const isOrderPage =
+    pathname.startsWith(ordersPath(role)) || orderTabs.some((tab) => tab.href === pathname);
+  return isOrderPage ? orderTabs : [];
 }

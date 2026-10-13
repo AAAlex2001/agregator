@@ -9,11 +9,10 @@ interface PostItemProps {
   post: Post;
   showOpen?: boolean;
   onDeleted: () => void;
-  onUnsaved?: () => void;
 }
 
 /** Публикация с меню, реакциями и учётом просмотра. */
-export function PostItem({ post, showOpen = true, onDeleted, onUnsaved }: PostItemProps) {
+export function PostItem({ post, showOpen = true, onDeleted }: PostItemProps) {
   const isPublished = post.status === "published";
   const card = usePostView(post.id, isPublished);
 
@@ -22,7 +21,7 @@ export function PostItem({ post, showOpen = true, onDeleted, onUnsaved }: PostIt
       ref={card}
       post={post}
       menu={<PostMenu post={post} showOpen={showOpen} onDeleted={onDeleted} />}
-      footer={isPublished && <PostReactions post={post} onUnsaved={onUnsaved} />}
+      footer={isPublished && <PostReactions post={post} />}
     />
   );
 }

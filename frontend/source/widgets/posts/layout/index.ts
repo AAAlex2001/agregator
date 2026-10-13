@@ -1,2 +1,2 @@
 export { PostsSiteShell } from "./ui/PostsSiteShell";
-export { PostAccess } from "./ui/PostAccess";
+export { PostAccess, PostsSignIn } from "./ui/PostAccess";

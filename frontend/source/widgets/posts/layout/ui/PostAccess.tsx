@@ -4,30 +4,12 @@ import type { ReactNode } from "react";
 import { useSession } from "@/source/entities/session";
 import { useAuthModal } from "@/source/shared/lib/auth-modal";
 import Button from "@/source/shared/ui/Button";
-import { PostsSkeleton } from "../../skeleton";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
 import s from "./PostsLayout.module.scss";
 
-interface PostAccessProps {
-  children: ReactNode;
-  loadingFallback?: ReactNode;
-}
-
-/** Личный раздел публикаций: гостю вместо него — предложение войти. */
-export function PostAccess({
-  children,
-  loadingFallback = <PostsSkeleton />,
-}: PostAccessProps) {
-  const { user, isLoading } = useSession();
+/** Предложение войти вместо личного раздела публикаций. */
+export function PostsSignIn() {
   const { openAuth } = useAuthModal();
-
-  if (user) {
-    return children;
-  }
-
-  if (isLoading) {
-    return loadingFallback;
-  }
 
   return (
     <section className={s.access}>
@@ -39,4 +21,23 @@ export function PostAccess({
       <Button onClick={() => openAuth("login")}>Войти</Button>
     </section>
   );
+}
+
+interface PostAccessProps {
+  children: ReactNode;
+}
+
+/** Форма публикации только для вошедших: гостю — предложение войти. */
+export function PostAccess({ children }: PostAccessProps) {
+  const { user, isLoading } = useSession();
+
+  if (user) {
+    return children;
+  }
+
+  if (isLoading) {
+    return null;
+  }
+
+  return <PostsSignIn />;
 }

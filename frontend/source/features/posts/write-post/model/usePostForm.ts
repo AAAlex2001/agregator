@@ -50,10 +50,7 @@ export function usePostForm(post: Post | undefined) {
       const nextUrl = mode === "draft" ? "/posts/my?status=draft" : "/posts/my";
       router.push(nextUrl);
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "Не удалось сохранить публикацию";
-      showError(message);
+      showError((error as Error).message);
       setSavingMode(null);
     }
   };

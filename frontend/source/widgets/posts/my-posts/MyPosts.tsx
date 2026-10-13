@@ -1,8 +1,8 @@
 "use client";
 
 import cn from "classnames";
-import { useState } from "react";
-import { PostAvatar, type PostStatus } from "@/source/entities/posts";
+import Link from "next/link";
+import { PostAvatar, type Post, type PostStatus } from "@/source/entities/posts";
 import { useSession } from "@/source/entities/session";
 import Button from "@/source/shared/ui/Button";
 import { Subtitle, Title } from "@/source/shared/ui/Typography";
@@ -28,13 +28,14 @@ const TABS: { status: PostStatus; label: string; hint: string }[] = [
 ];
 
 interface MyPostsProps {
-  initialStatus: PostStatus;
+  status: PostStatus;
+  posts: Post[];
+  nextPageHref?: string;
 }
 
-/** Свои публикации по вкладкам: опубликованные, черновики и скрытые модератором. */
-export function MyPosts({ initialStatus }: MyPostsProps) {
+/** Свои публикации по вкладкам-ссылкам: опубликованные, черновики и скрытые модератором. */
+export function MyPosts({ status, posts, nextPageHref }: MyPostsProps) {
   const { user } = useSession();
-  const [status, setStatus] = useState(initialStatus);
   const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
   const name = fullName || "Мой профиль";
   const current = TABS.find((tab) => tab.status === status);
@@ -55,31 +56,25 @@ export function MyPosts({ initialStatus }: MyPostsProps) {
         <PostAvatar src={user?.avatar_url ?? null} name={name} className={s.avatar} />
         <Title as="h2" text={name} className={s.profileTitle} />
       </div>
-      <div className={s.tabs} role="tablist" aria-label="Мои публикации">
-        {TABS.map((tab) => {
-          const isActive = status === tab.status;
-
-          return (
-            <button
-              key={tab.status}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              className={cn(s.tab, { [s.active]: isActive })}
-              onClick={() => setStatus(tab.status)}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <nav className={s.tabs} aria-label="Мои публикации">
+        {TABS.map((tab) => (
+          <Link
+            key={tab.status}
+            href={`/posts/my?status=${tab.status}`}
+            className={cn(s.tab, { [s.active]: tab.status === status })}
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </nav>
       <p className={s.hint}>{current?.hint}</p>
       <PostList
-        key={status}
-        query={{ mode: "my", status }}
+        posts={posts}
+        nextPageHref={nextPageHref}
         emptyTitle="Здесь пока пусто"
         emptyText="Расскажите о своём опыте и услугах: текст, фото и видео."
-        emptyAction={{ label: "Написать пост", href: "/posts/new" }}
+        emptyActionLabel="Написать пост"
+        emptyActionHref="/posts/new"
       />
     </div>
   );

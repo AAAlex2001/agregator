@@ -1,27 +1,28 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import {
-  POSTS_MAX_PAGE,
-  postFeedUrl,
-  readPostFeedPage,
-  type PostFeedParams,
-} from "@/source/entities/posts";
-import { loadPostsFeed } from "@/source/entities/posts/server";
-import { FeedList, PostsFeed } from "@/source/widgets/posts/feed";
+import { nextPostListUrl, postListUrl, readPage } from "@/source/entities/posts";
+import { loadFollowingUnseen, loadPosts } from "@/source/entities/posts/server";
+import { PostsFeed } from "@/source/widgets/posts/feed";
+import { PostList } from "@/source/widgets/posts/list";
 import { PostsSkeleton } from "@/source/widgets/posts/skeleton";
 
 interface PostsPageProps {
-  searchParams: Promise<PostFeedParams>;
+  searchParams: Promise<{ author?: string; page?: string }>;
 }
 
 const DESCRIPTION =
   "Опыт, новости и публикации специалистов промышленной безопасности на Ресурс-Плюс.";
 
+/** Автор из адреса ленты: ?author=12 — лента автора, иначе общая. */
+function authorParams(authorId: number | undefined): Record<string, string> {
+  return authorId ? { author: String(authorId) } : {};
+}
+
 /** Лента и лента автора. Страницы «Показать ещё» дополняют первую, поэтому адрес у ленты один. */
 export async function generateMetadata({ searchParams }: PostsPageProps): Promise<Metadata> {
-  const { authorId } = readPostFeedPage(await searchParams);
+  const authorId = Number((await searchParams).author) || undefined;
   const title = authorId ? "Публикации автора" : "Публикации сообщества";
-  const url = postFeedUrl(1, authorId);
+  const url = postListUrl("/posts", 1, authorParams(authorId));
 
   return {
     title,
@@ -45,23 +46,32 @@ interface FeedPageProps {
 
 /** Публикации с первой по текущую страницу сразу в разметке и ссылка на следующую. */
 async function FeedPage({ page, authorId }: FeedPageProps) {
-  const feed = await loadPostsFeed(page, authorId);
-  const hasMore = feed.items.length < feed.total && page < POSTS_MAX_PAGE;
-  const nextPageHref = hasMore ? postFeedUrl(page + 1, authorId) : undefined;
+  const path = authorId ? `/posts/author/${authorId}` : "/posts/feed";
+  const feed = await loadPosts(path, page);
+  if (!feed) {
+    return null;
+  }
 
   return (
-    <FeedList
+    <PostList
       posts={feed.items}
-      nextPageHref={nextPageHref}
+      nextPageHref={nextPostListUrl(feed, page, "/posts", authorParams(authorId))}
+      emptyTitle="Публикаций пока нет"
+      emptyText="Поделитесь опытом, новостями и полезными материалами."
+      emptyActionLabel="Написать пост"
+      emptyActionHref="/posts/new"
     />
   );
 }
 
 export default async function PostsPage({ searchParams }: PostsPageProps) {
-  const { authorId, page } = readPostFeedPage(await searchParams);
+  const params = await searchParams;
+  const page = readPage(params.page);
+  const authorId = Number(params.author) || undefined;
+  const unseenCount = await loadFollowingUnseen();
 
   return (
-    <PostsFeed key={authorId ?? "all"} authorId={authorId}>
+    <PostsFeed tab="all" authorId={authorId} unseenCount={unseenCount}>
       <Suspense fallback={<PostsSkeleton />}>
         <FeedPage page={page} authorId={authorId} />
       </Suspense>

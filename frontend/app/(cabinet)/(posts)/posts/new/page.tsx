@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Открывает личный раздел публикаций после входа. */
 export default function Page() {
   return (
-    <PostAccess loadingFallback={null}>
+    <PostAccess>
       <PostEditor />
     </PostAccess>
   );

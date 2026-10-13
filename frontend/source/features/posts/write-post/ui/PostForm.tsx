@@ -1,7 +1,6 @@
 "use client";
 
-import { PostHead, type Post } from "@/source/entities/posts";
-import { useSession } from "@/source/entities/session";
+import type { Post } from "@/source/entities/posts";
 import Button from "@/source/shared/ui/Button";
 import { RichTextEditor, type EditorPanel } from "@/source/shared/ui/RichTextEditor";
 import { useAiAssistant } from "../model/useAiAssistant";
@@ -16,12 +15,9 @@ interface PostFormProps {
   post?: Post;
 }
 
-/**
- * Новая публикация или правка своей: текст с ИИ-помощником, фото и видео,
- * черновик или публикация.
- */
+/** Новая публикация или правка своей: текст с ИИ-помощником, фото и видео,
+ *  черновик или публикация. */
 export function PostForm({ post }: PostFormProps) {
-  const { user } = useSession();
   const form = usePostForm(post);
   const media = usePostMedia(post?.media ?? []);
   const assistant = useAiAssistant();
@@ -48,15 +44,6 @@ export function PostForm({ post }: PostFormProps) {
         void form.save("publish", media.files);
       }}
     >
-      {user && (
-        <PostHead
-          author={{
-            id: user.id,
-            name: [user.first_name, user.last_name].filter(Boolean).join(" ") || "Пользователь",
-            avatar_url: user.avatar_url,
-          }}
-        />
-      )}
       <RichTextEditor
         ariaLabel="Текст публикации"
         placeholder="Что у вас нового?"
@@ -67,12 +54,10 @@ export function PostForm({ post }: PostFormProps) {
       />
       <PostMediaPicker
         files={media.files}
-        uploading={media.uploading}
-        removingId={media.removingId}
         disabled={isLocked}
+        isBusy={media.isBusy}
         onUpload={media.upload}
         onRemove={media.remove}
-        onMove={media.move}
       />
       <div className={s.actions}>
         <Button variant="transparent" href="/posts/my" disabled={isSaving}>

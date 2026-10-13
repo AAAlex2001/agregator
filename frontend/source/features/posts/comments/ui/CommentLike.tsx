@@ -32,8 +32,7 @@ export function CommentLike({ comment }: CommentLikeProps) {
       setLiked(result.liked);
       setLikes(result.likes_count);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Не удалось изменить лайк";
-      showError(message);
+      showError((error as Error).message);
     } finally {
       setIsBusy(false);
     }
