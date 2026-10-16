@@ -1,0 +1,18 @@
+.contact {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--color-orange-bg-soft);
+  color: var(--color-orange-primary);
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14px;
+  text-decoration: none;
+  word-break: break-all;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-orange-badge-hover);
+  }
+}

@@ -1,0 +1,80 @@
+.catalog {
+  width: 100%;
+  max-width: 1340px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  margin-bottom: 16px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding-inline: 7px;
+  border-radius: 14px;
+  background: var(--color-surface-muted);
+  color: var(--color-text-placeholder);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.search {
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex: 0 1 500px;
+    max-width: 500px;
+  }
+}
+
+.search svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-placeholder);
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  @media (min-width: 1440px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.accessTabs {
+  width: 100%;
+
+  @media (min-width: 1440px) {
+    width: auto;
+    min-width: 0;
+  }
+}

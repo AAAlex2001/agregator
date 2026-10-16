@@ -1,0 +1,133 @@
+.plateWrap {
+  position: relative;
+}
+
+.plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 5px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.chevron {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 95;
+  padding-top: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease,
+    visibility 0.16s;
+}
+
+.dropRight {
+  left: auto;
+  right: 0;
+}
+
+.panel {
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  max-height: 70vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-sidebar);
+  border-radius: 16px;
+  box-shadow: 0 16px 44px var(--color-shadow-navigation-panel);
+  padding: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plateWrap:hover,
+.plateWrap:focus-within {
+  .plate {
+    background: var(--plate-bg);
+    color: var(--plate-color);
+  }
+
+  .chevron {
+    transform: rotate(180deg);
+  }
+
+  .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+.indigo {
+  --plate-color: var(--color-capability-indigo-text);
+  --plate-bg: var(--color-capability-indigo-surface);
+}
+
+.amber {
+  --plate-color: var(--color-capability-amber-text);
+  --plate-bg: var(--color-capability-amber-surface);
+}
+
+.green {
+  --plate-color: var(--color-capability-green-text);
+  --plate-bg: var(--color-capability-green-surface);
+}
+
+.red {
+  --plate-color: var(--color-capability-red-text);
+  --plate-bg: var(--color-capability-red-surface);
+}
+
+.gold {
+  --plate-color: var(--color-rtn-plate-text);
+  --plate-bg: var(--color-rtn-plate-surface);
+}
+
+.gold .plate {
+  color: var(--plate-color);
+}
+
+.plateLogo {
+  color: var(--color-tech-expert-text);
+
+  svg {
+    width: 126px;
+    height: auto;
+    display: block;
+  }
+}
+
+.plateWrap:hover .plateLogo {
+  background: transparent;
+  color: var(--color-tech-expert-text);
+}

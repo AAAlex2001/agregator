@@ -1,0 +1,72 @@
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--color-text-option);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-select-option-hover);
+  }
+}
+
+.optionActive {
+  color: var(--color-text-primary);
+
+  .box {
+    border-color: var(--color-orange-primary);
+    background: var(--color-orange-primary)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8.4L6.3 11.6L13 4.8' stroke='%23FFFFFF' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat center / 14px 14px;
+  }
+
+  .optionTop {
+    font-weight: 700;
+  }
+}
+
+.box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border-select-check);
+  border-radius: 5px;
+  background: var(--color-surface);
+}
+
+.optionIcon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.optionLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.optionTop {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.optionBottom {
+  font-size: 12.5px;
+  line-height: 16px;
+  color: var(--color-text-select-hint);
+}

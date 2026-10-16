@@ -1,0 +1,101 @@
+.editor,
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.body {
+  gap: 8px;
+}
+
+.field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  min-height: 160px;
+  color: var(--color-text-primary);
+  background: var(--background);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  outline: none;
+  font: 400 16px/24px "Montserrat";
+  font-synthesis: style;
+  overflow-wrap: anywhere;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: var(--color-orange-primary);
+  }
+
+  p {
+    min-height: 24px;
+  }
+
+  p + p {
+    margin-top: 8px;
+  }
+
+  h2,
+  h3 {
+    font-weight: 700;
+  }
+
+  h2 {
+    margin: 20px 0 8px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  h3 {
+    margin: 16px 0 8px;
+    font-size: 18px;
+  }
+
+  h2:first-child,
+  h3:first-child {
+    margin-top: 0;
+  }
+
+  ul,
+  ol {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li + li {
+    margin-top: 4px;
+  }
+
+  li p {
+    min-height: 0;
+  }
+
+  blockquote {
+    margin: 8px 0;
+    padding-left: 12px;
+    color: var(--color-text-secondary);
+    border-left: 3px solid var(--color-border-soft);
+  }
+
+  a {
+    color: var(--color-orange-accent);
+    text-decoration: underline;
+  }
+
+  :global(p.is-editor-empty:first-child)::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+}

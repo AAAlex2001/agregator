@@ -1,0 +1,13 @@
+.access {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding-block: 24px;
+}
+
+.access .subtitle {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}

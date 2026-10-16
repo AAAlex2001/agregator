@@ -1,0 +1,35 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prompt {
+  flex: 1;
+  min-width: 0;
+}
+
+.send {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+button.send {
+  border: 0;
+  background: transparent;
+  color: var(--color-orange-accent);
+  cursor: pointer;
+}
+
+button.send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.send:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}

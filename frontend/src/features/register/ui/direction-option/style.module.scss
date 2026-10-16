@@ -1,0 +1,45 @@
+.item {
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-select);
+  border-radius: 14px;
+  background: var(--color-surface);
+  transition: border-color 0.15s ease;
+}
+
+.itemActive {
+  border-color: var(--color-orange-primary);
+}
+
+.checkbox {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.title {
+  display: block;
+  font-size: var(--profile-label-size);
+  line-height: var(--profile-label-line);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.text {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-profile-divider);
+}

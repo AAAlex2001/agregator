@@ -1,0 +1,68 @@
+.root {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+  user-select: none;
+}
+
+.input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.box {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 4px;
+  border: 1.5px solid var(--color-border-disabled);
+  background: var(--color-surface);
+  color: transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.root:hover .box,
+.input:focus-visible + .box {
+  border-color: var(--color-orange-primary);
+}
+
+.input:checked + .box {
+  background: var(--color-orange-primary);
+  border-color: var(--color-orange-primary);
+  color: var(--color-surface);
+}
+
+.input:disabled + .box {
+  background: var(--color-surface-muted);
+  border-color: var(--color-input-border);
+  cursor: not-allowed;
+}
+
+.hasError .box,
+.hasError:hover .box {
+  border-color: var(--color-error-field);
+}
+
+.check {
+  width: 12px;
+  height: 12px;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+}

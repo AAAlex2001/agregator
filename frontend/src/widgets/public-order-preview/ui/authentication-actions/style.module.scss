@@ -1,0 +1,30 @@
+.divider {
+  height: 1px;
+  background: var(--color-orange-soft);
+  width: 100%;
+}
+
+.ctaText {
+  font-family: "Montserrat";
+  font-size: 14px;
+  color: var(--color-text-placeholder);
+  text-align: center;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
+
+.actionLink {
+  display: block;
+  text-decoration: none;
+  flex: 1;
+}

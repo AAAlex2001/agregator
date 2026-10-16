@@ -1,0 +1,19 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.message {
+  margin: 0;
+  padding: 20px 12px;
+  text-align: center;
+  color: var(--color-text-navigation-description);
+  font-size: 13px;
+}

@@ -1,0 +1,100 @@
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  padding: 12px 14px 14px 16px;
+  border-radius: 16px;
+}
+
+.unread {
+  background: var(--color-notification-unread-surface);
+  border: 1px solid transparent;
+}
+
+.read {
+  background: var(--color-surface);
+  border: 1px solid var(--color-icon-muted);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 5px;
+  width: 100%;
+}
+
+.title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-black);
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-timer);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-notification-time);
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+}
+
+.text {
+  width: 100%;
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-label);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.time {
+  width: 100%;
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: var(--color-notification-time);
+}
+
+.actionButton {
+  min-height: 44px;
+  padding: 16px 24px !important;
+  font-size: 14px !important;
+  line-height: 17px !important;
+}

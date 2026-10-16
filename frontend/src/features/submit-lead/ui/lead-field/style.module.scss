@@ -1,0 +1,19 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldWide {
+  @media (min-width: 768px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.label {
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}

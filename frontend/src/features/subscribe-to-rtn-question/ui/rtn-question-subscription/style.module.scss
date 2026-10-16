@@ -1,0 +1,39 @@
+﻿.subscribe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-rtn-subscription-surface);
+}
+
+.label {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-breadcrumb);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 13px 16px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 10px;
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 125%;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-orange-bright);
+  }
+}
+

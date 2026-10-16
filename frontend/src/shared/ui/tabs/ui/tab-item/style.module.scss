@@ -1,0 +1,102 @@
+.outlined {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 25px;
+  transition: background-color 0.5s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--color-orange-soft);
+  }
+}
+
+.outlinedActive {
+  background-color: var(--color-orange-soft);
+}
+
+@media (min-width: 768px) {
+  .outlined {
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
+
+.squared {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--color-text-option);
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.squaredActive {
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+  box-shadow: 0 2px 8px var(--color-shadow-segment);
+}
+
+.pill {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 8px;
+  height: 44px;
+  background: var(--color-surface-pill);
+  border: 1px solid var(--color-orange-border-translucent);
+  border-radius: 40px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-orange-soft);
+  }
+}
+
+.pillActive {
+  border-color: var(--color-orange-soft);
+  background: var(--color-shadow-orange-soft);
+}
+
+.pillWithCount {
+  padding: 10px 8px 10px 14px;
+}
+
+.pillCount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--color-orange-soft);
+  border-radius: 21px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-primary);
+}

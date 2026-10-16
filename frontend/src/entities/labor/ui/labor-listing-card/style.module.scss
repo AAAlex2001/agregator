@@ -1,0 +1,114 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-labor-card-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 6px 22px var(--color-labor-card-shadow);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 23px;
+}
+
+.kind {
+  margin: 4px 0 0;
+  color: var(--color-text-help);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.region {
+  align-self: flex-start;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--color-labor-region-surface);
+  color: var(--color-orange-notice-text);
+  font-size: 12px;
+
+  @media (min-width: 768px) {
+    align-self: auto;
+  }
+}
+
+.certificates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certificate {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--color-surface-selected);
+  color: var(--color-text-body);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.otherProfession {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-orange-soft);
+  border-radius: 12px;
+  background: var(--color-orange-surface);
+}
+
+.otherProfessionLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-orange-primary);
+}
+
+.otherProfessionText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-body);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  dt {
+    color: var(--color-labor-meta-label);
+    font-size: 12px;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--color-text-body);
+    font-size: 14px;
+    line-height: 19px;
+  }
+}

@@ -1,0 +1,43 @@
+.gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ring {
+  position: relative;
+  flex: 0 0 78px;
+  width: 78px;
+  height: 78px;
+}
+
+.value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.unit {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-tool-gauge-unit);
+}
+
+.label {
+  max-width: 120px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-tool-gauge-label);
+  text-align: center;
+  line-height: 1.3;
+}

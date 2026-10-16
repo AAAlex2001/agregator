@@ -1,0 +1,35 @@
+﻿.reply {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-select-menu);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.author {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.date {
+  font-size: 12.5px;
+  color: var(--color-comment-date);
+}
+
+.text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-rtn-classification-text);
+}
+

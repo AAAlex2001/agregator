@@ -1,0 +1,142 @@
+.plates {
+  display: none;
+
+  @media (min-width: 1440px) {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-right: auto;
+  }
+}
+
+.plateWrap {
+  position: relative;
+}
+
+.plateWrapLocked {
+  .plate {
+    cursor: help;
+  }
+
+  .plate:focus-visible {
+    outline: 2px solid var(--plate-color);
+    outline-offset: 2px;
+  }
+}
+
+.plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.plateLabel {
+  display: inline-flex;
+  align-items: center;
+}
+
+.plateLabelMultiline {
+  flex-direction: column;
+  align-items: center;
+  line-height: 16px;
+  text-align: center;
+  white-space: normal;
+}
+
+.platesCompact {
+  .plate {
+    gap: 4px;
+    padding: 8px 5px;
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .plateLabelMultiline {
+    line-height: 16px;
+  }
+
+  .plateLogo svg {
+    width: 126px;
+  }
+}
+
+.plates.platesCompact {
+  margin-right: 0;
+}
+
+.chevron {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.2s ease;
+}
+
+.plateWrap:hover,
+.plateWrap:focus-within {
+  .plate {
+    background: var(--plate-bg);
+    color: var(--plate-color);
+  }
+
+  .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.indigo {
+  --plate-color: var(--color-capability-indigo-text);
+  --plate-bg: var(--color-capability-indigo-surface);
+}
+
+.amber {
+  --plate-color: var(--color-capability-amber-text);
+  --plate-bg: var(--color-capability-amber-surface);
+}
+
+.green {
+  --plate-color: var(--color-capability-green-text);
+  --plate-bg: var(--color-capability-green-surface);
+}
+
+.red {
+  --plate-color: var(--color-capability-red-text);
+  --plate-bg: var(--color-capability-red-surface);
+}
+
+.gold {
+  --plate-color: var(--color-rtn-plate-text);
+  --plate-bg: var(--color-rtn-plate-surface);
+}
+
+.gold .plate {
+  color: var(--plate-color);
+}
+
+.plateLogo {
+  color: var(--color-tech-expert-text);
+
+  svg {
+    width: 150px;
+    height: auto;
+    display: block;
+  }
+}
+
+.plateWrap:hover .plateLogo {
+  background: transparent;
+  color: var(--color-tech-expert-text);
+}

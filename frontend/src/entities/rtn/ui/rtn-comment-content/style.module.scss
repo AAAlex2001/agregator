@@ -1,0 +1,40 @@
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.author {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.expert {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-comment-expert-surface);
+  color: var(--color-comment-expert-text);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.date {
+  font-size: 13px;
+  color: var(--color-comment-date);
+}
+
+.text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-comment-text);
+  white-space: pre-wrap;
+}

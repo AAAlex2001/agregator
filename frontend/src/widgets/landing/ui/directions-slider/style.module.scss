@@ -1,0 +1,55 @@
+.section {
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  padding: 0 var(--page-px);
+}
+
+.panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 24px;
+  background: var(--color-landing-directions-surface);
+  box-shadow: 0 6px 28px var(--color-landing-panel-shadow);
+
+  @media (min-width: 1440px) {
+    padding: 24px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.headCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.arrows {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.swiper :global(.swiper-slide) {
+  width: 380px;
+  max-width: 86vw;
+  height: auto;
+  display: flex;
+}
+
+.cardButton {
+  margin-top: auto;
+}

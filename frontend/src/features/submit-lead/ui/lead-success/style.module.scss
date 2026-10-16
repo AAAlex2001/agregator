@@ -1,0 +1,33 @@
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background: var(--color-surface);
+  text-align: center;
+  box-shadow: 0 10px 30px var(--color-lead-form-shadow);
+}
+
+.doneTitle {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.doneText {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--color-text-option);
+}
+
+.doneButton {
+  margin-top: 4px;
+  min-height: 48px;
+}

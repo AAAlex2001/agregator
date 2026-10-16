@@ -1,0 +1,47 @@
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 15px;
+  color: var(--color-text-primary);
+  text-align: left;
+}
+
+.radio {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 100px;
+  background: var(--color-surface);
+  box-shadow:
+    0 2px 5px var(--color-sort-radio-shadow),
+    0 0 0 1px var(--color-sort-radio-border),
+    0 1px 1px var(--color-shadow-toast);
+}
+
+.radioChecked {
+  background: var(--color-orange-primary);
+  box-shadow: none;
+}
+
+.radioDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: var(--color-surface);
+}
+
+.optionText {
+  flex-grow: 1;
+}

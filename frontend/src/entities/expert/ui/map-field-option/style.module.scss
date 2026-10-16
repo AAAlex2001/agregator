@@ -1,0 +1,24 @@
+.option {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: var(--color-orange-bg-soft);
+    color: var(--color-warning-text);
+  }
+}
+
+.optionActive {
+  background: var(--color-orange-bg-soft);
+  color: var(--color-warning-text);
+  font-weight: 600;
+}

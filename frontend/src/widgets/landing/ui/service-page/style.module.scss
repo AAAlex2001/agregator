@@ -1,0 +1,115 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-surface);
+
+  --landing-accent: var(--color-orange-primary);
+  --hero-num-bg: var(--color-surface);
+  --hero-num-fg: var(--color-orange-primary);
+}
+
+.page[data-direction="EXPERTISE"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-expertise-start) 0%,
+    var(--color-lead-expertise-end) 100%
+  );
+  --hero-fg: var(--color-lead-expertise-text);
+  --hero-fg-muted: var(--color-lead-expertise-muted);
+}
+
+.page[data-direction="AUDIT_SUPB"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-audit-start) 0%,
+    var(--color-lead-audit-end) 100%
+  );
+  --hero-fg: var(--color-lead-audit-text);
+  --hero-fg-muted: var(--color-lead-audit-muted);
+}
+
+.page[data-direction="TECH_DIAG"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-tech-diag-start) 0%,
+    var(--color-lead-tech-diag-end) 100%
+  );
+  --hero-fg: var(--color-lead-tech-diag-text);
+  --hero-fg-muted: var(--color-lead-tech-diag-muted);
+}
+
+.page[data-direction="DESIGN"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-design-start) 0%,
+    var(--color-lead-design-end) 100%
+  );
+  --hero-fg: var(--color-lead-design-text);
+  --hero-fg-muted: var(--color-lead-design-muted);
+}
+
+.page[data-direction="SURVEY"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-survey-start) 0%,
+    var(--color-lead-survey-end) 100%
+  );
+  --hero-fg: var(--color-lead-survey-text);
+  --hero-fg-muted: var(--color-lead-survey-muted);
+}
+
+.page[data-direction="ECOLOGY"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-ecology-start) 0%,
+    var(--color-lead-ecology-end) 100%
+  );
+  --hero-fg: var(--color-lead-ecology-text);
+  --hero-fg-muted: var(--color-lead-ecology-muted);
+}
+
+.page[data-direction="RESEARCH"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-research-start) 0%,
+    var(--color-lead-research-end) 100%
+  );
+  --hero-fg: var(--color-lead-research-text);
+  --hero-fg-muted: var(--color-lead-research-muted);
+}
+
+.page[data-direction="CADASTRAL"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-cadastral-start) 0%,
+    var(--color-lead-cadastral-end) 100%
+  );
+  --hero-fg: var(--color-lead-cadastral-text);
+  --hero-fg-muted: var(--color-lead-cadastral-muted);
+}
+
+.page[data-direction="FORENSIC"] {
+  --hero-bg: linear-gradient(
+    90deg,
+    var(--color-lead-forensic-start) 0%,
+    var(--color-lead-forensic-end) 100%
+  );
+  --hero-fg: var(--color-lead-forensic-text);
+  --hero-fg-muted: var(--color-lead-forensic-muted);
+}
+
+.page main {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 24px 0 72px;
+}
+
+@media (min-width: 1440px) {
+  .page main {
+    gap: 120px;
+    padding: 32px 0 120px;
+  }
+}

@@ -1,0 +1,48 @@
+.form {
+  --form-field-label-font: 600 15px/22px "Montserrat";
+  --form-choice-label-font: 500 var(--profile-label-size)/var(--profile-label-line) "Montserrat";
+  --form-help-font: 400 var(--profile-hint-size)/var(--profile-hint-line) "Montserrat";
+  --form-field-label-color: var(--color-text-primary);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  text-align: left;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.footer {
+  position: sticky;
+  bottom: var(--cabinet-bottom-height, 0px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 0;
+  background: var(--background);
+  border-top: 1px solid var(--color-labor-form-divider);
+
+  @media (min-width: 1440px) {
+    bottom: 0;
+  }
+}

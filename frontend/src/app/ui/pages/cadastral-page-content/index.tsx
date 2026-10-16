@@ -1,0 +1,39 @@
+"use client";
+
+import { OrderSearchBar } from "@/features/search-orders";
+import { CadastralLanding, LandingSearch } from "@/widgets/landing";
+import { useServiceRegistration } from "../../../providers/authentication/use-service-registration";
+import { ServiceFooter } from "../../shells/service-footer";
+import { ServiceHeader } from "../../shells/service-header";
+import { ServiceNavigation } from "../../shells/service-navigation";
+import type { ServicePageContentProps } from "../../service-page-props";
+
+/** Подключает регистрацию, поиск и карты к странице кадастровых работ. */
+export function CadastralPageContent({
+  news,
+  isPublic = false,
+}: ServicePageContentProps) {
+  const register = useServiceRegistration();
+  const basePath = isPublic ? "" : "/landing";
+
+  return (
+    <CadastralLanding
+      news={news}
+      articleBasePath={basePath}
+      onRegister={register}
+      header={isPublic ? <ServiceHeader /> : undefined}
+      footer={isPublic ? <ServiceFooter /> : undefined}
+      navigation={
+        <ServiceNavigation
+          activeHref="/kadastrovye-raboty"
+          basePath={basePath}
+        />
+      }
+      search={
+        <LandingSearch>
+          <OrderSearchBar />
+        </LandingSearch>
+      }
+    />
+  );
+}

@@ -1,0 +1,32 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.title {
+  margin: 0;
+  padding-right: 36px;
+  font-size: 22px;
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-error-message);
+}
+
+.loading {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+}
+
+.list {
+  display: flex;
+  max-height: min(60vh, 560px);
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}

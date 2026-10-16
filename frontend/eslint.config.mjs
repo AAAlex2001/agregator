@@ -5,9 +5,35 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "react",
+              importNames: ["useMemo", "useCallback"],
+              message: "Используем обычные функции и вычисления.",
+            },
+          ],
+        },
+      ],
+      "react/jsx-max-props-per-line": [
+        "error",
+        {
+          maximum: 1,
+          when: "always",
+        },
+      ],
+      "react/jsx-first-prop-new-line": [
+        "error",
+        "multiline-multiprop",
+      ],
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",

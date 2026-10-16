@@ -1,0 +1,77 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: var(--color-navigation-item-hover);
+  }
+}
+
+.itemRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.itemLogo {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.itemCopy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.itemMuted {
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.itemHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.itemLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.itemMuted .itemLabel {
+  color: var(--color-text-navigation-muted);
+  font-weight: 500;
+}
+
+.soon {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-navigation-soon-surface);
+  color: var(--color-text-navigation-muted);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.itemDesc {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-navigation-description);
+}

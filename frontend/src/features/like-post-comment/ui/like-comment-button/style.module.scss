@@ -1,0 +1,26 @@
+.like {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.liked svg {
+  color: var(--color-post-like);
+  fill: var(--color-post-like);
+}
+
+.like:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}
+
+.like:disabled {
+  opacity: 0.5;
+}

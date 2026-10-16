@@ -1,0 +1,99 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.backButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+
+  @media (min-width: 1440px) {
+    display: none;
+  }
+}
+
+.banner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  width: 110px;
+  height: 24px;
+}
+
+.badgeShort {
+  width: 82px;
+  height: 24px;
+}
+
+.title {
+  width: min(420px, 78%);
+  height: 20px;
+}
+
+.meta {
+  width: min(260px, 62%);
+  height: 16px;
+}
+
+.thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dateSeparator {
+  display: flex;
+  justify-content: center;
+}
+
+.datePill {
+  width: 74px;
+  height: 32px;
+}
+
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachButton {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+}
+
+.input {
+  flex: 1;
+  height: 44px;
+}
+
+.sendButton {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+}

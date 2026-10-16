@@ -1,0 +1,21 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.page main {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 24px 0 50px;
+}
+
+@media (min-width: 1440px) {
+  .page main {
+    gap: 120px;
+    padding-top: 32px;
+  }
+}

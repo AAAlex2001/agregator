@@ -1,0 +1,24 @@
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.author {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.date {
+  font-size: 13px;
+  color: var(--color-comment-date);
+}
+
+.text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-comment-text);
+  white-space: pre-wrap;
+}

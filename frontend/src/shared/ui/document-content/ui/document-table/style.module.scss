@@ -1,0 +1,89 @@
+.table {
+  display: none;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: left;
+  border-radius: 10px;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    display: table;
+  }
+}
+
+.th,
+.td {
+  padding: 12px;
+  vertical-align: top;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.th {
+  vertical-align: middle;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-surface);
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 100%
+  );
+
+  &:last-child {
+    background: linear-gradient(
+      90deg,
+      var(--color-orange-primary) 0%,
+      var(--color-orange-bright) 100%
+    );
+  }
+}
+
+tbody tr:nth-child(odd) .td {
+  background: var(--color-document-row);
+}
+
+.tableMobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.mHead {
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-surface);
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 100%
+  );
+  border-radius: 8px 8px 0 0;
+}
+
+.mCell,
+.mCellAlt {
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.mCellAlt {
+  background: var(--color-document-row);
+}

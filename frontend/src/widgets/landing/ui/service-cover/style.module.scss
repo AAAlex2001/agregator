@@ -1,0 +1,48 @@
+.cover {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--color-surface);
+  box-shadow: 0 10px 34px var(--color-landing-hero-shadow);
+}
+
+.coverImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.coverVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coverClaim {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 18px;
+  line-height: 25px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+  text-align: center;
+}
+
+.coverButton {
+  min-height: 55px;
+}
+
+.cover[data-direction="CADASTRAL"] .coverClaim,
+.cover[data-direction="FORENSIC"] .coverClaim {
+  padding-bottom: 4px;
+}
+
+.cover[data-direction="FORENSIC"] {
+  box-shadow: 0 10px 34px var(--color-shadow-select);
+}

@@ -1,0 +1,26 @@
+.photo {
+  position: relative;
+  flex: 0 0 85%;
+  height: 280px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  cursor: zoom-in;
+  background: var(--color-bg-card-soft);
+}
+
+.photo:only-child {
+  flex-basis: 100%;
+}
+
+.photo img {
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .photo {
+    height: 424px;
+  }
+}

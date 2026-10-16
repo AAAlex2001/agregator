@@ -1,0 +1,43 @@
+﻿.reason {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--color-rtn-expired-surface);
+}
+
+.reasonLabel {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: var(--color-rtn-expired);
+}
+
+.reasonText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-rtn-question-dismissed-text);
+}
+
+.NEW {
+  color: var(--color-rtn-question-new-text);
+  background: var(--color-rtn-question-new-surface);
+}
+
+.IN_REVIEW {
+  color: var(--color-rtn-question-review-text);
+  background: var(--color-rtn-question-review-surface);
+}
+
+.PUBLISHED {
+  color: var(--color-rtn-question-published-text);
+  background: var(--color-rtn-question-published-surface);
+}
+
+.DISMISSED {
+  color: var(--color-rtn-expired);
+  background: var(--color-rtn-expired-surface);
+}
+

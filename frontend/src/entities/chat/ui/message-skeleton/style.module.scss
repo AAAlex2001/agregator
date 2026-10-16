@@ -1,0 +1,37 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mine {
+  align-items: flex-end;
+}
+
+.other {
+  align-items: flex-start;
+}
+
+.wide {
+  height: 52px;
+}
+
+.short {
+  height: 40px;
+}
+
+.mine .wide {
+  width: min(340px, 72%);
+}
+
+.mine .short {
+  width: min(240px, 54%);
+}
+
+.other .wide {
+  width: min(300px, 68%);
+}
+
+.other .short {
+  width: min(220px, 48%);
+}

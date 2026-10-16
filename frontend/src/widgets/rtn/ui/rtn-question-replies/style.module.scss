@@ -1,0 +1,23 @@
+﻿.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-rtn-meta-text);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+

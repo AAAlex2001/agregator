@@ -1,0 +1,28 @@
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metaLabel {
+  font-family: "Montserrat";
+  font-size: 11px;
+  color: var(--color-text-placeholder);
+}
+
+.metaValue {
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--color-text-primary);
+}

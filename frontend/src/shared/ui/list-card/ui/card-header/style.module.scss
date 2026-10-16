@@ -1,0 +1,40 @@
+.headRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--color-text-tertiary);
+  min-width: 0;
+}
+
+.headerExtra {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.meta {
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+.divider {
+  color: var(--color-border-disabled);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: normal;
+  word-break: break-word;
+  flex-shrink: 1;
+  min-width: 0;
+}

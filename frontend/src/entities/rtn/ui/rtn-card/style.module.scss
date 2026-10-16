@@ -1,0 +1,134 @@
+.card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-rtn-card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-rtn-card-border-hover);
+    box-shadow: 0 8px 24px var(--color-rtn-card-shadow);
+  }
+}
+
+.link {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-rtn-title);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.excerpt {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-rtn-description);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 12px;
+  color: var(--color-rtn-description);
+  background: var(--color-rtn-tag-surface);
+  border-radius: 12px;
+  padding: 3px 10px;
+}
+
+.meta {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+  margin-top: 4px;
+}
+
+.metaItem {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.metaLabel {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--color-rtn-meta-label);
+}
+
+.metaValue {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-rtn-meta-value);
+  overflow-wrap: anywhere;
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px 22px 16px;
+  border-top: 1px solid var(--color-border-sidebar);
+}
+
+.asideTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-rtn-title);
+}
+
+@media (min-width: 768px) {
+  .withAside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+
+  .aside {
+    padding: 22px;
+    border-top: 0;
+    border-left: 1px solid var(--color-border-sidebar);
+  }
+}
+
+@media (min-width: 1440px) {
+  .withAside {
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+}

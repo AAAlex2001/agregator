@@ -1,0 +1,19 @@
+.executorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.value {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}

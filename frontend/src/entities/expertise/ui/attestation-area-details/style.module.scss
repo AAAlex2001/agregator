@@ -1,0 +1,22 @@
+.popoverTitle {
+  color: var(--color-orange-primary);
+  font-size: 15px;
+}
+
+.name {
+  color: var(--color-text-hint-medium);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.typeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+@media (max-width: 767px) {
+  .mobileTitle {
+    color: var(--color-expertise-choice-text);
+  }
+}

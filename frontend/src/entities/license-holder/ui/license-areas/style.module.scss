@@ -1,0 +1,55 @@
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  & > .badgeSlot > :not(.badgeMissing) {
+    min-width: auto;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 11px;
+    line-height: 14px;
+    border-radius: 6px;
+  }
+}
+
+.badgeSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 22px;
+}
+
+.badgeMissing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 22px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-license-holder-missing);
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 14px;
+  border: 1px dashed var(--color-license-holder-missing-border);
+}
+
+.badgeCombo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}

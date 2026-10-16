@@ -1,0 +1,30 @@
+.tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.tool:hover,
+.tool[aria-pressed="true"],
+.tool[aria-expanded="true"] {
+  color: var(--color-orange-accent);
+  background: var(--color-orange-bg-soft);
+}
+
+.tool:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}
+
+.tool:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

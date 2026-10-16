@@ -1,0 +1,42 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.statusBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.statusTitle {
+  width: 100%;
+  max-width: 320px;
+  height: 24px;
+}
+
+.statusSubtitle {
+  width: 100%;
+  max-width: 420px;
+  height: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.gridItem {
+  display: flex;
+  min-width: 0;
+}
+
+.gridItem > * {
+  width: 100%;
+}

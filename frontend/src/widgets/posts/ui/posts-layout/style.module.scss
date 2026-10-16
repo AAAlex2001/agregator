@@ -1,0 +1,123 @@
+.page {
+  width: 100%;
+  max-width: 1640px;
+  margin-inline: auto;
+  padding: 24px var(--content-page-px, var(--page-px))
+    calc(40px + var(--cabinet-bottom-height, 0px));
+  box-sizing: border-box;
+  font-family: "Montserrat";
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.nav {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-radius: 12px;
+  background: var(--color-orange-bg-soft);
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  flex: 1 0 auto;
+  justify-content: center;
+  white-space: nowrap;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.item:hover {
+  background: var(--color-orange-bg-faint);
+  color: var(--color-text-primary);
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}
+
+.active,
+.active:hover {
+  color: var(--color-orange-accent);
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px var(--color-posts-nav-shadow);
+  font-weight: 600;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+@media (min-width: 768px) {
+  .item {
+    padding-inline: 12px;
+    font-size: 14px;
+  }
+
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .nav {
+    order: 1;
+    position: sticky;
+    top: calc(var(--cabinet-header-height, 120px) + 8px);
+    flex: 0 0 240px;
+    flex-direction: column;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .item {
+    flex: none;
+    justify-content: flex-start;
+    min-height: 44px;
+  }
+
+  .active,
+  .active:hover {
+    background: var(--color-orange-bg-soft);
+    box-shadow: none;
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,47 @@
+.media {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.video {
+  display: none;
+
+  @media (min-width: 1440px) {
+    display: block;
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 18px;
+    background: var(--color-lead-video-surface);
+  }
+}
+
+.benefits {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-lead-benefits-text);
+
+  li {
+    position: relative;
+    padding-left: 24px;
+  }
+
+  li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 16px;
+    height: 16px;
+    background: var(--color-orange-primary);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8.4L6.3 11.6L13 4.8' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat center / contain;
+  }
+}

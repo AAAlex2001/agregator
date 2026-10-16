@@ -1,0 +1,32 @@
+.slideImage {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  background: var(--color-video-surface);
+}
+
+.slideImg {
+  object-fit: cover;
+}
+
+.slideBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px 18px 16px;
+}
+
+.slideTitle {
+  margin: 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.slideDesc {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--color-text-option);
+}

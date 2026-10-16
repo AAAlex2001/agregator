@@ -1,0 +1,51 @@
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-family: "Montserrat";
+  font-size: 11px;
+  color: var(--color-text-placeholder);
+}
+
+.filesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fileItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-file-preview-surface);
+  border-radius: 8px;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fileIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.fileName {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileBlur {
+  position: absolute;
+  inset: 0;
+  background: var(--color-file-preview-overlay);
+  backdrop-filter: blur(4px);
+}

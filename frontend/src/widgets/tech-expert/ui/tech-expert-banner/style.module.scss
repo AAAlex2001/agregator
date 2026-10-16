@@ -1,0 +1,130 @@
+.banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: linear-gradient(
+    120deg,
+    var(--color-tech-expert-banner-start) 0%,
+    var(--color-tech-expert-banner-end) 100%
+  );
+  border-radius: 20px;
+
+  @media (min-width: 768px) {
+    gap: 36px;
+    padding: 40px;
+  }
+
+  @media (min-width: 1440px) {
+    gap: 48px;
+    padding: 60px;
+  }
+}
+
+.art {
+  display: none;
+
+  @media (min-width: 1440px) {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 44%;
+    overflow: hidden;
+    border-radius: 0 20px 20px 0;
+    pointer-events: none;
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(
+      to left,
+      var(--color-black) 45%,
+      var(--color-mask-transparent) 100%
+    );
+    mask-image: linear-gradient(
+      to left,
+      var(--color-black) 45%,
+      var(--color-mask-transparent) 100%
+    );
+  }
+}
+
+.artImage {
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 28px;
+    text-align: left;
+  }
+}
+
+.logo {
+  flex: none;
+  height: 64px;
+  width: auto;
+  border-radius: 8px;
+
+  @media (min-width: 768px) {
+    height: 80px;
+  }
+}
+
+.divider {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    flex: none;
+    width: 1px;
+    height: 72px;
+    background: var(--color-tech-expert-divider);
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--color-surface);
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.subtitle {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--color-surface);
+
+  @media (min-width: 768px) {
+    font-size: 19px;
+  }
+}
+
+.accent {
+  color: var(--color-orange-bright);
+  font-weight: 700;
+  white-space: nowrap;
+}

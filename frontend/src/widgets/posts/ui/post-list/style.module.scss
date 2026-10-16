@@ -1,0 +1,15 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+}
+
+.loadMoreButton {
+  min-width: 180px;
+}

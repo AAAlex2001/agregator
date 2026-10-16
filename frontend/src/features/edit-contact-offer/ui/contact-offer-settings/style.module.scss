@@ -1,0 +1,27 @@
+.section {
+  width: 100%;
+  max-width: 1340px;
+  padding: 20px 0;
+  background: var(--color-surface);
+
+  @media (min-width: 768px) {
+    padding: 24px 0;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+
+  @media (min-width: 768px) {
+    > button {
+      min-width: 220px;
+    }
+  }
+}

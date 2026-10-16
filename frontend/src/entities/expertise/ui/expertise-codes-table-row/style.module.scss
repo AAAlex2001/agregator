@@ -1,0 +1,20 @@
+.td {
+  padding: 10px;
+  border: 1px solid var(--color-expertise-table-border);
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+  background: var(--color-surface);
+}
+
+.tdName {
+  text-align: left;
+  white-space: normal;
+  font-weight: 500;
+  width: 280px;
+  min-width: 280px;
+}
+
+tbody tr:nth-child(even) .td {
+  background: var(--color-document-row);
+}

@@ -1,0 +1,131 @@
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  padding: 0 var(--page-px);
+  flex-direction: column;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+
+  h1,
+  h2,
+  h3,
+  p {
+    max-width: 1000px;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+}
+
+.innerBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 30px;
+  width: 100%;
+}
+
+@keyframes pricingFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation: pricingFadeIn 0.7s ease;
+}
+
+.roleContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.gridItem {
+  flex: 1 1 100%;
+  display: flex;
+  order: 1;
+  min-width: 0;
+}
+
+.gridItem > * {
+  width: 100%;
+}
+
+.gridItemHighlighted {
+  order: 0;
+}
+
+.grid:has(.gridItem:not(.gridItemHighlighted):hover) .gridItemHighlighted {
+  --pricing-highlight-opacity: 0;
+}
+
+.footnote {
+  margin: 0;
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-placeholder);
+  text-align: left;
+}
+
+.customerCtaWrap {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.customerCtaButton {
+  width: 196px !important;
+  height: 44px !important;
+  max-height: 44px !important;
+  padding: 16px 24px !important;
+  font-size: 16px !important;
+  line-height: 16px !important;
+  font-weight: 500 !important;
+}
+
+@media (min-width: 768px) {
+  .gridItem {
+    flex: 1 1 calc(50% - 10px);
+  }
+  .gridItemHighlighted {
+    flex: 1 1 100%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .gridItem,
+  .gridItemHighlighted {
+    flex: 1 1 0;
+    order: 0;
+  }
+}

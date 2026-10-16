@@ -1,0 +1,77 @@
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  max-width: 100%;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 8px;
+  width: 320px;
+  max-width: 100%;
+  height: 340px;
+  background: var(--background);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px var(--color-shadow-soft);
+}
+
+.search {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 8px;
+  background: var(--background);
+  font: 400 14px/20px "Montserrat";
+  color: var(--color-text-primary);
+}
+
+.search:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}
+
+.viewport {
+  flex: 1 1 auto;
+  overflow: auto;
+  min-height: 0;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.picker :global([frimousse-category-header]) {
+  padding: 8px 4px 4px;
+  font: 600 12px/16px "Montserrat";
+  color: var(--color-text-muted);
+  background: var(--background);
+}
+
+.picker :global([frimousse-emoji]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 36px;
+  font-size: 22px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.picker :global([frimousse-emoji][data-active]) {
+  background: var(--color-orange-bg-faint);
+}

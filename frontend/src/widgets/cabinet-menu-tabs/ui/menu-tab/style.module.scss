@@ -1,0 +1,58 @@
+.tab {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  color: var(--color-menu-tabs-text);
+  background: transparent;
+  border: none;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-orange-primary);
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
+}
+
+.tabActive {
+  color: var(--color-orange-primary);
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  color: currentColor;
+
+  svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  svg [stroke] {
+    stroke: currentColor;
+  }
+}
+
+.text {
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+  white-space: nowrap;
+  color: currentColor;
+}

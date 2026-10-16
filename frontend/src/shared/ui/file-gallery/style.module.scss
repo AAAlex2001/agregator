@@ -1,0 +1,81 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--color-black);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tile {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  overflow: hidden;
+  border: 1px solid var(--color-orange-soft);
+  border-radius: 8px;
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tileReadonly {
+  border: 1px solid var(--color-orange-soft);
+  background: var(--color-surface-muted);
+}
+
+.tileEditable {
+  border: 1px solid var(--color-orange-bright);
+  background: var(--color-surface);
+}
+
+.addButton {
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+
+  &:hover {
+    background: var(--color-orange-bg-faint);
+    border-color: var(--color-orange-primary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.empty {
+  font-size: 10px;
+  line-height: 12px;
+  word-break: break-all;
+  color: var(--color-text-placeholder);
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--color-file-hint);
+}

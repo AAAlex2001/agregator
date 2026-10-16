@@ -1,0 +1,22 @@
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  scroll-margin-top: calc(var(--header-height, 110px) + 20px);
+}
+
+.comments .title {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.empty {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}

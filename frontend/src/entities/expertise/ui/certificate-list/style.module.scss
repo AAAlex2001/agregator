@@ -1,0 +1,68 @@
+.certList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.certRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  align-self: flex-start;
+  padding: 6px 10px 6px 12px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-pale);
+}
+
+.certContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.certArea {
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.certCat {
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-hint-medium);
+}
+
+.certExpiry {
+  font-family: "Montserrat";
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-help);
+}
+
+.certRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-warning-text);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.certRemove:hover {
+  background: var(--color-orange-badge);
+}

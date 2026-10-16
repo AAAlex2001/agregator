@@ -1,0 +1,144 @@
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 1620px;
+  margin-left: 0;
+  padding: 0 var(--page-px);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.swiper {
+  width: 100%;
+  overflow: visible;
+  padding-bottom: 40px;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 1620px;
+  margin: 0 auto;
+  padding: 0 var(--page-px);
+  box-sizing: border-box;
+}
+
+.slide {
+  width: 320px;
+  height: auto;
+  display: flex;
+}
+
+.arrows {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  z-index: 5;
+}
+
+.section :global(.industry-nav-btn--prev) {
+  span {
+    transform: rotate(180deg);
+  }
+}
+
+.section :global(.industry-nav-btn--next) {
+  span {
+    transform: rotate(0deg);
+  }
+}
+
+@media (min-width: 768px) {
+  .slide {
+    min-width: 490px;
+  }
+
+  .arrows {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--page-px);
+    box-sizing: border-box;
+
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .arrows {
+    display: none;
+  }
+
+  .swiper {
+    padding-bottom: 0;
+  }
+
+  .content {
+    width: 100%;
+    max-width: 1620px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+
+  .card .swiper {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .card :global(.swiper-wrapper) {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+    transform: none !important;
+  }
+
+  .slide {
+    width: auto;
+    min-width: auto;
+  }
+
+  .slide:nth-child(1),
+  .slide:nth-child(2) {
+    flex: 0 0 calc((100% - 20px) / 2);
+  }
+
+  .slide:nth-child(n+3) {
+    flex: 0 0 calc((100% - 40px) / 3);
+  }
+
+  .swiper :global(.swiper-slide) {
+    width: auto !important;
+    margin: 0 !important;
+  }
+}

@@ -1,0 +1,25 @@
+.type {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.active,
+.expired {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.active {
+  color: var(--color-rtn-active);
+  background: var(--color-rtn-active-surface);
+}
+
+.expired {
+  color: var(--color-rtn-expired);
+  background: var(--color-rtn-expired-surface);
+}

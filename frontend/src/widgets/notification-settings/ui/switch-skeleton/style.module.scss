@@ -1,0 +1,39 @@
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--color-surface);
+}
+
+.item + .item {
+  border-top: 1px solid var(--color-settings-skeleton-divider);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  width: 60%;
+  max-width: 220px;
+  height: 14px;
+}
+
+.description {
+  width: 90%;
+  max-width: 320px;
+  height: 12px;
+}
+
+.track {
+  width: 36px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}

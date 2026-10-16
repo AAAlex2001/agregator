@@ -1,0 +1,19 @@
+.row {
+  order: -1;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  flex-shrink: 0;
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 24px;
+  color: var(--color-text-primary);
+  margin-right: 8px;
+}

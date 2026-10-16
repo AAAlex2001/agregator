@@ -1,0 +1,50 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 32px;
+  width: 100%;
+  max-width: var(--page-maxw);
+  margin: 0 auto;
+  padding: var(--page-pt) var(--content-page-px, var(--page-px)) var(--page-pb);
+  font-family: "Montserrat";
+
+  @media (min-width: 768px) {
+    gap: 44px;
+  }
+
+  @media (min-width: 1440px) {
+    gap: 60px;
+  }
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 15px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.documentView {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

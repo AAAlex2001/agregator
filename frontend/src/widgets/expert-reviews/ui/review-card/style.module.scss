@@ -1,0 +1,79 @@
+.ratingBlock,
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quote {
+  margin: 0;
+  padding: 0;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 17px;
+    line-height: 26px;
+  }
+}
+
+.quoteMark {
+  display: inline-block;
+  font-family: "Montserrat";
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+  line-height: 1;
+  vertical-align: -3px;
+}
+
+.quoteMark:first-child {
+  margin-right: 4px;
+}
+
+.quoteMark:last-child {
+  margin-left: 4px;
+}
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.blue   { background: var(--color-info-surface); color: var(--color-info-text); }
+.green  { background: var(--color-success-surface); color: var(--color-success-text); }
+.gray   { background: var(--color-surface-muted); color: var(--color-text-muted); }
+.orange { background: var(--color-orange-bg-soft); color: var(--color-warning-text); }
+.brown  { background: var(--color-brown-surface); color: var(--color-brown-text); }
+.purple { background: var(--color-purple-surface); color: var(--color-purple-text); }

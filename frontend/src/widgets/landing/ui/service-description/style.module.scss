@@ -1,0 +1,25 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--color-landing-directions-surface);
+  box-shadow: 0 6px 28px var(--color-landing-panel-shadow);
+
+  @media (min-width: 1440px) {
+    padding: 40px;
+  }
+}
+
+.text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--color-text-body);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 26px;
+  }
+}

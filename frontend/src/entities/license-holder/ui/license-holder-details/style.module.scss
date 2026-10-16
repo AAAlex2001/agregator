@@ -1,0 +1,18 @@
+.value {
+  font-family: "Montserrat";
+  font-size: 12px;
+  line-height: 14px;
+  color: var(--color-text-primary);
+}
+
+.rental {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--color-orange-surface);
+  color: var(--color-warning-text);
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14px;
+}

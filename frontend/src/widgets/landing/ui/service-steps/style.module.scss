@@ -1,0 +1,90 @@
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  padding: 0 var(--page-px);
+  flex-direction: column;
+  max-width: 1620px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 40px;
+  position: relative;
+
+  h1,
+  h2,
+  h3,
+  p {
+    max-width: 1000px;
+  }
+}
+
+.section[data-variant="process"] .header {
+  h1,
+  h2,
+  h3,
+  p {
+    margin-right: 30px;
+
+    @media (min-width: 768px) {
+      margin-right: 190px;
+    }
+
+    @media (min-width: 1440px) {
+      margin-right: 0;
+    }
+  }
+}
+
+.stepsInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+}
+
+.ctaButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-orange-soft);
+  width: 100%;
+  max-width: 320px;
+  border-radius: 10px;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+  margin: 30px auto 0 auto;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--color-text-label);
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-orange-hover);
+  }
+}

@@ -1,0 +1,153 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 36px 0 8px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--lead-bg);
+  scroll-margin-top: 110px;
+  transition: background 0.35s ease;
+
+  @media (max-width: 767px) {
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+}
+
+.widget[data-direction="EXPERTISE"] {
+  --lead-bg: var(--gradient-lead-expertise);
+  --lead-ink: var(--color-lead-expertise-text);
+  --lead-muted: var(--color-lead-expertise-muted);
+}
+
+.widget[data-direction="AUDIT_SUPB"] {
+  --lead-bg: var(--gradient-lead-audit);
+  --lead-ink: var(--color-lead-audit-text);
+  --lead-muted: var(--color-lead-audit-muted);
+}
+
+.widget[data-direction="TECH_DIAG"] {
+  --lead-bg: var(--gradient-lead-tech-diag);
+  --lead-ink: var(--color-lead-tech-diag-text);
+  --lead-muted: var(--color-lead-tech-diag-muted);
+}
+
+.widget[data-direction="DESIGN"] {
+  --lead-bg: var(--gradient-lead-design);
+  --lead-ink: var(--color-lead-design-text);
+  --lead-muted: var(--color-lead-design-muted);
+}
+
+.widget[data-direction="SURVEY"] {
+  --lead-bg: var(--gradient-lead-survey);
+  --lead-ink: var(--color-lead-survey-text);
+  --lead-muted: var(--color-lead-survey-muted);
+}
+
+.widget[data-direction="ECOLOGY"] {
+  --lead-bg: var(--gradient-lead-ecology);
+  --lead-ink: var(--color-lead-ecology-text);
+  --lead-muted: var(--color-lead-ecology-muted);
+}
+
+.widget[data-direction="RESEARCH"] {
+  --lead-bg: var(--gradient-lead-research);
+  --lead-ink: var(--color-lead-research-text);
+  --lead-muted: var(--color-lead-research-muted);
+}
+
+.widget[data-direction="CADASTRAL"] {
+  --lead-bg: var(--gradient-lead-cadastral);
+  --lead-ink: var(--color-lead-cadastral-text);
+  --lead-muted: var(--color-lead-cadastral-muted);
+}
+
+.widget[data-direction="FORENSIC"] {
+  --lead-bg: var(--gradient-lead-forensic);
+  --lead-ink: var(--color-lead-forensic-text);
+  --lead-muted: var(--color-lead-forensic-muted);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  color: var(--lead-ink);
+
+  @media (max-width: 767px) {
+    font-size: 20px;
+    line-height: 26px;
+  }
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--lead-muted);
+  max-width: 62ch;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: 0 10px 30px var(--color-lead-form-shadow);
+
+  @media (max-width: 767px) {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+
+  @media (min-width: 1440px) {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 28px;
+  }
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-content: start;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.submit {
+  min-height: 54px;
+  font-weight: 700;
+}
+
+.consent {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-select-hint);
+  text-align: center;
+
+  a {
+    color: var(--color-orange-primary);
+    text-decoration: underline;
+  }
+}

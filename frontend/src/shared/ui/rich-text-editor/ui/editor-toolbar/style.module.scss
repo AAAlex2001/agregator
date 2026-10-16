@@ -1,0 +1,10 @@
+.toolbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px;
+  gap: 4px;
+  background: var(--color-bg-card-soft);
+  border-radius: 8px;
+}

@@ -1,0 +1,35 @@
+.access {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  height: 100%;
+
+  @media (min-width: 1440px) {
+    min-height: 230px;
+  }
+}
+
+.access > a,
+.access > button {
+  margin-top: auto;
+}
+
+.label {
+  color: var(--color-text-placeholder);
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.price {
+  color: var(--color-text-primary);
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--color-text-placeholder);
+  font-size: 14px;
+  line-height: 20px;
+}

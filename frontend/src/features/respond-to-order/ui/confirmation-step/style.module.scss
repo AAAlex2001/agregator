@@ -1,0 +1,104 @@
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.actionRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}
+
+.infoCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.accentText {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: var(--color-orange-primary);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.guaranteesCard {
+  border-bottom: 1px solid var(--color-orange-soft);
+}
+
+.guaranteesToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.guaranteesTitle {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.guaranteesChevron {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.guaranteesChevronOpen {
+  transform: rotate(180deg);
+}
+
+.guaranteesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.guaranteeItem {
+  display: flex;
+  gap: 6px;
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  width: 20px;
+  color: var(--color-success-bright);
+  font-weight: 700;
+  text-align: center;
+}
+
+.guaranteeText {
+  font-size: 14px;
+  line-height: 17px;
+  color: var(--color-text-primary);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+

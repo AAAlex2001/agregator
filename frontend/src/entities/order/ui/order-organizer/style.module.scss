@@ -1,0 +1,29 @@
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.value {
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.inn {
+  font-family: "Montserrat";
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+  margin-top: 2px;
+}

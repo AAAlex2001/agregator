@@ -1,0 +1,15 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.label {
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--color-text-placeholder);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

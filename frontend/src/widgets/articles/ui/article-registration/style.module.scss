@@ -1,0 +1,39 @@
+.outer {
+  margin: 36px 0 8px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--color-registration-invite-surface);
+
+  @media (max-width: 767px) {
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 28px;
+  padding: 22px;
+  border-radius: 0 0 20px 20px;
+  background: var(--color-surface);
+
+  @media (max-width: 1439px) {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  @media (max-width: 767px) {
+    margin-top: 4px;
+    border-radius: 16px;
+    padding: 16px 14px;
+  }
+}
+
+.fine {
+  margin: 12px 4px 0;
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--color-text-select-hint);
+  text-align: center;
+}

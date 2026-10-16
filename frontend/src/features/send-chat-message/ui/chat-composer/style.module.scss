@@ -1,0 +1,137 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 8px 12px 12px;
+  box-sizing: border-box;
+}
+
+.files {
+  width: 100%;
+}
+
+.hint {
+  color: var(--color-chat-muted);
+}
+
+.bar,
+.blockedBar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 20px 24px;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px var(--color-shadow-soft);
+  transition: box-shadow 0.2s ease;
+}
+
+.bar:focus-within {
+  box-shadow: 0 4px 16px var(--color-chat-composer-focus);
+}
+
+.blockedBar {
+  justify-content: center;
+  background: var(--color-chat-blocked-surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: not-allowed;
+}
+
+.blockedText {
+  width: 100%;
+  margin: 0;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--color-text-heading);
+  text-align: center;
+}
+
+.inputWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+  min-width: 0;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-heading);
+  resize: none;
+
+  &::placeholder {
+    color: var(--color-text-timer);
+  }
+}
+
+.clip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-charcoal);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 100%
+  );
+  color: var(--color-surface);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+@media (max-width: 767px) {
+  .wrap {
+    padding: 8px 8px 12px;
+  }
+
+  .bar,
+  .blockedBar {
+    padding: 16px;
+  }
+}

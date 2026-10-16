@@ -1,0 +1,49 @@
+.backgroundImage {
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  left: 80px;
+  bottom: 1020px;
+  z-index: 1;
+  transform: scaleX(-1);
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.backgroundImageCoal {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  left: 10px;
+  bottom: 1010px;
+  z-index: 0;
+
+  &:nth-child(2) {
+    width: 300px;
+    height: 300px;
+    left: -70px;
+    bottom: 810px;
+    transform: rotate(70deg);
+  }
+
+  &:nth-child(3) {
+    width: 150px;
+    height: 150px;
+    left: -10px;
+    bottom: 750px;
+    transform: rotate(-30deg);
+  }
+
+  &:nth-child(4) {
+    width: 150px;
+    height: 150px;
+    left: 60px;
+    bottom: 760px;
+  }
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

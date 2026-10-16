@@ -1,0 +1,169 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.iconLeft {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  color: var(--color-icon-muted);
+}
+
+.iconSvg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.inputWrapper:hover .iconLeft {
+  color: var(--color-text-placeholder);
+}
+
+.inputWrapper.focused .iconLeft {
+  color: var(--color-orange-primary);
+}
+
+.inputWrapper.active .iconLeft {
+  color: var(--color-orange-primary);
+}
+
+.inputWrapper:hover .lockDot {
+  color: var(--color-orange-primary) !important;
+}
+
+.inputWrapper.active .lockDot {
+  color: var(--color-orange-primary) !important;
+}
+
+.iconRight {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1;
+  transition: all 0.3s ease;
+  color: var(--color-orange-primary);
+
+  &.closedEye {
+    color: var(--color-icon-muted);
+
+    &:hover {
+      color: var(--color-orange-primary);
+    }
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.eyeIcon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.suffix {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--color-text-label);
+  font-family: "Montserrat";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 125%;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 10px;
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 125%;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: var(--color-orange-soft);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-orange-bright);
+  }
+
+  &::placeholder {
+    color: var(--color-text-placeholder);
+  }
+
+  &:disabled {
+    background: var(--color-surface-muted);
+    cursor: not-allowed;
+  }
+}
+
+.inputWrapper.active .input {
+  border: 1px solid var(--color-orange-bright);
+}
+
+.areaWrapper {
+  align-items: stretch;
+}
+
+.area {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.5;
+}
+
+.input.hasLeftIcon {
+  padding-left: 46px;
+}
+
+.input.hasRightIcon {
+  padding-right: 46px;
+}
+
+.error {
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 125%;
+  color: var(--color-error-field);
+}
+
+.hasError {
+  .input {
+    border-color: var(--color-error-field);
+
+    &:hover,
+    &:focus {
+      border-color: var(--color-error-field);
+    }
+  }
+}

@@ -1,0 +1,51 @@
+import type { PostStatus } from "@/entities/post";
+import { getPostsOnServer } from "@/entities/post/server";
+import { MyPosts, PostList, PostsSignIn } from "@/widgets/posts";
+import {
+  hasNextPostListPage,
+  readPostListPage,
+} from "../../../../content/post-list-page";
+import { createPrivateMetadata } from "../../../../seo/private-page";
+
+export const dynamic = "force-dynamic";
+export const metadata = createPrivateMetadata("Мои публикации");
+
+/** Вкладки своих публикаций, которые можно открыть из адреса. */
+const MY_POST_STATUSES: PostStatus[] = ["published", "draft", "hidden"];
+
+/** Вкладка и количество серверных страниц из адреса. */
+interface MyPostsPageProps {
+  searchParams: Promise<{
+    status?: string;
+    page?: string;
+  }>;
+}
+
+/** Свои публикации; вкладка — из адреса (?status=draft после сохранения черновика). */
+export default async function MyPostsPage({ searchParams }: MyPostsPageProps) {
+  const params = await searchParams;
+  const status = MY_POST_STATUSES.find((item) => item === params.status) ?? "published";
+  const page = readPostListPage(params.page);
+  const list = await getPostsOnServer("/posts/my", page, status);
+
+  if (!list) {
+    return <PostsSignIn />;
+  }
+
+  const nextPageHref = hasNextPostListPage(list, page)
+    ? `/posts/my?status=${status}&page=${page + 1}`
+    : undefined;
+
+  return (
+    <MyPosts status={status}>
+      <PostList
+        posts={list.items}
+        nextPageHref={nextPageHref}
+        emptyTitle="Здесь пока пусто"
+        emptyText="Расскажите о своём опыте и услугах: текст, фото и видео."
+        emptyActionLabel="Написать пост"
+        emptyActionHref="/posts/new"
+      />
+    </MyPosts>
+  );
+}

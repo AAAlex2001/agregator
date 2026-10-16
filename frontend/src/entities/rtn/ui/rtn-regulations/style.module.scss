@@ -1,0 +1,17 @@
+.list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  a {
+    color: var(--color-orange-primary);
+    font-size: 14px;
+    text-decoration: underline;
+  }
+
+  li::marker {
+    color: var(--color-orange-primary);
+  }
+}

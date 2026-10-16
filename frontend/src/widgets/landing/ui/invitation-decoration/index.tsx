@@ -1,0 +1,70 @@
+import { DecorativeImage } from "../decorative-image";
+import styles from "./style.module.scss";
+
+/** Сохраняет порядок декоративных изображений, от которого зависит их расположение. */
+export function InvitationDecoration() {
+  return (
+    <>
+      <DecorativeImage
+        src="/belaz_3.webp"
+        sizes="354px"
+        className={styles.backgroundImage}
+      />
+      <DecorativeImage
+        src="/belaz_2.webp"
+        sizes="672px"
+        className={styles.backgroundImageBelAz}
+      />
+      <DecorativeImage
+        src="/coal.webp"
+        sizes="246px"
+        className={styles.backgroundImageCoal}
+      />
+      <DecorativeImage
+        src="/gold.webp"
+        sizes="486px"
+        className={styles.backgroundImageCoal}
+      />
+      <DecorativeImage
+        src="/copper.webp"
+        sizes="390px"
+        className={styles.backgroundImageCoal}
+      />
+      <DecorativeImage
+        src="/coal.webp"
+        sizes="246px"
+        className={styles.backgroundImageCoal}
+      />
+      <DecorativeImage
+        src="/gold.webp"
+        sizes="486px"
+        className={styles.backgroundImageCoal}
+      />
+      <DecorativeImage
+        src="/coal.webp"
+        sizes="246px"
+        className={styles.backgroundImageCoal2}
+      />
+      <DecorativeImage
+        src="/gold.webp"
+        sizes="486px"
+        className={styles.backgroundImageCoal2}
+      />
+      <DecorativeImage
+        src="/copper.webp"
+        sizes="390px"
+        className={styles.backgroundImageCoal2}
+      />
+      <DecorativeImage
+        src="/coal.webp"
+        sizes="246px"
+        className={styles.backgroundImageCoal2}
+      />
+      <DecorativeImage
+        src="/gold.webp"
+        sizes="486px"
+        className={styles.backgroundImageCoal2}
+      />
+    </>
+  );
+}

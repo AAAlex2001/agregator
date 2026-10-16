@@ -1,0 +1,122 @@
+.capabilities {
+  flex-shrink: 0;
+}
+
+.capabilitiesToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.capabilitiesTitle,
+.capabilitiesHint {
+  display: block;
+}
+
+.capabilitiesTitle {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.capabilitiesHint {
+  margin-top: 2px;
+  color: var(--color-capability-hint);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.capabilitiesChevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-capability-hint);
+  transition: transform 0.2s ease;
+}
+
+.capabilitiesChevronOpen {
+  transform: rotate(180deg);
+}
+
+.capabilitiesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 0 4px;
+}
+
+.capabilityPlate {
+  --capability-color: var(--color-capability-neutral-text);
+  --capability-bg: var(--color-capability-neutral-surface);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 10px 8px 12px;
+  border-radius: 11px;
+  background: var(--capability-bg);
+  color: var(--capability-color);
+}
+
+.capabilityLabel {
+  min-width: 0;
+  color: inherit;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+
+  svg {
+    display: block;
+    width: 128px;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.lockedBadge {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--color-capability-locked-surface);
+  color: var(--color-capability-locked-text);
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.indigo {
+  --capability-color: var(--color-capability-indigo-text);
+  --capability-bg: var(--color-capability-indigo-surface);
+}
+
+.amber {
+  --capability-color: var(--color-capability-amber-text);
+  --capability-bg: var(--color-capability-amber-surface);
+}
+
+.green {
+  --capability-color: var(--color-capability-green-text);
+  --capability-bg: var(--color-capability-green-surface);
+}
+
+.red {
+  --capability-color: var(--color-capability-red-text);
+  --capability-bg: var(--color-capability-red-surface);
+}
+
+.gold {
+  --capability-color: var(--color-capability-gold-text);
+  --capability-bg: var(--color-capability-gold-surface);
+}

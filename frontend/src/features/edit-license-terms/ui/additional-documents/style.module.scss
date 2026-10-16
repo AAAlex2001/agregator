@@ -1,0 +1,32 @@
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 28px;
+  border-top: 1px solid var(--profile-divider);
+}
+
+.title {
+  margin: 0;
+  font-weight: 700;
+  font-size: var(--profile-title-size);
+  line-height: var(--profile-title-line);
+  color: var(--color-text-primary);
+}
+
+.hint {
+  margin: -8px 0 0;
+  font-size: var(--profile-hint-size);
+  line-height: var(--profile-hint-line);
+  color: var(--color-text-secondary);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--color-orange-surface);
+  border: 1px solid var(--color-license-holder-document-border);
+  border-radius: 10px;
+}

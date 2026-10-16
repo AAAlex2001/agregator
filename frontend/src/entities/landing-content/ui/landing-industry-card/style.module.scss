@@ -1,0 +1,137 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--color-orange-bright);
+  border-radius: 20px;
+  padding: 20px;
+  gap: 15px;
+  justify-content: flex-start;
+  background: var(--color-surface);
+  box-sizing: border-box;
+  position: relative;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease;
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.industry {
+  align-items: flex-start;
+  gap: 8px;
+  padding: 30px;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+
+  .content {
+    z-index: auto;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+    z-index: 1;
+
+    li {
+      font-size: 16px;
+      line-height: 20px;
+      color: var(--color-text-primary);
+      font-weight: 500;
+      gap: 5px;
+    }
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: var(--color-orange-primary);
+    border-radius: 50px;
+    padding: 5px 15px;
+    width: fit-content;
+    z-index: 3;
+    position: relative;
+    margin-bottom: 10px;
+
+    h3 {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+      color: var(--color-surface);
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    transform: none !important;
+    box-shadow: none !important;
+
+    .header {
+      z-index: 10;
+    }
+
+    .content ul,
+    .content p {
+      z-index: 0;
+    }
+
+    &:hover .image {
+      opacity: 1;
+    }
+  }
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.image.visible {
+  opacity: 0.18;
+}
+
+.industry .image {
+  height: 474px;
+  z-index: 2;
+}
+
+.industry .image.visible {
+  opacity: 1;
+}
+
+@media (min-width: 1440px) {
+  .industry .image {
+    z-index: 1;
+  }
+
+  .industry .image.visible {
+    opacity: 1;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}

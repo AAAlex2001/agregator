@@ -1,0 +1,52 @@
+.row {
+  display: grid;
+  gap: 12px;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-border-soft);
+
+  @media (min-width: 1440px) {
+    grid-template-columns: minmax(0, 1fr) 260px 256px;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, 124px);
+  gap: 8px;
+
+  > button,
+  > a {
+    width: 100%;
+  }
+}
+
+.openAction {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.deleteAction {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.chatAction {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}

@@ -1,0 +1,38 @@
+.discussion {
+  margin: 40px 0 0;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.total {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--color-feedback-positive-surface);
+  color: var(--color-orange-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--color-text-navigation-description);
+  font-size: 15px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

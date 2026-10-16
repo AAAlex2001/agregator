@@ -1,0 +1,20 @@
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  border-left: 3px solid var(--color-contacts-released-border);
+  background: var(--color-contacts-released-surface);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.links a {
+  color: var(--color-contacts-released-link);
+  font-weight: 600;
+}

@@ -1,0 +1,22 @@
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.reply {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-bg-card-soft);
+  color: var(--color-orange-primary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.reply:focus-visible {
+  outline: 2px solid var(--color-orange-primary);
+  outline-offset: 2px;
+}

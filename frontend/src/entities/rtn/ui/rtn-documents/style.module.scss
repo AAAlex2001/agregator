@@ -1,0 +1,24 @@
+.documents {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.gallery {
+  width: 100%;
+}
+
+.source {
+  color: var(--color-rtn-source-link);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,113 @@
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.breadcrumbs {
+  margin-bottom: 24px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  border: 1px solid var(--color-labor-card-border);
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: 0 6px 22px var(--color-labor-card-shadow);
+}
+
+.kind {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--color-orange-surface);
+  color: var(--color-orange-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-labor-public-label);
+}
+
+.value {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 0;
+
+  dt {
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--color-labor-public-label);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-labor-card-border);
+}
+
+.ctaHint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-labor-public-hint);
+}
+
+.ctaButton {
+  align-self: flex-start;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-orange-primary);
+  color: var(--color-surface);
+  font-family: "Montserrat";
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--color-labor-public-button-hover);
+  }
+}

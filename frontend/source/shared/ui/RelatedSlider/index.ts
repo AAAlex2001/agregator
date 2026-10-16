@@ -1,1 +1,0 @@
-export { RelatedSlider } from "./RelatedSlider";

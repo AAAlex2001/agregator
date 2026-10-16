@@ -1,0 +1,16 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font: var(--form-field-label-font);
+  color: var(--form-field-label-color);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-help);
+  font: var(--form-help-font);
+}

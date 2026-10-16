@@ -1,0 +1,19 @@
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-direction: row;
+  }
+
+  .cancel {
+    flex: 0 0 240px;
+  }
+
+  .submit {
+    flex: 1;
+  }
+}

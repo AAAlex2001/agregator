@@ -1,0 +1,113 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--color-tool-input-border);
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow: 0 4px 20px var(--color-tool-card-shadow);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.date {
+  color: var(--color-text-navigation-description);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.profile {
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--color-tool-profile-surface);
+  color: var(--color-tool-profile-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.info {
+  min-width: 0;
+}
+
+.name {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.caption {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--color-text-navigation-description);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border-sidebar);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rowName {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.badge {
+  flex: 0 0 auto;
+  padding: 4px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.low {
+  background: var(--color-risk-low-surface);
+  color: var(--color-risk-low-text);
+}
+
+.medium {
+  background: var(--color-risk-medium-surface);
+  color: var(--color-risk-medium-text);
+}
+
+.high {
+  background: var(--color-risk-high-surface);
+  color: var(--color-risk-high-text);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+
+  > * {
+    flex: 1;
+  }
+}

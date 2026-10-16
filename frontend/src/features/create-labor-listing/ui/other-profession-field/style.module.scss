@@ -1,0 +1,43 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.choice {
+  padding: 4px 0;
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--color-orange-focus);
+    outline-offset: 3px;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.label {
+  font: var(--form-choice-label-font);
+  color: var(--form-field-label-color);
+}
+
+.description {
+  font: var(--form-help-font);
+  color: var(--color-text-help);
+}
+
+.wrap .details {
+  border-color: var(--color-labor-input-border);
+
+  &:focus {
+    border-color: var(--color-orange-focus);
+  }
+
+  &::placeholder {
+    color: var(--color-text-help);
+  }
+}

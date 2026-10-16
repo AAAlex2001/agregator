@@ -1,0 +1,138 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 8px 12px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    padding: 8px 12px 12px;
+  }
+}
+
+.pendingFiles {
+  margin: 0;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  min-height: 56px;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px var(--color-shadow-soft);
+  border-radius: 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: box-shadow 0.2s ease;
+
+  &:focus-within {
+    box-shadow: 0 4px 16px var(--color-chat-composer-focus);
+  }
+
+  @media (min-width: 768px) {
+    padding: 20px 24px;
+  }
+}
+
+.blockedBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 56px;
+  background: var(--color-chat-blocked-surface);
+  box-shadow: 0 2px 8px var(--color-shadow-soft);
+  border-radius: 16px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: not-allowed;
+
+  @media (min-width: 768px) {
+    padding: 20px 24px;
+  }
+}
+
+.blockedText {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--color-text-heading);
+}
+
+.inputWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  min-width: 0;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  resize: none;
+  font-family: "Montserrat";
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-heading);
+
+  &::placeholder {
+    color: var(--color-text-timer);
+  }
+}
+
+.clip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--color-text-charcoal);
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 100%
+  );
+  color: var(--color-surface);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}

@@ -1,0 +1,12 @@
+.card {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 16px;
+  background: var(--color-surface);
+  box-sizing: border-box;
+  overflow: hidden;
+}

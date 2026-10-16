@@ -1,0 +1,35 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-placeholder);
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-error-message);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

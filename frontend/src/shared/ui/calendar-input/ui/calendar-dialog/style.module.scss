@@ -1,0 +1,273 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-overlay-file-remove);
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(388px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 32px var(--color-shadow-calendar);
+}
+
+.modalWithTime {
+  width: min(520px, calc(100vw - 32px));
+}
+
+.manualField {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: var(--color-calendar-text);
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border-calendar);
+    border-radius: 8px;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+
+    &:focus {
+      border-color: var(--color-orange-primary);
+      outline: none;
+    }
+  }
+}
+
+.modalWithTime .calendar {
+  display: flex !important;
+  align-items: flex-start;
+
+  :global(.react-datepicker__navigation--next) {
+    right: 140px;
+  }
+
+  :global(.react-datepicker__month-container) {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+
+  :global(.react-datepicker__time-container) {
+    flex: 0 0 110px;
+    width: 110px;
+  }
+}
+
+.calendar {
+  width: 100% !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-family: "Montserrat" !important;
+
+  :global(.react-datepicker__month-container) {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 290px;
+  }
+
+  :global(.react-datepicker__header) {
+    background: transparent;
+    border-bottom: none;
+    padding: 0;
+  }
+
+  :global(.react-datepicker__current-month) {
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-calendar-text);
+    margin-bottom: 12px;
+  }
+
+  :global(.react-datepicker__navigation) {
+    top: -2px;
+  }
+
+  :global(.react-datepicker__navigation--previous) {
+    left: 0;
+  }
+
+  :global(.react-datepicker__navigation--next) {
+    right: 0;
+  }
+
+  :global(.react-datepicker__navigation-icon::before) {
+    border-color: var(--color-calendar-text);
+    border-width: 2px 2px 0 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  :global(.react-datepicker__day-names) {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+  }
+
+  :global(.react-datepicker__day-name) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 2px;
+    margin: 0;
+    width: auto;
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--color-calendar-text);
+  }
+
+  :global(.react-datepicker__day-name:nth-child(6)),
+  :global(.react-datepicker__day-name:nth-child(7)) {
+    color: var(--color-calendar-weekend);
+  }
+
+  :global(.react-datepicker__month) {
+    margin: 0;
+  }
+
+  :global(.react-datepicker__week) {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px 0;
+  }
+
+  :global(.react-datepicker__day) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 32px;
+    margin: 0;
+    width: auto;
+    padding: 8px;
+    border-radius: 50px;
+    font-family: "Montserrat";
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--color-calendar-muted);
+
+    &:hover {
+      background: var(--color-orange-bg-soft);
+      color: var(--color-calendar-text);
+      border-radius: 50px;
+    }
+  }
+
+  :global(.react-datepicker__day--weekend) {
+    color: var(--color-calendar-weekend);
+  }
+
+  :global(.react-datepicker__day--selected),
+  :global(.react-datepicker__day--selected:hover) {
+    background: var(--color-orange-primary) !important;
+    color: var(--color-surface) !important;
+    font-weight: 600;
+    border-radius: 50px;
+  }
+
+  :global(.react-datepicker__day--keyboard-selected) {
+    background: transparent;
+  }
+
+  :global(.react-datepicker__day--keyboard-selected:hover) {
+    background: var(--color-orange-bg-soft);
+  }
+
+  :global(.react-datepicker__day--outside-month) {
+    color: var(--color-calendar-disabled);
+  }
+
+  :global(.react-datepicker__day--disabled) {
+    color: var(--color-calendar-outside-month);
+    background: transparent;
+  }
+
+  :global(.react-datepicker__day--today) {
+    font-weight: 600;
+  }
+
+  :global(.react-datepicker__time-container) {
+    margin-left: 15px;
+    padding-left: 15px;
+    border-left: 1px solid var(--color-input-border);
+    width: 110px;
+  }
+
+  :global(.react-datepicker__time-container .react-datepicker__time) {
+    background: transparent;
+  }
+
+  :global(.react-datepicker__time-container .react-datepicker__time-box) {
+    width: 100% !important;
+  }
+
+  :global(.react-datepicker__header--time) {
+    padding: 8px 0 !important;
+    font-family: "Montserrat";
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-calendar-text);
+  }
+
+  :global(.react-datepicker__time-list-item) {
+    font-family: "Montserrat" !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: var(--color-orange-bg-soft) !important;
+    }
+  }
+
+  :global(.react-datepicker__time-list-item--selected) {
+    background: var(--color-orange-primary) !important;
+    color: var(--color-surface) !important;
+    font-weight: 600;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.clearButton {
+  width: 100% !important;
+  flex: 1 1 auto;
+}
+
+.confirmButton {
+  width: 100% !important;
+  flex: 1 1 auto;
+  color: var(--color-surface) !important;
+}

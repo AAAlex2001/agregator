@@ -1,0 +1,46 @@
+.tabs {
+  display: flex;
+  gap: 4px;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+  }
+}
+
+.tab {
+  flex: 1 1 0;
+  padding: 14px 12px;
+  border: none;
+  border-radius: 14px 14px 0 0;
+  background: var(--color-orange-primary);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 600;
+  color: var(--color-surface);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: var(--color-registration-tab-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: -3px;
+  }
+
+  @media (max-width: 767px) {
+    border-radius: 12px;
+  }
+}
+
+.tabActive {
+  background: var(--color-surface);
+  color: var(--color-text-strong);
+
+  &:hover {
+    background: var(--color-surface);
+  }
+}

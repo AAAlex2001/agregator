@@ -1,0 +1,28 @@
+.mapVisual {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mapText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-option);
+}
+
+.mapBox {
+  min-width: 0;
+  height: 440px;
+}
+
+.mapBoxAuto {
+  min-width: 0;
+}
+
+@media (min-width: 1440px) {
+  .mapBox {
+    height: 420px;
+  }
+}

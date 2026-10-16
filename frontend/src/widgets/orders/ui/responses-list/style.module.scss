@@ -1,0 +1,21 @@
+.list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topActions {
+  width: 100%;
+  max-width: 1340px;
+  margin: 0 auto 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.loadMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+}

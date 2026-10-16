@@ -1,0 +1,13 @@
+﻿.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.subscribed {
+  color: var(--color-rtn-question-published-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+

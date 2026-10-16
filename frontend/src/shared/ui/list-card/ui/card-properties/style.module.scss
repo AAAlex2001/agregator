@@ -1,0 +1,45 @@
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 0 0 auto;
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 320px;
+    border-left: 1px solid var(--color-border-section);
+    padding-left: 24px;
+  }
+}
+
+.rightItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.value {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.valueAccent {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.valueOrange {
+  color: var(--color-orange-primary);
+}

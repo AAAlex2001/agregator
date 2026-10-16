@@ -1,0 +1,49 @@
+.expertBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.value {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-success-surface);
+  color: var(--color-success-button-text);
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 14px;
+  white-space: nowrap;
+  animation: pulse-green 1.4s ease-in-out infinite;
+  will-change: opacity, box-shadow;
+}
+
+@keyframes pulse-green {
+  0%,
+  100% {
+    background: var(--color-success-surface);
+    box-shadow: 0 0 0 0 var(--color-response-selected-shadow-none);
+  }
+
+  50% {
+    background: var(--color-response-selected-pulse);
+    box-shadow: 0 0 0 6px var(--color-response-selected-shadow);
+  }
+}

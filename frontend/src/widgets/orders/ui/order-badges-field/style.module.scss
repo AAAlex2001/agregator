@@ -1,0 +1,22 @@
+.title {
+  margin: 0;
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.helpTrigger {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-orange-primary);
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

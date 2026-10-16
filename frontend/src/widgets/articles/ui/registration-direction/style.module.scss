@@ -1,0 +1,21 @@
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fieldLabel {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 19px;
+  line-height: 25px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.cta {
+  align-self: stretch;
+  margin-top: auto;
+  min-height: 52px;
+  font-size: 15px;
+}

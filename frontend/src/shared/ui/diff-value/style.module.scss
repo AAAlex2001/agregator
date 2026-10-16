@@ -1,0 +1,30 @@
+.diff {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+}
+
+.previous {
+  color: var(--color-text-previous);
+  text-decoration: line-through;
+  font-size: 12px;
+  line-height: 16px;
+  word-break: break-word;
+}
+
+.label {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-success-button-text);
+}
+
+.current {
+  color: var(--color-success-button-text);
+  font-weight: 600;
+  word-break: break-word;
+}

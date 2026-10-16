@@ -1,0 +1,80 @@
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 16px;
+  border: 2px solid var(--color-input-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: var(--color-orange-soft);
+  }
+}
+
+.triggerActive {
+  border-color: var(--color-orange-bright);
+
+  &:hover {
+    border-color: var(--color-orange-bright);
+  }
+}
+
+.triggerOpen {
+  border-color: var(--color-orange-bright);
+}
+
+.trigger.triggerError,
+.trigger.triggerError:hover,
+.trigger.triggerError.triggerActive,
+.trigger.triggerError.triggerActive:hover {
+  border-color: var(--color-error-field);
+}
+
+.errorMessage {
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 125%;
+  color: var(--color-error-field);
+}
+
+.value,
+.placeholder {
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 125%;
+  text-align: left;
+}
+
+.value {
+  color: var(--color-text-primary);
+}
+
+.placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}

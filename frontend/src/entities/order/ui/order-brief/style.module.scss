@@ -1,0 +1,216 @@
+﻿.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.topRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.requirementsLabel {
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+.date,
+.sum {
+  font-size: 14px;
+  line-height: 28px;
+  color: var(--color-black);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.blue {
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+}
+
+.green {
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
+}
+
+.gray {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.orange {
+  background: var(--color-orange-bg-soft);
+  color: var(--color-warning-text);
+}
+
+.brown {
+  background: var(--color-brown-surface);
+  color: var(--color-brown-text);
+}
+
+.purple {
+  background: var(--color-purple-surface);
+  color: var(--color-purple-text);
+}
+
+.topItem {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topLabel {
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--color-text-placeholder);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--color-text-placeholder);
+}
+
+.responsesDeadlineActive,
+.responsesDeadlineExpired {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 22px;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.responsesDeadlineActive {
+  color: var(--color-orange-primary);
+}
+
+.responsesDeadlineExpired {
+  color: var(--color-error-code);
+}
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title,
+.customer,
+.commentText {
+  margin: 0;
+  word-break: break-word;
+}
+
+.title {
+  font-size: 14px;
+  line-height: 17px;
+  color: var(--color-black);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.customer {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+  color: var(--color-orange-primary);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commentLabel {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--color-black);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.commentBox {
+  box-sizing: border-box;
+  min-height: 105px;
+  padding: 16px;
+  border: 1px solid var(--color-orange-soft);
+  border-radius: 8px;
+}
+
+.commentText {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--color-black);
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}

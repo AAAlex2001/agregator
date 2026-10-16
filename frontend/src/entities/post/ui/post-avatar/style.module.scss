@@ -1,0 +1,19 @@
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-bg-card-soft);
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  font-weight: 600;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+}
+
+.avatar img {
+  object-fit: cover;
+}

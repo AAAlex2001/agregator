@@ -1,0 +1,180 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legend {
+  padding: 0 0 6px 0;
+  font: var(--form-field-label-font, 600 15px/18px "Montserrat");
+  color: var(--form-field-label-color, var(--color-text-primary));
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-orange-soft);
+  border-radius: 12px;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    background: var(--color-orange-surface);
+  }
+}
+
+.optionChecked {
+  border-color: var(--color-orange-primary);
+  background: var(--color-orange-surface);
+  box-shadow: 0 4px 12px var(--color-shadow-orange-radio);
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.indicator {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-orange-radio);
+  background: var(--color-surface);
+  transition: border-color 0.15s ease;
+}
+
+.optionChecked .indicator {
+  border-color: var(--color-orange-primary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.optionChecked .dot {
+  background: var(--color-orange-primary);
+}
+
+.box {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 4px;
+  border: 1.5px solid var(--color-border-disabled);
+  background: var(--color-surface);
+  color: transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.input:focus-visible + .box {
+  border-color: var(--color-orange-primary);
+}
+
+.input:checked + .box {
+  background: var(--color-orange-primary);
+  border-color: var(--color-orange-primary);
+  color: var(--color-surface);
+}
+
+.input:disabled + .box {
+  background: var(--color-surface-muted);
+  border-color: var(--color-input-border);
+  cursor: not-allowed;
+}
+
+.check {
+  width: 12px;
+  height: 12px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.label {
+  font-family: "Montserrat";
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.description {
+  font-family: "Montserrat";
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-description);
+}
+
+.trailing {
+  flex-shrink: 0;
+}
+
+.checklist {
+  gap: 4px;
+  .legend {
+    padding-bottom: 4px;
+  }
+  .options {
+    gap: 0;
+  }
+  .option {
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 28px;
+    padding: 4px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    &:has(.input:focus-visible) {
+      outline: 2px solid var(--color-orange-focus);
+      outline-offset: 3px;
+    }
+  }
+  .label {
+    font: var(--form-choice-label-font, 500 14px/20px "Montserrat");
+  }
+  .description {
+    font: var(--form-help-font, 400 13px/18px "Montserrat");
+    color: var(--color-text-help);
+  }
+}

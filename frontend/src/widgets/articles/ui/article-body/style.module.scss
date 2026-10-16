@@ -1,0 +1,8 @@
+.body {
+  min-width: 0;
+
+  @media (min-width: 1440px) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}

@@ -1,0 +1,58 @@
+.label {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-placeholder);
+}
+
+.ratingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.commentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quote {
+  margin: 0;
+  padding: 0;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-primary);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  @media (min-width: 768px) {
+    font-size: 17px;
+    line-height: 26px;
+  }
+}
+
+.quoteMark {
+  display: inline-block;
+  font-family: "Montserrat";
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--color-orange-primary);
+  line-height: 1;
+  vertical-align: -3px;
+}
+
+.quoteMark:first-child {
+  margin-right: 4px;
+}
+
+.quoteMark:last-child {
+  margin-left: 4px;
+}

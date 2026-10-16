@@ -1,0 +1,36 @@
+.head,
+.author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author {
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.author:hover .name {
+  text-decoration: underline;
+}
+
+.date {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}

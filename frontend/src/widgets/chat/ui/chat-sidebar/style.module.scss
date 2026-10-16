@@ -1,0 +1,15 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.sidebar .title {
+  margin: 0;
+  text-align: left;
+  font-size: 24px;
+  line-height: 30px;
+}

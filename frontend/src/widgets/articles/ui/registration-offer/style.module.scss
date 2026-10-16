@@ -1,0 +1,28 @@
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.roleTitle {
+  margin: 0;
+  font-family: "Montserrat";
+  font-size: 19px;
+  line-height: 25px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+}
+
+.roleText {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 21px;
+  color: var(--color-text-option);
+}
+
+.cta {
+  align-self: stretch;
+  margin-top: auto;
+  min-height: 52px;
+  font-size: 15px;
+}

@@ -1,0 +1,99 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-surface-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.rating {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-black);
+}
+
+.dot {
+  color: var(--color-text-charcoal);
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.reviews,
+.reviewsLink {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-black);
+}
+
+.reviewsLink {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.reviewsLink:hover,
+.reviewsLink:focus-visible {
+  color: var(--color-orange-primary);
+}
+
+.noReviews {
+  font-size: 14px;
+  color: var(--color-text-disabled);
+}
+
+.company {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-tertiary);
+  word-break: break-word;
+}
+
+.historyLink {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--color-link-underline-muted);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.historyLink:hover,
+.historyLink:focus-visible {
+  color: var(--color-orange-primary);
+  text-decoration-color: currentColor;
+}

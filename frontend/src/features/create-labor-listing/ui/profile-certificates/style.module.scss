@@ -1,0 +1,38 @@
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font: var(--form-field-label-font);
+  color: var(--form-field-label-color);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certificate {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--color-surface-selected);
+  color: var(--color-text-body);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.skeleton {
+  width: 120px;
+  height: 30px;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error-field);
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}

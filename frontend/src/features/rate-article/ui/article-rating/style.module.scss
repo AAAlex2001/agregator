@@ -1,0 +1,83 @@
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.caption {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--color-feedback-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-label);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--color-orange-primary);
+  color: var(--color-orange-primary);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.likeActive {
+  background: var(--color-feedback-positive-surface);
+  border-color: var(--color-orange-primary);
+  color: var(--color-orange-primary);
+}
+
+.dislikeActive {
+  background: var(--color-feedback-negative-surface);
+  border-color: var(--color-feedback-negative);
+  color: var(--color-feedback-negative);
+}
+
+.icon {
+  display: block;
+}
+
+.count {
+  min-width: 12px;
+  text-align: center;
+}
+
+.views {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-views);
+}
+
+.viewsIcon {
+  width: 20px;
+  height: 20px;
+}

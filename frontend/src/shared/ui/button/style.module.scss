@@ -1,0 +1,339 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  width: fit-content;
+  gap: 20px;
+  white-space: nowrap;
+  transition: background 0.4s ease;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &:disabled .arrow {
+    transform: none;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.primary {
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 50%,
+    var(--color-orange-bright) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  color: var(--color-orange-on-primary);
+  transition: background-position 0.6s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-position: 100% 0%;
+  }
+}
+
+.secondary {
+  background: var(--color-orange-soft);
+  color: var(--color-text-label);
+  font-weight: 600;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-orange-hover);
+  }
+}
+
+.chat {
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 50%,
+    var(--color-orange-bright) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  color: var(--color-text-primary);
+  transition: background-position 0.6s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-position: 100% 0%;
+  }
+}
+
+.outline {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-orange-bright);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-orange-soft);
+    border-color: var(--color-orange-soft);
+  }
+}
+
+.outlineOrange {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-orange-primary);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-orange-primary);
+    border-color: var(--color-orange-primary);
+    color: var(--color-surface);
+  }
+}
+
+.danger {
+  background: var(--color-surface);
+  color: var(--color-danger);
+  border: 2px solid var(--color-danger);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: var(--color-surface);
+  }
+}
+
+.green {
+  background: var(--color-success-button-surface);
+  color: var(--color-success-button-text);
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-success-button-hover);
+  }
+}
+
+.telegram {
+  position: relative;
+  background: var(--color-telegram);
+  color: var(--color-surface);
+  border: 2px solid var(--color-telegram);
+  font-weight: 700;
+  gap: 0;
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.18s ease,
+    box-shadow 0.22s ease;
+
+  svg:last-child {
+    position: absolute;
+    right: 22px;
+    width: 22px;
+    height: 22px;
+    transform-origin: 50% 50%;
+    transition:
+      transform 0.24s ease,
+      filter 0.24s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-telegram-hover);
+    border-color: var(--color-telegram-hover);
+    box-shadow: 0 12px 28px var(--color-shadow-telegram);
+  }
+
+  &:hover svg:last-child,
+  &:focus-visible svg:last-child {
+    animation: telegramFly 0.62s cubic-bezier(0.2, 0.8, 0.2, 1);
+    filter: drop-shadow(0 3px 6px var(--color-glow-telegram));
+  }
+}
+
+.transparent {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: none;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface-muted);
+  }
+}
+
+.pill {
+  border-radius: 40px;
+  font-weight: 500;
+  background: linear-gradient(
+    90deg,
+    var(--color-orange-bright) 0%,
+    var(--color-orange-primary) 50%,
+    var(--color-orange-bright) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  color: var(--color-surface);
+  transition: background-position 0.6s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-position: 100% 0%;
+  }
+}
+
+.pillMuted {
+  border-radius: 40px;
+  font-weight: 500;
+  background: var(--color-orange-soft);
+  color: var(--color-black);
+  transition: background-color 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-orange-hover);
+  }
+}
+
+.pillActive {
+  border-radius: 40px;
+  font-weight: 500;
+  background: var(--color-surface-pill);
+  color: var(--color-orange-primary);
+  border: 2px solid var(--color-orange-primary);
+  cursor: default;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface-pill);
+    color: var(--color-orange-primary);
+    border-color: var(--color-orange-primary);
+  }
+}
+
+.pillDisabled {
+  border-radius: 40px;
+  font-weight: 500;
+  background: var(--color-icon-muted);
+  color: var(--color-text-primary);
+  cursor: not-allowed;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-icon-muted);
+    color: var(--color-text-primary);
+  }
+}
+
+.button.pill,
+.button.pillMuted,
+.button.pillActive,
+.button.pillDisabled {
+  padding: 12px 20px;
+  font-size: 16px;
+  line-height: 16px;
+  height: 40px;
+  max-height: 40px;
+}
+
+.settings {
+  border-radius: 40px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-orange-border-translucent);
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-orange-soft);
+  }
+
+  &.active {
+    background: var(--color-orange-soft);
+    border-color: transparent;
+  }
+}
+
+.sm {
+  font-size: 14px;
+  line-height: 18px;
+  padding: 12px 24px;
+  max-height: 40px;
+}
+
+.md {
+  font-size: 16px;
+  line-height: 20px;
+  padding: 12px 32px;
+  max-height: 40px;
+}
+
+.lg {
+  font-size: 18px;
+  line-height: 22px;
+  padding: 14px 40px;
+  max-height: 40px;
+}
+
+.button.telegram.sm,
+.button.telegram.md,
+.button.telegram.lg {
+  padding-left: 56px;
+  padding-right: 56px;
+}
+
+.arrow {
+  display: inline-flex;
+  transition: transform 0.5s ease;
+  color: currentColor;
+
+  svg {
+    stroke: currentColor;
+  }
+}
+
+.button:hover .arrow,
+.button:focus-visible .arrow {
+  transform: translateX(12px);
+}
+
+@keyframes telegramFly {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  38% {
+    transform: translate(8px, -8px) rotate(-12deg) scale(1.12);
+  }
+  68% {
+    transform: translate(-2px, 2px) rotate(4deg) scale(0.96);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+.inlineLoader {
+  color: currentColor;
+}
+
+@media (min-width: 768px) {
+  .sm {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .md {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
