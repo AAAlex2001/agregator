@@ -48,10 +48,7 @@ export function ArchiveOrderItem({
       }
       responseFiles={
         order.executor_files.length > 0 ? (
-          <ResponseFiles
-            title="Файлы отклика:"
-            files={order.executor_files}
-          />
+          <ResponseFiles files={order.executor_files} />
         ) : undefined
       }
       actions={

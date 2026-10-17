@@ -19,6 +19,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base
 
 if TYPE_CHECKING:
+    from app.support.models import SupportTicket
     from models.chat import Chat, ChatMessage
     from models.customer import Customer
     from models.expert import Expert
@@ -30,7 +31,6 @@ if TYPE_CHECKING:
     from models.pricing import UserSubscription
     from models.response import OrderResponse
     from models.review import Review
-    from models.support_ticket import SupportTicket
 
 
 class UserRole(str, PyEnum):

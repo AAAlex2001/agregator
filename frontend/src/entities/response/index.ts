@@ -13,7 +13,6 @@ export { getResponseStatusBadge } from "./model/response-status";
 export { formatResponseCount } from "./model/response-count";
 export {
   getConfirmReminder,
-  getPreviousResponseCost,
   getResponseCost,
   hasResponseActions,
   isOrderCommentVisible,

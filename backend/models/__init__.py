@@ -3,6 +3,7 @@
 Строковые ссылки в relationship (например, "Account") резолвятся только когда
 класс импортирован — поэтому пакет импортирует все модули явно.
 """
+from app.support import models as support
 from models import (
     account,
     article,
@@ -50,7 +51,6 @@ from models import (
     rtn_question_subscription,
     session,
     static_news_interaction,
-    support_ticket,
     survey,
     tag,
     tech_diag,
@@ -103,7 +103,7 @@ __all__ = [
     "rtn_question_subscription",
     "session",
     "static_news_interaction",
-    "support_ticket",
+    "support",
     "survey",
     "tag",
     "tech_diag",

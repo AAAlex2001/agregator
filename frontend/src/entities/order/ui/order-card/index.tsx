@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { formatMoscowDateTime } from "@/shared/lib/format-date";
-import { DiffValue } from "@/shared/ui/diff-value";
 import { ListCard } from "@/shared/ui/list-card";
 import type { OrderCardData } from "../../model/order-card-data";
 import { OrderOrganizer } from "../order-organizer";
@@ -29,7 +28,7 @@ const OPEN_STATUS = {
   background: "var(--color-order-status-open-background)",
 };
 
-/** Показывает условия заказа и прежние значения изменённых полей. */
+/** Показывает условия заказа. */
 export function OrderCard({
   order,
   onClick,
@@ -46,12 +45,7 @@ export function OrderCard({
       statusColor={status.color}
       statusBg={status.background}
       titleLabel="Название заказа"
-      title={
-        <DiffValue
-          previous={order.previous_title}
-          current={order.title}
-        />
-      }
+      title={order.title}
       bottomLeftCustom={
         <OrderOrganizer
           name={order.company || order.customer_name}
@@ -62,18 +56,12 @@ export function OrderCard({
         <OrderRequirements
           workType={order.work_type}
           badges={order.badges}
-          previousBadges={order.previous_badges}
         />
       }
       rightItems={[
         {
           label: "Начальная максимальная цена",
-          value: (
-            <DiffValue
-              previous={order.previous_sum}
-              current={order.sum || "Не установлена"}
-            />
-          ),
+          value: order.sum || "Не установлена",
           valueAccent: true,
         },
         {
@@ -91,12 +79,7 @@ export function OrderCard({
         },
         {
           label: "Срок окончания выполнения работ",
-          value: (
-            <DiffValue
-              previous={order.previous_date}
-              current={order.date || "—"}
-            />
-          ),
+          value: order.date || "—",
         },
       ].filter((item) => item.value)}
       onClick={onClick}

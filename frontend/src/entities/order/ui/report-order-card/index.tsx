@@ -82,7 +82,6 @@ export function ReportOrderCard({
         <OrderRequirements
           workType={order.work_type}
           badges={order.badges}
-          previousBadges={null}
         />
       }
       details={

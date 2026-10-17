@@ -1,7 +1,7 @@
 import type { OrderDirection } from "./order-direction";
-import type { OrderBadge, PublicOrder } from "./types";
+import type { PublicOrder } from "./types";
 
-/** Общие данные карточки в списке и прежние значения изменённых условий. */
+/** Общие данные карточки заказа в списке. */
 interface OrderListItemFields extends PublicOrder {
   customer_id: number;
   customer_name: string;
@@ -23,11 +23,6 @@ interface OrderListItemFields extends PublicOrder {
   customer_has_review: boolean;
   created_at_display: string;
   status: "ACTIVE" | "ARCHIVED";
-  previous_title: string | null;
-  previous_comment: string | null;
-  previous_sum: string | null;
-  previous_date: string | null;
-  previous_badges: OrderBadge[] | null;
 }
 
 /** Карточка заказа; направление определяет точный тип дополнительных условий. */

@@ -1,8 +1,5 @@
-"""
-Базовый класс для всех моделей SQLAlchemy
-"""
-from sqlalchemy.orm import DeclarativeBase
+"""Переходник: Base теперь в app.core.base. Удалится, когда модели переедут в app/."""
 
+from app.core.base import Base
 
-class Base(DeclarativeBase):
-    """Базовый класс для всех ORM-моделей."""
+__all__ = ["Base"]

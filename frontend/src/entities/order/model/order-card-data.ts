@@ -16,8 +16,4 @@ export interface OrderCardData {
   status: "ACTIVE" | "ARCHIVED";
   work_type: OrderDirection["work_type"];
   badges: OrderBadge[];
-  previous_title: string | null;
-  previous_sum: string | null;
-  previous_date: string | null;
-  previous_badges: OrderBadge[] | null;
 }

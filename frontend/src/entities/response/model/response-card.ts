@@ -15,22 +15,6 @@ export function getResponseCost(response: ResponseItem): string {
   return `${response.proposed_sum} · ${getVatLabel(response.vat_kind)}`;
 }
 
-/** Прежняя цена или прежняя ставка НДС, если исполнитель их изменил. */
-export function getPreviousResponseCost(response: ResponseItem): string | null {
-  const previousVatKind = response.previous_vat_kind ?? response.vat_kind;
-  const previousVatLabel = getVatLabel(previousVatKind);
-
-  if (response.previous_proposed_sum) {
-    return `${response.previous_proposed_sum} · ${previousVatLabel}`;
-  }
-
-  if (previousVatKind !== response.vat_kind) {
-    return `${response.proposed_sum} · ${previousVatLabel}`;
-  }
-
-  return null;
-}
-
 /** Заказчик всегда видит комментарий исполнителя, исполнитель — пока идут переговоры. */
 export function isResponseCommentVisible(
   response: ResponseItem,

@@ -1,31 +1,29 @@
+"""Обращения в поддержку и переписка по ним."""
+
 from datetime import UTC, datetime
 from enum import Enum as PyEnum
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import (
-    JSON,
-    Boolean,
-    DateTime,
-    Enum,
-    ForeignKey,
-    String,
-    Text,
-)
+from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.base import Base
+from app.core.base import Base
 
 if TYPE_CHECKING:
     from models.account import Account
 
 
 class TicketStatus(str, PyEnum):
+    """Состояние обращения: ждёт ответа поддержки, отвечено или закрыто."""
+
     REVIEW = "REVIEW"
     ANSWERED = "ANSWERED"
     CLOSED = "CLOSED"
 
 
 class TicketCategory(str, PyEnum):
+    """Тема обращения, которую выбирает пользователь."""
+
     ORDER = "ORDER"
     RESPONSE = "RESPONSE"
     TECHNICAL = "TECHNICAL"
@@ -37,12 +35,15 @@ class TicketCategory(str, PyEnum):
 
 
 class TicketMessageAuthor(str, PyEnum):
+    """Кто написал сообщение: пользователь или поддержка."""
+
     USER = "USER"
     ADMIN = "ADMIN"
 
 
 class SupportTicket(Base):
-    """Тикет поддержки."""
+    """Обращение пользователя в поддержку."""
+
     __tablename__ = "support_tickets"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -64,9 +65,24 @@ class SupportTicket(Base):
         default=TicketStatus.REVIEW,
         index=True,
     )
-    has_unread_for_user: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
-    has_unread_for_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default="true")
-    last_message_text: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+    has_unread_for_user: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
+    )
+    has_unread_for_admin: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="true",
+    )
+    last_message_text: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+        default="",
+        server_default="",
+    )
     last_message_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -93,7 +109,8 @@ class SupportTicket(Base):
 
 
 class SupportTicketMessage(Base):
-    """Сообщение в тикете поддержки."""
+    """Сообщение в обращении: от пользователя или от поддержки, с вложениями."""
+
     __tablename__ = "support_ticket_messages"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)

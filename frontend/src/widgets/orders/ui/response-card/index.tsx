@@ -1,13 +1,8 @@
 import type { ReactNode } from "react";
 import { ExpertInfo } from "@/entities/expert";
 import { OrderRequirements } from "@/entities/order";
-import {
-  getPreviousResponseCost,
-  getResponseCost,
-  getResponseStatusBadge,
-} from "@/entities/response";
+import { getResponseCost, getResponseStatusBadge, ResponseFiles } from "@/entities/response";
 import type { ResponseItem, ResponseViewer } from "@/entities/response";
-import { DiffValue } from "@/shared/ui/diff-value";
 import { ListCard } from "@/shared/ui/list-card";
 import { OrderQuestions } from "../order-questions";
 import { ResponseDetails } from "../response-details";
@@ -20,7 +15,7 @@ interface ResponseCardProps {
   actions?: ReactNode;
 }
 
-/** Показывает предложение исполнителя рядом с условиями заказа и их изменениями. */
+/** Показывает предложение исполнителя рядом с условиями заказа. */
 export function ResponseCard({ response, viewer, actions }: ResponseCardProps) {
   const isExpert = viewer === "EXPERT";
   const status = getResponseStatusBadge(response, viewer);
@@ -35,12 +30,7 @@ export function ResponseCard({ response, viewer, actions }: ResponseCardProps) {
       statusColor={status.color}
       statusBg={status.background}
       titleLabel="Название заказа:"
-      title={
-        <DiffValue
-          previous={response.order_previous_title}
-          current={response.order_title}
-        />
-      }
+      title={response.order_title}
       headerExtra={isSelectedByCustomer ? (
         <span
           className={styles.selected}
@@ -54,7 +44,6 @@ export function ResponseCard({ response, viewer, actions }: ResponseCardProps) {
         <OrderRequirements
           workType="EXPERTISE"
           badges={response.badges}
-          previousBadges={response.order_previous_badges}
         />
       }
       bottomLeftCustom={isExpert ? (
@@ -91,22 +80,12 @@ export function ResponseCard({ response, viewer, actions }: ResponseCardProps) {
       rightItems={[
         {
           label: "Начальная максимальная цена",
-          value: (
-            <DiffValue
-              previous={response.order_previous_sum}
-              current={response.order_sum || "Не установлена"}
-            />
-          ),
+          value: response.order_sum || "Не установлена",
           valueAccent: true,
         },
         {
           label: isExpert ? "Ваша цена" : "Цена исполнителя",
-          value: (
-            <DiffValue
-              previous={getPreviousResponseCost(response)}
-              current={getResponseCost(response) || "—"}
-            />
-          ),
+          value: getResponseCost(response) || "—",
         },
         {
           label: "Срок начала выполнения работ (заказчик)",
@@ -120,27 +99,23 @@ export function ResponseCard({ response, viewer, actions }: ResponseCardProps) {
           label: isExpert
             ? "Ваш срок начала выполнения работ"
             : "Срок начала выполнения работ исполнителя",
-          value: response.proposed_start_date ? (
-            <DiffValue
-              previous={response.previous_proposed_start_date}
-              current={response.proposed_start_date}
-            />
-          ) : "",
+          value: response.proposed_start_date,
         },
         {
           label: isExpert
             ? "Ваш срок окончания выполнения работ"
             : "Срок окончания выполнения работ исполнителя",
-          value: (
-            <DiffValue
-              previous={response.previous_proposed_deadline}
-              current={response.proposed_deadline || "—"}
-            />
-          ),
+          value: response.proposed_deadline || "—",
         },
         {
           label: "Дата отклика",
           value: response.date || "—",
+        },
+        {
+          label: "Файлы отклика",
+          value: response.response_files.length > 0 && (
+            <ResponseFiles files={response.response_files} />
+          ),
         },
       ].filter((item) => item.value)}
       actions={actions}

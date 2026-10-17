@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
 
+from app.core.errors import AppError, app_error_handler
+from app.support.routes import router as support_router
 from routes import (
     admin_contact_deal,
     admin_content,
@@ -57,7 +59,6 @@ from routes import (
     rtn,
     rtn_interactions,
     settings,
-    support,
     survey,
     tech_diag,
     telegram_auth,
@@ -100,6 +101,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
 app.add_exception_handler(PostError, posts.post_error_handler)
+app.add_exception_handler(AppError, app_error_handler)
 
 
 cors_origins_env = os.getenv("CORS_ORIGINS", "https://plus-resurs.com,http://localhost:3000")
@@ -148,7 +150,7 @@ app.include_router(lead.router, prefix="/api")
 app.include_router(labor.router, prefix="/api")
 app.include_router(contact_deal.router, prefix="/api")
 app.include_router(question.router, prefix="/api")
-app.include_router(support.router, prefix="/api")
+app.include_router(support_router, prefix="/api")
 app.include_router(license_holder.router, prefix="/api")
 app.include_router(report.router, prefix="/api")
 app.include_router(hazard.router, prefix="/api")

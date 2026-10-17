@@ -23,12 +23,7 @@ export function OrderDetails({ order, children }: OrderDetailsProps) {
   return (
     <>
       <OrderDirectionDetails order={order} />
-      {order.comment && (
-        <OrderComment
-          text={order.comment}
-          previous={order.previous_comment}
-        />
-      )}
+      {order.comment && <OrderComment text={order.comment} />}
       {children}
       {getOrderDocumentPaths(order.documents).length > 0 && (
         <OrderDocuments documents={order.documents} />

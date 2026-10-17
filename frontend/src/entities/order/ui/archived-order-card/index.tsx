@@ -78,13 +78,16 @@ export function ArchivedOrderCard({
           label: "Создан",
           value: order.created_at_display,
         },
+        {
+          label: "Файлы отклика",
+          value: hasExecutor && responseFiles,
+        },
       ].filter((item) => item.value)}
       actions={actions}
       leftExtra={
         <OrderRequirements
           workType={order.work_type}
           badges={order.badges}
-          previousBadges={null}
         />
       }
       details={
@@ -96,7 +99,6 @@ export function ArchivedOrderCard({
                 text={order.executor_comment}
               />
             )}
-            {hasExecutor && responseFiles}
           </OrderDetails>
         ) : undefined
       }

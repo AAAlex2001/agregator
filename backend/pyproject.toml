@@ -44,7 +44,7 @@ ignore = [
 "test/**/*.py" = ["B", "TRY"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["models", "schemas", "services", "routes", "utils", "dependencies", "database", "tasks", "ws"]
+known-first-party = ["app", "models", "schemas", "services", "routes", "utils", "dependencies", "database", "tasks", "ws"]
 
 [tool.mypy]
 python_version = "3.12"

@@ -59,9 +59,5 @@ export function getOrderPreviewCard(
     status: "ACTIVE",
     work_type: values.workType,
     badges,
-    previous_title: null,
-    previous_sum: null,
-    previous_date: null,
-    previous_badges: null,
   };
 }

@@ -68,7 +68,7 @@ export interface ResponseOrderBadge {
   variant: string;
 }
 
-/** Отклик в списке: предложение исполнителя, условия заказа и их прежние редакции. */
+/** Отклик в списке: предложение исполнителя и условия заказа. */
 export interface ResponseItem {
   id: number;
   order_id: number;
@@ -96,16 +96,6 @@ export interface ResponseItem {
   proposed_sum_amount_raw: number;
   proposed_start_date_raw: string;
   proposed_deadline_raw: string;
-  previous_comment: string | null;
-  previous_proposed_sum: string | null;
-  previous_proposed_start_date: string | null;
-  previous_proposed_deadline: string | null;
-  previous_vat_kind: VatKind | null;
-  previous_response_files: string[] | null;
-  order_previous_title: string | null;
-  order_previous_comment: string | null;
-  order_previous_sum: string | null;
-  order_previous_badges: ResponseOrderBadge[] | null;
   expert_name: string;
   expert_avatar_url: string | null;
   expert_rating: number | null;
