@@ -67,6 +67,18 @@
   overflow: hidden;
 }
 
+.collapseOpen .collapseInner {
+  overflow: visible;
+  animation: clip-while-opening 0.28s;
+}
+
+@keyframes clip-while-opening {
+  from,
+  to {
+    overflow: hidden;
+  }
+}
+
 .toggle {
   display: flex;
   align-items: center;
@@ -118,5 +130,9 @@
   .collapse .body,
   .chevron {
     transition: none;
+  }
+
+  .collapseOpen .collapseInner {
+    animation: none;
   }
 }

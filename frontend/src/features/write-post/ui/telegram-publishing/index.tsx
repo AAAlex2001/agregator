@@ -63,7 +63,7 @@ export function TelegramPublishing({
 
       <FormSection
         title="Кнопки под постом"
-        hint="Ссылка, копирование текста или скрытый текст для подписчиков. К альбому кнопки не добавить."
+        hint="Ссылка, промокод или скрытый текст. К альбому из нескольких фото кнопки не добавить"
         collapsible
         defaultOpen={telegram.buttons.length > 0}
       >
@@ -76,7 +76,7 @@ export function TelegramPublishing({
 
       <FormSection
         title="Опрос"
-        hint="Бот отправит опрос следом за постом"
+        hint="Бот отправит опрос сразу после поста"
         collapsible
         defaultOpen={telegram.poll !== null}
       >
@@ -89,6 +89,7 @@ export function TelegramPublishing({
 
       <FormSection
         title="Настройки публикации"
+        hint="Время выхода, звук, закреп, превью ссылок и автоудаление"
         collapsible
         defaultOpen={Boolean(state.scheduledAt)}
       >
@@ -96,6 +97,7 @@ export function TelegramPublishing({
           telegram={telegram}
           scheduledAt={state.scheduledAt}
           canSchedule={canSchedule}
+          hasMedia={state.media.length > 0}
           disabled={disabled}
           onChange={onTelegramChange}
           onScheduleChange={onScheduleChange}

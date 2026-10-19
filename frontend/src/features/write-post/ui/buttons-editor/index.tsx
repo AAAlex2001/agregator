@@ -1,11 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { TelegramButton } from "@/entities/post";
-import { Button } from "@/shared/ui/button";
-import { PlusIcon } from "@/shared/ui/icons";
-import { MAX_BUTTON_ROWS, MAX_BUTTONS_IN_ROW } from "../../config/telegram-options";
 import { addButtonRow, addButtonToRow, changeButton, removeButton } from "../../model/buttons";
+import type { ButtonPlace } from "../../model/types";
 import { ButtonFields } from "../button-fields";
+import { ButtonKeyboard } from "../button-keyboard";
 import styles from "./style.module.scss";
 
 /** Ряды кнопок, блокировка и замена рядов. */
@@ -15,49 +15,56 @@ interface ButtonsEditorProps {
   onChange: (rows: TelegramButton[][]) => void;
 }
 
-/** Ряды кнопок под постом: до 8 рядов, в ряду до 3 кнопок. */
+/** Кнопки под постом: клавиатура как в Telegram и настройка выбранной кнопки под ней. */
 export function ButtonsEditor({ rows, disabled, onChange }: ButtonsEditorProps) {
+  const [selected, setSelected] = useState<ButtonPlace | null>(null);
+  const button = selected ? rows[selected.row]?.[selected.column] : undefined;
+
+  /** Новый ряд с одной кнопкой; она сразу открывается для настройки. */
+  function addRow() {
+    onChange(addButtonRow(rows));
+    setSelected({ row: rows.length, column: 0 });
+  }
+
+  /** Новая кнопка в конце ряда; она сразу открывается для настройки. */
+  function addToRow(row: number) {
+    onChange(addButtonToRow(rows, row));
+    setSelected({ row, column: rows[row].length });
+  }
+
+  /** Заменяет выбранную кнопку изменённой. */
+  function change(place: ButtonPlace, changed: TelegramButton) {
+    onChange(changeButton(rows, place.row, place.column, changed));
+  }
+
+  /** Убирает выбранную кнопку и закрывает её настройку. */
+  function remove(place: ButtonPlace) {
+    onChange(removeButton(rows, place.row, place.column));
+    setSelected(null);
+  }
+
   return (
     <div className={styles.editor}>
-      {rows.map((row, rowIndex) => (
-        <div
-          key={rowIndex}
-          className={styles.row}
-        >
-          <span className={styles.rowTitle}>Ряд {rowIndex + 1}</span>
-          {row.map((button, columnIndex) => (
-            <ButtonFields
-              key={columnIndex}
-              button={button}
-              number={`${rowIndex + 1}.${columnIndex + 1}`}
-              onChange={(changed) => onChange(changeButton(rows, rowIndex, columnIndex, changed))}
-              onRemove={() => onChange(removeButton(rows, rowIndex, columnIndex))}
-            />
-          ))}
-          {row.length < MAX_BUTTONS_IN_ROW && (
-            <Button
-              variant="transparent"
-              size="sm"
-              disabled={disabled}
-              onClick={() => onChange(addButtonToRow(rows, rowIndex))}
-            >
-              <PlusIcon />
-              Кнопка в этот ряд
-            </Button>
-          )}
-        </div>
-      ))}
-      {rows.length < MAX_BUTTON_ROWS && (
-        <Button
-          variant="outline"
-          size="sm"
-          className={styles.addRow}
-          disabled={disabled}
-          onClick={() => onChange(addButtonRow(rows))}
-        >
-          <PlusIcon />
-          Добавить ряд кнопок
-        </Button>
+      {rows.length > 0 && (
+        <p className={styles.hint}>
+          Так кнопки будут выглядеть под постом. Нажмите на кнопку, чтобы её настроить,
+          или на «+», чтобы добавить ещё одну в тот же ряд.
+        </p>
+      )}
+      <ButtonKeyboard
+        rows={rows}
+        selected={selected}
+        disabled={disabled}
+        onSelect={setSelected}
+        onAddToRow={addToRow}
+        onAddRow={addRow}
+      />
+      {selected && button && (
+        <ButtonFields
+          button={button}
+          onChange={(changed) => change(selected, changed)}
+          onRemove={() => remove(selected)}
+        />
       )}
     </div>
   );

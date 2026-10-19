@@ -19,7 +19,10 @@ interface TelegramPreviewProps {
   onClose: () => void;
 }
 
-/** Пост так, как его покажет Telegram: первое фото, текст, кнопки, опрос и сколько символов занято. */
+/**
+ * Пост так, как его покажет Telegram: первое фото, текст, кнопки, опрос
+ * и сколько символов занято.
+ */
 export function TelegramPreview({
   html,
   media,
@@ -62,7 +65,9 @@ export function TelegramPreview({
               </span>
             )}
             {cover && cover.kind === "video" && <span className={styles.video}>Видео</span>}
-            {media.length > 1 && <span className={styles.album}>Альбом: {media.length} файлов</span>}
+            {media.length > 1 && (
+              <span className={styles.album}>Альбом: {media.length} файлов</span>
+            )}
             <div
               className={styles.text}
               dangerouslySetInnerHTML={{ __html: preview.html }}

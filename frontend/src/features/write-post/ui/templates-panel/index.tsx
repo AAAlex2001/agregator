@@ -48,6 +48,7 @@ export function TemplatesPanel() {
         <Button
           variant="outline"
           size="sm"
+          className={styles.saveButton}
           isLoading={isSaving}
           disabled={editor.isEmpty}
           onClick={() => save(editor.getHTML())}
@@ -63,7 +64,9 @@ export function TemplatesPanel() {
       )}
       {error && <p className={styles.error}>{error}</p>}
       {!isLoading && !error && templates.length === 0 && (
-        <p className={styles.empty}>Шаблонов пока нет. Сохраните текст, который часто повторяется.</p>
+        <p className={styles.empty}>
+          Шаблонов пока нет. Сохраните текст, который часто повторяется.
+        </p>
       )}
       <ul className={styles.list}>
         {templates.map((template) => (

@@ -34,7 +34,9 @@ export function ChannelPicker({
   if (channels.length === 0) {
     return (
       <div className={styles.empty}>
-        <p className={styles.emptyText}>Подключите канал или группу, чтобы публиковать в Telegram.</p>
+        <p className={styles.emptyText}>
+            Подключите канал или группу, чтобы публиковать в Telegram.
+          </p>
         <Button
           variant="outline"
           size="sm"
@@ -65,7 +67,9 @@ export function ChannelPicker({
             >
               <span className={styles.label}>
                 <span className={styles.title}>{channel.title}</span>
-                <span className={styles.meta}>{isSent ? "Пост уже вышел здесь" : describeChannel(channel)}</span>
+                <span className={styles.meta}>
+                  {isSent ? "Пост уже вышел здесь" : describeChannel(channel)}
+                </span>
                 {problem && <span className={styles.problem}>{problem}</span>}
               </span>
             </Checkbox>

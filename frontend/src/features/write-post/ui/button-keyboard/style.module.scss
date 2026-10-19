@@ -1,0 +1,146 @@
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--color-telegram-chat);
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.key {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 24px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: var(--color-telegram-bubble);
+  color: var(--color-telegram);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--color-orange-soft);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-orange-primary);
+  }
+}
+
+.selected,
+.selected:hover {
+  border-color: var(--color-orange-primary);
+  box-shadow: 0 0 0 3px var(--color-orange-bg-faint);
+}
+
+.primary {
+  background: var(--color-telegram);
+  color: var(--color-surface);
+}
+
+.success {
+  background: var(--color-success-bright);
+  color: var(--color-surface);
+}
+
+.danger {
+  background: var(--color-error);
+  color: var(--color-surface);
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.kind {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+}
+
+.addKey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 100%;
+  min-height: 44px;
+  border: 2px dashed var(--color-border-soft);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-orange-primary);
+    color: var(--color-orange-primary);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.addRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px;
+  border: 2px dashed var(--color-border-soft);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-orange-primary);
+    color: var(--color-orange-primary);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.key:disabled,
+.addKey:disabled,
+.addRow:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

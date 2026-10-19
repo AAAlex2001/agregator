@@ -41,7 +41,11 @@ function publishMessage(isEdit: boolean, isScheduled: boolean): string {
 export function usePostForm(post: Post | undefined, target: PostTarget, replyTo: Post | null) {
   const router = useRouter();
   const { showSuccess, showError } = useNotifications();
-  const [state, dispatch] = useReducer(postFormReducer, { post, target, replyTo }, createPostFormState);
+  const [state, dispatch] = useReducer(
+    postFormReducer,
+    { post, target, replyTo },
+    createPostFormState,
+  );
   const sentIds = sentChannelIds(post);
 
   /** Сохраняет текст из редактора. */

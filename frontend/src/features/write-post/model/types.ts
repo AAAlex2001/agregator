@@ -15,6 +15,12 @@ export type SaveMode = "draft" | "publish";
 /** Куда пишется пост: в ленту сайта или в Telegram-каналы. */
 export type PostTarget = "site" | "telegram";
 
+/** Где стоит кнопка под постом: ряд и место в ряду. */
+export interface ButtonPlace {
+  row: number;
+  column: number;
+}
+
 /** Текст, файлы, где и когда публиковать, настройки Telegram и идущие запросы формы. */
 export interface PostFormState {
   html: string;

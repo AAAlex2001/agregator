@@ -46,12 +46,20 @@ export const EMPTY_POLL: TelegramPoll = {
   allows_multiple_answers: false,
 };
 
-/** Превью ссылок в тексте. */
-export const LINK_PREVIEW_OPTIONS: SelectOption[] = [
-  { value: "auto", label: "Как решит Telegram" },
-  { value: "off", label: "Без превью" },
-  { value: "small", label: "Маленькое" },
-  { value: "large", label: "Большое" },
+/** Превью ссылок в тексте и что каждое значит. */
+export const LINK_PREVIEW_TABS = [
+  {
+    id: "auto",
+    label: "Авто",
+    hint: "Telegram сам решит, показывать ли превью первой ссылки",
+  },
+  { id: "off", label: "Без превью", hint: "Ссылки останутся просто ссылками" },
+  {
+    id: "small",
+    label: "Маленькое",
+    hint: "Картинка ссылки — маленькой миниатюрой сбоку",
+  },
+  { id: "large", label: "Большое", hint: "Картинка ссылки — крупно на всю ширину" },
 ];
 
 /** Через сколько удалить пост из каналов; пустое значение — не удалять. */
@@ -64,19 +72,23 @@ export const AUTO_DELETE_OPTIONS: SelectOption[] = [
   { value: "168", label: "Через неделю" },
 ];
 
-/** Что делает кнопка. */
-export const BUTTON_KIND_OPTIONS: SelectOption[] = [
-  { value: "url", label: "Ссылка" },
-  { value: "copy", label: "Скопировать текст" },
-  { value: "hidden", label: "Скрытый текст для подписчиков" },
+/** Что делает кнопка и как это выглядит для подписчика. */
+export const BUTTON_KIND_TABS = [
+  { id: "url", label: "Ссылка", hint: "Откроет сайт или канал по ссылке" },
+  { id: "copy", label: "Копировать", hint: "Скопирует текст — например, промокод" },
+  {
+    id: "hidden",
+    label: "Скрытый текст",
+    hint: "Подписчик увидит текст во всплывающем окне, остальные — просьбу подписаться",
+  },
 ];
 
 /** Цвет кнопки; пустое значение — обычная. */
-export const BUTTON_STYLE_OPTIONS: SelectOption[] = [
-  { value: "", label: "Обычная" },
-  { value: "primary", label: "Синяя" },
-  { value: "success", label: "Зелёная" },
-  { value: "danger", label: "Красная" },
+export const BUTTON_STYLE_TABS = [
+  { id: "", label: "Обычная" },
+  { id: "primary", label: "Синяя" },
+  { id: "success", label: "Зелёная" },
+  { id: "danger", label: "Красная" },
 ];
 
 /** Варианты превью ссылок в порядке списка. */

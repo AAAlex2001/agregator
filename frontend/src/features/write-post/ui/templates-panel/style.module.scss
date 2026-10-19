@@ -18,6 +18,17 @@
   min-width: 0;
 }
 
+.save .saveButton {
+  flex: 1 1 auto;
+  max-height: none;
+}
+
+@media (min-width: 768px) {
+  .save .saveButton {
+    flex: none;
+  }
+}
+
 .list {
   display: flex;
   flex-direction: column;

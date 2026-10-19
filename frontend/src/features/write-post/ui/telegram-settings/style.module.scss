@@ -1,5 +1,24 @@
 .settings {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  & + & {
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border-soft);
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+  color: var(--color-text-primary);
 }

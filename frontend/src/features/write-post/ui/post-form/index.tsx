@@ -95,7 +95,9 @@ export function PostForm({ post, target, replyTo = null }: PostFormProps) {
         onChange={changeHtml}
       />
       {sentIds.length > 0 ? (
-        <p className={styles.note}>Пост уже вышел в Telegram: фото и видео в нём изменить нельзя, только текст.</p>
+        <p className={styles.note}>
+          Пост уже вышел в Telegram: фото и видео в нём изменить нельзя, только текст.
+        </p>
       ) : (
         <PostMediaPicker
           files={state.media}
