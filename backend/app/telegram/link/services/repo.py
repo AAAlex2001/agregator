@@ -42,16 +42,27 @@ class TelegramLinkRepository:
         return await self.db.get(Account, account_id)
 
     async def find_by_telegram(self, telegram_id: int) -> Account | None:
-        """Аккаунт, к которому Telegram привязан последним."""
+        """Аккаунт, который последним открыл бота по ссылке с сайта.
 
-        stmt = (
+        Telegram привязан ко всем ролям одной почты, поэтому роль определяется по ссылке.
+        Без ссылки (привязка из мини-приложения) — роль, изменённая последней.
+        """
+
+        active = [Account.telegram_id == telegram_id, Account.is_active.is_(True)]
+        by_link = (
             select(Account)
-            .where(Account.telegram_id == telegram_id, Account.is_active.is_(True))
-            .order_by(Account.updated_at.desc())
+            .join(TelegramLinkToken, TelegramLinkToken.account_id == Account.id)
+            .where(*active, TelegramLinkToken.used_at.is_not(None))
+            .order_by(TelegramLinkToken.used_at.desc())
             .limit(1)
         )
+        linked = await self.db.scalar(by_link)
+        if linked is not None:
+            return linked
 
-        return await self.db.scalar(stmt)
+        latest = select(Account).where(*active).order_by(Account.updated_at.desc()).limit(1)
+
+        return await self.db.scalar(latest)
 
     async def bind(self, account: Account, telegram_id: int) -> None:
         """Привязывает Telegram ко всем ролям этой почты и отвязывает от чужих аккаунтов."""

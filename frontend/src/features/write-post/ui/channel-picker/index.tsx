@@ -3,7 +3,7 @@
 import { channelProblem, describeChannel, useChannels } from "@/entities/poster-channel";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
-import { Skeleton } from "@/shared/ui/skeleton";
+import { ChannelPickerSkeleton } from "../channel-picker-skeleton";
 import styles from "./style.module.scss";
 
 /** Выбранные каналы, уже вышедшие и действие выбора. */
@@ -24,7 +24,7 @@ export function ChannelPicker({
   const { channels, error, isLoading } = useChannels();
 
   if (isLoading) {
-    return <Skeleton className={styles.skeleton} />;
+    return <ChannelPickerSkeleton />;
   }
 
   if (error) {

@@ -1,10 +1,9 @@
 "use client";
 
-import { ChannelCard, useChannels } from "@/entities/poster-channel";
+import { ChannelCard, ChannelCardSkeleton, useChannels } from "@/entities/poster-channel";
 import { ConnectChannelButton } from "@/features/connect-channel";
 import { DisconnectChannelButton } from "@/features/disconnect-channel";
 import { RefreshChannelButton } from "@/features/refresh-channel";
-import { Skeleton } from "@/shared/ui/skeleton";
 import { Subtitle } from "@/shared/ui/subtitle";
 import { Title } from "@/shared/ui/title";
 import { CONNECT_STEPS } from "../../config/connect-steps";
@@ -43,7 +42,12 @@ export function PosterChannels() {
         <ConnectChannelButton />
       </section>
 
-      {isLoading && <Skeleton className={styles.skeleton} />}
+      {isLoading && (
+        <div className={styles.list}>
+          <ChannelCardSkeleton />
+          <ChannelCardSkeleton />
+        </div>
+      )}
       {error && <p className={styles.error}>{error}</p>}
       {!isLoading && !error && channels.length === 0 && (
         <p className={styles.empty}>Подключённых каналов пока нет.</p>
