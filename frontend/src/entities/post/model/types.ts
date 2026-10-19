@@ -1,5 +1,5 @@
 /** Состояние публикации: черновик, опубликованная или скрытая запись. */
-export type PostStatus = "draft" | "published" | "hidden";
+export type PostStatus = "draft" | "scheduled" | "published" | "hidden";
 
 /** Фото или видео, загруженное для публикации. */
 export interface PostMedia {
@@ -39,12 +39,52 @@ export interface DeliveryChannel {
   is_active: boolean;
 }
 
-/** Пост в одном Telegram-канале: статус, ошибка и время выхода. */
+/** Пост в одном Telegram-канале: статус, ошибка, время выхода и ссылка на сообщение. */
 export interface PostDelivery {
   channel: DeliveryChannel;
   status: DeliveryStatus;
   error: string | null;
   sent_at: string | null;
+  message_url: string | null;
+}
+
+/** Что делает кнопка под постом: ссылка, копирование или скрытый текст для подписчиков. */
+export type TelegramButtonKind = "url" | "copy" | "hidden";
+
+/** Цвет кнопки в Telegram. */
+export type TelegramButtonStyle = "primary" | "success" | "danger";
+
+/** Кнопка под Telegram-постом. */
+export interface TelegramButton {
+  kind: TelegramButtonKind;
+  text: string;
+  value: string;
+  alt: string;
+  style: TelegramButtonStyle | null;
+}
+
+/** Опрос, который уходит следом за постом. */
+export interface TelegramPoll {
+  question: string;
+  options: string[];
+  is_anonymous: boolean;
+  allows_multiple_answers: boolean;
+}
+
+/** Превью ссылки: как решит Telegram, без превью, маленькое или большое. */
+export type LinkPreview = "auto" | "off" | "small" | "large";
+
+/** Как пост выходит в Telegram: настройки, кнопки и опрос. */
+export interface TelegramOptions {
+  silent: boolean;
+  protect: boolean;
+  pin: boolean;
+  link_preview: LinkPreview;
+  link_preview_above: boolean;
+  caption_above: boolean;
+  auto_delete_hours: number | null;
+  buttons: TelegramButton[][];
+  poll: TelegramPoll | null;
 }
 
 /** Публикация из API с её содержимым, счётчиками и отметками посетителя. */
@@ -56,6 +96,9 @@ export interface Post extends RepostedPost {
   status: PostStatus;
   on_site: boolean;
   deliveries: PostDelivery[];
+  telegram: TelegramOptions;
+  scheduled_at: string | null;
+  reply_to_id: number | null;
   likes_count: number;
   comments_count: number;
   reposts_count: number;
@@ -84,6 +127,9 @@ export interface PostPayload {
   draft: boolean;
   on_site: boolean;
   channel_ids: number[];
+  telegram: TelegramOptions;
+  scheduled_at: string | null;
+  reply_to_id: number | null;
 }
 
 /** Текст поста в разметке Telegram и сколько символов из лимита он занимает. */

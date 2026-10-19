@@ -7,20 +7,20 @@ import { FormatButton } from "../format-button";
 import { LinkButton } from "../link-button";
 import styles from "./style.module.scss";
 
-/** Редактор, дополнительная панель и блокировка кнопок. */
+/** Редактор, дополнительные панели, открытая из них и блокировка кнопок. */
 interface EditorToolbarProps {
   editor: Editor;
-  panel?: EditorPanel;
-  isPanelOpen: boolean;
+  panels: EditorPanel[];
+  openPanel: string | null;
   disabled: boolean;
-  onPanelToggle: () => void;
+  onPanelToggle: (label: string) => void;
 }
 
 /** Кнопки оформления выделенного текста, ссылки и смайлики. */
 export function EditorToolbar({
   editor,
-  panel,
-  isPanelOpen,
+  panels,
+  openPanel,
   disabled,
   onPanelToggle,
 }: EditorToolbarProps) {
@@ -30,16 +30,17 @@ export function EditorToolbar({
       role="toolbar"
       aria-label="Оформление текста"
     >
-      {panel && (
+      {panels.map((panel) => (
         <EditorButton
+          key={panel.label}
           label={panel.label}
-          pressed={isPanelOpen}
+          pressed={panel.label === openPanel}
           disabled={disabled}
-          onClick={onPanelToggle}
+          onClick={() => onPanelToggle(panel.label)}
         >
           <panel.icon />
         </EditorButton>
-      )}
+      ))}
       {FORMAT_TOOLS.map((tool) => (
         <FormatButton
           key={tool.label}

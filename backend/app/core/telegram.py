@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 API_URL = "https://api.telegram.org"
 TIMEOUT_SECONDS = 30
 UPLOAD_TIMEOUT_SECONDS = 300
+CHANNEL_ID_PREFIX = "-100"
 
 ERROR_TEXTS = {
     "chat not found": "Бот не видит чат: добавьте его заново",
@@ -53,6 +54,22 @@ def readable_error(description: str) -> str:
     known = [text for fragment, text in ERROR_TEXTS.items() if fragment in lowered]
 
     return known[0] if known else description
+
+
+def message_link(chat_id: int, username: str | None, message_id: int) -> str | None:
+    """Ссылка на сообщение: в публичном чате — по имени, в закрытом канале — через t.me/c.
+
+    У обычной группы ссылок на сообщения нет.
+    """
+
+    if username:
+        return f"https://t.me/{username}/{message_id}"
+
+    chat = str(chat_id)
+    if not chat.startswith(CHANNEL_ID_PREFIX):
+        return None
+
+    return f"https://t.me/c/{chat.removeprefix(CHANNEL_ID_PREFIX)}/{message_id}"
 
 
 def parse_reply(data: dict[str, Any]) -> TelegramReply:

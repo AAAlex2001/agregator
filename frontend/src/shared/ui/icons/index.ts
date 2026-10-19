@@ -18,6 +18,7 @@ export { CloseIcon } from "./close-icon";
 export { CookieIcon } from "./cookie-icon";
 export { CustomerIcon } from "./customer-icon";
 export { DiplomaIcon } from "./diploma-icon";
+export { DocumentPlusIcon } from "./document-plus-icon";
 export { EllipsisIcon } from "./ellipsis-icon";
 export { EmailIcon } from "./email-icon";
 export { ExpertIcon } from "./expert-icon";

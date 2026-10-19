@@ -13,7 +13,7 @@ import type { FormatTool } from "../model/types";
 /** Кнопки оформления в прежнем порядке. */
 export const FORMAT_TOOLS: FormatTool[] = [
   {
-    label: "Заголовок",
+    label: "Заголовок раздела",
     icon: Heading2Icon,
     isActive: (editor) => editor.isActive("heading", { level: 2 }),
     run: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
@@ -25,7 +25,7 @@ export const FORMAT_TOOLS: FormatTool[] = [
     run: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
-    label: "Жирный",
+    label: "Жирный текст",
     icon: BoldIcon,
     isActive: (editor) => editor.isActive("bold"),
     run: (editor) => editor.chain().focus().toggleBold().run(),
@@ -37,13 +37,13 @@ export const FORMAT_TOOLS: FormatTool[] = [
     run: (editor) => editor.chain().focus().toggleItalic().run(),
   },
   {
-    label: "Подчёркнутый",
+    label: "Подчёркнутый текст",
     icon: UnderlineIcon,
     isActive: (editor) => editor.isActive("underline"),
     run: (editor) => editor.chain().focus().toggleUnderline().run(),
   },
   {
-    label: "Список",
+    label: "Маркированный список",
     icon: ListIcon,
     isActive: (editor) => editor.isActive("bulletList"),
     run: (editor) => editor.chain().focus().toggleBulletList().run(),

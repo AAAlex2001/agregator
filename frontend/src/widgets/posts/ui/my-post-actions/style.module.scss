@@ -1,8 +1,17 @@
 .actions {
   display: flex;
+  justify-content: space-between;
   gap: 8px;
+  width: 100%;
 }
 
 .actions .danger {
   color: var(--color-error);
+}
+
+@media (min-width: 1440px) {
+  .actions {
+    justify-content: flex-start;
+    width: auto;
+  }
 }

@@ -56,9 +56,13 @@
 
 .actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   width: 100%;
+
+  > * {
+    width: 100%;
+  }
 }
 
 @media (min-width: 768px) {
@@ -67,6 +71,12 @@
   }
 
   .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
     width: auto;
+
+    > * {
+      width: auto;
+    }
   }
 }

@@ -1,10 +1,12 @@
 """Запросы к постам. Коммит делает сессия запроса."""
 
-from sqlalchemy import or_, select
+from datetime import datetime
+
+from sqlalchemy import or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.poster.media.models import PostMedia
-from app.poster.publications.models import Post
+from app.poster.publications.models import Post, PostStatus
 
 
 async def lock_post(db: AsyncSession, post_id: int) -> None:
@@ -32,6 +34,20 @@ class PostRepository:
         await lock_post(self.db, post_id)
 
         return await self.reload(post_id)
+
+    async def publish_due(self, now: datetime) -> int:
+        """Отложенные посты, чьё время пришло, становятся опубликованными. Сколько их вышло."""
+
+        stmt = (
+            update(Post)
+            .where(Post.status == PostStatus.SCHEDULED, Post.scheduled_at <= now)
+            .values(status=PostStatus.PUBLISHED, published_at=now, updated_at=now)
+            .returning(Post.id)
+            .execution_options(synchronize_session=False)
+        )
+        published = await self.db.scalars(stmt)
+
+        return len(list(published))
 
     async def media_paths(self, post_id: int) -> list[str]:
         """Файлы поста и его репостов: они удаляются вместе с оригиналом."""

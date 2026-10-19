@@ -16,10 +16,14 @@ interface MyPostCardProps {
   onDeleted: () => void;
 }
 
-/** Когда пост вышел или последний раз менялся. */
+/** Когда пост вышел, выйдет или последний раз менялся. */
 function postDate(post: Post): string {
   if (post.status === "published" && post.published_at) {
     return `Опубликован ${formatWithTime(post.published_at)}`;
+  }
+
+  if (post.status === "scheduled" && post.scheduled_at) {
+    return `Выйдет ${formatWithTime(post.scheduled_at)}`;
   }
 
   return `Изменён ${formatWithTime(post.updated_at)}`;

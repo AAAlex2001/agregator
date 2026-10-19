@@ -6,6 +6,10 @@ export function postStatusLabel(status: PostStatus): string {
     return "Опубликован";
   }
 
+  if (status === "scheduled") {
+    return "Запланирован";
+  }
+
   return status === "draft" ? "Черновик" : "Скрыт модератором";
 }
 

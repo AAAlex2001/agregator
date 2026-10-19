@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import ColumnElement, Select, func, or_, select
+from sqlalchemy import ColumnElement, Select, and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.poster.follows.models import Follow
@@ -59,12 +59,20 @@ class FeedRepository:
         return await self.page_newest(ON_SITE, limit, offset)
 
     async def list_following(self, user_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
-        """Лента «Подписки»: посты и репосты авторов, на которых подписан пользователь."""
+        """Лента «Подписки»: посты и репосты авторов, вышедшие после подписки на них.
 
-        authors = select(Follow.author_id).where(Follow.follower_id == user_id)
-        conditions = [*ON_SITE, Post.author_id.in_(authors)]
+        Отписка удаляет подписку — и посты автора уходят из ленты.
+        """
 
-        return await self.page_newest(conditions, limit, offset)
+        following = and_(Follow.author_id == Post.author_id, Follow.follower_id == user_id)
+        stmt = (
+            select(Post)
+            .join(Follow, following)
+            .where(*ON_SITE, Post.published_at > Follow.created_at, VISIBLE_REPOST)
+            .order_by(*NEWEST_FIRST)
+        )
+
+        return await self.page(stmt, limit, offset)
 
     async def list_by_author(self, author_id: int, limit: int, offset: int) -> tuple[list[Post], int]:
         """Опубликованные оригиналы автора — для его страницы."""

@@ -43,7 +43,7 @@ export function EmojiButton({ editor, disabled }: EmojiButtonProps) {
   return (
     <div onBlur={closeOnBlur}>
       <EditorButton
-        label="Смайлик"
+        label="Вставить смайлик"
         expanded={isOpen}
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}

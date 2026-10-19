@@ -10,6 +10,7 @@ from app.poster.media import models as poster_media
 from app.poster.publications import models as poster_publications
 from app.poster.reactions import models as poster_reactions
 from app.poster.reports import models as poster_reports
+from app.poster.templates import models as poster_templates
 from app.support import models as support
 from app.telegram.link import models as telegram_link
 
@@ -23,6 +24,7 @@ __all__ = [
     "poster_publications",
     "poster_reactions",
     "poster_reports",
+    "poster_templates",
     "sessions",
     "support",
     "telegram_link",

@@ -1,10 +1,12 @@
 import type { Post } from "@/entities/post";
+import { DEFAULT_TELEGRAM_OPTIONS } from "../config/telegram-options";
 import type { PostFormAction, PostFormState, PostTarget } from "./types";
 
-/** Пост, который правят, и куда пишется новый. */
+/** Пост, который правят, куда пишется новый и на какой свой пост он отвечает. */
 interface PostFormSource {
   post?: Post;
   target: PostTarget;
+  replyTo: Post | null;
 }
 
 /** Каналы, где пост уже есть или ждёт отправки. */
@@ -15,12 +17,15 @@ function postChannelIds(post: Post): number[] {
 }
 
 /** Начальные поля формы: пустые для нового поста или из сохранённой публикации. */
-export function createPostFormState({ post, target }: PostFormSource): PostFormState {
+export function createPostFormState({ post, target, replyTo }: PostFormSource): PostFormState {
   return {
     html: post?.html ?? "",
     media: post?.media ?? [],
     onSite: post ? post.on_site : target === "site",
     channelIds: post ? postChannelIds(post) : [],
+    telegram: post?.telegram ?? DEFAULT_TELEGRAM_OPTIONS,
+    scheduledAt: post?.scheduled_at ?? "",
+    replyTo,
     isMediaBusy: false,
     savingMode: null,
   };
@@ -55,6 +60,21 @@ export function postFormReducer(
       return {
         ...state,
         channelIds: toggleChannel(state.channelIds, action.channelId),
+      };
+    case "telegram/change":
+      return {
+        ...state,
+        telegram: action.telegram,
+      };
+    case "schedule/change":
+      return {
+        ...state,
+        scheduledAt: action.scheduledAt,
+      };
+    case "reply/clear":
+      return {
+        ...state,
+        replyTo: null,
       };
     case "media/start":
       return {

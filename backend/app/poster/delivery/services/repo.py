@@ -51,6 +51,20 @@ class DeliveryRepository:
 
         await self.db.execute(stmt)
 
+    async def list_expired(self, now: datetime, limit: int) -> list[PostDelivery]:
+        """Отправленные доставки, которым пора исчезнуть из канала. Занятые другим процессом — пропускаются."""
+
+        stmt = (
+            select(PostDelivery)
+            .where(PostDelivery.status == DeliveryStatus.SENT, PostDelivery.delete_at <= now)
+            .order_by(PostDelivery.delete_at)
+            .limit(limit)
+            .with_for_update(of=PostDelivery, skip_locked=True)
+        )
+        deliveries = await self.db.scalars(stmt)
+
+        return list(deliveries)
+
     async def get(self, delivery_id: int) -> PostDelivery | None:
         """Доставка вместе с каналом или None."""
 

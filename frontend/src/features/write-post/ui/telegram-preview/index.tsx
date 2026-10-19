@@ -2,30 +2,35 @@
 
 import cn from "classnames";
 import Image from "next/image";
-import type { PostMedia } from "@/entities/post";
+import type { PostMedia, TelegramOptions } from "@/entities/post";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
 import { useTelegramPreview } from "../../model/use-telegram-preview";
+import { PreviewKeyboard } from "../preview-keyboard";
+import { PreviewPoll } from "../preview-poll";
 import styles from "./style.module.scss";
 
-/** Текст и файлы поста, открытие окна и закрытие. */
+/** Текст, файлы и настройки поста, открытие окна и закрытие. */
 interface TelegramPreviewProps {
   html: string;
   media: PostMedia[];
+  telegram: TelegramOptions;
   open: boolean;
   onClose: () => void;
 }
 
-/** Пост так, как его покажет Telegram: первое фото, текст и сколько символов занято. */
+/** Пост так, как его покажет Telegram: первое фото, текст, кнопки, опрос и сколько символов занято. */
 export function TelegramPreview({
   html,
   media,
+  telegram,
   open,
   onClose,
 }: TelegramPreviewProps) {
   const { preview, error, isLoading } = useTelegramPreview(html, media.length, open);
   const cover = media[0];
   const isTooLong = preview !== null && preview.length > preview.limit;
+  const hasKeyboard = telegram.buttons.length > 0 && media.length <= 1;
 
   return (
     <Modal
@@ -63,6 +68,8 @@ export function TelegramPreview({
               dangerouslySetInnerHTML={{ __html: preview.html }}
             />
           </div>
+          {hasKeyboard && <PreviewKeyboard rows={telegram.buttons} />}
+          {telegram.poll && <PreviewPoll poll={telegram.poll} />}
           <p className={cn(styles.counter, { [styles.counterOver]: isTooLong })}>
             {preview.length} из {preview.limit} символов
             {media.length > 0 && " — с фото и видео текст идёт подписью"}

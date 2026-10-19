@@ -84,6 +84,7 @@ export function PostMediaPicker({
       {files.length < MAX_POST_MEDIA && (
         <Button
           variant="outline"
+          className={styles.add}
           disabled={disabled}
           isLoading={isBusy}
           onClick={pickFiles}

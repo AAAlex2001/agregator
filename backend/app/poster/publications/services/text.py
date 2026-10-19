@@ -1,5 +1,6 @@
 """Текст публикации: очистка разметки из редактора и видимый текст без тегов."""
 
+import re
 from html import unescape
 
 import nh3
@@ -10,6 +11,10 @@ from app.poster.publications.services.exceptions import PostTextTooLongError
 ALLOWED_TAGS = {"p", "br", "h2", "h3", "strong", "em", "u", "blockquote", "ul", "ol", "li", "a"}
 ALLOWED_ATTRIBUTES = {"a": {"href"}}
 ALLOWED_SCHEMES = {"http", "https"}
+BLOCK_BOUNDARY = re.compile(
+    r"</(?:p|div|h[1-6]|li|ul|ol|blockquote|pre|tr|td|th)>|<br\s*/?>",
+    re.IGNORECASE,
+)
 
 
 def clean_html(html: str) -> str:
@@ -26,9 +31,10 @@ def clean_html(html: str) -> str:
 
 
 def plain_text(html: str) -> str:
-    """Видимый текст без тегов, сущностей и лишних пробелов."""
+    """Видимый текст без тегов, сущностей и лишних пробелов. Абзацы и заголовки не склеиваются."""
 
-    text = unescape(nh3.clean(html, tags=set()))
+    spaced = BLOCK_BOUNDARY.sub(" ", html)
+    text = unescape(nh3.clean(spaced, tags=set()))
 
     return " ".join(text.split())
 

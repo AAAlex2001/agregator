@@ -8,7 +8,7 @@ import {
   updatePost,
   uploadPostMedia,
 } from "@/entities/post";
-import type { Post, PostMedia } from "@/entities/post";
+import type { Post, PostMedia, TelegramOptions } from "@/entities/post";
 import { useNotifications } from "@/shared/ui/notifications";
 import { MAX_POST_MEDIA } from "../config/media";
 import { createPostFormState, postFormReducer } from "./reducer";
@@ -25,14 +25,23 @@ export function sentChannelIds(post?: Post): number[] {
     .map((delivery) => delivery.channel.id);
 }
 
+/** Что сказать после публикации: сохранено, запланировано или опубликовано. */
+function publishMessage(isEdit: boolean, isScheduled: boolean): string {
+  if (isScheduled) {
+    return "Пост запланирован";
+  }
+
+  return isEdit ? "Изменения сохранены" : "Публикация опубликована";
+}
+
 /**
  * Новая публикация или правка своей: текст, фото и видео, сайт и каналы, черновик или публикация.
  * После сохранения открывает свои посты.
  */
-export function usePostForm(post: Post | undefined, target: PostTarget) {
+export function usePostForm(post: Post | undefined, target: PostTarget, replyTo: Post | null) {
   const router = useRouter();
   const { showSuccess, showError } = useNotifications();
-  const [state, dispatch] = useReducer(postFormReducer, { post, target }, createPostFormState);
+  const [state, dispatch] = useReducer(postFormReducer, { post, target, replyTo }, createPostFormState);
   const sentIds = sentChannelIds(post);
 
   /** Сохраняет текст из редактора. */
@@ -61,6 +70,27 @@ export function usePostForm(post: Post | undefined, target: PostTarget) {
       type: "channel/toggle",
       channelId,
     });
+  }
+
+  /** Настройки, кнопки и опрос Telegram-поста. */
+  function changeTelegram(telegram: TelegramOptions) {
+    dispatch({
+      type: "telegram/change",
+      telegram,
+    });
+  }
+
+  /** Время отложенной публикации; пустая строка — опубликовать сразу. */
+  function changeSchedule(scheduledAt: string) {
+    dispatch({
+      type: "schedule/change",
+      scheduledAt,
+    });
+  }
+
+  /** Пост выйдет обычным, а не ответом. */
+  function clearReply() {
+    dispatch({ type: "reply/clear" });
   }
 
   /** Загружает выбранные файлы; формат и размер проверяет сервер. */
@@ -119,6 +149,9 @@ export function usePostForm(post: Post | undefined, target: PostTarget) {
       draft: mode === "draft",
       on_site: state.onSite,
       channel_ids: state.channelIds.filter((id) => !sentIds.includes(id)),
+      telegram: state.telegram,
+      scheduled_at: state.scheduledAt || null,
+      reply_to_id: state.replyTo?.id ?? null,
     };
 
     try {
@@ -134,7 +167,7 @@ export function usePostForm(post: Post | undefined, target: PostTarget) {
         return;
       }
 
-      showSuccess(post ? "Изменения сохранены" : "Публикация опубликована");
+      showSuccess(publishMessage(Boolean(post), Boolean(state.scheduledAt)));
       router.push("/posts/my");
     } catch (error) {
       dispatch({ type: "submit/error" });
@@ -150,6 +183,9 @@ export function usePostForm(post: Post | undefined, target: PostTarget) {
     changeHtml,
     changeOnSite,
     toggleChannel,
+    changeTelegram,
+    changeSchedule,
+    clearReply,
     uploadMedia,
     removeMedia,
     save,

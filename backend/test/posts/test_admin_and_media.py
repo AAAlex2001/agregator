@@ -276,6 +276,10 @@ async def test_upload_removes_file_when_insert_fails(post_client, posts_database
 
 async def test_author_update_cannot_undo_concurrent_moderation(post_client, posts_database):
     """Устаревшая открытая форма не превращает скрытый модератором пост в черновик."""
+    from app.core.telegram import get_telegram_api
+    from app.poster.channels.services.repo import ChannelRepository
+    from app.poster.delivery.services.publisher import TelegramPublisher
+    from app.poster.delivery.services.usecases.edit_messages import EditMessagesUseCase
     from app.poster.publications.schemas import PostSaveSchema
     from app.poster.publications.services.post_form import PostForm
     from app.poster.publications.services.repo import PostRepository
@@ -291,7 +295,11 @@ async def test_author_update_cannot_undo_concurrent_moderation(post_client, post
             f"/api/internal/posts/{saved['id']}/status?status=hidden", headers=ADMIN
         )
         assert response.status_code == 200
-        updated = await UpdatePostUseCase(posts, PostForm(PostMediaRepository(db))).execute(
+        updated = await UpdatePostUseCase(
+            posts,
+            PostForm(PostMediaRepository(db), ChannelRepository(db), posts),
+            EditMessagesUseCase(TelegramPublisher(get_telegram_api())),
+        ).execute(
             stale, PostSaveSchema(html="Изменено автором", draft=True)
         )
         assert updated.status == PostStatus.HIDDEN

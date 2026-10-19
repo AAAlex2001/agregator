@@ -18,6 +18,7 @@ from app.poster.delivery.tasks import run_delivery_loop
 from app.poster.media.tasks import run_media_cleanup_loop
 from app.poster.moderation.routes import router as poster_moderation_router
 from app.poster.routes import router as poster_router
+from app.poster.templates.routes import router as poster_templates_router
 from app.support.routes import router as support_router
 from app.telegram.link.routes import router as telegram_link_router
 from routes import (
@@ -150,6 +151,7 @@ app.include_router(poster_router, prefix="/api")
 app.include_router(poster_moderation_router, prefix="/api")
 app.include_router(poster_channels_router, prefix="/api")
 app.include_router(poster_delivery_router, prefix="/api")
+app.include_router(poster_templates_router, prefix="/api")
 app.include_router(telegram_link_router, prefix="/api")
 app.include_router(referral.router, prefix="/api")
 app.include_router(review.router, prefix="/api")

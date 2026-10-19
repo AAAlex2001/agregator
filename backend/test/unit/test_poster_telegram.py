@@ -126,9 +126,14 @@ class FakeChannels:
         return [item for item in self.items if item.id in channel_ids and item.is_ready]
 
 
+class NoPosts:
+    async def get_by_id(self, post_id):
+        return None
+
+
 def fill(payload: PostSaveSchema, media=None, channels=None) -> Post:
     post = Post(author_id=OWNER.id)
-    form = PostForm(FakeMedia(media or []), FakeChannels(channels or []))
+    form = PostForm(FakeMedia(media or []), FakeChannels(channels or []), NoPosts())
     asyncio.run(form.fill(post, OWNER.id, payload))
 
     return post
@@ -294,12 +299,21 @@ class FakeAccess:
         self.updates.append((chat_id, bot_status))
 
 
-def bot(api: FakeApi, connect=None, access=None, chats=None) -> HandleUpdateUseCase:
+class FakeHidden:
+    def __init__(self) -> None:
+        self.callbacks: list[dict] = []
+
+    async def execute(self, callback):
+        self.callbacks.append(callback)
+
+
+def bot(api: FakeApi, connect=None, access=None, chats=None, hidden=None) -> HandleUpdateUseCase:
     return HandleUpdateUseCase(
         api=api,
         link=FakeLink(OWNER),
         connect=connect or ConnectChannelUseCase(FakeChannelRepository(), FakeLinks(None), FakeChats(True, INFO)),
         access=access or FakeAccess(),
+        hidden=hidden or FakeHidden(),
         channels=FakeChannelRepository(),
         chats=chats or FakeChats(True, INFO),
     )

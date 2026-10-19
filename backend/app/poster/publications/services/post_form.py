@@ -5,18 +5,23 @@ from datetime import UTC, datetime
 from app.poster.channels.models import PosterChannel
 from app.poster.channels.services.repo import ChannelRepository
 from app.poster.delivery.models import DeliveryStatus, PostDelivery
+from app.poster.delivery.options import TelegramOptions
 from app.poster.delivery.services.telegram_markup import length_limit, telegram_length, to_telegram
 from app.poster.media.models import PostMedia
 from app.poster.media.services.repo import PostMediaRepository
 from app.poster.publications.models import Post, PostStatus
 from app.poster.publications.schemas import PostSaveSchema
 from app.poster.publications.services.exceptions import (
+    ButtonsInAlbumError,
     ChannelUnavailableError,
     EmptyPostError,
     NoPublicationTargetError,
     PostMediaUnavailableError,
+    ReplyTargetError,
+    ScheduleInPastError,
     TelegramTextTooLongError,
 )
+from app.poster.publications.services.repo import PostRepository
 from app.poster.publications.services.text import check_text_length, clean_html, plain_text
 
 
@@ -28,6 +33,35 @@ def check_telegram_length(html: str, media_count: int) -> None:
 
     if length > limit:
         raise TelegramTextTooLongError(f"Для Telegram текст длиннее лимита: {length} из {limit} символов")
+
+
+def check_buttons(options: TelegramOptions, media_count: int) -> None:
+    """Кнопки Telegram ставит только под одно сообщение — у альбома их быть не может."""
+
+    if options.buttons and media_count > 1:
+        raise ButtonsInAlbumError
+
+
+def check_schedule(scheduled_at: datetime | None, now: datetime) -> None:
+    """Время отложенной публикации ещё не наступило."""
+
+    if scheduled_at is None or scheduled_at <= now:
+        raise ScheduleInPastError
+
+
+def next_status(post: Post, payload: PostSaveSchema) -> str:
+    """Скрытый остаётся скрытым, вышедший пост не откладывается, со временем — отложенный."""
+
+    if post.status == PostStatus.HIDDEN:
+        return PostStatus.HIDDEN
+
+    if payload.draft:
+        return PostStatus.DRAFT
+
+    if post.status == PostStatus.PUBLISHED or payload.scheduled_at is None:
+        return PostStatus.PUBLISHED
+
+    return PostStatus.SCHEDULED
 
 
 def has_sent_messages(post: Post) -> bool:
@@ -58,9 +92,15 @@ def sync_deliveries(post: Post, channels: list[PosterChannel]) -> None:
 class PostForm:
     """Записывает форму в пост: текст, файлы по порядку, сайт, каналы и статус."""
 
-    def __init__(self, media: PostMediaRepository, channels: ChannelRepository) -> None:
+    def __init__(
+        self,
+        media: PostMediaRepository,
+        channels: ChannelRepository,
+        posts: PostRepository,
+    ) -> None:
         self.media = media
         self.channels = channels
+        self.posts = posts
 
     async def attachable_media(
         self,
@@ -92,6 +132,21 @@ class PostForm:
 
         return channels
 
+    async def reply_target(self, owner_id: int, post: Post, reply_to_id: int | None) -> int | None:
+        """Свой опубликованный пост, на который отвечает этот. Чужой или сам этот — ReplyTargetError."""
+
+        if reply_to_id is None:
+            return None
+
+        target = await self.posts.get_by_id(reply_to_id)
+        if target is None or target.id == post.id:
+            raise ReplyTargetError
+
+        if target.author_id != owner_id or target.status != PostStatus.PUBLISHED:
+            raise ReplyTargetError
+
+        return target.id
+
     async def fill(self, post: Post, owner_id: int, payload: PostSaveSchema) -> None:
         """Пустой пост — EmptyPostError. Скрытый модератором пост остаётся скрытым."""
 
@@ -102,25 +157,32 @@ class PostForm:
         check_text_length(html)
 
         media = await self.attachable_media(owner_id, payload.media_ids, post.id)
-        if not plain_text(html) and not media:
+        if not plain_text(html) and not media and payload.telegram.poll is None:
             raise EmptyPostError
 
         channels = await self.ready_channels(owner_id, payload.channel_ids)
+        reply_to_id = await self.reply_target(owner_id, post, payload.reply_to_id)
         if channels or has_sent_messages(post):
             check_telegram_length(html, len(media))
+            check_buttons(payload.telegram, len(media))
+
+        now = datetime.now(UTC)
+        status = next_status(post, payload)
+        if status == PostStatus.SCHEDULED:
+            check_schedule(payload.scheduled_at, now)
 
         for position, item in enumerate(media):
             item.sort_order = position
 
-        now = datetime.now(UTC)
         post.html = html
         post.media = media
         post.on_site = payload.on_site
+        post.telegram = payload.telegram.model_dump(mode="json")
+        post.scheduled_at = payload.scheduled_at if status == PostStatus.SCHEDULED else None
+        post.reply_to_id = reply_to_id
+        post.status = status
         post.updated_at = now
         sync_deliveries(post, channels)
-
-        if post.status != PostStatus.HIDDEN:
-            post.status = PostStatus.DRAFT if payload.draft else PostStatus.PUBLISHED
 
         if post.status == PostStatus.PUBLISHED and post.published_at is None:
             post.published_at = now

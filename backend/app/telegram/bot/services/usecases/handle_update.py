@@ -1,4 +1,4 @@
-"""Апдейт от Telegram: /start со ссылкой, выбранный чат, изменение прав бота, смена id группы."""
+"""Апдейт от Telegram: /start со ссылкой, выбранный чат, права бота, смена id группы, скрытые кнопки."""
 
 from typing import Any
 
@@ -9,6 +9,7 @@ from app.poster.channels.services.repo import ChannelRepository
 from app.poster.channels.services.telegram_chats import GONE_STATUSES, TelegramChats
 from app.poster.channels.services.usecases.connect_channel import ConnectChannelUseCase, ConnectResult
 from app.poster.channels.services.usecases.update_chat_access import UpdateChatAccessUseCase
+from app.poster.delivery.services.usecases.show_hidden_text import ShowHiddenTextUseCase
 from app.telegram.bot.services import texts
 from app.telegram.bot.services.keyboards import CONNECT_KEYBOARD
 from app.telegram.link.services.usecases.link_account import LinkAccountUseCase
@@ -25,6 +26,7 @@ class HandleUpdateUseCase:
         link: LinkAccountUseCase,
         connect: ConnectChannelUseCase,
         access: UpdateChatAccessUseCase,
+        hidden: ShowHiddenTextUseCase,
         channels: ChannelRepository,
         chats: TelegramChats,
     ) -> None:
@@ -32,17 +34,21 @@ class HandleUpdateUseCase:
         self.link = link
         self.connect = connect
         self.access = access
+        self.hidden = hidden
         self.channels = channels
         self.chats = chats
 
     async def execute(self, update: dict[str, Any]) -> None:
-        """Сообщение в личке или в группе либо изменение прав бота в чате."""
+        """Сообщение в личке или в группе, изменение прав бота или нажатие скрытой кнопки."""
 
         if "message" in update:
             await self.on_message(update["message"])
 
         if "my_chat_member" in update:
             await self.on_bot_member(update["my_chat_member"])
+
+        if "callback_query" in update:
+            await self.hidden.execute(update["callback_query"])
 
     async def on_message(self, message: dict[str, Any]) -> None:
         """Группа стала супергруппой, выбран чат кнопкой или пришла команда /start."""

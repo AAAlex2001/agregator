@@ -19,6 +19,7 @@ class DeliverySchema(BaseModel):
     status: DeliveryStatus = Field(..., description="Ждёт, отправляется, отправлен, ошибка или удалён")
     error: str | None = Field(None, description="Почему не получилось")
     sent_at: datetime | None = Field(None, description="Когда вышел в Telegram")
+    message_url: str | None = Field(None, description="Ссылка на пост в Telegram")
 
 
 class TelegramPreviewRequestSchema(BaseModel):

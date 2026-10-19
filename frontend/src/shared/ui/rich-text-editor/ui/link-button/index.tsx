@@ -59,7 +59,7 @@ export function LinkButton({ editor, disabled }: LinkButtonProps) {
   return (
     <>
       <EditorButton
-        label="Ссылка"
+        label="Вставить ссылку"
         pressed={isActive}
         disabled={disabled}
         onClick={toggleLink}

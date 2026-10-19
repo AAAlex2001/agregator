@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import StrEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import (
     Boolean,
@@ -19,6 +19,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base import Base
@@ -33,18 +34,23 @@ MAX_POST_TEXT = 5000
 
 PUBLISHED_ONLY = text("status = 'published'")
 SITEMAP_ONLY = text("status = 'published' AND repost_of_id IS NULL")
+SCHEDULED_ONLY = text("status = 'scheduled'")
 
 
 class PostStatus(StrEnum):
     """Состояние публикации. Читателям виден только опубликованный пост."""
 
     DRAFT = "draft"
+    SCHEDULED = "scheduled"
     PUBLISHED = "published"
     HIDDEN = "hidden"
 
 
 class Post(Base):
-    """Публикация пользователя. У репоста repost_of_id — оригинал, html — комментарий к нему."""
+    """Публикация пользователя. У репоста repost_of_id — оригинал, html — комментарий к нему.
+
+    reply_to_id — свой прошлый пост, на который этот отвечает в Telegram.
+    """
 
     __tablename__ = "posts"
 
@@ -54,10 +60,16 @@ class Post(Base):
         ForeignKey("posts.id", ondelete="CASCADE"),
         index=True,
     )
+    reply_to_id: Mapped[int | None] = mapped_column(
+        ForeignKey("posts.id", ondelete="SET NULL"),
+        index=True,
+    )
 
     html: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[str] = mapped_column(String(16), default=PostStatus.DRAFT, index=True)
     on_site: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    telegram: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
+    scheduled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     likes_count: Mapped[int] = mapped_column(Integer, default=0)
     comments_count: Mapped[int] = mapped_column(Integer, default=0)
     reposts_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -89,7 +101,7 @@ class Post(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "status IN ('draft', 'published', 'hidden')",
+            "status IN ('draft', 'scheduled', 'published', 'hidden')",
             name="ck_posts_status",
         ),
         Index(
@@ -110,6 +122,11 @@ class Post(Base):
             author_id,
             published_at,
             postgresql_where=PUBLISHED_ONLY,
+        ),
+        Index(
+            "ix_posts_scheduled",
+            scheduled_at,
+            postgresql_where=SCHEDULED_ONLY,
         ),
         Index(
             "ix_posts_sitemap",

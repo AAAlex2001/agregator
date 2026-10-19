@@ -9,6 +9,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base import Base
+from app.core.telegram import message_link
 
 if TYPE_CHECKING:
     from app.poster.channels.models import PosterChannel
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 MAX_ATTEMPTS = 3
 
 PENDING_ONLY = text("status = 'pending'")
+AUTO_DELETE_ONLY = text("status = 'sent' AND delete_at IS NOT NULL")
 
 
 class DeliveryStatus(StrEnum):
@@ -49,6 +51,7 @@ class PostDelivery(Base):
     attempts: Mapped[int] = mapped_column(Integer, default=0)
     next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    delete_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
@@ -59,7 +62,17 @@ class PostDelivery(Base):
 
     channel: Mapped["PosterChannel"] = relationship(lazy="joined")
 
+    @property
+    def message_url(self) -> str | None:
+        """Ссылка на вышедший пост в Telegram, если у чата есть ссылки на сообщения."""
+
+        if self.status != DeliveryStatus.SENT or not self.message_ids:
+            return None
+
+        return message_link(self.channel.chat_id, self.channel.username, self.message_ids[0])
+
     __table_args__ = (
         UniqueConstraint("post_id", "channel_id", name="uq_post_deliveries_post_channel"),
         Index("ix_post_deliveries_pending", "id", postgresql_where=PENDING_ONLY),
+        Index("ix_post_deliveries_delete_at", "delete_at", postgresql_where=AUTO_DELETE_ONLY),
     )

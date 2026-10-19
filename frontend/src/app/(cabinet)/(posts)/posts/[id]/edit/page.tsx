@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PostAccess, PostEditor } from "@/widgets/posts";
-import { loadPostFromParams } from "../../../../../content/load-post-page";
+import { loadPostById, loadPostFromParams } from "../../../../../content/load-post-page";
 import type { PostPageProps } from "../../../../../content/load-post-page";
 import { createPrivateMetadata } from "../../../../../seo/private-page";
 
@@ -15,9 +15,14 @@ export default async function EditPostPage({ params }: PostPageProps) {
     notFound();
   }
 
+  const replyTo = await loadPostById(post.reply_to_id);
+
   return (
     <PostAccess>
-      <PostEditor post={post} />
+      <PostEditor
+        post={post}
+        replyTo={replyTo}
+      />
     </PostAccess>
   );
 }

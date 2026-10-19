@@ -26,6 +26,16 @@
   line-height: 16px;
 }
 
+.link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 .status {
   font-weight: 400;
   opacity: 0.8;

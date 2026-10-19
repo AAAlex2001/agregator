@@ -10,10 +10,11 @@ import { Subtitle } from "@/shared/ui/subtitle";
 import { Title } from "@/shared/ui/title";
 import styles from "./style.module.scss";
 
-/** Своя публикация для правки и куда пишется новый пост. */
+/** Своя публикация для правки, куда пишется новый пост и на какой свой пост он отвечает. */
 interface PostEditorProps {
   post?: Post;
   target?: PostTarget;
+  replyTo?: Post | null;
 }
 
 /** Заголовок и подзаголовок экрана для поста в Telegram или на сайт. */
@@ -37,7 +38,7 @@ function postTarget(post: Post): PostTarget {
 }
 
 /** Экран нового поста или правки своего; пост для правки приходит с сервера. */
-export function PostEditor({ post, target = "site" }: PostEditorProps) {
+export function PostEditor({ post, target = "site", replyTo = null }: PostEditorProps) {
   const { user } = useUser();
   const isForeign = post !== undefined && post.author.id !== user?.id;
   const isRepost = Boolean(post?.repost_of);
@@ -76,6 +77,7 @@ export function PostEditor({ post, target = "site" }: PostEditorProps) {
         <PostForm
           post={post}
           target={formTarget}
+          replyTo={replyTo}
         />
       )}
     </div>

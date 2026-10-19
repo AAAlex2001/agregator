@@ -8,7 +8,7 @@ interface PostDeliveriesProps {
   deliveries: PostDelivery[];
 }
 
-/** Каналы поста чипами со статусом и ошибки отправки под ними. */
+/** Каналы поста чипами со статусом и ошибки отправки под ними; вышедший пост открывается в Telegram. */
 export function PostDeliveries({ deliveries }: PostDeliveriesProps) {
   const failed = deliveries.filter((delivery) => delivery.status === "failed" && delivery.error);
 
@@ -20,7 +20,18 @@ export function PostDeliveries({ deliveries }: PostDeliveriesProps) {
             key={delivery.channel.id}
             className={cn(styles.chip, styles[delivery.status])}
           >
-            {delivery.channel.title}
+            {delivery.message_url ? (
+              <a
+                className={styles.link}
+                href={delivery.message_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {delivery.channel.title}
+              </a>
+            ) : (
+              delivery.channel.title
+            )}
             <span className={styles.status}>{deliveryStatusLabel(delivery.status)}</span>
           </li>
         ))}

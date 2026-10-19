@@ -13,7 +13,7 @@ class PostNotFoundError(AppError):
 class EmptyPostError(AppError):
     """В посте нет ни текста, ни файлов."""
 
-    message = "Напишите текст, добавьте фото или видео"
+    message = "Напишите текст, добавьте фото, видео или опрос"
 
 
 class PostTextTooLongError(AppError):
@@ -52,3 +52,21 @@ class SentMediaLockedError(AppError):
     """Фото и видео уже вышедшего в Telegram поста изменить нельзя."""
 
     message = "Пост уже вышел в Telegram: фото и видео в нём изменить нельзя, только текст"
+
+
+class ButtonsInAlbumError(AppError):
+    """Кнопки под альбомом Telegram не показывает."""
+
+    message = "Кнопки нельзя добавить к альбому: оставьте одно фото или видео"
+
+
+class ScheduleInPastError(AppError):
+    """Время отложенной публикации уже прошло."""
+
+    message = "Время публикации уже прошло — выберите время в будущем"
+
+
+class ReplyTargetError(AppError):
+    """Отвечать можно только на свой опубликованный пост."""
+
+    message = "Пост, на который вы отвечаете, не найден"

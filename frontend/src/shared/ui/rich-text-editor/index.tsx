@@ -8,13 +8,13 @@ import { EditorCounter } from "./ui/editor-counter";
 import { EditorToolbar } from "./ui/editor-toolbar";
 import styles from "./style.module.scss";
 
-/** Подписи, начальный текст, лимит и дополнительная панель редактора. */
+/** Подписи, начальный текст и дополнительные панели редактора. */
 interface RichTextEditorProps {
   ariaLabel: string;
   placeholder: string;
   defaultValue: string;
   disabled?: boolean;
-  panel?: EditorPanel;
+  panels?: EditorPanel[];
   onChange: (html: string) => void;
 }
 
@@ -30,10 +30,11 @@ export function RichTextEditor({
   placeholder,
   defaultValue,
   disabled = false,
-  panel,
+  panels = [],
   onChange,
 }: RichTextEditorProps) {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const panel = panels.find((item) => item.label === openPanel);
   const [setup] = useState(() => ({
     extensions: createEditorExtensions(placeholder, TEXT_LIMIT),
     content: defaultValue,
@@ -73,13 +74,13 @@ export function RichTextEditor({
   return (
     <EditorContext.Provider value={{ editor }}>
       <div className={styles.editor}>
-        {panel && isPanelOpen && panel.content}
+        {panel?.content}
         <EditorToolbar
           editor={editor}
-          panel={panel}
-          isPanelOpen={isPanelOpen}
+          panels={panels}
+          openPanel={openPanel}
           disabled={disabled}
-          onPanelToggle={() => setIsPanelOpen(!isPanelOpen)}
+          onPanelToggle={(label) => setOpenPanel(label === openPanel ? null : label)}
         />
         <div className={styles.body}>
           <EditorContent editor={editor} />

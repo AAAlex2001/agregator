@@ -1,5 +1,6 @@
 export type {
   DeliveryStatus,
+  LinkPreview,
   Post,
   PostComment,
   PostCommentPage,
@@ -8,6 +9,11 @@ export type {
   PostMedia,
   PostPage,
   PostStatus,
+  TelegramButton,
+  TelegramButtonKind,
+  TelegramButtonStyle,
+  TelegramOptions,
+  TelegramPoll,
   TelegramPreview,
 } from "./model/types";
 export { POSTS_MAX_PAGE } from "./config/pagination";

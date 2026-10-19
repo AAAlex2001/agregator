@@ -1,4 +1,7 @@
-"""Фоновая отправка постов в Telegram. Безопасна при нескольких копиях бэкенда."""
+"""Фоновая работа постера: выпуск отложенных постов, отправка в каналы и автоудаление.
+
+Безопасна при нескольких копиях бэкенда: каждую запись забирает один процесс.
+"""
 
 import asyncio
 import logging
@@ -9,6 +12,7 @@ from app.core.telegram import get_telegram_api
 from app.poster.channels.services.repo import ChannelRepository
 from app.poster.delivery.services.publisher import TelegramPublisher
 from app.poster.delivery.services.repo import DeliveryRepository
+from app.poster.delivery.services.usecases.delete_expired import DeleteExpiredUseCase
 from app.poster.delivery.services.usecases.send_delivery import SendDeliveryUseCase
 from app.poster.publications.services.repo import PostRepository
 
@@ -17,6 +21,13 @@ logger = logging.getLogger(__name__)
 BATCH_SIZE = 10
 INTERVAL_SECONDS = 3
 STUCK_AFTER = timedelta(minutes=10)
+
+
+async def publish_due_posts() -> None:
+    """Отложенные посты, чьё время пришло, выходят: на сайте сразу, в каналы — через очередь."""
+
+    async with SessionLocal() as db, db.begin():
+        await PostRepository(db).publish_due(datetime.now(UTC))
 
 
 async def claim_deliveries() -> list[int]:
@@ -55,13 +66,23 @@ async def send_claimed() -> None:
             logger.exception("Не удалось отправить доставку %s", delivery_id)
 
 
+async def delete_expired_messages() -> None:
+    """Убирает из каналов посты с истёкшим сроком автоудаления."""
+
+    publisher = TelegramPublisher(get_telegram_api())
+
+    async with SessionLocal() as db, db.begin():
+        await DeleteExpiredUseCase(DeliveryRepository(db), publisher).execute(datetime.now(UTC), BATCH_SIZE)
+
+
 async def run_delivery_loop() -> None:
-    """Каждые несколько секунд отправляет новые посты в каналы."""
+    """Каждые несколько секунд: выпустить отложенные, отправить новые, удалить истёкшие."""
 
     while True:
-        try:
-            await send_claimed()
-        except Exception:
-            logger.exception("Ошибка очереди отправки постов в Telegram")
+        for step in (publish_due_posts, send_claimed, delete_expired_messages):
+            try:
+                await step()
+            except Exception:
+                logger.exception("Ошибка фоновой работы постера: %s", step.__name__)
 
         await asyncio.sleep(INTERVAL_SECONDS)

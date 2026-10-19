@@ -5,8 +5,9 @@ from datetime import datetime
 from textwrap import shorten
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, computed_field, model_validator
 
+from app.poster.delivery.options import TelegramOptions
 from app.poster.delivery.schemas import DeliverySchema
 from app.poster.media.models import MAX_POST_MEDIA, MediaKind
 from app.poster.media.schemas import PostMediaSchema
@@ -38,6 +39,9 @@ class PostSaveSchema(BaseModel):
     draft: bool = Field(False, description="Сохранить черновиком, не публикуя")
     on_site: bool = Field(True, description="Показать в ленте сайта")
     channel_ids: list[int] = Field([], max_length=MAX_POST_CHANNELS, description="Каналы для публикации")
+    telegram: TelegramOptions = Field(TelegramOptions(), description="Как пост выйдет в Telegram")
+    scheduled_at: AwareDatetime | None = Field(None, description="Опубликовать в это время")
+    reply_to_id: int | None = Field(None, description="Свой пост, на который этот отвечает в Telegram")
 
 
 class PostAuthorSchema(BaseModel):
@@ -86,6 +90,9 @@ class PostSchema(BaseModel):
     repost_of: OriginalPostSchema | None = Field(None, description="Оригинал, если это репост")
     on_site: bool = Field(True, description="Пост в ленте сайта")
     deliveries: list[DeliverySchema] = Field([], description="Каналы поста — видит только автор")
+    telegram: TelegramOptions = Field(TelegramOptions(), description="Как пост выходит в Telegram")
+    scheduled_at: datetime | None = Field(None, description="Когда выйдет отложенный пост")
+    reply_to_id: int | None = Field(None, description="Свой пост, на который этот отвечает в Telegram")
     status: PostStatus = Field(..., description="Черновик, опубликован или скрыт")
     likes_count: int = Field(..., description="Сколько лайков")
     comments_count: int = Field(..., description="Сколько комментариев")

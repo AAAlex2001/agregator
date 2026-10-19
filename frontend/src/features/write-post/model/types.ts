@@ -1,5 +1,5 @@
 import type { Editor } from "@tiptap/react";
-import type { PostMedia } from "@/entities/post";
+import type { Post, PostMedia, TelegramOptions } from "@/entities/post";
 
 /** Просьба к ИИ-помощнику, идущий запрос и отправка просьбы для текста в редакторе. */
 export interface AiAssistant {
@@ -15,12 +15,15 @@ export type SaveMode = "draft" | "publish";
 /** Куда пишется пост: в ленту сайта или в Telegram-каналы. */
 export type PostTarget = "site" | "telegram";
 
-/** Текст, файлы, где публиковать и идущие запросы формы публикации. */
+/** Текст, файлы, где и когда публиковать, настройки Telegram и идущие запросы формы. */
 export interface PostFormState {
   html: string;
   media: PostMedia[];
   onSite: boolean;
   channelIds: number[];
+  telegram: TelegramOptions;
+  scheduledAt: string;
+  replyTo: Post | null;
   isMediaBusy: boolean;
   savingMode: SaveMode | null;
 }
@@ -38,6 +41,17 @@ export type PostFormAction =
   | {
       type: "channel/toggle";
       channelId: number;
+    }
+  | {
+      type: "telegram/change";
+      telegram: TelegramOptions;
+    }
+  | {
+      type: "schedule/change";
+      scheduledAt: string;
+    }
+  | {
+      type: "reply/clear";
     }
   | {
       type: "media/start";

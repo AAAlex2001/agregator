@@ -21,10 +21,11 @@ from app.poster.publications.schemas import (
 from app.poster.publications.services.exceptions import (
     EmptyPostError,
     PostMediaUnavailableError,
+    ReplyTargetError,
     RepostNotEditableError,
 )
 from app.poster.publications.services.post_form import PostForm
-from app.poster.publications.services.text import clean_html
+from app.poster.publications.services.text import clean_html, plain_text
 from app.poster.publications.services.usecases.create_post import CreatePostUseCase
 from app.poster.publications.services.usecases.update_post import UpdatePostUseCase
 from app.poster.reports.schemas import ReportSaveSchema
@@ -75,7 +76,13 @@ class FakeTelegram:
 
 
 class FakePostRepository:
-    """Сохранение поста без базы."""
+    """Сохранение поста без базы; свой опубликованный пост №50 — для ответов."""
+
+    async def get_by_id(self, post_id: int) -> Post | None:
+        if post_id != 50:
+            return None
+
+        return Post(id=50, author_id=AUTHOR.id, status=PostStatus.PUBLISHED)
 
     async def add(self, post: Post) -> Post:
         if post.id is None:
@@ -95,7 +102,7 @@ class FakeRepostRepository:
 
 
 def save(payload: PostSaveSchema, media: list[PostMedia] | None = None) -> Post:
-    form = PostForm(FakeMediaRepository(media or []), FakeChannelRepository())
+    form = PostForm(FakeMediaRepository(media or []), FakeChannelRepository(), FakePostRepository())
     usecase = CreatePostUseCase(FakePostRepository(), form)
 
     return asyncio.run(usecase.execute(AUTHOR, payload))
@@ -215,7 +222,7 @@ def test_page_title_of_post_without_text_names_author() -> None:
 def test_hidden_post_stays_hidden_after_author_edit() -> None:
     post = Post(id=8, author_id=AUTHOR.id, status=PostStatus.HIDDEN)
 
-    form = PostForm(FakeMediaRepository([]), FakeChannelRepository())
+    form = PostForm(FakeMediaRepository([]), FakeChannelRepository(), FakePostRepository())
 
     asyncio.run(form.fill(post, AUTHOR.id, PostSaveSchema(html="Новая версия")))
 
@@ -224,7 +231,7 @@ def test_hidden_post_stays_hidden_after_author_edit() -> None:
 
 def test_repost_cannot_be_edited() -> None:
     repost = Post(id=5, author_id=AUTHOR.id, repost_of_id=1)
-    form = PostForm(FakeMediaRepository([]), FakeChannelRepository())
+    form = PostForm(FakeMediaRepository([]), FakeChannelRepository(), FakePostRepository())
     usecase = UpdatePostUseCase(FakePostRepository(), form, FakeTelegram())
 
     with pytest.raises(RepostNotEditableError):
@@ -329,3 +336,18 @@ def test_author_schema_does_not_expose_private_contacts() -> None:
 
     assert author.name == "Имя Фамилия"
     assert set(author.model_dump()) == {"id", "name", "avatar_url"}
+
+
+def test_plain_text_keeps_space_between_blocks() -> None:
+    html = "<h2>Итоги года</h2><p>Первый абзац.</p><p>Второй<br>строка</p><ul><li>раз</li><li>два</li></ul>"
+
+    assert plain_text(html) == "Итоги года Первый абзац. Второй строка раз два"
+    assert plain_text("<h1>Указ</h1><div>Текст</div>") == "Указ Текст"
+
+
+def test_reply_goes_only_to_own_published_post() -> None:
+    post = save(PostSaveSchema(html="<p>Продолжение</p>", reply_to_id=50))
+
+    assert post.reply_to_id == 50
+    with pytest.raises(ReplyTargetError):
+        save(PostSaveSchema(html="<p>Продолжение</p>", reply_to_id=51))

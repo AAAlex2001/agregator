@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata = createPrivateMetadata("Мои посты");
 
 /** Вкладки своих постов, которые можно открыть из адреса. */
-const MY_POST_STATUSES: PostStatus[] = ["published", "draft", "hidden"];
+const MY_POST_STATUSES: PostStatus[] = ["published", "scheduled", "draft", "hidden"];
 
 /** Вкладка и количество серверных страниц из адреса. */
 interface MyPostsPageProps {

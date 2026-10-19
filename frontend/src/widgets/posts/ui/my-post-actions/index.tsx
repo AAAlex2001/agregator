@@ -4,7 +4,14 @@ import { useState } from "react";
 import type { Post } from "@/entities/post";
 import { useCopyPostLink } from "@/features/copy-post-link";
 import { DeletePostDialog } from "@/features/delete-post";
-import { EyeIcon, PencilIcon, ShareIcon, TrashIcon } from "@/shared/ui/icons";
+import {
+  DocumentPlusIcon,
+  EyeIcon,
+  PencilIcon,
+  ShareIcon,
+  TelegramIcon,
+  TrashIcon,
+} from "@/shared/ui/icons";
 import { ToolButton } from "@/shared/ui/tool-button";
 import styles from "./style.module.scss";
 
@@ -14,11 +21,16 @@ interface MyPostActionsProps {
   onDeleted: () => void;
 }
 
-/** Открыть на сайте и поделиться — если пост в ленте; удалить; изменить — если это не репост. */
+/**
+ * Открыть на сайте и поделиться — если пост в ленте; открыть в Telegram и ответить постом —
+ * если он там вышел; удалить; изменить — если это не репост.
+ */
 export function MyPostActions({ post, onDeleted }: MyPostActionsProps) {
   const copyLink = useCopyPostLink(post.id);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const isOnSite = post.on_site && post.status === "published";
+  const sent = post.deliveries.filter((delivery) => delivery.status === "sent");
+  const telegramUrl = sent.find((delivery) => delivery.message_url)?.message_url;
 
   /** Закрывает подтверждение и обновляет список. */
   function finishDeletion() {
@@ -42,6 +54,23 @@ export function MyPostActions({ post, onDeleted }: MyPostActionsProps) {
           onClick={copyLink}
         >
           <ShareIcon />
+        </ToolButton>
+      )}
+      {telegramUrl && (
+        <ToolButton
+          label="Открыть в Telegram"
+          href={telegramUrl}
+          external
+        >
+          <TelegramIcon />
+        </ToolButton>
+      )}
+      {sent.length > 0 && (
+        <ToolButton
+          label="Ответить постом"
+          href={`/posts/new/telegram?reply_to=${post.id}`}
+        >
+          <DocumentPlusIcon />
         </ToolButton>
       )}
       <ToolButton

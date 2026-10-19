@@ -36,10 +36,11 @@ def get_post_repository(db: AsyncSession = Depends(get_db)) -> PostRepository:
 def get_post_form(
     media: PostMediaRepository = Depends(get_post_media_repository),
     channels: ChannelRepository = Depends(get_channel_repository),
+    posts: PostRepository = Depends(get_post_repository),
 ) -> PostForm:
-    """Форма поста: текст, файлы, сайт и каналы."""
+    """Форма поста: текст, файлы, сайт, каналы и пост, на который отвечаем."""
 
-    return PostForm(media, channels)
+    return PostForm(media, channels, posts)
 
 
 def get_telegram_publisher(api: TelegramApi = Depends(get_telegram_api)) -> TelegramPublisher:

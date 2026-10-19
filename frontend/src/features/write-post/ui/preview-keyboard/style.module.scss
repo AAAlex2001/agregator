@@ -1,0 +1,40 @@
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 4px;
+}
+
+.key {
+  flex: 1;
+  min-width: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--color-telegram-quote);
+  color: var(--color-telegram);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.primary {
+  background: var(--color-telegram);
+  color: var(--color-surface);
+}
+
+.success {
+  background: var(--color-success-bright);
+  color: var(--color-surface);
+}
+
+.danger {
+  background: var(--color-error);
+  color: var(--color-surface);
+}
