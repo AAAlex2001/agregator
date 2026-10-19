@@ -1,0 +1,78 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heading .subtitle {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.howTo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--color-info-surface);
+}
+
+.howToTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  color: var(--color-text-primary);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--color-text-secondary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton {
+  display: block;
+  width: 100%;
+  height: 88px;
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-error);
+}
+
+.empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 768px) {
+  .howTo {
+    padding: 24px;
+  }
+}

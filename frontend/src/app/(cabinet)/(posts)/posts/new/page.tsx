@@ -1,9 +1,9 @@
 import { PostAccess, PostEditor } from "@/widgets/posts";
 import { createPrivateMetadata } from "../../../../seo/private-page";
 
-export const metadata = createPrivateMetadata("Новая публикация");
+export const metadata = createPrivateMetadata("Пост на сайт");
 
-/** Новая публикация; гостю — предложение войти. */
+/** Новый пост в ленту сайта; гостю — предложение войти. */
 export default function NewPostPage() {
   return (
     <PostAccess>

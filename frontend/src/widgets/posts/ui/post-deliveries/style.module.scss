@@ -1,0 +1,54 @@
+.deliveries {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.status {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.sent {
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
+}
+
+.failed {
+  background: var(--color-error-badge-surface);
+  color: var(--color-error);
+}
+
+.deleted {
+  background: var(--color-bg-card-soft);
+  color: var(--color-text-muted);
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-error);
+}

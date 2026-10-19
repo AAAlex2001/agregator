@@ -86,3 +86,15 @@
   opacity: 0.5;
   cursor: wait;
 }
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.description {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+}

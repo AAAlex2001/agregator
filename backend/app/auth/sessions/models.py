@@ -1,0 +1,41 @@
+"""Серверная сессия входа: id в cookie, срок продления и предельный срок."""
+
+import uuid
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING
+
+from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.base import Base
+
+if TYPE_CHECKING:
+    from models.account import Account
+
+
+class Session(Base):
+    """Сессия пользователя. Продлевается до expires_at, но не дольше max_expires_at."""
+
+    __tablename__ = "sessions"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    session_id: Mapped[str] = mapped_column(
+        String,
+        unique=True,
+        index=True,
+        nullable=False,
+        default=lambda: str(uuid.uuid4()),
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        nullable=False,
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    max_expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    user: Mapped["Account"] = relationship(lazy="selectin")

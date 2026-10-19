@@ -67,6 +67,9 @@
   --color-info-text: #1565c0;
   --color-telegram: #229ed9;
   --color-telegram-hover: #147fba;
+  --color-telegram-chat: #e6ebee;
+  --color-telegram-bubble: #ffffff;
+  --color-telegram-quote: rgba(34, 158, 217, 0.1);
   --color-overlay-modal: rgba(26, 26, 26, 0.55);
   --color-shadow-modal: rgba(0, 0, 0, 0.18);
   --color-shadow-toast: rgba(0, 0, 0, 0.12);

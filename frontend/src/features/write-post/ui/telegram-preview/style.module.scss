@@ -1,0 +1,84 @@
+.title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--color-text-primary);
+}
+
+.error {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-error);
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-telegram-chat);
+}
+
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 100%;
+  padding: 8px 12px 10px;
+  border-radius: 12px 12px 12px 4px;
+  background: var(--color-telegram-bubble);
+  overflow: hidden;
+}
+
+.cover {
+  position: relative;
+  display: block;
+  width: calc(100% + 24px);
+  height: 220px;
+  margin: -8px -12px 0;
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.video,
+.album {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-telegram);
+}
+
+.text {
+  font-size: 15px;
+  line-height: 21px;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  a {
+    color: var(--color-telegram);
+  }
+
+  blockquote {
+    margin: 4px 0;
+    padding: 4px 8px;
+    border-left: 3px solid var(--color-telegram);
+    border-radius: 4px;
+    background: var(--color-telegram-quote);
+  }
+}
+
+.counter {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+}
+
+.counterOver {
+  color: var(--color-error);
+  font-weight: 600;
+}

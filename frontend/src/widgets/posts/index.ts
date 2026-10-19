@@ -3,6 +3,8 @@ export { PostsFeed } from "./ui/posts-feed";
 export { PostList } from "./ui/post-list";
 export { PostDetail } from "./ui/post-detail";
 export { MyPosts } from "./ui/my-posts";
+export { MyPostGrid } from "./ui/my-post-grid";
+export { PosterChannels } from "./ui/poster-channels";
 export { PostsSection } from "./ui/posts-section";
 export { PostsSignIn } from "./ui/posts-sign-in";
 export { PostAccess } from "./ui/post-access";

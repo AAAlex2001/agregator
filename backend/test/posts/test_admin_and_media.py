@@ -8,8 +8,9 @@ import pytest
 from PIL import Image
 from sqlalchemy import func, select
 
-from models.posts import Post, PostMedia, PostStatus
-from services.posts.repo import PostMediaRepository
+from app.poster.media.models import PostMedia
+from app.poster.media.services.repo import PostMediaRepository
+from app.poster.publications.models import Post, PostStatus
 
 pytestmark = pytest.mark.integration
 ADMIN = {"x-internal-token": "posts-test-admin"}
@@ -74,10 +75,10 @@ async def test_concurrent_uploads_cannot_exceed_free_media_limit(post_client, po
 
 
 async def test_cleanup_keeps_drafts_recent_and_locked_media(post_client, posts_database, monkeypatch):
-    from services.posts import uploads
-    from tasks import post_media_cleanup
+    from app.poster.media import tasks as post_media_cleanup
+    from app.poster.media.services import storage as uploads
 
-    monkeypatch.setattr(post_media_cleanup, "AsyncSessionLocal", posts_database)
+    monkeypatch.setattr(post_media_cleanup, "SessionLocal", posts_database)
     old = datetime.now(UTC) - timedelta(days=2)
     async with posts_database() as db:
         draft = Post(author_id=1, html="Черновик", status=PostStatus.DRAFT)
@@ -101,7 +102,7 @@ async def test_cleanup_keeps_drafts_recent_and_locked_media(post_client, posts_d
         locked = await PostMediaRepository(db).get_for_update(locked_id)
         locked.post_id = draft_id
         await db.flush()
-        await asyncio.wait_for(post_media_cleanup.cleanup_post_media(), timeout=5)
+        await asyncio.wait_for(post_media_cleanup.delete_expired_media(), timeout=5)
         await db.commit()
     assert not (uploads.UPLOADS_DIR / "posts/expired.png").exists()
     for name in ["recent.png", "draft.png", "locked.png"]:
@@ -181,7 +182,7 @@ async def test_admin_dismisses_reports_and_deletes_comment_threads(post_client):
 
 
 async def test_admin_deletes_original_reposts_and_their_media(post_client):
-    from services.posts import uploads
+    from app.poster.media.services import storage as uploads
 
     client = post_client
     login(client)
@@ -202,7 +203,7 @@ async def test_admin_deletes_original_reposts_and_their_media(post_client):
 
 
 async def test_concurrent_comment_likes_preserve_counter(post_client, posts_database):
-    from services.posts.comment_repo import CommentLikeRepository, PostCommentRepository
+    from app.poster.comments.services.repo import CommentLikeRepository, PostCommentRepository
 
     client = post_client
     login(client)
@@ -252,9 +253,9 @@ async def test_upload_removes_file_when_insert_fails(post_client, posts_database
     from fastapi import UploadFile
     from sqlalchemy.exc import SQLAlchemyError
 
+    from app.poster.media.services import storage as uploads
+    from app.poster.media.services.usecases.upload_media import UploadMediaUseCase
     from models.account import Account
-    from services.posts import uploads
-    from services.posts.use_cases.manage_media import UploadPostMediaUseCase
 
     async def failed_flush():
         raise SQLAlchemyError("Тестовая ошибка записи")
@@ -264,7 +265,7 @@ async def test_upload_removes_file_when_insert_fails(post_client, posts_database
         monkeypatch.setattr(db, "flush", failed_flush)
         content = photo()["file"][1]
         with pytest.raises(SQLAlchemyError):
-            await UploadPostMediaUseCase(PostMediaRepository(db)).execute(
+            await UploadMediaUseCase(PostMediaRepository(db)).execute(
                 user, UploadFile(file=BytesIO(content), filename="photo.png")
             )
         await db.rollback()
@@ -275,9 +276,10 @@ async def test_upload_removes_file_when_insert_fails(post_client, posts_database
 
 async def test_author_update_cannot_undo_concurrent_moderation(post_client, posts_database):
     """Устаревшая открытая форма не превращает скрытый модератором пост в черновик."""
-    from schemas.posts import PostSaveSchema
-    from services.posts.repo import PostRepository
-    from services.posts.use_cases.update_post import UpdatePostUseCase
+    from app.poster.publications.schemas import PostSaveSchema
+    from app.poster.publications.services.post_form import PostForm
+    from app.poster.publications.services.repo import PostRepository
+    from app.poster.publications.services.usecases.update_post import UpdatePostUseCase
 
     login(post_client)
     saved = await publish(post_client)
@@ -289,7 +291,7 @@ async def test_author_update_cannot_undo_concurrent_moderation(post_client, post
             f"/api/internal/posts/{saved['id']}/status?status=hidden", headers=ADMIN
         )
         assert response.status_code == 200
-        updated = await UpdatePostUseCase(posts, PostMediaRepository(db)).execute(
+        updated = await UpdatePostUseCase(posts, PostForm(PostMediaRepository(db))).execute(
             stale, PostSaveSchema(html="Изменено автором", draft=True)
         )
         assert updated.status == PostStatus.HIDDEN

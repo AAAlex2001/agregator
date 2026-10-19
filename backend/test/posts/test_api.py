@@ -5,7 +5,7 @@ from io import BytesIO
 import pytest
 from PIL import Image
 
-from models.posts import Post, PostStatus
+from app.poster.publications.models import Post, PostStatus
 
 pytestmark = pytest.mark.integration
 
@@ -161,7 +161,7 @@ async def test_hidden_original_and_comments_are_not_exposed(post_client, posts_d
 
 
 async def test_assistant_returns_controlled_response_without_key(post_client, monkeypatch):
-    from services.posts.config import get_settings
+    from app.core.config import get_settings
 
     monkeypatch.setenv("PROXYAPI_KEY", "")
     get_settings.cache_clear()
@@ -284,7 +284,7 @@ async def test_delete_waits_for_media_attachment(post_client, posts_database):
     """Удаление ждёт сохранения поста и не удаляет уже прикреплённое фото."""
     import asyncio
 
-    from services.posts.repo import PostMediaRepository
+    from app.poster.media.services.repo import PostMediaRepository
 
     client = post_client
     login(client)
@@ -299,7 +299,7 @@ async def test_delete_waits_for_media_attachment(post_client, posts_database):
 
     async with posts_database() as db:
         media = PostMediaRepository(db)
-        files = await media.list_usable(post["author"]["id"], [media_id], post["id"])
+        files = await media.list_attachable(post["author"]["id"], [media_id], post["id"])
         files[0].post_id = post["id"]
         await db.flush()
 

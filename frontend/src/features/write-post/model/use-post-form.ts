@@ -12,22 +12,54 @@ import type { Post, PostMedia } from "@/entities/post";
 import { useNotifications } from "@/shared/ui/notifications";
 import { MAX_POST_MEDIA } from "../config/media";
 import { createPostFormState, postFormReducer } from "./reducer";
-import type { SaveMode } from "./types";
+import type { PostTarget, SaveMode } from "./types";
+
+/** Каналы, куда пост уже вышел: их не отправляют снова и не снимают. */
+export function sentChannelIds(post?: Post): number[] {
+  if (!post) {
+    return [];
+  }
+
+  return post.deliveries
+    .filter((delivery) => delivery.status === "sent")
+    .map((delivery) => delivery.channel.id);
+}
 
 /**
- * Новая публикация или правка своей: текст, фото и видео, черновик или публикация.
- * После сохранения открывает свои публикации.
+ * Новая публикация или правка своей: текст, фото и видео, сайт и каналы, черновик или публикация.
+ * После сохранения открывает свои посты.
  */
-export function usePostForm(post?: Post) {
+export function usePostForm(post: Post | undefined, target: PostTarget) {
   const router = useRouter();
   const { showSuccess, showError } = useNotifications();
-  const [state, dispatch] = useReducer(postFormReducer, post, createPostFormState);
+  const [state, dispatch] = useReducer(postFormReducer, { post, target }, createPostFormState);
+  const sentIds = sentChannelIds(post);
 
   /** Сохраняет текст из редактора. */
   function changeHtml(html: string) {
     dispatch({
       type: "html/change",
       html,
+    });
+  }
+
+  /** Показывать ли пост в ленте сайта. */
+  function changeOnSite(onSite: boolean) {
+    dispatch({
+      type: "site/change",
+      onSite,
+    });
+  }
+
+  /** Добавляет канал к публикации или убирает его. Уже вышедший пост из канала не снимается. */
+  function toggleChannel(channelId: number) {
+    if (sentIds.includes(channelId)) {
+      return;
+    }
+
+    dispatch({
+      type: "channel/toggle",
+      channelId,
     });
   }
 
@@ -74,7 +106,7 @@ export function usePostForm(post?: Post) {
     }
   }
 
-  /** Сохраняет публикацию черновиком или в ленту и открывает свои публикации. */
+  /** Сохраняет публикацию черновиком или публикует и открывает свои посты. */
   async function save(mode: SaveMode) {
     dispatch({
       type: "submit/start",
@@ -85,6 +117,8 @@ export function usePostForm(post?: Post) {
       html: state.html,
       media_ids: state.media.map((file) => file.id),
       draft: mode === "draft",
+      on_site: state.onSite,
+      channel_ids: state.channelIds.filter((id) => !sentIds.includes(id)),
     };
 
     try {
@@ -112,7 +146,10 @@ export function usePostForm(post?: Post) {
 
   return {
     state,
+    sentIds,
     changeHtml,
+    changeOnSite,
+    toggleChannel,
     uploadMedia,
     removeMedia,
     save,

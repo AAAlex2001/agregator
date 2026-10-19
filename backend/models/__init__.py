@@ -3,7 +3,7 @@
 Строковые ссылки в relationship (например, "Account") резолвятся только когда
 класс импортирован — поэтому пакет импортирует все модули явно.
 """
-from app.support import models as support
+from app import models as app_models
 from models import (
     account,
     article,
@@ -33,7 +33,6 @@ from models import (
     password_reset_code,
     payment,
     platform_settings,
-    posts,
     pricing,
     question,
     referral,
@@ -49,7 +48,6 @@ from models import (
     rtn_question,
     rtn_question_reply,
     rtn_question_subscription,
-    session,
     static_news_interaction,
     survey,
     tag,
@@ -58,6 +56,7 @@ from models import (
 
 __all__ = [
     "account",
+    "app_models",
     "article",
     "article_comment",
     "article_reaction",
@@ -86,7 +85,6 @@ __all__ = [
     "payment",
     "platform_settings",
     "pricing",
-    "posts",
     "question",
     "referral",
     "research",
@@ -101,9 +99,7 @@ __all__ = [
     "rtn_question",
     "rtn_question_reply",
     "rtn_question_subscription",
-    "session",
     "static_news_interaction",
-    "support",
     "survey",
     "tag",
     "tech_diag",

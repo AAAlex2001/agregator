@@ -15,7 +15,14 @@ function currentPage(pathname: string, postId?: string) {
   if (pathname === "/posts/new") {
     return {
       section: "/posts/my",
-      title: "Новая публикация",
+      title: "Пост на сайт",
+    };
+  }
+
+  if (pathname === "/posts/new/telegram") {
+    return {
+      section: "/posts/my",
+      title: "Пост в Telegram",
     };
   }
 

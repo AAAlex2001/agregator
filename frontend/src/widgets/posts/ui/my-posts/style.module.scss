@@ -29,27 +29,6 @@
   color: var(--color-text-secondary);
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid var(--color-border-soft);
-  border-radius: 8px;
-}
-
-.profile .profileTitle {
-  margin-bottom: 6px;
-  font-size: 18px;
-  line-height: 26px;
-}
-
-.avatar {
-  width: 64px;
-  height: 64px;
-  flex: 0 0 64px;
-}
-
 .tabs {
   display: flex;
   align-self: flex-start;
@@ -89,9 +68,5 @@
 
   .head {
     align-items: center;
-  }
-
-  .profile {
-    padding: 24px;
   }
 }

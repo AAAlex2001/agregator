@@ -12,13 +12,19 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import Response
 
 from app.core.errors import AppError, app_error_handler
+from app.poster.channels.routes import router as poster_channels_router
+from app.poster.delivery.routes import router as poster_delivery_router
+from app.poster.delivery.tasks import run_delivery_loop
+from app.poster.media.tasks import run_media_cleanup_loop
+from app.poster.moderation.routes import router as poster_moderation_router
+from app.poster.routes import router as poster_router
 from app.support.routes import router as support_router
+from app.telegram.link.routes import router as telegram_link_router
 from routes import (
     admin_contact_deal,
     admin_content,
     admin_lead,
     admin_panel,
-    admin_posts,
     admin_rtn,
     article,
     article_interactions,
@@ -47,7 +53,6 @@ from routes import (
     notification,
     order,
     payment,
-    posts,
     pricing,
     question,
     referral,
@@ -63,10 +68,8 @@ from routes import (
     tech_diag,
     telegram_auth,
 )
-from services.posts.exceptions import PostError
 from services.techexpert.service import router as techexpert_router
 from tasks.auto_reject import run_auto_reject_loop
-from tasks.post_media_cleanup import run_post_media_cleanup_loop
 from utils.redis_sliding_window import redis_sliding_window
 from utils.request_context import request_id_var
 from ws.expert_room_manager import EXPERT_ROOM_CHANNEL, expert_room_manager
@@ -87,8 +90,12 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     await ws_pubsub.start()
     await redis_sliding_window.start()
     auto_reject_task = asyncio.create_task(run_auto_reject_loop())
-    media_cleanup_task = asyncio.create_task(run_post_media_cleanup_loop())
+    media_cleanup_task = asyncio.create_task(run_media_cleanup_loop())
+    delivery_task = asyncio.create_task(run_delivery_loop())
     yield
+    delivery_task.cancel()
+    with suppress(asyncio.CancelledError):
+        await delivery_task
     media_cleanup_task.cancel()
     with suppress(asyncio.CancelledError):
         await media_cleanup_task
@@ -100,7 +107,6 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Resurs Plus API", version="1.0.0", lifespan=lifespan)
-app.add_exception_handler(PostError, posts.post_error_handler)
 app.add_exception_handler(AppError, app_error_handler)
 
 
@@ -140,8 +146,11 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(payment.router, prefix="/api")
 app.include_router(pricing.router, prefix="/api")
-app.include_router(posts.router, prefix="/api")
-app.include_router(admin_posts.router, prefix="/api")
+app.include_router(poster_router, prefix="/api")
+app.include_router(poster_moderation_router, prefix="/api")
+app.include_router(poster_channels_router, prefix="/api")
+app.include_router(poster_delivery_router, prefix="/api")
+app.include_router(telegram_link_router, prefix="/api")
 app.include_router(referral.router, prefix="/api")
 app.include_router(review.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")

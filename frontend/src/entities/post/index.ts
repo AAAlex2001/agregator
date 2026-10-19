@@ -1,11 +1,14 @@
 export type {
+  DeliveryStatus,
   Post,
   PostComment,
   PostCommentPage,
   PostCommentThread,
+  PostDelivery,
   PostMedia,
   PostPage,
   PostStatus,
+  TelegramPreview,
 } from "./model/types";
 export { POSTS_MAX_PAGE } from "./config/pagination";
 export { togglePostLike } from "./api/toggle-post-like";
@@ -20,6 +23,7 @@ export { repostPost } from "./api/repost-post";
 export { uploadPostMedia } from "./api/upload-post-media";
 export { deletePostMedia } from "./api/delete-post-media";
 export { writePostWithAi } from "./api/write-post-with-ai";
+export { getTelegramPreview } from "./api/get-telegram-preview";
 export { createPostComment } from "./api/create-post-comment";
 export { updatePostComment } from "./api/update-post-comment";
 export { deletePostComment } from "./api/delete-post-comment";

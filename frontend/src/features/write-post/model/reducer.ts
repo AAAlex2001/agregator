@@ -1,14 +1,38 @@
 import type { Post } from "@/entities/post";
-import type { PostFormAction, PostFormState } from "./types";
+import type { PostFormAction, PostFormState, PostTarget } from "./types";
+
+/** Пост, который правят, и куда пишется новый. */
+interface PostFormSource {
+  post?: Post;
+  target: PostTarget;
+}
+
+/** Каналы, где пост уже есть или ждёт отправки. */
+function postChannelIds(post: Post): number[] {
+  return post.deliveries
+    .filter((delivery) => delivery.status !== "deleted")
+    .map((delivery) => delivery.channel.id);
+}
 
 /** Начальные поля формы: пустые для нового поста или из сохранённой публикации. */
-export function createPostFormState(post?: Post): PostFormState {
+export function createPostFormState({ post, target }: PostFormSource): PostFormState {
   return {
     html: post?.html ?? "",
     media: post?.media ?? [],
+    onSite: post ? post.on_site : target === "site",
+    channelIds: post ? postChannelIds(post) : [],
     isMediaBusy: false,
     savingMode: null,
   };
+}
+
+/** Добавляет канал в выбор или убирает его оттуда. */
+function toggleChannel(channelIds: number[], channelId: number): number[] {
+  if (channelIds.includes(channelId)) {
+    return channelIds.filter((id) => id !== channelId);
+  }
+
+  return [...channelIds, channelId];
 }
 
 /** Обновляет форму публикации по действию поля или результату запроса. */
@@ -21,6 +45,16 @@ export function postFormReducer(
       return {
         ...state,
         html: action.html,
+      };
+    case "site/change":
+      return {
+        ...state,
+        onSite: action.onSite,
+      };
+    case "channel/toggle":
+      return {
+        ...state,
+        channelIds: toggleChannel(state.channelIds, action.channelId),
       };
     case "media/start":
       return {

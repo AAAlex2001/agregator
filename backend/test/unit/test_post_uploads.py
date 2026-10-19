@@ -6,8 +6,8 @@ import pytest
 from fastapi import UploadFile
 from PIL import Image, PngImagePlugin
 
-from services.posts import uploads
-from services.posts.uploads import UploadError
+from app.poster.media.services import storage as uploads
+from app.poster.media.services.exceptions import UploadError
 
 
 async def test_photo_is_checked_by_content_and_metadata_is_removed(tmp_path, monkeypatch):

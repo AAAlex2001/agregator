@@ -3,6 +3,7 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.sessions.dependencies import require_user
 from app.core.database import get_db
 from app.support.models import SupportTicket
 from app.support.services.exceptions import TicketNotFoundError
@@ -11,7 +12,6 @@ from app.support.services.storage import SupportFileStorage
 from app.support.services.usecases.create_ticket import CreateTicketUseCase
 from app.support.services.usecases.reply_to_ticket import ReplyToTicketUseCase
 from app.support.services.usecases.view_ticket import ViewTicketUseCase
-from dependencies.posts_auth import require_user
 from models.account import Account
 
 

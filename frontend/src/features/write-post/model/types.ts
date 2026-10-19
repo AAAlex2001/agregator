@@ -12,10 +12,15 @@ export interface AiAssistant {
 /** Как сохраняется публикация: черновиком или сразу в ленту. */
 export type SaveMode = "draft" | "publish";
 
-/** Текст, прикреплённые файлы и идущие запросы формы публикации. */
+/** Куда пишется пост: в ленту сайта или в Telegram-каналы. */
+export type PostTarget = "site" | "telegram";
+
+/** Текст, файлы, где публиковать и идущие запросы формы публикации. */
 export interface PostFormState {
   html: string;
   media: PostMedia[];
+  onSite: boolean;
+  channelIds: number[];
   isMediaBusy: boolean;
   savingMode: SaveMode | null;
 }
@@ -25,6 +30,14 @@ export type PostFormAction =
   | {
       type: "html/change";
       html: string;
+    }
+  | {
+      type: "site/change";
+      onSite: boolean;
+    }
+  | {
+      type: "channel/toggle";
+      channelId: number;
     }
   | {
       type: "media/start";

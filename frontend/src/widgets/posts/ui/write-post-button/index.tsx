@@ -3,15 +3,16 @@
 import { useUser } from "@/entities/user";
 import { Button } from "@/shared/ui/button";
 import { usePostsLogin } from "../../model/login-context";
+import { NewPostMenu } from "../new-post-menu";
 
-/** Открывает редактор публикации, а гостю — окно входа. */
+/** Вошедшему — выбор, куда писать пост; гостю — окно входа. */
 export function WritePostButton() {
   const { user } = useUser();
   const openLogin = usePostsLogin();
 
   if (user) {
-    return <Button href="/posts/new">Написать пост</Button>;
+    return <NewPostMenu />;
   }
 
-  return <Button onClick={openLogin}>Написать пост</Button>;
+  return <Button onClick={openLogin}>Новый пост</Button>;
 }

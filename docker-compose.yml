@@ -133,6 +133,25 @@ services:
     deploy:
       replicas: 2
 
+  bot:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["python", "-m", "app.telegram.bot.polling"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agregator:${POSTGRES_PASSWORD:-changeme}@postgres:5432/agregator_db
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_PROXY: ${TELEGRAM_PROXY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - agregator-network
+      - ipv6-egress
+
   nginx:
     image: nginx:alpine
     container_name: agregator-nginx

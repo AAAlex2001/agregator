@@ -5,13 +5,14 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from app.core.ai import AiError
+from app.poster.ai.services.exceptions import AiUnavailableError, TooManyAiRequestsError
+from app.poster.ai.services.prompt import to_html
+from app.poster.ai.services.usecases.write_post import WritePostUseCase
 from models.account import Account
-from services.posts.ai import AiError
-from services.posts.config import PostSettings
-from services.posts.exceptions import AiUnavailableError, TooManyAiRequestsError
-from services.posts.use_cases.write_with_ai import WritePostWithAiUseCase, to_html
 
 USER = Account(id=1, email="anna@mail.ru")
+REQUESTS_PER_HOUR = 30
 
 
 class FakeAi:
@@ -40,8 +41,8 @@ class FakeAiRequests:
 
 
 def write(answer: str, html: str = "", requests: FakeAiRequests | None = None) -> str:
-    usecase = WritePostWithAiUseCase(
-        FakeAi(answer), requests or FakeAiRequests(), PostSettings(_env_file=None)
+    usecase = WritePostUseCase(
+        FakeAi(answer), requests or FakeAiRequests(), REQUESTS_PER_HOUR
     )
 
     return asyncio.run(usecase.execute(USER, "Напиши пост про мёд", html))
@@ -65,7 +66,7 @@ def test_empty_answer_is_an_error() -> None:
 
 def test_current_text_goes_to_the_model() -> None:
     ai = FakeAi("<p>Готово</p>")
-    usecase = WritePostWithAiUseCase(ai, FakeAiRequests(), PostSettings(_env_file=None))
+    usecase = WritePostUseCase(ai, FakeAiRequests(), REQUESTS_PER_HOUR)
 
     asyncio.run(usecase.execute(USER, "Сократи", "<p>Длинный текст</p>"))
 
@@ -99,7 +100,7 @@ class BrokenAi:
 
 def test_unavailable_model_is_counted_and_reported():
     requests = FakeAiRequests()
-    usecase = WritePostWithAiUseCase(BrokenAi(), requests, PostSettings(_env_file=None))
+    usecase = WritePostUseCase(BrokenAi(), requests, REQUESTS_PER_HOUR)
 
     with pytest.raises(AiUnavailableError):
         asyncio.run(usecase.execute(USER, "Напиши пост", ""))

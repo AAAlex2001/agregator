@@ -1,6 +1,6 @@
 import type { PostStatus } from "@/entities/post";
 import { getPostsOnServer } from "@/entities/post/server";
-import { MyPosts, PostList, PostsSignIn } from "@/widgets/posts";
+import { MyPostGrid, MyPosts, PostsSignIn } from "@/widgets/posts";
 import {
   hasNextPostListPage,
   readPostListPage,
@@ -8,9 +8,9 @@ import {
 import { createPrivateMetadata } from "../../../../seo/private-page";
 
 export const dynamic = "force-dynamic";
-export const metadata = createPrivateMetadata("Мои публикации");
+export const metadata = createPrivateMetadata("Мои посты");
 
-/** Вкладки своих публикаций, которые можно открыть из адреса. */
+/** Вкладки своих постов, которые можно открыть из адреса. */
 const MY_POST_STATUSES: PostStatus[] = ["published", "draft", "hidden"];
 
 /** Вкладка и количество серверных страниц из адреса. */
@@ -21,7 +21,7 @@ interface MyPostsPageProps {
   }>;
 }
 
-/** Свои публикации; вкладка — из адреса (?status=draft после сохранения черновика). */
+/** Свои посты карточками; вкладка — из адреса (?status=draft после сохранения черновика). */
 export default async function MyPostsPage({ searchParams }: MyPostsPageProps) {
   const params = await searchParams;
   const status = MY_POST_STATUSES.find((item) => item === params.status) ?? "published";
@@ -38,13 +38,9 @@ export default async function MyPostsPage({ searchParams }: MyPostsPageProps) {
 
   return (
     <MyPosts status={status}>
-      <PostList
+      <MyPostGrid
         posts={list.items}
         nextPageHref={nextPageHref}
-        emptyTitle="Здесь пока пусто"
-        emptyText="Расскажите о своём опыте и услугах: текст, фото и видео."
-        emptyActionLabel="Написать пост"
-        emptyActionHref="/posts/new"
       />
     </MyPosts>
   );

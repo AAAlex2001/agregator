@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
+from app.auth.sessions.dependencies import require_user
 from app.support.dependencies import (
     get_create_ticket_usecase,
     get_own_ticket,
@@ -15,7 +16,6 @@ from app.support.services.repo import SupportRepository
 from app.support.services.usecases.create_ticket import CreateTicketUseCase
 from app.support.services.usecases.reply_to_ticket import ReplyToTicketUseCase
 from app.support.services.usecases.view_ticket import ViewTicketUseCase
-from dependencies.posts_auth import require_user
 from models.account import Account
 
 router = APIRouter(prefix="/support/tickets", tags=["support"])

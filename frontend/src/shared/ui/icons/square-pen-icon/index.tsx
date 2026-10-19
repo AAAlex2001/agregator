@@ -3,7 +3,7 @@ interface SquarePenIconProps {
   className?: string;
 }
 
-/** Карандаш над листом — «Мои публикации». */
+/** Карандаш над листом — «Мои посты». */
 export function SquarePenIcon({ className }: SquarePenIconProps) {
   return (
     <svg

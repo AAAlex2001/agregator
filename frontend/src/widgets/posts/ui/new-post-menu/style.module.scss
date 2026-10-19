@@ -1,0 +1,22 @@
+.trigger {
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: var(--color-orange-primary);
+  color: var(--color-surface);
+  font-size: 15px;
+  font-weight: 600;
+
+  &:hover {
+    background: var(--color-orange-accent);
+    color: var(--color-surface);
+  }
+}
+
+.telegram {
+  color: var(--color-telegram);
+}
+
+.site {
+  color: var(--color-purple-text);
+}

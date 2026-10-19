@@ -10,6 +10,7 @@ import styles from "./style.module.scss";
 /** Пункт меню: ссылка или кнопка с иконкой. */
 export interface MenuAction {
   label: string;
+  description?: string;
   icon: ReactNode;
   href?: string;
   danger?: boolean;
@@ -21,6 +22,7 @@ interface ActionMenuProps {
   label: string;
   actions: MenuAction[];
   trigger?: ReactNode;
+  triggerClassName?: string;
   disabled?: boolean;
 }
 
@@ -29,6 +31,7 @@ export function ActionMenu({
   label,
   actions,
   trigger,
+  triggerClassName,
   disabled,
 }: ActionMenuProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -80,7 +83,7 @@ export function ActionMenu({
     >
       <button
         type="button"
-        className={cn(styles.trigger, {
+        className={cn(styles.trigger, triggerClassName, {
           [styles.square]: !trigger,
         })}
         aria-label={label}
@@ -107,7 +110,7 @@ export function ActionMenu({
               onClick={() => setIsOpen(false)}
             >
               {action.icon}
-              {action.label}
+              <MenuItemText action={action} />
             </Link>
           ) : (
             <button
@@ -120,11 +123,30 @@ export function ActionMenu({
               onClick={() => runAction(action)}
             >
               {action.icon}
-              {action.label}
+              <MenuItemText action={action} />
             </button>
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/** Пункт меню из выбранного действия. */
+interface MenuItemTextProps {
+  action: MenuAction;
+}
+
+/** Название пункта и пояснение под ним, если оно есть. */
+function MenuItemText({ action }: MenuItemTextProps) {
+  if (!action.description) {
+    return action.label;
+  }
+
+  return (
+    <span className={styles.text}>
+      <span>{action.label}</span>
+      <span className={styles.description}>{action.description}</span>
+    </span>
   );
 }

@@ -26,6 +26,27 @@ export interface RepostedPost {
   published_at: string | null;
 }
 
+/** Как идёт доставка поста в Telegram-канал. */
+export type DeliveryStatus = "pending" | "sending" | "sent" | "failed" | "deleted";
+
+/** Канал или группа, куда ушёл пост. */
+export interface DeliveryChannel {
+  id: number;
+  kind: "channel" | "group" | "supergroup";
+  title: string;
+  username: string | null;
+  can_post: boolean;
+  is_active: boolean;
+}
+
+/** Пост в одном Telegram-канале: статус, ошибка и время выхода. */
+export interface PostDelivery {
+  channel: DeliveryChannel;
+  status: DeliveryStatus;
+  error: string | null;
+  sent_at: string | null;
+}
+
 /** Публикация из API с её содержимым, счётчиками и отметками посетителя. */
 export interface Post extends RepostedPost {
   title: string;
@@ -33,6 +54,8 @@ export interface Post extends RepostedPost {
   cover_url: string | null;
   repost_of: RepostedPost | null;
   status: PostStatus;
+  on_site: boolean;
+  deliveries: PostDelivery[];
   likes_count: number;
   comments_count: number;
   reposts_count: number;
@@ -54,11 +77,20 @@ export interface PostLikes {
   likes_count: number;
 }
 
-/** Текст, прикреплённые файлы и режим сохранения публикации. */
+/** Текст, файлы, режим сохранения и где публиковать: на сайте и в каналах. */
 export interface PostPayload {
   html: string;
   media_ids: number[];
   draft: boolean;
+  on_site: boolean;
+  channel_ids: number[];
+}
+
+/** Текст поста в разметке Telegram и сколько символов из лимита он занимает. */
+export interface TelegramPreview {
+  html: string;
+  length: number;
+  limit: number;
 }
 
 /** Комментарий к публикации с автором, ответом и отметкой посетителя. */

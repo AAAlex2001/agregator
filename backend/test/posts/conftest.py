@@ -12,9 +12,9 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.schema import CreateSchema, DropSchema
 
+from app.auth.sessions.models import Session
+from app.core.base import Base
 from models.account import Account, UserRole
-from models.base import Base
-from models.session import Session
 
 
 @pytest_asyncio.fixture
@@ -69,12 +69,14 @@ async def posts_database():
 async def post_client(posts_database, monkeypatch, tmp_path):
     """Подключает реальную API к изолированной базе и временным файлам."""
     monkeypatch.setenv("DATABASE_URL", os.environ["POSTS_TEST_DATABASE_URL"])
-    from database.database import get_db
-    from dependencies import internal_auth
-    from routes.admin_posts import router as admin_router
-    from routes.posts import post_error_handler, router
-    from services.posts import uploads
-    from services.posts.exceptions import PostError
+    monkeypatch.setenv("INTERNAL_API_TOKEN", "posts-test-admin")
+
+    from app.core.config import get_settings
+    from app.core.database import get_db
+    from app.core.errors import AppError, app_error_handler
+    from app.poster.media.services import storage
+    from app.poster.moderation.routes import router as admin_router
+    from app.poster.routes import router
 
     async def database():
         async with posts_database() as db:
@@ -85,12 +87,13 @@ async def post_client(posts_database, monkeypatch, tmp_path):
                 await db.rollback()
                 raise
 
-    monkeypatch.setattr(uploads, "UPLOADS_DIR", tmp_path)
+    get_settings.cache_clear()
+    monkeypatch.setattr(storage, "UPLOADS_DIR", tmp_path)
     app = FastAPI()
-    app.add_exception_handler(PostError, post_error_handler)
+    app.add_exception_handler(AppError, app_error_handler)
     app.include_router(router, prefix="/api")
     app.include_router(admin_router, prefix="/api")
-    monkeypatch.setattr(internal_auth, "INTERNAL_API_TOKEN", "posts-test-admin")
     app.dependency_overrides[get_db] = database
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
+    get_settings.cache_clear()
