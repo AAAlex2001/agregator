@@ -2,7 +2,7 @@
 
 from fastapi import Depends
 
-from app.blitz.audit.services.exceptions import AuditLeadRequiredError
+from app.blitz.audit.services.exceptions import AuditorRequiredError
 from app.blitz.audit.services.repo import AuditRepository
 from app.blitz.audit.services.usecases.answer_counter import AnswerCounterUseCase
 from app.blitz.audit.services.usecases.answer_offer import AnswerOfferUseCase
@@ -11,20 +11,19 @@ from app.blitz.audit.services.usecases.create_audit import CreateAuditUseCase
 from app.blitz.audit.services.usecases.propose_price import ProposePriceUseCase
 from app.blitz.audit.services.usecases.request_plan_changes import RequestPlanChangesUseCase
 from app.blitz.audit.services.usecases.send_plan import SendPlanUseCase
-from app.blitz.audit.services.usecases.set_lead import SetAuditLeadUseCase
 from app.blitz.audit.services.usecases.set_team import SetTeamUseCase
 from app.blitz.audit.services.usecases.upload_documents import UploadAuditDocumentsUseCase
 from app.blitz.documents.services.storage import OrderFiles
 from app.blitz.notifications import BlitzNotifier, get_blitz_notifier
-from app.blitz.orders.dependencies import get_audit_lead, get_audit_repository, get_order_repository
+from app.blitz.orders.dependencies import get_audit_repository, get_auditor, get_order_repository
 from app.blitz.orders.services.repo import OrderRepository
 
 
-def require_audit_lead(audit_lead: bool = Depends(get_audit_lead)) -> None:
-    """Пускает только руководителя аудиторской группы."""
+def require_auditor(auditor: bool = Depends(get_auditor)) -> None:
+    """Пускает только эксперта с анкетой аудитора."""
 
-    if not audit_lead:
-        raise AuditLeadRequiredError
+    if not auditor:
+        raise AuditorRequiredError
 
 
 def get_create_audit_usecase(
@@ -109,9 +108,3 @@ def get_upload_documents_usecase(
     """Документы по перечню."""
 
     return UploadAuditDocumentsUseCase(orders, OrderFiles(), notifier)
-
-
-def get_set_lead_usecase(audits: AuditRepository = Depends(get_audit_repository)) -> SetAuditLeadUseCase:
-    """Назначение руководителя группы администратором."""
-
-    return SetAuditLeadUseCase(audits)

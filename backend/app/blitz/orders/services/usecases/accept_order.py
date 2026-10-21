@@ -1,4 +1,4 @@
-"""Эксперт или руководитель аудиторской группы берёт заявку по цене заказчика."""
+"""Эксперт или аудитор берёт заявку по цене заказчика. Взявший аудит руководит его группой."""
 
 from datetime import date
 
@@ -23,7 +23,7 @@ class AcceptOrderUseCase:
         expert: Account,
         order: BlitzOrder,
         contract_kind: str | None,
-        audit_lead: bool,
+        auditor: bool,
     ) -> BlitzOrder:
         """Заявку уже взяли — OrderStateError, не подходит эксперту — OrderAccessError."""
 
@@ -33,9 +33,9 @@ class AcceptOrderUseCase:
         if order.status != OrderStatus.NEW or order.expert_id is not None:
             raise OrderStateError("Заявку уже взял другой исполнитель")
 
-        if not can_take(order, expert, date.today(), audit_lead):
+        if not can_take(order, expert, date.today(), auditor):
             raise OrderAccessError(
-                "Брать заявки на аудит может руководитель аудиторской группы"
+                "Заявки на аудит берут эксперты с анкетой «Аудит СУПБ»"
                 if audit
                 else "Ваши удостоверения не подходят под эту заявку",
             )

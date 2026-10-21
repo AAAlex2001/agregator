@@ -66,7 +66,7 @@ def extra_files(
 
 
 class CreateAuditUseCase:
-    """Сохраняет заявку с файлами. Руководители групп получают её сразу, консультацию — менеджер."""
+    """Сохраняет заявку с файлами. Аудиторы получают её сразу, консультацию — менеджер."""
 
     def __init__(
         self,
@@ -128,7 +128,7 @@ class CreateAuditUseCase:
         return order
 
     async def notify(self, order: BlitzOrder, consultation: bool) -> None:
-        """Консультация — менеджеру. Иначе — руководителям групп и менеджеру."""
+        """Консультация — менеджеру. Иначе — аудиторам и менеджеру."""
 
         if consultation:
             self.notifier.notify_admins(
@@ -139,5 +139,5 @@ class CreateAuditUseCase:
             return
 
         message = f"Новая заявка на аудит СУПБ: {order.object_name}"
-        await self.notifier.notify_all(await self.audits.list_leads(), order, message)
+        await self.notifier.notify_all(await self.audits.list_auditors(), order, message)
         self.notifier.notify_admins(order, message)

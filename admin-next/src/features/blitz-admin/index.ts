@@ -1,4 +1,3 @@
-export { useBlitzAuditors } from "./auditors/use-blitz-auditors";
 export { useBlitzInvoices } from "./invoices/use-blitz-invoices";
 export { useBlitzOrders } from "./list-orders/use-blitz-orders";
 export { DangerZone } from "./manage/ui/danger-zone";

@@ -15,7 +15,7 @@ from app.blitz.audit.dependencies import (
     get_send_plan_usecase,
     get_set_team_usecase,
     get_upload_documents_usecase,
-    require_audit_lead,
+    require_auditor,
 )
 from app.blitz.audit.schemas import (
     AuditCatalogSchema,
@@ -84,13 +84,11 @@ async def create_audit(
     return details(order, user)
 
 
-@router.get("/audit/auditors", dependencies=[Depends(require_audit_lead)])
+@router.get("/audit/auditors", dependencies=[Depends(require_auditor)])
 async def list_auditors(audits: AuditRepository = Depends(get_audit_repository)) -> list[TeamMemberSchema]:
     """Аудиторы, из которых руководитель набирает группу."""
 
-    leads = await audits.lead_ids()
-
-    return [describe(account, account.id in leads) for account in await audits.list_auditors()]
+    return [describe(account, False) for account in await audits.list_auditors()]
 
 
 @router.post("/orders/{order_id}/offer")

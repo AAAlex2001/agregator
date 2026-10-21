@@ -8,7 +8,6 @@ import type {
   BlitzStatus,
   BlitzTariff,
   BlitzTariffCell,
-  BlitzTeamMember,
 } from "../model/types";
 
 /** Заявки, новые первыми. Пустой список статусов — все. */
@@ -128,20 +127,6 @@ export const saveAuditTariff = async (price: number | null): Promise<number | nu
   const tariff: { price: number | null } = await response.json();
 
   return tariff.price;
-};
-
-/** Эксперты с анкетой аудитора и признак руководителя группы. */
-export const fetchBlitzAuditors = async (signal: AbortSignal): Promise<BlitzTeamMember[]> => {
-  const response = await adminFetch("/blitz/auditors", { signal });
-
-  return response.json();
-};
-
-/** Назначить аудитора руководителем группы или снять с этой роли. */
-export const setBlitzAuditLead = async (accountId: number, lead: boolean): Promise<BlitzTeamMember> => {
-  const response = await adminFetch(`/blitz/auditors/${accountId}/lead`, jsonBody("PUT", { lead }));
-
-  return response.json();
 };
 
 /** Адрес файла заявки через прокси админки. */

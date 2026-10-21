@@ -1,7 +1,6 @@
 import {
   ACCOUNTS_PATH,
   ARTICLES_PATH,
-  BLITZ_AUDITORS_PATH,
   BLITZ_INVOICES_PATH,
   BLITZ_PATH,
   BLITZ_TARIFFS_PATH,
@@ -61,7 +60,6 @@ export const ADMIN_NAV = [
       { href: BLITZ_PATH, label: "Заявки", Icon: ClipboardIcon },
       { href: BLITZ_INVOICES_PATH, label: "Счета", Icon: FileTextIcon },
       { href: BLITZ_TARIFFS_PATH, label: "Тарифы", Icon: TagIcon },
-      { href: BLITZ_AUDITORS_PATH, label: "Аудиторы", Icon: BriefcaseIcon },
       { href: COMMISSION_PATH, label: "Конкурсная комиссия", Icon: UsersIcon },
     ],
   },

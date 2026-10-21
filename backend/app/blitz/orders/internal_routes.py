@@ -61,11 +61,11 @@ async def list_fitting_experts(
     orders: OrderRepository = Depends(get_order_repository),
     audits: AuditRepository = Depends(get_audit_repository),
 ) -> list[ExpertOptionSchema]:
-    """Исполнители для назначения: сначала подходящие. Аудит проводят только руководители групп."""
+    """Исполнители для назначения: сначала подходящие. Аудит проводят эксперты с анкетой аудитора."""
 
     if order.service == ServiceKind.AUDIT:
-        leads = await audits.list_leads()
-        options = [ExpertOptionSchema(id=lead.id, name=lead.display_name, fits=True) for lead in leads]
+        auditors = await audits.list_auditors()
+        options = [ExpertOptionSchema(id=item.id, name=item.display_name, fits=True) for item in auditors]
 
         return sorted(options, key=lambda option: option.name)
 

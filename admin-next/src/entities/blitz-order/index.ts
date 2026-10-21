@@ -7,7 +7,6 @@ export {
   confirmBlitzInvoice,
   deleteBlitzOrder,
   fetchAuditTariff,
-  fetchBlitzAuditors,
   fetchBlitzCatalog,
   fetchBlitzExperts,
   fetchBlitzInvoices,
@@ -16,7 +15,6 @@ export {
   fetchBlitzTariffs,
   saveAuditTariff,
   saveBlitzTariffs,
-  setBlitzAuditLead,
   setBlitzStatus,
 } from "./api/blitz";
 export {
@@ -34,7 +32,6 @@ export {
   type BlitzStatus,
   type BlitzTariff,
   type BlitzTariffCell,
-  type BlitzTeamMember,
 } from "./model/types";
 export { default as AuditSummary } from "./ui/audit-summary";
 export { default as OrderDocuments } from "./ui/order-documents";

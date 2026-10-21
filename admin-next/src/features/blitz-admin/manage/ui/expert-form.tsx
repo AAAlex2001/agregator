@@ -13,7 +13,7 @@ import styles from "./style.module.scss";
 
 /**
  * Назначает исполнителя до подписания договора. У экспертизы подходящие по удостоверениям — первыми,
- * аудит проводят только руководители аудиторских групп. Без цены назначить нельзя.
+ * аудит проводят эксперты с анкетой «Аудит СУПБ». Без цены назначить нельзя.
  */
 export function ExpertForm({ order, onChange }: BlitzCommandProps) {
   const [expertId, setExpertId] = useState("");
@@ -26,7 +26,7 @@ export function ExpertForm({ order, onChange }: BlitzCommandProps) {
   const needsKind = !order.contract_kind && kinds.length > 1;
   const fitLabel = (fits: boolean) => (fits ? "подходит" : "удостоверения не совпадают");
   const expertOptions = [
-    { value: "", label: isAudit ? "Выберите руководителя группы" : "Выберите эксперта" },
+    { value: "", label: isAudit ? "Выберите аудитора" : "Выберите эксперта" },
     ...experts.map((expert) => ({
       value: String(expert.id),
       label: isAudit ? expert.name : `${expert.name} — ${fitLabel(expert.fits)}`,
@@ -43,7 +43,7 @@ export function ExpertForm({ order, onChange }: BlitzCommandProps) {
   }
 
   return (
-    <Panel title={isAudit ? "Руководитель группы" : "Эксперт"}>
+    <Panel title={isAudit ? "Аудитор" : "Эксперт"}>
       <div className={styles.form}>
         <p className={styles.hint}>
           Сейчас: {order.expert_name ?? "не назначен"}. Новый исполнитель заменит текущего, заказчику уйдёт

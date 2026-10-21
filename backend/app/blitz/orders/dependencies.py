@@ -30,30 +30,30 @@ def get_order_repository(db: AsyncSession = Depends(get_db)) -> OrderRepository:
 
 
 def get_audit_repository(db: AsyncSession = Depends(get_db)) -> AuditRepository:
-    """Аудиторы и руководители групп с сессией текущего запроса."""
+    """Аудиторы с сессией текущего запроса."""
 
     return AuditRepository(db)
 
 
-async def get_audit_lead(
+async def get_auditor(
     user: Account = Depends(require_user),
     audits: AuditRepository = Depends(get_audit_repository),
 ) -> bool:
-    """Руководит ли пользователь аудиторскими группами."""
+    """Есть ли у пользователя анкета аудитора: тогда он видит и берёт заявки на аудит."""
 
-    return user.role == UserRole.EXPERT and await audits.is_lead(user.id)
+    return user.role == UserRole.EXPERT and await audits.is_auditor(user.id)
 
 
 async def get_viewed_order(
     order_id: int,
     user: Account = Depends(require_user),
-    audit_lead: bool = Depends(get_audit_lead),
+    auditor: bool = Depends(get_auditor),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> BlitzOrder:
     """Заявка, которую пользователю можно смотреть. Чужая выглядит как несуществующая."""
 
     order = await orders.get(order_id)
-    if order is None or not can_view(order, user, date.today(), audit_lead):
+    if order is None or not can_view(order, user, date.today(), auditor):
         raise OrderNotFoundError
 
     return order
@@ -62,13 +62,13 @@ async def get_viewed_order(
 async def get_locked_order(
     order_id: int,
     user: Account = Depends(require_user),
-    audit_lead: bool = Depends(get_audit_lead),
+    auditor: bool = Depends(get_auditor),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> BlitzOrder:
     """Заявка для действия: строка заблокирована до конца запроса."""
 
     order = await orders.get_for_update(order_id)
-    if order is None or not can_view(order, user, date.today(), audit_lead):
+    if order is None or not can_view(order, user, date.today(), auditor):
         raise OrderNotFoundError
 
     return order

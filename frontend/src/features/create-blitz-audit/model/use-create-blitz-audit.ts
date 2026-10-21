@@ -73,7 +73,7 @@ export function useCreateBlitzAudit() {
       showSuccess(
         state.kind === "consultation"
           ? "Заявка отправлена: менеджер свяжется с вами"
-          : "Заявка отправлена руководителям аудиторских групп",
+          : "Заявка отправлена аудиторам",
       );
       router.push(`/blitz-audit/orders/${order.id}`);
     } catch (error) {

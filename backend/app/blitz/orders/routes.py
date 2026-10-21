@@ -8,7 +8,7 @@ from pydantic import Json
 from app.auth.sessions.dependencies import require_user
 from app.blitz.orders.dependencies import (
     get_accept_order_usecase,
-    get_audit_lead,
+    get_auditor,
     get_cancel_order_usecase,
     get_create_order_usecase,
     get_locked_order,
@@ -96,17 +96,17 @@ async def list_my_orders(
 async def list_incoming_orders(
     service: ServiceKind = Query(ServiceKind.EXPERTISE),
     user: Account = Depends(require_user),
-    audit_lead: bool = Depends(get_audit_lead),
+    auditor: bool = Depends(get_auditor),
     orders: OrderRepository = Depends(get_order_repository),
 ) -> list[OrderSummarySchema]:
-    """Новые заявки, которые эксперт может взять: экспертизы — по удостоверениям, аудит — руководитель."""
+    """Новые заявки, которые эксперт может взять: экспертизы — по удостоверениям, аудит — аудитор."""
 
     require_expert(user)
     today = date.today()
 
     incoming = await orders.list_unassigned(service)
 
-    return [summary(order, user) for order in incoming if can_take(order, user, today, audit_lead)]
+    return [summary(order, user) for order in incoming if can_take(order, user, today, auditor)]
 
 
 @router.get("/orders/assigned")
@@ -137,12 +137,12 @@ async def accept_order(
     data: AcceptOrderSchema,
     order: BlitzOrder = Depends(get_locked_order),
     user: Account = Depends(require_user),
-    audit_lead: bool = Depends(get_audit_lead),
+    auditor: bool = Depends(get_auditor),
     usecase: AcceptOrderUseCase = Depends(get_accept_order_usecase),
 ) -> OrderSchema:
-    """Эксперт или руководитель аудиторской группы готов провести работу по цене заказчика."""
+    """Эксперт или аудитор готов провести работу по цене заказчика."""
 
-    return details(await usecase.execute(user, order, data.contract_kind, audit_lead), user)
+    return details(await usecase.execute(user, order, data.contract_kind, auditor), user)
 
 
 @router.post("/orders/{order_id}/cancel")

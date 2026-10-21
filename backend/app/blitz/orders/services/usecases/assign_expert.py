@@ -21,7 +21,7 @@ ASSIGNABLE = frozenset(
 
 
 class AssignExpertUseCase:
-    """Закрепляет заявку за экспертом или руководителем аудиторской группы и просит подписать договор."""
+    """Закрепляет заявку за экспертом или аудитором и просит подписать договор."""
 
     def __init__(self, orders: OrderRepository, audits: AuditRepository, notifier: BlitzNotifier) -> None:
         self.orders = orders
@@ -66,13 +66,13 @@ class AssignExpertUseCase:
         return order
 
     async def executor(self, order: BlitzOrder, expert_id: int) -> Account:
-        """Активный эксперт, а для аудита — руководитель группы. Иначе InvalidOrderError."""
+        """Активный эксперт, а для аудита — с анкетой аудитора. Иначе InvalidOrderError."""
 
         expert = await self.orders.get_expert(expert_id)
         if expert is None:
             raise InvalidOrderError("Такого эксперта нет")
 
-        if order.service == ServiceKind.AUDIT and not await self.audits.is_lead(expert.id):
-            raise InvalidOrderError("Аудит проводит руководитель аудиторской группы")
+        if order.service == ServiceKind.AUDIT and not await self.audits.is_auditor(expert.id):
+            raise InvalidOrderError("У эксперта нет анкеты «Аудит СУПБ»")
 
         return expert

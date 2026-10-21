@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from app.blitz.audit.services.exceptions import AuditLeadRequiredError
+from app.blitz.audit.services.exceptions import AuditorRequiredError
 from app.blitz.audit.services.negotiation import negotiable
 from app.blitz.audit.services.repo import AuditRepository
 from app.blitz.notifications import BlitzNotifier
@@ -22,7 +22,7 @@ class ProposePriceUseCase:
         self.notifier = notifier
 
     async def execute(self, lead: Account, order: BlitzOrder, price: Decimal) -> BlitzOrder:
-        """Заявку уже взяли — OrderStateError, не руководитель — AuditLeadRequiredError."""
+        """Заявку уже взяли — OrderStateError, нет анкеты аудитора — AuditorRequiredError."""
 
         if order.service != ServiceKind.AUDIT:
             raise InvalidOrderError("Предложить цену можно только по заявке на аудит")
@@ -30,8 +30,8 @@ class ProposePriceUseCase:
         if order.status != OrderStatus.NEW or order.expert_id is not None:
             raise OrderStateError("Заявку уже взял другой аудитор")
 
-        if not await self.audits.is_lead(lead.id):
-            raise AuditLeadRequiredError
+        if not await self.audits.is_auditor(lead.id):
+            raise AuditorRequiredError
 
         if order.price is not None and not negotiable(order):
             raise OrderStateError("Заказчик не готов обсуждать цену: возьмите заявку по его цене")

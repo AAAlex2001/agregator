@@ -111,7 +111,7 @@ export function TermsSection({ state, catalog, dispatch }: TermsSectionProps) {
         </Field>
       ) : (
         <p className={styles.note}>
-          Руководитель аудиторской группы рассчитает стоимость и предложит её вам
+          Аудитор рассчитает стоимость и предложит её вам
         </p>
       )}
       <Field label="Можно ли обсуждать стоимость">

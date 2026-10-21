@@ -23,7 +23,7 @@ AUDIT_ONLY = frozenset(
 class SetOrderStatusUseCase:
     """Любой статус с пометкой в истории. Возврат в «ждёт эксперта» снимает исполнителя.
 
-    Заявка на аудит после консультации уходит руководителям аудиторских групп.
+    Заявка на аудит после консультации уходит аудиторам.
     """
 
     def __init__(self, orders: OrderRepository, audits: AuditRepository, notifier: BlitzNotifier) -> None:
@@ -61,7 +61,8 @@ class SetOrderStatusUseCase:
         await self.notifier.notify_all(notified, order, f"{message}. {note}" if note else message)
 
         if opened and status == OrderStatus.NEW:
-            leads = await self.audits.list_leads()
-            await self.notifier.notify_all(leads, order, f"Новая заявка на аудит СУПБ: {order.object_name}")
+            auditors = await self.audits.list_auditors()
+            message = f"Новая заявка на аудит СУПБ: {order.object_name}"
+            await self.notifier.notify_all(auditors, order, message)
 
         return order

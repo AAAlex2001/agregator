@@ -10,7 +10,7 @@ from docx import Document
 from pydantic import ValidationError
 
 from app.blitz.audit.schemas import AuditCreateSchema, AuditDetailsSchema
-from app.blitz.audit.services.exceptions import AuditLeadRequiredError
+from app.blitz.audit.services.exceptions import AuditorRequiredError
 from app.blitz.audit.services.usecases.answer_counter import AnswerCounterUseCase
 from app.blitz.audit.services.usecases.answer_offer import AnswerOfferUseCase
 from app.blitz.audit.services.usecases.propose_price import ProposePriceUseCase
@@ -29,6 +29,7 @@ from app.blitz.orders.models import (
     OrderStatus,
     ServiceKind,
 )
+from app.blitz.orders.services.access import can_take
 from app.blitz.orders.services.exceptions import (
     CustomerRequiredError,
     InvalidOrderError,
@@ -207,19 +208,16 @@ class FakeOrders:
 
 
 class FakeAudits:
-    """Аудиторы без базы: руководитель группы — LEAD."""
+    """Аудиторы без базы: аудитор — LEAD и переданные в списке."""
 
     def __init__(self, auditors: list[Account] | None = None) -> None:
         self.auditors = auditors or []
 
-    async def is_lead(self, account_id: int) -> bool:
-        return account_id == LEAD.id
-
-    async def list_leads(self) -> list[Account]:
-        return [LEAD]
+    async def is_auditor(self, account_id: int) -> bool:
+        return account_id == LEAD.id or any(item.id == account_id for item in self.auditors)
 
     async def list_auditors(self) -> list[Account]:
-        return self.auditors
+        return [LEAD, *self.auditors]
 
 
 class FakeNotifier:
@@ -489,11 +487,11 @@ def test_audit_contract_has_own_template_and_number() -> None:
     assert "аудита системы управления промышленной безопасностью" in text
 
 
-def test_only_lead_proposes_audit_price() -> None:
+def test_only_auditor_proposes_audit_price() -> None:
     usecase = ProposePriceUseCase(FakeOrders(), FakeAudits(), FakeNotifier())
     fresh = audit_order(price=None)
 
-    with pytest.raises(AuditLeadRequiredError):
+    with pytest.raises(AuditorRequiredError):
         asyncio.run(usecase.execute(STRANGER, fresh, Decimal("250000")))
 
     asyncio.run(usecase.execute(LEAD, fresh, Decimal("250000")))
@@ -579,7 +577,7 @@ def test_customer_sees_auditor_names_from_plan() -> None:
     assert details(contract, CUSTOMER).team[0].lead
 
 
-def test_consultation_opens_to_leads() -> None:
+def test_consultation_opens_to_auditors() -> None:
     notifier = FakeNotifier()
     consultation = audit_order(OrderStatus.CONSULTATION)
 
@@ -659,3 +657,10 @@ def test_audit_tariff_is_not_below_minimum() -> None:
     assert saved.price == Decimal("150000")
     assert asyncio.run(usecase.execute(None)) is None
     assert tariffs.tariff is None
+
+def test_any_auditor_takes_new_audit() -> None:
+    fresh = audit_order()
+
+    assert can_take(fresh, STRANGER, TODAY, True)
+    assert not can_take(fresh, STRANGER, TODAY, False)
+    assert not can_take(audit_order(OrderStatus.OFFER), STRANGER, TODAY, True)

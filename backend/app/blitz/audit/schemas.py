@@ -276,12 +276,6 @@ class PlanChangesSchema(BaseModel):
     comment: str = Field(..., min_length=3, max_length=4000)
 
 
-class LeadSchema(BaseModel):
-    """Назначить аудитора руководителем группы или снять с этой роли."""
-
-    lead: bool
-
-
 class ChecklistItemSchema(BaseModel):
     """Пункт перечня документов."""
 
